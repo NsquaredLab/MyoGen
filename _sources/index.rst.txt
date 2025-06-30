@@ -5,10 +5,11 @@
 Welcome to |logo|
 ==================
 
-**Computational Framework for Neuromuscular Simulation and EMG Modeling**
+**Biophysical Simulation Toolkit for EMG Signal Generation**
 
-MyoGen is a Python framework designed for simulating neuromuscular systems and generating realistic EMG signals. 
-It provides researchers with easily accessible tools for modeling motor unit behavior, muscle dynamics, and EMG signals.
+MyoGen is a biophysical simulation toolkit for generating surface and intramuscular electromyography (EMG) signals. Built on established physiological principles and validated anatomical data, MyoGen provides researchers, engineers, and educators with an accessible platform for EMG signal simulation that spans from motor unit recruitment to surface electrode recordings.
+
+The toolkit implements a complete simulation pipeline: from motor unit recruitment thresholds and spike train generation using the NEURON simulator, through anatomically accurate muscle modeling with realistic fiber distributions, to surface EMG signal synthesis via Motor Unit Action Potentials (MUAPs).
 
 .. raw:: html
 
@@ -19,41 +20,68 @@ It provides researchers with easily accessible tools for modeling motor unit beh
     </div>
     </br>
 
-The framework is designed with the following goals:
+Key features include:
 
-1. **Accurate Simulation**: Physiologically realistic models of motor units, muscles, and EMG signals
-2. **Ease of Use**: Simple APIs that abstract complex neuromuscular modeling and allow for rapid prototyping
-3. **Extensibility**: The framework is designed to be extensible, allowing for the addition of new models and simulation approaches
-4. **Utility Functions**: Current generation, plotting tools, and setup utilities
+- **Motor Unit Recruitment Modeling**: Four validated models (Fuglevand, De Luca, Konstantin, Combined) for physiologically realistic recruitment patterns
+- **Biophysical Spike Train Simulation**: NEURON-based motor neuron modeling with detailed calcium dynamics and membrane properties  
+- **Anatomically Accurate Muscle Models**: Spatial distribution of motor units and muscle fibers based on anatomical measurements
+- **Surface EMG Synthesis**: Multi-layered volume conductor modeling for realistic surface EMG signal generation
+- **Multi-Electrode Array Support**: Simulation of high-density electrode grids with configurable spatial arrangements
+- **Flexible Input Current Patterns**: Built-in generators for sinusoidal, ramp, step, trapezoid, and sawtooth stimulation waveforms
+- **GPU Acceleration**: Automatic CuPy integration for fast parallel processing of large-scale simulations
+- **Comprehensive Visualization**: Built-in plotting tools for recruitment thresholds, spike trains, muscle anatomy, MUAPs, and surface EMG
+- **Reproducible Research**: Deterministic random number generation and parameter saving for reproducible simulations
 
 .. warning::
-   MyoGen is still in an early stage of development.    
-   The framework is not yet fully functional and the documentation is still under construction.  
-
-   We are actively working on the framework and will be adding new features and improving the documentation regularly.
-
-   We appreciate your understanding and interest in the project!
+   MyoGen is still under development and the API is subject to change.
 
 Installation
 ------------
+
 1. **Clone the Repository:**
 
    .. code-block:: bash
 
       git clone https://github.com/NsquaredLab/MyoGen.git
-      cd myogen
+      cd MyoGen
 
-2. **Install uv:** If you don't have it yet, install ``uv``. Follow the instructions on the `uv GitHub page <https://github.com/astral-sh/uv>`_.
+2. **(Windows only) Install NEURON 8.2.6:**
 
-3. **Set up Virtual Environment & Install Dependencies:**
+   .. warning::
+      Make sure to install version 8.2.6.
+
+   Download from: https://github.com/neuronsimulator/nrn/releases/download/8.2.6/nrn-8.2.6.w64-mingw-py-38-39-310-311-312-setup.exe
+
+3. **Install UV:**
+   
+   Follow the instructions at https://docs.astral.sh/uv/#highlights
+
+4. **Create Environment:**
 
    .. code-block:: bash
 
-      # Install base dependencies
       uv sync
-      
-      # To run documentation/examples, install optional groups:
-      uv sync --group docs
+
+5. **Add CuPy if CUDA is Available:**
+
+   .. code-block:: bash
+
+      uv pip install cupy-cuda12x
+
+6. **Activate the Environment:**
+
+   .. code-block:: bash
+
+      source .venv/bin/activate
+
+7. **Run Setup to Compile NMODL Files:**
+
+   .. warning::
+      This step is required. Please do not skip it.
+
+   .. code-block:: bash
+
+      python -c "from myogen.utils import setup_myogen; setup_myogen()"
 
 Package Structure
 -----------------
