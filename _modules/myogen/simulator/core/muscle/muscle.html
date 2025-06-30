@@ -1,0 +1,1045 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../../../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>myogen.simulator.core.muscle.muscle &#8212; MyoGen 0.1.0 Documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../../../../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/sg_gallery.css?v=d2d258e8" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/sg_gallery-binder.css?v=f4aeca0c" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/custom.css?v=e1466590" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../../../../../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../../../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="../../../../../_static/documentation_options.js?v=01f34227"></script>
+    <script src="../../../../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/myogen/simulator/core/muscle/muscle';</script>
+    <link rel="index" title="Index" href="../../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="0.1.0" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class=" navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../../../../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../../../../_static/myogen_logo.png" class="logo__image only-light" alt="MyoGen 0.1.0 Documentation - Home"/>
+    <img src="../../../../../_static/myogen_logo.png" class="logo__image only-dark pst-js-only" alt="MyoGen 0.1.0 Documentation - Home"/>
+  
+  
+</a></div>
+    
+      <div class="navbar-item">
+<div class="nav-item">
+  <div class="version-switcher__container dropdown">
+      <button id="version-switcher-button" type="button" class="version-switcher__button btn btn-sm navbar-btn" aria-haspopup="true" aria-expanded="false">
+          Version 0.1.0
+      </button>
+      
+      
+      
+  </div>
+</div> </div>
+    
+      <div class="navbar-item"><div class="nav-item">
+   <span>
+      made at the <a href="https://www.nsquared.tf.fau.de/" target="_blank">N² Lab</a>
+   </span>
+</div> </div>
+    
+  </div>
+  
+  <div class=" navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../api/index.html">
+    API Documentation
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../auto_examples/index.html">
+    Examples
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/NSquaredLab/MyoGen" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+    </div>
+  
+
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar hide-on-wide">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../api/index.html">
+    API Documentation
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../auto_examples/index.html">
+    Examples
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/NSquaredLab/MyoGen" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../../../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../../../../index.html" class="nav-link">Module code</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">myogen.simulator.core.muscle.muscle</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <h1>Source code for myogen.simulator.core.muscle.muscle</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">inspect</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">skfmm</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">scipy.integrate</span><span class="w"> </span><span class="kn">import</span> <span class="n">dblquad</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">scipy.stats</span><span class="w"> </span><span class="kn">import</span> <span class="n">chi2</span><span class="p">,</span> <span class="n">multivariate_normal</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.neighbors</span><span class="w"> </span><span class="kn">import</span> <span class="n">NearestNeighbors</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">tqdm</span><span class="w"> </span><span class="kn">import</span> <span class="n">tqdm</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">myogen</span><span class="w"> </span><span class="kn">import</span> <span class="n">RANDOM_GENERATOR</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_perform_fast_marching</span><span class="p">(</span>
+    <span class="n">speed_map</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">seed_points</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Perform fast marching using scikit-fmm to compute distance maps.</span>
+
+<span class="sd">    This function implements the Fast Marching Method to solve the Eikonal equation,</span>
+<span class="sd">    which is used to distribute innervation centers optimally within the muscle cross-section.</span>
+<span class="sd">    The method ensures that innervation centers are spaced as far apart as possible from</span>
+<span class="sd">    each other, mimicking the natural distribution of motor unit territories.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    speed_map : np.ndarray</span>
+<span class="sd">        2D speed map (inverse of a density map) defining the propagation speed</span>
+<span class="sd">        at each grid point. Higher values indicate faster propagation.</span>
+<span class="sd">        Should be &gt; 1e-10 for valid regions and ≤ 1e-10 for invalid regions.</span>
+<span class="sd">    seed_points : np.ndarray</span>
+<span class="sd">        Seed points as 2×N array where each column is a point [x, y].</span>
+<span class="sd">        Uses 1-based indexing like MATLAB. These are the starting points</span>
+<span class="sd">        for the distance computation.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    np.ndarray</span>
+<span class="sd">        Distance map from seed points. Each element represents the minimum</span>
+<span class="sd">        distance to any of the seed points. Invalid regions (outside the</span>
+<span class="sd">        circular muscle boundary) are set to -1e10.</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    This function is used internally by the muscle distribution algorithm</span>
+<span class="sd">    to implement a greedy approach for placing innervation centers such that</span>
+<span class="sd">    each new electrode_grid_center is placed at the location farthest from all previously</span>
+<span class="sd">    placed centers.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Create a mask for valid regions (inside the circular domain)</span>
+    <span class="n">valid_mask</span> <span class="o">=</span> <span class="n">speed_map</span> <span class="o">&gt;</span> <span class="mf">1e-10</span>
+
+    <span class="c1"># Create a signed distance function for the domain</span>
+    <span class="c1"># Initialize with large positive values (far from boundary)</span>
+    <span class="n">phi</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">speed_map</span><span class="p">)</span> <span class="o">*</span> <span class="mf">1000.0</span>
+
+    <span class="c1"># Set seed points to 0 (starting points for Fast Marching)</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">seed_points</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]):</span>
+        <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">seed_points</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="n">i</span><span class="p">]</span> <span class="o">-</span> <span class="mi">1</span><span class="p">),</span> <span class="nb">int</span><span class="p">(</span><span class="n">seed_points</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="n">i</span><span class="p">]</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="c1"># Ensure indices are within bounds</span>
+        <span class="k">if</span> <span class="mi">0</span> <span class="o">&lt;=</span> <span class="n">x</span> <span class="o">&lt;</span> <span class="n">speed_map</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">and</span> <span class="mi">0</span> <span class="o">&lt;=</span> <span class="n">y</span> <span class="o">&lt;</span> <span class="n">speed_map</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]:</span>
+            <span class="n">phi</span><span class="p">[</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.0</span>  <span class="c1"># Starting points</span>
+
+    <span class="c1"># Set invalid regions (outside circle) to negative values</span>
+    <span class="n">phi</span><span class="p">[</span><span class="o">~</span><span class="n">valid_mask</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="mf">1000.0</span>
+
+    <span class="c1"># Use scikit-fmm to solve the Eikonal equation</span>
+    <span class="n">distance</span> <span class="o">=</span> <span class="n">skfmm</span><span class="o">.</span><span class="n">distance</span><span class="p">(</span><span class="n">phi</span><span class="p">,</span> <span class="n">dx</span><span class="o">=</span><span class="mf">1.0</span><span class="p">)</span>
+
+    <span class="c1"># Set invalid regions to very small values so they won&#39;t be selected</span>
+    <span class="n">distance</span><span class="p">[</span><span class="o">~</span><span class="n">valid_mask</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="mf">1e10</span>
+
+    <span class="k">return</span> <span class="n">distance</span>
+
+
+<div class="viewcode-block" id="Muscle">
+<a class="viewcode-back" href="../../../../../generated/myogen.simulator.Muscle.html#myogen.simulator.Muscle">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">Muscle</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A muscle model for simulating motor unit organization and muscle fiber distribution.</span>
+
+<span class="sd">    The muscle model consists of:</span>
+<span class="sd">    - Motor unit territories with biologically realistic size distributions</span>
+<span class="sd">    - Spatially distributed innervation centers using optimal packing algorithms</span>
+<span class="sd">    - Muscle fiber assignment based on proximity and self-avoidance principles</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; # Create a muscle with 120 motor units</span>
+<span class="sd">    &gt;&gt;&gt; recruitment_thresholds = generate_mu_recruitment_thresholds(N=120)</span>
+<span class="sd">    &gt;&gt;&gt; muscle = Muscle(</span>
+<span class="sd">    ...     recruitment_thresholds=recruitment_thresholds,</span>
+<span class="sd">    ...     radius__mm=4.9,</span>
+<span class="sd">    ...     fiber_density__fibers_per_mm2=400,</span>
+<span class="sd">    ...     autorun=True</span>
+<span class="sd">    ... )</span>
+<span class="sd">    &gt;&gt;&gt;</span>
+<span class="sd">    &gt;&gt;&gt; # Access muscle fiber positions for motor unit 0</span>
+<span class="sd">    &gt;&gt;&gt; fiber_positions = muscle.resulting_fiber_assignment(0)</span>
+<span class="sd">    &gt;&gt;&gt; print(f&quot;MU 0 has {len(fiber_positions)} muscle fibers&quot;)</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="Muscle.__init__">
+<a class="viewcode-back" href="../../../../../generated/myogen.simulator.Muscle.html#myogen.simulator.Muscle.__init__">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">recruitment_thresholds</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+        <span class="n">radius__mm</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">4.9</span><span class="p">,</span>  <span class="c1"># Radius of FDI muscle (Jacobson, 1992)</span>
+        <span class="n">fiber_density__fibers_per_mm2</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">400</span><span class="p">,</span>
+        <span class="n">max_innervation_area_to_total_muscle_area__ratio</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">/</span> <span class="mi">4</span><span class="p">,</span>
+        <span class="n">grid_resolution</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">256</span><span class="p">,</span>
+        <span class="n">autorun</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Initialize the muscle simulation with specified parameters.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        recruitment_thresholds : np.ndarray</span>
+<span class="sd">            Array of recruitment thresholds for each motor unit. The values</span>
+<span class="sd">            determine the relative sizes of motor unit territories, with larger</span>
+<span class="sd">            values corresponding to larger territories. Typically ranges from</span>
+<span class="sd">            0 to 1, with the largest motor units having thresholds near 1.</span>
+<span class="sd">        radius__mm : float, default 4.9</span>
+<span class="sd">            Radius of the muscle cross-section in millimeters. Default value</span>
+<span class="sd">            corresponds to the First Dorsal Interosseous (FDI) muscle based</span>
+<span class="sd">            on anatomical measurements (Jacobson et al., 1992).</span>
+<span class="sd">        fiber_density__fibers_per_mm2 : float, default 400</span>
+<span class="sd">            Density of muscle fibers per square millimeter. This parameter</span>
+<span class="sd">            controls the total number of muscle fibers in the muscle and</span>
+<span class="sd">            affects the granularity of the simulation. Values typically</span>
+<span class="sd">            range from 300-600 fibers/mm² for human muscles.</span>
+<span class="sd">            Default value is 400 fibers/mm².</span>
+<span class="sd">        max_innervation_area_to_total_muscle_area__ratio : float, default 0.25</span>
+<span class="sd">            Ratio defining the maximum territory size relative to total muscle area.</span>
+<span class="sd">            A value of 0.25 means the largest motor unit can innervate up to 25%</span>
+<span class="sd">            of the total muscle cross-sectional area. Must be in range (0, 1].</span>
+<span class="sd">        grid_resolution : int, default 256</span>
+<span class="sd">            Resolution of the computational grid used for innervation electrode_grid_center</span>
+<span class="sd">            distribution. Higher values provide more accurate spatial distribution</span>
+<span class="sd">            but increase computational cost. Recommended range: 128-512.</span>
+<span class="sd">        autorun : bool, default False</span>
+<span class="sd">            If True, automatically executes the complete muscle simulation pipeline:</span>
+<span class="sd">            innervation electrode_grid_center distribution, muscle fiber generation, and fiber-to-</span>
+<span class="sd">            motor unit assignment. If False, these steps must be called manually.</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        ValueError</span>
+<span class="sd">            If max_innervation_area_to_total_muscle_area__ratio is not in (0, 1].</span>
+
+<span class="sd">        Notes</span>
+<span class="sd">        -----</span>
+<span class="sd">        The muscle model uses a circular cross-section approximation, which is</span>
+<span class="sd">        appropriate for many skeletal muscles. The recruitment thresholds are</span>
+<span class="sd">        used as a proxy for motor unit sizes, following the size principle</span>
+<span class="sd">        where larger motor units have higher recruitment thresholds.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">recruitment_thresholds</span> <span class="o">=</span> <span class="n">recruitment_thresholds</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_number_of_neurons</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">recruitment_thresholds</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">radius__mm</span> <span class="o">=</span> <span class="n">radius__mm</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fiber_density__fibers_per_mm2</span> <span class="o">=</span> <span class="n">fiber_density__fibers_per_mm2</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">grid_resolution</span> <span class="o">=</span> <span class="n">grid_resolution</span>
+
+        <span class="c1"># Validate the ratio</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="mi">0</span> <span class="o">&lt;</span> <span class="n">max_innervation_area_to_total_muscle_area__ratio</span> <span class="o">&lt;=</span> <span class="mi">1</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s1">&#39;&quot;max_innervation_area_to_total_muscle_area__ratio&quot; must be in (0, 1].&#39;</span>
+            <span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">max_innervation_area_to_total_muscle_area__ratio</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">max_innervation_area_to_total_muscle_area__ratio</span>
+        <span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">muscle_area__mm2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">power</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">radius__mm</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+
+        <span class="c1"># Calculate innervation areas (same as MATLAB calc_innervation_areas)</span>
+        <span class="c1"># Use recruitment_thresholds as motor neuron sizes (equivalent to obj.mn_pool.sz)</span>
+        <span class="n">muscle_area2max_ia</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_innervation_area_to_total_muscle_area__ratio</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">desired_innervation_areas__mm2</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">recruitment_thresholds</span>
+            <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">recruitment_thresholds</span><span class="p">)</span>
+            <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">muscle_area__mm2</span>
+            <span class="o">/</span> <span class="n">muscle_area2max_ia</span>
+        <span class="p">)</span>
+
+        <span class="c1"># Calculate innervation numbers (same as MATLAB calc_innervation_numbers)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">desired_number_of_innervated_fibers</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">desired_innervation_areas__mm2</span>
+            <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">desired_innervation_areas__mm2</span><span class="p">)</span>
+            <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">muscle_area__mm2</span>
+            <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">fiber_density__fibers_per_mm2</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">innervation_center_positions</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="k">if</span> <span class="n">autorun</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">distribute_innervation_centers</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">generate_muscle_fiber_centers</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">assign_mfs2mns</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="Muscle.distribute_innervation_centers">
+<a class="viewcode-back" href="../../../../../generated/myogen.simulator.Muscle.html#myogen.simulator.Muscle.distribute_innervation_centers">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">distribute_innervation_centers</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Distribute innervation electrode_grid_center positions using the fast marching method.</span>
+
+<span class="sd">        This method implements an optimal packing algorithm to distribute motor unit</span>
+<span class="sd">        innervation centers within the circular muscle cross-section. The algorithm</span>
+<span class="sd">        uses the Fast Marching Method to ensure that each new innervation electrode_grid_center is</span>
+<span class="sd">        placed at the location that maximizes the minimum distance to all previously</span>
+<span class="sd">        placed centers.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        None</span>
+<span class="sd">            Results are stored in self.innervation_center_positions as an array</span>
+<span class="sd">            of shape (n_motor_units, 2) containing [x, y] coordinates in mm.</span>
+
+<span class="sd">        Notes</span>
+<span class="sd">        -----</span>
+<span class="sd">        This method must be called before generate_muscle_fiber_centers() and</span>
+<span class="sd">        assign_mfs2mns(). The resulting distribution approximates the optimal</span>
+<span class="sd">        packing problem for circles, leading to realistic motor unit territory</span>
+<span class="sd">        arrangements.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">density_map</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">grid_resolution</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">grid_resolution</span><span class="p">))</span>
+        <span class="n">X</span><span class="p">,</span> <span class="n">Y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">meshgrid</span><span class="p">(</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">grid_resolution</span><span class="p">),</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">grid_resolution</span><span class="p">),</span>
+        <span class="p">)</span>
+        <span class="n">density_map</span><span class="p">[</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span>
+                <span class="p">(</span><span class="n">X</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">grid_resolution</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span>
+                <span class="o">+</span> <span class="p">(</span><span class="n">Y</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">grid_resolution</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span>
+            <span class="p">)</span>
+            <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">grid_resolution</span> <span class="o">/</span> <span class="mi">2</span> <span class="o">-</span> <span class="mi">1</span>
+        <span class="p">]</span> <span class="o">=</span> <span class="mf">1e-10</span>
+
+        <span class="n">vertices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">2</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_number_of_neurons</span> <span class="o">+</span> <span class="mi">1</span><span class="p">))</span>
+        <span class="n">vertices</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
+
+        <span class="c1"># MATLAB: for i = 2:(obj.N+1)</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_number_of_neurons</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
+            <span class="c1"># Use scikit-fmm for fast marching</span>
+            <span class="c1"># Create speed map, avoiding division by zero</span>
+            <span class="n">ind</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">_perform_fast_marching</span><span class="p">(</span><span class="n">density_map</span><span class="o">.</span><span class="n">copy</span><span class="p">(),</span> <span class="n">vertices</span><span class="p">[:,</span> <span class="p">:</span><span class="n">i</span><span class="p">]))</span>
+            <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unravel_index</span><span class="p">(</span><span class="n">ind</span><span class="p">,</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">grid_resolution</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">grid_resolution</span><span class="p">))</span>
+            <span class="n">vertices</span><span class="p">[:,</span> <span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">]</span>
+
+        <span class="c1"># MATLAB: obj.innervation_center_positions = vertices(:,end:-1:2)&#39;;</span>
+        <span class="c1"># This takes columns from end down to 2 (1-indexed), then transposes</span>
+        <span class="c1"># In Python: vertices[:, -1:0:-1] gives us columns from end down to 1 (0-indexed)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">innervation_center_positions</span> <span class="o">=</span> <span class="n">vertices</span><span class="p">[:,</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span><span class="mi">0</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">T</span>
+
+        <span class="c1"># Only proceed if we have valid innervation_center_positions</span>
+        <span class="k">if</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">innervation_center_positions</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">0</span>
+            <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">innervation_center_positions</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="mi">2</span>
+        <span class="p">):</span>
+            <span class="n">center_offset</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">innervation_center_positions</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">grid_resolution</span> <span class="o">/</span> <span class="mi">2</span>
+            <span class="n">max_dist</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span>
+                <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">center_offset</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="n">center_offset</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span>
+            <span class="p">)</span>
+            <span class="k">if</span> <span class="n">max_dist</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>  <span class="c1"># Avoid division by zero</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">innervation_center_positions</span> <span class="o">=</span> <span class="p">(</span>
+                    <span class="n">center_offset</span> <span class="o">/</span> <span class="n">max_dist</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">radius__mm</span>
+                <span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">innervation_center_positions</span> <span class="o">=</span> <span class="p">(</span>
+                    <span class="n">center_offset</span>  <span class="c1"># Keep original if max_dist is 0</span>
+                <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Muscle.generate_muscle_fiber_centers">
+<a class="viewcode-back" href="../../../../../generated/myogen.simulator.Muscle.html#myogen.simulator.Muscle.generate_muscle_fiber_centers">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">generate_muscle_fiber_centers</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Generate muscle fiber electrode_grid_center positions using a pre-computed Voronoi distribution.</span>
+
+<span class="sd">        This method creates the spatial distribution of muscle fiber centers</span>
+<span class="sd">        within the circular muscle cross-section. The distribution is based on a</span>
+<span class="sd">        Voronoi tessellation pattern that mimics the natural packing of muscle fibers</span>
+<span class="sd">        observed in histological studies.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        None</span>
+<span class="sd">            Results are stored in the following attributes:</span>
+<span class="sd">            - self.mf_centers: Array of shape (n_fibers, 2) with fiber positions [x, y] in mm</span>
+<span class="sd">            - self.number_of_muscle_fibers: Total number of muscle fibers</span>
+<span class="sd">            - self.muscle_border: Array of border points for visualization</span>
+
+<span class="sd">        Notes</span>
+<span class="sd">        -----</span>
+<span class="sd">        This method should be called after distribute_innervation_centers() and</span>
+<span class="sd">        before assign_mfs2mns(). The Voronoi-based distribution provides more</span>
+<span class="sd">        realistic fiber spacing compared to regular grids or purely random distributions.</span>
+
+<span class="sd">        The reference dataset (&#39;voronoi_pi1e5.csv&#39;) contains 100,000 pre-computed</span>
+<span class="sd">        Voronoi cell centers optimized for circular domains, ensuring efficient</span>
+<span class="sd">        and consistent fiber distributions across simulations.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># Expected number of muscle fibers in the muscle</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">number_of_muscle_fibers</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">rint</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">radius__mm</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">fiber_density__fibers_per_mm2</span><span class="p">)</span>
+        <span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">mf_centers</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span>
+            <span class="n">Path</span><span class="p">(</span><span class="n">inspect</span><span class="o">.</span><span class="n">getfile</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="p">))</span><span class="o">.</span><span class="n">parent</span> <span class="o">/</span> <span class="s2">&quot;voronoi_pi1e5.csv&quot;</span><span class="p">,</span>
+            <span class="n">header</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">values</span>
+
+        <span class="c1"># Adjust the loaded innervation_center_positions to the expected number of fibers and muscle radius</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mf_centers</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mf_centers</span> <span class="o">-</span> <span class="mi">5</span><span class="p">)</span> <span class="o">/</span> <span class="mi">4</span>  <span class="c1"># 4 may be unnecessary here</span>
+        <span class="n">dists</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mf_centers</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">mf_centers</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span>
+        <span class="n">sorted_indices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argsort</span><span class="p">(</span><span class="n">dists</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">sorted_indices</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">number_of_muscle_fibers</span> <span class="o">+</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">mf_centers</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">mf_centers</span><span class="p">[</span><span class="n">sorted_indices</span><span class="p">[:</span> <span class="bp">self</span><span class="o">.</span><span class="n">number_of_muscle_fibers</span><span class="p">],</span> <span class="p">:]</span>
+                <span class="o">/</span> <span class="n">dists</span><span class="p">[</span><span class="n">sorted_indices</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">number_of_muscle_fibers</span><span class="p">]]</span>
+                <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">radius__mm</span>
+            <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">mf_centers</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">mf_centers</span><span class="p">[</span><span class="n">sorted_indices</span><span class="p">,</span> <span class="p">:]</span>
+                <span class="o">/</span> <span class="n">dists</span><span class="p">[</span><span class="n">sorted_indices</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]]</span>
+                <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">radius__mm</span>
+            <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">number_of_muscle_fibers</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mf_centers</span><span class="p">)</span>
+
+        <span class="c1"># Create muscle border for plotting</span>
+        <span class="n">phi_circle</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">,</span> <span class="mi">1000</span><span class="p">)</span>
+        <span class="n">phi_circle</span> <span class="o">=</span> <span class="n">phi_circle</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">muscle_border</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">column_stack</span><span class="p">(</span>
+            <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">radius__mm</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">phi_circle</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">radius__mm</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">phi_circle</span><span class="p">)]</span>
+        <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Muscle.assign_mfs2mns">
+<a class="viewcode-back" href="../../../../../generated/myogen.simulator.Muscle.html#myogen.simulator.Muscle.assign_mfs2mns">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">assign_mfs2mns</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_neighbours</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">3</span><span class="p">,</span> <span class="n">conf</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.999</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Assign muscle fibers to motor neurons using biologically realistic principles.</span>
+
+<span class="sd">        This method implements an assignment algorithm that balances</span>
+<span class="sd">        multiple biological constraints:</span>
+<span class="sd">        1. Proximity: Fibers closer to innervation centers are more likely to be assigned</span>
+<span class="sd">        2. Territory size: Each motor unit has a target number of fibers based on its size</span>
+<span class="sd">        3. Self-avoidance: Neighboring fibers avoid belonging to the same motor unit</span>
+<span class="sd">        4. Gaussian territories: Fiber territories follow roughly Gaussian distributions</span>
+
+<span class="sd">        The assignment uses a probabilistic approach where each fiber is assigned</span>
+<span class="sd">        based on the posterior probability computed from prior probabilities (target</span>
+<span class="sd">        fiber numbers) and likelihoods (spatial clustering with Gaussian territories).</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        n_neighbours : int, default 3</span>
+<span class="sd">            Number of neighboring fibers to consider for self-avoiding phenomena.</span>
+<span class="sd">            Higher values increase intermingling between motor units but may slow</span>
+<span class="sd">            computation. Typical range: 2-5.</span>
+<span class="sd">        conf : float, default 0.999</span>
+<span class="sd">            Confidence interval that defines the relationship between innervation</span>
+<span class="sd">            area and Gaussian distribution variance. Higher values create tighter,</span>
+<span class="sd">            more compact territories. Should be between 0.9 and 0.999.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        None</span>
+<span class="sd">            Results are stored in self.assignment as an array of length n_fibers</span>
+<span class="sd">            where each element indicates the motor unit index (0 to n_motor_units-1)</span>
+<span class="sd">            assigned to that fiber.</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        ValueError</span>
+<span class="sd">            If innervation_center_positions is None. Call distribute_innervation_centers()</span>
+<span class="sd">            first.</span>
+
+<span class="sd">        Notes</span>
+<span class="sd">        -----</span>
+<span class="sd">        The algorithm compensates for out-of-muscle effects by calculating how much</span>
+<span class="sd">        of each motor unit&#39;s Gaussian distribution falls outside the circular muscle</span>
+<span class="sd">        boundary and adjusting the in-muscle probabilities accordingly.</span>
+
+<span class="sd">        The self-avoidance mechanism promotes realistic intermingling by reducing</span>
+<span class="sd">        the probability of assigning a fiber to a motor unit if its neighbors are</span>
+<span class="sd">        already assigned to that unit.</span>
+
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+<span class="sd">        &gt;&gt;&gt; muscle.assign_mfs2mns(n_neighbours=4, conf=0.995)</span>
+<span class="sd">        &gt;&gt;&gt; assignments = muscle.assignment</span>
+<span class="sd">        &gt;&gt;&gt; print(f&quot;Fiber 0 belongs to motor unit {assignments[0]}&quot;)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Ensure innervation_center_positions is available</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">innervation_center_positions</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;innervation_center_positions is None. Call distribute_innervation_centers() first.&quot;</span>
+            <span class="p">)</span>
+
+        <span class="c1"># Out-of-muscle area compensation</span>
+        <span class="c1"># Calculates how much of the MU&#39;s gaussian distribution is outside of the</span>
+        <span class="c1"># muscle border and inflates the rest of the distribution according to it</span>
+        <span class="n">borderfun_pos</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">real</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">radius__mm</span><span class="o">**</span><span class="mi">2</span> <span class="o">-</span> <span class="n">x</span><span class="o">**</span><span class="mi">2</span><span class="p">))</span>
+        <span class="n">borderfun_neg</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">real</span><span class="p">(</span><span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">radius__mm</span><span class="o">**</span><span class="mi">2</span> <span class="o">-</span> <span class="n">x</span><span class="o">**</span><span class="mi">2</span><span class="p">))</span>
+        <span class="n">out_circle_coeff</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_number_of_neurons</span><span class="p">)</span>
+
+        <span class="n">c</span> <span class="o">=</span> <span class="n">chi2</span><span class="o">.</span><span class="n">ppf</span><span class="p">(</span><span class="n">conf</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+        <span class="n">sigma</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">ia</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="n">ia</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="n">c</span>
+
+        <span class="k">for</span> <span class="n">mu</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span>
+            <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_number_of_neurons</span><span class="p">),</span>
+            <span class="n">desc</span><span class="o">=</span><span class="s2">&quot;Calculating out-of-circle coefficients&quot;</span><span class="p">,</span>
+        <span class="p">):</span>
+            <span class="c1"># Create multivariate normal distribution for this motor unit</span>
+            <span class="n">mean</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">innervation_center_positions</span><span class="p">[</span><span class="n">mu</span><span class="p">]</span>
+            <span class="n">cov</span> <span class="o">=</span> <span class="n">sigma</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">desired_innervation_areas__mm2</span><span class="p">[</span><span class="n">mu</span><span class="p">])</span>
+
+            <span class="k">def</span><span class="w"> </span><span class="nf">probfun</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+                <span class="n">points</span> <span class="o">=</span> <span class="p">(</span>
+                    <span class="n">np</span><span class="o">.</span><span class="n">column_stack</span><span class="p">([</span><span class="n">x</span><span class="o">.</span><span class="n">ravel</span><span class="p">(),</span> <span class="n">y</span><span class="o">.</span><span class="n">ravel</span><span class="p">()])</span>
+                    <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="s2">&quot;ravel&quot;</span><span class="p">)</span>
+                    <span class="k">else</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">]])</span>
+                <span class="p">)</span>
+                <span class="k">return</span> <span class="n">multivariate_normal</span><span class="o">.</span><span class="n">pdf</span><span class="p">(</span><span class="n">points</span><span class="p">,</span> <span class="n">mean</span><span class="o">=</span><span class="n">mean</span><span class="p">,</span> <span class="n">cov</span><span class="o">=</span><span class="n">cov</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span>
+                    <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="o">.</span><span class="n">shape</span>
+                <span class="p">)</span>
+
+            <span class="c1"># Use dblquad for integration (equivalent to MATLAB&#39;s integral2)</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="n">dblquad</span><span class="p">(</span>
+                <span class="n">probfun</span><span class="p">,</span> <span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">radius__mm</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">radius__mm</span><span class="p">,</span> <span class="n">borderfun_neg</span><span class="p">,</span> <span class="n">borderfun_pos</span>
+            <span class="p">)</span>
+            <span class="n">in_circle_int</span> <span class="o">=</span> <span class="n">result</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>  <span class="c1"># dblquad returns (integral, error) or more</span>
+            <span class="n">out_circle_coeff</span><span class="p">[</span><span class="n">mu</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">/</span> <span class="n">in_circle_int</span>
+
+        <span class="c1"># Find nearest neighbors for suppression (equivalent to MATLAB&#39;s knnsearch)</span>
+        <span class="k">if</span> <span class="n">n_neighbours</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">nbrs</span> <span class="o">=</span> <span class="n">NearestNeighbors</span><span class="p">(</span><span class="n">n_neighbors</span><span class="o">=</span><span class="n">n_neighbours</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mf_centers</span><span class="p">)</span>
+            <span class="n">_</span><span class="p">,</span> <span class="n">neighbours</span> <span class="o">=</span> <span class="n">nbrs</span><span class="o">.</span><span class="n">kneighbors</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mf_centers</span><span class="p">)</span>
+            <span class="n">neighbours</span> <span class="o">=</span> <span class="n">neighbours</span><span class="p">[</span>
+                <span class="p">:,</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="p">]</span>  <span class="c1"># Exclude self (equivalent to neighbours(:,2:end))</span>
+
+        <span class="c1"># Assignment procedure</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assignment</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">number_of_muscle_fibers</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span>
+        <span class="n">randomized_mf</span> <span class="o">=</span> <span class="n">RANDOM_GENERATOR</span><span class="o">.</span><span class="n">permutation</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">number_of_muscle_fibers</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">mf</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span><span class="n">randomized_mf</span><span class="p">,</span> <span class="n">desc</span><span class="o">=</span><span class="s2">&quot;Assigning muscle fibers to motor neurons&quot;</span><span class="p">):</span>
+            <span class="n">probs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_number_of_neurons</span><span class="p">)</span>
+
+            <span class="k">for</span> <span class="n">mu</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_number_of_neurons</span><span class="p">):</span>
+                <span class="c1"># Suppression assignment if neighbours are from the same MU</span>
+                <span class="c1"># Promotes intermingling</span>
+                <span class="k">if</span> <span class="n">n_neighbours</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">assignment</span><span class="p">[</span><span class="n">neighbours</span><span class="p">[</span><span class="n">mf</span><span class="p">]]</span> <span class="o">==</span> <span class="n">mu</span><span class="p">):</span>
+                    <span class="n">probs</span><span class="p">[</span><span class="n">mu</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="c1"># A priori probability of the assignment (same as MATLAB)</span>
+                    <span class="n">apriori_prob</span> <span class="o">=</span> <span class="p">(</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">desired_number_of_innervated_fibers</span><span class="p">[</span><span class="n">mu</span><span class="p">]</span>
+                        <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">number_of_muscle_fibers</span>
+                    <span class="p">)</span>
+
+                    <span class="c1"># Likelihood coming from clustered nature of mf distribution</span>
+                    <span class="c1"># Use scipy&#39;s multivariate_normal.pdf (equivalent to MATLAB&#39;s mvnpdf)</span>
+                    <span class="n">mean</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">innervation_center_positions</span><span class="p">[</span><span class="n">mu</span><span class="p">]</span>
+                    <span class="n">cov</span> <span class="o">=</span> <span class="n">sigma</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">desired_innervation_areas__mm2</span><span class="p">[</span><span class="n">mu</span><span class="p">])</span>
+                    <span class="n">clust_hood</span> <span class="o">=</span> <span class="n">multivariate_normal</span><span class="o">.</span><span class="n">pdf</span><span class="p">(</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">mf_centers</span><span class="p">[</span><span class="n">mf</span><span class="p">,</span> <span class="p">:],</span> <span class="n">mean</span><span class="o">=</span><span class="n">mean</span><span class="p">,</span> <span class="n">cov</span><span class="o">=</span><span class="n">cov</span>
+                    <span class="p">)</span>
+                    <span class="n">clust_hood</span> <span class="o">=</span> <span class="n">clust_hood</span> <span class="o">*</span> <span class="n">out_circle_coeff</span><span class="p">[</span><span class="n">mu</span><span class="p">]</span>
+
+                    <span class="c1"># Final a posteriori probability</span>
+                    <span class="n">probs</span><span class="p">[</span><span class="n">mu</span><span class="p">]</span> <span class="o">=</span> <span class="n">apriori_prob</span> <span class="o">*</span> <span class="n">clust_hood</span>
+
+            <span class="c1"># Normalize probabilities</span>
+            <span class="n">probs</span> <span class="o">=</span> <span class="n">probs</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">probs</span><span class="p">)</span>
+
+            <span class="c1"># Sample from the probability distribution (equivalent to MATLAB&#39;s randsample)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">assignment</span><span class="p">[</span><span class="n">mf</span><span class="p">]</span> <span class="o">=</span> <span class="n">RANDOM_GENERATOR</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_number_of_neurons</span><span class="p">,</span> <span class="n">p</span><span class="o">=</span><span class="n">probs</span>
+            <span class="p">)</span>
+
+        <span class="nb">print</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Assignment completed. </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">number_of_muscle_fibers</span><span class="si">}</span><span class="s2"> muscle fibers assigned.&quot;</span>
+        <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Muscle.resulting_fiber_assignment">
+<a class="viewcode-back" href="../../../../../generated/myogen.simulator.Muscle.html#myogen.simulator.Muscle.resulting_fiber_assignment">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">resulting_fiber_assignment</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mu</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the muscle fiber positions assigned to a specific motor unit.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        mu : int</span>
+<span class="sd">            Motor unit index (0-based). Must be less than the total number of motor units.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        np.ndarray</span>
+<span class="sd">            Array of shape (n_assigned_fibers, 2) containing the [x, y] coordinates</span>
+<span class="sd">            (in mm) of all muscle fibers assigned to the specified motor unit.</span>
+<span class="sd">            If no fibers are assigned to the motor unit, returns an empty array.</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        IndexError</span>
+<span class="sd">            If mu is outside the valid range [0, n_motor_units-1].</span>
+<span class="sd">        AttributeError</span>
+<span class="sd">            If the muscle fiber assignment has not been completed yet.</span>
+
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+<span class="sd">        &gt;&gt;&gt; fiber_positions = muscle.resulting_fiber_assignment(0)</span>
+<span class="sd">        &gt;&gt;&gt; print(f&quot;Motor unit 0 has {len(fiber_positions)} fibers&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; print(f&quot;First fiber position: x={fiber_positions[0,0]:.2f}, y={fiber_positions[0,1]:.2f}&quot;)</span>
+
+<span class="sd">        Notes</span>
+<span class="sd">        -----</span>
+<span class="sd">        This method should only be called after assign_mfs2mns() has been executed.</span>
+<span class="sd">        The returned coordinates are in the muscle&#39;s coordinate system with the</span>
+<span class="sd">        origin at the muscle electrode_grid_center.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">mf_centers</span><span class="p">[</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">assignment</span> <span class="o">==</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">recruitment_thresholds</span><span class="p">))[</span><span class="n">mu</span><span class="p">]</span>
+            <span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="p">]</span></div>
+
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">resulting_number_of_innervated_fibers</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Calculate the actual number of muscle fibers assigned to each motor unit.</span>
+
+<span class="sd">        This property returns the final fiber counts after the assignment process,</span>
+<span class="sd">        which may differ slightly from the desired counts due to the stochastic</span>
+<span class="sd">        assignment algorithm and discrete fiber distribution.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        np.ndarray</span>
+<span class="sd">            Array of length n_motor_units where each element represents the actual</span>
+<span class="sd">            number of muscle fibers assigned to the corresponding motor unit.</span>
+<span class="sd">            The sum of all elements equals the total number of muscle fibers.</span>
+
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+<span class="sd">        &gt;&gt;&gt; actual_counts = muscle.resulting_number_of_innervated_fibers</span>
+<span class="sd">        &gt;&gt;&gt; desired_counts = muscle.desired_number_of_innervated_fibers</span>
+<span class="sd">        &gt;&gt;&gt; print(f&quot;Motor unit 0: desired {desired_counts[0]}, actual {actual_counts[0]}&quot;)</span>
+
+<span class="sd">        Notes</span>
+<span class="sd">        -----</span>
+<span class="sd">        This property can be used to assess how well the assignment algorithm</span>
+<span class="sd">        achieved the target fiber distribution. Large deviations may indicate</span>
+<span class="sd">        the need to adjust assignment parameters or increase grid resolution.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">bincount</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">assignment</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">),</span> <span class="n">minlength</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_number_of_neurons</span>
+        <span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">resulting_innervation_areas__mm2</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Calculate the actual innervation areas for each motor unit based on assigned fibers.</span>
+
+<span class="sd">        The innervation area is computed as the area of a circle that encompasses</span>
+<span class="sd">        all muscle fibers assigned to a motor unit, centered on the motor unit&#39;s</span>
+<span class="sd">        innervation electrode_grid_center. This provides a measure of the spatial extent of each</span>
+<span class="sd">        motor unit territory.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        np.ndarray</span>
+<span class="sd">            Array of length n_motor_units containing the innervation area (in mm²)</span>
+<span class="sd">            for each motor unit. Areas are calculated as π × r², where r is the</span>
+<span class="sd">            maximum distance from the innervation electrode_grid_center to any assigned fiber.</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        AttributeError</span>
+<span class="sd">            If innervation_center_positions is None or assignment has not been completed.</span>
+
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+<span class="sd">        &gt;&gt;&gt; actual_areas = muscle.resulting_innervation_areas__mm2</span>
+<span class="sd">        &gt;&gt;&gt; desired_areas = muscle.desired_innervation_areas__mm2</span>
+<span class="sd">        &gt;&gt;&gt; for i, (actual, desired) in enumerate(zip(actual_areas, desired_areas)):</span>
+<span class="sd">        ...     print(f&quot;MU {i}: desired {desired:.2f} mm², actual {actual:.2f} mm²&quot;)</span>
+
+<span class="sd">        Notes</span>
+<span class="sd">        -----</span>
+<span class="sd">        The resulting areas may differ from desired areas due to the discrete nature</span>
+<span class="sd">        of fiber assignment and the constraint of the circular muscle boundary.</span>
+<span class="sd">        Motor units near the muscle periphery may have smaller actual areas than</span>
+<span class="sd">        desired due to boundary effects.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">innervation_center_positions</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span>
+                <span class="s2">&quot;innervation_center_positions is None. Call distribute_innervation_centers() first.&quot;</span>
+            <span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
+            <span class="p">[</span>
+                <span class="n">np</span><span class="o">.</span><span class="n">pi</span>
+                <span class="o">*</span> <span class="p">(</span>
+                    <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span>
+                        <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">mf_centers</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">assignment</span> <span class="o">==</span> <span class="n">mu</span><span class="p">]</span>
+                            <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">innervation_center_positions</span><span class="p">[</span><span class="n">mu</span><span class="p">],</span>
+                            <span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span>
+                        <span class="p">)</span>
+                    <span class="p">)</span>
+                    <span class="o">**</span> <span class="mi">2</span>
+                <span class="p">)</span>
+                <span class="k">for</span> <span class="n">mu</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_number_of_neurons</span><span class="p">)</span>
+            <span class="p">]</span>
+        <span class="p">)</span></div>
+
+</pre></div>
+
+                </article>
+              
+              
+              
+              
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../../../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2025 - 2025, n-squared lab, FAU Erlangen-Nürnberg, Germany.
+      <br/>
+    
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.2.3.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

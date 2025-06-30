@@ -1,0 +1,754 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Muscle Model &#8212; MyoGen 0.1.0 Documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery.css?v=d2d258e8" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-binder.css?v=f4aeca0c" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+    <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=e1466590" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="../_static/documentation_options.js?v=01f34227"></script>
+    <script src="../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'auto_examples/02_simulate_muscle';</script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Surface Motor Unit Action Potentials" href="03_simulate_surface_muaps.html" />
+    <link rel="prev" title="Motor Unit Spike Trains" href="01_simulate_spike_trains.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="0.1.0" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class=" navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../_static/myogen_logo.png" class="logo__image only-light" alt="MyoGen 0.1.0 Documentation - Home"/>
+    <img src="../_static/myogen_logo.png" class="logo__image only-dark pst-js-only" alt="MyoGen 0.1.0 Documentation - Home"/>
+  
+  
+</a></div>
+    
+      <div class="navbar-item">
+<div class="nav-item">
+  <div class="version-switcher__container dropdown">
+      <button id="version-switcher-button" type="button" class="version-switcher__button btn btn-sm navbar-btn" aria-haspopup="true" aria-expanded="false">
+          Version 0.1.0
+      </button>
+      
+      
+      
+  </div>
+</div> </div>
+    
+      <div class="navbar-item"><div class="nav-item">
+   <span>
+      made at the <a href="https://www.nsquared.tf.fau.de/" target="_blank">N² Lab</a>
+   </span>
+</div> </div>
+    
+  </div>
+  
+  <div class=" navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../api/index.html">
+    API Documentation
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="index.html">
+    Examples
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/NSquaredLab/MyoGen" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+    </div>
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../api/index.html">
+    API Documentation
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="index.html">
+    Examples
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/NSquaredLab/MyoGen" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+<nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"><ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="00_simulate_recruitment_thresholds.html">Recruitment Thresholds</a></li>
+<li class="toctree-l1"><a class="reference internal" href="01_simulate_spike_trains.html">Motor Unit Spike Trains</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Muscle Model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="03_simulate_surface_muaps.html">Surface Motor Unit Action Potentials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="04_simulate_surface_emg.html">Surface EMG Signals</a></li>
+<li class="toctree-l1"><a class="reference internal" href="05_simulate_currents.html">Current Generation</a></li>
+</ul>
+</div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="index.html" class="nav-link">Examples</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Muscle Model</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <div class="sphx-glr-download-link-note admonition note">
+<p class="admonition-title">Note</p>
+<p><a class="reference internal" href="#sphx-glr-download-auto-examples-02-simulate-muscle-py"><span class="std std-ref">Go to the end</span></a>
+to download the full example code.</p>
+</div>
+<section class="sphx-glr-example-title" id="muscle-model">
+<span id="sphx-glr-auto-examples-02-simulate-muscle-py"></span><h1>Muscle Model<a class="headerlink" href="#muscle-model" title="Link to this heading">#</a></h1>
+<p>The <strong>spike trains</strong> alone are not enough to create <strong>EMG signals</strong>.</p>
+<p>To create <strong>EMG signals</strong>, we need to create a <strong>muscle model</strong> that will distribute the <strong>motor units</strong> and <strong>fibers</strong> within the muscle volume.</p>
+<section id="import-libraries">
+<h2>Import Libraries<a class="headerlink" href="#import-libraries" title="Link to this heading">#</a></h2>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <a href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="pathlib.Path" class="sphx-glr-backref-module-pathlib sphx-glr-backref-type-py-class"><span class="n">Path</span></a>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">joblib</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">myogen</span><span class="w"> </span><span class="kn">import</span> <span class="n">simulator</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">myogen.utils.plotting.muscle</span><span class="w"> </span><span class="kn">import</span> <span class="n">plot_mf_centers</span><span class="p">,</span> <span class="n">plot_innervation_areas_2d</span>
+</pre></div>
+</div>
+</section>
+<section id="define-parameters">
+<h2>Define Parameters<a class="headerlink" href="#define-parameters" title="Link to this heading">#</a></h2>
+<p>The <strong>muscle model</strong> is created using the <strong>Muscle</strong> object.</p>
+<p>The <strong>Muscle</strong> object takes the following parameters:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">recruitment_thresholds</span></code>: Recruitment thresholds of the motor units</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">radius</span></code>: Radius of the muscle in mm</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">fiber_density</span></code>: Fiber density per mm²</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">max_innervation_area_to_total_muscle_area__ratio</span></code>: Maximum innervation area to total muscle area ratio</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">grid_resolution</span></code>: Spatial resolution for muscle discretization</p></li>
+</ul>
+<p>Since the <strong>recruitment thresholds</strong> are already generated, we can load them from the previous example using <code class="docutils literal notranslate"><span class="pre">joblib</span></code>.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Load recruitment thresholds</span>
+<a href="https://docs.python.org/3/library/pathlib.html#pathlib.PosixPath" title="pathlib.PosixPath" class="sphx-glr-backref-module-pathlib sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">save_path</span></a> <span class="o">=</span> <a href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="pathlib.Path" class="sphx-glr-backref-module-pathlib sphx-glr-backref-type-py-class"><span class="n">Path</span></a><span class="p">(</span><span class="s2">&quot;./results&quot;</span><span class="p">)</span>
+
+<a href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">recruitment_thresholds</span></a> <span class="o">=</span> <span class="n">joblib</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><a href="https://docs.python.org/3/library/pathlib.html#pathlib.PosixPath" title="pathlib.PosixPath" class="sphx-glr-backref-module-pathlib sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">save_path</span></a> <span class="o">/</span> <span class="s2">&quot;thresholds.pkl&quot;</span><span class="p">)</span>
+
+<span class="c1"># Define muscle parameters for an FDI muscle</span>
+<a href="https://docs.python.org/3/library/functions.html#float" title="builtins.float" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">muscle_radius</span></a> <span class="o">=</span> <span class="mf">4.9</span>  <span class="c1"># Muscle radius in mm</span>
+<a href="https://docs.python.org/3/library/functions.html#int" title="builtins.int" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">mean_fiber_length</span></a> <span class="o">=</span> <span class="mi">32</span>  <span class="c1"># Mean fiber length in mm</span>
+<a href="https://docs.python.org/3/library/functions.html#int" title="builtins.int" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">fiber_length_variation</span></a> <span class="o">=</span> <span class="mi">3</span>  <span class="c1"># Fiber length variation (±) in mm</span>
+<a href="https://docs.python.org/3/library/functions.html#int" title="builtins.int" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">fiber_density</span></a> <span class="o">=</span> <span class="mi">50</span>  <span class="c1"># Fiber density per mm²</span>
+
+<span class="c1"># Define simulation parameters</span>
+<a href="https://docs.python.org/3/library/functions.html#float" title="builtins.float" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">max_innervation_ratio</span></a> <span class="o">=</span> <span class="mi">1</span> <span class="o">/</span> <span class="mi">4</span>  <span class="c1"># Maximum motor unit territory size</span>
+<a href="https://docs.python.org/3/library/functions.html#int" title="builtins.int" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">grid_resolution</span></a> <span class="o">=</span> <span class="mi">256</span>  <span class="c1"># Spatial resolution for muscle discretization</span>
+</pre></div>
+</div>
+</section>
+<section id="create-muscle-model">
+<h2>Create Muscle Model<a class="headerlink" href="#create-muscle-model" title="Link to this heading">#</a></h2>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Depending on the parameters, the simulation can take a few minutes to run.</p>
+<p>To <strong>avoid running the simulation every time</strong>, we can save the muscle model using <code class="docutils literal notranslate"><span class="pre">joblib</span></code>.</p>
+</div>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Create muscle model</span>
+<span class="n">muscle</span> <span class="o">=</span> <span class="n">simulator</span><span class="o">.</span><span class="n">Muscle</span><span class="p">(</span>
+    <a href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">recruitment_thresholds</span></a><span class="o">=</span><a href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">recruitment_thresholds</span></a><span class="p">[::</span><span class="mi">4</span><span class="p">],</span>  <span class="c1"># For faster simulation</span>
+    <span class="n">radius__mm</span><span class="o">=</span><a href="https://docs.python.org/3/library/functions.html#float" title="builtins.float" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">muscle_radius</span></a><span class="p">,</span>
+    <span class="n">fiber_density__fibers_per_mm2</span><span class="o">=</span><a href="https://docs.python.org/3/library/functions.html#int" title="builtins.int" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">fiber_density</span></a><span class="p">,</span>
+    <span class="n">max_innervation_area_to_total_muscle_area__ratio</span><span class="o">=</span><a href="https://docs.python.org/3/library/functions.html#float" title="builtins.float" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">max_innervation_ratio</span></a><span class="p">,</span>
+    <a href="https://docs.python.org/3/library/functions.html#int" title="builtins.int" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">grid_resolution</span></a><span class="o">=</span><a href="https://docs.python.org/3/library/functions.html#int" title="builtins.int" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">grid_resolution</span></a><span class="p">,</span>
+    <span class="n">autorun</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="c1"># Save muscle model for future use</span>
+<span class="n">joblib</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">muscle</span><span class="p">,</span> <a href="https://docs.python.org/3/library/pathlib.html#pathlib.PosixPath" title="pathlib.PosixPath" class="sphx-glr-backref-module-pathlib sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">save_path</span></a> <span class="o">/</span> <span class="s2">&quot;muscle_model.pkl&quot;</span><span class="p">)</span>
+
+<span class="c1"># Display muscle statistics</span>
+<a href="https://numpy.org/doc/stable/reference/arrays.scalars.html#numpy.int64" title="numpy.int64" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-attribute"><span class="n">total_fibers</span></a> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">muscle</span><span class="o">.</span><span class="n">resulting_number_of_innervated_fibers</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Muscle model statistics:&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  - Total muscle fibers: </span><span class="si">{</span><a href="https://numpy.org/doc/stable/reference/arrays.scalars.html#numpy.int64" title="numpy.int64" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-attribute"><span class="n">total_fibers</span></a><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  - Mean fibers per MU: </span><span class="si">{</span><a href="https://numpy.org/doc/stable/reference/arrays.scalars.html#numpy.int64" title="numpy.int64" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-attribute"><span class="n">total_fibers</span></a><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="nb">len</span><span class="p">(</span><a href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">recruitment_thresholds</span></a><span class="p">)</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  - Muscle cross-sectional area: </span><span class="si">{</span><a href="https://docs.python.org/3/library/functions.html#float" title="builtins.float" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">np</span><span class="o">.</span><span class="n">pi</span></a><span class="w"> </span><span class="o">*</span><span class="w"> </span><a href="https://docs.python.org/3/library/functions.html#float" title="builtins.float" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">muscle_radius</span></a><span class="o">**</span><span class="mi">2</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2"> mm²&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Calculating out-of-circle coefficients:   0%|          | 0/25 [00:00&lt;?, ?it/s]
+Calculating out-of-circle coefficients:   4%|▍         | 1/25 [00:03&lt;01:27,  3.64s/it]
+Calculating out-of-circle coefficients:   8%|▊         | 2/25 [00:07&lt;01:22,  3.58s/it]
+Calculating out-of-circle coefficients:  12%|█▏        | 3/25 [00:09&lt;01:01,  2.78s/it]
+Calculating out-of-circle coefficients:  16%|█▌        | 4/25 [00:12&lt;01:01,  2.95s/it]
+Calculating out-of-circle coefficients:  20%|██        | 5/25 [00:13&lt;00:49,  2.46s/it]
+Calculating out-of-circle coefficients:  24%|██▍       | 6/25 [00:15&lt;00:40,  2.14s/it]
+Calculating out-of-circle coefficients:  28%|██▊       | 7/25 [00:17&lt;00:36,  2.01s/it]
+Calculating out-of-circle coefficients:  32%|███▏      | 8/25 [00:18&lt;00:32,  1.91s/it]
+Calculating out-of-circle coefficients:  36%|███▌      | 9/25 [00:19&lt;00:26,  1.66s/it]
+Calculating out-of-circle coefficients:  40%|████      | 10/25 [00:21&lt;00:26,  1.76s/it]
+Calculating out-of-circle coefficients:  44%|████▍     | 11/25 [00:23&lt;00:25,  1.84s/it]
+Calculating out-of-circle coefficients:  48%|████▊     | 12/25 [00:25&lt;00:21,  1.63s/it]
+Calculating out-of-circle coefficients:  52%|█████▏    | 13/25 [00:26&lt;00:20,  1.67s/it]
+Calculating out-of-circle coefficients:  56%|█████▌    | 14/25 [00:28&lt;00:16,  1.54s/it]
+Calculating out-of-circle coefficients:  60%|██████    | 15/25 [00:28&lt;00:12,  1.30s/it]
+Calculating out-of-circle coefficients:  64%|██████▍   | 16/25 [00:30&lt;00:13,  1.49s/it]
+Calculating out-of-circle coefficients:  68%|██████▊   | 17/25 [00:31&lt;00:10,  1.32s/it]
+Calculating out-of-circle coefficients:  72%|███████▏  | 18/25 [00:33&lt;00:09,  1.42s/it]
+Calculating out-of-circle coefficients:  76%|███████▌  | 19/25 [00:34&lt;00:07,  1.27s/it]
+Calculating out-of-circle coefficients:  80%|████████  | 20/25 [00:35&lt;00:06,  1.36s/it]
+Calculating out-of-circle coefficients:  84%|████████▍ | 21/25 [00:36&lt;00:05,  1.25s/it]
+Calculating out-of-circle coefficients:  88%|████████▊ | 22/25 [00:37&lt;00:03,  1.10s/it]
+Calculating out-of-circle coefficients:  92%|█████████▏| 23/25 [00:38&lt;00:02,  1.19s/it]
+Calculating out-of-circle coefficients:  96%|█████████▌| 24/25 [00:39&lt;00:01,  1.06s/it]
+Calculating out-of-circle coefficients: 100%|██████████| 25/25 [00:40&lt;00:00,  1.09s/it]
+Calculating out-of-circle coefficients: 100%|██████████| 25/25 [00:40&lt;00:00,  1.63s/it]
+
+Assigning muscle fibers to motor neurons:   0%|          | 0/3771 [00:00&lt;?, ?it/s]
+Assigning muscle fibers to motor neurons:   1%|          | 32/3771 [00:00&lt;00:11, 319.22it/s]
+Assigning muscle fibers to motor neurons:   2%|▏         | 66/3771 [00:00&lt;00:11, 325.72it/s]
+Assigning muscle fibers to motor neurons:   3%|▎         | 100/3771 [00:00&lt;00:11, 327.94it/s]
+Assigning muscle fibers to motor neurons:   4%|▎         | 134/3771 [00:00&lt;00:11, 330.08it/s]
+Assigning muscle fibers to motor neurons:   4%|▍         | 168/3771 [00:00&lt;00:10, 331.15it/s]
+Assigning muscle fibers to motor neurons:   5%|▌         | 202/3771 [00:00&lt;00:10, 331.71it/s]
+Assigning muscle fibers to motor neurons:   6%|▋         | 236/3771 [00:00&lt;00:10, 332.50it/s]
+Assigning muscle fibers to motor neurons:   7%|▋         | 270/3771 [00:00&lt;00:10, 333.35it/s]
+Assigning muscle fibers to motor neurons:   8%|▊         | 304/3771 [00:00&lt;00:10, 333.22it/s]
+Assigning muscle fibers to motor neurons:   9%|▉         | 338/3771 [00:01&lt;00:10, 333.40it/s]
+Assigning muscle fibers to motor neurons:  10%|▉         | 372/3771 [00:01&lt;00:10, 333.72it/s]
+Assigning muscle fibers to motor neurons:  11%|█         | 406/3771 [00:01&lt;00:10, 333.36it/s]
+Assigning muscle fibers to motor neurons:  12%|█▏        | 440/3771 [00:01&lt;00:09, 334.00it/s]
+Assigning muscle fibers to motor neurons:  13%|█▎        | 474/3771 [00:01&lt;00:09, 333.99it/s]
+Assigning muscle fibers to motor neurons:  13%|█▎        | 508/3771 [00:01&lt;00:09, 334.08it/s]
+Assigning muscle fibers to motor neurons:  14%|█▍        | 542/3771 [00:01&lt;00:09, 334.76it/s]
+Assigning muscle fibers to motor neurons:  15%|█▌        | 576/3771 [00:01&lt;00:09, 334.85it/s]
+Assigning muscle fibers to motor neurons:  16%|█▌        | 610/3771 [00:01&lt;00:09, 335.90it/s]
+Assigning muscle fibers to motor neurons:  17%|█▋        | 644/3771 [00:01&lt;00:09, 336.35it/s]
+Assigning muscle fibers to motor neurons:  18%|█▊        | 678/3771 [00:02&lt;00:09, 336.55it/s]
+Assigning muscle fibers to motor neurons:  19%|█▉        | 713/3771 [00:02&lt;00:09, 337.89it/s]
+Assigning muscle fibers to motor neurons:  20%|█▉        | 747/3771 [00:02&lt;00:08, 336.86it/s]
+Assigning muscle fibers to motor neurons:  21%|██        | 781/3771 [00:02&lt;00:08, 336.47it/s]
+Assigning muscle fibers to motor neurons:  22%|██▏       | 815/3771 [00:02&lt;00:08, 337.12it/s]
+Assigning muscle fibers to motor neurons:  23%|██▎       | 849/3771 [00:02&lt;00:08, 337.51it/s]
+Assigning muscle fibers to motor neurons:  23%|██▎       | 884/3771 [00:02&lt;00:08, 338.32it/s]
+Assigning muscle fibers to motor neurons:  24%|██▍       | 918/3771 [00:02&lt;00:08, 338.19it/s]
+Assigning muscle fibers to motor neurons:  25%|██▌       | 952/3771 [00:02&lt;00:08, 337.97it/s]
+Assigning muscle fibers to motor neurons:  26%|██▌       | 986/3771 [00:02&lt;00:08, 338.09it/s]
+Assigning muscle fibers to motor neurons:  27%|██▋       | 1021/3771 [00:03&lt;00:08, 338.93it/s]
+Assigning muscle fibers to motor neurons:  28%|██▊       | 1055/3771 [00:03&lt;00:08, 338.74it/s]
+Assigning muscle fibers to motor neurons:  29%|██▉       | 1090/3771 [00:03&lt;00:07, 339.30it/s]
+Assigning muscle fibers to motor neurons:  30%|██▉       | 1124/3771 [00:03&lt;00:07, 336.16it/s]
+Assigning muscle fibers to motor neurons:  31%|███       | 1159/3771 [00:03&lt;00:07, 337.36it/s]
+Assigning muscle fibers to motor neurons:  32%|███▏      | 1194/3771 [00:03&lt;00:07, 338.48it/s]
+Assigning muscle fibers to motor neurons:  33%|███▎      | 1228/3771 [00:03&lt;00:07, 338.40it/s]
+Assigning muscle fibers to motor neurons:  33%|███▎      | 1262/3771 [00:03&lt;00:07, 338.56it/s]
+Assigning muscle fibers to motor neurons:  34%|███▍      | 1297/3771 [00:03&lt;00:07, 339.24it/s]
+Assigning muscle fibers to motor neurons:  35%|███▌      | 1331/3771 [00:03&lt;00:07, 339.36it/s]
+Assigning muscle fibers to motor neurons:  36%|███▌      | 1366/3771 [00:04&lt;00:07, 340.06it/s]
+Assigning muscle fibers to motor neurons:  37%|███▋      | 1401/3771 [00:04&lt;00:06, 339.67it/s]
+Assigning muscle fibers to motor neurons:  38%|███▊      | 1436/3771 [00:04&lt;00:06, 340.20it/s]
+Assigning muscle fibers to motor neurons:  39%|███▉      | 1471/3771 [00:04&lt;00:06, 340.90it/s]
+Assigning muscle fibers to motor neurons:  40%|███▉      | 1506/3771 [00:04&lt;00:06, 342.14it/s]
+Assigning muscle fibers to motor neurons:  41%|████      | 1541/3771 [00:04&lt;00:06, 341.92it/s]
+Assigning muscle fibers to motor neurons:  42%|████▏     | 1576/3771 [00:04&lt;00:06, 343.28it/s]
+Assigning muscle fibers to motor neurons:  43%|████▎     | 1611/3771 [00:04&lt;00:06, 342.92it/s]
+Assigning muscle fibers to motor neurons:  44%|████▎     | 1646/3771 [00:04&lt;00:06, 343.61it/s]
+Assigning muscle fibers to motor neurons:  45%|████▍     | 1681/3771 [00:04&lt;00:06, 332.95it/s]
+Assigning muscle fibers to motor neurons:  46%|████▌     | 1716/3771 [00:05&lt;00:06, 336.30it/s]
+Assigning muscle fibers to motor neurons:  46%|████▋     | 1751/3771 [00:05&lt;00:05, 338.49it/s]
+Assigning muscle fibers to motor neurons:  47%|████▋     | 1786/3771 [00:05&lt;00:05, 339.86it/s]
+Assigning muscle fibers to motor neurons:  48%|████▊     | 1821/3771 [00:05&lt;00:05, 342.27it/s]
+Assigning muscle fibers to motor neurons:  49%|████▉     | 1856/3771 [00:05&lt;00:05, 343.05it/s]
+Assigning muscle fibers to motor neurons:  50%|█████     | 1891/3771 [00:05&lt;00:05, 344.06it/s]
+Assigning muscle fibers to motor neurons:  51%|█████     | 1926/3771 [00:05&lt;00:05, 343.23it/s]
+Assigning muscle fibers to motor neurons:  52%|█████▏    | 1961/3771 [00:05&lt;00:05, 344.10it/s]
+Assigning muscle fibers to motor neurons:  53%|█████▎    | 1996/3771 [00:05&lt;00:05, 344.99it/s]
+Assigning muscle fibers to motor neurons:  54%|█████▍    | 2031/3771 [00:06&lt;00:05, 345.59it/s]
+Assigning muscle fibers to motor neurons:  55%|█████▍    | 2066/3771 [00:06&lt;00:04, 345.94it/s]
+Assigning muscle fibers to motor neurons:  56%|█████▌    | 2101/3771 [00:06&lt;00:04, 346.24it/s]
+Assigning muscle fibers to motor neurons:  57%|█████▋    | 2136/3771 [00:06&lt;00:04, 347.14it/s]
+Assigning muscle fibers to motor neurons:  58%|█████▊    | 2171/3771 [00:06&lt;00:04, 346.58it/s]
+Assigning muscle fibers to motor neurons:  59%|█████▊    | 2207/3771 [00:06&lt;00:04, 347.66it/s]
+Assigning muscle fibers to motor neurons:  59%|█████▉    | 2242/3771 [00:06&lt;00:04, 348.20it/s]
+Assigning muscle fibers to motor neurons:  60%|██████    | 2277/3771 [00:06&lt;00:04, 348.50it/s]
+Assigning muscle fibers to motor neurons:  61%|██████▏   | 2313/3771 [00:06&lt;00:04, 349.46it/s]
+Assigning muscle fibers to motor neurons:  62%|██████▏   | 2349/3771 [00:06&lt;00:04, 350.62it/s]
+Assigning muscle fibers to motor neurons:  63%|██████▎   | 2385/3771 [00:07&lt;00:03, 351.10it/s]
+Assigning muscle fibers to motor neurons:  64%|██████▍   | 2421/3771 [00:07&lt;00:03, 351.49it/s]
+Assigning muscle fibers to motor neurons:  65%|██████▌   | 2457/3771 [00:07&lt;00:03, 351.43it/s]
+Assigning muscle fibers to motor neurons:  66%|██████▌   | 2493/3771 [00:07&lt;00:03, 352.98it/s]
+Assigning muscle fibers to motor neurons:  67%|██████▋   | 2529/3771 [00:07&lt;00:03, 353.40it/s]
+Assigning muscle fibers to motor neurons:  68%|██████▊   | 2565/3771 [00:07&lt;00:03, 352.91it/s]
+Assigning muscle fibers to motor neurons:  69%|██████▉   | 2601/3771 [00:07&lt;00:03, 353.02it/s]
+Assigning muscle fibers to motor neurons:  70%|██████▉   | 2637/3771 [00:07&lt;00:03, 352.50it/s]
+Assigning muscle fibers to motor neurons:  71%|███████   | 2673/3771 [00:07&lt;00:03, 352.29it/s]
+Assigning muscle fibers to motor neurons:  72%|███████▏  | 2709/3771 [00:07&lt;00:03, 351.43it/s]
+Assigning muscle fibers to motor neurons:  73%|███████▎  | 2745/3771 [00:08&lt;00:02, 352.09it/s]
+Assigning muscle fibers to motor neurons:  74%|███████▎  | 2781/3771 [00:08&lt;00:02, 352.69it/s]
+Assigning muscle fibers to motor neurons:  75%|███████▍  | 2817/3771 [00:08&lt;00:02, 351.65it/s]
+Assigning muscle fibers to motor neurons:  76%|███████▌  | 2853/3771 [00:08&lt;00:02, 351.90it/s]
+Assigning muscle fibers to motor neurons:  77%|███████▋  | 2889/3771 [00:08&lt;00:02, 351.26it/s]
+Assigning muscle fibers to motor neurons:  78%|███████▊  | 2925/3771 [00:08&lt;00:02, 352.58it/s]
+Assigning muscle fibers to motor neurons:  79%|███████▊  | 2961/3771 [00:08&lt;00:02, 352.17it/s]
+Assigning muscle fibers to motor neurons:  79%|███████▉  | 2997/3771 [00:08&lt;00:02, 352.21it/s]
+Assigning muscle fibers to motor neurons:  80%|████████  | 3033/3771 [00:08&lt;00:02, 350.97it/s]
+Assigning muscle fibers to motor neurons:  81%|████████▏ | 3069/3771 [00:08&lt;00:01, 351.37it/s]
+Assigning muscle fibers to motor neurons:  82%|████████▏ | 3105/3771 [00:09&lt;00:01, 351.74it/s]
+Assigning muscle fibers to motor neurons:  83%|████████▎ | 3141/3771 [00:09&lt;00:01, 351.94it/s]
+Assigning muscle fibers to motor neurons:  84%|████████▍ | 3177/3771 [00:09&lt;00:01, 351.80it/s]
+Assigning muscle fibers to motor neurons:  85%|████████▌ | 3213/3771 [00:09&lt;00:01, 351.22it/s]
+Assigning muscle fibers to motor neurons:  86%|████████▌ | 3249/3771 [00:09&lt;00:01, 352.12it/s]
+Assigning muscle fibers to motor neurons:  87%|████████▋ | 3285/3771 [00:09&lt;00:01, 351.57it/s]
+Assigning muscle fibers to motor neurons:  88%|████████▊ | 3321/3771 [00:09&lt;00:01, 351.78it/s]
+Assigning muscle fibers to motor neurons:  89%|████████▉ | 3357/3771 [00:09&lt;00:01, 351.65it/s]
+Assigning muscle fibers to motor neurons:  90%|████████▉ | 3393/3771 [00:09&lt;00:01, 351.66it/s]
+Assigning muscle fibers to motor neurons:  91%|█████████ | 3429/3771 [00:09&lt;00:00, 351.20it/s]
+Assigning muscle fibers to motor neurons:  92%|█████████▏| 3465/3771 [00:10&lt;00:00, 351.98it/s]
+Assigning muscle fibers to motor neurons:  93%|█████████▎| 3501/3771 [00:10&lt;00:00, 352.71it/s]
+Assigning muscle fibers to motor neurons:  94%|█████████▍| 3537/3771 [00:10&lt;00:00, 350.99it/s]
+Assigning muscle fibers to motor neurons:  95%|█████████▍| 3573/3771 [00:10&lt;00:00, 352.03it/s]
+Assigning muscle fibers to motor neurons:  96%|█████████▌| 3609/3771 [00:10&lt;00:00, 353.82it/s]
+Assigning muscle fibers to motor neurons:  97%|█████████▋| 3645/3771 [00:10&lt;00:00, 354.48it/s]
+Assigning muscle fibers to motor neurons:  98%|█████████▊| 3681/3771 [00:10&lt;00:00, 355.36it/s]
+Assigning muscle fibers to motor neurons:  99%|█████████▊| 3717/3771 [00:10&lt;00:00, 356.14it/s]
+Assigning muscle fibers to motor neurons: 100%|█████████▉| 3753/3771 [00:10&lt;00:00, 355.37it/s]
+Assigning muscle fibers to motor neurons: 100%|██████████| 3771/3771 [00:10&lt;00:00, 344.32it/s]
+Assignment completed. 3771 muscle fibers assigned.
+
+Muscle model statistics:
+  - Total muscle fibers: 3771
+  - Mean fibers per MU: 37.7
+  - Muscle cross-sectional area: 75.4 mm²
+</pre></div>
+</div>
+</section>
+<section id="visualize-muscle-fiber-centers">
+<h2>Visualize Muscle Fiber Centers<a class="headerlink" href="#visualize-muscle-fiber-centers" title="Link to this heading">#</a></h2>
+<p>The <strong>fiber centers</strong> are the centers of the fibers that are innervated by the motor units.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The <strong>fiber centers</strong> have been precalculated from a Voronoi tessellation of the muscle volume.
+Then depending on the <strong>fiber density</strong>, the <strong>fiber centers</strong> are distributed within the muscle volume.</p>
+</div>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><a href="https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.figure.html#matplotlib.pyplot.figure" title="matplotlib.pyplot.figure" class="sphx-glr-backref-module-matplotlib-pyplot sphx-glr-backref-type-py-function"><span class="n">plt</span><span class="o">.</span><span class="n">figure</span></a><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">6</span><span class="p">,</span> <span class="mi">6</span><span class="p">))</span>
+
+<span class="k">with</span> <a href="https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.xkcd.html#matplotlib.pyplot.xkcd" title="matplotlib.pyplot.xkcd" class="sphx-glr-backref-module-matplotlib-pyplot sphx-glr-backref-type-py-function"><span class="n">plt</span><span class="o">.</span><span class="n">xkcd</span></a><span class="p">():</span>
+    <span class="n">plot_mf_centers</span><span class="p">(</span><span class="n">muscle</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><a href="https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.gca.html#matplotlib.pyplot.gca" title="matplotlib.pyplot.gca" class="sphx-glr-backref-module-matplotlib-pyplot sphx-glr-backref-type-py-function"><span class="n">plt</span><span class="o">.</span><span class="n">gca</span></a><span class="p">())</span>
+<a href="https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.title.html#matplotlib.pyplot.title" title="matplotlib.pyplot.title" class="sphx-glr-backref-module-matplotlib-pyplot sphx-glr-backref-type-py-function"><span class="n">plt</span><span class="o">.</span><span class="n">title</span></a><span class="p">(</span><span class="s2">&quot;Motor Unit Fiber Centers&quot;</span><span class="p">)</span>
+<a href="https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.xlabel.html#matplotlib.pyplot.xlabel" title="matplotlib.pyplot.xlabel" class="sphx-glr-backref-module-matplotlib-pyplot sphx-glr-backref-type-py-function"><span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span></a><span class="p">(</span><span class="s2">&quot;X Position (mm)&quot;</span><span class="p">)</span>
+<a href="https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.ylabel.html#matplotlib.pyplot.ylabel" title="matplotlib.pyplot.ylabel" class="sphx-glr-backref-module-matplotlib-pyplot sphx-glr-backref-type-py-function"><span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span></a><span class="p">(</span><span class="s2">&quot;Y Position (mm)&quot;</span><span class="p">)</span>
+<a href="https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.axis.html#matplotlib.pyplot.axis" title="matplotlib.pyplot.axis" class="sphx-glr-backref-module-matplotlib-pyplot sphx-glr-backref-type-py-function"><span class="n">plt</span><span class="o">.</span><span class="n">axis</span></a><span class="p">(</span><span class="s2">&quot;equal&quot;</span><span class="p">)</span>
+
+<a href="https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.tight_layout.html#matplotlib.pyplot.tight_layout" title="matplotlib.pyplot.tight_layout" class="sphx-glr-backref-module-matplotlib-pyplot sphx-glr-backref-type-py-function"><span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span></a><span class="p">()</span>
+<a href="https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.show.html#matplotlib.pyplot.show" title="matplotlib.pyplot.show" class="sphx-glr-backref-module-matplotlib-pyplot sphx-glr-backref-type-py-function"><span class="n">plt</span><span class="o">.</span><span class="n">show</span></a><span class="p">()</span>
+</pre></div>
+</div>
+<img src="../_images/sphx_glr_02_simulate_muscle_001.png" srcset="../_images/sphx_glr_02_simulate_muscle_001.png" alt="Motor Unit Fiber Centers" class = "sphx-glr-single-img"/></section>
+<section id="visualize-motor-unit-innervation-areas">
+<h2>Visualize Motor Unit Innervation Areas<a class="headerlink" href="#visualize-motor-unit-innervation-areas" title="Link to this heading">#</a></h2>
+<p>Display the spatial organization of motor units and their innervation areas.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The <strong>innervation areas</strong> are the areas where the motor units are innervated.
+They are calculated using the <strong>recruitment thresholds</strong> and the <strong>fiber density</strong>.</p>
+</div>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><a href="https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.figure.html#matplotlib.pyplot.figure" title="matplotlib.pyplot.figure" class="sphx-glr-backref-module-matplotlib-pyplot sphx-glr-backref-type-py-function"><span class="n">plt</span><span class="o">.</span><span class="n">figure</span></a><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">6</span><span class="p">,</span> <span class="mi">6</span><span class="p">))</span>
+
+<a href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">selected_indices</span></a> <span class="o">=</span> <a href="https://numpy.org/doc/stable/reference/generated/numpy.arange.html#numpy.arange" title="numpy.arange" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-function"><span class="n">np</span><span class="o">.</span><span class="n">arange</span></a><span class="p">(</span><span class="mi">25</span><span class="p">)[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+<span class="k">with</span> <a href="https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.xkcd.html#matplotlib.pyplot.xkcd" title="matplotlib.pyplot.xkcd" class="sphx-glr-backref-module-matplotlib-pyplot sphx-glr-backref-type-py-function"><span class="n">plt</span><span class="o">.</span><span class="n">xkcd</span></a><span class="p">():</span>
+    <span class="n">plot_innervation_areas_2d</span><span class="p">(</span><span class="n">muscle</span><span class="p">,</span> <span class="n">indices_to_plot</span><span class="o">=</span><a href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">selected_indices</span></a><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><a href="https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.gca.html#matplotlib.pyplot.gca" title="matplotlib.pyplot.gca" class="sphx-glr-backref-module-matplotlib-pyplot sphx-glr-backref-type-py-function"><span class="n">plt</span><span class="o">.</span><span class="n">gca</span></a><span class="p">())</span>
+<a href="https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.title.html#matplotlib.pyplot.title" title="matplotlib.pyplot.title" class="sphx-glr-backref-module-matplotlib-pyplot sphx-glr-backref-type-py-function"><span class="n">plt</span><span class="o">.</span><span class="n">title</span></a><span class="p">(</span><span class="s2">&quot;Motor Unit Innervation Areas&quot;</span><span class="p">)</span>
+<a href="https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.xlabel.html#matplotlib.pyplot.xlabel" title="matplotlib.pyplot.xlabel" class="sphx-glr-backref-module-matplotlib-pyplot sphx-glr-backref-type-py-function"><span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span></a><span class="p">(</span><span class="s2">&quot;X Position (mm)&quot;</span><span class="p">)</span>
+<a href="https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.ylabel.html#matplotlib.pyplot.ylabel" title="matplotlib.pyplot.ylabel" class="sphx-glr-backref-module-matplotlib-pyplot sphx-glr-backref-type-py-function"><span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span></a><span class="p">(</span><span class="s2">&quot;Y Position (mm)&quot;</span><span class="p">)</span>
+<a href="https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.axis.html#matplotlib.pyplot.axis" title="matplotlib.pyplot.axis" class="sphx-glr-backref-module-matplotlib-pyplot sphx-glr-backref-type-py-function"><span class="n">plt</span><span class="o">.</span><span class="n">axis</span></a><span class="p">(</span><span class="s2">&quot;equal&quot;</span><span class="p">)</span>
+
+<a href="https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.tight_layout.html#matplotlib.pyplot.tight_layout" title="matplotlib.pyplot.tight_layout" class="sphx-glr-backref-module-matplotlib-pyplot sphx-glr-backref-type-py-function"><span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span></a><span class="p">()</span>
+<a href="https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.show.html#matplotlib.pyplot.show" title="matplotlib.pyplot.show" class="sphx-glr-backref-module-matplotlib-pyplot sphx-glr-backref-type-py-function"><span class="n">plt</span><span class="o">.</span><span class="n">show</span></a><span class="p">()</span>
+</pre></div>
+</div>
+<img src="../_images/sphx_glr_02_simulate_muscle_002.png" srcset="../_images/sphx_glr_02_simulate_muscle_002.png" alt="Motor Unit Innervation Areas" class = "sphx-glr-single-img"/><p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 52.697 seconds)</p>
+<div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-auto-examples-02-simulate-muscle-py">
+<div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
+<p><a class="reference download internal" download="" href="../_downloads/7ccac6a39e6ccdd3d9c1851f873ab5bf/02_simulate_muscle.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">02_simulate_muscle.ipynb</span></code></a></p>
+</div>
+<div class="sphx-glr-download sphx-glr-download-python docutils container">
+<p><a class="reference download internal" download="" href="../_downloads/b5228b22fde45eab91d36e55549267c9/02_simulate_muscle.py"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">02_simulate_muscle.py</span></code></a></p>
+</div>
+<div class="sphx-glr-download sphx-glr-download-zip docutils container">
+<p><a class="reference download internal" download="" href="../_downloads/99b05fb88b03811141d20ea6780235dc/02_simulate_muscle.zip"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">zipped:</span> <span class="pre">02_simulate_muscle.zip</span></code></a></p>
+</div>
+</div>
+<p class="sphx-glr-signature"><a class="reference external" href="https://sphinx-gallery.github.io">Gallery generated by Sphinx-Gallery</a></p>
+</section>
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#import-libraries">Import Libraries</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#define-parameters">Define Parameters</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#create-muscle-model">Create Muscle Model</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#visualize-muscle-fiber-centers">Visualize Muscle Fiber Centers</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#visualize-motor-unit-innervation-areas">Visualize Motor Unit Innervation Areas</a></li>
+</ul>
+  </nav></div>
+
+  <div class="sidebar-secondary-item">
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/auto_examples/02_simulate_muscle.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2025 - 2025, n-squared lab, FAU Erlangen-Nürnberg, Germany.
+      <br/>
+    
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.2.3.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

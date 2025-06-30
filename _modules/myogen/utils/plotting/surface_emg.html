@@ -1,0 +1,742 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>myogen.utils.plotting.surface_emg &#8212; MyoGen 0.1.0 Documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../../../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery.css?v=d2d258e8" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery-binder.css?v=f4aeca0c" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/custom.css?v=e1466590" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../../../../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="../../../../_static/documentation_options.js?v=01f34227"></script>
+    <script src="../../../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/myogen/utils/plotting/surface_emg';</script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="0.1.0" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class=" navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../../../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../../../_static/myogen_logo.png" class="logo__image only-light" alt="MyoGen 0.1.0 Documentation - Home"/>
+    <img src="../../../../_static/myogen_logo.png" class="logo__image only-dark pst-js-only" alt="MyoGen 0.1.0 Documentation - Home"/>
+  
+  
+</a></div>
+    
+      <div class="navbar-item">
+<div class="nav-item">
+  <div class="version-switcher__container dropdown">
+      <button id="version-switcher-button" type="button" class="version-switcher__button btn btn-sm navbar-btn" aria-haspopup="true" aria-expanded="false">
+          Version 0.1.0
+      </button>
+      
+      
+      
+  </div>
+</div> </div>
+    
+      <div class="navbar-item"><div class="nav-item">
+   <span>
+      made at the <a href="https://www.nsquared.tf.fau.de/" target="_blank">N² Lab</a>
+   </span>
+</div> </div>
+    
+  </div>
+  
+  <div class=" navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../api/index.html">
+    API Documentation
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../auto_examples/index.html">
+    Examples
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/NSquaredLab/MyoGen" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+    </div>
+  
+
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar hide-on-wide">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../api/index.html">
+    API Documentation
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../auto_examples/index.html">
+    Examples
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/NSquaredLab/MyoGen" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../../../index.html" class="nav-link">Module code</a></li>
+    
+    
+    <li class="breadcrumb-item"><a href="../../utils.html" class="nav-link">myogen.utils</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">myogen.utils.plotting.surface_emg</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <h1>Source code for myogen.utils.plotting.surface_emg</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Union</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">matplotlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">pyplot</span> <span class="k">as</span> <span class="n">plt</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">matplotlib.axes</span><span class="w"> </span><span class="kn">import</span> <span class="n">Axes</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">tqdm</span><span class="w"> </span><span class="kn">import</span> <span class="n">tqdm</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">beartype</span><span class="w"> </span><span class="kn">import</span> <span class="n">beartype</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">beartype.cave</span><span class="w"> </span><span class="kn">import</span> <span class="n">IterableType</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">myogen.utils.types</span><span class="w"> </span><span class="kn">import</span> <span class="n">SURFACE_EMG__TENSOR</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_get_axis</span><span class="p">(</span><span class="n">axes</span><span class="p">,</span> <span class="n">row_idx</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">col_idx</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">n_rows</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">n_cols</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Helper function to safely get axis from matplotlib subplots.&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">n_rows</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">n_cols</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">axes</span>
+    <span class="k">elif</span> <span class="n">n_rows</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">axes</span><span class="p">[</span><span class="n">col_idx</span><span class="p">]</span>
+    <span class="k">elif</span> <span class="n">n_cols</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">axes</span><span class="p">[</span><span class="n">row_idx</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">axes</span><span class="p">[</span><span class="n">row_idx</span><span class="p">,</span> <span class="n">col_idx</span><span class="p">]</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_auto_zoom_muaps</span><span class="p">(</span>
+    <span class="n">muap_data</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+    <span class="n">threshold</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.01</span><span class="p">,</span>
+    <span class="n">padding</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.1</span><span class="p">,</span>
+    <span class="n">center</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Auto-zoom MUAPs by centering them and cropping to significant regions.</span>
+
+<span class="sd">    Based on the algorithm from check_generated_surface_muaps.py.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    muap_data : np.ndarray</span>
+<span class="sd">        MUAP data with shape (n_muaps, n_rows, n_cols, n_time)</span>
+<span class="sd">    threshold : float</span>
+<span class="sd">        Threshold as fraction of max amplitude for significant regions</span>
+<span class="sd">    padding : float</span>
+<span class="sd">        Padding as fraction of signal length to add around significant regions</span>
+<span class="sd">    center : bool</span>
+<span class="sd">        Whether to center MUAPs temporally before cropping</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    np.ndarray</span>
+<span class="sd">        Processed MUAP data with same shape but potentially fewer time samples</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">n_muaps</span><span class="p">,</span> <span class="n">n_rows</span><span class="p">,</span> <span class="n">n_cols</span><span class="p">,</span> <span class="n">n_time</span> <span class="o">=</span> <span class="n">muap_data</span><span class="o">.</span><span class="n">shape</span>
+    <span class="n">processed_data</span> <span class="o">=</span> <span class="n">muap_data</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="n">center</span><span class="p">:</span>
+        <span class="c1"># Center each MUAP around its centroid</span>
+        <span class="k">for</span> <span class="n">muap_idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_muaps</span><span class="p">):</span>
+            <span class="c1"># Find the center of mass for this MUAP across all electrodes</span>
+            <span class="n">muap_abs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">processed_data</span><span class="p">[</span><span class="n">muap_idx</span><span class="p">])</span>
+
+            <span class="c1"># Calculate center of mass for each electrode</span>
+            <span class="n">centers</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">n_rows</span><span class="p">,</span> <span class="n">n_cols</span><span class="p">))</span>
+            <span class="k">for</span> <span class="n">row_idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_rows</span><span class="p">):</span>
+                <span class="k">for</span> <span class="n">col_idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_cols</span><span class="p">):</span>
+                    <span class="n">signal</span> <span class="o">=</span> <span class="n">muap_abs</span><span class="p">[</span><span class="n">row_idx</span><span class="p">,</span> <span class="n">col_idx</span><span class="p">]</span>
+                    <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">signal</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                        <span class="c1"># Center of mass calculation</span>
+                        <span class="n">time_indices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">n_time</span><span class="p">)</span>
+                        <span class="n">centers</span><span class="p">[</span><span class="n">row_idx</span><span class="p">,</span> <span class="n">col_idx</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">average</span><span class="p">(</span>
+                            <span class="n">time_indices</span><span class="p">,</span> <span class="n">weights</span><span class="o">=</span><span class="n">signal</span>
+                        <span class="p">)</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">centers</span><span class="p">[</span><span class="n">row_idx</span><span class="p">,</span> <span class="n">col_idx</span><span class="p">]</span> <span class="o">=</span> <span class="n">n_time</span> <span class="o">//</span> <span class="mi">2</span>
+
+            <span class="c1"># Use mean center across all electrodes</span>
+            <span class="n">mean_center</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">centers</span><span class="p">))</span>
+            <span class="n">shift</span> <span class="o">=</span> <span class="n">n_time</span> <span class="o">//</span> <span class="mi">2</span> <span class="o">-</span> <span class="n">mean_center</span>
+
+            <span class="c1"># Apply shift to center the MUAP</span>
+            <span class="k">if</span> <span class="n">shift</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">shifted_muap</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">processed_data</span><span class="p">[</span><span class="n">muap_idx</span><span class="p">])</span>
+                <span class="k">for</span> <span class="n">row_idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_rows</span><span class="p">):</span>
+                    <span class="k">for</span> <span class="n">col_idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_cols</span><span class="p">):</span>
+                        <span class="k">if</span> <span class="n">shift</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                            <span class="c1"># Shift right</span>
+                            <span class="n">shifted_muap</span><span class="p">[</span><span class="n">row_idx</span><span class="p">,</span> <span class="n">col_idx</span><span class="p">,</span> <span class="n">shift</span><span class="p">:]</span> <span class="o">=</span> <span class="n">processed_data</span><span class="p">[</span>
+                                <span class="n">muap_idx</span><span class="p">,</span> <span class="n">row_idx</span><span class="p">,</span> <span class="n">col_idx</span><span class="p">,</span> <span class="p">:</span><span class="o">-</span><span class="n">shift</span>
+                            <span class="p">]</span>
+                        <span class="k">elif</span> <span class="n">shift</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+                            <span class="c1"># Shift left</span>
+                            <span class="n">shifted_muap</span><span class="p">[</span><span class="n">row_idx</span><span class="p">,</span> <span class="n">col_idx</span><span class="p">,</span> <span class="p">:</span><span class="n">shift</span><span class="p">]</span> <span class="o">=</span> <span class="n">processed_data</span><span class="p">[</span>
+                                <span class="n">muap_idx</span><span class="p">,</span> <span class="n">row_idx</span><span class="p">,</span> <span class="n">col_idx</span><span class="p">,</span> <span class="o">-</span><span class="n">shift</span><span class="p">:</span>
+                            <span class="p">]</span>
+                        <span class="k">else</span><span class="p">:</span>
+                            <span class="n">shifted_muap</span><span class="p">[</span><span class="n">row_idx</span><span class="p">,</span> <span class="n">col_idx</span><span class="p">]</span> <span class="o">=</span> <span class="n">processed_data</span><span class="p">[</span>
+                                <span class="n">muap_idx</span><span class="p">,</span> <span class="n">row_idx</span><span class="p">,</span> <span class="n">col_idx</span>
+                            <span class="p">]</span>
+
+                <span class="n">processed_data</span><span class="p">[</span><span class="n">muap_idx</span><span class="p">]</span> <span class="o">=</span> <span class="n">shifted_muap</span>
+
+    <span class="c1"># Find significant regions across all MUAPs and crop</span>
+    <span class="n">max_amplitude</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">processed_data</span><span class="p">))</span>
+    <span class="n">threshold_value</span> <span class="o">=</span> <span class="n">threshold</span> <span class="o">*</span> <span class="n">max_amplitude</span>
+
+    <span class="c1"># Find where any MUAP exceeds threshold</span>
+    <span class="n">significant_mask</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">processed_data</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">threshold_value</span>
+    <span class="n">significant_indices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">significant_mask</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>  <span class="c1"># Get time dimension indices</span>
+
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">significant_indices</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">start_idx</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">significant_indices</span><span class="p">))</span>
+        <span class="n">end_idx</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">significant_indices</span><span class="p">))</span>
+
+        <span class="c1"># Add padding</span>
+        <span class="n">padding_samples</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">padding</span> <span class="o">*</span> <span class="n">n_time</span><span class="p">)</span>
+        <span class="n">start_idx</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">start_idx</span> <span class="o">-</span> <span class="n">padding_samples</span><span class="p">)</span>
+        <span class="n">end_idx</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">n_time</span><span class="p">,</span> <span class="n">end_idx</span> <span class="o">+</span> <span class="n">padding_samples</span><span class="p">)</span>
+
+        <span class="c1"># Crop all MUAPs to this region</span>
+        <span class="n">processed_data</span> <span class="o">=</span> <span class="n">processed_data</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="n">start_idx</span><span class="p">:</span><span class="n">end_idx</span><span class="p">]</span>
+
+    <span class="k">return</span> <span class="n">processed_data</span>
+
+
+<div class="viewcode-block" id="plot_surface_emg">
+<a class="viewcode-back" href="../../../../generated/myogen.utils.plotting.plot_surface_emg.html#myogen.utils.plotting.plot_surface_emg">[docs]</a>
+<span class="nd">@beartype</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">plot_surface_emg</span><span class="p">(</span>
+    <span class="n">surface_emg__tensor</span><span class="p">:</span> <span class="n">SURFACE_EMG__TENSOR</span><span class="p">,</span>
+    <span class="n">axs</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">Axes</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]],</span>
+    <span class="n">apply_default_formatting</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">Axes</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Plot the EMG signal across electrode grids.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    surface_emg__tensor : SURFACE_EMG__TENSOR</span>
+<span class="sd">        Tensor of shape (n_pools, n_rows, n_cols, n_time) containing EMG signals</span>
+<span class="sd">    axs : list[Union[Axes, np.ndarray]]</span>
+<span class="sd">        Matplotlib axes to plot on. Should provide one set of axes per pool.</span>
+<span class="sd">        Each set can be a 2D array of axes (from plt.subplots), a single axis, or a 1D array.</span>
+<span class="sd">        Expected structure: list of axes configurations, one per pool.</span>
+<span class="sd">    apply_default_formatting : bool, default=True</span>
+<span class="sd">        Whether to apply default formatting to the plot</span>
+<span class="sd">    **kwargs : dict</span>
+<span class="sd">        Additional keyword arguments to pass to the plot function. Only used if apply_default_formatting is False.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    list[Union[Axes, np.ndarray]]</span>
+<span class="sd">        The axes that were plotted on</span>
+
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">    ValueError</span>
+<span class="sd">        If the number of axes does not match the number of pools</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">axs_list</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">axs</span><span class="p">)</span>
+    <span class="n">n_pools</span> <span class="o">=</span> <span class="n">surface_emg__tensor</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">axs_list</span><span class="p">)</span> <span class="o">!=</span> <span class="n">n_pools</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Number of axes must match number of pools. Got </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">axs_list</span><span class="p">)</span><span class="si">}</span><span class="s2"> axes, but </span><span class="si">{</span><span class="n">n_pools</span><span class="si">}</span><span class="s2"> pools.&quot;</span>
+        <span class="p">)</span>
+
+    <span class="n">n_rows</span> <span class="o">=</span> <span class="n">surface_emg__tensor</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">n_cols</span> <span class="o">=</span> <span class="n">surface_emg__tensor</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+
+    <span class="k">for</span> <span class="n">pool_idx</span><span class="p">,</span> <span class="n">pool_axes</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">axs_list</span><span class="p">):</span>
+        <span class="c1"># Handle the case where pool_axes is a single axis or array of axes</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">pool_axes</span><span class="p">,</span> <span class="s1">&#39;flat&#39;</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">pool_axes</span><span class="p">,</span> <span class="n">Axes</span><span class="p">):</span>
+            <span class="c1"># pool_axes is a 2D array of axes</span>
+            <span class="n">axes_flat</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="n">pool_axes</span><span class="o">.</span><span class="n">flat</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">pool_axes</span><span class="p">,</span> <span class="n">Axes</span><span class="p">):</span>
+            <span class="c1"># pool_axes is a single axis</span>
+            <span class="n">axes_flat</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="p">[</span><span class="n">pool_axes</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># pool_axes is a 1D array or other iterable</span>
+            <span class="n">axes_flat</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="n">pool_axes</span>
+
+        <span class="k">for</span> <span class="n">row_idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_rows</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">col_idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_cols</span><span class="p">):</span>
+                <span class="n">electrode_idx</span> <span class="o">=</span> <span class="n">row_idx</span> <span class="o">*</span> <span class="n">n_cols</span> <span class="o">+</span> <span class="n">col_idx</span>
+                <span class="k">if</span> <span class="n">electrode_idx</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">axes_flat</span><span class="p">):</span>
+                    <span class="n">ax</span> <span class="o">=</span> <span class="n">axes_flat</span><span class="p">[</span><span class="n">electrode_idx</span><span class="p">]</span>
+                    
+                    <span class="n">plot_kwargs</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">apply_default_formatting</span> <span class="k">else</span> <span class="p">{}</span>
+                    
+                    <span class="k">if</span> <span class="n">apply_default_formatting</span><span class="p">:</span>
+                        <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">surface_emg__tensor</span><span class="p">[</span><span class="n">pool_idx</span><span class="p">,</span> <span class="n">row_idx</span><span class="p">,</span> <span class="n">col_idx</span><span class="p">])</span>
+                        <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Pool </span><span class="si">{</span><span class="n">pool_idx</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="si">}</span><span class="s2"> - R</span><span class="si">{</span><span class="n">row_idx</span><span class="si">}</span><span class="s2"> C</span><span class="si">{</span><span class="n">col_idx</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                        <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;Time (samples)&quot;</span><span class="p">)</span>
+                        <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;Amplitude&quot;</span><span class="p">)</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">surface_emg__tensor</span><span class="p">[</span><span class="n">pool_idx</span><span class="p">,</span> <span class="n">row_idx</span><span class="p">,</span> <span class="n">col_idx</span><span class="p">],</span> <span class="o">**</span><span class="n">plot_kwargs</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">axs</span></div>
+
+
+
+<div class="viewcode-block" id="plot_muap_grid">
+<a class="viewcode-back" href="../../../../generated/myogen.utils.plotting.plot_muap_grid.html#myogen.utils.plotting.plot_muap_grid">[docs]</a>
+<span class="nd">@beartype</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">plot_muap_grid</span><span class="p">(</span>
+    <span class="n">muap_data</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+    <span class="n">axs</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">Axes</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]],</span>
+    <span class="n">muap_indices</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">apply_default_formatting</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">Axes</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Plot Motor Unit Action Potentials (MUAPs) in electrode grid format.</span>
+
+<span class="sd">    This function visualizes MUAPs as they appear across a grid of electrodes,</span>
+<span class="sd">    with each subplot showing the MUAP waveform at a specific electrode position.</span>
+<span class="sd">    The layout matches the physical electrode arrangement.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    muap_data : np.ndarray</span>
+<span class="sd">        MUAP data with shape (n_muaps, n_electrode_rows, n_electrode_cols, n_time_samples)</span>
+<span class="sd">        or (n_electrode_rows, n_electrode_cols, n_time_samples) for a single MUAP.</span>
+<span class="sd">    axs : list[Union[Axes, np.ndarray]]</span>
+<span class="sd">        Matplotlib axes to plot on. Should provide one set of axes per MUAP.</span>
+<span class="sd">        Each set can be a 2D array of axes (from plt.subplots), a single axis, or a 1D array.</span>
+<span class="sd">        Expected structure: list of axes configurations, one per MUAP to plot.</span>
+<span class="sd">    muap_indices : list[int], optional</span>
+<span class="sd">        List of MUAP indices to plot. If None, plots all MUAPs.</span>
+<span class="sd">    apply_default_formatting : bool, default=True</span>
+<span class="sd">        Whether to apply default formatting to the plot</span>
+<span class="sd">    **kwargs : dict</span>
+<span class="sd">        Additional keyword arguments to pass to the plot function. Only used if apply_default_formatting is False.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    list[Union[Axes, np.ndarray]]</span>
+<span class="sd">        The axes that were plotted on</span>
+
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">    ValueError</span>
+<span class="sd">        If the number of axes does not match the number of MUAPs to plot</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Handle single MUAP case by adding a dimension</span>
+    <span class="k">if</span> <span class="n">muap_data</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+        <span class="n">muap_data</span> <span class="o">=</span> <span class="n">muap_data</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">newaxis</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span>
+
+    <span class="c1"># Validate input dimensions</span>
+    <span class="k">if</span> <span class="n">muap_data</span><span class="o">.</span><span class="n">ndim</span> <span class="o">!=</span> <span class="mi">4</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;muap_data must have 3 or 4 dimensions, got </span><span class="si">{</span><span class="n">muap_data</span><span class="o">.</span><span class="n">ndim</span><span class="si">}</span><span class="s2">. &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;Expected shape: (n_muaps, n_rows, n_cols, n_time) or (n_rows, n_cols, n_time)&quot;</span>
+        <span class="p">)</span>
+
+    <span class="n">n_muaps</span><span class="p">,</span> <span class="n">n_rows</span><span class="p">,</span> <span class="n">n_cols</span><span class="p">,</span> <span class="n">n_time</span> <span class="o">=</span> <span class="n">muap_data</span><span class="o">.</span><span class="n">shape</span>
+
+    <span class="c1"># Set default MUAP indices if not provided</span>
+    <span class="k">if</span> <span class="n">muap_indices</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">muap_indices</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">n_muaps</span><span class="p">))</span>
+
+    <span class="c1"># Validate MUAP indices</span>
+    <span class="n">invalid_indices</span> <span class="o">=</span> <span class="p">[</span><span class="n">idx</span> <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="n">muap_indices</span> <span class="k">if</span> <span class="n">idx</span> <span class="o">&gt;=</span> <span class="n">n_muaps</span> <span class="ow">or</span> <span class="n">idx</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">invalid_indices</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Invalid MUAP indices: </span><span class="si">{</span><span class="n">invalid_indices</span><span class="si">}</span><span class="s2">. Must be in range [0, </span><span class="si">{</span><span class="n">n_muaps</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="si">}</span><span class="s2">]&quot;</span>
+        <span class="p">)</span>
+
+    <span class="n">axs_list</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">axs</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">axs_list</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">muap_indices</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Number of axes must match number of MUAPs to plot. Got </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">axs_list</span><span class="p">)</span><span class="si">}</span><span class="s2"> axes, but </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">muap_indices</span><span class="p">)</span><span class="si">}</span><span class="s2"> MUAPs.&quot;</span>
+        <span class="p">)</span>
+
+    <span class="c1"># Plot each requested MUAP</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">muap_idx</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">tqdm</span><span class="p">(</span><span class="n">muap_indices</span><span class="p">,</span> <span class="n">desc</span><span class="o">=</span><span class="s2">&quot;Plotting MUAPs&quot;</span><span class="p">)):</span>
+        <span class="n">muap_axes</span> <span class="o">=</span> <span class="n">axs_list</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+        
+        <span class="c1"># Handle the case where muap_axes is a single axis or array of axes</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">muap_axes</span><span class="p">,</span> <span class="s1">&#39;flat&#39;</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">muap_axes</span><span class="p">,</span> <span class="n">Axes</span><span class="p">):</span>
+            <span class="c1"># muap_axes is a 2D array of axes</span>
+            <span class="n">axes_flat</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="n">muap_axes</span><span class="o">.</span><span class="n">flat</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">muap_axes</span><span class="p">,</span> <span class="n">Axes</span><span class="p">):</span>
+            <span class="c1"># muap_axes is a single axis</span>
+            <span class="n">axes_flat</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="p">[</span><span class="n">muap_axes</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># muap_axes is a 1D array or other iterable</span>
+            <span class="n">axes_flat</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="n">muap_axes</span>
+
+        <span class="c1"># Calculate global y-limits for consistent scaling across electrodes</span>
+        <span class="n">muap_min</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">muap_data</span><span class="p">[</span><span class="n">muap_idx</span><span class="p">])</span>
+        <span class="n">muap_max</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">muap_data</span><span class="p">[</span><span class="n">muap_idx</span><span class="p">])</span>
+
+        <span class="c1"># Plot MUAP at each electrode position</span>
+        <span class="k">for</span> <span class="n">row_idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_rows</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">col_idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_cols</span><span class="p">):</span>
+                <span class="n">electrode_idx</span> <span class="o">=</span> <span class="n">row_idx</span> <span class="o">*</span> <span class="n">n_cols</span> <span class="o">+</span> <span class="n">col_idx</span>
+                <span class="k">if</span> <span class="n">electrode_idx</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">axes_flat</span><span class="p">):</span>
+                    <span class="n">ax</span> <span class="o">=</span> <span class="n">axes_flat</span><span class="p">[</span><span class="n">electrode_idx</span><span class="p">]</span>
+
+                    <span class="n">plot_kwargs</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">apply_default_formatting</span> <span class="k">else</span> <span class="p">{}</span>
+                    
+                    <span class="k">if</span> <span class="n">apply_default_formatting</span><span class="p">:</span>
+                        <span class="c1"># Plot MUAP waveform</span>
+                        <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">muap_data</span><span class="p">[</span><span class="n">muap_idx</span><span class="p">,</span> <span class="n">row_idx</span><span class="p">,</span> <span class="n">col_idx</span><span class="p">])</span>
+                        
+                        <span class="c1"># Set consistent y-limits across all electrodes</span>
+                        <span class="n">ax</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">(</span><span class="n">muap_min</span><span class="p">,</span> <span class="n">muap_max</span><span class="p">)</span>
+                        
+                        <span class="c1"># Clean up axes for better visualization</span>
+                        <span class="n">ax</span><span class="o">.</span><span class="n">set_xticks</span><span class="p">([])</span>
+                        <span class="n">ax</span><span class="o">.</span><span class="n">set_yticks</span><span class="p">([])</span>
+                        <span class="n">ax</span><span class="o">.</span><span class="n">spines</span><span class="p">[</span><span class="s2">&quot;top&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">set_visible</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+                        <span class="n">ax</span><span class="o">.</span><span class="n">spines</span><span class="p">[</span><span class="s2">&quot;right&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">set_visible</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+                        <span class="n">ax</span><span class="o">.</span><span class="n">spines</span><span class="p">[</span><span class="s2">&quot;left&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">set_visible</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+                        <span class="n">ax</span><span class="o">.</span><span class="n">spines</span><span class="p">[</span><span class="s2">&quot;bottom&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">set_visible</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">muap_data</span><span class="p">[</span><span class="n">muap_idx</span><span class="p">,</span> <span class="n">row_idx</span><span class="p">,</span> <span class="n">col_idx</span><span class="p">],</span> <span class="o">**</span><span class="n">plot_kwargs</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">axs</span></div>
+
+</pre></div>
+
+                </article>
+              
+              
+              
+              
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2025 - 2025, n-squared lab, FAU Erlangen-Nürnberg, Germany.
+      <br/>
+    
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.2.3.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>
