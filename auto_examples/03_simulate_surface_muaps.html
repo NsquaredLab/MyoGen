@@ -35,7 +35,7 @@
     <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-binder.css?v=f4aeca0c" />
     <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-dataframe.css?v=2082cf3c" />
     <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
-    <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=e1466590" />
+    <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=4797f867" />
   
   <!-- So that users can add custom icons -->
   <script src="../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
@@ -470,12 +470,12 @@ This can be changed by modifying the <code class="docutils literal notranslate">
 </pre></div>
 </div>
 <div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>MU 1 Position 1:   0%|          | 0/5 [00:00&lt;?, ?it/s]
-MU 1 Position 1:  20%|██        | 1/5 [00:00&lt;00:00,  4.35it/s]
-MU 1 Position 1:  40%|████      | 2/5 [00:00&lt;00:00,  6.10it/s]
-MU 1 Position 1:  60%|██████    | 3/5 [00:00&lt;00:00,  7.01it/s]
-MU 1 Position 1:  80%|████████  | 4/5 [00:00&lt;00:00,  7.53it/s]
-MU 1 Position 1: 100%|██████████| 5/5 [00:00&lt;00:00,  7.85it/s]
-MU 1 Position 1: 100%|██████████| 5/5 [00:00&lt;00:00,  7.14it/s]
+MU 1 Position 1:  20%|██        | 1/5 [00:00&lt;00:00,  4.30it/s]
+MU 1 Position 1:  40%|████      | 2/5 [00:00&lt;00:00,  6.00it/s]
+MU 1 Position 1:  60%|██████    | 3/5 [00:00&lt;00:00,  6.89it/s]
+MU 1 Position 1:  80%|████████  | 4/5 [00:00&lt;00:00,  7.41it/s]
+MU 1 Position 1: 100%|██████████| 5/5 [00:00&lt;00:00,  7.74it/s]
+MU 1 Position 1: 100%|██████████| 5/5 [00:00&lt;00:00,  7.03it/s]
 
 MUAP simulation completed!
 Generated MUAPs shape: (1, 1, 5, 5, 256)
@@ -513,13 +513,15 @@ The new API requires creating matplotlib axes and passing them to the plotting f
         <a href="https://docs.python.org/3/library/functions.html#int" title="builtins.int" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">electrode_cols</span></a><span class="p">,</span>
         <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><a href="https://docs.python.org/3/library/functions.html#int" title="builtins.int" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">electrode_cols</span></a> <span class="o">*</span> <span class="mi">2</span><span class="p">,</span> <a href="https://docs.python.org/3/library/functions.html#int" title="builtins.int" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">electrode_rows</span></a> <span class="o">*</span> <span class="mi">2</span><span class="p">),</span>
         <span class="n">sharex</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-        <span class="n">sharey</span><span class="o">=</span><span class="kc">True</span>
+        <span class="n">sharey</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
     <span class="p">)</span>
     <a href="https://matplotlib.org/stable/api/_as_gen/matplotlib.figure.Figure.suptitle.html#matplotlib.figure.Figure.suptitle" title="matplotlib.figure.Figure.suptitle" class="sphx-glr-backref-module-matplotlib-figure sphx-glr-backref-type-py-method"><span class="n">fig</span><span class="o">.</span><span class="n">suptitle</span></a><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;MUAP </span><span class="si">{</span><a href="https://docs.python.org/3/library/functions.html#int" title="builtins.int" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">muap_idx</span></a><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
     <a href="https://docs.python.org/3/library/stdtypes.html#list" title="builtins.list" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">axes_list</span></a><span class="o">.</span><span class="n">append</span><span class="p">(</span><a href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">axes</span></a><span class="p">)</span>
 
 <span class="c1"># Plot MUAPs using the new API</span>
-<span class="n">plot_muap_grid</span><span class="p">(</span><a href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">muaps_concatenated</span></a><span class="p">[</span> <span class="p">:,</span> <span class="p">:,</span> <span class="p">:,</span> <span class="mi">100</span><span class="p">:</span><span class="o">-</span><span class="mi">100</span><span class="p">],</span> <a href="https://docs.python.org/3/library/stdtypes.html#list" title="builtins.list" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">axes_list</span></a><span class="p">,</span> <span class="n">apply_default_formatting</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">plot_muap_grid</span><span class="p">(</span>
+    <a href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">muaps_concatenated</span></a><span class="p">[:,</span> <span class="p">:,</span> <span class="p">:,</span> <span class="mi">100</span><span class="p">:</span><span class="o">-</span><span class="mi">100</span><span class="p">],</span> <a href="https://docs.python.org/3/library/stdtypes.html#list" title="builtins.list" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">axes_list</span></a><span class="p">,</span> <span class="n">apply_default_formatting</span><span class="o">=</span><span class="kc">True</span>
+<span class="p">)</span>
 
 <span class="c1"># Show all plots</span>
 <a href="https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.show.html#matplotlib.pyplot.show" title="matplotlib.pyplot.show" class="sphx-glr-backref-module-matplotlib-pyplot sphx-glr-backref-type-py-function"><span class="n">plt</span><span class="o">.</span><span class="n">show</span></a><span class="p">()</span>
@@ -528,11 +530,11 @@ The new API requires creating matplotlib axes and passing them to the plotting f
 <img src="../_images/sphx_glr_03_simulate_surface_muaps_001.png" srcset="../_images/sphx_glr_03_simulate_surface_muaps_001.png" alt="MUAP 0" class = "sphx-glr-single-img"/><div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Concatenated MUAPs shape: (1, 5, 5, 256)
 
 Plotting MUAPs:   0%|          | 0/1 [00:00&lt;?, ?it/s]
-Plotting MUAPs: 100%|██████████| 1/1 [00:00&lt;00:00,  7.42it/s]
-Plotting MUAPs: 100%|██████████| 1/1 [00:00&lt;00:00,  7.41it/s]
+Plotting MUAPs: 100%|██████████| 1/1 [00:00&lt;00:00,  7.27it/s]
+Plotting MUAPs: 100%|██████████| 1/1 [00:00&lt;00:00,  7.26it/s]
 </pre></div>
 </div>
-<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 1.063 seconds)</p>
+<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 1.079 seconds)</p>
 <div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-auto-examples-03-simulate-surface-muaps-py">
 <div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
 <p><a class="reference download internal" download="" href="../_downloads/cb313d5f32f1c0229fd2a5de17339244/03_simulate_surface_muaps.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">03_simulate_surface_muaps.ipynb</span></code></a></p>

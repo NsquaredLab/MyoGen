@@ -112,24 +112,26 @@ print(f"Concatenated MUAPs shape: {muaps_concatenated.shape}")
 
 # Create subplot grid for each MUAP (matches electrode grid layout)
 n_muaps = muaps_concatenated.shape[0]
-electrode_rows = muaps_concatenated.shape[1] 
+electrode_rows = muaps_concatenated.shape[1]
 electrode_cols = muaps_concatenated.shape[2]
 
 # Create axes for each MUAP - one subplot grid per MUAP
 axes_list = []
 for muap_idx in range(n_muaps):
     fig, axes = plt.subplots(
-        electrode_rows, 
+        electrode_rows,
         electrode_cols,
         figsize=(electrode_cols * 2, electrode_rows * 2),
         sharex=True,
-        sharey=True
+        sharey=True,
     )
     fig.suptitle(f"MUAP {muap_idx}")
     axes_list.append(axes)
 
 # Plot MUAPs using the new API
-plot_muap_grid(muaps_concatenated[ :, :, :, 100:-100], axes_list, apply_default_formatting=True)
+plot_muap_grid(
+    muaps_concatenated[:, :, :, 100:-100], axes_list, apply_default_formatting=True
+)
 
 # Show all plots
 plt.show()

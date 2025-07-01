@@ -35,7 +35,7 @@
     <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-binder.css?v=f4aeca0c" />
     <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-dataframe.css?v=2082cf3c" />
     <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
-    <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=e1466590" />
+    <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=4797f867" />
   
   <!-- So that users can add custom icons -->
   <script src="../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
@@ -527,11 +527,13 @@ Input current matrix shape: (2, 40000)
 <section id="simulate-motor-unit-spike-trains">
 <h2>Simulate Motor Unit Spike Trains<a class="headerlink" href="#simulate-motor-unit-spike-trains" title="Link to this heading">#</a></h2>
 <p>The <strong>motor unit spike trains</strong> are simulated using the <code class="docutils literal notranslate"><span class="pre">generate_spike_trains</span></code> method of the <code class="docutils literal notranslate"><span class="pre">MotorNeuronPool</span></code> object.</p>
-<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><a href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">spike_trains_matrix</span></a><span class="p">,</span> <a href="https://docs.python.org/3/library/stdtypes.html#list" title="builtins.list" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">active_neuron_indices</span></a><span class="p">,</span> <a href="https://docs.python.org/3/library/stdtypes.html#list" title="builtins.list" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">data</span></a> <span class="o">=</span> <span class="n">motor_neuron_pool</span><span class="o">.</span><span class="n">generate_spike_trains</span><span class="p">(</span>
-    <span class="n">input_current__matrix</span><span class="o">=</span><a href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">input_current_matrix</span></a><span class="p">,</span>
-    <span class="n">timestep__ms</span><span class="o">=</span><a href="https://docs.python.org/3/library/functions.html#float" title="builtins.float" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">timestep</span></a><span class="p">,</span>
-    <span class="n">noise_mean__nA</span><span class="o">=</span><a href="https://docs.python.org/3/library/functions.html#int" title="builtins.int" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">noise_mean</span></a><span class="p">,</span>
-    <span class="n">noise_stdev__nA</span><span class="o">=</span><a href="https://docs.python.org/3/library/functions.html#int" title="builtins.int" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">noise_stdev</span></a><span class="p">,</span>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><a href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">spike_trains_matrix</span></a><span class="p">,</span> <a href="https://docs.python.org/3/library/stdtypes.html#list" title="builtins.list" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">active_neuron_indices</span></a><span class="p">,</span> <a href="https://docs.python.org/3/library/stdtypes.html#list" title="builtins.list" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">data</span></a> <span class="o">=</span> <span class="p">(</span>
+    <span class="n">motor_neuron_pool</span><span class="o">.</span><span class="n">generate_spike_trains</span><span class="p">(</span>
+        <span class="n">input_current__matrix</span><span class="o">=</span><a href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">input_current_matrix</span></a><span class="p">,</span>
+        <span class="n">timestep__ms</span><span class="o">=</span><a href="https://docs.python.org/3/library/functions.html#float" title="builtins.float" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">timestep</span></a><span class="p">,</span>
+        <span class="n">noise_mean__nA</span><span class="o">=</span><a href="https://docs.python.org/3/library/functions.html#int" title="builtins.int" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">noise_mean</span></a><span class="p">,</span>
+        <span class="n">noise_stdev__nA</span><span class="o">=</span><a href="https://docs.python.org/3/library/functions.html#int" title="builtins.int" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">noise_stdev</span></a><span class="p">,</span>
+    <span class="p">)</span>
 <span class="p">)</span>
 
 <span class="c1"># Save motor neuron pool for later analysis</span>
@@ -578,7 +580,7 @@ The simulation time is in milliseconds, so we need to convert it to seconds.</p>
 </pre></div>
 </div>
 <div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Firing rate statistics:
-  Pool 1: 62/100 active neurons, mean rate: 8.9 Hz, max rate: 18.0 Hz
+  Pool 1: 61/100 active neurons, mean rate: 9.0 Hz, max rate: 18.0 Hz
   Pool 2: 48/100 active neurons, mean rate: 10.1 Hz, max rate: 16.5 Hz
 </pre></div>
 </div>
@@ -618,7 +620,7 @@ The simulation time is in milliseconds, so we need to convert it to seconds.</p>
 <img src="../_images/sphx_glr_01_simulate_spike_trains_001.png" srcset="../_images/sphx_glr_01_simulate_spike_trains_001.png" alt="Pool 1 Spike Trains" class = "sphx-glr-single-img"/><div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Plotting spike trains...
 </pre></div>
 </div>
-<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 5.442 seconds)</p>
+<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 5.521 seconds)</p>
 <div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-auto-examples-01-simulate-spike-trains-py">
 <div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
 <p><a class="reference download internal" download="" href="../_downloads/d067465ba52f52793494b6657f65022d/01_simulate_spike_trains.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">01_simulate_spike_trains.ipynb</span></code></a></p>

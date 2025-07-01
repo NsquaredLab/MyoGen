@@ -179,7 +179,7 @@ To generate the **MUAPs**, we need to run the ``simulate_muaps`` method of the *
 
  .. code-block:: none
 
-    MU 1 Position 1:   0%|          | 0/5 [00:00<?, ?it/s]    MU 1 Position 1:  20%|██        | 1/5 [00:00<00:00,  4.35it/s]    MU 1 Position 1:  40%|████      | 2/5 [00:00<00:00,  6.10it/s]    MU 1 Position 1:  60%|██████    | 3/5 [00:00<00:00,  7.01it/s]    MU 1 Position 1:  80%|████████  | 4/5 [00:00<00:00,  7.53it/s]    MU 1 Position 1: 100%|██████████| 5/5 [00:00<00:00,  7.85it/s]    MU 1 Position 1: 100%|██████████| 5/5 [00:00<00:00,  7.14it/s]
+    MU 1 Position 1:   0%|          | 0/5 [00:00<?, ?it/s]    MU 1 Position 1:  20%|██        | 1/5 [00:00<00:00,  4.30it/s]    MU 1 Position 1:  40%|████      | 2/5 [00:00<00:00,  6.00it/s]    MU 1 Position 1:  60%|██████    | 3/5 [00:00<00:00,  6.89it/s]    MU 1 Position 1:  80%|████████  | 4/5 [00:00<00:00,  7.41it/s]    MU 1 Position 1: 100%|██████████| 5/5 [00:00<00:00,  7.74it/s]    MU 1 Position 1: 100%|██████████| 5/5 [00:00<00:00,  7.03it/s]
 
     MUAP simulation completed!
     Generated MUAPs shape: (1, 1, 5, 5, 256)
@@ -203,7 +203,7 @@ The MUAPs can be plotted using the ``plot_muap_grid`` function.
   **Plotting helper functions** are available in the ``myogen.utils.plotting`` module.
   The new API requires creating matplotlib axes and passing them to the plotting function.
 
-.. GENERATED FROM PYTHON SOURCE LINES 108-136
+.. GENERATED FROM PYTHON SOURCE LINES 108-138
 
 .. code-block:: Python
 
@@ -214,24 +214,26 @@ The MUAPs can be plotted using the ``plot_muap_grid`` function.
 
     # Create subplot grid for each MUAP (matches electrode grid layout)
     n_muaps = muaps_concatenated.shape[0]
-    electrode_rows = muaps_concatenated.shape[1] 
+    electrode_rows = muaps_concatenated.shape[1]
     electrode_cols = muaps_concatenated.shape[2]
 
     # Create axes for each MUAP - one subplot grid per MUAP
     axes_list = []
     for muap_idx in range(n_muaps):
         fig, axes = plt.subplots(
-            electrode_rows, 
+            electrode_rows,
             electrode_cols,
             figsize=(electrode_cols * 2, electrode_rows * 2),
             sharex=True,
-            sharey=True
+            sharey=True,
         )
         fig.suptitle(f"MUAP {muap_idx}")
         axes_list.append(axes)
 
     # Plot MUAPs using the new API
-    plot_muap_grid(muaps_concatenated[ :, :, :, 100:-100], axes_list, apply_default_formatting=True)
+    plot_muap_grid(
+        muaps_concatenated[:, :, :, 100:-100], axes_list, apply_default_formatting=True
+    )
 
     # Show all plots
     plt.show()
@@ -249,7 +251,7 @@ The MUAPs can be plotted using the ``plot_muap_grid`` function.
  .. code-block:: none
 
     Concatenated MUAPs shape: (1, 5, 5, 256)
-    Plotting MUAPs:   0%|          | 0/1 [00:00<?, ?it/s]    Plotting MUAPs: 100%|██████████| 1/1 [00:00<00:00,  7.42it/s]    Plotting MUAPs: 100%|██████████| 1/1 [00:00<00:00,  7.41it/s]
+    Plotting MUAPs:   0%|          | 0/1 [00:00<?, ?it/s]    Plotting MUAPs: 100%|██████████| 1/1 [00:00<00:00,  7.27it/s]    Plotting MUAPs: 100%|██████████| 1/1 [00:00<00:00,  7.26it/s]
 
 
 
@@ -257,7 +259,7 @@ The MUAPs can be plotted using the ``plot_muap_grid`` function.
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 1.063 seconds)
+   **Total running time of the script:** (0 minutes 1.079 seconds)
 
 
 .. _sphx_glr_download_auto_examples_03_simulate_surface_muaps.py:

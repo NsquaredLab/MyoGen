@@ -167,7 +167,9 @@ from matplotlib import pyplot as plt
 print("Plotting Fuglevand model...")
 with plt.xkcd():
     _, ax = plt.subplots(figsize=(10, 6))
-    plot_recruitment_thresholds(rt_fuglevand, [ax], model_name="Fuglevand", colors="#90b8e0")
+    plot_recruitment_thresholds(
+        rt_fuglevand, [ax], model_name="Fuglevand", colors="#90b8e0"
+    )
 plt.tight_layout()
 plt.show()
 

@@ -151,11 +151,13 @@ motor_neuron_pool = simulator.MotorNeuronPool(recruitment_thresholds)
 #
 # The **motor unit spike trains** are simulated using the ``generate_spike_trains`` method of the ``MotorNeuronPool`` object.
 
-spike_trains_matrix, active_neuron_indices, data = motor_neuron_pool.generate_spike_trains(
-    input_current__matrix=input_current_matrix,
-    timestep__ms=timestep,
-    noise_mean__nA=noise_mean,
-    noise_stdev__nA=noise_stdev,
+spike_trains_matrix, active_neuron_indices, data = (
+    motor_neuron_pool.generate_spike_trains(
+        input_current__matrix=input_current_matrix,
+        timestep__ms=timestep,
+        noise_mean__nA=noise_mean,
+        noise_stdev__nA=noise_stdev,
+    )
 )
 
 # Save motor neuron pool for later analysis

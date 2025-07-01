@@ -55,6 +55,12 @@ Import Libraries
 
 
 
+.. rst-class:: sphx-glr-script-out
+
+ .. code-block:: none
+
+    NMODL mechanisms appear to already be loaded, skipping reload
+
 
 
 
@@ -254,7 +260,7 @@ Fuglevand Model Visualization
 The Fuglevand model uses a simple exponential distribution for recruitment
 thresholds. This is the classic approach from Fuglevand et al. (1993).
 
-.. GENERATED FROM PYTHON SOURCE LINES 166-174
+.. GENERATED FROM PYTHON SOURCE LINES 166-176
 
 .. code-block:: Python
 
@@ -262,7 +268,9 @@ thresholds. This is the classic approach from Fuglevand et al. (1993).
     print("Plotting Fuglevand model...")
     with plt.xkcd():
         _, ax = plt.subplots(figsize=(10, 6))
-        plot_recruitment_thresholds(rt_fuglevand, [ax], model_name="Fuglevand", colors="#90b8e0")
+        plot_recruitment_thresholds(
+            rt_fuglevand, [ax], model_name="Fuglevand", colors="#90b8e0"
+        )
     plt.tight_layout()
     plt.show()
 
@@ -285,7 +293,7 @@ thresholds. This is the classic approach from Fuglevand et al. (1993).
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 175-180
+.. GENERATED FROM PYTHON SOURCE LINES 177-182
 
 De Luca Model Visualization
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -293,7 +301,7 @@ De Luca Model Visualization
 The De Luca model includes a slope correction parameter that allows control
 over the shape of the recruitment threshold distribution.
 
-.. GENERATED FROM PYTHON SOURCE LINES 180-193
+.. GENERATED FROM PYTHON SOURCE LINES 182-195
 
 .. code-block:: Python
 
@@ -329,7 +337,7 @@ over the shape of the recruitment threshold distribution.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 194-199
+.. GENERATED FROM PYTHON SOURCE LINES 196-201
 
 Konstantin Model Visualization
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -337,7 +345,7 @@ Konstantin Model Visualization
 The Konstantin model provides explicit control over the maximum recruitment
 threshold while maintaining physiological recruitment patterns.
 
-.. GENERATED FROM PYTHON SOURCE LINES 199-214
+.. GENERATED FROM PYTHON SOURCE LINES 201-216
 
 .. code-block:: Python
 
@@ -375,7 +383,7 @@ threshold while maintaining physiological recruitment patterns.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 215-220
+.. GENERATED FROM PYTHON SOURCE LINES 217-222
 
 Combined Model Visualization
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -383,7 +391,7 @@ Combined Model Visualization
 The Combined model merges De Luca's shape control with Konstantin's scaling,
 offering the most flexibility for custom recruitment patterns.
 
-.. GENERATED FROM PYTHON SOURCE LINES 220-233
+.. GENERATED FROM PYTHON SOURCE LINES 222-235
 
 .. code-block:: Python
 
@@ -422,7 +430,7 @@ offering the most flexibility for custom recruitment patterns.
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 0.594 seconds)
+   **Total running time of the script:** (0 minutes 2.533 seconds)
 
 
 .. _sphx_glr_download_auto_examples_00_simulate_recruitment_thresholds.py:
