@@ -663,8 +663,6 @@
 <span class="sd">    IEEE Transactions on Biomedical Engineering 51, 415–426. https://doi.org/10.1109/TBME.2003.820998</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-<div class="viewcode-block" id="SurfaceEMG.__init__">
-<a class="viewcode-back" href="../../../../../generated/myogen.simulator.SurfaceEMG.html#myogen.simulator.SurfaceEMG.__init__">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">muscle_model</span><span class="p">:</span> <span class="n">Muscle</span><span class="p">,</span>  <span class="c1"># Resolution parameters</span>
@@ -720,8 +718,7 @@
 
         <span class="c1"># Convert sampling frequency from Hz to kHz for internal calculations</span>
         <span class="c1"># (Historical convention in the simulation framework)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_sampling_frequency__kHz</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sampling_frequency__Hz</span> <span class="o">/</span> <span class="mf">1000.0</span></div>
-
+        <span class="bp">self</span><span class="o">.</span><span class="n">_sampling_frequency__kHz</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sampling_frequency__Hz</span> <span class="o">/</span> <span class="mf">1000.0</span>
 
 <div class="viewcode-block" id="SurfaceEMG.simulate_muaps">
 <a class="viewcode-back" href="../../../../../generated/myogen.simulator.SurfaceEMG.html#myogen.simulator.SurfaceEMG.simulate_muaps">[docs]</a>

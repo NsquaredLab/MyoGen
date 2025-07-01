@@ -1,6 +1,42 @@
-﻿myogen.utils.types.MUAP\_SHAPE\_\_TENSOR
-========================================
+﻿MUAP\_SHAPE\_\_TENSOR
+=====================
 
 .. currentmodule:: myogen.utils.types
 
-.. autodata:: MUAP_SHAPE__TENSOR
+.. py:data:: MUAP_SHAPE__TENSOR
+
+   
+      **Alias of:** ``Annotated[npt.NDArray[np.floating], Is[lambda x: x.ndim == 5]]``
+   
+
+   .. rubric:: Type Definition
+
+   This type alias is defined using beartype validators::
+
+       from typing import Annotated
+       import numpy.typing as npt
+       from beartype.vale import Is
+       
+       MUAP_SHAPE__TENSOR = Annotated[
+           npt.NDArray[np.floating],  # or np.bool_ for boolean arrays
+           Is[lambda x: x.ndim == N], # where N is the required dimensions
+       ]
+
+   .. rubric:: Runtime Type Checking
+
+   Use with beartype for automatic validation::
+
+       from myogen.utils.types import MUAP_SHAPE__TENSOR
+       from beartype import beartype
+       
+       @beartype
+       def process_muap_data(data: MUAP_SHAPE__TENSOR) -> MUAP_SHAPE__TENSOR:
+           """Process data with automatic shape validation."""
+           # beartype automatically validates array dimensions
+           return data
+
+   .. tip::
+      🐻 **Beartype Integration**: This type uses `beartype <https://github.com/beartype/beartype>`_ validators to ensure arrays have the correct number of dimensions at runtime.
+
+   .. note::
+      📐 **Array Validation**: The `Is[lambda x: x.ndim == N]` validator automatically checks that your NumPy arrays have the expected shape for MyoGen operations. 

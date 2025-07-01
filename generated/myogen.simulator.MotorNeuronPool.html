@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>myogen.simulator.MotorNeuronPool &#8212; MyoGen 0.1.0 Documentation</title>
+    <title>MotorNeuronPool &#8212; MyoGen 0.1.0 Documentation</title>
   
   
   
@@ -49,8 +49,8 @@
     <script>DOCUMENTATION_OPTIONS.pagename = 'generated/myogen.simulator.MotorNeuronPool';</script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="myogen.simulator.Muscle" href="myogen.simulator.Muscle.html" />
-    <link rel="prev" title="myogen.simulator.generate_mu_recruitment_thresholds" href="myogen.simulator.generate_mu_recruitment_thresholds.html" />
+    <link rel="next" title="Muscle" href="myogen.simulator.Muscle.html" />
+    <link rel="prev" title="generate_mu_recruitment_thresholds" href="myogen.simulator.generate_mu_recruitment_thresholds.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="0.1.0" />
@@ -310,36 +310,36 @@
   <div class="bd-toc-item navbar-nav"><p aria-level="2" class="caption" role="heading"><span class="caption-text">API Modules</span></p>
 <ul class="current nav bd-sidenav">
 <li class="toctree-l1 current active has-children"><a class="reference internal" href="../api/simulator_api.html">Simulator Module</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
-<li class="toctree-l2"><a class="reference internal" href="myogen.simulator.generate_mu_recruitment_thresholds.html">myogen.simulator.generate_mu_recruitment_thresholds</a></li>
-<li class="toctree-l2 current active"><a class="current reference internal" href="#">myogen.simulator.MotorNeuronPool</a></li>
-<li class="toctree-l2"><a class="reference internal" href="myogen.simulator.Muscle.html">myogen.simulator.Muscle</a></li>
-<li class="toctree-l2"><a class="reference internal" href="myogen.simulator.SurfaceEMG.html">myogen.simulator.SurfaceEMG</a></li>
+<li class="toctree-l2"><a class="reference internal" href="myogen.simulator.generate_mu_recruitment_thresholds.html">generate_mu_recruitment_thresholds</a></li>
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">MotorNeuronPool</a></li>
+<li class="toctree-l2"><a class="reference internal" href="myogen.simulator.Muscle.html">Muscle</a></li>
+<li class="toctree-l2"><a class="reference internal" href="myogen.simulator.SurfaceEMG.html">SurfaceEMG</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../api/utils_api.html">Utils Module</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l2"><a class="reference internal" href="myogen.utils.setup_myogen.html">myogen.utils.setup_myogen</a></li>
-<li class="toctree-l2"><a class="reference internal" href="myogen.utils.load_nmodl_files.html">myogen.utils.load_nmodl_files</a></li>
+<li class="toctree-l2"><a class="reference internal" href="myogen.utils.setup_myogen.html">setup_myogen</a></li>
+<li class="toctree-l2"><a class="reference internal" href="myogen.utils.load_nmodl_files.html">load_nmodl_files</a></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="../api/currents_api.html">Current Generation</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l3"><a class="reference internal" href="myogen.utils.currents.create_ramp_current.html">myogen.utils.currents.create_ramp_current</a></li>
-<li class="toctree-l3"><a class="reference internal" href="myogen.utils.currents.create_step_current.html">myogen.utils.currents.create_step_current</a></li>
-<li class="toctree-l3"><a class="reference internal" href="myogen.utils.currents.create_sinusoidal_current.html">myogen.utils.currents.create_sinusoidal_current</a></li>
-<li class="toctree-l3"><a class="reference internal" href="myogen.utils.currents.create_sawtooth_current.html">myogen.utils.currents.create_sawtooth_current</a></li>
-<li class="toctree-l3"><a class="reference internal" href="myogen.utils.currents.create_trapezoid_current.html">myogen.utils.currents.create_trapezoid_current</a></li>
+<li class="toctree-l3"><a class="reference internal" href="myogen.utils.currents.create_ramp_current.html">create_ramp_current</a></li>
+<li class="toctree-l3"><a class="reference internal" href="myogen.utils.currents.create_step_current.html">create_step_current</a></li>
+<li class="toctree-l3"><a class="reference internal" href="myogen.utils.currents.create_sinusoidal_current.html">create_sinusoidal_current</a></li>
+<li class="toctree-l3"><a class="reference internal" href="myogen.utils.currents.create_sawtooth_current.html">create_sawtooth_current</a></li>
+<li class="toctree-l3"><a class="reference internal" href="myogen.utils.currents.create_trapezoid_current.html">create_trapezoid_current</a></li>
 </ul>
 </details></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="../api/plotting_api.html">Plotting &amp; Visualization</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l3"><a class="reference internal" href="myogen.utils.plotting.plot_recruitment_thresholds.html">myogen.utils.plotting.plot_recruitment_thresholds</a></li>
-<li class="toctree-l3"><a class="reference internal" href="myogen.utils.plotting.plot_spike_trains.html">myogen.utils.plotting.plot_spike_trains</a></li>
-<li class="toctree-l3"><a class="reference internal" href="myogen.utils.plotting.plot_surface_emg.html">myogen.utils.plotting.plot_surface_emg</a></li>
-<li class="toctree-l3"><a class="reference internal" href="myogen.utils.plotting.plot_muap_grid.html">myogen.utils.plotting.plot_muap_grid</a></li>
-<li class="toctree-l3"><a class="reference internal" href="myogen.utils.plotting.plot_input_current__matrix.html">myogen.utils.plotting.plot_input_current__matrix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="myogen.utils.plotting.plot_recruitment_thresholds.html">plot_recruitment_thresholds</a></li>
+<li class="toctree-l3"><a class="reference internal" href="myogen.utils.plotting.plot_spike_trains.html">plot_spike_trains</a></li>
+<li class="toctree-l3"><a class="reference internal" href="myogen.utils.plotting.plot_surface_emg.html">plot_surface_emg</a></li>
+<li class="toctree-l3"><a class="reference internal" href="myogen.utils.plotting.plot_muap_grid.html">plot_muap_grid</a></li>
+<li class="toctree-l3"><a class="reference internal" href="myogen.utils.plotting.plot_input_current__matrix.html">plot_input_current__matrix</a></li>
 </ul>
 </details></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="../api/types_api.html">Type Definitions</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l3"><a class="reference internal" href="myogen.utils.types.INPUT_CURRENT__MATRIX.html">myogen.utils.types.INPUT_CURRENT__MATRIX</a></li>
-<li class="toctree-l3"><a class="reference internal" href="myogen.utils.types.SPIKE_TRAIN__MATRIX.html">myogen.utils.types.SPIKE_TRAIN__MATRIX</a></li>
-<li class="toctree-l3"><a class="reference internal" href="myogen.utils.types.MUAP_SHAPE__TENSOR.html">myogen.utils.types.MUAP_SHAPE__TENSOR</a></li>
-<li class="toctree-l3"><a class="reference internal" href="myogen.utils.types.SURFACE_EMG__TENSOR.html">myogen.utils.types.SURFACE_EMG__TENSOR</a></li>
+<li class="toctree-l3"><a class="reference internal" href="myogen.utils.types.INPUT_CURRENT__MATRIX.html">INPUT_CURRENT__MATRIX</a></li>
+<li class="toctree-l3"><a class="reference internal" href="myogen.utils.types.SPIKE_TRAIN__MATRIX.html">SPIKE_TRAIN__MATRIX</a></li>
+<li class="toctree-l3"><a class="reference internal" href="myogen.utils.types.MUAP_SHAPE__TENSOR.html">MUAP_SHAPE__TENSOR</a></li>
+<li class="toctree-l3"><a class="reference internal" href="myogen.utils.types.SURFACE_EMG__TENSOR.html">SURFACE_EMG__TENSOR</a></li>
 </ul>
 </details></li>
 </ul>
@@ -390,7 +390,7 @@
     
     <li class="breadcrumb-item"><a href="../api/simulator_api.html" class="nav-link">Simulator Module</a></li>
     
-    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">myogen.simulator.MotorNeuronPool</span></li>
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">MotorNeuronPool</span></li>
   </ul>
 </nav>
 </div>
@@ -407,8 +407,8 @@
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section id="myogen-simulator-motorneuronpool">
-<h1>myogen.simulator.MotorNeuronPool<a class="headerlink" href="#myogen-simulator-motorneuronpool" title="Link to this heading">#</a></h1>
+  <section id="motorneuronpool">
+<h1>MotorNeuronPool<a class="headerlink" href="#motorneuronpool" title="Link to this heading">#</a></h1>
 <dl class="py class">
 <dt class="sig sig-object py" id="myogen.simulator.MotorNeuronPool">
 <em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">myogen.simulator.</span></span><span class="sig-name descname"><span class="pre">MotorNeuronPool</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">recruitment_thresholds</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">diameter_soma_min</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">77.5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">diameter_soma_max</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">82.5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y_min</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">18.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y_max</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">36.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">diameter_dend_min</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">41.5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">diameter_dend_max</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">62.5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x_min</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-5500</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x_max</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-6789</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vt_min</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">12.35</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vt_max</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">20.9</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kf_cond_min</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">4</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kf_cond_max</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">CV</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.01</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/myogen/simulator/core/spike_train/spike_train.html#MotorNeuronPool"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#myogen.simulator.MotorNeuronPool" title="Link to this definition">#</a></dt>
@@ -440,38 +440,13 @@
 <dd class="field-odd"><p><a class="reference internal" href="#myogen.simulator.MotorNeuronPool" title="myogen.simulator.MotorNeuronPool"><code class="xref py py-class docutils literal notranslate"><span class="pre">MotorNeuronPool</span></code></a></p>
 </dd>
 </dl>
-<dl class="py method">
-<dt class="sig sig-object py" id="myogen.simulator.MotorNeuronPool.__init__">
-<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">recruitment_thresholds</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">diameter_soma_min</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">77.5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">diameter_soma_max</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">82.5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y_min</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">18.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y_max</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">36.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">diameter_dend_min</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">41.5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">diameter_dend_max</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">62.5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x_min</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-5500</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x_max</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-6789</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vt_min</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">12.35</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vt_max</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">20.9</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kf_cond_min</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">4</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kf_cond_max</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">CV</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.01</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/myogen/simulator/core/spike_train/spike_train.html#MotorNeuronPool.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#myogen.simulator.MotorNeuronPool.__init__" title="Link to this definition">#</a></dt>
-<dd><dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>recruitment_thresholds</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.3)"><em>ndarray</em></a>)</p></li>
-<li><p><strong>diameter_soma_min</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a>)</p></li>
-<li><p><strong>diameter_soma_max</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a>)</p></li>
-<li><p><strong>y_min</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a>)</p></li>
-<li><p><strong>y_max</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a>)</p></li>
-<li><p><strong>diameter_dend_min</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a>)</p></li>
-<li><p><strong>diameter_dend_max</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a>)</p></li>
-<li><p><strong>x_min</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a>)</p></li>
-<li><p><strong>x_max</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a>)</p></li>
-<li><p><strong>vt_min</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a>)</p></li>
-<li><p><strong>vt_max</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a>)</p></li>
-<li><p><strong>kf_cond_min</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a>)</p></li>
-<li><p><strong>kf_cond_max</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a>)</p></li>
-<li><p><strong>CV</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a>)</p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
 <p class="rubric">Methods</p>
 <div class="pst-scrollable-table-container"><table class="autosummary longtable table">
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#myogen.simulator.MotorNeuronPool.__init__" title="myogen.simulator.MotorNeuronPool.__init__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__init__</span></code></a>(recruitment_thresholds[, ...])</p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">__init__</span></code></p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#myogen.simulator.MotorNeuronPool.generate_spike_trains" title="myogen.simulator.MotorNeuronPool.generate_spike_trains"><code class="xref py py-obj docutils literal notranslate"><span class="pre">generate_spike_trains</span></code></a>(input_current__matrix)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#myogen.simulator.MotorNeuronPool.generate_spike_trains" title="myogen.simulator.MotorNeuronPool.generate_spike_trains"><code class="xref py py-obj docutils literal notranslate"><span class="pre">generate_spike_trains</span></code></a></p></td>
 <td><p>Generate the spike trains for as many neuron pools as input currents there are</p></td>
 </tr>
 </tbody>
@@ -551,7 +526,6 @@ Each element represents whether the neuron spiked at that time point</p></li>
   <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
     <ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#myogen.simulator.MotorNeuronPool"><code class="docutils literal notranslate"><span class="pre">MotorNeuronPool</span></code></a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#myogen.simulator.MotorNeuronPool.__init__"><code class="docutils literal notranslate"><span class="pre">MotorNeuronPool.__init__()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#myogen.simulator.MotorNeuronPool.generate_spike_trains"><code class="docutils literal notranslate"><span class="pre">MotorNeuronPool.generate_spike_trains()</span></code></a></li>
 </ul>
 </li>
