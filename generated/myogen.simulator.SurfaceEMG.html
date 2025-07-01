@@ -1,0 +1,1120 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>myogen.simulator.SurfaceEMG &#8212; MyoGen 0.1.0 Documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery.css?v=d2d258e8" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-binder.css?v=f4aeca0c" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+    <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=4797f867" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="../_static/documentation_options.js?v=01f34227"></script>
+    <script src="../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'generated/myogen.simulator.SurfaceEMG';</script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Utils Module" href="../api/utils_api.html" />
+    <link rel="prev" title="myogen.simulator.Muscle" href="myogen.simulator.Muscle.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="0.1.0" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class=" navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../_static/myogen_logo.png" class="logo__image only-light" alt="MyoGen 0.1.0 Documentation - Home"/>
+    <img src="../_static/myogen_logo.png" class="logo__image only-dark pst-js-only" alt="MyoGen 0.1.0 Documentation - Home"/>
+  
+  
+</a></div>
+    
+      <div class="navbar-item">
+<div class="nav-item">
+  <div class="version-switcher__container dropdown">
+      <button id="version-switcher-button" type="button" class="version-switcher__button btn btn-sm navbar-btn" aria-haspopup="true" aria-expanded="false">
+          Version 0.1.0
+      </button>
+      
+      
+      
+  </div>
+</div> </div>
+    
+      <div class="navbar-item"><div class="nav-item">
+   <span>
+      made at the <a href="https://www.nsquared.tf.fau.de/" target="_blank">N² Lab</a>
+   </span>
+</div> </div>
+    
+  </div>
+  
+  <div class=" navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../api/index.html">
+    API Documentation
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../auto_examples/index.html">
+    Examples
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/NSquaredLab/MyoGen" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+    </div>
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../api/index.html">
+    API Documentation
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../auto_examples/index.html">
+    Examples
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/NSquaredLab/MyoGen" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+<nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"><p aria-level="2" class="caption" role="heading"><span class="caption-text">API Modules</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="../api/simulator_api.html">Simulator Module</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="myogen.simulator.generate_mu_recruitment_thresholds.html">myogen.simulator.generate_mu_recruitment_thresholds</a></li>
+<li class="toctree-l2"><a class="reference internal" href="myogen.simulator.MotorNeuronPool.html">myogen.simulator.MotorNeuronPool</a></li>
+<li class="toctree-l2"><a class="reference internal" href="myogen.simulator.Muscle.html">myogen.simulator.Muscle</a></li>
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">myogen.simulator.SurfaceEMG</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../api/utils_api.html">Utils Module</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="myogen.utils.setup_myogen.html">myogen.utils.setup_myogen</a></li>
+<li class="toctree-l2"><a class="reference internal" href="myogen.utils.load_nmodl_files.html">myogen.utils.load_nmodl_files</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../api/currents_api.html">Current Generation</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="myogen.utils.currents.create_ramp_current.html">myogen.utils.currents.create_ramp_current</a></li>
+<li class="toctree-l3"><a class="reference internal" href="myogen.utils.currents.create_step_current.html">myogen.utils.currents.create_step_current</a></li>
+<li class="toctree-l3"><a class="reference internal" href="myogen.utils.currents.create_sinusoidal_current.html">myogen.utils.currents.create_sinusoidal_current</a></li>
+<li class="toctree-l3"><a class="reference internal" href="myogen.utils.currents.create_sawtooth_current.html">myogen.utils.currents.create_sawtooth_current</a></li>
+<li class="toctree-l3"><a class="reference internal" href="myogen.utils.currents.create_trapezoid_current.html">myogen.utils.currents.create_trapezoid_current</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../api/plotting_api.html">Plotting &amp; Visualization</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="myogen.utils.plotting.plot_recruitment_thresholds.html">myogen.utils.plotting.plot_recruitment_thresholds</a></li>
+<li class="toctree-l3"><a class="reference internal" href="myogen.utils.plotting.plot_spike_trains.html">myogen.utils.plotting.plot_spike_trains</a></li>
+<li class="toctree-l3"><a class="reference internal" href="myogen.utils.plotting.plot_surface_emg.html">myogen.utils.plotting.plot_surface_emg</a></li>
+<li class="toctree-l3"><a class="reference internal" href="myogen.utils.plotting.plot_muap_grid.html">myogen.utils.plotting.plot_muap_grid</a></li>
+<li class="toctree-l3"><a class="reference internal" href="myogen.utils.plotting.plot_input_current__matrix.html">myogen.utils.plotting.plot_input_current__matrix</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../api/types_api.html">Type Definitions</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="myogen.utils.types.INPUT_CURRENT__MATRIX.html">myogen.utils.types.INPUT_CURRENT__MATRIX</a></li>
+<li class="toctree-l3"><a class="reference internal" href="myogen.utils.types.SPIKE_TRAIN__MATRIX.html">myogen.utils.types.SPIKE_TRAIN__MATRIX</a></li>
+<li class="toctree-l3"><a class="reference internal" href="myogen.utils.types.MUAP_SHAPE__TENSOR.html">myogen.utils.types.MUAP_SHAPE__TENSOR</a></li>
+<li class="toctree-l3"><a class="reference internal" href="myogen.utils.types.SURFACE_EMG__TENSOR.html">myogen.utils.types.SURFACE_EMG__TENSOR</a></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+</ul>
+</div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../api/index.html" class="nav-link">API Documentation</a></li>
+    
+    
+    <li class="breadcrumb-item"><a href="../api/simulator_api.html" class="nav-link">Simulator Module</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">myogen.simulator.SurfaceEMG</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="myogen-simulator-surfaceemg">
+<h1>myogen.simulator.SurfaceEMG<a class="headerlink" href="#myogen-simulator-surfaceemg" title="Link to this heading">#</a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="myogen.simulator.SurfaceEMG">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">myogen.simulator.</span></span><span class="sig-name descname"><span class="pre">SurfaceEMG</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">muscle_model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sampling_frequency__Hz</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2048.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mean_conduction_velocity__mm_s</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">4.1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sampling_points_in_t_and_z_domains</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">256</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sampling_points_in_theta_domain</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">180</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">MUs_to_simulate</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mean_fiber_length__mm</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">32</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">var_fiber_length__mm</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">radius_bone__mm</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fat_thickness__mm</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">skin_thickness__mm</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">muscle_conductivity_radial__S_m</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.09</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">muscle_conductivity_longitudinal__S_m</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.4</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fat_conductivity__S_m</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.041</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">skin_conductivity__S_m</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">electrode_grid_inclination_angle__deg</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">electrode_grid_dimensions__rows_cols</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(8,</span> <span class="pre">8)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">inter_electrode_distance__mm</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">4</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">electrode_radius__mm</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.75</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">electrode_grid_center_positions</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/myogen/simulator/core/emg/surface_emg.html#SurfaceEMG"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#myogen.simulator.SurfaceEMG" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>Surface Electromyography (sEMG) Simulation.</p>
+<p>This class provides a biophysical simulation framework for generating
+surface electromyography signals from the muscle. It implements a
+multi-layered cylindrical volume conductor model <a class="footnote-reference brackets" href="#id2" id="id1" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a> that accounts for
+anatomical accuracy, physiological variability, and measurement noise
+characteristics typical of clinical and research EMG recordings.</p>
+<p>The simulation is built on established biophysical principles and validated
+anatomical data, making it suitable for algorithm development, method validation,
+and educational purposes in EMG signal processing and motor control research.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>muscle_model</strong> (<a class="reference internal" href="myogen.simulator.Muscle.html#myogen.simulator.Muscle" title="myogen.simulator.Muscle"><code class="xref py py-class docutils literal notranslate"><span class="pre">Muscle</span></code></a>) – Pre-computed muscle model containing motor unit territories, fiber distributions,
+and recruitment patterns. Must be created using myogen.simulator.Muscle class.
+The muscle model defines the spatial organization of motor units and their
+associated muscle fibers within the FDI muscle volume.</p></li>
+<li><p><strong>sampling_frequency__Hz</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a>, <em>default</em> <code class="docutils literal notranslate"><span class="pre">2048.0</span></code>) – <p>Temporal sampling frequency for MUAP and EMG signals in Hertz.
+Higher frequencies provide better temporal resolution but increase computational
+cost and memory usage.</p>
+<dl class="simple">
+<dt>Typical ranges:</dt><dd><ul>
+<li><p>Clinical EMG: 1024-2048 Hz.</p></li>
+<li><p>Research applications: 2048-4096 Hz.</p></li>
+<li><p>High-resolution studies: &gt;4096 Hz.</p></li>
+</ul>
+</dd>
+</dl>
+</p></li>
+<li><p><strong>mean_conduction_velocity__mm_s</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a>, <em>default</em> <code class="docutils literal notranslate"><span class="pre">4.1</span></code>) – Mean conduction velocity of action potentials along muscle fibers in mm/s.
+Based on experimental measurements from Botelho et al. (2019).
+This parameter significantly affects MUAP duration and propagation patterns.
+Typical range for FDI muscle: 3.5-4.5 mm/s.</p></li>
+<li><p><strong>sampling_points_in_t_and_z_domains</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>, <em>default</em> <code class="docutils literal notranslate"><span class="pre">256</span></code>) – <p>Spatial and temporal discretization resolution for numerical integration.
+Controls the accuracy of the volume conductor calculations but significantly
+impacts computational cost (scales quadratically). Higher values provide
+better numerical accuracy at the expense of simulation time.</p>
+<ul>
+<li><p>Fast simulations: 128-256 points.</p></li>
+<li><p>Standard accuracy: 256-512 points.</p></li>
+<li><p>High accuracy: 512-1024 points.</p></li>
+</ul>
+</p></li>
+<li><p><strong>sampling_points_in_theta_domain</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>, <em>default</em> <code class="docutils literal notranslate"><span class="pre">180</span></code>) – Angular discretization for cylindrical coordinate system in degrees.
+180 points provides 2° angular resolution, which is sufficient for most
+surface EMG applications. Higher values provide better spatial resolution
+for circumferential electrode placement studies.</p></li>
+<li><p><strong>MUs_to_simulate</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>] or <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>, <em>default</em> <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>) – Indices of specific motor units to simulate. If None, simulates all motor
+units present in the muscle model. For computational efficiency, consider
+simulating subsets for initial analysis or algorithm development.
+Motor unit indices correspond to recruitment order (0 = first recruited).</p></li>
+<li><p><strong>mean_fiber_length__mm</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a>, <em>default</em> <code class="docutils literal notranslate"><span class="pre">32</span></code>) – Mean muscle fiber length in millimeters based on anatomical measurements
+(Jacobson et al., 1992). This parameter affects MUAP duration and amplitude
+characteristics. Longer fibers produce longer-duration MUAPs with potentially
+higher amplitudes. Typical range for FDI: 28-36 mm.</p></li>
+<li><p><strong>var_fiber_length__mm</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a>, <em>default</em> <code class="docutils literal notranslate"><span class="pre">3</span></code>) – Standard deviation of fiber length distribution in millimeters.
+Introduces realistic biological variability in MUAP shapes within motor units.
+Higher values increase MUAP shape variability but maintain physiological realism.
+Typical range: 2-5 mm.</p></li>
+<li><p><strong>radius_bone__mm</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a>, <em>default</em> <code class="docutils literal notranslate"><span class="pre">0</span></code>) – Inner bone radius for cylindrical volume conductor model in millimeters.
+For surface EMG applications, bone effects are typically minimal, so default
+value of 0 is appropriate. Non-zero values may be used for intramuscular EMG
+or detailed anatomical studies.</p></li>
+<li><p><strong>fat_thickness__mm</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a>, <em>default</em> <code class="docutils literal notranslate"><span class="pre">1</span></code>) – Subcutaneous fat layer thickness in millimeters. This parameter significantly
+affects MUAP amplitude and spatial distribution due to fat’s low electrical
+conductivity acting as an insulator. Based on ultrasound measurements
+(Störchle et al., 2018). Typical range: 0.5-3 mm for hand muscles.</p></li>
+<li><p><strong>skin_thickness__mm</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a>, <em>default</em> <code class="docutils literal notranslate"><span class="pre">1</span></code>) – Skin layer thickness in millimeters. Generally less critical than fat thickness
+but affects high-frequency components of MUAPs and electrode-tissue coupling.
+Based on histological measurements (Brodar, 1960). Typical range: 0.5-2 mm.</p></li>
+<li><p><strong>muscle_conductivity_radial__S_m</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a>, <em>default</em> <code class="docutils literal notranslate"><span class="pre">0.09</span></code>) – Muscle tissue electrical conductivity in radial direction (perpendicular to fibers)
+in Siemens per meter. Muscle tissue exhibits anisotropic conductivity due to
+fiber orientation, with lower conductivity perpendicular to fibers.
+Value based on Botelho et al. (2019).</p></li>
+<li><p><strong>muscle_conductivity_longitudinal__S_m</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a>, <em>default</em> <code class="docutils literal notranslate"><span class="pre">0.4</span></code>) – Muscle tissue electrical conductivity in longitudinal direction (parallel to fibers)
+in Siemens per meter. Approximately 4-5x higher than radial conductivity due to
+fiber structure and orientation. This anisotropy significantly affects MUAP
+spatial patterns and propagation characteristics.</p></li>
+<li><p><strong>fat_conductivity__S_m</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a>, <em>default</em> <code class="docutils literal notranslate"><span class="pre">0.041</span></code>) – Subcutaneous fat tissue electrical conductivity in Siemens per meter.
+Low conductivity makes fat act as an electrical insulator, spatially smoothing
+MUAP patterns and reducing amplitudes. Based on experimental measurements
+from tissue impedance studies.</p></li>
+<li><p><strong>skin_conductivity__S_m</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a>, <em>default</em> <code class="docutils literal notranslate"><span class="pre">1</span></code>) – Skin tissue electrical conductivity in Siemens per meter.
+Relatively high conductivity provides good electrical coupling between
+underlying tissues and surface electrodes. Value based on Roeleveld et al. (1997).</p></li>
+<li><p><strong>electrode_grid_inclination_angle__deg</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a>, <em>default</em> <code class="docutils literal notranslate"><span class="pre">0</span></code>) – <dl class="simple">
+<dt>Rotation angle of electrode grid relative to muscle fiber direction in degrees.</dt><dd><ul>
+<li><p>0° = electrodes aligned parallel to muscle fibers</p></li>
+<li><p>90° = electrodes aligned perpendicular to muscle fibers</p></li>
+</ul>
+</dd>
+</dl>
+<p>This parameter affects MUAP propagation patterns and is important for
+studies of fiber direction estimation and conduction velocity analysis.</p>
+</p></li>
+<li><p><strong>electrode_grid_dimensions__rows_cols</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>], <em>default</em> <code class="xref py py-class docutils literal notranslate"><span class="pre">(8</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">8)</span></code>) – Number of electrode rows and columns in the recording grid.
+Total number of electrodes = rows × columns.
+Higher densities provide better spatial resolution but increase data volume.</p></li>
+<li><p><strong>inter_electrode_distance__mm</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a>, <em>default</em> <code class="docutils literal notranslate"><span class="pre">4</span></code>) – Distance between adjacent electrodes in millimeters.
+Affects spatial resolution and signal crosstalk between channels.
+Smaller distances provide higher spatial resolution but may increase
+correlated noise between adjacent channels.</p></li>
+<li><p><strong>electrode_radius__mm</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a>, <em>default</em> <code class="docutils literal notranslate"><span class="pre">0.75</span></code>) – Physical radius of individual circular electrodes in millimeters.
+Affects spatial averaging (larger electrodes average over more tissue volume)
+and signal-to-noise ratio (larger electrodes typically have lower impedance).
+Standard clinical surface electrodes: 0.5-2 mm radius.</p></li>
+<li><p><strong>electrode_grid_center_positions</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a> | <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a> | <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>]] or <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>, <em>default</em> <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>) – <p>List of electrode grid center positions in cylindrical coordinates.</p>
+<dl class="simple">
+<dt>Each position is specified as (z_position_mm, angle_radians) where:</dt><dd><ul>
+<li><p>z_position_mm: position along muscle fiber direction (+ = distal, - = proximal)</p></li>
+<li><p>angle_radians: circumferential position around muscle (0 = anterior)</p></li>
+</ul>
+</dd>
+</dl>
+<p>If None, uses single position at anatomical muscle belly center computed
+from the center of mass of all motor unit territories.</p>
+<p>Multiple positions enable spatial analysis of EMG characteristics across
+different muscle regions.</p>
+<dl class="simple">
+<dt>Example positions:</dt><dd><ul>
+<li><p>[(0, 0)]: Single center position</p></li>
+<li><p>[(0, 0), (-10, 0), (10, 0)]: Proximal-center-distal sequence</p></li>
+<li><p>[(0, 0), (0, π/2), (0, π)]: Circumferential positions</p></li>
+</ul>
+</dd>
+</dl>
+</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="myogen.simulator.SurfaceEMG.resulting_muaps_array">
+<span class="sig-name descname"><span class="pre">resulting_muaps_array</span></span><a class="headerlink" href="#myogen.simulator.SurfaceEMG.resulting_muaps_array" title="Link to this definition">#</a></dt>
+<dd><p>Generated MUAP templates after calling simulate_muaps().
+Shape: (n_positions, n_motor_units, n_electrode_rows, n_electrode_cols, n_time_samples)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="myogen.utils.types.MUAP_SHAPE__TENSOR.html#myogen.utils.types.MUAP_SHAPE__TENSOR" title="myogen.utils.types.MUAP_SHAPE__TENSOR"><code class="xref py py-data docutils literal notranslate"><span class="pre">MUAP_SHAPE__TENSOR</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="myogen.simulator.SurfaceEMG.surface_emg__tensor">
+<span class="sig-name descname"><span class="pre">surface_emg__tensor</span></span><a class="headerlink" href="#myogen.simulator.SurfaceEMG.surface_emg__tensor" title="Link to this definition">#</a></dt>
+<dd><p>Generated surface EMG signals after calling simulate_surface_emg().
+Shape: (n_positions, n_pools, n_electrode_rows, n_electrode_cols, n_time_samples)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="myogen.utils.types.SURFACE_EMG__TENSOR.html#myogen.utils.types.SURFACE_EMG__TENSOR" title="myogen.utils.types.SURFACE_EMG__TENSOR"><code class="xref py py-data docutils literal notranslate"><span class="pre">SURFACE_EMG__TENSOR</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="myogen.simulator.SurfaceEMG.noisy_surface_emg">
+<span class="sig-name descname"><span class="pre">noisy_surface_emg</span></span><a class="headerlink" href="#myogen.simulator.SurfaceEMG.noisy_surface_emg" title="Link to this definition">#</a></dt>
+<dd><p>Surface EMG with added noise after calling add_noise().
+Same shape as surface_emg__tensor.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="myogen.utils.types.SURFACE_EMG__TENSOR.html#myogen.utils.types.SURFACE_EMG__TENSOR" title="myogen.utils.types.SURFACE_EMG__TENSOR"><code class="xref py py-data docutils literal notranslate"><span class="pre">SURFACE_EMG__TENSOR</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="field-list simple">
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#TypeError" title="(in Python v3.13)"><strong>TypeError</strong></a> – If any input parameter has incorrect type (enforced by beartype decorator).</p></li>
+<li><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.13)"><strong>ValueError</strong></a> – If muscle_model is empty or if electrode parameters are physically unrealistic
+    (e.g., negative dimensions, impossible conductivity values).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Parameters<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>muscle_model</strong> (<a class="reference internal" href="myogen.simulator.Muscle.html#myogen.simulator.Muscle" title="myogen.simulator.core.muscle.muscle.Muscle"><em>Muscle</em></a>)</p></li>
+<li><p><strong>sampling_frequency__Hz</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a>)</p></li>
+<li><p><strong>mean_conduction_velocity__mm_s</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a>)</p></li>
+<li><p><strong>sampling_points_in_t_and_z_domains</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a>)</p></li>
+<li><p><strong>sampling_points_in_theta_domain</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a>)</p></li>
+<li><p><strong>MUs_to_simulate</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><em>list</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a><em>] </em><em>| </em><em>None</em>)</p></li>
+<li><p><strong>mean_fiber_length__mm</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a>)</p></li>
+<li><p><strong>var_fiber_length__mm</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a>)</p></li>
+<li><p><strong>radius_bone__mm</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a>)</p></li>
+<li><p><strong>fat_thickness__mm</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a>)</p></li>
+<li><p><strong>skin_thickness__mm</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a>)</p></li>
+<li><p><strong>muscle_conductivity_radial__S_m</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a>)</p></li>
+<li><p><strong>muscle_conductivity_longitudinal__S_m</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a>)</p></li>
+<li><p><strong>fat_conductivity__S_m</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a>)</p></li>
+<li><p><strong>skin_conductivity__S_m</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a>)</p></li>
+<li><p><strong>electrode_grid_inclination_angle__deg</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a>)</p></li>
+<li><p><strong>electrode_grid_dimensions__rows_cols</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.13)"><em>tuple</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a><em>]</em>)</p></li>
+<li><p><strong>inter_electrode_distance__mm</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a>)</p></li>
+<li><p><strong>electrode_radius__mm</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a>)</p></li>
+<li><p><strong>electrode_grid_center_positions</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><em>list</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.13)"><em>tuple</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a><em> | </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a><em> | </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a><em>] </em><em>| </em><em>None</em><em>] </em><em>| </em><em>None</em>)</p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<p><strong>Standard Configuration:</strong></p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">muscle</span> <span class="o">=</span> <span class="n">myogen</span><span class="o">.</span><span class="n">simulator</span><span class="o">.</span><span class="n">Muscle</span><span class="p">(</span><span class="o">...</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">surface_emg</span> <span class="o">=</span> <span class="n">SurfaceEMG</span><span class="p">(</span>
+<span class="gp">... </span>    <span class="n">muscle_model</span><span class="o">=</span><span class="n">muscle</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="n">sampling_frequency__Hz</span><span class="o">=</span><span class="mi">2048</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="n">electrode_grid_dimensions__rows_cols</span><span class="o">=</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">8</span><span class="p">),</span>
+<span class="gp">... </span>    <span class="n">MUs_to_simulate</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">))</span>  <span class="c1"># First 10 motor units</span>
+<span class="gp">... </span><span class="p">)</span>
+</pre></div>
+</div>
+<p><strong>High-Resolution Configuration:</strong></p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">surface_emg</span> <span class="o">=</span> <span class="n">SurfaceEMG</span><span class="p">(</span>
+<span class="gp">... </span>    <span class="n">muscle_model</span><span class="o">=</span><span class="n">muscle</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="n">sampling_frequency__Hz</span><span class="o">=</span><span class="mi">4096</span><span class="p">,</span>  <span class="c1"># Higher temporal resolution</span>
+<span class="gp">... </span>    <span class="n">sampling_points_in_t_and_z_domains</span><span class="o">=</span><span class="mi">512</span><span class="p">,</span>  <span class="c1"># Higher spatial resolution</span>
+<span class="gp">... </span>    <span class="n">electrode_grid_dimensions__rows_cols</span><span class="o">=</span><span class="p">(</span><span class="mi">16</span><span class="p">,</span> <span class="mi">8</span><span class="p">),</span>  <span class="c1"># More electrodes</span>
+<span class="gp">... </span>    <span class="n">inter_electrode_distance__mm</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>  <span class="c1"># Higher spatial sampling</span>
+<span class="gp">... </span><span class="p">)</span>
+</pre></div>
+</div>
+<p><strong>Multi-Position Spatial Analysis:</strong></p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">positions</span> <span class="o">=</span> <span class="p">[</span>
+<span class="gp">... </span>    <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>                    <span class="c1"># Center</span>
+<span class="gp">... </span>    <span class="p">(</span><span class="o">-</span><span class="mi">8</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">deg2rad</span><span class="p">(</span><span class="mi">0</span><span class="p">)),</span>      <span class="c1"># 8mm proximal</span>
+<span class="gp">... </span>    <span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">deg2rad</span><span class="p">(</span><span class="mi">0</span><span class="p">)),</span>       <span class="c1"># 8mm distal</span>
+<span class="gp">... </span>    <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">deg2rad</span><span class="p">(</span><span class="mi">90</span><span class="p">)),</span>      <span class="c1"># 90° circumferential</span>
+<span class="gp">... </span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">surface_emg</span> <span class="o">=</span> <span class="n">SurfaceEMG</span><span class="p">(</span>
+<span class="gp">... </span>    <span class="n">muscle_model</span><span class="o">=</span><span class="n">muscle</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="n">electrode_grid_center_positions</span><span class="o">=</span><span class="n">positions</span>
+<span class="gp">... </span><span class="p">)</span>
+</pre></div>
+</div>
+<p><strong>Thin Subcutaneous Layer Configuration:</strong></p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">surface_emg</span> <span class="o">=</span> <span class="n">SurfaceEMG</span><span class="p">(</span>
+<span class="gp">... </span>    <span class="n">muscle_model</span><span class="o">=</span><span class="n">muscle</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="n">fat_thickness__mm</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span>    <span class="c1"># Thin fat layer</span>
+<span class="gp">... </span>    <span class="n">skin_thickness__mm</span><span class="o">=</span><span class="mf">0.8</span><span class="p">,</span>   <span class="c1"># Thin skin layer</span>
+<span class="gp">... </span><span class="p">)</span>  <span class="c1"># Results in higher amplitude, more spatially localized MUAPs</span>
+</pre></div>
+</div>
+<p class="rubric">Notes</p>
+<dl>
+<dt>The simulation framework is based on:</dt><dd><ul class="simple">
+<li><p><strong>Volume Conductor Theory</strong>: Multi-layered cylindrical model representing muscle, fat,</p></li>
+</ul>
+<p>and skin tissues with anisotropic conductivity properties.</p>
+<ul class="simple">
+<li><p><strong>Motor Unit Physiology</strong>: Realistic motor unit territories, fiber distributions, and</p></li>
+</ul>
+<p>action potential propagation based on anatomical and physiological measurements.</p>
+<ul class="simple">
+<li><p><strong>Electrode Array Modeling</strong>: High-density surface electrode grids with configurable</p></li>
+</ul>
+<p>spatial arrangements and electrode properties.</p>
+<ul class="simple">
+<li><p><strong>Signal Processing Pipeline</strong>: Complete workflow from single-fiber action potentials</p></li>
+</ul>
+<p>to composite surface EMG signals with noise characteristics.</p>
+</dd>
+<dt>Key capabilities:</dt><dd><ul class="simple">
+<li><p><strong>Multi-Position Electrode Arrays</strong>: Simulate EMG at multiple spatial locations</p></li>
+<li><p><strong>Motor Unit Action Potentials (MUAPs)</strong>: Generate individual MUAP templates</p></li>
+<li><p><strong>Composite Surface EMG</strong>: Convolve MUAPs with spike trains for realistic EMG</p></li>
+<li><p><strong>Noise Modeling</strong>: Add measurement noise with specified signal-to-noise ratios</p></li>
+<li><p><strong>Computational Optimization</strong>: Efficient matrix reuse for large-scale simulations</p></li>
+<li><p><strong>Visualization Support</strong>: Built-in plotting capabilities for model validation</p></li>
+</ul>
+</dd>
+<dt>Typical workflow:</dt><dd><ol class="arabic simple">
+<li><p>Create muscle model using <cite>myogen.simulator.Muscle</cite></p></li>
+<li><p>Initialize <cite>SurfaceEMG</cite> with desired parameters</p></li>
+<li><p>Generate MUAP templates using <cite>simulate_muaps()</cite></p></li>
+<li><p>Create motor neuron pool using <cite>myogen.simulator.MotorNeuronPool</cite></p></li>
+<li><p>Generate surface EMG using <cite>simulate_surface_emg()</cite></p></li>
+<li><p>Optionally add noise using <cite>add_noise()</cite></p></li>
+</ol>
+</dd>
+<dt>Performance considerations:</dt><dd><ul class="simple">
+<li><p>Memory usage scales as: n_positions × n_motor_units × grid_area × time_samples</p></li>
+<li><p>Computational cost increases with: fiber count, electrode density, temporal resolution</p></li>
+<li><p>For large simulations (&gt;50 MUs, &gt;64 electrodes), consider parameter optimization</p></li>
+<li><p>GPU acceleration used automatically for convolution operations in surface EMG generation</p></li>
+</ul>
+</dd>
+<dt>Validation and quality assurance:</dt><dd><ul class="simple">
+<li><p>Parameters based on peer-reviewed anatomical and physiological studies</p></li>
+<li><p>Built-in validation checks for parameter consistency</p></li>
+<li><p>Extensive documentation with literature references</p></li>
+<li><p>Type checking enforced via beartype decorators</p></li>
+</ul>
+</dd>
+</dl>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<dl class="simple">
+<dt><a class="reference internal" href="myogen.simulator.Muscle.html#myogen.simulator.Muscle" title="myogen.simulator.Muscle"><code class="xref py py-obj docutils literal notranslate"><span class="pre">myogen.simulator.Muscle</span></code></a></dt><dd><p>For creating anatomically accurate muscle models</p>
+</dd>
+<dt><a class="reference internal" href="myogen.simulator.MotorNeuronPool.html#myogen.simulator.MotorNeuronPool" title="myogen.simulator.MotorNeuronPool"><code class="xref py py-obj docutils literal notranslate"><span class="pre">myogen.simulator.MotorNeuronPool</span></code></a></dt><dd><p>For generating motor neuron spike trains</p>
+</dd>
+<dt><a class="reference internal" href="myogen.utils.plotting.plot_surface_emg.html#myogen.utils.plotting.plot_surface_emg" title="myogen.utils.plotting.plot_surface_emg"><code class="xref py py-obj docutils literal notranslate"><span class="pre">myogen.utils.plotting.plot_surface_emg</span></code></a></dt><dd><p>For visualizing simulation results</p>
+</dd>
+</dl>
+</div>
+<p class="rubric">References</p>
+<aside class="footnote-list brackets">
+<aside class="footnote brackets" id="id2" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id1">1</a><span class="fn-bracket">]</span></span>
+<p>Farina, D., Mesin, L., Martina, S., Merletti, R., 2004.</p>
+</aside>
+</aside>
+<p>A surface EMG generation model with multilayer cylindrical description of the volume conductor.
+IEEE Transactions on Biomedical Engineering 51, 415–426. <a class="reference external" href="https://doi.org/10.1109/TBME.2003.820998">https://doi.org/10.1109/TBME.2003.820998</a></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="myogen.simulator.SurfaceEMG.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">muscle_model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sampling_frequency__Hz</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2048.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mean_conduction_velocity__mm_s</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">4.1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sampling_points_in_t_and_z_domains</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">256</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sampling_points_in_theta_domain</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">180</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">MUs_to_simulate</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mean_fiber_length__mm</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">32</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">var_fiber_length__mm</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">radius_bone__mm</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fat_thickness__mm</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">skin_thickness__mm</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">muscle_conductivity_radial__S_m</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.09</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">muscle_conductivity_longitudinal__S_m</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.4</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fat_conductivity__S_m</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.041</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">skin_conductivity__S_m</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">electrode_grid_inclination_angle__deg</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">electrode_grid_dimensions__rows_cols</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(8,</span> <span class="pre">8)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">inter_electrode_distance__mm</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">4</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">electrode_radius__mm</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.75</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">electrode_grid_center_positions</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/myogen/simulator/core/emg/surface_emg.html#SurfaceEMG.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#myogen.simulator.SurfaceEMG.__init__" title="Link to this definition">#</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>muscle_model</strong> (<a class="reference internal" href="myogen.simulator.Muscle.html#myogen.simulator.Muscle" title="myogen.simulator.core.muscle.muscle.Muscle"><em>Muscle</em></a>)</p></li>
+<li><p><strong>sampling_frequency__Hz</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a>)</p></li>
+<li><p><strong>mean_conduction_velocity__mm_s</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a>)</p></li>
+<li><p><strong>sampling_points_in_t_and_z_domains</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a>)</p></li>
+<li><p><strong>sampling_points_in_theta_domain</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a>)</p></li>
+<li><p><strong>MUs_to_simulate</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><em>list</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a><em>] </em><em>| </em><em>None</em>)</p></li>
+<li><p><strong>mean_fiber_length__mm</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a>)</p></li>
+<li><p><strong>var_fiber_length__mm</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a>)</p></li>
+<li><p><strong>radius_bone__mm</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a>)</p></li>
+<li><p><strong>fat_thickness__mm</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a>)</p></li>
+<li><p><strong>skin_thickness__mm</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a>)</p></li>
+<li><p><strong>muscle_conductivity_radial__S_m</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a>)</p></li>
+<li><p><strong>muscle_conductivity_longitudinal__S_m</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a>)</p></li>
+<li><p><strong>fat_conductivity__S_m</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a>)</p></li>
+<li><p><strong>skin_conductivity__S_m</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a>)</p></li>
+<li><p><strong>electrode_grid_inclination_angle__deg</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a>)</p></li>
+<li><p><strong>electrode_grid_dimensions__rows_cols</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.13)"><em>tuple</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a><em>]</em>)</p></li>
+<li><p><strong>inter_electrode_distance__mm</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a>)</p></li>
+<li><p><strong>electrode_radius__mm</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a>)</p></li>
+<li><p><strong>electrode_grid_center_positions</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><em>list</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.13)"><em>tuple</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a><em> | </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a><em> | </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a><em>] </em><em>| </em><em>None</em><em>] </em><em>| </em><em>None</em>)</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<p class="rubric">Methods</p>
+<div class="pst-scrollable-table-container"><table class="autosummary longtable table">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#myogen.simulator.SurfaceEMG.__init__" title="myogen.simulator.SurfaceEMG.__init__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__init__</span></code></a>(muscle_model[, ...])</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#myogen.simulator.SurfaceEMG.add_noise" title="myogen.simulator.SurfaceEMG.add_noise"><code class="xref py py-obj docutils literal notranslate"><span class="pre">add_noise</span></code></a>(snr_db[, noise_type])</p></td>
+<td><p>Add noise to the surface EMG signal to achieve a specified Signal-to-Noise Ratio (SNR).</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#myogen.simulator.SurfaceEMG.simulate_muaps" title="myogen.simulator.SurfaceEMG.simulate_muaps"><code class="xref py py-obj docutils literal notranslate"><span class="pre">simulate_muaps</span></code></a>([show_plots, verbose])</p></td>
+<td><p>Simulate MUAPs for the muscle model.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#myogen.simulator.SurfaceEMG.simulate_surface_emg" title="myogen.simulator.SurfaceEMG.simulate_surface_emg"><code class="xref py py-obj docutils literal notranslate"><span class="pre">simulate_surface_emg</span></code></a>(motor_neuron_pool)</p></td>
+<td><p>Generate realistic surface EMG signals by convolving MUAP templates with motor neuron spike trains.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<dl class="py method">
+<dt class="sig sig-object py" id="myogen.simulator.SurfaceEMG.add_noise">
+<span class="sig-name descname"><span class="pre">add_noise</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">snr_db</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">noise_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'gaussian'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/myogen/simulator/core/emg/surface_emg.html#SurfaceEMG.add_noise"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#myogen.simulator.SurfaceEMG.add_noise" title="Link to this definition">#</a></dt>
+<dd><p>Add noise to the surface EMG signal to achieve a specified Signal-to-Noise Ratio (SNR).</p>
+<p>This function calculates the appropriate noise level based on the signal power and
+desired SNR, then adds noise to the simulated surface EMG signals. This is useful
+for studying the effects of measurement noise on EMG analysis algorithms.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>snr_db</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a>) – <p>Target Signal-to-Noise Ratio in decibels (dB). Higher values mean less noise.</p>
+<dl class="simple">
+<dt>Typical values for surface EMG:</dt><dd><ul>
+<li><p>High quality: 20-30 dB</p></li>
+<li><p>Medium quality: 10-20 dB</p></li>
+<li><p>Low quality: 0-10 dB</p></li>
+<li><p>Very noisy: &lt; 0 dB</p></li>
+</ul>
+</dd>
+</dl>
+</p></li>
+<li><p><strong>noise_type</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <em>default</em> <code class="docutils literal notranslate"><span class="pre">&quot;gaussian&quot;</span></code>) – <p>Type of noise to add.</p>
+<dl class="simple">
+<dt>Currently supports:</dt><dd><ul>
+<li><p>”gaussian”: Additive white Gaussian noise (most common for EMG).</p></li>
+</ul>
+</dd>
+</dl>
+</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>noisy_surface_emg</strong> – Surface EMG tensor with added noise, same shape as self.surface_emg__tensor.
+The original signal is preserved in self.surface_emg__tensor.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="myogen.utils.types.SURFACE_EMG__TENSOR.html#myogen.utils.types.SURFACE_EMG__TENSOR" title="myogen.utils.types.SURFACE_EMG__TENSOR"><code class="xref py py-data docutils literal notranslate"><span class="pre">SURFACE_EMG__TENSOR</span></code></a></p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.13)"><strong>ValueError</strong></a> – If surface EMG has not been simulated yet (call simulate_surface_emg first)
+    If noise_type is not supported</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p><strong>SNR Calculation</strong>:
+SNR_dB = 10 * log10(P_signal / P_noise)</p>
+<dl class="simple">
+<dt>Where:</dt><dd><ul class="simple">
+<li><p>P_signal = mean power of the signal across all channels</p></li>
+<li><p>P_noise = power of the additive noise</p></li>
+</ul>
+</dd>
+</dl>
+<p>The noise power is calculated as:
+P_noise = P_signal / (10^(SNR_dB/10))</p>
+<dl class="simple">
+<dt><strong>Noise Characteristics</strong>:</dt><dd><ul class="simple">
+<li><p>Gaussian noise: Zero-mean with variance calculated to achieve target SNR</p></li>
+<li><p>Noise is added independently to each electrode channel</p></li>
+<li><p>Noise power is calculated based on the RMS power of the signal</p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># Simulate surface EMG first</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">surface_emg</span> <span class="o">=</span> <span class="n">emg_simulator</span><span class="o">.</span><span class="n">simulate_surface_emg</span><span class="p">(</span><span class="n">motor_neuron_pool</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Add moderate noise (15 dB SNR)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">noisy_emg</span> <span class="o">=</span> <span class="n">emg_simulator</span><span class="o">.</span><span class="n">add_noise</span><span class="p">(</span><span class="n">snr_db</span><span class="o">=</span><span class="mi">15</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Add high noise (5 dB SNR)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">very_noisy_emg</span> <span class="o">=</span> <span class="n">emg_simulator</span><span class="o">.</span><span class="n">add_noise</span><span class="p">(</span><span class="n">snr_db</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Original EMG shape: </span><span class="si">{</span><span class="n">surface_emg</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Noisy EMG shape: </span><span class="si">{</span><span class="n">noisy_emg</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="myogen.simulator.SurfaceEMG.simulate_muaps">
+<span class="sig-name descname"><span class="pre">simulate_muaps</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">show_plots</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/myogen/simulator/core/emg/surface_emg.html#SurfaceEMG.simulate_muaps"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#myogen.simulator.SurfaceEMG.simulate_muaps" title="Link to this definition">#</a></dt>
+<dd><p>Simulate MUAPs for the muscle model.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>show_plots</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a>, <em>optional</em>) – Whether to show plots of the MUAPs. Default is False.</p></li>
+<li><p><strong>verbose</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a>, <em>optional</em>) – Whether to print verbose output. Default is True.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>resulting_muaps_array</strong> – Generated MUAP templates after calling simulate_muaps().
+Shape: (n_positions, n_motor_units, n_electrode_rows, n_electrode_cols, n_time_samples)</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="myogen.utils.types.MUAP_SHAPE__TENSOR.html#myogen.utils.types.MUAP_SHAPE__TENSOR" title="myogen.utils.types.MUAP_SHAPE__TENSOR"><code class="xref py py-data docutils literal notranslate"><span class="pre">MUAP_SHAPE__TENSOR</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="myogen.simulator.SurfaceEMG.simulate_surface_emg">
+<span class="sig-name descname"><span class="pre">simulate_surface_emg</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">motor_neuron_pool</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/myogen/simulator/core/emg/surface_emg.html#SurfaceEMG.simulate_surface_emg"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#myogen.simulator.SurfaceEMG.simulate_surface_emg" title="Link to this definition">#</a></dt>
+<dd><p>Generate realistic surface EMG signals by convolving MUAP templates with motor neuron spike trains.</p>
+<p>This method implements the final step of surface EMG simulation by combining the previously
+computed Motor Unit Action Potential (MUAP) templates with physiologically realistic motor
+neuron firing patterns. The process involves temporal resampling to match simulation timesteps,
+convolution of spike trains with MUAP shapes, and summation across all active motor units
+for each electrode channel.</p>
+<p>The simulation can optionally use GPU acceleration (via CuPy) for efficient parallel processing of
+convolution operations across multiple electrode positions, motor units, and time points.
+If CuPy is not available, the simulation automatically falls back to CPU computation with NumPy.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>motor_neuron_pool</strong> (<a class="reference internal" href="myogen.simulator.MotorNeuronPool.html#myogen.simulator.MotorNeuronPool" title="myogen.simulator.MotorNeuronPool"><code class="xref py py-class docutils literal notranslate"><span class="pre">MotorNeuronPool</span></code></a>) – <p>Motor neuron pool containing spike trains and simulation parameters.</p>
+<dl class="simple">
+<dt>Must contain:</dt><dd><ul class="simple">
+<li><p>spike_trains: Binary spike train matrix [n_pools, n_motor_units, n_time_samples]</p></li>
+<li><p>timestep__ms: Simulation timestep in milliseconds</p></li>
+<li><p>active_neuron_indices: List of active motor unit indices for each pool</p></li>
+</ul>
+</dd>
+</dl>
+<p>The motor neuron pool defines the temporal firing patterns that will be
+convolved with the MUAP templates to generate surface EMG signals.</p>
+</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>surface_emg__tensor</strong> – Surface EMG tensor with shape (n_positions, n_pools, n_electrodes, n_time_samples)</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="myogen.utils.types.SURFACE_EMG__TENSOR.html#myogen.utils.types.SURFACE_EMG__TENSOR" title="myogen.utils.types.SURFACE_EMG__TENSOR"><code class="xref py py-data docutils literal notranslate"><span class="pre">SURFACE_EMG__TENSOR</span></code></a></p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#AttributeError" title="(in Python v3.13)"><strong>AttributeError</strong></a> – If simulate_muaps() has not been called first to generate MUAP templates.</p></li>
+<li><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.13)"><strong>ValueError</strong></a> – If motor_neuron_pool contains no active motor units or if there’s a mismatch
+    between simulated motor units and available spike trains.</p></li>
+<li><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#RuntimeError" title="(in Python v3.13)"><strong>RuntimeError</strong></a> – If GPU memory is insufficient for large simulations when using CuPy
+    (will automatically fall back to CPU-based computation).</p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<dl class="simple">
+<dt><strong>Computational Complexity:</strong></dt><dd><ul class="simple">
+<li><p>Time complexity: O(n_positions × n_pools × n_MUs × n_electrodes × n_time_samples)</p></li>
+<li><p>Space complexity: O(n_positions × n_pools × n_electrodes × n_time_samples)</p></li>
+<li><p>GPU acceleration (if available) provides 10-50x speedup for large simulations</p></li>
+</ul>
+</dd>
+<dt><strong>Memory Requirements:</strong></dt><dd><ul class="simple">
+<li><p>Input MUAPs: n_positions × n_MUs × n_electrodes × n_time_samples × 8 bytes</p></li>
+<li><p>Spike trains: n_pools × n_MUs × n_time_samples × 8 bytes</p></li>
+<li><p>Output EMG: n_positions × n_pools × n_electrodes × n_time_samples × 8 bytes</p></li>
+<li><p>Example: 4 positions × 10 pools × 100 MUs × 64 electrodes × 10000 samples ≈ 2 GB</p></li>
+</ul>
+</dd>
+<dt><strong>Signal Characteristics:</strong></dt><dd><ul class="simple">
+<li><p>Amplitude range: typically 10-1000 μV for surface EMG</p></li>
+<li><p>Frequency content: 10-500 Hz (depending on muscle and electrode configuration)</p></li>
+<li><p>Temporal patterns reflect motor unit recruitment and firing rate modulation</p></li>
+<li><p>Spatial patterns depend on motor unit territories and electrode positioning</p></li>
+</ul>
+</dd>
+<dt><strong>Validation Recommendations:</strong></dt><dd><ul class="simple">
+<li><p>Verify EMG amplitude scaling with muscle activation level</p></li>
+<li><p>Check frequency content matches physiological expectations</p></li>
+<li><p>Ensure spatial patterns are consistent with motor unit territories</p></li>
+<li><p>Compare multi-channel correlations with experimental data</p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<p><strong>Basic Surface EMG Simulation:</strong></p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># First generate MUAP templates</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">muaps</span> <span class="o">=</span> <span class="n">surface_emg</span><span class="o">.</span><span class="n">simulate_muaps</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Create motor neuron pool with spike trains</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">motor_pool</span> <span class="o">=</span> <span class="n">myogen</span><span class="o">.</span><span class="n">simulator</span><span class="o">.</span><span class="n">MotorNeuronPool</span><span class="p">(</span>
+<span class="gp">... </span>    <span class="n">spike_trains</span><span class="o">=</span><span class="n">spike_data</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="n">timestep__ms</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="n">active_neuron_indices</span><span class="o">=</span><span class="p">[[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">]]</span>  <span class="c1"># First 5 MUs active</span>
+<span class="gp">... </span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Generate surface EMG</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">emg_signals</span> <span class="o">=</span> <span class="n">surface_emg</span><span class="o">.</span><span class="n">simulate_surface_emg</span><span class="p">(</span><span class="n">motor_pool</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;EMG shape: </span><span class="si">{</span><span class="n">emg_signals</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>  <span class="c1"># (1, 1, 8, 8, 10000)</span>
+</pre></div>
+</div>
+<p><strong>Multi-Condition Simulation:</strong></p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># Motor pool with multiple activation conditions</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">motor_pool</span> <span class="o">=</span> <span class="n">myogen</span><span class="o">.</span><span class="n">simulator</span><span class="o">.</span><span class="n">MotorNeuronPool</span><span class="p">(</span>
+<span class="gp">... </span>    <span class="n">spike_trains</span><span class="o">=</span><span class="n">multi_condition_spikes</span><span class="p">,</span>  <span class="c1"># [n_conditions, n_MUs, n_samples]</span>
+<span class="gp">... </span>    <span class="n">timestep__ms</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="n">active_neuron_indices</span><span class="o">=</span><span class="p">[</span>
+<span class="gp">... </span>        <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span>           <span class="c1"># Low activation: 3 MUs</span>
+<span class="gp">... </span>        <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">],</span>  <span class="c1"># Medium activation: 6 MUs</span>
+<span class="gp">... </span>        <span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">))</span>      <span class="c1"># High activation: 10 MUs</span>
+<span class="gp">... </span>    <span class="p">]</span>
+<span class="gp">... </span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">emg_multi</span> <span class="o">=</span> <span class="n">surface_emg</span><span class="o">.</span><span class="n">simulate_surface_emg</span><span class="p">(</span><span class="n">motor_pool</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Multi-condition EMG: </span><span class="si">{</span><span class="n">emg_multi</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>  <span class="c1"># (n_pos, 3, 8, 8, n_samples)</span>
+</pre></div>
+</div>
+<p><strong>Analysis of Specific Electrodes:</strong></p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">emg</span> <span class="o">=</span> <span class="n">surface_emg</span><span class="o">.</span><span class="n">simulate_surface_emg</span><span class="p">(</span><span class="n">motor_pool</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Extract signal from center electrode</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">center_row</span><span class="p">,</span> <span class="n">center_col</span> <span class="o">=</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">4</span>  <span class="c1"># Center of 8x8 grid</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">center_emg</span> <span class="o">=</span> <span class="n">emg</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">center_row</span><span class="p">,</span> <span class="n">center_col</span><span class="p">,</span> <span class="p">:]</span>
+<span class="gp">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Compute RMS amplitude across grid</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">rms_amplitudes</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">emg</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:,</span> <span class="p">:]</span> <span class="o">**</span> <span class="mi">2</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">2</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;RMS amplitude map shape: </span><span class="si">{</span><span class="n">rms_amplitudes</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>  <span class="c1"># (8, 8)</span>
+</pre></div>
+</div>
+<p><strong>Multi-Position Comparison:</strong></p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># Compare EMG characteristics across electrode positions</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">emg</span> <span class="o">=</span> <span class="n">surface_emg</span><span class="o">.</span><span class="n">simulate_surface_emg</span><span class="p">(</span><span class="n">motor_pool</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">pos_idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">emg</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
+<span class="gp">... </span>    <span class="n">pos_emg</span> <span class="o">=</span> <span class="n">emg</span><span class="p">[</span><span class="n">pos_idx</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:,</span> <span class="p">:]</span>
+<span class="gp">... </span>    <span class="n">max_amplitude</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">pos_emg</span><span class="p">))</span>
+<span class="gp">... </span>    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Position </span><span class="si">{</span><span class="n">pos_idx</span><span class="si">}</span><span class="s2">: Max amplitude = </span><span class="si">{</span><span class="n">max_amplitude</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2"> μV&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<dl class="simple">
+<dt><a class="reference internal" href="#myogen.simulator.SurfaceEMG.simulate_muaps" title="myogen.simulator.SurfaceEMG.simulate_muaps"><code class="xref py py-obj docutils literal notranslate"><span class="pre">simulate_muaps</span></code></a></dt><dd><p>Generate MUAP templates (must be called first)</p>
+</dd>
+<dt><a class="reference internal" href="#myogen.simulator.SurfaceEMG.add_noise" title="myogen.simulator.SurfaceEMG.add_noise"><code class="xref py py-obj docutils literal notranslate"><span class="pre">add_noise</span></code></a></dt><dd><p>Add measurement noise to simulated EMG signals</p>
+</dd>
+<dt><a class="reference internal" href="myogen.simulator.MotorNeuronPool.html#myogen.simulator.MotorNeuronPool" title="myogen.simulator.MotorNeuronPool"><code class="xref py py-obj docutils literal notranslate"><span class="pre">myogen.simulator.MotorNeuronPool</span></code></a></dt><dd><p>Create motor neuron spike trains</p>
+</dd>
+<dt><a class="reference internal" href="myogen.utils.plotting.plot_surface_emg.html#myogen.utils.plotting.plot_surface_emg" title="myogen.utils.plotting.plot_surface_emg"><code class="xref py py-obj docutils literal notranslate"><span class="pre">myogen.utils.plotting.plot_surface_emg</span></code></a></dt><dd><p>Visualize simulated EMG signals</p>
+</dd>
+</dl>
+</div>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#myogen.simulator.SurfaceEMG"><code class="docutils literal notranslate"><span class="pre">SurfaceEMG</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#myogen.simulator.SurfaceEMG.resulting_muaps_array"><code class="docutils literal notranslate"><span class="pre">SurfaceEMG.resulting_muaps_array</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#myogen.simulator.SurfaceEMG.surface_emg__tensor"><code class="docutils literal notranslate"><span class="pre">SurfaceEMG.surface_emg__tensor</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#myogen.simulator.SurfaceEMG.noisy_surface_emg"><code class="docutils literal notranslate"><span class="pre">SurfaceEMG.noisy_surface_emg</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#myogen.simulator.SurfaceEMG.__init__"><code class="docutils literal notranslate"><span class="pre">SurfaceEMG.__init__()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#myogen.simulator.SurfaceEMG.add_noise"><code class="docutils literal notranslate"><span class="pre">SurfaceEMG.add_noise()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#myogen.simulator.SurfaceEMG.simulate_muaps"><code class="docutils literal notranslate"><span class="pre">SurfaceEMG.simulate_muaps()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#myogen.simulator.SurfaceEMG.simulate_surface_emg"><code class="docutils literal notranslate"><span class="pre">SurfaceEMG.simulate_surface_emg()</span></code></a></li>
+</ul>
+</li>
+</ul>
+  </nav></div>
+
+  <div class="sidebar-secondary-item">
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/generated/myogen.simulator.SurfaceEMG.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2025 - 2025, n-squared lab, FAU Erlangen-Nürnberg, Germany.
+      <br/>
+    
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.2.3.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

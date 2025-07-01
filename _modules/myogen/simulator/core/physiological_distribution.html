@@ -1,0 +1,596 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>myogen.simulator.core.physiological_distribution &#8212; MyoGen 0.1.0 Documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../../../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery.css?v=d2d258e8" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery-binder.css?v=f4aeca0c" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/custom.css?v=4797f867" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../../../../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="../../../../_static/documentation_options.js?v=01f34227"></script>
+    <script src="../../../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/myogen/simulator/core/physiological_distribution';</script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="0.1.0" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class=" navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../../../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../../../_static/myogen_logo.png" class="logo__image only-light" alt="MyoGen 0.1.0 Documentation - Home"/>
+    <img src="../../../../_static/myogen_logo.png" class="logo__image only-dark pst-js-only" alt="MyoGen 0.1.0 Documentation - Home"/>
+  
+  
+</a></div>
+    
+      <div class="navbar-item">
+<div class="nav-item">
+  <div class="version-switcher__container dropdown">
+      <button id="version-switcher-button" type="button" class="version-switcher__button btn btn-sm navbar-btn" aria-haspopup="true" aria-expanded="false">
+          Version 0.1.0
+      </button>
+      
+      
+      
+  </div>
+</div> </div>
+    
+      <div class="navbar-item"><div class="nav-item">
+   <span>
+      made at the <a href="https://www.nsquared.tf.fau.de/" target="_blank">N² Lab</a>
+   </span>
+</div> </div>
+    
+  </div>
+  
+  <div class=" navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../api/index.html">
+    API Documentation
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../auto_examples/index.html">
+    Examples
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/NSquaredLab/MyoGen" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+    </div>
+  
+
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar hide-on-wide">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../api/index.html">
+    API Documentation
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../auto_examples/index.html">
+    Examples
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/NSquaredLab/MyoGen" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../../../index.html" class="nav-link">Module code</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">myogen.simulator.core.physiological_distribution</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <h1>Source code for myogen.simulator.core.physiological_distribution</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Literal</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+
+
+<div class="viewcode-block" id="generate_mu_recruitment_thresholds">
+<a class="viewcode-back" href="../../../../generated/myogen.simulator.generate_mu_recruitment_thresholds.html#myogen.simulator.generate_mu_recruitment_thresholds">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">generate_mu_recruitment_thresholds</span><span class="p">(</span>
+    <span class="n">N</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+    <span class="n">recruitment_range</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+    <span class="n">deluca__slope</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">konstantin__max_threshold</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">,</span>
+    <span class="n">mode</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;fuglevand&quot;</span><span class="p">,</span> <span class="s2">&quot;deluca&quot;</span><span class="p">,</span> <span class="s2">&quot;konstantin&quot;</span><span class="p">,</span> <span class="s2">&quot;combined&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;konstantin&quot;</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]:</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Generate recruitment thresholds for a pool of motor units using different models.</span>
+
+<span class="sd">    This function computes the recruitment thresholds (and zero-based thresholds) for a pool of N motor units</span>
+<span class="sd">    according to one of several models from the literature. The distribution of thresholds is controlled by the</span>
+<span class="sd">    recruitment range (RR) and, for some models, additional parameters.</span>
+
+<span class="sd">    Following models are available:  </span>
+<span class="sd">        - Fuglevand et al. (1993) [1]_</span>
+<span class="sd">        - De Luca &amp; Contessa (2012) [2]_</span>
+<span class="sd">        - Konstantin et al. (2020) [3]_</span>
+<span class="sd">        - Combined model</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    N : int</span>
+<span class="sd">        Number of motor units in the pool.</span>
+<span class="sd">    recruitment_range : float</span>
+<span class="sd">        Recruitment range, defined as the ratio of the largest to smallest threshold</span>
+<span class="sd">        :math:`(rt(N)/rt(1))`.</span>
+<span class="sd">    deluca__slope : float, optional</span>
+<span class="sd">        Slope correction coefficient for the ``&#39;deluca&#39;`` mode. Required if ``mode=&#39;deluca&#39;``.</span>
+<span class="sd">        Typical values range from 25-100.</span>
+<span class="sd">    konstantin__max_threshold : float, optional</span>
+<span class="sd">        Maximum recruitment threshold for the ``&#39;konstantin&#39;`` mode. Required if ``mode=&#39;konstantin&#39;``.</span>
+<span class="sd">        Sets the absolute scale of all thresholds.</span>
+<span class="sd">    mode : RecruitmentMode, optional</span>
+<span class="sd">        Model to use for threshold generation. One of ``&#39;fuglevand&#39;``, ``&#39;deluca&#39;``, ``&#39;konstantin&#39;``, or ``&#39;combined&#39;``.</span>
+<span class="sd">        Default is ``&#39;konstantin&#39;``.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    rt : numpy.ndarray</span>
+<span class="sd">        Recruitment thresholds for each motor unit (shape: (N,)).</span>
+<span class="sd">        Values are monotonically increasing from ``rt[0]`` to ``rt[N-1]``.</span>
+<span class="sd">    rtz : numpy.ndarray</span>
+<span class="sd">        Zero-based recruitment thresholds where :math:`rtz[0] = 0` (shape: (N,)).</span>
+<span class="sd">        Computed as :math:`rtz = rt - rt[0]`, convenient for simulation.</span>
+
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">    ValueError</span>
+<span class="sd">        If a required mode-specific parameter is not provided or if an unknown mode is specified.</span>
+
+<span class="sd">    References</span>
+<span class="sd">    ----------</span>
+<span class="sd">    .. [1] Fuglevand, A.J., Winter, D.A., Patla, A.E., 1993. </span>
+<span class="sd">           Models of recruitment and rate coding organization in motor-unit pools. </span>
+<span class="sd">           Journal of Neurophysiology 70, 2470–2488. https://doi.org/10.1152/jn.1993.70.6.2470</span>
+<span class="sd">    .. [2] De Luca, C.J., Contessa, P., 2012. </span>
+<span class="sd">           Hierarchical control of motor units in voluntary contractions. </span>
+<span class="sd">           Journal of Neurophysiology 107, 178–195. https://doi.org/10.1152/jn.00961.2010</span>
+<span class="sd">    .. [3] Konstantin, A., Yu, T., Le Carpentier, E., Aoustin, Y., Farina, D., 2020. </span>
+<span class="sd">           Simulation of Motor Unit Action Potential Recordings From Intramuscular Multichannel Scanning Electrodes. </span>
+<span class="sd">           IEEE Transactions on Biomedical Engineering 67, 2005–2014. https://doi.org/10.1109/TBME.2019.2953680</span>
+
+
+
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    **fuglevand** : Fuglevand et al. (1993) [1]_ exponential model</span>
+<span class="sd">        .. math:: rt(i) = \exp( \frac{i \cdot \ln(RR)}{N} ) / 100</span>
+
+<span class="sd">        where :math:`i = 1, 2, \ldots, N`</span>
+
+<span class="sd">    **deluca** : De Luca &amp; Contessa (2012) [2]_ model with slope correction</span>
+<span class="sd">        .. math::</span>
+<span class="sd">            rt(i) = \frac{b \cdot i}{N} \cdot \exp\left(\frac{i \cdot \ln(RR / b)}{N}\right) / 100</span>
+
+<span class="sd">        where :math:`b` = ``deluca__slope``, :math:`i = 1, 2, \ldots, N`</span>
+
+<span class="sd">    **konstantin** : Konstantin et al. (2020) [3]_ model allowing explicit maximum threshold control</span>
+<span class="sd">        .. math::</span>
+<span class="sd">            rt(i) &amp;= \frac{RT_{max}}{RR} \cdot \exp\left(\frac{(i - 1) \cdot \ln(RR)}{N - 1}\right) \\</span>
+<span class="sd">            rtz(i) &amp;= \frac{RT_{max}}{RR} \cdot \left(\exp\left(\frac{(i - 1) \cdot \ln(RR + 1)}{N}\right) - 1\right)</span>
+
+<span class="sd">        where :math:`RT_{max}` = ``konstantin__max_threshold``, :math:`i = 1, 2, \ldots, N`</span>
+
+<span class="sd">    **combined** : A corrected De Luca model that uses the slope parameter for shape control but properly respects the RR constraint and maximum threshold like the Konstantin model</span>
+<span class="sd">        .. math::</span>
+<span class="sd">            rt(i) = \frac{RT_{max}}{RR} + \left(\frac{b \cdot i}{N} \cdot \exp\left(\frac{i \cdot \ln(RR / b)}{N}\right) - \frac{RT_{max}}{RR}\right) \cdot \left(\frac{RT_{max} - RT_{max}/RR}{b \cdot N \cdot \exp\left(\frac{i \cdot \ln(RR / b)}{N}\right) - \frac{RT_{max}}{RR}}\right)</span>
+
+<span class="sd">        where :math:`b` = ``deluca__slope``, :math:`RT_{max}` = ``konstantin__max_threshold``, :math:`i = 1, 2, \ldots, N`</span>
+
+<span class="sd">    .. note::</span>
+<span class="sd">        - All models ensure :math:`rt(1) &lt; rt(2) &lt; \ldots &lt; rt(N)` (monotonically increasing)</span>
+<span class="sd">        - The recruitment range :math:`RR = rt(N) / rt(1)` is preserved across all models</span>
+<span class="sd">        - ``rtz`` is a zero-based version where :math:`rtz(1) = 0`, useful for simulation</span>
+<span class="sd">        - Motor units are recruited when excitation :math:`&gt; rt(i)` for unit :math:`i`</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; # Generate thresholds using Fuglevand model</span>
+<span class="sd">    &gt;&gt;&gt; rt, rtz = generate_mu_recruitment_thresholds(</span>
+<span class="sd">    ...     N=100, recruitment_range=50, mode=&#39;fuglevand&#39;</span>
+<span class="sd">    ... )</span>
+<span class="sd">    &gt;&gt;&gt;</span>
+<span class="sd">    &gt;&gt;&gt; # Generate thresholds using Konstantin model with explicit max threshold</span>
+<span class="sd">    &gt;&gt;&gt; rt, rtz = generate_mu_recruitment_thresholds(</span>
+<span class="sd">    ...     N=100, recruitment</span>
+<span class="sd">    ... )</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">i</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">N</span><span class="p">)</span>
+
+    <span class="k">match</span> <span class="n">mode</span><span class="p">:</span>
+        <span class="k">case</span> <span class="s2">&quot;fuglevand&quot;</span><span class="p">:</span>
+            <span class="n">rt</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">((</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">recruitment_range</span><span class="p">)</span> <span class="o">/</span> <span class="n">N</span><span class="p">)</span> <span class="o">*</span> <span class="n">i</span><span class="p">)</span> <span class="o">/</span> <span class="mi">100</span>
+            <span class="n">rtz</span> <span class="o">=</span> <span class="n">rt</span> <span class="o">-</span> <span class="n">rt</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">case</span> <span class="s2">&quot;deluca&quot;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">deluca__slope</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;deluca__slope must be provided for &#39;deluca&#39; mode.&quot;</span><span class="p">)</span>
+            <span class="n">rt</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="p">(</span><span class="n">deluca__slope</span> <span class="o">*</span> <span class="n">i</span> <span class="o">/</span> <span class="n">N</span><span class="p">)</span>
+                <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">((</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">recruitment_range</span> <span class="o">/</span> <span class="n">deluca__slope</span><span class="p">)</span> <span class="o">/</span> <span class="n">N</span><span class="p">)</span> <span class="o">*</span> <span class="n">i</span><span class="p">)</span>
+                <span class="o">/</span> <span class="mi">100</span>
+            <span class="p">)</span>
+            <span class="n">rtz</span> <span class="o">=</span> <span class="n">rt</span> <span class="o">-</span> <span class="n">rt</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">case</span> <span class="s2">&quot;konstantin&quot;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">konstantin__max_threshold</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                    <span class="s2">&quot;konstantin__max_threshold must be provided for &#39;konstantin&#39; mode.&quot;</span>
+                <span class="p">)</span>
+            <span class="n">rt</span> <span class="o">=</span> <span class="p">(</span><span class="n">konstantin__max_threshold</span> <span class="o">/</span> <span class="n">recruitment_range</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span>
+                <span class="p">(</span><span class="n">i</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">recruitment_range</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">N</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+            <span class="p">)</span>
+            <span class="n">rtz</span> <span class="o">=</span> <span class="p">(</span><span class="n">konstantin__max_threshold</span> <span class="o">/</span> <span class="n">recruitment_range</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span>
+                <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">((</span><span class="n">i</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">recruitment_range</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">/</span> <span class="n">N</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span>
+            <span class="p">)</span>
+        <span class="k">case</span> <span class="s2">&quot;combined&quot;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">deluca__slope</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">konstantin__max_threshold</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                    <span class="s2">&quot;Both deluca__slope and konstantin__max_threshold must be provided for &#39;combined&#39; mode.&quot;</span>
+                <span class="p">)</span>
+            <span class="c1"># Create a De Luca-style curve with slope parameter controlling curvature</span>
+            <span class="c1"># but properly scaled to respect RR and max threshold</span>
+
+            <span class="c1"># Generate base De Luca shape (without the /100 scaling)</span>
+            <span class="n">base_shape</span> <span class="o">=</span> <span class="p">(</span><span class="n">deluca__slope</span> <span class="o">*</span> <span class="n">i</span> <span class="o">/</span> <span class="n">N</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span>
+                <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">recruitment_range</span> <span class="o">/</span> <span class="n">deluca__slope</span><span class="p">)</span> <span class="o">/</span> <span class="n">N</span><span class="p">)</span> <span class="o">*</span> <span class="n">i</span>
+            <span class="p">)</span>
+
+            <span class="c1"># Scale to ensure exact RR and max threshold</span>
+            <span class="c1"># We want: rt[0] = konstantin__max_threshold / RR and rt[-1] = konstantin__max_threshold</span>
+            <span class="n">min_val</span> <span class="o">=</span> <span class="n">base_shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">max_val</span> <span class="o">=</span> <span class="n">base_shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+
+            <span class="c1"># Scale the shape to achieve the desired RR while respecting max threshold</span>
+            <span class="n">rt</span> <span class="o">=</span> <span class="p">(</span><span class="n">konstantin__max_threshold</span> <span class="o">/</span> <span class="n">recruitment_range</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span>
+                <span class="n">base_shape</span> <span class="o">-</span> <span class="n">min_val</span>
+            <span class="p">)</span> <span class="o">*</span> <span class="p">(</span>
+                <span class="n">konstantin__max_threshold</span>
+                <span class="o">-</span> <span class="n">konstantin__max_threshold</span> <span class="o">/</span> <span class="n">recruitment_range</span>
+            <span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">max_val</span> <span class="o">-</span> <span class="n">min_val</span><span class="p">)</span>
+
+            <span class="n">rtz</span> <span class="o">=</span> <span class="n">rt</span> <span class="o">-</span> <span class="n">rt</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="k">case</span><span class="w"> </span><span class="k">_</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unknown mode: </span><span class="si">{</span><span class="n">mode</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Normalize the thresholds to the maximum threshold</span>
+    <span class="n">rtz</span> <span class="o">=</span> <span class="n">rtz</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">rt</span><span class="p">)</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">rtz</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">rt</span><span class="p">,</span> <span class="n">rtz</span></div>
+
+</pre></div>
+
+                </article>
+              
+              
+              
+              
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2025 - 2025, n-squared lab, FAU Erlangen-Nürnberg, Germany.
+      <br/>
+    
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.2.3.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>
