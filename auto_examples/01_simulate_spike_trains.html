@@ -314,6 +314,7 @@
 <li class="toctree-l1"><a class="reference internal" href="03_simulate_surface_muaps.html">Surface Motor Unit Action Potentials</a></li>
 <li class="toctree-l1"><a class="reference internal" href="04_simulate_surface_emg.html">Surface EMG Signals</a></li>
 <li class="toctree-l1"><a class="reference internal" href="05_simulate_currents.html">Current Generation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="06_simulate_force.html">Force Generation</a></li>
 </ul>
 </div>
 </nav></div>
@@ -518,9 +519,21 @@ Input current matrix shape: (2, 40000)
 
 <span class="c1"># Create motor neuron pool</span>
 <span class="n">motor_neuron_pool</span> <span class="o">=</span> <span class="n">simulator</span><span class="o">.</span><span class="n">MotorNeuronPool</span><span class="p">(</span><a href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">recruitment_thresholds</span></a><span class="p">)</span>
+
+<span class="c1"># Compute MVC current threshold</span>
+<a href="https://docs.python.org/3/library/functions.html#float" title="builtins.float" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">mvc_current_threshold</span></a> <span class="o">=</span> <span class="n">motor_neuron_pool</span><span class="o">.</span><a href="https://docs.python.org/3/library/functions.html#float" title="builtins.float" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">mvc_current_threshold</span></a>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">MVC current threshold: </span><span class="si">{</span><a href="https://docs.python.org/3/library/functions.html#float" title="builtins.float" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">mvc_current_threshold</span></a><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2"> nA&quot;</span><span class="p">)</span>
+
+<span class="c1"># min max to mvc current threshold</span>
+<a href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">input_current_matrix</span></a> <span class="o">=</span> <span class="p">(</span>
+    <a href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">input_current_matrix</span></a> <span class="o">*</span> <a href="https://docs.python.org/3/library/functions.html#float" title="builtins.float" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">mvc_current_threshold</span></a> <span class="o">/</span> <a href="https://numpy.org/doc/stable/reference/generated/numpy.max.html#numpy.max" title="numpy.max" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-function"><span class="n">np</span><span class="o">.</span><span class="n">max</span></a><span class="p">(</span><a href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">input_current_matrix</span></a><span class="p">)</span>
+<span class="p">)</span>
 </pre></div>
 </div>
 <div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>NMODL mechanisms appear to already be loaded, skipping reload
+
+MVC current threshold: 293.0 nA
 </pre></div>
 </div>
 </section>
@@ -580,8 +593,8 @@ The simulation time is in milliseconds, so we need to convert it to seconds.</p>
 </pre></div>
 </div>
 <div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Firing rate statistics:
-  Pool 1: 61/100 active neurons, mean rate: 9.0 Hz, max rate: 17.5 Hz
-  Pool 2: 48/100 active neurons, mean rate: 10.1 Hz, max rate: 16.0 Hz
+  Pool 1: 100/100 active neurons, mean rate: 15.0 Hz, max rate: 24.5 Hz
+  Pool 2: 98/100 active neurons, mean rate: 14.4 Hz, max rate: 22.0 Hz
 </pre></div>
 </div>
 </section>
@@ -620,7 +633,7 @@ The simulation time is in milliseconds, so we need to convert it to seconds.</p>
 <img src="../_images/sphx_glr_01_simulate_spike_trains_001.png" srcset="../_images/sphx_glr_01_simulate_spike_trains_001.png" alt="Pool 1 Spike Trains" class = "sphx-glr-single-img"/><div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Plotting spike trains...
 </pre></div>
 </div>
-<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 5.448 seconds)</p>
+<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 23.888 seconds)</p>
 <div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-auto-examples-01-simulate-spike-trains-py">
 <div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
 <p><a class="reference download internal" download="" href="../_downloads/d067465ba52f52793494b6657f65022d/01_simulate_spike_trains.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">01_simulate_spike_trains.ipynb</span></code></a></p>

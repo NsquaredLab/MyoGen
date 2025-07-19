@@ -411,66 +411,81 @@
 <h1>Muscle<a class="headerlink" href="#muscle" title="Link to this heading">#</a></h1>
 <dl class="py class">
 <dt class="sig sig-object py" id="myogen.simulator.Muscle">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">myogen.simulator.</span></span><span class="sig-name descname"><span class="pre">Muscle</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">recruitment_thresholds</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">radius__mm</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">4.9</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fiber_density__fibers_per_mm2</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">400</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_innervation_area_to_total_muscle_area__ratio</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.25</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">grid_resolution</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">256</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">autorun</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/myogen/simulator/core/muscle/muscle.html#Muscle"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#myogen.simulator.Muscle" title="Link to this definition">#</a></dt>
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">myogen.simulator.</span></span><span class="sig-name descname"><span class="pre">Muscle</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">recruitment_thresholds</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">radius__mm</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">6.91</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fiber_density__fibers_per_mm2</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">400</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_innervation_area_to_total_muscle_area__ratio</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.25</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mean_conduction_velocity__m_s</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">4.2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mean_fiber_length__mm</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">31.7</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">var_fiber_length__mm</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2.8</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">radius_bone__mm</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fat_thickness__mm</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">skin_thickness__mm</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.29</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">muscle_conductivity_radial__S_m</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.09</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">muscle_conductivity_longitudinal__S_m</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.4</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fat_conductivity__S_m</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.047</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">skin_conductivity__S_m</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.000488</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">grid_resolution</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">256</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">autorun</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/myogen/simulator/core/muscle/muscle.html#Muscle"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#myogen.simulator.Muscle" title="Link to this definition">#</a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
-<p>A muscle model for simulating motor unit organization and muscle fiber distribution.</p>
-<dl class="simple">
-<dt>The muscle model consists of:</dt><dd><ul class="simple">
-<li><p>Motor unit territories with biologically realistic size distributions</p></li>
-<li><p>Spatially distributed innervation centers using optimal packing algorithms</p></li>
-<li><p>Muscle fiber assignment based on proximity and self-avoidance principles</p></li>
-</ul>
-</dd>
-</dl>
+<p>A muscle model based on the cylindrical description of the volume conductor by Farina et al. 2004 <a class="footnote-reference brackets" href="#id14" id="id1" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a> and the motor unit distribution by Konstantin et al. 2020 <a class="footnote-reference brackets" href="#id15" id="id2" role="doc-noteref"><span class="fn-bracket">[</span>2<span class="fn-bracket">]</span></a>.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>All default values are set to simulate the First Dorsal Interosseous (FDI) muscle. Values are pulled from the literature.</p>
+</div>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>recruitment_thresholds</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.3)"><code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></a>) – Array of recruitment thresholds for each motor unit. The values
-determine the relative sizes of motor unit territories, with larger
-values corresponding to larger territories. Typically ranges from
--1 to 1, with the largest motor units having thresholds near 1.</p></li>
-<li><p><strong>radius__mm</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a>, <em>default</em> <code class="docutils literal notranslate"><span class="pre">4.9</span></code>) – Radius of the muscle cross-section in millimeters. Default value
-corresponds to the First Dorsal Interosseous (FDI) muscle based
-on anatomical measurements (Jacobson et al., 1992).</p></li>
-<li><p><strong>fiber_density__fibers_per_mm2</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a>, <em>default</em> <code class="docutils literal notranslate"><span class="pre">400</span></code>) – Density of muscle fibers per square millimeter. This parameter
-controls the total number of muscle fibers in the muscle and
-affects the granularity of the simulation. Values typically
-range from 300-600 fibers/mm² for human muscles.</p></li>
+<li><p><strong>recruitment_thresholds</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.3)"><code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></a>) – Array of recruitment thresholds for each motor unit (see <cite>myogen.simulator.generate_mu_recruitment_thresholds</cite>).
+Values range from 0 to 1 with the largest motor units having thresholds near 1.</p></li>
+<li><p><strong>radius__mm</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a>, <em>default</em> <code class="docutils literal notranslate"><span class="pre">6.91</span></code>) – Radius of the muscle cross-section in millimeters. Default is set to 6.91 mm as determined by Jacobson et al. 1992 <a class="footnote-reference brackets" href="#id16" id="id3" role="doc-noteref"><span class="fn-bracket">[</span>3<span class="fn-bracket">]</span></a>.</p></li>
+<li><p><strong>fiber_density__fibers_per_mm2</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a>, <em>default</em> <code class="docutils literal notranslate"><span class="pre">400</span></code>) – Density of muscle fibers per square millimeter. Default is set to 400 fibers/mm² as determined by no one.</p></li>
 <li><p><strong>max_innervation_area_to_total_muscle_area__ratio</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a>, <em>default</em> <code class="docutils literal notranslate"><span class="pre">0.25</span></code>) – Ratio defining the maximum territory size relative to total muscle area.
+Default is set to 0.25 as determined by no one but it is a good starting point.
 A value of 0.25 means the largest motor unit can innervate up to 25%
-of the total muscle cross-sectional area. Must be in range (0, 1].</p></li>
-<li><p><strong>grid_resolution</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>, <em>default</em> <code class="docutils literal notranslate"><span class="pre">256</span></code>) – Resolution of the computational grid used for innervation electrode_grid_center
-distribution. Higher values provide more accurate spatial distribution
-but increase computational cost. Recommended range: 128-512.</p></li>
-<li><p><strong>autorun</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a>, <em>default</em> <a class="reference external" href="https://docs.python.org/3/library/constants.html#False" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">False</span></code></a>) – If True, automatically executes the complete muscle simulation pipeline:
-innervation electrode_grid_center distribution, muscle fiber generation, and fiber-to-
-motor unit assignment. If False, these steps must be called manually.</p></li>
+of the total muscle cross-sectional area.
+Must be in range (0, 1].</p></li>
+<li><p><strong>mean_conduction_velocity__m_s</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a>, <em>default</em> <code class="docutils literal notranslate"><span class="pre">4.2</span></code>) – Mean conduction velocity in m/s. Default is set to 4.2 m/s as determined by Nishizono et al. 1990 <a class="footnote-reference brackets" href="#id17" id="id4" role="doc-noteref"><span class="fn-bracket">[</span>4<span class="fn-bracket">]</span></a>.
+Experimental range determined by Nishizono et al. 1990 <a class="footnote-reference brackets" href="#id17" id="id5" role="doc-noteref"><span class="fn-bracket">[</span>4<span class="fn-bracket">]</span></a> is between 3.2 and 5.0 m/s.</p></li>
+<li><p><strong>mean_fiber_length__mm</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a>, <em>default</em> <code class="docutils literal notranslate"><span class="pre">31.7</span></code>) – Mean fiber length in mm. Default is set to 31.7 mm as determined by Jacobson et al. 1992 <a class="footnote-reference brackets" href="#id16" id="id6" role="doc-noteref"><span class="fn-bracket">[</span>3<span class="fn-bracket">]</span></a> (Table 1).</p></li>
+<li><p><strong>var_fiber_length__mm</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a>, <em>default</em> <code class="docutils literal notranslate"><span class="pre">2.8</span></code>) – Fiber length variance in mm. Default is set to 2.8 mm as determined by Jacobson et al. 1992 <a class="footnote-reference brackets" href="#id16" id="id7" role="doc-noteref"><span class="fn-bracket">[</span>3<span class="fn-bracket">]</span></a> (Table 1).</p></li>
+<li><p><strong>radius_bone__mm</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a>, <em>default</em> <code class="docutils literal notranslate"><span class="pre">0</span></code>) – Bone radius in mm. Default is set to 0 mm as the FDI muscle doesn’t surround a bone.</p></li>
+<li><p><strong>fat_thickness__mm</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a>, <em>default</em> <code class="docutils literal notranslate"><span class="pre">0.3</span></code>) – Fat thickness in mm. Default is set to 0.3 mm as determined by Störchle et al. 2018 <a class="footnote-reference brackets" href="#id18" id="id8" role="doc-noteref"><span class="fn-bracket">[</span>5<span class="fn-bracket">]</span></a>.</p></li>
+<li><p><strong>skin_thickness__mm</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a>, <em>default</em> <code class="docutils literal notranslate"><span class="pre">1.29</span></code>) – Skin thickness in mm. Default is set to the male skin thickness average of 1.29 mm as determined by Brodar 1960 <a class="footnote-reference brackets" href="#id19" id="id9" role="doc-noteref"><span class="fn-bracket">[</span>6<span class="fn-bracket">]</span></a>.</p></li>
+<li><p><strong>muscle_conductivity_radial__S_m</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a>, <em>default</em> <code class="docutils literal notranslate"><span class="pre">0.09</span></code>) – Muscle conductivity in radial direction. Default is set to 0.09 S/m as determined by Botelho et al. 2019 <a class="footnote-reference brackets" href="#id20" id="id10" role="doc-noteref"><span class="fn-bracket">[</span>7<span class="fn-bracket">]</span></a> (Table 1).</p></li>
+<li><p><strong>muscle_conductivity_longitudinal__S_m</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a>, <em>default</em> <code class="docutils literal notranslate"><span class="pre">0.4</span></code>) – Muscle conductivity in longitudinal direction. Default is set to 0.4 S/m as determined by Botelho et al. 2019 <a class="footnote-reference brackets" href="#id20" id="id11" role="doc-noteref"><span class="fn-bracket">[</span>7<span class="fn-bracket">]</span></a> (Table 1).</p></li>
+<li><p><strong>fat_conductivity__S_m</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a>, <em>default</em> <code class="docutils literal notranslate"><span class="pre">4.7E-2</span></code>) – Fat conductivity. Default is set to 4.7E-2 S/m as determined by Botelho et al. 2019 <a class="footnote-reference brackets" href="#id20" id="id12" role="doc-noteref"><span class="fn-bracket">[</span>7<span class="fn-bracket">]</span></a> (Table 1).</p></li>
+<li><p><strong>skin_conductivity__S_m</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a>, <em>default</em> <code class="docutils literal notranslate"><span class="pre">4.88E-4</span></code>) – Skin conductivity. Default is set to 4.88E-4 S/m as determined by Botelho et al. 2019 <a class="footnote-reference brackets" href="#id20" id="id13" role="doc-noteref"><span class="fn-bracket">[</span>7<span class="fn-bracket">]</span></a> (Table 1).</p></li>
+<li><p><strong>grid_resolution</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>, <em>default</em> <code class="docutils literal notranslate"><span class="pre">256</span></code>) – Resolution of the computational grid used for innervation the muscle.
+Higher values provide more accurate spatial distribution but increase computational cost.
+Default is set to 256.</p></li>
+<li><p><strong>autorun</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a>, <em>default</em> <a class="reference external" href="https://docs.python.org/3/library/constants.html#False" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">False</span></code></a>) – If True, automatically executes the complete muscle simulation pipeline: innervation distribution, muscle fiber generation, and fiber-to-motor unit assignment.
+If False, these steps must be called manually.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Raises<span class="colon">:</span></dt>
 <dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.13)"><strong>ValueError</strong></a> – If max_innervation_area_to_total_muscle_area__ratio is not in (0, 1].</p>
 </dd>
 </dl>
-<p class="rubric">Notes</p>
-<p>The muscle model uses a circular cross-section approximation, which is
-appropriate for many skeletal muscles. The recruitment thresholds are
-used as a proxy for motor unit sizes, following the size principle
-where larger motor units have higher recruitment thresholds.</p>
-<p class="rubric">Examples</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># Create a muscle with 120 motor units</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">recruitment_thresholds</span> <span class="o">=</span> <span class="n">generate_mu_recruitment_thresholds</span><span class="p">(</span><span class="n">N</span><span class="o">=</span><span class="mi">120</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">muscle</span> <span class="o">=</span> <span class="n">Muscle</span><span class="p">(</span>
-<span class="gp">... </span>    <span class="n">recruitment_thresholds</span><span class="o">=</span><span class="n">recruitment_thresholds</span><span class="p">,</span>
-<span class="gp">... </span>    <span class="n">radius__mm</span><span class="o">=</span><span class="mf">4.9</span><span class="p">,</span>
-<span class="gp">... </span>    <span class="n">fiber_density__fibers_per_mm2</span><span class="o">=</span><span class="mi">400</span><span class="p">,</span>
-<span class="gp">... </span>    <span class="n">autorun</span><span class="o">=</span><span class="kc">True</span>
-<span class="gp">... </span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Access muscle fiber positions for motor unit 0</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">fiber_positions</span> <span class="o">=</span> <span class="n">muscle</span><span class="o">.</span><span class="n">resulting_fiber_assignment</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;MU 0 has </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">fiber_positions</span><span class="p">)</span><span class="si">}</span><span class="s2"> muscle fibers&quot;</span><span class="p">)</span>
-</pre></div>
-</div>
+<p class="rubric">References</p>
+<aside class="footnote-list brackets">
+<aside class="footnote brackets" id="id14" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id1">1</a><span class="fn-bracket">]</span></span>
+<p>Farina, D., Mesin, L., Martina, S., Merletti, R., 2004. A surface EMG generation model with multilayer cylindrical description of the volume conductor. IEEE Transactions on Biomedical Engineering 51, 415–426. <a class="reference external" href="https://doi.org/10.1109/TBME.2003.820998">https://doi.org/10.1109/TBME.2003.820998</a></p>
+</aside>
+<aside class="footnote brackets" id="id15" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id2">2</a><span class="fn-bracket">]</span></span>
+<p>Konstantin, A., Yu, T., Le Carpentier, E., Aoustin, Y., Farina, D., 2020. Simulation of Motor Unit Action Potential Recordings From Intramuscular Multichannel Scanning Electrodes. IEEE Transactions on Biomedical Engineering 67, 2005–2014. <a class="reference external" href="https://doi.org/10.1109/TBME.2019.2953680">https://doi.org/10.1109/TBME.2019.2953680</a></p>
+</aside>
+<aside class="footnote brackets" id="id16" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span>3<span class="fn-bracket">]</span></span>
+<span class="backrefs">(<a role="doc-backlink" href="#id3">1</a>,<a role="doc-backlink" href="#id6">2</a>,<a role="doc-backlink" href="#id7">3</a>)</span>
+<p>Jacobson, M.D., Raab, R., Fazeli, B.M., Abrams, R.A., Botte, M.J., Lieber, R.L., 1992. Architectural design of the human intrinsic hand muscles. The Journal of Hand Surgery 17, 804–809. <a class="reference external" href="https://doi.org/10.1016/0363-5023(92)90446-V">https://doi.org/10.1016/0363-5023(92)90446-V</a></p>
+</aside>
+<aside class="footnote brackets" id="id17" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span>4<span class="fn-bracket">]</span></span>
+<span class="backrefs">(<a role="doc-backlink" href="#id4">1</a>,<a role="doc-backlink" href="#id5">2</a>)</span>
+<p>Nishizono, H., Fujimoto, T., Ohtake, H., Miyashita, M., 1990. Muscle fiber conduction velocity and contractile properties estimated from surface electrode arrays. Electroencephalography and Clinical Neurophysiology 75, 75–81. <a class="reference external" href="https://doi.org/10.1016/0013-4694(90)90154-C">https://doi.org/10.1016/0013-4694(90)90154-C</a></p>
+</aside>
+<aside class="footnote brackets" id="id18" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id8">5</a><span class="fn-bracket">]</span></span>
+<p>Störchle, P., Müller, W., Sengeis, M., Lackner, S., Holasek, S., Fürhapter-Rieger, A., 2018. Measurement of mean subcutaneous fat thickness: eight standardised ultrasound sites compared to 216 randomly selected sites. Sci Rep 8, 16268. <a class="reference external" href="https://doi.org/10.1038/s41598-018-34213-0">https://doi.org/10.1038/s41598-018-34213-0</a></p>
+</aside>
+<aside class="footnote brackets" id="id19" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id9">6</a><span class="fn-bracket">]</span></span>
+<p>Brodar, V., 1960. Observations on skin thickness and subcutaneous tissue in man. Zeitschrift für Morphologie und Anthropologie 50, 386–395.</p>
+</aside>
+<aside class="footnote brackets" id="id20" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span>7<span class="fn-bracket">]</span></span>
+<span class="backrefs">(<a role="doc-backlink" href="#id10">1</a>,<a role="doc-backlink" href="#id11">2</a>,<a role="doc-backlink" href="#id12">3</a>,<a role="doc-backlink" href="#id13">4</a>)</span>
+<p>Botelho, D.P., Curran, K., Lowery, M.M., 2019. Anatomically accurate model of EMG during index finger flexion and abduction derived from diffusion tensor imaging. PLOS Computational Biology 15, e1007267. <a class="reference external" href="https://doi.org/10.1371/journal.pcbi.1007267">https://doi.org/10.1371/journal.pcbi.1007267</a></p>
+</aside>
+</aside>
 <p class="rubric">Methods</p>
 <div class="pst-scrollable-table-container"><table class="autosummary longtable table">
 <tbody>
@@ -481,10 +496,10 @@ where larger motor units have higher recruitment thresholds.</p>
 <td><p>Assign muscle fibers to motor neurons using biologically realistic principles.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#myogen.simulator.Muscle.distribute_innervation_centers" title="myogen.simulator.Muscle.distribute_innervation_centers"><code class="xref py py-obj docutils literal notranslate"><span class="pre">distribute_innervation_centers</span></code></a></p></td>
-<td><p>Distribute innervation electrode_grid_center positions using the fast marching method.</p></td>
+<td><p>Distribute innervation center positions using the fast marching method.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#myogen.simulator.Muscle.generate_muscle_fiber_centers" title="myogen.simulator.Muscle.generate_muscle_fiber_centers"><code class="xref py py-obj docutils literal notranslate"><span class="pre">generate_muscle_fiber_centers</span></code></a></p></td>
-<td><p>Generate muscle fiber electrode_grid_center positions using a pre-computed Voronoi distribution.</p></td>
+<td><p>Generate muscle fiber center positions using a pre-computed Voronoi distribution.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#myogen.simulator.Muscle.resulting_fiber_assignment" title="myogen.simulator.Muscle.resulting_fiber_assignment"><code class="xref py py-obj docutils literal notranslate"><span class="pre">resulting_fiber_assignment</span></code></a></p></td>
 <td><p>Get the muscle fiber positions assigned to a specific motor unit.</p></td>
@@ -552,21 +567,15 @@ boundary and adjusting the in-muscle probabilities accordingly.</p>
 <p>The self-avoidance mechanism promotes realistic intermingling by reducing
 the probability of assigning a fiber to a motor unit if its neighbors are
 already assigned to that unit.</p>
-<p class="rubric">Examples</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">muscle</span><span class="o">.</span><span class="n">assign_mfs2mns</span><span class="p">(</span><span class="n">n_neighbours</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">conf</span><span class="o">=</span><span class="mf">0.995</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">assignments</span> <span class="o">=</span> <span class="n">muscle</span><span class="o">.</span><span class="n">assignment</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Fiber 0 belongs to motor unit </span><span class="si">{</span><span class="n">assignments</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-</pre></div>
-</div>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="myogen.simulator.Muscle.distribute_innervation_centers">
 <span class="sig-name descname"><span class="pre">distribute_innervation_centers</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/myogen/simulator/core/muscle/muscle.html#Muscle.distribute_innervation_centers"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#myogen.simulator.Muscle.distribute_innervation_centers" title="Link to this definition">#</a></dt>
-<dd><p>Distribute innervation electrode_grid_center positions using the fast marching method.</p>
+<dd><p>Distribute innervation center positions using the fast marching method.</p>
 <p>This method implements an optimal packing algorithm to distribute motor unit
 innervation centers within the circular muscle cross-section. The algorithm
-uses the Fast Marching Method to ensure that each new innervation electrode_grid_center is
+uses the Fast Marching Method to ensure that each new innervation center is
 placed at the location that maximizes the minimum distance to all previously
 placed centers.</p>
 <dl class="field-list simple">
@@ -588,7 +597,7 @@ arrangements.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="myogen.simulator.Muscle.generate_muscle_fiber_centers">
 <span class="sig-name descname"><span class="pre">generate_muscle_fiber_centers</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/myogen/simulator/core/muscle/muscle.html#Muscle.generate_muscle_fiber_centers"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#myogen.simulator.Muscle.generate_muscle_fiber_centers" title="Link to this definition">#</a></dt>
-<dd><p>Generate muscle fiber electrode_grid_center positions using a pre-computed Voronoi distribution.</p>
+<dd><p>Generate muscle fiber center positions using a pre-computed Voronoi distribution.</p>
 <p>This method creates the spatial distribution of muscle fiber centers
 within the circular muscle cross-section. The distribution is based on a
 Voronoi tessellation pattern that mimics the natural packing of muscle fibers

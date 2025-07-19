@@ -145,6 +145,17 @@ load_nmodl_files()
 # Create motor neuron pool
 motor_neuron_pool = simulator.MotorNeuronPool(recruitment_thresholds)
 
+# Compute MVC current threshold
+mvc_current_threshold = motor_neuron_pool.mvc_current_threshold
+
+print(f"\nMVC current threshold: {mvc_current_threshold:.1f} nA")
+
+# min max to mvc current threshold
+input_current_matrix = (
+    input_current_matrix * mvc_current_threshold / np.max(input_current_matrix)
+)
+
+
 ##############################################################################
 # Simulate Motor Unit Spike Trains
 # ---------------------------------

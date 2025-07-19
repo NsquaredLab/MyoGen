@@ -446,12 +446,39 @@
 <tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">__init__</span></code></p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#myogen.simulator.MotorNeuronPool.generate_spike_trains" title="myogen.simulator.MotorNeuronPool.generate_spike_trains"><code class="xref py py-obj docutils literal notranslate"><span class="pre">generate_spike_trains</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#myogen.simulator.MotorNeuronPool.compute_mvc_current_threshold" title="myogen.simulator.MotorNeuronPool.compute_mvc_current_threshold"><code class="xref py py-obj docutils literal notranslate"><span class="pre">compute_mvc_current_threshold</span></code></a></p></td>
+<td><p>Computes the minimum current threshold for maximum voluntary contraction using binary search optimization.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#myogen.simulator.MotorNeuronPool.generate_spike_trains" title="myogen.simulator.MotorNeuronPool.generate_spike_trains"><code class="xref py py-obj docutils literal notranslate"><span class="pre">generate_spike_trains</span></code></a></p></td>
 <td><p>Generate the spike trains for as many neuron pools as input currents there are</p></td>
 </tr>
 </tbody>
 </table>
 </div>
+<p class="rubric">Attributes</p>
+<div class="pst-scrollable-table-container"><table class="autosummary longtable table">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#myogen.simulator.MotorNeuronPool.mvc_current_threshold" title="myogen.simulator.MotorNeuronPool.mvc_current_threshold"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mvc_current_threshold</span></code></a></p></td>
+<td><p>Property that returns the minimum current threshold for maximum voluntary contraction.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<dl class="py method">
+<dt class="sig sig-object py" id="myogen.simulator.MotorNeuronPool.compute_mvc_current_threshold">
+<span class="sig-name descname"><span class="pre">compute_mvc_current_threshold</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/myogen/simulator/core/spike_train/spike_train.html#MotorNeuronPool.compute_mvc_current_threshold"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#myogen.simulator.MotorNeuronPool.compute_mvc_current_threshold" title="Link to this definition">#</a></dt>
+<dd><p>Computes the minimum current threshold for maximum voluntary contraction
+using binary search optimization.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Minimum current threshold in nA needed to activate all neurons</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
 <dl class="py method">
 <dt class="sig sig-object py" id="myogen.simulator.MotorNeuronPool.generate_spike_trains">
 <span class="sig-name descname"><span class="pre">generate_spike_trains</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_current__matrix</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timestep__ms</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.05</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">noise_mean__nA</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">30</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">noise_stdev__nA</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">30</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">what_to_record</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[{'locations':</span> <span class="pre">['dendrite',</span> <span class="pre">'soma'],</span> <span class="pre">'variables':</span> <span class="pre">['v']}]</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/myogen/simulator/core/spike_train/spike_train.html#MotorNeuronPool.generate_spike_trains"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#myogen.simulator.MotorNeuronPool.generate_spike_trains" title="Link to this definition">#</a></dt>
@@ -498,6 +525,20 @@ Each element represents whether the neuron spiked at that time point</p></li>
 </dl>
 </dd></dl>
 
+<dl class="py property">
+<dt class="sig sig-object py" id="myogen.simulator.MotorNeuronPool.mvc_current_threshold">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">mvc_current_threshold</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><span class="pre">float</span></a></em><a class="headerlink" href="#myogen.simulator.MotorNeuronPool.mvc_current_threshold" title="Link to this definition">#</a></dt>
+<dd><p>Property that returns the minimum current threshold for maximum voluntary contraction.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Minimum current threshold in nA needed to activate all neurons</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
 </dd></dl>
 
 </section>
@@ -526,7 +567,9 @@ Each element represents whether the neuron spiked at that time point</p></li>
   <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
     <ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#myogen.simulator.MotorNeuronPool"><code class="docutils literal notranslate"><span class="pre">MotorNeuronPool</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#myogen.simulator.MotorNeuronPool.compute_mvc_current_threshold"><code class="docutils literal notranslate"><span class="pre">MotorNeuronPool.compute_mvc_current_threshold()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#myogen.simulator.MotorNeuronPool.generate_spike_trains"><code class="docutils literal notranslate"><span class="pre">MotorNeuronPool.generate_spike_trains()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#myogen.simulator.MotorNeuronPool.mvc_current_threshold"><code class="docutils literal notranslate"><span class="pre">MotorNeuronPool.mvc_current_threshold</span></code></a></li>
 </ul>
 </li>
 </ul>

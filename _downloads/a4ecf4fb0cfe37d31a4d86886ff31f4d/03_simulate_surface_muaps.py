@@ -36,12 +36,6 @@ from myogen.utils.plotting import plot_muap_grid
 
 # Define simulation parameters
 sampling_frequency = 2048.0  # Hz - standard for surface EMG
-electrode_grid_size = (5, 5)
-inter_electrode_distance = 4.0  # mm - standard spacing
-
-# Define volume conductor parameters
-fat_thickness = 1.0  # mm
-skin_thickness = 1.0  # mm
 
 ##############################################################################
 # Load Muscle Model
@@ -56,7 +50,7 @@ muscle = joblib.load(save_path / "muscle_model.pkl")
 # Create Surface EMG Model
 # -------------------------
 #
-# The **SurfaceEMG** object is initialized with the **muscle model** and the **simulation parameters**.
+# The **SurfaceEMG** object is initialized with the **muscle model**, the **electrode array**, and the **simulation parameters**.
 #
 # .. note::
 #    For simplicity, we only simulate the first motor unit.
@@ -65,15 +59,20 @@ muscle = joblib.load(save_path / "muscle_model.pkl")
 #   This is to simulate the **surface EMG** from two different directions.
 #
 
+electrode_array_monopolar = simulator.SurfaceElectrodeArray(
+    num_rows=13,
+    num_cols=5,
+    inter_electrode_distances__mm=2,
+    electrode_radius__mm=1,
+    differentiation_mode="monopolar",
+    bending_radius__mm=muscle.radius__mm + muscle.skin_thickness__mm + muscle.fat_thickness__mm,
+)
+
 surface_emg = simulator.SurfaceEMG(
     muscle_model=muscle,
+    electrode_arrays=[electrode_array_monopolar],
     sampling_frequency__Hz=sampling_frequency,
-    electrode_grid_dimensions__rows_cols=electrode_grid_size,
-    inter_electrode_distance__mm=inter_electrode_distance,
-    MUs_to_simulate=[0],
-    electrode_grid_center_positions=[(0, 0)],
-    fat_thickness__mm=fat_thickness,
-    skin_thickness__mm=skin_thickness,
+    MUs_to_simulate=[0]
 )
 
 ##############################################################################
@@ -84,14 +83,13 @@ surface_emg = simulator.SurfaceEMG(
 
 
 # Run simulation with progress output
-muaps = surface_emg.simulate_muaps(show_plots=False, verbose=False)
+muaps = surface_emg.simulate_muaps()
 
 print(f"\nMUAP simulation completed!")
-print(f"Generated MUAPs shape: {muaps.shape}")
-print(f"  - {muaps.shape[0]} electrode position(s)")
-print(f"  - {muaps.shape[1]} motor units")
-print(f"  - {muaps.shape[2]}×{muaps.shape[3]} electrode grid")
-print(f"  - {muaps.shape[4]} time samples")
+print(f"Generated MUAPs shape: {muaps[0].shape}")
+print(f"  - {muaps[0].shape[0]} motor units")
+print(f"  - {muaps[0].shape[1]}×{muaps[0].shape[2]} electrode grid")
+print(f"  - {muaps[0].shape[3]} time samples")
 
 # Save results
 joblib.dump(surface_emg, save_path / "surface_emg.pkl")
@@ -132,6 +130,6 @@ for muap_idx in range(n_muaps):
 plot_muap_grid(
     muaps_concatenated[:, :, :, 100:-100], axes_list, apply_default_formatting=True
 )
-
+plt.tight_layout()
 # Show all plots
 plt.show()

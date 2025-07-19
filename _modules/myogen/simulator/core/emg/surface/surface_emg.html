@@ -1,0 +1,992 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../../../../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>myogen.simulator.core.emg.surface.surface_emg &#8212; MyoGen 0.1.0 Documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../../../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../../../../../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../../../../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../../../../../_static/sg_gallery.css?v=d2d258e8" />
+    <link rel="stylesheet" type="text/css" href="../../../../../../_static/sg_gallery-binder.css?v=f4aeca0c" />
+    <link rel="stylesheet" type="text/css" href="../../../../../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+    <link rel="stylesheet" type="text/css" href="../../../../../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+    <link rel="stylesheet" type="text/css" href="../../../../../../_static/custom.css?v=4797f867" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../../../../../../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../../../../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="../../../../../../_static/documentation_options.js?v=01f34227"></script>
+    <script src="../../../../../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/myogen/simulator/core/emg/surface/surface_emg';</script>
+    <link rel="index" title="Index" href="../../../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="0.1.0" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../../../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class=" navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../../../../../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../../../../../_static/myogen_logo.png" class="logo__image only-light" alt="MyoGen 0.1.0 Documentation - Home"/>
+    <img src="../../../../../../_static/myogen_logo.png" class="logo__image only-dark pst-js-only" alt="MyoGen 0.1.0 Documentation - Home"/>
+  
+  
+</a></div>
+    
+      <div class="navbar-item">
+<div class="nav-item">
+  <div class="version-switcher__container dropdown">
+      <button id="version-switcher-button" type="button" class="version-switcher__button btn btn-sm navbar-btn" aria-haspopup="true" aria-expanded="false">
+          Version 0.1.0
+      </button>
+      
+      
+      
+  </div>
+</div> </div>
+    
+      <div class="navbar-item"><div class="nav-item">
+   <span>
+      made at the <a href="https://www.nsquared.tf.fau.de/" target="_blank">N² Lab</a>
+   </span>
+</div> </div>
+    
+  </div>
+  
+  <div class=" navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../../api/index.html">
+    API Documentation
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../../auto_examples/index.html">
+    Examples
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/NSquaredLab/MyoGen" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+    </div>
+  
+
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar hide-on-wide">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../../api/index.html">
+    API Documentation
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../../auto_examples/index.html">
+    Examples
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/NSquaredLab/MyoGen" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../../../../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../../../../../index.html" class="nav-link">Module code</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">myogen.simulator.core.emg.surface.surface_emg</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <h1>Source code for myogen.simulator.core.emg.surface.surface_emg</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">warnings</span>
+
+<span class="k">try</span><span class="p">:</span>
+    <span class="kn">import</span><span class="w"> </span><span class="nn">cupy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">cp</span>
+
+    <span class="n">HAS_CUPY</span> <span class="o">=</span> <span class="kc">True</span>
+<span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+    <span class="n">HAS_CUPY</span> <span class="o">=</span> <span class="kc">False</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">joblib</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">scipy.signal</span><span class="w"> </span><span class="kn">import</span> <span class="n">resample</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">tqdm</span><span class="w"> </span><span class="kn">import</span> <span class="n">tqdm</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">myogen</span><span class="w"> </span><span class="kn">import</span> <span class="n">RANDOM_GENERATOR</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">myogen.simulator.core.muscle</span><span class="w"> </span><span class="kn">import</span> <span class="n">Muscle</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">myogen.simulator.core.spike_train</span><span class="w"> </span><span class="kn">import</span> <span class="n">MotorNeuronPool</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">myogen.simulator.core.emg.surface.simulate_fiber</span><span class="w"> </span><span class="kn">import</span> <span class="n">simulate_fiber_v2</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">myogen.simulator.core.emg.electrodes</span><span class="w"> </span><span class="kn">import</span> <span class="n">SurfaceElectrodeArray</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">myogen.utils.types</span><span class="w"> </span><span class="kn">import</span> <span class="n">MUAP_SHAPE__TENSOR</span><span class="p">,</span> <span class="n">SURFACE_EMG__TENSOR</span><span class="p">,</span> <span class="n">beartowertype</span>
+
+<span class="c1"># Suppress warnings for cleaner output during batch simulations</span>
+<span class="n">warnings</span><span class="o">.</span><span class="n">filterwarnings</span><span class="p">(</span><span class="s2">&quot;ignore&quot;</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="SurfaceEMG">
+<a class="viewcode-back" href="../../../../../../generated/myogen.simulator.SurfaceEMG.html#myogen.simulator.SurfaceEMG">[docs]</a>
+<span class="nd">@beartowertype</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">SurfaceEMG</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Surface Electromyography (sEMG) Simulation.</span>
+
+<span class="sd">    This class provides a simulation framework for generating</span>
+<span class="sd">    surface electromyography signals from the muscle. It implements the</span>
+<span class="sd">    multi-layered cylindrical volume conductor model from Farina et al. 2004 [1]_.</span>
+
+<span class="sd">    .. note::</span>
+<span class="sd">        All default values are set to simulate the first dorsal interosseous muscle (FDI) of the hand.</span>
+<span class="sd">        Change all physiological parameters to simulate other muscles.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    muscle_model : Muscle</span>
+<span class="sd">        Pre-computed muscle model (see :class:`myogen.simulator.Muscle`).</span>
+<span class="sd">    electrode_arrays : list[SurfaceElectrodeArray]</span>
+<span class="sd">        List of electrode arrays to use for simulation (see :class:`myogen.simulator.SurfaceElectrodeArray`).</span>
+<span class="sd">    sampling_frequency__Hz : float, default=2048.0</span>
+<span class="sd">        Sampling frequency in Hz. Default is set to 2048 Hz as used by the Quattrocento (OT Bioelettronica, Turin, Italy) system.</span>
+<span class="sd">    sampling_points_in_t_and_z_domains : int, default=256</span>
+<span class="sd">        Spatial and temporal discretization resolution for numerical integration.</span>
+<span class="sd">        Controls the accuracy of the volume conductor calculations but significantly</span>
+<span class="sd">        impacts computational cost (scales quadratically).</span>
+<span class="sd">        Higher values provide better numerical accuracy at the expense of simulation time.</span>
+<span class="sd">        Default is set to 256 samples.</span>
+<span class="sd">    sampling_points_in_theta_domain : int, default=180</span>
+<span class="sd">        Angular discretization for cylindrical coordinate system in degrees.</span>
+<span class="sd">        Higher values provide better spatial resolution for circumferential electrode placement studies.</span>
+<span class="sd">        Default is set to 180 points, which provides 2° angular resolution.</span>
+<span class="sd">        This is suitable for most EMG studies.</span>
+<span class="sd">    MUs_to_simulate : list[int], optional</span>
+<span class="sd">        Indices of motor units to simulate. If None, all motor units are simulated.</span>
+<span class="sd">        Default is None. For computational efficiency, consider</span>
+<span class="sd">        simulating subsets for initial analysis.</span>
+<span class="sd">        Indices correspond to the recruitment order (0 is recruited first).</span>
+
+<span class="sd">    References</span>
+<span class="sd">    ----------</span>
+<span class="sd">    .. [1] Farina, D., Mesin, L., Martina, S., Merletti, R., 2004. A surface EMG generation model with multilayer cylindrical description of the volume conductor. IEEE Transactions on Biomedical Engineering 51, 415–426. https://doi.org/10.1109/TBME.2003.820998</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">muscle_model</span><span class="p">:</span> <span class="n">Muscle</span><span class="p">,</span>
+        <span class="n">electrode_arrays</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">SurfaceElectrodeArray</span><span class="p">],</span>
+        <span class="n">sampling_frequency__Hz</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">2048.0</span><span class="p">,</span>
+        <span class="n">sampling_points_in_t_and_z_domains</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">256</span><span class="p">,</span>
+        <span class="n">sampling_points_in_theta_domain</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">180</span><span class="p">,</span>
+        <span class="n">MUs_to_simulate</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">muscle_model</span> <span class="o">=</span> <span class="n">muscle_model</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">electrode_arrays</span> <span class="o">=</span> <span class="n">electrode_arrays</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sampling_frequency__Hz</span> <span class="o">=</span> <span class="n">sampling_frequency__Hz</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mean_conduction_velocity__m_s</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">muscle_model</span><span class="o">.</span><span class="n">mean_conduction_velocity__m_s</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sampling_points_in_t_and_z_domains</span> <span class="o">=</span> <span class="n">sampling_points_in_t_and_z_domains</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sampling_points_in_theta_domain</span> <span class="o">=</span> <span class="n">sampling_points_in_theta_domain</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">MUs_to_simulate</span> <span class="o">=</span> <span class="n">MUs_to_simulate</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mean_fiber_length__mm</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">muscle_model</span><span class="o">.</span><span class="n">mean_fiber_length__mm</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">var_fiber_length__mm</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">muscle_model</span><span class="o">.</span><span class="n">var_fiber_length__mm</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">radius_bone__mm</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">muscle_model</span><span class="o">.</span><span class="n">radius_bone__mm</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fat_thickness__mm</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">muscle_model</span><span class="o">.</span><span class="n">fat_thickness__mm</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">skin_thickness__mm</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">muscle_model</span><span class="o">.</span><span class="n">skin_thickness__mm</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">muscle_conductivity_radial__S_m</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">muscle_model</span><span class="o">.</span><span class="n">muscle_conductivity_radial__S_m</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">muscle_conductivity_longitudinal__S_m</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">muscle_model</span><span class="o">.</span><span class="n">muscle_conductivity_longitudinal__S_m</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fat_conductivity__S_m</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">muscle_model</span><span class="o">.</span><span class="n">fat_conductivity__S_m</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">skin_conductivity__S_m</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">muscle_model</span><span class="o">.</span><span class="n">skin_conductivity__S_m</span>
+
+        <span class="c1"># Calculate total radius</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">radius_total</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">muscle_model</span><span class="o">.</span><span class="n">radius__mm</span>
+            <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">fat_thickness__mm</span>
+            <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">skin_thickness__mm</span>
+        <span class="p">)</span>
+
+<div class="viewcode-block" id="SurfaceEMG.simulate_muaps">
+<a class="viewcode-back" href="../../../../../../generated/myogen.simulator.SurfaceEMG.html#myogen.simulator.SurfaceEMG.simulate_muaps">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">simulate_muaps</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">MUAP_SHAPE__TENSOR</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Simulate MUAPs for all electrode arrays using the provided muscle model.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        list[MUAP_SHAPE__TENSOR]</span>
+<span class="sd">            List of generated MUAP templates for each electrode array.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Set default MUs to simulate</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">MUs_to_simulate</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">MUs_to_simulate</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span>
+                <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">muscle_model</span><span class="o">.</span><span class="n">resulting_number_of_innervated_fibers</span><span class="p">))</span>
+            <span class="p">)</span>
+
+        <span class="c1"># Calculate innervation zone variance</span>
+        <span class="n">innervation_zone_variance</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">mean_fiber_length__mm</span> <span class="o">*</span> <span class="mf">0.1</span>
+        <span class="p">)</span>  <span class="c1"># 10% of the mean fiber length (see Botelho et al. 2019 [6]_)</span>
+
+        <span class="c1"># Extract fiber counts</span>
+        <span class="n">number_of_fibers_per_MUs</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">muscle_model</span><span class="o">.</span><span class="n">resulting_number_of_innervated_fibers</span>
+        <span class="p">)</span>
+
+        <span class="c1"># Create time array</span>
+        <span class="n">t</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span>
+            <span class="mi">0</span><span class="p">,</span>
+            <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sampling_points_in_t_and_z_domains</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+            <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">sampling_frequency__Hz</span>
+            <span class="o">*</span> <span class="mf">1e-3</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">sampling_points_in_t_and_z_domains</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="c1"># Pre-calculate innervation zones</span>
+        <span class="n">innervation_zones</span> <span class="o">=</span> <span class="n">RANDOM_GENERATOR</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span>
+            <span class="n">low</span><span class="o">=-</span><span class="n">innervation_zone_variance</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span>
+            <span class="n">high</span><span class="o">=</span><span class="n">innervation_zone_variance</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span>
+            <span class="n">size</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">MUs_to_simulate</span><span class="p">),</span>
+        <span class="p">)</span>
+
+        <span class="c1"># Initialize output arrays for each electrode array</span>
+        <span class="c1"># Each electrode array can have different dimensions</span>
+        <span class="n">electrode_array_results</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">for</span> <span class="n">array_idx</span><span class="p">,</span> <span class="n">electrode_array</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">electrode_arrays</span><span class="p">):</span>
+            <span class="c1"># Initialize array for this electrode configuration</span>
+            <span class="n">array_result</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span>
+                <span class="p">(</span>
+                    <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">MUs_to_simulate</span><span class="p">),</span>
+                    <span class="n">electrode_array</span><span class="o">.</span><span class="n">num_rows</span><span class="p">,</span>
+                    <span class="n">electrode_array</span><span class="o">.</span><span class="n">num_cols</span><span class="p">,</span>
+                    <span class="nb">len</span><span class="p">(</span><span class="n">t</span><span class="p">),</span>
+                <span class="p">)</span>
+            <span class="p">)</span>
+
+            <span class="c1"># Matrix optimization variables</span>
+            <span class="n">A_matrix</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="n">B_incomplete</span> <span class="o">=</span> <span class="kc">None</span>
+
+            <span class="c1"># Process each motor unit</span>
+            <span class="k">for</span> <span class="n">MU_number</span><span class="p">,</span> <span class="n">MU_index</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">MUs_to_simulate</span><span class="p">):</span>
+                <span class="n">number_of_fibers</span> <span class="o">=</span> <span class="n">number_of_fibers_per_MUs</span><span class="p">[</span><span class="n">MU_index</span><span class="p">]</span>
+
+                <span class="k">if</span> <span class="n">number_of_fibers</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="k">continue</span>
+
+                <span class="c1"># Get fiber positions</span>
+                <span class="n">position_of_fibers</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">muscle_model</span><span class="o">.</span><span class="n">resulting_fiber_assignment</span><span class="p">(</span>
+                    <span class="n">MU_index</span>
+                <span class="p">)</span>
+                <span class="n">innervation_zone</span> <span class="o">=</span> <span class="n">innervation_zones</span><span class="p">[</span><span class="n">MU_number</span><span class="p">]</span>
+
+                <span class="c1"># Process each fiber</span>
+                <span class="k">for</span> <span class="n">fiber_number</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span>
+                    <span class="nb">range</span><span class="p">(</span><span class="n">number_of_fibers</span><span class="p">),</span>
+                    <span class="n">desc</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Electrode Array </span><span class="si">{</span><span class="n">array_idx</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">electrode_arrays</span><span class="p">)</span><span class="si">}</span><span class="s2"> MU </span><span class="si">{</span><span class="n">MU_number</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">MUs_to_simulate</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                    <span class="n">unit</span><span class="o">=</span><span class="s2">&quot;fibers&quot;</span><span class="p">,</span>
+                <span class="p">):</span>
+                    <span class="n">fiber_position</span> <span class="o">=</span> <span class="n">position_of_fibers</span><span class="p">[</span><span class="n">fiber_number</span><span class="p">]</span>
+
+                    <span class="c1"># Calculate fiber distance from center</span>
+                    <span class="n">R</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">fiber_position</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="n">fiber_position</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span>
+
+                    <span class="c1"># Generate fiber length</span>
+                    <span class="n">fiber_length__mm</span> <span class="o">=</span> <span class="p">(</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">mean_fiber_length__mm</span>
+                        <span class="o">+</span> <span class="n">RANDOM_GENERATOR</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span>
+                            <span class="n">low</span><span class="o">=-</span><span class="bp">self</span><span class="o">.</span><span class="n">var_fiber_length__mm</span><span class="p">,</span>
+                            <span class="n">high</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">var_fiber_length__mm</span><span class="p">,</span>
+                        <span class="p">)</span>
+                    <span class="p">)</span>
+
+                    <span class="c1"># Calculate fiber end positions</span>
+                    <span class="n">L2</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">innervation_zone</span> <span class="o">-</span> <span class="n">fiber_length__mm</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span>
+                    <span class="n">L1</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">innervation_zone</span> <span class="o">+</span> <span class="n">fiber_length__mm</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span>
+
+                    <span class="c1"># Use the new simulate_fiber_v2 function</span>
+                    <span class="k">if</span> <span class="n">fiber_number</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">A_matrix</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                        <span class="n">phi_temp</span><span class="p">,</span> <span class="n">A_matrix</span><span class="p">,</span> <span class="n">B_incomplete</span> <span class="o">=</span> <span class="n">simulate_fiber_v2</span><span class="p">(</span>
+                            <span class="n">Fs</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">sampling_frequency__Hz</span> <span class="o">*</span> <span class="mf">1e-3</span><span class="p">,</span>
+                            <span class="n">v</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">mean_conduction_velocity__m_s</span><span class="p">,</span>
+                            <span class="n">N</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">sampling_points_in_t_and_z_domains</span><span class="p">,</span>
+                            <span class="n">M</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">sampling_points_in_theta_domain</span><span class="p">,</span>
+                            <span class="n">r</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">radius_total</span><span class="p">,</span>
+                            <span class="n">r_bone</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">radius_bone__mm</span><span class="p">,</span>
+                            <span class="n">th_fat</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">fat_thickness__mm</span><span class="p">,</span>
+                            <span class="n">th_skin</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">skin_thickness__mm</span><span class="p">,</span>
+                            <span class="n">R</span><span class="o">=</span><span class="n">R</span><span class="p">,</span>
+                            <span class="n">L1</span><span class="o">=</span><span class="n">L1</span><span class="p">,</span>
+                            <span class="n">L2</span><span class="o">=</span><span class="n">L2</span><span class="p">,</span>
+                            <span class="n">zi</span><span class="o">=</span><span class="n">innervation_zone</span><span class="p">,</span>
+                            <span class="n">electrode_array</span><span class="o">=</span><span class="n">electrode_array</span><span class="p">,</span>
+                            <span class="n">sig_muscle_rho</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">muscle_conductivity_radial__S_m</span><span class="p">,</span>
+                            <span class="n">sig_muscle_z</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">muscle_conductivity_longitudinal__S_m</span><span class="p">,</span>
+                            <span class="n">sig_skin</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">skin_conductivity__S_m</span><span class="p">,</span>
+                            <span class="n">sig_fat</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">fat_conductivity__S_m</span><span class="p">,</span>
+                        <span class="p">)</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">phi_temp</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">simulate_fiber_v2</span><span class="p">(</span>
+                            <span class="n">Fs</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">sampling_frequency__Hz</span> <span class="o">*</span> <span class="mf">1e-3</span><span class="p">,</span>
+                            <span class="n">v</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">mean_conduction_velocity__m_s</span><span class="p">,</span>
+                            <span class="n">N</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">sampling_points_in_t_and_z_domains</span><span class="p">,</span>
+                            <span class="n">M</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">sampling_points_in_theta_domain</span><span class="p">,</span>
+                            <span class="n">r</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">radius_total</span><span class="p">,</span>
+                            <span class="n">r_bone</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">radius_bone__mm</span><span class="p">,</span>
+                            <span class="n">th_fat</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">fat_thickness__mm</span><span class="p">,</span>
+                            <span class="n">th_skin</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">skin_thickness__mm</span><span class="p">,</span>
+                            <span class="n">R</span><span class="o">=</span><span class="n">R</span><span class="p">,</span>
+                            <span class="n">L1</span><span class="o">=</span><span class="n">L1</span><span class="p">,</span>
+                            <span class="n">L2</span><span class="o">=</span><span class="n">L2</span><span class="p">,</span>
+                            <span class="n">zi</span><span class="o">=</span><span class="n">innervation_zone</span><span class="p">,</span>
+                            <span class="n">electrode_array</span><span class="o">=</span><span class="n">electrode_array</span><span class="p">,</span>
+                            <span class="n">sig_muscle_rho</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">muscle_conductivity_radial__S_m</span><span class="p">,</span>
+                            <span class="n">sig_muscle_z</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">muscle_conductivity_longitudinal__S_m</span><span class="p">,</span>
+                            <span class="n">sig_skin</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">skin_conductivity__S_m</span><span class="p">,</span>
+                            <span class="n">sig_fat</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">fat_conductivity__S_m</span><span class="p">,</span>
+                            <span class="n">A_matrix</span><span class="o">=</span><span class="n">A_matrix</span><span class="p">,</span>
+                            <span class="n">B_incomplete</span><span class="o">=</span><span class="n">B_incomplete</span><span class="p">,</span>
+                        <span class="p">)</span>
+
+                    <span class="n">array_result</span><span class="p">[</span><span class="n">MU_number</span><span class="p">]</span> <span class="o">+=</span> <span class="n">phi_temp</span>
+
+            <span class="n">electrode_array_results</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">array_result</span><span class="p">)</span>
+
+        <span class="c1"># Store results</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">resulting_muaps_arrays</span> <span class="o">=</span> <span class="n">electrode_array_results</span>
+
+        <span class="k">return</span> <span class="n">electrode_array_results</span></div>
+
+
+<div class="viewcode-block" id="SurfaceEMG.simulate_surface_emg">
+<a class="viewcode-back" href="../../../../../../generated/myogen.simulator.SurfaceEMG.html#myogen.simulator.SurfaceEMG.simulate_surface_emg">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">simulate_surface_emg</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">motor_neuron_pool</span><span class="p">:</span> <span class="n">MotorNeuronPool</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">SURFACE_EMG__TENSOR</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Generate surface EMG signals for all electrode arrays using the provided motor neuron pool.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        motor_neuron_pool : MotorNeuronPool</span>
+<span class="sd">            Motor neuron pool with spike trains computed (see :class:`myogen.simulator.MotorNeuronPool`).</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        list[SURFACE_EMG__TENSOR]</span>
+<span class="sd">            Surface EMG signals for each electrode array</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        AttributeError</span>
+<span class="sd">            If MUAP templates have not been generated. Call simulate_muaps() first.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;resulting_muaps_arrays&quot;</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span>
+                <span class="s2">&quot;MUAP templates have not been generated. Call simulate_muaps() first.&quot;</span>
+            <span class="p">)</span>
+
+        <span class="c1"># Handle MUs to simulate</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">MUs_to_simulate</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">MUs_to_simulate</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span>
+                <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">muscle_model</span><span class="o">.</span><span class="n">resulting_number_of_innervated_fibers</span><span class="p">))</span>
+            <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">MUs_to_simulate</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">MUs_to_simulate</span><span class="p">)</span>
+
+        <span class="n">emg_results</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">for</span> <span class="n">array_idx</span><span class="p">,</span> <span class="n">muap_array</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">resulting_muaps_arrays</span><span class="p">):</span>
+            <span class="c1"># Temporal resampling</span>
+            <span class="n">muap_shapes</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span>
+                <span class="n">resample</span><span class="p">(</span>
+                    <span class="n">muap_array</span><span class="p">,</span>
+                    <span class="nb">int</span><span class="p">(</span>
+                        <span class="p">(</span><span class="n">muap_array</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">sampling_frequency__Hz</span><span class="p">)</span>
+                        <span class="o">//</span> <span class="p">(</span><span class="n">motor_neuron_pool</span><span class="o">.</span><span class="n">timestep__ms</span> <span class="o">/</span> <span class="mi">1000</span><span class="p">)</span>
+                    <span class="p">),</span>
+                    <span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span>
+                <span class="p">)</span>
+            <span class="p">)</span>
+
+            <span class="n">n_pools</span> <span class="o">=</span> <span class="n">motor_neuron_pool</span><span class="o">.</span><span class="n">spike_trains</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">n_rows</span> <span class="o">=</span> <span class="n">muap_shapes</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+            <span class="n">n_cols</span> <span class="o">=</span> <span class="n">muap_shapes</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+
+            <span class="c1"># Initialize result array</span>
+            <span class="n">sample_conv</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">convolve</span><span class="p">(</span>
+                <span class="n">motor_neuron_pool</span><span class="o">.</span><span class="n">spike_trains</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+                <span class="n">muap_shapes</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+                <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;same&quot;</span><span class="p">,</span>
+            <span class="p">)</span>
+
+            <span class="n">surface_emg</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">n_pools</span><span class="p">,</span> <span class="n">n_rows</span><span class="p">,</span> <span class="n">n_cols</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">sample_conv</span><span class="p">)))</span>
+
+            <span class="c1"># Perform convolution for each pool using GPU acceleration if available</span>
+            <span class="k">if</span> <span class="n">HAS_CUPY</span><span class="p">:</span>
+                <span class="c1"># Use GPU acceleration with CuPy</span>
+                <span class="n">spike_gpu</span> <span class="o">=</span> <span class="n">cp</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">motor_neuron_pool</span><span class="o">.</span><span class="n">spike_trains</span><span class="p">)</span>
+                <span class="n">muap_gpu</span> <span class="o">=</span> <span class="n">cp</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">muap_shapes</span><span class="p">)</span>
+                <span class="n">surface_emg_gpu</span> <span class="o">=</span> <span class="n">cp</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">n_pools</span><span class="p">,</span> <span class="n">n_rows</span><span class="p">,</span> <span class="n">n_cols</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">sample_conv</span><span class="p">)))</span>
+
+                <span class="k">for</span> <span class="n">pool_idx</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span>
+                    <span class="nb">range</span><span class="p">(</span><span class="n">n_pools</span><span class="p">),</span>
+                    <span class="n">desc</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Electrode Array </span><span class="si">{</span><span class="n">array_idx</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">resulting_muaps_arrays</span><span class="p">)</span><span class="si">}</span><span class="s2"> Surface EMG (GPU)&quot;</span><span class="p">,</span>
+                    <span class="n">unit</span><span class="o">=</span><span class="s2">&quot;pools&quot;</span><span class="p">,</span>
+                <span class="p">):</span>
+                    <span class="n">active_neuron_indices</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span>
+                        <span class="n">motor_neuron_pool</span><span class="o">.</span><span class="n">active_neuron_indices</span><span class="p">[</span><span class="n">pool_idx</span><span class="p">]</span>
+                    <span class="p">)</span>
+
+                    <span class="k">for</span> <span class="n">row_idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_rows</span><span class="p">):</span>
+                        <span class="k">for</span> <span class="n">col_idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_cols</span><span class="p">):</span>
+                            <span class="c1"># Process all active MUs on GPU</span>
+                            <span class="n">convolutions</span> <span class="o">=</span> <span class="n">cp</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
+                                <span class="p">[</span>
+                                    <span class="n">cp</span><span class="o">.</span><span class="n">correlate</span><span class="p">(</span>
+                                        <span class="n">spike_gpu</span><span class="p">[</span><span class="n">pool_idx</span><span class="p">,</span> <span class="n">mu_idx</span><span class="p">],</span>
+                                        <span class="n">muap_gpu</span><span class="p">[</span><span class="n">mu_idx</span><span class="p">,</span> <span class="n">row_idx</span><span class="p">,</span> <span class="n">col_idx</span><span class="p">],</span>
+                                        <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;same&quot;</span><span class="p">,</span>
+                                    <span class="p">)</span>
+                                    <span class="k">for</span> <span class="n">mu_idx</span> <span class="ow">in</span> <span class="n">MUs_to_simulate</span><span class="o">.</span><span class="n">intersection</span><span class="p">(</span>
+                                        <span class="n">active_neuron_indices</span>
+                                    <span class="p">)</span>
+                                <span class="p">]</span>
+                            <span class="p">)</span>
+                            <span class="c1"># Sum across MUAPs on GPU</span>
+                            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">convolutions</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                                <span class="n">surface_emg_gpu</span><span class="p">[</span><span class="n">pool_idx</span><span class="p">,</span> <span class="n">row_idx</span><span class="p">,</span> <span class="n">col_idx</span><span class="p">]</span> <span class="o">=</span> <span class="n">cp</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span>
+                                    <span class="n">convolutions</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span>
+                                <span class="p">)</span>
+
+                <span class="c1"># Transfer results back to CPU</span>
+                <span class="n">surface_emg</span> <span class="o">=</span> <span class="n">cp</span><span class="o">.</span><span class="n">asnumpy</span><span class="p">(</span><span class="n">surface_emg_gpu</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="c1"># Fallback to CPU computation with NumPy</span>
+                <span class="k">for</span> <span class="n">pool_idx</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span>
+                    <span class="nb">range</span><span class="p">(</span><span class="n">n_pools</span><span class="p">),</span>
+                    <span class="n">desc</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Electrode Array </span><span class="si">{</span><span class="n">array_idx</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">resulting_muaps_arrays</span><span class="p">)</span><span class="si">}</span><span class="s2"> Surface EMG (CPU)&quot;</span><span class="p">,</span>
+                    <span class="n">unit</span><span class="o">=</span><span class="s2">&quot;pools&quot;</span><span class="p">,</span>
+                <span class="p">):</span>
+                    <span class="n">active_neuron_indices</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span>
+                        <span class="n">motor_neuron_pool</span><span class="o">.</span><span class="n">active_neuron_indices</span><span class="p">[</span><span class="n">pool_idx</span><span class="p">]</span>
+                    <span class="p">)</span>
+
+                    <span class="k">for</span> <span class="n">row_idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_rows</span><span class="p">):</span>
+                        <span class="k">for</span> <span class="n">col_idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_cols</span><span class="p">):</span>
+                            <span class="c1"># Process all active MUs</span>
+                            <span class="n">convolutions</span> <span class="o">=</span> <span class="p">[]</span>
+                            <span class="k">for</span> <span class="n">mu_idx</span> <span class="ow">in</span> <span class="n">MUs_to_simulate</span><span class="o">.</span><span class="n">intersection</span><span class="p">(</span>
+                                <span class="n">active_neuron_indices</span>
+                            <span class="p">):</span>
+                                <span class="n">conv</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">correlate</span><span class="p">(</span>
+                                    <span class="n">motor_neuron_pool</span><span class="o">.</span><span class="n">spike_trains</span><span class="p">[</span><span class="n">pool_idx</span><span class="p">,</span> <span class="n">mu_idx</span><span class="p">],</span>
+                                    <span class="n">muap_shapes</span><span class="p">[</span><span class="n">mu_idx</span><span class="p">,</span> <span class="n">row_idx</span><span class="p">,</span> <span class="n">col_idx</span><span class="p">],</span>
+                                    <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;same&quot;</span><span class="p">,</span>
+                                <span class="p">)</span>
+                                <span class="n">convolutions</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">conv</span><span class="p">)</span>
+
+                            <span class="k">if</span> <span class="n">convolutions</span><span class="p">:</span>
+                                <span class="n">surface_emg</span><span class="p">[</span><span class="n">pool_idx</span><span class="p">,</span> <span class="n">row_idx</span><span class="p">,</span> <span class="n">col_idx</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span>
+                                    <span class="n">convolutions</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span>
+                                <span class="p">)</span>
+
+            <span class="n">emg_results</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">surface_emg</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">surface_emg__tensors</span> <span class="o">=</span> <span class="n">emg_results</span>
+        <span class="k">return</span> <span class="n">emg_results</span></div>
+
+
+<div class="viewcode-block" id="SurfaceEMG.add_noise">
+<a class="viewcode-back" href="../../../../../../generated/myogen.simulator.SurfaceEMG.html#myogen.simulator.SurfaceEMG.add_noise">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">add_noise</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">snr_db</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">noise_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;gaussian&quot;</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">SURFACE_EMG__TENSOR</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Add noise to all electrode arrays.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        snr_db : float</span>
+<span class="sd">            Signal-to-noise ratio in dB</span>
+<span class="sd">        noise_type : str, default=&quot;gaussian&quot;</span>
+<span class="sd">            Type of noise to add</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        list[SURFACE_EMG__TENSOR]</span>
+<span class="sd">            Noisy EMG signals for each electrode array</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;surface_emg__tensors&quot;</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;Surface EMG has not been simulated. Call simulate_surface_emg() first.&quot;</span>
+            <span class="p">)</span>
+
+        <span class="n">noisy_emg_results</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">emg_array</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">surface_emg__tensors</span><span class="p">):</span>
+            <span class="c1"># Calculate signal power</span>
+            <span class="n">signal_power</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">emg_array</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+
+            <span class="c1"># Calculate noise power</span>
+            <span class="n">snr_linear</span> <span class="o">=</span> <span class="mi">10</span> <span class="o">**</span> <span class="p">(</span><span class="n">snr_db</span> <span class="o">/</span> <span class="mi">10</span><span class="p">)</span>
+            <span class="n">noise_power</span> <span class="o">=</span> <span class="n">signal_power</span> <span class="o">/</span> <span class="n">snr_linear</span>
+
+            <span class="c1"># Generate noise</span>
+            <span class="k">if</span> <span class="n">noise_type</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;gaussian&quot;</span><span class="p">:</span>
+                <span class="n">noise_std</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">noise_power</span><span class="p">)</span>
+                <span class="n">noise</span> <span class="o">=</span> <span class="n">RANDOM_GENERATOR</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span>
+                    <span class="n">loc</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="n">noise_std</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="n">emg_array</span><span class="o">.</span><span class="n">shape</span>
+                <span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unsupported noise type: </span><span class="si">{</span><span class="n">noise_type</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+            <span class="c1"># Add noise</span>
+            <span class="n">noisy_emg</span> <span class="o">=</span> <span class="n">emg_array</span> <span class="o">+</span> <span class="n">noise</span>
+            <span class="n">noisy_emg_results</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">noisy_emg</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">noisy_surface_emg__tensors</span> <span class="o">=</span> <span class="n">noisy_emg_results</span>
+        <span class="k">return</span> <span class="n">noisy_emg_results</span></div>
+</div>
+
+
+
+<span class="c1"># For backward compatibility - run simulation if script is executed directly</span>
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">myogen</span><span class="w"> </span><span class="kn">import</span> <span class="n">simulator</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">myogen.utils.plotting.muscle</span><span class="w"> </span><span class="kn">import</span> <span class="n">show_mf_centers</span><span class="p">,</span> <span class="n">show_innervation_areas_2d</span>
+    <span class="kn">import</span><span class="w"> </span><span class="nn">seaborn</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">sns</span>
+
+    <span class="c1"># Generate recruitment thresholds#</span>
+    <span class="n">N_MU</span> <span class="o">=</span> <span class="mi">100</span>  <span class="c1"># Number of motor units</span>
+    <span class="n">r</span> <span class="o">=</span> <span class="mf">4.9</span>  <span class="c1"># Radius of the muscle in mm</span>
+    <span class="n">fiber_density</span> <span class="o">=</span> <span class="mi">400</span>  <span class="c1"># fibers per mm²</span>
+    <span class="n">max_innervation_ratio</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">/</span> <span class="mi">4</span>  <span class="c1"># Maximum innervation area to total muscle area ratio</span>
+    <span class="n">grid_resolution</span> <span class="o">=</span> <span class="mi">256</span>  <span class="c1"># Grid resolution for muscle simulation</span>
+
+    <span class="n">recruitment_thresholds</span><span class="p">,</span> <span class="n">recruitment_thresholds_starting_by_zeros</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="n">simulator</span><span class="o">.</span><span class="n">generate_mu_recruitment_thresholds</span><span class="p">(</span>
+            <span class="n">N</span><span class="o">=</span><span class="n">N_MU</span><span class="p">,</span>
+            <span class="n">recruitment_range</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span>  <span class="c1"># Recruitment range in % MVC</span>
+            <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;konstantin&quot;</span><span class="p">,</span>  <span class="c1"># Recruitment pattern model</span>
+            <span class="n">konstantin__max_threshold</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+        <span class="p">)</span>
+    <span class="p">)</span>
+
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">recruitment_thresholds</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="s2">&quot;o&quot;</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s2">&quot;None&quot;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+    <span class="c1"># #Create muscle object</span>
+    <span class="c1"># muscle = simulator.Muscle(</span>
+    <span class="c1">#     recruitment_thresholds=recruitment_thresholds,</span>
+    <span class="c1">#     radius__mm=r,</span>
+    <span class="c1">#     fiber_density__fibers_per_mm2=fiber_density,</span>
+    <span class="c1">#     max_innervation_area_to_total_muscle_area__ratio=max_innervation_ratio,</span>
+    <span class="c1">#     grid_resolution=grid_resolution,</span>
+    <span class="c1">#     autorun=True,</span>
+    <span class="c1"># )</span>
+    <span class="c1"># joblib.dump(muscle, &quot;muscle.pkl&quot;)  # Save for reuse</span>
+
+    <span class="c1"># load muscle object</span>
+    <span class="n">muscle</span> <span class="o">=</span> <span class="n">joblib</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s2">&quot;muscle.pkl&quot;</span><span class="p">)</span>
+
+    <span class="k">with</span> <span class="n">plt</span><span class="o">.</span><span class="n">xkcd</span><span class="p">():</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s2">&quot;font.size&quot;</span><span class="p">:</span> <span class="mi">24</span><span class="p">})</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s2">&quot;axes.titlesize&quot;</span><span class="p">:</span> <span class="mi">24</span><span class="p">})</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s2">&quot;axes.labelsize&quot;</span><span class="p">:</span> <span class="mi">24</span><span class="p">})</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s2">&quot;xtick.labelsize&quot;</span><span class="p">:</span> <span class="mi">24</span><span class="p">})</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s2">&quot;ytick.labelsize&quot;</span><span class="p">:</span> <span class="mi">24</span><span class="p">})</span>
+        <span class="n">show_mf_centers</span><span class="p">(</span><span class="n">muscle</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">plt</span><span class="o">.</span><span class="n">gca</span><span class="p">())</span>
+
+        <span class="n">sns</span><span class="o">.</span><span class="n">despine</span><span class="p">(</span><span class="n">trim</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">offset</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+    <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">6</span><span class="p">,</span> <span class="mi">6</span><span class="p">))</span>
+
+    <span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s2">&quot;font.size&quot;</span><span class="p">:</span> <span class="mi">24</span><span class="p">})</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s2">&quot;axes.titlesize&quot;</span><span class="p">:</span> <span class="mi">24</span><span class="p">})</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s2">&quot;axes.labelsize&quot;</span><span class="p">:</span> <span class="mi">24</span><span class="p">})</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s2">&quot;xtick.labelsize&quot;</span><span class="p">:</span> <span class="mi">24</span><span class="p">})</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s2">&quot;ytick.labelsize&quot;</span><span class="p">:</span> <span class="mi">24</span><span class="p">})</span>
+
+    <span class="n">selected_indices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="nb">reversed</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">120</span><span class="p">))))</span>
+    <span class="k">with</span> <span class="n">plt</span><span class="o">.</span><span class="n">xkcd</span><span class="p">():</span>
+        <span class="n">show_innervation_areas_2d</span><span class="p">(</span>
+            <span class="n">muscle</span><span class="p">,</span> <span class="n">indices_to_plot</span><span class="o">=</span><span class="n">selected_indices</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">plt</span><span class="o">.</span><span class="n">gca</span><span class="p">()</span>
+        <span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;Motor Unit Innervation Areas (First 10 MUs)&quot;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;X Position (mm)&quot;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;Y Position (mm)&quot;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">axis</span><span class="p">(</span><span class="s2">&quot;equal&quot;</span><span class="p">)</span>
+
+    <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+    <span class="n">surface_emg</span> <span class="o">=</span> <span class="n">SurfaceEMG</span><span class="p">(</span>
+        <span class="n">muscle_model</span><span class="o">=</span><span class="n">muscle</span><span class="p">,</span>
+        <span class="n">MUs_to_simulate</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+    <span class="p">)</span>
+
+    <span class="n">MUAP</span> <span class="o">=</span> <span class="n">surface_emg</span><span class="o">.</span><span class="n">simulate_muaps</span><span class="p">(</span>
+        <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">show_plots</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>  <span class="c1"># Center at the muscle belly</span>
+    <span class="p">)</span>
+
+    <span class="n">np</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="s2">&quot;FDI_MUAPs_multi.npy&quot;</span><span class="p">,</span> <span class="n">MUAP</span><span class="p">)</span>
+
+
+<span class="c1">#######################################################################################################</span>
+<span class="c1">###################################### References #####################################################</span>
+<span class="c1">#######################################################################################################</span>
+
+<span class="c1"># BOTELHO, Diego; CURRAN, Kathleen; LOWERY, Madeleine M. Anatomically accurate</span>
+<span class="c1"># model of EMG during index finger flexion and abduction derived from diffusion tensor</span>
+<span class="c1"># imaging. PLOS Computational Biology, [S. l.], v. 15, n. 8, p. e1007267, 2019. DOI:</span>
+<span class="c1"># 10.1371/journal.pcbi.1007267.</span>
+
+<span class="c1"># BRODAR, Vida. Observations on Skin Thickness and Subcutaneous Tissue in Man. Zeitschrift</span>
+<span class="c1"># Für Morphologie Und Anthropologie, [S. l.], v. 50, n. 3, p. 386–95, 1960. Available in:</span>
+<span class="c1"># https://about.jstor.org/terms</span>
+
+<span class="c1"># ENOKA, Roger M.; FUGLEVAND, Andrew J. Motor unit physiology: Some unresolved issues. Muscle &amp; Nerve,</span>
+<span class="c1"># [S. l.], v. 24, n. 1, p. 4–17, 2001. DOI: 10.1002/1097-4598(200101)24:1&lt;4::AID-MUS13&gt;3.0.CO;2-F.</span>
+
+<span class="c1"># FEINSTEIN, Bertram; LINDEGARD, Bengt; NYMAN, Eberhard; WOHLFART, Gunnar.</span>
+<span class="c1"># MORPHOLOGIC STUDIES OF MOTOR UNITS IN NORMAL HUMAN MUSCLES. Cells Tissues</span>
+<span class="c1"># Organs, [S. l.], v. 23, n. 2, p. 127–142, 1955. DOI: 10.1159/000140989.</span>
+
+<span class="c1"># HWANG, Kun; HUAN, Fan; KIM, Dae Joong. Muscle fibre types of the lumbrical, interossei,</span>
+<span class="c1"># flexor, and extensor muscles moving the index finger. Journal of Plastic Surgery and Hand</span>
+<span class="c1"># Surgery, [S. l.], v. 47, n. 4, p. 268–272, 2013. DOI: 10.3109/2000656X.2012.755988.</span>
+
+<span class="c1"># JACOBSON, Mark D.; RAAB, Rajnik; FAZELI, Babak M.; ABRAMS, Reid A.; BOTTE, Michael J.;</span>
+<span class="c1"># LIEBER, Richard L. Architectural design of the human intrinsic hand muscles. The Journal of</span>
+<span class="c1"># Hand Surgery, [S. l.], v. 17, n. 5, p. 804–809, 1992. DOI: 10.1016/0363-5023(92)90446-V.</span>
+
+<span class="c1"># ROELEVELD, K.; BLOK, J. H.; STEGEMAN, D. F.; VAN OOSTEROM, A. Volume conduction</span>
+<span class="c1"># models for surface EMG; confrontation with measurements. Journal of Electromyography</span>
+<span class="c1"># and Kinesiology, [S. l.], v. 7, n. 4, p. 221–232, 1997. DOI: 10.1016/S1050-6411(97)00009-6.</span>
+
+<span class="c1"># STÖRCHLE, Paul; MÜLLER, Wolfram; SENGEIS, Marietta; LACKNER, Sonja; HOLASEK, Sandra;</span>
+<span class="c1"># FÜRHAPTER-RIEGER, Alfred. Measurement of mean subcutaneous fat thickness: eight</span>
+<span class="c1"># standardised ultrasound sites compared to 216 randomly selected sites. Scientific Reports,</span>
+<span class="c1"># [S. l.], v. 8, n. 1, p. 16268, 2018. DOI: 10.1038/s41598-018-34213-0.</span>
+</pre></div>
+
+                </article>
+              
+              
+              
+              
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../../../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../../../../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2025 - 2025, n-squared lab, FAU Erlangen-Nürnberg, Germany.
+      <br/>
+    
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.2.3.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

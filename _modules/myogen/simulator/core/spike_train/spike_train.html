@@ -523,7 +523,7 @@
         <span class="p">]</span> <span class="o">=</span> <span class="p">[</span>
             <span class="p">{</span><span class="s2">&quot;variables&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;v&quot;</span><span class="p">],</span> <span class="s2">&quot;locations&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;dendrite&quot;</span><span class="p">,</span> <span class="s2">&quot;soma&quot;</span><span class="p">]},</span>
         <span class="p">],</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">SPIKE_TRAIN__MATRIX</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span> <span class="nb">list</span><span class="p">[</span><span class="n">neo</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">segment</span><span class="o">.</span><span class="n">Segment</span><span class="p">]]:</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">SPIKE_TRAIN__MATRIX</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span> <span class="nb">list</span><span class="p">[</span><span class="n">neo</span><span class="o">.</span><span class="n">Segment</span><span class="p">]]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Generate the spike trains for as many neuron pools as input currents there are</span>
 
@@ -629,7 +629,93 @@
         <span class="p">]</span>
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">spike_trains</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">active_neuron_indices</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span></div>
-</div>
+
+
+<div class="viewcode-block" id="MotorNeuronPool.compute_mvc_current_threshold">
+<a class="viewcode-back" href="../../../../../generated/myogen.simulator.MotorNeuronPool.html#myogen.simulator.MotorNeuronPool.compute_mvc_current_threshold">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">compute_mvc_current_threshold</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Computes the minimum current threshold for maximum voluntary contraction</span>
+<span class="sd">        using binary search optimization.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        float</span>
+<span class="sd">            Minimum current threshold in nA needed to activate all neurons</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">def</span><span class="w"> </span><span class="nf">test_current_activates_all_neurons</span><span class="p">(</span><span class="n">current_nA</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">            </span><span class="sd">&quot;&quot;&quot;Test if a given current activates all neurons in the pool.</span>
+
+<span class="sd">            Parameters</span>
+<span class="sd">            ----------</span>
+<span class="sd">            current_nA : float</span>
+<span class="sd">                Current amplitude in nA</span>
+
+<span class="sd">            Returns</span>
+<span class="sd">            -------</span>
+<span class="sd">            bool</span>
+<span class="sd">                True if all neurons are activated, False otherwise</span>
+<span class="sd">            &quot;&quot;&quot;</span>
+            <span class="c1"># Create short test simulation parameters</span>
+            <span class="n">test_duration_ms</span> <span class="o">=</span> <span class="mi">500</span>  <span class="c1"># Short 500ms test</span>
+            <span class="n">test_timestep_ms</span> <span class="o">=</span> <span class="mf">0.5</span>
+            <span class="n">n_timepoints</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">test_duration_ms</span> <span class="o">/</span> <span class="n">test_timestep_ms</span><span class="p">)</span>
+
+            <span class="c1"># Create constant current input for testing</span>
+            <span class="n">test_current</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">((</span><span class="mi">1</span><span class="p">,</span> <span class="n">n_timepoints</span><span class="p">),</span> <span class="n">current_nA</span><span class="p">)</span>
+
+            <span class="c1"># Run short simulation</span>
+            <span class="n">spike_trains</span><span class="p">,</span> <span class="n">active_neuron_indices</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">generate_spike_trains</span><span class="p">(</span>
+                <span class="n">input_current__matrix</span><span class="o">=</span><span class="n">test_current</span><span class="p">,</span>
+                <span class="n">timestep__ms</span><span class="o">=</span><span class="n">test_timestep_ms</span><span class="p">,</span>
+                <span class="n">noise_mean__nA</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>  <span class="c1"># Reduce noise for more consistent results</span>
+                <span class="n">noise_stdev__nA</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+                <span class="n">what_to_record</span><span class="o">=</span><span class="p">[],</span>  <span class="c1"># Minimal recording for speed</span>
+            <span class="p">)</span>
+
+            <span class="c1"># Check if all neurons are active</span>
+            <span class="n">n_total_neurons</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">recruitment_thresholds</span><span class="p">)</span>
+            <span class="n">n_active_neurons</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">active_neuron_indices</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+
+            <span class="k">return</span> <span class="n">n_active_neurons</span> <span class="o">==</span> <span class="n">n_total_neurons</span>
+
+        <span class="c1"># Binary search for minimum current</span>
+        <span class="n">low_current</span> <span class="o">=</span> <span class="mf">0.0</span>
+        <span class="n">high_current</span> <span class="o">=</span> <span class="mf">1000.0</span>  <span class="c1"># Start with reasonable upper bound</span>
+        <span class="n">tolerance</span> <span class="o">=</span> <span class="mf">1.0</span>  <span class="c1"># 1 nA tolerance</span>
+
+        <span class="c1"># First, find an upper bound that works</span>
+        <span class="k">while</span> <span class="ow">not</span> <span class="n">test_current_activates_all_neurons</span><span class="p">(</span><span class="n">high_current</span><span class="p">):</span>
+            <span class="n">high_current</span> <span class="o">*=</span> <span class="mi">2</span>
+            <span class="k">if</span> <span class="n">high_current</span> <span class="o">&gt;</span> <span class="mi">10000</span><span class="p">:</span>  <span class="c1"># Safety limit</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                    <span class="s2">&quot;Could not find current that activates all neurons within reasonable range&quot;</span>
+                <span class="p">)</span>
+
+        <span class="c1"># Binary search between low and high</span>
+        <span class="k">while</span> <span class="n">high_current</span> <span class="o">-</span> <span class="n">low_current</span> <span class="o">&gt;</span> <span class="n">tolerance</span><span class="p">:</span>
+            <span class="n">mid_current</span> <span class="o">=</span> <span class="p">(</span><span class="n">low_current</span> <span class="o">+</span> <span class="n">high_current</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span>
+
+            <span class="k">if</span> <span class="n">test_current_activates_all_neurons</span><span class="p">(</span><span class="n">mid_current</span><span class="p">):</span>
+                <span class="n">high_current</span> <span class="o">=</span> <span class="n">mid_current</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">low_current</span> <span class="o">=</span> <span class="n">mid_current</span>
+
+        <span class="k">return</span> <span class="n">high_current</span></div>
+
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">mvc_current_threshold</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Property that returns the minimum current threshold for maximum voluntary contraction.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        float</span>
+<span class="sd">            Minimum current threshold in nA needed to activate all neurons</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">compute_mvc_current_threshold</span><span class="p">()</span></div>
 
 </pre></div>
 

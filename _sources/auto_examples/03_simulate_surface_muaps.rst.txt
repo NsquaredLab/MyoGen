@@ -65,19 +65,13 @@ The **SurfaceEMG** object takes the following parameters:
 - ``fat_thickness``: Fat thickness
 - ``skin_thickness``: Skin thickness
 
-.. GENERATED FROM PYTHON SOURCE LINES 36-46
+.. GENERATED FROM PYTHON SOURCE LINES 36-40
 
 .. code-block:: Python
 
 
     # Define simulation parameters
     sampling_frequency = 2048.0  # Hz - standard for surface EMG
-    electrode_grid_size = (5, 5)
-    inter_electrode_distance = 4.0  # mm - standard spacing
-
-    # Define volume conductor parameters
-    fat_thickness = 1.0  # mm
-    skin_thickness = 1.0  # mm
 
 
 
@@ -86,14 +80,14 @@ The **SurfaceEMG** object takes the following parameters:
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 47-51
+.. GENERATED FROM PYTHON SOURCE LINES 41-45
 
 Load Muscle Model
 ----------------------------
 
 Load muscle model from previous example
 
-.. GENERATED FROM PYTHON SOURCE LINES 51-55
+.. GENERATED FROM PYTHON SOURCE LINES 45-49
 
 .. code-block:: Python
 
@@ -108,12 +102,12 @@ Load muscle model from previous example
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 56-67
+.. GENERATED FROM PYTHON SOURCE LINES 50-61
 
 Create Surface EMG Model
 -------------------------
 
-The **SurfaceEMG** object is initialized with the **muscle model** and the **simulation parameters**.
+The **SurfaceEMG** object is initialized with the **muscle model**, the **electrode array**, and the **simulation parameters**.
 
 .. note::
    For simplicity, we only simulate the first motor unit.
@@ -122,20 +116,25 @@ The **SurfaceEMG** object is initialized with the **muscle model** and the **sim
   This is to simulate the **surface EMG** from two different directions.
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 67-79
+.. GENERATED FROM PYTHON SOURCE LINES 61-78
 
 .. code-block:: Python
 
 
+    electrode_array_monopolar = simulator.SurfaceElectrodeArray(
+        num_rows=13,
+        num_cols=5,
+        inter_electrode_distances__mm=2,
+        electrode_radius__mm=1,
+        differentiation_mode="monopolar",
+        bending_radius__mm=muscle.radius__mm + muscle.skin_thickness__mm + muscle.fat_thickness__mm,
+    )
+
     surface_emg = simulator.SurfaceEMG(
         muscle_model=muscle,
+        electrode_arrays=[electrode_array_monopolar],
         sampling_frequency__Hz=sampling_frequency,
-        electrode_grid_dimensions__rows_cols=electrode_grid_size,
-        inter_electrode_distance__mm=inter_electrode_distance,
-        MUs_to_simulate=[0],
-        electrode_grid_center_positions=[(0, 0)],
-        fat_thickness__mm=fat_thickness,
-        skin_thickness__mm=skin_thickness,
+        MUs_to_simulate=[0]
     )
 
 
@@ -145,28 +144,27 @@ The **SurfaceEMG** object is initialized with the **muscle model** and the **sim
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 80-84
+.. GENERATED FROM PYTHON SOURCE LINES 79-83
 
 Simulate MUAPs
 --------------
 
 To generate the **MUAPs**, we need to run the ``simulate_muaps`` method of the **SurfaceEMG** object.
 
-.. GENERATED FROM PYTHON SOURCE LINES 84-99
+.. GENERATED FROM PYTHON SOURCE LINES 83-97
 
 .. code-block:: Python
 
 
 
     # Run simulation with progress output
-    muaps = surface_emg.simulate_muaps(show_plots=False, verbose=False)
+    muaps = surface_emg.simulate_muaps()
 
     print(f"\nMUAP simulation completed!")
-    print(f"Generated MUAPs shape: {muaps.shape}")
-    print(f"  - {muaps.shape[0]} electrode position(s)")
-    print(f"  - {muaps.shape[1]} motor units")
-    print(f"  - {muaps.shape[2]}×{muaps.shape[3]} electrode grid")
-    print(f"  - {muaps.shape[4]} time samples")
+    print(f"Generated MUAPs shape: {muaps[0].shape}")
+    print(f"  - {muaps[0].shape[0]} motor units")
+    print(f"  - {muaps[0].shape[1]}×{muaps[0].shape[2]} electrode grid")
+    print(f"  - {muaps[0].shape[3]} time samples")
 
     # Save results
     joblib.dump(surface_emg, save_path / "surface_emg.pkl")
@@ -179,20 +177,19 @@ To generate the **MUAPs**, we need to run the ``simulate_muaps`` method of the *
 
  .. code-block:: none
 
-    MU 1 Position 1:   0%|          | 0/5 [00:00<?, ?it/s]    MU 1 Position 1:  20%|██        | 1/5 [00:00<00:00,  4.34it/s]    MU 1 Position 1:  40%|████      | 2/5 [00:00<00:00,  6.09it/s]    MU 1 Position 1:  60%|██████    | 3/5 [00:00<00:00,  6.99it/s]    MU 1 Position 1:  80%|████████  | 4/5 [00:00<00:00,  7.51it/s]    MU 1 Position 1: 100%|██████████| 5/5 [00:00<00:00,  7.83it/s]    MU 1 Position 1: 100%|██████████| 5/5 [00:00<00:00,  7.12it/s]
+    Electrode Array 1/1 MU 1/1:   0%|          | 0/46 [00:00<?, ?fibers/s]    Electrode Array 1/1 MU 1/1:   2%|▏         | 1/46 [00:00<00:16,  2.70fibers/s]    Electrode Array 1/1 MU 1/1:   4%|▍         | 2/46 [00:00<00:13,  3.28fibers/s]    Electrode Array 1/1 MU 1/1:   7%|▋         | 3/46 [00:00<00:12,  3.54fibers/s]    Electrode Array 1/1 MU 1/1:   9%|▊         | 4/46 [00:01<00:11,  3.67fibers/s]    Electrode Array 1/1 MU 1/1:  11%|█         | 5/46 [00:01<00:10,  3.75fibers/s]    Electrode Array 1/1 MU 1/1:  13%|█▎        | 6/46 [00:01<00:10,  3.80fibers/s]    Electrode Array 1/1 MU 1/1:  15%|█▌        | 7/46 [00:01<00:10,  3.84fibers/s]    Electrode Array 1/1 MU 1/1:  17%|█▋        | 8/46 [00:02<00:09,  3.86fibers/s]    Electrode Array 1/1 MU 1/1:  20%|█▉        | 9/46 [00:02<00:09,  3.88fibers/s]    Electrode Array 1/1 MU 1/1:  22%|██▏       | 10/46 [00:02<00:09,  3.89fibers/s]    Electrode Array 1/1 MU 1/1:  24%|██▍       | 11/46 [00:02<00:08,  3.90fibers/s]    Electrode Array 1/1 MU 1/1:  26%|██▌       | 12/46 [00:03<00:08,  3.90fibers/s]    Electrode Array 1/1 MU 1/1:  28%|██▊       | 13/46 [00:03<00:08,  3.90fibers/s]    Electrode Array 1/1 MU 1/1:  30%|███       | 14/46 [00:03<00:08,  3.91fibers/s]    Electrode Array 1/1 MU 1/1:  33%|███▎      | 15/46 [00:03<00:07,  3.91fibers/s]    Electrode Array 1/1 MU 1/1:  35%|███▍      | 16/46 [00:04<00:07,  3.91fibers/s]    Electrode Array 1/1 MU 1/1:  37%|███▋      | 17/46 [00:04<00:07,  3.91fibers/s]    Electrode Array 1/1 MU 1/1:  39%|███▉      | 18/46 [00:04<00:07,  3.91fibers/s]    Electrode Array 1/1 MU 1/1:  41%|████▏     | 19/46 [00:04<00:06,  3.90fibers/s]    Electrode Array 1/1 MU 1/1:  43%|████▎     | 20/46 [00:05<00:06,  3.90fibers/s]    Electrode Array 1/1 MU 1/1:  46%|████▌     | 21/46 [00:05<00:06,  3.91fibers/s]    Electrode Array 1/1 MU 1/1:  48%|████▊     | 22/46 [00:05<00:06,  3.91fibers/s]    Electrode Array 1/1 MU 1/1:  50%|█████     | 23/46 [00:06<00:05,  3.91fibers/s]    Electrode Array 1/1 MU 1/1:  52%|█████▏    | 24/46 [00:06<00:05,  3.91fibers/s]    Electrode Array 1/1 MU 1/1:  54%|█████▍    | 25/46 [00:06<00:05,  3.91fibers/s]    Electrode Array 1/1 MU 1/1:  57%|█████▋    | 26/46 [00:06<00:05,  3.90fibers/s]    Electrode Array 1/1 MU 1/1:  59%|█████▊    | 27/46 [00:07<00:04,  3.90fibers/s]    Electrode Array 1/1 MU 1/1:  61%|██████    | 28/46 [00:07<00:04,  3.90fibers/s]    Electrode Array 1/1 MU 1/1:  63%|██████▎   | 29/46 [00:07<00:04,  3.90fibers/s]    Electrode Array 1/1 MU 1/1:  65%|██████▌   | 30/46 [00:07<00:04,  3.90fibers/s]    Electrode Array 1/1 MU 1/1:  67%|██████▋   | 31/46 [00:08<00:03,  3.90fibers/s]    Electrode Array 1/1 MU 1/1:  70%|██████▉   | 32/46 [00:08<00:03,  3.90fibers/s]    Electrode Array 1/1 MU 1/1:  72%|███████▏  | 33/46 [00:08<00:03,  3.90fibers/s]    Electrode Array 1/1 MU 1/1:  74%|███████▍  | 34/46 [00:08<00:03,  3.91fibers/s]    Electrode Array 1/1 MU 1/1:  76%|███████▌  | 35/46 [00:09<00:02,  3.90fibers/s]    Electrode Array 1/1 MU 1/1:  78%|███████▊  | 36/46 [00:09<00:02,  3.91fibers/s]    Electrode Array 1/1 MU 1/1:  80%|████████  | 37/46 [00:09<00:02,  3.91fibers/s]    Electrode Array 1/1 MU 1/1:  83%|████████▎ | 38/46 [00:09<00:02,  3.91fibers/s]    Electrode Array 1/1 MU 1/1:  85%|████████▍ | 39/46 [00:10<00:01,  3.90fibers/s]    Electrode Array 1/1 MU 1/1:  87%|████████▋ | 40/46 [00:10<00:01,  3.90fibers/s]    Electrode Array 1/1 MU 1/1:  89%|████████▉ | 41/46 [00:10<00:01,  3.90fibers/s]    Electrode Array 1/1 MU 1/1:  91%|█████████▏| 42/46 [00:10<00:01,  3.90fibers/s]    Electrode Array 1/1 MU 1/1:  93%|█████████▎| 43/46 [00:11<00:00,  3.90fibers/s]    Electrode Array 1/1 MU 1/1:  96%|█████████▌| 44/46 [00:11<00:00,  3.90fibers/s]    Electrode Array 1/1 MU 1/1:  98%|█████████▊| 45/46 [00:11<00:00,  3.91fibers/s]    Electrode Array 1/1 MU 1/1: 100%|██████████| 46/46 [00:11<00:00,  3.91fibers/s]    Electrode Array 1/1 MU 1/1: 100%|██████████| 46/46 [00:11<00:00,  3.87fibers/s]
 
     MUAP simulation completed!
-    Generated MUAPs shape: (1, 1, 5, 5, 256)
-      - 1 electrode position(s)
+    Generated MUAPs shape: (1, 13, 5, 256)
       - 1 motor units
-      - 5×5 electrode grid
+      - 13×5 electrode grid
       - 256 time samples
 
     ['results/surface_emg.pkl']
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 100-108
+.. GENERATED FROM PYTHON SOURCE LINES 98-106
 
 Plot MUAPs
 ------------------------------------
@@ -203,7 +200,7 @@ The MUAPs can be plotted using the ``plot_muap_grid`` function.
   **Plotting helper functions** are available in the ``myogen.utils.plotting`` module.
   The new API requires creating matplotlib axes and passing them to the plotting function.
 
-.. GENERATED FROM PYTHON SOURCE LINES 108-138
+.. GENERATED FROM PYTHON SOURCE LINES 106-136
 
 .. code-block:: Python
 
@@ -234,7 +231,7 @@ The MUAPs can be plotted using the ``plot_muap_grid`` function.
     plot_muap_grid(
         muaps_concatenated[:, :, :, 100:-100], axes_list, apply_default_formatting=True
     )
-
+    plt.tight_layout()
     # Show all plots
     plt.show()
 
@@ -250,8 +247,8 @@ The MUAPs can be plotted using the ``plot_muap_grid`` function.
 
  .. code-block:: none
 
-    Concatenated MUAPs shape: (1, 5, 5, 256)
-    Plotting MUAPs:   0%|          | 0/1 [00:00<?, ?it/s]    Plotting MUAPs: 100%|██████████| 1/1 [00:00<00:00,  6.24it/s]    Plotting MUAPs: 100%|██████████| 1/1 [00:00<00:00,  6.23it/s]
+    Concatenated MUAPs shape: (1, 13, 5, 256)
+    Plotting MUAPs:   0%|          | 0/1 [00:00<?, ?it/s]    Plotting MUAPs: 100%|██████████| 1/1 [00:01<00:00,  1.30s/it]    Plotting MUAPs: 100%|██████████| 1/1 [00:01<00:00,  1.30s/it]
 
 
 
@@ -259,7 +256,7 @@ The MUAPs can be plotted using the ``plot_muap_grid`` function.
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 1.102 seconds)
+   **Total running time of the script:** (0 minutes 14.138 seconds)
 
 
 .. _sphx_glr_download_auto_examples_03_simulate_surface_muaps.py:

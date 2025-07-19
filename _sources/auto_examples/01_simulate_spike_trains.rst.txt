@@ -200,7 +200,7 @@ Finally, the **motor neuron pools** are created using the ``MotorNeuronPool`` ob
    The **MotorNeuronPool** object handles the simulation of the motor units.
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 133-148
+.. GENERATED FROM PYTHON SOURCE LINES 133-159
 
 .. code-block:: Python
 
@@ -219,6 +219,17 @@ Finally, the **motor neuron pools** are created using the ``MotorNeuronPool`` ob
     # Create motor neuron pool
     motor_neuron_pool = simulator.MotorNeuronPool(recruitment_thresholds)
 
+    # Compute MVC current threshold
+    mvc_current_threshold = motor_neuron_pool.mvc_current_threshold
+
+    print(f"\nMVC current threshold: {mvc_current_threshold:.1f} nA")
+
+    # min max to mvc current threshold
+    input_current_matrix = (
+        input_current_matrix * mvc_current_threshold / np.max(input_current_matrix)
+    )
+
+
 
 
 
@@ -229,17 +240,19 @@ Finally, the **motor neuron pools** are created using the ``MotorNeuronPool`` ob
 
     NMODL mechanisms appear to already be loaded, skipping reload
 
+    MVC current threshold: 293.0 nA
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 149-153
+
+.. GENERATED FROM PYTHON SOURCE LINES 160-164
 
 Simulate Motor Unit Spike Trains
 ---------------------------------
 
 The **motor unit spike trains** are simulated using the ``generate_spike_trains`` method of the ``MotorNeuronPool`` object.
 
-.. GENERATED FROM PYTHON SOURCE LINES 153-171
+.. GENERATED FROM PYTHON SOURCE LINES 164-182
 
 .. code-block:: Python
 
@@ -279,7 +292,7 @@ The **motor unit spike trains** are simulated using the ``generate_spike_trains`
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 172-180
+.. GENERATED FROM PYTHON SOURCE LINES 183-191
 
 Calculate and Display Statistics
 ---------------------------------
@@ -290,7 +303,7 @@ It might be of interest to calculate the **firing rates** of the motor units.
    The **firing rates** are calculated as the number of spikes divided by the simulation time.
    The simulation time is in milliseconds, so we need to convert it to seconds.
 
-.. GENERATED FROM PYTHON SOURCE LINES 180-199
+.. GENERATED FROM PYTHON SOURCE LINES 191-210
 
 .. code-block:: Python
 
@@ -323,13 +336,13 @@ It might be of interest to calculate the **firing rates** of the motor units.
 
 
     Firing rate statistics:
-      Pool 1: 61/100 active neurons, mean rate: 9.0 Hz, max rate: 17.5 Hz
-      Pool 2: 48/100 active neurons, mean rate: 10.1 Hz, max rate: 16.0 Hz
+      Pool 1: 100/100 active neurons, mean rate: 15.0 Hz, max rate: 24.5 Hz
+      Pool 2: 98/100 active neurons, mean rate: 14.4 Hz, max rate: 22.0 Hz
 
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 200-211
+.. GENERATED FROM PYTHON SOURCE LINES 211-222
 
 Visualize Spike Trains
 ----------------------
@@ -343,7 +356,7 @@ The **spike trains** can be visualized using the ``plot_spike_trains`` function.
 
       from myogen.utils.plotting import plot_spike_trains
 
-.. GENERATED FROM PYTHON SOURCE LINES 211-232
+.. GENERATED FROM PYTHON SOURCE LINES 222-243
 
 .. code-block:: Python
 
@@ -389,7 +402,7 @@ The **spike trains** can be visualized using the ``plot_spike_trains`` function.
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 5.448 seconds)
+   **Total running time of the script:** (0 minutes 23.888 seconds)
 
 
 .. _sphx_glr_download_auto_examples_01_simulate_spike_trains.py:

@@ -147,11 +147,11 @@ To simulate the **surface EMG**, we need to run the ``simulate_surface_emg`` met
     )
 
     print(f"Surface EMG simulation completed!")
-    print(f"Generated EMG shape: {surface_emg_signals.shape}")
-    print(f"  - {surface_emg_signals.shape[0]} pools")
-    print(f"  - {surface_emg_signals.shape[1]} electrode rows")
-    print(f"  - {surface_emg_signals.shape[2]} electrode columns")
-    print(f"  - {surface_emg_signals.shape[3]} time samples")
+    print(f"Generated EMG shape: {surface_emg_signals[0].shape}")
+    print(f"  - {surface_emg_signals[0].shape[0]} pools")
+    print(f"  - {surface_emg_signals[0].shape[1]} electrode rows")
+    print(f"  - {surface_emg_signals[0].shape[2]} electrode columns")
+    print(f"  - {surface_emg_signals[0].shape[3]} time samples")
 
     # Save the surface EMG results
     joblib.dump(surface_emg_signals, save_path / "surface_emg_signals.pkl")
@@ -164,13 +164,13 @@ To simulate the **surface EMG**, we need to run the ``simulate_surface_emg`` met
 
  .. code-block:: none
 
-    Simulating surface EMG (CPU):   0%|          | 0/2 [00:00<?, ?it/s]    Simulating surface EMG (CPU):  50%|█████     | 1/2 [00:22<00:22, 22.18s/it]    Simulating surface EMG (CPU): 100%|██████████| 2/2 [00:39<00:00, 19.39s/it]    Simulating surface EMG (CPU): 100%|██████████| 2/2 [00:39<00:00, 19.81s/it]
+    Electrode Array 1/1 Surface EMG (CPU):   0%|          | 0/2 [00:00<?, ?pools/s]    Electrode Array 1/1 Surface EMG (CPU):  50%|█████     | 1/2 [01:33<01:33, 93.11s/pools]    Electrode Array 1/1 Surface EMG (CPU): 100%|██████████| 2/2 [03:04<00:00, 91.99s/pools]    Electrode Array 1/1 Surface EMG (CPU): 100%|██████████| 2/2 [03:04<00:00, 92.15s/pools]
     Surface EMG simulation completed!
-    Generated EMG shape: (1, 2, 5, 5, 40000)
-      - 1 pools
-      - 2 electrode rows
-      - 5 electrode columns
-      - 5 time samples
+    Generated EMG shape: (2, 8, 8, 40000)
+      - 2 pools
+      - 8 electrode rows
+      - 8 electrode columns
+      - 40000 time samples
 
     ['results/surface_emg_signals.pkl']
 
@@ -203,7 +203,7 @@ Visualize Surface EMG Results
         # Create single plot with normalized signals
         fig, ax = plt.subplots(figsize=(12, 6))
         # Get the signals
-        emg_signal = surface_emg.noisy_surface_emg[0, 0, 3, 3]
+        emg_signal = surface_emg.noisy_surface_emg__tensors[0][0, 3, 3]
         current_signal = input_current_matrix[0]  # Only first current
 
         # Normalize EMG by dividing by maximum
@@ -251,20 +251,13 @@ Visualize Surface EMG Results
    :class: sphx-glr-single-img
 
 
-.. rst-class:: sphx-glr-script-out
-
- .. code-block:: none
-
-    Target SNR: 10.00 dB
-    Achieved SNR: 10.00 dB
-
 
 
 
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 40.080 seconds)
+   **Total running time of the script:** (3 minutes 4.891 seconds)
 
 
 .. _sphx_glr_download_auto_examples_04_simulate_surface_emg.py:

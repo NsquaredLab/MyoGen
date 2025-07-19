@@ -433,85 +433,127 @@
 <a class="viewcode-back" href="../../../../../generated/myogen.simulator.Muscle.html#myogen.simulator.Muscle">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">Muscle</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    A muscle model for simulating motor unit organization and muscle fiber distribution.</span>
+<span class="sd">    A muscle model based on the cylindrical description of the volume conductor by Farina et al. 2004 [1]_ and the motor unit distribution by Konstantin et al. 2020 [2]_.</span>
 
-<span class="sd">    The muscle model consists of:</span>
-<span class="sd">        - Motor unit territories with biologically realistic size distributions</span>
-<span class="sd">        - Spatially distributed innervation centers using optimal packing algorithms</span>
-<span class="sd">        - Muscle fiber assignment based on proximity and self-avoidance principles</span>
+<span class="sd">    .. note::</span>
+<span class="sd">        All default values are set to simulate the First Dorsal Interosseous (FDI) muscle. Values are pulled from the literature.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
 <span class="sd">    recruitment_thresholds : np.ndarray</span>
-<span class="sd">        Array of recruitment thresholds for each motor unit. The values</span>
-<span class="sd">        determine the relative sizes of motor unit territories, with larger</span>
-<span class="sd">        values corresponding to larger territories. Typically ranges from</span>
-<span class="sd">        -1 to 1, with the largest motor units having thresholds near 1.</span>
-<span class="sd">    radius__mm : float, default 4.9</span>
-<span class="sd">        Radius of the muscle cross-section in millimeters. Default value</span>
-<span class="sd">        corresponds to the First Dorsal Interosseous (FDI) muscle based</span>
-<span class="sd">        on anatomical measurements (Jacobson et al., 1992).</span>
-<span class="sd">    fiber_density__fibers_per_mm2 : float, default 400</span>
-<span class="sd">        Density of muscle fibers per square millimeter. This parameter</span>
-<span class="sd">        controls the total number of muscle fibers in the muscle and</span>
-<span class="sd">        affects the granularity of the simulation. Values typically</span>
-<span class="sd">        range from 300-600 fibers/mm² for human muscles.</span>
-<span class="sd">    max_innervation_area_to_total_muscle_area__ratio : float, default 0.25</span>
+<span class="sd">        Array of recruitment thresholds for each motor unit (see `myogen.simulator.generate_mu_recruitment_thresholds`).</span>
+<span class="sd">        Values range from 0 to 1 with the largest motor units having thresholds near 1.</span>
+<span class="sd">    radius__mm : float, default=6.91</span>
+<span class="sd">        Radius of the muscle cross-section in millimeters. Default is set to 6.91 mm as determined by Jacobson et al. 1992 [3]_.</span>
+<span class="sd">    fiber_density__fibers_per_mm2 : float, default=400</span>
+<span class="sd">        Density of muscle fibers per square millimeter. Default is set to 400 fibers/mm² as determined by no one.</span>
+<span class="sd">    max_innervation_area_to_total_muscle_area__ratio : float, default=0.25</span>
 <span class="sd">        Ratio defining the maximum territory size relative to total muscle area.</span>
+<span class="sd">        Default is set to 0.25 as determined by no one but it is a good starting point.</span>
 <span class="sd">        A value of 0.25 means the largest motor unit can innervate up to 25%</span>
-<span class="sd">        of the total muscle cross-sectional area. Must be in range (0, 1].</span>
-<span class="sd">    grid_resolution : int, default 256</span>
-<span class="sd">        Resolution of the computational grid used for innervation electrode_grid_center</span>
-<span class="sd">        distribution. Higher values provide more accurate spatial distribution</span>
-<span class="sd">        but increase computational cost. Recommended range: 128-512.</span>
-<span class="sd">    autorun : bool, default False</span>
-<span class="sd">        If True, automatically executes the complete muscle simulation pipeline:</span>
-<span class="sd">        innervation electrode_grid_center distribution, muscle fiber generation, and fiber-to-</span>
-<span class="sd">        motor unit assignment. If False, these steps must be called manually.</span>
+<span class="sd">        of the total muscle cross-sectional area.</span>
+<span class="sd">        Must be in range (0, 1].</span>
+<span class="sd">    mean_conduction_velocity__m_s : float, default=4.2</span>
+<span class="sd">        Mean conduction velocity in m/s. Default is set to 4.2 m/s as determined by Nishizono et al. 1990 [4]_.</span>
+<span class="sd">        Experimental range determined by Nishizono et al. 1990 [4]_ is between 3.2 and 5.0 m/s.</span>
+<span class="sd">    mean_fiber_length__mm : float, default=31.7</span>
+<span class="sd">        Mean fiber length in mm. Default is set to 31.7 mm as determined by Jacobson et al. 1992 [3]_ (Table 1).</span>
+<span class="sd">    var_fiber_length__mm : float, default=2.8</span>
+<span class="sd">        Fiber length variance in mm. Default is set to 2.8 mm as determined by Jacobson et al. 1992 [3]_ (Table 1).</span>
+<span class="sd">    radius_bone__mm : float, default=0</span>
+<span class="sd">        Bone radius in mm. Default is set to 0 mm as the FDI muscle doesn&#39;t surround a bone.</span>
+<span class="sd">    fat_thickness__mm : float, default=0.3</span>
+<span class="sd">        Fat thickness in mm. Default is set to 0.3 mm as determined by Störchle et al. 2018 [5]_.</span>
+<span class="sd">    skin_thickness__mm : float, default=1.29</span>
+<span class="sd">        Skin thickness in mm. Default is set to the male skin thickness average of 1.29 mm as determined by Brodar 1960 [6]_.</span>
+<span class="sd">    muscle_conductivity_radial__S_m : float, default=0.09</span>
+<span class="sd">        Muscle conductivity in radial direction. Default is set to 0.09 S/m as determined by Botelho et al. 2019 [7]_ (Table 1).</span>
+<span class="sd">    muscle_conductivity_longitudinal__S_m : float, default=0.4</span>
+<span class="sd">        Muscle conductivity in longitudinal direction. Default is set to 0.4 S/m as determined by Botelho et al. 2019 [7]_ (Table 1).</span>
+<span class="sd">    fat_conductivity__S_m : float, default=4.7E-2</span>
+<span class="sd">        Fat conductivity. Default is set to 4.7E-2 S/m as determined by Botelho et al. 2019 [7]_ (Table 1).</span>
+<span class="sd">    skin_conductivity__S_m : float, default=4.88E-4</span>
+<span class="sd">        Skin conductivity. Default is set to 4.88E-4 S/m as determined by Botelho et al. 2019 [7]_ (Table 1).</span>
+<span class="sd">    grid_resolution : int, default=256</span>
+<span class="sd">        Resolution of the computational grid used for innervation the muscle.</span>
+<span class="sd">        Higher values provide more accurate spatial distribution but increase computational cost.</span>
+<span class="sd">        Default is set to 256.</span>
+<span class="sd">    autorun : bool, default=False</span>
+<span class="sd">        If True, automatically executes the complete muscle simulation pipeline: innervation distribution, muscle fiber generation, and fiber-to-motor unit assignment.</span>
+<span class="sd">        If False, these steps must be called manually.</span>
 
 <span class="sd">    Raises</span>
 <span class="sd">    ------</span>
 <span class="sd">    ValueError</span>
 <span class="sd">        If max_innervation_area_to_total_muscle_area__ratio is not in (0, 1].</span>
 
-<span class="sd">    Notes</span>
-<span class="sd">    -----</span>
-<span class="sd">    The muscle model uses a circular cross-section approximation, which is</span>
-<span class="sd">    appropriate for many skeletal muscles. The recruitment thresholds are</span>
-<span class="sd">    used as a proxy for motor unit sizes, following the size principle</span>
-<span class="sd">    where larger motor units have higher recruitment thresholds.</span>
+<span class="sd">    References</span>
+<span class="sd">    ----------</span>
+<span class="sd">    .. [1] Farina, D., Mesin, L., Martina, S., Merletti, R., 2004. A surface EMG generation model with multilayer cylindrical description of the volume conductor. IEEE Transactions on Biomedical Engineering 51, 415–426. https://doi.org/10.1109/TBME.2003.820998</span>
 
-<span class="sd">    Examples</span>
-<span class="sd">    --------</span>
-<span class="sd">    &gt;&gt;&gt; # Create a muscle with 120 motor units</span>
-<span class="sd">    &gt;&gt;&gt; recruitment_thresholds = generate_mu_recruitment_thresholds(N=120)</span>
-<span class="sd">    &gt;&gt;&gt; muscle = Muscle(</span>
-<span class="sd">    ...     recruitment_thresholds=recruitment_thresholds,</span>
-<span class="sd">    ...     radius__mm=4.9,</span>
-<span class="sd">    ...     fiber_density__fibers_per_mm2=400,</span>
-<span class="sd">    ...     autorun=True</span>
-<span class="sd">    ... )</span>
-<span class="sd">    &gt;&gt;&gt;</span>
-<span class="sd">    &gt;&gt;&gt; # Access muscle fiber positions for motor unit 0</span>
-<span class="sd">    &gt;&gt;&gt; fiber_positions = muscle.resulting_fiber_assignment(0)</span>
-<span class="sd">    &gt;&gt;&gt; print(f&quot;MU 0 has {len(fiber_positions)} muscle fibers&quot;)</span>
+<span class="sd">    .. [2] Konstantin, A., Yu, T., Le Carpentier, E., Aoustin, Y., Farina, D., 2020. Simulation of Motor Unit Action Potential Recordings From Intramuscular Multichannel Scanning Electrodes. IEEE Transactions on Biomedical Engineering 67, 2005–2014. https://doi.org/10.1109/TBME.2019.2953680</span>
 
+<span class="sd">    .. [3] Jacobson, M.D., Raab, R., Fazeli, B.M., Abrams, R.A., Botte, M.J., Lieber, R.L., 1992. Architectural design of the human intrinsic hand muscles. The Journal of Hand Surgery 17, 804–809. https://doi.org/10.1016/0363-5023(92)90446-V</span>
+
+<span class="sd">    .. [4] Nishizono, H., Fujimoto, T., Ohtake, H., Miyashita, M., 1990. Muscle fiber conduction velocity and contractile properties estimated from surface electrode arrays. Electroencephalography and Clinical Neurophysiology 75, 75–81. https://doi.org/10.1016/0013-4694(90)90154-C</span>
+
+<span class="sd">    .. [5] Störchle, P., Müller, W., Sengeis, M., Lackner, S., Holasek, S., Fürhapter-Rieger, A., 2018. Measurement of mean subcutaneous fat thickness: eight standardised ultrasound sites compared to 216 randomly selected sites. Sci Rep 8, 16268. https://doi.org/10.1038/s41598-018-34213-0</span>
+
+<span class="sd">    .. [6] Brodar, V., 1960. Observations on skin thickness and subcutaneous tissue in man. Zeitschrift für Morphologie und Anthropologie 50, 386–395.</span>
+
+<span class="sd">    .. [7] Botelho, D.P., Curran, K., Lowery, M.M., 2019. Anatomically accurate model of EMG during index finger flexion and abduction derived from diffusion tensor imaging. PLOS Computational Biology 15, e1007267. https://doi.org/10.1371/journal.pcbi.1007267</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">recruitment_thresholds</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
-        <span class="n">radius__mm</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">4.9</span><span class="p">,</span>  <span class="c1"># Radius of FDI muscle (Jacobson, 1992)</span>
+        <span class="n">radius__mm</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">6.91</span><span class="p">,</span>
         <span class="n">fiber_density__fibers_per_mm2</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">400</span><span class="p">,</span>
         <span class="n">max_innervation_area_to_total_muscle_area__ratio</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">/</span> <span class="mi">4</span><span class="p">,</span>
+        <span class="n">mean_conduction_velocity__m_s</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">4.2</span><span class="p">,</span>
+        <span class="n">mean_fiber_length__mm</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">31.7</span><span class="p">,</span>
+        <span class="n">var_fiber_length__mm</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">2.8</span><span class="p">,</span>
+        <span class="n">radius_bone__mm</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="n">fat_thickness__mm</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.3</span><span class="p">,</span>
+        <span class="n">skin_thickness__mm</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.29</span><span class="p">,</span>
+        <span class="n">muscle_conductivity_radial__S_m</span><span class="o">=</span><span class="mf">0.09</span><span class="p">,</span>
+        <span class="n">muscle_conductivity_longitudinal__S_m</span><span class="o">=</span><span class="mf">0.4</span><span class="p">,</span>
+        <span class="n">fat_conductivity__S_m</span><span class="o">=</span><span class="mf">4.7e-2</span><span class="p">,</span>
+        <span class="n">skin_conductivity__S_m</span><span class="o">=</span><span class="mf">4.88e-4</span><span class="p">,</span>
         <span class="n">grid_resolution</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">256</span><span class="p">,</span>
         <span class="n">autorun</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">recruitment_thresholds</span> <span class="o">=</span> <span class="n">recruitment_thresholds</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_number_of_neurons</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">recruitment_thresholds</span><span class="p">)</span>
+        <span class="c1"># Muscle properties</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">radius__mm</span> <span class="o">=</span> <span class="n">radius__mm</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">fiber_density__fibers_per_mm2</span> <span class="o">=</span> <span class="n">fiber_density__fibers_per_mm2</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">max_innervation_area_to_total_muscle_area__ratio</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">max_innervation_area_to_total_muscle_area__ratio</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mean_conduction_velocity__m_s</span> <span class="o">=</span> <span class="n">mean_conduction_velocity__m_s</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mean_fiber_length__mm</span> <span class="o">=</span> <span class="n">mean_fiber_length__mm</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">var_fiber_length__mm</span> <span class="o">=</span> <span class="n">var_fiber_length__mm</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">radius_bone__mm</span> <span class="o">=</span> <span class="n">radius_bone__mm</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fat_thickness__mm</span> <span class="o">=</span> <span class="n">fat_thickness__mm</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">skin_thickness__mm</span> <span class="o">=</span> <span class="n">skin_thickness__mm</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">muscle_conductivity_radial__S_m</span> <span class="o">=</span> <span class="n">muscle_conductivity_radial__S_m</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">muscle_conductivity_longitudinal__S_m</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">muscle_conductivity_longitudinal__S_m</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fat_conductivity__S_m</span> <span class="o">=</span> <span class="n">fat_conductivity__S_m</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">skin_conductivity__S_m</span> <span class="o">=</span> <span class="n">skin_conductivity__S_m</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">muscle_area__mm2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">power</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">radius__mm</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ma2max_ia</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_innervation_area_to_total_muscle_area__ratio</span>
+
+        <span class="c1"># Simulation properties</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">recruitment_thresholds</span> <span class="o">=</span> <span class="n">recruitment_thresholds</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_number_of_neurons</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">recruitment_thresholds</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">grid_resolution</span> <span class="o">=</span> <span class="n">grid_resolution</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">autorun</span> <span class="o">=</span> <span class="n">autorun</span>
+
+        <span class="c1"># Simulation results</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">innervation_center_positions</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mf_centers</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assignment</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
 
         <span class="c1"># Validate the ratio</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="mi">0</span> <span class="o">&lt;</span> <span class="n">max_innervation_area_to_total_muscle_area__ratio</span> <span class="o">&lt;=</span> <span class="mi">1</span><span class="p">):</span>
@@ -519,23 +561,13 @@
                 <span class="s1">&#39;&quot;max_innervation_area_to_total_muscle_area__ratio&quot; must be in (0, 1].&#39;</span>
             <span class="p">)</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">max_innervation_area_to_total_muscle_area__ratio</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="n">max_innervation_area_to_total_muscle_area__ratio</span>
-        <span class="p">)</span>
-
-        <span class="bp">self</span><span class="o">.</span><span class="n">muscle_area__mm2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">power</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">radius__mm</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
-
-        <span class="c1"># Calculate innervation areas (same as MATLAB calc_innervation_areas)</span>
-        <span class="c1"># Use recruitment_thresholds as motor neuron sizes (equivalent to obj.mn_pool.sz)</span>
-        <span class="n">muscle_area2max_ia</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_innervation_area_to_total_muscle_area__ratio</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">desired_innervation_areas__mm2</span> <span class="o">=</span> <span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">recruitment_thresholds</span>
             <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">recruitment_thresholds</span><span class="p">)</span>
             <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">muscle_area__mm2</span>
-            <span class="o">/</span> <span class="n">muscle_area2max_ia</span>
+            <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">ma2max_ia</span>
         <span class="p">)</span>
 
-        <span class="c1"># Calculate innervation numbers (same as MATLAB calc_innervation_numbers)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">desired_number_of_innervated_fibers</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">desired_innervation_areas__mm2</span>
             <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">desired_innervation_areas__mm2</span><span class="p">)</span>
@@ -543,22 +575,64 @@
             <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">fiber_density__fibers_per_mm2</span>
         <span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">innervation_center_positions</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
-
         <span class="k">if</span> <span class="n">autorun</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">distribute_innervation_centers</span><span class="p">()</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">generate_muscle_fiber_centers</span><span class="p">()</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">assign_mfs2mns</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_generate_fiber_properties</span><span class="p">()</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_generate_fiber_properties</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Generate muscle fiber diameters and conduction velocities based on physiological models.</span>
+
+<span class="sd">        This method should be called after generate_muscle_fiber_centers() to generate</span>
+<span class="sd">        realistic fiber properties based on the number and positions of muscle fibers.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">mf_centers</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Muscle fiber centers must be generated first&quot;</span><span class="p">)</span>
+
+        <span class="n">n_fibers</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mf_centers</span><span class="p">)</span>
+
+        <span class="c1"># Generate muscle fiber diameters using log-normal distribution</span>
+        <span class="c1"># Based on physiological measurements (Brooke &amp; Kaiser, 1970)</span>
+        <span class="c1"># Mean diameter ~50μm, range 20-80μm</span>
+        <span class="n">mean_diameter</span> <span class="o">=</span> <span class="mf">50e-3</span>  <span class="c1"># mm (50 μm)</span>
+        <span class="n">std_diameter</span> <span class="o">=</span> <span class="mf">15e-3</span>  <span class="c1"># mm (15 μm)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">mf_diameters</span> <span class="o">=</span> <span class="n">RANDOM_GENERATOR</span><span class="o">.</span><span class="n">lognormal</span><span class="p">(</span>
+            <span class="n">mean</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">mean_diameter</span><span class="p">),</span> <span class="n">sigma</span><span class="o">=</span><span class="mf">0.3</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="n">n_fibers</span>
+        <span class="p">)</span>
+
+        <span class="c1"># Ensure diameters are within physiological range (20-80 μm)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mf_diameters</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mf_diameters</span><span class="p">,</span> <span class="mf">20e-3</span><span class="p">,</span> <span class="mf">80e-3</span><span class="p">)</span>
+
+        <span class="c1"># Generate conduction velocities based on fiber diameter</span>
+        <span class="c1"># CV = k * diameter + c, where k ≈ 4.5-6.0 (m/s)/mm, c ≈ 0.5-1.0 m/s</span>
+        <span class="c1"># Based on Hakansson (1956) and later studies</span>
+        <span class="n">k</span> <span class="o">=</span> <span class="mf">5.5</span>  <span class="c1"># (m/s)/mm</span>
+        <span class="n">c</span> <span class="o">=</span> <span class="mf">0.8</span>  <span class="c1"># m/s</span>
+
+        <span class="c1"># Add some biological variability</span>
+        <span class="n">cv_base</span> <span class="o">=</span> <span class="n">k</span> <span class="o">*</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mf_diameters</span> <span class="o">*</span> <span class="mi">1000</span><span class="p">)</span> <span class="o">+</span> <span class="n">c</span>  <span class="c1"># Convert mm to m for diameter</span>
+        <span class="n">cv_noise</span> <span class="o">=</span> <span class="n">RANDOM_GENERATOR</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">,</span> <span class="n">n_fibers</span><span class="p">)</span>  <span class="c1"># 20% CV variation</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">mf_cv</span> <span class="o">=</span> <span class="n">cv_base</span> <span class="o">+</span> <span class="n">cv_noise</span>
+
+        <span class="c1"># Ensure velocities are within physiological range (2-6 m/s)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mf_cv</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mf_cv</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">,</span> <span class="mf">6.0</span><span class="p">)</span>
+
+        <span class="c1"># Convert back to mm/s for consistency with the rest of the code</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mf_cv</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mf_cv</span> <span class="o">*</span> <span class="mi">1000</span>  <span class="c1"># m/s to mm/s</span>
 
 <div class="viewcode-block" id="Muscle.distribute_innervation_centers">
 <a class="viewcode-back" href="../../../../../generated/myogen.simulator.Muscle.html#myogen.simulator.Muscle.distribute_innervation_centers">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">distribute_innervation_centers</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Distribute innervation electrode_grid_center positions using the fast marching method.</span>
+<span class="sd">        Distribute innervation center positions using the fast marching method.</span>
 
 <span class="sd">        This method implements an optimal packing algorithm to distribute motor unit</span>
 <span class="sd">        innervation centers within the circular muscle cross-section. The algorithm</span>
-<span class="sd">        uses the Fast Marching Method to ensure that each new innervation electrode_grid_center is</span>
+<span class="sd">        uses the Fast Marching Method to ensure that each new innervation center is</span>
 <span class="sd">        placed at the location that maximizes the minimum distance to all previously</span>
 <span class="sd">        placed centers.</span>
 
@@ -627,7 +701,7 @@
 <a class="viewcode-back" href="../../../../../generated/myogen.simulator.Muscle.html#myogen.simulator.Muscle.generate_muscle_fiber_centers">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">generate_muscle_fiber_centers</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Generate muscle fiber electrode_grid_center positions using a pre-computed Voronoi distribution.</span>
+<span class="sd">        Generate muscle fiber center positions using a pre-computed Voronoi distribution.</span>
 
 <span class="sd">        This method creates the spatial distribution of muscle fiber centers</span>
 <span class="sd">        within the circular muscle cross-section. The distribution is based on a</span>
@@ -741,12 +815,6 @@
 <span class="sd">        The self-avoidance mechanism promotes realistic intermingling by reducing</span>
 <span class="sd">        the probability of assigning a fiber to a motor unit if its neighbors are</span>
 <span class="sd">        already assigned to that unit.</span>
-
-<span class="sd">        Examples</span>
-<span class="sd">        --------</span>
-<span class="sd">        &gt;&gt;&gt; muscle.assign_mfs2mns(n_neighbours=4, conf=0.995)</span>
-<span class="sd">        &gt;&gt;&gt; assignments = muscle.assignment</span>
-<span class="sd">        &gt;&gt;&gt; print(f&quot;Fiber 0 belongs to motor unit {assignments[0]}&quot;)</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># Ensure innervation_center_positions is available</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">innervation_center_positions</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -767,6 +835,7 @@
         <span class="k">for</span> <span class="n">mu</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span>
             <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_number_of_neurons</span><span class="p">),</span>
             <span class="n">desc</span><span class="o">=</span><span class="s2">&quot;Calculating out-of-circle coefficients&quot;</span><span class="p">,</span>
+            <span class="n">unit</span><span class="o">=</span><span class="s2">&quot;MU&quot;</span><span class="p">,</span>
         <span class="p">):</span>
             <span class="c1"># Create multivariate normal distribution for this motor unit</span>
             <span class="n">mean</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">innervation_center_positions</span><span class="p">[</span><span class="n">mu</span><span class="p">]</span>
@@ -783,10 +852,9 @@
                 <span class="p">)</span>
 
             <span class="c1"># Use dblquad for integration (equivalent to MATLAB&#39;s integral2)</span>
-            <span class="n">result</span> <span class="o">=</span> <span class="n">dblquad</span><span class="p">(</span>
+            <span class="n">in_circle_int</span> <span class="o">=</span> <span class="n">dblquad</span><span class="p">(</span>
                 <span class="n">probfun</span><span class="p">,</span> <span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">radius__mm</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">radius__mm</span><span class="p">,</span> <span class="n">borderfun_neg</span><span class="p">,</span> <span class="n">borderfun_pos</span>
-            <span class="p">)</span>
-            <span class="n">in_circle_int</span> <span class="o">=</span> <span class="n">result</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>  <span class="c1"># dblquad returns (integral, error) or more</span>
+            <span class="p">)[</span><span class="mi">0</span><span class="p">]</span>  <span class="c1"># dblquad returns (integral, error)</span>
             <span class="n">out_circle_coeff</span><span class="p">[</span><span class="n">mu</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">/</span> <span class="n">in_circle_int</span>
 
         <span class="c1"># Find nearest neighbors for suppression (equivalent to MATLAB&#39;s knnsearch)</span>
@@ -801,7 +869,9 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">assignment</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">number_of_muscle_fibers</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span>
         <span class="n">randomized_mf</span> <span class="o">=</span> <span class="n">RANDOM_GENERATOR</span><span class="o">.</span><span class="n">permutation</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">number_of_muscle_fibers</span><span class="p">)</span>
 
-        <span class="k">for</span> <span class="n">mf</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span><span class="n">randomized_mf</span><span class="p">,</span> <span class="n">desc</span><span class="o">=</span><span class="s2">&quot;Assigning muscle fibers to motor neurons&quot;</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">mf</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span>
+            <span class="n">randomized_mf</span><span class="p">,</span> <span class="n">desc</span><span class="o">=</span><span class="s2">&quot;Assigning muscle fibers to motor neurons&quot;</span><span class="p">,</span> <span class="n">unit</span><span class="o">=</span><span class="s2">&quot;MF&quot;</span>
+        <span class="p">):</span>
             <span class="n">probs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_number_of_neurons</span><span class="p">)</span>
 
             <span class="k">for</span> <span class="n">mu</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_number_of_neurons</span><span class="p">):</span>
@@ -810,7 +880,7 @@
                 <span class="k">if</span> <span class="n">n_neighbours</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">assignment</span><span class="p">[</span><span class="n">neighbours</span><span class="p">[</span><span class="n">mf</span><span class="p">]]</span> <span class="o">==</span> <span class="n">mu</span><span class="p">):</span>
                     <span class="n">probs</span><span class="p">[</span><span class="n">mu</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
                 <span class="k">else</span><span class="p">:</span>
-                    <span class="c1"># A priori probability of the assignment (same as MATLAB)</span>
+                    <span class="c1"># A priori probability of the assignment</span>
                     <span class="n">apriori_prob</span> <span class="o">=</span> <span class="p">(</span>
                         <span class="bp">self</span><span class="o">.</span><span class="n">desired_number_of_innervated_fibers</span><span class="p">[</span><span class="n">mu</span><span class="p">]</span>
                         <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">number_of_muscle_fibers</span>
@@ -830,6 +900,11 @@
 
             <span class="c1"># Normalize probabilities</span>
             <span class="n">probs</span> <span class="o">=</span> <span class="n">probs</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">probs</span><span class="p">)</span>
+
+            <span class="c1"># should something bad happen with the probabilities, we should not crash</span>
+            <span class="n">probs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan_to_num</span><span class="p">(</span><span class="n">probs</span><span class="p">,</span> <span class="n">nan</span><span class="o">=</span><span class="mf">0.0</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">probs</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">probs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_number_of_neurons</span><span class="p">)</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">_number_of_neurons</span>
 
             <span class="c1"># Sample from the probability distribution (equivalent to MATLAB&#39;s randsample)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">assignment</span><span class="p">[</span><span class="n">mf</span><span class="p">]</span> <span class="o">=</span> <span class="n">RANDOM_GENERATOR</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span>

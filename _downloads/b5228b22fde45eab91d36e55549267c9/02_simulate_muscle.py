@@ -41,11 +41,11 @@ save_path = Path("./results")
 
 recruitment_thresholds = joblib.load(save_path / "thresholds.pkl")
 
-# Define muscle parameters for an FDI muscle
+# Define muscle parameters
 muscle_radius = 4.9  # Muscle radius in mm
 mean_fiber_length = 32  # Mean fiber length in mm
 fiber_length_variation = 3  # Fiber length variation (±) in mm
-fiber_density = 50  # Fiber density per mm²
+fiber_density = 300  # Fiber density per mm²
 
 # Define simulation parameters
 max_innervation_ratio = 1 / 4  # Maximum motor unit territory size

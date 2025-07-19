@@ -59,11 +59,11 @@ surface_emg_signals = surface_emg.simulate_surface_emg(
 )
 
 print(f"Surface EMG simulation completed!")
-print(f"Generated EMG shape: {surface_emg_signals.shape}")
-print(f"  - {surface_emg_signals.shape[0]} pools")
-print(f"  - {surface_emg_signals.shape[1]} electrode rows")
-print(f"  - {surface_emg_signals.shape[2]} electrode columns")
-print(f"  - {surface_emg_signals.shape[3]} time samples")
+print(f"Generated EMG shape: {surface_emg_signals[0].shape}")
+print(f"  - {surface_emg_signals[0].shape[0]} pools")
+print(f"  - {surface_emg_signals[0].shape[1]} electrode rows")
+print(f"  - {surface_emg_signals[0].shape[2]} electrode columns")
+print(f"  - {surface_emg_signals[0].shape[3]} time samples")
 
 # Save the surface EMG results
 joblib.dump(surface_emg_signals, save_path / "surface_emg_signals.pkl")
@@ -89,7 +89,7 @@ with plt.xkcd():
     # Create single plot with normalized signals
     fig, ax = plt.subplots(figsize=(12, 6))
     # Get the signals
-    emg_signal = surface_emg.noisy_surface_emg[0, 0, 3, 3]
+    emg_signal = surface_emg.noisy_surface_emg__tensors[0][0, 3, 3]
     current_signal = input_current_matrix[0]  # Only first current
 
     # Normalize EMG by dividing by maximum
