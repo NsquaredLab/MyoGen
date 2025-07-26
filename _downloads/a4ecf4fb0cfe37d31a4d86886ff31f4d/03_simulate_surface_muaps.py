@@ -65,14 +65,16 @@ electrode_array_monopolar = simulator.SurfaceElectrodeArray(
     inter_electrode_distances__mm=2,
     electrode_radius__mm=1,
     differentiation_mode="monopolar",
-    bending_radius__mm=muscle.radius__mm + muscle.skin_thickness__mm + muscle.fat_thickness__mm,
+    bending_radius__mm=muscle.radius__mm
+    + muscle.skin_thickness__mm
+    + muscle.fat_thickness__mm,
 )
 
 surface_emg = simulator.SurfaceEMG(
     muscle_model=muscle,
     electrode_arrays=[electrode_array_monopolar],
     sampling_frequency__Hz=sampling_frequency,
-    MUs_to_simulate=[0]
+    MUs_to_simulate=[0],
 )
 
 ##############################################################################

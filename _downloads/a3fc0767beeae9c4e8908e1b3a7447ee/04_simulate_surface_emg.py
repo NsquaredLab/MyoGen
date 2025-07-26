@@ -102,7 +102,7 @@ with plt.xkcd():
 
     # Plot both normalized signals on same axis
 ax.plot(
-    motor_neuron_pool.times / 1000.0,
+    np.arange(len(emg_normalized)) / surface_emg.sampling_frequency__Hz,
     emg_normalized,
     linewidth=2,
     label="Surface EMG",

@@ -164,13 +164,13 @@ To simulate the **surface EMG**, we need to run the ``simulate_surface_emg`` met
 
  .. code-block:: none
 
-    Electrode Array 1/1 Surface EMG (CPU):   0%|          | 0/2 [00:00<?, ?pools/s]    Electrode Array 1/1 Surface EMG (CPU):  50%|█████     | 1/2 [01:33<01:33, 93.11s/pools]    Electrode Array 1/1 Surface EMG (CPU): 100%|██████████| 2/2 [03:04<00:00, 91.99s/pools]    Electrode Array 1/1 Surface EMG (CPU): 100%|██████████| 2/2 [03:04<00:00, 92.15s/pools]
+    Electrode Array 1/1 Surface EMG (CPU):   0%|          | 0/2 [00:00<?, ?pools/s]    Electrode Array 1/1 Surface EMG (CPU):  50%|█████     | 1/2 [01:34<01:34, 94.00s/pools]    Electrode Array 1/1 Surface EMG (CPU): 100%|██████████| 2/2 [03:06<00:00, 92.86s/pools]    Electrode Array 1/1 Surface EMG (CPU): 100%|██████████| 2/2 [03:06<00:00, 93.03s/pools]
     Surface EMG simulation completed!
-    Generated EMG shape: (2, 8, 8, 40000)
+    Generated EMG shape: (2, 8, 8, 4096)
       - 2 pools
       - 8 electrode rows
       - 8 electrode columns
-      - 40000 time samples
+      - 4096 time samples
 
     ['results/surface_emg_signals.pkl']
 
@@ -216,7 +216,7 @@ Visualize Surface EMG Results
 
         # Plot both normalized signals on same axis
     ax.plot(
-        motor_neuron_pool.times / 1000.0,
+        np.arange(len(emg_normalized)) / surface_emg.sampling_frequency__Hz,
         emg_normalized,
         linewidth=2,
         label="Surface EMG",
@@ -257,7 +257,7 @@ Visualize Surface EMG Results
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (3 minutes 4.891 seconds)
+   **Total running time of the script:** (3 minutes 6.570 seconds)
 
 
 .. _sphx_glr_download_auto_examples_04_simulate_surface_emg.py:

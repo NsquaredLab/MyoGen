@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>myogen.utils.currents &#8212; MyoGen 0.1.0 Documentation</title>
+    <title>myogen.utils.currents &#8212; MyoGen 0.1.1 Documentation</title>
   
   
   
@@ -42,7 +42,7 @@
   <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="../../../_static/documentation_options.js?v=01f34227"></script>
+    <script src="../../../_static/documentation_options.js?v=a58bc63e"></script>
     <script src="../../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = '_modules/myogen/utils/currents';</script>
@@ -50,7 +50,7 @@
     <link rel="search" title="Search" href="../../../search.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="0.1.0" />
+  <meta name="docsearch:version" content="0.1.1" />
   </head>
   
   
@@ -116,8 +116,8 @@
       
     
     
-    <img src="../../../_static/myogen_logo.png" class="logo__image only-light" alt="MyoGen 0.1.0 Documentation - Home"/>
-    <img src="../../../_static/myogen_logo.png" class="logo__image only-dark pst-js-only" alt="MyoGen 0.1.0 Documentation - Home"/>
+    <img src="../../../_static/myogen_logo.png" class="logo__image only-light" alt="MyoGen 0.1.1 Documentation - Home"/>
+    <img src="../../../_static/myogen_logo.png" class="logo__image only-dark pst-js-only" alt="MyoGen 0.1.1 Documentation - Home"/>
   
   
 </a></div>
@@ -126,7 +126,7 @@
 <div class="nav-item">
   <div class="version-switcher__container dropdown">
       <button id="version-switcher-button" type="button" class="version-switcher__button btn btn-sm navbar-btn" aria-haspopup="true" aria-expanded="false">
-          Version 0.1.0
+          Version 0.1.1
       </button>
       
       
@@ -361,12 +361,12 @@
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">beartype</span><span class="w"> </span><span class="kn">import</span> <span class="n">beartype</span>
 
-<span class="kn">from</span><span class="w"> </span><span class="nn">myogen.utils.types</span><span class="w"> </span><span class="kn">import</span> <span class="n">INPUT_CURRENT__MATRIX</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">myogen.utils.types</span><span class="w"> </span><span class="kn">import</span> <span class="n">INPUT_CURRENT__MATRIX</span><span class="p">,</span> <span class="n">beartowertype</span>
 
 
 <div class="viewcode-block" id="create_sinusoidal_current">
 <a class="viewcode-back" href="../../../generated/myogen.utils.currents.create_sinusoidal_current.html#myogen.utils.currents.create_sinusoidal_current">[docs]</a>
-<span class="nd">@beartype</span>
+<span class="nd">@beartowertype</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">create_sinusoidal_current</span><span class="p">(</span>
     <span class="n">n_pools</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
     <span class="n">t_points</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
@@ -477,7 +477,7 @@
 
 <div class="viewcode-block" id="create_sawtooth_current">
 <a class="viewcode-back" href="../../../generated/myogen.utils.currents.create_sawtooth_current.html#myogen.utils.currents.create_sawtooth_current">[docs]</a>
-<span class="nd">@beartype</span>
+<span class="nd">@beartowertype</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">create_sawtooth_current</span><span class="p">(</span>
     <span class="n">n_pools</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
     <span class="n">t_points</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
@@ -609,7 +609,7 @@
 
 <div class="viewcode-block" id="create_step_current">
 <a class="viewcode-back" href="../../../generated/myogen.utils.currents.create_step_current.html#myogen.utils.currents.create_step_current">[docs]</a>
-<span class="nd">@beartype</span>
+<span class="nd">@beartowertype</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">create_step_current</span><span class="p">(</span>
     <span class="n">n_pools</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
     <span class="n">t_points</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
@@ -707,7 +707,7 @@
 
 <div class="viewcode-block" id="create_ramp_current">
 <a class="viewcode-back" href="../../../generated/myogen.utils.currents.create_ramp_current.html#myogen.utils.currents.create_ramp_current">[docs]</a>
-<span class="nd">@beartype</span>
+<span class="nd">@beartowertype</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">create_ramp_current</span><span class="p">(</span>
     <span class="n">n_pools</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
     <span class="n">t_points</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
@@ -798,7 +798,7 @@
 
 <div class="viewcode-block" id="create_trapezoid_current">
 <a class="viewcode-back" href="../../../generated/myogen.utils.currents.create_trapezoid_current.html#myogen.utils.currents.create_trapezoid_current">[docs]</a>
-<span class="nd">@beartype</span>
+<span class="nd">@beartowertype</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">create_trapezoid_current</span><span class="p">(</span>
     <span class="n">n_pools</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
     <span class="n">t_points</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
