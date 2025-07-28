@@ -13,6 +13,27 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+## [0.2.0] - 2025-07-26
+
+### Added
+- **Cortical Input Module**: Comprehensive cortical input generation functionality with multiple waveform types:
+  - `create_sinusoidal_cortical_input()` - Sinusoidal cortical inputs with configurable amplitude, frequency, offset, and phase
+  - `create_sawtooth_cortical_input()` - Sawtooth waveform inputs with adjustable width and phase
+  - `create_step_cortical_input()` - Step function inputs with configurable duration and height
+  - `create_ramp_cortical_input()` - Linear ramp inputs between start and end firing rates
+  - `create_trapezoid_cortical_input()` - Trapezoidal inputs with configurable rise, plateau, and fall times
+- New example script `07_simulate_cortical_input.py` demonstrating cortical input simulation
+- Enhanced spike train plotting functionality with improved visualization tools
+
+### Changed
+- **API Simplification**: Removed explicit `load_nmodl_files()` calls from example scripts for cleaner user experience
+- Improved code readability and organization in spike train classes
+- Enhanced error handling and callback mechanisms in spike train simulation
+
+### Fixed
+- Fixed callback errors in spike train simulation for improved stability
+- Improved code structure and readability across multiple modules
+
 ## [0.1.1] - 2025-07-26
 
 ### Added

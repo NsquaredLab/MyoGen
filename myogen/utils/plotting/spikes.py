@@ -11,7 +11,11 @@ from matplotlib.axes import Axes
 from beartype import beartype
 from beartype.cave import IterableType
 
-from myogen.utils.types import INPUT_CURRENT__MATRIX, SPIKE_TRAIN__MATRIX
+from myogen.utils.types import (
+    INPUT_CURRENT__MATRIX,
+    SPIKE_TRAIN__MATRIX,
+    CORTICAL_INPUT__MATRIX,
+)
 
 # Configure multiple sources to suppress font warnings
 logging.getLogger("matplotlib.font_manager").setLevel(logging.ERROR)
@@ -27,6 +31,7 @@ def plot_spike_trains(
     timestep__ms: float,
     axs: IterableType[Axes],
     pool_current__matrix: INPUT_CURRENT__MATRIX | None = None,
+    cortical_input__matrix: CORTICAL_INPUT__MATRIX | None = None,
     pool_to_plot: list[int] | None = None,
     apply_default_formatting: bool = True,
     **kwargs: Any,
@@ -129,6 +134,45 @@ def plot_spike_trains(
         # Initialize current variables to avoid undefined variable errors
         pc_min = 0
         pc_max = 1
+
+        if cortical_input__matrix is not None:
+            pc = cortical_input__matrix[_pool_to_plot[spike_pool_idx]]
+
+            pc_min = np.min(pc)
+            pc_max = np.max(pc)
+            print(pc_min, pc_max)
+            pc_normalized = (pc - pc_min) / (pc_max - pc_min)
+            pc_normalized = pc_normalized * (index)
+
+            ax.plot(
+                np.arange(0, len(pc)) * timestep__ms / 1000,
+                pc_normalized,
+                linestyle="--",
+                linewidth=1,
+                alpha=1,
+                zorder=0,
+                color="black",
+                label=f"Cortical\nInput Firing Rate",
+            )
+
+            if apply_default_formatting:
+                ax.legend(frameon=False)
+
+                ax2 = ax.twinx()
+                ax2.spines["right"].set_color("black")
+                print("index", index)
+                ax2.set_ylim(0, index + 1)
+                ax2.set_yticks(np.linspace(0, index + 1, 10))
+                ax2.set_yticklabels(
+                    np.round(
+                        np.linspace(0, index + 1, 10) * (pc_max - pc_min) / (index + 1)
+                        + pc_min
+                    )
+                )
+                ax2.set_ylabel("Firing rate (pps)")
+
+                ax2.tick_params(axis="y", colors="black")
+                ax2.yaxis.label.set_color("black")
 
         if pool_current__matrix is not None:
             pc = pool_current__matrix[_pool_to_plot[spike_pool_idx]]

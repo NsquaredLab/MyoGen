@@ -1,8 +1,8 @@
 """
-Motor Unit Spike Trains
+Cortical Inputs and Motor Unit Spike Trains
 ==================================
 
-After generating the **recruitment thresholds**, we can simulate the **spike trains** of the motor units.
+Instead of using injected currents, we can simulate the spike trains of the motor units by using cortical inputs.
 
 .. note::
     The spike trains are simulated using the **NEURON simulator** wrapped by **PyNN**.
@@ -34,12 +34,13 @@ After generating the **recruitment thresholds**, we can simulate the **spike tra
 from pathlib import Path
 
 import joblib
+from myogen.utils.currents import create_trapezoid_current
 import numpy as np
 from matplotlib import pyplot as plt
 
 from myogen import simulator, RANDOM_GENERATOR
-
-from myogen.utils.currents import create_trapezoid_current
+from myogen.utils import load_nmodl_files
+from myogen.utils.cortical_inputs import create_sinusoidal_cortical_input
 from myogen.utils.plotting import plot_spike_trains
 
 ##############################################################################
@@ -70,47 +71,53 @@ noise_mean = 26  # Mean noise current in nA
 noise_stdev = 20  # Standard deviation of noise current in nA
 
 ##############################################################################
-# Create Input Currents
+# Create Cortical Inputs
 # ------------------------------
 #
-# To drive the motor units, we use a **common input current profile**.
+# To drive the motor units, we use **cortical inputs**.
 #
-# In this example, we use a **trapezoid-shaped input current** which is generated using the ``create_trapezoid_current`` function.
+# In this example, we use a **sinusoidal input firing rate** which is generated using the ``create_sinusoidal_cortical_input`` function.
 #
 # .. note::
-#    More convenient functions for generating input current profiles are available in the ``myogen.utils.currents`` module.
+#    More convenient functions for generating input current profiles are available in the ``myogen.utils.cortical_inputs`` module.
 
 # Calculate number of time points
 t_points = int(simulation_time / timestep)
 
-# Generate random parameters for each pool's input current
-amplitude_range = list(RANDOM_GENERATOR.uniform(100, 150, size=n_pools))
-rise_time_ms = list(RANDOM_GENERATOR.uniform(100, 500, size=n_pools))
-plateau_time_ms = list(RANDOM_GENERATOR.uniform(100, 500, size=n_pools))
-fall_time_ms = list(RANDOM_GENERATOR.uniform(100, 500, size=n_pools))
+# Generate random parameters for each pool's cortical input
+amplitude_range = list(RANDOM_GENERATOR.uniform(20, 80, size=n_pools))
+offsets = list(RANDOM_GENERATOR.uniform(50, 100, size=n_pools))
+frequencies = list(RANDOM_GENERATOR.uniform(0.5, 10, size=n_pools))
+phases = list(RANDOM_GENERATOR.uniform(0, 2 * np.pi, size=n_pools))
 
-print(f"\nInput current parameters:")
+CST_number = 400
+connection_prob = 0.3
+
+
+print(f"\nCortical inputs parameters:")
 for i in range(n_pools):
     print(
-        f"  Pool {i + 1}: amplitude={amplitude_range[i]:.1f} nA, "
-        f"rise={rise_time_ms[i]:.0f} ms, "
-        f"plateau={plateau_time_ms[i]:.0f} ms, "
-        f"fall={fall_time_ms[i]:.0f} ms"
+        f"  Pool {i + 1}: amplitude={amplitude_range[i]:.1f} pps, "
+        f"offset={offsets[i]:.1f} pps, "
+        f"frequency={frequencies[i]:.1f} Hz, "
+        f"phase={phases[i]:.1f} rad"
     )
 
-# Create the input current matrix
-input_current_matrix = create_trapezoid_current(
+# Create the cortical input matrix
+cortical_input__matrix = create_sinusoidal_cortical_input(
     n_pools,
     t_points,
     timestep,
-    amplitudes__muV=amplitude_range,
-    rise_times__ms=rise_time_ms,
-    plateau_times__ms=plateau_time_ms,
-    fall_times__ms=fall_time_ms,
-    delays__ms=500.0,
+    amplitudes__pps=amplitude_range,
+    frequencies__Hz=frequencies,
+    offsets__pps=offsets,
+    phases__rad=phases,
 )
 
-print(f"\nInput current matrix shape: {input_current_matrix.shape}")
+print(
+    f"\nCortical input matrix shape: {cortical_input__matrix.shape}\n amplitude={amplitude_range[i]:.1f} pps \n offset={offsets[i]:.1f} pps\n frequency={frequencies[i]:.1f} Hz\nphase={phases[i]:.1f} rad"
+)
+
 
 ##############################################################################
 # Create Motor Neuron Pools
@@ -136,8 +143,6 @@ save_path = Path("./results")
 # Load recruitment thresholds
 recruitment_thresholds = joblib.load(save_path / "thresholds.pkl")
 
-# Save input current matrix for later analysis
-joblib.dump(input_current_matrix, save_path / "input_current_matrix.pkl")
 
 # Load NEURON mechanism
 load_nmodl_files()
@@ -150,12 +155,6 @@ mvc_current_threshold = motor_neuron_pool.mvc_current_threshold
 
 print(f"\nMVC current threshold: {mvc_current_threshold:.1f} nA")
 
-# min max to mvc current threshold
-input_current_matrix = (
-    input_current_matrix * mvc_current_threshold / np.max(input_current_matrix)
-)
-
-
 ##############################################################################
 # Simulate Motor Unit Spike Trains
 # ---------------------------------
@@ -164,12 +163,13 @@ input_current_matrix = (
 
 spike_trains_matrix, active_neuron_indices, data = (
     motor_neuron_pool.generate_spike_trains(
-        input_current__matrix=input_current_matrix,
+        cortical_input__matrix=cortical_input__matrix,
         timestep__ms=timestep,
-        noise_mean__nA=noise_mean,
-        noise_stdev__nA=noise_stdev,
+        CST_number=CST_number,
+        connection_prob=connection_prob,
     )
 )
+
 
 # Save motor neuron pool for later analysis
 joblib.dump(motor_neuron_pool, save_path / "motor_neuron_pool.pkl")
@@ -235,7 +235,7 @@ with plt.xkcd():
         spike_trains__matrix=spike_trains_matrix,
         timestep__ms=timestep,
         axs=[ax],
-        pool_current__matrix=input_current_matrix,
+        cortical_input__matrix=cortical_input__matrix,
         pool_to_plot=[0],
     )
 plt.tight_layout()

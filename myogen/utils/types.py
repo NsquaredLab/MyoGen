@@ -40,3 +40,9 @@ INTRAMUSCULAR_EMG__TENSOR = Annotated[
     npt.NDArray[np.floating],
     Is[lambda x: x.ndim == 3],
 ]
+
+# Cortical input matrix: (mu_pools, time_points)
+CORTICAL_INPUT__MATRIX = Annotated[
+    npt.NDArray[np.floating],
+    Is[lambda x: x.ndim == 2],
+]
