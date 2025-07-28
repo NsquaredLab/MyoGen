@@ -139,9 +139,6 @@ recruitment_thresholds = joblib.load(save_path / "thresholds.pkl")
 # Save input current matrix for later analysis
 joblib.dump(input_current_matrix, save_path / "input_current_matrix.pkl")
 
-# Load NEURON mechanism
-load_nmodl_files()
-
 # Create motor neuron pool
 motor_neuron_pool = simulator.MotorNeuronPool(recruitment_thresholds)
 
