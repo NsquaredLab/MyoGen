@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>MotorNeuronPool &#8212; MyoGen 0.1.1 Documentation</title>
+    <title>MotorNeuronPool &#8212; MyoGen 0.2.0 Documentation</title>
   
   
   
@@ -43,7 +43,7 @@
   <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="../_static/documentation_options.js?v=a58bc63e"></script>
+    <script src="../_static/documentation_options.js?v=938c9ccc"></script>
     <script src="../_static/doctools.js?v=9bcbadda"></script>
     <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'generated/myogen.simulator.MotorNeuronPool';</script>
@@ -53,7 +53,7 @@
     <link rel="prev" title="generate_mu_recruitment_thresholds" href="myogen.simulator.generate_mu_recruitment_thresholds.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="0.1.1" />
+  <meta name="docsearch:version" content="0.2.0" />
   </head>
   
   
@@ -119,8 +119,8 @@
       
     
     
-    <img src="../_static/myogen_logo.png" class="logo__image only-light" alt="MyoGen 0.1.1 Documentation - Home"/>
-    <img src="../_static/myogen_logo.png" class="logo__image only-dark pst-js-only" alt="MyoGen 0.1.1 Documentation - Home"/>
+    <img src="../_static/myogen_logo.png" class="logo__image only-light" alt="MyoGen 0.2.0 Documentation - Home"/>
+    <img src="../_static/myogen_logo.png" class="logo__image only-dark pst-js-only" alt="MyoGen 0.2.0 Documentation - Home"/>
   
   
 </a></div>
@@ -129,7 +129,7 @@
 <div class="nav-item">
   <div class="version-switcher__container dropdown">
       <button id="version-switcher-button" type="button" class="version-switcher__button btn btn-sm navbar-btn" aria-haspopup="true" aria-expanded="false">
-          Version 0.1.1
+          Version 0.2.0
       </button>
       
       
@@ -481,18 +481,22 @@ using binary search optimization.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="myogen.simulator.MotorNeuronPool.generate_spike_trains">
-<span class="sig-name descname"><span class="pre">generate_spike_trains</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_current__matrix</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timestep__ms</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.05</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">noise_mean__nA</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">30</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">noise_stdev__nA</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">30</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">what_to_record</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[{'locations':</span> <span class="pre">['dendrite',</span> <span class="pre">'soma'],</span> <span class="pre">'variables':</span> <span class="pre">['v']}]</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/myogen/simulator/core/spike_train/spike_train.html#MotorNeuronPool.generate_spike_trains"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#myogen.simulator.MotorNeuronPool.generate_spike_trains" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">generate_spike_trains</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_current__matrix</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cortical_input__matrix</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timestep__ms</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.05</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">noise_mean__nA</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">30</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">noise_stdev__nA</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">30</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">CST_number</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">400</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">connection_prob</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">what_to_record</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[{'locations':</span> <span class="pre">['dendrite',</span> <span class="pre">'soma'],</span> <span class="pre">'variables':</span> <span class="pre">['v']}]</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/myogen/simulator/core/spike_train/spike_train.html#MotorNeuronPool.generate_spike_trains"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#myogen.simulator.MotorNeuronPool.generate_spike_trains" title="Link to this definition">#</a></dt>
 <dd><p>Generate the spike trains for as many neuron pools as input currents there are</p>
 <p>Each motor neuron pools have each “neurons_per_pool” neurons.
 The input currents are injected into each pool, and the spike trains are recorded.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>input_current__matrix</strong> (<a class="reference internal" href="myogen.utils.types.INPUT_CURRENT__MATRIX.html#myogen.utils.types.INPUT_CURRENT__MATRIX" title="myogen.utils.types.INPUT_CURRENT__MATRIX"><code class="xref py py-data docutils literal notranslate"><span class="pre">INPUT_CURRENT__MATRIX</span></code></a>) – Matrix of shape (n_pools, t_points) containing current values
+<li><p><strong>input_current__matrix</strong> (<a class="reference internal" href="myogen.utils.types.INPUT_CURRENT__MATRIX.html#myogen.utils.types.INPUT_CURRENT__MATRIX" title="myogen.utils.types.INPUT_CURRENT__MATRIX"><code class="xref py py-data docutils literal notranslate"><span class="pre">INPUT_CURRENT__MATRIX</span></code></a>, <em>optional</em>) – Matrix of shape (n_pools, t_points) containing current values
 Each row represents the current for one pool</p></li>
+<li><p><strong>cortical_input__matrix</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">CORTICAL_INPUT__MATRIX</span></code>, <em>optional</em>) – Matrix of shape (n_pools, t_points) containing cortical input values
+Each row represents the cortical input for one pool</p></li>
 <li><p><strong>timestep__ms</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a>) – Simulation timestep__ms in ms</p></li>
 <li><p><strong>noise_mean__nA</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a>) – Mean of the noise current in nA</p></li>
 <li><p><strong>noise_stdev__nA</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a>) – Standard deviation of the noise current in nA</p></li>
+<li><p><strong>CST_number</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>) – Number of neurons in the cortical input population. Only used if cortical_input__matrix is provided. Default is 400.</p></li>
+<li><p><strong>connection_prob</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a>) – Probability of a connection between a cortical input neuron and a motor neuron. Only used if cortical_input__matrix is provided. Default is 0.3.</p></li>
 <li><p><strong>what_to_record</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></a>[<code class="docutils literal notranslate"><span class="pre">'variables'</span></code>, <code class="docutils literal notranslate"><span class="pre">'to_file'</span></code>, <code class="docutils literal notranslate"><span class="pre">'sampling_interval'</span></code>, <code class="docutils literal notranslate"><span class="pre">'locations'</span></code>], <code class="xref py py-class docutils literal notranslate"><span class="pre">Any</span></code>]) – <p>List of dictionaries specifying what to record.</p>
 <dl class="simple">
 <dt>Each dictionary contains the following keys:</dt><dd><ul>

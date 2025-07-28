@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>myogen.simulator.core.spike_train.spike_train &#8212; MyoGen 0.1.1 Documentation</title>
+    <title>myogen.simulator.core.spike_train.spike_train &#8212; MyoGen 0.2.0 Documentation</title>
   
   
   
@@ -42,7 +42,7 @@
   <link rel="preload" as="script" href="../../../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="../../../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="../../../../../_static/documentation_options.js?v=a58bc63e"></script>
+    <script src="../../../../../_static/documentation_options.js?v=938c9ccc"></script>
     <script src="../../../../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = '_modules/myogen/simulator/core/spike_train/spike_train';</script>
@@ -50,7 +50,7 @@
     <link rel="search" title="Search" href="../../../../../search.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="0.1.1" />
+  <meta name="docsearch:version" content="0.2.0" />
   </head>
   
   
@@ -116,8 +116,8 @@
       
     
     
-    <img src="../../../../../_static/myogen_logo.png" class="logo__image only-light" alt="MyoGen 0.1.1 Documentation - Home"/>
-    <img src="../../../../../_static/myogen_logo.png" class="logo__image only-dark pst-js-only" alt="MyoGen 0.1.1 Documentation - Home"/>
+    <img src="../../../../../_static/myogen_logo.png" class="logo__image only-light" alt="MyoGen 0.2.0 Documentation - Home"/>
+    <img src="../../../../../_static/myogen_logo.png" class="logo__image only-dark pst-js-only" alt="MyoGen 0.2.0 Documentation - Home"/>
   
   
 </a></div>
@@ -126,7 +126,7 @@
 <div class="nav-item">
   <div class="version-switcher__container dropdown">
       <button id="version-switcher-button" type="button" class="version-switcher__button btn btn-sm navbar-btn" aria-haspopup="true" aria-expanded="false">
-          Version 0.1.1
+          Version 0.2.0
       </button>
       
       
@@ -353,16 +353,22 @@
                 <article class="bd-article">
                   
   <h1>Source code for myogen.simulator.core.spike_train.spike_train</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Literal</span>
+<span></span><span class="kn">from</span><span class="w"> </span><span class="nn">operator</span><span class="w"> </span><span class="kn">import</span> <span class="n">call</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Literal</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">pyNN.neuron</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">sim</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pyNN.neuron.morphology</span><span class="w"> </span><span class="kn">import</span> <span class="n">uniform</span><span class="p">,</span> <span class="n">centre</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pyNN.parameters</span><span class="w"> </span><span class="kn">import</span> <span class="n">IonicSpecies</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pyNN.random</span><span class="w"> </span><span class="kn">import</span> <span class="n">NumpyRNG</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">neo</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">myogen</span><span class="w"> </span><span class="kn">import</span> <span class="n">RANDOM_GENERATOR</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">myogen.simulator.core.spike_train</span><span class="w"> </span><span class="kn">import</span> <span class="n">functions</span><span class="p">,</span> <span class="n">classes</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">myogen.utils.types</span><span class="w"> </span><span class="kn">import</span> <span class="n">SPIKE_TRAIN__MATRIX</span><span class="p">,</span> <span class="n">INPUT_CURRENT__MATRIX</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">myogen.utils.types</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">SPIKE_TRAIN__MATRIX</span><span class="p">,</span>
+    <span class="n">INPUT_CURRENT__MATRIX</span><span class="p">,</span>
+    <span class="n">CORTICAL_INPUT__MATRIX</span><span class="p">,</span>
+<span class="p">)</span>
 
 
 <div class="viewcode-block" id="MotorNeuronPool">
@@ -514,10 +520,13 @@
 <a class="viewcode-back" href="../../../../../generated/myogen.simulator.MotorNeuronPool.html#myogen.simulator.MotorNeuronPool.generate_spike_trains">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">generate_spike_trains</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
-        <span class="n">input_current__matrix</span><span class="p">:</span> <span class="n">INPUT_CURRENT__MATRIX</span><span class="p">,</span>
+        <span class="n">input_current__matrix</span><span class="p">:</span> <span class="n">INPUT_CURRENT__MATRIX</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">cortical_input__matrix</span><span class="p">:</span> <span class="n">CORTICAL_INPUT__MATRIX</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">timestep__ms</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.05</span><span class="p">,</span>
         <span class="n">noise_mean__nA</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">30</span><span class="p">,</span>  <span class="c1"># noqa N803</span>
         <span class="n">noise_stdev__nA</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">30</span><span class="p">,</span>  <span class="c1"># noqa N803</span>
+        <span class="n">CST_number</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">400</span><span class="p">,</span>
+        <span class="n">connection_prob</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.3</span><span class="p">,</span>
         <span class="n">what_to_record</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span>
             <span class="nb">dict</span><span class="p">[</span><span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;variables&quot;</span><span class="p">,</span> <span class="s2">&quot;to_file&quot;</span><span class="p">,</span> <span class="s2">&quot;sampling_interval&quot;</span><span class="p">,</span> <span class="s2">&quot;locations&quot;</span><span class="p">],</span> <span class="n">Any</span><span class="p">]</span>
         <span class="p">]</span> <span class="o">=</span> <span class="p">[</span>
@@ -532,15 +541,22 @@
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        input_current__matrix : INPUT_CURRENT__MATRIX</span>
+<span class="sd">        input_current__matrix : INPUT_CURRENT__MATRIX, optional</span>
 <span class="sd">            Matrix of shape (n_pools, t_points) containing current values</span>
 <span class="sd">            Each row represents the current for one pool</span>
+<span class="sd">        cortical_input__matrix : CORTICAL_INPUT__MATRIX, optional</span>
+<span class="sd">            Matrix of shape (n_pools, t_points) containing cortical input values</span>
+<span class="sd">            Each row represents the cortical input for one pool</span>
 <span class="sd">        timestep__ms : float</span>
 <span class="sd">            Simulation timestep__ms in ms</span>
 <span class="sd">        noise_mean__nA : float</span>
 <span class="sd">            Mean of the noise current in nA</span>
 <span class="sd">        noise_stdev__nA : float</span>
 <span class="sd">            Standard deviation of the noise current in nA</span>
+<span class="sd">        CST_number : int</span>
+<span class="sd">            Number of neurons in the cortical input population. Only used if cortical_input__matrix is provided. Default is 400.</span>
+<span class="sd">        connection_prob : float</span>
+<span class="sd">            Probability of a connection between a cortical input neuron and a motor neuron. Only used if cortical_input__matrix is provided. Default is 0.3.</span>
 <span class="sd">        what_to_record: WhatToRecord</span>
 <span class="sd">            List of dictionaries specifying what to record.</span>
 
@@ -569,6 +585,17 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">timestep__ms</span> <span class="o">=</span> <span class="n">timestep__ms</span>
         <span class="n">sim</span><span class="o">.</span><span class="n">setup</span><span class="p">(</span><span class="n">timestep</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">timestep__ms</span><span class="p">)</span>
 
+        <span class="k">if</span> <span class="n">input_current__matrix</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">n_pools</span> <span class="o">=</span> <span class="n">input_current__matrix</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">simulation_time_points</span> <span class="o">=</span> <span class="n">input_current__matrix</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="k">elif</span> <span class="n">cortical_input__matrix</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">n_pools</span> <span class="o">=</span> <span class="n">cortical_input__matrix</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">simulation_time_points</span> <span class="o">=</span> <span class="n">cortical_input__matrix</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;Either &#39;input_current__matrix&#39; or &#39;cortical_input__matrix&#39; must be provided.&quot;</span>
+            <span class="p">)</span>
+
         <span class="c1"># Create motor neuron pools</span>
         <span class="n">pools</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">sim</span><span class="o">.</span><span class="n">Population</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span>
             <span class="n">sim</span><span class="o">.</span><span class="n">Population</span><span class="p">(</span>
@@ -576,27 +603,56 @@
                 <span class="bp">self</span><span class="o">.</span><span class="n">_create_motor_neuron_pool</span><span class="p">(),</span>
                 <span class="n">initial_values</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;v&quot;</span><span class="p">:</span> <span class="o">-</span><span class="mi">70</span><span class="p">},</span>
             <span class="p">)</span>
-            <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">input_current__matrix</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+            <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_pools</span><span class="p">)</span>
         <span class="p">]</span>
 
         <span class="c1"># Inject currents into each pool - one current per pool</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">times</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">input_current__matrix</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">timestep__ms</span>
-        <span class="k">for</span> <span class="n">input_current</span><span class="p">,</span> <span class="n">pool</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">input_current__matrix</span><span class="p">,</span> <span class="n">pools</span><span class="p">):</span>
-            <span class="n">current_source</span> <span class="o">=</span> <span class="n">sim</span><span class="o">.</span><span class="n">StepCurrentSource</span><span class="p">(</span>
-                <span class="n">times</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">times</span><span class="p">,</span> <span class="n">amplitudes</span><span class="o">=</span><span class="n">input_current</span>
-            <span class="p">)</span>
-            <span class="n">current_source</span><span class="o">.</span><span class="n">inject_into</span><span class="p">(</span><span class="n">pool</span><span class="p">,</span> <span class="n">location</span><span class="o">=</span><span class="s2">&quot;soma&quot;</span><span class="p">)</span>
-
-            <span class="c1"># Add Gaussian noise current to each neuron in the pool</span>
-            <span class="k">for</span> <span class="n">neuron</span> <span class="ow">in</span> <span class="n">pool</span><span class="p">:</span>
-                <span class="n">noise_source</span> <span class="o">=</span> <span class="n">sim</span><span class="o">.</span><span class="n">NoisyCurrentSource</span><span class="p">(</span>
-                    <span class="n">mean</span><span class="o">=</span><span class="n">noise_mean__nA</span><span class="p">,</span>
-                    <span class="n">stdev</span><span class="o">=</span><span class="n">noise_stdev__nA</span><span class="p">,</span>
-                    <span class="n">start</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
-                    <span class="n">stop</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">times</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">timestep__ms</span><span class="p">,</span>
-                    <span class="n">dt</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">timestep__ms</span><span class="p">,</span>
+        <span class="k">if</span> <span class="n">input_current__matrix</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">times</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">input_current__matrix</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">timestep__ms</span>
+            <span class="k">for</span> <span class="n">input_current</span><span class="p">,</span> <span class="n">pool</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">input_current__matrix</span><span class="p">,</span> <span class="n">pools</span><span class="p">):</span>
+                <span class="n">current_source</span> <span class="o">=</span> <span class="n">sim</span><span class="o">.</span><span class="n">StepCurrentSource</span><span class="p">(</span>
+                    <span class="n">times</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">times</span><span class="p">,</span> <span class="n">amplitudes</span><span class="o">=</span><span class="n">input_current</span>
                 <span class="p">)</span>
-                <span class="n">noise_source</span><span class="o">.</span><span class="n">inject_into</span><span class="p">([</span><span class="n">neuron</span><span class="p">],</span> <span class="n">location</span><span class="o">=</span><span class="s2">&quot;soma&quot;</span><span class="p">)</span>
+                <span class="n">current_source</span><span class="o">.</span><span class="n">inject_into</span><span class="p">(</span><span class="n">pool</span><span class="p">,</span> <span class="n">location</span><span class="o">=</span><span class="s2">&quot;soma&quot;</span><span class="p">)</span>
+
+                <span class="c1"># Add Gaussian noise current to each neuron in the pool</span>
+                <span class="k">for</span> <span class="n">neuron</span> <span class="ow">in</span> <span class="n">pool</span><span class="p">:</span>
+                    <span class="n">noise_source</span> <span class="o">=</span> <span class="n">sim</span><span class="o">.</span><span class="n">NoisyCurrentSource</span><span class="p">(</span>
+                        <span class="n">mean</span><span class="o">=</span><span class="n">noise_mean__nA</span><span class="p">,</span>
+                        <span class="n">stdev</span><span class="o">=</span><span class="n">noise_stdev__nA</span><span class="p">,</span>
+                        <span class="n">start</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+                        <span class="n">stop</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">times</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">timestep__ms</span><span class="p">,</span>
+                        <span class="n">dt</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">timestep__ms</span><span class="p">,</span>
+                    <span class="p">)</span>
+                    <span class="n">noise_source</span><span class="o">.</span><span class="n">inject_into</span><span class="p">([</span><span class="n">neuron</span><span class="p">],</span> <span class="n">location</span><span class="o">=</span><span class="s2">&quot;soma&quot;</span><span class="p">)</span>
+
+        <span class="n">callbacks</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">projections</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="c1"># Create cortical input</span>
+        <span class="k">if</span> <span class="n">cortical_input__matrix</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">FR</span><span class="p">,</span> <span class="n">pool</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">cortical_input__matrix</span><span class="p">,</span> <span class="n">pools</span><span class="p">):</span>
+                <span class="n">spike_source</span> <span class="o">=</span> <span class="n">sim</span><span class="o">.</span><span class="n">Population</span><span class="p">(</span>
+                    <span class="n">CST_number</span><span class="p">,</span> <span class="n">classes</span><span class="o">.</span><span class="n">SpikeSourceGammaStart</span><span class="p">(</span><span class="n">alpha</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+                <span class="p">)</span>
+                <span class="n">synapse</span> <span class="o">=</span> <span class="n">sim</span><span class="o">.</span><span class="n">StaticSynapse</span><span class="p">(</span><span class="n">weight</span><span class="o">=</span><span class="mf">0.6</span><span class="p">,</span> <span class="n">delay</span><span class="o">=</span><span class="mf">0.2</span><span class="p">)</span>
+                <span class="n">projection</span> <span class="o">=</span> <span class="n">sim</span><span class="o">.</span><span class="n">Projection</span><span class="p">(</span>
+                    <span class="n">spike_source</span><span class="p">,</span>
+                    <span class="n">pool</span><span class="p">,</span>
+                    <span class="n">sim</span><span class="o">.</span><span class="n">FixedProbabilityConnector</span><span class="p">(</span>
+                        <span class="n">connection_prob</span><span class="p">,</span> <span class="n">location_selector</span><span class="o">=</span><span class="s2">&quot;dendrite&quot;</span><span class="p">,</span> <span class="n">rng</span><span class="o">=</span><span class="n">NumpyRNG</span><span class="p">()</span>
+                    <span class="p">),</span>
+                    <span class="n">synapse</span><span class="p">,</span>
+                    <span class="n">receptor_type</span><span class="o">=</span><span class="s2">&quot;syn&quot;</span><span class="p">,</span>
+                <span class="p">)</span>
+                <span class="n">projections</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">projection</span><span class="p">)</span>
+                <span class="n">callbacks</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                    <span class="n">classes</span><span class="o">.</span><span class="n">SetRateFromArray</span><span class="p">(</span>
+                        <span class="n">population_source</span><span class="o">=</span><span class="n">spike_source</span><span class="p">,</span>
+                        <span class="n">population_neuron</span><span class="o">=</span><span class="n">pool</span><span class="p">,</span>
+                        <span class="n">firing_rate</span><span class="o">=</span><span class="n">FR</span><span class="p">,</span>
+                        <span class="n">timestep__ms</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">timestep__ms</span><span class="p">,</span>
+                    <span class="p">)</span>
+                <span class="p">)</span>
 
         <span class="c1"># Set up recording</span>
         <span class="k">for</span> <span class="n">pool</span> <span class="ow">in</span> <span class="n">pools</span><span class="p">:</span>
@@ -605,13 +661,13 @@
                 <span class="n">pool</span><span class="o">.</span><span class="n">record</span><span class="p">(</span><span class="o">**</span><span class="n">record</span><span class="p">)</span>
 
         <span class="c1"># Run simulation</span>
-        <span class="n">sim</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">input_current__matrix</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">timestep__ms</span><span class="p">)</span>
+        <span class="n">sim</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">simulation_time_points</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">timestep__ms</span><span class="p">,</span> <span class="n">callbacks</span><span class="o">=</span><span class="n">callbacks</span><span class="p">)</span>
         <span class="n">sim</span><span class="o">.</span><span class="n">end</span><span class="p">()</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="p">[</span><span class="n">pool</span><span class="o">.</span><span class="n">get_data</span><span class="p">()</span><span class="o">.</span><span class="n">segments</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">pool</span> <span class="ow">in</span> <span class="n">pools</span><span class="p">]</span>
 
         <span class="c1"># Convert spike times to binary arrays and save</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">time_indices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">input_current__matrix</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">time_indices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">simulation_time_points</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">spike_trains</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
             <span class="p">[</span>
                 <span class="p">[</span>

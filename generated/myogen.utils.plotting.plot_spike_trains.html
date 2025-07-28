@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>plot_spike_trains &#8212; MyoGen 0.1.1 Documentation</title>
+    <title>plot_spike_trains &#8212; MyoGen 0.2.0 Documentation</title>
   
   
   
@@ -43,7 +43,7 @@
   <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="../_static/documentation_options.js?v=a58bc63e"></script>
+    <script src="../_static/documentation_options.js?v=938c9ccc"></script>
     <script src="../_static/doctools.js?v=9bcbadda"></script>
     <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'generated/myogen.utils.plotting.plot_spike_trains';</script>
@@ -53,7 +53,7 @@
     <link rel="prev" title="plot_recruitment_thresholds" href="myogen.utils.plotting.plot_recruitment_thresholds.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="0.1.1" />
+  <meta name="docsearch:version" content="0.2.0" />
   </head>
   
   
@@ -119,8 +119,8 @@
       
     
     
-    <img src="../_static/myogen_logo.png" class="logo__image only-light" alt="MyoGen 0.1.1 Documentation - Home"/>
-    <img src="../_static/myogen_logo.png" class="logo__image only-dark pst-js-only" alt="MyoGen 0.1.1 Documentation - Home"/>
+    <img src="../_static/myogen_logo.png" class="logo__image only-light" alt="MyoGen 0.2.0 Documentation - Home"/>
+    <img src="../_static/myogen_logo.png" class="logo__image only-dark pst-js-only" alt="MyoGen 0.2.0 Documentation - Home"/>
   
   
 </a></div>
@@ -129,7 +129,7 @@
 <div class="nav-item">
   <div class="version-switcher__container dropdown">
       <button id="version-switcher-button" type="button" class="version-switcher__button btn btn-sm navbar-btn" aria-haspopup="true" aria-expanded="false">
-          Version 0.1.1
+          Version 0.2.0
       </button>
       
       
@@ -414,7 +414,7 @@
 <h1>plot_spike_trains<a class="headerlink" href="#plot-spike-trains" title="Link to this heading">#</a></h1>
 <dl class="py function">
 <dt class="sig sig-object py" id="myogen.utils.plotting.plot_spike_trains">
-<span class="sig-prename descclassname"><span class="pre">myogen.utils.plotting.</span></span><span class="sig-name descname"><span class="pre">plot_spike_trains</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">spike_trains__matrix</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timestep__ms</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">axs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pool_current__matrix</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pool_to_plot</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">apply_default_formatting</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/myogen/utils/plotting/spikes.html#plot_spike_trains"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#myogen.utils.plotting.plot_spike_trains" title="Link to this definition">#</a></dt>
+<span class="sig-prename descclassname"><span class="pre">myogen.utils.plotting.</span></span><span class="sig-name descname"><span class="pre">plot_spike_trains</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">spike_trains__matrix</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timestep__ms</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">axs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pool_current__matrix</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cortical_input__matrix</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pool_to_plot</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">apply_default_formatting</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/myogen/utils/plotting/spikes.html#plot_spike_trains"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#myogen.utils.plotting.plot_spike_trains" title="Link to this definition">#</a></dt>
 <dd><p>Plot spike trains for each motor neuron pool.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -426,6 +426,7 @@
 <li><p><strong>pool_to_plot</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>] | <code class="xref py py-class docutils literal notranslate"><span class="pre">None</span></code>, <em>optional</em>) – The pools to plot if not all pools should be plotted, by default None (all pools are plotted).</p></li>
 <li><p><strong>apply_default_formatting</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a>, <em>optional</em>) – Whether to apply default formatting to the plot, by default True.</p></li>
 <li><p><strong>**kwargs</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Any</span></code>) – Additional keyword arguments to pass to the plot function. Only used if apply_default_formatting is False.</p></li>
+<li><p><strong>cortical_input__matrix</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Annotated" title="(in Python v3.13)"><em>Annotated</em></a><em>[</em><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.3)"><em>ndarray</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.13)"><em>tuple</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a><em>, </em><em>...</em><em>]</em><em>, </em><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.dtype.html#numpy.dtype" title="(in NumPy v2.3)"><em>dtype</em></a><em>[</em><a class="reference external" href="https://numpy.org/doc/stable/reference/arrays.scalars.html#numpy.floating" title="(in NumPy v2.3)"><em>floating</em></a><em>]</em><em>]</em><em>, </em><em>beartype.vale.Is</em><em>[</em><em>lambda x: x.ndim == 2</em><em>]</em><em>] </em><em>| </em><em>None</em>)</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>

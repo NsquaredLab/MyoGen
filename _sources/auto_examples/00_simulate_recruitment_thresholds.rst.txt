@@ -40,7 +40,7 @@ The first step in using **MyoGen** is to generate the **recruitment thresholds**
 Import Libraries
 ----------------
 
-.. GENERATED FROM PYTHON SOURCE LINES 23-30
+.. GENERATED FROM PYTHON SOURCE LINES 23-31
 
 .. code-block:: Python
 
@@ -48,6 +48,7 @@ Import Libraries
     from pathlib import Path
 
     import joblib
+
 
     from myogen import simulator
 
@@ -58,7 +59,7 @@ Import Libraries
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 31-56
+.. GENERATED FROM PYTHON SOURCE LINES 32-57
 
 Define Parameters
 -----------------
@@ -86,7 +87,7 @@ With some models you also need to define additional parameters:
   - ``deluca__slopes``: Different slope values to demonstrate variety
   - ``konstantin__max_threshold``: Maximum recruitment threshold
 
-.. GENERATED FROM PYTHON SOURCE LINES 56-71
+.. GENERATED FROM PYTHON SOURCE LINES 57-72
 
 .. code-block:: Python
 
@@ -112,7 +113,7 @@ With some models you also need to define additional parameters:
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 72-83
+.. GENERATED FROM PYTHON SOURCE LINES 73-84
 
 Generate Recruitment Thresholds
 --------------------------------
@@ -126,7 +127,7 @@ Generating the recruitment thresholds is done by calling the ``generate_mu_recru
 
       from myogen import simulator
 
-.. GENERATED FROM PYTHON SOURCE LINES 83-127
+.. GENERATED FROM PYTHON SOURCE LINES 84-128
 
 .. code-block:: Python
 
@@ -181,7 +182,7 @@ Generating the recruitment thresholds is done by calling the ``generate_mu_recru
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 128-133
+.. GENERATED FROM PYTHON SOURCE LINES 129-134
 
 Save Recruitment Thresholds
 --------------------------
@@ -189,7 +190,7 @@ Save Recruitment Thresholds
 .. note::
    All **MyoGen** objects can be saved to a file using ``joblib``. This is useful to **avoid re-running expensive simulations** if you need to use the same parameters.
 
-.. GENERATED FROM PYTHON SOURCE LINES 133-136
+.. GENERATED FROM PYTHON SOURCE LINES 134-137
 
 .. code-block:: Python
 
@@ -209,7 +210,7 @@ Save Recruitment Thresholds
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 137-148
+.. GENERATED FROM PYTHON SOURCE LINES 138-149
 
 Plot Recruitment Thresholds
 --------------------------
@@ -223,7 +224,7 @@ The recruitment thresholds can be plotted using the ``plot_recruitment_threshold
 
       from myogen.utils.plotting import plot_recruitment_thresholds
 
-.. GENERATED FROM PYTHON SOURCE LINES 148-160
+.. GENERATED FROM PYTHON SOURCE LINES 149-161
 
 .. code-block:: Python
 
@@ -246,7 +247,7 @@ The recruitment thresholds can be plotted using the ``plot_recruitment_threshold
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 161-166
+.. GENERATED FROM PYTHON SOURCE LINES 162-167
 
 Fuglevand Model Visualization
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -254,7 +255,7 @@ Fuglevand Model Visualization
 The Fuglevand model uses a simple exponential distribution for recruitment
 thresholds. This is the classic approach from Fuglevand et al. (1993).
 
-.. GENERATED FROM PYTHON SOURCE LINES 166-176
+.. GENERATED FROM PYTHON SOURCE LINES 167-177
 
 .. code-block:: Python
 
@@ -287,7 +288,7 @@ thresholds. This is the classic approach from Fuglevand et al. (1993).
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 177-182
+.. GENERATED FROM PYTHON SOURCE LINES 178-183
 
 De Luca Model Visualization
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -295,7 +296,7 @@ De Luca Model Visualization
 The De Luca model includes a slope correction parameter that allows control
 over the shape of the recruitment threshold distribution.
 
-.. GENERATED FROM PYTHON SOURCE LINES 182-195
+.. GENERATED FROM PYTHON SOURCE LINES 183-196
 
 .. code-block:: Python
 
@@ -331,7 +332,7 @@ over the shape of the recruitment threshold distribution.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 196-201
+.. GENERATED FROM PYTHON SOURCE LINES 197-202
 
 Konstantin Model Visualization
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -339,7 +340,7 @@ Konstantin Model Visualization
 The Konstantin model provides explicit control over the maximum recruitment
 threshold while maintaining physiological recruitment patterns.
 
-.. GENERATED FROM PYTHON SOURCE LINES 201-216
+.. GENERATED FROM PYTHON SOURCE LINES 202-217
 
 .. code-block:: Python
 
@@ -377,7 +378,7 @@ threshold while maintaining physiological recruitment patterns.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 217-222
+.. GENERATED FROM PYTHON SOURCE LINES 218-223
 
 Combined Model Visualization
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -385,7 +386,7 @@ Combined Model Visualization
 The Combined model merges De Luca's shape control with Konstantin's scaling,
 offering the most flexibility for custom recruitment patterns.
 
-.. GENERATED FROM PYTHON SOURCE LINES 222-235
+.. GENERATED FROM PYTHON SOURCE LINES 223-236
 
 .. code-block:: Python
 
@@ -424,7 +425,7 @@ offering the most flexibility for custom recruitment patterns.
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 0.592 seconds)
+   **Total running time of the script:** (0 minutes 0.605 seconds)
 
 
 .. _sphx_glr_download_auto_examples_00_simulate_recruitment_thresholds.py:

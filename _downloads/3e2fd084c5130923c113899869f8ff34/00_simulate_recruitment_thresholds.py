@@ -25,6 +25,7 @@ from pathlib import Path
 
 import joblib
 
+
 from myogen import simulator
 
 ##############################################################################
