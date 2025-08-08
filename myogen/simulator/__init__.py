@@ -13,9 +13,9 @@ from myogen.simulator.core.physiological_distribution import (
 )
 from myogen.simulator.core.emg import (
     SurfaceEMG,
-    # IntramuscularEMG,
+    IntramuscularEMG,
     SurfaceElectrodeArray,
-    # IntramuscularElectrodeArray,
+    IntramuscularElectrodeArray,
 )
 from myogen.simulator.core.muscle import Muscle
 from myogen.simulator.core.spike_train import MotorNeuronPool
@@ -26,8 +26,8 @@ __all__ = [
     "Muscle",
     "MotorNeuronPool",
     "SurfaceEMG",
-    # "IntramuscularEMG",
+    "IntramuscularEMG",
     "SurfaceElectrodeArray",
-    # "IntramuscularElectrodeArray",
+    "IntramuscularElectrodeArray",
     "ForceModel",
 ]

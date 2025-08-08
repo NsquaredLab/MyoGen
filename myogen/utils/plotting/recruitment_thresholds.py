@@ -8,7 +8,7 @@ from beartype import beartype
 from beartype.cave import IterableType
 from matplotlib.axes import Axes
 from matplotlib import pyplot as plt
-from typing import Any, Union, Dict, Tuple, Optional
+from typing import Any, Union, Dict, Optional
 
 # Configure multiple sources to suppress font warnings
 logging.getLogger("matplotlib.font_manager").setLevel(logging.ERROR)

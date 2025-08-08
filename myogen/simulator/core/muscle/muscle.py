@@ -88,6 +88,8 @@ class Muscle:
         Values range from 0 to 1 with the largest motor units having thresholds near 1.
     radius__mm : float, default=6.91
         Radius of the muscle cross-section in millimeters. Default is set to 6.91 mm as determined by Jacobson et al. 1992 [3]_.
+    length__mm : float, default=30.0
+        Length of the muscle in millimeters. Default is set to 30.0 mm as determined by no one.
     fiber_density__fibers_per_mm2 : float, default=400
         Density of muscle fibers per square millimeter. Default is set to 400 fibers/mm² as determined by no one.
     max_innervation_area_to_total_muscle_area__ratio : float, default=0.25
@@ -151,6 +153,7 @@ class Muscle:
         self,
         recruitment_thresholds: np.ndarray,
         radius__mm: float = 6.91,
+        length__mm: float = 30.0,
         fiber_density__fibers_per_mm2: float = 400,
         max_innervation_area_to_total_muscle_area__ratio: float = 1 / 4,
         mean_conduction_velocity__m_s: float = 4.2,
@@ -168,6 +171,7 @@ class Muscle:
     ):
         # Muscle properties
         self.radius__mm = radius__mm
+        self.length__mm = length__mm
         self.fiber_density__fibers_per_mm2 = fiber_density__fibers_per_mm2
         self.max_innervation_area_to_total_muscle_area__ratio = (
             max_innervation_area_to_total_muscle_area__ratio
