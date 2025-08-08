@@ -2,10 +2,15 @@
 Electrode configuration framework for EMG simulation.
 """
 
-from typing import Tuple, Literal, Optional, Dict, Any
+from typing import Literal
+
 import numpy as np
+from scipy.spatial.transform import Rotation as R
+
+from myogen.utils.types import beartowertype
 
 
+@beartowertype
 class SurfaceElectrodeArray:
     """
     Surface electrode array for EMG recording.
@@ -23,7 +28,7 @@ class SurfaceElectrodeArray:
         Inter-electrode distances in mm.
     electrode_radius__mm : float, optional
         Radius of the electrodes in mm
-    center_point__mm_deg : Tuple[float, float]
+    center_point__mm_deg : tuple[float, float]
         Position along z in mm and rotation around the muscle theta in degrees.
     bending_radius__mm : float, optional
         Bending radius around which the electrode grid is bent. Usually this is equal to the radius of the muscle.
@@ -39,7 +44,7 @@ class SurfaceElectrodeArray:
         num_cols: int,
         inter_electrode_distances__mm: float,
         electrode_radius__mm: float,
-        center_point__mm_deg: Tuple[float, float] = (0.0, 0.0),
+        center_point__mm_deg: tuple[float, float] = (0.0, 0.0),
         bending_radius__mm: float = 0.0,
         rotation_angle__deg: float = 0.0,
         differentiation_mode: Literal[
@@ -224,6 +229,7 @@ class SurfaceElectrodeArray:
         return H_sf
 
 
+@beartowertype
 class IntramuscularElectrodeArray:
     """
     Intramuscular electrode array for EMG recording.
@@ -237,13 +243,11 @@ class IntramuscularElectrodeArray:
         Number of electrodes in the array
     inter_electrode_distance__mm : float, default=0.5
         Inter-electrode distance in mm
-    position__mm : Tuple[float, float, float], default=(0.0, 0.0, 0.0)
+    position__mm : tuple[float, float, float], default=(0.0, 0.0, 0.0)
         Position of the electrode array center in mm (x, y, z coordinates)
-    orientation__rad : Tuple[float, float, float], default=(0.0, 0.0, 0.0)
+    orientation__rad : tuple[float, float, float], default=(0.0, 0.0, 0.0)
         Orientation of the electrode array in radians (roll, pitch, yaw)
-    arrangement : Literal["linear", "grid"], default="linear"
-        Arrangement type of electrodes
-    differentiation_mode : Literal["monopolar", "consecutive", "reference"], default="consecutive"
+    differentiation_mode : Literal["consecutive", "reference"], default="consecutive"
         Differentiation mode for recording
     trajectory_distance__mm : float, default=0.0
         Distance for trajectory movement in mm
@@ -255,12 +259,9 @@ class IntramuscularElectrodeArray:
         self,
         num_electrodes: int,
         inter_electrode_distance__mm: float = 0.5,
-        position__mm: Tuple[float, float, float] = (0.0, 0.0, 0.0),
-        orientation__rad: Tuple[float, float, float] = (0.0, 0.0, 0.0),
-        arrangement: Literal["linear", "grid"] = "linear",
-        differentiation_mode: Literal[
-            "monopolar", "consecutive", "reference"
-        ] = "consecutive",
+        position__mm: tuple[float, float, float] = (0.0, 0.0, 0.0),
+        orientation__rad: tuple[float, float, float] = (0.0, 0.0, 0.0),
+        differentiation_mode: Literal["consecutive", "reference"] = "consecutive",
         trajectory_distance__mm: float = 0.0,
         trajectory_steps: int = 1,
     ):
@@ -268,7 +269,6 @@ class IntramuscularElectrodeArray:
         self.inter_electrode_distance__mm = inter_electrode_distance__mm
         self.position__mm = position__mm
         self.orientation__rad = orientation__rad
-        self.arrangement = arrangement
         self.differentiation_mode = differentiation_mode
         self.trajectory_distance__mm = trajectory_distance__mm
         self.trajectory_steps = trajectory_steps
@@ -276,516 +276,336 @@ class IntramuscularElectrodeArray:
         self.num_points = num_electrodes  # Alias for compatibility
         self.n_nodes = trajectory_steps
 
-        # Set electrode type description
-        if self.num_electrodes == 1:
-            self.type = "single point"
-            self.type_short = "1p"
-        elif self.num_electrodes == 2:
-            self.type = "2-point differential"
-            self.type_short = "2p_diff"
-        else:
-            self.type = f"intramuscular_{self.num_electrodes}p_array"
-            self.type_short = f"{self.num_electrodes}p_array"
+        self._pts_origin = np.concatenate(
+            [
+                np.zeros((self.num_electrodes, 2)),
+                np.arange(self.num_electrodes)[..., None]
+                * self.inter_electrode_distance__mm,
+            ],
+            axis=-1,
+        )
 
-        # Set up channel configuration based on differentiation mode
-        if differentiation_mode == "monopolar":
-            self.num_channels = self.num_electrodes
-        elif differentiation_mode == "consecutive":
-            # Consecutive differential: adjacent electrode pairs
-            self.num_channels = max(1, self.num_electrodes - 1)
-        elif differentiation_mode == "reference":
-            # Reference differential: all electrodes vs reference
-            self.num_channels = max(1, self.num_electrodes - 1)
-        else:
-            self.num_channels = self.num_electrodes
+        self._normal_origin = []
+        self._normals_init = []
+        self._normals = []
+
+        match differentiation_mode:
+            case "consecutive":
+                eye_mat = np.eye(
+                    self._pts_origin.shape[0] - 1, self._pts_origin.shape[0]
+                )
+                self._diff_mat = eye_mat - np.roll(eye_mat, shift=1, axis=1)
+            case "reference":
+                self._diff_mat = np.roll(
+                    np.eye(self._pts_origin.shape[0] - 1, self._pts_origin.shape[0]),
+                    shift=1,
+                    axis=1,
+                )
+                self._diff_mat[:, 0] = -1
+
+        self._n_channels = self._diff_mat.shape[0]
+
+        self.set_position(
+            position__mm=self.position__mm, orientation__rad=self.orientation__rad
+        )
+        self.set_linear_trajectory(
+            distance__mm=self.trajectory_distance__mm, n_nodes=self.trajectory_steps
+        )
 
         # Create electrode positions and differential matrix
-        self._create_electrode_positions()
-        self._create_differential_matrix()
+        # self._create_electrode_positions()
+        # self._create_differential_matrix()
 
-    def _create_electrode_positions(self) -> None:
-        """Create electrode positions in 3D space."""
-        if self.arrangement == "linear":
-            # Linear arrangement along z-axis (typical for needle electrodes)
-            self.pts_origin = np.column_stack(
-                [
-                    np.zeros(self.num_electrodes),
-                    np.zeros(self.num_electrodes),
-                    np.linspace(
-                        0,
-                        (self.num_electrodes - 1) * self.inter_electrode_distance__mm,
-                        self.num_electrodes,
-                    ),
-                ]
-            )
-        elif self.arrangement == "grid":
-            # Grid arrangement (for specialized multi-channel arrays)
-            n_per_side = int(np.ceil(np.sqrt(self.num_electrodes)))
-            x_pos, y_pos = np.meshgrid(
-                np.linspace(
-                    0, (n_per_side - 1) * self.inter_electrode_distance__mm, n_per_side
-                ),
-                np.linspace(
-                    0, (n_per_side - 1) * self.inter_electrode_distance__mm, n_per_side
-                ),
-            )
-            # Take only the required number of points
-            x_flat = x_pos.flatten()[: self.num_electrodes]
-            y_flat = y_pos.flatten()[: self.num_electrodes]
-            self.pts_origin = np.column_stack(
-                [
-                    x_flat,
-                    y_flat,
-                    np.zeros(self.num_electrodes),  # z = 0 for grid
-                ]
-            )
-        else:
-            raise ValueError(f"Unknown arrangement: {self.arrangement}")
-
-        # Apply rotation and translation
-        self._apply_transformation()
-
-        # Calculate trajectory points if needed
-        if self.trajectory_steps > 1:
-            self._calculate_trajectory_points()
-        else:
-            self.pts = self.pts_init.copy()
-
-    def _apply_transformation(self) -> None:
-        """Apply rotation and translation to electrode positions."""
-        # Apply rotation matrices for each axis
-        # Rotation around x-axis
-        rx = self.orientation__rad[0]
-        Rx = np.array(
-            [[1, 0, 0], [0, np.cos(rx), -np.sin(rx)], [0, np.sin(rx), np.cos(rx)]]
-        )
-
-        # Rotation around y-axis
-        ry = self.orientation__rad[1]
-        Ry = np.array(
-            [[np.cos(ry), 0, np.sin(ry)], [0, 1, 0], [-np.sin(ry), 0, np.cos(ry)]]
-        )
-
-        # Rotation around z-axis
-        rz = self.orientation__rad[2]
-        Rz = np.array(
-            [[np.cos(rz), -np.sin(rz), 0], [np.sin(rz), np.cos(rz), 0], [0, 0, 1]]
-        )
-
-        # Combined rotation matrix
-        R = Rz @ Ry @ Rx
-
-        # Apply rotation and translation
-        self.pts_init = (R @ self.pts_origin.T).T + np.array(self.position__mm)
-
-    def _calculate_trajectory_points(self) -> None:
-        """Calculate all observation points along the trajectory."""
-        all_pts = []
-        for i in range(self.n_nodes):
-            # Linear movement along x-axis by default
-            if self.n_nodes > 1:
-                t = i / (self.n_nodes - 1)  # Normalized parameter [0, 1]
-                offset = np.array([t * self.trajectory_distance__mm, 0, 0])
-            else:
-                offset = np.array([0, 0, 0])
-
-            # Translate all electrode points by the offset
-            trajectory_pts = self.pts_init + offset
-            all_pts.append(trajectory_pts)
-
-        # Concatenate all trajectory positions
-        self.pts = np.vstack(all_pts)
-
-        # Extend the differential matrix to cover all trajectory nodes
-        if hasattr(self, "diff_mat") and self.diff_mat is not None:
-            self.diff_mat = np.tile(self.diff_mat, (1, self.n_nodes))
-
-    def _create_differential_matrix(self) -> None:
-        """Create differential recording matrix based on differentiation mode."""
-        if self.differentiation_mode == "monopolar":
-            # Monopolar recording: each electrode is a separate channel
-            self.diff_mat = np.eye(self.num_electrodes)
-        elif self.differentiation_mode == "consecutive":
-            # Consecutive differential: adjacent electrode pairs
-            if self.num_electrodes >= 2:
-                self.diff_mat = np.zeros((self.num_channels, self.num_electrodes))
-                for i in range(self.num_channels):
-                    self.diff_mat[i, i] = 1  # Positive electrode
-                    self.diff_mat[i, i + 1] = -1  # Negative electrode
-            else:
-                self.diff_mat = np.ones((1, self.num_electrodes))
-        elif self.differentiation_mode == "reference":
-            # Reference differential: all electrodes vs reference (last electrode)
-            if self.num_electrodes >= 2:
-                self.diff_mat = np.zeros((self.num_channels, self.num_electrodes))
-                for i in range(self.num_channels):
-                    self.diff_mat[i, i + 1] = 1  # Signal electrode
-                    self.diff_mat[i, 0] = -1  # Reference electrode (first)
-            else:
-                self.diff_mat = np.ones((1, self.num_electrodes))
-        else:
-            # Default to monopolar
-            self.diff_mat = np.eye(self.num_electrodes)
-
-    def get_electrode_positions_for_simulation(
-        self, trajectory_node: int = 0
-    ) -> tuple[np.ndarray, np.ndarray]:
+    def set_position(
+        self,
+        position__mm: tuple[float, float, float],
+        orientation__rad: tuple[float, float, float],
+    ) -> None:
         """
-        Get electrode positions formatted for simulation.
+        Set the position and orientation of the intramuscular electrode array.
+
+        This method defines the spatial placement and angular orientation of the
+        electrode array within the muscle volume. The array is first oriented
+        according to the specified rotations and then translated to the target position.
+
+        **Coordinate System:**
+        - x-axis: radial direction (outward from muscle center)
+        - y-axis: circumferential direction (around muscle)
+        - z-axis: longitudinal direction (along muscle fibers)
+
+        **Rotation Order:**
+        Applied as: Roll (x) → Pitch (y) → Yaw (z) using Rodrigues rotation
 
         Parameters
         ----------
-        trajectory_node : int, default=0
-            Trajectory node index to get positions for
+        position__mm : tuple[float, float, float]
+            Center position of the electrode array in mm (x, y, z coordinates).
+            This defines where the array center is placed within the muscle.
+        orientation__rad : tuple[float, float, float]
+            Orientation angles in radians (roll, pitch, yaw).
+            - Roll: rotation around x-axis (radial tilt)
+            - Pitch: rotation around y-axis (circumferential tilt)
+            - Yaw: rotation around z-axis (longitudinal rotation)
 
-        Returns
-        -------
-        tuple
-            Tuple containing:
-            - electrode_positions: (num_electrodes, 3) array of electrode positions
-            - differential_matrix: (num_channels, num_electrodes) differential matrix
+        Notes
+        -----
+        Position and orientation changes affect all subsequent trajectory calculations.
+        The electrode positions are recalculated based on the new transformation.
+
+        Examples
+        --------
+        >>> # Place array at muscle center with 45° yaw rotation
+        >>> array.set_position(
+        ...     position__mm=(0.0, 0.0, 10.0),
+        ...     orientation__rad=(0.0, 0.0, np.pi/4)
+        ... )
+        
+        See Also
+        --------
+        set_linear_trajectory : Define trajectory movement parameters
+        rodrigues_rot : Rodrigues rotation implementation
         """
-        if self.trajectory_steps > 1 and trajectory_node < self.n_nodes:
-            # Get positions for specific trajectory node
-            start_idx = trajectory_node * self.num_electrodes
-            end_idx = start_idx + self.num_electrodes
-            electrode_positions = self.pts[start_idx:end_idx, :]
-        else:
-            # Use initial positions
-            electrode_positions = self.pts_init
+        self._pts_init = np.copy(self._pts_origin)
 
-        return electrode_positions, self.diff_mat
+        self._pts_init = self.rodrigues_rot(
+            self._pts_init, [1, 0, 0], orientation__rad[0]
+        )
+        self._pts_init = self.rodrigues_rot(
+            self._pts_init, [0, 1, 0], orientation__rad[1]
+        )
+        self._pts_init = self.rodrigues_rot(
+            self._pts_init, [0, 0, 1], orientation__rad[2]
+        )
 
-    def get_differential_matrix(self) -> np.ndarray:
+        self._pts_init += np.matlib.repmat(
+            np.array(position__mm)[None], self._pts_init.shape[0], 1
+        )
+        self._pts = np.copy(self._pts_init)
+
+    def rodrigues_rot(self, v, k, theta):
         """
-        Get the differential recording matrix.
+        Apply Rodrigues rotation to vectors around an arbitrary axis.
+
+        This method implements 3D rotation of points or vectors around an arbitrary
+        axis using the Rodrigues rotation formula. It is used internally for
+        electrode array positioning and trajectory calculations.
+
+        **Mathematical Foundation:**
+        Based on Rodrigues' rotation formula for rotating a vector v around
+        axis k by angle theta: v_rot = v*cos(θ) + (k×v)*sin(θ) + k*(k·v)*(1-cos(θ))
+
+        Parameters
+        ----------
+        v : array_like
+            Vector(s) to rotate. Can be single vector (3,) or array of vectors (N, 3).
+        k : array_like
+            Rotation axis vector (3,). Will be normalized internally.
+        theta : float
+            Rotation angle in radians. Positive angles follow right-hand rule.
 
         Returns
         -------
         np.ndarray
-            Differential matrix with shape (num_channels, num_electrodes)
-        """
-        return self.diff_mat.copy()
+            Rotated vector(s) with same shape as input v.
 
-    def set_trajectory(self, distance__mm: float, steps: int) -> None:
+        Notes
+        -----
+        Uses scipy.spatial.transform.Rotation for numerical stability and efficiency.
+        The rotation axis k is automatically normalized to unit length.
+
+        Examples
+        --------
+        >>> # Rotate point 90° around z-axis
+        >>> point = np.array([1.0, 0.0, 0.0])
+        >>> rotated = array.rodrigues_rot(point, [0, 0, 1], np.pi/2)
+        >>> # Result: approximately [0, 1, 0]
         """
-        Set linear trajectory for electrode movement.
+        v = np.array(v.copy(), dtype=float)
+        k = np.array(k.copy(), dtype=float)
+        k = k / np.linalg.norm(k)  # normalize axis
+
+        r = R.from_rotvec(k * theta)  # Create rotation from axis-angle
+        return r.apply(v)  # Rotates v (works with (3,), (N, 3))
+
+    def set_linear_trajectory(
+        self, distance__mm: float, n_nodes: int | None = None
+    ) -> None:
+        """
+        Configure linear trajectory movement for the electrode array.
+
+        This method sets up a linear movement path for the electrode array,
+        simulating needle insertion or withdrawal. The trajectory is discretized
+        into nodes for temporal interpolation during EMG simulation.
+
+        **Trajectory Properties:**
+        - Direction: Along the array's longitudinal axis (z-direction in local coordinates)
+        - Movement: Linear progression from start to end position
+        - Discretization: Evenly spaced nodes for smooth interpolation
+        - Default step size: 0.5mm if n_nodes not specified
 
         Parameters
         ----------
         distance__mm : float
-            Total distance to move in mm
-        steps : int
-            Number of steps in the trajectory
-        """
-        self.trajectory_distance__mm = distance__mm
-        self.trajectory_steps = steps
-        self.n_nodes = steps
+            Total trajectory distance in mm. Positive values move in the
+            positive z-direction of the array's local coordinate system.
+        n_nodes : int, optional
+            Number of discrete trajectory nodes. If None, automatically
+            calculated as max(ceil(distance/0.5), 1) for 0.5mm steps.
 
-        # Recalculate trajectory points
-        if steps > 1:
-            self._calculate_trajectory_points()
-        else:
-            self.pts = self.pts_init.copy()
+        Notes
+        -----
+        The trajectory is applied after position and orientation transformations.
+        All trajectory transforms are calculated in the array's oriented coordinate system.
 
-    def traj_mixing_fun(self, t: float, n_nodes: int, node: int) -> float:
+        Examples
+        --------
+        >>> # Set up 10mm insertion with default step size (~0.5mm)
+        >>> array.set_linear_trajectory(distance__mm=10.0)
+        
+        >>> # Set up 5mm trajectory with specific number of nodes
+        >>> array.set_linear_trajectory(distance__mm=5.0, n_nodes=20)
+
+        See Also
+        --------
+        calc_observation_points : Calculate electrode positions along trajectory
+        traj_mixing_mat : Generate mixing matrices for trajectory interpolation
         """
-        Trajectory mixing function for interpolating between trajectory nodes.
+        if n_nodes is None:
+            n_nodes = max(np.ceil(distance__mm / 0.5), 1)
+
+        self.n_nodes = n_nodes
+        self._trajectory_step = distance__mm / self.n_nodes
+
+        self.traj_transforms = np.linspace(start=0, stop=distance__mm, num=self.n_nodes)
+        self.traj_transforms = np.hstack(
+            [
+                np.zeros((max(self.traj_transforms.shape), 2)),
+                self.traj_transforms.reshape(-1, 1),
+                np.zeros((max(self.traj_transforms.shape), 3)),
+            ]
+        )
+
+        self.traj_transforms[:, :3] = self.rodrigues_rot(
+            self.traj_transforms[:, :3], [1, 0, 0], self.orientation__rad[0]
+        )
+        self.traj_transforms[:, :3] = self.rodrigues_rot(
+            self.traj_transforms[:, :3], [0, 1, 0], self.orientation__rad[1]
+        )
+        self.traj_transforms[:, :3] = self.rodrigues_rot(
+            self.traj_transforms[:, :3], [0, 0, 1], self.orientation__rad[2]
+        )
+
+        self.calc_observation_points()
+
+    def calc_observation_points(self) -> None:
+        self.pts = np.concatenate(
+            [
+                self.rotate_and_translate(
+                    self._pts_init,
+                    self.traj_transforms[i, 3:],
+                    self.traj_transforms[i, :3],
+                )
+                for i in range(self.n_nodes)
+            ]
+        )
+
+        self._diff_mat = np.matlib.repmat(self._diff_mat, 1, self.n_nodes)
+
+    def rotate_and_translate(self, pt, rpy, d):
+        # pt: (N, 3) matrix
+        # rpy: (3,) vector [roll, pitch, yaw]
+        # d: (3,) vector translation
+
+        pt = self.rodrigues_rot(pt, np.array([1, 0, 0]), rpy[0])  # roll
+        pt = self.rodrigues_rot(pt, np.array([0, 1, 0]), rpy[1])  # pitch
+        pt = self.rodrigues_rot(pt, np.array([0, 0, 1]), rpy[2])  # yaw
+
+        return pt + d.reshape(1, 3)  # translation (broadcasted)
+
+    def traj_mixing_fun(self, t, n_nodes, node) -> float:
+        """
+        Compute mixing weight for a specific trajectory node at given time.
+
+        This function calculates the interpolation weight for a trajectory node based
+        on the current time/position along the trajectory. Uses triangular weighting 
+        where nodes closer to the current time get higher weights.
 
         Parameters
         ----------
         t : float
-            Normalized parameter (between 0 and 1)
+            Current normalized time or position in trajectory (0.0 to 1.0).
         n_nodes : int
-            Number of trajectory nodes
-        node : int
-            Current node (1-indexed to match MATLAB)
+            Total number of nodes in the trajectory.
+        node : int or array_like
+            Node index(es) for which to calculate mixing weights.
+            Can be scalar or array of node indices.
 
         Returns
         -------
-        float
-            Mixing weight for this node
+        float or np.ndarray
+            Mixing weight(s) for the specified node(s) at time t.
+            Returns 0 for distant nodes, max weight 1 for closest node.
         """
-        # Convert to 0-indexed
-        node_idx = node - 1
+        eps = np.finfo(float).eps
+        return np.maximum(
+            0,
+            1 - (n_nodes - 1) * np.abs(t - (node - 1) / (n_nodes - 1 + eps)),
+        )
 
-        # Normalized node position
-        node_pos = node_idx / (n_nodes - 1 + np.finfo(float).eps)
-
-        # Linear interpolation weight (triangular function)
-        return max(0, 1 - (n_nodes - 1) * abs(t - node_pos))
-
-    def traj_mixing_mat(self, t: float, n_nodes: int, n_channels: int) -> np.ndarray:
+    def traj_mixing_mat(self, t, n_nodes, n_channels) -> np.ndarray:
         """
-        Generate trajectory mixing matrix for smooth interpolation between nodes.
+        Generate mixing matrix for trajectory interpolation during EMG simulation.
+
+        This method creates a diagonal mixing matrix that weights the contribution of
+        different trajectory nodes during temporal interpolation. The matrix enables
+        smooth transitions between electrode positions as the array moves along its
+        trajectory during needle insertion or withdrawal.
+
+        **Interpolation Strategy:**
+        - Linear interpolation between adjacent trajectory nodes
+        - Weights based on distance from current time/position to node positions
+        - Diagonal matrix structure for efficient computation
+        - Smooth transitions avoid discontinuities in EMG signals
 
         Parameters
         ----------
         t : float
-            Normalized parameter (between 0 and 1)
+            Current normalized time or position in trajectory (0.0 to 1.0).
+            0.0 corresponds to trajectory start, 1.0 to trajectory end.
         n_nodes : int
-            Number of trajectory nodes
+            Total number of trajectory nodes for interpolation.
         n_channels : int
-            Number of channels
+            Number of recording channels in the electrode array.
+            Depends on differentiation mode and electrode count.
 
         Returns
         -------
         np.ndarray
-            Diagonal mixing matrix for trajectory interpolation
+            Diagonal mixing matrix with shape (n_nodes * n_channels, n_nodes * n_channels).
+            Diagonal elements contain repeated mixing weights for each trajectory node,
+            with each node's weight repeated n_channels times.
+
+        Notes
+        -----
+        The mixing matrix enables temporal interpolation of EMG signals recorded
+        at different trajectory positions. Higher weights are given to nodes
+        closer to the current time/position parameter.
+
+        Examples
+        --------
+        >>> # Get mixing weights for mid-trajectory position
+        >>> mix_mat = array.traj_mixing_mat(t=0.5, n_nodes=10, n_channels=4)
+        >>> # Matrix will weight middle nodes more heavily
+
+        See Also
+        --------
+        traj_mixing_fun : Individual node mixing function
+        set_linear_trajectory : Configure trajectory parameters
         """
-        # Calculate mixing weights for all nodes
-        weights = []
-        for node in range(1, n_nodes + 1):  # 1-indexed to match MATLAB
-            weight = self.traj_mixing_fun(t, n_nodes, node)
-            weights.append(weight)
 
-        # Repeat each weight for each electrode point
-        weights_array = np.array(weights)
-        repeated_weights = np.tile(weights_array, (self.num_points, 1))
-        full_weights = repeated_weights.flatten("F")  # Fortran order to match MATLAB
-
-        # Create diagonal matrix
-        return np.diag(full_weights)
-
-    def __str__(self) -> str:
-        """String representation of the electrode array."""
-        return (
-            f"IntramuscularElectrodeArray({self.num_electrodes} electrodes, "
-            f"{self.inter_electrode_distance__mm}mm spacing, {self.arrangement} arrangement, "
-            f"{self.differentiation_mode} mode)"
+        return np.diag(
+            np.repeat(
+                self.traj_mixing_fun(t, n_nodes, np.arange(1, n_nodes + 1)),
+                n_channels,
+            )
         )
-
-    def __repr__(self) -> str:
-        """Detailed representation of the electrode array."""
-        return self.__str__()
-
-    @classmethod
-    def create_single_differential(
-        cls,
-        inter_electrode_distance__mm: float = 0.5,
-        position__mm: Tuple[float, float, float] = (0.0, 0.0, 20.0),
-        orientation__rad: Tuple[float, float, float] = (-np.pi / 2, 0, -np.pi / 2),
-        trajectory_distance__mm: float = 0.125,
-        trajectory_steps: int = 4,
-    ) -> "IntramuscularElectrodeArray":
-        """
-        Create a single-channel differential electrode (equivalent to MATLAB s07 example).
-
-        Parameters
-        ----------
-        inter_electrode_distance__mm : float, default=0.5
-            Distance between electrode contacts in mm
-        position__mm : Tuple[float, float, float], default=(0.0, 0.0, 20.0)
-            Initial position of electrode array center
-        orientation__rad : Tuple[float, float, float], default=(-π/2, 0, -π/2)
-            Electrode orientation (matches MATLAB default)
-        trajectory_distance__mm : float, default=0.125
-            Distance for scanning trajectory
-        trajectory_steps : int, default=4
-            Number of trajectory steps
-
-        Returns
-        -------
-        IntramuscularElectrodeArray
-            Configured electrode array
-        """
-        return cls(
-            num_electrodes=2,
-            inter_electrode_distance__mm=inter_electrode_distance__mm,
-            position__mm=position__mm,
-            orientation__rad=orientation__rad,
-            arrangement="linear",
-            differentiation_mode="consecutive",
-            trajectory_distance__mm=trajectory_distance__mm,
-            trajectory_steps=trajectory_steps,
-        )
-
-    @classmethod
-    def create_scanning_array(
-        cls,
-        num_electrodes: int = 16,
-        inter_electrode_distance__mm: float = 1.0,
-        position__mm: Tuple[float, float, float] = (-5.0, 0.0, 15.0),
-        orientation__rad: Tuple[float, float, float] = (-np.pi / 6, 0, -np.pi / 2),
-        trajectory_distance__mm: float = 1.0,
-        trajectory_steps: int = 19,
-    ) -> "IntramuscularElectrodeArray":
-        """
-        Create a scanning electrode array (equivalent to MATLAB s07 example).
-
-        Parameters
-        ----------
-        num_electrodes : int, default=16
-            Number of electrode contacts
-        inter_electrode_distance__mm : float, default=1.0
-            Distance between contacts in mm
-        position__mm : Tuple[float, float, float], default=(-5.0, 0.0, 15.0)
-            Initial position
-        orientation__rad : Tuple[float, float, float], default=(-π/6, 0, -π/2)
-            Electrode orientation
-        trajectory_distance__mm : float, default=1.0
-            Scanning distance
-        trajectory_steps : int, default=19
-            Number of scanning steps
-
-        Returns
-        -------
-        IntramuscularElectrodeArray
-            Configured scanning array
-        """
-        return cls(
-            num_electrodes=num_electrodes,
-            inter_electrode_distance__mm=inter_electrode_distance__mm,
-            position__mm=position__mm,
-            orientation__rad=orientation__rad,
-            arrangement="linear",
-            differentiation_mode="consecutive",
-            trajectory_distance__mm=trajectory_distance__mm,
-            trajectory_steps=trajectory_steps,
-        )
-
-    @classmethod
-    def create_end_to_end_array(
-        cls,
-        num_electrodes: int = 11,
-        inter_electrode_distance__mm: float = 1.0,
-        position__mm: Tuple[float, float, float] = (-5.0, 0.0, 20.0),
-        orientation__rad: Tuple[float, float, float] = (-np.pi / 2, 0, -np.pi / 2),
-        static: bool = True,
-    ) -> "IntramuscularElectrodeArray":
-        """
-        Create an end-to-end electrode array (equivalent to MATLAB s07 example).
-
-        Parameters
-        ----------
-        num_electrodes : int, default=11
-            Number of electrode contacts
-        inter_electrode_distance__mm : float, default=1.0
-            Distance between contacts in mm
-        position__mm : Tuple[float, float, float], default=(-5.0, 0.0, 20.0)
-            Array position
-        orientation__rad : Tuple[float, float, float], default=(-π/2, 0, -π/2)
-            Array orientation
-        static : bool, default=True
-            Whether electrode is static (no trajectory)
-
-        Returns
-        -------
-        IntramuscularElectrodeArray
-            Configured end-to-end array
-        """
-        trajectory_distance = 0.0 if static else 1.0
-        trajectory_steps = 1 if static else 2
-
-        return cls(
-            num_electrodes=num_electrodes,
-            inter_electrode_distance__mm=inter_electrode_distance__mm,
-            position__mm=position__mm,
-            orientation__rad=orientation__rad,
-            arrangement="linear",
-            differentiation_mode="consecutive",
-            trajectory_distance__mm=trajectory_distance,
-            trajectory_steps=trajectory_steps,
-        )
-
-    def get_electrode_normals(self) -> Optional[np.ndarray]:
-        """
-        Get electrode normal vectors (for point electrodes, returns None).
-
-        Returns
-        -------
-        Optional[np.ndarray]
-            Normal vectors or None for point electrodes
-        """
-        # Point electrodes don't have specific orientations
-        return None
-
-    def get_visible_area(self, fiber_positions: np.ndarray) -> np.ndarray:
-        """
-        Calculate visible area/detectability for each fiber position.
-
-        This is a simplified version of the MATLAB get_visible_area function.
-
-        Parameters
-        ----------
-        fiber_positions : np.ndarray
-            Fiber positions (N × 3) in mm
-
-        Returns
-        -------
-        np.ndarray
-            Visibility weights for each fiber
-        """
-        # Get current electrode positions
-        electrode_positions, _ = self.get_electrode_positions_for_simulation()
-
-        # Calculate distances from each fiber to closest electrode
-        min_distances = np.inf * np.ones(len(fiber_positions))
-
-        for electrode_pos in electrode_positions:
-            distances = np.sqrt(np.sum((fiber_positions - electrode_pos) ** 2, axis=1))
-            min_distances = np.minimum(min_distances, distances)
-
-        # Convert distance to visibility (closer = more visible)
-        # Use exponential decay with characteristic length scale
-        visibility_length_scale = 2.0  # mm
-        visibility = np.exp(-min_distances / visibility_length_scale)
-
-        return visibility
-
-    def set_position(self, position__mm: Tuple[float, float, float]) -> None:
-        """
-        Update electrode array position.
-
-        Parameters
-        ----------
-        position__mm : Tuple[float, float, float]
-            New position in mm
-        """
-        self.position__mm = position__mm
-        self._apply_transformation()
-
-        if self.trajectory_steps > 1:
-            self._calculate_trajectory_points()
-        else:
-            self.pts = self.pts_init.copy()
-
-    def set_orientation(self, orientation__rad: Tuple[float, float, float]) -> None:
-        """
-        Update electrode array orientation.
-
-        Parameters
-        ----------
-        orientation__rad : Tuple[float, float, float]
-            New orientation in radians (roll, pitch, yaw)
-        """
-        self.orientation__rad = orientation__rad
-        self._apply_transformation()
-
-        if self.trajectory_steps > 1:
-            self._calculate_trajectory_points()
-        else:
-            self.pts = self.pts_init.copy()
-
-    def get_electrode_type_info(self) -> Dict[str, Any]:
-        """
-        Get electrode type information for simulation logging.
-
-        Returns
-        -------
-        Dict[str, Any]
-            Dictionary with electrode configuration details
-        """
-        return {
-            "type": self.type,
-            "type_short": self.type_short,
-            "num_electrodes": self.num_electrodes,
-            "num_channels": self.num_channels,
-            "inter_electrode_distance_mm": self.inter_electrode_distance__mm,
-            "differentiation_mode": self.differentiation_mode,
-            "arrangement": self.arrangement,
-            "trajectory_steps": self.trajectory_steps,
-            "trajectory_distance_mm": self.trajectory_distance__mm,
-            "position_mm": self.position__mm,
-            "orientation_rad": self.orientation__rad,
-        }
