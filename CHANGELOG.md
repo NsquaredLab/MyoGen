@@ -13,6 +13,32 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+## [0.3.0] - 2025-08-08
+
+### Added
+- **Intramuscular EMG Framework**: Enhanced intramuscular EMG simulation capabilities with improved framework
+- Optional CUDA/CuPy support for accelerated computations in intramuscular EMG
+- New type definitions for EMG simulation components:
+  - `CORTICAL_INPUT__MATRIX` type for cortical input data
+  - `INTRAMUSCULAR_MUAP_SHAPE__TENSOR` for intramuscular electrode arrays
+
+### Changed
+- **Major Refactor**: Improved intramuscular EMG simulation framework with better type annotations and imports
+- Enhanced `IntramuscularEMG` class with better parameter handling
+- Optimized bioelectric field calculations for needle electrodes
+- Updated surface EMG components for consistency with intramuscular framework
+- Enhanced muscle model integration with electrode positioning
+- Improved motor unit simulation with better parameter handling
+- Enhanced recruitment thresholds plotting utilities
+- Updated project dependencies and compatibility with latest package versions
+- Enhanced Sphinx documentation configuration with better type aliases and extensions
+- Renamed `MUAP_SHAPE__TENSOR` to `SURFACE_MUAP_SHAPE__TENSOR` for better clarity
+
+### Fixed
+- Ensured Mermaid diagrams have consistent white background in documentation
+- Improved readability and visual consistency in documentation
+- Enhanced development experience with updated VSCode settings
+
 ## [0.2.0] - 2025-07-26
 
 ### Added
