@@ -19,6 +19,7 @@ Key Features:
     - **Motor unit discrimination**: Individual motor units can be identified and tracked
     - **Realistic noise modeling**: Includes physiological noise and recording artifacts
 """
+# sphinx_gallery_thumbnail_number = -1
 
 ##############################################################################
 # Import Libraries
@@ -62,6 +63,7 @@ thresholds, _ = simulator.generate_mu_recruitment_thresholds(
 
 plt.figure()
 plt.plot(thresholds, "o")
+plt.tight_layout()
 plt.show()
 
 ##############################################################################
@@ -99,6 +101,7 @@ print("Initializing iEMG simulator...")
 iemg_sim = simulator.IntramuscularEMG(
     muscle_model=muscle,
     electrode_array=electrode,
+    MUs_to_simulate=list(range(0, N_motor_units, 3)),
 )
 
 ##############################################################################
@@ -132,7 +135,7 @@ mvc_current = mn_pool.mvc_current_threshold
 n_pools = 2  # Number of distinct motor neuron pools
 
 timestep = 0.01  # Simulation timestep in ms (high resolution)
-simulation_time = 5000  # Total simulation duration in ms
+simulation_time = 500  # Total simulation duration in ms
 
 # Calculate number of time points
 t_points = int(simulation_time / timestep)
@@ -245,22 +248,20 @@ with plt.xkcd():
         np.max(current_signal) - np.min(current_signal)
     )
     
-    # Plot both normalized signals
-    ax.plot(
-        emg_time,
-        iemg_normalized,
-        linewidth=2,
-        label="Intramuscular EMG",
-        color="red",
-    )
-    
+# Plot both normalized signals
+ax.plot(
+    emg_time,
+    iemg_normalized,
+    linewidth=2,
+    label="Intramuscular EMG",
+)
+
+with plt.xkcd():
     ax.plot(
         current_time,
         current_normalized,
         linewidth=2,
         label="Input Current",
-        alpha=0.7,
-        color="blue",
     )
     
     ax.set_xlabel("Time (s)")
