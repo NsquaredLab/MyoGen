@@ -33,6 +33,16 @@ Muscle Model
 
    Muscle
 
+Force Model
+^^^^^^^^^^^
+
+.. autosummary::
+   :toctree: ../generated/
+   :template: autosummary/class.rst
+   :recursive:
+
+   ForceModel
+
 EMG Generation
 ^^^^^^^^^^^^^^
 
@@ -42,3 +52,16 @@ EMG Generation
    :recursive:
 
    SurfaceEMG 
+   IntramuscularEMG
+
+Electrodes
+^^^^^^^^^^^^^^
+
+
+.. autosummary::
+   :toctree: ../generated/
+   :template: autosummary/class.rst
+   :recursive:
+
+   SurfaceElectrodeArray 
+   IntramuscularElectrodeArray
