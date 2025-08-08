@@ -38,7 +38,10 @@ extensions = [
     "sphinx_gallery.gen_gallery",
     "sphinx.ext.doctest",
     "myst_parser",
+    "sphinxcontrib.mermaid",
 ]
+
+mermaid_version = "11.9.0"
 
 napoleon_use_admonition_for_examples = False
 napoleon_use_admonition_for_references = False
@@ -70,6 +73,7 @@ napoleon_type_aliases = {
     "list[float] | None": ":class:`list`\\[:class:`float`] | :class:`None`",
     "list[str] | None": ":class:`list`\\[:class:`str`] | :class:`None`",
     "tuple[int, int]": ":class:`tuple`\\[:class:`int`, :class:`int`]",
+    "tuple[float, float]": ":class:`tuple`\\[:class:`float`, :class:`float`]",
     "list[int]": ":class:`list`\\[:class:`int`]",
     "list[float]": ":class:`list`\\[:class:`float`]",
     "list[str]": ":class:`list`\\[:class:`str`]",
@@ -78,6 +82,10 @@ napoleon_type_aliases = {
     "SPIKE_TRAIN__MATRIX": ":data:`~myogen.utils.types.SPIKE_TRAIN__MATRIX`",
     "MUAP_SHAPE__TENSOR": ":data:`~myogen.utils.types.MUAP_SHAPE__TENSOR`",
     "SURFACE_EMG__TENSOR": ":data:`~myogen.utils.types.SURFACE_EMG__TENSOR`",
+    "INTRAMUSCULAR_EMG__TENSOR": ":data:`~myogen.utils.types.INTRAMUSCULAR_EMG__TENSOR`",
+    "CORTICAL_INPUT__MATRIX": ":data:`~myogen.utils.types.CORTICAL_INPUT__MATRIX`",
+    "SURFACE_MUAP_SHAPE__TENSOR": ":data:`~myogen.utils.types.SURFACE_MUAP_SHAPE__TENSOR`",
+    "INTRAMUSCULAR_MUAP_SHAPE__TENSOR": ":data:`~myogen.utils.types.INTRAMUSCULAR_MUAP_SHAPE__TENSOR`",
     "INPUT_CURRENT__MATRIX | None": ":class:`~myogen.utils.types.INPUT_CURRENT__MATRIX` | :class:`None`",
     # Beartype and Annotated type patterns - map to clean aliases
     "Annotated[ndarray[tuple[int, ...], dtype[bool]], beartype.vale.Is[lambda x: x.ndim == 3]]": ":data:`~myogen.utils.types.SPIKE_TRAIN__MATRIX`",
