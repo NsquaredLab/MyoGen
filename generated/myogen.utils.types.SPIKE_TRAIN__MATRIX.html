@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>SPIKE_TRAIN__MATRIX &#8212; MyoGen 0.2.0 Documentation</title>
+    <title>SPIKE_TRAIN__MATRIX &#8212; MyoGen 0.3.0 Documentation</title>
   
   
   
@@ -35,7 +35,7 @@
     <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-binder.css?v=f4aeca0c" />
     <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-dataframe.css?v=2082cf3c" />
     <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
-    <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=4797f867" />
+    <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=73e2cb9d" />
   
   <!-- So that users can add custom icons -->
   <script src="../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
@@ -43,17 +43,17 @@
   <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="../_static/documentation_options.js?v=938c9ccc"></script>
+    <script src="../_static/documentation_options.js?v=e259d695"></script>
     <script src="../_static/doctools.js?v=9bcbadda"></script>
     <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'generated/myogen.utils.types.SPIKE_TRAIN__MATRIX';</script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="MUAP_SHAPE__TENSOR" href="myogen.utils.types.MUAP_SHAPE__TENSOR.html" />
-    <link rel="prev" title="INPUT_CURRENT__MATRIX" href="myogen.utils.types.INPUT_CURRENT__MATRIX.html" />
+    <link rel="next" title="SURFACE_MUAP_SHAPE__TENSOR" href="myogen.utils.types.SURFACE_MUAP_SHAPE__TENSOR.html" />
+    <link rel="prev" title="CORTICAL_INPUT__MATRIX" href="myogen.utils.types.CORTICAL_INPUT__MATRIX.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="0.2.0" />
+  <meta name="docsearch:version" content="0.3.0" />
   </head>
   
   
@@ -119,8 +119,8 @@
       
     
     
-    <img src="../_static/myogen_logo.png" class="logo__image only-light" alt="MyoGen 0.2.0 Documentation - Home"/>
-    <img src="../_static/myogen_logo.png" class="logo__image only-dark pst-js-only" alt="MyoGen 0.2.0 Documentation - Home"/>
+    <img src="../_static/myogen_logo.png" class="logo__image only-light" alt="MyoGen 0.3.0 Documentation - Home"/>
+    <img src="../_static/myogen_logo.png" class="logo__image only-dark pst-js-only" alt="MyoGen 0.3.0 Documentation - Home"/>
   
   
 </a></div>
@@ -129,7 +129,7 @@
 <div class="nav-item">
   <div class="version-switcher__container dropdown">
       <button id="version-switcher-button" type="button" class="version-switcher__button btn btn-sm navbar-btn" aria-haspopup="true" aria-expanded="false">
-          Version 0.2.0
+          Version 0.3.0
       </button>
       
       
@@ -313,7 +313,11 @@
 <li class="toctree-l2"><a class="reference internal" href="myogen.simulator.generate_mu_recruitment_thresholds.html">generate_mu_recruitment_thresholds</a></li>
 <li class="toctree-l2"><a class="reference internal" href="myogen.simulator.MotorNeuronPool.html">MotorNeuronPool</a></li>
 <li class="toctree-l2"><a class="reference internal" href="myogen.simulator.Muscle.html">Muscle</a></li>
+<li class="toctree-l2"><a class="reference internal" href="myogen.simulator.ForceModel.html">ForceModel</a></li>
 <li class="toctree-l2"><a class="reference internal" href="myogen.simulator.SurfaceEMG.html">SurfaceEMG</a></li>
+<li class="toctree-l2"><a class="reference internal" href="myogen.simulator.IntramuscularEMG.html">IntramuscularEMG</a></li>
+<li class="toctree-l2"><a class="reference internal" href="myogen.simulator.SurfaceElectrodeArray.html">SurfaceElectrodeArray</a></li>
+<li class="toctree-l2"><a class="reference internal" href="myogen.simulator.IntramuscularElectrodeArray.html">IntramuscularElectrodeArray</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 current active has-children"><a class="reference internal" href="../api/utils_api.html">Utils Module</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
@@ -337,9 +341,12 @@
 </details></li>
 <li class="toctree-l2 current active has-children"><a class="reference internal" href="../api/types_api.html">Type Definitions</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
 <li class="toctree-l3"><a class="reference internal" href="myogen.utils.types.INPUT_CURRENT__MATRIX.html">INPUT_CURRENT__MATRIX</a></li>
+<li class="toctree-l3"><a class="reference internal" href="myogen.utils.types.CORTICAL_INPUT__MATRIX.html">CORTICAL_INPUT__MATRIX</a></li>
 <li class="toctree-l3 current active"><a class="current reference internal" href="#">SPIKE_TRAIN__MATRIX</a></li>
-<li class="toctree-l3"><a class="reference internal" href="myogen.utils.types.MUAP_SHAPE__TENSOR.html">MUAP_SHAPE__TENSOR</a></li>
+<li class="toctree-l3"><a class="reference internal" href="myogen.utils.types.SURFACE_MUAP_SHAPE__TENSOR.html">SURFACE_MUAP_SHAPE__TENSOR</a></li>
+<li class="toctree-l3"><a class="reference internal" href="myogen.utils.types.INTRAMUSCULAR_MUAP_SHAPE__TENSOR.html">INTRAMUSCULAR_MUAP_SHAPE__TENSOR</a></li>
 <li class="toctree-l3"><a class="reference internal" href="myogen.utils.types.SURFACE_EMG__TENSOR.html">SURFACE_EMG__TENSOR</a></li>
+<li class="toctree-l3"><a class="reference internal" href="myogen.utils.types.INTRAMUSCULAR_EMG__TENSOR.html">INTRAMUSCULAR_EMG__TENSOR</a></li>
 </ul>
 </details></li>
 </ul>

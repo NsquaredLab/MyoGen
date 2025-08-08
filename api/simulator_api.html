@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Simulator Module &#8212; MyoGen 0.2.0 Documentation</title>
+    <title>Simulator Module &#8212; MyoGen 0.3.0 Documentation</title>
   
   
   
@@ -35,7 +35,7 @@
     <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-binder.css?v=f4aeca0c" />
     <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-dataframe.css?v=2082cf3c" />
     <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
-    <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=4797f867" />
+    <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=73e2cb9d" />
   
   <!-- So that users can add custom icons -->
   <script src="../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
@@ -43,7 +43,7 @@
   <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="../_static/documentation_options.js?v=938c9ccc"></script>
+    <script src="../_static/documentation_options.js?v=e259d695"></script>
     <script src="../_static/doctools.js?v=9bcbadda"></script>
     <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'api/simulator_api';</script>
@@ -53,7 +53,7 @@
     <link rel="prev" title="API Documentation" href="index.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="0.2.0" />
+  <meta name="docsearch:version" content="0.3.0" />
   </head>
   
   
@@ -119,8 +119,8 @@
       
     
     
-    <img src="../_static/myogen_logo.png" class="logo__image only-light" alt="MyoGen 0.2.0 Documentation - Home"/>
-    <img src="../_static/myogen_logo.png" class="logo__image only-dark pst-js-only" alt="MyoGen 0.2.0 Documentation - Home"/>
+    <img src="../_static/myogen_logo.png" class="logo__image only-light" alt="MyoGen 0.3.0 Documentation - Home"/>
+    <img src="../_static/myogen_logo.png" class="logo__image only-dark pst-js-only" alt="MyoGen 0.3.0 Documentation - Home"/>
   
   
 </a></div>
@@ -129,7 +129,7 @@
 <div class="nav-item">
   <div class="version-switcher__container dropdown">
       <button id="version-switcher-button" type="button" class="version-switcher__button btn btn-sm navbar-btn" aria-haspopup="true" aria-expanded="false">
-          Version 0.2.0
+          Version 0.3.0
       </button>
       
       
@@ -313,7 +313,11 @@
 <li class="toctree-l2"><a class="reference internal" href="../generated/myogen.simulator.generate_mu_recruitment_thresholds.html">generate_mu_recruitment_thresholds</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../generated/myogen.simulator.MotorNeuronPool.html">MotorNeuronPool</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../generated/myogen.simulator.Muscle.html">Muscle</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../generated/myogen.simulator.ForceModel.html">ForceModel</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../generated/myogen.simulator.SurfaceEMG.html">SurfaceEMG</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../generated/myogen.simulator.IntramuscularEMG.html">IntramuscularEMG</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../generated/myogen.simulator.SurfaceElectrodeArray.html">SurfaceElectrodeArray</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../generated/myogen.simulator.IntramuscularElectrodeArray.html">IntramuscularElectrodeArray</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="utils_api.html">Utils Module</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -337,9 +341,12 @@
 </details></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="types_api.html">Type Definitions</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l3"><a class="reference internal" href="../generated/myogen.utils.types.INPUT_CURRENT__MATRIX.html">INPUT_CURRENT__MATRIX</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../generated/myogen.utils.types.CORTICAL_INPUT__MATRIX.html">CORTICAL_INPUT__MATRIX</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../generated/myogen.utils.types.SPIKE_TRAIN__MATRIX.html">SPIKE_TRAIN__MATRIX</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../generated/myogen.utils.types.MUAP_SHAPE__TENSOR.html">MUAP_SHAPE__TENSOR</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../generated/myogen.utils.types.SURFACE_MUAP_SHAPE__TENSOR.html">SURFACE_MUAP_SHAPE__TENSOR</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../generated/myogen.utils.types.INTRAMUSCULAR_MUAP_SHAPE__TENSOR.html">INTRAMUSCULAR_MUAP_SHAPE__TENSOR</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../generated/myogen.utils.types.SURFACE_EMG__TENSOR.html">SURFACE_EMG__TENSOR</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../generated/myogen.utils.types.INTRAMUSCULAR_EMG__TENSOR.html">INTRAMUSCULAR_EMG__TENSOR</a></li>
 </ul>
 </details></li>
 </ul>
@@ -433,7 +440,18 @@
 <div class="pst-scrollable-table-container"><table class="autosummary longtable table">
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="../generated/myogen.simulator.Muscle.html#myogen.simulator.Muscle" title="myogen.simulator.Muscle"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Muscle</span></code></a>(recruitment_thresholds[, radius__mm, ...])</p></td>
-<td><p>A muscle model based on the cylindrical description of the volume conductor by Farina et al. 2004 <a href="#id3"><span class="problematic" id="id1">[1]_</span></a> and the motor unit distribution by Konstantin et al. 2020 <a href="#id4"><span class="problematic" id="id2">[2]_</span></a>.</p></td>
+<td><p>A muscle model based on the cylindrical description of the volume conductor by Farina et al. 2004 <a href="#id4"><span class="problematic" id="id1">[1]_</span></a> and the motor unit distribution by Konstantin et al. 2020 <a href="#id5"><span class="problematic" id="id2">[2]_</span></a>.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="force-model">
+<h2>Force Model<a class="headerlink" href="#force-model" title="Link to this heading">#</a></h2>
+<div class="pst-scrollable-table-container"><table class="autosummary longtable table">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../generated/myogen.simulator.ForceModel.html#myogen.simulator.ForceModel" title="myogen.simulator.ForceModel"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ForceModel</span></code></a>(recruitment_thresholds, ...[, ...])</p></td>
+<td><p>Force model based on Fuglevand et al. (1993) <a href="#id6"><span class="problematic" id="id3">[1]_</span></a>.</p></td>
 </tr>
 </tbody>
 </table>
@@ -445,6 +463,23 @@
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="../generated/myogen.simulator.SurfaceEMG.html#myogen.simulator.SurfaceEMG" title="myogen.simulator.SurfaceEMG"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SurfaceEMG</span></code></a>(muscle_model, electrode_arrays[, ...])</p></td>
 <td><p>Surface Electromyography (sEMG) Simulation.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../generated/myogen.simulator.IntramuscularEMG.html#myogen.simulator.IntramuscularEMG" title="myogen.simulator.IntramuscularEMG"><code class="xref py py-obj docutils literal notranslate"><span class="pre">IntramuscularEMG</span></code></a>(muscle_model, electrode_array)</p></td>
+<td><p>Intramuscular Electromyography (iEMG) Simulation.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="electrodes">
+<h2>Electrodes<a class="headerlink" href="#electrodes" title="Link to this heading">#</a></h2>
+<div class="pst-scrollable-table-container"><table class="autosummary longtable table">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../generated/myogen.simulator.SurfaceElectrodeArray.html#myogen.simulator.SurfaceElectrodeArray" title="myogen.simulator.SurfaceElectrodeArray"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SurfaceElectrodeArray</span></code></a>(num_rows, num_cols, ...)</p></td>
+<td><p>Surface electrode array for EMG recording.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../generated/myogen.simulator.IntramuscularElectrodeArray.html#myogen.simulator.IntramuscularElectrodeArray" title="myogen.simulator.IntramuscularElectrodeArray"><code class="xref py py-obj docutils literal notranslate"><span class="pre">IntramuscularElectrodeArray</span></code></a>(num_electrodes)</p></td>
+<td><p>Intramuscular electrode array for EMG recording.</p></td>
 </tr>
 </tbody>
 </table>
@@ -478,7 +513,9 @@
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#motor-unit-recruitment-thresholds">Motor Unit Recruitment Thresholds</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#motor-neuron-pool">Motor Neuron Pool</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#muscle-model">Muscle Model</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#force-model">Force Model</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#emg-generation">EMG Generation</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#electrodes">Electrodes</a></li>
 </ul>
   </nav></div>
 

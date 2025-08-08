@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>MUAP_SHAPE__TENSOR &#8212; MyoGen 0.2.0 Documentation</title>
+    <title>CORTICAL_INPUT__MATRIX &#8212; MyoGen 0.3.0 Documentation</title>
   
   
   
@@ -35,7 +35,7 @@
     <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-binder.css?v=f4aeca0c" />
     <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-dataframe.css?v=2082cf3c" />
     <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
-    <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=4797f867" />
+    <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=73e2cb9d" />
   
   <!-- So that users can add custom icons -->
   <script src="../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
@@ -43,17 +43,17 @@
   <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="../_static/documentation_options.js?v=938c9ccc"></script>
+    <script src="../_static/documentation_options.js?v=e259d695"></script>
     <script src="../_static/doctools.js?v=9bcbadda"></script>
     <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
-    <script>DOCUMENTATION_OPTIONS.pagename = 'generated/myogen.utils.types.MUAP_SHAPE__TENSOR';</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'generated/myogen.utils.types.CORTICAL_INPUT__MATRIX';</script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="SURFACE_EMG__TENSOR" href="myogen.utils.types.SURFACE_EMG__TENSOR.html" />
-    <link rel="prev" title="SPIKE_TRAIN__MATRIX" href="myogen.utils.types.SPIKE_TRAIN__MATRIX.html" />
+    <link rel="next" title="SPIKE_TRAIN__MATRIX" href="myogen.utils.types.SPIKE_TRAIN__MATRIX.html" />
+    <link rel="prev" title="INPUT_CURRENT__MATRIX" href="myogen.utils.types.INPUT_CURRENT__MATRIX.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="0.2.0" />
+  <meta name="docsearch:version" content="0.3.0" />
   </head>
   
   
@@ -119,8 +119,8 @@
       
     
     
-    <img src="../_static/myogen_logo.png" class="logo__image only-light" alt="MyoGen 0.2.0 Documentation - Home"/>
-    <img src="../_static/myogen_logo.png" class="logo__image only-dark pst-js-only" alt="MyoGen 0.2.0 Documentation - Home"/>
+    <img src="../_static/myogen_logo.png" class="logo__image only-light" alt="MyoGen 0.3.0 Documentation - Home"/>
+    <img src="../_static/myogen_logo.png" class="logo__image only-dark pst-js-only" alt="MyoGen 0.3.0 Documentation - Home"/>
   
   
 </a></div>
@@ -129,7 +129,7 @@
 <div class="nav-item">
   <div class="version-switcher__container dropdown">
       <button id="version-switcher-button" type="button" class="version-switcher__button btn btn-sm navbar-btn" aria-haspopup="true" aria-expanded="false">
-          Version 0.2.0
+          Version 0.3.0
       </button>
       
       
@@ -313,7 +313,11 @@
 <li class="toctree-l2"><a class="reference internal" href="myogen.simulator.generate_mu_recruitment_thresholds.html">generate_mu_recruitment_thresholds</a></li>
 <li class="toctree-l2"><a class="reference internal" href="myogen.simulator.MotorNeuronPool.html">MotorNeuronPool</a></li>
 <li class="toctree-l2"><a class="reference internal" href="myogen.simulator.Muscle.html">Muscle</a></li>
+<li class="toctree-l2"><a class="reference internal" href="myogen.simulator.ForceModel.html">ForceModel</a></li>
 <li class="toctree-l2"><a class="reference internal" href="myogen.simulator.SurfaceEMG.html">SurfaceEMG</a></li>
+<li class="toctree-l2"><a class="reference internal" href="myogen.simulator.IntramuscularEMG.html">IntramuscularEMG</a></li>
+<li class="toctree-l2"><a class="reference internal" href="myogen.simulator.SurfaceElectrodeArray.html">SurfaceElectrodeArray</a></li>
+<li class="toctree-l2"><a class="reference internal" href="myogen.simulator.IntramuscularElectrodeArray.html">IntramuscularElectrodeArray</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 current active has-children"><a class="reference internal" href="../api/utils_api.html">Utils Module</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
@@ -337,9 +341,12 @@
 </details></li>
 <li class="toctree-l2 current active has-children"><a class="reference internal" href="../api/types_api.html">Type Definitions</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
 <li class="toctree-l3"><a class="reference internal" href="myogen.utils.types.INPUT_CURRENT__MATRIX.html">INPUT_CURRENT__MATRIX</a></li>
+<li class="toctree-l3 current active"><a class="current reference internal" href="#">CORTICAL_INPUT__MATRIX</a></li>
 <li class="toctree-l3"><a class="reference internal" href="myogen.utils.types.SPIKE_TRAIN__MATRIX.html">SPIKE_TRAIN__MATRIX</a></li>
-<li class="toctree-l3 current active"><a class="current reference internal" href="#">MUAP_SHAPE__TENSOR</a></li>
+<li class="toctree-l3"><a class="reference internal" href="myogen.utils.types.SURFACE_MUAP_SHAPE__TENSOR.html">SURFACE_MUAP_SHAPE__TENSOR</a></li>
+<li class="toctree-l3"><a class="reference internal" href="myogen.utils.types.INTRAMUSCULAR_MUAP_SHAPE__TENSOR.html">INTRAMUSCULAR_MUAP_SHAPE__TENSOR</a></li>
 <li class="toctree-l3"><a class="reference internal" href="myogen.utils.types.SURFACE_EMG__TENSOR.html">SURFACE_EMG__TENSOR</a></li>
+<li class="toctree-l3"><a class="reference internal" href="myogen.utils.types.INTRAMUSCULAR_EMG__TENSOR.html">INTRAMUSCULAR_EMG__TENSOR</a></li>
 </ul>
 </details></li>
 </ul>
@@ -393,7 +400,7 @@
     
     <li class="breadcrumb-item"><a href="../api/types_api.html" class="nav-link">Type Definitions</a></li>
     
-    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">MUAP_SHAPE__TENSOR</span></li>
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">CORTICAL_INPUT__MATRIX</span></li>
   </ul>
 </nav>
 </div>
@@ -410,13 +417,13 @@
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section id="muap-shape-tensor">
-<h1>MUAP_SHAPE__TENSOR<a class="headerlink" href="#muap-shape-tensor" title="Link to this heading">#</a></h1>
+  <section id="cortical-input-matrix">
+<h1>CORTICAL_INPUT__MATRIX<a class="headerlink" href="#cortical-input-matrix" title="Link to this heading">#</a></h1>
 <dl class="py data">
-<dt class="sig sig-object py" id="myogen.utils.types.MUAP_SHAPE__TENSOR">
-<span class="sig-prename descclassname"><span class="pre">myogen.utils.types.</span></span><span class="sig-name descname"><span class="pre">MUAP_SHAPE__TENSOR</span></span><a class="headerlink" href="#myogen.utils.types.MUAP_SHAPE__TENSOR" title="Link to this definition">#</a></dt>
+<dt class="sig sig-object py" id="myogen.utils.types.CORTICAL_INPUT__MATRIX">
+<span class="sig-prename descclassname"><span class="pre">myogen.utils.types.</span></span><span class="sig-name descname"><span class="pre">CORTICAL_INPUT__MATRIX</span></span><a class="headerlink" href="#myogen.utils.types.CORTICAL_INPUT__MATRIX" title="Link to this definition">#</a></dt>
 <dd><blockquote>
-<div><p><strong>Alias of:</strong> <code class="docutils literal notranslate"><span class="pre">Annotated[npt.NDArray[np.floating],</span> <span class="pre">Is[lambda</span> <span class="pre">x:</span> <span class="pre">x.ndim</span> <span class="pre">==</span> <span class="pre">5]]</span></code></p>
+<div><p><strong>Alias of:</strong> <em>(see source code)</em></p>
 </div></blockquote>
 <p class="rubric">Type Definition</p>
 <p>This type alias is defined using beartype validators:</p>
@@ -424,7 +431,7 @@
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy.typing</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">npt</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">beartype.vale</span><span class="w"> </span><span class="kn">import</span> <span class="n">Is</span>
 
-<span class="n">MUAP_SHAPE__TENSOR</span> <span class="o">=</span> <span class="n">Annotated</span><span class="p">[</span>
+<span class="n">CORTICAL_INPUT__MATRIX</span> <span class="o">=</span> <span class="n">Annotated</span><span class="p">[</span>
     <span class="n">npt</span><span class="o">.</span><span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">floating</span><span class="p">],</span>  <span class="c1"># or np.bool_ for boolean arrays</span>
     <span class="n">Is</span><span class="p">[</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="n">N</span><span class="p">],</span> <span class="c1"># where N is the required dimensions</span>
 <span class="p">]</span>
@@ -432,11 +439,11 @@
 </div>
 <p class="rubric">Runtime Type Checking</p>
 <p>Use with beartype for automatic validation:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">myogen.utils.types</span><span class="w"> </span><span class="kn">import</span> <span class="n">MUAP_SHAPE__TENSOR</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">myogen.utils.types</span><span class="w"> </span><span class="kn">import</span> <span class="n">CORTICAL_INPUT__MATRIX</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">beartype</span><span class="w"> </span><span class="kn">import</span> <span class="n">beartype</span>
 
 <span class="nd">@beartype</span>
-<span class="k">def</span><span class="w"> </span><span class="nf">process_muap_data</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="n">MUAP_SHAPE__TENSOR</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">MUAP_SHAPE__TENSOR</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">process_cortical_data</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="n">CORTICAL_INPUT__MATRIX</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">CORTICAL_INPUT__MATRIX</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Process data with automatic shape validation.&quot;&quot;&quot;</span>
     <span class="c1"># beartype automatically validates array dimensions</span>
     <span class="k">return</span> <span class="n">data</span>
@@ -477,7 +484,7 @@
   </div>
   <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
     <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#myogen.utils.types.MUAP_SHAPE__TENSOR"><code class="docutils literal notranslate"><span class="pre">MUAP_SHAPE__TENSOR</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#myogen.utils.types.CORTICAL_INPUT__MATRIX"><code class="docutils literal notranslate"><span class="pre">CORTICAL_INPUT__MATRIX</span></code></a></li>
 </ul>
   </nav></div>
 
@@ -485,7 +492,7 @@
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
     <ul class="this-page-menu">
-      <li><a href="../_sources/generated/myogen.utils.types.MUAP_SHAPE__TENSOR.rst.txt"
+      <li><a href="../_sources/generated/myogen.utils.types.CORTICAL_INPUT__MATRIX.rst.txt"
             rel="nofollow">Show Source</a></li>
     </ul>
    </div></div>

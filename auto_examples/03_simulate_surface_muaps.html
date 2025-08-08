@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Surface Motor Unit Action Potentials &#8212; MyoGen 0.2.0 Documentation</title>
+    <title>Surface Motor Unit Action Potentials &#8212; MyoGen 0.3.0 Documentation</title>
   
   
   
@@ -35,7 +35,7 @@
     <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-binder.css?v=f4aeca0c" />
     <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-dataframe.css?v=2082cf3c" />
     <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
-    <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=4797f867" />
+    <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=73e2cb9d" />
   
   <!-- So that users can add custom icons -->
   <script src="../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
@@ -43,7 +43,7 @@
   <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="../_static/documentation_options.js?v=938c9ccc"></script>
+    <script src="../_static/documentation_options.js?v=e259d695"></script>
     <script src="../_static/doctools.js?v=9bcbadda"></script>
     <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'auto_examples/03_simulate_surface_muaps';</script>
@@ -53,7 +53,7 @@
     <link rel="prev" title="Muscle Model" href="02_simulate_muscle.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="0.2.0" />
+  <meta name="docsearch:version" content="0.3.0" />
   </head>
   
   
@@ -119,8 +119,8 @@
       
     
     
-    <img src="../_static/myogen_logo.png" class="logo__image only-light" alt="MyoGen 0.2.0 Documentation - Home"/>
-    <img src="../_static/myogen_logo.png" class="logo__image only-dark pst-js-only" alt="MyoGen 0.2.0 Documentation - Home"/>
+    <img src="../_static/myogen_logo.png" class="logo__image only-light" alt="MyoGen 0.3.0 Documentation - Home"/>
+    <img src="../_static/myogen_logo.png" class="logo__image only-dark pst-js-only" alt="MyoGen 0.3.0 Documentation - Home"/>
   
   
 </a></div>
@@ -129,7 +129,7 @@
 <div class="nav-item">
   <div class="version-switcher__container dropdown">
       <button id="version-switcher-button" type="button" class="version-switcher__button btn btn-sm navbar-btn" aria-haspopup="true" aria-expanded="false">
-          Version 0.2.0
+          Version 0.3.0
       </button>
       
       
@@ -316,6 +316,7 @@
 <li class="toctree-l1"><a class="reference internal" href="05_simulate_currents.html">Current Generation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="06_simulate_force.html">Force Generation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="07_simulate_cortical_input.html">Cortical Inputs and Motor Unit Spike Trains</a></li>
+<li class="toctree-l1"><a class="reference internal" href="08_simulate_intramuscular_emg.html">Intramuscular EMG Signals</a></li>
 </ul>
 </div>
 </nav></div>
@@ -472,22 +473,22 @@ This can be changed by modifying the <code class="docutils literal notranslate">
 </pre></div>
 </div>
 <div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Electrode Array 1/1 MU 1/1:   0%|          | 0/46 [00:00&lt;?, ?fibers/s]
-Electrode Array 1/1 MU 1/1:   2%|▏         | 1/46 [00:00&lt;00:16,  2.73fibers/s]
-Electrode Array 1/1 MU 1/1:   4%|▍         | 2/46 [00:00&lt;00:13,  3.32fibers/s]
+Electrode Array 1/1 MU 1/1:   2%|▏         | 1/46 [00:00&lt;00:16,  2.70fibers/s]
+Electrode Array 1/1 MU 1/1:   4%|▍         | 2/46 [00:00&lt;00:13,  3.30fibers/s]
 Electrode Array 1/1 MU 1/1:   7%|▋         | 3/46 [00:00&lt;00:12,  3.56fibers/s]
-Electrode Array 1/1 MU 1/1:   9%|▊         | 4/46 [00:01&lt;00:11,  3.68fibers/s]
+Electrode Array 1/1 MU 1/1:   9%|▊         | 4/46 [00:01&lt;00:11,  3.69fibers/s]
 Electrode Array 1/1 MU 1/1:  11%|█         | 5/46 [00:01&lt;00:10,  3.77fibers/s]
-Electrode Array 1/1 MU 1/1:  13%|█▎        | 6/46 [00:01&lt;00:10,  3.81fibers/s]
-Electrode Array 1/1 MU 1/1:  15%|█▌        | 7/46 [00:01&lt;00:10,  3.84fibers/s]
+Electrode Array 1/1 MU 1/1:  13%|█▎        | 6/46 [00:01&lt;00:10,  3.82fibers/s]
+Electrode Array 1/1 MU 1/1:  15%|█▌        | 7/46 [00:01&lt;00:10,  3.85fibers/s]
 Electrode Array 1/1 MU 1/1:  17%|█▋        | 8/46 [00:02&lt;00:09,  3.87fibers/s]
-Electrode Array 1/1 MU 1/1:  20%|█▉        | 9/46 [00:02&lt;00:09,  3.88fibers/s]
-Electrode Array 1/1 MU 1/1:  22%|██▏       | 10/46 [00:02&lt;00:09,  3.89fibers/s]
+Electrode Array 1/1 MU 1/1:  20%|█▉        | 9/46 [00:02&lt;00:09,  3.89fibers/s]
+Electrode Array 1/1 MU 1/1:  22%|██▏       | 10/46 [00:02&lt;00:09,  3.90fibers/s]
 Electrode Array 1/1 MU 1/1:  24%|██▍       | 11/46 [00:02&lt;00:08,  3.90fibers/s]
-Electrode Array 1/1 MU 1/1:  26%|██▌       | 12/46 [00:03&lt;00:08,  3.91fibers/s]
-Electrode Array 1/1 MU 1/1:  28%|██▊       | 13/46 [00:03&lt;00:08,  3.91fibers/s]
+Electrode Array 1/1 MU 1/1:  26%|██▌       | 12/46 [00:03&lt;00:08,  3.90fibers/s]
+Electrode Array 1/1 MU 1/1:  28%|██▊       | 13/46 [00:03&lt;00:08,  3.90fibers/s]
 Electrode Array 1/1 MU 1/1:  30%|███       | 14/46 [00:03&lt;00:08,  3.91fibers/s]
-Electrode Array 1/1 MU 1/1:  33%|███▎      | 15/46 [00:03&lt;00:07,  3.92fibers/s]
-Electrode Array 1/1 MU 1/1:  35%|███▍      | 16/46 [00:04&lt;00:07,  3.92fibers/s]
+Electrode Array 1/1 MU 1/1:  33%|███▎      | 15/46 [00:03&lt;00:07,  3.91fibers/s]
+Electrode Array 1/1 MU 1/1:  35%|███▍      | 16/46 [00:04&lt;00:07,  3.91fibers/s]
 Electrode Array 1/1 MU 1/1:  37%|███▋      | 17/46 [00:04&lt;00:07,  3.92fibers/s]
 Electrode Array 1/1 MU 1/1:  39%|███▉      | 18/46 [00:04&lt;00:07,  3.92fibers/s]
 Electrode Array 1/1 MU 1/1:  41%|████▏     | 19/46 [00:04&lt;00:06,  3.92fibers/s]
@@ -498,7 +499,7 @@ Electrode Array 1/1 MU 1/1:  50%|█████     | 23/46 [00:05&lt;00:05,  3
 Electrode Array 1/1 MU 1/1:  52%|█████▏    | 24/46 [00:06&lt;00:05,  3.92fibers/s]
 Electrode Array 1/1 MU 1/1:  54%|█████▍    | 25/46 [00:06&lt;00:05,  3.92fibers/s]
 Electrode Array 1/1 MU 1/1:  57%|█████▋    | 26/46 [00:06&lt;00:05,  3.92fibers/s]
-Electrode Array 1/1 MU 1/1:  59%|█████▊    | 27/46 [00:07&lt;00:04,  3.93fibers/s]
+Electrode Array 1/1 MU 1/1:  59%|█████▊    | 27/46 [00:07&lt;00:04,  3.92fibers/s]
 Electrode Array 1/1 MU 1/1:  61%|██████    | 28/46 [00:07&lt;00:04,  3.92fibers/s]
 Electrode Array 1/1 MU 1/1:  63%|██████▎   | 29/46 [00:07&lt;00:04,  3.93fibers/s]
 Electrode Array 1/1 MU 1/1:  65%|██████▌   | 30/46 [00:07&lt;00:04,  3.93fibers/s]
@@ -506,14 +507,14 @@ Electrode Array 1/1 MU 1/1:  67%|██████▋   | 31/46 [00:08&lt;00:03
 Electrode Array 1/1 MU 1/1:  70%|██████▉   | 32/46 [00:08&lt;00:03,  3.92fibers/s]
 Electrode Array 1/1 MU 1/1:  72%|███████▏  | 33/46 [00:08&lt;00:03,  3.92fibers/s]
 Electrode Array 1/1 MU 1/1:  74%|███████▍  | 34/46 [00:08&lt;00:03,  3.92fibers/s]
-Electrode Array 1/1 MU 1/1:  76%|███████▌  | 35/46 [00:09&lt;00:02,  3.92fibers/s]
-Electrode Array 1/1 MU 1/1:  78%|███████▊  | 36/46 [00:09&lt;00:02,  3.93fibers/s]
+Electrode Array 1/1 MU 1/1:  76%|███████▌  | 35/46 [00:09&lt;00:02,  3.93fibers/s]
+Electrode Array 1/1 MU 1/1:  78%|███████▊  | 36/46 [00:09&lt;00:02,  3.92fibers/s]
 Electrode Array 1/1 MU 1/1:  80%|████████  | 37/46 [00:09&lt;00:02,  3.92fibers/s]
-Electrode Array 1/1 MU 1/1:  83%|████████▎ | 38/46 [00:09&lt;00:02,  3.93fibers/s]
-Electrode Array 1/1 MU 1/1:  85%|████████▍ | 39/46 [00:10&lt;00:01,  3.93fibers/s]
+Electrode Array 1/1 MU 1/1:  83%|████████▎ | 38/46 [00:09&lt;00:02,  3.92fibers/s]
+Electrode Array 1/1 MU 1/1:  85%|████████▍ | 39/46 [00:10&lt;00:01,  3.92fibers/s]
 Electrode Array 1/1 MU 1/1:  87%|████████▋ | 40/46 [00:10&lt;00:01,  3.92fibers/s]
-Electrode Array 1/1 MU 1/1:  89%|████████▉ | 41/46 [00:10&lt;00:01,  3.93fibers/s]
-Electrode Array 1/1 MU 1/1:  91%|█████████▏| 42/46 [00:10&lt;00:01,  3.93fibers/s]
+Electrode Array 1/1 MU 1/1:  89%|████████▉ | 41/46 [00:10&lt;00:01,  3.92fibers/s]
+Electrode Array 1/1 MU 1/1:  91%|█████████▏| 42/46 [00:10&lt;00:01,  3.92fibers/s]
 Electrode Array 1/1 MU 1/1:  93%|█████████▎| 43/46 [00:11&lt;00:00,  3.92fibers/s]
 Electrode Array 1/1 MU 1/1:  96%|█████████▌| 44/46 [00:11&lt;00:00,  3.92fibers/s]
 Electrode Array 1/1 MU 1/1:  98%|█████████▊| 45/46 [00:11&lt;00:00,  3.92fibers/s]
@@ -572,11 +573,11 @@ The new API requires creating matplotlib axes and passing them to the plotting f
 <img src="../_images/sphx_glr_03_simulate_surface_muaps_001.png" srcset="../_images/sphx_glr_03_simulate_surface_muaps_001.png" alt="MUAP 0" class = "sphx-glr-single-img"/><div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Concatenated MUAPs shape: (1, 13, 5, 256)
 
 Plotting MUAPs:   0%|          | 0/1 [00:00&lt;?, ?it/s]
-Plotting MUAPs: 100%|██████████| 1/1 [00:01&lt;00:00,  1.30s/it]
-Plotting MUAPs: 100%|██████████| 1/1 [00:01&lt;00:00,  1.30s/it]
+Plotting MUAPs: 100%|██████████| 1/1 [00:01&lt;00:00,  1.32s/it]
+Plotting MUAPs: 100%|██████████| 1/1 [00:01&lt;00:00,  1.32s/it]
 </pre></div>
 </div>
-<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 14.101 seconds)</p>
+<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 14.088 seconds)</p>
 <div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-auto-examples-03-simulate-surface-muaps-py">
 <div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
 <p><a class="reference download internal" download="" href="../_downloads/cb313d5f32f1c0229fd2a5de17339244/03_simulate_surface_muaps.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">03_simulate_surface_muaps.ipynb</span></code></a></p>

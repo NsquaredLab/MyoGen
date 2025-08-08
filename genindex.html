@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Index &#8212; MyoGen 0.2.0 Documentation</title>
+    <title>Index &#8212; MyoGen 0.3.0 Documentation</title>
   
   
   
@@ -34,7 +34,7 @@
     <link rel="stylesheet" type="text/css" href="_static/sg_gallery-binder.css?v=f4aeca0c" />
     <link rel="stylesheet" type="text/css" href="_static/sg_gallery-dataframe.css?v=2082cf3c" />
     <link rel="stylesheet" type="text/css" href="_static/sg_gallery-rendered-html.css?v=1277b6f3" />
-    <link rel="stylesheet" type="text/css" href="_static/custom.css?v=4797f867" />
+    <link rel="stylesheet" type="text/css" href="_static/custom.css?v=73e2cb9d" />
   
   <!-- So that users can add custom icons -->
   <script src="_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
@@ -42,15 +42,23 @@
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="_static/documentation_options.js?v=938c9ccc"></script>
+    <script src="_static/documentation_options.js?v=e259d695"></script>
     <script src="_static/doctools.js?v=9bcbadda"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script type="module" src="https://cdn.jsdelivr.net/npm/mermaid@11.9.0/dist/mermaid.esm.min.mjs"></script>
+    <script type="module" src="https://cdn.jsdelivr.net/npm/@mermaid-js/layout-elk@0.1.4/dist/mermaid-layout-elk.esm.min.mjs"></script>
+    <script type="module">import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@11.9.0/dist/mermaid.esm.min.mjs";import elkLayouts from "https://cdn.jsdelivr.net/npm/@mermaid-js/layout-elk@0.1.4/dist/mermaid-layout-elk.esm.min.mjs";mermaid.registerLayoutLoaders(elkLayouts);mermaid.initialize({startOnLoad:false});</script>
+    <script src="https://cdn.jsdelivr.net/npm/d3@7.9.0/dist/d3.min.js"></script>
+    <script type="module">
+import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@11.9.0/dist/mermaid.esm.min.mjs";
+window.addEventListener("load", () => mermaid.run());
+</script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'genindex';</script>
     <link rel="index" title="Index" href="#" />
     <link rel="search" title="Search" href="search.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="0.2.0" />
+  <meta name="docsearch:version" content="0.3.0" />
   </head>
   
   
@@ -116,8 +124,8 @@
       
     
     
-    <img src="_static/myogen_logo.png" class="logo__image only-light" alt="MyoGen 0.2.0 Documentation - Home"/>
-    <img src="_static/myogen_logo.png" class="logo__image only-dark pst-js-only" alt="MyoGen 0.2.0 Documentation - Home"/>
+    <img src="_static/myogen_logo.png" class="logo__image only-light" alt="MyoGen 0.3.0 Documentation - Home"/>
+    <img src="_static/myogen_logo.png" class="logo__image only-dark pst-js-only" alt="MyoGen 0.3.0 Documentation - Home"/>
   
   
 </a></div>
@@ -126,7 +134,7 @@
 <div class="nav-item">
   <div class="version-switcher__container dropdown">
       <button id="version-switcher-button" type="button" class="version-switcher__button btn btn-sm navbar-btn" aria-haspopup="true" aria-expanded="false">
-          Version 0.2.0
+          Version 0.3.0
       </button>
       
       
@@ -332,6 +340,7 @@
  <a href="#A"><strong>A</strong></a>
  | <a href="#C"><strong>C</strong></a>
  | <a href="#D"><strong>D</strong></a>
+ | <a href="#F"><strong>F</strong></a>
  | <a href="#G"><strong>G</strong></a>
  | <a href="#I"><strong>I</strong></a>
  | <a href="#L"><strong>L</strong></a>
@@ -339,13 +348,18 @@
  | <a href="#P"><strong>P</strong></a>
  | <a href="#R"><strong>R</strong></a>
  | <a href="#S"><strong>S</strong></a>
+ | <a href="#T"><strong>T</strong></a>
  
 </div>
 <h2 id="A">A</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="generated/myogen.simulator.SurfaceEMG.html#myogen.simulator.SurfaceEMG.add_noise">add_noise() (myogen.simulator.SurfaceEMG method)</a>
+      <li><a href="generated/myogen.simulator.IntramuscularEMG.html#myogen.simulator.IntramuscularEMG.add_noise">add_noise() (myogen.simulator.IntramuscularEMG method)</a>
+
+      <ul>
+        <li><a href="generated/myogen.simulator.SurfaceEMG.html#myogen.simulator.SurfaceEMG.add_noise">(myogen.simulator.SurfaceEMG method)</a>
 </li>
+      </ul></li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="generated/myogen.simulator.Muscle.html#myogen.simulator.Muscle.assign_mfs2mns">assign_mfs2mns() (myogen.simulator.Muscle method)</a>
@@ -358,12 +372,14 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="generated/myogen.simulator.MotorNeuronPool.html#myogen.simulator.MotorNeuronPool.compute_mvc_current_threshold">compute_mvc_current_threshold() (myogen.simulator.MotorNeuronPool method)</a>
 </li>
-      <li><a href="generated/myogen.utils.currents.create_ramp_current.html#myogen.utils.currents.create_ramp_current">create_ramp_current() (in module myogen.utils.currents)</a>
+      <li><a href="generated/myogen.utils.types.CORTICAL_INPUT__MATRIX.html#myogen.utils.types.CORTICAL_INPUT__MATRIX">CORTICAL_INPUT__MATRIX (in module myogen.utils.types)</a>
 </li>
-      <li><a href="generated/myogen.utils.currents.create_sawtooth_current.html#myogen.utils.currents.create_sawtooth_current">create_sawtooth_current() (in module myogen.utils.currents)</a>
+      <li><a href="generated/myogen.utils.currents.create_ramp_current.html#myogen.utils.currents.create_ramp_current">create_ramp_current() (in module myogen.utils.currents)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="generated/myogen.utils.currents.create_sawtooth_current.html#myogen.utils.currents.create_sawtooth_current">create_sawtooth_current() (in module myogen.utils.currents)</a>
+</li>
       <li><a href="generated/myogen.utils.currents.create_sinusoidal_current.html#myogen.utils.currents.create_sinusoidal_current">create_sinusoidal_current() (in module myogen.utils.currents)</a>
 </li>
       <li><a href="generated/myogen.utils.currents.create_step_current.html#myogen.utils.currents.create_step_current">create_step_current() (in module myogen.utils.currents)</a>
@@ -381,16 +397,30 @@
   </ul></td>
 </tr></table>
 
+<h2 id="F">F</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="generated/myogen.simulator.ForceModel.html#myogen.simulator.ForceModel">ForceModel (class in myogen.simulator)</a>
+</li>
+  </ul></td>
+</tr></table>
+
 <h2 id="G">G</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="generated/myogen.simulator.ForceModel.html#myogen.simulator.ForceModel.generate_force">generate_force() (myogen.simulator.ForceModel method)</a>
+</li>
       <li><a href="generated/myogen.simulator.generate_mu_recruitment_thresholds.html#myogen.simulator.generate_mu_recruitment_thresholds">generate_mu_recruitment_thresholds() (in module myogen.simulator)</a>
+</li>
+      <li><a href="generated/myogen.simulator.Muscle.html#myogen.simulator.Muscle.generate_muscle_fiber_centers">generate_muscle_fiber_centers() (myogen.simulator.Muscle method)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="generated/myogen.simulator.Muscle.html#myogen.simulator.Muscle.generate_muscle_fiber_centers">generate_muscle_fiber_centers() (myogen.simulator.Muscle method)</a>
-</li>
       <li><a href="generated/myogen.simulator.MotorNeuronPool.html#myogen.simulator.MotorNeuronPool.generate_spike_trains">generate_spike_trains() (myogen.simulator.MotorNeuronPool method)</a>
+</li>
+      <li><a href="generated/myogen.simulator.ForceModel.html#myogen.simulator.ForceModel.get_gain">get_gain() (myogen.simulator.ForceModel method)</a>
+</li>
+      <li><a href="generated/myogen.simulator.SurfaceElectrodeArray.html#myogen.simulator.SurfaceElectrodeArray.get_H_sf">get_H_sf() (myogen.simulator.SurfaceElectrodeArray method)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -399,6 +429,16 @@
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="generated/myogen.utils.types.INPUT_CURRENT__MATRIX.html#myogen.utils.types.INPUT_CURRENT__MATRIX">INPUT_CURRENT__MATRIX (in module myogen.utils.types)</a>
+</li>
+      <li><a href="generated/myogen.utils.types.INTRAMUSCULAR_EMG__TENSOR.html#myogen.utils.types.INTRAMUSCULAR_EMG__TENSOR">INTRAMUSCULAR_EMG__TENSOR (in module myogen.utils.types)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="generated/myogen.utils.types.INTRAMUSCULAR_MUAP_SHAPE__TENSOR.html#myogen.utils.types.INTRAMUSCULAR_MUAP_SHAPE__TENSOR">INTRAMUSCULAR_MUAP_SHAPE__TENSOR (in module myogen.utils.types)</a>
+</li>
+      <li><a href="generated/myogen.simulator.IntramuscularElectrodeArray.html#myogen.simulator.IntramuscularElectrodeArray">IntramuscularElectrodeArray (class in myogen.simulator)</a>
+</li>
+      <li><a href="generated/myogen.simulator.IntramuscularEMG.html#myogen.simulator.IntramuscularEMG">IntramuscularEMG (class in myogen.simulator)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -415,8 +455,6 @@
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="generated/myogen.simulator.MotorNeuronPool.html#myogen.simulator.MotorNeuronPool">MotorNeuronPool (class in myogen.simulator)</a>
-</li>
-      <li><a href="generated/myogen.utils.types.MUAP_SHAPE__TENSOR.html#myogen.utils.types.MUAP_SHAPE__TENSOR">MUAP_SHAPE__TENSOR (in module myogen.utils.types)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
@@ -450,11 +488,13 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="generated/myogen.simulator.Muscle.html#myogen.simulator.Muscle.resulting_fiber_assignment">resulting_fiber_assignment() (myogen.simulator.Muscle method)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="generated/myogen.simulator.Muscle.html#myogen.simulator.Muscle.resulting_innervation_areas__mm2">resulting_innervation_areas__mm2 (myogen.simulator.Muscle property)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="generated/myogen.simulator.Muscle.html#myogen.simulator.Muscle.resulting_number_of_innervated_fibers">resulting_number_of_innervated_fibers (myogen.simulator.Muscle property)</a>
+</li>
+      <li><a href="generated/myogen.simulator.IntramuscularElectrodeArray.html#myogen.simulator.IntramuscularElectrodeArray.rodrigues_rot">rodrigues_rot() (myogen.simulator.IntramuscularElectrodeArray method)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -462,19 +502,51 @@
 <h2 id="S">S</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="generated/myogen.simulator.ForceModel.html#myogen.simulator.ForceModel.sawtooth2ipi">sawtooth2ipi() (myogen.simulator.ForceModel method)</a>
+</li>
+      <li><a href="generated/myogen.simulator.ForceModel.html#myogen.simulator.ForceModel.sawtooth2spikes">sawtooth2spikes() (myogen.simulator.ForceModel method)</a>
+</li>
+      <li><a href="generated/myogen.simulator.IntramuscularElectrodeArray.html#myogen.simulator.IntramuscularElectrodeArray.set_linear_trajectory">set_linear_trajectory() (myogen.simulator.IntramuscularElectrodeArray method)</a>
+</li>
+      <li><a href="generated/myogen.simulator.IntramuscularElectrodeArray.html#myogen.simulator.IntramuscularElectrodeArray.set_position">set_position() (myogen.simulator.IntramuscularElectrodeArray method)</a>
+</li>
       <li><a href="generated/myogen.utils.setup_myogen.html#myogen.utils.setup_myogen">setup_myogen() (in module myogen.utils)</a>
 </li>
-      <li><a href="generated/myogen.simulator.SurfaceEMG.html#myogen.simulator.SurfaceEMG.simulate_muaps">simulate_muaps() (myogen.simulator.SurfaceEMG method)</a>
+      <li><a href="generated/myogen.simulator.IntramuscularEMG.html#myogen.simulator.IntramuscularEMG.simulate_intramuscular_emg">simulate_intramuscular_emg() (myogen.simulator.IntramuscularEMG method)</a>
 </li>
-      <li><a href="generated/myogen.simulator.SurfaceEMG.html#myogen.simulator.SurfaceEMG.simulate_surface_emg">simulate_surface_emg() (myogen.simulator.SurfaceEMG method)</a>
+      <li><a href="generated/myogen.simulator.IntramuscularEMG.html#myogen.simulator.IntramuscularEMG.simulate_muaps">simulate_muaps() (myogen.simulator.IntramuscularEMG method)</a>
+
+      <ul>
+        <li><a href="generated/myogen.simulator.SurfaceEMG.html#myogen.simulator.SurfaceEMG.simulate_muaps">(myogen.simulator.SurfaceEMG method)</a>
 </li>
+      </ul></li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="generated/myogen.simulator.SurfaceEMG.html#myogen.simulator.SurfaceEMG.simulate_surface_emg">simulate_surface_emg() (myogen.simulator.SurfaceEMG method)</a>
+</li>
       <li><a href="generated/myogen.utils.types.SPIKE_TRAIN__MATRIX.html#myogen.utils.types.SPIKE_TRAIN__MATRIX">SPIKE_TRAIN__MATRIX (in module myogen.utils.types)</a>
+</li>
+      <li><a href="generated/myogen.simulator.ForceModel.html#myogen.simulator.ForceModel.spikes2sawtooth">spikes2sawtooth() (myogen.simulator.ForceModel method)</a>
 </li>
       <li><a href="generated/myogen.utils.types.SURFACE_EMG__TENSOR.html#myogen.utils.types.SURFACE_EMG__TENSOR">SURFACE_EMG__TENSOR (in module myogen.utils.types)</a>
 </li>
+      <li><a href="generated/myogen.utils.types.SURFACE_MUAP_SHAPE__TENSOR.html#myogen.utils.types.SURFACE_MUAP_SHAPE__TENSOR">SURFACE_MUAP_SHAPE__TENSOR (in module myogen.utils.types)</a>
+</li>
+      <li><a href="generated/myogen.simulator.SurfaceElectrodeArray.html#myogen.simulator.SurfaceElectrodeArray">SurfaceElectrodeArray (class in myogen.simulator)</a>
+</li>
       <li><a href="generated/myogen.simulator.SurfaceEMG.html#myogen.simulator.SurfaceEMG">SurfaceEMG (class in myogen.simulator)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="T">T</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="generated/myogen.simulator.IntramuscularElectrodeArray.html#myogen.simulator.IntramuscularElectrodeArray.traj_mixing_fun">traj_mixing_fun() (myogen.simulator.IntramuscularElectrodeArray method)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="generated/myogen.simulator.IntramuscularElectrodeArray.html#myogen.simulator.IntramuscularElectrodeArray.traj_mixing_mat">traj_mixing_mat() (myogen.simulator.IntramuscularElectrodeArray method)</a>
 </li>
   </ul></td>
 </tr></table>

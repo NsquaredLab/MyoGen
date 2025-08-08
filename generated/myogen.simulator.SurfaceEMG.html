@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>SurfaceEMG &#8212; MyoGen 0.2.0 Documentation</title>
+    <title>SurfaceEMG &#8212; MyoGen 0.3.0 Documentation</title>
   
   
   
@@ -35,7 +35,7 @@
     <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-binder.css?v=f4aeca0c" />
     <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-dataframe.css?v=2082cf3c" />
     <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
-    <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=4797f867" />
+    <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=73e2cb9d" />
   
   <!-- So that users can add custom icons -->
   <script src="../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
@@ -43,17 +43,17 @@
   <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="../_static/documentation_options.js?v=938c9ccc"></script>
+    <script src="../_static/documentation_options.js?v=e259d695"></script>
     <script src="../_static/doctools.js?v=9bcbadda"></script>
     <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'generated/myogen.simulator.SurfaceEMG';</script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="Utils Module" href="../api/utils_api.html" />
-    <link rel="prev" title="Muscle" href="myogen.simulator.Muscle.html" />
+    <link rel="next" title="IntramuscularEMG" href="myogen.simulator.IntramuscularEMG.html" />
+    <link rel="prev" title="ForceModel" href="myogen.simulator.ForceModel.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="0.2.0" />
+  <meta name="docsearch:version" content="0.3.0" />
   </head>
   
   
@@ -119,8 +119,8 @@
       
     
     
-    <img src="../_static/myogen_logo.png" class="logo__image only-light" alt="MyoGen 0.2.0 Documentation - Home"/>
-    <img src="../_static/myogen_logo.png" class="logo__image only-dark pst-js-only" alt="MyoGen 0.2.0 Documentation - Home"/>
+    <img src="../_static/myogen_logo.png" class="logo__image only-light" alt="MyoGen 0.3.0 Documentation - Home"/>
+    <img src="../_static/myogen_logo.png" class="logo__image only-dark pst-js-only" alt="MyoGen 0.3.0 Documentation - Home"/>
   
   
 </a></div>
@@ -129,7 +129,7 @@
 <div class="nav-item">
   <div class="version-switcher__container dropdown">
       <button id="version-switcher-button" type="button" class="version-switcher__button btn btn-sm navbar-btn" aria-haspopup="true" aria-expanded="false">
-          Version 0.2.0
+          Version 0.3.0
       </button>
       
       
@@ -313,7 +313,11 @@
 <li class="toctree-l2"><a class="reference internal" href="myogen.simulator.generate_mu_recruitment_thresholds.html">generate_mu_recruitment_thresholds</a></li>
 <li class="toctree-l2"><a class="reference internal" href="myogen.simulator.MotorNeuronPool.html">MotorNeuronPool</a></li>
 <li class="toctree-l2"><a class="reference internal" href="myogen.simulator.Muscle.html">Muscle</a></li>
+<li class="toctree-l2"><a class="reference internal" href="myogen.simulator.ForceModel.html">ForceModel</a></li>
 <li class="toctree-l2 current active"><a class="current reference internal" href="#">SurfaceEMG</a></li>
+<li class="toctree-l2"><a class="reference internal" href="myogen.simulator.IntramuscularEMG.html">IntramuscularEMG</a></li>
+<li class="toctree-l2"><a class="reference internal" href="myogen.simulator.SurfaceElectrodeArray.html">SurfaceElectrodeArray</a></li>
+<li class="toctree-l2"><a class="reference internal" href="myogen.simulator.IntramuscularElectrodeArray.html">IntramuscularElectrodeArray</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../api/utils_api.html">Utils Module</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -337,9 +341,12 @@
 </details></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="../api/types_api.html">Type Definitions</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l3"><a class="reference internal" href="myogen.utils.types.INPUT_CURRENT__MATRIX.html">INPUT_CURRENT__MATRIX</a></li>
+<li class="toctree-l3"><a class="reference internal" href="myogen.utils.types.CORTICAL_INPUT__MATRIX.html">CORTICAL_INPUT__MATRIX</a></li>
 <li class="toctree-l3"><a class="reference internal" href="myogen.utils.types.SPIKE_TRAIN__MATRIX.html">SPIKE_TRAIN__MATRIX</a></li>
-<li class="toctree-l3"><a class="reference internal" href="myogen.utils.types.MUAP_SHAPE__TENSOR.html">MUAP_SHAPE__TENSOR</a></li>
+<li class="toctree-l3"><a class="reference internal" href="myogen.utils.types.SURFACE_MUAP_SHAPE__TENSOR.html">SURFACE_MUAP_SHAPE__TENSOR</a></li>
+<li class="toctree-l3"><a class="reference internal" href="myogen.utils.types.INTRAMUSCULAR_MUAP_SHAPE__TENSOR.html">INTRAMUSCULAR_MUAP_SHAPE__TENSOR</a></li>
 <li class="toctree-l3"><a class="reference internal" href="myogen.utils.types.SURFACE_EMG__TENSOR.html">SURFACE_EMG__TENSOR</a></li>
+<li class="toctree-l3"><a class="reference internal" href="myogen.utils.types.INTRAMUSCULAR_EMG__TENSOR.html">INTRAMUSCULAR_EMG__TENSOR</a></li>
 </ul>
 </details></li>
 </ul>
@@ -417,16 +424,11 @@
 <p>This class provides a simulation framework for generating
 surface electromyography signals from the muscle. It implements the
 multi-layered cylindrical volume conductor model from Farina et al. 2004 <a class="footnote-reference brackets" href="#id2" id="id1" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a>.</p>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>All default values are set to simulate the first dorsal interosseous muscle (FDI) of the hand.
-Change all physiological parameters to simulate other muscles.</p>
-</div>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>muscle_model</strong> (<a class="reference internal" href="myogen.simulator.Muscle.html#myogen.simulator.Muscle" title="myogen.simulator.Muscle"><code class="xref py py-class docutils literal notranslate"><span class="pre">Muscle</span></code></a>) – Pre-computed muscle model (see <a class="reference internal" href="myogen.simulator.Muscle.html#myogen.simulator.Muscle" title="myogen.simulator.Muscle"><code class="xref py py-class docutils literal notranslate"><span class="pre">myogen.simulator.Muscle</span></code></a>).</p></li>
-<li><p><strong>electrode_arrays</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">list[SurfaceElectrodeArray]</span></code>) – List of electrode arrays to use for simulation (see <code class="xref py py-class docutils literal notranslate"><span class="pre">myogen.simulator.SurfaceElectrodeArray</span></code>).</p></li>
+<li><p><strong>electrode_arrays</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">list[SurfaceElectrodeArray]</span></code>) – List of electrode arrays to use for simulation (see <a class="reference internal" href="myogen.simulator.SurfaceElectrodeArray.html#myogen.simulator.SurfaceElectrodeArray" title="myogen.simulator.SurfaceElectrodeArray"><code class="xref py py-class docutils literal notranslate"><span class="pre">myogen.simulator.SurfaceElectrodeArray</span></code></a>).</p></li>
 <li><p><strong>sampling_frequency__Hz</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a>, <em>default</em> <code class="docutils literal notranslate"><span class="pre">2048.0</span></code>) – Sampling frequency in Hz. Default is set to 2048 Hz as used by the Quattrocento (OT Bioelettronica, Turin, Italy) system.</p></li>
 <li><p><strong>sampling_points_in_t_and_z_domains</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>, <em>default</em> <code class="docutils literal notranslate"><span class="pre">256</span></code>) – Spatial and temporal discretization resolution for numerical integration.
 Controls the accuracy of the volume conductor calculations but significantly
@@ -498,7 +500,7 @@ Indices correspond to the recruitment order (0 is recruited first).</p></li>
 <dd class="field-odd"><p>List of generated MUAP templates for each electrode array.</p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">list[MUAP_SHAPE__TENSOR]</span></code></p>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">list[SURFACE_MUAP_SHAPE__TENSOR]</span></code></p>
 </dd>
 </dl>
 </dd></dl>

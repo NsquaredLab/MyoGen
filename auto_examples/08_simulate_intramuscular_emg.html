@@ -1,0 +1,1488 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Intramuscular EMG Signals &#8212; MyoGen 0.3.0 Documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery.css?v=d2d258e8" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-binder.css?v=f4aeca0c" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+    <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=73e2cb9d" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="../_static/documentation_options.js?v=e259d695"></script>
+    <script src="../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'auto_examples/08_simulate_intramuscular_emg';</script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="prev" title="Cortical Inputs and Motor Unit Spike Trains" href="07_simulate_cortical_input.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="0.3.0" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class=" navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../_static/myogen_logo.png" class="logo__image only-light" alt="MyoGen 0.3.0 Documentation - Home"/>
+    <img src="../_static/myogen_logo.png" class="logo__image only-dark pst-js-only" alt="MyoGen 0.3.0 Documentation - Home"/>
+  
+  
+</a></div>
+    
+      <div class="navbar-item">
+<div class="nav-item">
+  <div class="version-switcher__container dropdown">
+      <button id="version-switcher-button" type="button" class="version-switcher__button btn btn-sm navbar-btn" aria-haspopup="true" aria-expanded="false">
+          Version 0.3.0
+      </button>
+      
+      
+      
+  </div>
+</div> </div>
+    
+      <div class="navbar-item"><div class="nav-item">
+   <span>
+      made at the <a href="https://www.nsquared.tf.fau.de/" target="_blank">N² Lab</a>
+   </span>
+</div> </div>
+    
+  </div>
+  
+  <div class=" navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../api/index.html">
+    API Documentation
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="index.html">
+    Examples
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/NSquaredLab/MyoGen" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+    </div>
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../api/index.html">
+    API Documentation
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="index.html">
+    Examples
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/NSquaredLab/MyoGen" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+<nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"><ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="00_simulate_recruitment_thresholds.html">Recruitment Thresholds</a></li>
+<li class="toctree-l1"><a class="reference internal" href="01_simulate_spike_trains.html">Motor Unit Spike Trains</a></li>
+<li class="toctree-l1"><a class="reference internal" href="02_simulate_muscle.html">Muscle Model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="03_simulate_surface_muaps.html">Surface Motor Unit Action Potentials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="04_simulate_surface_emg.html">Surface EMG Signals</a></li>
+<li class="toctree-l1"><a class="reference internal" href="05_simulate_currents.html">Current Generation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="06_simulate_force.html">Force Generation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="07_simulate_cortical_input.html">Cortical Inputs and Motor Unit Spike Trains</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Intramuscular EMG Signals</a></li>
+</ul>
+</div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="index.html" class="nav-link">Examples</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Intramuscular EMG Signals</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <div class="sphx-glr-download-link-note admonition note">
+<p class="admonition-title">Note</p>
+<p><a class="reference internal" href="#sphx-glr-download-auto-examples-08-simulate-intramuscular-emg-py"><span class="std std-ref">Go to the end</span></a>
+to download the full example code.</p>
+</div>
+<section class="sphx-glr-example-title" id="intramuscular-emg-signals">
+<span id="sphx-glr-auto-examples-08-simulate-intramuscular-emg-py"></span><h1>Intramuscular EMG Signals<a class="headerlink" href="#intramuscular-emg-signals" title="Link to this heading">#</a></h1>
+<p>This example demonstrates how to simulate <strong>intramuscular EMG signals</strong> using
+needle electrodes. It shows the complete pipeline from muscle model creation
+to EMG signal generation with realistic noise and motor unit detectability.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><strong>Intramuscular EMG</strong> (iEMG) is recorded using needle electrodes inserted
+directly into the muscle tissue. This provides high spatial resolution
+and allows for the detection of individual motor unit action potentials
+(MUAPs). Unlike surface EMG, intramuscular recordings can capture the
+activity of deeper motor units and provide better selectivity.</p>
+</div>
+<dl class="simple">
+<dt>Key Features:</dt><dd><ul class="simple">
+<li><p><strong>High spatial resolution</strong>: Needle electrodes can detect individual MUAPs</p></li>
+<li><p><strong>Deep muscle access</strong>: Can record from muscles not accessible by surface electrodes</p></li>
+<li><p><strong>Motor unit discrimination</strong>: Individual motor units can be identified and tracked</p></li>
+<li><p><strong>Realistic noise modeling</strong>: Includes physiological noise and recording artifacts</p></li>
+</ul>
+</dd>
+</dl>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span>
+</pre></div>
+</div>
+<section id="import-libraries">
+<h2>Import Libraries<a class="headerlink" href="#import-libraries" title="Link to this heading">#</a></h2>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">joblib</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">seaborn</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">sns</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">myogen</span><span class="w"> </span><span class="kn">import</span> <span class="n">simulator</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">myogen.utils.currents</span><span class="w"> </span><span class="kn">import</span> <span class="n">create_sinusoidal_current</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">myogen.utils.plotting.spikes</span><span class="w"> </span><span class="kn">import</span> <span class="n">plot_spike_trains</span>
+</pre></div>
+</div>
+</section>
+<section id="define-parameters">
+<h2>Define Parameters<a class="headerlink" href="#define-parameters" title="Link to this heading">#</a></h2>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Simulation parameters</span>
+<a href="https://docs.python.org/3/library/functions.html#int" title="builtins.int" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">N_motor_units</span></a> <span class="o">=</span> <span class="mi">25</span>  <span class="c1"># Smaller number for faster computation</span>
+<a href="https://docs.python.org/3/library/functions.html#float" title="builtins.float" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">recruitment_range</span></a> <span class="o">=</span> <span class="mf">50.0</span>
+
+<span class="c1"># Electrode parameters</span>
+<a href="https://docs.python.org/3/library/functions.html#float" title="builtins.float" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">inter_electrode_distance</span></a> <span class="o">=</span> <span class="mf">0.5</span>  <span class="c1"># mm</span>
+<a href="https://docs.python.org/3/library/stdtypes.html#tuple" title="builtins.tuple" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">electrode_position</span></a> <span class="o">=</span> <span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)</span>  <span class="c1"># mm (start of muscle)</span>
+</pre></div>
+</div>
+</section>
+<section id="generate-motor-unit-recruitment-thresholds">
+<h2>Generate Motor Unit Recruitment Thresholds<a class="headerlink" href="#generate-motor-unit-recruitment-thresholds" title="Link to this heading">#</a></h2>
+<p>First, we generate the <strong>recruitment thresholds</strong> for the motor unit pool.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><a href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">thresholds</span></a><span class="p">,</span> <a href="https://docs.python.org/3/library/stdtypes.html#list" title="builtins.list" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">_</span></a> <span class="o">=</span> <span class="n">simulator</span><span class="o">.</span><span class="n">generate_mu_recruitment_thresholds</span><span class="p">(</span>
+    <span class="n">N</span><span class="o">=</span><a href="https://docs.python.org/3/library/functions.html#int" title="builtins.int" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">N_motor_units</span></a><span class="p">,</span>
+    <a href="https://docs.python.org/3/library/functions.html#float" title="builtins.float" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">recruitment_range</span></a><span class="o">=</span><a href="https://docs.python.org/3/library/functions.html#float" title="builtins.float" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">recruitment_range</span></a><span class="p">,</span>
+    <span class="n">deluca__slope</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span>
+    <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;combined&quot;</span>
+<span class="p">)</span>
+
+<a href="https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.figure.html#matplotlib.pyplot.figure" title="matplotlib.pyplot.figure" class="sphx-glr-backref-module-matplotlib-pyplot sphx-glr-backref-type-py-function"><span class="n">plt</span><span class="o">.</span><span class="n">figure</span></a><span class="p">()</span>
+<a href="https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.plot.html#matplotlib.pyplot.plot" title="matplotlib.pyplot.plot" class="sphx-glr-backref-module-matplotlib-pyplot sphx-glr-backref-type-py-function"><span class="n">plt</span><span class="o">.</span><span class="n">plot</span></a><span class="p">(</span><a href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">thresholds</span></a><span class="p">,</span> <span class="s2">&quot;o&quot;</span><span class="p">)</span>
+<a href="https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.tight_layout.html#matplotlib.pyplot.tight_layout" title="matplotlib.pyplot.tight_layout" class="sphx-glr-backref-module-matplotlib-pyplot sphx-glr-backref-type-py-function"><span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span></a><span class="p">()</span>
+<a href="https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.show.html#matplotlib.pyplot.show" title="matplotlib.pyplot.show" class="sphx-glr-backref-module-matplotlib-pyplot sphx-glr-backref-type-py-function"><span class="n">plt</span><span class="o">.</span><span class="n">show</span></a><span class="p">()</span>
+</pre></div>
+</div>
+<img src="../_images/sphx_glr_08_simulate_intramuscular_emg_001.png" srcset="../_images/sphx_glr_08_simulate_intramuscular_emg_001.png" alt="08 simulate intramuscular emg" class = "sphx-glr-single-img"/></section>
+<section id="load-muscle-model">
+<h2>Load Muscle Model<a class="headerlink" href="#load-muscle-model" title="Link to this heading">#</a></h2>
+<p>Load the <strong>muscle model</strong> with the generated recruitment thresholds.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">muscle</span> <span class="o">=</span> <span class="n">joblib</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s2">&quot;results/muscle_model.pkl&quot;</span><span class="p">)</span>
+<a href="https://docs.python.org/3/library/functions.html#int" title="builtins.int" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">muscle</span><span class="o">.</span><span class="n">length__mm</span></a> <span class="o">=</span> <span class="mi">30</span>
+</pre></div>
+</div>
+</section>
+<section id="create-intramuscular-electrode-array">
+<h2>Create Intramuscular Electrode Array<a class="headerlink" href="#create-intramuscular-electrode-array" title="Link to this heading">#</a></h2>
+<p>Set up a <strong>differential needle electrode</strong> for intramuscular recordings.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">electrode</span> <span class="o">=</span> <span class="n">simulator</span><span class="o">.</span><span class="n">IntramuscularElectrodeArray</span><span class="p">(</span>
+    <span class="n">num_electrodes</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span>
+    <span class="n">inter_electrode_distance__mm</span><span class="o">=</span><a href="https://docs.python.org/3/library/functions.html#float" title="builtins.float" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">inter_electrode_distance</span></a><span class="p">,</span>
+    <span class="n">differentiation_mode</span><span class="o">=</span><span class="s2">&quot;consecutive&quot;</span><span class="p">,</span>
+    <span class="n">position__mm</span><span class="o">=</span><a href="https://docs.python.org/3/library/stdtypes.html#tuple" title="builtins.tuple" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">electrode_position</span></a><span class="p">,</span>
+    <span class="n">orientation__rad</span><span class="o">=</span><span class="p">(</span><span class="o">-</span><a href="https://docs.python.org/3/library/functions.html#float" title="builtins.float" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">np</span><span class="o">.</span><span class="n">pi</span></a> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="o">-</span><a href="https://docs.python.org/3/library/functions.html#float" title="builtins.float" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">np</span><span class="o">.</span><span class="n">pi</span></a> <span class="o">/</span> <span class="mi">2</span><span class="p">),</span>  <span class="c1"># perpendicular to muscle</span>
+    <span class="n">trajectory_distance__mm</span><span class="o">=</span><span class="mf">0.125</span><span class="p">,</span>  <span class="c1"># mm</span>
+    <span class="n">trajectory_steps</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>  <span class="c1"># number of steps</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="initialize-intramuscular-emg-simulator">
+<h2>Initialize Intramuscular EMG Simulator<a class="headerlink" href="#initialize-intramuscular-emg-simulator" title="Link to this heading">#</a></h2>
+<p>Create the <strong>intramuscular EMG simulator</strong> with the muscle model and electrode.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Initializing iEMG simulator...&quot;</span><span class="p">)</span>
+<span class="n">iemg_sim</span> <span class="o">=</span> <span class="n">simulator</span><span class="o">.</span><span class="n">IntramuscularEMG</span><span class="p">(</span>
+    <span class="n">muscle_model</span><span class="o">=</span><span class="n">muscle</span><span class="p">,</span>
+    <span class="n">electrode_array</span><span class="o">=</span><span class="n">electrode</span><span class="p">,</span>
+    <span class="n">MUs_to_simulate</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <a href="https://docs.python.org/3/library/functions.html#int" title="builtins.int" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">N_motor_units</span></a><span class="p">,</span> <span class="mi">3</span><span class="p">)),</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Initializing iEMG simulator...
+</pre></div>
+</div>
+</section>
+<section id="calculate-motor-unit-action-potentials">
+<h2>Calculate Motor Unit Action Potentials<a class="headerlink" href="#calculate-motor-unit-action-potentials" title="Link to this heading">#</a></h2>
+<p>Compute the <strong>MUAPs</strong> for each motor unit at the electrode positions.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Computing motor unit action potentials...&quot;</span><span class="p">)</span>
+<span class="n">iemg_sim</span><span class="o">.</span><span class="n">simulate_muaps</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  - Generated MUAPs for </span><span class="si">{</span><a href="https://docs.python.org/3/library/functions.html#int" title="builtins.int" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">N_motor_units</span></a><span class="si">}</span><span class="s2"> motor units&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  - Electrode array with </span><span class="si">{</span><a href="https://docs.python.org/3/library/functions.html#int" title="builtins.int" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">electrode</span><span class="o">.</span><span class="n">num_electrodes</span></a><span class="si">}</span><span class="s2"> electrodes&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Computing motor unit action potentials...
+
+Creating motor unit simulators:   0%|          | 0/9 [00:00&lt;?, ?Simulator/s]
+Creating motor unit simulators: 100%|██████████| 9/9 [00:00&lt;00:00, 6361.43Simulator/s]
+
+Setting up NMJ distributions:   0%|          | 0/9 [00:00&lt;?, ?Simulator/s]
+Setting up NMJ distributions:  33%|███▎      | 3/9 [00:00&lt;00:00, 18.47Simulator/s]
+Setting up NMJ distributions:  56%|█████▌    | 5/9 [00:00&lt;00:00, 18.25Simulator/s]
+Setting up NMJ distributions:  78%|███████▊  | 7/9 [00:00&lt;00:00, 17.45Simulator/s]
+Setting up NMJ distributions: 100%|██████████| 9/9 [00:00&lt;00:00, 14.44Simulator/s]
+Setting up NMJ distributions: 100%|██████████| 9/9 [00:00&lt;00:00, 15.66Simulator/s]
+
+MU 0: Calculating SFAPs:   0%|          | 0/46 [00:00&lt;?, ?fiber/s]
+MU 0: Calculating SFAPs:  28%|██▊       | 13/46 [00:00&lt;00:00, 126.97fiber/s]
+MU 0: Calculating SFAPs:  59%|█████▊    | 27/46 [00:00&lt;00:00, 130.85fiber/s]
+MU 0: Calculating SFAPs:  89%|████████▉ | 41/46 [00:00&lt;00:00, 132.23fiber/s]
+MU 0: Calculating SFAPs: 100%|██████████| 46/46 [00:00&lt;00:00, 131.71fiber/s]
+
+MU 1: Calculating SFAPs:   0%|          | 0/202 [00:00&lt;?, ?fiber/s]
+MU 1: Calculating SFAPs:   6%|▋         | 13/202 [00:00&lt;00:01, 125.94fiber/s]
+MU 1: Calculating SFAPs:  13%|█▎        | 26/202 [00:00&lt;00:01, 125.77fiber/s]
+MU 1: Calculating SFAPs:  19%|█▉        | 39/202 [00:00&lt;00:01, 125.74fiber/s]
+MU 1: Calculating SFAPs:  26%|██▌       | 52/202 [00:00&lt;00:01, 125.71fiber/s]
+MU 1: Calculating SFAPs:  32%|███▏      | 65/202 [00:00&lt;00:01, 125.76fiber/s]
+MU 1: Calculating SFAPs:  39%|███▊      | 78/202 [00:00&lt;00:00, 125.38fiber/s]
+MU 1: Calculating SFAPs:  45%|████▌     | 91/202 [00:00&lt;00:00, 125.60fiber/s]
+MU 1: Calculating SFAPs:  51%|█████▏    | 104/202 [00:00&lt;00:00, 125.70fiber/s]
+MU 1: Calculating SFAPs:  58%|█████▊    | 117/202 [00:00&lt;00:00, 125.83fiber/s]
+MU 1: Calculating SFAPs:  64%|██████▍   | 130/202 [00:01&lt;00:00, 125.80fiber/s]
+MU 1: Calculating SFAPs:  71%|███████   | 143/202 [00:01&lt;00:00, 126.05fiber/s]
+MU 1: Calculating SFAPs:  77%|███████▋  | 156/202 [00:01&lt;00:00, 125.89fiber/s]
+MU 1: Calculating SFAPs:  84%|████████▎ | 169/202 [00:01&lt;00:00, 125.97fiber/s]
+MU 1: Calculating SFAPs:  90%|█████████ | 182/202 [00:01&lt;00:00, 126.08fiber/s]
+MU 1: Calculating SFAPs:  97%|█████████▋| 195/202 [00:01&lt;00:00, 126.25fiber/s]
+MU 1: Calculating SFAPs: 100%|██████████| 202/202 [00:01&lt;00:00, 125.84fiber/s]
+
+MU 2: Calculating SFAPs:   0%|          | 0/341 [00:00&lt;?, ?fiber/s]
+MU 2: Calculating SFAPs:   4%|▍         | 13/341 [00:00&lt;00:02, 127.90fiber/s]
+MU 2: Calculating SFAPs:   8%|▊         | 26/341 [00:00&lt;00:02, 128.81fiber/s]
+MU 2: Calculating SFAPs:  12%|█▏        | 40/341 [00:00&lt;00:02, 129.36fiber/s]
+MU 2: Calculating SFAPs:  16%|█▌        | 54/341 [00:00&lt;00:02, 129.80fiber/s]
+MU 2: Calculating SFAPs:  20%|█▉        | 68/341 [00:00&lt;00:02, 129.96fiber/s]
+MU 2: Calculating SFAPs:  24%|██▍       | 81/341 [00:00&lt;00:02, 129.81fiber/s]
+MU 2: Calculating SFAPs:  28%|██▊       | 94/341 [00:00&lt;00:01, 129.70fiber/s]
+MU 2: Calculating SFAPs:  31%|███▏      | 107/341 [00:00&lt;00:01, 129.71fiber/s]
+MU 2: Calculating SFAPs:  35%|███▌      | 120/341 [00:00&lt;00:01, 129.63fiber/s]
+MU 2: Calculating SFAPs:  39%|███▉      | 134/341 [00:01&lt;00:01, 129.82fiber/s]
+MU 2: Calculating SFAPs:  43%|████▎     | 148/341 [00:01&lt;00:01, 129.96fiber/s]
+MU 2: Calculating SFAPs:  47%|████▋     | 161/341 [00:01&lt;00:01, 129.94fiber/s]
+MU 2: Calculating SFAPs:  51%|█████▏    | 175/341 [00:01&lt;00:01, 130.13fiber/s]
+MU 2: Calculating SFAPs:  55%|█████▌    | 189/341 [00:01&lt;00:01, 130.22fiber/s]
+MU 2: Calculating SFAPs:  60%|█████▉    | 203/341 [00:01&lt;00:01, 130.03fiber/s]
+MU 2: Calculating SFAPs:  64%|██████▎   | 217/341 [00:01&lt;00:00, 130.01fiber/s]
+MU 2: Calculating SFAPs:  68%|██████▊   | 231/341 [00:01&lt;00:00, 130.27fiber/s]
+MU 2: Calculating SFAPs:  72%|███████▏  | 245/341 [00:01&lt;00:00, 129.78fiber/s]
+MU 2: Calculating SFAPs:  76%|███████▌  | 258/341 [00:01&lt;00:00, 128.77fiber/s]
+MU 2: Calculating SFAPs:  79%|███████▉  | 271/341 [00:02&lt;00:00, 127.92fiber/s]
+MU 2: Calculating SFAPs:  83%|████████▎ | 284/341 [00:02&lt;00:00, 128.29fiber/s]
+MU 2: Calculating SFAPs:  87%|████████▋ | 298/341 [00:02&lt;00:00, 128.89fiber/s]
+MU 2: Calculating SFAPs:  91%|█████████▏| 312/341 [00:02&lt;00:00, 129.41fiber/s]
+MU 2: Calculating SFAPs:  95%|█████████▌| 325/341 [00:02&lt;00:00, 129.56fiber/s]
+MU 2: Calculating SFAPs:  99%|█████████▉| 339/341 [00:02&lt;00:00, 129.86fiber/s]
+MU 2: Calculating SFAPs: 100%|██████████| 341/341 [00:02&lt;00:00, 129.57fiber/s]
+
+MU 3: Calculating SFAPs:   0%|          | 0/886 [00:00&lt;?, ?fiber/s]
+MU 3: Calculating SFAPs:   1%|▏         | 13/886 [00:00&lt;00:07, 121.98fiber/s]
+MU 3: Calculating SFAPs:   3%|▎         | 26/886 [00:00&lt;00:07, 122.72fiber/s]
+MU 3: Calculating SFAPs:   4%|▍         | 39/886 [00:00&lt;00:06, 123.33fiber/s]
+MU 3: Calculating SFAPs:   6%|▌         | 52/886 [00:00&lt;00:06, 122.98fiber/s]
+MU 3: Calculating SFAPs:   7%|▋         | 65/886 [00:00&lt;00:06, 123.50fiber/s]
+MU 3: Calculating SFAPs:   9%|▉         | 78/886 [00:00&lt;00:06, 123.90fiber/s]
+MU 3: Calculating SFAPs:  10%|█         | 91/886 [00:00&lt;00:06, 124.01fiber/s]
+MU 3: Calculating SFAPs:  12%|█▏        | 104/886 [00:00&lt;00:06, 124.09fiber/s]
+MU 3: Calculating SFAPs:  13%|█▎        | 117/886 [00:00&lt;00:06, 124.24fiber/s]
+MU 3: Calculating SFAPs:  15%|█▍        | 130/886 [00:01&lt;00:06, 124.15fiber/s]
+MU 3: Calculating SFAPs:  16%|█▌        | 143/886 [00:01&lt;00:06, 123.49fiber/s]
+MU 3: Calculating SFAPs:  18%|█▊        | 156/886 [00:01&lt;00:05, 123.88fiber/s]
+MU 3: Calculating SFAPs:  19%|█▉        | 169/886 [00:01&lt;00:05, 124.07fiber/s]
+MU 3: Calculating SFAPs:  21%|██        | 182/886 [00:01&lt;00:05, 124.18fiber/s]
+MU 3: Calculating SFAPs:  22%|██▏       | 195/886 [00:01&lt;00:05, 124.29fiber/s]
+MU 3: Calculating SFAPs:  23%|██▎       | 208/886 [00:01&lt;00:05, 124.42fiber/s]
+MU 3: Calculating SFAPs:  25%|██▍       | 221/886 [00:01&lt;00:05, 124.35fiber/s]
+MU 3: Calculating SFAPs:  26%|██▋       | 234/886 [00:01&lt;00:05, 124.35fiber/s]
+MU 3: Calculating SFAPs:  28%|██▊       | 247/886 [00:01&lt;00:05, 124.42fiber/s]
+MU 3: Calculating SFAPs:  29%|██▉       | 260/886 [00:02&lt;00:05, 124.60fiber/s]
+MU 3: Calculating SFAPs:  31%|███       | 273/886 [00:02&lt;00:04, 124.43fiber/s]
+MU 3: Calculating SFAPs:  32%|███▏      | 286/886 [00:02&lt;00:04, 124.35fiber/s]
+MU 3: Calculating SFAPs:  34%|███▎      | 299/886 [00:02&lt;00:04, 124.13fiber/s]
+MU 3: Calculating SFAPs:  35%|███▌      | 312/886 [00:02&lt;00:04, 123.73fiber/s]
+MU 3: Calculating SFAPs:  37%|███▋      | 325/886 [00:02&lt;00:04, 123.59fiber/s]
+MU 3: Calculating SFAPs:  38%|███▊      | 338/886 [00:02&lt;00:04, 123.32fiber/s]
+MU 3: Calculating SFAPs:  40%|███▉      | 351/886 [00:02&lt;00:04, 122.99fiber/s]
+MU 3: Calculating SFAPs:  41%|████      | 364/886 [00:02&lt;00:04, 122.86fiber/s]
+MU 3: Calculating SFAPs:  43%|████▎     | 377/886 [00:03&lt;00:04, 122.81fiber/s]
+MU 3: Calculating SFAPs:  44%|████▍     | 390/886 [00:03&lt;00:04, 122.25fiber/s]
+MU 3: Calculating SFAPs:  45%|████▌     | 403/886 [00:03&lt;00:03, 122.29fiber/s]
+MU 3: Calculating SFAPs:  47%|████▋     | 416/886 [00:03&lt;00:03, 122.26fiber/s]
+MU 3: Calculating SFAPs:  48%|████▊     | 429/886 [00:03&lt;00:03, 122.39fiber/s]
+MU 3: Calculating SFAPs:  50%|████▉     | 442/886 [00:03&lt;00:03, 122.51fiber/s]
+MU 3: Calculating SFAPs:  51%|█████▏    | 455/886 [00:03&lt;00:03, 122.24fiber/s]
+MU 3: Calculating SFAPs:  53%|█████▎    | 468/886 [00:03&lt;00:03, 122.31fiber/s]
+MU 3: Calculating SFAPs:  54%|█████▍    | 481/886 [00:03&lt;00:03, 122.48fiber/s]
+MU 3: Calculating SFAPs:  56%|█████▌    | 494/886 [00:04&lt;00:03, 122.35fiber/s]
+MU 3: Calculating SFAPs:  57%|█████▋    | 507/886 [00:04&lt;00:03, 122.45fiber/s]
+MU 3: Calculating SFAPs:  59%|█████▊    | 520/886 [00:04&lt;00:02, 122.44fiber/s]
+MU 3: Calculating SFAPs:  60%|██████    | 533/886 [00:04&lt;00:02, 122.41fiber/s]
+MU 3: Calculating SFAPs:  62%|██████▏   | 546/886 [00:04&lt;00:02, 122.51fiber/s]
+MU 3: Calculating SFAPs:  63%|██████▎   | 559/886 [00:04&lt;00:02, 122.61fiber/s]
+MU 3: Calculating SFAPs:  65%|██████▍   | 572/886 [00:04&lt;00:02, 122.69fiber/s]
+MU 3: Calculating SFAPs:  66%|██████▌   | 585/886 [00:04&lt;00:02, 122.69fiber/s]
+MU 3: Calculating SFAPs:  67%|██████▋   | 598/886 [00:04&lt;00:02, 122.67fiber/s]
+MU 3: Calculating SFAPs:  69%|██████▉   | 611/886 [00:04&lt;00:02, 122.78fiber/s]
+MU 3: Calculating SFAPs:  70%|███████   | 624/886 [00:05&lt;00:02, 122.77fiber/s]
+MU 3: Calculating SFAPs:  72%|███████▏  | 637/886 [00:05&lt;00:02, 122.43fiber/s]
+MU 3: Calculating SFAPs:  73%|███████▎  | 650/886 [00:05&lt;00:01, 122.52fiber/s]
+MU 3: Calculating SFAPs:  75%|███████▍  | 663/886 [00:05&lt;00:01, 122.53fiber/s]
+MU 3: Calculating SFAPs:  76%|███████▋  | 676/886 [00:05&lt;00:01, 122.49fiber/s]
+MU 3: Calculating SFAPs:  78%|███████▊  | 689/886 [00:05&lt;00:01, 122.63fiber/s]
+MU 3: Calculating SFAPs:  79%|███████▉  | 702/886 [00:05&lt;00:01, 122.72fiber/s]
+MU 3: Calculating SFAPs:  81%|████████  | 715/886 [00:05&lt;00:01, 122.82fiber/s]
+MU 3: Calculating SFAPs:  82%|████████▏ | 728/886 [00:05&lt;00:01, 122.48fiber/s]
+MU 3: Calculating SFAPs:  84%|████████▎ | 741/886 [00:06&lt;00:01, 122.53fiber/s]
+MU 3: Calculating SFAPs:  85%|████████▌ | 754/886 [00:06&lt;00:01, 122.33fiber/s]
+MU 3: Calculating SFAPs:  87%|████████▋ | 767/886 [00:06&lt;00:00, 122.12fiber/s]
+MU 3: Calculating SFAPs:  88%|████████▊ | 780/886 [00:06&lt;00:00, 122.21fiber/s]
+MU 3: Calculating SFAPs:  90%|████████▉ | 793/886 [00:06&lt;00:00, 122.28fiber/s]
+MU 3: Calculating SFAPs:  91%|█████████ | 806/886 [00:06&lt;00:00, 122.41fiber/s]
+MU 3: Calculating SFAPs:  92%|█████████▏| 819/886 [00:06&lt;00:00, 122.59fiber/s]
+MU 3: Calculating SFAPs:  94%|█████████▍| 832/886 [00:06&lt;00:00, 122.59fiber/s]
+MU 3: Calculating SFAPs:  95%|█████████▌| 845/886 [00:06&lt;00:00, 122.57fiber/s]
+MU 3: Calculating SFAPs:  97%|█████████▋| 858/886 [00:06&lt;00:00, 122.60fiber/s]
+MU 3: Calculating SFAPs:  98%|█████████▊| 871/886 [00:07&lt;00:00, 122.55fiber/s]
+MU 3: Calculating SFAPs: 100%|█████████▉| 884/886 [00:07&lt;00:00, 122.15fiber/s]
+MU 3: Calculating SFAPs: 100%|██████████| 886/886 [00:07&lt;00:00, 122.99fiber/s]
+
+MU 4: Calculating SFAPs:   0%|          | 0/1152 [00:00&lt;?, ?fiber/s]
+MU 4: Calculating SFAPs:   1%|          | 12/1152 [00:00&lt;00:10, 112.29fiber/s]
+MU 4: Calculating SFAPs:   2%|▏         | 24/1152 [00:00&lt;00:09, 115.13fiber/s]
+MU 4: Calculating SFAPs:   3%|▎         | 36/1152 [00:00&lt;00:09, 115.98fiber/s]
+MU 4: Calculating SFAPs:   4%|▍         | 48/1152 [00:00&lt;00:09, 116.82fiber/s]
+MU 4: Calculating SFAPs:   5%|▌         | 60/1152 [00:00&lt;00:09, 117.06fiber/s]
+MU 4: Calculating SFAPs:   6%|▋         | 72/1152 [00:00&lt;00:09, 116.92fiber/s]
+MU 4: Calculating SFAPs:   7%|▋         | 84/1152 [00:00&lt;00:09, 117.15fiber/s]
+MU 4: Calculating SFAPs:   8%|▊         | 96/1152 [00:00&lt;00:08, 117.48fiber/s]
+MU 4: Calculating SFAPs:   9%|▉         | 108/1152 [00:00&lt;00:08, 117.48fiber/s]
+MU 4: Calculating SFAPs:  10%|█         | 120/1152 [00:01&lt;00:08, 117.74fiber/s]
+MU 4: Calculating SFAPs:  11%|█▏        | 132/1152 [00:01&lt;00:08, 117.22fiber/s]
+MU 4: Calculating SFAPs:  12%|█▎        | 144/1152 [00:01&lt;00:08, 117.04fiber/s]
+MU 4: Calculating SFAPs:  14%|█▎        | 156/1152 [00:01&lt;00:08, 116.87fiber/s]
+MU 4: Calculating SFAPs:  15%|█▍        | 168/1152 [00:01&lt;00:08, 117.15fiber/s]
+MU 4: Calculating SFAPs:  16%|█▌        | 180/1152 [00:01&lt;00:08, 117.22fiber/s]
+MU 4: Calculating SFAPs:  17%|█▋        | 192/1152 [00:01&lt;00:08, 117.06fiber/s]
+MU 4: Calculating SFAPs:  18%|█▊        | 204/1152 [00:01&lt;00:08, 116.87fiber/s]
+MU 4: Calculating SFAPs:  19%|█▉        | 216/1152 [00:01&lt;00:08, 116.86fiber/s]
+MU 4: Calculating SFAPs:  20%|█▉        | 228/1152 [00:01&lt;00:07, 116.92fiber/s]
+MU 4: Calculating SFAPs:  21%|██        | 240/1152 [00:02&lt;00:07, 117.27fiber/s]
+MU 4: Calculating SFAPs:  22%|██▏       | 252/1152 [00:02&lt;00:07, 117.31fiber/s]
+MU 4: Calculating SFAPs:  23%|██▎       | 264/1152 [00:02&lt;00:07, 117.30fiber/s]
+MU 4: Calculating SFAPs:  24%|██▍       | 276/1152 [00:02&lt;00:07, 117.24fiber/s]
+MU 4: Calculating SFAPs:  25%|██▌       | 288/1152 [00:02&lt;00:07, 117.26fiber/s]
+MU 4: Calculating SFAPs:  26%|██▌       | 300/1152 [00:02&lt;00:07, 117.32fiber/s]
+MU 4: Calculating SFAPs:  27%|██▋       | 312/1152 [00:02&lt;00:07, 117.31fiber/s]
+MU 4: Calculating SFAPs:  28%|██▊       | 324/1152 [00:02&lt;00:07, 117.41fiber/s]
+MU 4: Calculating SFAPs:  29%|██▉       | 336/1152 [00:02&lt;00:06, 117.11fiber/s]
+MU 4: Calculating SFAPs:  30%|███       | 348/1152 [00:02&lt;00:06, 117.14fiber/s]
+MU 4: Calculating SFAPs:  31%|███▏      | 360/1152 [00:03&lt;00:06, 117.36fiber/s]
+MU 4: Calculating SFAPs:  32%|███▏      | 372/1152 [00:03&lt;00:06, 117.57fiber/s]
+MU 4: Calculating SFAPs:  33%|███▎      | 384/1152 [00:03&lt;00:06, 117.50fiber/s]
+MU 4: Calculating SFAPs:  34%|███▍      | 396/1152 [00:03&lt;00:06, 117.52fiber/s]
+MU 4: Calculating SFAPs:  35%|███▌      | 408/1152 [00:03&lt;00:06, 117.62fiber/s]
+MU 4: Calculating SFAPs:  36%|███▋      | 420/1152 [00:03&lt;00:06, 117.48fiber/s]
+MU 4: Calculating SFAPs:  38%|███▊      | 432/1152 [00:03&lt;00:06, 117.40fiber/s]
+MU 4: Calculating SFAPs:  39%|███▊      | 444/1152 [00:03&lt;00:06, 117.30fiber/s]
+MU 4: Calculating SFAPs:  40%|███▉      | 456/1152 [00:03&lt;00:05, 117.38fiber/s]
+MU 4: Calculating SFAPs:  41%|████      | 468/1152 [00:03&lt;00:05, 117.27fiber/s]
+MU 4: Calculating SFAPs:  42%|████▏     | 480/1152 [00:04&lt;00:05, 116.95fiber/s]
+MU 4: Calculating SFAPs:  43%|████▎     | 492/1152 [00:04&lt;00:05, 117.21fiber/s]
+MU 4: Calculating SFAPs:  44%|████▍     | 504/1152 [00:04&lt;00:05, 117.25fiber/s]
+MU 4: Calculating SFAPs:  45%|████▍     | 516/1152 [00:04&lt;00:05, 117.02fiber/s]
+MU 4: Calculating SFAPs:  46%|████▌     | 528/1152 [00:04&lt;00:05, 116.90fiber/s]
+MU 4: Calculating SFAPs:  47%|████▋     | 540/1152 [00:04&lt;00:05, 116.75fiber/s]
+MU 4: Calculating SFAPs:  48%|████▊     | 552/1152 [00:04&lt;00:05, 116.64fiber/s]
+MU 4: Calculating SFAPs:  49%|████▉     | 564/1152 [00:04&lt;00:05, 116.92fiber/s]
+MU 4: Calculating SFAPs:  50%|█████     | 576/1152 [00:04&lt;00:04, 116.84fiber/s]
+MU 4: Calculating SFAPs:  51%|█████     | 588/1152 [00:05&lt;00:04, 116.85fiber/s]
+MU 4: Calculating SFAPs:  52%|█████▏    | 600/1152 [00:05&lt;00:04, 117.19fiber/s]
+MU 4: Calculating SFAPs:  53%|█████▎    | 612/1152 [00:05&lt;00:04, 116.82fiber/s]
+MU 4: Calculating SFAPs:  54%|█████▍    | 624/1152 [00:05&lt;00:04, 116.73fiber/s]
+MU 4: Calculating SFAPs:  55%|█████▌    | 636/1152 [00:05&lt;00:04, 116.71fiber/s]
+MU 4: Calculating SFAPs:  56%|█████▋    | 648/1152 [00:05&lt;00:04, 116.62fiber/s]
+MU 4: Calculating SFAPs:  57%|█████▋    | 660/1152 [00:05&lt;00:04, 116.32fiber/s]
+MU 4: Calculating SFAPs:  58%|█████▊    | 672/1152 [00:05&lt;00:04, 116.48fiber/s]
+MU 4: Calculating SFAPs:  59%|█████▉    | 684/1152 [00:05&lt;00:04, 116.43fiber/s]
+MU 4: Calculating SFAPs:  60%|██████    | 696/1152 [00:05&lt;00:03, 116.76fiber/s]
+MU 4: Calculating SFAPs:  61%|██████▏   | 708/1152 [00:06&lt;00:03, 116.86fiber/s]
+MU 4: Calculating SFAPs:  62%|██████▎   | 720/1152 [00:06&lt;00:03, 116.94fiber/s]
+MU 4: Calculating SFAPs:  64%|██████▎   | 732/1152 [00:06&lt;00:03, 116.43fiber/s]
+MU 4: Calculating SFAPs:  65%|██████▍   | 744/1152 [00:06&lt;00:03, 116.11fiber/s]
+MU 4: Calculating SFAPs:  66%|██████▌   | 756/1152 [00:06&lt;00:03, 116.34fiber/s]
+MU 4: Calculating SFAPs:  67%|██████▋   | 768/1152 [00:06&lt;00:03, 116.30fiber/s]
+MU 4: Calculating SFAPs:  68%|██████▊   | 780/1152 [00:06&lt;00:03, 116.41fiber/s]
+MU 4: Calculating SFAPs:  69%|██████▉   | 792/1152 [00:06&lt;00:03, 116.55fiber/s]
+MU 4: Calculating SFAPs:  70%|██████▉   | 804/1152 [00:06&lt;00:02, 116.51fiber/s]
+MU 4: Calculating SFAPs:  71%|███████   | 816/1152 [00:06&lt;00:02, 116.72fiber/s]
+MU 4: Calculating SFAPs:  72%|███████▏  | 828/1152 [00:07&lt;00:02, 116.93fiber/s]
+MU 4: Calculating SFAPs:  73%|███████▎  | 840/1152 [00:07&lt;00:02, 116.97fiber/s]
+MU 4: Calculating SFAPs:  74%|███████▍  | 852/1152 [00:07&lt;00:02, 116.78fiber/s]
+MU 4: Calculating SFAPs:  75%|███████▌  | 864/1152 [00:07&lt;00:02, 116.73fiber/s]
+MU 4: Calculating SFAPs:  76%|███████▌  | 876/1152 [00:07&lt;00:02, 116.72fiber/s]
+MU 4: Calculating SFAPs:  77%|███████▋  | 888/1152 [00:07&lt;00:02, 116.64fiber/s]
+MU 4: Calculating SFAPs:  78%|███████▊  | 900/1152 [00:07&lt;00:02, 116.58fiber/s]
+MU 4: Calculating SFAPs:  79%|███████▉  | 912/1152 [00:07&lt;00:02, 116.64fiber/s]
+MU 4: Calculating SFAPs:  80%|████████  | 924/1152 [00:07&lt;00:01, 116.66fiber/s]
+MU 4: Calculating SFAPs:  81%|████████▏ | 936/1152 [00:08&lt;00:01, 116.79fiber/s]
+MU 4: Calculating SFAPs:  82%|████████▏ | 948/1152 [00:08&lt;00:01, 116.81fiber/s]
+MU 4: Calculating SFAPs:  83%|████████▎ | 960/1152 [00:08&lt;00:01, 116.89fiber/s]
+MU 4: Calculating SFAPs:  84%|████████▍ | 972/1152 [00:08&lt;00:01, 117.08fiber/s]
+MU 4: Calculating SFAPs:  85%|████████▌ | 984/1152 [00:08&lt;00:01, 116.97fiber/s]
+MU 4: Calculating SFAPs:  86%|████████▋ | 996/1152 [00:08&lt;00:01, 116.83fiber/s]
+MU 4: Calculating SFAPs:  88%|████████▊ | 1008/1152 [00:08&lt;00:01, 116.45fiber/s]
+MU 4: Calculating SFAPs:  89%|████████▊ | 1020/1152 [00:08&lt;00:01, 116.74fiber/s]
+MU 4: Calculating SFAPs:  90%|████████▉ | 1032/1152 [00:08&lt;00:01, 116.58fiber/s]
+MU 4: Calculating SFAPs:  91%|█████████ | 1044/1152 [00:08&lt;00:00, 116.36fiber/s]
+MU 4: Calculating SFAPs:  92%|█████████▏| 1056/1152 [00:09&lt;00:00, 116.20fiber/s]
+MU 4: Calculating SFAPs:  93%|█████████▎| 1068/1152 [00:09&lt;00:00, 116.01fiber/s]
+MU 4: Calculating SFAPs:  94%|█████████▍| 1080/1152 [00:09&lt;00:00, 115.83fiber/s]
+MU 4: Calculating SFAPs:  95%|█████████▍| 1092/1152 [00:09&lt;00:00, 115.86fiber/s]
+MU 4: Calculating SFAPs:  96%|█████████▌| 1104/1152 [00:09&lt;00:00, 115.95fiber/s]
+MU 4: Calculating SFAPs:  97%|█████████▋| 1116/1152 [00:09&lt;00:00, 115.90fiber/s]
+MU 4: Calculating SFAPs:  98%|█████████▊| 1128/1152 [00:09&lt;00:00, 115.77fiber/s]
+MU 4: Calculating SFAPs:  99%|█████████▉| 1140/1152 [00:09&lt;00:00, 115.89fiber/s]
+MU 4: Calculating SFAPs: 100%|██████████| 1152/1152 [00:09&lt;00:00, 115.97fiber/s]
+MU 4: Calculating SFAPs: 100%|██████████| 1152/1152 [00:09&lt;00:00, 116.79fiber/s]
+
+MU 5: Calculating SFAPs:   0%|          | 0/1031 [00:00&lt;?, ?fiber/s]
+MU 5: Calculating SFAPs:   1%|          | 12/1031 [00:00&lt;00:08, 119.73fiber/s]
+MU 5: Calculating SFAPs:   2%|▏         | 25/1031 [00:00&lt;00:08, 122.89fiber/s]
+MU 5: Calculating SFAPs:   4%|▎         | 38/1031 [00:00&lt;00:07, 124.24fiber/s]
+MU 5: Calculating SFAPs:   5%|▍         | 51/1031 [00:00&lt;00:07, 124.66fiber/s]
+MU 5: Calculating SFAPs:   6%|▌         | 64/1031 [00:00&lt;00:07, 125.32fiber/s]
+MU 5: Calculating SFAPs:   7%|▋         | 77/1031 [00:00&lt;00:07, 125.59fiber/s]
+MU 5: Calculating SFAPs:   9%|▊         | 90/1031 [00:00&lt;00:07, 125.97fiber/s]
+MU 5: Calculating SFAPs:  10%|▉         | 103/1031 [00:00&lt;00:07, 126.33fiber/s]
+MU 5: Calculating SFAPs:  11%|█▏        | 116/1031 [00:00&lt;00:07, 126.44fiber/s]
+MU 5: Calculating SFAPs:  13%|█▎        | 129/1031 [00:01&lt;00:07, 126.32fiber/s]
+MU 5: Calculating SFAPs:  14%|█▍        | 142/1031 [00:01&lt;00:07, 126.45fiber/s]
+MU 5: Calculating SFAPs:  15%|█▌        | 155/1031 [00:01&lt;00:06, 126.68fiber/s]
+MU 5: Calculating SFAPs:  16%|█▋        | 168/1031 [00:01&lt;00:06, 125.73fiber/s]
+MU 5: Calculating SFAPs:  18%|█▊        | 181/1031 [00:01&lt;00:06, 126.03fiber/s]
+MU 5: Calculating SFAPs:  19%|█▉        | 194/1031 [00:01&lt;00:06, 125.82fiber/s]
+MU 5: Calculating SFAPs:  20%|██        | 207/1031 [00:01&lt;00:06, 126.14fiber/s]
+MU 5: Calculating SFAPs:  21%|██▏       | 220/1031 [00:01&lt;00:06, 126.25fiber/s]
+MU 5: Calculating SFAPs:  23%|██▎       | 233/1031 [00:01&lt;00:06, 126.44fiber/s]
+MU 5: Calculating SFAPs:  24%|██▍       | 246/1031 [00:01&lt;00:06, 126.52fiber/s]
+MU 5: Calculating SFAPs:  25%|██▌       | 259/1031 [00:02&lt;00:06, 126.51fiber/s]
+MU 5: Calculating SFAPs:  26%|██▋       | 272/1031 [00:02&lt;00:05, 126.58fiber/s]
+MU 5: Calculating SFAPs:  28%|██▊       | 285/1031 [00:02&lt;00:05, 126.58fiber/s]
+MU 5: Calculating SFAPs:  29%|██▉       | 298/1031 [00:02&lt;00:05, 126.45fiber/s]
+MU 5: Calculating SFAPs:  30%|███       | 311/1031 [00:02&lt;00:05, 126.55fiber/s]
+MU 5: Calculating SFAPs:  31%|███▏      | 324/1031 [00:02&lt;00:05, 126.58fiber/s]
+MU 5: Calculating SFAPs:  33%|███▎      | 337/1031 [00:02&lt;00:05, 126.56fiber/s]
+MU 5: Calculating SFAPs:  34%|███▍      | 350/1031 [00:02&lt;00:05, 126.65fiber/s]
+MU 5: Calculating SFAPs:  35%|███▌      | 363/1031 [00:02&lt;00:05, 126.80fiber/s]
+MU 5: Calculating SFAPs:  36%|███▋      | 376/1031 [00:02&lt;00:05, 126.72fiber/s]
+MU 5: Calculating SFAPs:  38%|███▊      | 389/1031 [00:03&lt;00:05, 126.54fiber/s]
+MU 5: Calculating SFAPs:  39%|███▉      | 402/1031 [00:03&lt;00:04, 126.74fiber/s]
+MU 5: Calculating SFAPs:  40%|████      | 415/1031 [00:03&lt;00:04, 126.80fiber/s]
+MU 5: Calculating SFAPs:  42%|████▏     | 428/1031 [00:03&lt;00:04, 126.59fiber/s]
+MU 5: Calculating SFAPs:  43%|████▎     | 441/1031 [00:03&lt;00:04, 126.68fiber/s]
+MU 5: Calculating SFAPs:  44%|████▍     | 454/1031 [00:03&lt;00:04, 126.61fiber/s]
+MU 5: Calculating SFAPs:  45%|████▌     | 467/1031 [00:03&lt;00:04, 126.67fiber/s]
+MU 5: Calculating SFAPs:  47%|████▋     | 480/1031 [00:03&lt;00:04, 126.69fiber/s]
+MU 5: Calculating SFAPs:  48%|████▊     | 493/1031 [00:03&lt;00:04, 126.85fiber/s]
+MU 5: Calculating SFAPs:  49%|████▉     | 506/1031 [00:04&lt;00:04, 126.73fiber/s]
+MU 5: Calculating SFAPs:  50%|█████     | 519/1031 [00:04&lt;00:04, 126.65fiber/s]
+MU 5: Calculating SFAPs:  52%|█████▏    | 532/1031 [00:04&lt;00:03, 126.74fiber/s]
+MU 5: Calculating SFAPs:  53%|█████▎    | 545/1031 [00:04&lt;00:03, 126.56fiber/s]
+MU 5: Calculating SFAPs:  54%|█████▍    | 558/1031 [00:04&lt;00:03, 126.65fiber/s]
+MU 5: Calculating SFAPs:  55%|█████▌    | 571/1031 [00:04&lt;00:03, 126.78fiber/s]
+MU 5: Calculating SFAPs:  57%|█████▋    | 584/1031 [00:04&lt;00:03, 126.86fiber/s]
+MU 5: Calculating SFAPs:  58%|█████▊    | 597/1031 [00:04&lt;00:03, 126.72fiber/s]
+MU 5: Calculating SFAPs:  59%|█████▉    | 610/1031 [00:04&lt;00:03, 126.78fiber/s]
+MU 5: Calculating SFAPs:  60%|██████    | 623/1031 [00:04&lt;00:03, 126.87fiber/s]
+MU 5: Calculating SFAPs:  62%|██████▏   | 636/1031 [00:05&lt;00:03, 126.78fiber/s]
+MU 5: Calculating SFAPs:  63%|██████▎   | 649/1031 [00:05&lt;00:03, 126.75fiber/s]
+MU 5: Calculating SFAPs:  64%|██████▍   | 662/1031 [00:05&lt;00:02, 126.58fiber/s]
+MU 5: Calculating SFAPs:  65%|██████▌   | 675/1031 [00:05&lt;00:02, 125.18fiber/s]
+MU 5: Calculating SFAPs:  67%|██████▋   | 688/1031 [00:05&lt;00:02, 124.22fiber/s]
+MU 5: Calculating SFAPs:  68%|██████▊   | 701/1031 [00:05&lt;00:02, 124.64fiber/s]
+MU 5: Calculating SFAPs:  69%|██████▉   | 714/1031 [00:05&lt;00:02, 125.44fiber/s]
+MU 5: Calculating SFAPs:  71%|███████   | 727/1031 [00:05&lt;00:02, 125.66fiber/s]
+MU 5: Calculating SFAPs:  72%|███████▏  | 740/1031 [00:05&lt;00:02, 125.89fiber/s]
+MU 5: Calculating SFAPs:  73%|███████▎  | 753/1031 [00:05&lt;00:02, 125.88fiber/s]
+MU 5: Calculating SFAPs:  74%|███████▍  | 766/1031 [00:06&lt;00:02, 126.23fiber/s]
+MU 5: Calculating SFAPs:  76%|███████▌  | 779/1031 [00:06&lt;00:01, 126.38fiber/s]
+MU 5: Calculating SFAPs:  77%|███████▋  | 792/1031 [00:06&lt;00:01, 126.52fiber/s]
+MU 5: Calculating SFAPs:  78%|███████▊  | 805/1031 [00:06&lt;00:01, 126.44fiber/s]
+MU 5: Calculating SFAPs:  79%|███████▉  | 818/1031 [00:06&lt;00:01, 126.44fiber/s]
+MU 5: Calculating SFAPs:  81%|████████  | 831/1031 [00:06&lt;00:01, 126.57fiber/s]
+MU 5: Calculating SFAPs:  82%|████████▏ | 844/1031 [00:06&lt;00:01, 126.67fiber/s]
+MU 5: Calculating SFAPs:  83%|████████▎ | 857/1031 [00:06&lt;00:01, 126.68fiber/s]
+MU 5: Calculating SFAPs:  84%|████████▍ | 870/1031 [00:06&lt;00:01, 126.98fiber/s]
+MU 5: Calculating SFAPs:  86%|████████▌ | 883/1031 [00:06&lt;00:01, 126.77fiber/s]
+MU 5: Calculating SFAPs:  87%|████████▋ | 896/1031 [00:07&lt;00:01, 126.84fiber/s]
+MU 5: Calculating SFAPs:  88%|████████▊ | 909/1031 [00:07&lt;00:00, 126.71fiber/s]
+MU 5: Calculating SFAPs:  89%|████████▉ | 922/1031 [00:07&lt;00:00, 125.87fiber/s]
+MU 5: Calculating SFAPs:  91%|█████████ | 935/1031 [00:07&lt;00:00, 126.03fiber/s]
+MU 5: Calculating SFAPs:  92%|█████████▏| 948/1031 [00:07&lt;00:00, 126.28fiber/s]
+MU 5: Calculating SFAPs:  93%|█████████▎| 961/1031 [00:07&lt;00:00, 126.46fiber/s]
+MU 5: Calculating SFAPs:  94%|█████████▍| 974/1031 [00:07&lt;00:00, 126.33fiber/s]
+MU 5: Calculating SFAPs:  96%|█████████▌| 987/1031 [00:07&lt;00:00, 126.51fiber/s]
+MU 5: Calculating SFAPs:  97%|█████████▋| 1000/1031 [00:07&lt;00:00, 126.76fiber/s]
+MU 5: Calculating SFAPs:  98%|█████████▊| 1013/1031 [00:08&lt;00:00, 126.71fiber/s]
+MU 5: Calculating SFAPs: 100%|█████████▉| 1026/1031 [00:08&lt;00:00, 126.91fiber/s]
+MU 5: Calculating SFAPs: 100%|██████████| 1031/1031 [00:08&lt;00:00, 126.33fiber/s]
+
+MU 6: Calculating SFAPs:   0%|          | 0/1233 [00:00&lt;?, ?fiber/s]
+MU 6: Calculating SFAPs:   1%|          | 12/1233 [00:00&lt;00:10, 112.86fiber/s]
+MU 6: Calculating SFAPs:   2%|▏         | 24/1233 [00:00&lt;00:10, 115.48fiber/s]
+MU 6: Calculating SFAPs:   3%|▎         | 36/1233 [00:00&lt;00:10, 116.93fiber/s]
+MU 6: Calculating SFAPs:   4%|▍         | 48/1233 [00:00&lt;00:10, 117.64fiber/s]
+MU 6: Calculating SFAPs:   5%|▍         | 60/1233 [00:00&lt;00:09, 118.04fiber/s]
+MU 6: Calculating SFAPs:   6%|▌         | 72/1233 [00:00&lt;00:09, 118.30fiber/s]
+MU 6: Calculating SFAPs:   7%|▋         | 84/1233 [00:00&lt;00:09, 118.56fiber/s]
+MU 6: Calculating SFAPs:   8%|▊         | 96/1233 [00:00&lt;00:09, 118.44fiber/s]
+MU 6: Calculating SFAPs:   9%|▉         | 108/1233 [00:00&lt;00:09, 118.78fiber/s]
+MU 6: Calculating SFAPs:  10%|▉         | 120/1233 [00:01&lt;00:09, 118.71fiber/s]
+MU 6: Calculating SFAPs:  11%|█         | 132/1233 [00:01&lt;00:09, 118.85fiber/s]
+MU 6: Calculating SFAPs:  12%|█▏        | 144/1233 [00:01&lt;00:09, 118.88fiber/s]
+MU 6: Calculating SFAPs:  13%|█▎        | 156/1233 [00:01&lt;00:09, 119.01fiber/s]
+MU 6: Calculating SFAPs:  14%|█▎        | 168/1233 [00:01&lt;00:08, 119.04fiber/s]
+MU 6: Calculating SFAPs:  15%|█▍        | 180/1233 [00:01&lt;00:08, 119.03fiber/s]
+MU 6: Calculating SFAPs:  16%|█▌        | 192/1233 [00:01&lt;00:08, 119.18fiber/s]
+MU 6: Calculating SFAPs:  17%|█▋        | 204/1233 [00:01&lt;00:08, 119.03fiber/s]
+MU 6: Calculating SFAPs:  18%|█▊        | 216/1233 [00:01&lt;00:08, 118.66fiber/s]
+MU 6: Calculating SFAPs:  18%|█▊        | 228/1233 [00:01&lt;00:08, 118.83fiber/s]
+MU 6: Calculating SFAPs:  19%|█▉        | 240/1233 [00:02&lt;00:08, 118.95fiber/s]
+MU 6: Calculating SFAPs:  20%|██        | 252/1233 [00:02&lt;00:08, 119.13fiber/s]
+MU 6: Calculating SFAPs:  21%|██▏       | 264/1233 [00:02&lt;00:08, 119.36fiber/s]
+MU 6: Calculating SFAPs:  22%|██▏       | 277/1233 [00:02&lt;00:07, 119.61fiber/s]
+MU 6: Calculating SFAPs:  23%|██▎       | 289/1233 [00:02&lt;00:07, 119.34fiber/s]
+MU 6: Calculating SFAPs:  24%|██▍       | 301/1233 [00:02&lt;00:07, 119.40fiber/s]
+MU 6: Calculating SFAPs:  25%|██▌       | 313/1233 [00:02&lt;00:07, 119.47fiber/s]
+MU 6: Calculating SFAPs:  26%|██▋       | 325/1233 [00:02&lt;00:07, 119.46fiber/s]
+MU 6: Calculating SFAPs:  27%|██▋       | 337/1233 [00:02&lt;00:07, 119.06fiber/s]
+MU 6: Calculating SFAPs:  28%|██▊       | 349/1233 [00:02&lt;00:07, 119.31fiber/s]
+MU 6: Calculating SFAPs:  29%|██▉       | 361/1233 [00:03&lt;00:07, 119.04fiber/s]
+MU 6: Calculating SFAPs:  30%|███       | 373/1233 [00:03&lt;00:07, 118.85fiber/s]
+MU 6: Calculating SFAPs:  31%|███       | 385/1233 [00:03&lt;00:07, 118.82fiber/s]
+MU 6: Calculating SFAPs:  32%|███▏      | 397/1233 [00:03&lt;00:07, 119.16fiber/s]
+MU 6: Calculating SFAPs:  33%|███▎      | 409/1233 [00:03&lt;00:06, 119.23fiber/s]
+MU 6: Calculating SFAPs:  34%|███▍      | 421/1233 [00:03&lt;00:06, 119.00fiber/s]
+MU 6: Calculating SFAPs:  35%|███▌      | 433/1233 [00:03&lt;00:06, 118.96fiber/s]
+MU 6: Calculating SFAPs:  36%|███▌      | 445/1233 [00:03&lt;00:06, 118.70fiber/s]
+MU 6: Calculating SFAPs:  37%|███▋      | 457/1233 [00:03&lt;00:06, 118.49fiber/s]
+MU 6: Calculating SFAPs:  38%|███▊      | 469/1233 [00:03&lt;00:06, 118.56fiber/s]
+MU 6: Calculating SFAPs:  39%|███▉      | 481/1233 [00:04&lt;00:06, 118.23fiber/s]
+MU 6: Calculating SFAPs:  40%|███▉      | 493/1233 [00:04&lt;00:06, 118.14fiber/s]
+MU 6: Calculating SFAPs:  41%|████      | 505/1233 [00:04&lt;00:06, 118.36fiber/s]
+MU 6: Calculating SFAPs:  42%|████▏     | 517/1233 [00:04&lt;00:06, 118.46fiber/s]
+MU 6: Calculating SFAPs:  43%|████▎     | 529/1233 [00:04&lt;00:05, 118.55fiber/s]
+MU 6: Calculating SFAPs:  44%|████▍     | 541/1233 [00:04&lt;00:05, 118.59fiber/s]
+MU 6: Calculating SFAPs:  45%|████▍     | 553/1233 [00:04&lt;00:05, 118.51fiber/s]
+MU 6: Calculating SFAPs:  46%|████▌     | 565/1233 [00:04&lt;00:05, 118.37fiber/s]
+MU 6: Calculating SFAPs:  47%|████▋     | 577/1233 [00:04&lt;00:05, 114.60fiber/s]
+MU 6: Calculating SFAPs:  48%|████▊     | 589/1233 [00:04&lt;00:05, 114.37fiber/s]
+MU 6: Calculating SFAPs:  49%|████▊     | 601/1233 [00:05&lt;00:05, 114.40fiber/s]
+MU 6: Calculating SFAPs:  50%|████▉     | 613/1233 [00:05&lt;00:05, 114.32fiber/s]
+MU 6: Calculating SFAPs:  51%|█████     | 625/1233 [00:05&lt;00:05, 114.01fiber/s]
+MU 6: Calculating SFAPs:  52%|█████▏    | 637/1233 [00:05&lt;00:05, 113.88fiber/s]
+MU 6: Calculating SFAPs:  53%|█████▎    | 649/1233 [00:05&lt;00:05, 113.70fiber/s]
+MU 6: Calculating SFAPs:  54%|█████▎    | 661/1233 [00:05&lt;00:05, 114.07fiber/s]
+MU 6: Calculating SFAPs:  55%|█████▍    | 673/1233 [00:05&lt;00:04, 113.85fiber/s]
+MU 6: Calculating SFAPs:  56%|█████▌    | 685/1233 [00:05&lt;00:04, 113.64fiber/s]
+MU 6: Calculating SFAPs:  57%|█████▋    | 697/1233 [00:05&lt;00:04, 113.28fiber/s]
+MU 6: Calculating SFAPs:  58%|█████▊    | 709/1233 [00:06&lt;00:04, 113.26fiber/s]
+MU 6: Calculating SFAPs:  58%|█████▊    | 721/1233 [00:06&lt;00:04, 113.41fiber/s]
+MU 6: Calculating SFAPs:  59%|█████▉    | 733/1233 [00:06&lt;00:04, 114.59fiber/s]
+MU 6: Calculating SFAPs:  60%|██████    | 745/1233 [00:06&lt;00:04, 115.81fiber/s]
+MU 6: Calculating SFAPs:  61%|██████▏   | 757/1233 [00:06&lt;00:04, 116.19fiber/s]
+MU 6: Calculating SFAPs:  62%|██████▏   | 769/1233 [00:06&lt;00:03, 116.84fiber/s]
+MU 6: Calculating SFAPs:  63%|██████▎   | 781/1233 [00:06&lt;00:03, 117.21fiber/s]
+MU 6: Calculating SFAPs:  64%|██████▍   | 793/1233 [00:06&lt;00:03, 117.54fiber/s]
+MU 6: Calculating SFAPs:  65%|██████▌   | 805/1233 [00:06&lt;00:03, 117.28fiber/s]
+MU 6: Calculating SFAPs:  66%|██████▋   | 817/1233 [00:06&lt;00:03, 117.63fiber/s]
+MU 6: Calculating SFAPs:  67%|██████▋   | 829/1233 [00:07&lt;00:03, 117.88fiber/s]
+MU 6: Calculating SFAPs:  68%|██████▊   | 841/1233 [00:07&lt;00:03, 117.75fiber/s]
+MU 6: Calculating SFAPs:  69%|██████▉   | 853/1233 [00:07&lt;00:03, 117.50fiber/s]
+MU 6: Calculating SFAPs:  70%|███████   | 865/1233 [00:07&lt;00:03, 117.72fiber/s]
+MU 6: Calculating SFAPs:  71%|███████   | 877/1233 [00:07&lt;00:03, 118.01fiber/s]
+MU 6: Calculating SFAPs:  72%|███████▏  | 889/1233 [00:07&lt;00:02, 118.05fiber/s]
+MU 6: Calculating SFAPs:  73%|███████▎  | 901/1233 [00:07&lt;00:02, 118.06fiber/s]
+MU 6: Calculating SFAPs:  74%|███████▍  | 913/1233 [00:07&lt;00:02, 117.99fiber/s]
+MU 6: Calculating SFAPs:  75%|███████▌  | 925/1233 [00:07&lt;00:02, 117.69fiber/s]
+MU 6: Calculating SFAPs:  76%|███████▌  | 937/1233 [00:07&lt;00:02, 115.04fiber/s]
+MU 6: Calculating SFAPs:  77%|███████▋  | 949/1233 [00:08&lt;00:02, 116.11fiber/s]
+MU 6: Calculating SFAPs:  78%|███████▊  | 961/1233 [00:08&lt;00:02, 116.73fiber/s]
+MU 6: Calculating SFAPs:  79%|███████▉  | 973/1233 [00:08&lt;00:02, 117.22fiber/s]
+MU 6: Calculating SFAPs:  80%|███████▉  | 985/1233 [00:08&lt;00:02, 117.43fiber/s]
+MU 6: Calculating SFAPs:  81%|████████  | 997/1233 [00:08&lt;00:02, 117.72fiber/s]
+MU 6: Calculating SFAPs:  82%|████████▏ | 1009/1233 [00:08&lt;00:01, 117.75fiber/s]
+MU 6: Calculating SFAPs:  83%|████████▎ | 1021/1233 [00:08&lt;00:01, 118.09fiber/s]
+MU 6: Calculating SFAPs:  84%|████████▍ | 1033/1233 [00:08&lt;00:01, 117.68fiber/s]
+MU 6: Calculating SFAPs:  85%|████████▍ | 1045/1233 [00:08&lt;00:01, 117.86fiber/s]
+MU 6: Calculating SFAPs:  86%|████████▌ | 1057/1233 [00:08&lt;00:01, 117.91fiber/s]
+MU 6: Calculating SFAPs:  87%|████████▋ | 1069/1233 [00:09&lt;00:01, 117.78fiber/s]
+MU 6: Calculating SFAPs:  88%|████████▊ | 1081/1233 [00:09&lt;00:01, 117.88fiber/s]
+MU 6: Calculating SFAPs:  89%|████████▊ | 1093/1233 [00:09&lt;00:01, 117.98fiber/s]
+MU 6: Calculating SFAPs:  90%|████████▉ | 1105/1233 [00:09&lt;00:01, 118.01fiber/s]
+MU 6: Calculating SFAPs:  91%|█████████ | 1117/1233 [00:09&lt;00:00, 118.04fiber/s]
+MU 6: Calculating SFAPs:  92%|█████████▏| 1129/1233 [00:09&lt;00:00, 118.07fiber/s]
+MU 6: Calculating SFAPs:  93%|█████████▎| 1141/1233 [00:09&lt;00:00, 118.13fiber/s]
+MU 6: Calculating SFAPs:  94%|█████████▎| 1153/1233 [00:09&lt;00:00, 117.36fiber/s]
+MU 6: Calculating SFAPs:  94%|█████████▍| 1165/1233 [00:09&lt;00:00, 117.62fiber/s]
+MU 6: Calculating SFAPs:  95%|█████████▌| 1177/1233 [00:10&lt;00:00, 117.71fiber/s]
+MU 6: Calculating SFAPs:  96%|█████████▋| 1189/1233 [00:10&lt;00:00, 117.79fiber/s]
+MU 6: Calculating SFAPs:  97%|█████████▋| 1201/1233 [00:10&lt;00:00, 117.80fiber/s]
+MU 6: Calculating SFAPs:  98%|█████████▊| 1213/1233 [00:10&lt;00:00, 118.10fiber/s]
+MU 6: Calculating SFAPs:  99%|█████████▉| 1225/1233 [00:10&lt;00:00, 118.05fiber/s]
+MU 6: Calculating SFAPs: 100%|██████████| 1233/1233 [00:10&lt;00:00, 117.55fiber/s]
+
+MU 7: Calculating SFAPs:   0%|          | 0/1515 [00:00&lt;?, ?fiber/s]
+MU 7: Calculating SFAPs:   1%|          | 12/1515 [00:00&lt;00:13, 113.22fiber/s]
+MU 7: Calculating SFAPs:   2%|▏         | 24/1515 [00:00&lt;00:12, 116.48fiber/s]
+MU 7: Calculating SFAPs:   2%|▏         | 37/1515 [00:00&lt;00:12, 118.26fiber/s]
+MU 7: Calculating SFAPs:   3%|▎         | 49/1515 [00:00&lt;00:12, 118.66fiber/s]
+MU 7: Calculating SFAPs:   4%|▍         | 61/1515 [00:00&lt;00:12, 119.12fiber/s]
+MU 7: Calculating SFAPs:   5%|▍         | 73/1515 [00:00&lt;00:12, 119.06fiber/s]
+MU 7: Calculating SFAPs:   6%|▌         | 85/1515 [00:00&lt;00:12, 119.14fiber/s]
+MU 7: Calculating SFAPs:   6%|▋         | 97/1515 [00:00&lt;00:11, 118.98fiber/s]
+MU 7: Calculating SFAPs:   7%|▋         | 109/1515 [00:00&lt;00:11, 119.07fiber/s]
+MU 7: Calculating SFAPs:   8%|▊         | 121/1515 [00:01&lt;00:11, 119.11fiber/s]
+MU 7: Calculating SFAPs:   9%|▉         | 133/1515 [00:01&lt;00:11, 119.30fiber/s]
+MU 7: Calculating SFAPs:  10%|▉         | 145/1515 [00:01&lt;00:11, 119.39fiber/s]
+MU 7: Calculating SFAPs:  10%|█         | 158/1515 [00:01&lt;00:11, 119.63fiber/s]
+MU 7: Calculating SFAPs:  11%|█         | 170/1515 [00:01&lt;00:11, 119.58fiber/s]
+MU 7: Calculating SFAPs:  12%|█▏        | 182/1515 [00:01&lt;00:11, 119.49fiber/s]
+MU 7: Calculating SFAPs:  13%|█▎        | 194/1515 [00:01&lt;00:11, 119.57fiber/s]
+MU 7: Calculating SFAPs:  14%|█▎        | 206/1515 [00:01&lt;00:10, 119.69fiber/s]
+MU 7: Calculating SFAPs:  14%|█▍        | 218/1515 [00:01&lt;00:10, 119.68fiber/s]
+MU 7: Calculating SFAPs:  15%|█▌        | 230/1515 [00:01&lt;00:10, 119.73fiber/s]
+MU 7: Calculating SFAPs:  16%|█▌        | 242/1515 [00:02&lt;00:10, 118.99fiber/s]
+MU 7: Calculating SFAPs:  17%|█▋        | 254/1515 [00:02&lt;00:11, 114.30fiber/s]
+MU 7: Calculating SFAPs:  18%|█▊        | 266/1515 [00:02&lt;00:10, 115.74fiber/s]
+MU 7: Calculating SFAPs:  18%|█▊        | 278/1515 [00:02&lt;00:10, 116.87fiber/s]
+MU 7: Calculating SFAPs:  19%|█▉        | 290/1515 [00:02&lt;00:10, 117.49fiber/s]
+MU 7: Calculating SFAPs:  20%|█▉        | 302/1515 [00:02&lt;00:10, 118.05fiber/s]
+MU 7: Calculating SFAPs:  21%|██        | 315/1515 [00:02&lt;00:10, 118.68fiber/s]
+MU 7: Calculating SFAPs:  22%|██▏       | 327/1515 [00:02&lt;00:09, 119.03fiber/s]
+MU 7: Calculating SFAPs:  22%|██▏       | 339/1515 [00:02&lt;00:09, 119.27fiber/s]
+MU 7: Calculating SFAPs:  23%|██▎       | 352/1515 [00:02&lt;00:09, 119.62fiber/s]
+MU 7: Calculating SFAPs:  24%|██▍       | 364/1515 [00:03&lt;00:09, 119.36fiber/s]
+MU 7: Calculating SFAPs:  25%|██▍       | 377/1515 [00:03&lt;00:09, 119.55fiber/s]
+MU 7: Calculating SFAPs:  26%|██▌       | 390/1515 [00:03&lt;00:09, 119.82fiber/s]
+MU 7: Calculating SFAPs:  27%|██▋       | 403/1515 [00:03&lt;00:09, 119.89fiber/s]
+MU 7: Calculating SFAPs:  27%|██▋       | 416/1515 [00:03&lt;00:09, 119.99fiber/s]
+MU 7: Calculating SFAPs:  28%|██▊       | 428/1515 [00:03&lt;00:09, 119.71fiber/s]
+MU 7: Calculating SFAPs:  29%|██▉       | 440/1515 [00:03&lt;00:08, 119.54fiber/s]
+MU 7: Calculating SFAPs:  30%|██▉       | 452/1515 [00:03&lt;00:08, 119.50fiber/s]
+MU 7: Calculating SFAPs:  31%|███       | 464/1515 [00:03&lt;00:08, 119.59fiber/s]
+MU 7: Calculating SFAPs:  31%|███▏      | 477/1515 [00:04&lt;00:08, 119.79fiber/s]
+MU 7: Calculating SFAPs:  32%|███▏      | 489/1515 [00:04&lt;00:08, 119.79fiber/s]
+MU 7: Calculating SFAPs:  33%|███▎      | 502/1515 [00:04&lt;00:08, 119.91fiber/s]
+MU 7: Calculating SFAPs:  34%|███▍      | 515/1515 [00:04&lt;00:08, 120.06fiber/s]
+MU 7: Calculating SFAPs:  35%|███▍      | 528/1515 [00:04&lt;00:08, 119.92fiber/s]
+MU 7: Calculating SFAPs:  36%|███▌      | 540/1515 [00:04&lt;00:08, 119.88fiber/s]
+MU 7: Calculating SFAPs:  37%|███▋      | 553/1515 [00:04&lt;00:08, 120.04fiber/s]
+MU 7: Calculating SFAPs:  37%|███▋      | 566/1515 [00:04&lt;00:07, 120.06fiber/s]
+MU 7: Calculating SFAPs:  38%|███▊      | 579/1515 [00:04&lt;00:07, 119.83fiber/s]
+MU 7: Calculating SFAPs:  39%|███▉      | 592/1515 [00:04&lt;00:07, 120.03fiber/s]
+MU 7: Calculating SFAPs:  40%|███▉      | 605/1515 [00:05&lt;00:07, 119.93fiber/s]
+MU 7: Calculating SFAPs:  41%|████      | 618/1515 [00:05&lt;00:07, 120.05fiber/s]
+MU 7: Calculating SFAPs:  42%|████▏     | 631/1515 [00:05&lt;00:07, 120.02fiber/s]
+MU 7: Calculating SFAPs:  43%|████▎     | 644/1515 [00:05&lt;00:07, 120.12fiber/s]
+MU 7: Calculating SFAPs:  43%|████▎     | 657/1515 [00:05&lt;00:07, 120.10fiber/s]
+MU 7: Calculating SFAPs:  44%|████▍     | 670/1515 [00:05&lt;00:07, 120.01fiber/s]
+MU 7: Calculating SFAPs:  45%|████▌     | 683/1515 [00:05&lt;00:06, 119.95fiber/s]
+MU 7: Calculating SFAPs:  46%|████▌     | 695/1515 [00:05&lt;00:06, 119.07fiber/s]
+MU 7: Calculating SFAPs:  47%|████▋     | 707/1515 [00:05&lt;00:06, 119.33fiber/s]
+MU 7: Calculating SFAPs:  48%|████▊     | 720/1515 [00:06&lt;00:06, 119.58fiber/s]
+MU 7: Calculating SFAPs:  48%|████▊     | 732/1515 [00:06&lt;00:06, 119.67fiber/s]
+MU 7: Calculating SFAPs:  49%|████▉     | 745/1515 [00:06&lt;00:06, 119.86fiber/s]
+MU 7: Calculating SFAPs:  50%|█████     | 758/1515 [00:06&lt;00:06, 119.96fiber/s]
+MU 7: Calculating SFAPs:  51%|█████     | 771/1515 [00:06&lt;00:06, 120.03fiber/s]
+MU 7: Calculating SFAPs:  52%|█████▏    | 784/1515 [00:06&lt;00:06, 119.88fiber/s]
+MU 7: Calculating SFAPs:  53%|█████▎    | 796/1515 [00:06&lt;00:05, 119.86fiber/s]
+MU 7: Calculating SFAPs:  53%|█████▎    | 809/1515 [00:06&lt;00:05, 119.93fiber/s]
+MU 7: Calculating SFAPs:  54%|█████▍    | 821/1515 [00:06&lt;00:05, 119.72fiber/s]
+MU 7: Calculating SFAPs:  55%|█████▌    | 834/1515 [00:06&lt;00:05, 119.79fiber/s]
+MU 7: Calculating SFAPs:  56%|█████▌    | 847/1515 [00:07&lt;00:05, 119.98fiber/s]
+MU 7: Calculating SFAPs:  57%|█████▋    | 859/1515 [00:07&lt;00:05, 119.93fiber/s]
+MU 7: Calculating SFAPs:  58%|█████▊    | 872/1515 [00:07&lt;00:05, 120.01fiber/s]
+MU 7: Calculating SFAPs:  58%|█████▊    | 885/1515 [00:07&lt;00:05, 119.90fiber/s]
+MU 7: Calculating SFAPs:  59%|█████▉    | 898/1515 [00:07&lt;00:05, 120.14fiber/s]
+MU 7: Calculating SFAPs:  60%|██████    | 911/1515 [00:07&lt;00:05, 120.06fiber/s]
+MU 7: Calculating SFAPs:  61%|██████    | 924/1515 [00:07&lt;00:04, 120.02fiber/s]
+MU 7: Calculating SFAPs:  62%|██████▏   | 937/1515 [00:07&lt;00:04, 119.72fiber/s]
+MU 7: Calculating SFAPs:  63%|██████▎   | 950/1515 [00:07&lt;00:04, 119.93fiber/s]
+MU 7: Calculating SFAPs:  64%|██████▎   | 963/1515 [00:08&lt;00:04, 120.03fiber/s]
+MU 7: Calculating SFAPs:  64%|██████▍   | 976/1515 [00:08&lt;00:04, 120.15fiber/s]
+MU 7: Calculating SFAPs:  65%|██████▌   | 989/1515 [00:08&lt;00:04, 120.29fiber/s]
+MU 7: Calculating SFAPs:  66%|██████▌   | 1002/1515 [00:08&lt;00:04, 120.36fiber/s]
+MU 7: Calculating SFAPs:  67%|██████▋   | 1015/1515 [00:08&lt;00:04, 120.35fiber/s]
+MU 7: Calculating SFAPs:  68%|██████▊   | 1028/1515 [00:08&lt;00:04, 120.27fiber/s]
+MU 7: Calculating SFAPs:  69%|██████▊   | 1041/1515 [00:08&lt;00:03, 120.35fiber/s]
+MU 7: Calculating SFAPs:  70%|██████▉   | 1054/1515 [00:08&lt;00:03, 120.09fiber/s]
+MU 7: Calculating SFAPs:  70%|███████   | 1067/1515 [00:08&lt;00:03, 120.21fiber/s]
+MU 7: Calculating SFAPs:  71%|███████▏  | 1080/1515 [00:09&lt;00:03, 120.30fiber/s]
+MU 7: Calculating SFAPs:  72%|███████▏  | 1093/1515 [00:09&lt;00:03, 120.03fiber/s]
+MU 7: Calculating SFAPs:  73%|███████▎  | 1106/1515 [00:09&lt;00:03, 120.13fiber/s]
+MU 7: Calculating SFAPs:  74%|███████▍  | 1119/1515 [00:09&lt;00:03, 120.16fiber/s]
+MU 7: Calculating SFAPs:  75%|███████▍  | 1132/1515 [00:09&lt;00:03, 120.19fiber/s]
+MU 7: Calculating SFAPs:  76%|███████▌  | 1145/1515 [00:09&lt;00:03, 120.11fiber/s]
+MU 7: Calculating SFAPs:  76%|███████▋  | 1158/1515 [00:09&lt;00:02, 120.17fiber/s]
+MU 7: Calculating SFAPs:  77%|███████▋  | 1171/1515 [00:09&lt;00:02, 119.09fiber/s]
+MU 7: Calculating SFAPs:  78%|███████▊  | 1183/1515 [00:09&lt;00:02, 117.81fiber/s]
+MU 7: Calculating SFAPs:  79%|███████▉  | 1195/1515 [00:10&lt;00:02, 117.39fiber/s]
+MU 7: Calculating SFAPs:  80%|███████▉  | 1207/1515 [00:10&lt;00:02, 117.99fiber/s]
+MU 7: Calculating SFAPs:  81%|████████  | 1220/1515 [00:10&lt;00:02, 118.70fiber/s]
+MU 7: Calculating SFAPs:  81%|████████▏ | 1233/1515 [00:10&lt;00:02, 119.35fiber/s]
+MU 7: Calculating SFAPs:  82%|████████▏ | 1246/1515 [00:10&lt;00:02, 119.59fiber/s]
+MU 7: Calculating SFAPs:  83%|████████▎ | 1258/1515 [00:10&lt;00:02, 119.58fiber/s]
+MU 7: Calculating SFAPs:  84%|████████▍ | 1271/1515 [00:10&lt;00:02, 119.77fiber/s]
+MU 7: Calculating SFAPs:  85%|████████▍ | 1284/1515 [00:10&lt;00:01, 119.93fiber/s]
+MU 7: Calculating SFAPs:  86%|████████▌ | 1296/1515 [00:10&lt;00:01, 119.75fiber/s]
+MU 7: Calculating SFAPs:  86%|████████▋ | 1309/1515 [00:10&lt;00:01, 119.86fiber/s]
+MU 7: Calculating SFAPs:  87%|████████▋ | 1322/1515 [00:11&lt;00:01, 120.01fiber/s]
+MU 7: Calculating SFAPs:  88%|████████▊ | 1335/1515 [00:11&lt;00:01, 120.01fiber/s]
+MU 7: Calculating SFAPs:  89%|████████▉ | 1348/1515 [00:11&lt;00:01, 120.19fiber/s]
+MU 7: Calculating SFAPs:  90%|████████▉ | 1361/1515 [00:11&lt;00:01, 120.24fiber/s]
+MU 7: Calculating SFAPs:  91%|█████████ | 1374/1515 [00:11&lt;00:01, 120.15fiber/s]
+MU 7: Calculating SFAPs:  92%|█████████▏| 1387/1515 [00:11&lt;00:01, 120.12fiber/s]
+MU 7: Calculating SFAPs:  92%|█████████▏| 1400/1515 [00:11&lt;00:00, 120.36fiber/s]
+MU 7: Calculating SFAPs:  93%|█████████▎| 1413/1515 [00:11&lt;00:00, 120.16fiber/s]
+MU 7: Calculating SFAPs:  94%|█████████▍| 1426/1515 [00:11&lt;00:00, 119.57fiber/s]
+MU 7: Calculating SFAPs:  95%|█████████▍| 1438/1515 [00:12&lt;00:00, 119.63fiber/s]
+MU 7: Calculating SFAPs:  96%|█████████▌| 1451/1515 [00:12&lt;00:00, 119.74fiber/s]
+MU 7: Calculating SFAPs:  97%|█████████▋| 1463/1515 [00:12&lt;00:00, 119.77fiber/s]
+MU 7: Calculating SFAPs:  97%|█████████▋| 1475/1515 [00:12&lt;00:00, 119.79fiber/s]
+MU 7: Calculating SFAPs:  98%|█████████▊| 1487/1515 [00:12&lt;00:00, 119.82fiber/s]
+MU 7: Calculating SFAPs:  99%|█████████▉| 1499/1515 [00:12&lt;00:00, 119.79fiber/s]
+MU 7: Calculating SFAPs: 100%|█████████▉| 1511/1515 [00:12&lt;00:00, 119.83fiber/s]
+MU 7: Calculating SFAPs: 100%|██████████| 1515/1515 [00:12&lt;00:00, 119.56fiber/s]
+
+MU 8: Calculating SFAPs:   0%|          | 0/1799 [00:00&lt;?, ?fiber/s]
+MU 8: Calculating SFAPs:   1%|          | 11/1799 [00:00&lt;00:16, 108.99fiber/s]
+MU 8: Calculating SFAPs:   1%|▏         | 23/1799 [00:00&lt;00:15, 111.63fiber/s]
+MU 8: Calculating SFAPs:   2%|▏         | 35/1799 [00:00&lt;00:15, 113.07fiber/s]
+MU 8: Calculating SFAPs:   3%|▎         | 47/1799 [00:00&lt;00:15, 113.85fiber/s]
+MU 8: Calculating SFAPs:   3%|▎         | 59/1799 [00:00&lt;00:15, 114.17fiber/s]
+MU 8: Calculating SFAPs:   4%|▍         | 71/1799 [00:00&lt;00:15, 114.35fiber/s]
+MU 8: Calculating SFAPs:   5%|▍         | 83/1799 [00:00&lt;00:14, 114.79fiber/s]
+MU 8: Calculating SFAPs:   5%|▌         | 95/1799 [00:00&lt;00:14, 114.65fiber/s]
+MU 8: Calculating SFAPs:   6%|▌         | 107/1799 [00:00&lt;00:14, 114.86fiber/s]
+MU 8: Calculating SFAPs:   7%|▋         | 119/1799 [00:01&lt;00:14, 115.14fiber/s]
+MU 8: Calculating SFAPs:   7%|▋         | 131/1799 [00:01&lt;00:14, 115.17fiber/s]
+MU 8: Calculating SFAPs:   8%|▊         | 143/1799 [00:01&lt;00:14, 114.96fiber/s]
+MU 8: Calculating SFAPs:   9%|▊         | 155/1799 [00:01&lt;00:14, 115.19fiber/s]
+MU 8: Calculating SFAPs:   9%|▉         | 167/1799 [00:01&lt;00:14, 115.12fiber/s]
+MU 8: Calculating SFAPs:  10%|▉         | 179/1799 [00:01&lt;00:14, 115.15fiber/s]
+MU 8: Calculating SFAPs:  11%|█         | 191/1799 [00:01&lt;00:13, 115.23fiber/s]
+MU 8: Calculating SFAPs:  11%|█▏        | 203/1799 [00:01&lt;00:13, 115.26fiber/s]
+MU 8: Calculating SFAPs:  12%|█▏        | 215/1799 [00:01&lt;00:13, 115.38fiber/s]
+MU 8: Calculating SFAPs:  13%|█▎        | 227/1799 [00:01&lt;00:13, 115.12fiber/s]
+MU 8: Calculating SFAPs:  13%|█▎        | 239/1799 [00:02&lt;00:13, 115.19fiber/s]
+MU 8: Calculating SFAPs:  14%|█▍        | 251/1799 [00:02&lt;00:13, 115.37fiber/s]
+MU 8: Calculating SFAPs:  15%|█▍        | 263/1799 [00:02&lt;00:13, 115.64fiber/s]
+MU 8: Calculating SFAPs:  15%|█▌        | 275/1799 [00:02&lt;00:13, 115.37fiber/s]
+MU 8: Calculating SFAPs:  16%|█▌        | 287/1799 [00:02&lt;00:13, 115.35fiber/s]
+MU 8: Calculating SFAPs:  17%|█▋        | 299/1799 [00:02&lt;00:13, 114.98fiber/s]
+MU 8: Calculating SFAPs:  17%|█▋        | 311/1799 [00:02&lt;00:12, 115.02fiber/s]
+MU 8: Calculating SFAPs:  18%|█▊        | 323/1799 [00:02&lt;00:12, 115.16fiber/s]
+MU 8: Calculating SFAPs:  19%|█▊        | 335/1799 [00:02&lt;00:12, 115.12fiber/s]
+MU 8: Calculating SFAPs:  19%|█▉        | 347/1799 [00:03&lt;00:12, 115.35fiber/s]
+MU 8: Calculating SFAPs:  20%|█▉        | 359/1799 [00:03&lt;00:12, 115.30fiber/s]
+MU 8: Calculating SFAPs:  21%|██        | 371/1799 [00:03&lt;00:12, 115.13fiber/s]
+MU 8: Calculating SFAPs:  21%|██▏       | 383/1799 [00:03&lt;00:12, 115.04fiber/s]
+MU 8: Calculating SFAPs:  22%|██▏       | 395/1799 [00:03&lt;00:12, 115.38fiber/s]
+MU 8: Calculating SFAPs:  23%|██▎       | 407/1799 [00:03&lt;00:12, 115.29fiber/s]
+MU 8: Calculating SFAPs:  23%|██▎       | 419/1799 [00:03&lt;00:11, 115.28fiber/s]
+MU 8: Calculating SFAPs:  24%|██▍       | 431/1799 [00:03&lt;00:11, 115.31fiber/s]
+MU 8: Calculating SFAPs:  25%|██▍       | 443/1799 [00:03&lt;00:11, 115.23fiber/s]
+MU 8: Calculating SFAPs:  25%|██▌       | 455/1799 [00:03&lt;00:11, 115.13fiber/s]
+MU 8: Calculating SFAPs:  26%|██▌       | 467/1799 [00:04&lt;00:11, 115.23fiber/s]
+MU 8: Calculating SFAPs:  27%|██▋       | 479/1799 [00:04&lt;00:11, 114.66fiber/s]
+MU 8: Calculating SFAPs:  27%|██▋       | 491/1799 [00:04&lt;00:11, 114.84fiber/s]
+MU 8: Calculating SFAPs:  28%|██▊       | 503/1799 [00:04&lt;00:11, 114.96fiber/s]
+MU 8: Calculating SFAPs:  29%|██▊       | 515/1799 [00:04&lt;00:11, 115.13fiber/s]
+MU 8: Calculating SFAPs:  29%|██▉       | 527/1799 [00:04&lt;00:11, 115.13fiber/s]
+MU 8: Calculating SFAPs:  30%|██▉       | 539/1799 [00:04&lt;00:11, 114.30fiber/s]
+MU 8: Calculating SFAPs:  31%|███       | 551/1799 [00:04&lt;00:10, 114.61fiber/s]
+MU 8: Calculating SFAPs:  31%|███▏      | 563/1799 [00:04&lt;00:10, 114.95fiber/s]
+MU 8: Calculating SFAPs:  32%|███▏      | 575/1799 [00:05&lt;00:10, 114.91fiber/s]
+MU 8: Calculating SFAPs:  33%|███▎      | 587/1799 [00:05&lt;00:10, 115.30fiber/s]
+MU 8: Calculating SFAPs:  33%|███▎      | 599/1799 [00:05&lt;00:10, 115.14fiber/s]
+MU 8: Calculating SFAPs:  34%|███▍      | 611/1799 [00:05&lt;00:10, 115.16fiber/s]
+MU 8: Calculating SFAPs:  35%|███▍      | 623/1799 [00:05&lt;00:10, 115.20fiber/s]
+MU 8: Calculating SFAPs:  35%|███▌      | 635/1799 [00:05&lt;00:10, 115.21fiber/s]
+MU 8: Calculating SFAPs:  36%|███▌      | 647/1799 [00:05&lt;00:09, 115.26fiber/s]
+MU 8: Calculating SFAPs:  37%|███▋      | 659/1799 [00:05&lt;00:09, 115.34fiber/s]
+MU 8: Calculating SFAPs:  37%|███▋      | 671/1799 [00:05&lt;00:09, 115.42fiber/s]
+MU 8: Calculating SFAPs:  38%|███▊      | 683/1799 [00:05&lt;00:09, 115.34fiber/s]
+MU 8: Calculating SFAPs:  39%|███▊      | 695/1799 [00:06&lt;00:09, 115.58fiber/s]
+MU 8: Calculating SFAPs:  39%|███▉      | 707/1799 [00:06&lt;00:09, 115.72fiber/s]
+MU 8: Calculating SFAPs:  40%|███▉      | 719/1799 [00:06&lt;00:09, 115.45fiber/s]
+MU 8: Calculating SFAPs:  41%|████      | 731/1799 [00:06&lt;00:09, 115.44fiber/s]
+MU 8: Calculating SFAPs:  41%|████▏     | 743/1799 [00:06&lt;00:09, 115.49fiber/s]
+MU 8: Calculating SFAPs:  42%|████▏     | 755/1799 [00:06&lt;00:09, 115.18fiber/s]
+MU 8: Calculating SFAPs:  43%|████▎     | 767/1799 [00:06&lt;00:08, 115.46fiber/s]
+MU 8: Calculating SFAPs:  43%|████▎     | 779/1799 [00:06&lt;00:08, 115.50fiber/s]
+MU 8: Calculating SFAPs:  44%|████▍     | 791/1799 [00:06&lt;00:08, 115.07fiber/s]
+MU 8: Calculating SFAPs:  45%|████▍     | 803/1799 [00:06&lt;00:08, 115.08fiber/s]
+MU 8: Calculating SFAPs:  45%|████▌     | 815/1799 [00:07&lt;00:08, 115.05fiber/s]
+MU 8: Calculating SFAPs:  46%|████▌     | 827/1799 [00:07&lt;00:08, 115.11fiber/s]
+MU 8: Calculating SFAPs:  47%|████▋     | 839/1799 [00:07&lt;00:08, 115.31fiber/s]
+MU 8: Calculating SFAPs:  47%|████▋     | 851/1799 [00:07&lt;00:08, 115.55fiber/s]
+MU 8: Calculating SFAPs:  48%|████▊     | 863/1799 [00:07&lt;00:08, 115.63fiber/s]
+MU 8: Calculating SFAPs:  49%|████▊     | 875/1799 [00:07&lt;00:08, 115.30fiber/s]
+MU 8: Calculating SFAPs:  49%|████▉     | 887/1799 [00:07&lt;00:07, 115.44fiber/s]
+MU 8: Calculating SFAPs:  50%|████▉     | 899/1799 [00:07&lt;00:07, 115.62fiber/s]
+MU 8: Calculating SFAPs:  51%|█████     | 911/1799 [00:07&lt;00:07, 115.55fiber/s]
+MU 8: Calculating SFAPs:  51%|█████▏    | 923/1799 [00:08&lt;00:07, 115.62fiber/s]
+MU 8: Calculating SFAPs:  52%|█████▏    | 935/1799 [00:08&lt;00:07, 115.48fiber/s]
+MU 8: Calculating SFAPs:  53%|█████▎    | 947/1799 [00:08&lt;00:07, 115.62fiber/s]
+MU 8: Calculating SFAPs:  53%|█████▎    | 959/1799 [00:08&lt;00:07, 115.28fiber/s]
+MU 8: Calculating SFAPs:  54%|█████▍    | 971/1799 [00:08&lt;00:07, 115.23fiber/s]
+MU 8: Calculating SFAPs:  55%|█████▍    | 983/1799 [00:08&lt;00:07, 115.43fiber/s]
+MU 8: Calculating SFAPs:  55%|█████▌    | 995/1799 [00:08&lt;00:06, 115.28fiber/s]
+MU 8: Calculating SFAPs:  56%|█████▌    | 1007/1799 [00:08&lt;00:06, 115.18fiber/s]
+MU 8: Calculating SFAPs:  57%|█████▋    | 1019/1799 [00:08&lt;00:06, 115.09fiber/s]
+MU 8: Calculating SFAPs:  57%|█████▋    | 1031/1799 [00:08&lt;00:06, 115.38fiber/s]
+MU 8: Calculating SFAPs:  58%|█████▊    | 1043/1799 [00:09&lt;00:06, 115.53fiber/s]
+MU 8: Calculating SFAPs:  59%|█████▊    | 1055/1799 [00:09&lt;00:06, 115.45fiber/s]
+MU 8: Calculating SFAPs:  59%|█████▉    | 1067/1799 [00:09&lt;00:06, 115.40fiber/s]
+MU 8: Calculating SFAPs:  60%|█████▉    | 1079/1799 [00:09&lt;00:06, 115.06fiber/s]
+MU 8: Calculating SFAPs:  61%|██████    | 1091/1799 [00:09&lt;00:06, 115.26fiber/s]
+MU 8: Calculating SFAPs:  61%|██████▏   | 1103/1799 [00:09&lt;00:06, 115.20fiber/s]
+MU 8: Calculating SFAPs:  62%|██████▏   | 1115/1799 [00:09&lt;00:05, 115.34fiber/s]
+MU 8: Calculating SFAPs:  63%|██████▎   | 1127/1799 [00:09&lt;00:05, 114.94fiber/s]
+MU 8: Calculating SFAPs:  63%|██████▎   | 1139/1799 [00:09&lt;00:05, 114.90fiber/s]
+MU 8: Calculating SFAPs:  64%|██████▍   | 1151/1799 [00:09&lt;00:05, 114.99fiber/s]
+MU 8: Calculating SFAPs:  65%|██████▍   | 1163/1799 [00:10&lt;00:05, 114.92fiber/s]
+MU 8: Calculating SFAPs:  65%|██████▌   | 1175/1799 [00:10&lt;00:05, 115.26fiber/s]
+MU 8: Calculating SFAPs:  66%|██████▌   | 1187/1799 [00:10&lt;00:05, 115.64fiber/s]
+MU 8: Calculating SFAPs:  67%|██████▋   | 1199/1799 [00:10&lt;00:05, 115.42fiber/s]
+MU 8: Calculating SFAPs:  67%|██████▋   | 1211/1799 [00:10&lt;00:05, 115.31fiber/s]
+MU 8: Calculating SFAPs:  68%|██████▊   | 1223/1799 [00:10&lt;00:05, 114.61fiber/s]
+MU 8: Calculating SFAPs:  69%|██████▊   | 1235/1799 [00:10&lt;00:04, 113.89fiber/s]
+MU 8: Calculating SFAPs:  69%|██████▉   | 1247/1799 [00:10&lt;00:04, 114.48fiber/s]
+MU 8: Calculating SFAPs:  70%|██████▉   | 1259/1799 [00:10&lt;00:04, 114.73fiber/s]
+MU 8: Calculating SFAPs:  71%|███████   | 1271/1799 [00:11&lt;00:04, 115.14fiber/s]
+MU 8: Calculating SFAPs:  71%|███████▏  | 1283/1799 [00:11&lt;00:04, 115.30fiber/s]
+MU 8: Calculating SFAPs:  72%|███████▏  | 1295/1799 [00:11&lt;00:04, 115.14fiber/s]
+MU 8: Calculating SFAPs:  73%|███████▎  | 1307/1799 [00:11&lt;00:04, 115.11fiber/s]
+MU 8: Calculating SFAPs:  73%|███████▎  | 1319/1799 [00:11&lt;00:04, 115.12fiber/s]
+MU 8: Calculating SFAPs:  74%|███████▍  | 1331/1799 [00:11&lt;00:04, 114.37fiber/s]
+MU 8: Calculating SFAPs:  75%|███████▍  | 1343/1799 [00:11&lt;00:04, 113.53fiber/s]
+MU 8: Calculating SFAPs:  75%|███████▌  | 1355/1799 [00:11&lt;00:03, 112.52fiber/s]
+MU 8: Calculating SFAPs:  76%|███████▌  | 1367/1799 [00:11&lt;00:03, 112.47fiber/s]
+MU 8: Calculating SFAPs:  77%|███████▋  | 1379/1799 [00:11&lt;00:03, 113.16fiber/s]
+MU 8: Calculating SFAPs:  77%|███████▋  | 1391/1799 [00:12&lt;00:03, 114.31fiber/s]
+MU 8: Calculating SFAPs:  78%|███████▊  | 1403/1799 [00:12&lt;00:03, 114.77fiber/s]
+MU 8: Calculating SFAPs:  79%|███████▊  | 1415/1799 [00:12&lt;00:03, 115.21fiber/s]
+MU 8: Calculating SFAPs:  79%|███████▉  | 1427/1799 [00:12&lt;00:03, 115.37fiber/s]
+MU 8: Calculating SFAPs:  80%|███████▉  | 1439/1799 [00:12&lt;00:03, 115.31fiber/s]
+MU 8: Calculating SFAPs:  81%|████████  | 1451/1799 [00:12&lt;00:03, 115.15fiber/s]
+MU 8: Calculating SFAPs:  81%|████████▏ | 1463/1799 [00:12&lt;00:02, 115.14fiber/s]
+MU 8: Calculating SFAPs:  82%|████████▏ | 1475/1799 [00:12&lt;00:02, 115.33fiber/s]
+MU 8: Calculating SFAPs:  83%|████████▎ | 1487/1799 [00:12&lt;00:02, 115.39fiber/s]
+MU 8: Calculating SFAPs:  83%|████████▎ | 1499/1799 [00:13&lt;00:02, 115.55fiber/s]
+MU 8: Calculating SFAPs:  84%|████████▍ | 1511/1799 [00:13&lt;00:02, 115.59fiber/s]
+MU 8: Calculating SFAPs:  85%|████████▍ | 1523/1799 [00:13&lt;00:02, 115.59fiber/s]
+MU 8: Calculating SFAPs:  85%|████████▌ | 1535/1799 [00:13&lt;00:02, 115.73fiber/s]
+MU 8: Calculating SFAPs:  86%|████████▌ | 1547/1799 [00:13&lt;00:02, 115.84fiber/s]
+MU 8: Calculating SFAPs:  87%|████████▋ | 1559/1799 [00:13&lt;00:02, 115.82fiber/s]
+MU 8: Calculating SFAPs:  87%|████████▋ | 1571/1799 [00:13&lt;00:01, 115.63fiber/s]
+MU 8: Calculating SFAPs:  88%|████████▊ | 1583/1799 [00:13&lt;00:01, 115.54fiber/s]
+MU 8: Calculating SFAPs:  89%|████████▊ | 1595/1799 [00:13&lt;00:01, 115.45fiber/s]
+MU 8: Calculating SFAPs:  89%|████████▉ | 1607/1799 [00:13&lt;00:01, 115.53fiber/s]
+MU 8: Calculating SFAPs:  90%|████████▉ | 1619/1799 [00:14&lt;00:01, 115.93fiber/s]
+MU 8: Calculating SFAPs:  91%|█████████ | 1631/1799 [00:14&lt;00:01, 115.92fiber/s]
+MU 8: Calculating SFAPs:  91%|█████████▏| 1643/1799 [00:14&lt;00:01, 115.95fiber/s]
+MU 8: Calculating SFAPs:  92%|█████████▏| 1655/1799 [00:14&lt;00:01, 115.68fiber/s]
+MU 8: Calculating SFAPs:  93%|█████████▎| 1667/1799 [00:14&lt;00:01, 115.56fiber/s]
+MU 8: Calculating SFAPs:  93%|█████████▎| 1679/1799 [00:14&lt;00:01, 115.25fiber/s]
+MU 8: Calculating SFAPs:  94%|█████████▍| 1691/1799 [00:14&lt;00:00, 115.40fiber/s]
+MU 8: Calculating SFAPs:  95%|█████████▍| 1703/1799 [00:14&lt;00:00, 115.51fiber/s]
+MU 8: Calculating SFAPs:  95%|█████████▌| 1715/1799 [00:14&lt;00:00, 115.44fiber/s]
+MU 8: Calculating SFAPs:  96%|█████████▌| 1727/1799 [00:15&lt;00:00, 115.49fiber/s]
+MU 8: Calculating SFAPs:  97%|█████████▋| 1739/1799 [00:15&lt;00:00, 115.71fiber/s]
+MU 8: Calculating SFAPs:  97%|█████████▋| 1751/1799 [00:15&lt;00:00, 115.79fiber/s]
+MU 8: Calculating SFAPs:  98%|█████████▊| 1763/1799 [00:15&lt;00:00, 115.60fiber/s]
+MU 8: Calculating SFAPs:  99%|█████████▊| 1775/1799 [00:15&lt;00:00, 115.38fiber/s]
+MU 8: Calculating SFAPs:  99%|█████████▉| 1787/1799 [00:15&lt;00:00, 115.45fiber/s]
+MU 8: Calculating SFAPs: 100%|██████████| 1799/1799 [00:15&lt;00:00, 115.41fiber/s]
+MU 8: Calculating SFAPs: 100%|██████████| 1799/1799 [00:15&lt;00:00, 115.14fiber/s]
+
+Computing MUAPs:   0%|          | 0/9 [00:00&lt;?, ?MU/s]
+Computing MUAPs: 100%|██████████| 9/9 [00:00&lt;00:00, 9009.24MU/s]
+  - Generated MUAPs for 25 motor units
+  - Electrode array with 4 electrodes
+</pre></div>
+</div>
+</section>
+<section id="create-motor-neuron-pool">
+<h2>Create Motor Neuron Pool<a class="headerlink" href="#create-motor-neuron-pool" title="Link to this heading">#</a></h2>
+<p>Set up the <strong>motor neuron pool</strong> for spike train generation.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">mn_pool</span> <span class="o">=</span> <span class="n">simulator</span><span class="o">.</span><span class="n">MotorNeuronPool</span><span class="p">(</span><span class="n">recruitment_thresholds</span><span class="o">=</span><a href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">thresholds</span></a><span class="p">)</span>
+<a href="https://docs.python.org/3/library/functions.html#float" title="builtins.float" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">mvc_current</span></a> <span class="o">=</span> <span class="n">mn_pool</span><span class="o">.</span><span class="n">mvc_current_threshold</span>
+</pre></div>
+</div>
+</section>
+<section id="generate-input-currents">
+<h2>Generate Input Currents<a class="headerlink" href="#generate-input-currents" title="Link to this heading">#</a></h2>
+<p>Create a <strong>sinusoidal current profile</strong> for the contraction simulation.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><a href="https://docs.python.org/3/library/functions.html#int" title="builtins.int" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">n_pools</span></a> <span class="o">=</span> <span class="mi">2</span>  <span class="c1"># Number of distinct motor neuron pools</span>
+
+<a href="https://docs.python.org/3/library/functions.html#float" title="builtins.float" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">timestep</span></a> <span class="o">=</span> <span class="mf">0.01</span>  <span class="c1"># Simulation timestep in ms (high resolution)</span>
+<a href="https://docs.python.org/3/library/functions.html#int" title="builtins.int" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">simulation_time</span></a> <span class="o">=</span> <span class="mi">500</span>  <span class="c1"># Total simulation duration in ms</span>
+
+<span class="c1"># Calculate number of time points</span>
+<a href="https://docs.python.org/3/library/functions.html#int" title="builtins.int" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">t_points</span></a> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><a href="https://docs.python.org/3/library/functions.html#int" title="builtins.int" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">simulation_time</span></a> <span class="o">/</span> <a href="https://docs.python.org/3/library/functions.html#float" title="builtins.float" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">timestep</span></a><span class="p">)</span>
+
+<span class="c1"># Create the input current matrix</span>
+<a href="https://docs.python.org/3/library/stdtypes.html#list" title="builtins.list" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">sin_amplitudes</span></a> <span class="o">=</span> <span class="p">[</span>
+    <a href="https://docs.python.org/3/library/functions.html#float" title="builtins.float" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">mvc_current</span></a> <span class="o">*</span> <span class="mi">1</span><span class="p">,</span>
+    <a href="https://docs.python.org/3/library/functions.html#float" title="builtins.float" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">mvc_current</span></a> <span class="o">*</span> <span class="mi">1</span><span class="p">,</span>
+<span class="p">]</span>  <span class="c1"># Same amplitude for both pools</span>
+<a href="https://docs.python.org/3/library/stdtypes.html#list" title="builtins.list" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">sin_frequencies</span></a> <span class="o">=</span> <span class="p">[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">]</span>  <span class="c1"># Same frequency for both pools (1 Hz)</span>
+<a href="https://docs.python.org/3/library/stdtypes.html#list" title="builtins.list" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">sin_offsets</span></a> <span class="o">=</span> <span class="p">[</span>
+    <span class="mf">0.0</span><span class="p">,</span>
+    <span class="mf">0.0</span><span class="p">,</span>
+<span class="p">]</span>
+<a href="https://docs.python.org/3/library/stdtypes.html#list" title="builtins.list" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">sin_phases</span></a> <span class="o">=</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <a href="https://docs.python.org/3/library/functions.html#float" title="builtins.float" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">np</span><span class="o">.</span><span class="n">pi</span></a><span class="p">]</span>  <span class="c1"># 0 and 90 degrees (in radians)</span>
+
+<a href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">sinusoidal_currents</span></a> <span class="o">=</span> <span class="n">create_sinusoidal_current</span><span class="p">(</span>
+    <a href="https://docs.python.org/3/library/functions.html#int" title="builtins.int" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">n_pools</span></a><span class="o">=</span><a href="https://docs.python.org/3/library/functions.html#int" title="builtins.int" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">n_pools</span></a><span class="p">,</span>
+    <a href="https://docs.python.org/3/library/functions.html#int" title="builtins.int" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">t_points</span></a><span class="o">=</span><a href="https://docs.python.org/3/library/functions.html#int" title="builtins.int" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">t_points</span></a><span class="p">,</span>
+    <span class="n">timestep__ms</span><span class="o">=</span><a href="https://docs.python.org/3/library/functions.html#float" title="builtins.float" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">timestep</span></a><span class="p">,</span>
+    <span class="n">amplitudes__muV</span><span class="o">=</span><a href="https://docs.python.org/3/library/stdtypes.html#list" title="builtins.list" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">sin_amplitudes</span></a><span class="p">,</span>
+    <span class="n">frequencies__Hz</span><span class="o">=</span><a href="https://docs.python.org/3/library/stdtypes.html#list" title="builtins.list" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">sin_frequencies</span></a><span class="p">,</span>
+    <span class="n">offsets__muV</span><span class="o">=</span><a href="https://docs.python.org/3/library/stdtypes.html#list" title="builtins.list" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">sin_offsets</span></a><span class="p">,</span>
+    <span class="n">phases__rad</span><span class="o">=</span><a href="https://docs.python.org/3/library/stdtypes.html#list" title="builtins.list" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">sin_phases</span></a><span class="p">,</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="generate-spike-trains">
+<h2>Generate Spike Trains<a class="headerlink" href="#generate-spike-trains" title="Link to this heading">#</a></h2>
+<p>Simulate the <strong>neural spike trains</strong> using the motor neuron pool.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Generating spike trains...&quot;</span><span class="p">)</span>
+<a href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">spike_trains</span></a><span class="p">,</span> <a href="https://docs.python.org/3/library/stdtypes.html#list" title="builtins.list" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">active_indices</span></a><span class="p">,</span> <a href="https://docs.python.org/3/library/stdtypes.html#list" title="builtins.list" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">_</span></a> <span class="o">=</span> <span class="n">mn_pool</span><span class="o">.</span><span class="n">generate_spike_trains</span><span class="p">(</span>
+    <span class="n">input_current__matrix</span><span class="o">=</span><a href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">sinusoidal_currents</span></a><span class="p">,</span> <span class="n">timestep__ms</span><span class="o">=</span><a href="https://docs.python.org/3/library/functions.html#float" title="builtins.float" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">timestep</span></a>
+<span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  - Generated spike trains for </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><a href="https://docs.python.org/3/library/stdtypes.html#list" title="builtins.list" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">active_indices</span></a><span class="p">)</span><span class="si">}</span><span class="s2"> active motor units&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  - Total simulation time: </span><span class="si">{</span><a href="https://docs.python.org/3/library/functions.html#int" title="builtins.int" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">simulation_time</span></a><span class="si">}</span><span class="s2"> ms&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Generating spike trains...
+  - Generated spike trains for 2 active motor units
+  - Total simulation time: 500 ms
+</pre></div>
+</div>
+</section>
+<section id="visualize-spike-trains">
+<h2>Visualize Spike Trains<a class="headerlink" href="#visualize-spike-trains" title="Link to this heading">#</a></h2>
+<p>Display the <strong>spike trains</strong> generated by the motor neuron pool in response
+to the sinusoidal input current. This shows the neural firing patterns
+that will be convolved with the MUAPs to generate the final EMG signal.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><a href="https://matplotlib.org/stable/api/_as_gen/matplotlib.figure.Figure.html#matplotlib.figure.Figure" title="matplotlib.figure.Figure" class="sphx-glr-backref-module-matplotlib-figure sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">spike_fig</span></a><span class="p">,</span> <a href="https://matplotlib.org/stable/api/_as_gen/matplotlib.axes.Axes.html#matplotlib.axes.Axes" title="matplotlib.axes.Axes" class="sphx-glr-backref-module-matplotlib-axes sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">spike_ax</span></a> <span class="o">=</span> <a href="https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.subplots.html#matplotlib.pyplot.subplots" title="matplotlib.pyplot.subplots" class="sphx-glr-backref-module-matplotlib-pyplot sphx-glr-backref-type-py-function"><span class="n">plt</span><span class="o">.</span><span class="n">subplots</span></a><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">6</span><span class="p">))</span>
+<span class="n">plot_spike_trains</span><span class="p">(</span>
+    <span class="n">spike_trains__matrix</span><span class="o">=</span><a href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">spike_trains</span></a><span class="p">,</span>
+    <span class="n">timestep__ms</span><span class="o">=</span><a href="https://docs.python.org/3/library/functions.html#float" title="builtins.float" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">timestep</span></a><span class="p">,</span>
+    <span class="n">axs</span><span class="o">=</span><span class="p">[</span><a href="https://matplotlib.org/stable/api/_as_gen/matplotlib.axes.Axes.html#matplotlib.axes.Axes" title="matplotlib.axes.Axes" class="sphx-glr-backref-module-matplotlib-axes sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">spike_ax</span></a><span class="p">],</span>
+    <span class="n">pool_current__matrix</span><span class="o">=</span><a href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">sinusoidal_currents</span></a><span class="p">,</span>
+    <span class="n">pool_to_plot</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>  <span class="c1"># Show only the first pool</span>
+<span class="p">)</span>
+<a href="https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.tight_layout.html#matplotlib.pyplot.tight_layout" title="matplotlib.pyplot.tight_layout" class="sphx-glr-backref-module-matplotlib-pyplot sphx-glr-backref-type-py-function"><span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span></a><span class="p">()</span>
+<a href="https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.show.html#matplotlib.pyplot.show" title="matplotlib.pyplot.show" class="sphx-glr-backref-module-matplotlib-pyplot sphx-glr-backref-type-py-function"><span class="n">plt</span><span class="o">.</span><span class="n">show</span></a><span class="p">()</span>
+</pre></div>
+</div>
+<img src="../_images/sphx_glr_08_simulate_intramuscular_emg_002.png" srcset="../_images/sphx_glr_08_simulate_intramuscular_emg_002.png" alt="Pool 1 Spike Trains" class = "sphx-glr-single-img"/></section>
+<section id="simulate-intramuscular-emg">
+<h2>Simulate Intramuscular EMG<a class="headerlink" href="#simulate-intramuscular-emg" title="Link to this heading">#</a></h2>
+<p>Generate the final <strong>intramuscular EMG signals</strong> by convolving spike trains with MUAPs.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Simulating intramuscular EMG signals...&quot;</span><span class="p">)</span>
+<a href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">emg_signals</span></a> <span class="o">=</span> <span class="n">iemg_sim</span><span class="o">.</span><span class="n">simulate_intramuscular_emg</span><span class="p">(</span>
+    <span class="n">motor_neuron_pool</span><span class="o">=</span><span class="n">mn_pool</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Intramuscular EMG simulation completed!&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  - EMG signal shape: </span><span class="si">{</span><a href="https://docs.python.org/3/library/stdtypes.html#tuple" title="builtins.tuple" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">emg_signals</span><span class="o">.</span><span class="n">shape</span></a><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  - Signal RMS (before noise): </span><span class="si">{</span><a href="https://numpy.org/doc/stable/reference/generated/numpy.ufunc.html#numpy.ufunc" title="numpy.ufunc" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span></a><span class="p">(</span><a href="https://numpy.org/doc/stable/reference/generated/numpy.mean.html#numpy.mean" title="numpy.mean" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-function"><span class="n">np</span><span class="o">.</span><span class="n">mean</span></a><span class="p">(</span><a href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">emg_signals</span></a><span class="o">**</span><span class="mi">2</span><span class="p">))</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2"> nA&quot;</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Adding realistic noise (SNR = 20 dB)...&quot;</span><span class="p">)</span>
+<a href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">noisy_emg_signals</span></a> <span class="o">=</span> <span class="n">iemg_sim</span><span class="o">.</span><span class="n">add_noise</span><span class="p">(</span><span class="n">snr_db</span><span class="o">=</span><span class="mi">20</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  - Signal RMS (after noise): </span><span class="si">{</span><a href="https://numpy.org/doc/stable/reference/generated/numpy.ufunc.html#numpy.ufunc" title="numpy.ufunc" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span></a><span class="p">(</span><a href="https://numpy.org/doc/stable/reference/generated/numpy.mean.html#numpy.mean" title="numpy.mean" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-function"><span class="n">np</span><span class="o">.</span><span class="n">mean</span></a><span class="p">(</span><a href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">noisy_emg_signals</span></a><span class="o">**</span><span class="mi">2</span><span class="p">))</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2"> nA&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Simulating intramuscular EMG signals...
+
+Intramuscular EMG (CPU):   0%|          | 0/2 [00:00&lt;?, ?pool/s]
+Intramuscular EMG (CPU):  50%|█████     | 1/2 [00:00&lt;00:00,  6.28pool/s]
+Intramuscular EMG (CPU): 100%|██████████| 2/2 [00:00&lt;00:00, 12.54pool/s]
+Intramuscular EMG simulation completed!
+  - EMG signal shape: (2, 4, 5120)
+  - Signal RMS (before noise): 0.103 nA
+Adding realistic noise (SNR = 20 dB)...
+  - Signal RMS (after noise): 0.104 nA
+</pre></div>
+</div>
+</section>
+<section id="visualize-intramuscular-emg-results">
+<h2>Visualize Intramuscular EMG Results<a class="headerlink" href="#visualize-intramuscular-emg-results" title="Link to this heading">#</a></h2>
+<p>Create an <strong>xkcd-style plot</strong> comparing the <strong>intramuscular EMG</strong> signal
+with the input current, similar to the surface EMG example.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The intramuscular EMG provides <strong>high spatial resolution</strong> and can detect
+individual motor unit action potentials (MUAPs) with excellent signal quality.</p>
+</div>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Clear matplotlib cache and set up xkcd style</span>
+<a href="https://matplotlib.org/stable/api/matplotlib_configuration_api.html#matplotlib.get_cachedir" title="matplotlib.get_cachedir" class="sphx-glr-backref-module-matplotlib sphx-glr-backref-type-py-function"><span class="n">matplotlib</span><span class="o">.</span><span class="n">get_cachedir</span></a><span class="p">()</span>
+<span class="k">with</span> <a href="https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.xkcd.html#matplotlib.pyplot.xkcd" title="matplotlib.pyplot.xkcd" class="sphx-glr-backref-module-matplotlib-pyplot sphx-glr-backref-type-py-function"><span class="n">plt</span><span class="o">.</span><span class="n">xkcd</span></a><span class="p">():</span>
+    <a href="https://docs.python.org/3/library/stdtypes.html#dict.update" title="builtins.dict.update" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-method"><span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="o">.</span><span class="n">update</span></a><span class="p">({</span><span class="s2">&quot;font.size&quot;</span><span class="p">:</span> <span class="mi">24</span><span class="p">})</span>
+
+    <span class="c1"># Create single plot with normalized signals</span>
+    <a href="https://matplotlib.org/stable/api/_as_gen/matplotlib.figure.Figure.html#matplotlib.figure.Figure" title="matplotlib.figure.Figure" class="sphx-glr-backref-module-matplotlib-figure sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">fig</span></a><span class="p">,</span> <a href="https://matplotlib.org/stable/api/_as_gen/matplotlib.axes.Axes.html#matplotlib.axes.Axes" title="matplotlib.axes.Axes" class="sphx-glr-backref-module-matplotlib-axes sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">ax</span></a> <span class="o">=</span> <a href="https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.subplots.html#matplotlib.pyplot.subplots" title="matplotlib.pyplot.subplots" class="sphx-glr-backref-module-matplotlib-pyplot sphx-glr-backref-type-py-function"><span class="n">plt</span><span class="o">.</span><span class="n">subplots</span></a><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span> <span class="mi">6</span><span class="p">))</span>
+
+    <span class="c1"># Get the signals - use first electrode&#39;s differential recording</span>
+    <a href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">iemg_signal</span></a> <span class="o">=</span> <a href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">noisy_emg_signals</span></a><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="p">:]</span>  <span class="c1"># First electrode differential pair</span>
+    <a href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">current_signal</span></a> <span class="o">=</span> <a href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">sinusoidal_currents</span></a><span class="p">[</span><span class="mi">0</span><span class="p">]</span>  <span class="c1"># First current pool</span>
+
+    <span class="c1"># Create time axes</span>
+    <a href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">emg_time</span></a> <span class="o">=</span> <a href="https://numpy.org/doc/stable/reference/generated/numpy.arange.html#numpy.arange" title="numpy.arange" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-function"><span class="n">np</span><span class="o">.</span><span class="n">arange</span></a><span class="p">(</span><span class="nb">len</span><span class="p">(</span><a href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">iemg_signal</span></a><span class="p">))</span> <span class="o">/</span> <a href="https://docs.python.org/3/library/functions.html#float" title="builtins.float" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">iemg_sim</span><span class="o">.</span><span class="n">sampling_frequency__Hz</span></a>  <span class="c1"># Convert to seconds</span>
+    <a href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">current_time</span></a> <span class="o">=</span> <a href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">mn_pool</span><span class="o">.</span><span class="n">times</span></a> <span class="o">/</span> <span class="mi">1000</span>
+
+    <span class="c1"># Normalize iEMG signal by dividing by maximum absolute value</span>
+    <a href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">iemg_normalized</span></a> <span class="o">=</span> <a href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">iemg_signal</span></a> <span class="o">/</span> <a href="https://numpy.org/doc/stable/reference/generated/numpy.max.html#numpy.max" title="numpy.max" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-function"><span class="n">np</span><span class="o">.</span><span class="n">max</span></a><span class="p">(</span><a href="https://numpy.org/doc/stable/reference/generated/numpy.ufunc.html#numpy.ufunc" title="numpy.ufunc" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">np</span><span class="o">.</span><span class="n">abs</span></a><span class="p">(</span><a href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">iemg_signal</span></a><span class="p">))</span>
+
+    <span class="c1"># Normalize current between 0 and 1</span>
+    <a href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">current_normalized</span></a> <span class="o">=</span> <span class="p">(</span><a href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">current_signal</span></a> <span class="o">-</span> <a href="https://numpy.org/doc/stable/reference/generated/numpy.min.html#numpy.min" title="numpy.min" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-function"><span class="n">np</span><span class="o">.</span><span class="n">min</span></a><span class="p">(</span><a href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">current_signal</span></a><span class="p">))</span> <span class="o">/</span> <span class="p">(</span>
+        <a href="https://numpy.org/doc/stable/reference/generated/numpy.max.html#numpy.max" title="numpy.max" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-function"><span class="n">np</span><span class="o">.</span><span class="n">max</span></a><span class="p">(</span><a href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">current_signal</span></a><span class="p">)</span> <span class="o">-</span> <a href="https://numpy.org/doc/stable/reference/generated/numpy.min.html#numpy.min" title="numpy.min" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-function"><span class="n">np</span><span class="o">.</span><span class="n">min</span></a><span class="p">(</span><a href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">current_signal</span></a><span class="p">)</span>
+    <span class="p">)</span>
+
+<span class="c1"># Plot both normalized signals</span>
+<a href="https://matplotlib.org/stable/api/_as_gen/matplotlib.axes.Axes.plot.html#matplotlib.axes.Axes.plot" title="matplotlib.axes.Axes.plot" class="sphx-glr-backref-module-matplotlib-axes sphx-glr-backref-type-py-method"><span class="n">ax</span><span class="o">.</span><span class="n">plot</span></a><span class="p">(</span>
+    <a href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">emg_time</span></a><span class="p">,</span>
+    <a href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">iemg_normalized</span></a><span class="p">,</span>
+    <span class="n">linewidth</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+    <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Intramuscular EMG&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="k">with</span> <a href="https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.xkcd.html#matplotlib.pyplot.xkcd" title="matplotlib.pyplot.xkcd" class="sphx-glr-backref-module-matplotlib-pyplot sphx-glr-backref-type-py-function"><span class="n">plt</span><span class="o">.</span><span class="n">xkcd</span></a><span class="p">():</span>
+    <a href="https://matplotlib.org/stable/api/_as_gen/matplotlib.axes.Axes.plot.html#matplotlib.axes.Axes.plot" title="matplotlib.axes.Axes.plot" class="sphx-glr-backref-module-matplotlib-axes sphx-glr-backref-type-py-method"><span class="n">ax</span><span class="o">.</span><span class="n">plot</span></a><span class="p">(</span>
+        <a href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">current_time</span></a><span class="p">,</span>
+        <a href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">current_normalized</span></a><span class="p">,</span>
+        <span class="n">linewidth</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+        <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Input Current&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <a href="https://matplotlib.org/stable/api/_as_gen/matplotlib.axes.Axes.set_xlabel.html#matplotlib.axes.Axes.set_xlabel" title="matplotlib.axes.Axes.set_xlabel" class="sphx-glr-backref-module-matplotlib-axes sphx-glr-backref-type-py-method"><span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span></a><span class="p">(</span><span class="s2">&quot;Time (s)&quot;</span><span class="p">)</span>
+    <a href="https://matplotlib.org/stable/api/_as_gen/matplotlib.axes.Axes.set_ylabel.html#matplotlib.axes.Axes.set_ylabel" title="matplotlib.axes.Axes.set_ylabel" class="sphx-glr-backref-module-matplotlib-axes sphx-glr-backref-type-py-method"><span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span></a><span class="p">(</span><span class="s2">&quot;Normalized Amplitude&quot;</span><span class="p">)</span>
+    <a href="https://matplotlib.org/stable/api/_as_gen/matplotlib.axes.Axes.grid.html#matplotlib.axes.Axes.grid" title="matplotlib.axes.Axes.grid" class="sphx-glr-backref-module-matplotlib-axes sphx-glr-backref-type-py-method"><span class="n">ax</span><span class="o">.</span><span class="n">grid</span></a><span class="p">(</span><span class="kc">True</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.3</span><span class="p">)</span>
+    <a href="https://matplotlib.org/stable/api/_as_gen/matplotlib.axes.Axes.legend.html#matplotlib.axes.Axes.legend" title="matplotlib.axes.Axes.legend" class="sphx-glr-backref-module-matplotlib-axes sphx-glr-backref-type-py-method"><span class="n">ax</span><span class="o">.</span><span class="n">legend</span></a><span class="p">()</span>
+
+    <span class="n">sns</span><span class="o">.</span><span class="n">despine</span><span class="p">(</span><span class="n">trim</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">left</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">bottom</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">right</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">top</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">offset</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+
+    <a href="https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.title.html#matplotlib.pyplot.title" title="matplotlib.pyplot.title" class="sphx-glr-backref-module-matplotlib-pyplot sphx-glr-backref-type-py-function"><span class="n">plt</span><span class="o">.</span><span class="n">title</span></a><span class="p">(</span><span class="s2">&quot;Normalized Intramuscular EMG and Input Current&quot;</span><span class="p">)</span>
+
+<a href="https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.tight_layout.html#matplotlib.pyplot.tight_layout" title="matplotlib.pyplot.tight_layout" class="sphx-glr-backref-module-matplotlib-pyplot sphx-glr-backref-type-py-function"><span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span></a><span class="p">()</span>
+<a href="https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.show.html#matplotlib.pyplot.show" title="matplotlib.pyplot.show" class="sphx-glr-backref-module-matplotlib-pyplot sphx-glr-backref-type-py-function"><span class="n">plt</span><span class="o">.</span><span class="n">show</span></a><span class="p">()</span>
+</pre></div>
+</div>
+<img src="../_images/sphx_glr_08_simulate_intramuscular_emg_003.png" srcset="../_images/sphx_glr_08_simulate_intramuscular_emg_003.png" alt="Normalized Intramuscular EMG and Input Current" class = "sphx-glr-single-img"/><p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (2 minutes 14.079 seconds)</p>
+<div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-auto-examples-08-simulate-intramuscular-emg-py">
+<div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
+<p><a class="reference download internal" download="" href="../_downloads/e582db73117a5d6287c737af36322e70/08_simulate_intramuscular_emg.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">08_simulate_intramuscular_emg.ipynb</span></code></a></p>
+</div>
+<div class="sphx-glr-download sphx-glr-download-python docutils container">
+<p><a class="reference download internal" download="" href="../_downloads/237d6198a9a4b052d2e2fc44509462c0/08_simulate_intramuscular_emg.py"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">08_simulate_intramuscular_emg.py</span></code></a></p>
+</div>
+<div class="sphx-glr-download sphx-glr-download-zip docutils container">
+<p><a class="reference download internal" download="" href="../_downloads/2e83e1d1ce070263ae7c4c5376988ef6/08_simulate_intramuscular_emg.zip"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">zipped:</span> <span class="pre">08_simulate_intramuscular_emg.zip</span></code></a></p>
+</div>
+</div>
+<p class="sphx-glr-signature"><a class="reference external" href="https://sphinx-gallery.github.io">Gallery generated by Sphinx-Gallery</a></p>
+</section>
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#import-libraries">Import Libraries</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#define-parameters">Define Parameters</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#generate-motor-unit-recruitment-thresholds">Generate Motor Unit Recruitment Thresholds</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#load-muscle-model">Load Muscle Model</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#create-intramuscular-electrode-array">Create Intramuscular Electrode Array</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#initialize-intramuscular-emg-simulator">Initialize Intramuscular EMG Simulator</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#calculate-motor-unit-action-potentials">Calculate Motor Unit Action Potentials</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#create-motor-neuron-pool">Create Motor Neuron Pool</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#generate-input-currents">Generate Input Currents</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#generate-spike-trains">Generate Spike Trains</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#visualize-spike-trains">Visualize Spike Trains</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#simulate-intramuscular-emg">Simulate Intramuscular EMG</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#visualize-intramuscular-emg-results">Visualize Intramuscular EMG Results</a></li>
+</ul>
+  </nav></div>
+
+  <div class="sidebar-secondary-item">
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/auto_examples/08_simulate_intramuscular_emg.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2025 - 2025, n-squared lab, FAU Erlangen-Nürnberg, Germany.
+      <br/>
+    
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.2.3.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Surface EMG Signals &#8212; MyoGen 0.2.0 Documentation</title>
+    <title>Surface EMG Signals &#8212; MyoGen 0.3.0 Documentation</title>
   
   
   
@@ -35,7 +35,7 @@
     <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-binder.css?v=f4aeca0c" />
     <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-dataframe.css?v=2082cf3c" />
     <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
-    <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=4797f867" />
+    <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=73e2cb9d" />
   
   <!-- So that users can add custom icons -->
   <script src="../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
@@ -43,7 +43,7 @@
   <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="../_static/documentation_options.js?v=938c9ccc"></script>
+    <script src="../_static/documentation_options.js?v=e259d695"></script>
     <script src="../_static/doctools.js?v=9bcbadda"></script>
     <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'auto_examples/04_simulate_surface_emg';</script>
@@ -53,7 +53,7 @@
     <link rel="prev" title="Surface Motor Unit Action Potentials" href="03_simulate_surface_muaps.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="0.2.0" />
+  <meta name="docsearch:version" content="0.3.0" />
   </head>
   
   
@@ -119,8 +119,8 @@
       
     
     
-    <img src="../_static/myogen_logo.png" class="logo__image only-light" alt="MyoGen 0.2.0 Documentation - Home"/>
-    <img src="../_static/myogen_logo.png" class="logo__image only-dark pst-js-only" alt="MyoGen 0.2.0 Documentation - Home"/>
+    <img src="../_static/myogen_logo.png" class="logo__image only-light" alt="MyoGen 0.3.0 Documentation - Home"/>
+    <img src="../_static/myogen_logo.png" class="logo__image only-dark pst-js-only" alt="MyoGen 0.3.0 Documentation - Home"/>
   
   
 </a></div>
@@ -129,7 +129,7 @@
 <div class="nav-item">
   <div class="version-switcher__container dropdown">
       <button id="version-switcher-button" type="button" class="version-switcher__button btn btn-sm navbar-btn" aria-haspopup="true" aria-expanded="false">
-          Version 0.2.0
+          Version 0.3.0
       </button>
       
       
@@ -316,6 +316,7 @@
 <li class="toctree-l1"><a class="reference internal" href="05_simulate_currents.html">Current Generation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="06_simulate_force.html">Force Generation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="07_simulate_cortical_input.html">Cortical Inputs and Motor Unit Spike Trains</a></li>
+<li class="toctree-l1"><a class="reference internal" href="08_simulate_intramuscular_emg.html">Intramuscular EMG Signals</a></li>
 </ul>
 </div>
 </nav></div>
@@ -446,9 +447,9 @@ to download the full example code.</p>
 </pre></div>
 </div>
 <div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Electrode Array 1/1 Surface EMG (CPU):   0%|          | 0/2 [00:00&lt;?, ?pools/s]
-Electrode Array 1/1 Surface EMG (CPU):  50%|█████     | 1/2 [01:33&lt;01:33, 93.60s/pools]
-Electrode Array 1/1 Surface EMG (CPU): 100%|██████████| 2/2 [03:05&lt;00:00, 92.47s/pools]
-Electrode Array 1/1 Surface EMG (CPU): 100%|██████████| 2/2 [03:05&lt;00:00, 92.64s/pools]
+Electrode Array 1/1 Surface EMG (CPU):  50%|█████     | 1/2 [01:33&lt;01:33, 93.65s/pools]
+Electrode Array 1/1 Surface EMG (CPU): 100%|██████████| 2/2 [03:05&lt;00:00, 92.52s/pools]
+Electrode Array 1/1 Surface EMG (CPU): 100%|██████████| 2/2 [03:05&lt;00:00, 92.69s/pools]
 Surface EMG simulation completed!
 Generated EMG shape: (2, 8, 8, 4096)
   - 2 pools
@@ -519,7 +520,7 @@ Generated EMG shape: (2, 8, 8, 4096)
 <a href="https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.show.html#matplotlib.pyplot.show" title="matplotlib.pyplot.show" class="sphx-glr-backref-module-matplotlib-pyplot sphx-glr-backref-type-py-function"><span class="n">plt</span><span class="o">.</span><span class="n">show</span></a><span class="p">()</span>
 </pre></div>
 </div>
-<img src="../_images/sphx_glr_04_simulate_surface_emg_001.png" srcset="../_images/sphx_glr_04_simulate_surface_emg_001.png" alt="Normalized Surface EMG and Input Current" class = "sphx-glr-single-img"/><p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (3 minutes 5.794 seconds)</p>
+<img src="../_images/sphx_glr_04_simulate_surface_emg_001.png" srcset="../_images/sphx_glr_04_simulate_surface_emg_001.png" alt="Normalized Surface EMG and Input Current" class = "sphx-glr-single-img"/><p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (3 minutes 5.881 seconds)</p>
 <div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-auto-examples-04-simulate-surface-emg-py">
 <div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
 <p><a class="reference download internal" download="" href="../_downloads/fcfac483f5f6571de43955e3219fa1eb/04_simulate_surface_emg.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">04_simulate_surface_emg.ipynb</span></code></a></p>

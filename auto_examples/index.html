@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Examples &#8212; MyoGen 0.2.0 Documentation</title>
+    <title>Examples &#8212; MyoGen 0.3.0 Documentation</title>
   
   
   
@@ -35,7 +35,7 @@
     <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-binder.css?v=f4aeca0c" />
     <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-dataframe.css?v=2082cf3c" />
     <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
-    <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=4797f867" />
+    <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=73e2cb9d" />
   
   <!-- So that users can add custom icons -->
   <script src="../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
@@ -43,17 +43,25 @@
   <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="../_static/documentation_options.js?v=938c9ccc"></script>
+    <script src="../_static/documentation_options.js?v=e259d695"></script>
     <script src="../_static/doctools.js?v=9bcbadda"></script>
     <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script type="module" src="https://cdn.jsdelivr.net/npm/mermaid@11.9.0/dist/mermaid.esm.min.mjs"></script>
+    <script type="module" src="https://cdn.jsdelivr.net/npm/@mermaid-js/layout-elk@0.1.4/dist/mermaid-layout-elk.esm.min.mjs"></script>
+    <script type="module">import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@11.9.0/dist/mermaid.esm.min.mjs";import elkLayouts from "https://cdn.jsdelivr.net/npm/@mermaid-js/layout-elk@0.1.4/dist/mermaid-layout-elk.esm.min.mjs";mermaid.registerLayoutLoaders(elkLayouts);mermaid.initialize({startOnLoad:false});</script>
+    <script src="https://cdn.jsdelivr.net/npm/d3@7.9.0/dist/d3.min.js"></script>
+    <script type="module">
+import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@11.9.0/dist/mermaid.esm.min.mjs";
+window.addEventListener("load", () => mermaid.run());
+</script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'auto_examples/index';</script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="Recruitment Thresholds" href="00_simulate_recruitment_thresholds.html" />
-    <link rel="prev" title="SURFACE_EMG__TENSOR" href="../generated/myogen.utils.types.SURFACE_EMG__TENSOR.html" />
+    <link rel="prev" title="INTRAMUSCULAR_EMG__TENSOR" href="../generated/myogen.utils.types.INTRAMUSCULAR_EMG__TENSOR.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="0.2.0" />
+  <meta name="docsearch:version" content="0.3.0" />
   </head>
   
   
@@ -119,8 +127,8 @@
       
     
     
-    <img src="../_static/myogen_logo.png" class="logo__image only-light" alt="MyoGen 0.2.0 Documentation - Home"/>
-    <img src="../_static/myogen_logo.png" class="logo__image only-dark pst-js-only" alt="MyoGen 0.2.0 Documentation - Home"/>
+    <img src="../_static/myogen_logo.png" class="logo__image only-light" alt="MyoGen 0.3.0 Documentation - Home"/>
+    <img src="../_static/myogen_logo.png" class="logo__image only-dark pst-js-only" alt="MyoGen 0.3.0 Documentation - Home"/>
   
   
 </a></div>
@@ -129,7 +137,7 @@
 <div class="nav-item">
   <div class="version-switcher__container dropdown">
       <button id="version-switcher-button" type="button" class="version-switcher__button btn btn-sm navbar-btn" aria-haspopup="true" aria-expanded="false">
-          Version 0.2.0
+          Version 0.3.0
       </button>
       
       
@@ -316,6 +324,7 @@
 <li class="toctree-l1"><a class="reference internal" href="05_simulate_currents.html">Current Generation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="06_simulate_force.html">Force Generation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="07_simulate_cortical_input.html">Cortical Inputs and Motor Unit Spike Trains</a></li>
+<li class="toctree-l1"><a class="reference internal" href="08_simulate_intramuscular_emg.html">Intramuscular EMG Signals</a></li>
 </ul>
 </div>
 </nav></div>
@@ -375,6 +384,128 @@
                   
   <section id="examples">
 <span id="examples-index"></span><h1>Examples<a class="headerlink" href="#examples" title="Link to this heading">#</a></h1>
+<p>This collection of examples demonstrates the complete MyoGen simulation pipeline, from basic motor unit recruitment to advanced EMG signal generation.</p>
+<section id="workflow">
+<h2>Workflow<a class="headerlink" href="#workflow" title="Link to this heading">#</a></h2>
+<figure class="align-default" id="id1">
+<pre  class="mermaid">
+         %%{init: {
+   &quot;theme&quot;: &quot;base&quot;,
+   &quot;themeVariables&quot;: {
+     &quot;fontSize&quot;: &quot;1.1em&quot;,
+     &quot;fontFamily&quot;: &quot;-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif&quot;,
+     &quot;primaryColor&quot;: &quot;#ffffff&quot;,
+     &quot;primaryTextColor&quot;: &quot;#1f2937&quot;,
+     &quot;primaryBorderColor&quot;: &quot;#e5e7eb&quot;,
+     &quot;lineColor&quot;: &quot;#6b7280&quot;,
+     &quot;background&quot;: &quot;#ffffff&quot;,
+     &quot;mainBkg&quot;: &quot;#ffffff&quot;,
+     &quot;secondaryColor&quot;: &quot;#f9fafb&quot;,
+     &quot;tertiaryColor&quot;: &quot;#f3f4f6&quot;,
+     &quot;clusterBkg&quot;: &quot;#f8fafc&quot;,
+     &quot;clusterBorder&quot;: &quot;#cbd5e1&quot;,
+     &quot;edgeLabelBackground&quot;: &quot;#ffffff&quot;,
+     &quot;cScale0&quot;: &quot;#1f2937&quot;,
+     &quot;cScale1&quot;: &quot;#1f2937&quot;,
+     &quot;cScale2&quot;: &quot;#1f2937&quot;,
+     &quot;clusterTextSize&quot;: &quot;1.5em&quot;
+   },
+   &quot;flowchart&quot;: {
+     &quot;curve&quot;: &quot;linear&quot;,
+     &quot;nodeSpacing&quot;: 50,
+     &quot;rankSpacing&quot;: 80
+   }
+ }}%%
+
+flowchart TD
+     S((Start))
+     A[&quot;Recruitment&lt;br/&gt;Thresholds&quot;]
+
+     B[&quot;Injected Current&quot;]
+     C[&quot;Cortical Input&quot;]
+
+     D[&quot;Muscle Model&quot;]
+
+     E[&quot;Surface MUAPs&quot;]
+     F[&quot;Surface EMG&quot;]
+     G[&quot;Intramuscular EMG&quot;]
+     J[&quot;Intramuscular MUAPs&quot;]
+
+     %% Column 4: Independent Utilities
+     H[&quot;Current Generation&quot;]
+     I[&quot;Force Model&quot;]
+
+     subgraph neural_drive [&quot;&lt;b&gt;⚡ Neural Drive&lt;/b&gt;&quot;]
+         B
+         C
+     end
+
+     subgraph utilities [&quot;&lt;b&gt;🔧 Utilities&lt;/b&gt;&quot;]
+         H
+     end
+
+     subgraph physiology [&quot;&lt;b&gt;💪 Anatomy Model&lt;/b&gt;&quot;]
+         S --&gt; A --&gt; D &amp; I
+     end
+
+     subgraph emg [&quot;&lt;b&gt;📊 EMG Generation&lt;/b&gt;&quot;]
+         direction TB
+         E --&gt; F
+         J --&gt; G
+     end
+
+
+     H --&gt; neural_drive
+     D --&gt; emg
+
+     neural_drive --&gt; emg
+
+     %% Modern Light Mode Styling
+     classDef start fill:#f0f9ff,stroke:#0369a1,stroke-width:3px,color:#0c4a6e
+     classDef foundation fill:#dbeafe,stroke:#1d4ed8,stroke-width:2px,color:#1e3a8a
+     classDef neural fill:#ede9fe,stroke:#7c3aed,stroke-width:2px,color:#5b21b6
+     classDef physiology fill:#fef3c7,stroke:#d97706,stroke-width:2px,color:#92400e
+     classDef emg fill:#d1fae5,stroke:#059669,stroke-width:2px,color:#064e3b
+     classDef utility fill:#fee2e2,stroke:#dc2626,stroke-width:2px,color:#991b1b
+     classDef default fill:#f3f4f6,stroke:#6b7280,stroke-width:2px,color:#374151
+
+     class S start
+     class A foundation
+     class B,C neural
+     class D,I physiology
+     class E,F,G,J emg
+     class H utility
+
+     %% Subgraph styling
+     style neural_drive fill:#f3f0ff,stroke:#8b5cf6,stroke-width:2px,stroke-dasharray: 5 5
+     style utilities fill:#fef2f2,stroke:#ef4444,stroke-width:2px,stroke-dasharray: 5 5
+     style physiology fill:#fffbeb,stroke:#f59e0b,stroke-width:2px,stroke-dasharray: 5 5
+     style emg fill:#ecfdf5,stroke:#10b981,stroke-width:2px,stroke-dasharray: 5 5
+
+     %% Clickable links
+     click A &quot;00_simulate_recruitment_thresholds.html&quot;
+     click B &quot;01_simulate_spike_trains.html&quot;
+     click C &quot;07_simulate_cortical_input.html&quot;
+     click D &quot;02_simulate_muscle.html&quot;
+     click E &quot;03_simulate_surface_muaps.html&quot;
+     click F &quot;04_simulate_surface_emg.html&quot;
+     click J &quot;08_simulate_intramuscular_emg.html&quot;
+     click G &quot;08_simulate_intramuscular_emg.html&quot;
+     click H &quot;05_simulate_currents.html&quot;
+     click I &quot;06_simulate_force.html&quot;
+    </pre><figcaption>
+<p><span class="caption-text">Click any box to navigate to that example</span><a class="headerlink" href="#id1" title="Link to this image">#</a></p>
+</figcaption>
+</figure>
+</section>
+<section id="recommended-entry-path">
+<h2>Recommended Entry Path<a class="headerlink" href="#recommended-entry-path" title="Link to this heading">#</a></h2>
+<ol class="arabic simple">
+<li><p><a class="reference internal" href="00_simulate_recruitment_thresholds.html#sphx-glr-auto-examples-00-simulate-recruitment-thresholds-py"><span class="std std-ref">Recruitment Thresholds</span></a> - Create recruitment thresholds</p></li>
+<li><p><a class="reference internal" href="01_simulate_spike_trains.html#sphx-glr-auto-examples-01-simulate-spike-trains-py"><span class="std std-ref">Motor Unit Spike Trains</span></a> - Neural drive</p></li>
+<li><p><a class="reference internal" href="02_simulate_muscle.html#sphx-glr-auto-examples-02-simulate-muscle-py"><span class="std std-ref">Muscle Model</span></a> - Muscle structure</p></li>
+<li><p><a class="reference internal" href="04_simulate_surface_emg.html#sphx-glr-auto-examples-04-simulate-surface-emg-py"><span class="std std-ref">Surface EMG Signals</span></a> - Surface EMG</p></li>
+</ol>
 <div class="sphx-glr-thumbnails"><div class="sphx-glr-thumbcontainer" tooltip="The first step in using MyoGen is to generate the recruitment thresholds of the motor units (MUs)."><img alt="" src="../_images/sphx_glr_00_simulate_recruitment_thresholds_thumb.png" />
 <p><a class="reference internal" href="00_simulate_recruitment_thresholds.html#sphx-glr-auto-examples-00-simulate-recruitment-thresholds-py"><span class="std std-ref">Recruitment Thresholds</span></a></p>
   <div class="sphx-glr-thumbnail-title">Recruitment Thresholds</div>
@@ -399,9 +530,13 @@
 </div><div class="sphx-glr-thumbcontainer" tooltip="Instead of using injected currents, we can simulate the spike trains of the motor units by using cortical inputs."><img alt="" src="../_images/sphx_glr_07_simulate_cortical_input_thumb.png" />
 <p><a class="reference internal" href="07_simulate_cortical_input.html#sphx-glr-auto-examples-07-simulate-cortical-input-py"><span class="std std-ref">Cortical Inputs and Motor Unit Spike Trains</span></a></p>
   <div class="sphx-glr-thumbnail-title">Cortical Inputs and Motor Unit Spike Trains</div>
+</div><div class="sphx-glr-thumbcontainer" tooltip="This example demonstrates how to simulate intramuscular EMG signals using needle electrodes. It shows the complete pipeline from muscle model creation to EMG signal generation with realistic noise and motor unit detectability."><img alt="" src="../_images/sphx_glr_08_simulate_intramuscular_emg_thumb.png" />
+<p><a class="reference internal" href="08_simulate_intramuscular_emg.html#sphx-glr-auto-examples-08-simulate-intramuscular-emg-py"><span class="std std-ref">Intramuscular EMG Signals</span></a></p>
+  <div class="sphx-glr-thumbnail-title">Intramuscular EMG Signals</div>
 </div></div><div class="toctree-wrapper compound">
 </div>
 <p class="sphx-glr-signature"><a class="reference external" href="https://sphinx-gallery.github.io">Gallery generated by Sphinx-Gallery</a></p>
+</section>
 </section>
 
 
@@ -418,6 +553,19 @@
                 <dialog id="pst-secondary-sidebar-modal"></dialog>
                 <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
 
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#workflow">Workflow</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#recommended-entry-path">Recommended Entry Path</a></li>
+</ul>
+  </nav></div>
 
   <div class="sidebar-secondary-item">
   <div role="note" aria-label="source link">

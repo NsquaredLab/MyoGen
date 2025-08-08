@@ -11,6 +11,9 @@ This module contains type definitions for structured data and type safety.
    :recursive:
 
    INPUT_CURRENT__MATRIX
+   CORTICAL_INPUT__MATRIX
    SPIKE_TRAIN__MATRIX
-   MUAP_SHAPE__TENSOR
-   SURFACE_EMG__TENSOR 
+   SURFACE_MUAP_SHAPE__TENSOR
+   INTRAMUSCULAR_MUAP_SHAPE__TENSOR
+   SURFACE_EMG__TENSOR
+   INTRAMUSCULAR_EMG__TENSOR 
