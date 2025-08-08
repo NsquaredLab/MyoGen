@@ -8,17 +8,24 @@ motor unit action potential (MUAP) generation with realistic jitter.
 Based on the MU_Sim class from the MATLAB iemg_simulator.
 """
 
+from typing import Optional, List
+
 import numpy as np
-from typing import Tuple, Optional, List
 from scipy.spatial.distance import cdist
-from myogen import RANDOM_GENERATOR
+from sklearn.cluster import KMeans
+from tqdm import tqdm
+
+from myogen import RANDOM_GENERATOR, SEED
+from myogen.utils.types import beartowertype
 from .bioelectric import (
     get_current_density,
     get_elementary_current_response,
-    calculate_sfap,
+    shift_padding,
+    hr_shift_template,
 )
 
 
+@beartowertype
 class MotorUnitSim:
     """
     Simulation of individual motor unit for intramuscular EMG.
@@ -31,56 +38,74 @@ class MotorUnitSim:
 
     Parameters
     ----------
-    mf_centers : np.ndarray
-        Muscle fiber center positions (N × 3) in mm [x, y, z]
-    muscle_length : float
-        Total muscle length in mm
-    mf_diameters : np.ndarray
-        Muscle fiber diameters in mm (N,)
-    mf_cv : np.ndarray
-        Muscle fiber conduction velocities in mm/s (N,)
-    nmj_cv : List[float]
-        Neuromuscular junction branch conduction velocities in mm/s
+    muscle_fiber_centers__mm : np.ndarray
+        Muscle fiber center positions (N × 3) in mm [x, y, z].
+    muscle_length__mm : float
+        Total muscle length in mm.
+    muscle_fiber_diameters__mm : np.ndarray
+        Muscle fiber diameters in mm (N,).
+    muscle_fiber_conduction_velocity__mm_per_s : np.ndarray
+        Muscle fiber conduction velocities in mm/s (N,).
+    neuromuscular_junction_conduction_velocities__mm_per_s : List[float]
+        Neuromuscular junction branch conduction velocities in mm/s.
+    nominal_center__mm : np.ndarray, optional
+        Nominal center of the motor unit in mm [x, y]. This is the target center of the motor unit,
+        which is used to calculate the nerve paths.
     """
 
     def __init__(
         self,
-        mf_centers: np.ndarray,
-        muscle_length: float,
-        mf_diameters: np.ndarray,
-        mf_cv: np.ndarray,
-        nmj_cv: List[float] = [5000.0, 2000.0],
+        muscle_fiber_centers__mm: np.ndarray,
+        muscle_length__mm: float,
+        muscle_fiber_diameters__mm: np.ndarray,
+        muscle_fiber_conduction_velocity__mm_per_s: np.ndarray,
+        nominal_center__mm: np.ndarray,
+        neuromuscular_junction_conduction_velocities__mm_per_s: List[float] = [
+            5000.0,
+            2000.0,
+        ],
     ):
-        self.mf_centers = np.asarray(mf_centers)
-        self.Nmf = len(mf_centers)
-        self.muscle_length = muscle_length
-        self.mf_diameters = np.asarray(mf_diameters)
-        self.mf_cv = np.asarray(mf_cv)
-        self.nmj_cv = nmj_cv
+        self.muscle_fiber_centers__mm = muscle_fiber_centers__mm
+        self.muscle_length__mm = muscle_length__mm
+        self.muscle_fiber_diameters__mm = muscle_fiber_diameters__mm[..., None]
+        self.muscle_fiber_conduction_velocity__mm_per_s = (
+            muscle_fiber_conduction_velocity__mm_per_s[..., None]
+        )
+        self.neuromuscular_junction_conduction_velocities__mm_per_s = (
+            neuromuscular_junction_conduction_velocities__mm_per_s
+        )
+        self.nominal_center__mm = nominal_center__mm
+
+        self._number_of_muscle_fibers = len(muscle_fiber_centers__mm)
 
         # Initialize fiber end positions
-        self.mf_left_end = np.zeros(self.Nmf)
-        self.mf_right_end = np.full(self.Nmf, muscle_length)
+        self._muscle_fiber_left_ends__mm = np.zeros(
+            shape=(self._number_of_muscle_fibers, 1)
+        )  # coordinates of muscle fibers left ends
+        self._muscle_fiber_right_ends__mm = np.full(
+            fill_value=muscle_length__mm, shape=(self._number_of_muscle_fibers, 1)
+        )  # coordinates of muscle fibers right ends
 
         # Neuromuscular junction properties
-        self.nmj_z: Optional[np.ndarray] = None  # Will be set by sim_nmj_branches
-        self.nmj_delays: Optional[np.ndarray] = None
-        self.branch_points_xy: Optional[List] = None
-        self.branch_points_z: Optional[List] = None
-        self.nerve_paths: Optional[np.ndarray] = None
+        self._neuromuscular_z_coordinates__mm: Optional[np.ndarray] = None
+        self._neuromuscular_delays: Optional[np.ndarray] = None
+        self._branch_points_xy__mm: Optional[List] = None
+        self._branch_points_z__mm: Optional[List] = None
+        self._nerve_paths: Optional[np.ndarray] = None
 
         # Simulation results
-        self.sfaps: Optional[np.ndarray] = None  # Single fiber action potentials
-        self.muap: Optional[np.ndarray] = None  # Motor unit action potential
+        self._sfaps: Optional[np.ndarray] = None  # Single fiber action potentials
+        self._muap: Optional[np.ndarray] = None  # Motor unit action potential
 
         # Simulation parameters
-        self.dt: Optional[float] = None
-        self.dz: Optional[float] = None
-        self.Npt: Optional[int] = None  # Number of electrode points
+        self._dt: Optional[float] = None
+        self._dz: Optional[float] = None
+        self._number_of_electrode_points: Optional[int] = (
+            None  # Number of electrode points
+        )
 
         # Centers
-        self.nominal_center: Optional[np.ndarray] = None
-        self.actual_center = np.mean(mf_centers, axis=0)
+        self._actual_center = np.mean(muscle_fiber_centers__mm, axis=0)
 
     def sim_nmj_branches_two_layers(
         self,
@@ -108,69 +133,58 @@ class MotorUnitSim:
         """
         rng = RANDOM_GENERATOR
 
-        # Primary branch positions
-        primary_branches_z = rng.normal(endplate_center, branches_z_std, n_branches)
+        self.nerve_paths = np.zeros(
+            (self._number_of_muscle_fibers, 2)
+        )  # Point coordinates
 
-        # Assign fibers to branches
-        fibers_per_branch = self.Nmf // n_branches
-        remaining_fibers = self.Nmf % n_branches
+        kmeans = KMeans(
+            n_clusters=n_branches, init="k-means++", max_iter=100, random_state=SEED
+        )
+        idx = kmeans.fit_predict(self.muscle_fiber_centers__mm)
+        c = kmeans.cluster_centers_
 
-        self.nmj_z = np.zeros(self.Nmf)
-        self.branch_points_z = []
-        self.branch_points_xy = []
-        self.nerve_paths = np.zeros((self.Nmf, 2))  # Two segments: axon + branch
+        self.branch_points_xy = c
+        self.branch_points_z = endplate_center + branches_z_std * rng.standard_normal(
+            size=(n_branches, 1)
+        )
 
-        fiber_idx = 0
-        for branch_idx in range(n_branches):
-            # Number of fibers for this branch
-            n_fibers_this_branch = fibers_per_branch + (
-                1 if branch_idx < remaining_fibers else 0
+        self._neuromuscular_z_coordinates__mm = np.array(
+            [
+                self.branch_points_z[idx[i]]
+                + arborization_z_std * rng.standard_normal()
+                for i in range(self._number_of_muscle_fibers)
+            ]
+        )
+
+        self._actual_center = np.concatenate(
+            [
+                np.mean(self.muscle_fiber_centers__mm, axis=0),
+                np.mean(self._neuromuscular_z_coordinates__mm, axis=0),
+            ]
+        )[None]
+        for i in range(self._number_of_muscle_fibers):
+            cluster_center = np.concatenate(
+                [
+                    self.branch_points_xy[idx[i]],
+                    self._neuromuscular_z_coordinates__mm[idx[i]],
+                ]
+            )[None]
+            nmj_coordinates = np.concatenate(
+                [
+                    self.muscle_fiber_centers__mm[i],
+                    self._neuromuscular_z_coordinates__mm[i],
+                ]
+            )[None]
+
+            self.nerve_paths[i, 0] = np.linalg.norm(
+                self._actual_center - cluster_center, axis=-1
             )
-
-            if n_fibers_this_branch == 0:
-                continue
-
-            # Primary branch position
-            branch_z = primary_branches_z[branch_idx]
-            self.branch_points_z.append(branch_z)
-
-            # Secondary arborization positions for fibers
-            fiber_nmj_positions = rng.normal(
-                branch_z, arborization_z_std, n_fibers_this_branch
+            self.nerve_paths[i, 1] = np.linalg.norm(
+                nmj_coordinates - cluster_center, axis=-1
             )
-
-            # Assign to fibers
-            for i in range(n_fibers_this_branch):
-                if fiber_idx < self.Nmf:
-                    self.nmj_z[fiber_idx] = fiber_nmj_positions[i]
-
-                    # Calculate nerve path lengths (simplified)
-                    # Path 1: From spinal cord to branch point
-                    branch_distance = np.sqrt(
-                        (self.mf_centers[fiber_idx, 0] - self.actual_center[0]) ** 2
-                        + (self.mf_centers[fiber_idx, 1] - self.actual_center[1]) ** 2
-                        + (branch_z - endplate_center) ** 2
-                    )
-
-                    # Path 2: From branch point to NMJ
-                    nmj_distance = np.sqrt(
-                        (self.mf_centers[fiber_idx, 0] - self.mf_centers[fiber_idx, 0])
-                        ** 2
-                        + (
-                            self.mf_centers[fiber_idx, 1]
-                            - self.mf_centers[fiber_idx, 1]
-                        )
-                        ** 2
-                        + (fiber_nmj_positions[i] - branch_z) ** 2
-                    )
-
-                    self.nerve_paths[fiber_idx, 0] = branch_distance
-                    self.nerve_paths[fiber_idx, 1] = nmj_distance
-
-                    fiber_idx += 1
 
         # Calculate delays
-        self._calculate_nmj_delays()
+        # self._calculate_nmj_delays()
 
     def sim_nmj_branches_gaussian(self, endplate_center: float, branches_z_std: float):
         """
@@ -219,6 +233,7 @@ class MotorUnitSim:
 
     def calc_sfaps(
         self,
+        index: int,
         dt: float,
         dz: float,
         electrode_positions: np.ndarray,
@@ -243,87 +258,130 @@ class MotorUnitSim:
         """
         self.dt = dt
         self.dz = dz
-        self.Npt = len(electrode_positions)
+        self.Npt = electrode_positions.shape[0]
 
         if min_radial_dist is None:
             min_radial_dist = float(
-                np.mean(self.mf_diameters) * 1000
+                np.mean(self.muscle_fiber_diameters__mm) * 1000
             )  # Convert to micrometers
 
-        # Check that nmj_z is set
-        if self.nmj_z is None:
+        if self._neuromuscular_z_coordinates__mm is None:
             raise ValueError(
                 "Must call sim_nmj_branches_* method first to set neuromuscular junction positions"
             )
 
-        # Calculate maximum simulation time needed
-        max_time_1 = float(np.max((self.nmj_z - self.mf_left_end) / self.mf_cv))
-        max_time_2 = float(np.max((self.mf_right_end - self.nmj_z) / self.mf_cv))
-        max_propagation_time = 2 * max(max_time_1, max_time_2)
+        t = np.arange(
+            start=0,
+            stop=2
+            * np.max(
+                [
+                    np.divide(
+                        self._neuromuscular_z_coordinates__mm
+                        - self._muscle_fiber_left_ends__mm,
+                        self.muscle_fiber_conduction_velocity__mm_per_s,
+                    ),
+                    np.divide(
+                        self._muscle_fiber_right_ends__mm
+                        - self._neuromuscular_z_coordinates__mm,
+                        self.muscle_fiber_conduction_velocity__mm_per_s,
+                    ),
+                ]
+            )
+            + dt,
+            step=dt,
+        )[..., None]
+        self.sfaps = np.zeros((len(t), self.Npt, self._number_of_muscle_fibers))
 
-        max_delay = (
-            float(np.max(self.nmj_delays)) if self.nmj_delays is not None else 0.0
-        )
-        t_max = max_propagation_time + max_delay
-        t = np.arange(0, t_max + dt, dt)
+        for fiber_idx in tqdm(
+            range(self._number_of_muscle_fibers),
+            desc=f"MU {index}: Calculating SFAPs",
+            unit="fiber",
+        ):
+            z_left = np.arange(
+                start=self._neuromuscular_z_coordinates__mm[fiber_idx],
+                step=-dz,
+                stop=self._muscle_fiber_left_ends__mm[fiber_idx] - dz,
+            )
+            z_right = np.arange(
+                start=self._neuromuscular_z_coordinates__mm[fiber_idx],
+                step=dz,
+                stop=self._muscle_fiber_right_ends__mm[fiber_idx] + dz,
+            )
+            z = np.concatenate((z_left[::-1], z_right[1:]))[:, None]
+            mf_coord_3d = np.concatenate(
+                [
+                    np.matlib.repmat(
+                        a=self.muscle_fiber_centers__mm[fiber_idx], m=len(z), n=1
+                    ),
+                    z,
+                ],
+                axis=1,
+            )
 
-        # Initialize SFAP storage: (time, electrodes, fibers)
-        self.sfaps = np.zeros((len(t), self.Npt, self.Nmf))
+            current_density = get_current_density(
+                t,
+                z,
+                self._neuromuscular_z_coordinates__mm[fiber_idx],
+                self._muscle_fiber_right_ends__mm[fiber_idx]
+                - self._neuromuscular_z_coordinates__mm[fiber_idx],
+                self._neuromuscular_z_coordinates__mm[fiber_idx]
+                - self._muscle_fiber_left_ends__mm[fiber_idx],
+                self.muscle_fiber_conduction_velocity__mm_per_s[fiber_idx],
+                self.muscle_fiber_diameters__mm[fiber_idx],
+            )
 
-        # Calculate SFAPs for each fiber at each electrode
-        for fiber_idx in range(self.Nmf):
             for electrode_idx in range(self.Npt):
                 # Calculate radial distance from fiber to electrode
-                fiber_pos = self.mf_centers[fiber_idx]
-                electrode_pos = electrode_positions[electrode_idx]
-
-                r_distance = np.sqrt(
-                    (fiber_pos[0] - electrode_pos[0]) ** 2
-                    + (fiber_pos[1] - electrode_pos[1]) ** 2
+                radial_distance = np.sqrt(
+                    np.sum(
+                        (
+                            electrode_positions[electrode_idx, :2]
+                            - self.muscle_fiber_centers__mm[fiber_idx]
+                        )
+                        ** 2,
+                        keepdims=True,
+                    )
                 )
-                r_distance = max(
-                    r_distance, min_radial_dist * 1e-3
-                )  # Convert back to mm
+                if radial_distance < min_radial_dist:
+                    radial_distance = min_radial_dist
 
-                # Fiber parameters
-                fiber_length_L1 = self.mf_right_end[fiber_idx] - self.nmj_z[fiber_idx]
-                fiber_length_L2 = self.nmj_z[fiber_idx] - self.mf_left_end[fiber_idx]
-
-                # Create spatial grid along fiber
-                z_min = self.mf_left_end[fiber_idx]
-                z_max = self.mf_right_end[fiber_idx]
-                z_fiber = np.arange(z_min, z_max + dz, dz)
-
-                # Calculate current density
-                current_density = get_current_density(
-                    t,
-                    z_fiber,
-                    self.nmj_z[fiber_idx],
-                    fiber_length_L1,
-                    fiber_length_L2,
-                    self.mf_cv[fiber_idx],
-                    self.mf_diameters[fiber_idx],
+                response_to_elem_current = get_elementary_current_response(
+                    z,
+                    electrode_positions[electrode_idx, 2],
+                    radial_distance,
                 )
 
-                # Calculate volume conductor response
-                h_response = get_elementary_current_response(
-                    z_fiber, electrode_pos[2], np.full_like(z_fiber, r_distance)
+                self.sfaps[:, electrode_idx, fiber_idx] = (
+                    current_density.T @ response_to_elem_current
+                )[:, 0]
+
+        self.shift_sfaps(dt)
+
+    def calc_mnap_delays(self):
+        self.mnap_delays = np.divide(
+            self.nerve_paths,
+            np.matlib.repmat(
+                np.array(self.neuromuscular_junction_conduction_velocities__mm_per_s)[
+                    None
+                ],
+                self._number_of_muscle_fibers,
+                1,
+            ),
+        ).sum(axis=1, keepdims=True)
+
+    def shift_sfaps(self, dt):
+        self.calc_mnap_delays()
+
+        for fb in range(self._number_of_muscle_fibers):
+            for pt in range(self.Npt):
+                self.sfaps[:, pt, fb] = shift_padding(
+                    self.sfaps[:, pt, fb],
+                    int(np.floor(self.mnap_delays[fb] / dt)),
+                    axis=0,
                 )
-
-                # Convolve to get SFAP
-                sfap = np.zeros(len(t))
-                for z_idx, z_pos in enumerate(z_fiber):
-                    sfap += current_density[z_idx, :] * h_response[z_idx] * dz
-
-                # Apply neuromuscular junction delay if present
-                if self.nmj_delays is not None:
-                    delay_samples = int(self.nmj_delays[fiber_idx] / dt)
-                    if delay_samples > 0 and delay_samples < len(sfap):
-                        sfap_delayed = np.zeros_like(sfap)
-                        sfap_delayed[delay_samples:] = sfap[:-delay_samples]
-                        sfap = sfap_delayed
-
-                self.sfaps[:, electrode_idx, fiber_idx] = sfap
+                self.sfaps[:, pt, fb] = hr_shift_template(
+                    self.sfaps[:, pt, fb], int(np.mod(self.mnap_delays[fb], dt))
+                )
 
     def calc_muap(self, jitter_std: float = 0.0) -> np.ndarray:
         """
@@ -343,42 +401,25 @@ class MotorUnitSim:
             raise ValueError("Must call calc_sfaps() first")
 
         if self.dt is None:
-            raise ValueError("dt not set - call calc_sfaps() first")
+            raise ValueError("_dt not set - call calc_sfaps() first")
 
-        rng = RANDOM_GENERATOR
-        n_time, n_electrodes, n_fibers = self.sfaps.shape
+        if jitter_std != 0:
+            delays = jitter_std * RANDOM_GENERATOR.standard_normal(
+                size=(self._number_of_muscle_fibers, 1)
+            )
+            jittered_sfaps = np.zeros_like(self.sfaps)
+            for fiber_idx in range(self._number_of_muscle_fibers):
+                for electrode_idx in range(self.Npt):
+                    jittered_sfaps[:, electrode_idx, fiber_idx] = hr_shift_template(
+                        self.sfaps[:, electrode_idx, fiber_idx],
+                        delays[fiber_idx] / self.dt,
+                    )
 
-        # Initialize MUAP
-        muap = np.zeros((n_time, n_electrodes))
+                self.muap = np.sum(jittered_sfaps, axis=2)
+        else:
+            self.muap = np.sum(self.sfaps, axis=2)
 
-        # Add each fiber's contribution with jitter
-        for fiber_idx in range(n_fibers):
-            # Apply jitter if specified
-            if jitter_std > 0:
-                jitter_delay = rng.normal(0, jitter_std)
-                jitter_samples = int(jitter_delay / self.dt)
-            else:
-                jitter_samples = 0
-
-            # Add fiber SFAP to MUAP with jitter
-            for electrode_idx in range(n_electrodes):
-                sfap = self.sfaps[:, electrode_idx, fiber_idx]
-
-                if jitter_samples != 0:
-                    # Apply jitter by shifting
-                    sfap_jittered = np.zeros_like(sfap)
-                    if jitter_samples > 0 and jitter_samples < len(sfap):
-                        sfap_jittered[jitter_samples:] = sfap[:-jitter_samples]
-                    elif jitter_samples < 0 and abs(jitter_samples) < len(sfap):
-                        sfap_jittered[:jitter_samples] = sfap[-jitter_samples:]
-                    else:
-                        sfap_jittered = sfap
-                    sfap = sfap_jittered
-
-                muap[:, electrode_idx] += sfap
-
-        self.muap = muap
-        return muap
+        return self.muap
 
     def get_muap_duration(self, threshold_fraction: float = 0.1) -> float:
         """

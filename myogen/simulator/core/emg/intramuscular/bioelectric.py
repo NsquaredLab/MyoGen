@@ -19,8 +19,6 @@ References
 """
 
 import numpy as np
-from typing import Tuple, Optional
-from scipy.ndimage import shift
 
 
 def get_tm_current(z: np.ndarray, D1: float = 96.0, D2: float = -90.0) -> np.ndarray:
@@ -132,151 +130,165 @@ def get_elementary_current_response(
     np.ndarray
         Elementary current response (transfer function)
     """
-    denominator = np.sqrt(sigma_z / sigma_r * r**2 + (z - z_electrode) ** 2)
-    h = 1 / 4 / np.pi / sigma_r / denominator
+    return np.divide(
+        1 / 4 / np.pi / sigma_r,
+        np.sqrt(sigma_z / sigma_r * r**2 + (z - z_electrode) ** 2),
+    )
 
-    return h
 
-
-def shift_padding(
-    arr: np.ndarray, shift_samples: int, fill_value: float = 0.0
-) -> np.ndarray:
+def shift_padding(vec, sh, axis):
     """
-    Shift array with padding (equivalent to MATLAB shift_padding function).
+    Circularly shifts 'vec' by 'sh' positions along the specified 'axis'
+    and then pads the shifted region with zeros.
 
     Parameters
     ----------
-    arr : np.ndarray
-        Input array to shift
-    shift_samples : int
-        Number of samples to shift (positive = right shift)
-    fill_value : float, default=0.0
-        Value to use for padding
+    vec : ndarray
+        Input array to shift.
+    sh : int
+        Shift amount (positive means downward/rightward like MATLAB).
+    axis : int
+        Axis along which to shift.
 
     Returns
     -------
-    np.ndarray
-        Shifted array with padding
+    ndarray
+        Shifted and zero-padded array.
     """
-    if shift_samples == 0:
-        return arr.copy()
+    vec = np.roll(vec, sh, axis=axis)
 
-    result = np.full_like(arr, fill_value)
+    n = len(vec)
 
-    if shift_samples > 0:
-        # Right shift
-        if shift_samples < arr.shape[0]:
-            result[shift_samples:] = arr[:-shift_samples]
-    else:
-        # Left shift
-        abs_shift = abs(shift_samples)
-        if abs_shift < arr.shape[0]:
-            result[:-abs_shift] = arr[abs_shift:]
+    # Equivalent of vec(1:sh) = 0
+    if sh > 0:
+        vec[:sh] = 0
 
-    return result
+    # Equivalent of vec(end+sh+1:end) = 0
+    if sh < 0:
+        start = n + sh  # because end+sh+1 in MATLAB is 1-based
+        if start < n:
+            vec[start:] = 0
+    elif sh > 0:
+        vec[-sh:] = 0
+
+    return vec
+
+
+def hr_shift_template(x, delay):
+    """
+    Shifts waveform x by a subsample step 'delay' using FFT-based phase shifting.
+
+    Parameters:
+        x (array-like): Input signal.
+        delay (float): Fraction of the sampling period to delay (e.g. 0.1 means 1/10th).
+
+    Returns:
+        shifted (np.ndarray): Fractionally shifted signal.
+    """
+    x = np.asarray(x).flatten()
+
+    # Pad if even length
+    padded = False
+    if len(x) % 2 == 0:
+        x = np.append(x, 0)
+        padded = True
+
+    N = len(x)
+
+    X = np.fft.fft(x)
+    X0 = X[0]
+    Xk = X[1 : int(np.ceil(N / 2))]
+
+    k = np.arange(1, len(Xk) + 1)
+    Sk = Xk * np.exp(1j * (2 * np.pi * delay) * k / N)
+    S = np.concatenate(([X0], Sk, np.conj(Sk[::-1])))
+
+    shifted = np.fft.ifft(S).real  # same as MATLAB, assumes real signal
+
+    if padded:
+        shifted = shifted[:-1]
+
+    return shifted
 
 
 def get_current_density(
-    t: np.ndarray,
-    z: np.ndarray,
-    zi: float,
-    L1: float,
-    L2: float,
-    v: float,
-    d: float = 55e-6,  # 55 micrometers default
-    suppress_endplate_density: bool = True,
-    endplate_width: float = 0.5,
-) -> np.ndarray:
+    t, z, zi, L1, L2, v, d=55e-6, suppress_endplate_density=True, endplate_width=0.5
+):
     """
-    Calculate intracellular action potential (IAP) current density.
-
-    This function models the individual (IAP) or single fiber (SFAP) action
-    potential in space and time coordinates. Based on Farina & Merletti 2001
-    with corrections from Nandedkar & Stålberg 1983.
+    Model the individual action potential (IAP) or single fiber action potential (SFAP) in space and time.
+    Translated from Farina & Merletti (2001) and Nandedkar & Stålberg (1998).
 
     Parameters
     ----------
-    t : np.ndarray
-        Time vector in seconds
-    z : np.ndarray
-        Spatial coordinates along muscle fiber in mm
+    t : array
+        Time vector
+    z : array
+        Spatial coordinates along the muscle fiber (in mm)
     zi : float
-        Position of endplate (neuromuscular junction) in mm
+        Position of endplate (in mm)
     L1 : float
-        Length of muscle fiber from zi to positive end (tendon) in mm
+        Length of fiber from zi to positive end (mm)
     L2 : float
-        Length of muscle fiber from zi to negative end (tendon) in mm
+        Length of fiber from zi to negative end (mm)
     v : float
-        Conduction velocity in mm/s
-    d : float, default=55e-6
-        Fiber diameter in mm (default 55 micrometers)
-    suppress_endplate_density : bool, default=True
-        Whether to suppress current density at endplate region
-    endplate_width : float, default=0.5
-        Width of endplate region to suppress in mm
-
-    Returns
-    -------
-    np.ndarray
-        Current density matrix (space × time)
-
-    Notes
-    -----
-    This implementation includes the correction factor (4x amplitude, 2x speed)
-    from Nandedkar & Stålberg compared to the original analytical model.
+        Conduction speed in mm/s
+    d : float, optional
+        Fiber diameter in mm (default: 55 µm)
+    suppress_endplate_density : bool, optional
+        Whether to suppress density at endplate region (default: True)
+    endplate_width : float, optional
+        Width around endplate where density is suppressed (mm)
     """
-    # Ensure z is a column vector and add one more point for differentiation
-    z = np.asarray(z).flatten()
-    dz = np.mean(np.diff(z))
-    z_extended = np.append(z, z[-1] + dz)
 
-    # Create meshgrids for vectorized computation
-    T, Z = np.meshgrid(t, z_extended, indexing="ij")
+    dz = np.mean(np.diff(z, axis=0))
+    z = np.concatenate([z, z[[-1]] + dz], axis=0)
 
-    # Apply Nandedkar & Stålberg correction: 4x amplitude, 2x speed
-    correction_factor = 4
-    speed_factor = 2
+    T, Z = np.meshgrid(t, z)
 
-    # Right-propagating wave (from endplate toward tendon)
-    psi1 = -correction_factor * get_tm_current_dz(-speed_factor * (Z - zi - v * T))
-
-    # Left-propagating wave (from endplate toward opposite tendon)
-    psi2 = correction_factor * get_tm_current_dz(-speed_factor * (-Z + zi - v * T))
-
-    # Tendon termination function
-    def tendon_terminator(z_inline: np.ndarray, L_inline: float) -> np.ndarray:
+    # Tendon terminator function
+    def tendon_terminator(z_inline, L_inline):
         return (z_inline <= L_inline / 2) & (z_inline >= -L_inline / 2)
 
-    # Calculate spatial derivatives
-    right_wave = np.diff(psi1, axis=1) / dz
-    right_wave = right_wave * tendon_terminator(Z[:, :-1] - zi - L1 / 2, L1)
-    right_wave = right_wave * ((Z[:, :-1] - zi) / v > 0)  # Negative time suppression
+    # Compute psi (transmembrane current derivative)
+    if L1 >= L2:
+        psi = -4 * get_tm_current_dz(-2 * (Z - zi - v * T))
+        longest_wave = np.diff(psi, axis=0) / dz
+        longest_wave *= tendon_terminator(Z[:-1, :] - zi - L1 / 2, L1)
+        longest_wave *= (Z[:-1, :] - zi) / v > 0  # negative time suppression
+    else:
+        psi = 4 * get_tm_current_dz(-2 * (-Z + zi - v * T))
+        longest_wave = np.diff(psi, axis=0) / dz
+        longest_wave *= tendon_terminator(Z[:-1, :] - zi + L2 / 2, L2)
+        longest_wave *= (-Z[:-1, :] + zi) / v > 0
 
-    # Left wave calculation (with proper reversal)
-    left_wave_temp = np.diff(psi2[:, ::-1], axis=1) / dz
-    left_wave = -left_wave_temp[:, ::-1]
-    left_wave = left_wave * tendon_terminator(Z[:, :-1] - zi + L2 / 2, L2)
-    left_wave = left_wave * ((-Z[:, :-1] + zi) / v > 0)  # Negative time suppression
+    # Shortest wave (reversed)
+    shortest_wave = longest_wave[::-1].copy()
+    shift_amount = int(np.round((L1 + L2 - max(z) + L2 - L1) / dz))
+    shortest_wave = shift_padding(shortest_wave, shift_amount, 0)
 
-    # Combine waves
-    iap = right_wave - left_wave
+    if L1 >= L2:
+        shortest_wave *= tendon_terminator(Z[:-1, :] - zi + L2 / 2, L2)
+        iap = longest_wave - shortest_wave
+    else:
+        shortest_wave *= tendon_terminator(Z[:-1, :] - zi - L1 / 2, L1)
+        iap = shortest_wave - longest_wave
 
-    # Suppress endplate density if requested
+    # Suppress endplate density if required
     if suppress_endplate_density:
-        endplate_mask = (Z[:, :-1] <= (zi - endplate_width)) | (
-            Z[:, :-1] >= (zi + endplate_width)
-        )
-        iap = iap * endplate_mask
 
-    # Apply conductivity and geometry scaling
-    # From Malmivuo & Plonsey 1995, formula 8.19
-    sigma_i = 1.01 * 1000  # S/mm (intracellular conductivity)
-    d_mm = d * 1000 if d < 0.1 else d  # Convert to mm if in meters
+        def endplate_terminator(z_inline):
+            return (z_inline <= (zi - endplate_width)) | (
+                z_inline >= (zi + endplate_width)
+            )
 
-    # Scale by intracellular conductivity and fiber cross-sectional area
-    iap = iap * sigma_i * np.pi * (d_mm / 2) ** 2 / 4
+        iap *= endplate_terminator(Z[:-1, :])
 
-    return iap.T  # Return as (space × time) to match MATLAB convention
+    # Scale using intracellular conductivity
+    sigma_i = 1.01 * 1000  # [S/m] converted to S/mm
+    d *= 1000  # convert fiber diameter from mm to µm for consistency with original scaling
+    iap *= sigma_i * np.pi * ((d / 2) ** 2) / 4
+
+    return iap
 
 
 def get_current_density_fast(
@@ -336,7 +348,7 @@ def get_current_density_fast(
 def calculate_sfap(
     electrode_position: np.ndarray,
     fiber_positions: np.ndarray,
-    fiber_lengths: Tuple[float, float],
+    fiber_lengths: tuple[float, float],
     endplate_position: float,
     conduction_velocity: float,
     fiber_diameter: float,
@@ -355,7 +367,7 @@ def calculate_sfap(
         3D position of electrode [x, y, z] in mm
     fiber_positions : np.ndarray
         3D positions along fiber [x, y, z] in mm (N × 3)
-    fiber_lengths : Tuple[float, float]
+    fiber_lengths : tuple[float, float]
         Lengths (L1, L2) from endplate to each tendon in mm
     endplate_position : float
         Z-coordinate of endplate in mm
