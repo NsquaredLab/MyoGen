@@ -4,10 +4,10 @@ import numpy as np
 import matplotlib.pyplot as plt
 from tqdm import tqdm
 
-from myogen.utils.types import SPIKE_TRAIN__MATRIX
+from myogen.utils.types import SPIKE_TRAIN__MATRIX, beartowertype
 
 
-@beartype
+@beartowertype
 class ForceModel:
     """
     Force model based on Fuglevand et al. (1993) [1]_.
@@ -98,6 +98,25 @@ class ForceModel:
         ]
 
     def generate_force(self, spike_train__matrix: SPIKE_TRAIN__MATRIX) -> np.ndarray:
+        """
+        Generate force output from motor unit spike trains using the Fuglevand model.
+
+        This method simulates muscle force by converting spike trains into force output
+        through individual motor unit twitches with nonlinear gain modulation based on
+        discharge rate.
+
+        Parameters
+        ----------
+        spike_train__matrix : SPIKE_TRAIN__MATRIX
+            Spike train matrix with shape (n_pools, n_neurons, n_time_points).
+            Binary array where 1 indicates a spike occurrence.
+
+        Returns
+        -------
+        np.ndarray
+            Force output array with shape (n_pools, n_time_points).
+            Force values in arbitrary units representing muscle force over time.
+        """
         return np.array(
             [self._generate_force(spike_train.T) for spike_train in spike_train__matrix]
         )
