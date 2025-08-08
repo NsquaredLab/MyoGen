@@ -17,7 +17,11 @@ from myogen.simulator.core.muscle import Muscle
 from myogen.simulator.core.spike_train import MotorNeuronPool
 from myogen.simulator.core.emg.surface.simulate_fiber import simulate_fiber_v2
 from myogen.simulator.core.emg.electrodes import SurfaceElectrodeArray
-from myogen.utils.types import MUAP_SHAPE__TENSOR, SURFACE_EMG__TENSOR, beartowertype
+from myogen.utils.types import (
+    SURFACE_MUAP_SHAPE__TENSOR,
+    SURFACE_EMG__TENSOR,
+    beartowertype,
+)
 
 # Suppress warnings for cleaner output during batch simulations
 warnings.filterwarnings("ignore")
@@ -31,10 +35,6 @@ class SurfaceEMG:
     This class provides a simulation framework for generating
     surface electromyography signals from the muscle. It implements the
     multi-layered cylindrical volume conductor model from Farina et al. 2004 [1]_.
-
-    .. note::
-        All default values are set to simulate the first dorsal interosseous muscle (FDI) of the hand.
-        Change all physiological parameters to simulate other muscles.
 
     Parameters
     ----------
@@ -105,13 +105,13 @@ class SurfaceEMG:
             + self.skin_thickness__mm
         )
 
-    def simulate_muaps(self) -> list[MUAP_SHAPE__TENSOR]:
+    def simulate_muaps(self) -> list[SURFACE_MUAP_SHAPE__TENSOR]:
         """
         Simulate MUAPs for all electrode arrays using the provided muscle model.
 
         Returns
         -------
-        list[MUAP_SHAPE__TENSOR]
+        list[SURFACE_MUAP_SHAPE__TENSOR]
             List of generated MUAP templates for each electrode array.
         """
         # Set default MUs to simulate
@@ -365,11 +365,13 @@ class SurfaceEMG:
                                 [
                                     cp.correlate(
                                         spike_gpu[pool_idx, mu_idx],
-                                        muap_gpu[mu_idx, row_idx, col_idx],
+                                        muap_gpu[i, row_idx, col_idx],
                                         mode="same",
                                     )
-                                    for mu_idx in MUs_to_simulate.intersection(
-                                        active_neuron_indices
+                                    for i, mu_idx in enumerate(
+                                        MUs_to_simulate.intersection(
+                                            active_neuron_indices
+                                        )
                                     )
                                 ]
                             )
@@ -396,12 +398,12 @@ class SurfaceEMG:
                         for col_idx in range(n_cols):
                             # Process all active MUs
                             convolutions = []
-                            for mu_idx in MUs_to_simulate.intersection(
-                                active_neuron_indices
+                            for i, mu_idx in enumerate(
+                                MUs_to_simulate.intersection(active_neuron_indices)
                             ):
                                 conv = np.correlate(
                                     motor_neuron_pool.spike_trains[pool_idx, mu_idx],
-                                    muap_shapes[mu_idx, row_idx, col_idx],
+                                    muap_shapes[i, row_idx, col_idx],
                                     mode="same",
                                 )
                                 convolutions.append(conv)
