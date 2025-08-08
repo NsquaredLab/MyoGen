@@ -17,32 +17,38 @@ INPUT_CURRENT__MATRIX = Annotated[
     Is[lambda x: x.ndim == 2],
 ]
 
+# Cortical input matrix: (mu_pools, time_points)
+CORTICAL_INPUT__MATRIX = Annotated[
+    npt.NDArray[np.floating],
+    Is[lambda x: x.ndim == 2],
+]
+
 # Spike train matrix: (pools, neurons_per_pool, time_points)
 SPIKE_TRAIN__MATRIX = Annotated[
     npt.NDArray[np.bool_],
     Is[lambda x: x.ndim == 3],
 ]
 
-# MUAP shape tensor: (muap_index, electrode_grid_rows, electrode_grid_columns, muap_samples)
-MUAP_SHAPE__TENSOR = Annotated[
+# Surface MUAP shape tensor: (muap_index, electrode_grid_rows, electrode_grid_columns, muap_samples)
+SURFACE_MUAP_SHAPE__TENSOR = Annotated[
     npt.NDArray[np.floating],
     Is[lambda x: x.ndim == 4],
 ]
 
-# Surface EMG tensor: (mu_pools, electrode_grid_rows, electrode_grid_columns, time)
+# Intramuscular MUAP shape tensor: (muap_index, n_electrodes, muap_samples)
+INTRAMUSCULAR_MUAP_SHAPE__TENSOR = Annotated[
+    npt.NDArray[np.floating],
+    Is[lambda x: x.ndim == 3],
+]
+
+# Surface EMG tensor: (mu_pools, electrode_grid_rows, electrode_grid_columns, time_points)
 SURFACE_EMG__TENSOR = Annotated[
     npt.NDArray[np.floating],
     Is[lambda x: x.ndim == 4],
 ]
 
-# Intramuscular EMG tensor: (mu_pools, n_electrodes, time)
+# Intramuscular EMG tensor: (mu_pools, n_electrodes, time_points)
 INTRAMUSCULAR_EMG__TENSOR = Annotated[
     npt.NDArray[np.floating],
     Is[lambda x: x.ndim == 3],
-]
-
-# Cortical input matrix: (mu_pools, time_points)
-CORTICAL_INPUT__MATRIX = Annotated[
-    npt.NDArray[np.floating],
-    Is[lambda x: x.ndim == 2],
 ]
