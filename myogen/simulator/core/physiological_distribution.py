@@ -2,14 +2,17 @@ from typing import Literal
 
 import numpy as np
 
+from myogen.utils.types import beartowertype, RECRUITMENT_THRESHOLDS__ARRAY
 
+
+@beartowertype
 def generate_mu_recruitment_thresholds(
     N: int,
-    recruitment_range: float,
+    recruitment_range__ratio: float,
     deluca__slope: float | None = None,
-    konstantin__max_threshold: float = 1.0,
+    konstantin__max_threshold__ratio: float = 1.0,
     mode: Literal["fuglevand", "deluca", "konstantin", "combined"] = "konstantin",
-) -> tuple[np.ndarray, np.ndarray]:
+) -> tuple[RECRUITMENT_THRESHOLDS__ARRAY, RECRUITMENT_THRESHOLDS__ARRAY]:
     r"""
     Generate recruitment thresholds for a pool of motor units using different models.
 
@@ -27,25 +30,25 @@ def generate_mu_recruitment_thresholds(
     ----------
     N : int
         Number of motor units in the pool.
-    recruitment_range : float
-        Recruitment range, defined as the ratio of the largest to smallest threshold
+    recruitment_range__ratio : float
+        Recruitment range (dimensionless ratio), defined as the ratio of the largest to smallest threshold
         :math:`(rt(N)/rt(1))`.
     deluca__slope : float, optional
-        Slope correction coefficient for the ``'deluca'`` mode. Required if ``mode='deluca'``.
-        Typical values range from 25-100.
-    konstantin__max_threshold : float, optional
-        Maximum recruitment threshold for the ``'konstantin'`` mode. Required if ``mode='konstantin'``.
-        Sets the absolute scale of all thresholds.
+        Dimensionless slope parameter for the ``'deluca'`` mode. Required if ``mode='deluca'``.
+        Controls the curvature of the threshold distribution. Typical values range from 0.001-100.
+    konstantin__max_threshold__ratio : float, optional
+        Maximum recruitment threshold (dimensionless ratio) for the ``'konstantin'`` mode. Required if ``mode='konstantin'``.
+        Sets the absolute scale of all thresholds. Default is 1.0.
     mode : RecruitmentMode, optional
         Model to use for threshold generation. One of ``'fuglevand'``, ``'deluca'``, ``'konstantin'``, or ``'combined'``.
         Default is ``'konstantin'``.
 
     Returns
     -------
-    rt : numpy.ndarray
+    rt : RECRUITMENT_THRESHOLDS__ARRAY
         Recruitment thresholds for each motor unit (shape: (N,)).
         Values are monotonically increasing from ``rt[0]`` to ``rt[N-1]``.
-    rtz : numpy.ndarray
+    rtz : RECRUITMENT_THRESHOLDS__ARRAY
         Zero-based recruitment thresholds where :math:`rtz[0] = 0` (shape: (N,)).
         Computed as :math:`rtz = rt - rt[0]`, convenient for simulation.
 
@@ -87,13 +90,13 @@ def generate_mu_recruitment_thresholds(
             rt(i) &= \frac{RT_{max}}{RR} \cdot \exp\left(\frac{(i - 1) \cdot \ln(RR)}{N - 1}\right) \\
             rtz(i) &= \frac{RT_{max}}{RR} \cdot \left(\exp\left(\frac{(i - 1) \cdot \ln(RR + 1)}{N}\right) - 1\right)
 
-        where :math:`RT_{max}` = ``konstantin__max_threshold``, :math:`i = 1, 2, \ldots, N`
+        where :math:`RT_{max}` = ``konstantin__max_threshold__ratio``, :math:`i = 1, 2, \ldots, N`
 
     **combined** : A corrected De Luca model that uses the slope parameter for shape control but properly respects the RR constraint and maximum threshold like the Konstantin model
         .. math::
             rt(i) = \frac{RT_{max}}{RR} + \left(\frac{b \cdot i}{N} \cdot \exp\left(\frac{i \cdot \ln(RR / b)}{N}\right) - \frac{RT_{max}}{RR}\right) \cdot \left(\frac{RT_{max} - RT_{max}/RR}{b \cdot N \cdot \exp\left(\frac{i \cdot \ln(RR / b)}{N}\right) - \frac{RT_{max}}{RR}}\right)
 
-        where :math:`b` = ``deluca__slope``, :math:`RT_{max}` = ``konstantin__max_threshold``, :math:`i = 1, 2, \ldots, N`
+        where :math:`b` = ``deluca__slope``, :math:`RT_{max}` = ``konstantin__max_threshold__ratio``, :math:`i = 1, 2, \ldots, N`
 
     .. note::
         - All models ensure :math:`rt(1) < rt(2) < \ldots < rt(N)` (monotonically increasing)
@@ -105,64 +108,64 @@ def generate_mu_recruitment_thresholds(
     --------
     >>> # Generate thresholds using Fuglevand model
     >>> rt, rtz = generate_mu_recruitment_thresholds(
-    ...     N=100, recruitment_range=50, mode='fuglevand'
+    ...     N=100, recruitment_range__ratio=50.0, mode='fuglevand'
     ... )
     >>>
     >>> # Generate thresholds using Konstantin model with explicit max threshold
     >>> rt, rtz = generate_mu_recruitment_thresholds(
-    ...     N=100, recruitment
+    ...     N=100, recruitment_range__ratio=50.0, konstantin__max_threshold__ratio=1.0, mode='konstantin'
     ... )
     """
     i = np.arange(N)
 
     match mode:
         case "fuglevand":
-            rt = np.exp((np.log(recruitment_range) / N) * i) / 100
+            rt = np.exp((np.log(recruitment_range__ratio) / N) * i) / 100
             rtz = rt - rt[0]
         case "deluca":
             if deluca__slope is None:
                 raise ValueError("deluca__slope must be provided for 'deluca' mode.")
             rt = (
                 (deluca__slope * i / N)
-                * np.exp((np.log(recruitment_range / deluca__slope) / N) * i)
+                * np.exp((np.log(recruitment_range__ratio / deluca__slope) / N) * i)
                 / 100
             )
             rtz = rt - rt[0]
         case "konstantin":
-            if konstantin__max_threshold is None:
+            if konstantin__max_threshold__ratio is None:
                 raise ValueError(
-                    "konstantin__max_threshold must be provided for 'konstantin' mode."
+                    "konstantin__max_threshold__ratio must be provided for 'konstantin' mode."
                 )
-            rt = (konstantin__max_threshold / recruitment_range) * np.exp(
-                (i - 1) * np.log(recruitment_range) / (N - 1)
+            rt = (konstantin__max_threshold__ratio / recruitment_range__ratio) * np.exp(
+                (i - 1) * np.log(recruitment_range__ratio) / (N - 1)
             )
-            rtz = (konstantin__max_threshold / recruitment_range) * (
-                np.exp((i - 1) * np.log(recruitment_range + 1) / N) - 1
+            rtz = (konstantin__max_threshold__ratio / recruitment_range__ratio) * (
+                np.exp((i - 1) * np.log(recruitment_range__ratio + 1) / N) - 1
             )
         case "combined":
-            if deluca__slope is None or konstantin__max_threshold is None:
+            if deluca__slope is None or konstantin__max_threshold__ratio is None:
                 raise ValueError(
-                    "Both deluca__slope and konstantin__max_threshold must be provided for 'combined' mode."
+                    "Both deluca__slope and konstantin__max_threshold__ratio must be provided for 'combined' mode."
                 )
             # Create a De Luca-style curve with slope parameter controlling curvature
             # but properly scaled to respect RR and max threshold
 
             # Generate base De Luca shape (without the /100 scaling)
             base_shape = (deluca__slope * i / N) * np.exp(
-                (np.log(recruitment_range / deluca__slope) / N) * i
+                (np.log(recruitment_range__ratio / deluca__slope) / N) * i
             )
 
             # Scale to ensure exact RR and max threshold
-            # We want: rt[0] = konstantin__max_threshold / RR and rt[-1] = konstantin__max_threshold
+            # We want: rt[0] = konstantin__max_threshold__ratio / RR and rt[-1] = konstantin__max_threshold__ratio
             min_val = base_shape[0]
             max_val = base_shape[-1]
 
             # Scale the shape to achieve the desired RR while respecting max threshold
-            rt = (konstantin__max_threshold / recruitment_range) + (
+            rt = (konstantin__max_threshold__ratio / recruitment_range__ratio) + (
                 base_shape - min_val
             ) * (
-                konstantin__max_threshold
-                - konstantin__max_threshold / recruitment_range
+                konstantin__max_threshold__ratio
+                - konstantin__max_threshold__ratio / recruitment_range__ratio
             ) / (max_val - min_val)
 
             rtz = rt - rt[0]
