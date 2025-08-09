@@ -169,12 +169,12 @@ class IntramuscularEMG:
             # Create motor unit simulator
             self._motor_units.append(
                 MotorUnitSim(
-                    muscle_fiber_centers__mm=self.muscle_model.mf_centers[fiber_mask],
+                    muscle_fiber_centers__mm=self.muscle_model.muscle_fiber_centers__mm[fiber_mask],
                     muscle_length__mm=self.muscle_model.length__mm,
-                    muscle_fiber_diameters__mm=self.muscle_model.mf_diameters[
+                    muscle_fiber_diameters__mm=self.muscle_model.muscle_fiber_diameters__mm[
                         fiber_mask
                     ],
-                    muscle_fiber_conduction_velocity__mm_per_s=self.muscle_model.mf_cv[
+                    muscle_fiber_conduction_velocity__mm_per_s=self.muscle_model.muscle_fiber_conduction_velocities__mm_per_s[
                         fiber_mask
                     ],
                     neuromuscular_junction_conduction_velocities__mm_per_s=self._branch_cvs__mm_per_s,
