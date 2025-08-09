@@ -8,10 +8,27 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- **Type System Enhancement**: New `RECRUITMENT_THRESHOLDS__ARRAY` custom type alias for 1D recruitment threshold arrays with runtime validation via Beartype
+- **Development Guidelines**: Comprehensive `CLAUDE.md` with development protocols:
+  - Git workflow with logical commit chunking and co-authorship requirements
+  - Example development guidelines with plt.xkcd() usage and Sphinx Gallery format
+  - API testing requirements and font warning suppression protocols
+  - CHANGELOG.md update requirements for all changes
 
 ### Changed
+- **API Breaking Changes**: Enhanced `generate_mu_recruitment_thresholds` function with improved type safety:
+  - Added `@beartowertype` decorator for runtime parameter validation
+  - Updated parameter names with scientific unit suffixes:
+    - `recruitment_range` → `recruitment_range__ratio` (dimensionless ratio)
+    - `konstantin__max_threshold` → `konstantin__max_threshold__ratio` (dimensionless ratio)
+    - `deluca__slope__per_hundred_units` → `deluca__slope` (dimensionless shape parameter)
+  - Return type now uses `RECRUITMENT_THRESHOLDS__ARRAY` custom type
+  - Enhanced docstring with explicit dimensionality information and corrected examples
+- **Example Updates**: Updated `00_simulate_recruitment_thresholds.py` to use new API parameter names
 
 ### Fixed
+- **Parameter Naming**: Removed misleading `__per_hundred_units` suffix from `deluca__slope` parameter that incorrectly suggested it had units
+- **Scientific Accuracy**: Corrected `deluca__slope` description as dimensionless curvature control parameter rather than rate parameter
 
 ## [0.3.0] - 2025-08-08
 
