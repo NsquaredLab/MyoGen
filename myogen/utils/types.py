@@ -52,3 +52,9 @@ INTRAMUSCULAR_EMG__TENSOR = Annotated[
     npt.NDArray[np.floating],
     Is[lambda x: x.ndim == 3],
 ]
+
+# Recruitment thresholds array: (n_motor_units,)
+RECRUITMENT_THRESHOLDS__ARRAY = Annotated[
+    npt.NDArray[np.floating],
+    Is[lambda x: x.ndim == 1],
+]
