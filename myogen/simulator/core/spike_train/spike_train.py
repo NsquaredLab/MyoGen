@@ -110,7 +110,7 @@ class MotorNeuronPool:
         self.kf_cond_min__S_per_cm2 = kf_cond_min__S_per_cm2
         self.kf_cond_max__S_per_cm2 = kf_cond_max__S_per_cm2
         self.coefficient_of_variation = coefficient_of_variation
-        
+
         # Store private copies for internal modifications
         self._recruitment_thresholds = recruitment_thresholds.copy()
         self._diameter_soma_min__mm = diameter_soma_min__mm
@@ -162,7 +162,10 @@ class MotorNeuronPool:
         # scale recruitment thresholds to v_min and v_max
         vt = (
             -70
-            + (self._vt_min__mV + (self._vt_max__mV - self._vt_min__mV) * self._recruitment_thresholds)
+            + (
+                self._vt_min__mV
+                + (self._vt_max__mV - self._vt_min__mV) * self._recruitment_thresholds
+            )
             + rng.normal(size=n_neurons) * self._coefficient_of_variation
         )
 
@@ -177,20 +180,32 @@ class MotorNeuronPool:
             },
             pas_soma={
                 "conductance_density": functions.create_cond(
-                    n_neurons, 7e-4, 7e-4, "soma", CV=10 * self._coefficient_of_variation
+                    n_neurons,
+                    7e-4,
+                    7e-4,
+                    "soma",
+                    CV=10 * self._coefficient_of_variation,
                 ),
                 "e_rev": -70,
             },  #
             pas_dend={
                 "conductance_density": functions.create_cond(
-                    n_neurons, 7e-4, 7e-4, "dendrite", CV=10 * self._coefficient_of_variation
+                    n_neurons,
+                    7e-4,
+                    7e-4,
+                    "dendrite",
+                    CV=10 * self._coefficient_of_variation,
                 ),
                 "e_rev": -70,
             },  #
             na={"conductance_density": uniform("soma", 30), "vt": list(vt)},
             kf={
                 "conductance_density": functions.create_cond(
-                    n_neurons, self._kf_cond_min__S_per_cm2, self._kf_cond_max__S_per_cm2, "soma", CV=self._coefficient_of_variation
+                    n_neurons,
+                    self._kf_cond_min__S_per_cm2,
+                    self._kf_cond_max__S_per_cm2,
+                    "soma",
+                    CV=self._coefficient_of_variation,
                 ),
                 "vt": list(vt),
             },
@@ -278,7 +293,9 @@ class MotorNeuronPool:
 
         # Create motor neuron pools
         pools: list[sim.Population] = []
-        for pool_idx in tqdm(range(n_pools), desc="Creating motor neuron pools", unit="pool"):
+        for pool_idx in tqdm(
+            range(n_pools), desc="Creating motor neuron pools", unit="pool"
+        ):
             pools.append(
                 sim.Population(
                     len(self._recruitment_thresholds),
@@ -294,7 +311,7 @@ class MotorNeuronPool:
                 zip(input_current__matrix, pools),
                 total=len(pools),
                 desc="Injecting currents into pools",
-                unit="pool"
+                unit="pool",
             ):
                 current_source = sim.StepCurrentSource(
                     times=self.times, amplitudes=input_current
@@ -306,7 +323,7 @@ class MotorNeuronPool:
                     pool,
                     desc=f"Adding noise to neurons in pool",
                     unit="neuron",
-                    leave=False
+                    leave=False,
                 ):
                     noise_source = sim.NoisyCurrentSource(
                         mean=noise_mean__nA,
@@ -382,57 +399,63 @@ class MotorNeuronPool:
     def spike_trains(self) -> SPIKE_TRAIN__MATRIX:
         """
         Matrix of spike trains for each pool and neuron.
-        
+
         Returns
         -------
         SPIKE_TRAIN__MATRIX
             Matrix of shape (n_pools, neurons_per_pool, t_points) containing spike trains
-            
+
         Raises
         ------
         AttributeError
             If spike trains have not been computed. Run generate_spike_trains() first.
         """
-        if not hasattr(self, '_spike_trains'):
-            raise AttributeError("Spike trains not computed. Run generate_spike_trains() first.")
+        if not hasattr(self, "_spike_trains"):
+            raise AttributeError(
+                "Spike trains not computed. Run generate_spike_trains() first."
+            )
         return self._spike_trains
-    
+
     @property
     def active_neuron_indices(self) -> list[np.ndarray]:
         """
         List of arrays containing indices of active neurons in each pool.
-        
+
         Returns
         -------
         list[np.ndarray]
             List of arrays of indices of the active neurons in each pool
-            
+
         Raises
         ------
         AttributeError
             If active neuron indices have not been computed. Run generate_spike_trains() first.
         """
-        if not hasattr(self, '_active_neuron_indices'):
-            raise AttributeError("Active neuron indices not computed. Run generate_spike_trains() first.")
+        if not hasattr(self, "_active_neuron_indices"):
+            raise AttributeError(
+                "Active neuron indices not computed. Run generate_spike_trains() first."
+            )
         return self._active_neuron_indices
-    
+
     @property
     def data(self) -> list[neo.Segment]:
         """
         List of neo segments containing recorded data from simulation.
-        
+
         Returns
         -------
         list[neo.core.segment.Segment]
             List of neo segments containing the recorded data
-            
+
         Raises
         ------
         AttributeError
             If data has not been computed. Run generate_spike_trains() first.
         """
-        if not hasattr(self, '_data'):
-            raise AttributeError("Simulation data not computed. Run generate_spike_trains() first.")
+        if not hasattr(self, "_data"):
+            raise AttributeError(
+                "Simulation data not computed. Run generate_spike_trains() first."
+            )
         return self._data
 
     def compute_mvc_current_threshold(self) -> float:

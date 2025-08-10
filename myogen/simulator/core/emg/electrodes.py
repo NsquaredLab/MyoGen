@@ -76,7 +76,7 @@ class SurfaceElectrodeArray:
         self.inter_electrode_distances__mm = inter_electrode_distances__mm
         self.electrode_radius__mm = electrode_radius__mm
         self.differentiation_mode = differentiation_mode
-        
+
         # Private copies for internal modifications
         self._num_rows = num_rows
         self._num_cols = num_cols
@@ -113,7 +113,7 @@ class SurfaceElectrodeArray:
 
     def _create_electrode_grid(self) -> None:
         """Create electrode positions in local coordinate system.
-        
+
         Results are stored in the `electrode_positions` property after execution.
         """
         _pos_z = np.zeros((self._num_rows, self._num_cols))
@@ -188,8 +188,7 @@ class SurfaceElectrodeArray:
             -self._bending_radius__mm
             * np.sin(self._rotation_angle__deg * np.pi / 180)
             * _pos_theta
-            + np.cos(self._rotation_angle__deg * np.pi / 180)
-            * (_pos_z - displacement)
+            + np.cos(self._rotation_angle__deg * np.pi / 180) * (_pos_z - displacement)
             + displacement
         )
         _pos_theta = (
@@ -198,7 +197,7 @@ class SurfaceElectrodeArray:
             * (_pos_z - displacement)
             / self._bending_radius__mm
         )
-        
+
         # Store results privately
         self._pos_z = _pos_z
         self._pos_theta = _pos_theta
@@ -207,60 +206,60 @@ class SurfaceElectrodeArray:
     def pos_z(self) -> np.ndarray:
         """
         Longitudinal positions of electrodes in mm.
-        
+
         Returns
         -------
         np.ndarray
             Array of shape (num_rows, num_cols) containing z-coordinates
             of each electrode position in mm.
-            
+
         Raises
         ------
         AttributeError
             If electrode grid has not been created. Run constructor first.
         """
-        if not hasattr(self, '_pos_z'):
+        if not hasattr(self, "_pos_z"):
             raise AttributeError(
                 "Electrode grid not computed. This should be automatically created "
                 "during class initialization. Please check constructor execution."
             )
         return self._pos_z
-    
+
     @property
     def pos_theta(self) -> np.ndarray:
         """
         Angular positions of electrodes in radians.
-        
+
         Returns
         -------
         np.ndarray
             Array of shape (num_rows, num_cols) containing angular coordinates
             of each electrode position in radians.
-            
+
         Raises
         ------
         AttributeError
             If electrode grid has not been created. Run constructor first.
         """
-        if not hasattr(self, '_pos_theta'):
+        if not hasattr(self, "_pos_theta"):
             raise AttributeError(
                 "Electrode grid not computed. This should be automatically created "
                 "during class initialization. Please check constructor execution."
             )
         return self._pos_theta
-    
+
     @property
     def electrode_positions(self) -> tuple[np.ndarray, np.ndarray]:
         """
         Complete electrode position arrays (z, theta) in physical coordinates.
-        
+
         Returns
         -------
         tuple[np.ndarray, np.ndarray]
             Tuple containing:
             - pos_z: Longitudinal positions in mm, shape (num_rows, num_cols)
             - pos_theta: Angular positions in radians, shape (num_rows, num_cols)
-            
+
         Raises
         ------
         AttributeError
@@ -328,6 +327,7 @@ class SurfaceElectrodeArray:
 
         return H_sf
 
+
 @beartowertype
 class IntramuscularElectrodeArray:
     """
@@ -394,7 +394,7 @@ class IntramuscularElectrodeArray:
         self.differentiation_mode = differentiation_mode
         self.trajectory_distance__mm = trajectory_distance__mm
         self.trajectory_steps = trajectory_steps
-        
+
         # Private copies for internal modifications
         self._num_electrodes = num_electrodes
         self._inter_electrode_distance__mm = inter_electrode_distance__mm
@@ -741,111 +741,111 @@ class IntramuscularElectrodeArray:
     def electrode_positions(self) -> np.ndarray:
         """
         Current electrode positions in 3D space (mm).
-        
+
         Returns
         -------
         np.ndarray
             Array of shape (n_nodes * num_electrodes, 3) containing x, y, z coordinates
             of each electrode position for all trajectory nodes.
-            
+
         Raises
         ------
         AttributeError
             If trajectory has not been calculated. Run set_linear_trajectory() first.
         """
-        if not hasattr(self, 'pts'):
+        if not hasattr(self, "pts"):
             raise AttributeError(
                 "Electrode positions not computed. Run set_linear_trajectory() first "
                 "to calculate trajectory and electrode positions."
             )
         return self.pts
-    
+
     @property
     def differential_matrix(self) -> np.ndarray:
         """
         Differential matrix for signal processing based on differentiation mode.
-        
+
         Returns
         -------
         np.ndarray
             Differential matrix for applying spatial differentiation to recorded signals.
             Shape depends on differentiation mode and number of trajectory nodes.
-            
+
         Raises
         ------
         AttributeError
             If differential matrix has not been created. Run constructor first.
         """
-        if not hasattr(self, '_diff_mat'):
+        if not hasattr(self, "_diff_mat"):
             raise AttributeError(
                 "Differential matrix not computed. This should be automatically created "
                 "during class initialization. Please check constructor execution."
             )
         return self._diff_mat
-    
-    @property 
+
+    @property
     def trajectory_transforms(self) -> np.ndarray:
         """
         Transformation matrices for trajectory movement.
-        
+
         Returns
         -------
         np.ndarray
             Array of shape (n_nodes, 6) containing translation and rotation parameters
             for each trajectory node. First 3 columns are translations (x, y, z),
             last 3 columns are rotations (roll, pitch, yaw).
-            
+
         Raises
         ------
         AttributeError
             If trajectory has not been set. Run set_linear_trajectory() first.
         """
-        if not hasattr(self, 'traj_transforms'):
+        if not hasattr(self, "traj_transforms"):
             raise AttributeError(
                 "Trajectory transforms not computed. Run set_linear_trajectory() first "
                 "to configure electrode trajectory movement."
             )
         return self.traj_transforms
-    
+
     @property
     def initial_positions(self) -> np.ndarray:
         """
         Initial electrode positions after position/orientation setup.
-        
+
         Returns
         -------
         np.ndarray
             Array of shape (num_electrodes, 3) containing initial x, y, z coordinates
             of electrodes before trajectory movement is applied.
-            
+
         Raises
         ------
         AttributeError
             If initial positions have not been set. Run set_position() first.
         """
-        if not hasattr(self, '_pts_init'):
+        if not hasattr(self, "_pts_init"):
             raise AttributeError(
                 "Initial electrode positions not computed. Run set_position() first "
                 "to configure electrode array placement and orientation."
             )
         return self._pts_init
-    
+
     @property
     def num_channels(self) -> int:
         """
         Number of recording channels based on differentiation mode.
-        
+
         Returns
         -------
         int
             Number of differential recording channels available from this electrode array.
-            
+
         Raises
         ------
         AttributeError
             If channel count has not been calculated. Run constructor first.
         """
-        if not hasattr(self, '_n_channels'):
+        if not hasattr(self, "_n_channels"):
             raise AttributeError(
                 "Number of channels not computed. This should be automatically created "
                 "during class initialization. Please check constructor execution."
