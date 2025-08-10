@@ -74,7 +74,6 @@ surface_emg = simulator.SurfaceEMG(
     muscle_model=muscle,
     electrode_arrays=[electrode_array_monopolar],
     sampling_frequency__Hz=sampling_frequency,
-    MUs_to_simulate=[0],
 )
 
 ##############################################################################

@@ -45,7 +45,7 @@ motor_neuron_pool = joblib.load(save_path / "motor_neuron_pool.pkl")
 # .. note::
 #   Because of computation time, we pre-computed the **surface EMG** model for 100 motor units.
 
-surface_emg = joblib.load(save_path / "surface_emg_100.pkl")
+surface_emg = joblib.load(save_path / "surface_emg.pkl")
 
 
 ##############################################################################

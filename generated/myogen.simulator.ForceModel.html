@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>ForceModel &#8212; MyoGen 0.3.0 Documentation</title>
+    <title>ForceModel &#8212; MyoGen 0.4.0 Documentation</title>
   
   
   
@@ -31,11 +31,13 @@
 <link href="../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
 
     <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=34f00721" />
     <link rel="stylesheet" type="text/css" href="../_static/sg_gallery.css?v=d2d258e8" />
     <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-binder.css?v=f4aeca0c" />
     <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-dataframe.css?v=2082cf3c" />
     <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
-    <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=73e2cb9d" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=34f00721" />
   
   <!-- So that users can add custom icons -->
   <script src="../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
@@ -43,17 +45,19 @@
   <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="../_static/documentation_options.js?v=e259d695"></script>
+    <script src="../_static/documentation_options.js?v=1437fa6d"></script>
     <script src="../_static/doctools.js?v=9bcbadda"></script>
     <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/custom.js?v=a236ca48"></script>
+    <script src="../_static/design-tabs.js?v=f930bc37"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'generated/myogen.simulator.ForceModel';</script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="SurfaceEMG" href="myogen.simulator.SurfaceEMG.html" />
-    <link rel="prev" title="Muscle" href="myogen.simulator.Muscle.html" />
+    <link rel="next" title="myogen.simulator.ForceModel.__init__" href="myogen.simulator.ForceModel.__init__.html" />
+    <link rel="prev" title="myogen.simulator.Muscle.resulting_number_of_innervated_fibers" href="myogen.simulator.Muscle.resulting_number_of_innervated_fibers.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="0.3.0" />
+  <meta name="docsearch:version" content="0.4.0" />
   </head>
   
   
@@ -78,8 +82,8 @@
   <input type="search"
          class="form-control"
          name="q"
-         placeholder="Search the docs ..."
-         aria-label="Search the docs ..."
+         placeholder="Search MyoGen docs..."
+         aria-label="Search MyoGen docs..."
          autocomplete="off"
          autocorrect="off"
          autocapitalize="off"
@@ -91,6 +95,9 @@
   <div class="pst-async-banner-revealer d-none">
   <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
 </div>
+<aside class="bd-header-announcement" aria-label="Announcement">
+  <div class="bd-header-announcement__content">⚠️ MyoGen is under active development. API may change.</div>
+</aside>
 
   
     <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
@@ -119,8 +126,8 @@
       
     
     
-    <img src="../_static/myogen_logo.png" class="logo__image only-light" alt="MyoGen 0.3.0 Documentation - Home"/>
-    <img src="../_static/myogen_logo.png" class="logo__image only-dark pst-js-only" alt="MyoGen 0.3.0 Documentation - Home"/>
+    <img src="../_static/myogen_logo.png" class="logo__image only-light" alt="MyoGen 0.4.0 Documentation - Home"/>
+    <img src="../_static/myogen_logo.png" class="logo__image only-dark pst-js-only" alt="MyoGen 0.4.0 Documentation - Home"/>
   
   
 </a></div>
@@ -129,7 +136,7 @@
 <div class="nav-item">
   <div class="version-switcher__container dropdown">
       <button id="version-switcher-button" type="button" class="version-switcher__button btn btn-sm navbar-btn" aria-haspopup="true" aria-expanded="false">
-          Version 0.3.0
+          Version 0.4.0
       </button>
       
       
@@ -311,16 +318,92 @@
 <ul class="current nav bd-sidenav">
 <li class="toctree-l1 current active has-children"><a class="reference internal" href="../api/simulator_api.html">Simulator Module</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="myogen.simulator.generate_mu_recruitment_thresholds.html">generate_mu_recruitment_thresholds</a></li>
-<li class="toctree-l2"><a class="reference internal" href="myogen.simulator.MotorNeuronPool.html">MotorNeuronPool</a></li>
-<li class="toctree-l2"><a class="reference internal" href="myogen.simulator.Muscle.html">Muscle</a></li>
-<li class="toctree-l2 current active"><a class="current reference internal" href="#">ForceModel</a></li>
-<li class="toctree-l2"><a class="reference internal" href="myogen.simulator.SurfaceEMG.html">SurfaceEMG</a></li>
-<li class="toctree-l2"><a class="reference internal" href="myogen.simulator.IntramuscularEMG.html">IntramuscularEMG</a></li>
-<li class="toctree-l2"><a class="reference internal" href="myogen.simulator.SurfaceElectrodeArray.html">SurfaceElectrodeArray</a></li>
-<li class="toctree-l2"><a class="reference internal" href="myogen.simulator.IntramuscularElectrodeArray.html">IntramuscularElectrodeArray</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="myogen.simulator.MotorNeuronPool.html">MotorNeuronPool</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="myogen.simulator.MotorNeuronPool.__init__.html">myogen.simulator.MotorNeuronPool.__init__</a></li>
+<li class="toctree-l3"><a class="reference internal" href="myogen.simulator.MotorNeuronPool.compute_mvc_current_threshold.html">myogen.simulator.MotorNeuronPool.compute_mvc_current_threshold</a></li>
+<li class="toctree-l3"><a class="reference internal" href="myogen.simulator.MotorNeuronPool.generate_spike_trains.html">myogen.simulator.MotorNeuronPool.generate_spike_trains</a></li>
+<li class="toctree-l3"><a class="reference internal" href="myogen.simulator.MotorNeuronPool.active_neuron_indices.html">myogen.simulator.MotorNeuronPool.active_neuron_indices</a></li>
+<li class="toctree-l3"><a class="reference internal" href="myogen.simulator.MotorNeuronPool.data.html">myogen.simulator.MotorNeuronPool.data</a></li>
+<li class="toctree-l3"><a class="reference internal" href="myogen.simulator.MotorNeuronPool.mvc_current_threshold.html">myogen.simulator.MotorNeuronPool.mvc_current_threshold</a></li>
+<li class="toctree-l3"><a class="reference internal" href="myogen.simulator.MotorNeuronPool.spike_trains.html">myogen.simulator.MotorNeuronPool.spike_trains</a></li>
 </ul>
 </details></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../api/utils_api.html">Utils Module</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="myogen.simulator.Muscle.html">Muscle</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="myogen.simulator.Muscle.__init__.html">myogen.simulator.Muscle.__init__</a></li>
+<li class="toctree-l3"><a class="reference internal" href="myogen.simulator.Muscle.assign_mfs2mns.html">myogen.simulator.Muscle.assign_mfs2mns</a></li>
+<li class="toctree-l3"><a class="reference internal" href="myogen.simulator.Muscle.distribute_innervation_centers.html">myogen.simulator.Muscle.distribute_innervation_centers</a></li>
+<li class="toctree-l3"><a class="reference internal" href="myogen.simulator.Muscle.generate_muscle_fiber_centers.html">myogen.simulator.Muscle.generate_muscle_fiber_centers</a></li>
+<li class="toctree-l3"><a class="reference internal" href="myogen.simulator.Muscle.resulting_fiber_assignment.html">myogen.simulator.Muscle.resulting_fiber_assignment</a></li>
+<li class="toctree-l3"><a class="reference internal" href="myogen.simulator.Muscle.assignment.html">myogen.simulator.Muscle.assignment</a></li>
+<li class="toctree-l3"><a class="reference internal" href="myogen.simulator.Muscle.innervation_center_positions__mm.html">myogen.simulator.Muscle.innervation_center_positions__mm</a></li>
+<li class="toctree-l3"><a class="reference internal" href="myogen.simulator.Muscle.muscle_border__mm.html">myogen.simulator.Muscle.muscle_border__mm</a></li>
+<li class="toctree-l3"><a class="reference internal" href="myogen.simulator.Muscle.muscle_fiber_centers__mm.html">myogen.simulator.Muscle.muscle_fiber_centers__mm</a></li>
+<li class="toctree-l3"><a class="reference internal" href="myogen.simulator.Muscle.muscle_fiber_conduction_velocities__mm_per_s.html">myogen.simulator.Muscle.muscle_fiber_conduction_velocities__mm_per_s</a></li>
+<li class="toctree-l3"><a class="reference internal" href="myogen.simulator.Muscle.muscle_fiber_diameters__mm.html">myogen.simulator.Muscle.muscle_fiber_diameters__mm</a></li>
+<li class="toctree-l3"><a class="reference internal" href="myogen.simulator.Muscle.number_of_muscle_fibers.html">myogen.simulator.Muscle.number_of_muscle_fibers</a></li>
+<li class="toctree-l3"><a class="reference internal" href="myogen.simulator.Muscle.recruitment_thresholds.html">myogen.simulator.Muscle.recruitment_thresholds</a></li>
+<li class="toctree-l3"><a class="reference internal" href="myogen.simulator.Muscle.resulting_innervation_areas__mm2.html">myogen.simulator.Muscle.resulting_innervation_areas__mm2</a></li>
+<li class="toctree-l3"><a class="reference internal" href="myogen.simulator.Muscle.resulting_number_of_innervated_fibers.html">myogen.simulator.Muscle.resulting_number_of_innervated_fibers</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 current active has-children"><a class="current reference internal" href="#">ForceModel</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="myogen.simulator.ForceModel.__init__.html">myogen.simulator.ForceModel.__init__</a></li>
+<li class="toctree-l3"><a class="reference internal" href="myogen.simulator.ForceModel.generate_force.html">myogen.simulator.ForceModel.generate_force</a></li>
+<li class="toctree-l3"><a class="reference internal" href="myogen.simulator.ForceModel.contraction_times__samples.html">myogen.simulator.ForceModel.contraction_times__samples</a></li>
+<li class="toctree-l3"><a class="reference internal" href="myogen.simulator.ForceModel.peak_twitch_forces__unitless.html">myogen.simulator.ForceModel.peak_twitch_forces__unitless</a></li>
+<li class="toctree-l3"><a class="reference internal" href="myogen.simulator.ForceModel.twitch_list.html">myogen.simulator.ForceModel.twitch_list</a></li>
+<li class="toctree-l3"><a class="reference internal" href="myogen.simulator.ForceModel.twitch_mat.html">myogen.simulator.ForceModel.twitch_mat</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="myogen.simulator.SurfaceEMG.html">SurfaceEMG</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="myogen.simulator.SurfaceEMG.__init__.html">myogen.simulator.SurfaceEMG.__init__</a></li>
+<li class="toctree-l3"><a class="reference internal" href="myogen.simulator.SurfaceEMG.add_noise.html">myogen.simulator.SurfaceEMG.add_noise</a></li>
+<li class="toctree-l3"><a class="reference internal" href="myogen.simulator.SurfaceEMG.simulate_muaps.html">myogen.simulator.SurfaceEMG.simulate_muaps</a></li>
+<li class="toctree-l3"><a class="reference internal" href="myogen.simulator.SurfaceEMG.simulate_surface_emg.html">myogen.simulator.SurfaceEMG.simulate_surface_emg</a></li>
+<li class="toctree-l3"><a class="reference internal" href="myogen.simulator.SurfaceEMG.motor_neuron_pool.html">myogen.simulator.SurfaceEMG.motor_neuron_pool</a></li>
+<li class="toctree-l3"><a class="reference internal" href="myogen.simulator.SurfaceEMG.muaps.html">myogen.simulator.SurfaceEMG.muaps</a></li>
+<li class="toctree-l3"><a class="reference internal" href="myogen.simulator.SurfaceEMG.noisy_surface_emg__tensors.html">myogen.simulator.SurfaceEMG.noisy_surface_emg__tensors</a></li>
+<li class="toctree-l3"><a class="reference internal" href="myogen.simulator.SurfaceEMG.surface_emg__tensors.html">myogen.simulator.SurfaceEMG.surface_emg__tensors</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="myogen.simulator.IntramuscularEMG.html">IntramuscularEMG</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="myogen.simulator.IntramuscularEMG.__init__.html">myogen.simulator.IntramuscularEMG.__init__</a></li>
+<li class="toctree-l3"><a class="reference internal" href="myogen.simulator.IntramuscularEMG.add_noise.html">myogen.simulator.IntramuscularEMG.add_noise</a></li>
+<li class="toctree-l3"><a class="reference internal" href="myogen.simulator.IntramuscularEMG.simulate_intramuscular_emg.html">myogen.simulator.IntramuscularEMG.simulate_intramuscular_emg</a></li>
+<li class="toctree-l3"><a class="reference internal" href="myogen.simulator.IntramuscularEMG.simulate_muaps.html">myogen.simulator.IntramuscularEMG.simulate_muaps</a></li>
+<li class="toctree-l3"><a class="reference internal" href="myogen.simulator.IntramuscularEMG.intramuscular_emg__tensor.html">myogen.simulator.IntramuscularEMG.intramuscular_emg__tensor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="myogen.simulator.IntramuscularEMG.motor_neuron_pool.html">myogen.simulator.IntramuscularEMG.motor_neuron_pool</a></li>
+<li class="toctree-l3"><a class="reference internal" href="myogen.simulator.IntramuscularEMG.muaps.html">myogen.simulator.IntramuscularEMG.muaps</a></li>
+<li class="toctree-l3"><a class="reference internal" href="myogen.simulator.IntramuscularEMG.noisy_intramuscular_emg__tensor.html">myogen.simulator.IntramuscularEMG.noisy_intramuscular_emg__tensor</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="myogen.simulator.SurfaceElectrodeArray.html">SurfaceElectrodeArray</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="myogen.simulator.SurfaceElectrodeArray.__init__.html">myogen.simulator.SurfaceElectrodeArray.__init__</a></li>
+<li class="toctree-l3"><a class="reference internal" href="myogen.simulator.SurfaceElectrodeArray.get_H_sf.html">myogen.simulator.SurfaceElectrodeArray.get_H_sf</a></li>
+<li class="toctree-l3"><a class="reference internal" href="myogen.simulator.SurfaceElectrodeArray.electrode_positions.html">myogen.simulator.SurfaceElectrodeArray.electrode_positions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="myogen.simulator.SurfaceElectrodeArray.pos_theta.html">myogen.simulator.SurfaceElectrodeArray.pos_theta</a></li>
+<li class="toctree-l3"><a class="reference internal" href="myogen.simulator.SurfaceElectrodeArray.pos_z.html">myogen.simulator.SurfaceElectrodeArray.pos_z</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="myogen.simulator.IntramuscularElectrodeArray.html">IntramuscularElectrodeArray</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="myogen.simulator.IntramuscularElectrodeArray.__init__.html">myogen.simulator.IntramuscularElectrodeArray.__init__</a></li>
+<li class="toctree-l3"><a class="reference internal" href="myogen.simulator.IntramuscularElectrodeArray.calc_observation_points.html">myogen.simulator.IntramuscularElectrodeArray.calc_observation_points</a></li>
+<li class="toctree-l3"><a class="reference internal" href="myogen.simulator.IntramuscularElectrodeArray.rodrigues_rot.html">myogen.simulator.IntramuscularElectrodeArray.rodrigues_rot</a></li>
+<li class="toctree-l3"><a class="reference internal" href="myogen.simulator.IntramuscularElectrodeArray.rotate_and_translate.html">myogen.simulator.IntramuscularElectrodeArray.rotate_and_translate</a></li>
+<li class="toctree-l3"><a class="reference internal" href="myogen.simulator.IntramuscularElectrodeArray.set_linear_trajectory.html">myogen.simulator.IntramuscularElectrodeArray.set_linear_trajectory</a></li>
+<li class="toctree-l3"><a class="reference internal" href="myogen.simulator.IntramuscularElectrodeArray.set_position.html">myogen.simulator.IntramuscularElectrodeArray.set_position</a></li>
+<li class="toctree-l3"><a class="reference internal" href="myogen.simulator.IntramuscularElectrodeArray.traj_mixing_fun.html">myogen.simulator.IntramuscularElectrodeArray.traj_mixing_fun</a></li>
+<li class="toctree-l3"><a class="reference internal" href="myogen.simulator.IntramuscularElectrodeArray.traj_mixing_mat.html">myogen.simulator.IntramuscularElectrodeArray.traj_mixing_mat</a></li>
+<li class="toctree-l3"><a class="reference internal" href="myogen.simulator.IntramuscularElectrodeArray.differential_matrix.html">myogen.simulator.IntramuscularElectrodeArray.differential_matrix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="myogen.simulator.IntramuscularElectrodeArray.electrode_positions.html">myogen.simulator.IntramuscularElectrodeArray.electrode_positions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="myogen.simulator.IntramuscularElectrodeArray.initial_positions.html">myogen.simulator.IntramuscularElectrodeArray.initial_positions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="myogen.simulator.IntramuscularElectrodeArray.num_channels.html">myogen.simulator.IntramuscularElectrodeArray.num_channels</a></li>
+<li class="toctree-l3"><a class="reference internal" href="myogen.simulator.IntramuscularElectrodeArray.trajectory_transforms.html">myogen.simulator.IntramuscularElectrodeArray.trajectory_transforms</a></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../api/utils_api.html">Utils Module</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l2"><a class="reference internal" href="myogen.utils.setup_myogen.html">setup_myogen</a></li>
 <li class="toctree-l2"><a class="reference internal" href="myogen.utils.load_nmodl_files.html">load_nmodl_files</a></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="../api/currents_api.html">Current Generation</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -418,17 +501,98 @@
 <h1>ForceModel<a class="headerlink" href="#forcemodel" title="Link to this heading">#</a></h1>
 <dl class="py class">
 <dt class="sig sig-object py" id="myogen.simulator.ForceModel">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">myogen.simulator.</span></span><span class="sig-name descname"><span class="pre">ForceModel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">recruitment_thresholds</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">recording_frequency__Hz</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">longest_duration_rise_time__ms</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">90.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">contraction_time_range</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3.0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/myogen/simulator/core/force/force_model.html#ForceModel"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#myogen.simulator.ForceModel" title="Link to this definition">#</a></dt>
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">ForceModel</span></span><span class="sig-paren">(</span>
+
+<dl>
+<dd><em class="sig-param"><span class="n"><span class="pre">recruitment_thresholds</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">recording_frequency__Hz</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">longest_duration_rise_time__ms</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">90.0</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">contraction_time_range__unitless</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3.0</span></span></em>,</dd>
+</dl>
+
+<span class="sig-paren">)</span><a class="reference internal" href="../_modules/myogen/simulator/core/force/force_model.html#ForceModel"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#myogen.simulator.ForceModel" title="Link to this definition">#</a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <p>Force model based on Fuglevand et al. (1993) <a class="footnote-reference brackets" href="#id2" id="id1" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a>.</p>
+<p>This class implements the Fuglevand force generation model for motor unit pools,
+computing individual motor unit twitch responses and their nonlinear gain modulation
+based on discharge rates. The model generates realistic force outputs from spike trains
+using physiologically-based parameters.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>recruitment_thresholds</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.3)"><code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></a>) – Recruitment thresholds for each motor unit.</p></li>
-<li><p><strong>recording_frequency__Hz</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a>) – Recording frequency in Hz.</p></li>
-<li><p><strong>longest_duration_rise_time__ms</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a>, <em>optional</em>) – Longest duration of the rise time in milliseconds.</p></li>
-<li><p><strong>twitch_force_range</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a>, <em>optional</em>) – Twitch force range.</p></li>
-<li><p><strong>contraction_time_range</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a>, <em>optional</em>) – Contraction time range. Generally between 2 and 5.</p></li>
+<li><p><strong>recruitment_thresholds</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">RECRUITMENT_THRESHOLDS__ARRAY</span></code>) – Recruitment thresholds for each motor unit. Array of values typically ranging
+from 0 to 1 where larger motor units have higher thresholds.</p></li>
+<li><p><strong>recording_frequency__Hz</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a>) – Recording frequency in Hz. Determines temporal resolution of force calculations.
+Typical values: 1000-10000 Hz.</p></li>
+<li><p><strong>longest_duration_rise_time__ms</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a>, <em>default</em> <code class="docutils literal notranslate"><span class="pre">90.0</span></code>) – Longest duration of the rise time in milliseconds. This parameter (T_L in [1])
+determines the contraction time of the slowest motor unit. Typical range: 50-150 ms.</p></li>
+<li><p><strong>contraction_time_range__unitless</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a>, <em>default</em> <code class="docutils literal notranslate"><span class="pre">3.0</span></code>) – Contraction time range factor (RT in [1]). Determines the spread of contraction
+times across motor units. Generally between 2 and 5. Higher values create
+larger differences between fast and slow motor units.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="myogen.simulator.ForceModel.peak_twitch_forces__unitless">
+<span class="sig-name descname"><span class="pre">peak_twitch_forces__unitless</span></span><a class="headerlink" href="#myogen.simulator.ForceModel.peak_twitch_forces__unitless" title="Link to this definition">#</a></dt>
+<dd><p>Peak twitch forces for each motor unit (unitless). Available after initialization.
+Computed according to Fuglevand equation 13.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.3)"><code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="myogen.simulator.ForceModel.contraction_times__samples">
+<span class="sig-name descname"><span class="pre">contraction_times__samples</span></span><a class="headerlink" href="#myogen.simulator.ForceModel.contraction_times__samples" title="Link to this definition">#</a></dt>
+<dd><p>Contraction times for each motor unit in samples. Available after initialization.
+Computed according to Fuglevand equation 14.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.3)"><code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="myogen.simulator.ForceModel.twitch_mat">
+<span class="sig-name descname"><span class="pre">twitch_mat</span></span><a class="headerlink" href="#myogen.simulator.ForceModel.twitch_mat" title="Link to this definition">#</a></dt>
+<dd><p>Complete twitch matrix for all motor units. Available after initialization.
+Shape: (max_twitch_length, n_motor_units).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.3)"><code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="myogen.simulator.ForceModel.twitch_list">
+<span class="sig-name descname"><span class="pre">twitch_list</span></span><a class="headerlink" href="#myogen.simulator.ForceModel.twitch_list" title="Link to this definition">#</a></dt>
+<dd><p>List of individual twitch responses for each motor unit. Available after initialization.
+Each element contains the twitch response for one motor unit.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code></a>[<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.3)"><code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="field-list simple">
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.13)"><strong>ValueError</strong></a> – If recruitment_thresholds is empty or contains invalid values.
+    If recording_frequency__Hz is not positive.
+    If longest_duration_rise_time__ms is not positive.
+    If contraction_time_range__unitless is not greater than 1.</p>
+</dd>
+<dt class="field-even">Parameters<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>recruitment_thresholds</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Annotated" title="(in Python v3.13)"><em>Annotated</em></a><em>[</em><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.3)"><em>ndarray</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.13)"><em>tuple</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a><em>, </em><em>...</em><em>]</em><em>, </em><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.dtype.html#numpy.dtype" title="(in NumPy v2.3)"><em>dtype</em></a><em>[</em><a class="reference external" href="https://numpy.org/doc/stable/reference/arrays.scalars.html#numpy.floating" title="(in NumPy v2.3)"><em>floating</em></a><em>]</em><em>]</em><em>, </em><em>beartype.vale.Is</em><em>[</em><em>lambda x: x.ndim == 1</em><em>]</em><em>]</em>)</p></li>
+<li><p><strong>recording_frequency__Hz</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a>)</p></li>
+<li><p><strong>longest_duration_rise_time__ms</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a>)</p></li>
+<li><p><strong>contraction_time_range__unitless</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a>)</p></li>
 </ul>
 </dd>
 </dl>
@@ -441,26 +605,42 @@ Models of recruitment and rate coding in motor-unit pools.
 Journal of Neurophysiology, 70(2), 782-797.</p>
 </aside>
 </aside>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">myogen.simulator.core.force</span><span class="w"> </span><span class="kn">import</span> <span class="n">ForceModel</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">thresholds</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">force_model</span> <span class="o">=</span> <span class="n">ForceModel</span><span class="p">(</span>
+<span class="gp">... </span>    <span class="n">recruitment_thresholds</span><span class="o">=</span><span class="n">thresholds</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="n">recording_frequency__Hz</span><span class="o">=</span><span class="mf">2000.0</span>
+<span class="gp">... </span><span class="p">)</span>
+</pre></div>
+</div>
 <p class="rubric">Methods</p>
 <div class="pst-scrollable-table-container"><table class="autosummary longtable table">
 <tbody>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">__init__</span></code></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="myogen.simulator.ForceModel.__init__.html#myogen.simulator.ForceModel.__init__" title="myogen.simulator.ForceModel.__init__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__init__</span></code></a></p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#myogen.simulator.ForceModel.generate_force" title="myogen.simulator.ForceModel.generate_force"><code class="xref py py-obj docutils literal notranslate"><span class="pre">generate_force</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="myogen.simulator.ForceModel.generate_force.html#myogen.simulator.ForceModel.generate_force" title="myogen.simulator.ForceModel.generate_force"><code class="xref py py-obj docutils literal notranslate"><span class="pre">generate_force</span></code></a></p></td>
 <td><p>Generate force output from motor unit spike trains using the Fuglevand model.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#myogen.simulator.ForceModel.get_gain" title="myogen.simulator.ForceModel.get_gain"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_gain</span></code></a></p></td>
-<td><p>Returns the gain value for the force output for a motor unit with current inter-pulse-interval ipi and T-parameter of the twitch T.</p></td>
+</tbody>
+</table>
+</div>
+<p class="rubric">Attributes</p>
+<div class="pst-scrollable-table-container"><table class="autosummary longtable table">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="myogen.simulator.ForceModel.contraction_times__samples.html#myogen.simulator.ForceModel.contraction_times__samples" title="myogen.simulator.ForceModel.contraction_times__samples"><code class="xref py py-obj docutils literal notranslate"><span class="pre">contraction_times__samples</span></code></a></p></td>
+<td><p>Contraction times for each motor unit in samples.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#myogen.simulator.ForceModel.sawtooth2ipi" title="myogen.simulator.ForceModel.sawtooth2ipi"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sawtooth2ipi</span></code></a></p></td>
-<td><p>Convert sawtooth signal to inter-pulse intervals.</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="myogen.simulator.ForceModel.peak_twitch_forces__unitless.html#myogen.simulator.ForceModel.peak_twitch_forces__unitless" title="myogen.simulator.ForceModel.peak_twitch_forces__unitless"><code class="xref py py-obj docutils literal notranslate"><span class="pre">peak_twitch_forces__unitless</span></code></a></p></td>
+<td><p>Peak twitch forces for each motor unit (unitless).</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#myogen.simulator.ForceModel.sawtooth2spikes" title="myogen.simulator.ForceModel.sawtooth2spikes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sawtooth2spikes</span></code></a></p></td>
-<td><p>Convert sawtooth signal to spikes.</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="myogen.simulator.ForceModel.twitch_list.html#myogen.simulator.ForceModel.twitch_list" title="myogen.simulator.ForceModel.twitch_list"><code class="xref py py-obj docutils literal notranslate"><span class="pre">twitch_list</span></code></a></p></td>
+<td><p>List of individual twitch responses for each motor unit.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#myogen.simulator.ForceModel.spikes2sawtooth" title="myogen.simulator.ForceModel.spikes2sawtooth"><code class="xref py py-obj docutils literal notranslate"><span class="pre">spikes2sawtooth</span></code></a></p></td>
-<td><p>Convert spikes to sawtooth signal.</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="myogen.simulator.ForceModel.twitch_mat.html#myogen.simulator.ForceModel.twitch_mat" title="myogen.simulator.ForceModel.twitch_mat"><code class="xref py py-obj docutils literal notranslate"><span class="pre">twitch_mat</span></code></a></p></td>
+<td><p>Complete twitch matrix for all motor units.</p></td>
 </tr>
 </tbody>
 </table>
@@ -471,185 +651,101 @@ Journal of Neurophysiology, 70(2), 782-797.</p>
 <dd><p>Generate force output from motor unit spike trains using the Fuglevand model.</p>
 <p>This method simulates muscle force by converting spike trains into force output
 through individual motor unit twitches with nonlinear gain modulation based on
-discharge rate.</p>
+discharge rate. Each motor unit contributes to the total force according to its
+twitch properties and firing pattern.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>spike_train__matrix</strong> (<a class="reference internal" href="myogen.utils.types.SPIKE_TRAIN__MATRIX.html#myogen.utils.types.SPIKE_TRAIN__MATRIX" title="myogen.utils.types.SPIKE_TRAIN__MATRIX"><code class="xref py py-data docutils literal notranslate"><span class="pre">SPIKE_TRAIN__MATRIX</span></code></a>) – Spike train matrix with shape (n_pools, n_neurons, n_time_points).
-Binary array where 1 indicates a spike occurrence.</p>
+Binary array where 1 indicates a spike occurrence.
+The number of neurons (axis 1) must match the number of recruitment thresholds.</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>Force output array with shape (n_pools, n_time_points).
-Force values in arbitrary units representing muscle force over time.</p>
+Force values in arbitrary units representing muscle force over time.
+Each row corresponds to one motor neuron pool’s force response.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.3)"><code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></a></p>
 </dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.13)"><strong>ValueError</strong></a> – If spike train matrix dimensions don’t match the number of motor units.
+    If twitch parameters have not been computed.</p>
+</dd>
 </dl>
+<p class="rubric">Notes</p>
+<p>The force generation follows these steps:
+1. Convert spike trains to inter-pulse intervals (IPIs)
+2. Calculate nonlinear gain based on discharge rates
+3. Sum weighted twitch responses for each spike
+4. Apply gain modulation to final force output</p>
 </dd></dl>
 
-<dl class="py method">
-<dt class="sig sig-object py" id="myogen.simulator.ForceModel.get_gain">
-<span class="sig-name descname"><span class="pre">get_gain</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ipi</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">T</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/myogen/simulator/core/force/force_model.html#ForceModel.get_gain"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#myogen.simulator.ForceModel.get_gain" title="Link to this definition">#</a></dt>
-<dd><p>Returns the gain value for the force output for a motor unit with current
-inter-pulse-interval ipi and T-parameter of the twitch T. This function
-corresponds to Fuglevand’s nonlinear gain model for the force output,
-see Fuglevand - Models of Rate Coding …, eq. 17.</p>
-<section id="parameters">
-<h2>Parameters:<a class="headerlink" href="#parameters" title="Link to this heading">#</a></h2>
-<dl class="simple">
-<dt>ipi: np.ndarray</dt><dd><p>Inter-pulse interval vector.</p>
-</dd>
-<dt>T: float</dt><dd><p>T-parameter of the twitch.</p>
-</dd>
-</dl>
-</section>
-<section id="returns">
-<h2>Returns:<a class="headerlink" href="#returns" title="Link to this heading">#</a></h2>
-<dl class="simple">
-<dt>np.ndarray</dt><dd><p>Gain vector.</p>
-</dd>
-</dl>
-</section>
+<dl class="py property">
+<dt class="sig sig-object py" id="id0">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">peak_twitch_forces__unitless</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.3)"><span class="pre">ndarray</span></a></em><a class="headerlink" href="#id0" title="Link to this definition">#</a></dt>
+<dd><p>Peak twitch forces for each motor unit (unitless).</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>ipi</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.3)"><em>ndarray</em></a>)</p></li>
-<li><p><strong>T</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a>)</p></li>
-</ul>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Array of peak twitch forces according to Fuglevand model equation 13.</p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.3)"><em>ndarray</em></a></p>
+<dd class="field-even"><p><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.3)"><code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></a></p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.13)"><strong>ValueError</strong></a> – If twitch parameters have not been computed yet.</p>
 </dd>
 </dl>
 </dd></dl>
 
-<dl class="py method">
-<dt class="sig sig-object py" id="myogen.simulator.ForceModel.sawtooth2ipi">
-<span class="sig-name descname"><span class="pre">sawtooth2ipi</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sawtooth</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ipi_saturation</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">inf</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/myogen/simulator/core/force/force_model.html#ForceModel.sawtooth2ipi"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#myogen.simulator.ForceModel.sawtooth2ipi" title="Link to this definition">#</a></dt>
-<dd><p>Convert sawtooth signal to inter-pulse intervals.</p>
-<p>This method converts sawtooth heights (representing time since last spike) into
-inter-pulse intervals (IPIs) by combining forward and backward spike information.
-The IPI values are used to calculate instantaneous discharge rates for the
-Fuglevand gain model.</p>
-<p><strong>IPI Calculation:</strong>
-- Forward sawtooth: time since last spike
-- Backward sawtooth: time until next spike
-- IPI = forward + backward sawtooth values
-- IPI represents the full inter-pulse interval in time samples
-- Convert to physiological units: IPI_ms = IPI_samples / (recording_frequency__Hz / 1000)</p>
-<section id="id3">
-<h2>Parameters:<a class="headerlink" href="#id3" title="Link to this heading">#</a></h2>
-<dl class="simple">
-<dt>sawtooth: np.ndarray</dt><dd><p>Sawtooth signal matrix where values represent time since last spike.</p>
-</dd>
-<dt>ipi_saturation: float, optional</dt><dd><p>Maximum IPI value (saturation) to prevent infinite values when spikes
-are far apart. Default is infinity.</p>
-</dd>
-</dl>
-</section>
-<section id="id4">
-<h2>Returns:<a class="headerlink" href="#id4" title="Link to this heading">#</a></h2>
-<dl class="simple">
-<dt>Tuple[np.ndarray, np.ndarray]</dt><dd><p>ipi_filled: IPI signal with zeros where no full IPI can be calculated.
-ipi_filled_seamless: IPI signal with zeros filled by preceding values
-for smooth gain calculations.</p>
-</dd>
-</dl>
-</section>
+<dl class="py property">
+<dt class="sig sig-object py" id="id3">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">contraction_times__samples</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.3)"><span class="pre">ndarray</span></a></em><a class="headerlink" href="#id3" title="Link to this definition">#</a></dt>
+<dd><p>Contraction times for each motor unit in samples.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>sawtooth</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.3)"><em>ndarray</em></a>)</p></li>
-<li><p><strong>ipi_saturation</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a>)</p></li>
-</ul>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Array of contraction times according to Fuglevand model equation 14.</p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.13)">tuple</a>[<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.3)"><em>ndarray</em></a>, <a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.3)"><em>ndarray</em></a>]</p>
+<dd class="field-even"><p><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.3)"><code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></a></p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.13)"><strong>ValueError</strong></a> – If twitch parameters have not been computed yet.</p>
 </dd>
 </dl>
 </dd></dl>
 
-<dl class="py method">
-<dt class="sig sig-object py" id="myogen.simulator.ForceModel.sawtooth2spikes">
-<span class="sig-name descname"><span class="pre">sawtooth2spikes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sawtooth</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/myogen/simulator/core/force/force_model.html#ForceModel.sawtooth2spikes"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#myogen.simulator.ForceModel.sawtooth2spikes" title="Link to this definition">#</a></dt>
-<dd><p>Convert sawtooth signal to spikes.</p>
-<p>A spike occurs when the sawtooth resets to 0, indicating the end of an
-inter-pulse interval. This is the inverse operation of spikes2sawtooth.</p>
-<dl class="simple">
-<dt><strong>Spike Detection:</strong></dt><dd><ul class="simple">
-<li><p>Spike at t=0 if sawtooth starts at 0</p></li>
-<li><p>Spike when sawtooth decreases (resets from peak back to 0)</p></li>
-<li><p>Each spike marks the end of one IPI and start of the next</p></li>
-</ul>
-</dd>
-</dl>
-<section id="id5">
-<h2>Parameters:<a class="headerlink" href="#id5" title="Link to this heading">#</a></h2>
-<dl class="simple">
-<dt>sawtooth: np.ndarray</dt><dd><p>Sawtooth signal matrix where values represent time since last spike.</p>
-</dd>
-</dl>
-</section>
-<section id="id6">
-<h2>Returns:<a class="headerlink" href="#id6" title="Link to this heading">#</a></h2>
-<dl class="simple">
-<dt>np.ndarray</dt><dd><p>Spike train matrix with binary values (1 = spike, 0 = no spike).</p>
-</dd>
-</dl>
-</section>
+<dl class="py property">
+<dt class="sig sig-object py" id="id4">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">twitch_mat</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.3)"><span class="pre">ndarray</span></a></em><a class="headerlink" href="#id4" title="Link to this definition">#</a></dt>
+<dd><p>Complete twitch matrix for all motor units.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>sawtooth</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.3)"><em>ndarray</em></a>)</p>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Matrix of shape (max_twitch_length, n_motor_units) containing
+the twitch responses for each motor unit.</p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.3)"><em>ndarray</em></a></p>
+<dd class="field-even"><p><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.3)"><code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></a></p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.13)"><strong>ValueError</strong></a> – If twitches have not been initialized yet.</p>
 </dd>
 </dl>
 </dd></dl>
 
-<dl class="py method">
-<dt class="sig sig-object py" id="myogen.simulator.ForceModel.spikes2sawtooth">
-<span class="sig-name descname"><span class="pre">spikes2sawtooth</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">spikes</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">initial_values</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/myogen/simulator/core/force/force_model.html#ForceModel.spikes2sawtooth"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#myogen.simulator.ForceModel.spikes2sawtooth" title="Link to this definition">#</a></dt>
-<dd><p>Convert spikes to sawtooth signal.</p>
-<p>The sawtooth signal represents inter-pulse intervals (IPIs) where each sawtooth
-tooth height equals the number of time steps between consecutive spikes. This is
-used to calculate instantaneous discharge rates for force generation.</p>
-<dl class="simple">
-<dt><strong>Sawtooth Sizing:</strong></dt><dd><ul class="simple">
-<li><p>Each time step without a spike: sawtooth value increments by 1</p></li>
-<li><p>When a spike occurs: sawtooth resets to 0</p></li>
-<li><p>Sawtooth height = IPI in time samples (at recording_frequency__Hz)</p></li>
-<li><p>Example: height of 50 at 10kHz = 5ms IPI</p></li>
-</ul>
-</dd>
-</dl>
-<section id="id7">
-<h2>Parameters:<a class="headerlink" href="#id7" title="Link to this heading">#</a></h2>
-<dl class="simple">
-<dt>spikes: np.ndarray</dt><dd><p>Spike train matrix (time x neurons). Binary values where 1 indicates a spike.</p>
-</dd>
-<dt>initial_values: np.ndarray, optional</dt><dd><p>Initial values for each neuron. Default is ones. Will be reset to 0 if
-there’s a spike at t=0.</p>
-</dd>
-</dl>
-</section>
-<section id="id8">
-<h2>Returns:<a class="headerlink" href="#id8" title="Link to this heading">#</a></h2>
-<dl class="simple">
-<dt>np.ndarray</dt><dd><p>Sawtooth sequence where each value represents the time since the last spike
-in samples. Used for calculating inter-pulse intervals and gain modulation.</p>
-</dd>
-</dl>
-</section>
+<dl class="py property">
+<dt class="sig sig-object py" id="id5">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">twitch_list</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.3)"><span class="pre">ndarray</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#id5" title="Link to this definition">#</a></dt>
+<dd><p>List of individual twitch responses for each motor unit.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>spikes</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.3)"><em>ndarray</em></a>)</p></li>
-<li><p><strong>initial_values</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.3)"><em>ndarray</em></a><em> | </em><em>None</em>)</p></li>
-</ul>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>List where each element is the twitch response array for one motor unit.
+Each array may have different lengths based on the motor unit’s contraction time.</p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.3)"><em>ndarray</em></a></p>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code></a>[<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.3)"><code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></a>]</p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.13)"><strong>ValueError</strong></a> – If twitches have not been initialized yet.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -681,16 +777,36 @@ in samples. Used for calculating inter-pulse intervals and gain modulation.</p>
   </div>
   <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
     <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#myogen.simulator.ForceModel"><code class="docutils literal notranslate"><span class="pre">ForceModel</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#myogen.simulator.ForceModel"><code class="docutils literal notranslate"><span class="pre">ForceModel</span></code></a><ul class="visible nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#myogen.simulator.ForceModel.peak_twitch_forces__unitless"><code class="docutils literal notranslate"><span class="pre">ForceModel.peak_twitch_forces__unitless</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#myogen.simulator.ForceModel.contraction_times__samples"><code class="docutils literal notranslate"><span class="pre">ForceModel.contraction_times__samples</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#myogen.simulator.ForceModel.twitch_mat"><code class="docutils literal notranslate"><span class="pre">ForceModel.twitch_mat</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#myogen.simulator.ForceModel.twitch_list"><code class="docutils literal notranslate"><span class="pre">ForceModel.twitch_list</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#myogen.simulator.ForceModel.generate_force"><code class="docutils literal notranslate"><span class="pre">ForceModel.generate_force()</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#myogen.simulator.ForceModel.get_gain"><code class="docutils literal notranslate"><span class="pre">ForceModel.get_gain()</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#myogen.simulator.ForceModel.sawtooth2ipi"><code class="docutils literal notranslate"><span class="pre">ForceModel.sawtooth2ipi()</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#myogen.simulator.ForceModel.sawtooth2spikes"><code class="docutils literal notranslate"><span class="pre">ForceModel.sawtooth2spikes()</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#myogen.simulator.ForceModel.spikes2sawtooth"><code class="docutils literal notranslate"><span class="pre">ForceModel.spikes2sawtooth()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id0"><code class="docutils literal notranslate"><span class="pre">ForceModel.peak_twitch_forces__unitless</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id3"><code class="docutils literal notranslate"><span class="pre">ForceModel.contraction_times__samples</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id4"><code class="docutils literal notranslate"><span class="pre">ForceModel.twitch_mat</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id5"><code class="docutils literal notranslate"><span class="pre">ForceModel.twitch_list</span></code></a></li>
 </ul>
 </li>
 </ul>
   </nav></div>
+
+  <div class="sidebar-secondary-item">
+
+  
+  <div class="tocsection editthispage">
+    <a href="https://github.com/NSquaredLab/MyoGen/edit/main/docs/generated/myogen.simulator.ForceModel.rst">
+      <i class="fa-solid fa-pencil"></i>
+      
+      
+        
+          Edit on GitHub
+        
+      
+    </a>
+  </div>
+</div>
 
   <div class="sidebar-secondary-item">
   <div role="note" aria-label="source link">

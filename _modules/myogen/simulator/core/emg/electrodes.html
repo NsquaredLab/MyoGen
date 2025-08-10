@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>myogen.simulator.core.emg.electrodes &#8212; MyoGen 0.3.0 Documentation</title>
+    <title>myogen.simulator.core.emg.electrodes &#8212; MyoGen 0.4.0 Documentation</title>
   
   
   
@@ -30,11 +30,13 @@
 <link href="../../../../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
 
     <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/custom.css?v=34f00721" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/sg_gallery.css?v=d2d258e8" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/sg_gallery-binder.css?v=f4aeca0c" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
-    <link rel="stylesheet" type="text/css" href="../../../../../_static/custom.css?v=73e2cb9d" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/custom.css?v=34f00721" />
   
   <!-- So that users can add custom icons -->
   <script src="../../../../../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
@@ -42,9 +44,11 @@
   <link rel="preload" as="script" href="../../../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="../../../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="../../../../../_static/documentation_options.js?v=e259d695"></script>
+    <script src="../../../../../_static/documentation_options.js?v=1437fa6d"></script>
     <script src="../../../../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../../../_static/custom.js?v=a236ca48"></script>
+    <script src="../../../../../_static/design-tabs.js?v=f930bc37"></script>
     <script type="module" src="https://cdn.jsdelivr.net/npm/mermaid@11.9.0/dist/mermaid.esm.min.mjs"></script>
     <script type="module" src="https://cdn.jsdelivr.net/npm/@mermaid-js/layout-elk@0.1.4/dist/mermaid-layout-elk.esm.min.mjs"></script>
     <script type="module">import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@11.9.0/dist/mermaid.esm.min.mjs";import elkLayouts from "https://cdn.jsdelivr.net/npm/@mermaid-js/layout-elk@0.1.4/dist/mermaid-layout-elk.esm.min.mjs";mermaid.registerLayoutLoaders(elkLayouts);mermaid.initialize({startOnLoad:false});</script>
@@ -58,7 +62,7 @@ window.addEventListener("load", () => mermaid.run());
     <link rel="search" title="Search" href="../../../../../search.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="0.3.0" />
+  <meta name="docsearch:version" content="0.4.0" />
   </head>
   
   
@@ -83,8 +87,8 @@ window.addEventListener("load", () => mermaid.run());
   <input type="search"
          class="form-control"
          name="q"
-         placeholder="Search the docs ..."
-         aria-label="Search the docs ..."
+         placeholder="Search MyoGen docs..."
+         aria-label="Search MyoGen docs..."
          autocomplete="off"
          autocorrect="off"
          autocapitalize="off"
@@ -96,6 +100,9 @@ window.addEventListener("load", () => mermaid.run());
   <div class="pst-async-banner-revealer d-none">
   <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
 </div>
+<aside class="bd-header-announcement" aria-label="Announcement">
+  <div class="bd-header-announcement__content">⚠️ MyoGen is under active development. API may change.</div>
+</aside>
 
   
     <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
@@ -124,8 +131,8 @@ window.addEventListener("load", () => mermaid.run());
       
     
     
-    <img src="../../../../../_static/myogen_logo.png" class="logo__image only-light" alt="MyoGen 0.3.0 Documentation - Home"/>
-    <img src="../../../../../_static/myogen_logo.png" class="logo__image only-dark pst-js-only" alt="MyoGen 0.3.0 Documentation - Home"/>
+    <img src="../../../../../_static/myogen_logo.png" class="logo__image only-light" alt="MyoGen 0.4.0 Documentation - Home"/>
+    <img src="../../../../../_static/myogen_logo.png" class="logo__image only-dark pst-js-only" alt="MyoGen 0.4.0 Documentation - Home"/>
   
   
 </a></div>
@@ -134,7 +141,7 @@ window.addEventListener("load", () => mermaid.run());
 <div class="nav-item">
   <div class="version-switcher__container dropdown">
       <button id="version-switcher-button" type="button" class="version-switcher__button btn btn-sm navbar-btn" aria-haspopup="true" aria-expanded="false">
-          Version 0.3.0
+          Version 0.4.0
       </button>
       
       
@@ -401,8 +408,26 @@ window.addEventListener("load", () => mermaid.run());
 <span class="sd">        Rotation angle of the electrodes in degrees. This is the angle between the electrode grid and the muscle surface.</span>
 <span class="sd">    differentiation_mode : {&quot;monopolar&quot;, &quot;bipolar_longitudinal&quot;, &quot;bipolar_transversal&quot;, &quot;laplacian&quot;}</span>
 <span class="sd">        Differentiation mode. Default is monopolar.</span>
+
+<span class="sd">    Attributes</span>
+<span class="sd">    ----------</span>
+<span class="sd">    pos_z : np.ndarray</span>
+<span class="sd">        Longitudinal electrode positions in mm, shape (num_rows, num_cols).</span>
+<span class="sd">        Available after class initialization via `_create_electrode_grid()`.</span>
+<span class="sd">    pos_theta : np.ndarray</span>
+<span class="sd">        Angular electrode positions in radians, shape (num_rows, num_cols).</span>
+<span class="sd">        Available after class initialization via `_create_electrode_grid()`.</span>
+<span class="sd">    electrode_positions : tuple[np.ndarray, np.ndarray]</span>
+<span class="sd">        Complete electrode position arrays (pos_z, pos_theta).</span>
+<span class="sd">        Available after class initialization via `_create_electrode_grid()`.</span>
+<span class="sd">    num_electrodes : int</span>
+<span class="sd">        Total number of electrodes (num_rows * num_cols).</span>
+<span class="sd">    num_channels : int</span>
+<span class="sd">        Number of recording channels based on differentiation mode.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
+<div class="viewcode-block" id="SurfaceElectrodeArray.__init__">
+<a class="viewcode-back" href="../../../../../generated/myogen.simulator.SurfaceElectrodeArray.__init__.html#myogen.simulator.SurfaceElectrodeArray.__init__">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">num_rows</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
@@ -416,6 +441,7 @@ window.addEventListener("load", () => mermaid.run());
             <span class="s2">&quot;monopolar&quot;</span><span class="p">,</span> <span class="s2">&quot;bipolar_longitudinal&quot;</span><span class="p">,</span> <span class="s2">&quot;bipolar_transversal&quot;</span><span class="p">,</span> <span class="s2">&quot;laplacian&quot;</span>
         <span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;monopolar&quot;</span><span class="p">,</span>
     <span class="p">):</span>
+        <span class="c1"># Immutable public arguments - never modify these</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">num_rows</span> <span class="o">=</span> <span class="n">num_rows</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">num_cols</span> <span class="o">=</span> <span class="n">num_cols</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">center_point__mm_deg</span> <span class="o">=</span> <span class="n">center_point__mm_deg</span>
@@ -425,10 +451,21 @@ window.addEventListener("load", () => mermaid.run());
         <span class="bp">self</span><span class="o">.</span><span class="n">electrode_radius__mm</span> <span class="o">=</span> <span class="n">electrode_radius__mm</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">differentiation_mode</span> <span class="o">=</span> <span class="n">differentiation_mode</span>
 
+        <span class="c1"># Private copies for internal modifications</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_num_rows</span> <span class="o">=</span> <span class="n">num_rows</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_num_cols</span> <span class="o">=</span> <span class="n">num_cols</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_center_point__mm_deg</span> <span class="o">=</span> <span class="n">center_point__mm_deg</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_bending_radius__mm</span> <span class="o">=</span> <span class="n">bending_radius__mm</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_rotation_angle__deg</span> <span class="o">=</span> <span class="n">rotation_angle__deg</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_inter_electrode_distances__mm</span> <span class="o">=</span> <span class="n">inter_electrode_distances__mm</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_electrode_radius__mm</span> <span class="o">=</span> <span class="n">electrode_radius__mm</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_differentiation_mode</span> <span class="o">=</span> <span class="n">differentiation_mode</span>
+
         <span class="bp">self</span><span class="o">.</span><span class="n">num_electrodes</span> <span class="o">=</span> <span class="n">num_rows</span> <span class="o">*</span> <span class="n">num_cols</span>
 
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">bending_radius__mm</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">bending_radius__mm</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">finfo</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span><span class="o">.</span><span class="n">eps</span>
+        <span class="c1"># Handle zero bending radius</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_bending_radius__mm</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_bending_radius__mm</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">finfo</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span><span class="o">.</span><span class="n">eps</span>
 
         <span class="c1"># Set up channel configuration based on differentiation mode</span>
         <span class="k">if</span> <span class="n">differentiation_mode</span> <span class="o">==</span> <span class="s2">&quot;monopolar&quot;</span><span class="p">:</span>
@@ -446,95 +483,167 @@ window.addEventListener("load", () => mermaid.run());
             <span class="bp">self</span><span class="o">.</span><span class="n">num_channels</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_electrodes</span>
 
         <span class="c1"># Create electrode grid in local coordinate system</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_create_electrode_grid</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_create_electrode_grid</span><span class="p">()</span></div>
+
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_create_electrode_grid</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Create electrode positions in local coordinate system.&quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">pos_z</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">num_rows</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_cols</span><span class="p">))</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_rows</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-            <span class="n">index_center</span> <span class="o">=</span> <span class="nb">int</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">num_rows</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">pos_z</span><span class="p">[</span><span class="n">index_center</span><span class="p">,</span> <span class="p">:]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">center_point__mm_deg</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Create electrode positions in local coordinate system.</span>
+
+<span class="sd">        Results are stored in the `electrode_positions` property after execution.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">_pos_z</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">_num_rows</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_num_cols</span><span class="p">))</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_num_rows</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">index_center</span> <span class="o">=</span> <span class="nb">int</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">_num_rows</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span>
+            <span class="n">_pos_z</span><span class="p">[</span><span class="n">index_center</span><span class="p">,</span> <span class="p">:]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_center_point__mm_deg</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
             <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">index_center</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">pos_z</span><span class="p">[</span><span class="n">index_center</span> <span class="o">+</span> <span class="n">i</span><span class="p">,</span> <span class="p">:]</span> <span class="o">=</span> <span class="p">(</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">pos_z</span><span class="p">[</span><span class="n">index_center</span> <span class="o">+</span> <span class="n">i</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="p">:]</span>
-                    <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">inter_electrode_distances__mm</span>
+                <span class="n">_pos_z</span><span class="p">[</span><span class="n">index_center</span> <span class="o">+</span> <span class="n">i</span><span class="p">,</span> <span class="p">:]</span> <span class="o">=</span> <span class="p">(</span>
+                    <span class="n">_pos_z</span><span class="p">[</span><span class="n">index_center</span> <span class="o">+</span> <span class="n">i</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="p">:]</span>
+                    <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_inter_electrode_distances__mm</span>
                 <span class="p">)</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">pos_z</span><span class="p">[</span><span class="n">index_center</span> <span class="o">-</span> <span class="n">i</span><span class="p">,</span> <span class="p">:]</span> <span class="o">=</span> <span class="p">(</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">pos_z</span><span class="p">[</span><span class="n">index_center</span> <span class="o">-</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="p">:]</span>
-                    <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">inter_electrode_distances__mm</span>
+                <span class="n">_pos_z</span><span class="p">[</span><span class="n">index_center</span> <span class="o">-</span> <span class="n">i</span><span class="p">,</span> <span class="p">:]</span> <span class="o">=</span> <span class="p">(</span>
+                    <span class="n">_pos_z</span><span class="p">[</span><span class="n">index_center</span> <span class="o">-</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="p">:]</span>
+                    <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">_inter_electrode_distances__mm</span>
                 <span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">index_center1</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num_rows</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span>
+            <span class="n">index_center1</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_num_rows</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span>
             <span class="n">index_center2</span> <span class="o">=</span> <span class="n">index_center1</span> <span class="o">-</span> <span class="mi">1</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">pos_z</span><span class="p">[</span><span class="n">index_center1</span><span class="p">,</span> <span class="p">:]</span> <span class="o">=</span> <span class="p">(</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">center_point__mm_deg</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">inter_electrode_distances__mm</span> <span class="o">/</span> <span class="mi">2</span>
+            <span class="n">_pos_z</span><span class="p">[</span><span class="n">index_center1</span><span class="p">,</span> <span class="p">:]</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_center_point__mm_deg</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_inter_electrode_distances__mm</span> <span class="o">/</span> <span class="mi">2</span>
             <span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">pos_z</span><span class="p">[</span><span class="n">index_center2</span><span class="p">,</span> <span class="p">:]</span> <span class="o">=</span> <span class="p">(</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">center_point__mm_deg</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">inter_electrode_distances__mm</span> <span class="o">/</span> <span class="mi">2</span>
+            <span class="n">_pos_z</span><span class="p">[</span><span class="n">index_center2</span><span class="p">,</span> <span class="p">:]</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_center_point__mm_deg</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">_inter_electrode_distances__mm</span> <span class="o">/</span> <span class="mi">2</span>
             <span class="p">)</span>
             <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">index_center2</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">pos_z</span><span class="p">[</span><span class="n">index_center1</span> <span class="o">+</span> <span class="n">i</span><span class="p">,</span> <span class="p">:]</span> <span class="o">=</span> <span class="p">(</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">pos_z</span><span class="p">[</span><span class="n">index_center1</span> <span class="o">+</span> <span class="n">i</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="p">:]</span>
-                    <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">inter_electrode_distances__mm</span>
+                <span class="n">_pos_z</span><span class="p">[</span><span class="n">index_center1</span> <span class="o">+</span> <span class="n">i</span><span class="p">,</span> <span class="p">:]</span> <span class="o">=</span> <span class="p">(</span>
+                    <span class="n">_pos_z</span><span class="p">[</span><span class="n">index_center1</span> <span class="o">+</span> <span class="n">i</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="p">:]</span>
+                    <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_inter_electrode_distances__mm</span>
                 <span class="p">)</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">pos_z</span><span class="p">[</span><span class="n">index_center2</span> <span class="o">-</span> <span class="n">i</span><span class="p">,</span> <span class="p">:]</span> <span class="o">=</span> <span class="p">(</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">pos_z</span><span class="p">[</span><span class="n">index_center2</span> <span class="o">-</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="p">:]</span>
-                    <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">inter_electrode_distances__mm</span>
+                <span class="n">_pos_z</span><span class="p">[</span><span class="n">index_center2</span> <span class="o">-</span> <span class="n">i</span><span class="p">,</span> <span class="p">:]</span> <span class="o">=</span> <span class="p">(</span>
+                    <span class="n">_pos_z</span><span class="p">[</span><span class="n">index_center2</span> <span class="o">-</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="p">:]</span>
+                    <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">_inter_electrode_distances__mm</span>
                 <span class="p">)</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">pos_theta</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">num_rows</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_cols</span><span class="p">))</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_cols</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-            <span class="n">index_center</span> <span class="o">=</span> <span class="nb">int</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">num_cols</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">pos_theta</span><span class="p">[:,</span> <span class="n">index_center</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">center_point__mm_deg</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">180</span>
+        <span class="n">_pos_theta</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">_num_rows</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_num_cols</span><span class="p">))</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_num_cols</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">index_center</span> <span class="o">=</span> <span class="nb">int</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">_num_cols</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span>
+            <span class="n">_pos_theta</span><span class="p">[:,</span> <span class="n">index_center</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_center_point__mm_deg</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">180</span>
             <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">index_center</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">pos_theta</span><span class="p">[:,</span> <span class="n">index_center</span> <span class="o">+</span> <span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">pos_theta</span><span class="p">[:,</span> <span class="n">index_center</span> <span class="o">+</span> <span class="n">i</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span>
-                    <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">inter_electrode_distances__mm</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">bending_radius__mm</span>
+                <span class="n">_pos_theta</span><span class="p">[:,</span> <span class="n">index_center</span> <span class="o">+</span> <span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+                    <span class="n">_pos_theta</span><span class="p">[:,</span> <span class="n">index_center</span> <span class="o">+</span> <span class="n">i</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span>
+                    <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_inter_electrode_distances__mm</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">_bending_radius__mm</span>
                 <span class="p">)</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">pos_theta</span><span class="p">[:,</span> <span class="n">index_center</span> <span class="o">-</span> <span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">pos_theta</span><span class="p">[:,</span> <span class="n">index_center</span> <span class="o">-</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span>
-                    <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">inter_electrode_distances__mm</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">bending_radius__mm</span>
+                <span class="n">_pos_theta</span><span class="p">[:,</span> <span class="n">index_center</span> <span class="o">-</span> <span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+                    <span class="n">_pos_theta</span><span class="p">[:,</span> <span class="n">index_center</span> <span class="o">-</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span>
+                    <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">_inter_electrode_distances__mm</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">_bending_radius__mm</span>
                 <span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">index_center1</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num_cols</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span>
+            <span class="n">index_center1</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_num_cols</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span>
             <span class="n">index_center2</span> <span class="o">=</span> <span class="n">index_center1</span> <span class="o">-</span> <span class="mi">1</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">pos_theta</span><span class="p">[:,</span> <span class="n">index_center1</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">center_point__mm_deg</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">180</span>
-                <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">inter_electrode_distances__mm</span> <span class="o">/</span> <span class="mi">2</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">bending_radius__mm</span>
+            <span class="n">_pos_theta</span><span class="p">[:,</span> <span class="n">index_center1</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_center_point__mm_deg</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">180</span>
+                <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_inter_electrode_distances__mm</span> <span class="o">/</span> <span class="mi">2</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">_bending_radius__mm</span>
             <span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">pos_theta</span><span class="p">[:,</span> <span class="n">index_center2</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">center_point__mm_deg</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">180</span>
-                <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">inter_electrode_distances__mm</span> <span class="o">/</span> <span class="mi">2</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">bending_radius__mm</span>
+            <span class="n">_pos_theta</span><span class="p">[:,</span> <span class="n">index_center2</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_center_point__mm_deg</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">180</span>
+                <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">_inter_electrode_distances__mm</span> <span class="o">/</span> <span class="mi">2</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">_bending_radius__mm</span>
             <span class="p">)</span>
             <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">index_center2</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">pos_theta</span><span class="p">[:,</span> <span class="n">index_center1</span> <span class="o">+</span> <span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">pos_theta</span><span class="p">[:,</span> <span class="n">index_center1</span> <span class="o">+</span> <span class="n">i</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span>
-                    <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">inter_electrode_distances__mm</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">bending_radius__mm</span>
+                <span class="n">_pos_theta</span><span class="p">[:,</span> <span class="n">index_center1</span> <span class="o">+</span> <span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+                    <span class="n">_pos_theta</span><span class="p">[:,</span> <span class="n">index_center1</span> <span class="o">+</span> <span class="n">i</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span>
+                    <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_inter_electrode_distances__mm</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">_bending_radius__mm</span>
                 <span class="p">)</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">pos_theta</span><span class="p">[:,</span> <span class="n">index_center2</span> <span class="o">-</span> <span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">pos_theta</span><span class="p">[:,</span> <span class="n">index_center2</span> <span class="o">-</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span>
-                    <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">inter_electrode_distances__mm</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">bending_radius__mm</span>
+                <span class="n">_pos_theta</span><span class="p">[:,</span> <span class="n">index_center2</span> <span class="o">-</span> <span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+                    <span class="n">_pos_theta</span><span class="p">[:,</span> <span class="n">index_center2</span> <span class="o">-</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span>
+                    <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">_inter_electrode_distances__mm</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">_bending_radius__mm</span>
                 <span class="p">)</span>
 
         <span class="c1">## Rotated detection system (Farina, 2004), eq (36)</span>
-        <span class="n">displacement</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">center_point__mm_deg</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pos_z</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">pos_z</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">bending_radius__mm</span>
-            <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rotation_angle__deg</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">180</span><span class="p">)</span>
-            <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">pos_theta</span>
-            <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rotation_angle__deg</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">180</span><span class="p">)</span>
-            <span class="o">*</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pos_z</span> <span class="o">-</span> <span class="n">displacement</span><span class="p">)</span>
+        <span class="n">displacement</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_center_point__mm_deg</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">_pos_z</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+        <span class="n">_pos_z</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">_bending_radius__mm</span>
+            <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_rotation_angle__deg</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">180</span><span class="p">)</span>
+            <span class="o">*</span> <span class="n">_pos_theta</span>
+            <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_rotation_angle__deg</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">180</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">_pos_z</span> <span class="o">-</span> <span class="n">displacement</span><span class="p">)</span>
             <span class="o">+</span> <span class="n">displacement</span>
         <span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">pos_theta</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rotation_angle__deg</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">180</span><span class="p">)</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">pos_theta</span>
-            <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rotation_angle__deg</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">180</span><span class="p">)</span>
-            <span class="o">*</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pos_z</span> <span class="o">-</span> <span class="n">displacement</span><span class="p">)</span>
-            <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">bending_radius__mm</span>
+        <span class="n">_pos_theta</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_rotation_angle__deg</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">180</span><span class="p">)</span> <span class="o">*</span> <span class="n">_pos_theta</span>
+            <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_rotation_angle__deg</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">180</span><span class="p">)</span>
+            <span class="o">*</span> <span class="p">(</span><span class="n">_pos_z</span> <span class="o">-</span> <span class="n">displacement</span><span class="p">)</span>
+            <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">_bending_radius__mm</span>
         <span class="p">)</span>
 
+        <span class="c1"># Store results privately</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_pos_z</span> <span class="o">=</span> <span class="n">_pos_z</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_pos_theta</span> <span class="o">=</span> <span class="n">_pos_theta</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">pos_z</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Longitudinal positions of electrodes in mm.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        np.ndarray</span>
+<span class="sd">            Array of shape (num_rows, num_cols) containing z-coordinates</span>
+<span class="sd">            of each electrode position in mm.</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        AttributeError</span>
+<span class="sd">            If electrode grid has not been created. Run constructor first.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;_pos_z&quot;</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span>
+                <span class="s2">&quot;Electrode grid not computed. This should be automatically created &quot;</span>
+                <span class="s2">&quot;during class initialization. Please check constructor execution.&quot;</span>
+            <span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pos_z</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">pos_theta</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Angular positions of electrodes in radians.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        np.ndarray</span>
+<span class="sd">            Array of shape (num_rows, num_cols) containing angular coordinates</span>
+<span class="sd">            of each electrode position in radians.</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        AttributeError</span>
+<span class="sd">            If electrode grid has not been created. Run constructor first.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;_pos_theta&quot;</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span>
+                <span class="s2">&quot;Electrode grid not computed. This should be automatically created &quot;</span>
+                <span class="s2">&quot;during class initialization. Please check constructor execution.&quot;</span>
+            <span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pos_theta</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">electrode_positions</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Complete electrode position arrays (z, theta) in physical coordinates.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        tuple[np.ndarray, np.ndarray]</span>
+<span class="sd">            Tuple containing:</span>
+<span class="sd">            - pos_z: Longitudinal positions in mm, shape (num_rows, num_cols)</span>
+<span class="sd">            - pos_theta: Angular positions in radians, shape (num_rows, num_cols)</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        AttributeError</span>
+<span class="sd">            If electrode grid has not been created. Run constructor first.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pos_z</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">pos_theta</span><span class="p">)</span>
+
 <div class="viewcode-block" id="SurfaceElectrodeArray.get_H_sf">
-<a class="viewcode-back" href="../../../../../generated/myogen.simulator.SurfaceElectrodeArray.html#myogen.simulator.SurfaceElectrodeArray.get_H_sf">[docs]</a>
+<a class="viewcode-back" href="../../../../../generated/myogen.simulator.SurfaceElectrodeArray.get_H_sf.html#myogen.simulator.SurfaceElectrodeArray.get_H_sf">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_H_sf</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">ktheta_mesh_kzktheta</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">kz_mesh_kzktheta</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">|</span> <span class="nb">float</span><span class="p">:</span>
@@ -624,8 +733,32 @@ window.addEventListener("load", () => mermaid.run());
 <span class="sd">        Distance for trajectory movement in mm</span>
 <span class="sd">    trajectory_steps : int, default=1</span>
 <span class="sd">        Number of steps in the trajectory</span>
+
+<span class="sd">    Attributes</span>
+<span class="sd">    ----------</span>
+<span class="sd">    electrode_positions : np.ndarray</span>
+<span class="sd">        Current electrode positions in 3D space, shape (n_nodes * num_electrodes, 3).</span>
+<span class="sd">        Available after set_linear_trajectory() execution.</span>
+<span class="sd">    differential_matrix : np.ndarray</span>
+<span class="sd">        Differential matrix for signal processing based on differentiation mode.</span>
+<span class="sd">        Available after class initialization.</span>
+<span class="sd">    trajectory_transforms : np.ndarray</span>
+<span class="sd">        Transformation matrices for trajectory movement, shape (n_nodes, 6).</span>
+<span class="sd">        Available after set_linear_trajectory() execution.</span>
+<span class="sd">    initial_positions : np.ndarray</span>
+<span class="sd">        Initial electrode positions after position/orientation setup, shape (num_electrodes, 3).</span>
+<span class="sd">        Available after set_position() execution.</span>
+<span class="sd">    num_channels : int</span>
+<span class="sd">        Number of recording channels based on differentiation mode.</span>
+<span class="sd">        Available after class initialization.</span>
+<span class="sd">    num_points : int</span>
+<span class="sd">        Alias for num_electrodes (compatibility).</span>
+<span class="sd">    n_nodes : int</span>
+<span class="sd">        Number of trajectory nodes.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
+<div class="viewcode-block" id="IntramuscularElectrodeArray.__init__">
+<a class="viewcode-back" href="../../../../../generated/myogen.simulator.IntramuscularElectrodeArray.__init__.html#myogen.simulator.IntramuscularElectrodeArray.__init__">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">num_electrodes</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
@@ -636,6 +769,7 @@ window.addEventListener("load", () => mermaid.run());
         <span class="n">trajectory_distance__mm</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span>
         <span class="n">trajectory_steps</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
     <span class="p">):</span>
+        <span class="c1"># Immutable public arguments - never modify these</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">num_electrodes</span> <span class="o">=</span> <span class="n">num_electrodes</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">inter_electrode_distance__mm</span> <span class="o">=</span> <span class="n">inter_electrode_distance__mm</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">position__mm</span> <span class="o">=</span> <span class="n">position__mm</span>
@@ -644,14 +778,23 @@ window.addEventListener("load", () => mermaid.run());
         <span class="bp">self</span><span class="o">.</span><span class="n">trajectory_distance__mm</span> <span class="o">=</span> <span class="n">trajectory_distance__mm</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">trajectory_steps</span> <span class="o">=</span> <span class="n">trajectory_steps</span>
 
+        <span class="c1"># Private copies for internal modifications</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_num_electrodes</span> <span class="o">=</span> <span class="n">num_electrodes</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_inter_electrode_distance__mm</span> <span class="o">=</span> <span class="n">inter_electrode_distance__mm</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_position__mm</span> <span class="o">=</span> <span class="n">position__mm</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_orientation__rad</span> <span class="o">=</span> <span class="n">orientation__rad</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_differentiation_mode</span> <span class="o">=</span> <span class="n">differentiation_mode</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_trajectory_distance__mm</span> <span class="o">=</span> <span class="n">trajectory_distance__mm</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_trajectory_steps</span> <span class="o">=</span> <span class="n">trajectory_steps</span>
+
         <span class="bp">self</span><span class="o">.</span><span class="n">num_points</span> <span class="o">=</span> <span class="n">num_electrodes</span>  <span class="c1"># Alias for compatibility</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">n_nodes</span> <span class="o">=</span> <span class="n">trajectory_steps</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_pts_origin</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">(</span>
             <span class="p">[</span>
-                <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">num_electrodes</span><span class="p">,</span> <span class="mi">2</span><span class="p">)),</span>
-                <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num_electrodes</span><span class="p">)[</span><span class="o">...</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span>
-                <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">inter_electrode_distance__mm</span><span class="p">,</span>
+                <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">_num_electrodes</span><span class="p">,</span> <span class="mi">2</span><span class="p">)),</span>
+                <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_num_electrodes</span><span class="p">)[</span><span class="o">...</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span>
+                <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_inter_electrode_distance__mm</span><span class="p">,</span>
             <span class="p">],</span>
             <span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span>
         <span class="p">)</span>
@@ -677,18 +820,15 @@ window.addEventListener("load", () => mermaid.run());
         <span class="bp">self</span><span class="o">.</span><span class="n">_n_channels</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_diff_mat</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">set_position</span><span class="p">(</span>
-            <span class="n">position__mm</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">position__mm</span><span class="p">,</span> <span class="n">orientation__rad</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">orientation__rad</span>
+            <span class="n">position__mm</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_position__mm</span><span class="p">,</span> <span class="n">orientation__rad</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_orientation__rad</span>
         <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">set_linear_trajectory</span><span class="p">(</span>
-            <span class="n">distance__mm</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">trajectory_distance__mm</span><span class="p">,</span> <span class="n">n_nodes</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">trajectory_steps</span>
-        <span class="p">)</span>
+            <span class="n">distance__mm</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_trajectory_distance__mm</span><span class="p">,</span> <span class="n">n_nodes</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_trajectory_steps</span>
+        <span class="p">)</span></div>
 
-        <span class="c1"># Create electrode positions and differential matrix</span>
-        <span class="c1"># self._create_electrode_positions()</span>
-        <span class="c1"># self._create_differential_matrix()</span>
 
 <div class="viewcode-block" id="IntramuscularElectrodeArray.set_position">
-<a class="viewcode-back" href="../../../../../generated/myogen.simulator.IntramuscularElectrodeArray.html#myogen.simulator.IntramuscularElectrodeArray.set_position">[docs]</a>
+<a class="viewcode-back" href="../../../../../generated/myogen.simulator.IntramuscularElectrodeArray.set_position.html#myogen.simulator.IntramuscularElectrodeArray.set_position">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">set_position</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">position__mm</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">],</span>
@@ -732,7 +872,7 @@ window.addEventListener("load", () => mermaid.run());
 <span class="sd">        ...     position__mm=(0.0, 0.0, 10.0),</span>
 <span class="sd">        ...     orientation__rad=(0.0, 0.0, np.pi/4)</span>
 <span class="sd">        ... )</span>
-<span class="sd">        </span>
+
 <span class="sd">        See Also</span>
 <span class="sd">        --------</span>
 <span class="sd">        set_linear_trajectory : Define trajectory movement parameters</span>
@@ -757,7 +897,7 @@ window.addEventListener("load", () => mermaid.run());
 
 
 <div class="viewcode-block" id="IntramuscularElectrodeArray.rodrigues_rot">
-<a class="viewcode-back" href="../../../../../generated/myogen.simulator.IntramuscularElectrodeArray.html#myogen.simulator.IntramuscularElectrodeArray.rodrigues_rot">[docs]</a>
+<a class="viewcode-back" href="../../../../../generated/myogen.simulator.IntramuscularElectrodeArray.rodrigues_rot.html#myogen.simulator.IntramuscularElectrodeArray.rodrigues_rot">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">rodrigues_rot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">theta</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Apply Rodrigues rotation to vectors around an arbitrary axis.</span>
@@ -805,7 +945,7 @@ window.addEventListener("load", () => mermaid.run());
 
 
 <div class="viewcode-block" id="IntramuscularElectrodeArray.set_linear_trajectory">
-<a class="viewcode-back" href="../../../../../generated/myogen.simulator.IntramuscularElectrodeArray.html#myogen.simulator.IntramuscularElectrodeArray.set_linear_trajectory">[docs]</a>
+<a class="viewcode-back" href="../../../../../generated/myogen.simulator.IntramuscularElectrodeArray.set_linear_trajectory.html#myogen.simulator.IntramuscularElectrodeArray.set_linear_trajectory">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">set_linear_trajectory</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">distance__mm</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">n_nodes</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
@@ -840,7 +980,7 @@ window.addEventListener("load", () => mermaid.run());
 <span class="sd">        --------</span>
 <span class="sd">        &gt;&gt;&gt; # Set up 10mm insertion with default step size (~0.5mm)</span>
 <span class="sd">        &gt;&gt;&gt; array.set_linear_trajectory(distance__mm=10.0)</span>
-<span class="sd">        </span>
+
 <span class="sd">        &gt;&gt;&gt; # Set up 5mm trajectory with specific number of nodes</span>
 <span class="sd">        &gt;&gt;&gt; array.set_linear_trajectory(distance__mm=5.0, n_nodes=20)</span>
 
@@ -877,6 +1017,8 @@ window.addEventListener("load", () => mermaid.run());
         <span class="bp">self</span><span class="o">.</span><span class="n">calc_observation_points</span><span class="p">()</span></div>
 
 
+<div class="viewcode-block" id="IntramuscularElectrodeArray.calc_observation_points">
+<a class="viewcode-back" href="../../../../../generated/myogen.simulator.IntramuscularElectrodeArray.calc_observation_points.html#myogen.simulator.IntramuscularElectrodeArray.calc_observation_points">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">calc_observation_points</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">pts</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">(</span>
             <span class="p">[</span>
@@ -889,8 +1031,11 @@ window.addEventListener("load", () => mermaid.run());
             <span class="p">]</span>
         <span class="p">)</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">_diff_mat</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">matlib</span><span class="o">.</span><span class="n">repmat</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_diff_mat</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_nodes</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_diff_mat</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">matlib</span><span class="o">.</span><span class="n">repmat</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_diff_mat</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_nodes</span><span class="p">)</span></div>
 
+
+<div class="viewcode-block" id="IntramuscularElectrodeArray.rotate_and_translate">
+<a class="viewcode-back" href="../../../../../generated/myogen.simulator.IntramuscularElectrodeArray.rotate_and_translate.html#myogen.simulator.IntramuscularElectrodeArray.rotate_and_translate">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">rotate_and_translate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pt</span><span class="p">,</span> <span class="n">rpy</span><span class="p">,</span> <span class="n">d</span><span class="p">):</span>
         <span class="c1"># pt: (N, 3) matrix</span>
         <span class="c1"># rpy: (3,) vector [roll, pitch, yaw]</span>
@@ -900,16 +1045,17 @@ window.addEventListener("load", () => mermaid.run());
         <span class="n">pt</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rodrigues_rot</span><span class="p">(</span><span class="n">pt</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">]),</span> <span class="n">rpy</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>  <span class="c1"># pitch</span>
         <span class="n">pt</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rodrigues_rot</span><span class="p">(</span><span class="n">pt</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]),</span> <span class="n">rpy</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>  <span class="c1"># yaw</span>
 
-        <span class="k">return</span> <span class="n">pt</span> <span class="o">+</span> <span class="n">d</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>  <span class="c1"># translation (broadcasted)</span>
+        <span class="k">return</span> <span class="n">pt</span> <span class="o">+</span> <span class="n">d</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>  <span class="c1"># translation (broadcasted)</span></div>
+
 
 <div class="viewcode-block" id="IntramuscularElectrodeArray.traj_mixing_fun">
-<a class="viewcode-back" href="../../../../../generated/myogen.simulator.IntramuscularElectrodeArray.html#myogen.simulator.IntramuscularElectrodeArray.traj_mixing_fun">[docs]</a>
+<a class="viewcode-back" href="../../../../../generated/myogen.simulator.IntramuscularElectrodeArray.traj_mixing_fun.html#myogen.simulator.IntramuscularElectrodeArray.traj_mixing_fun">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">traj_mixing_fun</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">n_nodes</span><span class="p">,</span> <span class="n">node</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Compute mixing weight for a specific trajectory node at given time.</span>
 
 <span class="sd">        This function calculates the interpolation weight for a trajectory node based</span>
-<span class="sd">        on the current time/position along the trajectory. Uses triangular weighting </span>
+<span class="sd">        on the current time/position along the trajectory. Uses triangular weighting</span>
 <span class="sd">        where nodes closer to the current time get higher weights.</span>
 
 <span class="sd">        Parameters</span>
@@ -936,7 +1082,7 @@ window.addEventListener("load", () => mermaid.run());
 
 
 <div class="viewcode-block" id="IntramuscularElectrodeArray.traj_mixing_mat">
-<a class="viewcode-back" href="../../../../../generated/myogen.simulator.IntramuscularElectrodeArray.html#myogen.simulator.IntramuscularElectrodeArray.traj_mixing_mat">[docs]</a>
+<a class="viewcode-back" href="../../../../../generated/myogen.simulator.IntramuscularElectrodeArray.traj_mixing_mat.html#myogen.simulator.IntramuscularElectrodeArray.traj_mixing_mat">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">traj_mixing_mat</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">n_nodes</span><span class="p">,</span> <span class="n">n_channels</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Generate mixing matrix for trajectory interpolation during EMG simulation.</span>
@@ -994,7 +1140,122 @@ window.addEventListener("load", () => mermaid.run());
                 <span class="n">n_channels</span><span class="p">,</span>
             <span class="p">)</span>
         <span class="p">)</span></div>
-</div>
+
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">electrode_positions</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Current electrode positions in 3D space (mm).</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        np.ndarray</span>
+<span class="sd">            Array of shape (n_nodes * num_electrodes, 3) containing x, y, z coordinates</span>
+<span class="sd">            of each electrode position for all trajectory nodes.</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        AttributeError</span>
+<span class="sd">            If trajectory has not been calculated. Run set_linear_trajectory() first.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;pts&quot;</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span>
+                <span class="s2">&quot;Electrode positions not computed. Run set_linear_trajectory() first &quot;</span>
+                <span class="s2">&quot;to calculate trajectory and electrode positions.&quot;</span>
+            <span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">pts</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">differential_matrix</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Differential matrix for signal processing based on differentiation mode.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        np.ndarray</span>
+<span class="sd">            Differential matrix for applying spatial differentiation to recorded signals.</span>
+<span class="sd">            Shape depends on differentiation mode and number of trajectory nodes.</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        AttributeError</span>
+<span class="sd">            If differential matrix has not been created. Run constructor first.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;_diff_mat&quot;</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span>
+                <span class="s2">&quot;Differential matrix not computed. This should be automatically created &quot;</span>
+                <span class="s2">&quot;during class initialization. Please check constructor execution.&quot;</span>
+            <span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_diff_mat</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">trajectory_transforms</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Transformation matrices for trajectory movement.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        np.ndarray</span>
+<span class="sd">            Array of shape (n_nodes, 6) containing translation and rotation parameters</span>
+<span class="sd">            for each trajectory node. First 3 columns are translations (x, y, z),</span>
+<span class="sd">            last 3 columns are rotations (roll, pitch, yaw).</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        AttributeError</span>
+<span class="sd">            If trajectory has not been set. Run set_linear_trajectory() first.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;traj_transforms&quot;</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span>
+                <span class="s2">&quot;Trajectory transforms not computed. Run set_linear_trajectory() first &quot;</span>
+                <span class="s2">&quot;to configure electrode trajectory movement.&quot;</span>
+            <span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">traj_transforms</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">initial_positions</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Initial electrode positions after position/orientation setup.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        np.ndarray</span>
+<span class="sd">            Array of shape (num_electrodes, 3) containing initial x, y, z coordinates</span>
+<span class="sd">            of electrodes before trajectory movement is applied.</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        AttributeError</span>
+<span class="sd">            If initial positions have not been set. Run set_position() first.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;_pts_init&quot;</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span>
+                <span class="s2">&quot;Initial electrode positions not computed. Run set_position() first &quot;</span>
+                <span class="s2">&quot;to configure electrode array placement and orientation.&quot;</span>
+            <span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pts_init</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">num_channels</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Number of recording channels based on differentiation mode.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        int</span>
+<span class="sd">            Number of differential recording channels available from this electrode array.</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        AttributeError</span>
+<span class="sd">            If channel count has not been calculated. Run constructor first.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;_n_channels&quot;</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span>
+                <span class="s2">&quot;Number of channels not computed. This should be automatically created &quot;</span>
+                <span class="s2">&quot;during class initialization. Please check constructor execution.&quot;</span>
+            <span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_n_channels</span></div>
 
 </pre></div>
 

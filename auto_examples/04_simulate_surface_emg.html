@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Surface EMG Signals &#8212; MyoGen 0.3.0 Documentation</title>
+    <title>Surface EMG Signals &#8212; MyoGen 0.4.0 Documentation</title>
   
   
   
@@ -31,11 +31,13 @@
 <link href="../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
 
     <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=34f00721" />
     <link rel="stylesheet" type="text/css" href="../_static/sg_gallery.css?v=d2d258e8" />
     <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-binder.css?v=f4aeca0c" />
     <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-dataframe.css?v=2082cf3c" />
     <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
-    <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=73e2cb9d" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=34f00721" />
   
   <!-- So that users can add custom icons -->
   <script src="../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
@@ -43,9 +45,11 @@
   <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="../_static/documentation_options.js?v=e259d695"></script>
+    <script src="../_static/documentation_options.js?v=1437fa6d"></script>
     <script src="../_static/doctools.js?v=9bcbadda"></script>
     <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/custom.js?v=a236ca48"></script>
+    <script src="../_static/design-tabs.js?v=f930bc37"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'auto_examples/04_simulate_surface_emg';</script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
@@ -53,7 +57,7 @@
     <link rel="prev" title="Surface Motor Unit Action Potentials" href="03_simulate_surface_muaps.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="0.3.0" />
+  <meta name="docsearch:version" content="0.4.0" />
   </head>
   
   
@@ -78,8 +82,8 @@
   <input type="search"
          class="form-control"
          name="q"
-         placeholder="Search the docs ..."
-         aria-label="Search the docs ..."
+         placeholder="Search MyoGen docs..."
+         aria-label="Search MyoGen docs..."
          autocomplete="off"
          autocorrect="off"
          autocapitalize="off"
@@ -91,6 +95,9 @@
   <div class="pst-async-banner-revealer d-none">
   <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
 </div>
+<aside class="bd-header-announcement" aria-label="Announcement">
+  <div class="bd-header-announcement__content">⚠️ MyoGen is under active development. API may change.</div>
+</aside>
 
   
     <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
@@ -119,8 +126,8 @@
       
     
     
-    <img src="../_static/myogen_logo.png" class="logo__image only-light" alt="MyoGen 0.3.0 Documentation - Home"/>
-    <img src="../_static/myogen_logo.png" class="logo__image only-dark pst-js-only" alt="MyoGen 0.3.0 Documentation - Home"/>
+    <img src="../_static/myogen_logo.png" class="logo__image only-light" alt="MyoGen 0.4.0 Documentation - Home"/>
+    <img src="../_static/myogen_logo.png" class="logo__image only-dark pst-js-only" alt="MyoGen 0.4.0 Documentation - Home"/>
   
   
 </a></div>
@@ -129,7 +136,7 @@
 <div class="nav-item">
   <div class="version-switcher__container dropdown">
       <button id="version-switcher-button" type="button" class="version-switcher__button btn btn-sm navbar-btn" aria-haspopup="true" aria-expanded="false">
-          Version 0.3.0
+          Version 0.4.0
       </button>
       
       
@@ -424,7 +431,7 @@ to download the full example code.</p>
 <p class="admonition-title">Note</p>
 <p>Because of computation time, we pre-computed the <strong>surface EMG</strong> model for 100 motor units.</p>
 </div>
-<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">surface_emg</span> <span class="o">=</span> <span class="n">joblib</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><a href="https://docs.python.org/3/library/pathlib.html#pathlib.PosixPath" title="pathlib.PosixPath" class="sphx-glr-backref-module-pathlib sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">save_path</span></a> <span class="o">/</span> <span class="s2">&quot;surface_emg_100.pkl&quot;</span><span class="p">)</span>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">surface_emg</span> <span class="o">=</span> <span class="n">joblib</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><a href="https://docs.python.org/3/library/pathlib.html#pathlib.PosixPath" title="pathlib.PosixPath" class="sphx-glr-backref-module-pathlib sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">save_path</span></a> <span class="o">/</span> <span class="s2">&quot;surface_emg.pkl&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 </section>
@@ -447,14 +454,14 @@ to download the full example code.</p>
 </pre></div>
 </div>
 <div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Electrode Array 1/1 Surface EMG (CPU):   0%|          | 0/2 [00:00&lt;?, ?pools/s]
-Electrode Array 1/1 Surface EMG (CPU):  50%|█████     | 1/2 [01:33&lt;01:33, 93.65s/pools]
-Electrode Array 1/1 Surface EMG (CPU): 100%|██████████| 2/2 [03:05&lt;00:00, 92.52s/pools]
-Electrode Array 1/1 Surface EMG (CPU): 100%|██████████| 2/2 [03:05&lt;00:00, 92.69s/pools]
+Electrode Array 1/1 Surface EMG (CPU):  50%|█████     | 1/2 [00:23&lt;00:23, 23.19s/pools]
+Electrode Array 1/1 Surface EMG (CPU): 100%|██████████| 2/2 [00:46&lt;00:00, 23.19s/pools]
+Electrode Array 1/1 Surface EMG (CPU): 100%|██████████| 2/2 [00:46&lt;00:00, 23.19s/pools]
 Surface EMG simulation completed!
-Generated EMG shape: (2, 8, 8, 4096)
+Generated EMG shape: (2, 13, 5, 4096)
   - 2 pools
-  - 8 electrode rows
-  - 8 electrode columns
+  - 13 electrode rows
+  - 5 electrode columns
   - 4096 time samples
 
 [&#39;results/surface_emg_signals.pkl&#39;]
@@ -479,7 +486,7 @@ Generated EMG shape: (2, 8, 8, 4096)
     <span class="c1"># Create single plot with normalized signals</span>
     <a href="https://matplotlib.org/stable/api/_as_gen/matplotlib.figure.Figure.html#matplotlib.figure.Figure" title="matplotlib.figure.Figure" class="sphx-glr-backref-module-matplotlib-figure sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">fig</span></a><span class="p">,</span> <a href="https://matplotlib.org/stable/api/_as_gen/matplotlib.axes.Axes.html#matplotlib.axes.Axes" title="matplotlib.axes.Axes" class="sphx-glr-backref-module-matplotlib-axes sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">ax</span></a> <span class="o">=</span> <a href="https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.subplots.html#matplotlib.pyplot.subplots" title="matplotlib.pyplot.subplots" class="sphx-glr-backref-module-matplotlib-pyplot sphx-glr-backref-type-py-function"><span class="n">plt</span><span class="o">.</span><span class="n">subplots</span></a><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span> <span class="mi">6</span><span class="p">))</span>
     <span class="c1"># Get the signals</span>
-    <a href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">emg_signal</span></a> <span class="o">=</span> <a href="https://docs.python.org/3/library/stdtypes.html#list" title="builtins.list" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">surface_emg</span><span class="o">.</span><span class="n">noisy_surface_emg__tensors</span></a><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">]</span>
+    <a href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">emg_signal</span></a> <span class="o">=</span> <span class="n">surface_emg</span><span class="o">.</span><span class="n">noisy_surface_emg__tensors</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">]</span>
     <a href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">current_signal</span></a> <span class="o">=</span> <a href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">input_current_matrix</span></a><span class="p">[</span><span class="mi">0</span><span class="p">]</span>  <span class="c1"># Only first current</span>
 
     <span class="c1"># Normalize EMG by dividing by maximum</span>
@@ -520,7 +527,7 @@ Generated EMG shape: (2, 8, 8, 4096)
 <a href="https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.show.html#matplotlib.pyplot.show" title="matplotlib.pyplot.show" class="sphx-glr-backref-module-matplotlib-pyplot sphx-glr-backref-type-py-function"><span class="n">plt</span><span class="o">.</span><span class="n">show</span></a><span class="p">()</span>
 </pre></div>
 </div>
-<img src="../_images/sphx_glr_04_simulate_surface_emg_001.png" srcset="../_images/sphx_glr_04_simulate_surface_emg_001.png" alt="Normalized Surface EMG and Input Current" class = "sphx-glr-single-img"/><p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (3 minutes 5.881 seconds)</p>
+<img src="../_images/sphx_glr_04_simulate_surface_emg_001.png" srcset="../_images/sphx_glr_04_simulate_surface_emg_001.png" alt="Normalized Surface EMG and Input Current" class = "sphx-glr-single-img"/><p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 46.760 seconds)</p>
 <div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-auto-examples-04-simulate-surface-emg-py">
 <div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
 <p><a class="reference download internal" download="" href="../_downloads/fcfac483f5f6571de43955e3219fa1eb/04_simulate_surface_emg.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">04_simulate_surface_emg.ipynb</span></code></a></p>
@@ -567,6 +574,22 @@ Generated EMG shape: (2, 8, 8, 4096)
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#visualize-surface-emg-results">Visualize Surface EMG Results</a></li>
 </ul>
   </nav></div>
+
+  <div class="sidebar-secondary-item">
+
+  
+  <div class="tocsection editthispage">
+    <a href="https://github.com/NSquaredLab/MyoGen/edit/main/docs/auto_examples/04_simulate_surface_emg.rst">
+      <i class="fa-solid fa-pencil"></i>
+      
+      
+        
+          Edit on GitHub
+        
+      
+    </a>
+  </div>
+</div>
 
   <div class="sidebar-secondary-item">
   <div role="note" aria-label="source link">

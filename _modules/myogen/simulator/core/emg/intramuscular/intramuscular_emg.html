@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>myogen.simulator.core.emg.intramuscular.intramuscular_emg &#8212; MyoGen 0.3.0 Documentation</title>
+    <title>myogen.simulator.core.emg.intramuscular.intramuscular_emg &#8212; MyoGen 0.4.0 Documentation</title>
   
   
   
@@ -30,11 +30,13 @@
 <link href="../../../../../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
 
     <link rel="stylesheet" type="text/css" href="../../../../../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../../../../../_static/custom.css?v=34f00721" />
     <link rel="stylesheet" type="text/css" href="../../../../../../_static/sg_gallery.css?v=d2d258e8" />
     <link rel="stylesheet" type="text/css" href="../../../../../../_static/sg_gallery-binder.css?v=f4aeca0c" />
     <link rel="stylesheet" type="text/css" href="../../../../../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
     <link rel="stylesheet" type="text/css" href="../../../../../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
-    <link rel="stylesheet" type="text/css" href="../../../../../../_static/custom.css?v=73e2cb9d" />
+    <link rel="stylesheet" type="text/css" href="../../../../../../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../../../../../../_static/custom.css?v=34f00721" />
   
   <!-- So that users can add custom icons -->
   <script src="../../../../../../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
@@ -42,9 +44,11 @@
   <link rel="preload" as="script" href="../../../../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="../../../../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="../../../../../../_static/documentation_options.js?v=e259d695"></script>
+    <script src="../../../../../../_static/documentation_options.js?v=1437fa6d"></script>
     <script src="../../../../../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../../../../_static/custom.js?v=a236ca48"></script>
+    <script src="../../../../../../_static/design-tabs.js?v=f930bc37"></script>
     <script type="module" src="https://cdn.jsdelivr.net/npm/mermaid@11.9.0/dist/mermaid.esm.min.mjs"></script>
     <script type="module" src="https://cdn.jsdelivr.net/npm/@mermaid-js/layout-elk@0.1.4/dist/mermaid-layout-elk.esm.min.mjs"></script>
     <script type="module">import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@11.9.0/dist/mermaid.esm.min.mjs";import elkLayouts from "https://cdn.jsdelivr.net/npm/@mermaid-js/layout-elk@0.1.4/dist/mermaid-layout-elk.esm.min.mjs";mermaid.registerLayoutLoaders(elkLayouts);mermaid.initialize({startOnLoad:false});</script>
@@ -58,7 +62,7 @@ window.addEventListener("load", () => mermaid.run());
     <link rel="search" title="Search" href="../../../../../../search.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="0.3.0" />
+  <meta name="docsearch:version" content="0.4.0" />
   </head>
   
   
@@ -83,8 +87,8 @@ window.addEventListener("load", () => mermaid.run());
   <input type="search"
          class="form-control"
          name="q"
-         placeholder="Search the docs ..."
-         aria-label="Search the docs ..."
+         placeholder="Search MyoGen docs..."
+         aria-label="Search MyoGen docs..."
          autocomplete="off"
          autocorrect="off"
          autocapitalize="off"
@@ -96,6 +100,9 @@ window.addEventListener("load", () => mermaid.run());
   <div class="pst-async-banner-revealer d-none">
   <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
 </div>
+<aside class="bd-header-announcement" aria-label="Announcement">
+  <div class="bd-header-announcement__content">⚠️ MyoGen is under active development. API may change.</div>
+</aside>
 
   
     <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
@@ -124,8 +131,8 @@ window.addEventListener("load", () => mermaid.run());
       
     
     
-    <img src="../../../../../../_static/myogen_logo.png" class="logo__image only-light" alt="MyoGen 0.3.0 Documentation - Home"/>
-    <img src="../../../../../../_static/myogen_logo.png" class="logo__image only-dark pst-js-only" alt="MyoGen 0.3.0 Documentation - Home"/>
+    <img src="../../../../../../_static/myogen_logo.png" class="logo__image only-light" alt="MyoGen 0.4.0 Documentation - Home"/>
+    <img src="../../../../../../_static/myogen_logo.png" class="logo__image only-dark pst-js-only" alt="MyoGen 0.4.0 Documentation - Home"/>
   
   
 </a></div>
@@ -134,7 +141,7 @@ window.addEventListener("load", () => mermaid.run());
 <div class="nav-item">
   <div class="version-switcher__container dropdown">
       <button id="version-switcher-button" type="button" class="version-switcher__button btn btn-sm navbar-btn" aria-haspopup="true" aria-expanded="false">
-          Version 0.3.0
+          Version 0.4.0
       </button>
       
       
@@ -439,11 +446,24 @@ window.addEventListener("load", () => mermaid.run());
 <span class="sd">        simulating subsets for initial analysis.</span>
 <span class="sd">        Indices correspond to the recruitment order (0 is recruited first).</span>
 
+<span class="sd">    Attributes</span>
+<span class="sd">    ----------</span>
+<span class="sd">    muaps : INTRAMUSCULAR_MUAP_SHAPE__TENSOR</span>
+<span class="sd">        Intramuscular MUAP shapes for all electrode arrays. Available after simulate_muaps().</span>
+<span class="sd">    intramuscular_emg__tensor : INTRAMUSCULAR_EMG__TENSOR</span>
+<span class="sd">        Intramuscular EMG signals for all electrode arrays. Available after simulate_intramuscular_emg().</span>
+<span class="sd">    noisy_intramuscular_emg__tensor : INTRAMUSCULAR_EMG__TENSOR</span>
+<span class="sd">        Noisy intramuscular EMG signals for all electrode arrays. Available after add_noise().</span>
+<span class="sd">    motor_neuron_pool : MotorNeuronPool</span>
+<span class="sd">        Motor neuron pool used for EMG generation. Available after simulate_intramuscular_emg().</span>
+
 <span class="sd">    References</span>
 <span class="sd">    ----------</span>
 <span class="sd">    .. [1] Konstantin, A., Yu, T., Le Carpentier, E., Aoustin, Y., Farina, D., 2020. Simulation of Motor Unit Action Potential Recordings From Intramuscular Multichannel Scanning Electrodes. IEEE Transactions on Biomedical Engineering 67, 2005–2014. https://doi.org/10.1109/TBME.2019.2953680</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
+<div class="viewcode-block" id="IntramuscularEMG.__init__">
+<a class="viewcode-back" href="../../../../../../generated/myogen.simulator.IntramuscularEMG.__init__.html#myogen.simulator.IntramuscularEMG.__init__">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">muscle_model</span><span class="p">:</span> <span class="n">Muscle</span><span class="p">,</span>
@@ -455,6 +475,7 @@ window.addEventListener("load", () => mermaid.run());
         <span class="n">branch_cvs__m_per_s</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mf">5.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">),</span>
         <span class="n">MUs_to_simulate</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">):</span>
+        <span class="c1"># Immutable public arguments - never modify these</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">muscle_model</span> <span class="o">=</span> <span class="n">muscle_model</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">electrode_array</span> <span class="o">=</span> <span class="n">electrode_array</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">sampling_frequency__Hz</span> <span class="o">=</span> <span class="n">sampling_frequency__Hz</span>
@@ -464,43 +485,83 @@ window.addEventListener("load", () => mermaid.run());
         <span class="bp">self</span><span class="o">.</span><span class="n">branch_cvs__m_per_s</span> <span class="o">=</span> <span class="n">branch_cvs__m_per_s</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">MUs_to_simulate</span> <span class="o">=</span> <span class="n">MUs_to_simulate</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">_branch_cvs__mm_per_s</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span>
-            <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">branch_cvs__m_per_s</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="mf">1000.0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">branch_cvs__m_per_s</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="mf">1000.0</span><span class="p">)</span>
+        <span class="c1"># Private copies for internal modifications</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_muscle_model</span> <span class="o">=</span> <span class="n">muscle_model</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_electrode_array</span> <span class="o">=</span> <span class="n">electrode_array</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_sampling_frequency__Hz</span> <span class="o">=</span> <span class="n">sampling_frequency__Hz</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_spatial_resolution__mm</span> <span class="o">=</span> <span class="n">spatial_resolution__mm</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_endplate_center__percent</span> <span class="o">=</span> <span class="n">endplate_center__percent</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_nmj_jitter__s</span> <span class="o">=</span> <span class="n">nmj_jitter__s</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_branch_cvs__m_per_s</span> <span class="o">=</span> <span class="n">branch_cvs__m_per_s</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_MUs_to_simulate</span> <span class="o">=</span> <span class="n">MUs_to_simulate</span>
+
+        <span class="c1"># Derived parameters - immutable public access</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">branch_cvs__mm_per_s</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span>
+            <span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_branch_cvs__m_per_s</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="mf">1000.0</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_branch_cvs__m_per_s</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="mf">1000.0</span><span class="p">,</span>
+            <span class="p">)</span>
         <span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_endplate_center__mm</span> <span class="o">=</span> <span class="n">muscle_model</span><span class="o">.</span><span class="n">length__mm</span> <span class="o">*</span> <span class="p">(</span>
-            <span class="n">endplate_center__percent</span> <span class="o">/</span> <span class="mf">100.0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">endplate_center__mm</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_muscle_model</span><span class="o">.</span><span class="n">length__mm</span> <span class="o">*</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_endplate_center__percent</span> <span class="o">/</span> <span class="mf">100.0</span>
         <span class="p">)</span>
 
-        <span class="c1"># Derived parameters</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_dt</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="n">sampling_frequency__Hz</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_dz</span> <span class="o">=</span> <span class="n">spatial_resolution__mm</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_n_motor_units</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">muscle_model</span><span class="o">.</span><span class="n">recruitment_thresholds</span><span class="p">)</span>
+        <span class="c1"># Private copies for internal modifications</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_branch_cvs__mm_per_s</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span>
+            <span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_branch_cvs__m_per_s</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="mf">1000.0</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_branch_cvs__m_per_s</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="mf">1000.0</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_endplate_center__mm</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_muscle_model</span><span class="o">.</span><span class="n">length__mm</span> <span class="o">*</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_endplate_center__percent</span> <span class="o">/</span> <span class="mf">100.0</span>
+        <span class="p">)</span>
+
+        <span class="c1"># Derived parameters - private for internal use</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_dt</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sampling_frequency__Hz</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_dz</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_spatial_resolution__mm</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_n_motor_units</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_muscle_model</span><span class="o">.</span><span class="n">recruitment_thresholds</span><span class="p">)</span>
 
         <span class="c1"># Motor unit selection</span>
-        <span class="k">if</span> <span class="n">MUs_to_simulate</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_MUs_to_simulate</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_MUs_to_simulate</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_n_motor_units</span><span class="p">))</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_MUs_to_simulate</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">MUs_to_simulate</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_MUs_to_simulate</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_MUs_to_simulate</span>
 
-        <span class="c1"># Motor unit simulations</span>
+        <span class="c1"># Motor unit simulations - private storage</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_motor_units</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">MotorUnitSim</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>  <span class="c1"># List of motor unit simulators</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_muaps</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">INTRAMUSCULAR_MUAP_SHAPE__TENSOR</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_max_muap_length</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span>
 
-        <span class="c1"># Simulation results</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">intramuscular_emg__tensor</span><span class="p">:</span> <span class="n">INTRAMUSCULAR_EMG__TENSOR</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">noisy_intramuscular_emg__tensor</span><span class="p">:</span> <span class="n">INTRAMUSCULAR_EMG__TENSOR</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="c1"># Simulation results - stored privately, accessed via properties</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_intramuscular_emg__tensor</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">INTRAMUSCULAR_EMG__TENSOR</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_noisy_intramuscular_emg__tensor</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">INTRAMUSCULAR_EMG__TENSOR</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="kc">None</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_motor_neuron_pool</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">MotorNeuronPool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span></div>
+
 
 <div class="viewcode-block" id="IntramuscularEMG.simulate_muaps">
-<a class="viewcode-back" href="../../../../../../generated/myogen.simulator.IntramuscularEMG.html#myogen.simulator.IntramuscularEMG.simulate_muaps">[docs]</a>
+<a class="viewcode-back" href="../../../../../../generated/myogen.simulator.IntramuscularEMG.simulate_muaps.html#myogen.simulator.IntramuscularEMG.simulate_muaps">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">simulate_muaps</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">INTRAMUSCULAR_MUAP_SHAPE__TENSOR</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Simulate MUAPs for all electrode arrays using the provided muscle model.</span>
+
+<span class="sd">        This method generates intramuscular Motor Unit Action Potential (MUAP) templates</span>
+<span class="sd">        by simulating individual motor units with realistic neuromuscular junction</span>
+<span class="sd">        distributions and fiber action potential propagation.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        INTRAMUSCULAR_MUAP_SHAPE__TENSOR</span>
 <span class="sd">            Intramuscular MUAP shapes for all electrode arrays.</span>
+<span class="sd">            Results are stored in the `muaps` property after execution.</span>
+
+<span class="sd">        Notes</span>
+<span class="sd">        -----</span>
+<span class="sd">        This method must be called before simulate_intramuscular_emg(). The process</span>
+<span class="sd">        includes: (1) motor unit initialization, (2) neuromuscular junction simulation,</span>
+<span class="sd">        and (3) MUAP calculation with spatial filtering.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_initialize_motor_units</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_simulate_neuromuscular_junctions</span><span class="p">()</span>
@@ -515,8 +576,8 @@ window.addEventListener("load", () => mermaid.run());
 <span class="sd">        the muscle model fiber assignments and properties.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="p">(</span>
-            <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">muscle_model</span><span class="p">,</span> <span class="s2">&quot;assignment&quot;</span><span class="p">)</span>
-            <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">muscle_model</span><span class="o">.</span><span class="n">assignment</span> <span class="ow">is</span> <span class="kc">None</span>
+            <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_muscle_model</span><span class="p">,</span> <span class="s2">&quot;assignment&quot;</span><span class="p">)</span>
+            <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">_muscle_model</span><span class="o">.</span><span class="n">assignment</span> <span class="ow">is</span> <span class="kc">None</span>
         <span class="p">):</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
                 <span class="s2">&quot;Muscle model must have fiber assignments. Call muscle.assign_mfs2mns() first.&quot;</span>
@@ -530,23 +591,25 @@ window.addEventListener("load", () => mermaid.run());
             <span class="n">unit</span><span class="o">=</span><span class="s2">&quot;Simulator&quot;</span><span class="p">,</span>
         <span class="p">):</span>
             <span class="c1"># Get fibers assigned to this motor unit</span>
-            <span class="n">fiber_mask</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">muscle_model</span><span class="o">.</span><span class="n">assignment</span> <span class="o">==</span> <span class="n">mu_idx</span>
+            <span class="n">fiber_mask</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_muscle_model</span><span class="o">.</span><span class="n">assignment</span> <span class="o">==</span> <span class="n">mu_idx</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">fiber_mask</span><span class="p">):</span>
                 <span class="k">continue</span>
 
             <span class="c1"># Create motor unit simulator</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_motor_units</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
                 <span class="n">MotorUnitSim</span><span class="p">(</span>
-                    <span class="n">muscle_fiber_centers__mm</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">muscle_model</span><span class="o">.</span><span class="n">mf_centers</span><span class="p">[</span><span class="n">fiber_mask</span><span class="p">],</span>
-                    <span class="n">muscle_length__mm</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">muscle_model</span><span class="o">.</span><span class="n">length__mm</span><span class="p">,</span>
-                    <span class="n">muscle_fiber_diameters__mm</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">muscle_model</span><span class="o">.</span><span class="n">mf_diameters</span><span class="p">[</span>
+                    <span class="n">muscle_fiber_centers__mm</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_muscle_model</span><span class="o">.</span><span class="n">muscle_fiber_centers__mm</span><span class="p">[</span>
                         <span class="n">fiber_mask</span>
                     <span class="p">],</span>
-                    <span class="n">muscle_fiber_conduction_velocity__mm_per_s</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">muscle_model</span><span class="o">.</span><span class="n">mf_cv</span><span class="p">[</span>
+                    <span class="n">muscle_length__mm</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_muscle_model</span><span class="o">.</span><span class="n">length__mm</span><span class="p">,</span>
+                    <span class="n">muscle_fiber_diameters__mm</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_muscle_model</span><span class="o">.</span><span class="n">muscle_fiber_diameters__mm</span><span class="p">[</span>
+                        <span class="n">fiber_mask</span>
+                    <span class="p">],</span>
+                    <span class="n">muscle_fiber_conduction_velocity__mm_per_s</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_muscle_model</span><span class="o">.</span><span class="n">muscle_fiber_conduction_velocities__mm_per_s</span><span class="p">[</span>
                         <span class="n">fiber_mask</span>
                     <span class="p">],</span>
                     <span class="n">neuromuscular_junction_conduction_velocities__mm_per_s</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_branch_cvs__mm_per_s</span><span class="p">,</span>
-                    <span class="n">nominal_center__mm</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">muscle_model</span><span class="o">.</span><span class="n">innervation_center_positions</span><span class="p">[</span>
+                    <span class="n">nominal_center__mm</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_muscle_model</span><span class="o">.</span><span class="n">innervation_center_positions__mm</span><span class="p">[</span>
                         <span class="n">mu_idx</span>
                     <span class="p">],</span>
                 <span class="p">)</span>
@@ -564,8 +627,8 @@ window.addEventListener("load", () => mermaid.run());
 
         <span class="n">n_branches</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span>
             <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">muscle_model</span><span class="o">.</span><span class="n">recruitment_thresholds</span>
-                <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">muscle_model</span><span class="o">.</span><span class="n">recruitment_thresholds</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_muscle_model</span><span class="o">.</span><span class="n">recruitment_thresholds</span>
+                <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">_muscle_model</span><span class="o">.</span><span class="n">recruitment_thresholds</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
             <span class="p">)</span>
         <span class="p">)</span>
 
@@ -575,8 +638,8 @@ window.addEventListener("load", () => mermaid.run());
             <span class="p">)</span>
         <span class="p">):</span>
             <span class="n">spread_factor</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">muscle_model</span><span class="o">.</span><span class="n">recruitment_thresholds</span><span class="p">[:</span><span class="n">mu_idx</span><span class="p">]</span>
-            <span class="p">)</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">muscle_model</span><span class="o">.</span><span class="n">recruitment_thresholds</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_muscle_model</span><span class="o">.</span><span class="n">recruitment_thresholds</span><span class="p">[:</span><span class="n">mu_idx</span><span class="p">]</span>
+            <span class="p">)</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_muscle_model</span><span class="o">.</span><span class="n">recruitment_thresholds</span><span class="p">)</span>
 
             <span class="c1"># Create NMJ distribution</span>
             <span class="c1"># Branch spread increases with motor unit size</span>
@@ -605,7 +668,7 @@ window.addEventListener("load", () => mermaid.run());
                 <span class="n">index</span><span class="o">=</span><span class="n">i</span><span class="p">,</span>
                 <span class="n">dt</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_dt</span><span class="p">,</span>
                 <span class="n">dz</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_dz</span><span class="p">,</span>
-                <span class="n">electrode_positions</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">electrode_array</span><span class="o">.</span><span class="n">pts</span><span class="p">,</span>
+                <span class="n">electrode_positions</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_electrode_array</span><span class="o">.</span><span class="n">pts</span><span class="p">,</span>
             <span class="p">)</span>
 
         <span class="c1"># Calculate MUAPs (no jitter for templates)</span>
@@ -618,7 +681,7 @@ window.addEventListener("load", () => mermaid.run());
             <span class="n">max_length</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">max_length</span><span class="p">,</span> <span class="n">muap</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_muaps</span><span class="p">:</span> <span class="n">INTRAMUSCULAR_MUAP_SHAPE__TENSOR</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span>
-            <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_motor_units</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">electrode_array</span><span class="o">.</span><span class="n">pts</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">max_length</span><span class="p">)</span>
+            <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_motor_units</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">_electrode_array</span><span class="o">.</span><span class="n">pts</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">max_length</span><span class="p">)</span>
         <span class="p">)</span>
 
         <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">muap</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">muaps_list</span><span class="p">):</span>
@@ -674,13 +737,17 @@ window.addEventListener("load", () => mermaid.run());
         <span class="k">return</span> <span class="n">detectable</span><span class="p">,</span> <span class="n">detectable_indices</span>
 
 <div class="viewcode-block" id="IntramuscularEMG.simulate_intramuscular_emg">
-<a class="viewcode-back" href="../../../../../../generated/myogen.simulator.IntramuscularEMG.html#myogen.simulator.IntramuscularEMG.simulate_intramuscular_emg">[docs]</a>
+<a class="viewcode-back" href="../../../../../../generated/myogen.simulator.IntramuscularEMG.simulate_intramuscular_emg.html#myogen.simulator.IntramuscularEMG.simulate_intramuscular_emg">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">simulate_intramuscular_emg</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">motor_neuron_pool</span><span class="p">:</span> <span class="n">MotorNeuronPool</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">INTRAMUSCULAR_EMG__TENSOR</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Generate intramuscular EMG signals for all electrode arrays using the provided motor neuron pool.</span>
+
+<span class="sd">        This method convolves the pre-computed MUAP templates with motor neuron spike trains</span>
+<span class="sd">        to synthesize realistic intramuscular EMG signals. The process includes temporal</span>
+<span class="sd">        resampling and supports both CPU and GPU acceleration for efficient computation.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -691,23 +758,25 @@ window.addEventListener("load", () => mermaid.run());
 <span class="sd">        -------</span>
 <span class="sd">        INTRAMUSCULAR_EMG__TENSOR</span>
 <span class="sd">            Intramuscular EMG signals for all electrode arrays.</span>
+<span class="sd">            Results are stored in the `intramuscular_emg__tensor` property after execution.</span>
 
 <span class="sd">        Raises</span>
 <span class="sd">        ------</span>
-<span class="sd">        AttributeError</span>
+<span class="sd">        ValueError</span>
 <span class="sd">            If MUAP templates have not been generated. Call simulate_muaps() first.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_muaps</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
                 <span class="s2">&quot;MUAP templates have not been generated. Call simulate_muaps() first.&quot;</span>
             <span class="p">)</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">motor_neuron_pool</span> <span class="o">=</span> <span class="n">motor_neuron_pool</span>
+        <span class="c1"># Store motor neuron pool privately</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_motor_neuron_pool</span> <span class="o">=</span> <span class="n">motor_neuron_pool</span>
 
         <span class="c1"># Handle MUs to simulate</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_MUs_to_simulate</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">MUs_to_simulate</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span>
-                <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">muscle_model</span><span class="o">.</span><span class="n">resulting_number_of_innervated_fibers</span><span class="p">))</span>
+                <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_muscle_model</span><span class="o">.</span><span class="n">resulting_number_of_innervated_fibers</span><span class="p">))</span>
             <span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">MUs_to_simulate</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_MUs_to_simulate</span><span class="p">)</span>
@@ -717,9 +786,9 @@ window.addEventListener("load", () => mermaid.run());
         <span class="n">target_length</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span>
             <span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span>
                 <span class="n">muap_array</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
-                <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">sampling_frequency__Hz</span>
+                <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sampling_frequency__Hz</span>
                 <span class="o">*</span> <span class="mi">1</span>
-                <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">motor_neuron_pool</span><span class="o">.</span><span class="n">timestep__ms</span>
+                <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">_motor_neuron_pool</span><span class="o">.</span><span class="n">timestep__ms</span>
                 <span class="o">*</span> <span class="mi">1000</span>
             <span class="p">)</span>
         <span class="p">)</span>
@@ -731,24 +800,24 @@ window.addEventListener("load", () => mermaid.run());
                 <span class="n">muap_shapes</span><span class="p">[</span><span class="n">muap_nr</span><span class="p">,</span> <span class="n">electrode_nr</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">interp</span><span class="p">(</span>
                     <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span>
                         <span class="mi">0</span><span class="p">,</span>
-                        <span class="n">muap_array</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">sampling_frequency__Hz</span><span class="p">,</span>
+                        <span class="n">muap_array</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sampling_frequency__Hz</span><span class="p">,</span>
                         <span class="n">target_length</span><span class="p">,</span>
                         <span class="n">endpoint</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
                     <span class="p">),</span>
                     <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span>
                         <span class="mi">0</span><span class="p">,</span>
-                        <span class="n">muap_array</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">sampling_frequency__Hz</span><span class="p">,</span>
-                        <span class="mi">1</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">sampling_frequency__Hz</span><span class="p">,</span>
+                        <span class="n">muap_array</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sampling_frequency__Hz</span><span class="p">,</span>
+                        <span class="mi">1</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sampling_frequency__Hz</span><span class="p">,</span>
                     <span class="p">),</span>
                     <span class="n">muap_array</span><span class="p">[</span><span class="n">muap_nr</span><span class="p">,</span> <span class="n">electrode_nr</span><span class="p">],</span>
                 <span class="p">)</span>
 
-        <span class="n">n_pools</span> <span class="o">=</span> <span class="n">motor_neuron_pool</span><span class="o">.</span><span class="n">spike_trains</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">n_pools</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_motor_neuron_pool</span><span class="o">.</span><span class="n">spike_trains</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
         <span class="n">n_electrodes</span> <span class="o">=</span> <span class="n">muap_shapes</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
 
         <span class="c1"># Initialize result array</span>
         <span class="n">sample_conv</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">convolve</span><span class="p">(</span>
-            <span class="n">motor_neuron_pool</span><span class="o">.</span><span class="n">spike_trains</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_motor_neuron_pool</span><span class="o">.</span><span class="n">spike_trains</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
             <span class="n">muap_shapes</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
             <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;same&quot;</span><span class="p">,</span>
         <span class="p">)</span>
@@ -759,7 +828,7 @@ window.addEventListener("load", () => mermaid.run());
         <span class="c1"># Perform convolution for each pool using GPU acceleration if available</span>
         <span class="k">if</span> <span class="n">HAS_CUPY</span><span class="p">:</span>
             <span class="c1"># Use GPU acceleration with CuPy</span>
-            <span class="n">spike_gpu</span> <span class="o">=</span> <span class="n">cp</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">motor_neuron_pool</span><span class="o">.</span><span class="n">spike_trains</span><span class="p">)</span>
+            <span class="n">spike_gpu</span> <span class="o">=</span> <span class="n">cp</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_motor_neuron_pool</span><span class="o">.</span><span class="n">spike_trains</span><span class="p">)</span>
             <span class="n">muap_gpu</span> <span class="o">=</span> <span class="n">cp</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">muap_shapes</span><span class="p">)</span>
             <span class="n">intramuscular_emg_gpu</span> <span class="o">=</span> <span class="n">cp</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">n_pools</span><span class="p">,</span> <span class="n">n_electrodes</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">sample_conv</span><span class="p">)))</span>
 
@@ -769,7 +838,7 @@ window.addEventListener("load", () => mermaid.run());
                 <span class="n">unit</span><span class="o">=</span><span class="s2">&quot;pool&quot;</span><span class="p">,</span>
             <span class="p">):</span>
                 <span class="n">active_neuron_indices</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span>
-                    <span class="n">motor_neuron_pool</span><span class="o">.</span><span class="n">active_neuron_indices</span><span class="p">[</span><span class="n">pool_idx</span><span class="p">]</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_motor_neuron_pool</span><span class="o">.</span><span class="n">active_neuron_indices</span><span class="p">[</span><span class="n">pool_idx</span><span class="p">]</span>
                 <span class="p">)</span>
 
                 <span class="k">for</span> <span class="n">e_idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_electrodes</span><span class="p">):</span>
@@ -802,7 +871,7 @@ window.addEventListener("load", () => mermaid.run());
                 <span class="n">unit</span><span class="o">=</span><span class="s2">&quot;pool&quot;</span><span class="p">,</span>
             <span class="p">):</span>
                 <span class="n">active_neuron_indices</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span>
-                    <span class="n">motor_neuron_pool</span><span class="o">.</span><span class="n">active_neuron_indices</span><span class="p">[</span><span class="n">pool_idx</span><span class="p">]</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_motor_neuron_pool</span><span class="o">.</span><span class="n">active_neuron_indices</span><span class="p">[</span><span class="n">pool_idx</span><span class="p">]</span>
                 <span class="p">)</span>
 
                 <span class="k">for</span> <span class="n">e_idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_electrodes</span><span class="p">):</span>
@@ -812,7 +881,7 @@ window.addEventListener("load", () => mermaid.run());
                         <span class="n">MUs_to_simulate</span><span class="o">.</span><span class="n">intersection</span><span class="p">(</span><span class="n">active_neuron_indices</span><span class="p">)</span>
                     <span class="p">):</span>
                         <span class="n">conv</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">correlate</span><span class="p">(</span>
-                            <span class="n">motor_neuron_pool</span><span class="o">.</span><span class="n">spike_trains</span><span class="p">[</span><span class="n">pool_idx</span><span class="p">,</span> <span class="n">mu_idx</span><span class="p">],</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">_motor_neuron_pool</span><span class="o">.</span><span class="n">spike_trains</span><span class="p">[</span><span class="n">pool_idx</span><span class="p">,</span> <span class="n">mu_idx</span><span class="p">],</span>
                             <span class="n">muap_shapes</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">e_idx</span><span class="p">],</span>
                             <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;same&quot;</span><span class="p">,</span>
                         <span class="p">)</span>
@@ -829,8 +898,8 @@ window.addEventListener("load", () => mermaid.run());
                 <span class="n">n_electrodes</span><span class="p">,</span>
                 <span class="nb">int</span><span class="p">(</span>
                     <span class="n">intramuscular_emg</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
-                    <span class="o">/</span> <span class="p">(</span><span class="mi">1</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">motor_neuron_pool</span><span class="o">.</span><span class="n">timestep__ms</span> <span class="o">*</span> <span class="mi">1000</span><span class="p">)</span>
-                    <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">sampling_frequency__Hz</span>
+                    <span class="o">/</span> <span class="p">(</span><span class="mi">1</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">_motor_neuron_pool</span><span class="o">.</span><span class="n">timestep__ms</span> <span class="o">*</span> <span class="mi">1000</span><span class="p">)</span>
+                    <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sampling_frequency__Hz</span>
                 <span class="p">),</span>
             <span class="p">)</span>
         <span class="p">)</span>
@@ -840,49 +909,61 @@ window.addEventListener("load", () => mermaid.run());
                     <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span>
                         <span class="mi">0</span><span class="p">,</span>
                         <span class="n">intramuscular_emg</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
-                        <span class="o">*</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">motor_neuron_pool</span><span class="o">.</span><span class="n">timestep__ms</span> <span class="o">/</span> <span class="mi">1000</span><span class="p">),</span>
-                        <span class="mi">1</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">sampling_frequency__Hz</span><span class="p">,</span>
+                        <span class="o">*</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_motor_neuron_pool</span><span class="o">.</span><span class="n">timestep__ms</span> <span class="o">/</span> <span class="mi">1000</span><span class="p">),</span>
+                        <span class="mi">1</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sampling_frequency__Hz</span><span class="p">,</span>
                     <span class="p">),</span>
                     <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span>
                         <span class="mi">0</span><span class="p">,</span>
                         <span class="n">intramuscular_emg</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
-                        <span class="o">*</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">motor_neuron_pool</span><span class="o">.</span><span class="n">timestep__ms</span> <span class="o">/</span> <span class="mi">1000</span><span class="p">),</span>
-                        <span class="bp">self</span><span class="o">.</span><span class="n">motor_neuron_pool</span><span class="o">.</span><span class="n">timestep__ms</span> <span class="o">/</span> <span class="mi">1000</span><span class="p">,</span>
+                        <span class="o">*</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_motor_neuron_pool</span><span class="o">.</span><span class="n">timestep__ms</span> <span class="o">/</span> <span class="mi">1000</span><span class="p">),</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">_motor_neuron_pool</span><span class="o">.</span><span class="n">timestep__ms</span> <span class="o">/</span> <span class="mi">1000</span><span class="p">,</span>
                     <span class="p">),</span>
                     <span class="n">intramuscular_emg</span><span class="p">[</span><span class="n">pool_idx</span><span class="p">,</span> <span class="n">e_idx</span><span class="p">],</span>
                 <span class="p">)</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">intramuscular_emg__tensor</span> <span class="o">=</span> <span class="n">intramuscular_emg_resampled</span>
+        <span class="c1"># Store results privately</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_intramuscular_emg__tensor</span> <span class="o">=</span> <span class="n">intramuscular_emg_resampled</span>
         <span class="k">return</span> <span class="n">intramuscular_emg_resampled</span></div>
 
 
 <div class="viewcode-block" id="IntramuscularEMG.add_noise">
-<a class="viewcode-back" href="../../../../../../generated/myogen.simulator.IntramuscularEMG.html#myogen.simulator.IntramuscularEMG.add_noise">[docs]</a>
+<a class="viewcode-back" href="../../../../../../generated/myogen.simulator.IntramuscularEMG.add_noise.html#myogen.simulator.IntramuscularEMG.add_noise">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">add_noise</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">snr_db</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">noise_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;gaussian&quot;</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">INTRAMUSCULAR_EMG__TENSOR</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Add noise to all electrode arrays.</span>
 
+<span class="sd">        This method adds realistic noise to the simulated intramuscular EMG signals</span>
+<span class="sd">        based on a specified signal-to-noise ratio. The noise characteristics</span>
+<span class="sd">        can be customized to match different recording conditions.</span>
+
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        snr_db : float</span>
-<span class="sd">            Signal-to-noise ratio in dB</span>
+<span class="sd">            Signal-to-noise ratio in dB. Higher values result in cleaner signals.</span>
+<span class="sd">            Typical intramuscular EMG has SNR ranging from 15-50 dB.</span>
 <span class="sd">        noise_type : str, default=&quot;gaussian&quot;</span>
-<span class="sd">            Type of noise to add</span>
+<span class="sd">            Type of noise to add. Currently supports &quot;gaussian&quot; for white noise.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        INTRAMUSCULAR_EMG__TENSOR</span>
 <span class="sd">            Noisy intramuscular EMG signals for all electrode arrays.</span>
+<span class="sd">            Results are stored in the `noisy_intramuscular_emg__tensor` property after execution.</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        ValueError</span>
+<span class="sd">            If intramuscular EMG has not been simulated. Call simulate_intramuscular_emg() first.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">intramuscular_emg__tensor</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_intramuscular_emg__tensor</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
                 <span class="s2">&quot;Intramuscular EMG has not been simulated. Call simulate_intramuscular_emg() first.&quot;</span>
             <span class="p">)</span>
 
         <span class="c1"># Calculate signal power</span>
-        <span class="n">signal_power</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">intramuscular_emg__tensor</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+        <span class="n">signal_power</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_intramuscular_emg__tensor</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
 
         <span class="c1"># Calculate noise power</span>
         <span class="n">snr_linear</span> <span class="o">=</span> <span class="mi">10</span> <span class="o">**</span> <span class="p">(</span><span class="n">snr_db</span> <span class="o">/</span> <span class="mi">10</span><span class="p">)</span>
@@ -892,17 +973,103 @@ window.addEventListener("load", () => mermaid.run());
         <span class="k">if</span> <span class="n">noise_type</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;gaussian&quot;</span><span class="p">:</span>
             <span class="n">noise_std</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">noise_power</span><span class="p">)</span>
             <span class="n">noise</span> <span class="o">=</span> <span class="n">RANDOM_GENERATOR</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span>
-                <span class="n">loc</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="n">noise_std</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">intramuscular_emg__tensor</span><span class="o">.</span><span class="n">shape</span>
+                <span class="n">loc</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="n">noise_std</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_intramuscular_emg__tensor</span><span class="o">.</span><span class="n">shape</span>
             <span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unsupported noise type: </span><span class="si">{</span><span class="n">noise_type</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
         <span class="c1"># Add noise</span>
-        <span class="n">noisy_emg</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">intramuscular_emg__tensor</span> <span class="o">+</span> <span class="n">noise</span>
+        <span class="n">noisy_emg</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_intramuscular_emg__tensor</span> <span class="o">+</span> <span class="n">noise</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">noisy_intramuscular_emg__tensor</span> <span class="o">=</span> <span class="n">noisy_emg</span>
+        <span class="c1"># Store results privately</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_noisy_intramuscular_emg__tensor</span> <span class="o">=</span> <span class="n">noisy_emg</span>
         <span class="k">return</span> <span class="n">noisy_emg</span></div>
-</div>
+
+
+    <span class="c1"># Property accessors for computed results</span>
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">muaps</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">INTRAMUSCULAR_MUAP_SHAPE__TENSOR</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Intramuscular MUAP shapes for all electrode arrays.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        INTRAMUSCULAR_MUAP_SHAPE__TENSOR</span>
+<span class="sd">            Intramuscular MUAP templates for the electrode array.</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        ValueError</span>
+<span class="sd">            If MUAP templates have not been computed yet.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_muaps</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;MUAP templates not computed. Call simulate_muaps() first.&quot;</span>
+            <span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_muaps</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">intramuscular_emg__tensor</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">INTRAMUSCULAR_EMG__TENSOR</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Intramuscular EMG signals for all electrode arrays.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        INTRAMUSCULAR_EMG__TENSOR</span>
+<span class="sd">            Intramuscular EMG signals for the electrode array.</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        ValueError</span>
+<span class="sd">            If intramuscular EMG has not been computed yet.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_intramuscular_emg__tensor</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;Intramuscular EMG signals not computed. Call simulate_intramuscular_emg() first.&quot;</span>
+            <span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_intramuscular_emg__tensor</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">noisy_intramuscular_emg__tensor</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">INTRAMUSCULAR_EMG__TENSOR</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Noisy intramuscular EMG signals for all electrode arrays.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        INTRAMUSCULAR_EMG__TENSOR</span>
+<span class="sd">            Noisy intramuscular EMG signals for the electrode array.</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        ValueError</span>
+<span class="sd">            If noisy intramuscular EMG has not been computed yet.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_noisy_intramuscular_emg__tensor</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;Noisy intramuscular EMG signals not computed. Call add_noise() first.&quot;</span>
+            <span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_noisy_intramuscular_emg__tensor</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">motor_neuron_pool</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">MotorNeuronPool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Motor neuron pool used for EMG generation.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        MotorNeuronPool</span>
+<span class="sd">            The motor neuron pool used in the simulation.</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        ValueError</span>
+<span class="sd">            If motor neuron pool has not been set yet.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_motor_neuron_pool</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;Motor neuron pool not set. Call simulate_intramuscular_emg() first.&quot;</span>
+            <span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_motor_neuron_pool</span></div>
 
 </pre></div>
 

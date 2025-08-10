@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Motor Unit Spike Trains &#8212; MyoGen 0.3.0 Documentation</title>
+    <title>Motor Unit Spike Trains &#8212; MyoGen 0.4.0 Documentation</title>
   
   
   
@@ -31,11 +31,13 @@
 <link href="../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
 
     <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=34f00721" />
     <link rel="stylesheet" type="text/css" href="../_static/sg_gallery.css?v=d2d258e8" />
     <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-binder.css?v=f4aeca0c" />
     <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-dataframe.css?v=2082cf3c" />
     <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
-    <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=73e2cb9d" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=34f00721" />
   
   <!-- So that users can add custom icons -->
   <script src="../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
@@ -43,9 +45,11 @@
   <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="../_static/documentation_options.js?v=e259d695"></script>
+    <script src="../_static/documentation_options.js?v=1437fa6d"></script>
     <script src="../_static/doctools.js?v=9bcbadda"></script>
     <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/custom.js?v=a236ca48"></script>
+    <script src="../_static/design-tabs.js?v=f930bc37"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'auto_examples/01_simulate_spike_trains';</script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
@@ -53,7 +57,7 @@
     <link rel="prev" title="Recruitment Thresholds" href="00_simulate_recruitment_thresholds.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="0.3.0" />
+  <meta name="docsearch:version" content="0.4.0" />
   </head>
   
   
@@ -78,8 +82,8 @@
   <input type="search"
          class="form-control"
          name="q"
-         placeholder="Search the docs ..."
-         aria-label="Search the docs ..."
+         placeholder="Search MyoGen docs..."
+         aria-label="Search MyoGen docs..."
          autocomplete="off"
          autocorrect="off"
          autocapitalize="off"
@@ -91,6 +95,9 @@
   <div class="pst-async-banner-revealer d-none">
   <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
 </div>
+<aside class="bd-header-announcement" aria-label="Announcement">
+  <div class="bd-header-announcement__content">⚠️ MyoGen is under active development. API may change.</div>
+</aside>
 
   
     <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
@@ -119,8 +126,8 @@
       
     
     
-    <img src="../_static/myogen_logo.png" class="logo__image only-light" alt="MyoGen 0.3.0 Documentation - Home"/>
-    <img src="../_static/myogen_logo.png" class="logo__image only-dark pst-js-only" alt="MyoGen 0.3.0 Documentation - Home"/>
+    <img src="../_static/myogen_logo.png" class="logo__image only-light" alt="MyoGen 0.4.0 Documentation - Home"/>
+    <img src="../_static/myogen_logo.png" class="logo__image only-dark pst-js-only" alt="MyoGen 0.4.0 Documentation - Home"/>
   
   
 </a></div>
@@ -129,7 +136,7 @@
 <div class="nav-item">
   <div class="version-switcher__container dropdown">
       <button id="version-switcher-button" type="button" class="version-switcher__button btn btn-sm navbar-btn" aria-haspopup="true" aria-expanded="false">
-          Version 0.3.0
+          Version 0.4.0
       </button>
       
       
@@ -530,7 +537,117 @@ Input current matrix shape: (2, 40000)
 <span class="p">)</span>
 </pre></div>
 </div>
-<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>MVC current threshold: 293.0 nA
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Creating motor neuron pools:   0%|          | 0/1 [00:00&lt;?, ?pool/s]
+Creating motor neuron pools: 100%|██████████| 1/1 [00:00&lt;00:00, 23.19pool/s]
+
+Injecting currents into pools:   0%|          | 0/1 [00:00&lt;?, ?pool/s]
+
+Adding noise to neurons in pool:   0%|          | 0/100 [00:00&lt;?, ?neuron/s]
+
+
+Injecting currents into pools: 100%|██████████| 1/1 [00:00&lt;00:00, 30.14pool/s]
+
+Creating motor neuron pools:   0%|          | 0/1 [00:00&lt;?, ?pool/s]
+Creating motor neuron pools: 100%|██████████| 1/1 [00:00&lt;00:00, 23.36pool/s]
+
+Injecting currents into pools:   0%|          | 0/1 [00:00&lt;?, ?pool/s]
+
+Adding noise to neurons in pool:   0%|          | 0/100 [00:00&lt;?, ?neuron/s]
+
+
+Injecting currents into pools: 100%|██████████| 1/1 [00:00&lt;00:00, 30.63pool/s]
+
+Creating motor neuron pools:   0%|          | 0/1 [00:00&lt;?, ?pool/s]
+Creating motor neuron pools: 100%|██████████| 1/1 [00:00&lt;00:00, 24.10pool/s]
+
+Injecting currents into pools:   0%|          | 0/1 [00:00&lt;?, ?pool/s]
+
+Adding noise to neurons in pool:   0%|          | 0/100 [00:00&lt;?, ?neuron/s]
+
+
+Injecting currents into pools: 100%|██████████| 1/1 [00:00&lt;00:00, 31.05pool/s]
+
+Creating motor neuron pools:   0%|          | 0/1 [00:00&lt;?, ?pool/s]
+Creating motor neuron pools: 100%|██████████| 1/1 [00:00&lt;00:00, 24.19pool/s]
+
+Injecting currents into pools:   0%|          | 0/1 [00:00&lt;?, ?pool/s]
+
+Adding noise to neurons in pool:   0%|          | 0/100 [00:00&lt;?, ?neuron/s]
+
+
+Injecting currents into pools: 100%|██████████| 1/1 [00:00&lt;00:00, 31.33pool/s]
+
+Creating motor neuron pools:   0%|          | 0/1 [00:00&lt;?, ?pool/s]
+Creating motor neuron pools: 100%|██████████| 1/1 [00:00&lt;00:00, 24.42pool/s]
+
+Injecting currents into pools:   0%|          | 0/1 [00:00&lt;?, ?pool/s]
+
+Adding noise to neurons in pool:   0%|          | 0/100 [00:00&lt;?, ?neuron/s]
+
+
+Injecting currents into pools: 100%|██████████| 1/1 [00:00&lt;00:00, 31.15pool/s]
+
+Creating motor neuron pools:   0%|          | 0/1 [00:00&lt;?, ?pool/s]
+Creating motor neuron pools: 100%|██████████| 1/1 [00:00&lt;00:00, 24.39pool/s]
+
+Injecting currents into pools:   0%|          | 0/1 [00:00&lt;?, ?pool/s]
+
+Adding noise to neurons in pool:   0%|          | 0/100 [00:00&lt;?, ?neuron/s]
+
+
+Injecting currents into pools: 100%|██████████| 1/1 [00:00&lt;00:00, 31.39pool/s]
+
+Creating motor neuron pools:   0%|          | 0/1 [00:00&lt;?, ?pool/s]
+Creating motor neuron pools: 100%|██████████| 1/1 [00:00&lt;00:00, 24.34pool/s]
+
+Injecting currents into pools:   0%|          | 0/1 [00:00&lt;?, ?pool/s]
+
+Adding noise to neurons in pool:   0%|          | 0/100 [00:00&lt;?, ?neuron/s]
+
+
+Injecting currents into pools: 100%|██████████| 1/1 [00:00&lt;00:00, 31.15pool/s]
+
+Creating motor neuron pools:   0%|          | 0/1 [00:00&lt;?, ?pool/s]
+Creating motor neuron pools: 100%|██████████| 1/1 [00:00&lt;00:00, 24.49pool/s]
+
+Injecting currents into pools:   0%|          | 0/1 [00:00&lt;?, ?pool/s]
+
+Adding noise to neurons in pool:   0%|          | 0/100 [00:00&lt;?, ?neuron/s]
+
+
+Injecting currents into pools: 100%|██████████| 1/1 [00:00&lt;00:00, 31.25pool/s]
+
+Creating motor neuron pools:   0%|          | 0/1 [00:00&lt;?, ?pool/s]
+Creating motor neuron pools: 100%|██████████| 1/1 [00:00&lt;00:00, 24.17pool/s]
+
+Injecting currents into pools:   0%|          | 0/1 [00:00&lt;?, ?pool/s]
+
+Adding noise to neurons in pool:   0%|          | 0/100 [00:00&lt;?, ?neuron/s]
+
+
+Injecting currents into pools: 100%|██████████| 1/1 [00:00&lt;00:00, 30.99pool/s]
+
+Creating motor neuron pools:   0%|          | 0/1 [00:00&lt;?, ?pool/s]
+Creating motor neuron pools: 100%|██████████| 1/1 [00:00&lt;00:00, 24.37pool/s]
+
+Injecting currents into pools:   0%|          | 0/1 [00:00&lt;?, ?pool/s]
+
+Adding noise to neurons in pool:   0%|          | 0/100 [00:00&lt;?, ?neuron/s]
+
+
+Injecting currents into pools: 100%|██████████| 1/1 [00:00&lt;00:00, 31.27pool/s]
+
+Creating motor neuron pools:   0%|          | 0/1 [00:00&lt;?, ?pool/s]
+Creating motor neuron pools: 100%|██████████| 1/1 [00:00&lt;00:00, 24.13pool/s]
+
+Injecting currents into pools:   0%|          | 0/1 [00:00&lt;?, ?pool/s]
+
+Adding noise to neurons in pool:   0%|          | 0/100 [00:00&lt;?, ?neuron/s]
+
+
+Injecting currents into pools: 100%|██████████| 1/1 [00:00&lt;00:00, 31.10pool/s]
+
+MVC current threshold: 293.0 nA
 </pre></div>
 </div>
 </section>
@@ -555,7 +672,31 @@ Input current matrix shape: (2, 40000)
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  - </span><span class="si">{</span><a href="https://docs.python.org/3/library/stdtypes.html#tuple" title="builtins.tuple" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">spike_trains_matrix</span><span class="o">.</span><span class="n">shape</span></a><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="si">}</span><span class="s2"> time points</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
-<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Spike trains shape: (2, 100, 40000)
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Creating motor neuron pools:   0%|          | 0/2 [00:00&lt;?, ?pool/s]
+Creating motor neuron pools: 100%|██████████| 2/2 [00:00&lt;00:00, 24.95pool/s]
+
+Injecting currents into pools:   0%|          | 0/2 [00:00&lt;?, ?pool/s]
+
+Adding noise to neurons in pool:   0%|          | 0/100 [00:00&lt;?, ?neuron/s]
+
+Adding noise to neurons in pool:  43%|████▎     | 43/100 [00:00&lt;00:00, 422.92neuron/s]
+
+Adding noise to neurons in pool:  86%|████████▌ | 86/100 [00:00&lt;00:00, 423.40neuron/s]
+
+
+Injecting currents into pools:  50%|█████     | 1/2 [00:00&lt;00:00,  3.48pool/s]
+
+Adding noise to neurons in pool:   0%|          | 0/100 [00:00&lt;?, ?neuron/s]
+
+Adding noise to neurons in pool:  43%|████▎     | 43/100 [00:00&lt;00:00, 423.34neuron/s]
+
+Adding noise to neurons in pool:  86%|████████▌ | 86/100 [00:00&lt;00:00, 422.41neuron/s]
+
+
+Injecting currents into pools: 100%|██████████| 2/2 [00:00&lt;00:00,  3.47pool/s]
+Injecting currents into pools: 100%|██████████| 2/2 [00:00&lt;00:00,  3.47pool/s]
+
+Spike trains shape: (2, 100, 40000)
   - 2 pools
   - 100 neurons per pool
   - 40000 time points
@@ -591,7 +732,7 @@ The simulation time is in milliseconds, so we need to convert it to seconds.</p>
 </div>
 <div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Firing rate statistics:
   Pool 1: 100/100 active neurons, mean rate: 15.0 Hz, max rate: 24.5 Hz
-  Pool 2: 98/100 active neurons, mean rate: 14.4 Hz, max rate: 22.0 Hz
+  Pool 2: 99/100 active neurons, mean rate: 14.3 Hz, max rate: 21.5 Hz
 </pre></div>
 </div>
 </section>
@@ -630,7 +771,7 @@ The simulation time is in milliseconds, so we need to convert it to seconds.</p>
 <img src="../_images/sphx_glr_01_simulate_spike_trains_001.png" srcset="../_images/sphx_glr_01_simulate_spike_trains_001.png" alt="Pool 1 Spike Trains" class = "sphx-glr-single-img"/><div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Plotting spike trains...
 </pre></div>
 </div>
-<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 24.545 seconds)</p>
+<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 24.701 seconds)</p>
 <div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-auto-examples-01-simulate-spike-trains-py">
 <div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
 <p><a class="reference download internal" download="" href="../_downloads/d067465ba52f52793494b6657f65022d/01_simulate_spike_trains.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">01_simulate_spike_trains.ipynb</span></code></a></p>
@@ -678,6 +819,22 @@ The simulation time is in milliseconds, so we need to convert it to seconds.</p>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#visualize-spike-trains">Visualize Spike Trains</a></li>
 </ul>
   </nav></div>
+
+  <div class="sidebar-secondary-item">
+
+  
+  <div class="tocsection editthispage">
+    <a href="https://github.com/NSquaredLab/MyoGen/edit/main/docs/auto_examples/01_simulate_spike_trains.rst">
+      <i class="fa-solid fa-pencil"></i>
+      
+      
+        
+          Edit on GitHub
+        
+      
+    </a>
+  </div>
+</div>
 
   <div class="sidebar-secondary-item">
   <div role="note" aria-label="source link">

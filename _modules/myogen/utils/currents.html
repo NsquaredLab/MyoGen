@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>myogen.utils.currents &#8212; MyoGen 0.3.0 Documentation</title>
+    <title>myogen.utils.currents &#8212; MyoGen 0.4.0 Documentation</title>
   
   
   
@@ -30,11 +30,13 @@
 <link href="../../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
 
     <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/custom.css?v=34f00721" />
     <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery.css?v=d2d258e8" />
     <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-binder.css?v=f4aeca0c" />
     <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
     <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
-    <link rel="stylesheet" type="text/css" href="../../../_static/custom.css?v=73e2cb9d" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/custom.css?v=34f00721" />
   
   <!-- So that users can add custom icons -->
   <script src="../../../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
@@ -42,9 +44,11 @@
   <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="../../../_static/documentation_options.js?v=e259d695"></script>
+    <script src="../../../_static/documentation_options.js?v=1437fa6d"></script>
     <script src="../../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../_static/custom.js?v=a236ca48"></script>
+    <script src="../../../_static/design-tabs.js?v=f930bc37"></script>
     <script type="module" src="https://cdn.jsdelivr.net/npm/mermaid@11.9.0/dist/mermaid.esm.min.mjs"></script>
     <script type="module" src="https://cdn.jsdelivr.net/npm/@mermaid-js/layout-elk@0.1.4/dist/mermaid-layout-elk.esm.min.mjs"></script>
     <script type="module">import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@11.9.0/dist/mermaid.esm.min.mjs";import elkLayouts from "https://cdn.jsdelivr.net/npm/@mermaid-js/layout-elk@0.1.4/dist/mermaid-layout-elk.esm.min.mjs";mermaid.registerLayoutLoaders(elkLayouts);mermaid.initialize({startOnLoad:false});</script>
@@ -58,7 +62,7 @@ window.addEventListener("load", () => mermaid.run());
     <link rel="search" title="Search" href="../../../search.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="0.3.0" />
+  <meta name="docsearch:version" content="0.4.0" />
   </head>
   
   
@@ -83,8 +87,8 @@ window.addEventListener("load", () => mermaid.run());
   <input type="search"
          class="form-control"
          name="q"
-         placeholder="Search the docs ..."
-         aria-label="Search the docs ..."
+         placeholder="Search MyoGen docs..."
+         aria-label="Search MyoGen docs..."
          autocomplete="off"
          autocorrect="off"
          autocapitalize="off"
@@ -96,6 +100,9 @@ window.addEventListener("load", () => mermaid.run());
   <div class="pst-async-banner-revealer d-none">
   <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
 </div>
+<aside class="bd-header-announcement" aria-label="Announcement">
+  <div class="bd-header-announcement__content">⚠️ MyoGen is under active development. API may change.</div>
+</aside>
 
   
     <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
@@ -124,8 +131,8 @@ window.addEventListener("load", () => mermaid.run());
       
     
     
-    <img src="../../../_static/myogen_logo.png" class="logo__image only-light" alt="MyoGen 0.3.0 Documentation - Home"/>
-    <img src="../../../_static/myogen_logo.png" class="logo__image only-dark pst-js-only" alt="MyoGen 0.3.0 Documentation - Home"/>
+    <img src="../../../_static/myogen_logo.png" class="logo__image only-light" alt="MyoGen 0.4.0 Documentation - Home"/>
+    <img src="../../../_static/myogen_logo.png" class="logo__image only-dark pst-js-only" alt="MyoGen 0.4.0 Documentation - Home"/>
   
   
 </a></div>
@@ -134,7 +141,7 @@ window.addEventListener("load", () => mermaid.run());
 <div class="nav-item">
   <div class="version-switcher__container dropdown">
       <button id="version-switcher-button" type="button" class="version-switcher__button btn btn-sm navbar-btn" aria-haspopup="true" aria-expanded="false">
-          Version 0.3.0
+          Version 0.4.0
       </button>
       
       
@@ -367,7 +374,6 @@ window.addEventListener("load", () => mermaid.run());
 <span></span><span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">cast</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">beartype</span><span class="w"> </span><span class="kn">import</span> <span class="n">beartype</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">myogen.utils.types</span><span class="w"> </span><span class="kn">import</span> <span class="n">INPUT_CURRENT__MATRIX</span><span class="p">,</span> <span class="n">beartowertype</span>
 
@@ -489,11 +495,11 @@ window.addEventListener("load", () => mermaid.run());
 <span class="k">def</span><span class="w"> </span><span class="nf">create_sawtooth_current</span><span class="p">(</span>
     <span class="n">n_pools</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
     <span class="n">t_points</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
-    <span class="n">timestep_ms</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+    <span class="n">timestep__ms</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
     <span class="n">amplitudes__muV</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="nb">list</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span>
     <span class="n">frequencies__Hz</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="nb">list</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span>
     <span class="n">offsets__muV</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="nb">list</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span>
-    <span class="n">widths</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="nb">list</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.5</span><span class="p">,</span>
+    <span class="n">widths__ratio</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="nb">list</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.5</span><span class="p">,</span>
     <span class="n">phases__rad</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="nb">list</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">INPUT_CURRENT__MATRIX</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Create a matrix of sawtooth currents for multiple pools.</span>
@@ -504,7 +510,7 @@ window.addEventListener("load", () => mermaid.run());
 <span class="sd">        Number of current pools to generate</span>
 <span class="sd">    t_points : int</span>
 <span class="sd">        Number of time points</span>
-<span class="sd">    timestep_ms : float</span>
+<span class="sd">    timestep__ms : float</span>
 <span class="sd">        Time step in milliseconds</span>
 <span class="sd">    amplitudes__muV : float | list[float]</span>
 <span class="sd">        Amplitude(s) of the sawtooth current(s) in microvolts.</span>
@@ -527,7 +533,7 @@ window.addEventListener("load", () => mermaid.run());
 <span class="sd">            - Single float: used for all pools</span>
 <span class="sd">            - List of floats: must match n_pools</span>
 
-<span class="sd">    widths : float | list[float]</span>
+<span class="sd">    widths__ratio : float | list[float]</span>
 <span class="sd">        Width(s) of the rising edge as proportion of period (0 to 1).</span>
 
 <span class="sd">        Must be:</span>
@@ -551,7 +557,7 @@ window.addEventListener("load", () => mermaid.run());
 <span class="sd">    INPUT_CURRENT__MATRIX</span>
 <span class="sd">        Matrix of shape (n_pools, t_points) containing sawtooth currents</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">t</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">t_points</span> <span class="o">*</span> <span class="n">timestep_ms</span><span class="p">,</span> <span class="n">timestep_ms</span><span class="p">)</span>
+    <span class="n">t</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">t_points</span> <span class="o">*</span> <span class="n">timestep__ms</span><span class="p">,</span> <span class="n">timestep__ms</span><span class="p">)</span>
 
     <span class="c1"># Convert parameters to lists</span>
     <span class="n">amplitudes_list</span> <span class="o">=</span> <span class="n">cast</span><span class="p">(</span>
@@ -571,7 +577,10 @@ window.addEventListener("load", () => mermaid.run());
         <span class="p">[</span><span class="n">offsets__muV</span><span class="p">]</span> <span class="o">*</span> <span class="n">n_pools</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">offsets__muV</span><span class="p">,</span> <span class="nb">float</span><span class="p">)</span> <span class="k">else</span> <span class="n">offsets__muV</span><span class="p">,</span>
     <span class="p">)</span>
     <span class="n">widths_list</span> <span class="o">=</span> <span class="n">cast</span><span class="p">(</span>
-        <span class="nb">list</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span> <span class="p">[</span><span class="n">widths</span><span class="p">]</span> <span class="o">*</span> <span class="n">n_pools</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">widths</span><span class="p">,</span> <span class="nb">float</span><span class="p">)</span> <span class="k">else</span> <span class="n">widths</span>
+        <span class="nb">list</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span>
+        <span class="p">[</span><span class="n">widths__ratio</span><span class="p">]</span> <span class="o">*</span> <span class="n">n_pools</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">widths__ratio</span><span class="p">,</span> <span class="nb">float</span><span class="p">)</span>
+        <span class="k">else</span> <span class="n">widths__ratio</span><span class="p">,</span>
     <span class="p">)</span>
     <span class="n">phases_list</span> <span class="o">=</span> <span class="n">cast</span><span class="p">(</span>
         <span class="nb">list</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span>
@@ -592,7 +601,7 @@ window.addEventListener("load", () => mermaid.run());
         <span class="p">)</span>
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">widths_list</span><span class="p">)</span> <span class="o">!=</span> <span class="n">n_pools</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;Length of widths (</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">widths_list</span><span class="p">)</span><span class="si">}</span><span class="s2">) must match n_pools (</span><span class="si">{</span><span class="n">n_pools</span><span class="si">}</span><span class="s2">)&quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;Length of widths__ratio (</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">widths_list</span><span class="p">)</span><span class="si">}</span><span class="s2">) must match n_pools (</span><span class="si">{</span><span class="n">n_pools</span><span class="si">}</span><span class="s2">)&quot;</span>
         <span class="p">)</span>
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">phases_list</span><span class="p">)</span> <span class="o">!=</span> <span class="n">n_pools</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
@@ -621,7 +630,7 @@ window.addEventListener("load", () => mermaid.run());
 <span class="k">def</span><span class="w"> </span><span class="nf">create_step_current</span><span class="p">(</span>
     <span class="n">n_pools</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
     <span class="n">t_points</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
-    <span class="n">timestep_ms</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+    <span class="n">timestep__ms</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
     <span class="n">step_heights__muV</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="nb">list</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span>
     <span class="n">step_durations__ms</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="nb">list</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span>
     <span class="n">offsets__muV</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="nb">list</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span>
@@ -634,7 +643,7 @@ window.addEventListener("load", () => mermaid.run());
 <span class="sd">        Number of current pools to generate</span>
 <span class="sd">    t_points : int</span>
 <span class="sd">        Number of time points</span>
-<span class="sd">    timestep_ms : float</span>
+<span class="sd">    timestep__ms : float</span>
 <span class="sd">        Time step in milliseconds.</span>
 <span class="sd">    step_heights__muV : float | list[float]</span>
 <span class="sd">        Step height(s) for the current(s) in microvolts.</span>
@@ -702,7 +711,7 @@ window.addEventListener("load", () => mermaid.run());
         <span class="n">current</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">t_points</span><span class="p">)</span>
 
         <span class="c1"># Create step: constant value for duration, then back to zero</span>
-        <span class="n">duration_points</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">step_durations_list</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">/</span> <span class="n">timestep_ms</span><span class="p">)</span>
+        <span class="n">duration_points</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">step_durations_list</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">/</span> <span class="n">timestep__ms</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">duration_points</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
             <span class="n">end_idx</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">duration_points</span><span class="p">,</span> <span class="n">t_points</span><span class="p">)</span>
             <span class="n">current</span><span class="p">[:</span><span class="n">end_idx</span><span class="p">]</span> <span class="o">=</span> <span class="n">step_heights_list</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
@@ -810,7 +819,7 @@ window.addEventListener("load", () => mermaid.run());
 <span class="k">def</span><span class="w"> </span><span class="nf">create_trapezoid_current</span><span class="p">(</span>
     <span class="n">n_pools</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
     <span class="n">t_points</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
-    <span class="n">timestep_ms</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+    <span class="n">timestep__ms</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
     <span class="n">amplitudes__muV</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="nb">list</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span>
     <span class="n">rise_times__ms</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="nb">list</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="mf">100.0</span><span class="p">,</span>
     <span class="n">plateau_times__ms</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="nb">list</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="mf">200.0</span><span class="p">,</span>
@@ -826,7 +835,7 @@ window.addEventListener("load", () => mermaid.run());
 <span class="sd">        Number of current pools to generate</span>
 <span class="sd">    t_points : int</span>
 <span class="sd">        Number of time points</span>
-<span class="sd">    timestep_ms : float</span>
+<span class="sd">    timestep__ms : float</span>
 <span class="sd">        Time step in milliseconds</span>
 <span class="sd">    amplitudes__muV : float | list[float]</span>
 <span class="sd">        Amplitude(s) of the trapezoidal current(s) in microvolts.</span>
@@ -941,10 +950,10 @@ window.addEventListener("load", () => mermaid.run());
 
     <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_pools</span><span class="p">):</span>
         <span class="c1"># Calculate indices for each phase</span>
-        <span class="n">delay_points</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">delays_list</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">/</span> <span class="n">timestep_ms</span><span class="p">)</span>
-        <span class="n">rise_points</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">rise_times_list</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">/</span> <span class="n">timestep_ms</span><span class="p">)</span>
-        <span class="n">plateau_points</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">plateau_times_list</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">/</span> <span class="n">timestep_ms</span><span class="p">)</span>
-        <span class="n">fall_points</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">fall_times_list</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">/</span> <span class="n">timestep_ms</span><span class="p">)</span>
+        <span class="n">delay_points</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">delays_list</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">/</span> <span class="n">timestep__ms</span><span class="p">)</span>
+        <span class="n">rise_points</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">rise_times_list</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">/</span> <span class="n">timestep__ms</span><span class="p">)</span>
+        <span class="n">plateau_points</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">plateau_times_list</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">/</span> <span class="n">timestep__ms</span><span class="p">)</span>
+        <span class="n">fall_points</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">fall_times_list</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">/</span> <span class="n">timestep__ms</span><span class="p">)</span>
 
         <span class="c1"># Create the base trapezoid shape</span>
         <span class="n">trapezoid</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">t_points</span><span class="p">)</span>

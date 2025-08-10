@@ -84,7 +84,7 @@ t_points = int(simulation_duration__ms / timestep__ms)
 # of each motor unit.
 
 recruitment_thresholds, _ = simulator.generate_mu_recruitment_thresholds(
-    N=n_motor_units, recruitment_range=recruitment_range
+    N=n_motor_units, recruitment_range__ratio=recruitment_range
 )
 
 ##############################################################################
@@ -98,7 +98,7 @@ force_model = ForceModel(
     recruitment_thresholds=recruitment_thresholds,
     recording_frequency__Hz=recording_frequency__Hz,
     longest_duration_rise_time__ms=longest_duration_rise_time__ms,
-    contraction_time_range=contraction_time_range,
+    contraction_time_range__unitless=contraction_time_range,
 )
 
 # Display force model statistics
@@ -106,10 +106,10 @@ print(f"\nForce model statistics:")
 print(f"  - Number of motor units: {force_model._number_of_neurons}")
 print(f"  - Recruitment ratio: {force_model._recruitment_ratio:.1f}")
 print(
-    f"  - Peak force range: {force_model.peak_twitch_forces[0]:.3f} - {force_model.peak_twitch_forces[-1]:.3f}"
+    f"  - Peak force range: {force_model.peak_twitch_forces__unitless[0]:.3f} - {force_model.peak_twitch_forces__unitless[-1]:.3f}"
 )
 print(
-    f"  - Contraction time range: {force_model.contraction_times[0]:.1f} - {force_model.contraction_times[-1]:.1f} samples"
+    f"  - Contraction time range: {force_model.contraction_times__samples[0]:.1f} - {force_model.contraction_times__samples[-1]:.1f} samples"
 )
 
 ##############################################################################
@@ -161,7 +161,7 @@ trap_delay = 2500.0  # Initial delay (ms)
 trapezoid_current = create_trapezoid_current(
     n_pools=1,
     t_points=t_points,
-    timestep_ms=timestep__ms,
+    timestep__ms=timestep__ms,
     amplitudes__muV=[trap_amplitude],
     rise_times__ms=[trap_rise_time],
     plateau_times__ms=[trap_plateau_time],

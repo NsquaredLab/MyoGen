@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>myogen.simulator.core.spike_train.spike_train &#8212; MyoGen 0.3.0 Documentation</title>
+    <title>myogen.simulator.core.spike_train.spike_train &#8212; MyoGen 0.4.0 Documentation</title>
   
   
   
@@ -30,11 +30,13 @@
 <link href="../../../../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
 
     <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/custom.css?v=34f00721" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/sg_gallery.css?v=d2d258e8" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/sg_gallery-binder.css?v=f4aeca0c" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
-    <link rel="stylesheet" type="text/css" href="../../../../../_static/custom.css?v=73e2cb9d" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/custom.css?v=34f00721" />
   
   <!-- So that users can add custom icons -->
   <script src="../../../../../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
@@ -42,9 +44,11 @@
   <link rel="preload" as="script" href="../../../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="../../../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="../../../../../_static/documentation_options.js?v=e259d695"></script>
+    <script src="../../../../../_static/documentation_options.js?v=1437fa6d"></script>
     <script src="../../../../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../../../_static/custom.js?v=a236ca48"></script>
+    <script src="../../../../../_static/design-tabs.js?v=f930bc37"></script>
     <script type="module" src="https://cdn.jsdelivr.net/npm/mermaid@11.9.0/dist/mermaid.esm.min.mjs"></script>
     <script type="module" src="https://cdn.jsdelivr.net/npm/@mermaid-js/layout-elk@0.1.4/dist/mermaid-layout-elk.esm.min.mjs"></script>
     <script type="module">import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@11.9.0/dist/mermaid.esm.min.mjs";import elkLayouts from "https://cdn.jsdelivr.net/npm/@mermaid-js/layout-elk@0.1.4/dist/mermaid-layout-elk.esm.min.mjs";mermaid.registerLayoutLoaders(elkLayouts);mermaid.initialize({startOnLoad:false});</script>
@@ -58,7 +62,7 @@ window.addEventListener("load", () => mermaid.run());
     <link rel="search" title="Search" href="../../../../../search.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="0.3.0" />
+  <meta name="docsearch:version" content="0.4.0" />
   </head>
   
   
@@ -83,8 +87,8 @@ window.addEventListener("load", () => mermaid.run());
   <input type="search"
          class="form-control"
          name="q"
-         placeholder="Search the docs ..."
-         aria-label="Search the docs ..."
+         placeholder="Search MyoGen docs..."
+         aria-label="Search MyoGen docs..."
          autocomplete="off"
          autocorrect="off"
          autocapitalize="off"
@@ -96,6 +100,9 @@ window.addEventListener("load", () => mermaid.run());
   <div class="pst-async-banner-revealer d-none">
   <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
 </div>
+<aside class="bd-header-announcement" aria-label="Announcement">
+  <div class="bd-header-announcement__content">⚠️ MyoGen is under active development. API may change.</div>
+</aside>
 
   
     <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
@@ -124,8 +131,8 @@ window.addEventListener("load", () => mermaid.run());
       
     
     
-    <img src="../../../../../_static/myogen_logo.png" class="logo__image only-light" alt="MyoGen 0.3.0 Documentation - Home"/>
-    <img src="../../../../../_static/myogen_logo.png" class="logo__image only-dark pst-js-only" alt="MyoGen 0.3.0 Documentation - Home"/>
+    <img src="../../../../../_static/myogen_logo.png" class="logo__image only-light" alt="MyoGen 0.4.0 Documentation - Home"/>
+    <img src="../../../../../_static/myogen_logo.png" class="logo__image only-dark pst-js-only" alt="MyoGen 0.4.0 Documentation - Home"/>
   
   
 </a></div>
@@ -134,7 +141,7 @@ window.addEventListener("load", () => mermaid.run());
 <div class="nav-item">
   <div class="version-switcher__container dropdown">
       <button id="version-switcher-button" type="button" class="version-switcher__button btn btn-sm navbar-btn" aria-haspopup="true" aria-expanded="false">
-          Version 0.3.0
+          Version 0.4.0
       </button>
       
       
@@ -361,14 +368,15 @@ window.addEventListener("load", () => mermaid.run());
                 <article class="bd-article">
                   
   <h1>Source code for myogen.simulator.core.spike_train.spike_train</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span><span class="w"> </span><span class="nn">operator</span><span class="w"> </span><span class="kn">import</span> <span class="n">call</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Literal</span>
+<span></span><span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Literal</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">neo</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">tqdm</span><span class="w"> </span><span class="kn">import</span> <span class="n">tqdm</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">pyNN.neuron</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">sim</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pyNN.neuron.morphology</span><span class="w"> </span><span class="kn">import</span> <span class="n">uniform</span><span class="p">,</span> <span class="n">centre</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pyNN.parameters</span><span class="w"> </span><span class="kn">import</span> <span class="n">IonicSpecies</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pyNN.random</span><span class="w"> </span><span class="kn">import</span> <span class="n">NumpyRNG</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">neo</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">myogen</span><span class="w"> </span><span class="kn">import</span> <span class="n">RANDOM_GENERATOR</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">myogen.simulator.core.spike_train</span><span class="w"> </span><span class="kn">import</span> <span class="n">functions</span><span class="p">,</span> <span class="n">classes</span>
@@ -376,84 +384,125 @@ window.addEventListener("load", () => mermaid.run());
     <span class="n">SPIKE_TRAIN__MATRIX</span><span class="p">,</span>
     <span class="n">INPUT_CURRENT__MATRIX</span><span class="p">,</span>
     <span class="n">CORTICAL_INPUT__MATRIX</span><span class="p">,</span>
+    <span class="n">beartowertype</span><span class="p">,</span>
 <span class="p">)</span>
 
 
 <div class="viewcode-block" id="MotorNeuronPool">
 <a class="viewcode-back" href="../../../../../generated/myogen.simulator.MotorNeuronPool.html#myogen.simulator.MotorNeuronPool">[docs]</a>
+<span class="nd">@beartowertype</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">MotorNeuronPool</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Motor neuron pool with specified parameters</span>
+<span class="sd">    Motor neuron pool with specified parameters for EMG simulation.</span>
+
+<span class="sd">    This class creates and manages a pool of motor neurons with physiologically</span>
+<span class="sd">    realistic parameters. It supports spike train generation through NEURON</span>
+<span class="sd">    backend integration and provides both current injection and cortical input</span>
+<span class="sd">    stimulation modes.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">    recruitment_thresholds: np.ndarray</span>
-<span class="sd">        Array of recruitment thresholds for the motor neurons</span>
-<span class="sd">    diameter_soma_min: float</span>
-<span class="sd">        Minimum diameter of the soma</span>
-<span class="sd">    diameter_soma_max: float</span>
-<span class="sd">    y_min: float</span>
-<span class="sd">        Minimum y coordinate of the soma</span>
-<span class="sd">    y_max: float</span>
-<span class="sd">        Maximum y coordinate of the soma</span>
-<span class="sd">    diameter_dend_min: float</span>
-<span class="sd">        Minimum diameter of the dendrite</span>
-<span class="sd">    diameter_dend_max: float</span>
-<span class="sd">        Maximum diameter of the dendrite</span>
-<span class="sd">    x_min: float</span>
-<span class="sd">        Minimum x coordinate of the dendrite</span>
-<span class="sd">    x_max: float</span>
-<span class="sd">        Maximum x coordinate of the dendrite</span>
-<span class="sd">    vt_min: float</span>
-<span class="sd">        Minimum voltage threshold of the neuron</span>
-<span class="sd">    vt_max: float</span>
-<span class="sd">        Maximum voltage threshold of the neuron</span>
-<span class="sd">    kf_cond_min: float</span>
-<span class="sd">        Minimum conductance density of the potassium fast channel</span>
-<span class="sd">    kf_cond_max: float</span>
-<span class="sd">        Maximum conductance density of the potassium fast channel</span>
-<span class="sd">    CV: float</span>
-<span class="sd">        Coefficient of variation of the noise</span>
+<span class="sd">    recruitment_thresholds : np.ndarray</span>
+<span class="sd">        Array of recruitment thresholds for the motor neurons (normalized 0-1)</span>
+<span class="sd">    diameter_soma_min__mm : float, default=77.5</span>
+<span class="sd">        Minimum diameter of the soma in millimeters</span>
+<span class="sd">    diameter_soma_max__mm : float, default=82.5</span>
+<span class="sd">        Maximum diameter of the soma in millimeters</span>
+<span class="sd">    y_min__mm : float, default=18.0</span>
+<span class="sd">        Minimum y coordinate of the soma in millimeters</span>
+<span class="sd">    y_max__mm : float, default=36.0</span>
+<span class="sd">        Maximum y coordinate of the soma in millimeters</span>
+<span class="sd">    diameter_dend_min__mm : float, default=41.5</span>
+<span class="sd">        Minimum diameter of the dendrite in millimeters</span>
+<span class="sd">    diameter_dend_max__mm : float, default=62.5</span>
+<span class="sd">        Maximum diameter of the dendrite in millimeters</span>
+<span class="sd">    x_min__mm : float, default=-5500</span>
+<span class="sd">        Minimum x coordinate of the dendrite in millimeters</span>
+<span class="sd">    x_max__mm : float, default=-6789</span>
+<span class="sd">        Maximum x coordinate of the dendrite in millimeters</span>
+<span class="sd">    vt_min__mV : float, default=12.35</span>
+<span class="sd">        Minimum voltage threshold of the neuron in millivolts</span>
+<span class="sd">    vt_max__mV : float, default=20.9</span>
+<span class="sd">        Maximum voltage threshold of the neuron in millivolts</span>
+<span class="sd">    kf_cond_min__S_per_cm2 : float, default=4</span>
+<span class="sd">        Minimum conductance density of the potassium fast channel in S/cm²</span>
+<span class="sd">    kf_cond_max__S_per_cm2 : float, default=0.5</span>
+<span class="sd">        Maximum conductance density of the potassium fast channel in S/cm²</span>
+<span class="sd">    coefficient_of_variation : float, default=0.01</span>
+<span class="sd">        Coefficient of variation for parameter noise (0-1)</span>
 
-<span class="sd">    Returns</span>
-<span class="sd">    -------</span>
-<span class="sd">    MotorNeuronPool</span>
-<span class="sd">        Motor neuron pool with specified parameters</span>
+<span class="sd">    Attributes</span>
+<span class="sd">    ----------</span>
+<span class="sd">    spike_trains : SPIKE_TRAIN__MATRIX</span>
+<span class="sd">        Matrix of spike trains - available after generate_spike_trains()</span>
+<span class="sd">    active_neuron_indices : list[np.ndarray]</span>
+<span class="sd">        Indices of active neurons per pool - available after generate_spike_trains()</span>
+<span class="sd">    data : list[neo.Segment]</span>
+<span class="sd">        Neo segments with recorded data - available after generate_spike_trains()</span>
+<span class="sd">    mvc_current_threshold : float</span>
+<span class="sd">        Minimum current for maximum voluntary contraction - computed on access</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; pool = MotorNeuronPool(recruitment_thresholds=np.linspace(0, 1, 100))</span>
+<span class="sd">    &gt;&gt;&gt; current_matrix = np.random.randn(5, 1000) * 50</span>
+<span class="sd">    &gt;&gt;&gt; spike_trains, indices, data = pool.generate_spike_trains(current_matrix)</span>
+<span class="sd">    &gt;&gt;&gt; print(f&quot;Generated spike trains shape: {pool.spike_trains.shape}&quot;)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
+<div class="viewcode-block" id="MotorNeuronPool.__init__">
+<a class="viewcode-back" href="../../../../../generated/myogen.simulator.MotorNeuronPool.__init__.html#myogen.simulator.MotorNeuronPool.__init__">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">recruitment_thresholds</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
-        <span class="n">diameter_soma_min</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">77.5</span><span class="p">,</span>
-        <span class="n">diameter_soma_max</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">82.5</span><span class="p">,</span>
-        <span class="n">y_min</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">18.0</span><span class="p">,</span>
-        <span class="n">y_max</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">36.0</span><span class="p">,</span>
-        <span class="n">diameter_dend_min</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">41.5</span><span class="p">,</span>
-        <span class="n">diameter_dend_max</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">62.5</span><span class="p">,</span>
-        <span class="n">x_min</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="o">-</span><span class="mi">5500</span><span class="p">,</span>
-        <span class="n">x_max</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="o">-</span><span class="mi">6789</span><span class="p">,</span>
-        <span class="n">vt_min</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">12.35</span><span class="p">,</span>
-        <span class="n">vt_max</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">20.9</span><span class="p">,</span>
-        <span class="n">kf_cond_min</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">4</span><span class="p">,</span>
-        <span class="n">kf_cond_max</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.5</span><span class="p">,</span>
-        <span class="n">CV</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.01</span><span class="p">,</span>
+        <span class="n">diameter_soma_min__mm</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">77.5</span><span class="p">,</span>
+        <span class="n">diameter_soma_max__mm</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">82.5</span><span class="p">,</span>
+        <span class="n">y_min__mm</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">18.0</span><span class="p">,</span>
+        <span class="n">y_max__mm</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">36.0</span><span class="p">,</span>
+        <span class="n">diameter_dend_min__mm</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">41.5</span><span class="p">,</span>
+        <span class="n">diameter_dend_max__mm</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">62.5</span><span class="p">,</span>
+        <span class="n">x_min__mm</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="o">-</span><span class="mi">5500</span><span class="p">,</span>
+        <span class="n">x_max__mm</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="o">-</span><span class="mi">6789</span><span class="p">,</span>
+        <span class="n">vt_min__mV</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">12.35</span><span class="p">,</span>
+        <span class="n">vt_max__mV</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">20.9</span><span class="p">,</span>
+        <span class="n">kf_cond_min__S_per_cm2</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">4</span><span class="p">,</span>
+        <span class="n">kf_cond_max__S_per_cm2</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.5</span><span class="p">,</span>
+        <span class="n">coefficient_of_variation</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.01</span><span class="p">,</span>
     <span class="p">):</span>
+        <span class="c1"># Store immutable public parameters</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">recruitment_thresholds</span> <span class="o">=</span> <span class="n">recruitment_thresholds</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">diameter_soma_min</span> <span class="o">=</span> <span class="n">diameter_soma_min</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">diameter_soma_max</span> <span class="o">=</span> <span class="n">diameter_soma_max</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">y_min</span> <span class="o">=</span> <span class="n">y_min</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">y_max</span> <span class="o">=</span> <span class="n">y_max</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">diameter_dend_min</span> <span class="o">=</span> <span class="n">diameter_dend_min</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">diameter_dend_max</span> <span class="o">=</span> <span class="n">diameter_dend_max</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">x_min</span> <span class="o">=</span> <span class="n">x_min</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">x_max</span> <span class="o">=</span> <span class="n">x_max</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">vt_min</span> <span class="o">=</span> <span class="n">vt_min</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">vt_max</span> <span class="o">=</span> <span class="n">vt_max</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">kf_cond_min</span> <span class="o">=</span> <span class="n">kf_cond_min</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">kf_cond_max</span> <span class="o">=</span> <span class="n">kf_cond_max</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">CV</span> <span class="o">=</span> <span class="n">CV</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">diameter_soma_min__mm</span> <span class="o">=</span> <span class="n">diameter_soma_min__mm</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">diameter_soma_max__mm</span> <span class="o">=</span> <span class="n">diameter_soma_max__mm</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">y_min__mm</span> <span class="o">=</span> <span class="n">y_min__mm</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">y_max__mm</span> <span class="o">=</span> <span class="n">y_max__mm</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">diameter_dend_min__mm</span> <span class="o">=</span> <span class="n">diameter_dend_min__mm</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">diameter_dend_max__mm</span> <span class="o">=</span> <span class="n">diameter_dend_max__mm</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">x_min__mm</span> <span class="o">=</span> <span class="n">x_min__mm</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">x_max__mm</span> <span class="o">=</span> <span class="n">x_max__mm</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">vt_min__mV</span> <span class="o">=</span> <span class="n">vt_min__mV</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">vt_max__mV</span> <span class="o">=</span> <span class="n">vt_max__mV</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">kf_cond_min__S_per_cm2</span> <span class="o">=</span> <span class="n">kf_cond_min__S_per_cm2</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">kf_cond_max__S_per_cm2</span> <span class="o">=</span> <span class="n">kf_cond_max__S_per_cm2</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">coefficient_of_variation</span> <span class="o">=</span> <span class="n">coefficient_of_variation</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="nf">_create_motor_neuron_pool</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">classes</span><span class="o">.</span><span class="n">cell_class</span><span class="p">:</span>
+        <span class="c1"># Store private copies for internal modifications</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_recruitment_thresholds</span> <span class="o">=</span> <span class="n">recruitment_thresholds</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_diameter_soma_min__mm</span> <span class="o">=</span> <span class="n">diameter_soma_min__mm</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_diameter_soma_max__mm</span> <span class="o">=</span> <span class="n">diameter_soma_max__mm</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_y_min__mm</span> <span class="o">=</span> <span class="n">y_min__mm</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_y_max__mm</span> <span class="o">=</span> <span class="n">y_max__mm</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_diameter_dend_min__mm</span> <span class="o">=</span> <span class="n">diameter_dend_min__mm</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_diameter_dend_max__mm</span> <span class="o">=</span> <span class="n">diameter_dend_max__mm</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_x_min__mm</span> <span class="o">=</span> <span class="n">x_min__mm</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_x_max__mm</span> <span class="o">=</span> <span class="n">x_max__mm</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_vt_min__mV</span> <span class="o">=</span> <span class="n">vt_min__mV</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_vt_max__mV</span> <span class="o">=</span> <span class="n">vt_max__mV</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_kf_cond_min__S_per_cm2</span> <span class="o">=</span> <span class="n">kf_cond_min__S_per_cm2</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_kf_cond_max__S_per_cm2</span> <span class="o">=</span> <span class="n">kf_cond_max__S_per_cm2</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_coefficient_of_variation</span> <span class="o">=</span> <span class="n">coefficient_of_variation</span></div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_create_motor_neuron_pool</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Create a pool of motor neurons with specified parameters</span>
 
 <span class="sd">        Returns</span>
@@ -463,33 +512,36 @@ window.addEventListener("load", () => mermaid.run());
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">rng</span> <span class="o">=</span> <span class="n">RANDOM_GENERATOR</span>
 
-        <span class="n">n_neurons</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">recruitment_thresholds</span><span class="p">)</span>
+        <span class="n">n_neurons</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_recruitment_thresholds</span><span class="p">)</span>
 
         <span class="n">somas</span> <span class="o">=</span> <span class="n">functions</span><span class="o">.</span><span class="n">create_somas</span><span class="p">(</span>
-            <span class="n">recruitment_thresholds</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">recruitment_thresholds</span><span class="p">,</span>
-            <span class="n">diameter_min</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">diameter_soma_min</span><span class="p">,</span>
-            <span class="n">diameter_max</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">diameter_soma_max</span><span class="p">,</span>
-            <span class="n">y_min</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">y_min</span><span class="p">,</span>
-            <span class="n">y_max</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">y_max</span><span class="p">,</span>
-            <span class="n">CV</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">CV</span><span class="p">,</span>
+            <span class="n">recruitment_thresholds</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_recruitment_thresholds</span><span class="p">,</span>
+            <span class="n">diameter_min</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_diameter_soma_min__mm</span><span class="p">,</span>
+            <span class="n">diameter_max</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_diameter_soma_max__mm</span><span class="p">,</span>
+            <span class="n">y_min</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_y_min__mm</span><span class="p">,</span>
+            <span class="n">y_max</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_y_max__mm</span><span class="p">,</span>
+            <span class="n">CV</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_coefficient_of_variation</span><span class="p">,</span>
         <span class="p">)</span>
         <span class="n">dends</span> <span class="o">=</span> <span class="n">functions</span><span class="o">.</span><span class="n">create_dends</span><span class="p">(</span>
-            <span class="n">recruitment_thresholds</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">recruitment_thresholds</span><span class="p">,</span>
+            <span class="n">recruitment_thresholds</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_recruitment_thresholds</span><span class="p">,</span>
             <span class="n">somas</span><span class="o">=</span><span class="n">somas</span><span class="p">,</span>
-            <span class="n">diameter_min</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">diameter_dend_min</span><span class="p">,</span>
-            <span class="n">diameter_max</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">diameter_dend_max</span><span class="p">,</span>
-            <span class="n">y_min</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">y_min</span><span class="p">,</span>
-            <span class="n">y_max</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">y_max</span><span class="p">,</span>
-            <span class="n">x_min</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">x_min</span><span class="p">,</span>
-            <span class="n">x_max</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">x_max</span><span class="p">,</span>
-            <span class="n">CV</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">CV</span><span class="p">,</span>
+            <span class="n">diameter_min</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_diameter_dend_min__mm</span><span class="p">,</span>
+            <span class="n">diameter_max</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_diameter_dend_max__mm</span><span class="p">,</span>
+            <span class="n">y_min</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_y_min__mm</span><span class="p">,</span>
+            <span class="n">y_max</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_y_max__mm</span><span class="p">,</span>
+            <span class="n">x_min</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_x_min__mm</span><span class="p">,</span>
+            <span class="n">x_max</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_x_max__mm</span><span class="p">,</span>
+            <span class="n">CV</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_coefficient_of_variation</span><span class="p">,</span>
         <span class="p">)</span>
 
         <span class="c1"># scale recruitment thresholds to v_min and v_max</span>
         <span class="n">vt</span> <span class="o">=</span> <span class="p">(</span>
             <span class="o">-</span><span class="mi">70</span>
-            <span class="o">+</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">vt_min</span> <span class="o">+</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">vt_max</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">vt_min</span><span class="p">)</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">recruitment_thresholds</span><span class="p">)</span>
-            <span class="o">+</span> <span class="n">rng</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="n">n_neurons</span><span class="p">)</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">CV</span>
+            <span class="o">+</span> <span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_vt_min__mV</span>
+                <span class="o">+</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_vt_max__mV</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">_vt_min__mV</span><span class="p">)</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_recruitment_thresholds</span>
+            <span class="p">)</span>
+            <span class="o">+</span> <span class="n">rng</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="n">n_neurons</span><span class="p">)</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_coefficient_of_variation</span>
         <span class="p">)</span>
 
         <span class="k">return</span> <span class="n">classes</span><span class="o">.</span><span class="n">cell_class</span><span class="p">(</span>
@@ -503,20 +555,32 @@ window.addEventListener("load", () => mermaid.run());
             <span class="p">},</span>
             <span class="n">pas_soma</span><span class="o">=</span><span class="p">{</span>
                 <span class="s2">&quot;conductance_density&quot;</span><span class="p">:</span> <span class="n">functions</span><span class="o">.</span><span class="n">create_cond</span><span class="p">(</span>
-                    <span class="n">n_neurons</span><span class="p">,</span> <span class="mf">7e-4</span><span class="p">,</span> <span class="mf">7e-4</span><span class="p">,</span> <span class="s2">&quot;soma&quot;</span><span class="p">,</span> <span class="n">CV</span><span class="o">=</span><span class="mi">10</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">CV</span>
+                    <span class="n">n_neurons</span><span class="p">,</span>
+                    <span class="mf">7e-4</span><span class="p">,</span>
+                    <span class="mf">7e-4</span><span class="p">,</span>
+                    <span class="s2">&quot;soma&quot;</span><span class="p">,</span>
+                    <span class="n">CV</span><span class="o">=</span><span class="mi">10</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_coefficient_of_variation</span><span class="p">,</span>
                 <span class="p">),</span>
                 <span class="s2">&quot;e_rev&quot;</span><span class="p">:</span> <span class="o">-</span><span class="mi">70</span><span class="p">,</span>
             <span class="p">},</span>  <span class="c1">#</span>
             <span class="n">pas_dend</span><span class="o">=</span><span class="p">{</span>
                 <span class="s2">&quot;conductance_density&quot;</span><span class="p">:</span> <span class="n">functions</span><span class="o">.</span><span class="n">create_cond</span><span class="p">(</span>
-                    <span class="n">n_neurons</span><span class="p">,</span> <span class="mf">7e-4</span><span class="p">,</span> <span class="mf">7e-4</span><span class="p">,</span> <span class="s2">&quot;dendrite&quot;</span><span class="p">,</span> <span class="n">CV</span><span class="o">=</span><span class="mi">10</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">CV</span>
+                    <span class="n">n_neurons</span><span class="p">,</span>
+                    <span class="mf">7e-4</span><span class="p">,</span>
+                    <span class="mf">7e-4</span><span class="p">,</span>
+                    <span class="s2">&quot;dendrite&quot;</span><span class="p">,</span>
+                    <span class="n">CV</span><span class="o">=</span><span class="mi">10</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_coefficient_of_variation</span><span class="p">,</span>
                 <span class="p">),</span>
                 <span class="s2">&quot;e_rev&quot;</span><span class="p">:</span> <span class="o">-</span><span class="mi">70</span><span class="p">,</span>
             <span class="p">},</span>  <span class="c1">#</span>
             <span class="n">na</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;conductance_density&quot;</span><span class="p">:</span> <span class="n">uniform</span><span class="p">(</span><span class="s2">&quot;soma&quot;</span><span class="p">,</span> <span class="mi">30</span><span class="p">),</span> <span class="s2">&quot;vt&quot;</span><span class="p">:</span> <span class="nb">list</span><span class="p">(</span><span class="n">vt</span><span class="p">)},</span>
             <span class="n">kf</span><span class="o">=</span><span class="p">{</span>
                 <span class="s2">&quot;conductance_density&quot;</span><span class="p">:</span> <span class="n">functions</span><span class="o">.</span><span class="n">create_cond</span><span class="p">(</span>
-                    <span class="n">n_neurons</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">kf_cond_min</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">kf_cond_max</span><span class="p">,</span> <span class="s2">&quot;soma&quot;</span><span class="p">,</span> <span class="n">CV</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">CV</span>
+                    <span class="n">n_neurons</span><span class="p">,</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_kf_cond_min__S_per_cm2</span><span class="p">,</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_kf_cond_max__S_per_cm2</span><span class="p">,</span>
+                    <span class="s2">&quot;soma&quot;</span><span class="p">,</span>
+                    <span class="n">CV</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_coefficient_of_variation</span><span class="p">,</span>
                 <span class="p">),</span>
                 <span class="s2">&quot;vt&quot;</span><span class="p">:</span> <span class="nb">list</span><span class="p">(</span><span class="n">vt</span><span class="p">),</span>
             <span class="p">},</span>
@@ -525,7 +589,7 @@ window.addEventListener("load", () => mermaid.run());
         <span class="p">)</span>
 
 <div class="viewcode-block" id="MotorNeuronPool.generate_spike_trains">
-<a class="viewcode-back" href="../../../../../generated/myogen.simulator.MotorNeuronPool.html#myogen.simulator.MotorNeuronPool.generate_spike_trains">[docs]</a>
+<a class="viewcode-back" href="../../../../../generated/myogen.simulator.MotorNeuronPool.generate_spike_trains.html#myogen.simulator.MotorNeuronPool.generate_spike_trains">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">generate_spike_trains</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">input_current__matrix</span><span class="p">:</span> <span class="n">INPUT_CURRENT__MATRIX</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -605,26 +669,39 @@ window.addEventListener("load", () => mermaid.run());
             <span class="p">)</span>
 
         <span class="c1"># Create motor neuron pools</span>
-        <span class="n">pools</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">sim</span><span class="o">.</span><span class="n">Population</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span>
-            <span class="n">sim</span><span class="o">.</span><span class="n">Population</span><span class="p">(</span>
-                <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">recruitment_thresholds</span><span class="p">),</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_create_motor_neuron_pool</span><span class="p">(),</span>
-                <span class="n">initial_values</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;v&quot;</span><span class="p">:</span> <span class="o">-</span><span class="mi">70</span><span class="p">},</span>
+        <span class="n">pools</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">sim</span><span class="o">.</span><span class="n">Population</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">pool_idx</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span>
+            <span class="nb">range</span><span class="p">(</span><span class="n">n_pools</span><span class="p">),</span> <span class="n">desc</span><span class="o">=</span><span class="s2">&quot;Creating motor neuron pools&quot;</span><span class="p">,</span> <span class="n">unit</span><span class="o">=</span><span class="s2">&quot;pool&quot;</span>
+        <span class="p">):</span>
+            <span class="n">pools</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                <span class="n">sim</span><span class="o">.</span><span class="n">Population</span><span class="p">(</span>
+                    <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_recruitment_thresholds</span><span class="p">),</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_create_motor_neuron_pool</span><span class="p">(),</span>
+                    <span class="n">initial_values</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;v&quot;</span><span class="p">:</span> <span class="o">-</span><span class="mi">70</span><span class="p">},</span>
+                <span class="p">)</span>
             <span class="p">)</span>
-            <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_pools</span><span class="p">)</span>
-        <span class="p">]</span>
 
         <span class="c1"># Inject currents into each pool - one current per pool</span>
         <span class="k">if</span> <span class="n">input_current__matrix</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">times</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">input_current__matrix</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">timestep__ms</span>
-            <span class="k">for</span> <span class="n">input_current</span><span class="p">,</span> <span class="n">pool</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">input_current__matrix</span><span class="p">,</span> <span class="n">pools</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">input_current</span><span class="p">,</span> <span class="n">pool</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span>
+                <span class="nb">zip</span><span class="p">(</span><span class="n">input_current__matrix</span><span class="p">,</span> <span class="n">pools</span><span class="p">),</span>
+                <span class="n">total</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">pools</span><span class="p">),</span>
+                <span class="n">desc</span><span class="o">=</span><span class="s2">&quot;Injecting currents into pools&quot;</span><span class="p">,</span>
+                <span class="n">unit</span><span class="o">=</span><span class="s2">&quot;pool&quot;</span><span class="p">,</span>
+            <span class="p">):</span>
                 <span class="n">current_source</span> <span class="o">=</span> <span class="n">sim</span><span class="o">.</span><span class="n">StepCurrentSource</span><span class="p">(</span>
                     <span class="n">times</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">times</span><span class="p">,</span> <span class="n">amplitudes</span><span class="o">=</span><span class="n">input_current</span>
                 <span class="p">)</span>
                 <span class="n">current_source</span><span class="o">.</span><span class="n">inject_into</span><span class="p">(</span><span class="n">pool</span><span class="p">,</span> <span class="n">location</span><span class="o">=</span><span class="s2">&quot;soma&quot;</span><span class="p">)</span>
 
                 <span class="c1"># Add Gaussian noise current to each neuron in the pool</span>
-                <span class="k">for</span> <span class="n">neuron</span> <span class="ow">in</span> <span class="n">pool</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">neuron</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span>
+                    <span class="n">pool</span><span class="p">,</span>
+                    <span class="n">desc</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Adding noise to neurons in pool&quot;</span><span class="p">,</span>
+                    <span class="n">unit</span><span class="o">=</span><span class="s2">&quot;neuron&quot;</span><span class="p">,</span>
+                    <span class="n">leave</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                <span class="p">):</span>
                     <span class="n">noise_source</span> <span class="o">=</span> <span class="n">sim</span><span class="o">.</span><span class="n">NoisyCurrentSource</span><span class="p">(</span>
                         <span class="n">mean</span><span class="o">=</span><span class="n">noise_mean__nA</span><span class="p">,</span>
                         <span class="n">stdev</span><span class="o">=</span><span class="n">noise_stdev__nA</span><span class="p">,</span>
@@ -672,31 +749,95 @@ window.addEventListener("load", () => mermaid.run());
         <span class="n">sim</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">simulation_time_points</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">timestep__ms</span><span class="p">,</span> <span class="n">callbacks</span><span class="o">=</span><span class="n">callbacks</span><span class="p">)</span>
         <span class="n">sim</span><span class="o">.</span><span class="n">end</span><span class="p">()</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="p">[</span><span class="n">pool</span><span class="o">.</span><span class="n">get_data</span><span class="p">()</span><span class="o">.</span><span class="n">segments</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">pool</span> <span class="ow">in</span> <span class="n">pools</span><span class="p">]</span>
+        <span class="c1"># Store results privately</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_data</span> <span class="o">=</span> <span class="p">[</span><span class="n">pool</span><span class="o">.</span><span class="n">get_data</span><span class="p">()</span><span class="o">.</span><span class="n">segments</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">pool</span> <span class="ow">in</span> <span class="n">pools</span><span class="p">]</span>
 
         <span class="c1"># Convert spike times to binary arrays and save</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">time_indices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">simulation_time_points</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">spike_trains</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_time_indices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">simulation_time_points</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_spike_trains</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
             <span class="p">[</span>
                 <span class="p">[</span>
                     <span class="n">np</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span>
-                        <span class="bp">self</span><span class="o">.</span><span class="n">time_indices</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">st</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">timestep__ms</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">_time_indices</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">st</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">timestep__ms</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
                     <span class="p">)</span>
                     <span class="k">for</span> <span class="n">st</span> <span class="ow">in</span> <span class="n">d</span><span class="o">.</span><span class="n">spiketrains</span>
                 <span class="p">]</span>
-                <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span>
+                <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span>
             <span class="p">]</span>
         <span class="p">)</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">active_neuron_indices</span> <span class="o">=</span> <span class="p">[</span>
-            <span class="n">np</span><span class="o">.</span><span class="n">argwhere</span><span class="p">(</span><span class="n">x</span><span class="p">)[:,</span> <span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">spike_trains</span><span class="p">,</span> <span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_active_neuron_indices</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">argwhere</span><span class="p">(</span><span class="n">x</span><span class="p">)[:,</span> <span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_spike_trains</span><span class="p">,</span> <span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span>
         <span class="p">]</span>
 
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">spike_trains</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">active_neuron_indices</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span></div>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_spike_trains</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_active_neuron_indices</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span></div>
 
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">spike_trains</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">SPIKE_TRAIN__MATRIX</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Matrix of spike trains for each pool and neuron.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        SPIKE_TRAIN__MATRIX</span>
+<span class="sd">            Matrix of shape (n_pools, neurons_per_pool, t_points) containing spike trains</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        AttributeError</span>
+<span class="sd">            If spike trains have not been computed. Run generate_spike_trains() first.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;_spike_trains&quot;</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span>
+                <span class="s2">&quot;Spike trains not computed. Run generate_spike_trains() first.&quot;</span>
+            <span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_spike_trains</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">active_neuron_indices</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        List of arrays containing indices of active neurons in each pool.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        list[np.ndarray]</span>
+<span class="sd">            List of arrays of indices of the active neurons in each pool</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        AttributeError</span>
+<span class="sd">            If active neuron indices have not been computed. Run generate_spike_trains() first.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;_active_neuron_indices&quot;</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span>
+                <span class="s2">&quot;Active neuron indices not computed. Run generate_spike_trains() first.&quot;</span>
+            <span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_active_neuron_indices</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">data</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">neo</span><span class="o">.</span><span class="n">Segment</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        List of neo segments containing recorded data from simulation.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        list[neo.core.segment.Segment]</span>
+<span class="sd">            List of neo segments containing the recorded data</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        AttributeError</span>
+<span class="sd">            If data has not been computed. Run generate_spike_trains() first.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;_data&quot;</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span>
+                <span class="s2">&quot;Simulation data not computed. Run generate_spike_trains() first.&quot;</span>
+            <span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span>
 
 <div class="viewcode-block" id="MotorNeuronPool.compute_mvc_current_threshold">
-<a class="viewcode-back" href="../../../../../generated/myogen.simulator.MotorNeuronPool.html#myogen.simulator.MotorNeuronPool.compute_mvc_current_threshold">[docs]</a>
+<a class="viewcode-back" href="../../../../../generated/myogen.simulator.MotorNeuronPool.compute_mvc_current_threshold.html#myogen.simulator.MotorNeuronPool.compute_mvc_current_threshold">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">compute_mvc_current_threshold</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Computes the minimum current threshold for maximum voluntary contraction</span>

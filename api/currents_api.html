@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Current Generation &#8212; MyoGen 0.3.0 Documentation</title>
+    <title>Current Generation &#8212; MyoGen 0.4.0 Documentation</title>
   
   
   
@@ -31,11 +31,13 @@
 <link href="../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
 
     <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=34f00721" />
     <link rel="stylesheet" type="text/css" href="../_static/sg_gallery.css?v=d2d258e8" />
     <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-binder.css?v=f4aeca0c" />
     <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-dataframe.css?v=2082cf3c" />
     <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
-    <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=73e2cb9d" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=34f00721" />
   
   <!-- So that users can add custom icons -->
   <script src="../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
@@ -43,9 +45,11 @@
   <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="../_static/documentation_options.js?v=e259d695"></script>
+    <script src="../_static/documentation_options.js?v=1437fa6d"></script>
     <script src="../_static/doctools.js?v=9bcbadda"></script>
     <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/custom.js?v=a236ca48"></script>
+    <script src="../_static/design-tabs.js?v=f930bc37"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'api/currents_api';</script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
@@ -53,7 +57,7 @@
     <link rel="prev" title="load_nmodl_files" href="../generated/myogen.utils.load_nmodl_files.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="0.3.0" />
+  <meta name="docsearch:version" content="0.4.0" />
   </head>
   
   
@@ -78,8 +82,8 @@
   <input type="search"
          class="form-control"
          name="q"
-         placeholder="Search the docs ..."
-         aria-label="Search the docs ..."
+         placeholder="Search MyoGen docs..."
+         aria-label="Search MyoGen docs..."
          autocomplete="off"
          autocorrect="off"
          autocapitalize="off"
@@ -91,6 +95,9 @@
   <div class="pst-async-banner-revealer d-none">
   <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
 </div>
+<aside class="bd-header-announcement" aria-label="Announcement">
+  <div class="bd-header-announcement__content">⚠️ MyoGen is under active development. API may change.</div>
+</aside>
 
   
     <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
@@ -119,8 +126,8 @@
       
     
     
-    <img src="../_static/myogen_logo.png" class="logo__image only-light" alt="MyoGen 0.3.0 Documentation - Home"/>
-    <img src="../_static/myogen_logo.png" class="logo__image only-dark pst-js-only" alt="MyoGen 0.3.0 Documentation - Home"/>
+    <img src="../_static/myogen_logo.png" class="logo__image only-light" alt="MyoGen 0.4.0 Documentation - Home"/>
+    <img src="../_static/myogen_logo.png" class="logo__image only-dark pst-js-only" alt="MyoGen 0.4.0 Documentation - Home"/>
   
   
 </a></div>
@@ -129,7 +136,7 @@
 <div class="nav-item">
   <div class="version-switcher__container dropdown">
       <button id="version-switcher-button" type="button" class="version-switcher__button btn btn-sm navbar-btn" aria-haspopup="true" aria-expanded="false">
-          Version 0.3.0
+          Version 0.4.0
       </button>
       
       
@@ -309,15 +316,91 @@
   <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
   <div class="bd-toc-item navbar-nav"><p aria-level="2" class="caption" role="heading"><span class="caption-text">API Modules</span></p>
 <ul class="current nav bd-sidenav">
-<li class="toctree-l1 has-children"><a class="reference internal" href="simulator_api.html">Simulator Module</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l1 has-children"><a class="reference internal" href="simulator_api.html">Simulator Module</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l2"><a class="reference internal" href="../generated/myogen.simulator.generate_mu_recruitment_thresholds.html">generate_mu_recruitment_thresholds</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../generated/myogen.simulator.MotorNeuronPool.html">MotorNeuronPool</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../generated/myogen.simulator.Muscle.html">Muscle</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../generated/myogen.simulator.ForceModel.html">ForceModel</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../generated/myogen.simulator.SurfaceEMG.html">SurfaceEMG</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../generated/myogen.simulator.IntramuscularEMG.html">IntramuscularEMG</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../generated/myogen.simulator.SurfaceElectrodeArray.html">SurfaceElectrodeArray</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../generated/myogen.simulator.IntramuscularElectrodeArray.html">IntramuscularElectrodeArray</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../generated/myogen.simulator.MotorNeuronPool.html">MotorNeuronPool</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../generated/myogen.simulator.MotorNeuronPool.__init__.html">myogen.simulator.MotorNeuronPool.__init__</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../generated/myogen.simulator.MotorNeuronPool.compute_mvc_current_threshold.html">myogen.simulator.MotorNeuronPool.compute_mvc_current_threshold</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../generated/myogen.simulator.MotorNeuronPool.generate_spike_trains.html">myogen.simulator.MotorNeuronPool.generate_spike_trains</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../generated/myogen.simulator.MotorNeuronPool.active_neuron_indices.html">myogen.simulator.MotorNeuronPool.active_neuron_indices</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../generated/myogen.simulator.MotorNeuronPool.data.html">myogen.simulator.MotorNeuronPool.data</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../generated/myogen.simulator.MotorNeuronPool.mvc_current_threshold.html">myogen.simulator.MotorNeuronPool.mvc_current_threshold</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../generated/myogen.simulator.MotorNeuronPool.spike_trains.html">myogen.simulator.MotorNeuronPool.spike_trains</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../generated/myogen.simulator.Muscle.html">Muscle</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../generated/myogen.simulator.Muscle.__init__.html">myogen.simulator.Muscle.__init__</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../generated/myogen.simulator.Muscle.assign_mfs2mns.html">myogen.simulator.Muscle.assign_mfs2mns</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../generated/myogen.simulator.Muscle.distribute_innervation_centers.html">myogen.simulator.Muscle.distribute_innervation_centers</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../generated/myogen.simulator.Muscle.generate_muscle_fiber_centers.html">myogen.simulator.Muscle.generate_muscle_fiber_centers</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../generated/myogen.simulator.Muscle.resulting_fiber_assignment.html">myogen.simulator.Muscle.resulting_fiber_assignment</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../generated/myogen.simulator.Muscle.assignment.html">myogen.simulator.Muscle.assignment</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../generated/myogen.simulator.Muscle.innervation_center_positions__mm.html">myogen.simulator.Muscle.innervation_center_positions__mm</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../generated/myogen.simulator.Muscle.muscle_border__mm.html">myogen.simulator.Muscle.muscle_border__mm</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../generated/myogen.simulator.Muscle.muscle_fiber_centers__mm.html">myogen.simulator.Muscle.muscle_fiber_centers__mm</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../generated/myogen.simulator.Muscle.muscle_fiber_conduction_velocities__mm_per_s.html">myogen.simulator.Muscle.muscle_fiber_conduction_velocities__mm_per_s</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../generated/myogen.simulator.Muscle.muscle_fiber_diameters__mm.html">myogen.simulator.Muscle.muscle_fiber_diameters__mm</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../generated/myogen.simulator.Muscle.number_of_muscle_fibers.html">myogen.simulator.Muscle.number_of_muscle_fibers</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../generated/myogen.simulator.Muscle.recruitment_thresholds.html">myogen.simulator.Muscle.recruitment_thresholds</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../generated/myogen.simulator.Muscle.resulting_innervation_areas__mm2.html">myogen.simulator.Muscle.resulting_innervation_areas__mm2</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../generated/myogen.simulator.Muscle.resulting_number_of_innervated_fibers.html">myogen.simulator.Muscle.resulting_number_of_innervated_fibers</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../generated/myogen.simulator.ForceModel.html">ForceModel</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../generated/myogen.simulator.ForceModel.__init__.html">myogen.simulator.ForceModel.__init__</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../generated/myogen.simulator.ForceModel.generate_force.html">myogen.simulator.ForceModel.generate_force</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../generated/myogen.simulator.ForceModel.contraction_times__samples.html">myogen.simulator.ForceModel.contraction_times__samples</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../generated/myogen.simulator.ForceModel.peak_twitch_forces__unitless.html">myogen.simulator.ForceModel.peak_twitch_forces__unitless</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../generated/myogen.simulator.ForceModel.twitch_list.html">myogen.simulator.ForceModel.twitch_list</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../generated/myogen.simulator.ForceModel.twitch_mat.html">myogen.simulator.ForceModel.twitch_mat</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../generated/myogen.simulator.SurfaceEMG.html">SurfaceEMG</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../generated/myogen.simulator.SurfaceEMG.__init__.html">myogen.simulator.SurfaceEMG.__init__</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../generated/myogen.simulator.SurfaceEMG.add_noise.html">myogen.simulator.SurfaceEMG.add_noise</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../generated/myogen.simulator.SurfaceEMG.simulate_muaps.html">myogen.simulator.SurfaceEMG.simulate_muaps</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../generated/myogen.simulator.SurfaceEMG.simulate_surface_emg.html">myogen.simulator.SurfaceEMG.simulate_surface_emg</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../generated/myogen.simulator.SurfaceEMG.motor_neuron_pool.html">myogen.simulator.SurfaceEMG.motor_neuron_pool</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../generated/myogen.simulator.SurfaceEMG.muaps.html">myogen.simulator.SurfaceEMG.muaps</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../generated/myogen.simulator.SurfaceEMG.noisy_surface_emg__tensors.html">myogen.simulator.SurfaceEMG.noisy_surface_emg__tensors</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../generated/myogen.simulator.SurfaceEMG.surface_emg__tensors.html">myogen.simulator.SurfaceEMG.surface_emg__tensors</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../generated/myogen.simulator.IntramuscularEMG.html">IntramuscularEMG</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../generated/myogen.simulator.IntramuscularEMG.__init__.html">myogen.simulator.IntramuscularEMG.__init__</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../generated/myogen.simulator.IntramuscularEMG.add_noise.html">myogen.simulator.IntramuscularEMG.add_noise</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../generated/myogen.simulator.IntramuscularEMG.simulate_intramuscular_emg.html">myogen.simulator.IntramuscularEMG.simulate_intramuscular_emg</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../generated/myogen.simulator.IntramuscularEMG.simulate_muaps.html">myogen.simulator.IntramuscularEMG.simulate_muaps</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../generated/myogen.simulator.IntramuscularEMG.intramuscular_emg__tensor.html">myogen.simulator.IntramuscularEMG.intramuscular_emg__tensor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../generated/myogen.simulator.IntramuscularEMG.motor_neuron_pool.html">myogen.simulator.IntramuscularEMG.motor_neuron_pool</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../generated/myogen.simulator.IntramuscularEMG.muaps.html">myogen.simulator.IntramuscularEMG.muaps</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../generated/myogen.simulator.IntramuscularEMG.noisy_intramuscular_emg__tensor.html">myogen.simulator.IntramuscularEMG.noisy_intramuscular_emg__tensor</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../generated/myogen.simulator.SurfaceElectrodeArray.html">SurfaceElectrodeArray</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../generated/myogen.simulator.SurfaceElectrodeArray.__init__.html">myogen.simulator.SurfaceElectrodeArray.__init__</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../generated/myogen.simulator.SurfaceElectrodeArray.get_H_sf.html">myogen.simulator.SurfaceElectrodeArray.get_H_sf</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../generated/myogen.simulator.SurfaceElectrodeArray.electrode_positions.html">myogen.simulator.SurfaceElectrodeArray.electrode_positions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../generated/myogen.simulator.SurfaceElectrodeArray.pos_theta.html">myogen.simulator.SurfaceElectrodeArray.pos_theta</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../generated/myogen.simulator.SurfaceElectrodeArray.pos_z.html">myogen.simulator.SurfaceElectrodeArray.pos_z</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../generated/myogen.simulator.IntramuscularElectrodeArray.html">IntramuscularElectrodeArray</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../generated/myogen.simulator.IntramuscularElectrodeArray.__init__.html">myogen.simulator.IntramuscularElectrodeArray.__init__</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../generated/myogen.simulator.IntramuscularElectrodeArray.calc_observation_points.html">myogen.simulator.IntramuscularElectrodeArray.calc_observation_points</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../generated/myogen.simulator.IntramuscularElectrodeArray.rodrigues_rot.html">myogen.simulator.IntramuscularElectrodeArray.rodrigues_rot</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../generated/myogen.simulator.IntramuscularElectrodeArray.rotate_and_translate.html">myogen.simulator.IntramuscularElectrodeArray.rotate_and_translate</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../generated/myogen.simulator.IntramuscularElectrodeArray.set_linear_trajectory.html">myogen.simulator.IntramuscularElectrodeArray.set_linear_trajectory</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../generated/myogen.simulator.IntramuscularElectrodeArray.set_position.html">myogen.simulator.IntramuscularElectrodeArray.set_position</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../generated/myogen.simulator.IntramuscularElectrodeArray.traj_mixing_fun.html">myogen.simulator.IntramuscularElectrodeArray.traj_mixing_fun</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../generated/myogen.simulator.IntramuscularElectrodeArray.traj_mixing_mat.html">myogen.simulator.IntramuscularElectrodeArray.traj_mixing_mat</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../generated/myogen.simulator.IntramuscularElectrodeArray.differential_matrix.html">myogen.simulator.IntramuscularElectrodeArray.differential_matrix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../generated/myogen.simulator.IntramuscularElectrodeArray.electrode_positions.html">myogen.simulator.IntramuscularElectrodeArray.electrode_positions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../generated/myogen.simulator.IntramuscularElectrodeArray.initial_positions.html">myogen.simulator.IntramuscularElectrodeArray.initial_positions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../generated/myogen.simulator.IntramuscularElectrodeArray.num_channels.html">myogen.simulator.IntramuscularElectrodeArray.num_channels</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../generated/myogen.simulator.IntramuscularElectrodeArray.trajectory_transforms.html">myogen.simulator.IntramuscularElectrodeArray.trajectory_transforms</a></li>
+</ul>
+</details></li>
 </ul>
 </details></li>
 <li class="toctree-l1 current active has-children"><a class="reference internal" href="utils_api.html">Utils Module</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
@@ -453,6 +536,22 @@
                 <dialog id="pst-secondary-sidebar-modal"></dialog>
                 <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
 
+
+  <div class="sidebar-secondary-item">
+
+  
+  <div class="tocsection editthispage">
+    <a href="https://github.com/NSquaredLab/MyoGen/edit/main/docs/api/currents_api.rst">
+      <i class="fa-solid fa-pencil"></i>
+      
+      
+        
+          Edit on GitHub
+        
+      
+    </a>
+  </div>
+</div>
 
   <div class="sidebar-secondary-item">
   <div role="note" aria-label="source link">

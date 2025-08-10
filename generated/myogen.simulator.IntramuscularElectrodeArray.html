@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>IntramuscularElectrodeArray &#8212; MyoGen 0.3.0 Documentation</title>
+    <title>IntramuscularElectrodeArray &#8212; MyoGen 0.4.0 Documentation</title>
   
   
   
@@ -31,11 +31,13 @@
 <link href="../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
 
     <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=34f00721" />
     <link rel="stylesheet" type="text/css" href="../_static/sg_gallery.css?v=d2d258e8" />
     <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-binder.css?v=f4aeca0c" />
     <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-dataframe.css?v=2082cf3c" />
     <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
-    <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=73e2cb9d" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=34f00721" />
   
   <!-- So that users can add custom icons -->
   <script src="../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
@@ -43,17 +45,19 @@
   <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="../_static/documentation_options.js?v=e259d695"></script>
+    <script src="../_static/documentation_options.js?v=1437fa6d"></script>
     <script src="../_static/doctools.js?v=9bcbadda"></script>
     <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/custom.js?v=a236ca48"></script>
+    <script src="../_static/design-tabs.js?v=f930bc37"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'generated/myogen.simulator.IntramuscularElectrodeArray';</script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="Utils Module" href="../api/utils_api.html" />
-    <link rel="prev" title="SurfaceElectrodeArray" href="myogen.simulator.SurfaceElectrodeArray.html" />
+    <link rel="next" title="myogen.simulator.IntramuscularElectrodeArray.__init__" href="myogen.simulator.IntramuscularElectrodeArray.__init__.html" />
+    <link rel="prev" title="myogen.simulator.SurfaceElectrodeArray.pos_z" href="myogen.simulator.SurfaceElectrodeArray.pos_z.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="0.3.0" />
+  <meta name="docsearch:version" content="0.4.0" />
   </head>
   
   
@@ -78,8 +82,8 @@
   <input type="search"
          class="form-control"
          name="q"
-         placeholder="Search the docs ..."
-         aria-label="Search the docs ..."
+         placeholder="Search MyoGen docs..."
+         aria-label="Search MyoGen docs..."
          autocomplete="off"
          autocorrect="off"
          autocapitalize="off"
@@ -91,6 +95,9 @@
   <div class="pst-async-banner-revealer d-none">
   <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
 </div>
+<aside class="bd-header-announcement" aria-label="Announcement">
+  <div class="bd-header-announcement__content">⚠️ MyoGen is under active development. API may change.</div>
+</aside>
 
   
     <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
@@ -119,8 +126,8 @@
       
     
     
-    <img src="../_static/myogen_logo.png" class="logo__image only-light" alt="MyoGen 0.3.0 Documentation - Home"/>
-    <img src="../_static/myogen_logo.png" class="logo__image only-dark pst-js-only" alt="MyoGen 0.3.0 Documentation - Home"/>
+    <img src="../_static/myogen_logo.png" class="logo__image only-light" alt="MyoGen 0.4.0 Documentation - Home"/>
+    <img src="../_static/myogen_logo.png" class="logo__image only-dark pst-js-only" alt="MyoGen 0.4.0 Documentation - Home"/>
   
   
 </a></div>
@@ -129,7 +136,7 @@
 <div class="nav-item">
   <div class="version-switcher__container dropdown">
       <button id="version-switcher-button" type="button" class="version-switcher__button btn btn-sm navbar-btn" aria-haspopup="true" aria-expanded="false">
-          Version 0.3.0
+          Version 0.4.0
       </button>
       
       
@@ -311,16 +318,92 @@
 <ul class="current nav bd-sidenav">
 <li class="toctree-l1 current active has-children"><a class="reference internal" href="../api/simulator_api.html">Simulator Module</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="myogen.simulator.generate_mu_recruitment_thresholds.html">generate_mu_recruitment_thresholds</a></li>
-<li class="toctree-l2"><a class="reference internal" href="myogen.simulator.MotorNeuronPool.html">MotorNeuronPool</a></li>
-<li class="toctree-l2"><a class="reference internal" href="myogen.simulator.Muscle.html">Muscle</a></li>
-<li class="toctree-l2"><a class="reference internal" href="myogen.simulator.ForceModel.html">ForceModel</a></li>
-<li class="toctree-l2"><a class="reference internal" href="myogen.simulator.SurfaceEMG.html">SurfaceEMG</a></li>
-<li class="toctree-l2"><a class="reference internal" href="myogen.simulator.IntramuscularEMG.html">IntramuscularEMG</a></li>
-<li class="toctree-l2"><a class="reference internal" href="myogen.simulator.SurfaceElectrodeArray.html">SurfaceElectrodeArray</a></li>
-<li class="toctree-l2 current active"><a class="current reference internal" href="#">IntramuscularElectrodeArray</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="myogen.simulator.MotorNeuronPool.html">MotorNeuronPool</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="myogen.simulator.MotorNeuronPool.__init__.html">myogen.simulator.MotorNeuronPool.__init__</a></li>
+<li class="toctree-l3"><a class="reference internal" href="myogen.simulator.MotorNeuronPool.compute_mvc_current_threshold.html">myogen.simulator.MotorNeuronPool.compute_mvc_current_threshold</a></li>
+<li class="toctree-l3"><a class="reference internal" href="myogen.simulator.MotorNeuronPool.generate_spike_trains.html">myogen.simulator.MotorNeuronPool.generate_spike_trains</a></li>
+<li class="toctree-l3"><a class="reference internal" href="myogen.simulator.MotorNeuronPool.active_neuron_indices.html">myogen.simulator.MotorNeuronPool.active_neuron_indices</a></li>
+<li class="toctree-l3"><a class="reference internal" href="myogen.simulator.MotorNeuronPool.data.html">myogen.simulator.MotorNeuronPool.data</a></li>
+<li class="toctree-l3"><a class="reference internal" href="myogen.simulator.MotorNeuronPool.mvc_current_threshold.html">myogen.simulator.MotorNeuronPool.mvc_current_threshold</a></li>
+<li class="toctree-l3"><a class="reference internal" href="myogen.simulator.MotorNeuronPool.spike_trains.html">myogen.simulator.MotorNeuronPool.spike_trains</a></li>
 </ul>
 </details></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../api/utils_api.html">Utils Module</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="myogen.simulator.Muscle.html">Muscle</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="myogen.simulator.Muscle.__init__.html">myogen.simulator.Muscle.__init__</a></li>
+<li class="toctree-l3"><a class="reference internal" href="myogen.simulator.Muscle.assign_mfs2mns.html">myogen.simulator.Muscle.assign_mfs2mns</a></li>
+<li class="toctree-l3"><a class="reference internal" href="myogen.simulator.Muscle.distribute_innervation_centers.html">myogen.simulator.Muscle.distribute_innervation_centers</a></li>
+<li class="toctree-l3"><a class="reference internal" href="myogen.simulator.Muscle.generate_muscle_fiber_centers.html">myogen.simulator.Muscle.generate_muscle_fiber_centers</a></li>
+<li class="toctree-l3"><a class="reference internal" href="myogen.simulator.Muscle.resulting_fiber_assignment.html">myogen.simulator.Muscle.resulting_fiber_assignment</a></li>
+<li class="toctree-l3"><a class="reference internal" href="myogen.simulator.Muscle.assignment.html">myogen.simulator.Muscle.assignment</a></li>
+<li class="toctree-l3"><a class="reference internal" href="myogen.simulator.Muscle.innervation_center_positions__mm.html">myogen.simulator.Muscle.innervation_center_positions__mm</a></li>
+<li class="toctree-l3"><a class="reference internal" href="myogen.simulator.Muscle.muscle_border__mm.html">myogen.simulator.Muscle.muscle_border__mm</a></li>
+<li class="toctree-l3"><a class="reference internal" href="myogen.simulator.Muscle.muscle_fiber_centers__mm.html">myogen.simulator.Muscle.muscle_fiber_centers__mm</a></li>
+<li class="toctree-l3"><a class="reference internal" href="myogen.simulator.Muscle.muscle_fiber_conduction_velocities__mm_per_s.html">myogen.simulator.Muscle.muscle_fiber_conduction_velocities__mm_per_s</a></li>
+<li class="toctree-l3"><a class="reference internal" href="myogen.simulator.Muscle.muscle_fiber_diameters__mm.html">myogen.simulator.Muscle.muscle_fiber_diameters__mm</a></li>
+<li class="toctree-l3"><a class="reference internal" href="myogen.simulator.Muscle.number_of_muscle_fibers.html">myogen.simulator.Muscle.number_of_muscle_fibers</a></li>
+<li class="toctree-l3"><a class="reference internal" href="myogen.simulator.Muscle.recruitment_thresholds.html">myogen.simulator.Muscle.recruitment_thresholds</a></li>
+<li class="toctree-l3"><a class="reference internal" href="myogen.simulator.Muscle.resulting_innervation_areas__mm2.html">myogen.simulator.Muscle.resulting_innervation_areas__mm2</a></li>
+<li class="toctree-l3"><a class="reference internal" href="myogen.simulator.Muscle.resulting_number_of_innervated_fibers.html">myogen.simulator.Muscle.resulting_number_of_innervated_fibers</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="myogen.simulator.ForceModel.html">ForceModel</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="myogen.simulator.ForceModel.__init__.html">myogen.simulator.ForceModel.__init__</a></li>
+<li class="toctree-l3"><a class="reference internal" href="myogen.simulator.ForceModel.generate_force.html">myogen.simulator.ForceModel.generate_force</a></li>
+<li class="toctree-l3"><a class="reference internal" href="myogen.simulator.ForceModel.contraction_times__samples.html">myogen.simulator.ForceModel.contraction_times__samples</a></li>
+<li class="toctree-l3"><a class="reference internal" href="myogen.simulator.ForceModel.peak_twitch_forces__unitless.html">myogen.simulator.ForceModel.peak_twitch_forces__unitless</a></li>
+<li class="toctree-l3"><a class="reference internal" href="myogen.simulator.ForceModel.twitch_list.html">myogen.simulator.ForceModel.twitch_list</a></li>
+<li class="toctree-l3"><a class="reference internal" href="myogen.simulator.ForceModel.twitch_mat.html">myogen.simulator.ForceModel.twitch_mat</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="myogen.simulator.SurfaceEMG.html">SurfaceEMG</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="myogen.simulator.SurfaceEMG.__init__.html">myogen.simulator.SurfaceEMG.__init__</a></li>
+<li class="toctree-l3"><a class="reference internal" href="myogen.simulator.SurfaceEMG.add_noise.html">myogen.simulator.SurfaceEMG.add_noise</a></li>
+<li class="toctree-l3"><a class="reference internal" href="myogen.simulator.SurfaceEMG.simulate_muaps.html">myogen.simulator.SurfaceEMG.simulate_muaps</a></li>
+<li class="toctree-l3"><a class="reference internal" href="myogen.simulator.SurfaceEMG.simulate_surface_emg.html">myogen.simulator.SurfaceEMG.simulate_surface_emg</a></li>
+<li class="toctree-l3"><a class="reference internal" href="myogen.simulator.SurfaceEMG.motor_neuron_pool.html">myogen.simulator.SurfaceEMG.motor_neuron_pool</a></li>
+<li class="toctree-l3"><a class="reference internal" href="myogen.simulator.SurfaceEMG.muaps.html">myogen.simulator.SurfaceEMG.muaps</a></li>
+<li class="toctree-l3"><a class="reference internal" href="myogen.simulator.SurfaceEMG.noisy_surface_emg__tensors.html">myogen.simulator.SurfaceEMG.noisy_surface_emg__tensors</a></li>
+<li class="toctree-l3"><a class="reference internal" href="myogen.simulator.SurfaceEMG.surface_emg__tensors.html">myogen.simulator.SurfaceEMG.surface_emg__tensors</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="myogen.simulator.IntramuscularEMG.html">IntramuscularEMG</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="myogen.simulator.IntramuscularEMG.__init__.html">myogen.simulator.IntramuscularEMG.__init__</a></li>
+<li class="toctree-l3"><a class="reference internal" href="myogen.simulator.IntramuscularEMG.add_noise.html">myogen.simulator.IntramuscularEMG.add_noise</a></li>
+<li class="toctree-l3"><a class="reference internal" href="myogen.simulator.IntramuscularEMG.simulate_intramuscular_emg.html">myogen.simulator.IntramuscularEMG.simulate_intramuscular_emg</a></li>
+<li class="toctree-l3"><a class="reference internal" href="myogen.simulator.IntramuscularEMG.simulate_muaps.html">myogen.simulator.IntramuscularEMG.simulate_muaps</a></li>
+<li class="toctree-l3"><a class="reference internal" href="myogen.simulator.IntramuscularEMG.intramuscular_emg__tensor.html">myogen.simulator.IntramuscularEMG.intramuscular_emg__tensor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="myogen.simulator.IntramuscularEMG.motor_neuron_pool.html">myogen.simulator.IntramuscularEMG.motor_neuron_pool</a></li>
+<li class="toctree-l3"><a class="reference internal" href="myogen.simulator.IntramuscularEMG.muaps.html">myogen.simulator.IntramuscularEMG.muaps</a></li>
+<li class="toctree-l3"><a class="reference internal" href="myogen.simulator.IntramuscularEMG.noisy_intramuscular_emg__tensor.html">myogen.simulator.IntramuscularEMG.noisy_intramuscular_emg__tensor</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="myogen.simulator.SurfaceElectrodeArray.html">SurfaceElectrodeArray</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="myogen.simulator.SurfaceElectrodeArray.__init__.html">myogen.simulator.SurfaceElectrodeArray.__init__</a></li>
+<li class="toctree-l3"><a class="reference internal" href="myogen.simulator.SurfaceElectrodeArray.get_H_sf.html">myogen.simulator.SurfaceElectrodeArray.get_H_sf</a></li>
+<li class="toctree-l3"><a class="reference internal" href="myogen.simulator.SurfaceElectrodeArray.electrode_positions.html">myogen.simulator.SurfaceElectrodeArray.electrode_positions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="myogen.simulator.SurfaceElectrodeArray.pos_theta.html">myogen.simulator.SurfaceElectrodeArray.pos_theta</a></li>
+<li class="toctree-l3"><a class="reference internal" href="myogen.simulator.SurfaceElectrodeArray.pos_z.html">myogen.simulator.SurfaceElectrodeArray.pos_z</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 current active has-children"><a class="current reference internal" href="#">IntramuscularElectrodeArray</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="myogen.simulator.IntramuscularElectrodeArray.__init__.html">myogen.simulator.IntramuscularElectrodeArray.__init__</a></li>
+<li class="toctree-l3"><a class="reference internal" href="myogen.simulator.IntramuscularElectrodeArray.calc_observation_points.html">myogen.simulator.IntramuscularElectrodeArray.calc_observation_points</a></li>
+<li class="toctree-l3"><a class="reference internal" href="myogen.simulator.IntramuscularElectrodeArray.rodrigues_rot.html">myogen.simulator.IntramuscularElectrodeArray.rodrigues_rot</a></li>
+<li class="toctree-l3"><a class="reference internal" href="myogen.simulator.IntramuscularElectrodeArray.rotate_and_translate.html">myogen.simulator.IntramuscularElectrodeArray.rotate_and_translate</a></li>
+<li class="toctree-l3"><a class="reference internal" href="myogen.simulator.IntramuscularElectrodeArray.set_linear_trajectory.html">myogen.simulator.IntramuscularElectrodeArray.set_linear_trajectory</a></li>
+<li class="toctree-l3"><a class="reference internal" href="myogen.simulator.IntramuscularElectrodeArray.set_position.html">myogen.simulator.IntramuscularElectrodeArray.set_position</a></li>
+<li class="toctree-l3"><a class="reference internal" href="myogen.simulator.IntramuscularElectrodeArray.traj_mixing_fun.html">myogen.simulator.IntramuscularElectrodeArray.traj_mixing_fun</a></li>
+<li class="toctree-l3"><a class="reference internal" href="myogen.simulator.IntramuscularElectrodeArray.traj_mixing_mat.html">myogen.simulator.IntramuscularElectrodeArray.traj_mixing_mat</a></li>
+<li class="toctree-l3"><a class="reference internal" href="myogen.simulator.IntramuscularElectrodeArray.differential_matrix.html">myogen.simulator.IntramuscularElectrodeArray.differential_matrix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="myogen.simulator.IntramuscularElectrodeArray.electrode_positions.html">myogen.simulator.IntramuscularElectrodeArray.electrode_positions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="myogen.simulator.IntramuscularElectrodeArray.initial_positions.html">myogen.simulator.IntramuscularElectrodeArray.initial_positions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="myogen.simulator.IntramuscularElectrodeArray.num_channels.html">myogen.simulator.IntramuscularElectrodeArray.num_channels</a></li>
+<li class="toctree-l3"><a class="reference internal" href="myogen.simulator.IntramuscularElectrodeArray.trajectory_transforms.html">myogen.simulator.IntramuscularElectrodeArray.trajectory_transforms</a></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../api/utils_api.html">Utils Module</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l2"><a class="reference internal" href="myogen.utils.setup_myogen.html">setup_myogen</a></li>
 <li class="toctree-l2"><a class="reference internal" href="myogen.utils.load_nmodl_files.html">load_nmodl_files</a></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="../api/currents_api.html">Current Generation</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -418,7 +501,19 @@
 <h1>IntramuscularElectrodeArray<a class="headerlink" href="#intramuscularelectrodearray" title="Link to this heading">#</a></h1>
 <dl class="py class">
 <dt class="sig sig-object py" id="myogen.simulator.IntramuscularElectrodeArray">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">myogen.simulator.</span></span><span class="sig-name descname"><span class="pre">IntramuscularElectrodeArray</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">num_electrodes</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">inter_electrode_distance__mm</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">position__mm</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(0.0,</span> <span class="pre">0.0,</span> <span class="pre">0.0)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">orientation__rad</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(0.0,</span> <span class="pre">0.0,</span> <span class="pre">0.0)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">differentiation_mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'consecutive'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">trajectory_distance__mm</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">trajectory_steps</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/myogen/simulator/core/emg/electrodes.html#IntramuscularElectrodeArray"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#myogen.simulator.IntramuscularElectrodeArray" title="Link to this definition">#</a></dt>
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">IntramuscularElectrodeArray</span></span><span class="sig-paren">(</span>
+
+<dl>
+<dd><em class="sig-param"><span class="n"><span class="pre">num_electrodes</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">inter_electrode_distance__mm</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.5</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">position__mm</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(0.0,</span> <span class="pre">0.0,</span> <span class="pre">0.0)</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">orientation__rad</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(0.0,</span> <span class="pre">0.0,</span> <span class="pre">0.0)</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">differentiation_mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'consecutive'</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">trajectory_distance__mm</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">trajectory_steps</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>,</dd>
+</dl>
+
+<span class="sig-paren">)</span><a class="reference internal" href="../_modules/myogen/simulator/core/emg/electrodes.html#IntramuscularElectrodeArray"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#myogen.simulator.IntramuscularElectrodeArray" title="Link to this definition">#</a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <p>Intramuscular electrode array for EMG recording.</p>
 <p>Represents a linear array of intramuscular electrodes (needle electrodes)
@@ -436,36 +531,189 @@ with configurable spacing and differentiation modes.</p>
 </ul>
 </dd>
 </dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="myogen.simulator.IntramuscularElectrodeArray.electrode_positions">
+<span class="sig-name descname"><span class="pre">electrode_positions</span></span><a class="headerlink" href="#myogen.simulator.IntramuscularElectrodeArray.electrode_positions" title="Link to this definition">#</a></dt>
+<dd><p>Current electrode positions in 3D space, shape (n_nodes * num_electrodes, 3).
+Available after set_linear_trajectory() execution.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.3)"><code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="myogen.simulator.IntramuscularElectrodeArray.differential_matrix">
+<span class="sig-name descname"><span class="pre">differential_matrix</span></span><a class="headerlink" href="#myogen.simulator.IntramuscularElectrodeArray.differential_matrix" title="Link to this definition">#</a></dt>
+<dd><p>Differential matrix for signal processing based on differentiation mode.
+Available after class initialization.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.3)"><code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="myogen.simulator.IntramuscularElectrodeArray.trajectory_transforms">
+<span class="sig-name descname"><span class="pre">trajectory_transforms</span></span><a class="headerlink" href="#myogen.simulator.IntramuscularElectrodeArray.trajectory_transforms" title="Link to this definition">#</a></dt>
+<dd><p>Transformation matrices for trajectory movement, shape (n_nodes, 6).
+Available after set_linear_trajectory() execution.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.3)"><code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="myogen.simulator.IntramuscularElectrodeArray.initial_positions">
+<span class="sig-name descname"><span class="pre">initial_positions</span></span><a class="headerlink" href="#myogen.simulator.IntramuscularElectrodeArray.initial_positions" title="Link to this definition">#</a></dt>
+<dd><p>Initial electrode positions after position/orientation setup, shape (num_electrodes, 3).
+Available after set_position() execution.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.3)"><code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="myogen.simulator.IntramuscularElectrodeArray.num_channels">
+<span class="sig-name descname"><span class="pre">num_channels</span></span><a class="headerlink" href="#myogen.simulator.IntramuscularElectrodeArray.num_channels" title="Link to this definition">#</a></dt>
+<dd><p>Number of recording channels based on differentiation mode.
+Available after class initialization.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="myogen.simulator.IntramuscularElectrodeArray.num_points">
+<span class="sig-name descname"><span class="pre">num_points</span></span><a class="headerlink" href="#myogen.simulator.IntramuscularElectrodeArray.num_points" title="Link to this definition">#</a></dt>
+<dd><p>Alias for num_electrodes (compatibility).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="myogen.simulator.IntramuscularElectrodeArray.n_nodes">
+<span class="sig-name descname"><span class="pre">n_nodes</span></span><a class="headerlink" href="#myogen.simulator.IntramuscularElectrodeArray.n_nodes" title="Link to this definition">#</a></dt>
+<dd><p>Number of trajectory nodes.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
 <p class="rubric">Methods</p>
 <div class="pst-scrollable-table-container"><table class="autosummary longtable table">
 <tbody>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">__init__</span></code></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="myogen.simulator.IntramuscularElectrodeArray.__init__.html#myogen.simulator.IntramuscularElectrodeArray.__init__" title="myogen.simulator.IntramuscularElectrodeArray.__init__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__init__</span></code></a></p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">calc_observation_points</span></code></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="myogen.simulator.IntramuscularElectrodeArray.calc_observation_points.html#myogen.simulator.IntramuscularElectrodeArray.calc_observation_points" title="myogen.simulator.IntramuscularElectrodeArray.calc_observation_points"><code class="xref py py-obj docutils literal notranslate"><span class="pre">calc_observation_points</span></code></a></p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#myogen.simulator.IntramuscularElectrodeArray.rodrigues_rot" title="myogen.simulator.IntramuscularElectrodeArray.rodrigues_rot"><code class="xref py py-obj docutils literal notranslate"><span class="pre">rodrigues_rot</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="myogen.simulator.IntramuscularElectrodeArray.rodrigues_rot.html#myogen.simulator.IntramuscularElectrodeArray.rodrigues_rot" title="myogen.simulator.IntramuscularElectrodeArray.rodrigues_rot"><code class="xref py py-obj docutils literal notranslate"><span class="pre">rodrigues_rot</span></code></a></p></td>
 <td><p>Apply Rodrigues rotation to vectors around an arbitrary axis.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">rotate_and_translate</span></code></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="myogen.simulator.IntramuscularElectrodeArray.rotate_and_translate.html#myogen.simulator.IntramuscularElectrodeArray.rotate_and_translate" title="myogen.simulator.IntramuscularElectrodeArray.rotate_and_translate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">rotate_and_translate</span></code></a></p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#myogen.simulator.IntramuscularElectrodeArray.set_linear_trajectory" title="myogen.simulator.IntramuscularElectrodeArray.set_linear_trajectory"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_linear_trajectory</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="myogen.simulator.IntramuscularElectrodeArray.set_linear_trajectory.html#myogen.simulator.IntramuscularElectrodeArray.set_linear_trajectory" title="myogen.simulator.IntramuscularElectrodeArray.set_linear_trajectory"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_linear_trajectory</span></code></a></p></td>
 <td><p>Configure linear trajectory movement for the electrode array.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#myogen.simulator.IntramuscularElectrodeArray.set_position" title="myogen.simulator.IntramuscularElectrodeArray.set_position"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_position</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="myogen.simulator.IntramuscularElectrodeArray.set_position.html#myogen.simulator.IntramuscularElectrodeArray.set_position" title="myogen.simulator.IntramuscularElectrodeArray.set_position"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_position</span></code></a></p></td>
 <td><p>Set the position and orientation of the intramuscular electrode array.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#myogen.simulator.IntramuscularElectrodeArray.traj_mixing_fun" title="myogen.simulator.IntramuscularElectrodeArray.traj_mixing_fun"><code class="xref py py-obj docutils literal notranslate"><span class="pre">traj_mixing_fun</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="myogen.simulator.IntramuscularElectrodeArray.traj_mixing_fun.html#myogen.simulator.IntramuscularElectrodeArray.traj_mixing_fun" title="myogen.simulator.IntramuscularElectrodeArray.traj_mixing_fun"><code class="xref py py-obj docutils literal notranslate"><span class="pre">traj_mixing_fun</span></code></a></p></td>
 <td><p>Compute mixing weight for a specific trajectory node at given time.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#myogen.simulator.IntramuscularElectrodeArray.traj_mixing_mat" title="myogen.simulator.IntramuscularElectrodeArray.traj_mixing_mat"><code class="xref py py-obj docutils literal notranslate"><span class="pre">traj_mixing_mat</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="myogen.simulator.IntramuscularElectrodeArray.traj_mixing_mat.html#myogen.simulator.IntramuscularElectrodeArray.traj_mixing_mat" title="myogen.simulator.IntramuscularElectrodeArray.traj_mixing_mat"><code class="xref py py-obj docutils literal notranslate"><span class="pre">traj_mixing_mat</span></code></a></p></td>
 <td><p>Generate mixing matrix for trajectory interpolation during EMG simulation.</p></td>
 </tr>
 </tbody>
 </table>
 </div>
+<p class="rubric">Attributes</p>
+<div class="pst-scrollable-table-container"><table class="autosummary longtable table">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="myogen.simulator.IntramuscularElectrodeArray.differential_matrix.html#myogen.simulator.IntramuscularElectrodeArray.differential_matrix" title="myogen.simulator.IntramuscularElectrodeArray.differential_matrix"><code class="xref py py-obj docutils literal notranslate"><span class="pre">differential_matrix</span></code></a></p></td>
+<td><p>Differential matrix for signal processing based on differentiation mode.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="myogen.simulator.IntramuscularElectrodeArray.electrode_positions.html#myogen.simulator.IntramuscularElectrodeArray.electrode_positions" title="myogen.simulator.IntramuscularElectrodeArray.electrode_positions"><code class="xref py py-obj docutils literal notranslate"><span class="pre">electrode_positions</span></code></a></p></td>
+<td><p>Current electrode positions in 3D space (mm).</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="myogen.simulator.IntramuscularElectrodeArray.initial_positions.html#myogen.simulator.IntramuscularElectrodeArray.initial_positions" title="myogen.simulator.IntramuscularElectrodeArray.initial_positions"><code class="xref py py-obj docutils literal notranslate"><span class="pre">initial_positions</span></code></a></p></td>
+<td><p>Initial electrode positions after position/orientation setup.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="myogen.simulator.IntramuscularElectrodeArray.num_channels.html#myogen.simulator.IntramuscularElectrodeArray.num_channels" title="myogen.simulator.IntramuscularElectrodeArray.num_channels"><code class="xref py py-obj docutils literal notranslate"><span class="pre">num_channels</span></code></a></p></td>
+<td><p>Number of recording channels based on differentiation mode.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="myogen.simulator.IntramuscularElectrodeArray.trajectory_transforms.html#myogen.simulator.IntramuscularElectrodeArray.trajectory_transforms" title="myogen.simulator.IntramuscularElectrodeArray.trajectory_transforms"><code class="xref py py-obj docutils literal notranslate"><span class="pre">trajectory_transforms</span></code></a></p></td>
+<td><p>Transformation matrices for trajectory movement.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<dl class="py method">
+<dt class="sig sig-object py" id="myogen.simulator.IntramuscularElectrodeArray.set_position">
+<span class="sig-name descname"><span class="pre">set_position</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">position__mm</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">orientation__rad</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/myogen/simulator/core/emg/electrodes.html#IntramuscularElectrodeArray.set_position"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#myogen.simulator.IntramuscularElectrodeArray.set_position" title="Link to this definition">#</a></dt>
+<dd><p>Set the position and orientation of the intramuscular electrode array.</p>
+<p>This method defines the spatial placement and angular orientation of the
+electrode array within the muscle volume. The array is first oriented
+according to the specified rotations and then translated to the target position.</p>
+<p><strong>Coordinate System:</strong>
+- x-axis: radial direction (outward from muscle center)
+- y-axis: circumferential direction (around muscle)
+- z-axis: longitudinal direction (along muscle fibers)</p>
+<p><strong>Rotation Order:</strong>
+Applied as: Roll (x) → Pitch (y) → Yaw (z) using Rodrigues rotation</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>position__mm</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">tuple[float</span></code>, <a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float]</span></code>) – Center position of the electrode array in mm (x, y, z coordinates).
+This defines where the array center is placed within the muscle.</p></li>
+<li><p><strong>orientation__rad</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">tuple[float</span></code>, <a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float]</span></code>) – Orientation angles in radians (roll, pitch, yaw).
+- Roll: rotation around x-axis (radial tilt)
+- Pitch: rotation around y-axis (circumferential tilt)
+- Yaw: rotation around z-axis (longitudinal rotation)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>None</em></p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>Position and orientation changes affect all subsequent trajectory calculations.
+The electrode positions are recalculated based on the new transformation.</p>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># Place array at muscle center with 45° yaw rotation</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">array</span><span class="o">.</span><span class="n">set_position</span><span class="p">(</span>
+<span class="gp">... </span>    <span class="n">position__mm</span><span class="o">=</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">10.0</span><span class="p">),</span>
+<span class="gp">... </span>    <span class="n">orientation__rad</span><span class="o">=</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="mi">4</span><span class="p">)</span>
+<span class="gp">... </span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<dl class="simple">
+<dt><a class="reference internal" href="myogen.simulator.IntramuscularElectrodeArray.set_linear_trajectory.html#myogen.simulator.IntramuscularElectrodeArray.set_linear_trajectory" title="myogen.simulator.IntramuscularElectrodeArray.set_linear_trajectory"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_linear_trajectory</span></code></a></dt><dd><p>Define trajectory movement parameters</p>
+</dd>
+<dt><a class="reference internal" href="myogen.simulator.IntramuscularElectrodeArray.rodrigues_rot.html#myogen.simulator.IntramuscularElectrodeArray.rodrigues_rot" title="myogen.simulator.IntramuscularElectrodeArray.rodrigues_rot"><code class="xref py py-obj docutils literal notranslate"><span class="pre">rodrigues_rot</span></code></a></dt><dd><p>Rodrigues rotation implementation</p>
+</dd>
+</dl>
+</div>
+</dd></dl>
+
 <dl class="py method">
 <dt class="sig sig-object py" id="myogen.simulator.IntramuscularElectrodeArray.rodrigues_rot">
 <span class="sig-name descname"><span class="pre">rodrigues_rot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">v</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">k</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">theta</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/myogen/simulator/core/emg/electrodes.html#IntramuscularElectrodeArray.rodrigues_rot"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#myogen.simulator.IntramuscularElectrodeArray.rodrigues_rot" title="Link to this definition">#</a></dt>
@@ -525,7 +773,7 @@ calculated as max(ceil(distance/0.5), 1) for 0.5mm steps.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p>None</p>
+<dd class="field-even"><p><em>None</em></p>
 </dd>
 </dl>
 <p class="rubric">Notes</p>
@@ -543,63 +791,28 @@ All trajectory transforms are calculated in the array’s oriented coordinate sy
 <div class="admonition seealso">
 <p class="admonition-title">See also</p>
 <dl class="simple">
-<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">calc_observation_points</span></code></dt><dd><p>Calculate electrode positions along trajectory</p>
+<dt><a class="reference internal" href="myogen.simulator.IntramuscularElectrodeArray.calc_observation_points.html#myogen.simulator.IntramuscularElectrodeArray.calc_observation_points" title="myogen.simulator.IntramuscularElectrodeArray.calc_observation_points"><code class="xref py py-obj docutils literal notranslate"><span class="pre">calc_observation_points</span></code></a></dt><dd><p>Calculate electrode positions along trajectory</p>
 </dd>
-<dt><a class="reference internal" href="#myogen.simulator.IntramuscularElectrodeArray.traj_mixing_mat" title="myogen.simulator.IntramuscularElectrodeArray.traj_mixing_mat"><code class="xref py py-obj docutils literal notranslate"><span class="pre">traj_mixing_mat</span></code></a></dt><dd><p>Generate mixing matrices for trajectory interpolation</p>
+<dt><a class="reference internal" href="myogen.simulator.IntramuscularElectrodeArray.traj_mixing_mat.html#myogen.simulator.IntramuscularElectrodeArray.traj_mixing_mat" title="myogen.simulator.IntramuscularElectrodeArray.traj_mixing_mat"><code class="xref py py-obj docutils literal notranslate"><span class="pre">traj_mixing_mat</span></code></a></dt><dd><p>Generate mixing matrices for trajectory interpolation</p>
 </dd>
 </dl>
 </div>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="myogen.simulator.IntramuscularElectrodeArray.set_position">
-<span class="sig-name descname"><span class="pre">set_position</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">position__mm</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">orientation__rad</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/myogen/simulator/core/emg/electrodes.html#IntramuscularElectrodeArray.set_position"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#myogen.simulator.IntramuscularElectrodeArray.set_position" title="Link to this definition">#</a></dt>
-<dd><p>Set the position and orientation of the intramuscular electrode array.</p>
-<p>This method defines the spatial placement and angular orientation of the
-electrode array within the muscle volume. The array is first oriented
-according to the specified rotations and then translated to the target position.</p>
-<p><strong>Coordinate System:</strong>
-- x-axis: radial direction (outward from muscle center)
-- y-axis: circumferential direction (around muscle)
-- z-axis: longitudinal direction (along muscle fibers)</p>
-<p><strong>Rotation Order:</strong>
-Applied as: Roll (x) → Pitch (y) → Yaw (z) using Rodrigues rotation</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>position__mm</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">tuple[float</span></code>, <a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float]</span></code>) – Center position of the electrode array in mm (x, y, z coordinates).
-This defines where the array center is placed within the muscle.</p></li>
-<li><p><strong>orientation__rad</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">tuple[float</span></code>, <a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float]</span></code>) – Orientation angles in radians (roll, pitch, yaw).
-- Roll: rotation around x-axis (radial tilt)
-- Pitch: rotation around y-axis (circumferential tilt)
-- Yaw: rotation around z-axis (longitudinal rotation)</p></li>
-</ul>
-</dd>
-<dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p>None</p>
+<dt class="sig sig-object py" id="myogen.simulator.IntramuscularElectrodeArray.calc_observation_points">
+<span class="sig-name descname"><span class="pre">calc_observation_points</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/myogen/simulator/core/emg/electrodes.html#IntramuscularElectrodeArray.calc_observation_points"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#myogen.simulator.IntramuscularElectrodeArray.calc_observation_points" title="Link to this definition">#</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><em>None</em></p>
 </dd>
 </dl>
-<p class="rubric">Notes</p>
-<p>Position and orientation changes affect all subsequent trajectory calculations.
-The electrode positions are recalculated based on the new transformation.</p>
-<p class="rubric">Examples</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># Place array at muscle center with 45° yaw rotation</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">array</span><span class="o">.</span><span class="n">set_position</span><span class="p">(</span>
-<span class="gp">... </span>    <span class="n">position__mm</span><span class="o">=</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">10.0</span><span class="p">),</span>
-<span class="gp">... </span>    <span class="n">orientation__rad</span><span class="o">=</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="mi">4</span><span class="p">)</span>
-<span class="gp">... </span><span class="p">)</span>
-</pre></div>
-</div>
-<div class="admonition seealso">
-<p class="admonition-title">See also</p>
-<dl class="simple">
-<dt><a class="reference internal" href="#myogen.simulator.IntramuscularElectrodeArray.set_linear_trajectory" title="myogen.simulator.IntramuscularElectrodeArray.set_linear_trajectory"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_linear_trajectory</span></code></a></dt><dd><p>Define trajectory movement parameters</p>
-</dd>
-<dt><a class="reference internal" href="#myogen.simulator.IntramuscularElectrodeArray.rodrigues_rot" title="myogen.simulator.IntramuscularElectrodeArray.rodrigues_rot"><code class="xref py py-obj docutils literal notranslate"><span class="pre">rodrigues_rot</span></code></a></dt><dd><p>Rodrigues rotation implementation</p>
-</dd>
-</dl>
-</div>
 </dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="myogen.simulator.IntramuscularElectrodeArray.rotate_and_translate">
+<span class="sig-name descname"><span class="pre">rotate_and_translate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pt</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rpy</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">d</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/myogen/simulator/core/emg/electrodes.html#IntramuscularElectrodeArray.rotate_and_translate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#myogen.simulator.IntramuscularElectrodeArray.rotate_and_translate" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="myogen.simulator.IntramuscularElectrodeArray.traj_mixing_fun">
@@ -672,12 +885,102 @@ closer to the current time/position parameter.</p>
 <div class="admonition seealso">
 <p class="admonition-title">See also</p>
 <dl class="simple">
-<dt><a class="reference internal" href="#myogen.simulator.IntramuscularElectrodeArray.traj_mixing_fun" title="myogen.simulator.IntramuscularElectrodeArray.traj_mixing_fun"><code class="xref py py-obj docutils literal notranslate"><span class="pre">traj_mixing_fun</span></code></a></dt><dd><p>Individual node mixing function</p>
+<dt><a class="reference internal" href="myogen.simulator.IntramuscularElectrodeArray.traj_mixing_fun.html#myogen.simulator.IntramuscularElectrodeArray.traj_mixing_fun" title="myogen.simulator.IntramuscularElectrodeArray.traj_mixing_fun"><code class="xref py py-obj docutils literal notranslate"><span class="pre">traj_mixing_fun</span></code></a></dt><dd><p>Individual node mixing function</p>
 </dd>
-<dt><a class="reference internal" href="#myogen.simulator.IntramuscularElectrodeArray.set_linear_trajectory" title="myogen.simulator.IntramuscularElectrodeArray.set_linear_trajectory"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_linear_trajectory</span></code></a></dt><dd><p>Configure trajectory parameters</p>
+<dt><a class="reference internal" href="myogen.simulator.IntramuscularElectrodeArray.set_linear_trajectory.html#myogen.simulator.IntramuscularElectrodeArray.set_linear_trajectory" title="myogen.simulator.IntramuscularElectrodeArray.set_linear_trajectory"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_linear_trajectory</span></code></a></dt><dd><p>Configure trajectory parameters</p>
 </dd>
 </dl>
 </div>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="id0">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">electrode_positions</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.3)"><span class="pre">ndarray</span></a></em><a class="headerlink" href="#id0" title="Link to this definition">#</a></dt>
+<dd><p>Current electrode positions in 3D space (mm).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Array of shape (n_nodes * num_electrodes, 3) containing x, y, z coordinates
+of each electrode position for all trajectory nodes.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.3)"><code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></a></p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#AttributeError" title="(in Python v3.13)"><strong>AttributeError</strong></a> – If trajectory has not been calculated. Run set_linear_trajectory() first.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="id1">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">differential_matrix</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.3)"><span class="pre">ndarray</span></a></em><a class="headerlink" href="#id1" title="Link to this definition">#</a></dt>
+<dd><p>Differential matrix for signal processing based on differentiation mode.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Differential matrix for applying spatial differentiation to recorded signals.
+Shape depends on differentiation mode and number of trajectory nodes.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.3)"><code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></a></p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#AttributeError" title="(in Python v3.13)"><strong>AttributeError</strong></a> – If differential matrix has not been created. Run constructor first.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="id2">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">trajectory_transforms</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.3)"><span class="pre">ndarray</span></a></em><a class="headerlink" href="#id2" title="Link to this definition">#</a></dt>
+<dd><p>Transformation matrices for trajectory movement.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Array of shape (n_nodes, 6) containing translation and rotation parameters
+for each trajectory node. First 3 columns are translations (x, y, z),
+last 3 columns are rotations (roll, pitch, yaw).</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.3)"><code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></a></p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#AttributeError" title="(in Python v3.13)"><strong>AttributeError</strong></a> – If trajectory has not been set. Run set_linear_trajectory() first.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="id3">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">initial_positions</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.3)"><span class="pre">ndarray</span></a></em><a class="headerlink" href="#id3" title="Link to this definition">#</a></dt>
+<dd><p>Initial electrode positions after position/orientation setup.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Array of shape (num_electrodes, 3) containing initial x, y, z coordinates
+of electrodes before trajectory movement is applied.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.3)"><code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></a></p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#AttributeError" title="(in Python v3.13)"><strong>AttributeError</strong></a> – If initial positions have not been set. Run set_position() first.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="id4">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">num_channels</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><span class="pre">int</span></a></em><a class="headerlink" href="#id4" title="Link to this definition">#</a></dt>
+<dd><p>Number of recording channels based on differentiation mode.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Number of differential recording channels available from this electrode array.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a></p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#AttributeError" title="(in Python v3.13)"><strong>AttributeError</strong></a> – If channel count has not been calculated. Run constructor first.</p>
+</dd>
+</dl>
 </dd></dl>
 
 </dd></dl>
@@ -707,16 +1010,46 @@ closer to the current time/position parameter.</p>
   </div>
   <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
     <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#myogen.simulator.IntramuscularElectrodeArray"><code class="docutils literal notranslate"><span class="pre">IntramuscularElectrodeArray</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#myogen.simulator.IntramuscularElectrodeArray"><code class="docutils literal notranslate"><span class="pre">IntramuscularElectrodeArray</span></code></a><ul class="visible nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#myogen.simulator.IntramuscularElectrodeArray.electrode_positions"><code class="docutils literal notranslate"><span class="pre">IntramuscularElectrodeArray.electrode_positions</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#myogen.simulator.IntramuscularElectrodeArray.differential_matrix"><code class="docutils literal notranslate"><span class="pre">IntramuscularElectrodeArray.differential_matrix</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#myogen.simulator.IntramuscularElectrodeArray.trajectory_transforms"><code class="docutils literal notranslate"><span class="pre">IntramuscularElectrodeArray.trajectory_transforms</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#myogen.simulator.IntramuscularElectrodeArray.initial_positions"><code class="docutils literal notranslate"><span class="pre">IntramuscularElectrodeArray.initial_positions</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#myogen.simulator.IntramuscularElectrodeArray.num_channels"><code class="docutils literal notranslate"><span class="pre">IntramuscularElectrodeArray.num_channels</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#myogen.simulator.IntramuscularElectrodeArray.num_points"><code class="docutils literal notranslate"><span class="pre">IntramuscularElectrodeArray.num_points</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#myogen.simulator.IntramuscularElectrodeArray.n_nodes"><code class="docutils literal notranslate"><span class="pre">IntramuscularElectrodeArray.n_nodes</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#myogen.simulator.IntramuscularElectrodeArray.set_position"><code class="docutils literal notranslate"><span class="pre">IntramuscularElectrodeArray.set_position()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#myogen.simulator.IntramuscularElectrodeArray.rodrigues_rot"><code class="docutils literal notranslate"><span class="pre">IntramuscularElectrodeArray.rodrigues_rot()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#myogen.simulator.IntramuscularElectrodeArray.set_linear_trajectory"><code class="docutils literal notranslate"><span class="pre">IntramuscularElectrodeArray.set_linear_trajectory()</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#myogen.simulator.IntramuscularElectrodeArray.set_position"><code class="docutils literal notranslate"><span class="pre">IntramuscularElectrodeArray.set_position()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#myogen.simulator.IntramuscularElectrodeArray.calc_observation_points"><code class="docutils literal notranslate"><span class="pre">IntramuscularElectrodeArray.calc_observation_points()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#myogen.simulator.IntramuscularElectrodeArray.rotate_and_translate"><code class="docutils literal notranslate"><span class="pre">IntramuscularElectrodeArray.rotate_and_translate()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#myogen.simulator.IntramuscularElectrodeArray.traj_mixing_fun"><code class="docutils literal notranslate"><span class="pre">IntramuscularElectrodeArray.traj_mixing_fun()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#myogen.simulator.IntramuscularElectrodeArray.traj_mixing_mat"><code class="docutils literal notranslate"><span class="pre">IntramuscularElectrodeArray.traj_mixing_mat()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id0"><code class="docutils literal notranslate"><span class="pre">IntramuscularElectrodeArray.electrode_positions</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id1"><code class="docutils literal notranslate"><span class="pre">IntramuscularElectrodeArray.differential_matrix</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id2"><code class="docutils literal notranslate"><span class="pre">IntramuscularElectrodeArray.trajectory_transforms</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id3"><code class="docutils literal notranslate"><span class="pre">IntramuscularElectrodeArray.initial_positions</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id4"><code class="docutils literal notranslate"><span class="pre">IntramuscularElectrodeArray.num_channels</span></code></a></li>
 </ul>
 </li>
 </ul>
   </nav></div>
+
+  <div class="sidebar-secondary-item">
+
+  
+  <div class="tocsection editthispage">
+    <a href="https://github.com/NSquaredLab/MyoGen/edit/main/docs/generated/myogen.simulator.IntramuscularElectrodeArray.rst">
+      <i class="fa-solid fa-pencil"></i>
+      
+      
+        
+          Edit on GitHub
+        
+      
+    </a>
+  </div>
+</div>
 
   <div class="sidebar-secondary-item">
   <div role="note" aria-label="source link">

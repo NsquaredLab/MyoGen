@@ -141,7 +141,7 @@ Generating the recruitment thresholds is done by calling the ``generate_mu_recru
 
     # 1. Fuglevand Model
     rt_fuglevand, rtz_fuglevand = simulator.generate_mu_recruitment_thresholds(
-        N=n_motor_units, recruitment_range=recruitment_range, mode="fuglevand"
+        N=n_motor_units, recruitment_range__ratio=recruitment_range, mode="fuglevand"
     )
 
     # 2. De Luca Model with different slopes
@@ -149,7 +149,7 @@ Generating the recruitment thresholds is done by calling the ``generate_mu_recru
     for slope in deluca_slopes:
         rt, _ = simulator.generate_mu_recruitment_thresholds(
             N=n_motor_units,
-            recruitment_range=recruitment_range,
+            recruitment_range__ratio=recruitment_range,
             deluca__slope=slope,
             mode="deluca",
         )
@@ -158,8 +158,8 @@ Generating the recruitment thresholds is done by calling the ``generate_mu_recru
     # 3. Konstantin Model
     rt_konstantin, rtz_konstantin = simulator.generate_mu_recruitment_thresholds(
         N=n_motor_units,
-        recruitment_range=recruitment_range,
-        konstantin__max_threshold=konstantin_max_threshold,
+        recruitment_range__ratio=recruitment_range,
+        konstantin__max_threshold__ratio=konstantin_max_threshold,
         mode="konstantin",
     )
 
@@ -168,9 +168,9 @@ Generating the recruitment thresholds is done by calling the ``generate_mu_recru
     for slope in combined_slopes:
         rt, _ = simulator.generate_mu_recruitment_thresholds(
             N=n_motor_units,
-            recruitment_range=recruitment_range,
+            recruitment_range__ratio=recruitment_range,
             deluca__slope=slope,
-            konstantin__max_threshold=combined_max_threshold,
+            konstantin__max_threshold__ratio=combined_max_threshold,
             mode="combined",
         )
         combined_results[slope] = rt
@@ -425,7 +425,7 @@ offering the most flexibility for custom recruitment patterns.
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 0.601 seconds)
+   **Total running time of the script:** (0 minutes 0.592 seconds)
 
 
 .. _sphx_glr_download_auto_examples_00_simulate_recruitment_thresholds.py:

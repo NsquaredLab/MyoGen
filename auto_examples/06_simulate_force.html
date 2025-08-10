@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Force Generation &#8212; MyoGen 0.3.0 Documentation</title>
+    <title>Force Generation &#8212; MyoGen 0.4.0 Documentation</title>
   
   
   
@@ -31,11 +31,13 @@
 <link href="../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
 
     <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=34f00721" />
     <link rel="stylesheet" type="text/css" href="../_static/sg_gallery.css?v=d2d258e8" />
     <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-binder.css?v=f4aeca0c" />
     <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-dataframe.css?v=2082cf3c" />
     <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
-    <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=73e2cb9d" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=34f00721" />
   
   <!-- So that users can add custom icons -->
   <script src="../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
@@ -43,9 +45,11 @@
   <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="../_static/documentation_options.js?v=e259d695"></script>
+    <script src="../_static/documentation_options.js?v=1437fa6d"></script>
     <script src="../_static/doctools.js?v=9bcbadda"></script>
     <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/custom.js?v=a236ca48"></script>
+    <script src="../_static/design-tabs.js?v=f930bc37"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'auto_examples/06_simulate_force';</script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
@@ -53,7 +57,7 @@
     <link rel="prev" title="Current Generation" href="05_simulate_currents.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="0.3.0" />
+  <meta name="docsearch:version" content="0.4.0" />
   </head>
   
   
@@ -78,8 +82,8 @@
   <input type="search"
          class="form-control"
          name="q"
-         placeholder="Search the docs ..."
-         aria-label="Search the docs ..."
+         placeholder="Search MyoGen docs..."
+         aria-label="Search MyoGen docs..."
          autocomplete="off"
          autocorrect="off"
          autocapitalize="off"
@@ -91,6 +95,9 @@
   <div class="pst-async-banner-revealer d-none">
   <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
 </div>
+<aside class="bd-header-announcement" aria-label="Announcement">
+  <div class="bd-header-announcement__content">⚠️ MyoGen is under active development. API may change.</div>
+</aside>
 
   
     <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
@@ -119,8 +126,8 @@
       
     
     
-    <img src="../_static/myogen_logo.png" class="logo__image only-light" alt="MyoGen 0.3.0 Documentation - Home"/>
-    <img src="../_static/myogen_logo.png" class="logo__image only-dark pst-js-only" alt="MyoGen 0.3.0 Documentation - Home"/>
+    <img src="../_static/myogen_logo.png" class="logo__image only-light" alt="MyoGen 0.4.0 Documentation - Home"/>
+    <img src="../_static/myogen_logo.png" class="logo__image only-dark pst-js-only" alt="MyoGen 0.4.0 Documentation - Home"/>
   
   
 </a></div>
@@ -129,7 +136,7 @@
 <div class="nav-item">
   <div class="version-switcher__container dropdown">
       <button id="version-switcher-button" type="button" class="version-switcher__button btn btn-sm navbar-btn" aria-haspopup="true" aria-expanded="false">
-          Version 0.3.0
+          Version 0.4.0
       </button>
       
       
@@ -466,7 +473,7 @@ pipeline from current input to force output.</p>
 These will determine both the activation order and the force characteristics
 of each motor unit.</p>
 <div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><a href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">recruitment_thresholds</span></a><span class="p">,</span> <a href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">_</span></a> <span class="o">=</span> <span class="n">simulator</span><span class="o">.</span><span class="n">generate_mu_recruitment_thresholds</span><span class="p">(</span>
-    <span class="n">N</span><span class="o">=</span><a href="https://docs.python.org/3/library/functions.html#int" title="builtins.int" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">n_motor_units</span></a><span class="p">,</span> <a href="https://docs.python.org/3/library/functions.html#int" title="builtins.int" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">recruitment_range</span></a><span class="o">=</span><a href="https://docs.python.org/3/library/functions.html#int" title="builtins.int" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">recruitment_range</span></a>
+    <span class="n">N</span><span class="o">=</span><a href="https://docs.python.org/3/library/functions.html#int" title="builtins.int" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">n_motor_units</span></a><span class="p">,</span> <span class="n">recruitment_range__ratio</span><span class="o">=</span><a href="https://docs.python.org/3/library/functions.html#int" title="builtins.int" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">recruitment_range</span></a>
 <span class="p">)</span>
 </pre></div>
 </div>
@@ -479,7 +486,7 @@ recruitment thresholds and physiological scaling rules.</p>
     <a href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">recruitment_thresholds</span></a><span class="o">=</span><a href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">recruitment_thresholds</span></a><span class="p">,</span>
     <a href="https://docs.python.org/3/library/functions.html#float" title="builtins.float" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">recording_frequency__Hz</span></a><span class="o">=</span><a href="https://docs.python.org/3/library/functions.html#float" title="builtins.float" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">recording_frequency__Hz</span></a><span class="p">,</span>
     <a href="https://docs.python.org/3/library/functions.html#float" title="builtins.float" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">longest_duration_rise_time__ms</span></a><span class="o">=</span><a href="https://docs.python.org/3/library/functions.html#float" title="builtins.float" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">longest_duration_rise_time__ms</span></a><span class="p">,</span>
-    <a href="https://docs.python.org/3/library/functions.html#float" title="builtins.float" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">contraction_time_range</span></a><span class="o">=</span><a href="https://docs.python.org/3/library/functions.html#float" title="builtins.float" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">contraction_time_range</span></a><span class="p">,</span>
+    <span class="n">contraction_time_range__unitless</span><span class="o">=</span><a href="https://docs.python.org/3/library/functions.html#float" title="builtins.float" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">contraction_time_range</span></a><span class="p">,</span>
 <span class="p">)</span>
 
 <span class="c1"># Display force model statistics</span>
@@ -487,10 +494,10 @@ recruitment thresholds and physiological scaling rules.</p>
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  - Number of motor units: </span><span class="si">{</span><a href="https://docs.python.org/3/library/functions.html#int" title="builtins.int" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">force_model</span><span class="o">.</span><span class="n">_number_of_neurons</span></a><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  - Recruitment ratio: </span><span class="si">{</span><a href="https://numpy.org/doc/stable/reference/arrays.scalars.html#numpy.float64" title="numpy.float64" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-attribute"><span class="n">force_model</span><span class="o">.</span><span class="n">_recruitment_ratio</span></a><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span>
-    <span class="sa">f</span><span class="s2">&quot;  - Peak force range: </span><span class="si">{</span><a href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">force_model</span><span class="o">.</span><span class="n">peak_twitch_forces</span></a><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2"> - </span><span class="si">{</span><a href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">force_model</span><span class="o">.</span><span class="n">peak_twitch_forces</span></a><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="sa">f</span><span class="s2">&quot;  - Peak force range: </span><span class="si">{</span><span class="n">force_model</span><span class="o">.</span><span class="n">peak_twitch_forces__unitless</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2"> - </span><span class="si">{</span><span class="n">force_model</span><span class="o">.</span><span class="n">peak_twitch_forces__unitless</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">&quot;</span>
 <span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span>
-    <span class="sa">f</span><span class="s2">&quot;  - Contraction time range: </span><span class="si">{</span><a href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">force_model</span><span class="o">.</span><span class="n">contraction_times</span></a><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2"> - </span><span class="si">{</span><a href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">force_model</span><span class="o">.</span><span class="n">contraction_times</span></a><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2"> samples&quot;</span>
+    <span class="sa">f</span><span class="s2">&quot;  - Contraction time range: </span><span class="si">{</span><span class="n">force_model</span><span class="o">.</span><span class="n">contraction_times__samples</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2"> - </span><span class="si">{</span><span class="n">force_model</span><span class="o">.</span><span class="n">contraction_times__samples</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2"> samples&quot;</span>
 <span class="p">)</span>
 </pre></div>
 </div>
@@ -547,7 +554,7 @@ drive motor unit recruitment and firing patterns.</p>
 <a href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">trapezoid_current</span></a> <span class="o">=</span> <span class="n">create_trapezoid_current</span><span class="p">(</span>
     <span class="n">n_pools</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
     <a href="https://docs.python.org/3/library/functions.html#int" title="builtins.int" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">t_points</span></a><span class="o">=</span><a href="https://docs.python.org/3/library/functions.html#int" title="builtins.int" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">t_points</span></a><span class="p">,</span>
-    <span class="n">timestep_ms</span><span class="o">=</span><a href="https://docs.python.org/3/library/functions.html#float" title="builtins.float" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">timestep__ms</span></a><span class="p">,</span>
+    <a href="https://docs.python.org/3/library/functions.html#float" title="builtins.float" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">timestep__ms</span></a><span class="o">=</span><a href="https://docs.python.org/3/library/functions.html#float" title="builtins.float" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">timestep__ms</span></a><span class="p">,</span>
     <span class="n">amplitudes__muV</span><span class="o">=</span><span class="p">[</span><a href="https://docs.python.org/3/library/functions.html#float" title="builtins.float" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">trap_amplitude</span></a><span class="p">],</span>
     <span class="n">rise_times__ms</span><span class="o">=</span><span class="p">[</span><a href="https://docs.python.org/3/library/functions.html#float" title="builtins.float" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">trap_rise_time</span></a><span class="p">],</span>
     <span class="n">plateau_times__ms</span><span class="o">=</span><span class="p">[</span><a href="https://docs.python.org/3/library/functions.html#float" title="builtins.float" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">trap_plateau_time</span></a><span class="p">],</span>
@@ -590,6 +597,26 @@ to the input current.</p>
 <span class="p">)</span>
 </pre></div>
 </div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Creating motor neuron pools:   0%|          | 0/1 [00:00&lt;?, ?pool/s]
+Creating motor neuron pools: 100%|██████████| 1/1 [00:00&lt;00:00, 24.62pool/s]
+
+Injecting currents into pools:   0%|          | 0/1 [00:00&lt;?, ?pool/s]
+
+Adding noise to neurons in pool:   0%|          | 0/100 [00:00&lt;?, ?neuron/s]
+
+Adding noise to neurons in pool:  21%|██        | 21/100 [00:00&lt;00:00, 204.81neuron/s]
+
+Adding noise to neurons in pool:  42%|████▏     | 42/100 [00:00&lt;00:00, 203.57neuron/s]
+
+Adding noise to neurons in pool:  63%|██████▎   | 63/100 [00:00&lt;00:00, 204.59neuron/s]
+
+Adding noise to neurons in pool:  84%|████████▍ | 84/100 [00:00&lt;00:00, 205.31neuron/s]
+
+
+Injecting currents into pools: 100%|██████████| 1/1 [00:00&lt;00:00,  1.63pool/s]
+Injecting currents into pools: 100%|██████████| 1/1 [00:00&lt;00:00,  1.63pool/s]
+</pre></div>
+</div>
 </section>
 <section id="visualize-spike-trains">
 <h2>Visualize Spike Trains<a class="headerlink" href="#visualize-spike-trains" title="Link to this heading">#</a></h2>
@@ -625,17 +652,17 @@ summation to produce the total muscle force.</p>
 </pre></div>
 </div>
 <div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Twitch trains are generated:   0%|          | 0/100 [00:00&lt;?, ?it/s]
-Twitch trains are generated:   9%|▉         | 9/100 [00:00&lt;00:01, 84.92it/s]
-Twitch trains are generated:  18%|█▊        | 18/100 [00:00&lt;00:00, 84.99it/s]
-Twitch trains are generated:  27%|██▋       | 27/100 [00:00&lt;00:00, 85.80it/s]
-Twitch trains are generated:  36%|███▌      | 36/100 [00:00&lt;00:00, 86.52it/s]
-Twitch trains are generated:  45%|████▌     | 45/100 [00:00&lt;00:00, 86.88it/s]
-Twitch trains are generated:  54%|█████▍    | 54/100 [00:00&lt;00:00, 87.53it/s]
-Twitch trains are generated:  64%|██████▍   | 64/100 [00:00&lt;00:00, 88.88it/s]
-Twitch trains are generated:  74%|███████▍  | 74/100 [00:00&lt;00:00, 89.97it/s]
-Twitch trains are generated:  84%|████████▍ | 84/100 [00:00&lt;00:00, 91.23it/s]
-Twitch trains are generated:  94%|█████████▍| 94/100 [00:01&lt;00:00, 91.95it/s]
-Twitch trains are generated: 100%|██████████| 100/100 [00:01&lt;00:00, 89.48it/s]
+Twitch trains are generated:   9%|▉         | 9/100 [00:00&lt;00:01, 85.19it/s]
+Twitch trains are generated:  18%|█▊        | 18/100 [00:00&lt;00:00, 85.47it/s]
+Twitch trains are generated:  27%|██▋       | 27/100 [00:00&lt;00:00, 85.71it/s]
+Twitch trains are generated:  36%|███▌      | 36/100 [00:00&lt;00:00, 86.43it/s]
+Twitch trains are generated:  45%|████▌     | 45/100 [00:00&lt;00:00, 87.06it/s]
+Twitch trains are generated:  55%|█████▌    | 55/100 [00:00&lt;00:00, 88.14it/s]
+Twitch trains are generated:  65%|██████▌   | 65/100 [00:00&lt;00:00, 89.25it/s]
+Twitch trains are generated:  75%|███████▌  | 75/100 [00:00&lt;00:00, 91.45it/s]
+Twitch trains are generated:  85%|████████▌ | 85/100 [00:00&lt;00:00, 92.30it/s]
+Twitch trains are generated:  95%|█████████▌| 95/100 [00:01&lt;00:00, 92.45it/s]
+Twitch trains are generated: 100%|██████████| 100/100 [00:01&lt;00:00, 89.92it/s]
 </pre></div>
 </div>
 </section>
@@ -682,7 +709,7 @@ the muscle responds to the electrical stimulation.</p>
 <a href="https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.show.html#matplotlib.pyplot.show" title="matplotlib.pyplot.show" class="sphx-glr-backref-module-matplotlib-pyplot sphx-glr-backref-type-py-function"><span class="n">plt</span><span class="o">.</span><span class="n">show</span></a><span class="p">()</span>
 </pre></div>
 </div>
-<img src="../_images/sphx_glr_06_simulate_force_004.png" srcset="../_images/sphx_glr_06_simulate_force_004.png" alt="Input Current and Force Response, Simulated Force Output, Realistic Force Output (with noise)" class = "sphx-glr-single-img"/><p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (1 minutes 2.152 seconds)</p>
+<img src="../_images/sphx_glr_06_simulate_force_004.png" srcset="../_images/sphx_glr_06_simulate_force_004.png" alt="Input Current and Force Response, Simulated Force Output, Realistic Force Output (with noise)" class = "sphx-glr-single-img"/><p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (1 minutes 1.404 seconds)</p>
 <div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-auto-examples-06-simulate-force-py">
 <div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
 <p><a class="reference download internal" download="" href="../_downloads/ee189116e48f4b4db86bf395d5f35c77/06_simulate_force.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">06_simulate_force.ipynb</span></code></a></p>
@@ -734,6 +761,22 @@ the muscle responds to the electrical stimulation.</p>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#visualize-force-output">Visualize Force Output</a></li>
 </ul>
   </nav></div>
+
+  <div class="sidebar-secondary-item">
+
+  
+  <div class="tocsection editthispage">
+    <a href="https://github.com/NSquaredLab/MyoGen/edit/main/docs/auto_examples/06_simulate_force.rst">
+      <i class="fa-solid fa-pencil"></i>
+      
+      
+        
+          Edit on GitHub
+        
+      
+    </a>
+  </div>
+</div>
 
   <div class="sidebar-secondary-item">
   <div role="note" aria-label="source link">

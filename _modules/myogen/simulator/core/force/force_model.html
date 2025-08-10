@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>myogen.simulator.core.force.force_model &#8212; MyoGen 0.3.0 Documentation</title>
+    <title>myogen.simulator.core.force.force_model &#8212; MyoGen 0.4.0 Documentation</title>
   
   
   
@@ -30,11 +30,13 @@
 <link href="../../../../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
 
     <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/custom.css?v=34f00721" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/sg_gallery.css?v=d2d258e8" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/sg_gallery-binder.css?v=f4aeca0c" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
-    <link rel="stylesheet" type="text/css" href="../../../../../_static/custom.css?v=73e2cb9d" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/custom.css?v=34f00721" />
   
   <!-- So that users can add custom icons -->
   <script src="../../../../../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
@@ -42,9 +44,11 @@
   <link rel="preload" as="script" href="../../../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="../../../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="../../../../../_static/documentation_options.js?v=e259d695"></script>
+    <script src="../../../../../_static/documentation_options.js?v=1437fa6d"></script>
     <script src="../../../../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../../../_static/custom.js?v=a236ca48"></script>
+    <script src="../../../../../_static/design-tabs.js?v=f930bc37"></script>
     <script type="module" src="https://cdn.jsdelivr.net/npm/mermaid@11.9.0/dist/mermaid.esm.min.mjs"></script>
     <script type="module" src="https://cdn.jsdelivr.net/npm/@mermaid-js/layout-elk@0.1.4/dist/mermaid-layout-elk.esm.min.mjs"></script>
     <script type="module">import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@11.9.0/dist/mermaid.esm.min.mjs";import elkLayouts from "https://cdn.jsdelivr.net/npm/@mermaid-js/layout-elk@0.1.4/dist/mermaid-layout-elk.esm.min.mjs";mermaid.registerLayoutLoaders(elkLayouts);mermaid.initialize({startOnLoad:false});</script>
@@ -58,7 +62,7 @@ window.addEventListener("load", () => mermaid.run());
     <link rel="search" title="Search" href="../../../../../search.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="0.3.0" />
+  <meta name="docsearch:version" content="0.4.0" />
   </head>
   
   
@@ -83,8 +87,8 @@ window.addEventListener("load", () => mermaid.run());
   <input type="search"
          class="form-control"
          name="q"
-         placeholder="Search the docs ..."
-         aria-label="Search the docs ..."
+         placeholder="Search MyoGen docs..."
+         aria-label="Search MyoGen docs..."
          autocomplete="off"
          autocorrect="off"
          autocapitalize="off"
@@ -96,6 +100,9 @@ window.addEventListener("load", () => mermaid.run());
   <div class="pst-async-banner-revealer d-none">
   <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
 </div>
+<aside class="bd-header-announcement" aria-label="Announcement">
+  <div class="bd-header-announcement__content">⚠️ MyoGen is under active development. API may change.</div>
+</aside>
 
   
     <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
@@ -124,8 +131,8 @@ window.addEventListener("load", () => mermaid.run());
       
     
     
-    <img src="../../../../../_static/myogen_logo.png" class="logo__image only-light" alt="MyoGen 0.3.0 Documentation - Home"/>
-    <img src="../../../../../_static/myogen_logo.png" class="logo__image only-dark pst-js-only" alt="MyoGen 0.3.0 Documentation - Home"/>
+    <img src="../../../../../_static/myogen_logo.png" class="logo__image only-light" alt="MyoGen 0.4.0 Documentation - Home"/>
+    <img src="../../../../../_static/myogen_logo.png" class="logo__image only-dark pst-js-only" alt="MyoGen 0.4.0 Documentation - Home"/>
   
   
 </a></div>
@@ -134,7 +141,7 @@ window.addEventListener("load", () => mermaid.run());
 <div class="nav-item">
   <div class="version-switcher__container dropdown">
       <button id="version-switcher-button" type="button" class="version-switcher__button btn btn-sm navbar-btn" aria-haspopup="true" aria-expanded="false">
-          Version 0.3.0
+          Version 0.4.0
       </button>
       
       
@@ -362,12 +369,16 @@ window.addEventListener("load", () => mermaid.run());
                   
   <h1>Source code for myogen.simulator.core.force.force_model</h1><div class="highlight"><pre>
 <span></span><span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Optional</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">beartype</span><span class="w"> </span><span class="kn">import</span> <span class="n">beartype</span>
+
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">tqdm</span><span class="w"> </span><span class="kn">import</span> <span class="n">tqdm</span>
 
-<span class="kn">from</span><span class="w"> </span><span class="nn">myogen.utils.types</span><span class="w"> </span><span class="kn">import</span> <span class="n">SPIKE_TRAIN__MATRIX</span><span class="p">,</span> <span class="n">beartowertype</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">myogen.utils.types</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">RECRUITMENT_THRESHOLDS__ARRAY</span><span class="p">,</span>
+    <span class="n">SPIKE_TRAIN__MATRIX</span><span class="p">,</span>
+    <span class="n">beartowertype</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.force_utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">spikes2sawtooth</span><span class="p">,</span> <span class="n">sawtooth2ipi</span><span class="p">,</span> <span class="n">get_gain</span>
 
 
 <div class="viewcode-block" id="ForceModel">
@@ -377,113 +388,272 @@ window.addEventListener("load", () => mermaid.run());
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Force model based on Fuglevand et al. (1993) [1]_.</span>
 
+<span class="sd">    This class implements the Fuglevand force generation model for motor unit pools,</span>
+<span class="sd">    computing individual motor unit twitch responses and their nonlinear gain modulation</span>
+<span class="sd">    based on discharge rates. The model generates realistic force outputs from spike trains</span>
+<span class="sd">    using physiologically-based parameters.</span>
+
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">    recruitment_thresholds : np.ndarray</span>
-<span class="sd">        Recruitment thresholds for each motor unit.</span>
+<span class="sd">    recruitment_thresholds : RECRUITMENT_THRESHOLDS__ARRAY</span>
+<span class="sd">        Recruitment thresholds for each motor unit. Array of values typically ranging</span>
+<span class="sd">        from 0 to 1 where larger motor units have higher thresholds.</span>
 <span class="sd">    recording_frequency__Hz : float</span>
-<span class="sd">        Recording frequency in Hz.</span>
-<span class="sd">    longest_duration_rise_time__ms : float, optional</span>
-<span class="sd">        Longest duration of the rise time in milliseconds.</span>
-<span class="sd">    twitch_force_range : float, optional</span>
-<span class="sd">        Twitch force range.</span>
-<span class="sd">    contraction_time_range : float, optional</span>
-<span class="sd">        Contraction time range. Generally between 2 and 5.</span>
+<span class="sd">        Recording frequency in Hz. Determines temporal resolution of force calculations.</span>
+<span class="sd">        Typical values: 1000-10000 Hz.</span>
+<span class="sd">    longest_duration_rise_time__ms : float, default=90.0</span>
+<span class="sd">        Longest duration of the rise time in milliseconds. This parameter (T_L in [1])</span>
+<span class="sd">        determines the contraction time of the slowest motor unit. Typical range: 50-150 ms.</span>
+<span class="sd">    contraction_time_range__unitless : float, default=3.0</span>
+<span class="sd">        Contraction time range factor (RT in [1]). Determines the spread of contraction</span>
+<span class="sd">        times across motor units. Generally between 2 and 5. Higher values create</span>
+<span class="sd">        larger differences between fast and slow motor units.</span>
+
+<span class="sd">    Attributes</span>
+<span class="sd">    ----------</span>
+<span class="sd">    peak_twitch_forces__unitless : np.ndarray</span>
+<span class="sd">        Peak twitch forces for each motor unit (unitless). Available after initialization.</span>
+<span class="sd">        Computed according to Fuglevand equation 13.</span>
+<span class="sd">    contraction_times__samples : np.ndarray</span>
+<span class="sd">        Contraction times for each motor unit in samples. Available after initialization.</span>
+<span class="sd">        Computed according to Fuglevand equation 14.</span>
+<span class="sd">    twitch_mat : np.ndarray</span>
+<span class="sd">        Complete twitch matrix for all motor units. Available after initialization.</span>
+<span class="sd">        Shape: (max_twitch_length, n_motor_units).</span>
+<span class="sd">    twitch_list : list[np.ndarray]</span>
+<span class="sd">        List of individual twitch responses for each motor unit. Available after initialization.</span>
+<span class="sd">        Each element contains the twitch response for one motor unit.</span>
+
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">    ValueError</span>
+<span class="sd">        If recruitment_thresholds is empty or contains invalid values.</span>
+<span class="sd">        If recording_frequency__Hz is not positive.</span>
+<span class="sd">        If longest_duration_rise_time__ms is not positive.</span>
+<span class="sd">        If contraction_time_range__unitless is not greater than 1.</span>
 
 <span class="sd">    References</span>
 <span class="sd">    ----------</span>
 <span class="sd">    .. [1] Fuglevand, A. J., Winter, D. A., &amp; Patla, A. E. (1993).</span>
 <span class="sd">        Models of recruitment and rate coding in motor-unit pools.</span>
 <span class="sd">        Journal of Neurophysiology, 70(2), 782-797.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; import numpy as np</span>
+<span class="sd">    &gt;&gt;&gt; from myogen.simulator.core.force import ForceModel</span>
+<span class="sd">    &gt;&gt;&gt; thresholds = np.linspace(0.1, 1.0, 10)</span>
+<span class="sd">    &gt;&gt;&gt; force_model = ForceModel(</span>
+<span class="sd">    ...     recruitment_thresholds=thresholds,</span>
+<span class="sd">    ...     recording_frequency__Hz=2000.0</span>
+<span class="sd">    ... )</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
+<div class="viewcode-block" id="ForceModel.__init__">
+<a class="viewcode-back" href="../../../../../generated/myogen.simulator.ForceModel.__init__.html#myogen.simulator.ForceModel.__init__">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
-        <span class="n">recruitment_thresholds</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+        <span class="n">recruitment_thresholds</span><span class="p">:</span> <span class="n">RECRUITMENT_THRESHOLDS__ARRAY</span><span class="p">,</span>
         <span class="n">recording_frequency__Hz</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
         <span class="n">longest_duration_rise_time__ms</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">90.0</span><span class="p">,</span>
-        <span class="n">contraction_time_range</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">3.0</span><span class="p">,</span>
-    <span class="p">):</span>
+        <span class="n">contraction_time_range__unitless</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">3.0</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="c1"># Input validation</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">recruitment_thresholds</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;recruitment_thresholds cannot be empty. &quot;</span>
+                <span class="s2">&quot;Please provide at least one recruitment threshold value.&quot;</span>
+            <span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">recruitment_thresholds</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;All recruitment thresholds must be positive. &quot;</span>
+                <span class="s2">&quot;Found values: min=</span><span class="si">{:.3f}</span><span class="s2">, max=</span><span class="si">{:.3f}</span><span class="s2">. &quot;</span>
+                <span class="s2">&quot;Recruitment thresholds typically range from 0.01 to 1.0.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                    <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">recruitment_thresholds</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">recruitment_thresholds</span><span class="p">)</span>
+                <span class="p">)</span>
+            <span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">recording_frequency__Hz</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;recording_frequency__Hz must be positive, got </span><span class="si">{</span><span class="n">recording_frequency__Hz</span><span class="si">}</span><span class="s2">. &quot;</span>
+                <span class="s2">&quot;Typical values for EMG/force recordings are between 1000-10000 Hz.&quot;</span>
+            <span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">longest_duration_rise_time__ms</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;longest_duration_rise_time__ms must be positive, got </span><span class="si">{</span><span class="n">longest_duration_rise_time__ms</span><span class="si">}</span><span class="s2">. &quot;</span>
+                <span class="s2">&quot;Typical values range from 50-150 ms for human motor units.&quot;</span>
+            <span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">contraction_time_range__unitless</span> <span class="o">&lt;=</span> <span class="mf">1.0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;contraction_time_range__unitless must be greater than 1.0, got </span><span class="si">{</span><span class="n">contraction_time_range__unitless</span><span class="si">}</span><span class="s2">. &quot;</span>
+                <span class="s2">&quot;This parameter determines the spread of contraction times. Typical values are 2.0-5.0.&quot;</span>
+            <span class="p">)</span>
+
+        <span class="c1"># Immutable public access</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">recruitment_thresholds</span> <span class="o">=</span> <span class="n">recruitment_thresholds</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_number_of_neurons</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">recruitment_thresholds</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">recording_frequency__Hz</span> <span class="o">=</span> <span class="n">recording_frequency__Hz</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">longest_duration_rise_time__ms</span> <span class="o">=</span> <span class="n">longest_duration_rise_time__ms</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">contraction_time_range__unitless</span> <span class="o">=</span> <span class="n">contraction_time_range__unitless</span>
+
+        <span class="c1"># Private copies for internal modifications</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_recruitment_thresholds</span> <span class="o">=</span> <span class="n">recruitment_thresholds</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_recording_frequency__Hz</span> <span class="o">=</span> <span class="n">recording_frequency__Hz</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_longest_duration_rise_time__ms</span> <span class="o">=</span> <span class="n">longest_duration_rise_time__ms</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_contraction_time_range__unitless</span> <span class="o">=</span> <span class="n">contraction_time_range__unitless</span>
+
+        <span class="c1"># Derived properties</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_number_of_neurons</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_recruitment_thresholds</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_recruitment_ratio</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">recruitment_thresholds</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">recruitment_thresholds</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_recruitment_thresholds</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">_recruitment_thresholds</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
         <span class="p">)</span>  <span class="c1"># referred in [1] as RP</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">recording_frequency__Hz</span> <span class="o">=</span> <span class="n">recording_frequency__Hz</span>
-
-        <span class="bp">self</span><span class="o">.</span><span class="n">longest_duration_rise_time__ms</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="n">longest_duration_rise_time__ms</span>  <span class="c1"># referred in [1] as T_L (see eq. 14)</span>
-        <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_longest_duration_rise_time__samples</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">longest_duration_rise_time__ms</span> <span class="o">/</span> <span class="mi">1000</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">recording_frequency__Hz</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_longest_duration_rise_time__ms</span> <span class="o">/</span> <span class="mi">1000</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_recording_frequency__Hz</span>
         <span class="p">)</span>  <span class="c1"># referred in [1] as T_L (see eq. 14)</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">contraction_time_range</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="n">contraction_time_range</span>  <span class="c1"># referred in [1] as RT (see eq. 14)</span>
-        <span class="p">)</span>
+        <span class="c1"># Simulation results - stored privately, accessed via properties</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_peak_twitch_forces__unitless</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_contraction_times__samples</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_twitch_mat</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_twitch_list</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">peak_twitch_forces</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span>
+        <span class="c1"># Initialize model parameters</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_compute_twitch_parameters</span><span class="p">()</span></div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_compute_twitch_parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Compute peak twitch forces and contraction times based on Fuglevand model.</span>
+
+<span class="sd">        This method calculates the physiological parameters for each motor unit</span>
+<span class="sd">        according to the Fuglevand et al. (1993) model equations.</span>
+
+<span class="sd">        Results are stored in the `peak_twitch_forces` and `contraction_times`</span>
+<span class="sd">        properties after execution.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_peak_twitch_forces__unitless</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span>
             <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_recruitment_ratio</span><span class="p">)</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">_number_of_neurons</span><span class="p">)</span>
             <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_number_of_neurons</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
         <span class="p">)</span>  <span class="c1"># referred in [1] as P(i) (see eq. 13)</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">contraction_times</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_longest_duration_rise_time__samples</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">power</span><span class="p">(</span>
-            <span class="mi">1</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">peak_twitch_forces</span><span class="p">,</span>
-            <span class="mi">1</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">emath</span><span class="o">.</span><span class="n">logn</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">contraction_time_range</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_recruitment_ratio</span><span class="p">),</span>
-        <span class="p">)</span>  <span class="c1"># referred in [1] as T(i) (see eq. 14)#</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_contraction_times__samples</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_longest_duration_rise_time__samples</span>
+            <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">power</span><span class="p">(</span>
+                <span class="mi">1</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">_peak_twitch_forces__unitless</span><span class="p">,</span>
+                <span class="mi">1</span>
+                <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">emath</span><span class="o">.</span><span class="n">logn</span><span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_contraction_time_range__unitless</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_recruitment_ratio</span>
+                <span class="p">),</span>
+            <span class="p">)</span>
+        <span class="p">)</span>  <span class="c1"># referred in [1] as T(i) (see eq. 14)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_initialize_twitches</span><span class="p">()</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="nf">_initialize_twitches</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_initialize_twitches</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Initialize the twitches matrix and the twitch list.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="c1"># 5 is a rule of thumb number so we capute the entire twitch.</span>
-        <span class="n">max_twitch_length</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ceil</span><span class="p">(</span><span class="mi">5</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">contraction_times</span><span class="p">)))</span>
+<span class="sd">        This method computes the individual motor unit twitch responses</span>
+<span class="sd">        based on the calculated peak forces and contraction times.</span>
+
+<span class="sd">        Results are stored in the `twitch_mat` and `twitch_list`</span>
+<span class="sd">        properties after execution.</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        ValueError</span>
+<span class="sd">            If twitch parameters have not been computed first.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_peak_twitch_forces__unitless</span> <span class="ow">is</span> <span class="kc">None</span>
+            <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">_contraction_times__samples</span> <span class="ow">is</span> <span class="kc">None</span>
+        <span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;Twitch parameters not computed. &quot;</span>
+                <span class="s2">&quot;Call _compute_twitch_parameters() first.&quot;</span>
+            <span class="p">)</span>
+
+        <span class="c1"># 5 is a rule of thumb number so we capture the entire twitch.</span>
+        <span class="n">max_twitch_length</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ceil</span><span class="p">(</span><span class="mi">5</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_contraction_times__samples</span><span class="p">)))</span>
 
         <span class="n">twitch_timelines_reshaped</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">max_twitch_length</span><span class="p">)[:,</span> <span class="n">np</span><span class="o">.</span><span class="n">newaxis</span><span class="p">]</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">twitch_mat</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">peak_twitch_forces</span>
-            <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">contraction_times</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_twitch_mat</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_peak_twitch_forces__unitless</span>
+            <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">_contraction_times__samples</span>
             <span class="o">*</span> <span class="n">twitch_timelines_reshaped</span>
-            <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">twitch_timelines_reshaped</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">contraction_times</span><span class="p">)</span>
+            <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">twitch_timelines_reshaped</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">_contraction_times__samples</span><span class="p">)</span>
         <span class="p">)</span>  <span class="c1"># referred in [1] as f_i(t) (see eq. 11 and 12)</span>
 
         <span class="c1"># Truncate the twitch to the effective length</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">twitch_list</span> <span class="o">=</span> <span class="p">[</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">twitch_mat</span><span class="p">[:</span><span class="n">L</span><span class="p">,</span> <span class="n">i</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_twitch_list</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_twitch_mat</span><span class="p">[:</span><span class="n">L</span><span class="p">,</span> <span class="n">i</span><span class="p">]</span>
             <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">L</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span>
                 <span class="n">np</span><span class="o">.</span><span class="n">minimum</span><span class="p">(</span>
-                    <span class="n">max_twitch_length</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ceil</span><span class="p">(</span><span class="mi">5</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">contraction_times</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+                    <span class="n">max_twitch_length</span><span class="p">,</span>
+                    <span class="n">np</span><span class="o">.</span><span class="n">ceil</span><span class="p">(</span><span class="mi">5</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_contraction_times__samples</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">),</span>
                 <span class="p">)</span>
             <span class="p">)</span>
         <span class="p">]</span>
 
 <div class="viewcode-block" id="ForceModel.generate_force">
-<a class="viewcode-back" href="../../../../../generated/myogen.simulator.ForceModel.html#myogen.simulator.ForceModel.generate_force">[docs]</a>
+<a class="viewcode-back" href="../../../../../generated/myogen.simulator.ForceModel.generate_force.html#myogen.simulator.ForceModel.generate_force">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">generate_force</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">spike_train__matrix</span><span class="p">:</span> <span class="n">SPIKE_TRAIN__MATRIX</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Generate force output from motor unit spike trains using the Fuglevand model.</span>
 
 <span class="sd">        This method simulates muscle force by converting spike trains into force output</span>
 <span class="sd">        through individual motor unit twitches with nonlinear gain modulation based on</span>
-<span class="sd">        discharge rate.</span>
+<span class="sd">        discharge rate. Each motor unit contributes to the total force according to its</span>
+<span class="sd">        twitch properties and firing pattern.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        spike_train__matrix : SPIKE_TRAIN__MATRIX</span>
 <span class="sd">            Spike train matrix with shape (n_pools, n_neurons, n_time_points).</span>
 <span class="sd">            Binary array where 1 indicates a spike occurrence.</span>
+<span class="sd">            The number of neurons (axis 1) must match the number of recruitment thresholds.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        np.ndarray</span>
 <span class="sd">            Force output array with shape (n_pools, n_time_points).</span>
 <span class="sd">            Force values in arbitrary units representing muscle force over time.</span>
+<span class="sd">            Each row corresponds to one motor neuron pool&#39;s force response.</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        ValueError</span>
+<span class="sd">            If spike train matrix dimensions don&#39;t match the number of motor units.</span>
+<span class="sd">            If twitch parameters have not been computed.</span>
+
+<span class="sd">        Notes</span>
+<span class="sd">        -----</span>
+<span class="sd">        The force generation follows these steps:</span>
+<span class="sd">        1. Convert spike trains to inter-pulse intervals (IPIs)</span>
+<span class="sd">        2. Calculate nonlinear gain based on discharge rates</span>
+<span class="sd">        3. Sum weighted twitch responses for each spike</span>
+<span class="sd">        4. Apply gain modulation to final force output</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Validate input dimensions</span>
+        <span class="k">if</span> <span class="n">spike_train__matrix</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_number_of_neurons</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Spike train matrix has </span><span class="si">{</span><span class="n">spike_train__matrix</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s2"> neurons, &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;but force model was initialized with </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_number_of_neurons</span><span class="si">}</span><span class="s2"> motor units. &quot;</span>
+                <span class="s2">&quot;The number of neurons in the spike train matrix must match the number of recruitment thresholds.&quot;</span>
+            <span class="p">)</span>
+
+        <span class="c1"># Check that twitch parameters are available</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_twitch_list</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;Twitch parameters not available. &quot;</span>
+                <span class="s2">&quot;This should not occur if the model was properly initialized. &quot;</span>
+                <span class="s2">&quot;Please reinitialize the ForceModel.&quot;</span>
+            <span class="p">)</span>
+
         <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
             <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_generate_force</span><span class="p">(</span><span class="n">spike_train</span><span class="o">.</span><span class="n">T</span><span class="p">)</span> <span class="k">for</span> <span class="n">spike_train</span> <span class="ow">in</span> <span class="n">spike_train__matrix</span><span class="p">]</span>
         <span class="p">)</span></div>
@@ -494,15 +664,15 @@ window.addEventListener("load", () => mermaid.run());
         <span class="n">L</span> <span class="o">=</span> <span class="n">spikes</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
 
         <span class="c1"># IPI signal generation out of spikes signal (for gain nonlinearity)</span>
-        <span class="n">_</span><span class="p">,</span> <span class="n">ipi</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sawtooth2ipi</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">spikes2sawtooth</span><span class="p">(</span>
+        <span class="n">_</span><span class="p">,</span> <span class="n">ipi</span> <span class="o">=</span> <span class="n">sawtooth2ipi</span><span class="p">(</span>
+            <span class="n">spikes2sawtooth</span><span class="p">(</span>
                 <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">([</span><span class="n">spikes</span><span class="p">[</span><span class="mi">1</span><span class="p">:],</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_number_of_neurons</span><span class="p">))])</span>
             <span class="p">)</span>
         <span class="p">)</span>
 
         <span class="n">gain</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full_like</span><span class="p">(</span><span class="n">spikes</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_number_of_neurons</span><span class="p">):</span>
-            <span class="n">gain</span><span class="p">[:,</span> <span class="n">n</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_gain</span><span class="p">(</span><span class="n">ipi</span><span class="p">[:,</span> <span class="n">n</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">contraction_times</span><span class="p">[</span><span class="n">n</span><span class="p">])</span>
+            <span class="n">gain</span><span class="p">[:,</span> <span class="n">n</span><span class="p">]</span> <span class="o">=</span> <span class="n">get_gain</span><span class="p">(</span><span class="n">ipi</span><span class="p">[:,</span> <span class="n">n</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">_contraction_times__samples</span><span class="p">[</span><span class="n">n</span><span class="p">])</span>
 
         <span class="c1"># Generate force</span>
         <span class="n">force</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">L</span><span class="p">)</span>
@@ -511,253 +681,103 @@ window.addEventListener("load", () => mermaid.run());
         <span class="p">):</span>
             <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">L</span><span class="p">):</span>
                 <span class="k">if</span> <span class="n">spikes</span><span class="p">[</span><span class="n">t</span><span class="p">,</span> <span class="n">n</span><span class="p">]:</span>
-                    <span class="n">twitch_to_add</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">twitch_list</span><span class="p">[</span><span class="n">n</span><span class="p">]</span>
+                    <span class="n">twitch_to_add</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_twitch_list</span><span class="p">[</span><span class="n">n</span><span class="p">]</span>
                     <span class="n">to_take</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">twitch_to_add</span><span class="p">),</span> <span class="n">L</span> <span class="o">-</span> <span class="n">t</span><span class="p">)</span>
                     <span class="n">force</span><span class="p">[</span><span class="n">t</span> <span class="p">:</span> <span class="n">t</span> <span class="o">+</span> <span class="n">to_take</span><span class="p">]</span> <span class="o">+=</span> <span class="n">gain</span><span class="p">[</span><span class="n">t</span><span class="p">,</span> <span class="n">n</span><span class="p">]</span> <span class="o">*</span> <span class="n">twitch_to_add</span><span class="p">[:</span><span class="n">to_take</span><span class="p">]</span>
 
         <span class="k">return</span> <span class="n">force</span>
 
-<div class="viewcode-block" id="ForceModel.get_gain">
-<a class="viewcode-back" href="../../../../../generated/myogen.simulator.ForceModel.html#myogen.simulator.ForceModel.get_gain">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">get_gain</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ipi</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">T</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+    <span class="c1"># Property accessors for computed results</span>
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">peak_twitch_forces__unitless</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Returns the gain value for the force output for a motor unit with current</span>
-<span class="sd">        inter-pulse-interval ipi and T-parameter of the twitch T. This function</span>
-<span class="sd">        corresponds to Fuglevand&#39;s nonlinear gain model for the force output,</span>
-<span class="sd">        see Fuglevand - Models of Rate Coding ..., eq. 17.</span>
+<span class="sd">        Peak twitch forces for each motor unit (unitless).</span>
 
-<span class="sd">        Parameters:</span>
-<span class="sd">        -----------</span>
-<span class="sd">        ipi: np.ndarray</span>
-<span class="sd">            Inter-pulse interval vector.</span>
-<span class="sd">        T: float</span>
-<span class="sd">            T-parameter of the twitch.</span>
-
-<span class="sd">        Returns:</span>
-<span class="sd">        --------</span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
 <span class="sd">        np.ndarray</span>
-<span class="sd">            Gain vector.</span>
+<span class="sd">            Array of peak twitch forces according to Fuglevand model equation 13.</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        ValueError</span>
+<span class="sd">            If twitch parameters have not been computed yet.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">Sf</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="mi">2</span> <span class="o">*</span> <span class="n">x</span><span class="o">**</span><span class="mi">3</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_peak_twitch_forces__unitless</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;Peak twitch forces not computed. &quot;</span>
+                <span class="s2">&quot;Twitch parameters are computed automatically during initialization.&quot;</span>
+            <span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_peak_twitch_forces__unitless</span>
 
-        <span class="n">inst_dr</span> <span class="o">=</span> <span class="n">T</span> <span class="o">/</span> <span class="n">ipi</span>  <span class="c1"># Instantaneous discharge rate</span>
-        <span class="n">gain</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">inst_dr</span><span class="p">)</span>  <span class="c1"># Gain</span>
-
-        <span class="n">mask</span> <span class="o">=</span> <span class="n">inst_dr</span> <span class="o">&gt;</span> <span class="mf">0.4</span>
-        <span class="n">gain</span><span class="p">[</span><span class="n">mask</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">Sf</span><span class="p">(</span><span class="n">inst_dr</span><span class="p">[</span><span class="n">mask</span><span class="p">])</span> <span class="o">/</span> <span class="n">inst_dr</span><span class="p">[</span><span class="n">mask</span><span class="p">])</span> <span class="o">/</span> <span class="p">(</span><span class="n">Sf</span><span class="p">(</span><span class="mf">0.4</span><span class="p">)</span> <span class="o">/</span> <span class="mf">0.4</span><span class="p">)</span>
-
-        <span class="k">return</span> <span class="n">gain</span></div>
-
-
-<div class="viewcode-block" id="ForceModel.spikes2sawtooth">
-<a class="viewcode-back" href="../../../../../generated/myogen.simulator.ForceModel.html#myogen.simulator.ForceModel.spikes2sawtooth">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">spikes2sawtooth</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="n">spikes</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">initial_values</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">contraction_times__samples</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Convert spikes to sawtooth signal.</span>
+<span class="sd">        Contraction times for each motor unit in samples.</span>
 
-<span class="sd">        The sawtooth signal represents inter-pulse intervals (IPIs) where each sawtooth</span>
-<span class="sd">        tooth height equals the number of time steps between consecutive spikes. This is</span>
-<span class="sd">        used to calculate instantaneous discharge rates for force generation.</span>
-
-<span class="sd">        **Sawtooth Sizing:**</span>
-<span class="sd">            - Each time step without a spike: sawtooth value increments by 1</span>
-<span class="sd">            - When a spike occurs: sawtooth resets to 0</span>
-<span class="sd">            - Sawtooth height = IPI in time samples (at recording_frequency__Hz)</span>
-<span class="sd">            - Example: height of 50 at 10kHz = 5ms IPI</span>
-
-<span class="sd">        Parameters:</span>
-<span class="sd">        -----------</span>
-<span class="sd">        spikes: np.ndarray</span>
-<span class="sd">            Spike train matrix (time x neurons). Binary values where 1 indicates a spike.</span>
-<span class="sd">        initial_values: np.ndarray, optional</span>
-<span class="sd">            Initial values for each neuron. Default is ones. Will be reset to 0 if</span>
-<span class="sd">            there&#39;s a spike at t=0.</span>
-
-<span class="sd">        Returns:</span>
-<span class="sd">        --------</span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
 <span class="sd">        np.ndarray</span>
-<span class="sd">            Sawtooth sequence where each value represents the time since the last spike</span>
-<span class="sd">            in samples. Used for calculating inter-pulse intervals and gain modulation.</span>
+<span class="sd">            Array of contraction times according to Fuglevand model equation 14.</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        ValueError</span>
+<span class="sd">            If twitch parameters have not been computed yet.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="n">initial_values</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">initial_values</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="mi">1</span><span class="p">,</span> <span class="n">spikes</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_contraction_times__samples</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;Contraction times not computed. &quot;</span>
+                <span class="s2">&quot;Twitch parameters are computed automatically during initialization.&quot;</span>
+            <span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_contraction_times__samples</span>
 
-        <span class="n">l</span><span class="p">,</span> <span class="n">w</span> <span class="o">=</span> <span class="n">spikes</span><span class="o">.</span><span class="n">shape</span>
-        <span class="n">seq</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">l</span><span class="p">,</span> <span class="n">w</span><span class="p">))</span>
-
-        <span class="c1"># Set initial values, but reset to 0 if there&#39;s a spike at t=0</span>
-        <span class="n">initial_values</span> <span class="o">=</span> <span class="n">initial_values</span> <span class="o">*</span> <span class="p">(</span><span class="n">spikes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">)</span>
-        <span class="n">seq</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">initial_values</span>
-
-        <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">w</span><span class="p">):</span>
-            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">l</span><span class="p">):</span>
-                <span class="k">if</span> <span class="n">spikes</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-                    <span class="n">seq</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
-                <span class="k">else</span><span class="p">:</span>
-                    <span class="n">seq</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">seq</span><span class="p">[</span><span class="n">i</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span>
-
-        <span class="k">return</span> <span class="n">seq</span></div>
-
-
-<div class="viewcode-block" id="ForceModel.sawtooth2spikes">
-<a class="viewcode-back" href="../../../../../generated/myogen.simulator.ForceModel.html#myogen.simulator.ForceModel.sawtooth2spikes">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">sawtooth2spikes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sawtooth</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">twitch_mat</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Convert sawtooth signal to spikes.</span>
+<span class="sd">        Complete twitch matrix for all motor units.</span>
 
-<span class="sd">        A spike occurs when the sawtooth resets to 0, indicating the end of an</span>
-<span class="sd">        inter-pulse interval. This is the inverse operation of spikes2sawtooth.</span>
-
-<span class="sd">        **Spike Detection:**</span>
-<span class="sd">            - Spike at t=0 if sawtooth starts at 0</span>
-<span class="sd">            - Spike when sawtooth decreases (resets from peak back to 0)</span>
-<span class="sd">            - Each spike marks the end of one IPI and start of the next</span>
-
-<span class="sd">        Parameters:</span>
-<span class="sd">        -----------</span>
-<span class="sd">        sawtooth: np.ndarray</span>
-<span class="sd">            Sawtooth signal matrix where values represent time since last spike.</span>
-
-<span class="sd">        Returns:</span>
-<span class="sd">        --------</span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
 <span class="sd">        np.ndarray</span>
-<span class="sd">            Spike train matrix with binary values (1 = spike, 0 = no spike).</span>
+<span class="sd">            Matrix of shape (max_twitch_length, n_motor_units) containing</span>
+<span class="sd">            the twitch responses for each motor unit.</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        ValueError</span>
+<span class="sd">            If twitches have not been initialized yet.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">spikes</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">sawtooth</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">bool</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_twitch_mat</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;Twitch matrix not computed. &quot;</span>
+                <span class="s2">&quot;Twitches are initialized automatically during model setup.&quot;</span>
+            <span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_twitch_mat</span>
 
-        <span class="n">spikes</span><span class="p">[</span><span class="n">sawtooth</span> <span class="o">==</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
-
-        <span class="k">return</span> <span class="n">spikes</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span></div>
-
-
-<div class="viewcode-block" id="ForceModel.sawtooth2ipi">
-<a class="viewcode-back" href="../../../../../generated/myogen.simulator.ForceModel.html#myogen.simulator.ForceModel.sawtooth2ipi">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">sawtooth2ipi</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="n">sawtooth</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">ipi_saturation</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">inf</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]:</span>
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">twitch_list</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Convert sawtooth signal to inter-pulse intervals.</span>
+<span class="sd">        List of individual twitch responses for each motor unit.</span>
 
-<span class="sd">        This method converts sawtooth heights (representing time since last spike) into</span>
-<span class="sd">        inter-pulse intervals (IPIs) by combining forward and backward spike information.</span>
-<span class="sd">        The IPI values are used to calculate instantaneous discharge rates for the</span>
-<span class="sd">        Fuglevand gain model.</span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        list[np.ndarray]</span>
+<span class="sd">            List where each element is the twitch response array for one motor unit.</span>
+<span class="sd">            Each array may have different lengths based on the motor unit&#39;s contraction time.</span>
 
-<span class="sd">        **IPI Calculation:**</span>
-<span class="sd">        - Forward sawtooth: time since last spike</span>
-<span class="sd">        - Backward sawtooth: time until next spike</span>
-<span class="sd">        - IPI = forward + backward sawtooth values</span>
-<span class="sd">        - IPI represents the full inter-pulse interval in time samples</span>
-<span class="sd">        - Convert to physiological units: IPI_ms = IPI_samples / (recording_frequency__Hz / 1000)</span>
-
-<span class="sd">        Parameters:</span>
-<span class="sd">        -----------</span>
-<span class="sd">        sawtooth: np.ndarray</span>
-<span class="sd">            Sawtooth signal matrix where values represent time since last spike.</span>
-<span class="sd">        ipi_saturation: float, optional</span>
-<span class="sd">            Maximum IPI value (saturation) to prevent infinite values when spikes</span>
-<span class="sd">            are far apart. Default is infinity.</span>
-
-<span class="sd">        Returns:</span>
-<span class="sd">        --------</span>
-<span class="sd">        Tuple[np.ndarray, np.ndarray]</span>
-<span class="sd">            ipi_filled: IPI signal with zeros where no full IPI can be calculated.</span>
-<span class="sd">            ipi_filled_seamless: IPI signal with zeros filled by preceding values</span>
-<span class="sd">            for smooth gain calculations.</span>
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        ValueError</span>
+<span class="sd">            If twitches have not been initialized yet.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">spikes</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sawtooth2spikes</span><span class="p">(</span><span class="n">sawtooth</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_twitch_list</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;Twitch list not computed. &quot;</span>
+                <span class="s2">&quot;Twitches are initialized automatically during model setup.&quot;</span>
+            <span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_twitch_list</span></div>
 
-        <span class="n">i_sawtooth</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">spikes2sawtooth</span><span class="p">(</span><span class="n">spikes</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">sawtooth</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
-        <span class="n">i_sawtooth</span> <span class="o">=</span> <span class="n">i_sawtooth</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
-        <span class="n">ipi_filled</span> <span class="o">=</span> <span class="n">sawtooth</span> <span class="o">+</span> <span class="n">i_sawtooth</span>
-        <span class="n">ipi_filled</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">minimum</span><span class="p">(</span><span class="n">ipi_filled</span><span class="p">,</span> <span class="n">ipi_saturation</span><span class="p">)</span>
-
-        <span class="n">ipi_filled_seamless</span> <span class="o">=</span> <span class="n">ipi_filled</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
-        <span class="n">ipi_filled_seamless</span><span class="p">[</span><span class="n">ipi_filled</span> <span class="o">==</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">ipi_filled_seamless</span><span class="p">[</span><span class="n">ipi_filled</span> <span class="o">==</span> <span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="mi">1</span>
-        <span class="n">ipi_filled_seamless</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">minimum</span><span class="p">(</span><span class="n">ipi_filled_seamless</span><span class="p">,</span> <span class="n">ipi_saturation</span><span class="p">)</span>
-
-        <span class="k">return</span> <span class="n">ipi_filled</span><span class="p">,</span> <span class="n">ipi_filled_seamless</span></div>
-</div>
-
-
-
-<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
-    <span class="kn">from</span><span class="w"> </span><span class="nn">myogen</span><span class="w"> </span><span class="kn">import</span> <span class="n">simulator</span>
-    <span class="kn">from</span><span class="w"> </span><span class="nn">myogen.utils.plotting.force</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
-        <span class="n">plot_twitch_parameter_assignment</span><span class="p">,</span>
-        <span class="n">plot_twitches</span><span class="p">,</span>
-    <span class="p">)</span>
-    <span class="kn">from</span><span class="w"> </span><span class="nn">myogen.utils.plotting</span><span class="w"> </span><span class="kn">import</span> <span class="n">plot_spike_trains</span>
-    <span class="kn">from</span><span class="w"> </span><span class="nn">myogen.utils.currents</span><span class="w"> </span><span class="kn">import</span> <span class="n">create_trapezoid_current</span>
-
-    <span class="n">recruitment_thresholds</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">simulator</span><span class="o">.</span><span class="n">generate_mu_recruitment_thresholds</span><span class="p">(</span>
-        <span class="n">N</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">recruitment_range</span><span class="o">=</span><span class="mi">25</span>
-    <span class="p">)</span>
-
-    <span class="n">force_model</span> <span class="o">=</span> <span class="n">ForceModel</span><span class="p">(</span>
-        <span class="n">recruitment_thresholds</span><span class="o">=</span><span class="n">recruitment_thresholds</span><span class="p">,</span> <span class="n">recording_frequency__Hz</span><span class="o">=</span><span class="mf">10000.0</span>
-    <span class="p">)</span>
-
-    <span class="n">_</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">6</span><span class="p">))</span>
-
-    <span class="n">plot_twitch_parameter_assignment</span><span class="p">(</span>
-        <span class="n">force_model</span><span class="p">,</span> <span class="n">ax</span><span class="p">,</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">10</span><span class="p">],</span> <span class="n">flip_x</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">apply_default_formatting</span><span class="o">=</span><span class="kc">True</span>
-    <span class="p">)</span>
-    <span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
-    <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
-
-    <span class="n">plot_twitches</span><span class="p">(</span><span class="n">force_model</span><span class="p">,</span> <span class="n">plt</span><span class="o">.</span><span class="n">gca</span><span class="p">(),</span> <span class="n">apply_default_formatting</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-    <span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
-    <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
-
-    <span class="n">simulation_duration__ms</span> <span class="o">=</span> <span class="mf">10000.0</span>  <span class="c1"># 1 seconds</span>
-    <span class="n">timestep__ms</span> <span class="o">=</span> <span class="mf">0.05</span>  <span class="c1"># 0.1 ms time step</span>
-    <span class="n">t_points</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">simulation_duration__ms</span> <span class="o">/</span> <span class="n">timestep__ms</span><span class="p">)</span>
-
-    <span class="n">trap_amplitudes</span> <span class="o">=</span> <span class="p">[</span><span class="mf">100.0</span><span class="p">]</span>  <span class="c1"># Peak amplitudes</span>
-    <span class="n">trap_rise_times</span> <span class="o">=</span> <span class="p">[</span><span class="mf">1000.0</span><span class="p">]</span>  <span class="c1"># Rise durations (ms)</span>
-    <span class="n">trap_plateau_times</span> <span class="o">=</span> <span class="p">[</span><span class="mf">3000.0</span><span class="p">]</span>  <span class="c1"># Plateau durations (ms)</span>
-    <span class="n">trap_fall_times</span> <span class="o">=</span> <span class="p">[</span><span class="mf">1000.0</span><span class="p">]</span>  <span class="c1"># Fall durations (ms)</span>
-    <span class="n">trap_offsets</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">]</span>  <span class="c1"># Baseline currents</span>
-    <span class="n">trap_delays</span> <span class="o">=</span> <span class="p">[</span><span class="mf">2500.0</span><span class="p">]</span>  <span class="c1"># Initial delays (ms)</span>
-
-    <span class="n">trapezoid_currents</span> <span class="o">=</span> <span class="n">create_trapezoid_current</span><span class="p">(</span>
-        <span class="n">n_pools</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
-        <span class="n">t_points</span><span class="o">=</span><span class="n">t_points</span><span class="p">,</span>
-        <span class="n">timestep_ms</span><span class="o">=</span><span class="n">timestep__ms</span><span class="p">,</span>
-        <span class="n">amplitudes__muV</span><span class="o">=</span><span class="n">trap_amplitudes</span><span class="p">,</span>
-        <span class="n">rise_times__ms</span><span class="o">=</span><span class="n">trap_rise_times</span><span class="p">,</span>
-        <span class="n">plateau_times__ms</span><span class="o">=</span><span class="n">trap_plateau_times</span><span class="p">,</span>
-        <span class="n">fall_times__ms</span><span class="o">=</span><span class="n">trap_fall_times</span><span class="p">,</span>
-        <span class="n">offsets__muV</span><span class="o">=</span><span class="n">trap_offsets</span><span class="p">,</span>
-        <span class="n">delays__ms</span><span class="o">=</span><span class="n">trap_delays</span><span class="p">,</span>
-    <span class="p">)</span>
-
-    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">trapezoid_currents</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
-    <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
-
-    <span class="n">motor_neuron_pool</span> <span class="o">=</span> <span class="n">simulator</span><span class="o">.</span><span class="n">MotorNeuronPool</span><span class="p">(</span><span class="n">recruitment_thresholds</span><span class="p">)</span>
-
-    <span class="n">spike_trains_matrix</span><span class="p">,</span> <span class="n">active_neuron_indices</span><span class="p">,</span> <span class="n">data</span> <span class="o">=</span> <span class="p">(</span>
-        <span class="n">motor_neuron_pool</span><span class="o">.</span><span class="n">generate_spike_trains</span><span class="p">(</span>
-            <span class="n">input_current__matrix</span><span class="o">=</span><span class="n">trapezoid_currents</span><span class="p">,</span>
-            <span class="n">timestep__ms</span><span class="o">=</span><span class="n">timestep__ms</span><span class="p">,</span>
-            <span class="n">noise_mean__nA</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
-            <span class="n">noise_stdev__nA</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
-        <span class="p">)</span>
-    <span class="p">)</span>
-
-    <span class="n">plot_spike_trains</span><span class="p">(</span><span class="n">spike_trains_matrix</span><span class="p">,</span> <span class="n">timestep__ms</span><span class="p">,</span> <span class="p">[</span><span class="n">plt</span><span class="o">.</span><span class="n">gca</span><span class="p">()])</span>
-    <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
-
-    <span class="n">force_hfs</span> <span class="o">=</span> <span class="n">force_model</span><span class="o">.</span><span class="n">generate_force</span><span class="p">(</span><span class="n">spike_trains_matrix</span><span class="p">)</span>
-    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
-        <span class="n">force_hfs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-        <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">force_hfs</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span> <span class="o">*</span> <span class="mf">0.0001</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">force_hfs</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
-    <span class="p">)</span>
-    <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </pre></div>
 
                 </article>

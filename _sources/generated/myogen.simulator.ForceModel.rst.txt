@@ -6,6 +6,7 @@
 .. autoclass:: ForceModel
    :members:
    :show-inheritance:
+   :member-order: bysource
 
    
    
@@ -13,16 +14,24 @@
 
    .. autosummary::
       :nosignatures:
+      :toctree:
    
       ~ForceModel.__init__
       ~ForceModel.generate_force
-      ~ForceModel.get_gain
-      ~ForceModel.sawtooth2ipi
-      ~ForceModel.sawtooth2spikes
-      ~ForceModel.spikes2sawtooth
    
    
 
    
    
-    
+   .. rubric:: Attributes
+
+   .. autosummary::
+      :nosignatures:
+      :toctree:
+   
+      ~ForceModel.contraction_times__samples
+      ~ForceModel.peak_twitch_forces__unitless
+      ~ForceModel.twitch_list
+      ~ForceModel.twitch_mat
+   
+   

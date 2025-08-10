@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>myogen.simulator.core.physiological_distribution &#8212; MyoGen 0.3.0 Documentation</title>
+    <title>myogen.simulator.core.physiological_distribution &#8212; MyoGen 0.4.0 Documentation</title>
   
   
   
@@ -30,11 +30,13 @@
 <link href="../../../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
 
     <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/custom.css?v=34f00721" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery.css?v=d2d258e8" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery-binder.css?v=f4aeca0c" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
-    <link rel="stylesheet" type="text/css" href="../../../../_static/custom.css?v=73e2cb9d" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/custom.css?v=34f00721" />
   
   <!-- So that users can add custom icons -->
   <script src="../../../../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
@@ -42,9 +44,11 @@
   <link rel="preload" as="script" href="../../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="../../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="../../../../_static/documentation_options.js?v=e259d695"></script>
+    <script src="../../../../_static/documentation_options.js?v=1437fa6d"></script>
     <script src="../../../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../../_static/custom.js?v=a236ca48"></script>
+    <script src="../../../../_static/design-tabs.js?v=f930bc37"></script>
     <script type="module" src="https://cdn.jsdelivr.net/npm/mermaid@11.9.0/dist/mermaid.esm.min.mjs"></script>
     <script type="module" src="https://cdn.jsdelivr.net/npm/@mermaid-js/layout-elk@0.1.4/dist/mermaid-layout-elk.esm.min.mjs"></script>
     <script type="module">import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@11.9.0/dist/mermaid.esm.min.mjs";import elkLayouts from "https://cdn.jsdelivr.net/npm/@mermaid-js/layout-elk@0.1.4/dist/mermaid-layout-elk.esm.min.mjs";mermaid.registerLayoutLoaders(elkLayouts);mermaid.initialize({startOnLoad:false});</script>
@@ -58,7 +62,7 @@ window.addEventListener("load", () => mermaid.run());
     <link rel="search" title="Search" href="../../../../search.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="0.3.0" />
+  <meta name="docsearch:version" content="0.4.0" />
   </head>
   
   
@@ -83,8 +87,8 @@ window.addEventListener("load", () => mermaid.run());
   <input type="search"
          class="form-control"
          name="q"
-         placeholder="Search the docs ..."
-         aria-label="Search the docs ..."
+         placeholder="Search MyoGen docs..."
+         aria-label="Search MyoGen docs..."
          autocomplete="off"
          autocorrect="off"
          autocapitalize="off"
@@ -96,6 +100,9 @@ window.addEventListener("load", () => mermaid.run());
   <div class="pst-async-banner-revealer d-none">
   <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
 </div>
+<aside class="bd-header-announcement" aria-label="Announcement">
+  <div class="bd-header-announcement__content">⚠️ MyoGen is under active development. API may change.</div>
+</aside>
 
   
     <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
@@ -124,8 +131,8 @@ window.addEventListener("load", () => mermaid.run());
       
     
     
-    <img src="../../../../_static/myogen_logo.png" class="logo__image only-light" alt="MyoGen 0.3.0 Documentation - Home"/>
-    <img src="../../../../_static/myogen_logo.png" class="logo__image only-dark pst-js-only" alt="MyoGen 0.3.0 Documentation - Home"/>
+    <img src="../../../../_static/myogen_logo.png" class="logo__image only-light" alt="MyoGen 0.4.0 Documentation - Home"/>
+    <img src="../../../../_static/myogen_logo.png" class="logo__image only-dark pst-js-only" alt="MyoGen 0.4.0 Documentation - Home"/>
   
   
 </a></div>
@@ -134,7 +141,7 @@ window.addEventListener("load", () => mermaid.run());
 <div class="nav-item">
   <div class="version-switcher__container dropdown">
       <button id="version-switcher-button" type="button" class="version-switcher__button btn btn-sm navbar-btn" aria-haspopup="true" aria-expanded="false">
-          Version 0.3.0
+          Version 0.4.0
       </button>
       
       
@@ -365,16 +372,19 @@ window.addEventListener("load", () => mermaid.run());
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 
+<span class="kn">from</span><span class="w"> </span><span class="nn">myogen.utils.types</span><span class="w"> </span><span class="kn">import</span> <span class="n">beartowertype</span><span class="p">,</span> <span class="n">RECRUITMENT_THRESHOLDS__ARRAY</span>
+
 
 <div class="viewcode-block" id="generate_mu_recruitment_thresholds">
 <a class="viewcode-back" href="../../../../generated/myogen.simulator.generate_mu_recruitment_thresholds.html#myogen.simulator.generate_mu_recruitment_thresholds">[docs]</a>
+<span class="nd">@beartowertype</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">generate_mu_recruitment_thresholds</span><span class="p">(</span>
     <span class="n">N</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
-    <span class="n">recruitment_range</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+    <span class="n">recruitment_range__ratio</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
     <span class="n">deluca__slope</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="n">konstantin__max_threshold</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">,</span>
+    <span class="n">konstantin__max_threshold__ratio</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">,</span>
     <span class="n">mode</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;fuglevand&quot;</span><span class="p">,</span> <span class="s2">&quot;deluca&quot;</span><span class="p">,</span> <span class="s2">&quot;konstantin&quot;</span><span class="p">,</span> <span class="s2">&quot;combined&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;konstantin&quot;</span><span class="p">,</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]:</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">RECRUITMENT_THRESHOLDS__ARRAY</span><span class="p">,</span> <span class="n">RECRUITMENT_THRESHOLDS__ARRAY</span><span class="p">]:</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Generate recruitment thresholds for a pool of motor units using different models.</span>
 
@@ -392,25 +402,25 @@ window.addEventListener("load", () => mermaid.run());
 <span class="sd">    ----------</span>
 <span class="sd">    N : int</span>
 <span class="sd">        Number of motor units in the pool.</span>
-<span class="sd">    recruitment_range : float</span>
-<span class="sd">        Recruitment range, defined as the ratio of the largest to smallest threshold</span>
+<span class="sd">    recruitment_range__ratio : float</span>
+<span class="sd">        Recruitment range (dimensionless ratio), defined as the ratio of the largest to smallest threshold</span>
 <span class="sd">        :math:`(rt(N)/rt(1))`.</span>
 <span class="sd">    deluca__slope : float, optional</span>
-<span class="sd">        Slope correction coefficient for the ``&#39;deluca&#39;`` mode. Required if ``mode=&#39;deluca&#39;``.</span>
-<span class="sd">        Typical values range from 25-100.</span>
-<span class="sd">    konstantin__max_threshold : float, optional</span>
-<span class="sd">        Maximum recruitment threshold for the ``&#39;konstantin&#39;`` mode. Required if ``mode=&#39;konstantin&#39;``.</span>
-<span class="sd">        Sets the absolute scale of all thresholds.</span>
+<span class="sd">        Dimensionless slope parameter for the ``&#39;deluca&#39;`` mode. Required if ``mode=&#39;deluca&#39;``.</span>
+<span class="sd">        Controls the curvature of the threshold distribution. Typical values range from 0.001-100.</span>
+<span class="sd">    konstantin__max_threshold__ratio : float, optional</span>
+<span class="sd">        Maximum recruitment threshold (dimensionless ratio) for the ``&#39;konstantin&#39;`` mode. Required if ``mode=&#39;konstantin&#39;``.</span>
+<span class="sd">        Sets the absolute scale of all thresholds. Default is 1.0.</span>
 <span class="sd">    mode : RecruitmentMode, optional</span>
 <span class="sd">        Model to use for threshold generation. One of ``&#39;fuglevand&#39;``, ``&#39;deluca&#39;``, ``&#39;konstantin&#39;``, or ``&#39;combined&#39;``.</span>
 <span class="sd">        Default is ``&#39;konstantin&#39;``.</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
-<span class="sd">    rt : numpy.ndarray</span>
+<span class="sd">    rt : RECRUITMENT_THRESHOLDS__ARRAY</span>
 <span class="sd">        Recruitment thresholds for each motor unit (shape: (N,)).</span>
 <span class="sd">        Values are monotonically increasing from ``rt[0]`` to ``rt[N-1]``.</span>
-<span class="sd">    rtz : numpy.ndarray</span>
+<span class="sd">    rtz : RECRUITMENT_THRESHOLDS__ARRAY</span>
 <span class="sd">        Zero-based recruitment thresholds where :math:`rtz[0] = 0` (shape: (N,)).</span>
 <span class="sd">        Computed as :math:`rtz = rt - rt[0]`, convenient for simulation.</span>
 
@@ -452,13 +462,13 @@ window.addEventListener("load", () => mermaid.run());
 <span class="sd">            rt(i) &amp;= \frac{RT_{max}}{RR} \cdot \exp\left(\frac{(i - 1) \cdot \ln(RR)}{N - 1}\right) \\</span>
 <span class="sd">            rtz(i) &amp;= \frac{RT_{max}}{RR} \cdot \left(\exp\left(\frac{(i - 1) \cdot \ln(RR + 1)}{N}\right) - 1\right)</span>
 
-<span class="sd">        where :math:`RT_{max}` = ``konstantin__max_threshold``, :math:`i = 1, 2, \ldots, N`</span>
+<span class="sd">        where :math:`RT_{max}` = ``konstantin__max_threshold__ratio``, :math:`i = 1, 2, \ldots, N`</span>
 
 <span class="sd">    **combined** : A corrected De Luca model that uses the slope parameter for shape control but properly respects the RR constraint and maximum threshold like the Konstantin model</span>
 <span class="sd">        .. math::</span>
 <span class="sd">            rt(i) = \frac{RT_{max}}{RR} + \left(\frac{b \cdot i}{N} \cdot \exp\left(\frac{i \cdot \ln(RR / b)}{N}\right) - \frac{RT_{max}}{RR}\right) \cdot \left(\frac{RT_{max} - RT_{max}/RR}{b \cdot N \cdot \exp\left(\frac{i \cdot \ln(RR / b)}{N}\right) - \frac{RT_{max}}{RR}}\right)</span>
 
-<span class="sd">        where :math:`b` = ``deluca__slope``, :math:`RT_{max}` = ``konstantin__max_threshold``, :math:`i = 1, 2, \ldots, N`</span>
+<span class="sd">        where :math:`b` = ``deluca__slope``, :math:`RT_{max}` = ``konstantin__max_threshold__ratio``, :math:`i = 1, 2, \ldots, N`</span>
 
 <span class="sd">    .. note::</span>
 <span class="sd">        - All models ensure :math:`rt(1) &lt; rt(2) &lt; \ldots &lt; rt(N)` (monotonically increasing)</span>
@@ -470,64 +480,64 @@ window.addEventListener("load", () => mermaid.run());
 <span class="sd">    --------</span>
 <span class="sd">    &gt;&gt;&gt; # Generate thresholds using Fuglevand model</span>
 <span class="sd">    &gt;&gt;&gt; rt, rtz = generate_mu_recruitment_thresholds(</span>
-<span class="sd">    ...     N=100, recruitment_range=50, mode=&#39;fuglevand&#39;</span>
+<span class="sd">    ...     N=100, recruitment_range__ratio=50.0, mode=&#39;fuglevand&#39;</span>
 <span class="sd">    ... )</span>
 <span class="sd">    &gt;&gt;&gt;</span>
 <span class="sd">    &gt;&gt;&gt; # Generate thresholds using Konstantin model with explicit max threshold</span>
 <span class="sd">    &gt;&gt;&gt; rt, rtz = generate_mu_recruitment_thresholds(</span>
-<span class="sd">    ...     N=100, recruitment</span>
+<span class="sd">    ...     N=100, recruitment_range__ratio=50.0, konstantin__max_threshold__ratio=1.0, mode=&#39;konstantin&#39;</span>
 <span class="sd">    ... )</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">i</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">N</span><span class="p">)</span>
 
     <span class="k">match</span> <span class="n">mode</span><span class="p">:</span>
         <span class="k">case</span> <span class="s2">&quot;fuglevand&quot;</span><span class="p">:</span>
-            <span class="n">rt</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">((</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">recruitment_range</span><span class="p">)</span> <span class="o">/</span> <span class="n">N</span><span class="p">)</span> <span class="o">*</span> <span class="n">i</span><span class="p">)</span> <span class="o">/</span> <span class="mi">100</span>
+            <span class="n">rt</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">((</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">recruitment_range__ratio</span><span class="p">)</span> <span class="o">/</span> <span class="n">N</span><span class="p">)</span> <span class="o">*</span> <span class="n">i</span><span class="p">)</span> <span class="o">/</span> <span class="mi">100</span>
             <span class="n">rtz</span> <span class="o">=</span> <span class="n">rt</span> <span class="o">-</span> <span class="n">rt</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
         <span class="k">case</span> <span class="s2">&quot;deluca&quot;</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">deluca__slope</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;deluca__slope must be provided for &#39;deluca&#39; mode.&quot;</span><span class="p">)</span>
             <span class="n">rt</span> <span class="o">=</span> <span class="p">(</span>
                 <span class="p">(</span><span class="n">deluca__slope</span> <span class="o">*</span> <span class="n">i</span> <span class="o">/</span> <span class="n">N</span><span class="p">)</span>
-                <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">((</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">recruitment_range</span> <span class="o">/</span> <span class="n">deluca__slope</span><span class="p">)</span> <span class="o">/</span> <span class="n">N</span><span class="p">)</span> <span class="o">*</span> <span class="n">i</span><span class="p">)</span>
+                <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">((</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">recruitment_range__ratio</span> <span class="o">/</span> <span class="n">deluca__slope</span><span class="p">)</span> <span class="o">/</span> <span class="n">N</span><span class="p">)</span> <span class="o">*</span> <span class="n">i</span><span class="p">)</span>
                 <span class="o">/</span> <span class="mi">100</span>
             <span class="p">)</span>
             <span class="n">rtz</span> <span class="o">=</span> <span class="n">rt</span> <span class="o">-</span> <span class="n">rt</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
         <span class="k">case</span> <span class="s2">&quot;konstantin&quot;</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">konstantin__max_threshold</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">konstantin__max_threshold__ratio</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                    <span class="s2">&quot;konstantin__max_threshold must be provided for &#39;konstantin&#39; mode.&quot;</span>
+                    <span class="s2">&quot;konstantin__max_threshold__ratio must be provided for &#39;konstantin&#39; mode.&quot;</span>
                 <span class="p">)</span>
-            <span class="n">rt</span> <span class="o">=</span> <span class="p">(</span><span class="n">konstantin__max_threshold</span> <span class="o">/</span> <span class="n">recruitment_range</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span>
-                <span class="p">(</span><span class="n">i</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">recruitment_range</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">N</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+            <span class="n">rt</span> <span class="o">=</span> <span class="p">(</span><span class="n">konstantin__max_threshold__ratio</span> <span class="o">/</span> <span class="n">recruitment_range__ratio</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span>
+                <span class="p">(</span><span class="n">i</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">recruitment_range__ratio</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">N</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
             <span class="p">)</span>
-            <span class="n">rtz</span> <span class="o">=</span> <span class="p">(</span><span class="n">konstantin__max_threshold</span> <span class="o">/</span> <span class="n">recruitment_range</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span>
-                <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">((</span><span class="n">i</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">recruitment_range</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">/</span> <span class="n">N</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span>
+            <span class="n">rtz</span> <span class="o">=</span> <span class="p">(</span><span class="n">konstantin__max_threshold__ratio</span> <span class="o">/</span> <span class="n">recruitment_range__ratio</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span>
+                <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">((</span><span class="n">i</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">recruitment_range__ratio</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">/</span> <span class="n">N</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span>
             <span class="p">)</span>
         <span class="k">case</span> <span class="s2">&quot;combined&quot;</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">deluca__slope</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">konstantin__max_threshold</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">deluca__slope</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">konstantin__max_threshold__ratio</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                    <span class="s2">&quot;Both deluca__slope and konstantin__max_threshold must be provided for &#39;combined&#39; mode.&quot;</span>
+                    <span class="s2">&quot;Both deluca__slope and konstantin__max_threshold__ratio must be provided for &#39;combined&#39; mode.&quot;</span>
                 <span class="p">)</span>
             <span class="c1"># Create a De Luca-style curve with slope parameter controlling curvature</span>
             <span class="c1"># but properly scaled to respect RR and max threshold</span>
 
             <span class="c1"># Generate base De Luca shape (without the /100 scaling)</span>
             <span class="n">base_shape</span> <span class="o">=</span> <span class="p">(</span><span class="n">deluca__slope</span> <span class="o">*</span> <span class="n">i</span> <span class="o">/</span> <span class="n">N</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span>
-                <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">recruitment_range</span> <span class="o">/</span> <span class="n">deluca__slope</span><span class="p">)</span> <span class="o">/</span> <span class="n">N</span><span class="p">)</span> <span class="o">*</span> <span class="n">i</span>
+                <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">recruitment_range__ratio</span> <span class="o">/</span> <span class="n">deluca__slope</span><span class="p">)</span> <span class="o">/</span> <span class="n">N</span><span class="p">)</span> <span class="o">*</span> <span class="n">i</span>
             <span class="p">)</span>
 
             <span class="c1"># Scale to ensure exact RR and max threshold</span>
-            <span class="c1"># We want: rt[0] = konstantin__max_threshold / RR and rt[-1] = konstantin__max_threshold</span>
+            <span class="c1"># We want: rt[0] = konstantin__max_threshold__ratio / RR and rt[-1] = konstantin__max_threshold__ratio</span>
             <span class="n">min_val</span> <span class="o">=</span> <span class="n">base_shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
             <span class="n">max_val</span> <span class="o">=</span> <span class="n">base_shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
 
             <span class="c1"># Scale the shape to achieve the desired RR while respecting max threshold</span>
-            <span class="n">rt</span> <span class="o">=</span> <span class="p">(</span><span class="n">konstantin__max_threshold</span> <span class="o">/</span> <span class="n">recruitment_range</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span>
+            <span class="n">rt</span> <span class="o">=</span> <span class="p">(</span><span class="n">konstantin__max_threshold__ratio</span> <span class="o">/</span> <span class="n">recruitment_range__ratio</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span>
                 <span class="n">base_shape</span> <span class="o">-</span> <span class="n">min_val</span>
             <span class="p">)</span> <span class="o">*</span> <span class="p">(</span>
-                <span class="n">konstantin__max_threshold</span>
-                <span class="o">-</span> <span class="n">konstantin__max_threshold</span> <span class="o">/</span> <span class="n">recruitment_range</span>
+                <span class="n">konstantin__max_threshold__ratio</span>
+                <span class="o">-</span> <span class="n">konstantin__max_threshold__ratio</span> <span class="o">/</span> <span class="n">recruitment_range__ratio</span>
             <span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">max_val</span> <span class="o">-</span> <span class="n">min_val</span><span class="p">)</span>
 
             <span class="n">rtz</span> <span class="o">=</span> <span class="n">rt</span> <span class="o">-</span> <span class="n">rt</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>

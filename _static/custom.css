@@ -32,3 +32,147 @@ html[data-theme="dark"] .bd-content img:not(.only-dark):not(.dark-light) {
 .mermaid {
     background-color: #ffffff;
 }
+
+/* Improved API documentation styling for vertical parameter display */
+/* Force function/method signatures to display parameters vertically */
+.sig.sig-object {
+    font-family: 'SFMono-Regular', Monaco, 'Inconsolata', 'Liberation Mono', 'Courier New', monospace !important;
+    font-size: 0.9em;
+    line-height: 1.6;
+    padding: 1rem;
+    background: var(--color-code-background);
+    border: 1px solid var(--color-background-border);
+    border-radius: 0.375rem;
+    margin: 1rem 0;
+    overflow-x: auto;
+}
+
+.sig-name {
+    font-weight: 600;
+    color: var(--color-api-name);
+}
+
+.sig-paren {
+    font-weight: normal;
+}
+
+/* Force parameters to display vertically */
+.sig-param {
+    display: block !important;
+    padding-left: 2rem;
+    margin: 0.25rem 0;
+    text-indent: 0;
+}
+
+/* Improve parameter display */
+.sig .o {
+    color: var(--color-api-pre-name);
+}
+
+.sig .n {
+    color: var(--color-api-name);
+}
+
+.sig .p {
+    color: var(--color-inline-code-links);
+}
+
+/* Better spacing for method signatures */
+dl.py.method > dt,
+dl.py.function > dt,
+dl.py.class > dt {
+    background: var(--color-api-background);
+    border-left: 3px solid var(--color-api-background-hover);
+    padding: 0.75rem 1rem;
+    margin-bottom: 0.5rem;
+}
+
+/* Improve autosummary tables */
+.autosummary {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1rem 0;
+}
+
+.autosummary th,
+.autosummary td {
+    padding: 0.75rem;
+    border-bottom: 1px solid var(--color-background-border);
+    text-align: left;
+    vertical-align: top;
+}
+
+.autosummary th {
+    background: var(--color-background-secondary);
+    font-weight: 600;
+}
+
+/* Improve parameter lists in docstrings */
+.field-list {
+    margin: 1rem 0;
+}
+
+.field-list .field-name {
+    font-weight: 600;
+    color: var(--color-api-pre-name);
+    min-width: 8rem;
+}
+
+.field-list .field-body {
+    margin-left: 1rem;
+}
+
+/* Better spacing for class documentation */
+.py.class .sig {
+    margin-bottom: 1.5rem;
+}
+
+/* Improve code blocks in docstrings */
+.docstring .highlight pre {
+    padding: 1rem;
+    border-radius: 0.375rem;
+    background: var(--color-code-background);
+    border: 1px solid var(--color-background-border);
+}
+
+/* Better rubric styling */
+.rubric {
+    font-size: 1.1em;
+    font-weight: 600;
+    color: var(--color-api-name);
+    margin: 2rem 0 1rem 0;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid var(--color-background-border);
+}
+
+/* Improve note and warning admonitions */
+.admonition.note,
+.admonition.warning,
+.admonition.tip {
+    border-radius: 0.375rem;
+    border-left-width: 4px;
+    margin: 1rem 0;
+}
+
+/* Improve cross-references */
+.reference.internal {
+    color: var(--color-link);
+    text-decoration: none;
+}
+
+.reference.internal:hover {
+    color: var(--color-link-hover);
+    text-decoration: underline;
+}
+
+/* Custom spacing for MyoGen API cards */
+.myogen-card {
+    padding: 0.5rem 0.5rem !important;
+    background-color: transparent !important;
+}
+
+
+.sig-param .o {
+  margin-left: 0.3em;
+  margin-right: 0.3em;
+}
