@@ -1,14 +1,10 @@
-from pathlib import Path
 from typing import Optional, Any, Union
 
 import numpy as np
-from matplotlib import pyplot as plt
 from matplotlib.axes import Axes
 from tqdm import tqdm
-from beartype import beartype
-from beartype.cave import IterableType
 
-from myogen.utils.types import SURFACE_EMG__TENSOR
+from myogen.utils.types import SURFACE_EMG__TENSOR, beartowertype
 
 
 def _get_axis(axes, row_idx: int, col_idx: int, n_rows: int, n_cols: int):
@@ -122,7 +118,7 @@ def _auto_zoom_muaps(
     return processed_data
 
 
-@beartype
+@beartowertype
 def plot_surface_emg(
     surface_emg__tensor: SURFACE_EMG__TENSOR,
     axs: list[Union[Axes, np.ndarray]],
@@ -200,7 +196,7 @@ def plot_surface_emg(
     return axs
 
 
-@beartype
+@beartowertype
 def plot_muap_grid(
     muap_data: np.ndarray,
     axs: list[Union[Axes, np.ndarray]],

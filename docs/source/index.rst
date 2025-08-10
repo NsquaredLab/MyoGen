@@ -111,13 +111,13 @@ Package Structure
 .. toctree::
    :maxdepth: 2
    :hidden:
-   :caption: API Documentation
+   :caption: 📚 API Documentation
    
    api/index
 
 .. toctree::
-   :maxdepth: 1
-   :caption: Examples & Tutorials
+   :maxdepth: 2
+   :caption: 🔬 Examples & Tutorials
    :hidden:
 
    auto_examples/index

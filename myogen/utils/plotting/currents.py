@@ -1,14 +1,13 @@
-from beartype import beartype
-from beartype.cave import IterableType
-import numpy as np
-from matplotlib import pyplot as plt
-from matplotlib.axes import Axes
 from typing import Any
 
-from myogen.utils.types import INPUT_CURRENT__MATRIX
+import numpy as np
+from beartype.cave import IterableType
+from matplotlib.axes import Axes
+
+from myogen.utils.types import INPUT_CURRENT__MATRIX, beartowertype
 
 
-@beartype
+@beartowertype
 def plot_input_current__matrix(
     input_current__matrix: INPUT_CURRENT__MATRIX,
     timestep__ms: float,
@@ -22,10 +21,10 @@ def plot_input_current__matrix(
     Parameters
     ----------
     input_current__matrix: INPUT_CURRENT__MATRIX
-        Matrix of shape (1, t_points) containing current values
+        Matrix of shape (n_pools, t_points) containing current values
         Each row represents the current for one pool
     timestep__ms: float
-        Simulation timestep__ms in ms
+        Time step in milliseconds
     axs: IterableType[Axes]
         Matplotlib axes to plot on. This could be the same axis for all pools, or a separate axis for each pool.
     apply_default_formatting: bool

@@ -1,17 +1,17 @@
+from typing import Any, Optional, Union
+
 import matplotlib.pyplot as plt
 import numpy as np
-from beartype import beartype
 from matplotlib.axes import Axes
 from mpl_toolkits.mplot3d import Axes3D  # needed for 3D plotting
 from mpl_toolkits.mplot3d.art3d import Poly3DCollection
 from scipy.spatial import ConvexHull
-from typing import Any, Optional, Union
 
-from myogen import RANDOM_GENERATOR
 from myogen.simulator import Muscle
+from myogen.utils.types import beartowertype
 
 
-@beartype
+@beartowertype
 def plot_mf_centers(
     muscle_model: Muscle,
     ax: Axes,
@@ -38,9 +38,9 @@ def plot_mf_centers(
     """
     if apply_default_formatting:
         # Draw muscle border
-        ax.plot(*muscle_model.muscle_border.T, "-", linewidth=2, color="#FF5944")
+        ax.plot(*muscle_model.muscle_border__mm.T, "-", linewidth=2, color="#FF5944")
         ax.scatter(
-            *muscle_model.mf_centers.T,
+            *muscle_model.muscle_fiber_centers__mm.T,
             s=3,
             color="#FF5944",
             edgecolors="black",
@@ -52,13 +52,13 @@ def plot_mf_centers(
         ax.set_title("Muscle fibers' center points")
     else:
         # Draw muscle border
-        ax.plot(*muscle_model.muscle_border.T, **kwargs)
-        ax.scatter(*muscle_model.mf_centers.T, **kwargs)
+        ax.plot(*muscle_model.muscle_border__mm.T, **kwargs)
+        ax.scatter(*muscle_model.muscle_fiber_centers__mm.T, **kwargs)
 
     return ax
 
 
-@beartype
+@beartowertype
 def plot_innervation_areas_2d(
     muscle_model: Muscle,
     ax: Axes,
@@ -99,7 +99,7 @@ def plot_innervation_areas_2d(
         for i, m in enumerate(indices_to_plot):
             fiber_indices = np.where(muscle_model.assignment == m)[0]
             if len(fiber_indices) > 0:
-                points = muscle_model.mf_centers[fiber_indices]
+                points = muscle_model.muscle_fiber_centers__mm[fiber_indices]
 
                 if len(fiber_indices) > 2:
                     hull = ConvexHull(points)
@@ -119,7 +119,7 @@ def plot_innervation_areas_2d(
 
         # Draw muscle border
         ax.plot(
-            *muscle_model.muscle_border.T,
+            *muscle_model.muscle_border__mm.T,
             "k-",
             linewidth=2,
             zorder=len(indices_to_plot) + 1,
@@ -134,7 +134,7 @@ def plot_innervation_areas_2d(
         for i, m in enumerate(indices_to_plot):
             fiber_indices = np.where(muscle_model.assignment == m)[0]
             if len(fiber_indices) > 0:
-                points = muscle_model.mf_centers[fiber_indices]
+                points = muscle_model.muscle_fiber_centers__mm[fiber_indices]
                 if len(fiber_indices) > 2:
                     hull = ConvexHull(points)
                     hull_points = points[hull.vertices]
@@ -143,12 +143,12 @@ def plot_innervation_areas_2d(
                 ax.scatter(*points.T, **kwargs)
 
         # Draw muscle border
-        ax.plot(*muscle_model.muscle_border.T, **kwargs)
+        ax.plot(*muscle_model.muscle_border__mm.T, **kwargs)
 
     return ax
 
 
-@beartype
+@beartowertype
 def plot_innervation_areas_3d(
     muscle_model: Muscle,
     ax: Union[Axes, Axes3D],
@@ -230,7 +230,7 @@ def plot_innervation_areas_3d(
             if len(fiber_indices) < 3:
                 continue  # Need at least 3 points for a 2D hull
 
-            points = muscle_model.mf_centers[fiber_indices]
+            points = muscle_model.muscle_fiber_centers__mm[fiber_indices]
             if points.shape[1] != 2:
                 raise ValueError("Expected 2D points in mf_centers")
 
@@ -263,7 +263,7 @@ def plot_innervation_areas_3d(
             if len(fiber_indices) < 3:
                 continue
 
-            points = muscle_model.mf_centers[fiber_indices]
+            points = muscle_model.muscle_fiber_centers__mm[fiber_indices]
             if points.shape[1] != 2:
                 raise ValueError("Expected 2D points in mf_centers")
 

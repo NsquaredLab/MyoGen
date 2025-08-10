@@ -91,7 +91,7 @@ save_path.mkdir(exist_ok=True)
 
 # 1. Fuglevand Model
 rt_fuglevand, rtz_fuglevand = simulator.generate_mu_recruitment_thresholds(
-    N=n_motor_units, recruitment_range=recruitment_range, mode="fuglevand"
+    N=n_motor_units, recruitment_range__ratio=recruitment_range, mode="fuglevand"
 )
 
 # 2. De Luca Model with different slopes
@@ -99,7 +99,7 @@ deluca_results = {}
 for slope in deluca_slopes:
     rt, _ = simulator.generate_mu_recruitment_thresholds(
         N=n_motor_units,
-        recruitment_range=recruitment_range,
+        recruitment_range__ratio=recruitment_range,
         deluca__slope=slope,
         mode="deluca",
     )
@@ -108,8 +108,8 @@ for slope in deluca_slopes:
 # 3. Konstantin Model
 rt_konstantin, rtz_konstantin = simulator.generate_mu_recruitment_thresholds(
     N=n_motor_units,
-    recruitment_range=recruitment_range,
-    konstantin__max_threshold=konstantin_max_threshold,
+    recruitment_range__ratio=recruitment_range,
+    konstantin__max_threshold__ratio=konstantin_max_threshold,
     mode="konstantin",
 )
 
@@ -118,9 +118,9 @@ combined_results = {}
 for slope in combined_slopes:
     rt, _ = simulator.generate_mu_recruitment_thresholds(
         N=n_motor_units,
-        recruitment_range=recruitment_range,
+        recruitment_range__ratio=recruitment_range,
         deluca__slope=slope,
-        konstantin__max_threshold=combined_max_threshold,
+        konstantin__max_threshold__ratio=combined_max_threshold,
         mode="combined",
     )
     combined_results[slope] = rt

@@ -5,6 +5,7 @@
 .. autoclass:: {{ objname }}
    :members:
    :show-inheritance:
+   :member-order: bysource
 
    {% block methods %}
    {% if methods %}
@@ -12,6 +13,7 @@
 
    .. autosummary::
       :nosignatures:
+      :toctree:
    {% for item in methods %}
       ~{{ objname }}.{{ item }}
    {%- endfor %}
@@ -24,8 +26,9 @@
 
    .. autosummary::
       :nosignatures:
+      :toctree:
    {% for item in attributes %}
       ~{{ objname }}.{{ item }}
    {%- endfor %}
    {% endif %}
-   {% endblock %} 
+   {% endblock %}

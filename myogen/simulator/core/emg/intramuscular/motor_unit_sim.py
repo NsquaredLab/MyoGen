@@ -204,8 +204,8 @@ class MotorUnitSim:
         self.nerve_paths = np.zeros((self.Nmf, 1))
         for i in range(self.Nmf):
             distance = np.sqrt(
-                (self.mf_centers[i, 0] - self.actual_center[0]) ** 2
-                + (self.mf_centers[i, 1] - self.actual_center[1]) ** 2
+                (self.muscle_fiber_centers__mm[i, 0] - self.actual_center[0]) ** 2
+                + (self.muscle_fiber_centers__mm[i, 1] - self.actual_center[1]) ** 2
                 + (self.nmj_z[i] - endplate_center) ** 2
             )
             self.nerve_paths[i, 0] = distance
@@ -486,5 +486,7 @@ class MotorUnitSim:
     @property
     def territory_radius(self) -> float:
         """Approximate radius of motor unit territory."""
-        distances = cdist([self.actual_center[:2]], self.mf_centers[:, :2])
+        distances = cdist(
+            [self.actual_center[:2]], self.muscle_fiber_centers__mm[:, :2]
+        )
         return float(np.mean(distances))

@@ -5,7 +5,6 @@ import numpy.typing as npt
 from beartype import beartype, BeartypeConf
 from beartype.vale import Is
 
-
 # See https://beartype.readthedocs.io/en/latest/api_decor/#beartype.BeartypeConf.is_pep484_tower
 beartowertype = beartype(conf=BeartypeConf(is_pep484_tower=True))
 
@@ -51,4 +50,10 @@ SURFACE_EMG__TENSOR = Annotated[
 INTRAMUSCULAR_EMG__TENSOR = Annotated[
     npt.NDArray[np.floating],
     Is[lambda x: x.ndim == 3],
+]
+
+# Recruitment thresholds array: (n_motor_units,)
+RECRUITMENT_THRESHOLDS__ARRAY = Annotated[
+    npt.NDArray[np.floating],
+    Is[lambda x: x.ndim == 1],
 ]
