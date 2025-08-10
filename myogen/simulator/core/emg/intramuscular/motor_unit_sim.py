@@ -486,5 +486,7 @@ class MotorUnitSim:
     @property
     def territory_radius(self) -> float:
         """Approximate radius of motor unit territory."""
-        distances = cdist([self.actual_center[:2]], self.muscle_fiber_centers__mm[:, :2])
+        distances = cdist(
+            [self.actual_center[:2]], self.muscle_fiber_centers__mm[:, :2]
+        )
         return float(np.mean(distances))

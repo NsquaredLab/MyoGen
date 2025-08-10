@@ -1,20 +1,20 @@
-from pathlib import Path
 import logging
 import os
 import warnings
+from pathlib import Path
 from typing import Any
 
 import numpy as np
 import seaborn as sns
+from beartype.cave import IterableType
 from matplotlib import pyplot as plt
 from matplotlib.axes import Axes
-from beartype import beartype
-from beartype.cave import IterableType
 
 from myogen.utils.types import (
     INPUT_CURRENT__MATRIX,
     SPIKE_TRAIN__MATRIX,
     CORTICAL_INPUT__MATRIX,
+    beartowertype,
 )
 
 # Configure multiple sources to suppress font warnings
@@ -25,7 +25,7 @@ logging.getLogger("libNeuroML").setLevel(logging.ERROR)
 os.environ["MPLCONFIGDIR"] = "/tmp"
 
 
-@beartype
+@beartowertype
 def plot_spike_trains(
     spike_trains__matrix: SPIKE_TRAIN__MATRIX,
     timestep__ms: float,
@@ -49,6 +49,8 @@ def plot_spike_trains(
         Matplotlib axes to plot on. This could be the same axis for all pools, or a separate axis for each pool.
     pool_current__matrix : INPUT_CURRENT__MATRIX | None, optional
         The input current matrix to plot, by default None.
+    cortical_input__matrix : CORTICAL_INPUT__MATRIX | None, optional
+        The cortical input matrix to plot, by default None.
     pool_to_plot : list[int] | None, optional
         The pools to plot if not all pools should be plotted, by default None (all pools are plotted).
     apply_default_formatting : bool, optional

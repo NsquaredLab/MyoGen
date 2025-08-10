@@ -56,7 +56,7 @@ electrode_position = (0.0, 0.0, 0.0)  # mm (start of muscle)
 
 thresholds, _ = simulator.generate_mu_recruitment_thresholds(
     N=N_motor_units,
-    recruitment_range=recruitment_range,
+    recruitment_range__ratio=recruitment_range,
     deluca__slope=5,
     mode="combined"
 )

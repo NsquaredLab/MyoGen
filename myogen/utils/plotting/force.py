@@ -1,10 +1,14 @@
-from matplotlib.axes import Axes
-from myogen.simulator import ForceModel
-import numpy as np
-import seaborn as sns
 from typing import Any
 
+import numpy as np
+import seaborn as sns
+from matplotlib.axes import Axes
 
+from myogen.simulator import ForceModel
+from myogen.utils.types import beartowertype
+
+
+@beartowertype
 def plot_twitch_parameter_assignment(
     force_model: ForceModel,
     ax: Axes,
@@ -37,8 +41,12 @@ def plot_twitch_parameter_assignment(
     """
 
     # Convert data to plotting coordinates
-    x_data = force_model.contraction_times / force_model.recording_frequency__Hz * 1000
-    y_data = force_model.peak_twitch_forces
+    x_data = (
+        force_model.contraction_times__samples
+        / force_model.recording_frequency__Hz
+        * 1000
+    )
+    y_data = force_model.peak_twitch_forces__unitless
 
     if apply_default_formatting:
         ax.plot(x_data, y_data, "-o")
@@ -128,6 +136,7 @@ def plot_twitch_parameter_assignment(
     return ax
 
 
+@beartowertype
 def plot_twitches(
     force_model: ForceModel,
     ax: Axes,
@@ -136,6 +145,22 @@ def plot_twitches(
 ) -> Axes:
     """
     Plot the twitches.
+
+    Parameters
+    ----------
+    force_model : ForceModel
+        The force model to plot.
+    ax : Axes
+        The axes to plot on.
+    apply_default_formatting : bool, optional
+        Whether to apply default formatting to the plot, by default True
+    **kwargs : Any
+        Additional keyword arguments to pass to the plot function. Only used if apply_default_formatting is False.
+
+    Returns
+    -------
+    Axes
+        The axes with the plot.
     """
 
     timeline = (

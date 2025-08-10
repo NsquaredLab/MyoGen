@@ -1,17 +1,17 @@
+from typing import Any, Optional, Union
+
 import matplotlib.pyplot as plt
 import numpy as np
-from beartype import beartype
 from matplotlib.axes import Axes
 from mpl_toolkits.mplot3d import Axes3D  # needed for 3D plotting
 from mpl_toolkits.mplot3d.art3d import Poly3DCollection
 from scipy.spatial import ConvexHull
-from typing import Any, Optional, Union
 
-from myogen import RANDOM_GENERATOR
 from myogen.simulator import Muscle
+from myogen.utils.types import beartowertype
 
 
-@beartype
+@beartowertype
 def plot_mf_centers(
     muscle_model: Muscle,
     ax: Axes,
@@ -58,7 +58,7 @@ def plot_mf_centers(
     return ax
 
 
-@beartype
+@beartowertype
 def plot_innervation_areas_2d(
     muscle_model: Muscle,
     ax: Axes,
@@ -148,7 +148,7 @@ def plot_innervation_areas_2d(
     return ax
 
 
-@beartype
+@beartowertype
 def plot_innervation_areas_3d(
     muscle_model: Muscle,
     ax: Union[Axes, Axes3D],

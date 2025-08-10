@@ -5,7 +5,6 @@ import numpy.typing as npt
 from beartype import beartype, BeartypeConf
 from beartype.vale import Is
 
-
 # See https://beartype.readthedocs.io/en/latest/api_decor/#beartype.BeartypeConf.is_pep484_tower
 beartowertype = beartype(conf=BeartypeConf(is_pep484_tower=True))
 

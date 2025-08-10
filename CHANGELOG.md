@@ -14,6 +14,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Example development guidelines with plt.xkcd() usage and Sphinx Gallery format
   - API testing requirements and font warning suppression protocols
   - CHANGELOG.md update requirements for all changes
+- **Naming Standards**: Enhanced CLAUDE.md with comprehensive naming conventions:
+  - Prohibition of unclear abbreviations (e.g., `mf`, `cv`)
+  - Mandatory unit suffixes for all physical quantities
+  - Consistent spatial coordinate notation (`positions__mm`, `centers__mm`)
+  - Velocity notation standards (`conduction_velocities__mm_per_s`)
+- **Class Documentation**: Added comprehensive Attributes sections to class docstrings documenting all computed properties
+- **EMG API Consistency**: Updated SurfaceEMG and IntramuscularEMG classes with proper MyoGen framework patterns:
+  - Immutable public argument pattern: constructor arguments accessible but never modified
+  - Private result storage: simulation results stored in `_private` attributes  
+  - Property-based access: computed results accessed via validated `@property` methods
+  - Comprehensive error handling: informative errors with guidance for beginners
+  - Enhanced method docstrings: document where results are stored after execution
 
 ### Changed
 - **API Breaking Changes**: Enhanced `generate_mu_recruitment_thresholds` function with improved type safety:
@@ -24,6 +36,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
     - `deluca__slope__per_hundred_units` → `deluca__slope` (dimensionless shape parameter)
   - Return type now uses `RECRUITMENT_THRESHOLDS__ARRAY` custom type
   - Enhanced docstring with explicit dimensionality information and corrected examples
+- **Muscle Class API Breaking Changes**: Standardized attribute naming with clear unit suffixes and descriptive names:
+  - `mf_centers` → `muscle_fiber_centers__mm` (muscle fiber center positions in mm)
+  - `mf_diameters` → `muscle_fiber_diameters__mm` (muscle fiber diameters in mm)  
+  - `mf_cv` → `muscle_fiber_conduction_velocities__mm_per_s` (conduction velocities in mm/s)
+  - `muscle_border` → `muscle_border__mm` (muscle boundary points in mm)
+  - `innervation_center_positions` → `innervation_center_positions__mm` (motor unit centers in mm)
+  - Applied class-level `@beartowertype` decorator for automatic method type validation
+  - Enhanced class docstring with comprehensive Attributes section documenting all computed properties
+  - Updated plotting utilities and EMG simulation modules to use new attribute names
 - **Example Updates**: Updated `00_simulate_recruitment_thresholds.py` to use new API parameter names
 
 ### Fixed

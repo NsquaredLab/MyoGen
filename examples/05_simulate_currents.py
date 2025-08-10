@@ -102,11 +102,11 @@ saw_widths = [0.3, 0.5, 0.7]  # Width of rising edge (0-1)
 sawtooth_currents = create_sawtooth_current(
     n_pools=n_pools,
     t_points=t_points,
-    timestep_ms=timestep__ms,
+    timestep__ms=timestep__ms,
     amplitudes__muV=saw_amplitudes,
     frequencies__Hz=saw_frequencies,
     offsets__muV=saw_offsets,
-    widths=saw_widths,
+    widths__ratio=saw_widths,
 )
 
 ##############################################################################
@@ -126,7 +126,7 @@ step_offsets = [120.0, 115.0, 125.0]  # Baseline currents
 step_currents = create_step_current(
     n_pools=n_pools,
     t_points=t_points,
-    timestep_ms=timestep__ms,
+    timestep__ms=timestep__ms,
     step_heights__muV=step_heights,
     step_durations__ms=step_durations,
     offsets__muV=step_offsets,
@@ -175,7 +175,7 @@ trap_delays = [100.0, 200.0, 50.0]  # Initial delays (ms)
 trapezoid_currents = create_trapezoid_current(
     n_pools=n_pools,
     t_points=t_points,
-    timestep_ms=timestep__ms,
+    timestep__ms=timestep__ms,
     amplitudes__muV=trap_amplitudes,
     rise_times__ms=trap_rise_times,
     plateau_times__ms=trap_plateau_times,

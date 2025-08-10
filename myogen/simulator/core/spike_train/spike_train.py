@@ -1,11 +1,12 @@
-from operator import call
 from typing import Any, Literal
+
+import neo
 import numpy as np
+from tqdm import tqdm
 import pyNN.neuron as sim
 from pyNN.neuron.morphology import uniform, centre
 from pyNN.parameters import IonicSpecies
 from pyNN.random import NumpyRNG
-import neo
 
 from myogen import RANDOM_GENERATOR
 from myogen.simulator.core.spike_train import functions, classes
@@ -13,82 +14,120 @@ from myogen.utils.types import (
     SPIKE_TRAIN__MATRIX,
     INPUT_CURRENT__MATRIX,
     CORTICAL_INPUT__MATRIX,
+    beartowertype,
 )
 
 
+@beartowertype
 class MotorNeuronPool:
     """
-    Motor neuron pool with specified parameters
+    Motor neuron pool with specified parameters for EMG simulation.
+
+    This class creates and manages a pool of motor neurons with physiologically
+    realistic parameters. It supports spike train generation through NEURON
+    backend integration and provides both current injection and cortical input
+    stimulation modes.
 
     Parameters
     ----------
-    recruitment_thresholds: np.ndarray
-        Array of recruitment thresholds for the motor neurons
-    diameter_soma_min: float
-        Minimum diameter of the soma
-    diameter_soma_max: float
-    y_min: float
-        Minimum y coordinate of the soma
-    y_max: float
-        Maximum y coordinate of the soma
-    diameter_dend_min: float
-        Minimum diameter of the dendrite
-    diameter_dend_max: float
-        Maximum diameter of the dendrite
-    x_min: float
-        Minimum x coordinate of the dendrite
-    x_max: float
-        Maximum x coordinate of the dendrite
-    vt_min: float
-        Minimum voltage threshold of the neuron
-    vt_max: float
-        Maximum voltage threshold of the neuron
-    kf_cond_min: float
-        Minimum conductance density of the potassium fast channel
-    kf_cond_max: float
-        Maximum conductance density of the potassium fast channel
-    CV: float
-        Coefficient of variation of the noise
+    recruitment_thresholds : np.ndarray
+        Array of recruitment thresholds for the motor neurons (normalized 0-1)
+    diameter_soma_min__mm : float, default=77.5
+        Minimum diameter of the soma in millimeters
+    diameter_soma_max__mm : float, default=82.5
+        Maximum diameter of the soma in millimeters
+    y_min__mm : float, default=18.0
+        Minimum y coordinate of the soma in millimeters
+    y_max__mm : float, default=36.0
+        Maximum y coordinate of the soma in millimeters
+    diameter_dend_min__mm : float, default=41.5
+        Minimum diameter of the dendrite in millimeters
+    diameter_dend_max__mm : float, default=62.5
+        Maximum diameter of the dendrite in millimeters
+    x_min__mm : float, default=-5500
+        Minimum x coordinate of the dendrite in millimeters
+    x_max__mm : float, default=-6789
+        Maximum x coordinate of the dendrite in millimeters
+    vt_min__mV : float, default=12.35
+        Minimum voltage threshold of the neuron in millivolts
+    vt_max__mV : float, default=20.9
+        Maximum voltage threshold of the neuron in millivolts
+    kf_cond_min__S_per_cm2 : float, default=4
+        Minimum conductance density of the potassium fast channel in S/cm²
+    kf_cond_max__S_per_cm2 : float, default=0.5
+        Maximum conductance density of the potassium fast channel in S/cm²
+    coefficient_of_variation : float, default=0.01
+        Coefficient of variation for parameter noise (0-1)
 
-    Returns
-    -------
-    MotorNeuronPool
-        Motor neuron pool with specified parameters
+    Attributes
+    ----------
+    spike_trains : SPIKE_TRAIN__MATRIX
+        Matrix of spike trains - available after generate_spike_trains()
+    active_neuron_indices : list[np.ndarray]
+        Indices of active neurons per pool - available after generate_spike_trains()
+    data : list[neo.Segment]
+        Neo segments with recorded data - available after generate_spike_trains()
+    mvc_current_threshold : float
+        Minimum current for maximum voluntary contraction - computed on access
+
+    Examples
+    --------
+    >>> pool = MotorNeuronPool(recruitment_thresholds=np.linspace(0, 1, 100))
+    >>> current_matrix = np.random.randn(5, 1000) * 50
+    >>> spike_trains, indices, data = pool.generate_spike_trains(current_matrix)
+    >>> print(f"Generated spike trains shape: {pool.spike_trains.shape}")
     """
 
     def __init__(
         self,
         recruitment_thresholds: np.ndarray,
-        diameter_soma_min: float = 77.5,
-        diameter_soma_max: float = 82.5,
-        y_min: float = 18.0,
-        y_max: float = 36.0,
-        diameter_dend_min: float = 41.5,
-        diameter_dend_max: float = 62.5,
-        x_min: float = -5500,
-        x_max: float = -6789,
-        vt_min: float = 12.35,
-        vt_max: float = 20.9,
-        kf_cond_min: float = 4,
-        kf_cond_max: float = 0.5,
-        CV: float = 0.01,
+        diameter_soma_min__mm: float = 77.5,
+        diameter_soma_max__mm: float = 82.5,
+        y_min__mm: float = 18.0,
+        y_max__mm: float = 36.0,
+        diameter_dend_min__mm: float = 41.5,
+        diameter_dend_max__mm: float = 62.5,
+        x_min__mm: float = -5500,
+        x_max__mm: float = -6789,
+        vt_min__mV: float = 12.35,
+        vt_max__mV: float = 20.9,
+        kf_cond_min__S_per_cm2: float = 4,
+        kf_cond_max__S_per_cm2: float = 0.5,
+        coefficient_of_variation: float = 0.01,
     ):
+        # Store immutable public parameters
         self.recruitment_thresholds = recruitment_thresholds
-        self.diameter_soma_min = diameter_soma_min
-        self.diameter_soma_max = diameter_soma_max
-        self.y_min = y_min
-        self.y_max = y_max
-        self.diameter_dend_min = diameter_dend_min
-        self.diameter_dend_max = diameter_dend_max
-        self.x_min = x_min
-        self.x_max = x_max
-        self.vt_min = vt_min
-        self.vt_max = vt_max
-        self.kf_cond_min = kf_cond_min
-        self.kf_cond_max = kf_cond_max
-        self.CV = CV
+        self.diameter_soma_min__mm = diameter_soma_min__mm
+        self.diameter_soma_max__mm = diameter_soma_max__mm
+        self.y_min__mm = y_min__mm
+        self.y_max__mm = y_max__mm
+        self.diameter_dend_min__mm = diameter_dend_min__mm
+        self.diameter_dend_max__mm = diameter_dend_max__mm
+        self.x_min__mm = x_min__mm
+        self.x_max__mm = x_max__mm
+        self.vt_min__mV = vt_min__mV
+        self.vt_max__mV = vt_max__mV
+        self.kf_cond_min__S_per_cm2 = kf_cond_min__S_per_cm2
+        self.kf_cond_max__S_per_cm2 = kf_cond_max__S_per_cm2
+        self.coefficient_of_variation = coefficient_of_variation
+        
+        # Store private copies for internal modifications
+        self._recruitment_thresholds = recruitment_thresholds.copy()
+        self._diameter_soma_min__mm = diameter_soma_min__mm
+        self._diameter_soma_max__mm = diameter_soma_max__mm
+        self._y_min__mm = y_min__mm
+        self._y_max__mm = y_max__mm
+        self._diameter_dend_min__mm = diameter_dend_min__mm
+        self._diameter_dend_max__mm = diameter_dend_max__mm
+        self._x_min__mm = x_min__mm
+        self._x_max__mm = x_max__mm
+        self._vt_min__mV = vt_min__mV
+        self._vt_max__mV = vt_max__mV
+        self._kf_cond_min__S_per_cm2 = kf_cond_min__S_per_cm2
+        self._kf_cond_max__S_per_cm2 = kf_cond_max__S_per_cm2
+        self._coefficient_of_variation = coefficient_of_variation
 
-    def _create_motor_neuron_pool(self) -> classes.cell_class:
+    def _create_motor_neuron_pool(self):
         """Create a pool of motor neurons with specified parameters
 
         Returns
@@ -98,33 +137,33 @@ class MotorNeuronPool:
         """
         rng = RANDOM_GENERATOR
 
-        n_neurons = len(self.recruitment_thresholds)
+        n_neurons = len(self._recruitment_thresholds)
 
         somas = functions.create_somas(
-            recruitment_thresholds=self.recruitment_thresholds,
-            diameter_min=self.diameter_soma_min,
-            diameter_max=self.diameter_soma_max,
-            y_min=self.y_min,
-            y_max=self.y_max,
-            CV=self.CV,
+            recruitment_thresholds=self._recruitment_thresholds,
+            diameter_min=self._diameter_soma_min__mm,
+            diameter_max=self._diameter_soma_max__mm,
+            y_min=self._y_min__mm,
+            y_max=self._y_max__mm,
+            CV=self._coefficient_of_variation,
         )
         dends = functions.create_dends(
-            recruitment_thresholds=self.recruitment_thresholds,
+            recruitment_thresholds=self._recruitment_thresholds,
             somas=somas,
-            diameter_min=self.diameter_dend_min,
-            diameter_max=self.diameter_dend_max,
-            y_min=self.y_min,
-            y_max=self.y_max,
-            x_min=self.x_min,
-            x_max=self.x_max,
-            CV=self.CV,
+            diameter_min=self._diameter_dend_min__mm,
+            diameter_max=self._diameter_dend_max__mm,
+            y_min=self._y_min__mm,
+            y_max=self._y_max__mm,
+            x_min=self._x_min__mm,
+            x_max=self._x_max__mm,
+            CV=self._coefficient_of_variation,
         )
 
         # scale recruitment thresholds to v_min and v_max
         vt = (
             -70
-            + (self.vt_min + (self.vt_max - self.vt_min) * self.recruitment_thresholds)
-            + rng.normal(size=n_neurons) * self.CV
+            + (self._vt_min__mV + (self._vt_max__mV - self._vt_min__mV) * self._recruitment_thresholds)
+            + rng.normal(size=n_neurons) * self._coefficient_of_variation
         )
 
         return classes.cell_class(
@@ -138,20 +177,20 @@ class MotorNeuronPool:
             },
             pas_soma={
                 "conductance_density": functions.create_cond(
-                    n_neurons, 7e-4, 7e-4, "soma", CV=10 * self.CV
+                    n_neurons, 7e-4, 7e-4, "soma", CV=10 * self._coefficient_of_variation
                 ),
                 "e_rev": -70,
             },  #
             pas_dend={
                 "conductance_density": functions.create_cond(
-                    n_neurons, 7e-4, 7e-4, "dendrite", CV=10 * self.CV
+                    n_neurons, 7e-4, 7e-4, "dendrite", CV=10 * self._coefficient_of_variation
                 ),
                 "e_rev": -70,
             },  #
             na={"conductance_density": uniform("soma", 30), "vt": list(vt)},
             kf={
                 "conductance_density": functions.create_cond(
-                    n_neurons, self.kf_cond_min, self.kf_cond_max, "soma", CV=self.CV
+                    n_neurons, self._kf_cond_min__S_per_cm2, self._kf_cond_max__S_per_cm2, "soma", CV=self._coefficient_of_variation
                 ),
                 "vt": list(vt),
             },
@@ -238,26 +277,37 @@ class MotorNeuronPool:
             )
 
         # Create motor neuron pools
-        pools: list[sim.Population] = [
-            sim.Population(
-                len(self.recruitment_thresholds),
-                self._create_motor_neuron_pool(),
-                initial_values={"v": -70},
+        pools: list[sim.Population] = []
+        for pool_idx in tqdm(range(n_pools), desc="Creating motor neuron pools", unit="pool"):
+            pools.append(
+                sim.Population(
+                    len(self._recruitment_thresholds),
+                    self._create_motor_neuron_pool(),
+                    initial_values={"v": -70},
+                )
             )
-            for _ in range(n_pools)
-        ]
 
         # Inject currents into each pool - one current per pool
         if input_current__matrix is not None:
             self.times = np.arange(input_current__matrix.shape[-1]) * self.timestep__ms
-            for input_current, pool in zip(input_current__matrix, pools):
+            for input_current, pool in tqdm(
+                zip(input_current__matrix, pools),
+                total=len(pools),
+                desc="Injecting currents into pools",
+                unit="pool"
+            ):
                 current_source = sim.StepCurrentSource(
                     times=self.times, amplitudes=input_current
                 )
                 current_source.inject_into(pool, location="soma")
 
                 # Add Gaussian noise current to each neuron in the pool
-                for neuron in pool:
+                for neuron in tqdm(
+                    pool,
+                    desc=f"Adding noise to neurons in pool",
+                    unit="neuron",
+                    leave=False
+                ):
                     noise_source = sim.NoisyCurrentSource(
                         mean=noise_mean__nA,
                         stdev=noise_stdev__nA,
@@ -305,27 +355,85 @@ class MotorNeuronPool:
         sim.run(simulation_time_points * self.timestep__ms, callbacks=callbacks)
         sim.end()
 
-        self.data = [pool.get_data().segments[0] for pool in pools]
+        # Store results privately
+        self._data = [pool.get_data().segments[0] for pool in pools]
 
         # Convert spike times to binary arrays and save
-        self.time_indices = np.arange(simulation_time_points)
-        self.spike_trains = np.array(
+        self._time_indices = np.arange(simulation_time_points)
+        self._spike_trains = np.array(
             [
                 [
                     np.isin(
-                        self.time_indices, np.array(st / self.timestep__ms).astype(int)
+                        self._time_indices, np.array(st / self.timestep__ms).astype(int)
                     )
                     for st in d.spiketrains
                 ]
-                for d in self.data
+                for d in self._data
             ]
         )
 
-        self.active_neuron_indices = [
-            np.argwhere(x)[:, 0] for x in np.sum(self.spike_trains, axis=-1) != 0
+        self._active_neuron_indices = [
+            np.argwhere(x)[:, 0] for x in np.sum(self._spike_trains, axis=-1) != 0
         ]
 
-        return self.spike_trains, self.active_neuron_indices, self.data
+        return self._spike_trains, self._active_neuron_indices, self._data
+
+    @property
+    def spike_trains(self) -> SPIKE_TRAIN__MATRIX:
+        """
+        Matrix of spike trains for each pool and neuron.
+        
+        Returns
+        -------
+        SPIKE_TRAIN__MATRIX
+            Matrix of shape (n_pools, neurons_per_pool, t_points) containing spike trains
+            
+        Raises
+        ------
+        AttributeError
+            If spike trains have not been computed. Run generate_spike_trains() first.
+        """
+        if not hasattr(self, '_spike_trains'):
+            raise AttributeError("Spike trains not computed. Run generate_spike_trains() first.")
+        return self._spike_trains
+    
+    @property
+    def active_neuron_indices(self) -> list[np.ndarray]:
+        """
+        List of arrays containing indices of active neurons in each pool.
+        
+        Returns
+        -------
+        list[np.ndarray]
+            List of arrays of indices of the active neurons in each pool
+            
+        Raises
+        ------
+        AttributeError
+            If active neuron indices have not been computed. Run generate_spike_trains() first.
+        """
+        if not hasattr(self, '_active_neuron_indices'):
+            raise AttributeError("Active neuron indices not computed. Run generate_spike_trains() first.")
+        return self._active_neuron_indices
+    
+    @property
+    def data(self) -> list[neo.Segment]:
+        """
+        List of neo segments containing recorded data from simulation.
+        
+        Returns
+        -------
+        list[neo.core.segment.Segment]
+            List of neo segments containing the recorded data
+            
+        Raises
+        ------
+        AttributeError
+            If data has not been computed. Run generate_spike_trains() first.
+        """
+        if not hasattr(self, '_data'):
+            raise AttributeError("Simulation data not computed. Run generate_spike_trains() first.")
+        return self._data
 
     def compute_mvc_current_threshold(self) -> float:
         """

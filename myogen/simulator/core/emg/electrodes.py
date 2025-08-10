@@ -36,6 +36,22 @@ class SurfaceElectrodeArray:
         Rotation angle of the electrodes in degrees. This is the angle between the electrode grid and the muscle surface.
     differentiation_mode : {"monopolar", "bipolar_longitudinal", "bipolar_transversal", "laplacian"}
         Differentiation mode. Default is monopolar.
+
+    Attributes
+    ----------
+    pos_z : np.ndarray
+        Longitudinal electrode positions in mm, shape (num_rows, num_cols).
+        Available after class initialization via `_create_electrode_grid()`.
+    pos_theta : np.ndarray
+        Angular electrode positions in radians, shape (num_rows, num_cols).
+        Available after class initialization via `_create_electrode_grid()`.
+    electrode_positions : tuple[np.ndarray, np.ndarray]
+        Complete electrode position arrays (pos_z, pos_theta).
+        Available after class initialization via `_create_electrode_grid()`.
+    num_electrodes : int
+        Total number of electrodes (num_rows * num_cols).
+    num_channels : int
+        Number of recording channels based on differentiation mode.
     """
 
     def __init__(
@@ -51,6 +67,7 @@ class SurfaceElectrodeArray:
             "monopolar", "bipolar_longitudinal", "bipolar_transversal", "laplacian"
         ] = "monopolar",
     ):
+        # Immutable public arguments - never modify these
         self.num_rows = num_rows
         self.num_cols = num_cols
         self.center_point__mm_deg = center_point__mm_deg
@@ -59,11 +76,22 @@ class SurfaceElectrodeArray:
         self.inter_electrode_distances__mm = inter_electrode_distances__mm
         self.electrode_radius__mm = electrode_radius__mm
         self.differentiation_mode = differentiation_mode
+        
+        # Private copies for internal modifications
+        self._num_rows = num_rows
+        self._num_cols = num_cols
+        self._center_point__mm_deg = center_point__mm_deg
+        self._bending_radius__mm = bending_radius__mm
+        self._rotation_angle__deg = rotation_angle__deg
+        self._inter_electrode_distances__mm = inter_electrode_distances__mm
+        self._electrode_radius__mm = electrode_radius__mm
+        self._differentiation_mode = differentiation_mode
 
         self.num_electrodes = num_rows * num_cols
 
-        if self.bending_radius__mm == 0:
-            self.bending_radius__mm = np.finfo(np.float32).eps
+        # Handle zero bending radius
+        if self._bending_radius__mm == 0:
+            self._bending_radius__mm = np.finfo(np.float32).eps
 
         # Set up channel configuration based on differentiation mode
         if differentiation_mode == "monopolar":
@@ -84,89 +112,161 @@ class SurfaceElectrodeArray:
         self._create_electrode_grid()
 
     def _create_electrode_grid(self) -> None:
-        """Create electrode positions in local coordinate system."""
-        self.pos_z = np.zeros((self.num_rows, self.num_cols))
-        if self.num_rows % 2 == 1:
-            index_center = int((self.num_rows - 1) / 2)
-            self.pos_z[index_center, :] = self.center_point__mm_deg[0]
+        """Create electrode positions in local coordinate system.
+        
+        Results are stored in the `electrode_positions` property after execution.
+        """
+        _pos_z = np.zeros((self._num_rows, self._num_cols))
+        if self._num_rows % 2 == 1:
+            index_center = int((self._num_rows - 1) / 2)
+            _pos_z[index_center, :] = self._center_point__mm_deg[0]
             for i in range(1, index_center + 1):
-                self.pos_z[index_center + i, :] = (
-                    self.pos_z[index_center + i - 1, :]
-                    + self.inter_electrode_distances__mm
+                _pos_z[index_center + i, :] = (
+                    _pos_z[index_center + i - 1, :]
+                    + self._inter_electrode_distances__mm
                 )
-                self.pos_z[index_center - i, :] = (
-                    self.pos_z[index_center - i + 1, :]
-                    - self.inter_electrode_distances__mm
+                _pos_z[index_center - i, :] = (
+                    _pos_z[index_center - i + 1, :]
+                    - self._inter_electrode_distances__mm
                 )
         else:
-            index_center1 = int(self.num_rows / 2)
+            index_center1 = int(self._num_rows / 2)
             index_center2 = index_center1 - 1
-            self.pos_z[index_center1, :] = (
-                self.center_point__mm_deg[0] + self.inter_electrode_distances__mm / 2
+            _pos_z[index_center1, :] = (
+                self._center_point__mm_deg[0] + self._inter_electrode_distances__mm / 2
             )
-            self.pos_z[index_center2, :] = (
-                self.center_point__mm_deg[0] - self.inter_electrode_distances__mm / 2
+            _pos_z[index_center2, :] = (
+                self._center_point__mm_deg[0] - self._inter_electrode_distances__mm / 2
             )
             for i in range(1, index_center2 + 1):
-                self.pos_z[index_center1 + i, :] = (
-                    self.pos_z[index_center1 + i - 1, :]
-                    + self.inter_electrode_distances__mm
+                _pos_z[index_center1 + i, :] = (
+                    _pos_z[index_center1 + i - 1, :]
+                    + self._inter_electrode_distances__mm
                 )
-                self.pos_z[index_center2 - i, :] = (
-                    self.pos_z[index_center2 - i + 1, :]
-                    - self.inter_electrode_distances__mm
+                _pos_z[index_center2 - i, :] = (
+                    _pos_z[index_center2 - i + 1, :]
+                    - self._inter_electrode_distances__mm
                 )
 
-        self.pos_theta = np.zeros((self.num_rows, self.num_cols))
-        if self.num_cols % 2 == 1:
-            index_center = int((self.num_cols - 1) / 2)
-            self.pos_theta[:, index_center] = self.center_point__mm_deg[1] * np.pi / 180
+        _pos_theta = np.zeros((self._num_rows, self._num_cols))
+        if self._num_cols % 2 == 1:
+            index_center = int((self._num_cols - 1) / 2)
+            _pos_theta[:, index_center] = self._center_point__mm_deg[1] * np.pi / 180
             for i in range(1, index_center + 1):
-                self.pos_theta[:, index_center + i] = (
-                    self.pos_theta[:, index_center + i - 1]
-                    + self.inter_electrode_distances__mm / self.bending_radius__mm
+                _pos_theta[:, index_center + i] = (
+                    _pos_theta[:, index_center + i - 1]
+                    + self._inter_electrode_distances__mm / self._bending_radius__mm
                 )
-                self.pos_theta[:, index_center - i] = (
-                    self.pos_theta[:, index_center - i + 1]
-                    - self.inter_electrode_distances__mm / self.bending_radius__mm
+                _pos_theta[:, index_center - i] = (
+                    _pos_theta[:, index_center - i + 1]
+                    - self._inter_electrode_distances__mm / self._bending_radius__mm
                 )
         else:
-            index_center1 = int(self.num_cols / 2)
+            index_center1 = int(self._num_cols / 2)
             index_center2 = index_center1 - 1
-            self.pos_theta[:, index_center1] = (
-                self.center_point__mm_deg[1] * np.pi / 180
-                + self.inter_electrode_distances__mm / 2 / self.bending_radius__mm
+            _pos_theta[:, index_center1] = (
+                self._center_point__mm_deg[1] * np.pi / 180
+                + self._inter_electrode_distances__mm / 2 / self._bending_radius__mm
             )
-            self.pos_theta[:, index_center2] = (
-                self.center_point__mm_deg[1] * np.pi / 180
-                - self.inter_electrode_distances__mm / 2 / self.bending_radius__mm
+            _pos_theta[:, index_center2] = (
+                self._center_point__mm_deg[1] * np.pi / 180
+                - self._inter_electrode_distances__mm / 2 / self._bending_radius__mm
             )
             for i in range(1, index_center2 + 1):
-                self.pos_theta[:, index_center1 + i] = (
-                    self.pos_theta[:, index_center1 + i - 1]
-                    + self.inter_electrode_distances__mm / self.bending_radius__mm
+                _pos_theta[:, index_center1 + i] = (
+                    _pos_theta[:, index_center1 + i - 1]
+                    + self._inter_electrode_distances__mm / self._bending_radius__mm
                 )
-                self.pos_theta[:, index_center2 - i] = (
-                    self.pos_theta[:, index_center2 - i + 1]
-                    - self.inter_electrode_distances__mm / self.bending_radius__mm
+                _pos_theta[:, index_center2 - i] = (
+                    _pos_theta[:, index_center2 - i + 1]
+                    - self._inter_electrode_distances__mm / self._bending_radius__mm
                 )
 
         ## Rotated detection system (Farina, 2004), eq (36)
-        displacement = self.center_point__mm_deg[0] * np.ones(self.pos_z.shape)
-        self.pos_z = (
-            -self.bending_radius__mm
-            * np.sin(self.rotation_angle__deg * np.pi / 180)
-            * self.pos_theta
-            + np.cos(self.rotation_angle__deg * np.pi / 180)
-            * (self.pos_z - displacement)
+        displacement = self._center_point__mm_deg[0] * np.ones(_pos_z.shape)
+        _pos_z = (
+            -self._bending_radius__mm
+            * np.sin(self._rotation_angle__deg * np.pi / 180)
+            * _pos_theta
+            + np.cos(self._rotation_angle__deg * np.pi / 180)
+            * (_pos_z - displacement)
             + displacement
         )
-        self.pos_theta = (
-            np.cos(self.rotation_angle__deg * np.pi / 180) * self.pos_theta
-            + np.sin(self.rotation_angle__deg * np.pi / 180)
-            * (self.pos_z - displacement)
-            / self.bending_radius__mm
+        _pos_theta = (
+            np.cos(self._rotation_angle__deg * np.pi / 180) * _pos_theta
+            + np.sin(self._rotation_angle__deg * np.pi / 180)
+            * (_pos_z - displacement)
+            / self._bending_radius__mm
         )
+        
+        # Store results privately
+        self._pos_z = _pos_z
+        self._pos_theta = _pos_theta
+
+    @property
+    def pos_z(self) -> np.ndarray:
+        """
+        Longitudinal positions of electrodes in mm.
+        
+        Returns
+        -------
+        np.ndarray
+            Array of shape (num_rows, num_cols) containing z-coordinates
+            of each electrode position in mm.
+            
+        Raises
+        ------
+        AttributeError
+            If electrode grid has not been created. Run constructor first.
+        """
+        if not hasattr(self, '_pos_z'):
+            raise AttributeError(
+                "Electrode grid not computed. This should be automatically created "
+                "during class initialization. Please check constructor execution."
+            )
+        return self._pos_z
+    
+    @property
+    def pos_theta(self) -> np.ndarray:
+        """
+        Angular positions of electrodes in radians.
+        
+        Returns
+        -------
+        np.ndarray
+            Array of shape (num_rows, num_cols) containing angular coordinates
+            of each electrode position in radians.
+            
+        Raises
+        ------
+        AttributeError
+            If electrode grid has not been created. Run constructor first.
+        """
+        if not hasattr(self, '_pos_theta'):
+            raise AttributeError(
+                "Electrode grid not computed. This should be automatically created "
+                "during class initialization. Please check constructor execution."
+            )
+        return self._pos_theta
+    
+    @property
+    def electrode_positions(self) -> tuple[np.ndarray, np.ndarray]:
+        """
+        Complete electrode position arrays (z, theta) in physical coordinates.
+        
+        Returns
+        -------
+        tuple[np.ndarray, np.ndarray]
+            Tuple containing:
+            - pos_z: Longitudinal positions in mm, shape (num_rows, num_cols)
+            - pos_theta: Angular positions in radians, shape (num_rows, num_cols)
+            
+        Raises
+        ------
+        AttributeError
+            If electrode grid has not been created. Run constructor first.
+        """
+        return (self.pos_z, self.pos_theta)
 
     def get_H_sf(
         self, ktheta_mesh_kzktheta: np.ndarray, kz_mesh_kzktheta: np.ndarray
@@ -228,7 +328,6 @@ class SurfaceElectrodeArray:
 
         return H_sf
 
-
 @beartowertype
 class IntramuscularElectrodeArray:
     """
@@ -253,6 +352,28 @@ class IntramuscularElectrodeArray:
         Distance for trajectory movement in mm
     trajectory_steps : int, default=1
         Number of steps in the trajectory
+
+    Attributes
+    ----------
+    electrode_positions : np.ndarray
+        Current electrode positions in 3D space, shape (n_nodes * num_electrodes, 3).
+        Available after set_linear_trajectory() execution.
+    differential_matrix : np.ndarray
+        Differential matrix for signal processing based on differentiation mode.
+        Available after class initialization.
+    trajectory_transforms : np.ndarray
+        Transformation matrices for trajectory movement, shape (n_nodes, 6).
+        Available after set_linear_trajectory() execution.
+    initial_positions : np.ndarray
+        Initial electrode positions after position/orientation setup, shape (num_electrodes, 3).
+        Available after set_position() execution.
+    num_channels : int
+        Number of recording channels based on differentiation mode.
+        Available after class initialization.
+    num_points : int
+        Alias for num_electrodes (compatibility).
+    n_nodes : int
+        Number of trajectory nodes.
     """
 
     def __init__(
@@ -265,6 +386,7 @@ class IntramuscularElectrodeArray:
         trajectory_distance__mm: float = 0.0,
         trajectory_steps: int = 1,
     ):
+        # Immutable public arguments - never modify these
         self.num_electrodes = num_electrodes
         self.inter_electrode_distance__mm = inter_electrode_distance__mm
         self.position__mm = position__mm
@@ -272,15 +394,24 @@ class IntramuscularElectrodeArray:
         self.differentiation_mode = differentiation_mode
         self.trajectory_distance__mm = trajectory_distance__mm
         self.trajectory_steps = trajectory_steps
+        
+        # Private copies for internal modifications
+        self._num_electrodes = num_electrodes
+        self._inter_electrode_distance__mm = inter_electrode_distance__mm
+        self._position__mm = position__mm
+        self._orientation__rad = orientation__rad
+        self._differentiation_mode = differentiation_mode
+        self._trajectory_distance__mm = trajectory_distance__mm
+        self._trajectory_steps = trajectory_steps
 
         self.num_points = num_electrodes  # Alias for compatibility
         self.n_nodes = trajectory_steps
 
         self._pts_origin = np.concatenate(
             [
-                np.zeros((self.num_electrodes, 2)),
-                np.arange(self.num_electrodes)[..., None]
-                * self.inter_electrode_distance__mm,
+                np.zeros((self._num_electrodes, 2)),
+                np.arange(self._num_electrodes)[..., None]
+                * self._inter_electrode_distance__mm,
             ],
             axis=-1,
         )
@@ -306,15 +437,11 @@ class IntramuscularElectrodeArray:
         self._n_channels = self._diff_mat.shape[0]
 
         self.set_position(
-            position__mm=self.position__mm, orientation__rad=self.orientation__rad
+            position__mm=self._position__mm, orientation__rad=self._orientation__rad
         )
         self.set_linear_trajectory(
-            distance__mm=self.trajectory_distance__mm, n_nodes=self.trajectory_steps
+            distance__mm=self._trajectory_distance__mm, n_nodes=self._trajectory_steps
         )
-
-        # Create electrode positions and differential matrix
-        # self._create_electrode_positions()
-        # self._create_differential_matrix()
 
     def set_position(
         self,
@@ -359,7 +486,7 @@ class IntramuscularElectrodeArray:
         ...     position__mm=(0.0, 0.0, 10.0),
         ...     orientation__rad=(0.0, 0.0, np.pi/4)
         ... )
-        
+
         See Also
         --------
         set_linear_trajectory : Define trajectory movement parameters
@@ -461,7 +588,7 @@ class IntramuscularElectrodeArray:
         --------
         >>> # Set up 10mm insertion with default step size (~0.5mm)
         >>> array.set_linear_trajectory(distance__mm=10.0)
-        
+
         >>> # Set up 5mm trajectory with specific number of nodes
         >>> array.set_linear_trajectory(distance__mm=5.0, n_nodes=20)
 
@@ -527,7 +654,7 @@ class IntramuscularElectrodeArray:
         Compute mixing weight for a specific trajectory node at given time.
 
         This function calculates the interpolation weight for a trajectory node based
-        on the current time/position along the trajectory. Uses triangular weighting 
+        on the current time/position along the trajectory. Uses triangular weighting
         where nodes closer to the current time get higher weights.
 
         Parameters
@@ -609,3 +736,118 @@ class IntramuscularElectrodeArray:
                 n_channels,
             )
         )
+
+    @property
+    def electrode_positions(self) -> np.ndarray:
+        """
+        Current electrode positions in 3D space (mm).
+        
+        Returns
+        -------
+        np.ndarray
+            Array of shape (n_nodes * num_electrodes, 3) containing x, y, z coordinates
+            of each electrode position for all trajectory nodes.
+            
+        Raises
+        ------
+        AttributeError
+            If trajectory has not been calculated. Run set_linear_trajectory() first.
+        """
+        if not hasattr(self, 'pts'):
+            raise AttributeError(
+                "Electrode positions not computed. Run set_linear_trajectory() first "
+                "to calculate trajectory and electrode positions."
+            )
+        return self.pts
+    
+    @property
+    def differential_matrix(self) -> np.ndarray:
+        """
+        Differential matrix for signal processing based on differentiation mode.
+        
+        Returns
+        -------
+        np.ndarray
+            Differential matrix for applying spatial differentiation to recorded signals.
+            Shape depends on differentiation mode and number of trajectory nodes.
+            
+        Raises
+        ------
+        AttributeError
+            If differential matrix has not been created. Run constructor first.
+        """
+        if not hasattr(self, '_diff_mat'):
+            raise AttributeError(
+                "Differential matrix not computed. This should be automatically created "
+                "during class initialization. Please check constructor execution."
+            )
+        return self._diff_mat
+    
+    @property 
+    def trajectory_transforms(self) -> np.ndarray:
+        """
+        Transformation matrices for trajectory movement.
+        
+        Returns
+        -------
+        np.ndarray
+            Array of shape (n_nodes, 6) containing translation and rotation parameters
+            for each trajectory node. First 3 columns are translations (x, y, z),
+            last 3 columns are rotations (roll, pitch, yaw).
+            
+        Raises
+        ------
+        AttributeError
+            If trajectory has not been set. Run set_linear_trajectory() first.
+        """
+        if not hasattr(self, 'traj_transforms'):
+            raise AttributeError(
+                "Trajectory transforms not computed. Run set_linear_trajectory() first "
+                "to configure electrode trajectory movement."
+            )
+        return self.traj_transforms
+    
+    @property
+    def initial_positions(self) -> np.ndarray:
+        """
+        Initial electrode positions after position/orientation setup.
+        
+        Returns
+        -------
+        np.ndarray
+            Array of shape (num_electrodes, 3) containing initial x, y, z coordinates
+            of electrodes before trajectory movement is applied.
+            
+        Raises
+        ------
+        AttributeError
+            If initial positions have not been set. Run set_position() first.
+        """
+        if not hasattr(self, '_pts_init'):
+            raise AttributeError(
+                "Initial electrode positions not computed. Run set_position() first "
+                "to configure electrode array placement and orientation."
+            )
+        return self._pts_init
+    
+    @property
+    def num_channels(self) -> int:
+        """
+        Number of recording channels based on differentiation mode.
+        
+        Returns
+        -------
+        int
+            Number of differential recording channels available from this electrode array.
+            
+        Raises
+        ------
+        AttributeError
+            If channel count has not been calculated. Run constructor first.
+        """
+        if not hasattr(self, '_n_channels'):
+            raise AttributeError(
+                "Number of channels not computed. This should be automatically created "
+                "during class initialization. Please check constructor execution."
+            )
+        return self._n_channels

@@ -1,12 +1,11 @@
 from typing import cast
 
 import numpy as np
-from beartype import beartype
 
-from myogen.utils.types import CORTICAL_INPUT__MATRIX
+from myogen.utils.types import CORTICAL_INPUT__MATRIX, beartowertype
 
 
-@beartype
+@beartowertype
 def create_sinusoidal_cortical_input(
     n_pools: int,
     t_points: int,
@@ -114,15 +113,15 @@ def create_sinusoidal_cortical_input(
     )
 
 
-@beartype
+@beartowertype
 def create_sawtooth_cortical_input(
     n_pools: int,
     t_points: int,
-    timestep_ms: float,
+    timestep__ms: float,
     amplitudes__pps: float | list[float],
     frequencies__Hz: float | list[float],
     offsets__pps: float | list[float] = 0.0,
-    widths: float | list[float] = 0.5,
+    widths__ratio: float | list[float] = 0.5,
     phases__rad: float | list[float] = 0.0,
 ) -> CORTICAL_INPUT__MATRIX:
     """Create a matrix of sawtooth currents for multiple pools.
@@ -133,30 +132,30 @@ def create_sawtooth_cortical_input(
         Number of current pools to generate
     t_points : int
         Number of time points
-    timestep_ms : float
+    timestep__ms : float
         Time step in milliseconds
-    amplitudes__muV : float | list[float]
-        Amplitude(s) of the sawtooth current(s) in microvolts.
+    amplitudes__pps : float | list[float]
+        Amplitude(s) of the sawtooth cortical input(s) in pulses per second.
 
         Must be:
             - Single float: used for all pools
             - List of floats: must match n_pools
 
     frequencies__Hz : float | list[float]
-        Frequency(s) of the sawtooth current(s) in Hertz.
+        Frequency(s) of the sawtooth cortical input(s) in Hertz.
 
         Must be:
             - Single float: used for all pools
             - List of floats: must match n_pools
 
-    offsets__muV : float | list[float]
-        DC offset(s) to add to the sawtooth current(s) in microvolts.
+    offsets__pps : float | list[float]
+        DC offset(s) to add to the sawtooth cortical input(s) in pulses per second.
 
         Must be:
             - Single float: used for all pools
             - List of floats: must match n_pools
 
-    widths : float | list[float]
+    widths__ratio : float | list[float]
         Width(s) of the rising edge as proportion of period (0 to 1).
 
         Must be:
@@ -164,7 +163,7 @@ def create_sawtooth_cortical_input(
             - List of floats: must match n_pools
 
     phases__rad : float | list[float]
-        Phase(s) of the sawtooth current(s) in radians.
+        Phase(s) of the sawtooth cortical input(s) in radians.
 
         Must be:
             - Single float: used for all pools
@@ -178,9 +177,9 @@ def create_sawtooth_cortical_input(
     Returns
     -------
     CORTICAL_INPUT__MATRIX
-        Matrix of shape (n_pools, t_points) containing sawtooth currents
+        Matrix of shape (n_pools, t_points) containing sawtooth cortical inputs
     """
-    t = np.arange(0, t_points * timestep_ms, timestep_ms)
+    t = np.arange(0, t_points * timestep__ms, timestep__ms)
 
     # Convert parameters to lists
     amplitudes_list = cast(
@@ -200,7 +199,10 @@ def create_sawtooth_cortical_input(
         [offsets__pps] * n_pools if isinstance(offsets__pps, float) else offsets__pps,
     )
     widths_list = cast(
-        list[float], [widths] * n_pools if isinstance(widths, float) else widths
+        list[float],
+        [widths__ratio] * n_pools
+        if isinstance(widths__ratio, float)
+        else widths__ratio,
     )
     phases_list = cast(
         list[float],
@@ -221,7 +223,7 @@ def create_sawtooth_cortical_input(
         )
     if len(widths_list) != n_pools:
         raise ValueError(
-            f"Length of widths ({len(widths_list)}) must match n_pools ({n_pools})"
+            f"Length of widths__ratio ({len(widths_list)}) must match n_pools ({n_pools})"
         )
     if len(phases_list) != n_pools:
         raise ValueError(
@@ -243,11 +245,11 @@ def create_sawtooth_cortical_input(
     return cortical_input__matrix
 
 
-@beartype
+@beartowertype
 def create_step_cortical_input(
     n_pools: int,
     t_points: int,
-    timestep_ms: float,
+    timestep__ms: float,
     step_heights__pps: float | list[float],
     step_durations__ms: float | list[float],
     offsets__pps: float | list[float] = 0.0,
@@ -260,10 +262,10 @@ def create_step_cortical_input(
         Number of current pools to generate
     t_points : int
         Number of time points
-    timestep_ms : float
+    timestep__ms : float
         Time step in milliseconds.
-    step_heights__muV : float | list[float]
-        Step height(s) for the current(s) in microvolts.
+    step_heights__pps : float | list[float]
+        Step height(s) for the cortical input(s) in pulses per second.
 
         Must be:
             - Single float: used for all pools
@@ -274,8 +276,8 @@ def create_step_cortical_input(
         Must be:
             - Single float: used for all pools
             - List of floats: must match n_pools
-    offsets__muV : float | list[float]
-        DC offset(s) to add to the step current(s) in microvolts.
+    offsets__pps : float | list[float]
+        DC offset(s) to add to the step cortical input(s) in pulses per second.
 
         Must be:
             - Single float: used for all pools
@@ -288,8 +290,8 @@ def create_step_cortical_input(
 
     Returns
     -------
-    INPUT_CURRENT__MATRIX
-        Matrix of shape (n_pools, t_points) containing step currents
+    CORTICAL_INPUT__MATRIX
+        Matrix of shape (n_pools, t_points) containing step cortical inputs
     """
     # Convert parameters to lists
     step_heights_list = cast(
@@ -328,7 +330,7 @@ def create_step_cortical_input(
         current = np.zeros(t_points)
 
         # Create step: constant value for duration, then back to zero
-        duration_points = int(step_durations_list[i] / timestep_ms)
+        duration_points = int(step_durations_list[i] / timestep__ms)
         if duration_points > 0:
             end_idx = min(duration_points, t_points)
             current[:end_idx] = step_heights_list[i]
@@ -338,7 +340,7 @@ def create_step_cortical_input(
     return cortical_input__matrix
 
 
-@beartype
+@beartowertype
 def create_ramp_cortical_input(
     n_pools: int,
     t_points: int,
@@ -346,7 +348,7 @@ def create_ramp_cortical_input(
     end_fr__pps: float | list[float],
     offsets__pps: float | list[float] = 0.0,
 ) -> CORTICAL_INPUT__MATRIX:
-    """Create a matrix of ramp currents for multiple pools.
+    """Create a matrix of ramp cortical inputs for multiple pools.
 
     Parameters
     ----------
@@ -354,22 +356,22 @@ def create_ramp_cortical_input(
         Number of current pools to generate
     t_points : int
         Number of time points
-    start_currents__muV : float | list[float]
-        Starting current(s) for the ramp in microvolts.
+    start_fr__pps : float | list[float]
+        Starting firing rate(s) for the ramp in pulses per second.
 
         Must be:
             - Single float: used for all pools
             - List of floats: must match n_pools
 
-    end_currents__muV : float | list[float]
-        Ending current(s) for the ramp in microvolts.
+    end_fr__pps : float | list[float]
+        Ending firing rate(s) for the ramp in pulses per second.
 
         Must be:
             - Single float: used for all pools
             - List of floats: must match n_pools
 
-    offsets__muV : float | list[float]
-        DC offset(s) to add to the ramp current(s) in microvolts.
+    offsets__pps : float | list[float]
+        DC offset(s) to add to the ramp cortical input(s) in pulses per second.
 
         Must be:
             - Single float: used for all pools
@@ -424,11 +426,11 @@ def create_ramp_cortical_input(
     return cortical_input__matrix
 
 
-@beartype
+@beartowertype
 def create_trapezoid_cortical_input(
     n_pools: int,
     t_points: int,
-    timestep_ms: float,
+    timestep__ms: float,
     amplitudes__pps: float | list[float],
     rise_times__ms: float | list[float] = 100.0,
     plateau_times__ms: float | list[float] = 200.0,
@@ -444,7 +446,7 @@ def create_trapezoid_cortical_input(
         Number of current pools to generate
     t_points : int
         Number of time points
-    timestep_ms : float
+    timestep__ms : float
         Time step in milliseconds
     amplitudes__pps : float | list[float]
         Amplitude(s) of the trapezoidal current(s) in pps.
@@ -559,10 +561,10 @@ def create_trapezoid_cortical_input(
 
     for i in range(n_pools):
         # Calculate indices for each phase
-        delay_points = int(delays_list[i] / timestep_ms)
-        rise_points = int(rise_times_list[i] / timestep_ms)
-        plateau_points = int(plateau_times_list[i] / timestep_ms)
-        fall_points = int(fall_times_list[i] / timestep_ms)
+        delay_points = int(delays_list[i] / timestep__ms)
+        rise_points = int(rise_times_list[i] / timestep__ms)
+        plateau_points = int(plateau_times_list[i] / timestep__ms)
+        fall_points = int(fall_times_list[i] / timestep__ms)
 
         # Create the base trapezoid shape
         trapezoid = np.zeros(t_points)

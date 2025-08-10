@@ -1,7 +1,7 @@
+import inspect
 from pathlib import Path
 from typing import Optional
 
-import inspect
 import numpy as np
 import pandas as pd
 import skfmm
@@ -134,7 +134,7 @@ class Muscle:
     ----------
     innervation_center_positions__mm : np.ndarray
         Motor unit innervation center positions [x, y] in mm. Available after distribute_innervation_centers().
-    muscle_fiber_centers__mm : np.ndarray  
+    muscle_fiber_centers__mm : np.ndarray
         Muscle fiber center positions [x, y] in mm. Available after generate_muscle_fiber_centers().
     muscle_fiber_diameters__mm : np.ndarray
         Muscle fiber diameters in mm. Available after _generate_fiber_properties().
@@ -239,7 +239,9 @@ class Muscle:
 
         # Derived properties
         self.muscle_area__mm2 = np.pi * np.power(self._radius__mm, 2)
-        self.max_innervation_area_scaling_factor = 1 / self._max_innervation_area_to_total_muscle_area__ratio
+        self.max_innervation_area_scaling_factor = (
+            1 / self._max_innervation_area_to_total_muscle_area__ratio
+        )
         self._number_of_neurons = len(self._recruitment_thresholds)
 
         # Simulation results - stored privately, accessed via properties
@@ -255,8 +257,8 @@ class Muscle:
         if not (0 < max_innervation_area_to_total_muscle_area__ratio <= 1):
             raise ValueError(
                 '"max_innervation_area_to_total_muscle_area__ratio" must be in (0, 1]. '
-                'This ratio defines how much of the muscle area the largest motor unit can occupy. '
-                'For realistic simulations, try values between 0.1 and 0.5.'
+                "This ratio defines how much of the muscle area the largest motor unit can occupy. "
+                "For realistic simulations, try values between 0.1 and 0.5."
             )
 
         self.desired_innervation_areas__mm2 = (
@@ -287,7 +289,7 @@ class Muscle:
         realistic fiber properties based on the number and positions of muscle fibers.
 
         Results are stored in the `mf_diameters` and `mf_cv` properties after execution.
-        
+
         Raises
         ------
         ValueError
@@ -312,7 +314,9 @@ class Muscle:
         )
 
         # Ensure diameters are within physiological range (20-80 μm)
-        self._muscle_fiber_diameters__mm = np.clip(self._muscle_fiber_diameters__mm, 20e-3, 80e-3)
+        self._muscle_fiber_diameters__mm = np.clip(
+            self._muscle_fiber_diameters__mm, 20e-3, 80e-3
+        )
 
         # Generate conduction velocities based on fiber diameter
         # CV = k * diameter + c, where k ≈ 4.5-6.0 (m/s)/mm, c ≈ 0.5-1.0 m/s
@@ -321,16 +325,22 @@ class Muscle:
         c = 0.8  # m/s
 
         # Add some biological variability
-        cv_base = k * (self._muscle_fiber_diameters__mm * 1000) + c  # Convert mm to m for diameter
+        cv_base = (
+            k * (self._muscle_fiber_diameters__mm * 1000) + c
+        )  # Convert mm to m for diameter
         cv_noise = RANDOM_GENERATOR.normal(0, 0.2, n_fibers)  # 20% CV variation
 
         self._muscle_fiber_conduction_velocities__mm_per_s = cv_base + cv_noise
 
         # Ensure velocities are within physiological range (2-6 m/s)
-        self._muscle_fiber_conduction_velocities__mm_per_s = np.clip(self._muscle_fiber_conduction_velocities__mm_per_s, 2.0, 6.0)
+        self._muscle_fiber_conduction_velocities__mm_per_s = np.clip(
+            self._muscle_fiber_conduction_velocities__mm_per_s, 2.0, 6.0
+        )
 
         # Convert back to mm/s for consistency with the rest of the code
-        self._muscle_fiber_conduction_velocities__mm_per_s = self._muscle_fiber_conduction_velocities__mm_per_s * 1000  # m/s to mm/s
+        self._muscle_fiber_conduction_velocities__mm_per_s = (
+            self._muscle_fiber_conduction_velocities__mm_per_s * 1000
+        )  # m/s to mm/s
 
     def distribute_innervation_centers(self) -> None:
         """
@@ -385,7 +395,9 @@ class Muscle:
             self._innervation_center_positions__mm.shape[0] > 0
             and self._innervation_center_positions__mm.shape[1] == 2
         ):
-            center_offset = self._innervation_center_positions__mm - self._grid_resolution / 2
+            center_offset = (
+                self._innervation_center_positions__mm - self._grid_resolution / 2
+            )
             max_dist = np.max(
                 np.sqrt(center_offset[:, 0] ** 2 + center_offset[:, 1] ** 2)
             )
@@ -409,7 +421,7 @@ class Muscle:
 
         Results are stored in the following properties after execution:
             - `mf_centers`: Array of shape (n_fibers, 2) with fiber positions [x, y] in mm
-            - `number_of_muscle_fibers`: Total number of muscle fibers  
+            - `number_of_muscle_fibers`: Total number of muscle fibers
             - `muscle_border`: Array of border points for visualization
 
         Notes
@@ -434,13 +446,20 @@ class Muscle:
         ).values
 
         # Adjust the loaded innervation_center_positions to the expected number of fibers and muscle radius
-        self._muscle_fiber_centers__mm = (self._muscle_fiber_centers__mm - 5) / 4  # 4 may be unnecessary here
-        dists = np.sqrt(self._muscle_fiber_centers__mm[:, 0] ** 2 + self._muscle_fiber_centers__mm[:, 1] ** 2)
+        self._muscle_fiber_centers__mm = (
+            self._muscle_fiber_centers__mm - 5
+        ) / 4  # 4 may be unnecessary here
+        dists = np.sqrt(
+            self._muscle_fiber_centers__mm[:, 0] ** 2
+            + self._muscle_fiber_centers__mm[:, 1] ** 2
+        )
         sorted_indices = np.argsort(dists)
 
         if len(sorted_indices) >= self._number_of_muscle_fibers + 1:
             self._muscle_fiber_centers__mm = (
-                self._muscle_fiber_centers__mm[sorted_indices[: self._number_of_muscle_fibers], :]
+                self._muscle_fiber_centers__mm[
+                    sorted_indices[: self._number_of_muscle_fibers], :
+                ]
                 / dists[sorted_indices[self._number_of_muscle_fibers]]
                 * self._radius__mm
             )
@@ -456,7 +475,10 @@ class Muscle:
         phi_circle = np.linspace(0, 2 * np.pi, 1000)
         phi_circle = phi_circle[:-1]
         self._muscle_border__mm = np.column_stack(
-            [self._radius__mm * np.cos(phi_circle), self._radius__mm * np.sin(phi_circle)]
+            [
+                self._radius__mm * np.cos(phi_circle),
+                self._radius__mm * np.sin(phi_circle),
+            ]
         )
 
     def assign_mfs2mns(self, n_neighbours: int = 3, conf: float = 0.999) -> None:
@@ -509,7 +531,7 @@ class Muscle:
                 "Innervation center positions not computed. "
                 "Call distribute_innervation_centers() first."
             )
-        
+
         if self._muscle_fiber_centers__mm is None:
             raise ValueError(
                 "Muscle fiber centers not computed. "
@@ -547,13 +569,19 @@ class Muscle:
 
             # Use dblquad for integration (equivalent to MATLAB's integral2)
             in_circle_int = dblquad(
-                probfun, -self._radius__mm, self._radius__mm, borderfun_neg, borderfun_pos
+                probfun,
+                -self._radius__mm,
+                self._radius__mm,
+                borderfun_neg,
+                borderfun_pos,
             )[0]  # dblquad returns (integral, error)
             out_circle_coeff[mu] = 1 / in_circle_int
 
         # Find nearest neighbors for suppression (equivalent to MATLAB's knnsearch)
         if n_neighbours > 0:
-            nbrs = NearestNeighbors(n_neighbors=n_neighbours + 1).fit(self._muscle_fiber_centers__mm)
+            nbrs = NearestNeighbors(n_neighbors=n_neighbours + 1).fit(
+                self._muscle_fiber_centers__mm
+            )
             _, neighbours = nbrs.kneighbors(self._muscle_fiber_centers__mm)
             neighbours = neighbours[
                 :, 1:
@@ -649,19 +677,19 @@ class Muscle:
                 "Muscle fiber assignment not completed. "
                 "Call assign_mfs2mns() first to assign fibers to motor units."
             )
-        
+
         if self._muscle_fiber_centers__mm is None:
             raise ValueError(
                 "Muscle fiber centers not computed. "
                 "Call generate_muscle_fiber_centers() first."
             )
-        
+
         if not (0 <= mu < len(self._recruitment_thresholds)):
             raise IndexError(
                 f"Motor unit index {mu} is out of range. "
-                f"Valid range is [0, {len(self._recruitment_thresholds)-1}]."
+                f"Valid range is [0, {len(self._recruitment_thresholds) - 1}]."
             )
-        
+
         return self._muscle_fiber_centers__mm[
             np.where(
                 self._assignment == np.arange(len(self._recruitment_thresholds))[mu]
@@ -706,7 +734,7 @@ class Muscle:
                 "Muscle fiber assignment not completed. "
                 "Call assign_mfs2mns() first to assign fibers to motor units."
             )
-        
+
         return np.bincount(
             self._assignment.astype(int), minlength=self._number_of_neurons
         )
@@ -752,13 +780,13 @@ class Muscle:
                 "Innervation center positions not computed. "
                 "Call distribute_innervation_centers() first."
             )
-        
+
         if self._assignment is None:
             raise ValueError(
                 "Muscle fiber assignment not completed. "
                 "Call assign_mfs2mns() first to assign fibers to motor units."
             )
-        
+
         if self._muscle_fiber_centers__mm is None:
             raise ValueError(
                 "Muscle fiber centers not computed. "
@@ -787,12 +815,12 @@ class Muscle:
     def innervation_center_positions__mm(self) -> np.ndarray:
         """
         Motor unit innervation center positions [x, y] in mm.
-        
+
         Returns
         -------
         np.ndarray
             Array of shape (n_motor_units, 2) containing [x, y] coordinates in mm.
-            
+
         Raises
         ------
         ValueError
@@ -809,12 +837,12 @@ class Muscle:
     def muscle_fiber_centers__mm(self) -> np.ndarray:
         """
         Muscle fiber center positions [x, y] in mm.
-        
+
         Returns
         -------
         np.ndarray
             Array of shape (n_fibers, 2) containing [x, y] coordinates in mm.
-            
+
         Raises
         ------
         ValueError
@@ -831,12 +859,12 @@ class Muscle:
     def muscle_fiber_diameters__mm(self) -> np.ndarray:
         """
         Muscle fiber diameters in mm.
-        
+
         Returns
         -------
         np.ndarray
             Array of muscle fiber diameters in mm.
-            
+
         Raises
         ------
         ValueError
@@ -853,12 +881,12 @@ class Muscle:
     def muscle_fiber_conduction_velocities__mm_per_s(self) -> np.ndarray:
         """
         Muscle fiber conduction velocities in mm/s.
-        
+
         Returns
         -------
         np.ndarray
             Array of muscle fiber conduction velocities in mm/s.
-            
+
         Raises
         ------
         ValueError
@@ -875,13 +903,13 @@ class Muscle:
     def assignment(self) -> np.ndarray:
         """
         Motor unit assignment for each muscle fiber.
-        
+
         Returns
         -------
         np.ndarray
             Array where each element indicates the motor unit index (0 to n_motor_units-1)
             assigned to that fiber.
-            
+
         Raises
         ------
         ValueError
@@ -898,12 +926,12 @@ class Muscle:
     def number_of_muscle_fibers(self) -> int:
         """
         Total number of muscle fibers.
-        
+
         Returns
         -------
         int
             Total number of muscle fibers.
-            
+
         Raises
         ------
         ValueError
@@ -920,12 +948,12 @@ class Muscle:
     def muscle_border__mm(self) -> np.ndarray:
         """
         Muscle boundary points for visualization.
-        
+
         Returns
         -------
         np.ndarray
             Array of boundary points for the circular muscle cross-section.
-            
+
         Raises
         ------
         ValueError
@@ -942,7 +970,7 @@ class Muscle:
     def recruitment_thresholds(self) -> np.ndarray:
         """
         Motor unit recruitment thresholds.
-        
+
         Returns
         -------
         np.ndarray
