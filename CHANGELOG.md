@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.4.0] - 2025-08-10
+
 ### Added
 - **Type System Enhancement**: New `RECRUITMENT_THRESHOLDS__ARRAY` custom type alias for 1D recruitment threshold arrays with runtime validation via Beartype
 - **Development Guidelines**: Comprehensive `CLAUDE.md` with development protocols:
