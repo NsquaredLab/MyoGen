@@ -26,6 +26,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Property-based access: computed results accessed via validated `@property` methods
   - Comprehensive error handling: informative errors with guidance for beginners
   - Enhanced method docstrings: document where results are stored after execution
+- **Electrode Array Framework**: Standardized SurfaceElectrodeArray and IntramuscularElectrodeArray classes:
+  - Applied immutable public arguments pattern with private copies for internal use
+  - Added comprehensive property-based access to computed attributes (pos_z, pos_theta, electrode_positions)
+  - Enhanced error handling with informative messages and guidance for beginners
+  - Added detailed Attributes sections to class docstrings documenting all computed properties
+- **Force Model Integration**: Enhanced ForceModel class with improved parameter naming and type validation:
+  - Applied @beartowertype decorator for runtime parameter validation
+  - Standardized parameter names with clear unit suffixes (contraction_time_range__unitless)
+  - Updated property names for consistency (peak_twitch_forces__unitless, contraction_times__samples)
+- **Current Generation API**: Standardized current generation functions with consistent parameter naming:
+  - Updated sawtooth_current: widths → widths__ratio, timestep_ms → timestep__ms
+  - Updated step_current: timestep_ms → timestep__ms  
+  - Updated trapezoid_current: timestep_ms → timestep__ms
+- **Import Organization**: Restructured import statements across all modules for better dependency management and consistency
 
 ### Changed
 - **API Breaking Changes**: Enhanced `generate_mu_recruitment_thresholds` function with improved type safety:
@@ -45,11 +59,28 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Applied class-level `@beartowertype` decorator for automatic method type validation
   - Enhanced class docstring with comprehensive Attributes section documenting all computed properties
   - Updated plotting utilities and EMG simulation modules to use new attribute names
-- **Example Updates**: Updated `00_simulate_recruitment_thresholds.py` to use new API parameter names
+- **Example Updates**: Updated all examples to use new API parameter names and consistent patterns:
+  - Updated `00_simulate_recruitment_thresholds.py` with new parameter names
+  - Updated `02_simulate_muscle.py` with reduced fiber density for faster demonstration
+  - Updated `03_simulate_surface_muaps.py` to remove deprecated MUs_to_simulate parameter
+  - Updated `04_simulate_surface_emg.py` with corrected file path references
+  - Updated `05_simulate_currents.py` with standardized current generation parameter names
+  - Updated `06_simulate_force.py` with new force model parameter names and property access
+  - Updated `08_simulate_intramuscular_emg.py` with new recruitment threshold parameter names
+- **Repository Cleanup**: Enhanced .gitignore to exclude generated files and development artifacts:
+  - Added .idea/ (IDE configuration files)
+  - Added docs/source/auto_examples/, docs/source/generated/, docs/source/sg_execution_times.rst (Sphinx generated files)
+  - Added examples/results/, results/ (temporary simulation outputs)
+  - Added test_*.png, *.code-workspace (development artifacts)
 
 ### Fixed
 - **Parameter Naming**: Removed misleading `__per_hundred_units` suffix from `deluca__slope` parameter that incorrectly suggested it had units
 - **Scientific Accuracy**: Corrected `deluca__slope` description as dimensionless curvature control parameter rather than rate parameter
+
+### Removed
+- **Deprecated Plotting Module**: Removed `myogen/utils/plotting/plotting.py` module with generic plotting functions
+  - Functionality has been moved to specialized plotting modules (currents.py, force.py, muscle.py, etc.)
+  - This provides better organization and clearer separation of concerns
 
 ## [0.3.0] - 2025-08-08
 
