@@ -6,33 +6,39 @@ This section provides a complete overview of all modules, classes, and functions
 
 MyoGen is organized into the following modules:
 
-.. list-table::
-   :widths: 20 80
-   :header-rows: 1
+.. grid:: 2
+   :gutter: 0
+   :margin: 0
 
-   * - **Module**
-     - **Description**
-   * - Simulator
-     - Core functionality for neuromuscular simulation, including motor unit recruitment, muscle modeling, and EMG generation.
-   * - Utils
-     - Utility functions for setup, NMODL file handling, current generation, plotting, and type definitions.
-   * - Currents
-     - Functions for generating various input current waveforms (ramp, step, sinusoidal, etc.). *(Submodule of Utils)*
-   * - Plotting
-     - Visualization tools for simulation results and analysis. *(Submodule of Utils)*
-   * - Types
-     - Type definitions for structured data and type safety. *(Submodule of Utils)*
+   .. card:: Simulator
+      :link: simulator_api.html
+      :class-card: sd-shadow-xs sd-bg-light myogen-card
 
-**Browse the API by module:**
+      Core functionality for neuromuscular simulation, including motor unit recruitment, muscle modeling, and EMG generation.
 
-.. toctree::
-   :maxdepth: 2
-   :caption: API Modules
+   .. card:: Utils
+      :link: utils_api.html
+      :class-card: sd-shadow-xs sd-bg-light myogen-card
 
-   simulator_api
-   utils_api
+      Utility functions for setup, NMODL file handling, current generation, plotting, and type definitions.
 
----
+   .. card:: Currents
+      :link: currents_api.html
+      :class-card: sd-shadow-xs sd-bg-light myogen-card
+
+      Functions for generating various input current waveforms (ramp, step, sinusoidal, etc.). *(Submodule of Utils)*
+
+   .. card:: Plotting
+      :link: plotting_api.html
+      :class-card: sd-shadow-xs sd-bg-light myogen-card
+   
+      Visualization tools for simulation results and analysis. *(Submodule of Utils)*
+
+   .. card:: Types
+      :link: types_api.html
+      :class-card: sd-shadow-xs sd-bg-light myogen-card
+
+      Type definitions for structured data and type safety. *(Submodule of Utils)*
 
 **How to use this documentation:**
 
@@ -42,6 +48,13 @@ MyoGen is organized into the following modules:
 
 If you are new to MyoGen, start with the Simulator module to understand the core simulation workflow, then explore the utility and plotting modules as needed.
 
----
-
 If you have questions or need further help, please refer to the `README <../../README.md>`_ or open an issue on `GitHub <https://github.com/NSquaredLab/MyoGen>`_.
+
+
+.. toctree::
+   :maxdepth: 2
+   :caption: API Modules
+   :hidden:
+
+   simulator_api
+   utils_api

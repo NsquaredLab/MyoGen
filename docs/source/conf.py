@@ -39,6 +39,7 @@ extensions = [
     "sphinx.ext.doctest",
     "myst_parser",
     "sphinxcontrib.mermaid",
+    "sphinx_design",
 ]
 
 mermaid_version = "11.9.0"
@@ -151,16 +152,35 @@ autodoc_default_options = {
     "members": True,
     "inherited-members": False,
     "show-inheritance": True,
+    "undoc-members": True,
+    "exclude-members": "__weakref__",
 }
 autodoc_inherit_docstrings = True
 autoclass_content = "both"
 autodoc_typehints = "description"
 autodoc_member_order = "groupwise"
+autodoc_preserve_defaults = True
+autodoc_typehints_format = "short"
+autodoc_type_aliases = napoleon_type_aliases
+
+# Better signature formatting
+maximum_signature_line_length = 80
+python_use_unqualified_type_names = True
+
+# Advanced autodoc signature formatting
+add_function_parentheses = True
+add_module_names = False
+show_authors = True
+
+# Improved signature display
+autodoc_signature_formatting = 'multiline'
+python_maximum_signature_line_length = 88
 
 # Autosummary configuration
 autosummary_generate = True
 autosummary_generate_overwrite = True
 autosummary_imported_members = False
+autosummary_ignore_module_all = False
 
 # General configuration
 templates_path = ["templates"]
@@ -178,9 +198,23 @@ html_theme_options = {
     "navbar_persistent": ["search-button"],
     "footer_start": ["copyright"],
     "footer_end": ["sphinx-version"],
+    # Enhanced navigation
+    "use_edit_page_button": True,
+    "navigation_with_keys": True,
+    "show_toc_level": 2,
+    "navigation_depth": 4,
+    # Search improvements
+    "search_bar_text": "Search MyoGen docs...",
+    # API documentation improvements
+    "show_nav_level": 2,
+    "collapse_navigation": False,
     # Pygments (syntax highlighting) configuration
     "pygments_light_style": "default",
     "pygments_dark_style": "monokai",
+    # Header and footer customization
+    "header_links_before_dropdown": 4,
+    # Announcement bar
+    "announcement": "⚠️ MyoGen is under active development. API may change.",
 }
 
 html_static_path = ["_static"]
@@ -233,4 +267,5 @@ suppress_warnings = [
 
 def setup(app):
     """Setup function for custom configurations."""
-    pass
+    app.add_css_file('custom.css')
+    app.add_js_file('custom.js')
