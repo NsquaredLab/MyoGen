@@ -173,7 +173,7 @@ add_module_names = False
 show_authors = True
 
 # Improved signature display
-autodoc_signature_formatting = 'multiline'
+autodoc_signature_formatting = "multiline"
 python_maximum_signature_line_length = 88
 
 # Autosummary configuration
@@ -267,5 +267,5 @@ suppress_warnings = [
 
 def setup(app):
     """Setup function for custom configurations."""
-    app.add_css_file('custom.css')
-    app.add_js_file('custom.js')
+    app.add_css_file("custom.css")
+    app.add_js_file("custom.js")
