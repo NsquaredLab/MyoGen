@@ -21,30 +21,22 @@ from neuron import h
 
 
 def find_nmodl_directory() -> Path:
-    """Find the NMODL directory in the pyNN/neuron installation."""
-    src_path = Path(__file__).parent.parent / "simulator"
-    try:
-        nmodl_path = next(src_path.parent.parent.rglob("*pyNN/neuron/nmodl"))
-        return nmodl_path
-    except StopIteration:
-        print("Error: Could not find pyNN/neuron/nmodl directory")
-        raise FileNotFoundError("Could not find pyNN/neuron/nmodl directory")
+    """Create isolated NMODL directory for MyoGen mechanisms."""
+    # Use MyoGen's own nmodl_files directory for isolated compilation
+    src_path = Path(__file__).parent.parent / "simulator" / "nmodl_files"
+    return src_path
 
 
-def _copy_mod_files(src_path: Path, nmodl_path: Path) -> List[Path]:
-    """Copy .mod files from source to NMODL directory."""
-    mod_files = list(src_path.glob("*mod"))
+def _get_mod_files(nmodl_path: Path) -> List[Path]:
+    """Get .mod files from NMODL directory."""
+    mod_files = list(nmodl_path.glob("*.mod"))
     if not mod_files:
-        print("Warning: No .mod files found in source directory")
+        print("Warning: No .mod files found in NMODL directory")
         return []
 
+    print(f"Found {len(mod_files)} .mod files to compile")
     for mod_file in mod_files:
-        try:
-            shutil.copy(mod_file, nmodl_path / mod_file.name)
-            print(f"Copied {mod_file.stem}")
-        except (shutil.Error, IOError) as e:
-            print(f"Error: Failed to copy {mod_file.stem}: {str(e)}")
-            raise
+        print(f"  {mod_file.name}")
 
     return mod_files
 
@@ -134,74 +126,109 @@ def _compile_mod_files_windows(nmodl_path: Path) -> None:
 
 
 def _compile_mod_files_unix(nmodl_path: Path) -> None:
-    """Compile NMODL files on Unix-like systems using pyNN's utility."""
-    from pyNN.utility.build import compile_nmodl
-
+    """Compile NMODL files on Unix-like systems using nrnivmodl."""
     try:
         print(f"Compiling NMODL files from {nmodl_path}")
-        compile_nmodl(nmodl_path)
-    except Exception as e:
-        print(f"Error: Failed to compile NMODL files: {str(e)}")
+        # Use nrnivmodl directly for better control
+        result = subprocess.run(
+            ["nrnivmodl", str(nmodl_path)],
+            cwd=nmodl_path.parent,
+            capture_output=True,
+            text=True,
+            check=True,
+        )
+        if result.stdout:
+            print(result.stdout)
+        if result.stderr:
+            print(f"Compilation warnings: {result.stderr}")
+    except subprocess.CalledProcessError as e:
+        print(f"Error: Failed to compile NMODL files: {e}")
+        print(f"Stdout: {e.stdout}")
+        print(f"Stderr: {e.stderr}")
         raise
+    except FileNotFoundError:
+        # Fallback to pyNN utility
+        try:
+            from pyNN.utility.build import compile_nmodl
+
+            compile_nmodl(nmodl_path)
+        except ImportError:
+            print(
+                "Error: Neither nrnivmodl nor pyNN.utility.build.compile_nmodl available"
+            )
+            raise
 
 
-def _compile_and_load_mod_files(nmodl_path: Path, mod_files: List[Path]) -> None:
+def _compile_and_load_mod_files(
+    nmodl_path: Path, mod_files: List[Path], quiet: bool = False
+) -> None:
     """Compile and load NMODL files into NEURON based on platform."""
     if not mod_files:
-        print("No mod files to compile")
+        if not quiet:
+            print("No mod files to compile")
         return
 
     # Platform-specific compilation
     if platform.system() == "Windows":
         _compile_mod_files_windows(nmodl_path)
-    else:
-        _compile_mod_files_unix(nmodl_path)
-
-    # Load the compiled mechanisms
-    # The location and naming of compiled files differs between platforms
-    if platform.system() == "Windows":
-        # On Windows, NEURON creates a DLL file, but the name might have a prefix
-        # Look for both 'nrnmech.dll' and '*.nrnmech.dll' patterns
+        # Load Windows DLL
         dll_files = list(nmodl_path.glob("*nrnmech.dll"))
-
         if dll_files:
-            # Use the first DLL found (usually there should be only one)
             dll_path = dll_files[0]
             try:
                 h.nrn_load_dll(str(dll_path))
-                print(f"Successfully loaded {dll_path.name}")
+                if not quiet:
+                    print(f"Successfully loaded {dll_path.name}")
             except Exception as e:
-                print(f"Warning: Error loading {dll_path.name}: {str(e)}")
-                print(
-                    "This may be because some mechanisms are already loaded, which is usually not a problem."
-                )
-                # Continue execution - don't re-raise the exception
+                if not quiet and "already exists" not in str(e):
+                    print(f"Warning: Error loading {dll_path.name}: {str(e)}")
         else:
-            print(
-                f"Warning: No nrnmech.dll file was found after compilation in {nmodl_path}"
-            )
-            print("Available files:")
-            for item in nmodl_path.iterdir():
-                if item.is_file():
-                    print(f"  {item.name}")
+            if not quiet:
+                print(f"Warning: No nrnmech.dll file found after compilation")
     else:
-        # On Unix, load individual .o files
-        for mod_file in mod_files:
-            o_file_path = str(nmodl_path / f"{mod_file.stem}.o")
-            try:
-                print(f"Loading {o_file_path}")
-                h.nrn_load_dll(o_file_path)
-                print(f"Successfully loaded {mod_file.stem}")
-            except Exception as e:
-                print(f"Warning: Failed to load {mod_file.stem}: {str(e)}")
-                print(
-                    "This may be because the mechanism is already loaded, which is usually not a problem."
-                )
+        _compile_mod_files_unix(nmodl_path)
+        # On Unix, look for the compiled shared library in the most likely locations
+        possible_lib_paths = [
+            nmodl_path / "x86_64" / "libnrnmech.so",
+            nmodl_path.parent / "x86_64" / "libnrnmech.so",
+            nmodl_path / "x86_64" / ".libs" / "libnrnmech.so",
+            nmodl_path.parent / "x86_64" / ".libs" / "libnrnmech.so",
+        ]
+
+        lib_loaded = False
+        for lib_path in possible_lib_paths:
+            if lib_path.exists() and not lib_loaded:
+                try:
+                    if not quiet:
+                        print(f"Loading compiled library: {lib_path}")
+                    h.nrn_load_dll(str(lib_path))
+                    if not quiet:
+                        print(f"Successfully loaded {lib_path}")
+                    lib_loaded = True
+                    break
+                except Exception as e:
+                    # Only show warnings if not about duplicates and not in quiet mode
+                    if (
+                        not quiet
+                        and "already exists" not in str(e)
+                        and "hocobj_call error" not in str(e)
+                    ):
+                        print(f"Warning: Failed to load {lib_path}: {str(e)}")
+
+        if not lib_loaded and not quiet:
+            print("Warning: Could not find or load compiled shared library")
+            print("Available directories and files:")
+            for item in nmodl_path.parent.iterdir():
+                print(f"  {item.name} ({'dir' if item.is_dir() else 'file'})")
 
 
 def load_nmodl_files(force_reload: bool = False, quiet: bool = False):
     """
-    Main function to handle NMODL file setup.
+    Main function to handle NMODL file setup using PyNN's load_mechanisms.
+
+    This function first attempts to use PyNN's built-in mechanism loading
+    functionality before falling back to the manual compilation approach.
+    PyNN's load_mechanisms is more robust and handles compilation automatically.
 
     Args:
         force_reload: If True, force recompilation even if mechanisms seem loaded
@@ -212,44 +239,92 @@ def load_nmodl_files(force_reload: bool = False, quiet: bool = False):
         if not quiet:
             print(message)
 
-    # Check if mechanisms are already loaded by trying to import neuron and check for our mechanisms
+    # Check if mechanisms are already loaded
     if not force_reload:
         try:
             from neuron import h
 
-            # Try to access one of our custom mechanisms to see if it's already loaded
-            h.AdExpIF  # This will fail if mechanisms aren't loaded, which is what we want
-            log("NMODL mechanisms appear to already be loaded, skipping reload")
-            return True
-        except (AttributeError, NameError):
-            # Mechanisms not loaded, proceed with loading
-            pass
+            # Test if our custom mechanisms are already loaded by trying to use them
+            test_section = h.Section()
+            mechanisms_working = True
+
+            try:
+                # Try to insert and use our key mechanisms
+                test_section.insert("motoneuron")
+                test_section.insert("caL")
+                test_section.insert("kdrRL")
+
+                # Clean up
+                test_section.uninsert("motoneuron")
+                test_section.uninsert("caL")
+                test_section.uninsert("kdrRL")
+
+                if not quiet:
+                    log("NMODL mechanisms already loaded and working, skipping reload")
+                return True
+
+            except Exception:
+                mechanisms_working = False
+            finally:
+                # Clean up test section
+                test_section = None
+
         except ImportError:
             log("Warning: NEURON not available, skipping NMODL loading")
             return False
         except Exception as e:
-            log(f"Warning: Error checking mechanism status: {e}")
-            # Continue with loading attempt
+            if not quiet:
+                log(f"Warning: Error checking mechanism status: {e}")
 
+    # If we get here, mechanisms need to be loaded
     try:
-        src_path = Path(__file__).parent.parent / "simulator"
-        log(f"Loading NMODL files from {src_path}")
-
         nmodl_path = find_nmodl_directory()
-        mod_files = _copy_mod_files(src_path / "nmodl_files", nmodl_path)
+        if not quiet:
+            log(f"Loading NMODL files from {nmodl_path}")
+
+        mod_files = _get_mod_files(nmodl_path)
 
         if mod_files:
-            _compile_and_load_mod_files(nmodl_path, mod_files)
-            log("NMODL files processing complete!")
+            if not quiet:
+                log(f"Found {len(mod_files)} .mod files to compile")
+                for mod_file in mod_files:
+                    log(f"  {mod_file.name}")
+
+            # First try using PyNN's load_mechanisms function
+            try:
+                from pyNN.neuron.simulator import load_mechanisms
+
+                if not quiet:
+                    log("Using PyNN's load_mechanisms functionality")
+                load_mechanisms(str(nmodl_path))
+                if not quiet:
+                    log("Successfully loaded mechanisms using PyNN load_mechanisms")
+                return True
+
+            except ImportError:
+                if not quiet:
+                    log("PyNN not available, falling back to manual compilation")
+            except Exception as e:
+                if not quiet:
+                    log(
+                        f"PyNN load_mechanisms failed: {e}, falling back to manual compilation"
+                    )
+
+            # Fallback to manual compilation
+            if not quiet:
+                log("Using manual NMODL compilation")
+            _compile_and_load_mod_files(nmodl_path, mod_files, quiet=quiet)
+            if not quiet:
+                log("NMODL files processing complete!")
             return True
         else:
-            log("Warning: No NMODL files were processed")
+            if not quiet:
+                log("Warning: No NMODL files were processed")
             return False
 
     except Exception as e:
-        log(f"Error during NMODL setup: {str(e)}")
         if not quiet:
-            # Log the error but don't crash the program
+            log(f"Error during NMODL setup: {str(e)}")
             import traceback
 
             traceback.print_exc()

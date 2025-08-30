@@ -29,10 +29,10 @@ import numpy as np
 from matplotlib import pyplot as plt
 
 from myogen.utils.currents import (
-    create_sinusoidal_current,
-    create_sawtooth_current,
-    create_step_current,
     create_ramp_current,
+    create_sawtooth_current,
+    create_sinusoidal_current,
+    create_step_current,
     create_trapezoid_current,
 )
 from myogen.utils.plotting.currents import plot_input_current__matrix
@@ -149,6 +149,7 @@ ramp_offsets = [120.0, 130.0, 110.0]  # DC offsets
 ramp_currents = create_ramp_current(
     n_pools=n_pools,
     t_points=t_points,
+    timestep__ms=timestep__ms,
     start_currents__muV=ramp_start,
     end_currents__muV=ramp_end,
     offsets__muV=ramp_offsets,
@@ -215,14 +216,6 @@ joblib.dump(trapezoid_currents, save_path / "trapezoid_currents.pkl")
 #
 #       from myogen.utils.plotting.currents import plot_input_currents
 
-# Suppress font warnings to keep output clean
-import warnings
-import logging
-
-warnings.filterwarnings("ignore", message=".*Font family.*not found.*")
-warnings.filterwarnings("ignore", message=".*findfont.*")
-logging.getLogger("matplotlib.font_manager").setLevel(logging.ERROR)
-
 ##############################################################################
 # Sinusoidal Currents Visualization
 # ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -233,7 +226,7 @@ logging.getLogger("matplotlib.font_manager").setLevel(logging.ERROR)
 print("Plotting sinusoidal currents...")
 with plt.xkcd():
     _, axs = plt.subplots(figsize=(10, 6), nrows=n_pools, sharex=True)
-    plot_input_current__matrix(sinusoidal_currents, timestep__ms, axs, color="#90b8e0")
+    plot_input_current__matrix(sinusoidal_currents, axs, color="#90b8e0")
 plt.tight_layout()
 plt.show()
 
@@ -247,7 +240,7 @@ plt.show()
 print("Plotting sawtooth currents...")
 with plt.xkcd():
     _, axs = plt.subplots(figsize=(10, 6), nrows=n_pools, sharex=True)
-    plot_input_current__matrix(sawtooth_currents, timestep__ms, axs, color="#90b8e0")
+    plot_input_current__matrix(sawtooth_currents, axs, color="#90b8e0")
 plt.tight_layout()
 plt.show()
 
@@ -261,7 +254,7 @@ plt.show()
 print("Plotting step currents...")
 with plt.xkcd():
     _, axs = plt.subplots(figsize=(10, 6), nrows=n_pools, sharex=True)
-    plot_input_current__matrix(step_currents, timestep__ms, axs, color="#90b8e0")
+    plot_input_current__matrix(step_currents, axs, color="#90b8e0")
 plt.tight_layout()
 plt.show()
 
@@ -275,7 +268,7 @@ plt.show()
 print("Plotting ramp currents...")
 with plt.xkcd():
     _, axs = plt.subplots(figsize=(10, 6), nrows=n_pools, sharex=True)
-    plot_input_current__matrix(ramp_currents, timestep__ms, axs, color="#90b8e0")
+    plot_input_current__matrix(ramp_currents, axs, color="#90b8e0")
 plt.tight_layout()
 plt.show()
 
@@ -289,6 +282,6 @@ plt.show()
 print("Plotting trapezoid currents...")
 with plt.xkcd():
     _, axs = plt.subplots(figsize=(10, 6), nrows=n_pools, sharex=True)
-    plot_input_current__matrix(trapezoid_currents, timestep__ms, axs, color="#90b8e0")
+    plot_input_current__matrix(trapezoid_currents, axs, color="#90b8e0")
 plt.tight_layout()
 plt.show()

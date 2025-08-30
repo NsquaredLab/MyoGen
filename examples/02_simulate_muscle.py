@@ -13,12 +13,12 @@ To create **EMG signals**, we need to create a **muscle model** that will distri
 
 from pathlib import Path
 
-import numpy as np
-import matplotlib.pyplot as plt
 import joblib
+import matplotlib.pyplot as plt
+import numpy as np
 
 from myogen import simulator
-from myogen.utils.plotting.muscle import plot_mf_centers, plot_innervation_areas_2d
+from myogen.utils.plotting.muscle import plot_innervation_areas_2d, plot_mf_centers
 
 ##############################################################################
 # Define Parameters
@@ -62,7 +62,7 @@ grid_resolution = 256  # Spatial resolution for muscle discretization
 
 # Create muscle model
 muscle = simulator.Muscle(
-    recruitment_thresholds=recruitment_thresholds[::4],  # For faster simulation
+    recruitment_thresholds=recruitment_thresholds[::3],  # For faster simulation
     radius__mm=muscle_radius,
     fiber_density__fibers_per_mm2=fiber_density,
     max_innervation_area_to_total_muscle_area__ratio=max_innervation_ratio,
@@ -76,7 +76,7 @@ joblib.dump(muscle, save_path / "muscle_model.pkl")
 # Display muscle statistics
 total_fibers = sum(muscle.resulting_number_of_innervated_fibers)
 
-print(f"\nMuscle model statistics:")
+print("Muscle model statistics:")
 print(f"  - Total muscle fibers: {total_fibers}")
 print(f"  - Mean fibers per MU: {total_fibers / len(recruitment_thresholds):.1f}")
 print(f"  - Muscle cross-sectional area: {np.pi * muscle_radius**2:.1f} mm²")
@@ -116,9 +116,8 @@ plt.show()
 
 plt.figure(figsize=(6, 6))
 
-selected_indices = np.arange(25)[::-1]
 with plt.xkcd():
-    plot_innervation_areas_2d(muscle, indices_to_plot=selected_indices, ax=plt.gca())
+    plot_innervation_areas_2d(muscle, ax=plt.gca())
 plt.title("Motor Unit Innervation Areas")
 plt.xlabel("X Position (mm)")
 plt.ylabel("Y Position (mm)")

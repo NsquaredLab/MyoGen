@@ -1,13 +1,13 @@
 import logging
 import warnings
-from typing import Any, Union, Dict, Optional
+from typing import Any, Optional, Union
 
 import numpy as np
 import seaborn as sns
 from beartype.cave import IterableType
 from matplotlib.axes import Axes
 
-from myogen.utils.types import beartowertype
+from myogen.utils.decorators import beartowertype
 
 # Configure multiple sources to suppress font warnings
 logging.getLogger("matplotlib.font_manager").setLevel(logging.ERROR)
@@ -16,7 +16,7 @@ logging.getLogger("libNeuroML").setLevel(logging.ERROR)
 
 @beartowertype
 def plot_recruitment_thresholds(
-    thresholds: Union[Dict[Union[str, int, float], np.ndarray], np.ndarray],
+    thresholds: Union[dict[Union[str, int, float], np.ndarray], np.ndarray],
     axs: IterableType[Axes],
     model_name: Optional[str] = None,
     y_max: Optional[float] = None,
@@ -128,7 +128,7 @@ def plot_recruitment_thresholds(
 
 def _plot_multiple_datasets(
     ax: Axes,
-    data: Dict[Union[str, int, float], np.ndarray],
+    data: dict[Union[str, int, float], np.ndarray],
     colors,
     markers,
     linestyles,

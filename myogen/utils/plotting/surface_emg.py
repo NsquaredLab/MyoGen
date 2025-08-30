@@ -1,10 +1,11 @@
-from typing import Optional, Any, Union
+from typing import Any, Optional, Union
 
 import numpy as np
 from matplotlib.axes import Axes
 from tqdm import tqdm
 
-from myogen.utils.types import SURFACE_EMG__TENSOR, beartowertype
+from myogen.utils.types import SURFACE_EMG__Block, SURFACE_MUAP__Block
+from myogen.utils.decorators import beartowertype
 
 
 def _get_axis(axes, row_idx: int, col_idx: int, n_rows: int, n_cols: int):
@@ -120,7 +121,7 @@ def _auto_zoom_muaps(
 
 @beartowertype
 def plot_surface_emg(
-    surface_emg__tensor: SURFACE_EMG__TENSOR,
+    surface_emg__tensor: SURFACE_EMG__Block,
     axs: list[Union[Axes, np.ndarray]],
     apply_default_formatting: bool = True,
     **kwargs: Any,
@@ -198,9 +199,10 @@ def plot_surface_emg(
 
 @beartowertype
 def plot_muap_grid(
-    muap_data: np.ndarray,
+    surface_muap__Block: SURFACE_MUAP__Block,
     axs: list[Union[Axes, np.ndarray]],
     muap_indices: Optional[list[int]] = None,
+    time_slice: Optional[slice] = None,
     apply_default_formatting: bool = True,
     **kwargs: Any,
 ) -> list[Union[Axes, np.ndarray]]:
@@ -213,15 +215,17 @@ def plot_muap_grid(
 
     Parameters
     ----------
-    muap_data : np.ndarray
-        MUAP data with shape (n_muaps, n_electrode_rows, n_electrode_cols, n_time_samples)
-        or (n_electrode_rows, n_electrode_cols, n_time_samples) for a single MUAP.
+    surface_muap__Block : SURFACE_MUAP__Block
+        Neo Block object returned by SurfaceEMG.simulate_muaps() containing MUAP data.
     axs : list[Union[Axes, np.ndarray]]
         Matplotlib axes to plot on. Should provide one set of axes per MUAP.
         Each set can be a 2D array of axes (from plt.subplots), a single axis, or a 1D array.
         Expected structure: list of axes configurations, one per MUAP to plot.
     muap_indices : list[int], optional
         List of MUAP indices to plot. If None, plots all MUAPs.
+    time_slice : slice, optional
+        Time slice to apply to the MUAP data (e.g., slice(100, -100) to remove first
+        and last 100 samples). If None, uses the full time series.
     apply_default_formatting : bool, default=True
         Whether to apply default formatting to the plot
     **kwargs : dict
@@ -237,18 +241,39 @@ def plot_muap_grid(
     ValueError
         If the number of axes does not match the number of MUAPs to plot
     """
+    # Convert Block object to numpy array
+    muap_arrays = []
+    for group in surface_muap__Block.groups:
+        for segment in group.segments:
+            for analogsignal in segment.analogsignals:
+                # Convert GridAnalogSignal to numpy array in grid format
+                grid_data = analogsignal.magnitude  # This gives (time, rows, cols)
+                muap_arrays.append(grid_data)
+
+    if not muap_arrays:
+        raise ValueError("No MUAP data found in the provided Block object")
+
+    # Stack all MUAPs: shape becomes (n_muaps, time, rows, cols)
+    muap_data_array = np.stack(muap_arrays, axis=0)
+    # Reorder to match expected format: (n_muaps, rows, cols, time)
+    muap_array = np.transpose(muap_data_array, (0, 2, 3, 1))
+
+    # Apply time slicing if specified
+    if time_slice is not None:
+        muap_array = muap_array[..., time_slice]
+
     # Handle single MUAP case by adding a dimension
-    if muap_data.ndim == 3:
-        muap_data = muap_data[np.newaxis, ...]
+    if muap_array.ndim == 3:
+        muap_array = muap_array[np.newaxis, ...]
 
     # Validate input dimensions
-    if muap_data.ndim != 4:
+    if muap_array.ndim != 4:
         raise ValueError(
-            f"muap_data must have 3 or 4 dimensions, got {muap_data.ndim}. "
+            f"muap_data must have 3 or 4 dimensions, got {muap_array.ndim}. "
             f"Expected shape: (n_muaps, n_rows, n_cols, n_time) or (n_rows, n_cols, n_time)"
         )
 
-    n_muaps, n_rows, n_cols, n_time = muap_data.shape
+    n_muaps, n_rows, n_cols, n_time = muap_array.shape
 
     # Set default MUAP indices if not provided
     if muap_indices is None:
@@ -268,7 +293,9 @@ def plot_muap_grid(
         )
 
     # Plot each requested MUAP
-    for i, muap_idx in enumerate(tqdm(muap_indices, desc="Plotting MUAPs")):
+    for i, muap_idx in enumerate(
+        tqdm(muap_indices, desc="Plotting MUAPs", unit="MUAP")
+    ):
         muap_axes = axs_list[i]
 
         # Handle the case where muap_axes is a single axis or array of axes
@@ -284,8 +311,8 @@ def plot_muap_grid(
 
         # Calculate global y-limits for consistent scaling across electrodes
         # Use nanmin/nanmax to handle NaN values robustly
-        muap_min = np.nanmin(muap_data[muap_idx])
-        muap_max = np.nanmax(muap_data[muap_idx])
+        muap_min = np.nanmin(muap_array[muap_idx])
+        muap_max = np.nanmax(muap_array[muap_idx])
 
         # Handle edge cases where all values are NaN or min/max are invalid
         if (
@@ -316,7 +343,7 @@ def plot_muap_grid(
 
                     if apply_default_formatting:
                         # Plot MUAP waveform
-                        ax.plot(muap_data[muap_idx, row_idx, col_idx])
+                        ax.plot(muap_array[muap_idx, row_idx, col_idx])
 
                         # Set consistent y-limits across all electrodes
                         ax.set_ylim(muap_min, muap_max)
@@ -329,6 +356,6 @@ def plot_muap_grid(
                         ax.spines["left"].set_visible(False)
                         ax.spines["bottom"].set_visible(False)
                     else:
-                        ax.plot(muap_data[muap_idx, row_idx, col_idx], **plot_kwargs)
+                        ax.plot(muap_array[muap_idx, row_idx, col_idx], **plot_kwargs)
 
     return axs

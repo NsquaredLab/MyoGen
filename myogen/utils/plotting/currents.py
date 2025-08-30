@@ -1,16 +1,15 @@
 from typing import Any
 
-import numpy as np
 from beartype.cave import IterableType
 from matplotlib.axes import Axes
 
-from myogen.utils.types import INPUT_CURRENT__MATRIX, beartowertype
+from myogen.utils.decorators import beartowertype
+from myogen.utils.types import CURRENT__AnalogSignal
 
 
 @beartowertype
 def plot_input_current__matrix(
-    input_current__matrix: INPUT_CURRENT__MATRIX,
-    timestep__ms: float,
+    input_current__matrix: CURRENT__AnalogSignal,
     axs: IterableType[Axes],
     apply_default_formatting: bool = True,
     **kwargs: Any,
@@ -21,10 +20,8 @@ def plot_input_current__matrix(
     Parameters
     ----------
     input_current__matrix: INPUT_CURRENT__MATRIX
-        Matrix of shape (n_pools, t_points) containing current values
-        Each row represents the current for one pool
-    timestep__ms: float
-        Time step in milliseconds
+        AnalogSignal of shape (t_points, n_pools) containing current values
+        Each column represents the current for one pool
     axs: IterableType[Axes]
         Matplotlib axes to plot on. This could be the same axis for all pools, or a separate axis for each pool.
     apply_default_formatting: bool
@@ -43,15 +40,19 @@ def plot_input_current__matrix(
         If the number of axes does not match the number of pools
     """
 
-    t = np.arange(0, input_current__matrix.shape[-1] * timestep__ms, timestep__ms)
+    # Extract time array and signal data from AnalogSignal
+    t = input_current__matrix.times.magnitude  # Time in milliseconds
+    signal_data = input_current__matrix.magnitude  # Signal data without units
 
-    if len(list(axs)) != input_current__matrix.shape[0]:
+    n_pools = signal_data.shape[1]  # Number of pools is second dimension
+
+    if len(list(axs)) != n_pools:
         raise ValueError(
-            f"Number of axes must match number of pools. Got {len(list(axs))} axes, but {input_current__matrix.shape[0]} pools."
+            f"Number of axes must match number of pools. Got {len(list(axs))} axes, but {n_pools} pools."
         )
 
-    for i, (current, ax) in enumerate(zip(input_current__matrix, list(axs))):
-        ax.plot(t, current, **kwargs)
+    for i, ax in enumerate(list(axs)):
+        ax.plot(t, signal_data[:, i], **kwargs)
         if apply_default_formatting:
             ax.set_title(f"Pool {i + 1} Input Current")
             ax.set_xlabel("Time (ms)")

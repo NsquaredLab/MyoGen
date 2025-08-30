@@ -14,7 +14,6 @@ from pathlib import Path
 
 import joblib
 import matplotlib.pyplot as plt
-import numpy as np
 
 from myogen import simulator
 from myogen.utils.plotting import plot_muap_grid
@@ -44,7 +43,7 @@ sampling_frequency = 2048.0  # Hz - standard for surface EMG
 # Load muscle model from previous example
 
 save_path = Path("./results")
-muscle = joblib.load(save_path / "muscle_model.pkl")
+muscle: simulator.Muscle = joblib.load(save_path / "muscle_model.pkl")
 
 ##############################################################################
 # Create Surface EMG Model
@@ -60,7 +59,7 @@ muscle = joblib.load(save_path / "muscle_model.pkl")
 #
 
 electrode_array_monopolar = simulator.SurfaceElectrodeArray(
-    num_rows=13,
+    num_rows=5,
     num_cols=5,
     inter_electrode_distances__mm=2,
     electrode_radius__mm=1,
@@ -86,11 +85,17 @@ surface_emg = simulator.SurfaceEMG(
 # Run simulation with progress output
 muaps = surface_emg.simulate_muaps()
 
-print(f"\nMUAP simulation completed!")
-print(f"Generated MUAPs shape: {muaps[0].shape}")
-print(f"  - {muaps[0].shape[0]} motor units")
-print(f"  - {muaps[0].shape[1]}×{muaps[0].shape[2]} electrode grid")
-print(f"  - {muaps[0].shape[3]} time samples")
+
+print("MUAP simulation completed!")
+print(f"Generated MUAPs shape: {muaps.groups[0].segments[0].analogsignals[0].shape}")
+print(f"  - {len(muaps.groups[0].segments)} motor units")
+print(
+    "  - {} rows × {} columns electrode grid".format(
+        muaps.groups[0].segments[0].analogsignals[0].shape[1],
+        muaps.groups[0].segments[0].analogsignals[0].shape[2],
+    )
+)
+print(f"  - {muaps.groups[0].segments[0].analogsignals[0].shape[0]} time samples")
 
 # Save results
 joblib.dump(surface_emg, save_path / "surface_emg.pkl")
@@ -105,32 +110,25 @@ joblib.dump(surface_emg, save_path / "surface_emg.pkl")
 #   **Plotting helper functions** are available in the ``myogen.utils.plotting`` module.
 #   The new API requires creating matplotlib axes and passing them to the plotting function.
 
-# Concatenate MUAPs from all electrode positions and motor units
-muaps_concatenated = np.concatenate(muaps)
-print(f"Concatenated MUAPs shape: {muaps_concatenated.shape}")
+# Create axes for the first MUAP
+fig, ax = plt.subplots(
+    electrode_array_monopolar.num_rows,
+    electrode_array_monopolar.num_cols,
+    figsize=(
+        electrode_array_monopolar.num_cols * 2,
+        electrode_array_monopolar.num_rows * 2,
+    ),
+    sharex=True,
+    sharey=True,
+)
+fig.suptitle("MUAP 0")
 
-# Create subplot grid for each MUAP (matches electrode grid layout)
-n_muaps = muaps_concatenated.shape[0]
-electrode_rows = muaps_concatenated.shape[1]
-electrode_cols = muaps_concatenated.shape[2]
-
-# Create axes for each MUAP - one subplot grid per MUAP
-axes_list = []
-for muap_idx in range(n_muaps):
-    fig, axes = plt.subplots(
-        electrode_rows,
-        electrode_cols,
-        figsize=(electrode_cols * 2, electrode_rows * 2),
-        sharex=True,
-        sharey=True,
-    )
-    fig.suptitle(f"MUAP {muap_idx}")
-    axes_list.append(axes)
-
-# Plot MUAPs using the new API
 plot_muap_grid(
-    muaps_concatenated[:, :, :, 100:-100], axes_list, apply_default_formatting=True
+    surface_muap__Block=muaps,
+    axs=[ax],
+    muap_indices=[0],
+    time_slice=slice(100, -100),
+    apply_default_formatting=True,
 )
 plt.tight_layout()
-# Show all plots
 plt.show()

@@ -33,14 +33,21 @@ After generating the **recruitment thresholds**, we can simulate the **spike tra
 
 from pathlib import Path
 
+import elephant
 import joblib
 import numpy as np
+import pyNN.neuron as sim
+import quantities as pq
 from matplotlib import pyplot as plt
+from neo import Block
 
-from myogen import simulator, RANDOM_GENERATOR
-
+from myogen import RANDOM_GENERATOR, simulator
 from myogen.utils.currents import create_trapezoid_current
 from myogen.utils.plotting import plot_spike_trains
+from myogen.utils.pyNN import (
+    compute_maximum_activation_current_thresholds,
+    inject_currents_into_populations,
+)
 
 ##############################################################################
 # Define Parameters
@@ -63,11 +70,30 @@ from myogen.utils.plotting import plot_spike_trains
 
 n_pools = 2  # Number of distinct motor neuron pools
 
-timestep = 0.05  # Simulation timestep in ms (high resolution)
+timestep = 0.01  # Simulation timestep in ms (high resolution)
 simulation_time = 2000  # Total simulation duration in ms
 
-noise_mean = 26  # Mean noise current in nA
-noise_stdev = 20  # Standard deviation of noise current in nA
+##############################################################################
+# Create Motor Neuron Pools
+# -------------------------
+#
+# Since the **recruitment thresholds** are already generated, we can load them from the previous example using ``joblib``.
+#
+# In pyNN a motor neuron **pool** is refered to as a motor neuron **population**.
+# To avoid confusion we christen the class that can create a motor neuron pool as
+# ``MotorNeuronPopulation``.
+#
+
+save_path = Path("./results")
+
+# Load recruitment thresholds
+recruitment_thresholds = joblib.load(save_path / "thresholds.pkl")
+
+# Create motor neuron pools
+motor_neuron_pools = [
+    simulator.pyNN.neurons.MotorNeuron__Population(recruitment_thresholds)
+    for _ in range(n_pools)
+]
 
 ##############################################################################
 # Create Input Currents
@@ -83,13 +109,18 @@ noise_stdev = 20  # Standard deviation of noise current in nA
 # Calculate number of time points
 t_points = int(simulation_time / timestep)
 
+# get maximum activation threshold for the pool
+max_activation_thresholds = compute_maximum_activation_current_thresholds(
+    motor_neuron_pools
+)
+
 # Generate random parameters for each pool's input current
-amplitude_range = list(RANDOM_GENERATOR.uniform(100, 150, size=n_pools))
+amplitude_range = max_activation_thresholds
 rise_time_ms = list(RANDOM_GENERATOR.uniform(100, 500, size=n_pools))
 plateau_time_ms = list(RANDOM_GENERATOR.uniform(100, 500, size=n_pools))
 fall_time_ms = list(RANDOM_GENERATOR.uniform(100, 500, size=n_pools))
 
-print(f"\nInput current parameters:")
+print("Input current parameters:")
 for i in range(n_pools):
     print(
         f"  Pool {i + 1}: amplitude={amplitude_range[i]:.1f} nA, "
@@ -98,8 +129,8 @@ for i in range(n_pools):
         f"fall={fall_time_ms[i]:.0f} ms"
     )
 
-# Create the input current matrix
-input_current_matrix = create_trapezoid_current(
+# Create the input current signal
+input_current__AnalogSignal = create_trapezoid_current(
     n_pools,
     t_points,
     timestep,
@@ -110,48 +141,12 @@ input_current_matrix = create_trapezoid_current(
     delays__ms=500.0,
 )
 
-print(f"\nInput current matrix shape: {input_current_matrix.shape}")
-
-##############################################################################
-# Create Motor Neuron Pools
-# -------------------------
-#
-# Since the **recruitment thresholds** are already generated, we can load them from the previous example using ``joblib``.
-#
-# Afterwards the custom files made for the ``NEURON`` simulator must be loaded.
-#
-# .. note::
-#   This step is required as ``NEURON`` does not support the simulation of motor units directly.
-#
-#   This is done using the ``load_nmodl_files`` function.
-#
-# Finally, the **motor neuron pools** are created using the ``MotorNeuronPool`` object.
-#
-# .. note::
-#    The **MotorNeuronPool** object handles the simulation of the motor units.
-#
-
-save_path = Path("./results")
-
-# Load recruitment thresholds
-recruitment_thresholds = joblib.load(save_path / "thresholds.pkl")
-
-# Save input current matrix for later analysis
-joblib.dump(input_current_matrix, save_path / "input_current_matrix.pkl")
-
-# Create motor neuron pool
-motor_neuron_pool = simulator.MotorNeuronPool(recruitment_thresholds)
-
-# Compute MVC current threshold
-mvc_current_threshold = motor_neuron_pool.mvc_current_threshold
-
-print(f"\nMVC current threshold: {mvc_current_threshold:.1f} nA")
-
-# min max to mvc current threshold
-input_current_matrix = (
-    input_current_matrix * mvc_current_threshold / np.max(input_current_matrix)
+print(
+    f"Input current signal shape: {input_current__AnalogSignal.shape}\nClass: {input_current__AnalogSignal.__class__}"
 )
 
+# Save input current signal for later analysis
+joblib.dump(input_current__AnalogSignal, save_path / "input_current__AnalogSignal.pkl")
 
 ##############################################################################
 # Simulate Motor Unit Spike Trains
@@ -159,22 +154,39 @@ input_current_matrix = (
 #
 # The **motor unit spike trains** are simulated using the ``generate_spike_trains`` method of the ``MotorNeuronPool`` object.
 
-spike_trains_matrix, active_neuron_indices, data = (
-    motor_neuron_pool.generate_spike_trains(
-        input_current__matrix=input_current_matrix,
-        timestep__ms=timestep,
-        noise_mean__nA=noise_mean,
-        noise_stdev__nA=noise_stdev,
-    )
+# Setup simulation
+sim.setup(timestep=timestep)
+
+# Inject currents into populations
+inject_currents_into_populations(
+    input_current__AnalogSignal=input_current__AnalogSignal,
+    populations=motor_neuron_pools,
 )
 
-# Save motor neuron pool for later analysis
-joblib.dump(motor_neuron_pool, save_path / "motor_neuron_pool.pkl")
+# Tell pyNN to record spikes of each pool
+for pool in motor_neuron_pools:
+    pool.record("spikes")
 
-print(f"\nSpike trains shape: {spike_trains_matrix.shape}")
-print(f"  - {spike_trains_matrix.shape[0]} pools")
-print(f"  - {spike_trains_matrix.shape[1]} neurons per pool")
-print(f"  - {spike_trains_matrix.shape[2]} time points\n")
+# Run the simulation and clean up after end
+sim.run(simulation_time)
+sim.end()
+
+# Store the spike trains in a Neo Block for later use
+# see https://neuralensemble.org/docs/PyNN/data_handling.html and
+# https://neo.readthedocs.io/en/latest/api_reference.html#neo.core.Block
+
+spike_train__Block = Block()
+spike_train__Block.segments.extend(
+    [pool.get_data().segments[0] for pool in motor_neuron_pools]
+)
+
+# This shouldn't be necessary if pyNN were correctly handling this. Apparently it is not.
+for segment in spike_train__Block.segments:
+    for spike_train in segment.spiketrains:
+        spike_train.sampling_period = input_current__AnalogSignal.sampling_period
+        spike_train.sampling_rate = input_current__AnalogSignal.sampling_rate
+
+joblib.dump(spike_train__Block, save_path / "spike_train__Block.pkl")
 
 ##############################################################################
 # Calculate and Display Statistics
@@ -183,24 +195,30 @@ print(f"  - {spike_trains_matrix.shape[2]} time points\n")
 # It might be of interest to calculate the **firing rates** of the motor units.
 #
 # .. note::
-#    The **firing rates** are calculated as the number of spikes divided by the simulation time.
+#    The **firing rates** are calculated as the number of spikes divided by the time in which each MU was active.
 #    The simulation time is in milliseconds, so we need to convert it to seconds.
 
-# Calculate firing rates for each pool
-firing_rates = np.zeros((n_pools, len(motor_neuron_pool.recruitment_thresholds)))
-for pool_idx in range(n_pools):
-    for neuron_idx in range(len(motor_neuron_pool.recruitment_thresholds)):
-        spike_count = np.sum(spike_trains_matrix[pool_idx, neuron_idx, :])
-        firing_rates[pool_idx, neuron_idx] = spike_count / (simulation_time / 1000.0)
+firing_rates = [
+    np.array(
+        [
+            elephant.statistics.mean_firing_rate(
+                st__s.time_slice(st__s.min(), st__s.max())
+            )
+            for st__ms in spike_train__segment.spiketrains
+            if len(st__s := st__ms.rescale(pq.s)) > 0
+        ]
+    )
+    for spike_train__segment in spike_train__Block.segments
+]
 
-print(f"\nFiring rate statistics:")
-for pool_idx in range(n_pools):
-    active_neurons = np.sum(firing_rates[pool_idx, :] > 0)
-    mean_rate = np.mean(firing_rates[pool_idx, firing_rates[pool_idx, :] > 0])
-    max_rate = np.max(firing_rates[pool_idx, :])
+print("Firing rate statistics:")
+for pool_idx, firing_rates_per_pool in enumerate(firing_rates):
+    active_neurons = np.sum(firing_rates_per_pool > 0)
+    mean_rate = np.mean(firing_rates_per_pool[firing_rates_per_pool > 0])
+    max_rate = np.max(firing_rates_per_pool)
 
     print(
-        f"  Pool {pool_idx + 1}: {active_neurons}/{len(motor_neuron_pool.recruitment_thresholds)} active neurons, "
+        f"  Pool {pool_idx + 1}: {active_neurons}/{len(recruitment_thresholds)} active neurons, "
         f"mean rate: {mean_rate:.1f} Hz, max rate: {max_rate:.1f} Hz"
     )
 
@@ -217,22 +235,12 @@ for pool_idx in range(n_pools):
 #
 #       from myogen.utils.plotting import plot_spike_trains
 
-# Suppress font warnings to keep output clean
-import warnings
-import logging
-
-warnings.filterwarnings("ignore", message=".*Font family.*not found.*")
-warnings.filterwarnings("ignore", message=".*findfont.*")
-logging.getLogger("matplotlib.font_manager").setLevel(logging.ERROR)
-
-print("Plotting spike trains...")
 with plt.xkcd():
     _, ax = plt.subplots(figsize=(10, 6))
     plot_spike_trains(
-        spike_trains__matrix=spike_trains_matrix,
-        timestep__ms=timestep,
+        spike_trains__Block=spike_train__Block,
         axs=[ax],
-        pool_current__matrix=input_current_matrix,
+        pool_current__AnalogSignal=input_current__AnalogSignal,
         pool_to_plot=[0],
     )
 plt.tight_layout()

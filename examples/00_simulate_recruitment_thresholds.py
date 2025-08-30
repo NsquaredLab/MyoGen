@@ -20,13 +20,13 @@ The first step in using **MyoGen** is to generate the **recruitment thresholds**
 ##############################################################################
 # Import Libraries
 # ----------------
-
 from pathlib import Path
 
 import joblib
-
+from matplotlib import pyplot as plt
 
 from myogen import simulator
+from myogen.utils.plotting import plot_recruitment_thresholds
 
 ##############################################################################
 # Define Parameters
@@ -55,8 +55,8 @@ from myogen import simulator
 #   - ``deluca__slopes``: Different slope values to demonstrate variety
 #   - ``konstantin__max_threshold``: Maximum recruitment threshold
 
-n_motor_units = 100  # Number of motor units in the pool
-recruitment_range = 50  # Recruitment range (max_threshold / min_threshold)
+n_motor_units = 50  # Number of motor units in the pool
+recruitment_range = 100  # Recruitment range (max_threshold / min_threshold)
 
 # Model specific parameters
 fuglevand_params = {}  # No additional parameters needed
@@ -90,14 +90,14 @@ save_path = Path("./results")
 save_path.mkdir(exist_ok=True)
 
 # 1. Fuglevand Model
-rt_fuglevand, rtz_fuglevand = simulator.generate_mu_recruitment_thresholds(
+rt_fuglevand, rtz_fuglevand = simulator.RecruitmentThresholds(
     N=n_motor_units, recruitment_range__ratio=recruitment_range, mode="fuglevand"
 )
 
 # 2. De Luca Model with different slopes
 deluca_results = {}
 for slope in deluca_slopes:
-    rt, _ = simulator.generate_mu_recruitment_thresholds(
+    rt, _ = simulator.RecruitmentThresholds(
         N=n_motor_units,
         recruitment_range__ratio=recruitment_range,
         deluca__slope=slope,
@@ -106,7 +106,7 @@ for slope in deluca_slopes:
     deluca_results[slope] = rt
 
 # 3. Konstantin Model
-rt_konstantin, rtz_konstantin = simulator.generate_mu_recruitment_thresholds(
+rt_konstantin, rtz_konstantin = simulator.RecruitmentThresholds(
     N=n_motor_units,
     recruitment_range__ratio=recruitment_range,
     konstantin__max_threshold__ratio=konstantin_max_threshold,
@@ -116,7 +116,7 @@ rt_konstantin, rtz_konstantin = simulator.generate_mu_recruitment_thresholds(
 # 4. Combined Model with different slopes
 combined_results = {}
 for slope in combined_slopes:
-    rt, _ = simulator.generate_mu_recruitment_thresholds(
+    rt, _ = simulator.RecruitmentThresholds(
         N=n_motor_units,
         recruitment_range__ratio=recruitment_range,
         deluca__slope=slope,
@@ -132,7 +132,7 @@ for slope in combined_slopes:
 # .. note::
 #    All **MyoGen** objects can be saved to a file using ``joblib``. This is useful to **avoid re-running expensive simulations** if you need to use the same parameters.
 
-joblib.dump(combined_results[50], save_path / "thresholds.pkl")
+joblib.dump(combined_results[5], save_path / "thresholds.pkl")
 
 ##############################################################################
 # Plot Recruitment Thresholds
@@ -147,17 +147,6 @@ joblib.dump(combined_results[50], save_path / "thresholds.pkl")
 #
 #       from myogen.utils.plotting import plot_recruitment_thresholds
 
-# Suppress font warnings to keep output clean
-import warnings
-import logging
-
-warnings.filterwarnings("ignore", message=".*Font family.*not found.*")
-warnings.filterwarnings("ignore", message=".*findfont.*")
-logging.getLogger("matplotlib.font_manager").setLevel(logging.ERROR)
-
-from myogen.utils.plotting import plot_recruitment_thresholds
-from matplotlib import pyplot as plt
-
 ##############################################################################
 # Fuglevand Model Visualization
 # ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -165,7 +154,6 @@ from matplotlib import pyplot as plt
 # The Fuglevand model uses a simple exponential distribution for recruitment
 # thresholds. This is the classic approach from Fuglevand et al. (1993).
 
-print("Plotting Fuglevand model...")
 with plt.xkcd():
     _, ax = plt.subplots(figsize=(10, 6))
     plot_recruitment_thresholds(
@@ -181,7 +169,6 @@ plt.show()
 # The De Luca model includes a slope correction parameter that allows control
 # over the shape of the recruitment threshold distribution.
 
-print("Plotting De Luca model...")
 with plt.xkcd():
     _, ax = plt.subplots(figsize=(10, 6))
     plot_recruitment_thresholds(
@@ -200,7 +187,6 @@ plt.show()
 # The Konstantin model provides explicit control over the maximum recruitment
 # threshold while maintaining physiological recruitment patterns.
 
-print("Plotting Konstantin model...")
 with plt.xkcd():
     _, ax = plt.subplots(figsize=(10, 6))
     plot_recruitment_thresholds(
@@ -221,7 +207,6 @@ plt.show()
 # The Combined model merges De Luca's shape control with Konstantin's scaling,
 # offering the most flexibility for custom recruitment patterns.
 
-print("Plotting Combined model...")
 with plt.xkcd():
     _, ax = plt.subplots(figsize=(10, 6))
     plot_recruitment_thresholds(

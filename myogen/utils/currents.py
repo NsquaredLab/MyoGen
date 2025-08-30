@@ -1,8 +1,11 @@
 from typing import cast
 
 import numpy as np
+import quantities as pq
+from neo.core import AnalogSignal
 
-from myogen.utils.types import INPUT_CURRENT__MATRIX, beartowertype
+from myogen.utils.decorators import beartowertype
+from myogen.utils.types import CURRENT__AnalogSignal
 
 
 @beartowertype
@@ -14,7 +17,7 @@ def create_sinusoidal_current(
     frequencies__Hz: float | list[float],
     offsets__muV: float | list[float],
     phases__rad: float | list[float] = 0.0,
-) -> INPUT_CURRENT__MATRIX:
+) -> CURRENT__AnalogSignal:
     """Create a matrix of sinusoidal currents for multiple pools.
 
     Parameters
@@ -57,8 +60,8 @@ def create_sinusoidal_current(
 
     Returns
     -------
-    INPUT_CURRENT__MATRIX
-        Matrix of shape (n_pools, t_points) containing sinusoidal currents
+    INPUT_CURRENT__AnalogSignal
+        Analog signal of shape (t_points, n_pools) * pq.nA containing sinusoidal currents
     """
     t = np.arange(0, t_points * timestep__ms, timestep__ms)
 
@@ -101,15 +104,23 @@ def create_sinusoidal_current(
             f"Length of phases__rad ({len(phases_list)}) must match n_pools ({n_pools})"
         )
 
-    return np.array(
-        [
-            (
-                amplitudes_list[i]
-                * np.sin(2 * np.pi * frequencies_list[i] * t / 1000 + phases_list[i])
-                + offsets_list[i]
-            )
-            for i in range(n_pools)
-        ]
+    return AnalogSignal(
+        signal=np.stack(
+            [
+                (
+                    amplitudes_list[i]
+                    * np.sin(
+                        2 * np.pi * frequencies_list[i] * t / 1000 + phases_list[i]
+                    )
+                    + offsets_list[i]
+                )
+                for i in range(n_pools)
+            ],
+            axis=-1,
+        )
+        * pq.nA,
+        t_start=0 * pq.ms,
+        sampling_period=timestep__ms * pq.ms,
     )
 
 
@@ -123,7 +134,7 @@ def create_sawtooth_current(
     offsets__muV: float | list[float] = 0.0,
     widths__ratio: float | list[float] = 0.5,
     phases__rad: float | list[float] = 0.0,
-) -> INPUT_CURRENT__MATRIX:
+) -> CURRENT__AnalogSignal:
     """Create a matrix of sawtooth currents for multiple pools.
 
     Parameters
@@ -176,8 +187,8 @@ def create_sawtooth_current(
 
     Returns
     -------
-    INPUT_CURRENT__MATRIX
-        Matrix of shape (n_pools, t_points) containing sawtooth currents
+    INPUT_CURRENT__AnalogSignal
+        Analog signal of shape (t_points, n_pools) * pq.nA containing sawtooth currents
     """
     t = np.arange(0, t_points * timestep__ms, timestep__ms)
 
@@ -230,19 +241,53 @@ def create_sawtooth_current(
             f"Length of phases__rad ({len(phases_list)}) must match n_pools ({n_pools})"
         )
 
-    input_current__matrix = np.zeros((n_pools, t_points))
-
-    for i in range(n_pools):
-        phase_t = 2 * np.pi * frequencies_list[i] * t / 1000 + phases_list[i]
-        sawtooth = (phase_t / (2 * np.pi)) % 1
-        sawtooth = np.where(
-            sawtooth < widths_list[i],
-            sawtooth / widths_list[i],
-            (1 - sawtooth) / (1 - widths_list[i]),
+    return AnalogSignal(
+        signal=np.stack(
+            [
+                (
+                    amplitudes_list[i]
+                    * np.where(
+                        (
+                            (
+                                2 * np.pi * frequencies_list[i] * t / 1000
+                                + phases_list[i]
+                            )
+                            / (2 * np.pi)
+                        )
+                        % 1
+                        < widths_list[i],
+                        (
+                            (
+                                2 * np.pi * frequencies_list[i] * t / 1000
+                                + phases_list[i]
+                            )
+                            / (2 * np.pi)
+                        )
+                        % 1
+                        / widths_list[i],
+                        (
+                            1
+                            - (
+                                (
+                                    2 * np.pi * frequencies_list[i] * t / 1000
+                                    + phases_list[i]
+                                )
+                                / (2 * np.pi)
+                            )
+                            % 1
+                        )
+                        / (1 - widths_list[i]),
+                    )
+                    + offsets_list[i]
+                )
+                for i in range(n_pools)
+            ],
+            axis=-1,
         )
-        input_current__matrix[i] = amplitudes_list[i] * sawtooth + offsets_list[i]
-
-    return input_current__matrix
+        * pq.nA,
+        t_start=0 * pq.ms,
+        sampling_period=timestep__ms * pq.ms,
+    )
 
 
 @beartowertype
@@ -253,7 +298,7 @@ def create_step_current(
     step_heights__muV: float | list[float],
     step_durations__ms: float | list[float],
     offsets__muV: float | list[float] = 0.0,
-) -> INPUT_CURRENT__MATRIX:
+) -> CURRENT__AnalogSignal:
     """Create a matrix of step currents for multiple pools.
 
     Parameters
@@ -290,8 +335,8 @@ def create_step_current(
 
     Returns
     -------
-    INPUT_CURRENT__MATRIX
-        Matrix of shape (n_pools, t_points) containing step currents
+    INPUT_CURRENT__AnalogSignal
+        Analog signal of shape (t_points, n_pools) * pq.nA containing step currents
     """
     # Convert parameters to lists
     step_heights_list = cast(
@@ -324,30 +369,31 @@ def create_step_current(
             f"Length of offsets__muV ({len(offsets_list)}) must match n_pools ({n_pools})"
         )
 
-    input_current__matrix = np.zeros((n_pools, t_points))
-
-    for i in range(n_pools):
+    def create_step_for_pool(i: int) -> np.ndarray:
         current = np.zeros(t_points)
-
-        # Create step: constant value for duration, then back to zero
         duration_points = int(step_durations_list[i] / timestep__ms)
         if duration_points > 0:
             end_idx = min(duration_points, t_points)
             current[:end_idx] = step_heights_list[i]
+        return current + offsets_list[i]
 
-        input_current__matrix[i] = current + offsets_list[i]
-
-    return input_current__matrix
+    return AnalogSignal(
+        signal=np.stack([create_step_for_pool(i) for i in range(n_pools)], axis=-1)
+        * pq.nA,
+        t_start=0 * pq.ms,
+        sampling_period=timestep__ms * pq.ms,
+    )
 
 
 @beartowertype
 def create_ramp_current(
     n_pools: int,
     t_points: int,
+    timestep__ms: float,
     start_currents__muV: float | list[float],
     end_currents__muV: float | list[float],
     offsets__muV: float | list[float] = 0.0,
-) -> INPUT_CURRENT__MATRIX:
+) -> CURRENT__AnalogSignal:
     """Create a matrix of ramp currents for multiple pools.
 
     Parameters
@@ -356,6 +402,8 @@ def create_ramp_current(
         Number of current pools to generate
     t_points : int
         Number of time points
+    timestep__ms : float
+        Time step in milliseconds
     start_currents__muV : float | list[float]
         Starting current(s) for the ramp in microvolts.
 
@@ -385,8 +433,8 @@ def create_ramp_current(
 
     Returns
     -------
-    INPUT_CURRENT__MATRIX
-        Matrix of shape (n_pools, t_points) containing ramp currents
+    INPUT_CURRENT__AnalogSignal
+        Analog signal of shape (t_points, n_pools) * pq.nA containing ramp currents
     """
     # Convert parameters to lists
     start_currents_list = cast(
@@ -419,13 +467,19 @@ def create_ramp_current(
             f"Length of offsets__muV ({len(offsets_list)}) must match n_pools ({n_pools})"
         )
 
-    input_current__matrix = np.zeros((n_pools, t_points))
-
-    for i in range(n_pools):
-        ramp = np.linspace(start_currents_list[i], end_currents_list[i], t_points)
-        input_current__matrix[i] = ramp + offsets_list[i]
-
-    return input_current__matrix
+    return AnalogSignal(
+        signal=np.stack(
+            [
+                np.linspace(start_currents_list[i], end_currents_list[i], t_points)
+                + offsets_list[i]
+                for i in range(n_pools)
+            ],
+            axis=-1,
+        )
+        * pq.nA,
+        t_start=0 * pq.ms,
+        sampling_period=timestep__ms * pq.ms,
+    )
 
 
 @beartowertype
@@ -439,7 +493,7 @@ def create_trapezoid_current(
     fall_times__ms: float | list[float] = 100.0,
     offsets__muV: float | list[float] = 0.0,
     delays__ms: float | list[float] = 0.0,
-) -> INPUT_CURRENT__MATRIX:
+) -> CURRENT__AnalogSignal:
     """Create a matrix of trapezoidal currents for multiple pools.
 
     Parameters
@@ -497,8 +551,8 @@ def create_trapezoid_current(
 
     Returns
     -------
-    INPUT_CURRENT__MATRIX
-        Matrix of shape (n_pools, t_points) containing trapezoidal currents
+    INPUT_CURRENT__AnalogSignal
+        Analog signal of shape (t_points, n_pools) * pq.nA containing trapezoidal currents
     """
     # Convert parameters to lists
     amplitudes_list = cast(
@@ -559,9 +613,7 @@ def create_trapezoid_current(
             f"Length of delays__ms ({len(delays_list)}) must match n_pools ({n_pools})"
         )
 
-    input_current__matrix = np.zeros((n_pools, t_points))
-
-    for i in range(n_pools):
+    def create_trapezoid_for_pool(i: int) -> np.ndarray:
         # Calculate indices for each phase
         delay_points = int(delays_list[i] / timestep__ms)
         rise_points = int(rise_times_list[i] / timestep__ms)
@@ -600,6 +652,11 @@ def create_trapezoid_current(
                             1, 0, points_to_fill
                         )
 
-        input_current__matrix[i] = amplitudes_list[i] * trapezoid + offsets_list[i]
+        return amplitudes_list[i] * trapezoid + offsets_list[i]
 
-    return input_current__matrix
+    return AnalogSignal(
+        signal=np.stack([create_trapezoid_for_pool(i) for i in range(n_pools)], axis=-1)
+        * pq.nA,
+        t_start=0 * pq.ms,
+        sampling_period=timestep__ms * pq.ms,
+    )

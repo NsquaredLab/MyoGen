@@ -2,13 +2,14 @@ from typing import Any, Optional, Union
 
 import matplotlib.pyplot as plt
 import numpy as np
+import tqdm
 from matplotlib.axes import Axes
 from mpl_toolkits.mplot3d import Axes3D  # needed for 3D plotting
 from mpl_toolkits.mplot3d.art3d import Poly3DCollection
 from scipy.spatial import ConvexHull
 
 from myogen.simulator import Muscle
-from myogen.utils.types import beartowertype
+from myogen.utils.decorators import beartowertype
 
 
 @beartowertype
@@ -89,6 +90,8 @@ def plot_innervation_areas_2d(
     if indices_to_plot is None:
         indices_to_plot = np.arange(muscle_model._number_of_neurons)
 
+    max_index = np.max(indices_to_plot)
+
     if apply_default_formatting:
         # Use a repeating palette of 10 colors
         base_colors = plt.cm.tab10(np.linspace(0, 1, 10))  # type: ignore
@@ -96,7 +99,11 @@ def plot_innervation_areas_2d(
 
         alphas = np.logspace(np.log10(0.1), np.log10(1.0), len(indices_to_plot))
 
-        for i, m in enumerate(indices_to_plot):
+        for (i, m), color, alpha in tqdm.tqdm(
+            list(zip(enumerate(reversed(indices_to_plot)), colors, alphas)),
+            desc="Plotting innervation areas",
+            unit="MU",
+        ):
             fiber_indices = np.where(muscle_model.assignment == m)[0]
             if len(fiber_indices) > 0:
                 points = muscle_model.muscle_fiber_centers__mm[fiber_indices]
@@ -107,14 +114,18 @@ def plot_innervation_areas_2d(
                     hull_points = np.vstack([hull_points, hull_points[0]])
                     ax.plot(
                         *hull_points.T,
-                        color=colors[i],
-                        linewidth=3 * alphas[i],
-                        alpha=alphas[i],
-                        zorder=i,
+                        color=color,
+                        linewidth=3 * alpha,
+                        alpha=alpha,
+                        zorder=-max_index + i,
                     )
 
                 ax.scatter(
-                    *points.T, color=colors[i], s=15, alpha=alphas[i], zorder=i + 1
+                    *points.T,
+                    color=color,
+                    s=15,
+                    alpha=alpha,
+                    zorder=-max_index + i,
                 )
 
         # Draw muscle border

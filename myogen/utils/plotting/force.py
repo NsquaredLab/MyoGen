@@ -5,7 +5,7 @@ import seaborn as sns
 from matplotlib.axes import Axes
 
 from myogen.simulator import ForceModel
-from myogen.utils.types import beartowertype
+from myogen.utils.decorators import beartowertype
 
 
 @beartowertype
