@@ -13,7 +13,7 @@ The toolkit implements a complete simulation pipeline: from motor unit recruitme
 
 Key features include:
 - **Motor Unit Recruitment Modeling**: Four validated models (Fuglevand, De Luca, Konstantin, Combined) for physiologically realistic recruitment patterns
-- **Biophysical Spike Train Simulation**: NEURON-based motor neuron modeling with detailed calcium dynamics and membrane properties  
+- **Biophysical Spike Train Simulation**: NEURON-based motor neuron modeling with detailed calcium dynamics and membrane properties
 - **Anatomically Accurate Muscle Models**: Spatial distribution of motor units and muscle fibers based on anatomical measurements
 - **Surface EMG Synthesis**: Multi-layered volume conductor modeling for realistic surface EMG signal generation
 - **Multi-Electrode Array Support**: Simulation of high-density electrode grids with configurable spatial arrangements
