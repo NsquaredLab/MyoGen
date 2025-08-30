@@ -6,20 +6,25 @@ electromyography signals using needle electrodes. It integrates motor unit
 simulation, electrode modeling, and signal generation with realistic noise.
 """
 
+import logging
 import warnings
 from typing import Optional
 
+import elephant
+import elephant.utils
 import numpy as np
+import quantities as pq
+from neo import AnalogSignal, Block, Group, Segment
 from tqdm import tqdm
 
 from myogen import RANDOM_GENERATOR
 from myogen.simulator.core.emg.electrodes import IntramuscularElectrodeArray
 from myogen.simulator.core.muscle import Muscle
-from myogen.simulator.core.spike_train import MotorNeuronPool
+from myogen.utils.decorators import beartowertype
 from myogen.utils.types import (
-    INTRAMUSCULAR_EMG__TENSOR,
-    INTRAMUSCULAR_MUAP_SHAPE__TENSOR,
-    beartowertype,
+    INTRAMUSCULAR_EMG__Block,
+    INTRAMUSCULAR_MUAP__Block,
+    SPIKE_TRAIN__Block,
 )
 
 try:
@@ -76,14 +81,14 @@ class IntramuscularEMG:
 
     Attributes
     ----------
-    muaps : INTRAMUSCULAR_MUAP_SHAPE__TENSOR
-        Intramuscular MUAP shapes for all electrode arrays. Available after simulate_muaps().
-    intramuscular_emg__tensor : INTRAMUSCULAR_EMG__TENSOR
-        Intramuscular EMG signals for all electrode arrays. Available after simulate_intramuscular_emg().
-    noisy_intramuscular_emg__tensor : INTRAMUSCULAR_EMG__TENSOR
-        Noisy intramuscular EMG signals for all electrode arrays. Available after add_noise().
-    motor_neuron_pool : MotorNeuronPool
-        Motor neuron pool used for EMG generation. Available after simulate_intramuscular_emg().
+    muaps__Block : INTRAMUSCULAR_MUAP__Block
+        Intramuscular MUAP shapes for the electrode array as a neo.Block. Available after simulate_muaps().
+    intramuscular_emg__Block : INTRAMUSCULAR_EMG__Block
+        Intramuscular EMG signals for the electrode array as a neo.Block. Available after simulate_intramuscular_emg().
+    noisy_intramuscular_emg__Block : INTRAMUSCULAR_EMG__Block
+        Noisy intramuscular EMG signals for the electrode array as a neo.Block. Available after add_noise().
+    spike_train__Block : SPIKE_TRAIN__Block
+        Spike train block used for EMG generation. Available after simulate_intramuscular_emg().
 
     References
     ----------
@@ -156,17 +161,15 @@ class IntramuscularEMG:
 
         # Motor unit simulations - private storage
         self._motor_units: list[MotorUnitSim] = []  # List of motor unit simulators
-        self._muaps: Optional[INTRAMUSCULAR_MUAP_SHAPE__TENSOR] = None
+        self._muaps__Block: Optional[INTRAMUSCULAR_MUAP__Block] = None
         self._max_muap_length: int = 0
 
         # Simulation results - stored privately, accessed via properties
-        self._intramuscular_emg__tensor: Optional[INTRAMUSCULAR_EMG__TENSOR] = None
-        self._noisy_intramuscular_emg__tensor: Optional[INTRAMUSCULAR_EMG__TENSOR] = (
-            None
-        )
-        self._motor_neuron_pool: Optional[MotorNeuronPool] = None
+        self._intramuscular_emg__Block: Optional[INTRAMUSCULAR_EMG__Block] = None
+        self._noisy_intramuscular_emg__Block: Optional[INTRAMUSCULAR_EMG__Block] = None
+        self._spike_train__Block: Optional[SPIKE_TRAIN__Block] = None
 
-    def simulate_muaps(self) -> INTRAMUSCULAR_MUAP_SHAPE__TENSOR:
+    def simulate_muaps(self) -> INTRAMUSCULAR_MUAP__Block:
         """
         Simulate MUAPs for all electrode arrays using the provided muscle model.
 
@@ -272,7 +275,7 @@ class IntramuscularEMG:
                 arborization_z_std=0.5 + spread_factor * 1.5,
             )
 
-    def _calculate_muaps(self) -> INTRAMUSCULAR_MUAP_SHAPE__TENSOR:
+    def _calculate_muaps(self) -> INTRAMUSCULAR_MUAP__Block:
         """
         Pre-calculate motor unit action potentials (MUAPs).
 
@@ -302,14 +305,19 @@ class IntramuscularEMG:
             muaps_list.append(muap)
             max_length = max(max_length, muap.shape[0])
 
-        self._muaps: INTRAMUSCULAR_MUAP_SHAPE__TENSOR = np.zeros(
-            (len(self._motor_units), self._electrode_array.pts.shape[0], max_length)
-        )
+        block = Block()
+        for muap in muaps_list:
+            block.segments.append(segment := Segment(name=f"MUAP_{muap.shape[0]}"))
+            segment.analogsignals.append(
+                AnalogSignal(
+                    muap * pq.dimensionless,
+                    sampling_rate=self._sampling_frequency__Hz * pq.Hz,
+                )
+            )
 
-        for i, muap in enumerate(muaps_list):
-            self._muaps[i, :, : muap.shape[0]] = muap.T
+        self._muaps__Block = block
 
-        return self._muaps
+        return self._muaps__Block
 
     def _analyze_detectable_motor_units(self) -> tuple[np.ndarray, list[int]]:
         """
@@ -323,7 +331,7 @@ class IntramuscularEMG:
         tuple[np.ndarray, List[int]]
             Boolean array of detectable motor units and their indices
         """
-        if self._muaps is None:
+        if self._muaps__Block is None:
             raise ValueError("Must call simulate_muaps() first")
 
         print("Analyzing motor unit detectability...")
@@ -335,12 +343,16 @@ class IntramuscularEMG:
 
         for i, mu_sim in enumerate(self._motor_units):
             # Get peak MUAP amplitude across all channels
-            muap_amplitudes = np.max(np.abs(self._muaps[i]), axis=0)
+            muap_data = self._muaps__Block.segments[i].analogsignals[0].magnitude
+            muap_amplitudes = np.max(np.abs(muap_data), axis=0)
             max_amplitude = np.max(muap_amplitudes)
 
             # Check if MUAP is prominent enough above noise
             # Use a simple noise threshold estimate
-            noise_estimate = np.std(self._muaps) * 0.1  # Simple noise estimate
+            all_muaps = np.array(
+                [seg.analogsignals[0].magnitude for seg in self._muaps__Block.segments]
+            )
+            noise_estimate = np.std(all_muaps) * 0.1  # Simple noise estimate
             is_prominent = max_amplitude > over_noise_threshold * noise_estimate
 
             # Additional criterion: contribution to total signal variance
@@ -360,38 +372,38 @@ class IntramuscularEMG:
 
     def simulate_intramuscular_emg(
         self,
-        motor_neuron_pool: MotorNeuronPool,
-    ) -> INTRAMUSCULAR_EMG__TENSOR:
+        spike_train__Block: SPIKE_TRAIN__Block,
+    ) -> INTRAMUSCULAR_EMG__Block:
         """
-        Generate intramuscular EMG signals for all electrode arrays using the provided motor neuron pool.
+        Generate intramuscular EMG signals using the provided spike train block.
 
-        This method convolves the pre-computed MUAP templates with motor neuron spike trains
+        This method convolves the pre-computed MUAP templates with spike trains
         to synthesize realistic intramuscular EMG signals. The process includes temporal
         resampling and supports both CPU and GPU acceleration for efficient computation.
 
         Parameters
         ----------
-        motor_neuron_pool : MotorNeuronPool
-            Motor neuron pool with spike trains computed (see :class:`myogen.simulator.MotorNeuronPool`).
+        spike_train__Block : SPIKE_TRAIN__Block
+            Block containing spike trains organized as segments (pools) with spiketrains.
 
         Returns
         -------
-        INTRAMUSCULAR_EMG__TENSOR
-            Intramuscular EMG signals for all electrode arrays.
-            Results are stored in the `intramuscular_emg__tensor` property after execution.
+        INTRAMUSCULAR_EMG__Block
+            Intramuscular EMG signals for the electrode array stored in a neo.Block.
+            Results are stored in the `intramuscular_emg__Block` property after execution.
 
         Raises
         ------
         ValueError
             If MUAP templates have not been generated. Call simulate_muaps() first.
         """
-        if self._muaps is None:
+        if self._muaps__Block is None:
             raise ValueError(
                 "MUAP templates have not been generated. Call simulate_muaps() first."
             )
 
-        # Store motor neuron pool privately
-        self._motor_neuron_pool = motor_neuron_pool
+        # Store spike train data privately
+        self._spike_train__Block = spike_train__Block
 
         # Handle MUs to simulate
         if self._MUs_to_simulate is None:
@@ -401,43 +413,94 @@ class IntramuscularEMG:
         else:
             MUs_to_simulate = set(self._MUs_to_simulate)
 
-        muap_array = self._muaps.copy()
+        # Extract MUAP data from Block and pad to same length
+        muap_data_list = [
+            seg.analogsignals[0].magnitude for seg in self._muaps__Block.segments
+        ]
+
+        # Find the maximum length among all MUAPs
+        max_length = max(muap.shape[0] for muap in muap_data_list)
+        n_electrodes = muap_data_list[0].shape[1]
+
+        # Pad all MUAPs to the same length (centered, pad both sides)
+        padded_muaps = []
+        for muap in muap_data_list:
+            pad_total = max_length - muap.shape[0]
+            if pad_total > 0:
+                pad_left = pad_total // 2
+                pad_right = pad_total - pad_left
+                pad_width = ((pad_left, pad_right), (0, 0))
+                padded_muap = np.pad(
+                    muap, pad_width, mode="constant", constant_values=0
+                )
+            else:
+                padded_muap = muap
+                padded_muaps.append(padded_muap)
+
+        muap_array = np.array(padded_muaps)
+
+        # Extract timestep from the first spike train
+        first_spiketrain = spike_train__Block.segments[0].spiketrains[0]
+        spiketrain_timestep__ms = first_spiketrain.sampling_period.rescale("ms")
 
         target_length = int(
             np.round(
-                muap_array.shape[2]
+                muap_array.shape[1]
                 / self._sampling_frequency__Hz
                 * 1
-                / self._motor_neuron_pool.timestep__ms
-                * 1000
+                / (spiketrain_timestep__ms.rescale("s").magnitude)
             )
         )
         muap_shapes = np.zeros(
-            (muap_array.shape[0], muap_array.shape[1], target_length)
+            (muap_array.shape[0], muap_array.shape[2], target_length)
         )
         for muap_nr in range(muap_shapes.shape[0]):
             for electrode_nr in range(muap_shapes.shape[1]):
                 muap_shapes[muap_nr, electrode_nr] = np.interp(
                     np.linspace(
                         0,
-                        muap_array.shape[-1] / self._sampling_frequency__Hz,
+                        muap_array.shape[1] / self._sampling_frequency__Hz,
                         target_length,
                         endpoint=False,
                     ),
                     np.arange(
                         0,
-                        muap_array.shape[-1] / self._sampling_frequency__Hz,
+                        muap_array.shape[1] / self._sampling_frequency__Hz,
                         1 / self._sampling_frequency__Hz,
                     ),
-                    muap_array[muap_nr, electrode_nr],
+                    muap_array[muap_nr, :, electrode_nr],
                 )
 
-        n_pools = self._motor_neuron_pool.spike_trains.shape[0]
+        # Convert spike train block to numpy arrays
+        n_pools = len(spike_train__Block.segments)
+        n_neurons = len(spike_train__Block.segments[0].spiketrains)
         n_electrodes = muap_shapes.shape[1]
+
+        # Convert spike trains to binary arrays using Elephant, suppressing rounding error logging
+        elephant_utils_logger = logging.getLogger(elephant.utils.__file__)
+        original_level = elephant_utils_logger.level
+        elephant_utils_logger.setLevel(logging.ERROR)
+
+        try:
+            spike_trains = np.array(
+                [
+                    elephant.conversion.BinnedSpikeTrain(
+                        segment.spiketrains, bin_size=spiketrain_timestep__ms
+                    )
+                    .to_array()
+                    .astype(bool)
+                    for segment in spike_train__Block.segments
+                ]
+            )
+        finally:
+            elephant_utils_logger.setLevel(original_level)
+
+        # Create active neuron indices (all neurons are active in each pool for spike train block)
+        active_neuron_indices = [list(range(n_neurons)) for _ in range(n_pools)]
 
         # Initialize result array
         sample_conv = np.convolve(
-            self._motor_neuron_pool.spike_trains[0, 0],
+            spike_trains[0, 0],
             muap_shapes[0, 0],
             mode="same",
         )
@@ -448,32 +511,37 @@ class IntramuscularEMG:
         # Perform convolution for each pool using GPU acceleration if available
         if HAS_CUPY:
             # Use GPU acceleration with CuPy
-            spike_gpu = cp.asarray(self._motor_neuron_pool.spike_trains)
+            spike_gpu = cp.asarray(spike_trains)
             muap_gpu = cp.asarray(muap_shapes)
             intramuscular_emg_gpu = cp.zeros((n_pools, n_electrodes, len(sample_conv)))
 
             for pool_idx in tqdm(
                 range(n_pools),
-                desc=f"Intramuscular EMG (GPU)",
+                desc="Intramuscular EMG (GPU)",
                 unit="pool",
             ):
-                active_neuron_indices = set(
-                    self._motor_neuron_pool.active_neuron_indices[pool_idx]
-                )
+                pool_active_neurons = set(active_neuron_indices[pool_idx])
 
                 for e_idx in range(n_electrodes):
                     # Process all active MUs on GPU
-                    convolutions = cp.array(
-                        [
-                            cp.correlate(
+                    convolutions = []
+                    for mu_idx in MUs_to_simulate.intersection(pool_active_neurons):
+                        # Find the MUAP index in our list of simulated MUs
+                        muap_idx = (
+                            self._MUs_to_simulate.index(mu_idx)
+                            if mu_idx in self._MUs_to_simulate
+                            else None
+                        )
+                        if muap_idx is not None and muap_idx < muap_gpu.shape[0]:
+                            conv = cp.correlate(
                                 spike_gpu[pool_idx, mu_idx],
-                                muap_gpu[i, e_idx],
+                                muap_gpu[muap_idx, e_idx],
                                 mode="same",
                             )
-                            for i, mu_idx in enumerate(
-                                MUs_to_simulate.intersection(active_neuron_indices)
-                            )
-                        ]
+                            convolutions.append(conv)
+
+                    convolutions = (
+                        cp.array(convolutions) if convolutions else cp.array([])
                     )
                     # Sum across MUAPs on GPU
                     if len(convolutions) > 0:
@@ -487,38 +555,42 @@ class IntramuscularEMG:
             # Fallback to CPU computation with NumPy
             for pool_idx in tqdm(
                 range(n_pools),
-                desc=f"Intramuscular EMG (CPU)",
+                desc="Intramuscular EMG (CPU)",
                 unit="pool",
             ):
-                active_neuron_indices = set(
-                    self._motor_neuron_pool.active_neuron_indices[pool_idx]
-                )
+                pool_active_neurons = set(active_neuron_indices[pool_idx])
 
                 for e_idx in range(n_electrodes):
                     # Process all active MUs
                     convolutions = []
-                    for i, mu_idx in enumerate(
-                        MUs_to_simulate.intersection(active_neuron_indices)
-                    ):
-                        conv = np.correlate(
-                            self._motor_neuron_pool.spike_trains[pool_idx, mu_idx],
-                            muap_shapes[i, e_idx],
-                            mode="same",
+                    for mu_idx in MUs_to_simulate.intersection(pool_active_neurons):
+                        # Find the MUAP index in our list of simulated MUs
+                        muap_idx = (
+                            self._MUs_to_simulate.index(mu_idx)
+                            if mu_idx in self._MUs_to_simulate
+                            else None
                         )
-                        convolutions.append(conv)
+                        if muap_idx is not None and muap_idx < muap_shapes.shape[0]:
+                            conv = np.correlate(
+                                spike_trains[pool_idx, mu_idx],
+                                muap_shapes[muap_idx, e_idx],
+                                mode="same",
+                            )
+                            convolutions.append(conv)
 
                     if convolutions:
                         intramuscular_emg[pool_idx, e_idx] = np.sum(
                             convolutions, axis=0
                         )
 
+        # Temporal resampling
         intramuscular_emg_resampled = np.zeros(
             (
                 n_pools,
                 n_electrodes,
                 int(
                     intramuscular_emg.shape[-1]
-                    / (1 / self._motor_neuron_pool.timestep__ms * 1000)
+                    * spiketrain_timestep__ms.rescale("s").magnitude
                     * self._sampling_frequency__Hz
                 ),
             )
@@ -526,30 +598,47 @@ class IntramuscularEMG:
         for pool_idx in range(n_pools):
             for e_idx in range(n_electrodes):
                 intramuscular_emg_resampled[pool_idx, e_idx] = np.interp(
-                    np.arange(
-                        0,
-                        intramuscular_emg.shape[-1]
-                        * (self._motor_neuron_pool.timestep__ms / 1000),
-                        1 / self._sampling_frequency__Hz,
+                    x=np.arange(
+                        start=0,
+                        stop=intramuscular_emg.shape[-1]
+                        * spiketrain_timestep__ms.rescale("s").magnitude,
+                        step=1 / self._sampling_frequency__Hz,
                     ),
-                    np.arange(
-                        0,
-                        intramuscular_emg.shape[-1]
-                        * (self._motor_neuron_pool.timestep__ms / 1000),
-                        self._motor_neuron_pool.timestep__ms / 1000,
+                    xp=np.arange(
+                        start=0,
+                        stop=intramuscular_emg.shape[-1]
+                        * spiketrain_timestep__ms.rescale("s").magnitude,
+                        step=spiketrain_timestep__ms.rescale("s").magnitude,
                     ),
-                    intramuscular_emg[pool_idx, e_idx],
+                    fp=intramuscular_emg[pool_idx, e_idx],
                 )
 
+        # Create neo Block structure
+        block = Block()
+
+        # Create segments for each motor unit pool
+        for pool_idx in range(n_pools):
+            segment = Segment(name=f"Pool_{pool_idx}")
+            block.segments.append(segment)
+
+            # Create AnalogSignal for this pool's EMG data
+            segment.analogsignals.append(
+                AnalogSignal(
+                    intramuscular_emg_resampled[pool_idx].T * pq.dimensionless,
+                    t_start=0 * pq.ms,
+                    sampling_rate=self._sampling_frequency__Hz * pq.Hz,
+                )
+            )
+
         # Store results privately
-        self._intramuscular_emg__tensor = intramuscular_emg_resampled
-        return intramuscular_emg_resampled
+        self._intramuscular_emg__Block = block
+        return block
 
     def add_noise(
-        self, snr_db: float, noise_type: str = "gaussian"
-    ) -> INTRAMUSCULAR_EMG__TENSOR:
+        self, snr__dB: float, noise_type: str = "gaussian"
+    ) -> INTRAMUSCULAR_EMG__Block:
         """
-        Add noise to all electrode arrays.
+        Add noise to the electrode array.
 
         This method adds realistic noise to the simulated intramuscular EMG signals
         based on a specified signal-to-noise ratio. The noise characteristics
@@ -557,7 +646,7 @@ class IntramuscularEMG:
 
         Parameters
         ----------
-        snr_db : float
+        snr__dB : float
             Signal-to-noise ratio in dB. Higher values result in cleaner signals.
             Typical intramuscular EMG has SNR ranging from 15-50 dB.
         noise_type : str, default="gaussian"
@@ -565,124 +654,143 @@ class IntramuscularEMG:
 
         Returns
         -------
-        INTRAMUSCULAR_EMG__TENSOR
-            Noisy intramuscular EMG signals for all electrode arrays.
-            Results are stored in the `noisy_intramuscular_emg__tensor` property after execution.
+        INTRAMUSCULAR_EMG__Block
+            Noisy intramuscular EMG signals for the electrode array as a neo.Block.
+            Results are stored in the `noisy_intramuscular_emg__Block` property after execution.
 
         Raises
         ------
         ValueError
             If intramuscular EMG has not been simulated. Call simulate_intramuscular_emg() first.
         """
-        if self._intramuscular_emg__tensor is None:
+        if self._intramuscular_emg__Block is None:
             raise ValueError(
                 "Intramuscular EMG has not been simulated. Call simulate_intramuscular_emg() first."
             )
 
-        # Calculate signal power
-        signal_power = np.mean(self._intramuscular_emg__tensor**2)
+        noisy_block = Block()
 
-        # Calculate noise power
-        snr_linear = 10 ** (snr_db / 10)
-        noise_power = signal_power / snr_linear
+        for pool_idx, segment in enumerate(self._intramuscular_emg__Block.segments):
+            noisy_segment = Segment(name=f"Pool_{pool_idx}")
+            noisy_block.segments.append(noisy_segment)
 
-        # Generate noise
-        if noise_type.lower() == "gaussian":
-            noise_std = np.sqrt(noise_power)
-            noise = RANDOM_GENERATOR.normal(
-                loc=0.0, scale=noise_std, size=self._intramuscular_emg__tensor.shape
+            # Get the EMG signal data
+            emg_signal = segment.analogsignals[0]
+            emg_array = emg_signal.magnitude
+
+            # Calculate signal power
+            signal_power = np.mean(emg_array**2)
+
+            # Calculate noise power
+            snr_linear = 10 ** (snr__dB / 10)
+            noise_power = signal_power / snr_linear
+
+            # Generate noise
+            if noise_type.lower() == "gaussian":
+                noise_std = np.sqrt(noise_power)
+                noise = RANDOM_GENERATOR.normal(
+                    loc=0.0, scale=noise_std, size=emg_array.shape
+                )
+            else:
+                raise ValueError(f"Unsupported noise type: {noise_type}")
+
+            # Add noise
+            noisy_emg = emg_array + noise
+
+            # Create new AnalogSignal with noise
+            noisy_segment.analogsignals.append(
+                AnalogSignal(
+                    noisy_emg * emg_signal.units,
+                    t_start=emg_signal.t_start,
+                    sampling_rate=emg_signal.sampling_rate,
+                )
             )
-        else:
-            raise ValueError(f"Unsupported noise type: {noise_type}")
-
-        # Add noise
-        noisy_emg = self._intramuscular_emg__tensor + noise
 
         # Store results privately
-        self._noisy_intramuscular_emg__tensor = noisy_emg
-        return noisy_emg
+        self._noisy_intramuscular_emg__Block = noisy_block
+        return noisy_block
 
     # Property accessors for computed results
     @property
-    def muaps(self) -> INTRAMUSCULAR_MUAP_SHAPE__TENSOR:
+    def muaps__Block(self) -> INTRAMUSCULAR_MUAP__Block:
         """
-        Intramuscular MUAP shapes for all electrode arrays.
+        Intramuscular MUAP shapes for the electrode array.
 
         Returns
         -------
-        INTRAMUSCULAR_MUAP_SHAPE__TENSOR
-            Intramuscular MUAP templates for the electrode array.
+        INTRAMUSCULAR_MUAP__Block
+            Intramuscular MUAP templates for the electrode array as a neo.Block.
 
         Raises
         ------
         ValueError
             If MUAP templates have not been computed yet.
         """
-        if self._muaps is None:
+        if self._muaps__Block is None:
             raise ValueError(
                 "MUAP templates not computed. Call simulate_muaps() first."
             )
-        return self._muaps
+        return self._muaps__Block
 
     @property
-    def intramuscular_emg__tensor(self) -> INTRAMUSCULAR_EMG__TENSOR:
+    def intramuscular_emg__Block(self) -> INTRAMUSCULAR_EMG__Block:
         """
-        Intramuscular EMG signals for all electrode arrays.
+        Intramuscular EMG signals for the electrode array.
 
         Returns
         -------
-        INTRAMUSCULAR_EMG__TENSOR
-            Intramuscular EMG signals for the electrode array.
+        INTRAMUSCULAR_EMG__Block
+            Intramuscular EMG signals for the electrode array as a neo.Block.
 
         Raises
         ------
         ValueError
             If intramuscular EMG has not been computed yet.
         """
-        if self._intramuscular_emg__tensor is None:
+        if self._intramuscular_emg__Block is None:
             raise ValueError(
                 "Intramuscular EMG signals not computed. Call simulate_intramuscular_emg() first."
             )
-        return self._intramuscular_emg__tensor
+        return self._intramuscular_emg__Block
 
     @property
-    def noisy_intramuscular_emg__tensor(self) -> INTRAMUSCULAR_EMG__TENSOR:
+    def noisy_intramuscular_emg__Block(self) -> INTRAMUSCULAR_EMG__Block:
         """
-        Noisy intramuscular EMG signals for all electrode arrays.
+        Noisy intramuscular EMG signals for the electrode array.
 
         Returns
         -------
-        INTRAMUSCULAR_EMG__TENSOR
-            Noisy intramuscular EMG signals for the electrode array.
+        INTRAMUSCULAR_EMG__Block
+            Noisy intramuscular EMG signals for the electrode array as a neo.Block.
 
         Raises
         ------
         ValueError
             If noisy intramuscular EMG has not been computed yet.
         """
-        if self._noisy_intramuscular_emg__tensor is None:
+        if self._noisy_intramuscular_emg__Block is None:
             raise ValueError(
                 "Noisy intramuscular EMG signals not computed. Call add_noise() first."
             )
-        return self._noisy_intramuscular_emg__tensor
+        return self._noisy_intramuscular_emg__Block
 
     @property
-    def motor_neuron_pool(self) -> MotorNeuronPool:
+    def spike_train__Block(self) -> SPIKE_TRAIN__Block:
         """
-        Motor neuron pool used for EMG generation.
+        Spike train block used for EMG generation.
 
         Returns
         -------
-        MotorNeuronPool
-            The motor neuron pool used in the simulation.
+        SPIKE_TRAIN__Block
+            The spike train block used in the simulation.
 
         Raises
         ------
         ValueError
-            If motor neuron pool has not been set yet.
+            If spike train block has not been set yet.
         """
-        if self._motor_neuron_pool is None:
+        if self._spike_train__Block is None:
             raise ValueError(
-                "Motor neuron pool not set. Call simulate_intramuscular_emg() first."
+                "Spike train block not set. Call simulate_intramuscular_emg() first."
             )
-        return self._motor_neuron_pool
+        return self._spike_train__Block

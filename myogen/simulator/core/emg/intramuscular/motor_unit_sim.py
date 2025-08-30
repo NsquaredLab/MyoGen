@@ -16,7 +16,7 @@ from sklearn.cluster import KMeans
 from tqdm import tqdm
 
 from myogen import RANDOM_GENERATOR, SEED
-from myogen.utils.types import beartowertype
+from myogen.utils.decorators import beartowertype
 from .bioelectric import (
     get_current_density,
     get_elementary_current_response,
@@ -60,7 +60,7 @@ class MotorUnitSim:
         muscle_fiber_diameters__mm: np.ndarray,
         muscle_fiber_conduction_velocity__mm_per_s: np.ndarray,
         nominal_center__mm: np.ndarray,
-        neuromuscular_junction_conduction_velocities__mm_per_s: List[float] = [
+        neuromuscular_junction_conduction_velocities__mm_per_s: list[float] = [
             5000.0,
             2000.0,
         ],

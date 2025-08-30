@@ -5,9 +5,10 @@ Electrode configuration framework for EMG simulation.
 from typing import Literal
 
 import numpy as np
+import numpy.matlib  # noqa
 from scipy.spatial.transform import Rotation as R
 
-from myogen.utils.types import beartowertype
+from myogen.utils.decorators import beartowertype
 
 
 @beartowertype

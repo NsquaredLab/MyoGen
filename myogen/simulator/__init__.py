@@ -6,27 +6,30 @@ NMODL files are automatically loaded when needed.
 """
 
 from myogen.simulator.core.emg import (
-    SurfaceEMG,
+    IntramuscularElectrodeArray,
     IntramuscularEMG,
     SurfaceElectrodeArray,
-    IntramuscularElectrodeArray,
+    SurfaceEMG,
 )
+from myogen.utils.neo import GridAnalogSignal
 from myogen.simulator.core.force import ForceModel
 from myogen.simulator.core.muscle import Muscle
 
 # Always import all public APIs (they will fail gracefully if NMODL not loaded)
-from myogen.simulator.core.physiological_distribution import (
-    generate_mu_recruitment_thresholds,
-)
-from myogen.simulator.core.spike_train import MotorNeuronPool
+from myogen.simulator.core.physiological_distribution import RecruitmentThresholds
+
+# Spinal neural population models
+# PyNN integration
+from myogen.simulator import pyNN
 
 __all__ = [
-    "generate_mu_recruitment_thresholds",
+    "RecruitmentThresholds",
     "Muscle",
-    "MotorNeuronPool",
     "SurfaceEMG",
     "IntramuscularEMG",
     "SurfaceElectrodeArray",
     "IntramuscularElectrodeArray",
     "ForceModel",
+    "GridAnalogSignal",
+    "pyNN",
 ]

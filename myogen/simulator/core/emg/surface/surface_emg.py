@@ -1,5 +1,6 @@
-import warnings
 from typing import Optional
+
+from myogen.utils.neo import GridAnalogSignal
 
 try:
     import cupy as cp
@@ -8,22 +9,25 @@ try:
 except ImportError:
     HAS_CUPY = False
 
+import logging
+
+import elephant
+import elephant.utils
 import numpy as np
+import quantities as pq
+from neo import Block, Group, Segment
 from tqdm import tqdm
 
 from myogen import RANDOM_GENERATOR
-from myogen.simulator.core.muscle import Muscle
-from myogen.simulator.core.spike_train import MotorNeuronPool
-from myogen.simulator.core.emg.surface.simulate_fiber import simulate_fiber_v2
 from myogen.simulator.core.emg.electrodes import SurfaceElectrodeArray
+from myogen.simulator.core.emg.surface.simulate_fiber import simulate_fiber_v2
+from myogen.simulator.core.muscle import Muscle
+from myogen.utils.decorators import beartowertype
 from myogen.utils.types import (
-    SURFACE_MUAP_SHAPE__TENSOR,
-    SURFACE_EMG__TENSOR,
-    beartowertype,
+    SPIKE_TRAIN__Block,
+    SURFACE_EMG__Block,
+    SURFACE_MUAP__Block,
 )
-
-# Suppress warnings for cleaner output during batch simulations
-warnings.filterwarnings("ignore")
 
 
 @beartowertype
@@ -62,14 +66,14 @@ class SurfaceEMG:
 
     Attributes
     ----------
-    muaps : list[SURFACE_MUAP_SHAPE__TENSOR]
-        Motor Unit Action Potential (MUAP) templates for each electrode array. Available after simulate_muaps().
-    surface_emg__tensors : list[SURFACE_EMG__TENSOR]
-        Surface EMG signals for each electrode array. Available after simulate_surface_emg().
-    noisy_surface_emg__tensors : list[SURFACE_EMG__TENSOR]
-        Noisy surface EMG signals for each electrode array. Available after add_noise().
-    motor_neuron_pool : MotorNeuronPool
-        Motor neuron pool used for EMG generation. Available after simulate_surface_emg().
+    muaps__Block : SURFACE_MUAP__Block
+        Motor Unit Action Potential (MUAP) templates for each electrode array as a neo.Block. Available after simulate_muaps().
+    surface_emg__Block : SURFACE_EMG__Block
+        Surface EMG signals for each electrode array as a neo.Block. Available after simulate_surface_emg().
+    noisy_surface_emg__Block : SURFACE_EMG__Block
+        Noisy surface EMG signals for each electrode array as a neo.Block. Available after add_noise().
+    spike_train__Block : SPIKE_TRAIN__Block
+        Spike train block used for EMG generation signals. Available after simulate_surface_emg().
 
     References
     ----------
@@ -146,12 +150,12 @@ class SurfaceEMG:
         self._radius_total = self.radius_total
 
         # Simulation results - stored privately, accessed via properties
-        self._muaps: Optional[list[SURFACE_MUAP_SHAPE__TENSOR]] = None
-        self._surface_emg__tensors: Optional[list[SURFACE_EMG__TENSOR]] = None
-        self._noisy_surface_emg__tensors: Optional[list[SURFACE_EMG__TENSOR]] = None
-        self._motor_neuron_pool: Optional[MotorNeuronPool] = None
+        self._muaps__Block: Optional[SURFACE_MUAP__Block] = None
+        self._surface_emg__Block: Optional[SURFACE_EMG__Block] = None
+        self._noisy_surface_emg__Block: Optional[SURFACE_EMG__Block] = None
+        self._spike_train__Block: Optional[SPIKE_TRAIN__Block] = None
 
-    def simulate_muaps(self) -> list[SURFACE_MUAP_SHAPE__TENSOR]:
+    def simulate_muaps(self) -> SURFACE_MUAP__Block:
         """
         Simulate MUAPs for all electrode arrays using the provided muscle model.
 
@@ -161,8 +165,8 @@ class SurfaceEMG:
 
         Returns
         -------
-        list[SURFACE_MUAP_SHAPE__TENSOR]
-            List of generated MUAP templates for each electrode array.
+        SURFACE_MUAP__Block
+            neo.Block of generated MUAP templates for each electrode array.
             Results are stored in the `muaps` property after execution.
 
         Notes
@@ -202,20 +206,10 @@ class SurfaceEMG:
             size=len(self._MUs_to_simulate),
         )
 
-        # Initialize output arrays for each electrode array
-        # Each electrode array can have different dimensions
-        electrode_array_results = []
-
+        block = Block()
         for array_idx, electrode_array in enumerate(self._electrode_arrays):
-            # Initialize array for this electrode configuration
-            array_result = np.zeros(
-                (
-                    len(self._MUs_to_simulate),
-                    electrode_array.num_rows,
-                    electrode_array.num_cols,
-                    len(t),
-                )
-            )
+            group = Group(name=f"ElectrodeArray_{array_idx}")
+            block.groups.append(group)
 
             # Matrix optimization variables
             A_matrix = None
@@ -223,6 +217,17 @@ class SurfaceEMG:
 
             # Process each motor unit
             for MU_number, MU_index in enumerate(self._MUs_to_simulate):
+                segment = Segment(name=f"MUAP_{MU_index}")
+                group.segments.append(segment)
+
+                array_result = np.zeros(
+                    (
+                        electrode_array.num_rows,
+                        electrode_array.num_cols,
+                        len(t),
+                    )
+                )
+
                 number_of_fibers = number_of_fibers_per_MUs[MU_index]
 
                 if number_of_fibers == 0:
@@ -255,8 +260,8 @@ class SurfaceEMG:
                     )
 
                     # Calculate fiber end positions
-                    L2 = abs(innervation_zone - fiber_length__mm / 2)
                     L1 = abs(innervation_zone + fiber_length__mm / 2)
+                    L2 = abs(innervation_zone - fiber_length__mm / 2)
 
                     # Use the new simulate_fiber_v2 function
                     if fiber_number == 0 or A_matrix is None:
@@ -302,34 +307,40 @@ class SurfaceEMG:
                             B_incomplete=B_incomplete,
                         )
 
-                    array_result[MU_number] += phi_temp
+                    array_result += phi_temp
 
-            electrode_array_results.append(array_result)
+                segment.analogsignals.append(
+                    GridAnalogSignal(
+                        signal=np.transpose(array_result, (2, 0, 1)) * pq.dimensionless,
+                        t_start=0 * pq.ms,
+                        sampling_rate=self._sampling_frequency__Hz * pq.Hz,
+                    )
+                )
 
         # Store results privately
-        self._muaps = electrode_array_results
+        self._muaps__Block = block
 
-        return electrode_array_results
+        return block
 
     def simulate_surface_emg(
-        self, motor_neuron_pool: MotorNeuronPool
-    ) -> list[SURFACE_EMG__TENSOR]:
+        self, spike_train__Block: SPIKE_TRAIN__Block
+    ) -> SURFACE_EMG__Block:
         """
-        Generate surface EMG signals for all electrode arrays using the provided motor neuron pool.
+        Generate surface EMG signals for all electrode arrays using the provided spike train block.
 
-        This method convolves the pre-computed MUAP templates with the motor neuron spike trains
+        This method convolves the pre-computed MUAP templates with the spike trains
         to synthesize realistic surface EMG signals. The process includes temporal resampling
-        to match the motor neuron pool timestep and supports both CPU and GPU acceleration.
+        to match the spike train timestep and supports both CPU and GPU acceleration.
 
         Parameters
         ----------
-        motor_neuron_pool : MotorNeuronPool
-            Motor neuron pool with spike trains computed (see :class:`myogen.simulator.MotorNeuronPool`).
+        spike_train__Block : SPIKE_TRAIN__Block
+            Block containing spike trains organized as segments (pools) with spiketrains.
 
         Returns
         -------
-        list[SURFACE_EMG__TENSOR]
-            Surface EMG signals for each electrode array.
+        SURFACE_EMG__Block
+            Surface EMG signals for each electrode array stored in a neo.Block.
             Results are stored in the `surface_emg__tensors` property after execution.
 
         Raises
@@ -337,38 +348,82 @@ class SurfaceEMG:
         ValueError
             If MUAP templates have not been generated. Call simulate_muaps() first.
         """
-        if self._muaps is None:
+        if self._muaps__Block is None:
             raise ValueError(
                 "MUAP templates have not been generated. Call simulate_muaps() first."
             )
 
-        # Store motor neuron pool privately
-        self._motor_neuron_pool = motor_neuron_pool
+        # Store spike train data privately
+        self._spike_train__Block = spike_train__Block
+
+        # Extract timestep from the first spike train
+        muap_timestep__ms = float((1 / self._sampling_frequency__Hz) * 1000) * pq.ms
+
+        # Convert spike train block to numpy arrays
+        n_pools = len(spike_train__Block.segments)
+        n_neurons = len(spike_train__Block.segments[0].spiketrains)
+
+        # Extract spike train durations to determine time length
+        first_spiketrain = spike_train__Block.segments[0].spiketrains[0]
+        spiketrain_timestep__ms = first_spiketrain.sampling_period.rescale("ms")
+
+        # Convert spike trains to binary arrays using Elephant, suppressing rounding error logging
+        elephant_utils_logger = logging.getLogger(elephant.utils.__file__)
+        original_level = elephant_utils_logger.level
+        elephant_utils_logger.setLevel(logging.ERROR)
+
+        try:
+            spike_trains = np.array(
+                [
+                    elephant.conversion.BinnedSpikeTrain(
+                        segment.spiketrains, bin_size=spiketrain_timestep__ms
+                    )
+                    .to_array()
+                    .astype(bool)
+                    for segment in spike_train__Block.segments
+                ]
+            )
+        finally:
+            elephant_utils_logger.setLevel(original_level)
 
         # Handle MUs to simulate
         if self._MUs_to_simulate is None:
-            MUs_to_simulate = set(
-                range(len(self._muscle_model.resulting_number_of_innervated_fibers))
-            )
+            MUs_to_simulate = set(range(n_neurons))
         else:
             MUs_to_simulate = set(self._MUs_to_simulate)
 
-        emg_results = []
+        # Create active neuron indices (all neurons are active in each pool for spike train block)
+        active_neuron_indices = [list(range(n_neurons)) for _ in range(n_pools)]
 
-        for array_idx, muap_array in enumerate(self._muaps):
+        block = Block()
+
+        muap_data_list = [
+            np.array([seg.analogsignals[0].magnitude for seg in group.segments])
+            for group in self._muaps__Block.groups
+        ]
+
+        for array_idx, muap_array in enumerate(muap_data_list):
+            emg_group = Group(name=f"ElectrodeArray_{array_idx}")
+            block.groups.append(emg_group)
+
+            muap_array = np.transpose(muap_array, (0, 2, 3, 1))
+
             # Temporal resampling
+            new_muap_time_length = max(
+                1,
+                np.round(
+                    muap_array.shape[3]
+                    / self._sampling_frequency__Hz
+                    * (1 / spiketrain_timestep__ms.rescale("s"))
+                ).astype(int),
+            )
+
             muap_shapes = np.zeros(
                 (
                     muap_array.shape[0],
                     muap_array.shape[1],
                     muap_array.shape[2],
-                    int(
-                        muap_array.shape[3]
-                        / self._sampling_frequency__Hz
-                        * 1
-                        / self._motor_neuron_pool.timestep__ms
-                        * 1000
-                    ),
+                    new_muap_time_length,
                 )
             )
 
@@ -376,28 +431,28 @@ class SurfaceEMG:
                 for row in range(muap_shapes.shape[1]):
                     for col in range(muap_shapes.shape[2]):
                         muap_shapes[muap_nr, row, col] = np.interp(
-                            np.arange(
-                                0,
-                                muap_array.shape[-1] / self._sampling_frequency__Hz,
-                                self._motor_neuron_pool.timestep__ms / 1000,
+                            x=np.arange(
+                                start=0,
+                                stop=muap_array.shape[-1]
+                                / self._sampling_frequency__Hz,
+                                step=spiketrain_timestep__ms.rescale("s").magnitude,
                             ),
-                            np.arange(
-                                0,
-                                muap_array.shape[-1] / self._sampling_frequency__Hz,
-                                1 / self._sampling_frequency__Hz,
+                            xp=np.arange(
+                                start=0,
+                                stop=muap_array.shape[-1]
+                                / self._sampling_frequency__Hz,
+                                step=muap_timestep__ms.rescale("s").magnitude,
                             ),
-                            muap_array[muap_nr, row, col],
+                            fp=muap_array[muap_nr, row, col],
                         )
 
-            n_pools = self._motor_neuron_pool.spike_trains.shape[0]
+            # n_pools already defined above from spike_train_block
             n_rows = muap_shapes.shape[1]
             n_cols = muap_shapes.shape[2]
 
             # Initialize result array
             sample_conv = np.convolve(
-                self._motor_neuron_pool.spike_trains[0, 0],
-                muap_shapes[0, 0, 0],
-                mode="same",
+                spike_trains[0, 0], muap_shapes[0, 0, 0], mode="same"
             )
 
             surface_emg = np.zeros((n_pools, n_rows, n_cols, len(sample_conv)))
@@ -407,18 +462,16 @@ class SurfaceEMG:
             # Perform convolution for each pool using GPU acceleration if available
             if HAS_CUPY:
                 # Use GPU acceleration with CuPy
-                spike_gpu = cp.asarray(self._motor_neuron_pool.spike_trains)
+                spike_gpu = cp.asarray(spike_trains)
                 muap_gpu = cp.asarray(muap_shapes)
                 surface_emg_gpu = cp.zeros((n_pools, n_rows, n_cols, len(sample_conv)))
 
                 for pool_idx in tqdm(
                     range(n_pools),
-                    desc=f"Electrode Array {array_idx + 1}/{len(self._muaps)} Surface EMG (GPU)",
+                    desc=f"Electrode Array {array_idx + 1}/{len(self._muaps__Block.groups)} Surface EMG (GPU)",
                     unit="pools",
                 ):
-                    active_neuron_indices = set(
-                        self._motor_neuron_pool.active_neuron_indices[pool_idx]
-                    )
+                    pool_active_neurons = set(active_neuron_indices[pool_idx])
 
                     for row_idx in range(n_rows):
                         for col_idx in range(n_cols):
@@ -432,7 +485,7 @@ class SurfaceEMG:
                                     )
                                     for i, mu_idx in enumerate(
                                         MUs_to_simulate.intersection(
-                                            active_neuron_indices
+                                            pool_active_neurons
                                         )
                                     )
                                 ]
@@ -449,24 +502,20 @@ class SurfaceEMG:
                 # Fallback to CPU computation with NumPy
                 for pool_idx in tqdm(
                     range(n_pools),
-                    desc=f"Electrode Array {array_idx + 1}/{len(self._muaps)} Surface EMG (CPU)",
+                    desc=f"Electrode Array {array_idx + 1}/{len(self._muaps__Block.groups)} Surface EMG (CPU)",
                     unit="pools",
                 ):
-                    active_neuron_indices = set(
-                        self._motor_neuron_pool.active_neuron_indices[pool_idx]
-                    )
+                    pool_active_neurons = set(active_neuron_indices[pool_idx])
 
                     for row_idx in range(n_rows):
                         for col_idx in range(n_cols):
                             # Process all active MUs
                             convolutions = []
                             for i, mu_idx in enumerate(
-                                MUs_to_simulate.intersection(active_neuron_indices)
+                                MUs_to_simulate.intersection(pool_active_neurons)
                             ):
                                 conv = np.correlate(
-                                    self._motor_neuron_pool.spike_trains[
-                                        pool_idx, mu_idx
-                                    ],
+                                    spike_trains[pool_idx, mu_idx],
                                     muap_shapes[i, row_idx, col_idx],
                                     mode="same",
                                 )
@@ -477,6 +526,7 @@ class SurfaceEMG:
                                     convolutions, axis=0
                                 )
 
+            # Temporal resampling
             surface_emg_resampled = np.zeros(
                 (
                     n_pools,
@@ -484,7 +534,7 @@ class SurfaceEMG:
                     n_cols,
                     int(
                         surface_emg.shape[-1]
-                        / (1 / self._motor_neuron_pool.timestep__ms * 1000)
+                        * spiketrain_timestep__ms.rescale("s").magnitude
                         * self._sampling_frequency__Hz
                     ),
                 )
@@ -493,30 +543,43 @@ class SurfaceEMG:
                 for row_idx in range(n_rows):
                     for col_idx in range(n_cols):
                         surface_emg_resampled[pool_idx, row_idx, col_idx] = np.interp(
-                            np.arange(
-                                0,
-                                surface_emg.shape[-1]
-                                * (self._motor_neuron_pool.timestep__ms / 1000),
-                                1 / self._sampling_frequency__Hz,
+                            x=np.arange(
+                                start=0,
+                                stop=surface_emg.shape[-1]
+                                * spiketrain_timestep__ms.rescale("s").magnitude,
+                                step=1 / self._sampling_frequency__Hz,
                             ),
-                            np.arange(
-                                0,
-                                surface_emg.shape[-1]
-                                * (self._motor_neuron_pool.timestep__ms / 1000),
-                                self._motor_neuron_pool.timestep__ms / 1000,
+                            xp=np.arange(
+                                start=0,
+                                stop=surface_emg.shape[-1]
+                                * spiketrain_timestep__ms.rescale("s").magnitude,
+                                step=spiketrain_timestep__ms.rescale("s").magnitude,
                             ),
-                            surface_emg[pool_idx, row_idx, col_idx],
+                            fp=surface_emg[pool_idx, row_idx, col_idx],
                         )
 
-            emg_results.append(surface_emg_resampled)
+            # Create segments for each motor unit pool within this electrode array group
+            for pool_idx in range(n_pools):
+                segment = Segment(name=f"Pool_{pool_idx}")
+                emg_group.segments.append(segment)
+
+                # Create GridAnalogSignal for this pool's EMG data
+                segment.analogsignals.append(
+                    GridAnalogSignal(
+                        signal=np.transpose(surface_emg_resampled[pool_idx], (2, 0, 1))
+                        * pq.dimensionless,
+                        t_start=0 * pq.ms,
+                        sampling_rate=self._sampling_frequency__Hz * pq.Hz,
+                    )
+                )
 
         # Store results privately
-        self._surface_emg__tensors = emg_results
-        return emg_results
+        self._surface_emg__Block = block
+        return block
 
     def add_noise(
-        self, snr_db: float, noise_type: str = "gaussian"
-    ) -> list[SURFACE_EMG__TENSOR]:
+        self, snr__dB: float, noise_type: str = "gaussian"
+    ) -> SURFACE_EMG__Block:
         """
         Add noise to all electrode arrays.
 
@@ -526,7 +589,7 @@ class SurfaceEMG:
 
         Parameters
         ----------
-        snr_db : float
+        snr__dB : float
             Signal-to-noise ratio in dB. Higher values result in cleaner signals.
             Typical physiological EMG has SNR ranging from 10-40 dB.
         noise_type : str, default="gaussian"
@@ -534,50 +597,69 @@ class SurfaceEMG:
 
         Returns
         -------
-        list[SURFACE_EMG__TENSOR]
-            Noisy EMG signals for each electrode array.
-            Results are stored in the `noisy_surface_emg__tensors` property after execution.
+        SURFACE_EMG__Block
+            Noisy EMG signals for each electrode array as a neo.Block.
+            Results are stored in the `noisy_surface_emg__Block` property after execution.
 
         Raises
         ------
         ValueError
             If surface EMG has not been simulated. Call simulate_surface_emg() first.
         """
-        if self._surface_emg__tensors is None:
+        if self._surface_emg__Block is None:
             raise ValueError(
                 "Surface EMG has not been simulated. Call simulate_surface_emg() first."
             )
 
-        noisy_emg_results = []
+        noisy_block = Block()
 
-        for _, emg_array in enumerate(self._surface_emg__tensors):
-            # Calculate signal power
-            signal_power = np.mean(emg_array**2)
+        for array_idx, emg_group in enumerate(self._surface_emg__Block.groups):
+            noisy_group = Group(name=f"ElectrodeArray_{array_idx}")
+            noisy_block.groups.append(noisy_group)
 
-            # Calculate noise power
-            snr_linear = 10 ** (snr_db / 10)
-            noise_power = signal_power / snr_linear
+            for pool_idx, segment in enumerate(emg_group.segments):
+                noisy_segment = Segment(name=f"Pool_{pool_idx}")
+                noisy_group.segments.append(noisy_segment)
 
-            # Generate noise
-            if noise_type.lower() == "gaussian":
-                noise_std = np.sqrt(noise_power)
-                noise = RANDOM_GENERATOR.normal(
-                    loc=0.0, scale=noise_std, size=emg_array.shape
+                # Get the EMG signal data
+                emg_signal = segment.analogsignals[0]
+                emg_array = emg_signal.magnitude
+
+                # Calculate signal power
+                signal_power = np.mean(emg_array**2)
+
+                # Calculate noise power
+                snr_linear = 10 ** (snr__dB / 10)
+                noise_power = signal_power / snr_linear
+
+                # Generate noise
+                if noise_type.lower() == "gaussian":
+                    noise_std = np.sqrt(noise_power)
+                    noise = RANDOM_GENERATOR.normal(
+                        loc=0.0, scale=noise_std, size=emg_array.shape
+                    )
+                else:
+                    raise ValueError(f"Unsupported noise type: {noise_type}")
+
+                # Add noise
+                noisy_emg = emg_array + noise
+
+                # Create new GridAnalogSignal with noise
+                noisy_segment.analogsignals.append(
+                    GridAnalogSignal(
+                        signal=noisy_emg * emg_signal.units,
+                        t_start=emg_signal.t_start,
+                        sampling_rate=emg_signal.sampling_rate,
+                    )
                 )
-            else:
-                raise ValueError(f"Unsupported noise type: {noise_type}")
-
-            # Add noise
-            noisy_emg = emg_array + noise
-            noisy_emg_results.append(noisy_emg)
 
         # Store results privately
-        self._noisy_surface_emg__tensors = noisy_emg_results
-        return noisy_emg_results
+        self._noisy_surface_emg__Block = noisy_block
+        return noisy_block
 
     # Property accessors for computed results
     @property
-    def muaps(self) -> list[SURFACE_MUAP_SHAPE__TENSOR]:
+    def muaps__Block(self) -> SURFACE_MUAP__Block:
         """
         Motor Unit Action Potential (MUAP) templates for each electrode array.
 
@@ -591,41 +673,41 @@ class SurfaceEMG:
         ValueError
             If MUAP templates have not been computed yet.
         """
-        if self._muaps is None:
+        if self._muaps__Block is None:
             raise ValueError(
                 "MUAP templates not computed. Call simulate_muaps() first."
             )
-        return self._muaps
+        return self._muaps__Block
 
     @property
-    def surface_emg__tensors(self) -> list[SURFACE_EMG__TENSOR]:
+    def surface_emg__Block(self) -> SURFACE_EMG__Block:
         """
-        Surface EMG signals for each electrode array.
+        Surface EMG signals for each electrode array stored in a neo.Block.
 
         Returns
         -------
-        list[SURFACE_EMG__TENSOR]
-            Surface EMG signals for each electrode array.
+        SURFACE_EMG__Block
+            Surface EMG signals for each electrode array stored in a neo.Block.
 
         Raises
         ------
         ValueError
             If surface EMG has not been computed yet.
         """
-        if self._surface_emg__tensors is None:
+        if self._surface_emg__Block is None:
             raise ValueError(
                 "Surface EMG signals not computed. Call simulate_surface_emg() first."
             )
-        return self._surface_emg__tensors
+        return self._surface_emg__Block
 
     @property
-    def noisy_surface_emg__tensors(self) -> list[SURFACE_EMG__TENSOR]:
+    def noisy_surface_emg__Block(self) -> SURFACE_EMG__Block:
         """
         Noisy surface EMG signals for each electrode array.
 
         Returns
         -------
-        list[SURFACE_EMG__TENSOR]
+        SURFACE_EMG__Block
             Noisy surface EMG signals for each electrode array.
 
         Raises
@@ -633,29 +715,29 @@ class SurfaceEMG:
         ValueError
             If noisy surface EMG has not been computed yet.
         """
-        if self._noisy_surface_emg__tensors is None:
+        if self._noisy_surface_emg__Block is None:
             raise ValueError(
                 "Noisy surface EMG signals not computed. Call add_noise() first."
             )
-        return self._noisy_surface_emg__tensors
+        return self._noisy_surface_emg__Block
 
     @property
-    def motor_neuron_pool(self) -> MotorNeuronPool:
+    def spike_train__Block(self) -> SPIKE_TRAIN__Block:
         """
-        Motor neuron pool used for EMG generation.
+        Spike train block used for EMG generation.
 
         Returns
         -------
-        MotorNeuronPool
-            The motor neuron pool used in the simulation.
+        SPIKE_TRAIN__Block
+            The spike train block used in the simulation.
 
         Raises
         ------
         ValueError
-            If motor neuron pool has not been set yet.
+            If spike train block has not been set yet.
         """
-        if self._motor_neuron_pool is None:
+        if self._spike_train__Block is None:
             raise ValueError(
-                "Motor neuron pool not set. Call simulate_surface_emg() first."
+                "Spike train block not set. Call simulate_surface_emg() first."
             )
-        return self._motor_neuron_pool
+        return self._spike_train__Block

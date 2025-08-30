@@ -1,14 +1,21 @@
+import logging
 from typing import Optional
 
+import elephant
+import elephant.utils
 import numpy as np
+import quantities as pq
+from neo import AnalogSignal
 from tqdm import tqdm
 
+from myogen.utils.decorators import beartowertype
 from myogen.utils.types import (
     RECRUITMENT_THRESHOLDS__ARRAY,
-    SPIKE_TRAIN__MATRIX,
-    beartowertype,
+    FORCE__AnalogSignal,
+    SPIKE_TRAIN__Block,
 )
-from .force_utils import spikes2sawtooth, sawtooth2ipi, get_gain
+
+from .force_utils import get_gain, sawtooth2ipi, spikes2sawtooth
 
 
 @beartowertype
@@ -224,28 +231,29 @@ class ForceModel:
             )
         ]
 
-    def generate_force(self, spike_train__matrix: SPIKE_TRAIN__MATRIX) -> np.ndarray:
+    def generate_force(
+        self, spike_train__Block: SPIKE_TRAIN__Block
+    ) -> FORCE__AnalogSignal:
         """
         Generate force output from motor unit spike trains using the Fuglevand model.
 
         This method simulates muscle force by converting spike trains into force output
         through individual motor unit twitches with nonlinear gain modulation based on
         discharge rate. Each motor unit contributes to the total force according to its
-        twitch properties and firing pattern.
+        twitch properties and firing pattern. The output is resampled to match the
+        recording_frequency__Hz parameter.
 
         Parameters
         ----------
-        spike_train__matrix : SPIKE_TRAIN__MATRIX
-            Spike train matrix with shape (n_pools, n_neurons, n_time_points).
-            Binary array where 1 indicates a spike occurrence.
-            The number of neurons (axis 1) must match the number of recruitment thresholds.
+        spike_train__Block : SPIKE_TRAIN__Block
+            Spike train block containing spike train data for multiple motor neuron pools.
 
         Returns
         -------
-        np.ndarray
-            Force output array with shape (n_pools, n_time_points).
-            Force values in arbitrary units representing muscle force over time.
-            Each row corresponds to one motor neuron pool's force response.
+        FORCE__AnalogSignal
+            Force output neo.AnalogSignal representing muscle force over time.
+            Each channel corresponds to one motor neuron pool's force response.
+            Sampling rate matches the recording_frequency__Hz parameter.
 
         Raises
         ------
@@ -260,16 +268,8 @@ class ForceModel:
         2. Calculate nonlinear gain based on discharge rates
         3. Sum weighted twitch responses for each spike
         4. Apply gain modulation to final force output
+        5. Resample output to match recording_frequency__Hz
         """
-        # Validate input dimensions
-        if spike_train__matrix.shape[1] != self._number_of_neurons:
-            raise ValueError(
-                f"Spike train matrix has {spike_train__matrix.shape[1]} neurons, "
-                f"but force model was initialized with {self._number_of_neurons} motor units. "
-                "The number of neurons in the spike train matrix must match the number of recruitment thresholds."
-            )
-
-        # Check that twitch parameters are available
         if self._twitch_list is None:
             raise ValueError(
                 "Twitch parameters not available. "
@@ -277,13 +277,64 @@ class ForceModel:
                 "Please reinitialize the ForceModel."
             )
 
-        return np.array(
-            [self._generate_force(spike_train.T) for spike_train in spike_train__matrix]
+        # Extract timing information from spike trains
+        spiketrain_timestep__ms = float(
+            spike_train__Block.segments[0]
+            .spiketrains[0]
+            .sampling_period.rescale("ms")
+            .magnitude
         )
 
-    def _generate_force(self, spikes: np.ndarray, prefix: str = "") -> np.ndarray:
-        """Generate force offline from spike trains."""
+        forces = []
+        for i, segment in enumerate(spike_train__Block.segments):
+            if len(segment.spiketrains) != self._number_of_neurons:
+                raise ValueError(
+                    f"MU pool {i} has {len(segment.spiketrains)} neurons, "
+                    f"but force model was initialized with {self._number_of_neurons} motor units. "
+                    "The number of neurons in the spike train neo.Block must match the number of recruitment thresholds."
+                )
+
+            elephant_utils_logger = logging.getLogger(elephant.utils.__file__)
+            original_level = elephant_utils_logger.level
+            elephant_utils_logger.setLevel(logging.ERROR)
+
+            try:
+                spike_array = (
+                    elephant.conversion.BinnedSpikeTrain(
+                        segment.spiketrains,
+                        bin_size=segment.spiketrains[0].sampling_period,
+                        t_start=segment.t_start,
+                        t_stop=segment.t_stop,
+                    )
+                    .to_array()
+                    .astype(bool)
+                    .T
+                )
+
+                # Generate force with resampling handled internally
+                force_output = self._generate_force(
+                    spike_array, spiketrain_timestep__ms, prefix=f"Pool {i + 1}"
+                )
+                forces.append(force_output)
+
+            finally:
+                elephant_utils_logger.setLevel(original_level)
+
+        return AnalogSignal(
+            np.stack(forces, axis=-1) * pq.dimensionless,
+            t_start=spike_train__Block.segments[0].t_start,
+            sampling_rate=self._recording_frequency__Hz * pq.Hz,
+        )
+
+    def _generate_force(
+        self, spikes: np.ndarray, spiketrain_timestep__ms: float, prefix: str = ""
+    ) -> np.ndarray:
+        """Generate force offline from spike trains with resampling to recording frequency."""
         L = spikes.shape[0]
+
+        # Calculate target length for resampling to recording frequency
+        spiketrain_timestep__s = spiketrain_timestep__ms / 1000.0
+        force_timestep__s = 1.0 / self._recording_frequency__Hz
 
         # IPI signal generation out of spikes signal (for gain nonlinearity)
         _, ipi = sawtooth2ipi(
@@ -296,18 +347,42 @@ class ForceModel:
         for n in range(self._number_of_neurons):
             gain[:, n] = get_gain(ipi[:, n], self._contraction_times__samples[n])
 
-        # Generate force
+        resampled_twitches = []
+        for force_twitch in self._twitch_list:
+            resampled_twitches.append(
+                np.interp(
+                    x=np.arange(
+                        0,
+                        force_twitch.shape[0] * force_timestep__s,
+                        spiketrain_timestep__s,
+                    ),
+                    xp=np.arange(
+                        0, force_twitch.shape[0] * force_timestep__s, force_timestep__s
+                    ),
+                    fp=force_twitch,
+                )
+            )
+
+        # Generate force at spike train sampling rate
         force = np.zeros(L)
         for n in tqdm(
-            range(self._number_of_neurons), desc=f"{prefix} Twitch trains are generated"
+            range(self._number_of_neurons),
+            desc=f"{prefix} Twitch trains are generated",
+            unit="MU",
         ):
             for t in range(L):
                 if spikes[t, n]:
-                    twitch_to_add = self._twitch_list[n]
+                    twitch_to_add = resampled_twitches[n]
                     to_take = min(len(twitch_to_add), L - t)
                     force[t : t + to_take] += gain[t, n] * twitch_to_add[:to_take]
 
-        return force
+        return np.interp(
+            x=np.arange(0, force.shape[0] * spiketrain_timestep__s, force_timestep__s),
+            xp=np.arange(
+                0, force.shape[0] * spiketrain_timestep__s, spiketrain_timestep__s
+            ),
+            fp=force,
+        )
 
     # Property accessors for computed results
     @property

@@ -46,7 +46,7 @@ from scipy.special import iv as In
 from scipy.special import jv as Jn
 from scipy.special import kv as Kn
 
-from myogen.utils.types import beartowertype
+from myogen.utils.decorators import beartowertype
 
 try:
     import cupy as cp

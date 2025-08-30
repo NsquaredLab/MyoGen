@@ -11,7 +11,8 @@ from sklearn.neighbors import NearestNeighbors
 from tqdm import tqdm
 
 from myogen import RANDOM_GENERATOR
-from myogen.utils.types import beartowertype, RECRUITMENT_THRESHOLDS__ARRAY
+from myogen.utils.types import RECRUITMENT_THRESHOLDS__ARRAY
+from myogen.utils.decorators import beartowertype
 
 
 def _perform_fast_marching(
