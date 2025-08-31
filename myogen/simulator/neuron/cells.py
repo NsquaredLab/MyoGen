@@ -13,9 +13,10 @@ from myogen.simulator.neuron._cython._poisson_process_generator import (
 class _Cell:
     _gid__iterator = itertools.count(0)
 
-    def __init__(self, class_ID: int):
+    def __init__(self, class_ID: int, pool_ID: int | None = None):
         self.global_ID = next(self._gid__iterator)
         self.class_ID = class_ID
+        self.pool_ID = pool_ID
 
         self._create_sections()
         self._build_topology()
@@ -27,7 +28,7 @@ class _Cell:
         self.synlist = []
 
     def __repr__(self) -> str:
-        return f"{self.__class__.__name__} [global ID: {self.global_ID}, class ID: {self.class_ID}]"
+        return f"{self.__class__.__name__} [global ID: {self.global_ID}, class ID: {self.class_ID}, pool ID: {self.pool_ID}]"
 
     def _create_sections(self):
         pass
@@ -101,8 +102,10 @@ class _Cell:
 class INgII(_Cell):
     _ids2 = itertools.count(0)
 
-    def __init__(self, class_ID: Optional[int] = None):
-        super().__init__(class_ID if class_ID is not None else next(self._ids2))
+    def __init__(self, class_ID: Optional[int] = None, pool_ID: int | None = None):
+        super().__init__(
+            class_ID if class_ID is not None else next(self._ids2), pool_ID
+        )
         self.create_synapses(self.soma)
 
     def _create_sections(self):
@@ -147,17 +150,17 @@ class INgII(_Cell):
 class INgIb(INgII):
     _ids2 = itertools.count(0)
 
-    def __init__(self):
-        super().__init__(next(self._ids2))
+    def __init__(self, pool_ID: int | None = None):
+        super().__init__(next(self._ids2), pool_ID)
 
 
 # AFFERENTS AND DESCENDING TRACTS
 class DD(_Cell, _PoissonProcessGenerator__Cython):
     _ids2 = itertools.count(0)
 
-    def __init__(self, N, dt):
+    def __init__(self, N, dt, pool_ID: int | None = None):
         self.ns = h.DUMMY()  # Dummy cell
-        _Cell.__init__(self, next(self._ids2))
+        _Cell.__init__(self, next(self._ids2), pool_ID)
         _PoissonProcessGenerator__Cython.__init__(
             self, SEED + (self.class_ID + 1) * (self.global_ID + 1), N, dt
         )
@@ -172,13 +175,23 @@ class DD(_Cell, _PoissonProcessGenerator__Cython):
 class AffIa(_Cell, _PoissonProcessGenerator__Cython):
     _ids2 = itertools.count(0)
 
-    def __init__(self, RT, N, dt, initN=0, class_ID: Optional[int] = None):
+    def __init__(
+        self,
+        RT,
+        N,
+        dt,
+        initN=0,
+        class_ID: Optional[int] = None,
+        pool_ID: int | None = None,
+    ):
         self.ns = h.DUMMY()  # Dummy cell
 
         self.RT = RT  # Recruitment Threshold
         self.IFR = RANDOM_GENERATOR.normal(5, 2.5)  # Variability
 
-        _Cell.__init__(self, class_ID if class_ID is not None else next(self._ids2))
+        _Cell.__init__(
+            self, class_ID if class_ID is not None else next(self._ids2), pool_ID
+        )
         _PoissonProcessGenerator__Cython.__init__(
             self,
             seed=SEED + (self.class_ID + 1) * (self.global_ID + 1),
@@ -195,15 +208,19 @@ class AffIa(_Cell, _PoissonProcessGenerator__Cython):
 class AffII(AffIa):
     _ids2 = itertools.count(0)
 
-    def __init__(self, RT, N, *args, **kwargs):
-        super().__init__(RT, N, class_ID=next(self._ids2), *args, **kwargs)
+    def __init__(self, RT, N, pool_ID: int | None = None, *args, **kwargs):
+        super().__init__(
+            RT, N, class_ID=next(self._ids2), pool_ID=pool_ID, *args, **kwargs
+        )
 
 
 class AffIb(AffIa):
     _ids2 = itertools.count(0)
 
-    def __init__(self, RT, N, *args, **kwargs):
-        super().__init__(RT, N, class_ID=next(self._ids2), *args, **kwargs)
+    def __init__(self, RT, N, pool_ID: int | None = None, *args, **kwargs):
+        super().__init__(
+            RT, N, class_ID=next(self._ids2), pool_ID=pool_ID, *args, **kwargs
+        )
 
 
 # MOTORNEURON
@@ -219,6 +236,7 @@ class AlphaMN(_Cell):
         n_dend=4,  # Number of dendrites
         model="Powers2017",
         rid=None,
+        pool_ID: int | None = None,
         *args,
         **kwargs,
     ):
@@ -230,7 +248,7 @@ class AlphaMN(_Cell):
         self.nseg = nseg
         self.mode = mode
         self.model = model
-        super().__init__(class_ID=self.rid, *args, **kwargs)
+        super().__init__(class_ID=self.rid, pool_ID=pool_ID, *args, **kwargs)
 
         for d in self.dend:
             self.create_synapses(d)

@@ -5,11 +5,10 @@ This module provides network connectivity functionality for MyoGen's neuron mode
 integrating with both the legacy NEURON-based populations and the modern MyoGen API.
 """
 
-from math import pi, sqrt
+import warnings
 from typing import Callable, Optional
 
 from neuron import h
-from scipy.constants import R
 
 from myogen import RANDOM_GENERATOR
 from myogen.simulator.neuron.pops import (
@@ -18,7 +17,9 @@ from myogen.simulator.neuron.pops import (
     AlphaMN__Pool,
     DescendingDrive__Pool,
     GII__Pool,
+    _Pool,
 )
+from myogen.utils.decorators import beartowertype
 
 # Network Constants
 MOTOR_NEURON_CONNECTION = "aMN->Muscle"
@@ -62,7 +63,7 @@ def _setup_muscle_activation(
 
         def muscle_activation_wrapper():
             return muscle_callback(
-                source_neuron.class_ID, muscle, 1 + source_neuron.axonDelay
+                source_neuron.pool_ID, muscle, 1 + source_neuron.axonDelay
             )
 
         netcon.record(muscle_activation_wrapper)
@@ -95,7 +96,7 @@ def _apply_default_synaptic_params(netcon: h.NetCon, source_neuron):
         )  # 1ms synaptic + axon delay
 
 
-def create_netcon(
+def _create_netcon(
     source_neuron,
     target_neuron,
     muscle_callback=None,
@@ -193,7 +194,7 @@ def _connect_population_to_population(
         for target_neuron in populations[target_pop]:
             if RANDOM_GENERATOR.uniform() < connection_probability:
                 target_synapse = RANDOM_GENERATOR.choice(target_neuron.synlist)
-                netcon = create_netcon(
+                netcon = _create_netcon(
                     source_neuron,
                     target_synapse,
                     muscle_callback=kwargs.get("muscle_callback"),
@@ -223,7 +224,7 @@ def _connect_population_to_external(
     connections = []
     for source_neuron in populations[source_pop]:
         external_target = None
-        netcon = create_netcon(
+        netcon = _create_netcon(
             source_neuron,
             external_target,
             muscle_callback=kwargs.get("muscle_callback"),
@@ -252,12 +253,20 @@ def _connect_external_to_population(
     connections = []
     external_source = None
     for target_neuron in populations[target_pop]:
-        netcon = create_netcon(external_source, target_neuron)
+        # Note: For external connections, we don't record the external source spikes,
+        # but we can still record target neuron spikes if they're the source in other connections
+        netcon = _create_netcon(
+            external_source,
+            target_neuron,
+            id_vector=kwargs.get("id_vector"),
+            spike_vector=kwargs.get("spike_vector"),
+            neuron_id=None,  # External source has no ID to record
+        )
         connections.append(netcon)
     return connections
 
 
-def connect_populations(
+def _connect_populations(
     populations: dict,
     source_pop: Optional[str],
     target_pop: Optional[str],
@@ -447,7 +456,7 @@ def _format_connection_info(netcon: h.NetCon, connection_index: int) -> str:
     return "NC[{}]: {} -> {}".format(connection_index, source_name, target_name)
 
 
-def print_network_connections(network_connections):
+def _print_network_connections(network_connections):
     """
     Print a human-readable summary of all network connections.
 
@@ -559,7 +568,7 @@ def _setup_spike_vectors(connection_config: dict, id_vector, spike_vector) -> tu
     return None, None
 
 
-def create_network(
+def _create_network(
     populations: dict[str, list],
     connections_config: dict,
     id_vector=None,
@@ -667,7 +676,7 @@ def create_network(
         )
 
         # Create connections for this connection group
-        network_connections_dict[connection_name] = connect_populations(
+        network_connections_dict[connection_name] = _connect_populations(
             populations=populations,
             source_pop=connection_config["source"],
             target_pop=connection_config["target"],
@@ -684,6 +693,357 @@ def create_network(
     return network_connections_dict
 
 
+@beartowertype
+class Network:
+    """
+    Modern neural network builder with intuitive connection API.
+
+    Provides a clean, discoverable interface for creating neural network connections
+    while maintaining compatibility with existing NEURON-based infrastructure.
+    """
+
+    def __init__(
+        self, populations: dict[str, _Pool], spike_recording: Optional[dict] = None
+    ):
+        """
+        Initialize network with neural populations.
+
+        Parameters
+        ----------
+        populations : dict[str, Union[list, Any]]
+            Dictionary mapping population names to Pool objects or lists of neuron objects.
+            Pool objects will have .neurons extracted, lists used directly.
+            Example: {"alpha_mn": alphaMN_pool, "ia": ia_pool}
+        spike_recording : dict, optional
+            Dictionary containing 'idvec' and 'spkvec' for spike recording.
+            Example: {"idvec": {"aMN": h.Vector()}, "spkvec": {"aMN": h.Vector()}}
+        """
+        self.populations: dict[str, _Pool] = populations
+        self.connections = []
+        self._netcons_by_connection: dict[tuple[str, str], list[h.NetCon]] = {}
+        self.spike_recording = spike_recording
+
+    def setup_spike_recording(self):
+        """
+        Set up spike recording NetCons for all neurons in all populations.
+
+        This creates additional NetCons specifically for recording spikes from neurons
+        that might not have outgoing connections but still need spike recording for analysis.
+        """
+        if not self.spike_recording:
+            return
+
+        from neuron import h
+
+        for pop_name, population in self.populations.items():
+            # Skip non-neuron populations (like gMN which is a config dict)
+            if not hasattr(population, "__iter__") or isinstance(population, dict):
+                continue
+
+            # Get spike recording vectors for this population
+            id_vector = self.spike_recording.get("idvec", {}).get(pop_name)
+            spike_vector = self.spike_recording.get("spkvec", {}).get(pop_name)
+
+            if id_vector is not None and spike_vector is not None:
+                # Create NetCons for spike recording (no target, just recording)
+                recording_netcons = []
+                for neuron in population:
+                    # Skip if this is not actually a neuron object
+                    if not hasattr(neuron, "soma") and not hasattr(neuron, "ns"):
+                        continue
+
+                    # Create a NetCon from the neuron to None (just for recording)
+                    if hasattr(neuron, "soma"):
+                        # Compartmental neuron
+                        nc = h.NetCon(neuron.soma(0.5)._ref_v, None, sec=neuron.soma)
+                    else:
+                        # Point process neuron
+                        nc = h.NetCon(neuron.ns, None)
+
+                    # Set up spike recording
+                    nc.threshold = -10.0  # Spike detection threshold
+                    nc.record(spike_vector, id_vector, neuron.global_ID)
+                    recording_netcons.append(nc)
+
+                # Store these recording NetCons separately
+                connection_key = (pop_name, "spike_recording")
+                self._netcons_by_connection[connection_key] = recording_netcons
+
+    def connect(
+        self,
+        source: str,
+        target: str,
+        probability: float = 1.0,
+        weight__μS: float = 0.6,
+        delay__ms: float = 1.0,
+        threshold__mV: float = -10.0,
+    ) -> list:
+        """
+        Connect two neural populations with specified parameters.
+
+        Parameters
+        ----------
+        source : str
+            Name of source population (must exist in populations dict).
+        target : str
+            Name of target population (must exist in populations dict).
+        probability : float, optional
+            Connection probability between 0.0 and 1.0, by default 1.0.
+            Each source-target neuron pair connects with this probability.
+        weight__μS : float, optional
+            Synaptic weight in microsiemens, by default 0.6.
+        delay__ms : float, optional
+            Synaptic delay in milliseconds, by default 1.0.
+        threshold__mV : float, optional
+            Spike threshold in millivolts, by default -10.0.
+
+        Returns
+        -------
+        list[h.NetCon]
+            List of created NEURON NetCon objects for this connection group.
+
+        Raises
+        ------
+        ValueError
+            If source or target populations don't exist, or probability out of range.
+        """
+        # Validation
+        if source not in self.populations:
+            raise ValueError(f"Source population '{source}' not found")
+        if target not in self.populations:
+            raise ValueError(f"Target population '{target}' not found")
+        if not 0.0 <= probability <= 1.0:
+            raise ValueError(f"Probability must be 0.0-1.0, got {probability}")
+
+        # Extract spike recording vectors for source population
+        id_vector = None
+        spike_vector = None
+        if self.spike_recording:
+            id_vector = self.spike_recording.get("idvec", {}).get(source)
+            spike_vector = self.spike_recording.get("spkvec", {}).get(source)
+
+        # Create connections using existing infrastructure
+        netcons = _connect_populations(
+            populations=self.populations,
+            source_pop=source,
+            target_pop=target,
+            connection_probability=probability,
+            synaptic_weight=weight__μS,
+            spike_threshold=threshold__mV,
+            id_vector=id_vector,
+            spike_vector=spike_vector,
+        )
+
+        self.connections.append(
+            {
+                "type": "neural",
+                "source": source,
+                "target": target,
+                "probability": probability,
+                "weight__μS": weight__μS,
+                "delay__ms": delay__ms,
+                "threshold__mV": threshold__mV,
+            }
+        )
+        self._netcons_by_connection[(source, target)] = netcons
+
+        return netcons
+
+    def connect_to_muscle(
+        self,
+        source: str,
+        muscle,
+        activation_callback: Callable,
+        weight__μS: float = 1.0,
+        threshold__mV: float = -10.0,
+    ) -> list:
+        """
+        Connect a neural population to a muscle with activation callback.
+
+        Parameters
+        ----------
+        source : str
+            Name of motor neuron population.
+        muscle : object
+            Muscle object for force generation.
+        activation_callback : Callable
+            Function called when motor neurons fire.
+            Expected signature: callback(neuron_id, muscle, delay_time)
+        weight__μS : float, optional
+            Synaptic weight in microsiemens, by default 1.0.
+        threshold__mV : float, optional
+            Spike threshold in millivolts, by default -10.0.
+
+        Returns
+        -------
+        list[h.NetCon]
+            List of motor neuron to muscle NetCon objects.
+        """
+        if source not in self.populations:
+            raise ValueError(f"Source population '{source}' not found")
+
+        # Extract spike recording vectors for source population
+        id_vector = None
+        spike_vector = None
+        if self.spike_recording:
+            id_vector = self.spike_recording.get("idvec", {}).get(source)
+            spike_vector = self.spike_recording.get("spkvec", {}).get(source)
+
+        # Create muscle connections using existing infrastructure
+        netcons = _connect_populations(
+            populations=self.populations,
+            source_pop=source,
+            target_pop=None,  # External target
+            connection_probability=1.0,  # All motor neurons connect
+            muscle_callback=activation_callback,
+            muscle=muscle,
+            synaptic_weight=weight__μS,
+            spike_threshold=threshold__mV,
+            id_vector=id_vector,
+            spike_vector=spike_vector,
+        )
+
+        self.connections.append(
+            {
+                "type": "muscle",
+                "source": source,
+                "target": "muscle",
+                "muscle": muscle,
+                "callback": activation_callback,
+                "weight__μS": weight__μS,
+                "threshold__mV": threshold__mV,
+            }
+        )
+        self._netcons_by_connection[(source, "muscle")] = netcons
+
+        return netcons
+
+    def connect_from_external(
+        self,
+        source: str,
+        target: str,
+        weight__μS: float = 0.8,
+        delay__ms: float = 1.0,
+        threshold__mV: float = -10.0,
+    ) -> list:
+        """
+        Connect external input source to a neural population.
+
+        Parameters
+        ----------
+        source : str
+            Name/label for external input source (e.g., "spindle", "cortical_drive").
+        target : str
+            Name of target neural population.
+        weight__μS : float, optional
+            Synaptic weight in microsiemens, by default 0.8.
+        delay__ms : float, optional
+            Synaptic delay in milliseconds, by default 1.0.
+        threshold__mV : float, optional
+            Spike threshold in millivolts, by default -10.0.
+
+        Returns
+        -------
+        list[h.NetCon]
+            List of external to neural NetCon objects.
+        """
+        if target not in self.populations:
+            raise ValueError(f"Target population '{target}' not found")
+
+        # Create external NetCons manually to maintain individual access
+        from neuron import h
+
+        netcons = []
+        target_neurons = self.populations[target]
+
+        for target_neuron in target_neurons:
+            # Create NetCon from None (external source) to target neuron
+            nc = h.NetCon(None, target_neuron.ns)
+            nc.weight[0] = weight__μS
+            nc.delay = delay__ms
+            nc.threshold = threshold__mV
+            netcons.append(nc)
+
+        self.connections.append(
+            {
+                "type": "external",
+                "source": source,
+                "target": target,
+                "weight__μS": weight__μS,
+                "delay__ms": delay__ms,
+                "threshold__mV": threshold__mV,
+            }
+        )
+        self._netcons_by_connection[(source, target)] = netcons
+
+        return netcons
+
+    def get_connections(self) -> list[dict]:
+        """Get list of all connection specifications."""
+        return self.connections.copy()
+
+    def get_netcons(
+        self, source: Optional[str] = None, target: Optional[str] = None
+    ) -> list:
+        """
+        Get NEURON NetCon objects with optional filtering by source and target.
+
+        Parameters
+        ----------
+        source : str, optional
+            Filter by source population/input name. If None, returns NetCons from all sources.
+        target : str, optional
+            Filter by target population name. If None, returns NetCons to all targets.
+
+        Returns
+        -------
+        list[h.NetCon]
+            List of matching NetCon objects.
+        """
+        if source is None and target is None:
+            all_netcons = []
+            for netcon_list in self._netcons_by_connection.values():
+                all_netcons.extend(netcon_list)
+            return all_netcons
+
+        matching_netcons = []
+
+        for (
+            conn_source,
+            conn_target,
+        ), netcon_list in self._netcons_by_connection.items():
+            source_matches = source is None or conn_source == source
+            target_matches = target is None or conn_target == target
+
+            if source_matches and target_matches:
+                matching_netcons.extend(netcon_list)
+
+        return matching_netcons
+
+    def print_network(self):
+        """Print a summary of network structure."""
+        print(f"Network with {len(self.populations)} populations:")
+        for name, neurons in self.populations.items():
+            print(f"  {name}: {len(neurons)} neurons")
+
+        print(f"\nConnections ({len(self.connections)}):")
+        for i, conn in enumerate(self.connections):
+            if conn["type"] == "neural":
+                print(
+                    f"  {i + 1}. {conn['source']} → {conn['target']} "
+                    f"(p={conn['probability']}, w={conn['weight__μS']}μS)"
+                )
+            elif conn["type"] == "muscle":
+                print(
+                    f"  {i + 1}. {conn['source']} → muscle (w={conn['weight__μS']}μS)"
+                )
+            elif conn["type"] == "external":
+                print(
+                    f"  {i + 1}. {conn['source']} → {conn['target']} "
+                    f"(w={conn['weight__μS']}μS)"
+                )
+
+
 if __name__ == "__main__":
     from myogen import setup_myogen
 
@@ -695,92 +1055,17 @@ if __name__ == "__main__":
         n=2, poisson_random_process_order=16, timestep__ms=timestep__ms
     )
 
-    # Alpha motor neuron parameters
     n_type1 = 2
     n_type2 = 2
     n_alpha_mn = n_type1 + n_type2
 
-    alphaMN__pool = AlphaMN__Pool(
-        n=n_alpha_mn,
-        model="Powers2017",
-        mode="active",
-        axon_velocities=(44, 53),
-        axon_length=0.9,  # cm
-        gamma=1.0,
-        # Soma parameters
-        soma_length_range=(2952, 3665, 0.3),
-        soma_diameter_range=(22, 30, 0.3),
-        soma_capacitance_range=(1.35546, 1.87853, 0.3),
-        soma_passive_conductance_range=(8.11e-5, 3.77e-4, 0.3),
-        soma_passive_reversal_range=(-71, -72, 0.3),
-        soma_na3rp_conductance_range=(0.01, 0.022, 0.3),
-        soma_naps_conductance_range=(2.6e-5, 2e-5, 0.3),
-        soma_kdrrl_conductance_range=(0.015, 0.02, 0.3),
-        soma_mahp_ca_conductance_range=(6.4e-6, 1.015e-5, 0.075),
-        soma_mahp_k_conductance_range=(4.5e-4, 6e-4, 0.3),
-        soma_mahp_tau_range=(90, 30, 0.3),
-        soma_gh_conductance_range=(3e-5, 2.3e-4, 0.3),
-        # Dendrite parameters
-        dendrite_length_range=(1794.13, 2226.91, 0.3),
-        dendrite_diameter_range=(8.73071, 11.9055, 0.3),
-        dendrite_passive_conductance_range=(7.93e-5, 1.75e-4, 0.3),
-        dendrite_passive_reversal_range=(-71, -72, 0.3),
-        dendrite_resistance_range=(51.038, 40.755, 0.3),
-        dendrite_capacitance_range=(0.867781, 0.880407, 0.3),
-        dendrite_gh_conductance_range=(3e-5, 2.3e-4, 0.3),
-        # Ca channel parameters - 4 dendrites
-        dendrite_ca_conductance_ranges=(
-            (8.5e-5, 1.18e-4, 0.3),
-            (9.5e-5, 1.28e-4, 0.3),
-            (1e-4, 1.38e-4, 0.3),
-            (1.15e-4, 1.53e-4, 0.3),
-        ),
-        dendrite_ca_theta_m_range=(-42, -39, 0.3),
-        dendrite_ca_theta_h_range=(10, -10, 0.3),
-    )
+    alphaMN__pool = AlphaMN__Pool(n=n_alpha_mn)
 
-    ia_pool = AffIa__Pool(
-        n=2,
-        poisson_random_process_order=25,
-        recruitment_thresholds=(0, 150),
-        axon_velocities=(62, 67),
-        axon_length__m=1.0,  # cm
-        timestep__ms=timestep__ms,
-    )
+    ia_pool = AffIa__Pool(n=2, timestep__ms=timestep__ms)
 
-    ii_pool = AffII__Pool(
-        n=2,
-        poisson_random_process_order=25,
-        recruitment_thresholds=(0, 50),
-        axon_velocities=(30, 35),
-        axon_length__m=1.0,  # cm
-        timestep__ms=timestep__ms,
-    )
+    ii_pool = AffII__Pool(n=2, timestep__ms=timestep__ms)
 
-    def gIIL(i):
-        Amu = 81390 + 3113  # [um^2] Bui et al.(2003) IaIn data.
-        Aci = 1.96 * (891.5 + 46.141) / sqrt(8)
-        A = [Amu - Aci, Amu + Aci]
-        D = [sqrt(A[0] / pi), sqrt(A[1] / pi)]
-        return D[i]
-
-    gii_pool = GII__Pool(
-        n=2,
-        soma_length_range__μm=(gIIL(0), gIIL(1)),
-        soma_diameter_range=(gIIL(0), gIIL(1)),
-        passive_conductance_range=(3e-5, 7e-5),
-        na3rp_conductance_range=(0.003, 0.01),
-        kdrrl_conductance_range=(0.015, 0.015),
-        mahp_ca_conductance_range=(3e-6, 3e-6),
-        mahp_k_conductance_range=(5e-4, 5e-4),
-        mahp_tau_range=(60, 70),
-        gh_conductance_range=(2.5e-5, 2.5e-5),
-        axon_length=0.5,  # cm
-        axon_velocities=(10, 10),
-    )
-
-    # Interneuron parameters
-    group_ii_interneuron_params = {"n": 2}  # Number of group II interneurons
+    gii_pool = GII__Pool(n=2)
 
     # Population parameter dictionary
     population_params = {
@@ -849,7 +1134,7 @@ if __name__ == "__main__":
     spike_id_vector = h.Vector()
     spike_time_vector = h.Vector()
 
-    network_connections_dict = create_network(
+    network_connections_dict = _create_network(
         populations=population_params,
         connections_config=connection_params,
         id_vector=spike_id_vector,
@@ -859,4 +1144,23 @@ if __name__ == "__main__":
         muscle=None,
     )
 
-    print_network_connections(network_connections_dict)
+    _print_network_connections(network_connections_dict)
+
+    # Example using new Network class
+    print("\n" + "=" * 50)
+    print("Testing new Network class:")
+    print("=" * 50)
+
+    # Create network with same populations
+    network = Network(population_params)
+
+    # Add connections with clean API using unit conventions
+    network.connect("Ia", "aMN", probability=0.9, weight__μS=0.6)
+    network.connect("gII", "aMN", probability=0.9, weight__μS=0.3)
+    network.connect_to_muscle(
+        "aMN", muscle=None, activation_callback=foo, weight__μS=1.0
+    )
+    network.connect_from_external("spindle", "Ia", weight__μS=0.8)
+
+    # Print network summary
+    network.print_network()

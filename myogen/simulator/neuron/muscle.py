@@ -40,6 +40,9 @@ class HillModel:
     initial_muscle_length__L0 : float, optional
         Initial muscle length normalized to L0. If -1, automatically calculated
         from joint angle. Must be between 0.7 and 1.3 if specified.
+    muscle_role : str, optional
+        Muscle role for antagonist pairs ("flexor" or "extensor"), by default "flexor".
+        Used for joint dynamics calculations and result organization.
     """
 
     @beartowertype
@@ -52,6 +55,7 @@ class HillModel:
         n_motor_units_type2: int,
         initial_joint_angle__deg: float,
         initial_muscle_length__L0: float = -1.0,
+        muscle_role: str = "flexor",
     ):
         # Store original parameters (immutable)
         self.simulation_time__ms = simulation_time__ms
@@ -61,6 +65,7 @@ class HillModel:
         self.n_motor_units_type2 = n_motor_units_type2
         self.initial_joint_angle__deg = initial_joint_angle__deg
         self.initial_muscle_length__L0 = initial_muscle_length__L0
+        self.muscle_role = muscle_role
 
         # Private working copies for internal use
         self._simulation_time__ms = simulation_time__ms
@@ -70,6 +75,7 @@ class HillModel:
         self._n_motor_units_type2 = n_motor_units_type2
         self._initial_joint_angle__deg = initial_joint_angle__deg
         self._initial_muscle_length__L0 = initial_muscle_length__L0
+        self._muscle_role = muscle_role
 
         # Validate inputs
         self._validate_parameters()
@@ -100,6 +106,11 @@ class HillModel:
         ):
             raise ValueError(
                 "initial_muscle_length__L0 must be -1 or between 0.7 and 1.3"
+            )
+            
+        if self._muscle_role not in ["flexor", "extensor"]:
+            raise ValueError(
+                "muscle_role must be 'flexor' or 'extensor'"
             )
 
     def _create_hill_model(self) -> _HillMuscleModel__Cython:
@@ -179,6 +190,13 @@ class HillModel:
         return np.asarray(self._hill_model.torque)
 
     @property
+    def signed_muscle_torque(self) -> np.ndarray:
+        """Get muscle torque with correct sign for joint dynamics (F0*m)."""
+        torque = np.asarray(self._hill_model.torque)
+        # Extensor muscles produce negative torque (opposing flexion)
+        return -torque if self._muscle_role == "extensor" else torque
+
+    @property
     def type1_activation(self) -> np.ndarray:
         """Get Type I motor unit activation time series."""
         return np.asarray(self._hill_model.F1)
@@ -212,6 +230,7 @@ class HillModel:
         """String representation of the Hill muscle model."""
         return (
             f"HillMuscleModel("
+            f"role={self.muscle_role}, "
             f"t_sim={self.simulation_time__ms}ms, "
             f"dt={self.time_step__ms}ms, "
             f"n_MU_I={self.n_motor_units_type1}, "

@@ -1,4 +1,6 @@
+import enum
 from functools import partial
+from math import e
 from typing import Optional, Union
 
 import numpy as np
@@ -171,8 +173,8 @@ class DescendingDrive__Pool(_Pool):
 
         super().__init__(
             cells=[
-                cells.DD(N=poisson_random_process_order, dt=timestep__ms)
-                for _ in range(n)
+                cells.DD(N=poisson_random_process_order, dt=timestep__ms, pool_ID=i)
+                for i in range(n)
             ]
         )
 
@@ -225,12 +227,13 @@ class AffIa__Pool(_Pool):
         vcon = np.linspace(*axon_velocities, n)
 
         _cells = []
-        for rt_i, vcon_i in zip(rt, vcon):
+        for i, (rt_i, vcon_i) in enumerate(zip(rt, vcon)):
             ia = cells.AffIa(
                 RT=rt_i,
                 N=poisson_random_process_order,
                 dt=timestep__ms,
                 initN=init_order,
+                pool_ID=i,
             )
             ia.create_axon(length__m=axon_length__m, velcon__m_per_s=vcon_i)
             _cells.append(ia)
@@ -286,12 +289,13 @@ class AffII__Pool(_Pool):
         vcon = np.linspace(*axon_velocities, n)
 
         _cells = []
-        for rt_i, vcon_i in zip(rt, vcon):
+        for i, (rt_i, vcon_i) in enumerate(zip(rt, vcon)):
             ii = cells.AffII(
                 RT=rt_i,
                 N=poisson_random_process_order,
                 dt=timestep__ms,
                 initN=init_order,
+                pool_ID=i,
             )
             ii.create_axon(length__m=axon_length__m, velcon__m_per_s=vcon_i)
             _cells.append(ii)
@@ -347,12 +351,13 @@ class AffIb__Pool(_Pool):
         vcon = np.linspace(*axon_velocities, n)
 
         _cells = []
-        for rt_i, vcon_i in zip(rt, vcon):
+        for i, (rt_i, vcon_i) in enumerate(zip(rt, vcon)):
             ib = cells.AffIb(
                 RT=rt_i,
                 N=poisson_random_process_order,
                 dt=timestep__ms,
                 initN=init_order,
+                pool_ID=i,
             )
             ib.create_axon(length__m=axon_length, velcon__m_per_s=vcon_i)
             _cells.append(ib)
@@ -474,7 +479,7 @@ class GII__Pool(_Pool):
             init, end = 0, n
 
         _cells = []
-        for (
+        for i, (
             sL_i,
             sdiam_i,
             sg_pas_i,
@@ -485,19 +490,21 @@ class GII__Pool(_Pool):
             staur_mAHP_i,
             sghbar_gh_i,
             vcon_i,
-        ) in zip(
-            sL[init:end],
-            sdiam[init:end],
-            sg_pas[init:end],
-            sgbar_na3rp[init:end],
-            sgMax_kdrRL[init:end],
-            sgcamax_mAHP[init:end],
-            sgkcamax_mAHP[init:end],
-            staur_mAHP[init:end],
-            sghbar_gh[init:end],
-            vcon[init:end],
+        ) in enumerate(
+            zip(
+                sL[init:end],
+                sdiam[init:end],
+                sg_pas[init:end],
+                sgbar_na3rp[init:end],
+                sgMax_kdrRL[init:end],
+                sgcamax_mAHP[init:end],
+                sgkcamax_mAHP[init:end],
+                staur_mAHP[init:end],
+                sghbar_gh[init:end],
+                vcon[init:end],
+            )
         ):
-            gII = cells.INgII()
+            gII = cells.INgII(pool_ID=i)
 
             gII.soma.L = sL_i
             gII.soma.diam = sdiam_i
@@ -604,7 +611,7 @@ class GIb__Pool(_Pool):
             init, end = 0, n
 
         _cells = []
-        for (
+        for i, (
             sL_i,
             sdiam_i,
             sg_pas_i,
@@ -615,19 +622,21 @@ class GIb__Pool(_Pool):
             staur_mAHP_i,
             sghbar_gh_i,
             vcon_i,
-        ) in zip(
-            sL[init:end],
-            sdiam[init:end],
-            sg_pas[init:end],
-            sgbar_na3rp[init:end],
-            sgMax_kdrRL[init:end],
-            sgcamax_mAHP[init:end],
-            sgkcamax_mAHP[init:end],
-            staur_mAHP[init:end],
-            sghbar_gh[init:end],
-            vcon[init:end],
+        ) in enumerate(
+            zip(
+                sL[init:end],
+                sdiam[init:end],
+                sg_pas[init:end],
+                sgbar_na3rp[init:end],
+                sgMax_kdrRL[init:end],
+                sgcamax_mAHP[init:end],
+                sgkcamax_mAHP[init:end],
+                staur_mAHP[init:end],
+                sghbar_gh[init:end],
+                vcon[init:end],
+            )
         ):
-            gIb = cells.INgIb()
+            gIb = cells.INgIb(pool_ID=i)
 
             gIb.soma.L = sL_i
             gIb.soma.diam = sdiam_i
@@ -856,7 +865,12 @@ class AlphaMN__Pool(_Pool):
         _cells = []
         for i in range(init, end):
             cell = cells.AlphaMN(
-                nseg=1, mode=self.mode, n_dend=1, model=self.model, rid=self.cell_index
+                nseg=1,
+                mode=self.mode,
+                n_dend=1,
+                model=self.model,
+                rid=self.cell_index,
+                pool_ID=i,
             )
             cell.create_axon(length__m=self.axon_length, velcon__m_per_s=vcon[i])
 
@@ -939,7 +953,12 @@ class AlphaMN__Pool(_Pool):
         _cells = []
         for i in range(init, end):
             cell = cells.AlphaMN(
-                nseg=1, mode=self.mode, n_dend=4, model=self.model, rid=self.cell_index
+                nseg=1,
+                mode=self.mode,
+                n_dend=4,
+                model=self.model,
+                rid=self.cell_index,
+                pool_ID=i,
             )
 
             # Set soma parameters
@@ -1056,7 +1075,7 @@ if __name__ == "__main__":
         print("Type: {}, List: {}".format(x, y))
         for cell in y:
             print(
-                "Cell: {}, Global ID: {}, Class ID: {}".format(
-                    cell.__class__.__name__, cell.global_ID, cell.class_ID
+                "Cell: {}, Global ID: {}, Class ID: {}, Pool ID: {}".format(
+                    cell.__class__.__name__, cell.global_ID, cell.class_ID, cell.pool_ID
                 )
             )
