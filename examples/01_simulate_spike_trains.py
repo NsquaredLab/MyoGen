@@ -134,7 +134,7 @@ input_current__AnalogSignal = create_trapezoid_current(
     n_pools,
     t_points,
     timestep,
-    amplitudes__muV=amplitude_range,
+    amplitudes__nA=amplitude_range,
     rise_times__ms=rise_time_ms,
     plateau_times__ms=plateau_time_ms,
     fall_times__ms=fall_time_ms,

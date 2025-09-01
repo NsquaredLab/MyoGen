@@ -177,11 +177,11 @@ trapezoid_currents = create_trapezoid_current(
     n_pools=n_pools,
     t_points=t_points,
     timestep__ms=timestep__ms,
-    amplitudes__muV=trap_amplitudes,
+    amplitudes__nA=trap_amplitudes,
     rise_times__ms=trap_rise_times,
     plateau_times__ms=trap_plateau_times,
     fall_times__ms=trap_fall_times,
-    offsets__muV=trap_offsets,
+    offsets__nA=trap_offsets,
     delays__ms=trap_delays,
 )
 
