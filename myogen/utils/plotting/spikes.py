@@ -82,11 +82,9 @@ def plot_spike_trains(
     warnings.filterwarnings("ignore", message=".*Font family.*not found.*")
     warnings.filterwarnings("ignore", message=".*findfont.*")
 
-    for pool_idx, (segment, ax) in enumerate(
-        zip(spike_trains__Block.segments, list(axs))
-    ):
-        if pool_idx not in _pool_to_plot:
-            continue
+    for ax_idx, pool_idx in enumerate(_pool_to_plot):
+        segment = spike_trains__Block.segments[pool_idx]
+        ax = list(axs)[ax_idx]
 
         spike_trains__SpikeTrainList = segment.spiketrains
 
@@ -100,7 +98,7 @@ def plot_spike_trains(
         for spike_times in spike_trains__SpikeTrainList:
             if len(spike_times) > 0:
                 ax.scatter(
-                    spike_times,
+                    spike_times.rescale("s"),
                     np.full(len(spike_times), i + 1),
                     color=colors[i % 2],
                     s=10,  # dot size
@@ -115,7 +113,7 @@ def plot_spike_trains(
         if apply_default_formatting:
             ax.set_xlabel("Time (s)")
             ax.set_ylabel("Motor Neuron Index")
-            ax.set_title(f"Pool {_pool_to_plot[pool_idx] + 1} Spike Trains")
+            ax.set_title(f"Pool {pool_idx + 1} Spike Trains")
 
         # Initialize current variables to avoid undefined variable errors
         pc_min = 0
@@ -170,7 +168,7 @@ def plot_spike_trains(
             pc_normalized = pc_normalized * (i + 1)
 
             ax.plot(
-                pc.times,
+                pc.times.rescale("s"),
                 np.squeeze(pc_normalized.magnitude),
                 linestyle="--",
                 linewidth=1,
