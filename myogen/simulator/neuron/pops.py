@@ -9,6 +9,7 @@ from scipy.optimize import curve_fit
 from myogen import setup_myogen
 from myogen.simulator.neuron import cells
 from myogen.utils.decorators import beartowertype
+from myogen.utils.types import RECRUITMENT_THRESHOLDS__ARRAY
 
 
 def _exp_crescent(x, a, b, c):
@@ -733,7 +734,8 @@ class AlphaMN__Pool(_Pool):
 
     def __init__(
         self,
-        n: int,
+        n: int | None = None,
+        recruitment_thresholds__array: RECRUITMENT_THRESHOLDS__ARRAY | None = None,
         model: str = "Powers2017",
         mode: str = "active",
         axon_velocities: tuple[float, float] = (50, 65),
@@ -790,6 +792,16 @@ class AlphaMN__Pool(_Pool):
         dendrite_ca_theta_h_range: tuple[float, float, float] = (10, -10, 0.3),
     ):
         self.n = n
+        self.recruitment_thresholds__array = recruitment_thresholds__array
+
+        if self.recruitment_thresholds__array is not None:
+            self.n = len(self.recruitment_thresholds__array)
+
+        if self.n is None and self.recruitment_thresholds__array is None:
+            raise ValueError(
+                "Either n or recruitment_thresholds__array must be provided."
+            )
+
         self.model = model
         self.mode = mode
         self.axon_velocities = axon_velocities
@@ -909,7 +921,10 @@ class AlphaMN__Pool(_Pool):
 
     def _create_powers2017_cells(self) -> list:
         """Create motor neurons using the Powers2017 model."""
-        interpF = lambda x, y, z: _exp_interp(first=x, last=y, n=self.n, curv=z)
+        if self.recruitment_thresholds__array is None:
+            interpF = lambda x, y, z: _exp_interp(first=x, last=y, n=self.n, curv=z)
+        else:
+            interpF = lambda x, y, _: self.recruitment_thresholds__array * (y - x) + x
 
         # Geometry parameters
         sL = interpF(*self.soma_length_range)
