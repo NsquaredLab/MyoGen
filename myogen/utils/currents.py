@@ -487,11 +487,11 @@ def create_trapezoid_current(
     n_pools: int,
     t_points: int,
     timestep__ms: float,
-    amplitudes__muV: float | list[float],
+    amplitudes__nA: float | list[float],
     rise_times__ms: float | list[float] = 100.0,
     plateau_times__ms: float | list[float] = 200.0,
     fall_times__ms: float | list[float] = 100.0,
-    offsets__muV: float | list[float] = 0.0,
+    offsets__nA: float | list[float] = 0.0,
     delays__ms: float | list[float] = 0.0,
 ) -> CURRENT__AnalogSignal:
     """Create a matrix of trapezoidal currents for multiple pools.
@@ -504,8 +504,8 @@ def create_trapezoid_current(
         Number of time points
     timestep__ms : float
         Time step in milliseconds
-    amplitudes__muV : float | list[float]
-        Amplitude(s) of the trapezoidal current(s) in microvolts.
+    amplitudes__nA : float | list[float]
+        Amplitude(s) of the trapezoidal current(s) in nano Amperes.
 
         Must be:
             - Single float: used for all pools
@@ -531,8 +531,8 @@ def create_trapezoid_current(
         Must be:
             - Single float: used for all pools
             - List of floats: must match n_pools
-    offsets__muV : float | list[float]
-        DC offset(s) to add to the trapezoidal current(s) in microvolts.
+    offsets__nA : float | list[float]
+        DC offset(s) to add to the trapezoidal current(s) in nano Amperes.
 
         Must be:
             - Single float: used for all pools
@@ -557,9 +557,9 @@ def create_trapezoid_current(
     # Convert parameters to lists
     amplitudes_list = cast(
         list[float],
-        [amplitudes__muV] * n_pools
-        if isinstance(amplitudes__muV, float)
-        else amplitudes__muV,
+        [amplitudes__nA] * n_pools
+        if isinstance(amplitudes__nA, float)
+        else amplitudes__nA,
     )
     rise_times_list = cast(
         list[float],
@@ -581,7 +581,7 @@ def create_trapezoid_current(
     )
     offsets_list = cast(
         list[float],
-        [offsets__muV] * n_pools if isinstance(offsets__muV, float) else offsets__muV,
+        [offsets__nA] * n_pools if isinstance(offsets__nA, float) else offsets__nA,
     )
     delays_list = cast(
         list[float],
@@ -657,6 +657,5 @@ def create_trapezoid_current(
     return AnalogSignal(
         signal=np.stack([create_trapezoid_for_pool(i) for i in range(n_pools)], axis=-1)
         * pq.nA,
-        t_start=0 * pq.ms,
         sampling_period=timestep__ms * pq.ms,
     )
