@@ -5,7 +5,6 @@ This module provides network connectivity functionality for MyoGen's neuron mode
 integrating with both the legacy NEURON-based populations and the modern MyoGen API.
 """
 
-import warnings
 from typing import Callable, Optional
 
 from neuron import h
@@ -733,8 +732,6 @@ class Network:
         if not self.spike_recording:
             return
 
-        from neuron import h
-
         for pop_name, population in self.populations.items():
             # Skip non-neuron populations (like gMN which is a config dict)
             if not hasattr(population, "__iter__") or isinstance(population, dict):
@@ -761,7 +758,7 @@ class Network:
                         nc = h.NetCon(neuron.ns, None)
 
                     # Set up spike recording
-                    nc.threshold = -10.0  # Spike detection threshold
+                    nc.threshold = DEFAULT_SPIKE_THRESHOLD  # Spike detection threshold
                     nc.record(spike_vector, id_vector, neuron.global_ID)
                     recording_netcons.append(nc)
 
@@ -774,9 +771,9 @@ class Network:
         source: str,
         target: str,
         probability: float = 1.0,
-        weight__μS: float = 0.6,
-        delay__ms: float = 1.0,
-        threshold__mV: float = -10.0,
+        weight__μS: float = DEFAULT_SYNAPTIC_WEIGHT,
+        delay__ms: float = DEFAULT_SYNAPTIC_DELAY,
+        threshold__mV: float = DEFAULT_SPIKE_THRESHOLD,
     ) -> list:
         """
         Connect two neural populations with specified parameters.
@@ -854,8 +851,8 @@ class Network:
         source: str,
         muscle,
         activation_callback: Callable,
-        weight__μS: float = 1.0,
-        threshold__mV: float = -10.0,
+        weight__μS: float = DEFAULT_SYNAPTIC_WEIGHT,
+        threshold__mV: float = DEFAULT_SPIKE_THRESHOLD,
     ) -> list:
         """
         Connect a neural population to a muscle with activation callback.
@@ -922,9 +919,9 @@ class Network:
         self,
         source: str,
         target: str,
-        weight__μS: float = 0.8,
-        delay__ms: float = 1.0,
-        threshold__mV: float = -10.0,
+        weight__μS: float = DEFAULT_SYNAPTIC_WEIGHT,
+        delay__ms: float = DEFAULT_SYNAPTIC_DELAY,
+        threshold__mV: float = DEFAULT_SPIKE_THRESHOLD,
     ) -> list:
         """
         Connect external input source to a neural population.
