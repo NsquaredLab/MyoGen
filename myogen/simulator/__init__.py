@@ -19,8 +19,8 @@ from myogen.simulator.core.muscle import Muscle
 from myogen.simulator.core.physiological_distribution import RecruitmentThresholds
 
 # Spinal neural population models
-# PyNN integration
-from myogen.simulator import pyNN
+# PyNN integration - commented out to avoid auto-loading conflicts
+# from myogen.simulator import pyNN
 
 __all__ = [
     "RecruitmentThresholds",
@@ -31,5 +31,5 @@ __all__ = [
     "IntramuscularElectrodeArray",
     "ForceModel",
     "GridAnalogSignal",
-    "pyNN",
+    # "pyNN",  # commented out to avoid auto-loading conflicts
 ]
