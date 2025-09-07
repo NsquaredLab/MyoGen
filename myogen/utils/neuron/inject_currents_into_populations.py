@@ -1,10 +1,10 @@
+import neuron
 import numpy as np
 import quantities as pq
 from beartype.typing import Sequence
 from neuron import h
-import neuron
 
-from myogen.simulator.neuron.pops import _Pool
+from myogen.simulator.neuron.populations import _Pool
 from myogen.utils.decorators import beartowertype
 from myogen.utils.types import CURRENT__AnalogSignal, SPIKE_TRAIN__Block
 
@@ -188,6 +188,8 @@ def inject_currents_and_simulate_spike_trains(
             SpikeTrain(
                 spike_recorder.as_numpy() * pq.ms,
                 t_stop=simulation_time__ms * pq.ms,
+                sampling_rate=(1 / h.dt * (1 / pq.ms)),
+                sampling_period=h.dt * pq.ms,
                 name=str(int(neuron_idx)),
                 description=f"Pool {pool_idx}, Neuron {neuron_idx}",
             )
