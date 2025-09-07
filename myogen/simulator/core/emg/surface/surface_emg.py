@@ -435,13 +435,13 @@ class SurfaceEMG:
                                 start=0,
                                 stop=muap_array.shape[-1]
                                 / self._sampling_frequency__Hz,
-                                step=spiketrain_timestep__ms.rescale("s").magnitude,
+                                step=spiketrain_timestep__ms.rescale(pq.s).magnitude,
                             ),
                             xp=np.arange(
                                 start=0,
                                 stop=muap_array.shape[-1]
                                 / self._sampling_frequency__Hz,
-                                step=muap_timestep__ms.rescale("s").magnitude,
+                                step=muap_timestep__ms.rescale(pq.s).magnitude,
                             ),
                             fp=muap_array[muap_nr, row, col],
                         )
@@ -534,7 +534,7 @@ class SurfaceEMG:
                     n_cols,
                     int(
                         surface_emg.shape[-1]
-                        * spiketrain_timestep__ms.rescale("s").magnitude
+                        * spiketrain_timestep__ms.rescale(pq.s).magnitude
                         * self._sampling_frequency__Hz
                     ),
                 )
@@ -546,14 +546,14 @@ class SurfaceEMG:
                             x=np.arange(
                                 start=0,
                                 stop=surface_emg.shape[-1]
-                                * spiketrain_timestep__ms.rescale("s").magnitude,
+                                * spiketrain_timestep__ms.rescale(pq.s).magnitude,
                                 step=1 / self._sampling_frequency__Hz,
                             ),
                             xp=np.arange(
                                 start=0,
                                 stop=surface_emg.shape[-1]
-                                * spiketrain_timestep__ms.rescale("s").magnitude,
-                                step=spiketrain_timestep__ms.rescale("s").magnitude,
+                                * spiketrain_timestep__ms.rescale(pq.s).magnitude,
+                                step=spiketrain_timestep__ms.rescale(pq.s).magnitude,
                             ),
                             fp=surface_emg[pool_idx, row_idx, col_idx],
                         )
@@ -568,7 +568,6 @@ class SurfaceEMG:
                     GridAnalogSignal(
                         signal=np.transpose(surface_emg_resampled[pool_idx], (2, 0, 1))
                         * pq.dimensionless,
-                        t_start=0 * pq.ms,
                         sampling_rate=self._sampling_frequency__Hz * pq.Hz,
                     )
                 )
