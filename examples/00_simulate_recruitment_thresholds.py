@@ -55,7 +55,7 @@ from myogen.utils.plotting import plot_recruitment_thresholds
 #   - ``deluca__slopes``: Different slope values to demonstrate variety
 #   - ``konstantin__max_threshold``: Maximum recruitment threshold
 
-n_motor_units = 50  # Number of motor units in the pool
+n_motor_units = 25  # Number of motor units in the pool
 recruitment_range = 100  # Recruitment range (max_threshold / min_threshold)
 
 # Model specific parameters

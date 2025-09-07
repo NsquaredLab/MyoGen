@@ -32,10 +32,10 @@ from myogen.utils.types import CURRENT__AnalogSignal, SPIKE_TRAIN__Block
 save_path = Path("./results")
 
 spike_train__Block: SPIKE_TRAIN__Block = joblib.load(
-    save_path / "spike_train__Block.pkl"
+    save_path / "sinusoidal_dd_spike_trains.pkl"
 )
 input_current__AnalogSignal: CURRENT__AnalogSignal = joblib.load(
-    save_path / "input_current__AnalogSignal.pkl"
+    save_path / "input_current__AnalogSignal_v2.pkl"
 )
 surface_emg: simulator.SurfaceEMG = joblib.load(save_path / "surface_emg.pkl")
 

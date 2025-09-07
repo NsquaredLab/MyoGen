@@ -62,11 +62,7 @@ grid_resolution = 256  # Spatial resolution for muscle discretization
 
 # Create muscle model
 muscle = simulator.Muscle(
-    recruitment_thresholds=recruitment_thresholds[::3],  # For faster simulation
-    radius__mm=muscle_radius,
-    fiber_density__fibers_per_mm2=fiber_density,
-    max_innervation_area_to_total_muscle_area__ratio=max_innervation_ratio,
-    grid_resolution=grid_resolution,
+    recruitment_thresholds=recruitment_thresholds,  # For faster simulation
     autorun=True,
 )
 

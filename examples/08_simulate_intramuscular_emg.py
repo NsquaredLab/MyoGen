@@ -82,7 +82,6 @@ print("Initializing iEMG simulator...")
 iemg_sim = simulator.IntramuscularEMG(
     muscle_model=muscle,
     electrode_array=electrode,
-    MUs_to_simulate=list(range(0, 25, 1)),
 )
 
 ##############################################################################
@@ -91,8 +90,14 @@ iemg_sim = simulator.IntramuscularEMG(
 #
 # Compute the **MUAPs** for each motor unit at the electrode positions.
 
+
 print("Computing motor unit action potentials...")
-iemg_sim.simulate_muaps()
+# iemg_sim.simulate_muaps()
+
+
+iemg_sim = joblib.load("./results/iemg_simulator.pkl")
+
+# joblib.dump(iemg_sim, "./results/iemg_simulator.pkl")
 
 
 ##############################################################################
@@ -103,10 +108,10 @@ iemg_sim.simulate_muaps()
 save_path = Path("./results")
 
 spike_train__Block: SPIKE_TRAIN__Block = joblib.load(
-    save_path / "spike_train__Block.pkl"
+    save_path / "sinusoidal_dd_spike_trains.pkl"
 )
 input_current__AnalogSignal: CURRENT__AnalogSignal = joblib.load(
-    save_path / "input_current__AnalogSignal.pkl"
+    save_path / "input_current__AnalogSignal_v2.pkl"
 )
 
 ##############################################################################
@@ -129,7 +134,7 @@ print(
 )
 
 print("Adding realistic noise (SNR = 20 dB)...")
-noisy_emg_signals__Block = iemg_sim.add_noise(snr__dB=20)
+noisy_emg_signals__Block = iemg_sim.add_noise(snr__dB=5)
 first_noisy_signal = noisy_emg_signals__Block.segments[0].analogsignals[0]
 print(
     f"  - Signal RMS (after noise): {np.sqrt(np.mean(first_noisy_signal.magnitude**2)):.3f}"
