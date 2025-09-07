@@ -24,7 +24,6 @@ class _Cell:
         self._define_biophysics()
 
         self.create_axon()
-        self.reclist = []
         self.synlist = []
 
     def __repr__(self) -> str:
@@ -47,15 +46,6 @@ class _Cell:
         self.velcon = velcon__m_per_s  # m/s, conduction velocity
         self.axonDelay = self.len / self.velcon * 1e3  # [ms]
 
-    def plot_voltage(self):
-        """Plot the recorded traces"""
-        import pylab as plt
-
-        for vec in self.reclist:
-            plt.plot(self.t_vec, vec[0], label=str(vec[1]) + "(" + str(vec[2]) + ")")
-        plt.legend()
-        plt.ylabel("mV")
-
     def create_synapses(self, loc, e=0, tau1=0.2, tau2=0.3):
         """Add an exponentially decaying synapse
         exp2Syn synapses with tau1=0.2, tau2=0.3 and e= 70 were
@@ -69,33 +59,12 @@ class _Cell:
         syn = h.Exp2Syn(loc(0.5))
         syn.tau1 = tau1
         syn.tau2 = tau2
-        if hasattr(self, "model") and self.model == "ModALS":
+        if hasattr(self, "model") and self.model == "NERLab":
             syn.e = 70
         else:
             syn.e = e
         self.synlist.append(syn)  # synlist is defined in Cell
         return syn
-
-    def create_netcon(self, target, threshold=-10, delay=1, weight=1):
-        """created netcon to record spikes"""
-        nc = h.NetCon(self.soma(0.5)._ref_v, target, sec=self.soma)
-        nc.threshold = threshold
-        nc.delay = delay
-        nc.weight[0] = weight
-        self.nclist.append(nc)
-
-    def set_recording(self, sec, loc=0.5):
-        v_vec = h.Vector()
-        self.reclist.append([v_vec.record(sec(loc)._ref_v), sec, loc])
-        if "self.t_vec" not in locals():
-            self.t_vec = h.Vector()  # Time stamp vector
-            self.t_vec.record(h._ref_t)
-
-    def add_current_stim(self, sec, loc=0.5, delay=5, amp=0.3, dur=1):
-        self.stim = h.IClamp(sec(loc))
-        self.stim.amp = amp  # input current in nA
-        self.stim.delay = delay  # turn on after this time in ms
-        self.stim.dur = dur  # duration of 1 ms
 
 
 # INTERNEURONS
@@ -294,14 +263,14 @@ class AlphaMN(_Cell):
 
     def _define_biophysics(self, gamma=1):
         """Assign the membrane properties across the cell."""
-        if self.model == "ModALS":
+        if self.model == "NERLab":
             if self.mode == "active":
                 self.soma.insert("napp")
                 self.soma.insert("Constant")
                 self.dend[0].insert("caL")
                 self.dend[0].insert("Constant")
             else:
-                print("ModALS passive model is not defined yet.")
+                print("NERLab passive model is not defined yet.")
                 print("try active mode.")
 
         if self.model == "Powers2017":
@@ -416,9 +385,9 @@ if __name__ == "__main__":
     import quantities as pq
     from elephant import kernels, statistics
 
-    from myogen import setup_myogen
+    from myogen import load_nmodl_mechanisms
 
-    setup_myogen()
+    load_nmodl_mechanisms()
 
     # Sim parameters
     tstop = 20000  # [ms]
