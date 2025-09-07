@@ -2,6 +2,7 @@ import numpy as np
 from Cython.Build import cythonize
 from numpy.random import Generator
 from setuptools import Extension, setup
+from myogen.utils.nmodl import load_nmodl_mechanisms
 
 SEED: int = 180319  # Seed for reproducibility
 RANDOM_GENERATOR: Generator = np.random.default_rng(SEED)
@@ -21,10 +22,7 @@ def set_random_seed(seed: int = SEED) -> None:
     print(f"Random seed set to {seed}.")
 
 
-def setup_myogen(
-    force_reload: bool = True,
-    quiet: bool = False,
-) -> bool:
+def _setup_myogen(quiet: bool = False) -> bool:
     """
     Set up MyoGen with NEURON mechanism compilation and loading.
 
@@ -108,10 +106,10 @@ def setup_myogen(
     )
 
     try:
-        from myogen.utils.nmodl import load_nmodl_files
+        from myogen.utils.nmodl import compile_nmodl_files
 
         # Note: load_nmodl_files now includes PyNN integration by default
-        return load_nmodl_files(force_reload=force_reload, quiet=quiet)
+        return compile_nmodl_files(quiet=quiet)
     except ImportError as e:
         if not quiet:
             print(f"Warning: NEURON not available, skipping mechanism setup: {e}")
@@ -120,3 +118,12 @@ def setup_myogen(
         if not quiet:
             print(f"Error during MyoGen setup: {e}")
         return False
+
+
+__all__ = [
+    "RANDOM_GENERATOR",
+    "SEED",
+    "set_random_seed",
+    "load_nmodl_mechanisms",
+    "_setup_myogen",
+]
