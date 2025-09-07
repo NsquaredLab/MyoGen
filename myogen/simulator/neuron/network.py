@@ -10,7 +10,7 @@ from typing import Callable, Optional
 from neuron import h
 
 from myogen import RANDOM_GENERATOR
-from myogen.simulator.neuron.pops import (
+from myogen.simulator.neuron.populations import (
     AffIa__Pool,
     AffII__Pool,
     AlphaMN__Pool,

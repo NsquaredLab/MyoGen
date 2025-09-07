@@ -7,7 +7,7 @@ from neo import AnalogSignal, Block, Segment, SpikeTrain
 
 from myogen import setup_myogen
 from myogen.simulator.neuron.network import Network
-from myogen.simulator.neuron.pops import _Pool
+from myogen.simulator.neuron.populations import _Pool
 
 setup_myogen()
 
@@ -95,7 +95,7 @@ class SimulationRunner:
         # Runtime state
         self._trace_vectors: dict[str, dict[int, Any]] = {}
         self._step_counter = None
-        
+
         # Setup internal spike recording vectors
         self._spike_recording = self._setup_spike_recording()
 
@@ -135,21 +135,21 @@ class SimulationRunner:
     def _setup_spike_recording(self) -> dict[str, Any]:
         """
         Create NEURON spike recording vectors for all populations.
-        
+
         Returns
         -------
         dict[str, Any]
             Dictionary containing 'idvec' and 'spkvec' with NEURON Vectors for each population.
         """
         from neuron import h
-        
+
         idvec = {}
         spkvec = {}
-        
+
         for pop_name in self._populations.keys():
             idvec[pop_name] = h.Vector()
             spkvec[pop_name] = h.Vector()
-        
+
         return {"idvec": idvec, "spkvec": spkvec}
 
     def _setup_network_spike_recording(self) -> None:
@@ -158,7 +158,7 @@ class SimulationRunner:
         """
         # Set spike recording on network
         self._network.spike_recording = self._spike_recording
-        
+
         # Setup spike recording (calls NEURON setup)
         self._network.setup_spike_recording()
 
@@ -324,13 +324,10 @@ class SimulationRunner:
         for pop_name in self._populations.keys():
             segment = Segment(name=pop_name)
 
-            if (
-                self._spike_recording
-                and pop_name in self._spike_recording.get("spkvec", {})
+            if self._spike_recording and pop_name in self._spike_recording.get(
+                "spkvec", {}
             ):
-                spike_times = self._spike_recording["spkvec"][
-                    pop_name
-                ].as_numpy()
+                spike_times = self._spike_recording["spkvec"][pop_name].as_numpy()
                 spike_ids = self._spike_recording["idvec"][pop_name].as_numpy()
 
                 for spike_id in sorted(np.unique(spike_ids)):

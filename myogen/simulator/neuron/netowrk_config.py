@@ -10,7 +10,7 @@ from neuron import h
 from myogen.simulator.neuron.joint_dynamics import JointDynamics
 from myogen.simulator.neuron.muscle import HillModel
 from myogen.simulator.neuron.network import Network
-from myogen.simulator.neuron.pops import *
+from myogen.simulator.neuron.populations import *
 from myogen.simulator.neuron.proprioception import (
     GolgiTendonOrganModel,
     SpindleModel,
