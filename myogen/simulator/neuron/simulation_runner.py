@@ -5,11 +5,7 @@ import numpy as np
 import quantities as pq
 from neo import AnalogSignal, Block, Segment, SpikeTrain
 
-from myogen import setup_myogen
 from myogen.simulator.neuron.network import Network
-from myogen.simulator.neuron.populations import _Pool
-
-setup_myogen()
 
 from neuron import h
 
