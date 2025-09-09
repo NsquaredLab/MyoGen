@@ -38,7 +38,7 @@ class DescendingDrive__Pool(_Pool):
 
         super().__init__(
             cells=[
-                cells.DD(N=poisson_random_process_order, dt=timestep__ms, pool_ID=i)
+                cells.DD(N=poisson_random_process_order, dt=timestep__ms, pool__ID=i)
                 for i in range(n)
             ]
         )

@@ -67,9 +67,9 @@ class AffIa__Pool(_Pool):
                 N=poisson_random_process_order,
                 dt=timestep__ms,
                 initN=init_order,
-                pool_ID=i,
+                pool__ID=i,
             )
-            ia.create_axon(length__m=axon_length__m, velcon__m_per_s=vcon_i)
+            ia.create_axon(length__m=axon_length__m, conduction_velocity__m_per_s=vcon_i)
             _cells.append(ia)
 
         super().__init__(cells=_cells)
@@ -129,9 +129,9 @@ class AffII__Pool(_Pool):
                 N=poisson_random_process_order,
                 dt=timestep__ms,
                 initN=init_order,
-                pool_ID=i,
+                pool__ID=i,
             )
-            ii.create_axon(length__m=axon_length__m, velcon__m_per_s=vcon_i)
+            ii.create_axon(length__m=axon_length__m, conduction_velocity__m_per_s=vcon_i)
             _cells.append(ii)
 
         super().__init__(cells=_cells)
@@ -191,9 +191,9 @@ class AffIb__Pool(_Pool):
                 N=poisson_random_process_order,
                 dt=timestep__ms,
                 initN=init_order,
-                pool_ID=i,
+                pool__ID=i,
             )
-            ib.create_axon(length__m=axon_length, velcon__m_per_s=vcon_i)
+            ib.create_axon(length__m=axon_length, conduction_velocity__m_per_s=vcon_i)
             _cells.append(ib)
 
         super().__init__(cells=_cells)

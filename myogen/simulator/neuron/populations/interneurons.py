@@ -135,7 +135,7 @@ class GII__Pool(_Pool):
                 vcon[init:end],
             )
         ):
-            gII = cells.INgII(pool_ID=i)
+            gII = cells.INgII(pool__ID=i)
 
             gII.soma.L = sL_i
             gII.soma.diam = sdiam_i
@@ -147,7 +147,7 @@ class GII__Pool(_Pool):
             gII.soma.taur_mAHP = staur_mAHP_i
             gII.soma.ghbar_gh = sghbar_gh_i
 
-            gII.create_axon(length__m=axon_length, velcon__m_per_s=vcon_i)
+            gII.create_axon(length__m=axon_length, conduction_velocity__m_per_s=vcon_i)
             _cells.append(gII)
 
         super().__init__(cells=_cells, initial_voltage__mV=initial_voltage__mV)
@@ -267,7 +267,7 @@ class GIb__Pool(_Pool):
                 vcon[init:end],
             )
         ):
-            gIb = cells.INgIb(pool_ID=i)
+            gIb = cells.INgIb(pool__ID=i)
 
             gIb.soma.L = sL_i
             gIb.soma.diam = sdiam_i
@@ -279,7 +279,7 @@ class GIb__Pool(_Pool):
             gIb.soma.taur_mAHP = staur_mAHP_i
             gIb.soma.ghbar_gh = sghbar_gh_i
 
-            gIb.create_axon(length__m=axon_length, velcon__m_per_s=vcon_i)
+            gIb.create_axon(length__m=axon_length, conduction_velocity__m_per_s=vcon_i)
 
             _cells.append(gIb)
 

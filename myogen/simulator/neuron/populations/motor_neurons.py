@@ -243,14 +243,14 @@ class AlphaMN__Pool(_Pool):
         _cells = []
         for i in range(init, end):
             cell = cells.AlphaMN(
-                nseg=1,
+                segments__count=1,
                 mode=self.mode,
-                n_dend=1,
+                dendrites__count=1,
                 model=self.model,
-                rid=self.cell_index,
-                pool_ID=i,
+                class__ID=self.cell_index,
+                pool__ID=i,
             )
-            cell.create_axon(length__m=self.axon_length, velcon__m_per_s=vcon[i])
+            cell.create_axon(length__m=self.axon_length, conduction_velocity__m_per_s=vcon[i])
 
             # Soma biophysical parameters
             cell.soma.L = Diam_soma[i]
@@ -334,18 +334,18 @@ class AlphaMN__Pool(_Pool):
         _cells = []
         for i in range(init, end):
             cell = cells.AlphaMN(
-                nseg=1,
+                segments__count=1,
                 mode=self.mode,
-                n_dend=4,
+                dendrites__count=4,
                 model=self.model,
-                rid=self.cell_index,
-                pool_ID=i,
+                class__ID=self.cell_index,
+                pool__ID=i,
             )
 
             # Set soma parameters
             cell.soma.L = sL[i]
             cell.soma.diam = sdiam[i]
-            cell.create_axon(length__m=self.axon_length, velcon__m_per_s=vcon[i])
+            cell.create_axon(length__m=self.axon_length, conduction_velocity__m_per_s=vcon[i])
             cell.soma.g_pas = sg_pas[i]
             cell.soma.e_pas = se_pas[i]
             cell.soma.cm = scm[i]
