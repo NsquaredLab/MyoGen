@@ -83,8 +83,8 @@ class GolgiTendonOrganModel:
         """
         return _GolgiTendonOrgan__Cython(
             gtoD=self._gto_parameters,
-            tstop=self._simulation_time__ms,
-            dt=self._time_step__ms,
+            tstop__ms=self._simulation_time__ms,
+            dt__ms=self._time_step__ms,
         )
 
     def integrate(self, muscle_force__N: float) -> float:

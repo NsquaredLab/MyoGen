@@ -227,7 +227,7 @@ class SpindleModel:
             "S": 0.156,  # Occlusion factor for primary afferent interactions
             # Temporal dynamics (low-pass filtering)
             "tau1": 0.149,  # Bag1 activation time constant [s] - fast dynamics
-            "tau2": 0.205,  # Bag2 activation time constant [s] - slow dynamics
+            "decay_time_constant__ms": 0.205,  # Bag2 activation time constant [s] - slow dynamics
             # Afferent sensitivity gains [Hz/L0] - firing rate per unit stretch
             "gBag1": 6500,  # Bag1 contribution to primary afferent (Ia)
             "gBag2A1": 3250,  # Bag2 contribution to primary afferent (Ia)

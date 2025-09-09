@@ -123,8 +123,8 @@ class HillModel:
 
         # Create Hill model with mapped parameters
         return _HillMuscleModel__Cython(
-            tstop=self._simulation_time__ms,
-            dt=self._time_step__ms,
+            tstop__ms=self._simulation_time__ms,
+            dt__ms=self._time_step__ms,
             hillD=self._muscle_parameters,
             Ntype1=self._n_motor_units_type1,
             Ntype2=self._n_motor_units_type2,
