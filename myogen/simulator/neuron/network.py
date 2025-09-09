@@ -62,7 +62,7 @@ def _setup_muscle_activation(
 
         def muscle_activation_wrapper():
             return muscle_callback(
-                source_neuron.pool_ID, muscle, 1 + source_neuron.axonDelay
+                source_neuron.pool__ID, muscle, 1 + source_neuron.axon_delay__ms
             )
 
         netcon.record(muscle_activation_wrapper)
@@ -89,9 +89,9 @@ def _apply_default_synaptic_params(netcon: h.NetCon, source_neuron):
     netcon.delay = DEFAULT_SYNAPTIC_DELAY  # 1ms synaptic + axon delay
 
     # Add axonal delay if source neuron has it
-    if hasattr(source_neuron, "axonDelay"):
+    if hasattr(source_neuron, "axon_delay__ms") and source_neuron.axon_delay__ms is not None:
         netcon.delay = (
-            DEFAULT_SYNAPTIC_DELAY + source_neuron.axonDelay
+            DEFAULT_SYNAPTIC_DELAY + source_neuron.axon_delay__ms
         )  # 1ms synaptic + axon delay
 
 
@@ -192,14 +192,14 @@ def _connect_population_to_population(
     for source_neuron in populations[source_pop]:
         for target_neuron in populations[target_pop]:
             if RANDOM_GENERATOR.uniform() < connection_probability:
-                target_synapse = RANDOM_GENERATOR.choice(target_neuron.synlist)
+                target_synapse = RANDOM_GENERATOR.choice(target_neuron.synapse__list)
                 netcon = _create_netcon(
                     source_neuron,
                     target_synapse,
                     muscle_callback=kwargs.get("muscle_callback"),
                     id_vector=kwargs.get("id_vector"),
                     spike_vector=kwargs.get("spike_vector"),
-                    neuron_id=source_neuron.global_ID,
+                    neuron_id=source_neuron.global__ID,
                 )
 
                 # Apply custom synaptic parameters if provided
@@ -230,7 +230,7 @@ def _connect_population_to_external(
             id_vector=kwargs.get("id_vector"),
             muscle=kwargs.get("muscle"),
             spike_vector=kwargs.get("spike_vector"),
-            neuron_id=source_neuron.global_ID,
+            neuron_id=source_neuron.global__ID,
         )
 
         # Apply custom spike threshold if provided
@@ -293,7 +293,7 @@ def _connect_populations(
       * connect_from_external(external_source, target_pop, ...)
     - Random number generation not seeded/controlled for reproducibility
     - Side effects: modifies global random state, creates NetCons with recording
-    - Inconsistent parameter passing to create_netcon (sometimes neuron_id=sc.global_ID, sometimes not)
+    - Inconsistent parameter passing to create_netcon (sometimes neuron_id=sc.global__ID, sometimes not)
 
     Parameters
     ----------
@@ -345,10 +345,10 @@ def _connect_populations(
        - No probability, weights, or thresholds applied
        - Simple stimulus input connections
 
-    Random synapse selection uses np.random.choice(tg.synlist) which assumes
-    target neurons have a 'synlist' attribute containing available synapses.
+    Random synapse selection uses np.random.choice(tg.synapse__list) which assumes
+    target neurons have a 'synapse__list' attribute containing available synapses.
 
-    Global ID usage: Uses sc.global_ID for spike recording, assuming source
+    Global ID usage: Uses sc.global__ID for spike recording, assuming source
     neurons have this attribute for unique identification.
     """
     # Parameter validation
@@ -759,7 +759,7 @@ class Network:
 
                     # Set up spike recording
                     nc.threshold = DEFAULT_SPIKE_THRESHOLD  # Spike detection threshold
-                    nc.record(spike_vector, id_vector, neuron.global_ID)
+                    nc.record(spike_vector, id_vector, neuron.global__ID)
                     recording_netcons.append(nc)
 
                 # Store these recording NetCons separately
