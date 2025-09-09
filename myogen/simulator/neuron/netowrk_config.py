@@ -1,16 +1,20 @@
-import numpy as np
-
-from myogen import setup_myogen
-
-setup_myogen()
-
 import matplotlib.pyplot as plt
+import numpy as np
 from neuron import h
 
+from myogen import load_nmodl_mechanisms
 from myogen.simulator.neuron.joint_dynamics import JointDynamics
 from myogen.simulator.neuron.muscle import HillModel
 from myogen.simulator.neuron.network import Network
-from myogen.simulator.neuron.populations import *
+from myogen.simulator.neuron.populations import (
+    AffIa__Pool,
+    AffIb__Pool,
+    AffII__Pool,
+    AlphaMN__Pool,
+    DescendingDrive__Pool,
+    GIb__Pool,
+    GII__Pool,
+)
 from myogen.simulator.neuron.proprioception import (
     GolgiTendonOrganModel,
     SpindleModel,
@@ -24,6 +28,8 @@ from myogen.utils.plotting import (
     plot_raster_spikes,
     plot_spindle_dynamics,
 )
+
+load_nmodl_mechanisms()
 
 # Simulation time - use more stable timestep
 dt = 0.005  # ms
@@ -169,7 +175,7 @@ def eachStep(
 
     # Integrate both muscles with same joint angle
     L_flex, V_flex, A_flex = muscle_flex.integrate(current_angle)
-    L_ext, V_ext, A_ext = muscle_ext.integrate(current_angle)
+    _, _, _ = muscle_ext.integrate(current_angle)
 
     # Use flexor muscle kinematics for spindle feedback (primary muscle)
     Iay, IIy = spin.integrate(L_flex, V_flex, A_flex, gMN["gDyn"][i], gMN["gStat"][i])
@@ -194,32 +200,32 @@ def eachStep(
         if DDcell.integrate(DDdrive_flexor[i]):
             spike_time = h.t + 1
             if spike_time < tstop:  # Avoid spikes at or after tstop
-                ncD["cmd->DD_flex"][DDcell.pool_ID].event(spike_time)
+                ncD["cmd->DD_flex"][DDcell.pool__ID].event(spike_time)
 
     for DDcell in popD["DD_ext"]:
         if DDcell.integrate(DDdrive_extensor[i]):
             spike_time = h.t + 1
             if spike_time < tstop:  # Avoid spikes at or after tstop
-                ncD["cmd->DD_ext"][DDcell.pool_ID].event(spike_time)
+                ncD["cmd->DD_ext"][DDcell.pool__ID].event(spike_time)
 
     for Ia in popD["Ia"]:
         if Iay >= Ia.RT:
             if Ia.integrate(Iay):
-                spike_time = h.t + Ia.axonDelay
+                spike_time = h.t + Ia.axon_delay__ms
                 if spike_time < tstop:  # Avoid spikes at or after tstop
-                    ncD["Spindle->Ia"][Ia.pool_ID].event(spike_time)
+                    ncD["Spindle->Ia"][Ia.pool__ID].event(spike_time)
     for II in popD["II"]:
         if IIy >= II.RT:
             if II.integrate(IIy):
-                spike_time = h.t + II.axonDelay
+                spike_time = h.t + II.axon_delay__ms
                 if spike_time < tstop:  # Avoid spikes at or after tstop
-                    ncD["Spindle->II"][II.pool_ID].event(spike_time)
+                    ncD["Spindle->II"][II.pool__ID].event(spike_time)
     for Ib in popD["Ib"]:
         if Iby >= Ib.RT:
             if Ib.integrate(Iby):
-                spike_time = h.t + Ib.axonDelay
+                spike_time = h.t + Ib.axon_delay__ms
                 if spike_time < tstop:  # Avoid spikes at or after tstop
-                    ncD["GTO->Ib"][Ib.pool_ID].event(spike_time)
+                    ncD["GTO->Ib"][Ib.pool__ID].event(spike_time)
 
 
 # ========================================
