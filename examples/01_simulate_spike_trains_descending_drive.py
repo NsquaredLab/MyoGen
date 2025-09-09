@@ -1,6 +1,6 @@
 """
-Motor Unit Spike Trains with Sinusoidal Descending Drive
-======================================================
+Spike Train Generation with Descending Drive
+============================================
 
 This example demonstrates **realistic spike train simulation** using **sinusoidal descending drive (DD)**
 instead of direct current injection. This approach provides more physiologically accurate motor control
@@ -43,6 +43,7 @@ patterns by modeling cortical input through descending drive populations.
 #       from myogen import set_random_seed
 #       set_random_seed(42)
 
+import itertools
 from pathlib import Path
 
 import elephant
@@ -50,11 +51,12 @@ import joblib
 import numpy as np
 import quantities as pq
 from matplotlib import pyplot as plt
+from neo import AnalogSignal, Block, Segment, SpikeTrain
 from neuron import h
-from neo import Block, Segment, SpikeTrain
+from tqdm import tqdm
 
 from myogen import RANDOM_GENERATOR
-from myogen.simulator.neuron.network import Network
+from myogen.simulator.neuron import Network
 from myogen.simulator.neuron.populations import AlphaMN__Pool, DescendingDrive__Pool
 from myogen.utils.nmodl import load_nmodl_mechanisms
 
@@ -74,110 +76,100 @@ from myogen.utils.nmodl import load_nmodl_mechanisms
 # - ``timestep``: Simulation timestep in ms (high resolution)
 # - ``simulation_time``: Total simulation duration in ms
 
-n_dd_neurons = 400  # Number of DD neurons (cortical input)
-dd_frequency__Hz = 1  # Sinusoidal drive frequency (1 Hz)
-dd_amplitude__Hz = 60.0  # Drive amplitude modulation
-dd_baseline__Hz = 30.0  # Baseline drive level
-timestep = 0.05  # ms (high resolution)
-simulation_time = 6000  # ms (6 seconds for clear oscillation pattern)
-dd_poisson_order = 1  # Poisson process order for DD neurons
-
 # Connection parameters
-dd_to_mn_probability = 0.8  # Connection probability DD -> MN
-dd_to_mn_weight__μS = 0.05  # Synaptic weight DD -> MN (increased for motor activation)
 
 ##############################################################################
-# Create Motor Neuron Pool
+# Create Populations
 # ------------------------
 #
-# Load the **recruitment thresholds** from the previous example and create a motor neuron pool
-# using the **AlphaMN__Pool** class with biophysically detailed Powers2017 neurons.
+# Like the previous example, we create a **motor neuron pool** using the **AlphaMN__Pool** class.
+#
+# We also create a **DescendingDrive__Pool** to represent the cortical input.
+#
+# .. note:: These neurons are modeled as Poisson point processes to convert the smooth input signal into realistic
+# spike patterns that represent cortical input to the spinal cord.
+#
+
+load_nmodl_mechanisms()
 
 save_path = Path("./results")
 save_path.mkdir(exist_ok=True)
 
-print("Loading NMODL mechanisms...")
-load_nmodl_mechanisms()
-
-# Load recruitment thresholds from example 00
 recruitment_thresholds = joblib.load(save_path / "thresholds.pkl")
-n_motor_neurons = len(recruitment_thresholds)
 
-print(f"Creating motor neuron pool with {n_motor_neurons} neurons...")
 motor_neuron_pool = AlphaMN__Pool(recruitment_thresholds__array=recruitment_thresholds)
 
-##############################################################################
-# Create Descending Drive Pool
-# -----------------------------
-#
-# Create a **DescendingDrive__Pool** that will receive the sinusoidal input pattern.
-# These neurons use Poisson processes to convert the smooth input signal into realistic
-# spike patterns that represent cortical input to the spinal cord.
-
-print(f"Creating descending drive pool with {n_dd_neurons} neurons...")
+timestep = 0.1  # ms
 descending_drive_pool = DescendingDrive__Pool(
-    n=n_dd_neurons, poisson_random_process_order=dd_poisson_order, timestep__ms=timestep
+    n=400, poisson_random_process_order=16, timestep__ms=timestep
 )
 
 ##############################################################################
-# Generate Sinusoidal Drive Pattern
+# Generate Drive Pattern
 # ----------------------------------
 #
+# The descending drive neuron population needs a time-varying input pattern to drive their Poisson processes.
+# This
 # Create a **smooth sinusoidal drive pattern** that represents realistic cortical motor commands.
 # This pattern combines:
 # - **Baseline activity**: Continuous low-level drive
 # - **Sinusoidal modulation**: Smooth oscillation at physiological frequency
 # - **Noise**: Small random variations for realism
 
-# Time vector
-time_points = int(simulation_time / timestep)
-time_array = np.linspace(0, simulation_time, time_points)
+simulation_time = 3000  # ms
 
-# Generate sinusoidal pattern
-sinusoidal_drive = (
-    dd_baseline__Hz
-    + dd_amplitude__Hz * np.sin(2 * np.pi * dd_frequency__Hz * time_array / 1000.0)
-    + RANDOM_GENERATOR.normal(0, 2.0, size=time_points)  # Add small noise
+time_points = int(simulation_time / timestep)
+
+dd_frequency__Hz = 1
+dd_amplitude__Hz = 60.0
+dd_baseline__Hz = 10.0
+
+sinusoidal_drive = AnalogSignal(
+    signal=(
+        np.maximum(
+            dd_baseline__Hz
+            + (
+                (dd_amplitude__Hz - dd_baseline__Hz)
+                * np.sin(
+                    2
+                    * np.pi
+                    * dd_frequency__Hz
+                    * np.linspace(0, simulation_time, time_points)
+                    / 1000.0
+                )
+            ),
+            dd_baseline__Hz,
+        )
+        + np.clip(RANDOM_GENERATOR.normal(0, 2.0, size=time_points), 0, None)
+    ),
+    units=pq.Hz,
+    sampling_period=(timestep * pq.ms).rescale(pq.s),
 )
 
-# Ensure drive is never negative
-sinusoidal_drive = np.maximum(sinusoidal_drive, 0.0)
-
-print("Generated sinusoidal drive pattern:")
-print(f"  Frequency: {dd_frequency__Hz} Hz")
-print(f"  Baseline: {dd_baseline__Hz} Hz")
-print(f"  Amplitude: {dd_amplitude__Hz} Hz")
-print(f"  Duration: {simulation_time} ms")
-
-# Save drive pattern
 joblib.dump(sinusoidal_drive, save_path / "sinusoidal_drive_pattern.pkl")
 
 ##############################################################################
 # Create Network and Connections
 # -------------------------------
 #
+# In MyoGen, populations can be connected using the **Network** class from the
+# `myogen.simulator.neuron` module.
+#
+# The **Network** class provides a high-level interface for creating and managing
+# connections between neuron populations.
+
 # Use the **Network** class to create synaptic connections between the descending drive
 # population and the motor neuron pool. This creates realistic synaptic transmission
 # with appropriate delays and weights.
+#
 
-print("Setting up neural network...")
-network = Network(
-    {
-        "DD": descending_drive_pool,
-        "aMN": motor_neuron_pool,
-    }
-)
+network = Network({"DD": descending_drive_pool, "aMN": motor_neuron_pool})
 
 # Connect DD neurons to motor neurons with realistic synaptic parameters
-print(
-    f"Connecting DD -> MN with probability {dd_to_mn_probability:.1f}, weight {dd_to_mn_weight__μS:.3f} μS"
-)
-network.connect(
-    "DD", "aMN", probability=dd_to_mn_probability, weight__μS=dd_to_mn_weight__μS
-)
+network.connect(source="DD", target="aMN", probability=0.8, weight__μS=0.1)
 
 # Set up external input to DD population
-network.connect_from_external("cortical_input", "DD", weight__μS=1.0)
+network.connect_from_external(source="cortical_input", target="DD", weight__μS=1.0)
 
 # Get NetCons for manual DD stimulation
 dd_netcons = network.get_netcons("cortical_input", "DD")
@@ -186,10 +178,9 @@ dd_netcons = network.get_netcons("cortical_input", "DD")
 # Setup Spike Recording
 # ---------------------
 #
-# Set up spike recording for motor neurons and manual tracking for DD neurons.
-# DD neurons use Poisson processes and don't have traditional spike detection.
-
-print("Setting up spike recording...")
+# To record spikes, we need to manually set up spike detection for the motor neurons
+# and track spike times for the DD neurons.
+#
 
 # Manual spike tracking for DD neurons (they use Poisson processes)
 dd_spike_times = [[] for _ in range(len(descending_drive_pool))]
@@ -204,74 +195,65 @@ for cell in motor_neuron_pool:
     mn_spike_recorders.append(spike_recorder)
 
 ##############################################################################
-# Run Simulation with Sinusoidal Drive
+# Run Simulation
 # ------------------------------------
 #
 # Execute the NEURON simulation with real-time injection of the sinusoidal drive pattern.
 # The DD neurons receive time-varying input that drives their Poisson processes.
 
-print("Running simulation...")
-
-# Set NEURON simulation parameters
-h.load_file("stdrun.hoc")
+h.load_file("stdrun.hoc")  # Load standard run library for NEURON
 h.dt = timestep
 h.tstop = simulation_time
 
-# Initialize voltages
-for section, voltage in zip(*motor_neuron_pool.get_initialization_data()):
+# Initialize voltages for all pools
+for section, voltage in itertools.chain.from_iterable(
+    zip(*pool.get_initialization_data())
+    for pool in [motor_neuron_pool, descending_drive_pool]
+):
     section.v = voltage
 
-for section, voltage in zip(*descending_drive_pool.get_initialization_data()):
-    section.v = voltage
 
+h.finitialize()
 
-# Custom simulation loop to inject time-varying drive
-def run_with_dd_input():
-    """Run simulation with time-varying DD input."""
-    h.finitialize()
+# Calculate total simulation steps for progress bar
+total_steps = int(simulation_time / timestep)
 
-    step_counter = 0
+step_counter = 0
+with tqdm(
+    total=total_steps,
+    desc="Running simulation",
+    unit="steps",
+    bar_format="{l_bar}{bar}| {n_fmt}/{total_fmt} steps [{elapsed}<{remaining}, {rate_fmt}]",
+) as pbar:
     while h.t < h.tstop:
-        # Calculate current drive value
         current_drive = sinusoidal_drive[min(step_counter, len(sinusoidal_drive) - 1)]
 
         # Drive DD neurons with current input level
         for dd_cell in descending_drive_pool:
             if dd_cell.integrate(current_drive):
                 # Record spike time for DD neuron
-                dd_spike_times[dd_cell.pool_ID].append(h.t)
+                dd_spike_times[dd_cell.pool__ID].append(h.t)
                 # Generate spike in DD neuron
                 spike_time = h.t + np.clip(RANDOM_GENERATOR.normal(0, 10), 0, None)
-                if spike_time < h.tstop:
-                    dd_netcons[dd_cell.pool_ID].event(spike_time)
+                if spike_time < h.tstop:  # Avoid scheduling beyond simulation end
+                    dd_netcons[dd_cell.pool__ID].event(spike_time)
 
         # Progress simulation
         h.fadvance()
         step_counter += 1
+        pbar.update(1)
 
-        # Progress indicator
-        if int(h.t) % 1000 == 0 and h.t > 0:
-            print(f"  Simulation time: {h.t:.0f} ms")
-
-
-# Run the simulation
-run_with_dd_input()
-
-print("Simulation completed!")
+        # Update description with current simulation time every 1000 steps
+        if step_counter % 1000 == 0:
+            pbar.set_description(f"Running simulation (t={h.t:.0f}ms)")
 
 ##############################################################################
 # Convert Spike Data to Neo Format
 # ---------------------------------
 #
-# Convert the recorded spike data to neo.Block format for analysis and visualization.
-# This creates separate segments for DD and motor neuron populations.
 
-print("Converting spike data to neo format...")
-
-# Create neo Block
 spike_train_block = Block(name="Sinusoidal DD Spike Trains")
 
-# Create segment for DD neurons
 dd_segment = Segment(name="Descending Drive")
 dd_segment.spiketrains = [
     SpikeTrain(
@@ -280,12 +262,10 @@ dd_segment.spiketrains = [
         sampling_rate=(1 / h.dt * (1 / pq.ms)),
         sampling_period=h.dt * pq.ms,
         name=f"DD_{i}",
-        description=f"Descending Drive Neuron {i}",
     )
     for i, spike_times in enumerate(dd_spike_times)
 ]
 
-# Create segment for motor neurons
 mn_segment = Segment(name="Motor Neurons")
 mn_segment.spiketrains = [
     SpikeTrain(
@@ -294,63 +274,58 @@ mn_segment.spiketrains = [
         sampling_rate=(1 / h.dt * (1 / pq.ms)),
         sampling_period=h.dt * pq.ms,
         name=f"MN_{i}",
-        description=f"Motor Neuron {i}",
     )
     for i, recorder in enumerate(mn_spike_recorders)
 ]
 
-# Add segments to block
-# spike_train_block.segments.append(dd_segment)
+# We only save the motor neuron spikes  segment
 spike_train_block.segments.append(mn_segment)
 
-# Save results
 joblib.dump(spike_train_block, save_path / "sinusoidal_dd_spike_trains.pkl")
 
 ##############################################################################
 # Calculate Firing Rate Statistics
 # ---------------------------------
 #
-# Analyze the firing patterns of both DD and motor neuron populations to understand
-# how the sinusoidal input is transformed into motor output.
 
 print("\nFiring rate analysis:")
 
 # Calculate DD firing rates
 dd_firing_rates = np.array(
     [
-        elephant.statistics.mean_firing_rate(st.time_slice(st.t_start, st.t_stop))
-        for st in dd_segment.spiketrains
-        if len(st) > 0
+        elephant.statistics.mean_firing_rate(st__s.time_slice(st__s.min(), st__s.max()))
+        for st__ms in dd_segment.spiketrains
+        if len(st__s := st__ms.rescale(pq.s)) > 0
     ]
 )
 
 # Calculate MN firing rates
 mn_firing_rates = np.array(
     [
-        elephant.statistics.mean_firing_rate(st.time_slice(st.t_start, st.t_stop))
-        for st in mn_segment.spiketrains
-        if len(st) > 0
+        elephant.statistics.mean_firing_rate(st__s.time_slice(st__s.min(), st__s.max()))
+        for st__ms in mn_segment.spiketrains
+        if len(st__s := st__ms.rescale(pq.s)) > 0
     ]
 )
 
 print("Descending Drive neurons:")
-print(f"  Active neurons: {len(dd_firing_rates)}/{n_dd_neurons}")
+print(f"\tActive neurons: {len(dd_firing_rates)}/{descending_drive_pool.n}")
 if len(dd_firing_rates) > 0:
     print(
-        f"  Mean firing rate: {np.mean(dd_firing_rates):.1f} ± {np.std(dd_firing_rates):.1f} Hz"
+        f"\tMean firing rate: {np.mean(dd_firing_rates):.1f} ± {np.std(dd_firing_rates):.1f} Hz"
     )
     print(
-        f"  Rate range: {np.min(dd_firing_rates):.1f} - {np.max(dd_firing_rates):.1f} Hz"
+        f"\tRate range: {np.min(dd_firing_rates):.1f} - {np.max(dd_firing_rates):.1f} Hz"
     )
 
 print("Motor neurons:")
-print(f"  Active neurons: {len(mn_firing_rates)}/{n_motor_neurons}")
+print(f"\tActive neurons: {len(mn_firing_rates)}/{motor_neuron_pool.n}")
 if len(mn_firing_rates) > 0:
     print(
-        f"  Mean firing rate: {np.mean(mn_firing_rates):.1f} ± {np.std(mn_firing_rates):.1f} Hz"
+        f"\tMean firing rate: {np.mean(mn_firing_rates):.1f} ± {np.std(mn_firing_rates):.1f} Hz"
     )
     print(
-        f"  Rate range: {np.min(mn_firing_rates):.1f} - {np.max(mn_firing_rates):.1f} Hz"
+        f"\tRate range: {np.min(mn_firing_rates):.1f} - {np.max(mn_firing_rates):.1f} Hz"
     )
 
 ##############################################################################
@@ -363,13 +338,11 @@ if len(mn_firing_rates) > 0:
 # 3. Motor neuron raster plot showing recruitment
 # 4. Population firing rates over time
 
-print("Creating visualizations...")
-
 # Create figure with subplots
-fig, axes = plt.subplots(4, 1, figsize=(15, 12))
+fig, axes = plt.subplots(4, 1, figsize=(15, 12), sharex=True)
 
 # 1. Plot sinusoidal drive pattern
-time_s = time_array / 1000.0  # Convert to seconds
+time_s = sinusoidal_drive.times.rescale(pq.s).magnitude
 axes[0].plot(time_s, sinusoidal_drive, "b-", linewidth=2, label="DD Input")
 axes[0].axhline(dd_baseline__Hz, color="r", linestyle="--", alpha=0.7, label="Baseline")
 axes[0].set_ylabel("Drive (Hz)")
@@ -387,8 +360,8 @@ for i, (spiketrain, color) in enumerate(zip(dd_segment.spiketrains, dd_colors)):
         )
 
 axes[1].set_ylabel("DD Neuron ID")
-axes[1].set_title(f"Descending Drive Population Activity (n={n_dd_neurons})")
-axes[1].set_ylim(-1, n_dd_neurons)
+axes[1].set_title(f"Descending Drive Population Activity (n={descending_drive_pool.n})")
+axes[1].set_ylim(-1, descending_drive_pool.n)
 axes[1].grid(True, alpha=0.3)
 
 # 3. Motor neuron raster plot (recruitment ordered)
@@ -404,47 +377,29 @@ for i, (spiketrain, color) in enumerate(zip(mn_segment.spiketrains, mn_colors)):
 
 axes[2].set_ylabel("Motor Neuron ID\n(Recruitment Order)")
 axes[2].set_title(
-    f"Motor Neuron Population Activity (n={active_mn_count}/{n_motor_neurons} active)"
+    f"Motor Neuron Population Activity (n={active_mn_count}/{motor_neuron_pool.n} active)"
 )
-axes[2].set_ylim(-1, n_motor_neurons)
+axes[2].set_ylim(-1, motor_neuron_pool.n)
 axes[2].grid(True, alpha=0.3)
 
 # 4. Population firing rates over time (binned)
-bin_size_ms = 200  # 200ms bins
-bins = np.arange(0, simulation_time + bin_size_ms, bin_size_ms)
-bin_centers = bins[:-1] + bin_size_ms / 2
+bin_size_ms = 100
 
-# Calculate binned firing rates for DD
-dd_rates_binned = []
-for bin_start, bin_end in zip(bins[:-1], bins[1:]):
-    bin_spikes = []
-    for spiketrain in dd_segment.spiketrains:
-        spikes_in_bin = (
-            spiketrain.time_slice(bin_start * pq.ms, bin_end * pq.ms)
-            .times.rescale(pq.ms)
-            .magnitude
-        )
-        bin_spikes.extend(spikes_in_bin)
+dd_psth = elephant.statistics.time_histogram(
+    dd_segment.spiketrains, bin_size_ms * pq.ms
+)
+dd_rates_binned = (
+    (dd_psth / (bin_size_ms * pq.ms) / descending_drive_pool.n).rescale(pq.Hz).magnitude
+)
 
-    rate_hz = len(bin_spikes) / (bin_size_ms / 1000.0) / n_dd_neurons
-    dd_rates_binned.append(rate_hz)
+mn_psth = elephant.statistics.time_histogram(
+    mn_segment.spiketrains, bin_size_ms * pq.ms
+)
+mn_rates_binned = (
+    (mn_psth / (bin_size_ms * pq.ms) / motor_neuron_pool.n).rescale(pq.Hz).magnitude
+)
 
-# Calculate binned firing rates for MN
-mn_rates_binned = []
-for bin_start, bin_end in zip(bins[:-1], bins[1:]):
-    bin_spikes = []
-    for spiketrain in mn_segment.spiketrains:
-        spikes_in_bin = (
-            spiketrain.time_slice(bin_start * pq.ms, bin_end * pq.ms)
-            .times.rescale(pq.ms)
-            .magnitude
-        )
-        bin_spikes.extend(spikes_in_bin)
-
-    rate_hz = len(bin_spikes) / (bin_size_ms / 1000.0) / n_motor_neurons
-    mn_rates_binned.append(rate_hz)
-
-bin_centers_s = bin_centers / 1000.0
+bin_centers_s = dd_psth.times.rescale(pq.s).magnitude
 axes[3].plot(
     bin_centers_s, dd_rates_binned, "b-", linewidth=2, label="DD Population", alpha=0.8
 )
@@ -463,30 +418,4 @@ for ax in axes:
     ax.set_xlim(0, simulation_time / 1000.0)
 
 plt.tight_layout()
-plt.savefig(save_path / "sinusoidal_dd_analysis.png", dpi=300, bbox_inches="tight")
 plt.show()
-
-##############################################################################
-# Summary and Results
-# -------------------
-#
-# This example demonstrates how **sinusoidal descending drive** creates more realistic
-# motor neuron activation patterns compared to direct current injection.
-
-print(f"\n{'=' * 60}")
-print("SIMULATION SUMMARY")
-print(f"{'=' * 60}")
-print(f"Simulation duration: {simulation_time} ms")
-print(f"DD frequency: {dd_frequency__Hz} Hz")
-print(f"DD neurons: {n_dd_neurons} (Poisson processes)")
-print(f"Motor neurons: {n_motor_neurons} (Powers2017 model)")
-print(
-    f"Connection strength: {dd_to_mn_weight__μS:.3f} μS (probability: {dd_to_mn_probability:.1f})"
-)
-print(f"Results saved to: {save_path}")
-print(f"{'=' * 60}")
-
-print("\nThis example shows how cortical oscillations at 1 Hz can drive")
-print("realistic motor unit recruitment patterns through descending")
-print("pathways, providing a more physiologically accurate simulation")
-print("of voluntary motor control than direct current injection.")

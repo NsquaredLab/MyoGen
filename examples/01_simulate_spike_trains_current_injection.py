@@ -1,15 +1,14 @@
 """
-Motor Unit Spike Trains (NEURON-based)
+Spike Train Generation with Current Injection
 =======================================
 
-After generating the **recruitment thresholds**, we can simulate the **spike trains** of the motor units.
+This example demonstrates how to simulate spike trains of cell populations (here alpha motor neurons) using current injection.
 
-.. note::
-    This example uses the **direct NEURON simulator** with biophysically detailed alpha motor neurons.
-    This provides more accurate modeling of motor neuron biophysics compared to the PyNN wrapper approach.
+The example shows two approaches:
+1. **Manual step-by-step approach** - demonstrates each phase of the NEURON simulation pipeline for educational purposes
+2. **Utility function approach** - uses the convenient inject_currents_and_simulate_spike_trains function for routine use
 
-    The AlphaMN__Pool class creates populations of detailed motor neurons with realistic morphology
-    and ion channel distributions based on the Powers2017 model.
+Both approaches produce identical results, but the manual approach helps you understand the underlying mechanisms.
 """
 
 ##############################################################################
@@ -38,59 +37,50 @@ from pathlib import Path
 
 import elephant
 import joblib
+import neuron
 import numpy as np
 import quantities as pq
 from matplotlib import pyplot as plt
+from neo import Block, Segment, SpikeTrain
+from neuron import h
 
 from myogen import RANDOM_GENERATOR
 from myogen.simulator.neuron.populations import AlphaMN__Pool
 from myogen.utils.currents import create_trapezoid_current
 from myogen.utils.neuron.inject_currents_into_populations import (
     inject_currents_and_simulate_spike_trains,
+    inject_currents_into_populations,
 )
 from myogen.utils.nmodl import load_nmodl_mechanisms
 from myogen.utils.plotting import plot_spike_trains
 
 ##############################################################################
-# Define Parameters
-# -----------------
-# In this example we will simulate a **motor pool** using the **recruitment thresholds** generated in the previous example.
+# Create Motor Neuron Populations (Pools)
+# ---------------------------------------
 #
-# This motor pool will have **two different randomly generated trapezoidal ramp currents** injected into the motor units.
+# In MyoGen a population of cells (e.g. motor neurons) is represented by a
+# **Population** class and available in the `myogen.simulator.neuron.populations` module.
 #
-# The parameters of the input current are:
+# A population can easily be created by specifying the number of cells. Plausible default parameters are already set.
 #
-# - ``n_pools``: Number of distinct motor neuron pools
-# - ``timestep``: Simulation timestep in ms (high resolution)
-# - ``simulation_time``: Total simulation duration in ms
-
-n_pools = 2
-timestep = 0.05
-simulation_time = 4000
-
-##############################################################################
-# Create Motor Neuron Pools
-# -------------------------
+# For a motor neuron population (refferred to as **motor pool**), we can use the **AlphaMN__Pool** class.
+# This class can also use the recruitment thresholds generated in the previous example to distribute the motor units properties in a physiologically plausible manner.
 #
-# Since the **recruitment thresholds** are already generated, we can load them from the previous example using ``joblib``.
+# .. important::
+#    These **Population** classes are custom build and use therefore custom NMODL mechanisms.
+#    To use them, the NMODL mechanisms need to be loaded first using the ``load_nmodl_mechanisms`` function.
 #
-# In the NEURON approach, we use the **AlphaMN__Pool** class which creates biophysically detailed
-# alpha motor neurons with realistic morphology and ion channel distributions.
+# To showcase MyoGen's capabilities, we will create two different motor neuron pools with identical properties but different input currents.
 #
-# The AlphaMN__Pool uses the Powers2017 model by default, which includes:
-# - Detailed soma and dendritic morphology
-# - Multiple ion channel types (Na, K, Ca, h-current)
-# - Calcium-dependent potassium channels for afterhyperpolarization
-# - L-type calcium channels in dendrites for persistent inward currents
 
 load_nmodl_mechanisms()
 
 save_path = Path("./results")
+save_path.mkdir(exist_ok=True)
 
-# Load recruitment thresholds
 recruitment_thresholds = joblib.load(save_path / "thresholds.pkl")
 
-# Create motor neuron pools using AlphaMN__Pool
+n_pools = 2
 motor_neuron_pools = [
     AlphaMN__Pool(recruitment_thresholds__array=recruitment_thresholds)
     for _ in range(n_pools)
@@ -98,7 +88,7 @@ motor_neuron_pools = [
 
 ##############################################################################
 # Create Input Currents
-# ------------------------------
+# ---------------------
 #
 # To drive the motor units, we use a **common input current profile**.
 #
@@ -106,14 +96,17 @@ motor_neuron_pools = [
 #
 # .. note::
 #    More convenient functions for generating input current profiles are available in the ``myogen.utils.currents`` module.
+#
+# .. note::
+#    The generated input current is an instance of the ``AnalogSignal`` class from the ``neo`` package.
 
-# Calculate number of time points
+timestep = 0.05  # ms
+simulation_time = 4000  # ms
 
 rise_time_ms = list(RANDOM_GENERATOR.uniform(100, 500, size=n_pools))
 plateau_time_ms = list(RANDOM_GENERATOR.uniform(1000, 2000, size=n_pools))
 fall_time_ms = list(RANDOM_GENERATOR.uniform(1000, 2000, size=n_pools))
 
-# Create the input current signal
 input_current__AnalogSignal = create_trapezoid_current(
     n_pools,
     int(simulation_time / timestep),
@@ -130,27 +123,134 @@ print(
 )
 
 # Save input current signal for later analysis
-joblib.dump(
-    input_current__AnalogSignal, save_path / "input_current__AnalogSignal_v2.pkl"
-)
+joblib.dump(input_current__AnalogSignal, save_path / "input_current__AnalogSignal.pkl")
 
 ##############################################################################
-# Setup and Run Complete Simulation Pipeline
+# Manual Simulation Approach - Step by Step
 # -------------------------------------------
 #
-# We use the inject_currents_and_simulate_spike_trains function which provides
-# a complete end-to-end pipeline: current injection, spike recording, simulation
-# execution, and conversion to neo.Block format.
+# Before showing the convenient utility function, let's understand what happens
+# under the hood by implementing the simulation pipeline manually.
+# This approach gives you full control and helps understand NEURON's mechanisms.
 
-# Run complete simulation pipeline: inject currents, record spikes, and return neo.Block
+# Step 1: Set up current injection manually
+# =========================================
+# We need to inject time-varying currents into each motor neuron.
+# This uses NEURON's ``IClamp`` (current clamp) mechanism with ``Vector.play()``.
+
+inject_currents_into_populations(motor_neuron_pools, input_current__AnalogSignal)
+
+# Step 2: Set up spike recording manually
+# =======================================
+# For each neuron, we create a ``NetCon`` (network connection) object that detects
+# spikes when the membrane voltage crosses a threshold, and records spike times.
+
+spike_detection_threshold__mV = 50.0
+simulation_time__ms = input_current__AnalogSignal.t_stop.rescale(pq.ms).magnitude
+
+spike_recorders = []
+
+for pool_idx, pool in enumerate(motor_neuron_pools):
+    pool_spike_recorders = []
+
+    for cell in pool:
+        # Create a vector to record spike times
+        spike_recorder = h.Vector()
+
+        # Create NetCon object: monitors voltage at soma(0.5) and records spikes
+        # NetCon(source, target, threshold, delay, weight)
+        # source: cell.soma(0.5)._ref_v (membrane voltage reference)
+        # target: None (no post-synaptic target, just recording)
+        nc = h.NetCon(cell.soma(0.5)._ref_v, None, sec=cell.soma)
+        nc.threshold = spike_detection_threshold__mV  # Spike detection threshold
+        nc.record(spike_recorder)  # Record spike times into vector
+
+        pool_spike_recorders.append(spike_recorder)
+
+    spike_recorders.append(pool_spike_recorders)
+
+# Step 3: Initialize voltages and run simulation
+# ==============================================
+# Before running, we need to initialize membrane voltages to physiological values.
+#
+# .. note:: For this MyoGen populations provide the ``get_initialization_data()`` method.
+# This returns the sections and their initial voltages.
+
+# Initialize each neuron's membrane voltage to its resting potential
+for pool in motor_neuron_pools:
+    for section, voltage in zip(*pool.get_initialization_data()):
+        section.v = voltage
+
+# Initialize NEURON's internal state and run the simulation
+h.finitialize()  # Initialize all mechanisms and variables
+neuron.run(simulation_time__ms)
+
+
+# Step 4: Convert recorded data to neo.Block format
+# =================================================
+# The spike times are now stored in NEURON vectors. We convert them to
+# the standardized neo.Block format for analysis and compatibility.
+
+spike_train__Block_manual = Block(name="Manual Simulation Results")
+
+for pool_idx, pool_spike_recorders in enumerate(spike_recorders):
+    # Create a segment for this motor unit pool
+    segment = Segment(name=f"Pool {pool_idx}")
+
+    # Convert each neuron's spike times to a SpikeTrain object
+    segment.spiketrains = []
+    for neuron_idx, spike_recorder in enumerate(pool_spike_recorders):
+        # Convert NEURON vector to numpy array and add units
+        spike_times = spike_recorder.as_numpy() * pq.ms
+
+        # Create SpikeTrain object with metadata
+        spiketrain = SpikeTrain(
+            spike_times,
+            t_stop=simulation_time__ms * pq.ms,
+            sampling_rate=(1 / h.dt * (1 / pq.ms)),  # Based on NEURON's dt
+            sampling_period=h.dt * pq.ms,
+            name=str(neuron_idx),
+            description=f"Pool {pool_idx}, Neuron {neuron_idx}",
+        )
+        segment.spiketrains.append(spiketrain)
+
+    spike_train__Block_manual.segments.append(segment)
+
+joblib.dump(spike_train__Block_manual, save_path / "spike_train__Block_manual.pkl")
+
+##############################################################################
+# Convenient Utility Function Approach
+# ------------------------------------
+#
+# The manual approach above shows you exactly what happens during simulation.
+# However, since this is a common task, MyoGen provides the ``inject_currents_and_simulate_spike_trains``
+# utility function that encapsulates all these steps in a single call.
+#
+# This is the recommended approach for routine simulations, while the manual
+# approach is useful when you need custom spike detection, specialized recording,
+# or want to understand the underlying mechanisms.
+
+# Run the same simulation using the utility function
 spike_train__Block = inject_currents_and_simulate_spike_trains(
     populations=motor_neuron_pools,
     input_current__AnalogSignal=input_current__AnalogSignal,
     spike_detection_thresholds__mV=50,
 )
 
-# Save spike trains
-joblib.dump(spike_train__Block, save_path / "spike_train__Block_v2.pkl")
+joblib.dump(spike_train__Block, save_path / "spike_train__Block_utility.pkl")
+
+# Compare the two approaches
+print("\nComparison of results:")
+print(f"Manual approach: {len(spike_train__Block_manual.segments)} segments")
+print(f"Utility approach: {len(spike_train__Block.segments)} segments")
+
+# Verify they produce similar results (spike counts should be identical)
+for i, (manual_seg, utility_seg) in enumerate(
+    zip(spike_train__Block_manual.segments, spike_train__Block.segments)
+):
+    manual_spikes = sum(len(st) for st in manual_seg.spiketrains)
+    utility_spikes = sum(len(st) for st in utility_seg.spiketrains)
+    print(f"Pool {i}: Manual={manual_spikes} spikes, Utility={utility_spikes} spikes")
 
 ##############################################################################
 # Calculate and Display Statistics
