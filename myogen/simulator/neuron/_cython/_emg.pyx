@@ -139,8 +139,8 @@ cdef class _sEMG__Cython():
 							curv=0.3) 
 		self.fs     	= int(1/(cfg['sim']['dt']*1e-3))
 		velcon 			= np.linspace(
-							cfg['pop']['aMN']['velcon'][0],
-							cfg['pop']['aMN']['velcon'][1],
+							cfg['pop']['aMN']['conduction_velocity__m_per_s'][0],
+							cfg['pop']['aMN']['conduction_velocity__m_per_s'][1],
 					 		cfg['pop']['aMN']['n'], 
 					 		dtype = np.double)
 		self.t1     	= cfg['pop']['aMN']['nType1']
