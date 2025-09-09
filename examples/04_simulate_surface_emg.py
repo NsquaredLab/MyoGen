@@ -35,7 +35,7 @@ spike_train__Block: SPIKE_TRAIN__Block = joblib.load(
     save_path / "sinusoidal_dd_spike_trains.pkl"
 )
 input_current__AnalogSignal: CURRENT__AnalogSignal = joblib.load(
-    save_path / "input_current__AnalogSignal_v2.pkl"
+    save_path / "sinusoidal_drive_pattern.pkl"
 )
 surface_emg: simulator.SurfaceEMG = joblib.load(save_path / "surface_emg.pkl")
 
@@ -112,11 +112,11 @@ with plt.xkcd():
         linewidth=2,
         label="Input Current",
         alpha=0.7,
+        zorder=-1,
     )
 
     ax.set_xlabel("Time (s)")
     ax.set_ylabel("Normalized Amplitude")
-    ax.grid(True, alpha=0.3)
     ax.legend()
 
     sns.despine(trim=True, left=False, bottom=False, right=True, top=True, offset=5)
