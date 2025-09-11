@@ -757,8 +757,11 @@ class Network:
                         # Point process neuron
                         nc = h.NetCon(neuron.ns, None)
 
-                    # Set up spike recording
-                    nc.threshold = DEFAULT_SPIKE_THRESHOLD  # Spike detection threshold
+                    # Set up spike recording with population-specific threshold
+                    if hasattr(population, 'spike_threshold__mV'):
+                        nc.threshold = population.spike_threshold__mV
+                    else:
+                        nc.threshold = DEFAULT_SPIKE_THRESHOLD  # Fallback for populations without explicit threshold
                     nc.record(spike_vector, id_vector, neuron.global__ID)
                     recording_netcons.append(nc)
 

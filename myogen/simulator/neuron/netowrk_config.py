@@ -23,7 +23,7 @@ from myogen.simulator.neuron.simulation_runner import SimulationRunner
 from myogen.utils.plotting import (
     plot_antagonist_muscle_comparison,
     plot_gto_dynamics,
-    plot_membrane_traces,
+    plot_membrane_potentials,
     plot_muscle_dynamics,
     plot_raster_spikes,
     plot_spindle_dynamics,
@@ -345,7 +345,7 @@ plt.show()
 
 # 2. Membrane potential traces for flexor motor neurons
 fig2, ax2 = plt.subplots(1, 1, figsize=(12, 8))
-plot_membrane_traces(
+plot_membrane_potentials(
     results,
     [ax2],
     population="aMN_flex",
@@ -357,7 +357,7 @@ plt.show()
 
 # 3. Membrane potential traces for extensor motor neurons
 fig3, ax3 = plt.subplots(1, 1, figsize=(12, 8))
-plot_membrane_traces(
+plot_membrane_potentials(
     results,
     [ax3],
     population="aMN_ext",

@@ -43,6 +43,9 @@ class AlphaMN__Pool(_Pool):
         Specific cell index to create (creates only one cell), by default None.
     lambda_factor : float, optional
         Lambda factor for Powers2017 model persistent sodium scaling, by default 1.0.
+    spike_threshold__mV : float, optional
+        Spike detection threshold for recording motor neuron spikes, by default 50.0.
+        Motor neurons have large action potentials (80-100 mV) requiring higher thresholds.
 
     Powers2017 Model Parameters (required when model="Powers2017")
     --------------------------------------------------------
@@ -104,6 +107,7 @@ class AlphaMN__Pool(_Pool):
         cell_index: Optional[int] = None,
         lambda_factor: float = 1.0,
         initial_voltage__mV: Union[float, list[float]] = -67,
+        spike_threshold__mV: float = 50.0,
         # Powers2017 parameters
         # Soma parameters
         soma_length_range: tuple[float, float, float] = (2952, 3665, 0.3),
@@ -201,7 +205,7 @@ class AlphaMN__Pool(_Pool):
         else:
             raise ValueError("Could not find the specific model for alpha MNs.")
 
-        super().__init__(cells=_cells, initial_voltage__mV=initial_voltage__mV)
+        super().__init__(cells=_cells, initial_voltage__mV=initial_voltage__mV, spike_threshold__mV=spike_threshold__mV)
 
     def _create_nerlab_cells(self) -> list:
         """Create motor neurons using the NERLab model."""

@@ -6,9 +6,10 @@ allowing for intuitive parameter names while maintaining compatibility
 with the underlying Hill implementation.
 """
 
-from typing import Any, Dict
+from typing import Any, Dict, Literal
 
 import numpy as np
+from sympy import Li
 
 from myogen.simulator.neuron._cython._hill import _HillMuscleModel__Cython
 from myogen.utils.decorators import beartowertype
@@ -55,7 +56,7 @@ class HillModel:
         n_motor_units_type2: int,
         initial_joint_angle__deg: float,
         initial_muscle_length__L0: float = -1.0,
-        muscle_role: str = "flexor",
+        muscle_role: Literal["flexor", "extensor"] = "flexor",
     ):
         # Store original parameters (immutable)
         self.simulation_time__ms = simulation_time__ms
@@ -107,11 +108,9 @@ class HillModel:
             raise ValueError(
                 "initial_muscle_length__L0 must be -1 or between 0.7 and 1.3"
             )
-            
+
         if self._muscle_role not in ["flexor", "extensor"]:
-            raise ValueError(
-                "muscle_role must be 'flexor' or 'extensor'"
-            )
+            raise ValueError("muscle_role must be 'flexor' or 'extensor'")
 
     def _create_hill_model(self) -> _HillMuscleModel__Cython:
         """
@@ -159,10 +158,7 @@ class HillModel:
         tuple[float, float, float]
             Muscle length (normalized to L0), velocity (L0/s), acceleration (L0/s�)
         """
-        # Convert angle to radians for the Hill model
-        joint_angle__rad = np.radians(joint_angle__deg)
-
-        return self._hill_model.integrate(joint_angle__rad)
+        return self._hill_model.integrate(np.radians(joint_angle__deg))
 
     @property
     def muscle_length(self) -> np.ndarray:

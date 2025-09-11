@@ -67,7 +67,8 @@ class _Pool:
     Base class for neuron cell populations.
 
     Provides common functionality for managing groups of neurons including
-    voltage initialization for populations with real NEURON sections.
+    voltage initialization for populations with real NEURON sections and
+    configurable spike detection thresholds.
 
     Parameters
     ----------
@@ -78,6 +79,11 @@ class _Pool:
         NEURON sections. Can be a single value applied to all cells or a list
         of per-cell values. If None (default), no voltage initialization is
         performed, which is appropriate for dummy cell populations.
+    spike_threshold__mV : float, optional
+        Spike detection threshold in millivolts for recording spikes from
+        this population. Motor neurons typically need higher thresholds
+        (e.g., 50.0 mV) while interneurons use lower thresholds (-10.0 mV).
+        By default -10.0.
 
     Notes
     -----
@@ -85,14 +91,20 @@ class _Pool:
     not provide initial_voltage__mV as they have no real soma or dendrite
     sections to initialize. Populations with real NEURON sections (e.g.,
     AlphaMN, AffII, GII, GIb) should provide appropriate voltage values.
+
+    Different neuron types have different action potential amplitudes:
+    - Motor neurons: typically reach 80-100 mV, need threshold ~50 mV
+    - Interneurons: typically reach 30-50 mV, can use default -10 mV
     """
 
     def __init__(
         self,
         cells: list,
         initial_voltage__mV: Optional[Union[float, list[float]]] = None,
+        spike_threshold__mV: float = -10.0,
     ):
         self._cells = cells
+        self.spike_threshold__mV = spike_threshold__mV
 
         # Handle initial voltage - only if provided
         if initial_voltage__mV is not None:

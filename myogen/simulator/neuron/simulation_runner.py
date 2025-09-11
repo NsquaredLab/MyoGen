@@ -4,6 +4,7 @@ from typing import Any, Callable, Optional, Union
 import numpy as np
 import quantities as pq
 from neo import AnalogSignal, Block, Segment, SpikeTrain
+from tqdm import tqdm
 
 from myogen.simulator.neuron.network import Network
 
@@ -91,6 +92,8 @@ class SimulationRunner:
         # Runtime state
         self._trace_vectors: dict[str, dict[int, Any]] = {}
         self._step_counter = None
+        self._progress_bar = None
+        self._total_steps = None
 
         # Setup internal spike recording vectors
         self._spike_recording = self._setup_spike_recording()
@@ -215,6 +218,11 @@ class SimulationRunner:
 
             print("Starting Simulation")
             h.run()
+
+            # Close progress bar
+            if self._progress_bar is not None:
+                self._progress_bar.close()
+
             print("Simulation completed")
 
             # Collect and structure results
@@ -223,6 +231,9 @@ class SimulationRunner:
             return results
 
         except Exception as e:
+            # Close progress bar in case of error
+            if self._progress_bar is not None:
+                self._progress_bar.close()
             raise RuntimeError(f"Simulation failed: {str(e)}") from e
 
     def _setup_neuron_environment(
@@ -233,6 +244,20 @@ class SimulationRunner:
         h.celsius = self._temperature__celsius
         h.tstop = duration__ms
         h.dt = timestep__ms
+
+        # Calculate total steps for progress bar
+        self._total_steps = int(duration__ms / timestep__ms)
+
+        # Store timestep for progress bar updates
+        self._timestep__ms = timestep__ms
+
+        # Initialize progress bar
+        self._progress_bar = tqdm(
+            total=duration__ms,
+            desc="Simulation Progress",
+            unit="ms",
+            bar_format="{l_bar}{bar}| {n:.2f}/{total:.2f} {unit} [{elapsed}<{remaining}, {rate_fmt}{postfix}]",
+        )
 
         # Reset step counter for step callback
         self._step_counter = count(0)
@@ -288,8 +313,13 @@ class SimulationRunner:
     def _register_step_callback(self) -> None:
         """Register user's step callback with NEURON's integration system."""
 
-        # Create wrapper that provides step counter access to callback
+        # Create wrapper that provides step counter access to callback and updates progress
         def step_wrapper():
+            # Update progress bar by timestep amount
+            if self._progress_bar is not None and hasattr(self, "_timestep__ms"):
+                self._progress_bar.update(self._timestep__ms)
+
+            # Call user's step callback
             return self._step_callback(self._step_counter)
 
         h.CVode().extra_scatter_gather(0, step_wrapper)
