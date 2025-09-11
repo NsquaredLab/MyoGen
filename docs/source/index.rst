@@ -81,7 +81,7 @@ Installation
 
    .. code-block:: bash
 
-      python -c "from myogen.utils import setup_myogen; setup_myogen()"
+      uv run poe setup_myogen
 
 Package Structure
 -----------------
