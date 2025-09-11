@@ -120,9 +120,9 @@ simulation_time = 3000  # ms
 
 time_points = int(simulation_time / timestep)
 
-dd_frequency__Hz = 1
+dd_frequency__Hz = 0.25
 dd_amplitude__Hz = 60.0
-dd_baseline__Hz = 10.0
+dd_baseline__Hz = 20.0
 
 sinusoidal_drive = AnalogSignal(
     signal=(
@@ -140,7 +140,7 @@ sinusoidal_drive = AnalogSignal(
             ),
             dd_baseline__Hz,
         )
-        + np.clip(RANDOM_GENERATOR.normal(0, 2.0, size=time_points), 0, None)
+        + np.clip(RANDOM_GENERATOR.normal(0, 1.0, size=time_points), 0, None)
     ),
     units=pq.Hz,
     sampling_period=(timestep * pq.ms).rescale(pq.s),
@@ -166,7 +166,7 @@ joblib.dump(sinusoidal_drive, save_path / "sinusoidal_drive_pattern.pkl")
 network = Network({"DD": descending_drive_pool, "aMN": motor_neuron_pool})
 
 # Connect DD neurons to motor neurons with realistic synaptic parameters
-network.connect(source="DD", target="aMN", probability=0.8, weight__μS=0.1)
+network.connect(source="DD", target="aMN", probability=0.5, weight__μS=0.1)
 
 # Set up external input to DD population
 network.connect_from_external(source="cortical_input", target="DD", weight__μS=1.0)
@@ -220,10 +220,10 @@ total_steps = int(simulation_time / timestep)
 
 step_counter = 0
 with tqdm(
-    total=total_steps,
+    total=simulation_time,
     desc="Running simulation",
-    unit="steps",
-    bar_format="{l_bar}{bar}| {n_fmt}/{total_fmt} steps [{elapsed}<{remaining}, {rate_fmt}]",
+    unit="ms",
+    bar_format="{l_bar}{bar}| {n:.2f}/{total:.2f} ms [{elapsed}<{remaining}, {rate_fmt}]",
 ) as pbar:
     while h.t < h.tstop:
         current_drive = sinusoidal_drive[min(step_counter, len(sinusoidal_drive) - 1)]
@@ -241,11 +241,8 @@ with tqdm(
         # Progress simulation
         h.fadvance()
         step_counter += 1
-        pbar.update(1)
+        pbar.update(timestep)
 
-        # Update description with current simulation time every 1000 steps
-        if step_counter % 1000 == 0:
-            pbar.set_description(f"Running simulation (t={h.t:.0f}ms)")
 
 ##############################################################################
 # Convert Spike Data to Neo Format

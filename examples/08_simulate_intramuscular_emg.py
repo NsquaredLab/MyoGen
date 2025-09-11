@@ -111,7 +111,7 @@ spike_train__Block: SPIKE_TRAIN__Block = joblib.load(
     save_path / "sinusoidal_dd_spike_trains.pkl"
 )
 input_current__AnalogSignal: CURRENT__AnalogSignal = joblib.load(
-    save_path / "input_current__AnalogSignal_v2.pkl"
+    save_path / "sinusoidal_drive_pattern.pkl"
 )
 
 ##############################################################################
@@ -134,7 +134,7 @@ print(
 )
 
 print("Adding realistic noise (SNR = 20 dB)...")
-noisy_emg_signals__Block = iemg_sim.add_noise(snr__dB=5)
+noisy_emg_signals__Block = iemg_sim.add_noise(snr__dB=20)
 first_noisy_signal = noisy_emg_signals__Block.segments[0].analogsignals[0]
 print(
     f"  - Signal RMS (after noise): {np.sqrt(np.mean(first_noisy_signal.magnitude**2)):.3f}"

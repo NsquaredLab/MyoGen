@@ -28,17 +28,29 @@ References
 ##############################################################################
 # Import Libraries
 # ----------------
+
+# %%
 import matplotlib.pyplot as plt
 import numpy as np
-import pyNN.neuron as sim
-from neo import Block
 
 from myogen import simulator
 from myogen.simulator.core.force.force_model import ForceModel
+from myogen.simulator.neuron.populations import AlphaMN__Pool
 from myogen.utils.currents import create_trapezoid_current
+from myogen.utils.neuron.inject_currents_into_populations import (
+    inject_currents_and_simulate_spike_trains,
+)
+from myogen.utils.nmodl import load_nmodl_mechanisms
 from myogen.utils.plotting import plot_spike_trains
 from myogen.utils.plotting.force import plot_twitch_parameter_assignment, plot_twitches
-from myogen.utils.pyNN import inject_currents_into_populations
+
+##############################################################################
+# Load NMODL Mechanisms
+# ---------------------
+#
+# Load the custom NEURON mechanisms required for the motor neuron models.
+
+load_nmodl_mechanisms()
 
 ##############################################################################
 # Define Parameters
@@ -138,11 +150,11 @@ plt.show()
 # drive motor unit recruitment and firing patterns.
 
 # Parameters for trapezoid current
-trap_amplitude = 100.0  # Peak amplitude
+trap_amplitude = 15.0  # Peak amplitude
 trap_rise_time = 5000.0  # Rise duration (ms)
 trap_plateau_time = 8000.0  # Plateau duration (ms)
 trap_fall_time = 3000.0  # Fall duration (ms)
-trap_offset = 50.0  # Baseline current
+trap_offset = 5.0  # Baseline current
 trap_delay = 0.0  # Initial delay (ms)
 
 input_current__AnalogSignal = create_trapezoid_current(
@@ -182,36 +194,14 @@ plt.show()
 # to the input current.
 
 
-motor_neuron_pool = simulator.pyNN.neurons.MotorNeuron__Population(
-    recruitment_thresholds
-)
+motor_neuron_pool = AlphaMN__Pool(recruitment_thresholds__array=recruitment_thresholds)
 
-# Setup simulation
-sim.setup(timestep=timestep__ms)
-
-# Inject currents into population
-inject_currents_into_populations(
-    input_current__AnalogSignal=input_current__AnalogSignal,
+# Generate spike trains using the convenient utility function
+spike_train__Block = inject_currents_and_simulate_spike_trains(
     populations=[motor_neuron_pool],
+    input_current__AnalogSignal=input_current__AnalogSignal,
+    spike_detection_thresholds__mV=50,
 )
-
-# Tell pyNN to record spikes
-motor_neuron_pool.record("spikes")
-
-# Run the simulation and clean up after end
-sim.run(simulation_duration__ms)
-spike_data = motor_neuron_pool.get_data()
-sim.end()
-
-# Store the spike trains in a Neo Block for later use
-spike_train__Block = Block()
-spike_train__Block.segments.extend([spike_data.segments[0]])
-
-# Fix sampling period for compatibility (PyNN issue workaround)
-for segment in spike_train__Block.segments:
-    for spike_train in segment.spiketrains:
-        spike_train.sampling_period = input_current__AnalogSignal.sampling_period
-        spike_train.sampling_rate = input_current__AnalogSignal.sampling_rate
 
 ##############################################################################
 # Visualize Spike Trains
