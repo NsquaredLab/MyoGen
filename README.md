@@ -63,7 +63,7 @@ source .venv/bin/activate
 > This step is required. Please do not skip it.
 
 ```bash
-python -c "from myogen.utils import setup_myogen; setup_myogen()"
+uv run poe setup_myogen
 ```
 
 #### NMODL/NEURON Issues
