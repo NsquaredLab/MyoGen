@@ -21,7 +21,7 @@ from myogen.utils.decorators import beartowertype
 def plot_raster_spikes(
     results: Block,
     axs: IterableType[Axes],
-    populations: list[str] = ["aMN", "Ia", "II", "gII", "gIb", "Ib", "DD"],
+    populations: list[str],
     time_range: tuple[float, float] | None = None,
     dot_size: float = 0.8,
     title: str = "Raster Plot",
@@ -31,16 +31,16 @@ def plot_raster_spikes(
     **kwargs: Any,
 ) -> IterableType[Axes]:
     """
-    Plot spike raster plots for neural populations.
+    Plot spike raster plots for neural populations, one per axis.
 
     Parameters
     ----------
     results : Block
         NEO Block containing spike train segments for each population.
     axs : IterableType[Axes]
-        Matplotlib axes to plot on.
-    populations : list[str], optional
-        List of population names to plot, by default ["aMN", "Ia", "II", "gII", "gIb", "Ib", "DD"].
+        Matplotlib axes to plot on. Must have as many axes as populations.
+    populations : list[str]
+        List of population names to plot.
     time_range : tuple[float, float], optional
         Time range to plot (start, end) in milliseconds, by default None (full range).
     dot_size : float, optional
@@ -62,20 +62,15 @@ def plot_raster_spikes(
         The axes that were plotted on.
     """
     ax_list = list(axs)
-    if len(ax_list) != 1:
+    if len(ax_list) != len(populations):
         raise ValueError(
-            f"plot_raster_spikes requires exactly 1 axis, got {len(ax_list)}"
+            f"plot_raster_spikes requires {len(populations)} axes (one per population), got {len(ax_list)}"
         )
 
-    ax = ax_list[0]
-
-    # Extract spike data from NEO Block segments
-    all_spike_times = []
-    all_spike_ids = []
-    population_offsets = {}
-    current_offset = 0
-
-    for pop_name in populations:
+    # Plot each population on its own axis
+    for pop_idx, pop_name in enumerate(populations):
+        ax = ax_list[pop_idx]
+        
         # Find segment for this population
         segment = None
         for seg in results.segments:
@@ -84,69 +79,69 @@ def plot_raster_spikes(
                 break
 
         if segment is None or not segment.spiketrains:
-            # No spikes for this population, skip
-            population_offsets[pop_name] = current_offset
+            # No spikes for this population, skip but still format axis
+            if apply_default_formatting:
+                ax.set_xlabel(xlabel if pop_idx == len(populations) - 1 else "")
+                ax.set_ylabel(ylabel)
+                ax.set_title(f"{title} - {pop_name}")
+                if time_range is not None:
+                    ax.set_xlim(time_range)
             continue
 
-        population_offsets[pop_name] = current_offset
-
         # Extract spike times and IDs from spike trains
-        for spiketrain in segment.spiketrains:
-            neuron_id = int(spiketrain.name)
+        spike_times = []
+        spike_ids = []
+        
+        for i, spiketrain in enumerate(segment.spiketrains):
             for spike_time in spiketrain.times:
-                all_spike_times.append(float(spike_time.magnitude))
-                all_spike_ids.append(current_offset + neuron_id)
+                spike_times.append(float(spike_time.magnitude))
+                spike_ids.append(i)
 
-        # Update offset for next population
-        max_id = (
-            max([int(st.name) for st in segment.spiketrains])
-            if segment.spiketrains
-            else -1
-        )
-        current_offset += max_id + 1
+        if spike_times:
+            spike_times = np.array(spike_times)
+            spike_ids = np.array(spike_ids)
 
-    if all_spike_times:
-        all_spike_times = np.array(all_spike_times)
-        all_spike_ids = np.array(all_spike_ids)
+            # Apply time range filter if specified
+            if time_range is not None:
+                time_mask = (spike_times >= time_range[0]) & (
+                    spike_times <= time_range[1]
+                )
+                spike_times = spike_times[time_mask]
+                spike_ids = spike_ids[time_mask]
 
-        # Apply time range filter if specified
-        if time_range is not None:
-            time_mask = (all_spike_times >= time_range[0]) & (
-                all_spike_times <= time_range[1]
-            )
-            all_spike_times = all_spike_times[time_mask]
-            all_spike_ids = all_spike_ids[time_mask]
+            # Plot spikes for this population
+            ax.plot(spike_times, spike_ids, ".", ms=dot_size, **kwargs)
 
-        # Plot spikes
-        ax.plot(all_spike_times, all_spike_ids, ".", ms=dot_size, **kwargs)
+        if apply_default_formatting:
+            # Only show xlabel on bottom plot
+            ax.set_xlabel(xlabel if pop_idx == len(populations) - 1 else "")
+            ax.set_ylabel(ylabel)
+            ax.set_title(f"{title} - {pop_name}")
 
-    if apply_default_formatting:
-        ax.set_xlabel(xlabel)
-        ax.set_ylabel(ylabel)
-        ax.set_title(title)
-
-        if time_range is not None:
-            ax.set_xlim(time_range)
-
-        # Add population labels on y-axis
-        yticks = []
-        yticklabels = []
-        for pop_name, offset in population_offsets.items():
-            yticks.append(offset)
-            yticklabels.append(pop_name)
-
-        if yticks:
-            ax.set_yticks(yticks)
-            ax.set_yticklabels(yticklabels)
+            if time_range is not None:
+                ax.set_xlim(time_range)
+                
+            # Set y-axis to show neuron IDs from 0 to max
+            if spike_times.size > 0:
+                ax.set_ylim(-0.5, len(segment.spiketrains) - 0.5)
+                
+            # Remove spines for cleaner appearance when multiple populations
+            if len(populations) > 1:
+                ax.spines['right'].set_visible(False)
+                ax.spines['top'].set_visible(False)
+                # Remove bottom spine for all except the last plot
+                if pop_idx < len(populations) - 1:
+                    ax.spines['bottom'].set_visible(False)
+                    ax.tick_params(bottom=False, labelbottom=False)
 
     return axs
 
 
 @beartowertype
-def plot_membrane_traces(
+def plot_membrane_potentials(
     results: Block,
     axs: IterableType[Axes],
-    population: str = "aMN",
+    populations: list[str] | str = "aMN",
     cell_indices: list[int] = [0, 10, 20, 30, 40],
     time_range: tuple[float, float] | None = None,
     title: str = "Membrane Potential",
@@ -156,16 +151,16 @@ def plot_membrane_traces(
     **kwargs: Any,
 ) -> IterableType[Axes]:
     """
-    Plot membrane potential traces for selected cells.
+    Plot membrane potential traces for selected cells across populations.
 
     Parameters
     ----------
     results : Block
         NEO Block containing analog signal segments for membrane potentials.
     axs : IterableType[Axes]
-        Matplotlib axes to plot on.
-    population : str, optional
-        Population name to plot, by default "aMN".
+        Matplotlib axes to plot on. If populations is a list, must have as many axes as populations.
+    populations : list[str] | str, optional
+        Population name(s) to plot. If list, plots one per axis. By default "aMN".
     cell_indices : list[int], optional
         List of cell indices to plot, by default [0, 10, 20, 30, 40].
     time_range : tuple[float, float], optional
@@ -187,47 +182,70 @@ def plot_membrane_traces(
         The axes that were plotted on.
     """
     ax_list = list(axs)
-    if len(ax_list) != 1:
+    
+    # Handle backward compatibility - convert single population to list
+    if isinstance(populations, str):
+        populations = [populations]
+        
+    if len(ax_list) != len(populations):
         raise ValueError(
-            f"plot_membrane_traces requires exactly 1 axis, got {len(ax_list)}"
+            f"plot_membrane_potentials requires {len(populations)} axes (one per population), got {len(ax_list)}"
         )
 
-    ax = ax_list[0]
+    # Plot each population on its own axis
+    for pop_idx, population in enumerate(populations):
+        ax = ax_list[pop_idx]
+        
+        # Find segment for this population
+        segment = None
+        for seg in results.segments:
+            if seg.name == population:
+                segment = seg
+                break
 
-    # Find segment for this population
-    segment = None
-    for seg in results.segments:
-        if seg.name == population:
-            segment = seg
-            break
+        if segment is None or not segment.analogsignals:
+            warnings.warn(f"No membrane potential data found for population '{population}'")
+            if apply_default_formatting:
+                ax.set_xlabel(xlabel if pop_idx == len(populations) - 1 else "")
+                ax.set_ylabel(ylabel)
+                ax.set_title(f"{title} - {population}")
+                if time_range is not None:
+                    ax.set_xlim(time_range)
+            continue
 
-    if segment is None or not segment.analogsignals:
-        warnings.warn(f"No membrane potential data found for population '{population}'")
-        return axs
+        # Plot traces for requested cell indices
+        for signal in segment.analogsignals:
+            cell_id = int(signal.name)
+            if cell_id in cell_indices:
+                times = signal.times.rescale("ms").magnitude
+                voltage = signal.magnitude.flatten()
 
-    # Plot traces for requested cell indices
-    for signal in segment.analogsignals:
-        cell_id = int(signal.name)
-        if cell_id in cell_indices:
-            times = signal.times.rescale("ms").magnitude
-            voltage = signal.magnitude.flatten()
+                # Apply time range filter if specified
+                if time_range is not None:
+                    time_mask = (times >= time_range[0]) & (times <= time_range[1])
+                    times = times[time_mask]
+                    voltage = voltage[time_mask]
 
-            # Apply time range filter if specified
+                ax.plot(times, voltage, label=f"{population}[{cell_id}]", **kwargs)
+
+        if apply_default_formatting:
+            # Only show xlabel on bottom plot
+            ax.set_xlabel(xlabel if pop_idx == len(populations) - 1 else "")
+            ax.set_ylabel(ylabel)
+            ax.set_title(f"{title} - {population}")
+            ax.legend(loc="upper right")
+
             if time_range is not None:
-                time_mask = (times >= time_range[0]) & (times <= time_range[1])
-                times = times[time_mask]
-                voltage = voltage[time_mask]
-
-            ax.plot(times, voltage, label=f"{population}[{cell_id}]", **kwargs)
-
-    if apply_default_formatting:
-        ax.set_xlabel(xlabel)
-        ax.set_ylabel(ylabel)
-        ax.set_title(title)
-        ax.legend(loc="upper right")
-
-        if time_range is not None:
-            ax.set_xlim(time_range)
+                ax.set_xlim(time_range)
+                
+            # Remove spines for cleaner appearance when multiple populations
+            if len(populations) > 1:
+                ax.spines['right'].set_visible(False)
+                ax.spines['top'].set_visible(False)
+                # Remove bottom spine for all except the last plot
+                if pop_idx < len(populations) - 1:
+                    ax.spines['bottom'].set_visible(False)
+                    ax.tick_params(bottom=False, labelbottom=False)
 
     return axs
 
@@ -345,7 +363,9 @@ def plot_muscle_dynamics(
                     else:
                         signal_data[key] = (signal_array[time_mask], value[1])
                 else:
-                    print(f"Warning: signal_data['{key}'] is a tuple but has length {len(value)}: {value}")
+                    print(
+                        f"Warning: signal_data['{key}'] is a tuple but has length {len(value)}: {value}"
+                    )
             elif key == "act":
                 for act_type, act_data in value.items():
                     # Handle activation data length mismatch
@@ -357,7 +377,9 @@ def plot_muscle_dynamics(
                     else:
                         signal_data[key][act_type] = act_data[time_mask]
             else:
-                print(f"Warning: signal_data['{key}'] is not a tuple or 'act': type={type(value)}, value={value}")
+                print(
+                    f"Warning: signal_data['{key}'] is not a tuple or 'act': type={type(value)}, value={value}"
+                )
 
     # Plot signals
     plot_idx = 0
@@ -400,6 +422,7 @@ def plot_muscle_dynamics(
                 ax.set_xlim(time_range)
 
     return axs
+
 
 @beartowertype
 def plot_antagonist_muscle_comparison(
@@ -481,7 +504,7 @@ def plot_antagonist_muscle_comparison(
     if time_range is not None:
         time_mask = (time >= time_range[0]) & (time <= time_range[1])
         plot_time = time[time_mask]
-        
+
         # Handle length mismatches for joint angle
         if len(joint_angle) != len(time_mask):
             min_length = min(len(joint_angle), len(time_mask))
@@ -490,7 +513,7 @@ def plot_antagonist_muscle_comparison(
             joint_angle = joint_angle[time_mask_trimmed]
         else:
             joint_angle = joint_angle[time_mask]
-            
+
         # Apply mask to muscle data with length checks
         for key in flexor_data:
             if len(flexor_data[key]) != len(time_mask):
@@ -500,7 +523,7 @@ def plot_antagonist_muscle_comparison(
                 flexor_data[key] = data_trimmed[time_mask_trimmed]
             else:
                 flexor_data[key] = flexor_data[key][time_mask]
-                
+
         for key in extensor_data:
             if len(extensor_data[key]) != len(time_mask):
                 min_length = min(len(extensor_data[key]), len(time_mask))
@@ -517,7 +540,7 @@ def plot_antagonist_muscle_comparison(
     if "artAng" in include_signals and plot_idx < len(ax_list):
         ax = ax_list[plot_idx]
         ax.plot(plot_time, joint_angle, label="Joint Angle", **kwargs)
-        
+
         if apply_default_formatting:
             ax.set_ylabel("Joint Angle [deg]")
             ax.legend()
@@ -535,8 +558,10 @@ def plot_antagonist_muscle_comparison(
         if "muscle_force" in flexor_data:
             ax.plot(plot_time, flexor_data["muscle_force"], label="Flexor", **kwargs)
         if "muscle_force" in extensor_data:
-            ax.plot(plot_time, extensor_data["muscle_force"], label="Extensor", **kwargs)
-        
+            ax.plot(
+                plot_time, extensor_data["muscle_force"], label="Extensor", **kwargs
+            )
+
         if apply_default_formatting:
             ax.set_ylabel("Force [F0]")
             ax.legend()
@@ -555,11 +580,11 @@ def plot_antagonist_muscle_comparison(
             flex_torque = flexor_data["muscle_torque"]
             ext_torque = -extensor_data["muscle_torque"]  # Negative for extensor
             net_torque = flex_torque + ext_torque
-            
+
             ax.plot(plot_time, flex_torque, label="Flexor", **kwargs)
             ax.plot(plot_time, ext_torque, label="Extensor", **kwargs)
             ax.plot(plot_time, net_torque, label="Net", linewidth=2, **kwargs)
-        
+
         if apply_default_formatting:
             ax.set_ylabel("Torque [F0·cm]")
             ax.legend()
