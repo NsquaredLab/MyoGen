@@ -259,6 +259,14 @@ class SurfaceEMG:
                         )
                     )
 
+                    theta = np.arctan2(fiber_position[1], fiber_position[0])
+
+                    electrode_array._center_point__mm_deg = (
+                        electrode_array._center_point__mm_deg[0],
+                        electrode_array._center_point__mm_deg[1] - np.rad2deg(theta),
+                    )
+                    electrode_array._create_electrode_grid()
+
                     # Calculate fiber end positions
                     L1 = abs(innervation_zone + fiber_length__mm / 2)
                     L2 = abs(innervation_zone - fiber_length__mm / 2)
