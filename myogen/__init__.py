@@ -49,32 +49,6 @@ def _setup_myogen(quiet: bool = False) -> bool:
     -------
     bool
         True if setup completed successfully, False otherwise
-
-    Examples
-    --------
-    Basic setup with standard MyoGen mechanisms:
-
-    >>> import myogen
-    >>> myogen.setup_myogen()
-
-    Setup with spinal circuits for proprioceptive modeling:
-
-    >>> import myogen
-    >>> myogen.setup_myogen(enable_spinal_circuits=True)
-
-    Notes
-    -----
-    This function should be called before using any NEURON-based simulation
-    components. It will automatically detect the platform and use appropriate
-    compilation tools, prioritizing PyNN's load_mechanisms() for better integration.
-
-    When enable_spinal_circuits=True, additional mechanisms become available:
-    - Ion channels: na3rp, naps, kdrRL, gh, mAHP, L_Ca_inact, caL, napp
-    - Synaptic: Gfluctdv, vecevent
-    - Stimulation: GammaStim, nsloc, izap, constant, dummy
-
-    For PyNN integration, the function will attempt to use pyNN.neuron.simulator.load_mechanisms()
-    which provides better compatibility with PyNN simulations and handles compilation automatically.
     """
     setup(
         ext_modules=cythonize(
