@@ -74,7 +74,7 @@ def _setup_myogen(quiet: bool = False) -> bool:
                     ["myogen/simulator/neuron/_cython/_poisson_process_generator.pyx"],
                 ),
             ],
-            compiler_directives = {'embedsignature': True}
+            compiler_directives={"embedsignature": True},
         ),
         script_args=["build_ext", "--inplace"],
         include_dirs=[np.get_include()],

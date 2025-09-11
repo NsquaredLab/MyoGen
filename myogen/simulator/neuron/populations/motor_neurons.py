@@ -205,7 +205,11 @@ class AlphaMN__Pool(_Pool):
         else:
             raise ValueError("Could not find the specific model for alpha MNs.")
 
-        super().__init__(cells=_cells, initial_voltage__mV=initial_voltage__mV, spike_threshold__mV=spike_threshold__mV)
+        super().__init__(
+            cells=_cells,
+            initial_voltage__mV=initial_voltage__mV,
+            spike_threshold__mV=spike_threshold__mV,
+        )
 
     def _create_nerlab_cells(self) -> list:
         """Create motor neurons using the NERLab model."""
@@ -254,7 +258,9 @@ class AlphaMN__Pool(_Pool):
                 class__ID=self.cell_index,
                 pool__ID=i,
             )
-            cell.create_axon(length__m=self.axon_length, conduction_velocity__m_per_s=vcon[i])
+            cell.create_axon(
+                length__m=self.axon_length, conduction_velocity__m_per_s=vcon[i]
+            )
 
             # Soma biophysical parameters
             cell.soma.L = Diam_soma[i]
@@ -349,7 +355,9 @@ class AlphaMN__Pool(_Pool):
             # Set soma parameters
             cell.soma.L = sL[i]
             cell.soma.diam = sdiam[i]
-            cell.create_axon(length__m=self.axon_length, conduction_velocity__m_per_s=vcon[i])
+            cell.create_axon(
+                length__m=self.axon_length, conduction_velocity__m_per_s=vcon[i]
+            )
             cell.soma.g_pas = sg_pas[i]
             cell.soma.e_pas = se_pas[i]
             cell.soma.cm = scm[i]

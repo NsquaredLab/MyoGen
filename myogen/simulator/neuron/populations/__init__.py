@@ -16,7 +16,7 @@ AffIa__Pool
     Population of type Ia afferent neurons providing primary proprioceptive feedback
     from muscle spindles.
 
-AffII__Pool  
+AffII__Pool
     Population of type II afferent neurons providing secondary proprioceptive feedback
     from muscle spindles.
 
@@ -35,11 +35,11 @@ AlphaMN__Pool
 Usage
 -----
 >>> from myogen.simulator.neuron.populations import AlphaMN__Pool, DescendingDrive__Pool
->>> 
+>>>
 >>> # Create motor neuron population
 >>> motor_pool = AlphaMN__Pool(n=10, model="Powers2017", mode="active")
->>> 
->>> # Create descending drive population  
+>>>
+>>> # Create descending drive population
 >>> drive_pool = DescendingDrive__Pool(n=5, poisson_random_process_order=16, timestep__ms=0.05)
 """
 
@@ -51,9 +51,9 @@ from .motor_neurons import AlphaMN__Pool
 
 __all__ = [
     "_Pool",
-    "DescendingDrive__Pool", 
+    "DescendingDrive__Pool",
     "AffIa__Pool",
-    "AffII__Pool", 
+    "AffII__Pool",
     "AffIb__Pool",
     "GII__Pool",
     "GIb__Pool",

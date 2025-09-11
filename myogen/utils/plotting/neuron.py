@@ -70,7 +70,7 @@ def plot_raster_spikes(
     # Plot each population on its own axis
     for pop_idx, pop_name in enumerate(populations):
         ax = ax_list[pop_idx]
-        
+
         # Find segment for this population
         segment = None
         for seg in results.segments:
@@ -91,7 +91,7 @@ def plot_raster_spikes(
         # Extract spike times and IDs from spike trains
         spike_times = []
         spike_ids = []
-        
+
         for i, spiketrain in enumerate(segment.spiketrains):
             for spike_time in spiketrain.times:
                 spike_times.append(float(spike_time.magnitude))
@@ -120,18 +120,18 @@ def plot_raster_spikes(
 
             if time_range is not None:
                 ax.set_xlim(time_range)
-                
+
             # Set y-axis to show neuron IDs from 0 to max
             if spike_times.size > 0:
                 ax.set_ylim(-0.5, len(segment.spiketrains) - 0.5)
-                
+
             # Remove spines for cleaner appearance when multiple populations
             if len(populations) > 1:
-                ax.spines['right'].set_visible(False)
-                ax.spines['top'].set_visible(False)
+                ax.spines["right"].set_visible(False)
+                ax.spines["top"].set_visible(False)
                 # Remove bottom spine for all except the last plot
                 if pop_idx < len(populations) - 1:
-                    ax.spines['bottom'].set_visible(False)
+                    ax.spines["bottom"].set_visible(False)
                     ax.tick_params(bottom=False, labelbottom=False)
 
     return axs
@@ -182,11 +182,11 @@ def plot_membrane_potentials(
         The axes that were plotted on.
     """
     ax_list = list(axs)
-    
+
     # Handle backward compatibility - convert single population to list
     if isinstance(populations, str):
         populations = [populations]
-        
+
     if len(ax_list) != len(populations):
         raise ValueError(
             f"plot_membrane_potentials requires {len(populations)} axes (one per population), got {len(ax_list)}"
@@ -195,7 +195,7 @@ def plot_membrane_potentials(
     # Plot each population on its own axis
     for pop_idx, population in enumerate(populations):
         ax = ax_list[pop_idx]
-        
+
         # Find segment for this population
         segment = None
         for seg in results.segments:
@@ -204,7 +204,9 @@ def plot_membrane_potentials(
                 break
 
         if segment is None or not segment.analogsignals:
-            warnings.warn(f"No membrane potential data found for population '{population}'")
+            warnings.warn(
+                f"No membrane potential data found for population '{population}'"
+            )
             if apply_default_formatting:
                 ax.set_xlabel(xlabel if pop_idx == len(populations) - 1 else "")
                 ax.set_ylabel(ylabel)
@@ -237,14 +239,14 @@ def plot_membrane_potentials(
 
             if time_range is not None:
                 ax.set_xlim(time_range)
-                
+
             # Remove spines for cleaner appearance when multiple populations
             if len(populations) > 1:
-                ax.spines['right'].set_visible(False)
-                ax.spines['top'].set_visible(False)
+                ax.spines["right"].set_visible(False)
+                ax.spines["top"].set_visible(False)
                 # Remove bottom spine for all except the last plot
                 if pop_idx < len(populations) - 1:
-                    ax.spines['bottom'].set_visible(False)
+                    ax.spines["bottom"].set_visible(False)
                     ax.tick_params(bottom=False, labelbottom=False)
 
     return axs

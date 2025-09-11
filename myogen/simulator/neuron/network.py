@@ -89,7 +89,10 @@ def _apply_default_synaptic_params(netcon: h.NetCon, source_neuron):
     netcon.delay = DEFAULT_SYNAPTIC_DELAY  # 1ms synaptic + axon delay
 
     # Add axonal delay if source neuron has it
-    if hasattr(source_neuron, "axon_delay__ms") and source_neuron.axon_delay__ms is not None:
+    if (
+        hasattr(source_neuron, "axon_delay__ms")
+        and source_neuron.axon_delay__ms is not None
+    ):
         netcon.delay = (
             DEFAULT_SYNAPTIC_DELAY + source_neuron.axon_delay__ms
         )  # 1ms synaptic + axon delay
@@ -758,7 +761,7 @@ class Network:
                         nc = h.NetCon(neuron.ns, None)
 
                     # Set up spike recording with population-specific threshold
-                    if hasattr(population, 'spike_threshold__mV'):
+                    if hasattr(population, "spike_threshold__mV"):
                         nc.threshold = population.spike_threshold__mV
                     else:
                         nc.threshold = DEFAULT_SPIKE_THRESHOLD  # Fallback for populations without explicit threshold
