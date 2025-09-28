@@ -435,7 +435,7 @@ class IntramuscularEMG:
                 )
             else:
                 padded_muap = muap
-                padded_muaps.append(padded_muap)
+            padded_muaps.append(padded_muap)
 
         muap_array = np.array(padded_muaps)
 
