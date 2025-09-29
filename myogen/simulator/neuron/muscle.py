@@ -9,7 +9,6 @@ with the underlying Hill implementation.
 from typing import Any, Dict, Literal
 
 import numpy as np
-from sympy import Li
 
 from myogen.simulator.neuron._cython._hill import _HillMuscleModel__Cython
 from myogen.utils.decorators import beartowertype

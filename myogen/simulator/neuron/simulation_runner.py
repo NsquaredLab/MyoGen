@@ -219,9 +219,13 @@ class SimulationRunner:
             print("Starting Simulation")
             h.run()
 
-            # Close progress bar
+            # Close progress bar (with error handling)
             if self._progress_bar is not None:
-                self._progress_bar.close()
+                try:
+                    self._progress_bar.close()
+                except (TypeError, AttributeError):
+                    # Ignore progress bar closing errors
+                    pass
 
             print("Simulation completed")
 
@@ -231,9 +235,13 @@ class SimulationRunner:
             return results
 
         except Exception as e:
-            # Close progress bar in case of error
+            # Close progress bar in case of error (with error handling)
             if self._progress_bar is not None:
-                self._progress_bar.close()
+                try:
+                    self._progress_bar.close()
+                except (TypeError, AttributeError):
+                    # Ignore progress bar closing errors
+                    pass
             raise RuntimeError(f"Simulation failed: {str(e)}") from e
 
     def _setup_neuron_environment(
@@ -256,7 +264,6 @@ class SimulationRunner:
             total=duration__ms,
             desc="Simulation Progress",
             unit="ms",
-            bar_format="{l_bar}{bar}| {n:.2f}/{total:.2f} {unit} [{elapsed}<{remaining}, {rate_fmt}{postfix}]",
         )
 
         # Reset step counter for step callback
@@ -313,14 +320,36 @@ class SimulationRunner:
     def _register_step_callback(self) -> None:
         """Register user's step callback with NEURON's integration system."""
 
+        duration__ms = h.tstop  # Use NEURON's tstop as simulation duration
+
+        # Track last progress bar update time to avoid multiple updates per timestep
+        last_progress_time = -1
+
         # Create wrapper that provides step counter access to callback and updates progress
         def step_wrapper():
-            # Update progress bar by timestep amount
-            if self._progress_bar is not None and hasattr(self, "_timestep__ms"):
-                self._progress_bar.update(self._timestep__ms)
+            nonlocal last_progress_time
 
-            # Call user's step callback
-            return self._step_callback(self._step_counter)
+            # Check if we've exceeded simulation time - don't process if so
+            if h.t >= h.tstop:
+                return
+
+            # Update progress bar based on actual simulation time progression (not callback count)
+            if self._progress_bar is not None:
+                # Only update progress bar when simulation time has actually advanced
+                if h.t > last_progress_time:
+                    time_advance = h.t - max(0, last_progress_time)
+                    try:
+                        self._progress_bar.update(time_advance)
+                        last_progress_time = h.t
+                    except (TypeError, AttributeError) as e:
+                        # Disable progress bar when it fails
+                        print(f"Progress bar error (disabling): {e}")
+                        self._progress_bar = None
+                        return
+
+            # Call user's step callback only if we haven't exceeded time limit
+            if h.t < h.tstop:
+                return self._step_callback(self._step_counter)
 
         h.CVode().extra_scatter_gather(0, step_wrapper)
 
