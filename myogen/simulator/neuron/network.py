@@ -268,6 +268,96 @@ def _connect_external_to_population(
     return connections
 
 
+def _connect_one_to_one(
+    source_pop: str,
+    target_pop: str,
+    populations: dict,
+    connection_probability: float = 1.0,
+    **kwargs,
+) -> list:
+    """
+    Create one-to-one connections between two neural populations.
+
+    Connects source[i] to target[i] for all matching indices with specified probability.
+    This is useful for creating independent noise inputs where each target neuron receives
+    input from exactly one source neuron (e.g., independent Poisson processes to motor neurons).
+
+    Parameters
+    ----------
+    source_pop : str
+        Name of source population in populations dict.
+    target_pop : str
+        Name of target population in populations dict.
+    populations : dict
+        Dictionary of neural populations.
+    connection_probability : float, optional
+        Probability that each source[i] -> target[i] connection is made, by default 1.0.
+        Must be between 0.0 and 1.0.
+    **kwargs
+        Additional keyword arguments passed to _create_netcon:
+        - muscle_callback: Muscle activation callback
+        - id_vector: Spike recording ID vector
+        - spike_vector: Spike recording time vector
+        - synaptic_weight: Synaptic weight override
+        - spike_threshold: Spike threshold override
+
+    Returns
+    -------
+    list of h.NetCon
+        List of NEURON NetCon objects for connections that were created.
+
+    Raises
+    ------
+    ValueError
+        If source and target populations have different sizes, or if
+        connection_probability is not in [0.0, 1.0].
+
+    Notes
+    -----
+    Requires source and target populations to have equal size. Each source neuron
+    may connect to the target neuron at the same index position, depending on
+    connection_probability.
+    """
+    source_neurons = populations[source_pop]
+    target_neurons = populations[target_pop]
+
+    if len(source_neurons) != len(target_neurons):
+        raise ValueError(
+            f"One-to-one connection requires equal population sizes. "
+            f"Source '{source_pop}' has {len(source_neurons)} neurons, "
+            f"target '{target_pop}' has {len(target_neurons)} neurons."
+        )
+
+    if not 0.0 <= connection_probability <= 1.0:
+        raise ValueError(
+            f"Connection probability must be between 0.0 and 1.0, got {connection_probability}"
+        )
+
+    connections = []
+    for source_neuron, target_neuron in zip(source_neurons, target_neurons):
+        # Check if this pair should be connected
+        if RANDOM_GENERATOR.uniform() < connection_probability:
+            target_synapse = RANDOM_GENERATOR.choice(target_neuron.synapse__list)
+            netcon = _create_netcon(
+                source_neuron,
+                target_synapse,
+                muscle_callback=kwargs.get("muscle_callback"),
+                id_vector=kwargs.get("id_vector"),
+                spike_vector=kwargs.get("spike_vector"),
+                neuron_id=source_neuron.global__ID,
+            )
+
+            # Apply custom synaptic parameters if provided
+            if kwargs.get("synaptic_weight") is not None:
+                netcon.weight[0] = kwargs.get("synaptic_weight")
+            if kwargs.get("spike_threshold") is not None:
+                netcon.threshold = kwargs.get("spike_threshold")
+
+            connections.append(netcon)
+
+    return connections
+
+
 def _connect_populations(
     populations: dict,
     source_pop: Optional[str],
@@ -981,6 +1071,100 @@ class Network:
 
         return netcons
 
+    def connect_one_to_one(
+        self,
+        source: str,
+        target: str,
+        probability: float = 1.0,
+        weight__μS: float = DEFAULT_SYNAPTIC_WEIGHT,
+        delay__ms: float = DEFAULT_SYNAPTIC_DELAY,
+        threshold__mV: float = DEFAULT_SPIKE_THRESHOLD,
+    ) -> list:
+        """
+        Connect two neural populations with one-to-one mapping.
+
+        Creates individual connections between source[i] and target[i] for each neuron
+        pair at matching indices with specified probability. This is particularly useful
+        for modeling independent noise sources (e.g., independent Poisson drives) where
+        each target neuron should receive input from exactly one source neuron.
+
+        Parameters
+        ----------
+        source : str
+            Name of source population (must exist in populations dict).
+        target : str
+            Name of target population (must exist in populations dict).
+        probability : float, optional
+            Probability that each source[i] -> target[i] connection is made, by default 1.0.
+            Must be between 0.0 and 1.0.
+        weight__μS : float, optional
+            Synaptic weight in microsiemens, by default 0.6.
+        delay__ms : float, optional
+            Synaptic delay in milliseconds, by default 1.0.
+        threshold__mV : float, optional
+            Spike threshold in millivolts, by default -10.0.
+
+        Returns
+        -------
+        list[h.NetCon]
+            List of created NEURON NetCon objects for connections that were made.
+
+        Raises
+        ------
+        ValueError
+            If source or target populations don't exist, have different sizes,
+            or probability is not in [0.0, 1.0].
+
+        Examples
+        --------
+        >>> # Create independent noise for each motor neuron
+        >>> noise_pool = DescendingDrive__Pool(n=10, poisson_random_process_order=16, timestep__ms=0.05)
+        >>> mn_pool = AlphaMN__Pool(n=10)
+        >>> network = Network({"noise": noise_pool, "mn": mn_pool})
+        >>> network.connect_one_to_one("noise", "mn", weight__μS=0.5)
+        """
+        # Validation
+        if source not in self.populations:
+            raise ValueError(f"Source population '{source}' not found")
+        if target not in self.populations:
+            raise ValueError(f"Target population '{target}' not found")
+        if not 0.0 <= probability <= 1.0:
+            raise ValueError(f"Probability must be 0.0-1.0, got {probability}")
+
+        # Extract spike recording vectors for source population
+        id_vector = None
+        spike_vector = None
+        if self.spike_recording:
+            id_vector = self.spike_recording.get("idvec", {}).get(source)
+            spike_vector = self.spike_recording.get("spkvec", {}).get(source)
+
+        # Create one-to-one connections using new helper function
+        netcons = _connect_one_to_one(
+            source_pop=source,
+            target_pop=target,
+            populations=self.populations,
+            connection_probability=probability,
+            synaptic_weight=weight__μS,
+            spike_threshold=threshold__mV,
+            id_vector=id_vector,
+            spike_vector=spike_vector,
+        )
+
+        self.connections.append(
+            {
+                "type": "one_to_one",
+                "source": source,
+                "target": target,
+                "probability": probability,
+                "weight__μS": weight__μS,
+                "delay__ms": delay__ms,
+                "threshold__mV": threshold__mV,
+            }
+        )
+        self._netcons_by_connection[(source, target)] = netcons
+
+        return netcons
+
     def get_connections(self) -> list[dict]:
         """Get list of all connection specifications."""
         return self.connections.copy()
@@ -1044,6 +1228,11 @@ class Network:
                 print(
                     f"  {i + 1}. {conn['source']} → {conn['target']} "
                     f"(w={conn['weight__μS']}μS)"
+                )
+            elif conn["type"] == "one_to_one":
+                print(
+                    f"  {i + 1}. {conn['source']} → {conn['target']} [1-to-1] "
+                    f"(p={conn['probability']}, w={conn['weight__μS']}μS)"
                 )
 
 
