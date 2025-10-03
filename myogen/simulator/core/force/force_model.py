@@ -6,6 +6,7 @@ import elephant.utils
 import numpy as np
 import quantities as pq
 from neo import AnalogSignal
+import scipy.sparse as sp
 from tqdm import tqdm
 
 from myogen.utils.decorators import beartowertype
@@ -15,7 +16,7 @@ from myogen.utils.types import (
     SPIKE_TRAIN__Block,
 )
 
-from .force_utils import get_gain, sawtooth2ipi, spikes2sawtooth
+from .force_utils import get_gain, sawtooth2ipi, spikes2sawtooth, get_gain_vectorized
 
 
 @beartowertype
@@ -306,8 +307,7 @@ class ForceModel:
                         t_start=segment.t_start,
                         t_stop=segment.t_stop,
                     )
-                    .to_array()
-                    .astype(bool)
+                    .to_sparse_bool_array()
                     .T
                 )
 
@@ -327,10 +327,16 @@ class ForceModel:
         )
 
     def _generate_force(
-        self, spikes: np.ndarray, spiketrain_timestep__ms: float, prefix: str = ""
+        self, spikes, spiketrain_timestep__ms: float, prefix: str = ""
     ) -> np.ndarray:
         """Generate force offline from spike trains with resampling to recording frequency."""
-        L = spikes.shape[0]
+        # Convert sparse to dense once at the start
+        if sp.issparse(spikes):
+            spikes_dense = spikes.toarray()
+        else:
+            spikes_dense = spikes
+
+        L = spikes_dense.shape[0]
 
         # Calculate target length for resampling to recording frequency
         spiketrain_timestep__s = spiketrain_timestep__ms / 1000.0
@@ -339,50 +345,86 @@ class ForceModel:
         # IPI signal generation out of spikes signal (for gain nonlinearity)
         _, ipi = sawtooth2ipi(
             spikes2sawtooth(
-                np.vstack([spikes[1:], np.zeros((1, self._number_of_neurons))])
-            )
+                np.vstack([spikes_dense[1:], np.zeros((1, self._number_of_neurons))])
+            ),
+            spikes_dense
         )
 
-        gain = np.full_like(spikes, np.nan)
-        for n in range(self._number_of_neurons):
-            gain[:, n] = get_gain(ipi[:, n], self._contraction_times__samples[n])
+        gain = get_gain_vectorized(ipi, self._contraction_times__samples)
 
+        # Optimize twitch resampling - pre-compute interpolation grids
         resampled_twitches = []
         for force_twitch in self._twitch_list:
-            resampled_twitches.append(
-                np.interp(
-                    x=np.arange(
-                        0,
-                        force_twitch.shape[0] * force_timestep__s,
-                        spiketrain_timestep__s,
-                    ),
-                    xp=np.arange(
-                        0, force_twitch.shape[0] * force_timestep__s, force_timestep__s
-                    ),
-                    fp=force_twitch,
-                )
-            )
+            # Pre-compute grid arrays - ensure exact length match
+            twitch_length = force_twitch.shape[0]
+            xp_orig = np.arange(twitch_length) * force_timestep__s
+            twitch_duration_s = (twitch_length - 1) * force_timestep__s
+            x_new = np.arange(0, twitch_duration_s + spiketrain_timestep__s, spiketrain_timestep__s)
 
-        # Generate force at spike train sampling rate
+            resampled_twitches.append(np.interp(x_new, xp_orig, force_twitch))
+
+        # Generate force at spike train sampling rate - optimized to only iterate over spikes
         force = np.zeros(L)
-        for n in tqdm(
-            range(self._number_of_neurons),
-            desc=f"{prefix} Twitch trains are generated",
-            unit="MU",
-        ):
+
+        # Try to use Numba if available for additional speedup
+        try:
+            force = self._generate_force_numba(
+                force, spikes_dense, gain, resampled_twitches, L, prefix
+            )
+        except (ImportError, AttributeError):
+            # Fallback to optimized NumPy version
+            for n in tqdm(
+                range(self._number_of_neurons),
+                desc=f"{prefix} Twitch trains are generated",
+                unit="MU",
+                disable=False
+            ):
+                # Only iterate over spike times, not all time points
+                spike_indices = np.where(spikes_dense[:, n])[0]
+                twitch = resampled_twitches[n]
+
+                for spike_t in spike_indices:
+                    to_take = min(len(twitch), L - spike_t)
+                    force[spike_t:spike_t + to_take] += gain[spike_t, n] * twitch[:to_take]
+
+        # Final resampling to target frequency
+        output_times = np.arange(0, L * spiketrain_timestep__s, force_timestep__s)
+        input_times = np.arange(0, L * spiketrain_timestep__s, spiketrain_timestep__s)
+
+        return np.interp(output_times, input_times, force)
+
+    def _generate_force_numba(
+        self, force: np.ndarray, spikes: np.ndarray, gain: np.ndarray,
+        resampled_twitches: list, L: int, prefix: str
+    ) -> np.ndarray:
+        """Generate force using Numba JIT compilation for maximum speed."""
+        try:
+            import numba
+        except ImportError:
+            raise ImportError("Numba not available, falling back to NumPy")
+
+        @numba.jit(nopython=True, parallel=False)
+        def add_twitches_jit(force, spikes, gain, n, twitch, L):
+            """Inner loop compiled with Numba for speed."""
             for t in range(L):
                 if spikes[t, n]:
-                    twitch_to_add = resampled_twitches[n]
-                    to_take = min(len(twitch_to_add), L - t)
-                    force[t : t + to_take] += gain[t, n] * twitch_to_add[:to_take]
+                    to_take = min(len(twitch), L - t)
+                    for i in range(to_take):
+                        force[t + i] += gain[t, n] * twitch[i]
+            return force
 
-        return np.interp(
-            x=np.arange(0, force.shape[0] * spiketrain_timestep__s, force_timestep__s),
-            xp=np.arange(
-                0, force.shape[0] * spiketrain_timestep__s, spiketrain_timestep__s
-            ),
-            fp=force,
-        )
+        # Process each neuron
+        for n in tqdm(
+            range(self._number_of_neurons),
+            desc=f"{prefix} Twitch trains (Numba)",
+            unit="MU",
+        ):
+            force = add_twitches_jit(
+                force, spikes, gain, n,
+                resampled_twitches[n], L
+            )
+
+        return force
 
     # Property accessors for computed results
     @property

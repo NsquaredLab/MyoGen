@@ -4,14 +4,50 @@
 Examples
 ==================
 
-This collection of examples demonstrates the complete MyoGen simulation pipeline, from basic motor unit recruitment to advanced EMG signal generation.
+Welcome to the MyoGen examples gallery! These examples demonstrate the complete neuromuscular simulation pipeline, from basic tutorials to full paper reproductions.
 
-Workflow
+Example Galleries
+-----------------
+
+Examples are organized into two main galleries:
+
+.. grid:: 2
+    :gutter: 3
+
+    .. grid-item-card:: Basic Tutorials
+        :link: auto_examples/basic/index
+        :link-type: doc
+        :class-card: sd-text-black sd-bg-light
+
+        **Getting Started with MyoGen**
+
+        Fundamental tutorials covering core functionality and workflow patterns.
+
+        Perfect for learning the basics of neuromuscular simulation.
+
+        +++
+        :bdg-primary:`Beginner Friendly` :bdg-info:`10 Examples`
+
+    .. grid-item-card:: Paper Reproductions
+        :link: auto_examples/papers/watanabe/index
+        :link-type: doc
+        :class-card: sd-text-black sd-bg-light
+
+        **Scientific Validation**
+
+        Complete reproductions of published neuromuscular modeling studies.
+
+        Demonstrates MyoGen's ability to replicate research findings.
+
+        +++
+        :bdg-warning:`Advanced` :bdg-success:`Validated`
+
+Simulation Pipeline Overview
 -----------------------------
 
 .. mermaid::
-   :caption: Click any box to navigate to that example
-   
+   :caption: MyoGen Simulation Workflow
+
     %%{init: {
       "theme": "base",
       "themeVariables": {
@@ -43,7 +79,7 @@ Workflow
    flowchart TD
         S((Start))
         A["Recruitment<br/>Thresholds"]
-        
+
         B["Injected Current"]
         C["Cortical Input"]
 
@@ -54,7 +90,6 @@ Workflow
         G["Intramuscular EMG"]
         J["Intramuscular MUAPs"]
 
-        %% Column 4: Independent Utilities
         H["Current Generation"]
         I["Force Model"]
 
@@ -78,12 +113,11 @@ Workflow
         end
 
 
-        H --> neural_drive 
+        H --> neural_drive
         D --> emg
 
         neural_drive --> emg
 
-        %% Modern Light Mode Styling
         classDef start fill:#f0f9ff,stroke:#0369a1,stroke-width:3px,color:#0c4a6e
         classDef foundation fill:#dbeafe,stroke:#1d4ed8,stroke-width:2px,color:#1e3a8a
         classDef neural fill:#ede9fe,stroke:#7c3aed,stroke-width:2px,color:#5b21b6
@@ -99,29 +133,48 @@ Workflow
         class E,F,G,J emg
         class H utility
 
-        %% Subgraph styling
         style neural_drive fill:#f3f0ff,stroke:#8b5cf6,stroke-width:2px,stroke-dasharray: 5 5
         style utilities fill:#fef2f2,stroke:#ef4444,stroke-width:2px,stroke-dasharray: 5 5
         style physiology fill:#fffbeb,stroke:#f59e0b,stroke-width:2px,stroke-dasharray: 5 5
         style emg fill:#ecfdf5,stroke:#10b981,stroke-width:2px,stroke-dasharray: 5 5
 
-        %% Clickable links
-        click A "00_simulate_recruitment_thresholds.html"
-        click B "01_simulate_spike_trains.html"
-        click C "07_simulate_cortical_input.html"
-        click D "02_simulate_muscle.html"
-        click E "03_simulate_surface_muaps.html"
-        click F "04_simulate_surface_emg.html"
-        click J "08_simulate_intramuscular_emg.html"
-        click G "08_simulate_intramuscular_emg.html"
-        click H "05_simulate_currents.html"
-        click I "06_simulate_force.html"
+Quick Start
+-----------
 
+**New to MyoGen?** Start with the basic tutorials:
 
-Recommended Entry Path
----------------------------
+1. :ref:`sphx_glr_auto_examples_basic_00_simulate_recruitment_thresholds.py` - Create recruitment thresholds
+2. :ref:`sphx_glr_auto_examples_basic_01_simulate_spike_trains_current_injection.py` - Generate spike trains
+3. :ref:`sphx_glr_auto_examples_basic_02_simulate_muscle.py` - Build muscle model
+4. :ref:`sphx_glr_auto_examples_basic_04_simulate_surface_emg.py` - Simulate EMG signals
 
-1. :ref:`sphx_glr_auto_examples_00_simulate_recruitment_thresholds.py` - Create recruitment thresholds
-2. :ref:`sphx_glr_auto_examples_01_simulate_spike_trains.py` - Neural drive 
-3. :ref:`sphx_glr_auto_examples_02_simulate_muscle.py` - Muscle structure
-4. :ref:`sphx_glr_auto_examples_04_simulate_surface_emg.py` - Surface EMG
+**Want to see advanced features?** Explore paper reproductions:
+
+- :ref:`sphx_glr_auto_examples_papers_watanabe` - Spinal network modeling with corticomuscular coherence
+
+Gallery Organization
+--------------------
+
+**Basic Tutorials** (`basic/`)
+    Self-contained examples covering individual features. Examples are numbered to suggest a learning path but can be run independently.
+
+**Paper Reproductions** (`papers/`)
+    Complete workflows reproducing published studies. Each reproduction is split into modular scripts for simulation, analysis, and visualization.
+
+Running Examples
+----------------
+
+All examples can be run directly:
+
+.. code-block:: bash
+
+    python examples/basic/00_simulate_recruitment_thresholds.py
+
+Or downloaded as Jupyter notebooks from the example pages in the documentation.
+
+Getting Help
+------------
+
+- 📖 **Documentation**: Full API reference and guides
+- 💬 **Issues**: Report bugs or request features on GitHub
+- 🎓 **Tutorials**: Step-by-step learning materials in basic gallery

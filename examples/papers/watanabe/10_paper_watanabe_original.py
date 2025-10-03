@@ -17,8 +17,11 @@ import elephant
 from scipy import signal as scipy_signal
 from tqdm import tqdm
 
-from myogen import load_nmodl_mechanisms
+import quantities as pq
+
+from myogen import load_nmodl_mechanisms, simulator
 from myogen.utils.plotting import plot_membrane_potentials, plot_raster_spikes
+from myogen.simulator.core.force.force_model import ForceModel
 
 ##############################################################################
 # Load NEURON Mechanisms and Dependencies
@@ -53,7 +56,7 @@ print(f"  - Time samples: {len(time)}")
 # These numbers represent typical motor pool compositions for a single muscle.
 
 # Motor neurons (output to muscles)
-naMN = 11
+naMN = 100
 
 # Descending drive (cortical input)
 nDD = 400  # Total descending drive neurons
@@ -84,6 +87,8 @@ beyond_180_mask = time_s > 180
 
 # Define time windows for analysis
 time_windows = [(3, 60), (63, 120), (123, 180)]
+# Colors matching the paper figures
+window_colors = ["#0001f9", "#966562", "#2efe37"]
 
 # Create figure with 3 side-by-side subplots
 fig_dd, axes_dd = plt.subplots(1, 3, figsize=(18, 5))
@@ -114,25 +119,44 @@ for idx, (t_start, t_stop) in enumerate(time_windows):
     # Normalize power spectrum between 0 and 1
     psd_dd_normalized = (psd_dd - np.min(psd_dd)) / (np.max(psd_dd) - np.min(psd_dd))
 
-    # Plot normalized power spectrum
-    axes_dd[idx].plot(freqs_dd, psd_dd_normalized, color="blue", linewidth=2)
-    axes_dd[idx].set_xlabel("Frequency (Hz)")
-    axes_dd[idx].set_ylabel("Power Spectral Density")
-    axes_dd[idx].set_title(f"DDdrive Power Spectrum ({t_start}-{t_stop}s)")
+    # Plot normalized power spectrum with filled area
+    axes_dd[idx].fill_between(
+        freqs_dd, psd_dd_normalized, color=window_colors[idx], alpha=0.7
+    )
+    axes_dd[idx].plot(
+        freqs_dd, psd_dd_normalized, color=window_colors[idx], linewidth=1.5
+    )
+    axes_dd[idx].set_xlabel("Frequency (Hz)", fontsize=12)
+    axes_dd[idx].set_ylabel("Conductance Spectrum (A.U.)", fontsize=12)
     axes_dd[idx].set_xlim(0, 25)
-    axes_dd[idx].grid(True, alpha=0.3)
+    axes_dd[idx].set_ylim(0, 1.05)
+    axes_dd[idx].spines["top"].set_visible(False)
+    axes_dd[idx].spines["right"].set_visible(False)
+    # Add panel label (A, B, C)
+    axes_dd[idx].text(
+        -0.15,
+        1.05,
+        chr(65 + idx),
+        transform=axes_dd[idx].transAxes,
+        fontsize=16,
+        fontweight="bold",
+        va="top",
+    )
 
 plt.tight_layout()
 plt.savefig(
     save_path / "DDdrive_power_spectra_all_windows.png", dpi=150, bbox_inches="tight"
 )
 plt.show()
-print("✓ DDdrive power spectra computed and plotted for all three time windows")
+print("DDdrive power spectra computed and plotted for all three time windows")
 
 
-with open(r"C:\Users\raulc\Downloads\spinal_network_results.pkl", "rb") as f:
+with open(
+    r"C:\Users\raulc\Research\papers_server\in_progress\simulator\spinal_network_results.pkl",
+    "rb",
+) as f:
     results: neo.Block = joblib.load(f)
-    print("✓ Previous results loaded successfully")
+    print("Previous results loaded successfully")
 
 aMN_results: neo.Segment = results.filter(name="aMN", container=True)[0]
 aMN_spikes = aMN_results.spiketrains
@@ -141,19 +165,194 @@ aMN_spikes = aMN_results.spiketrains
 time_windows = [(3, 60), (63, 120), (123, 180)]
 
 ##############################################################################
+# Compute Force Signal for Full Duration (Panel G)
+# -------------------------------------------------
+#
+# Calculate force using the Fuglevand ForceModel
+
+print("\nComputing force signal from motor neuron activity...")
+
+# Generate recruitment thresholds for motor neuron pool
+recruitment_thresholds, _ = simulator.RecruitmentThresholds(
+    N=naMN,
+    recruitment_range__ratio=50,  # Physiological recruitment range
+    mode="combined",
+    deluca__slope=5,
+)
+
+# Create force model with low sampling rate for efficiency
+# Using vectorized version for better performance
+force_model = ForceModel(
+    recruitment_thresholds=recruitment_thresholds,
+    recording_frequency__Hz=100,  # 100 Hz sampling rate (sufficient for force, reduces memory)
+    longest_duration_rise_time__ms=90.0,  # Maximum twitch rise time
+    contraction_time_range__unitless=3,  # Contraction time range factor
+)
+
+print("Force model created:")
+print(f"  - Number of motor units: {force_model._number_of_neurons}")
+print(f"  - Peak force range: {force_model.peak_twitch_forces__unitless[0]:.3f} - {force_model.peak_twitch_forces__unitless[-1]:.3f}")
+
+# Generate force from spike trains (only aMN segment)
+# Create a new Block containing only aMN spikes
+# Trim spike trains to exact duration to avoid timing issues
+aMN_block = neo.Block()
+aMN_segment_trimmed = neo.Segment(name="aMN")
+
+# Trim each spike train to exact duration
+for st in aMN_spikes:
+    st_trimmed = st.time_slice(0 * pq.ms, tstop * pq.ms)
+    # Manually set t_stop to exact value to avoid rounding issues
+    st_trimmed.t_stop = tstop * pq.ms
+    aMN_segment_trimmed.spiketrains.append(st_trimmed)
+
+aMN_block.segments.append(aMN_segment_trimmed)
+
+force_output = force_model.generate_force(spike_train__Block=aMN_block)
+
+# Extract force signal and time vector
+force_signal = force_output.magnitude[:, 0]
+time_spikes = force_output.times.rescale("s").magnitude
+sampling_rate_spikes = force_output.sampling_rate.rescale("Hz").magnitude
+
+# Scale force signal to reasonable range (e.g., 0-500 N)
+force_signal = (force_signal / np.max(force_signal)) * 500 if np.max(force_signal) > 0 else force_signal
+
+print(f"Force signal computed (length: {len(force_signal)} samples)")
+
+# Create Panel G: Force over time with color-coded intervals
+fig_force, ax_force = plt.subplots(1, 1, figsize=(15, 4))
+
+# Plot force signal in segments with different colors
+for window_idx, (t_start, t_stop) in enumerate(time_windows):
+    start_idx = int(t_start * sampling_rate_spikes)
+    stop_idx = int(t_stop * sampling_rate_spikes)
+    time_segment = time_spikes[start_idx:stop_idx]
+    force_segment = force_signal[start_idx:stop_idx]
+
+    ax_force.plot(
+        time_segment, force_segment, color=window_colors[window_idx], linewidth=1.5
+    )
+
+ax_force.set_xlabel("Time (s)", fontsize=12)
+ax_force.set_ylabel("Force (N)", fontsize=12)
+ax_force.set_xlim(0, 180)
+ax_force.spines["top"].set_visible(False)
+ax_force.spines["right"].set_visible(False)
+# Add panel label G
+ax_force.text(
+    -0.05,
+    1.05,
+    "G",
+    transform=ax_force.transAxes,
+    fontsize=16,
+    fontweight="bold",
+    va="top",
+)
+
+plt.tight_layout()
+plt.savefig(save_path / "watanabe_force_timeseries.png", dpi=150, bbox_inches="tight")
+plt.show()
+print("Force timeseries plot created (Panel G)")
+
+##############################################################################
+# Create Full Duration Raster Plot (Panel H)
+# -------------------------------------------
+#
+# Display motor neuron spikes across the entire simulation with color-coded backgrounds
+
+print("\nCreating full duration raster plot (Panel H)...")
+
+fig_raster, ax_raster = plt.subplots(1, 1, figsize=(15, 6))
+
+# Add color-coded background regions
+for window_idx, (t_start, t_stop) in enumerate(time_windows):
+    ax_raster.axvspan(t_start, t_stop, facecolor=window_colors[window_idx], alpha=0.3)
+
+# Plot all motor neuron spikes
+for neuron_idx, spike_train in enumerate(aMN_spikes):
+    spike_times = spike_train.times.rescale("s").magnitude
+    ax_raster.plot(
+        spike_times,
+        np.ones_like(spike_times) * neuron_idx,
+        "k.",
+        markersize=1,
+        alpha=0.5,
+    )
+
+ax_raster.set_xlabel("Time (s)", fontsize=12)
+ax_raster.set_ylabel("MN #", fontsize=12)
+ax_raster.set_xlim(0, 180)
+ax_raster.set_ylim(-1, len(aMN_spikes))
+ax_raster.spines["top"].set_visible(False)
+ax_raster.spines["right"].set_visible(False)
+# Add panel label H
+ax_raster.text(
+    -0.05,
+    1.05,
+    "H",
+    transform=ax_raster.transAxes,
+    fontsize=16,
+    fontweight="bold",
+    va="top",
+)
+
+# Add zoomed insets for each time window (like in paper)
+from mpl_toolkits.axes_grid1.inset_locator import inset_axes
+
+for window_idx, (t_start, t_stop) in enumerate(time_windows):
+    # Create a small time window to zoom into (0.15s window)
+    zoom_center = (t_start + t_stop) / 2
+    zoom_start = zoom_center - 0.075
+    zoom_stop = zoom_center + 0.075
+
+    # Create inset
+    axins = inset_axes(
+        ax_raster,
+        width="15%",
+        height="20%",
+        bbox_to_anchor=(0.18 + window_idx * 0.31, 0.75, 0.3, 0.25),
+        bbox_transform=ax_raster.transAxes,
+    )
+
+    # Plot spikes in zoomed window
+    for neuron_idx, spike_train in enumerate(aMN_spikes):
+        spike_times = spike_train.times.rescale("s").magnitude
+        in_window = (spike_times >= zoom_start) & (spike_times <= zoom_stop)
+        if np.any(in_window):
+            axins.plot(
+                spike_times[in_window],
+                np.ones_like(spike_times[in_window]) * neuron_idx,
+                "k.",
+                markersize=2,
+            )
+
+    axins.set_xlim(zoom_start, zoom_stop)
+    axins.set_ylim(50, 450)  # Focus on middle neurons
+    axins.set_facecolor(window_colors[window_idx])
+    axins.set_alpha(0.3)
+    axins.tick_params(labelsize=8)
+
+plt.tight_layout()
+plt.savefig(
+    save_path / "watanabe_raster_full_duration.png", dpi=150, bbox_inches="tight"
+)
+plt.show()
+print("Full duration raster plot created (Panel H)")
+
+##############################################################################
 # Comprehensive Results Visualization
 # ---------------------------------
 #
 # Create a series of plots that tell the complete story of spinal network
 # function, from neural activity to mechanical output.
 
-print("\n📊 Generating comprehensive visualizations...")
-
-import quantities as pq
+print("\nGenerating comprehensive visualizations...")
 
 # Loop through each time window
-for t_start, t_stop in time_windows:
-    print(f"\n⏱️  Processing time window: {t_start}-{t_stop}s")
+for window_idx, (t_start, t_stop) in enumerate(time_windows):
+    print(f"\nProcessing time window: {t_start}-{t_stop}s")
+    window_color = window_colors[window_idx]
 
     # Filter spike trains for the current time window
     aMN_spikes_windowed = [
@@ -226,17 +425,19 @@ for t_start, t_stop in time_windows:
 
     power_spectra = np.array(power_spectra)
 
-    print(f"✓ Convolved {len(random_pairs)} random pairs with square pulse")
-    print(f"✓ Computed power spectra (shape: {power_spectra.shape})")
+    print(f"Convolved {len(random_pairs)} random pairs with square pulse")
+    print(f"Computed power spectra (shape: {power_spectra.shape})")
 
     # 1. POWER SPECTRA: Individual and mean power spectra
     fig0, ax0 = plt.subplots(1, 1, figsize=(12, 6))
     # Plot individual power spectra with low alpha
     for psd in power_spectra:
-        ax0.plot(frequencies, psd, alpha=0.1, color="blue")
+        ax0.plot(frequencies, psd, alpha=0.1, color=window_color)
     # Plot mean power spectrum with alpha=1.0
     mean_psd = np.mean(power_spectra, axis=0)
-    ax0.plot(frequencies, mean_psd, alpha=1.0, color="red", linewidth=2, label="Mean")
+    ax0.plot(
+        frequencies, mean_psd, alpha=1.0, color=window_color, linewidth=2, label="Mean"
+    )
     ax0.set_xlabel("Frequency (Hz)")
     ax0.set_ylabel("Power Spectral Density")
     ax0.set_title(f"Power Spectra of Convolved Random Pairs ({t_start}-{t_stop}s)")
@@ -267,27 +468,36 @@ for t_start, t_stop in time_windows:
             aMN_membrane_potentials.append(analog_windowed.magnitude.flatten())
 
     if len(aMN_membrane_potentials) == 0:
-        print(f"⚠ No membrane potentials available for time window {t_start}-{t_stop}s, skipping coherence computation")
+        print(
+            f"⚠ No membrane potentials available for time window {t_start}-{t_stop}s, skipping coherence computation"
+        )
     else:
         # Average membrane potentials across all MNs
         avg_membrane_potential = np.mean(aMN_membrane_potentials, axis=0)
 
         # Detrend membrane potential
-        avg_membrane_potential_detrended = scipy_signal.detrend(avg_membrane_potential, type="linear")
+        avg_membrane_potential_detrended = scipy_signal.detrend(
+            avg_membrane_potential, type="linear"
+        )
 
         # Resample membrane potential to match CST sampling rate if needed
         # Membrane potential sampling rate
-        mp_sampling_rate = aMN_results.analogsignals[0].sampling_rate.rescale("Hz").magnitude
+        mp_sampling_rate = (
+            aMN_results.analogsignals[0].sampling_rate.rescale("Hz").magnitude
+        )
 
         # Resample membrane potential to CST sampling rate
         from scipy import interpolate
+
         mp_time = np.arange(len(avg_membrane_potential_detrended)) / mp_sampling_rate
         cst_time = np.arange(len(convolved_signals[0])) / sampling_rate
 
         # Create interpolation function
         interp_func = interpolate.interp1d(
-            mp_time, avg_membrane_potential_detrended,
-            kind='linear', fill_value='extrapolate'
+            mp_time,
+            avg_membrane_potential_detrended,
+            kind="linear",
+            fill_value="extrapolate",
         )
 
         # Resample to CST time base
@@ -301,14 +511,18 @@ for t_start, t_stop in time_windows:
             # Detrend CST
             conv_sig_detrended = scipy_signal.detrend(conv_sig, type="linear")
 
-            # Compute coherence
+            # Compute coherence with higher resolution
+            # Use larger nperseg for better frequency resolution
+            nperseg_coherence = min(
+                120000, len(conv_sig_detrended)
+            )  # Increased for higher resolution
             freqs_coh, coh = scipy_signal.coherence(
                 avg_membrane_potential_resampled,
                 conv_sig_detrended,
                 fs=sampling_rate,
                 window="hamming",
-                nperseg=min(nfft, len(conv_sig_detrended)),
-                noverlap=0,
+                nperseg=nperseg_coherence,
+                noverlap=nperseg_coherence // 2,  # 50% overlap for smoother estimate
             )
             coherences.append(coh)
             if coherence_freqs is None:
@@ -318,31 +532,46 @@ for t_start, t_stop in time_windows:
 
         # Calculate 95% confidence level
         from scipy.stats import f as f_dist
+
         K = 1  # Number of segments (1 when using full signal)
         alpha = 0.05
         F_value = f_dist.ppf(1 - alpha, 2, 2 * K - 1)
         confidence_level = (F_value * (K - 1)) / ((K - 1) + F_value)
 
-        print(f"✓ Computed coherences (shape: {coherences.shape})")
-        print(f"✓ 95% Confidence Level: {confidence_level:.4f}")
+        print(f"Computed coherences (shape: {coherences.shape})")
+        print(f"95% Confidence Level: {confidence_level:.4f}")
 
         # Plot coherence
-        fig0b, ax0b = plt.subplots(1, 1, figsize=(12, 6))
+        fig0b, ax0b = plt.subplots(1, 1, figsize=(8, 5))
         # Plot individual coherences with low alpha
         for coh in coherences:
-            ax0b.plot(coherence_freqs, coh, alpha=0.1, color="blue")
+            ax0b.plot(
+                coherence_freqs, coh, alpha=0.15, color=window_color, linewidth=0.5
+            )
         # Plot mean coherence with alpha=1.0
         mean_coh = np.mean(coherences, axis=0)
-        ax0b.plot(coherence_freqs, mean_coh, alpha=1.0, color="red", linewidth=2, label="Mean")
+        ax0b.plot(coherence_freqs, mean_coh, alpha=1.0, color=window_color, linewidth=2)
         # Plot 95% confidence level
-        ax0b.axhline(y=confidence_level, color="black", linestyle="--", linewidth=1.5, label="95% CL")
-        ax0b.set_xlabel("Frequency (Hz)")
-        ax0b.set_ylabel("Coherence")
-        ax0b.set_title(f"Corticomuscular Coherence ({t_start}-{t_stop}s)")
+        ax0b.axhline(
+            y=confidence_level, color="black", linestyle="--", linewidth=1, alpha=0.7
+        )
+        ax0b.set_xlabel("Frequency (Hz)", fontsize=12)
+        ax0b.set_ylabel("Coherence", fontsize=12)
         ax0b.set_xlim(0, 25)
         ax0b.set_ylim(0, 1)
-        ax0b.legend()
-        ax0b.grid(True, alpha=0.3)
+        ax0b.spines["top"].set_visible(False)
+        ax0b.spines["right"].set_visible(False)
+        # Add panel label (D, E, F)
+        panel_letter = chr(68 + window_idx)  # D=68, E=69, F=70
+        ax0b.text(
+            -0.15,
+            1.05,
+            panel_letter,
+            transform=ax0b.transAxes,
+            fontsize=16,
+            fontweight="bold",
+            va="top",
+        )
         plt.tight_layout()
         plt.savefig(
             save_path / f"watanabe_coherence_{t_start}_{t_stop}s.png",

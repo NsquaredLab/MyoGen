@@ -122,7 +122,7 @@ time_points = int(simulation_time / timestep)
 
 dd_frequency__Hz = 0.25
 dd_amplitude__Hz = 60.0
-dd_baseline__Hz = 20.0
+dd_baseline__Hz = 10.0
 
 sinusoidal_drive = AnalogSignal(
     signal=(

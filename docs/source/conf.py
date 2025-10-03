@@ -3,7 +3,7 @@ from pathlib import Path
 from datetime import datetime
 from typing import Optional, Any, Literal
 import toml
-from sphinx_gallery.sorting import FileNameSortKey
+from sphinx_gallery.sorting import FileNameSortKey, ExplicitOrder
 
 # Setup paths
 base_dir = Path(__file__).parent.parent.parent
@@ -247,8 +247,18 @@ intersphinx_mapping = {
 
 # Sphinx Gallery configuration
 sphinx_gallery_conf = {
-    "examples_dirs": str(base_dir / "examples"),
-    "gallery_dirs": "auto_examples",
+    "examples_dirs": [
+        str(base_dir / "examples" / "basic"),
+        str(base_dir / "examples" / "papers" / "watanabe"),
+    ],
+    "gallery_dirs": [
+        "auto_examples/basic",
+        "auto_examples/papers/watanabe",
+    ],
+    "subsection_order": ExplicitOrder([
+        str(base_dir / "examples" / "basic"),
+        str(base_dir / "examples" / "papers" / "watanabe"),
+    ]),
     "filename_pattern": r"\.py",
     "remove_config_comments": True,
     "within_subsection_order": FileNameSortKey,

@@ -92,12 +92,11 @@ iemg_sim = simulator.IntramuscularEMG(
 
 
 print("Computing motor unit action potentials...")
-iemg_sim.simulate_muaps()
+# iemg_sim.simulate_muaps()
 
+iemg_sim = joblib.load("./results/iemg_simulator.pkl")
 
-# iemg_sim = joblib.load("./results/iemg_simulator.pkl")
-
-joblib.dump(iemg_sim, "./results/iemg_simulator.pkl")
+# joblib.dump(iemg_sim, "./results/iemg_simulator.pkl")
 
 
 ##############################################################################
