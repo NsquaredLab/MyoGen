@@ -244,10 +244,10 @@ aMN_ext = AlphaMN__Pool(n=naMN)  # Extensor α-motoneurons
 
 # Create separate descending drive populations for proper antagonist control
 DD_flex = DescendingDrive__Pool(
-    n=nDD // 2, poisson_random_process_order=DDorder, timestep__ms=dt
+    n=nDD // 2, poisson_batch_size=DDorder, timestep__ms=dt
 )
 DD_ext = DescendingDrive__Pool(
-    n=nDD // 2, poisson_random_process_order=DDorder, timestep__ms=dt
+    n=nDD // 2, poisson_batch_size=DDorder, timestep__ms=dt
 )
 
 # Create afferent populations (shared between muscles for this example)

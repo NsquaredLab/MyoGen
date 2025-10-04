@@ -100,8 +100,9 @@ recruitment_thresholds = joblib.load(save_path / "thresholds.pkl")
 motor_neuron_pool = AlphaMN__Pool(recruitment_thresholds__array=recruitment_thresholds)
 
 timestep = 0.1  # ms
+h.secondorder = 2  # Crank-Nicolson method (second-order accurate)
 descending_drive_pool = DescendingDrive__Pool(
-    n=400, poisson_random_process_order=16, timestep__ms=timestep
+    n=400, poisson_batch_size=16, timestep__ms=timestep
 )
 
 ##############################################################################
@@ -234,7 +235,7 @@ with tqdm(
                 # Record spike time for DD neuron
                 dd_spike_times[dd_cell.pool__ID].append(h.t)
                 # Generate spike in DD neuron
-                spike_time = h.t + np.clip(RANDOM_GENERATOR.normal(0, 10), 0, None)
+                spike_time = h.t + np.clip(RANDOM_GENERATOR.normal(0, 1), 0, None)
                 if spike_time < h.tstop:  # Avoid scheduling beyond simulation end
                     dd_netcons[dd_cell.pool__ID].event(spike_time)
 
