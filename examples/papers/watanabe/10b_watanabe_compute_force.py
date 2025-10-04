@@ -16,10 +16,12 @@ later visualization.
 - watanabe_force_results.pkl: Neo Block containing force AnalogSignal and metadata
 """
 
+# %%
+
 from pathlib import Path
-import numpy as np
 import joblib
 import neo
+import numpy as np
 import quantities as pq
 
 from myogen import simulator
@@ -33,42 +35,28 @@ from myogen.simulator.core.force.force_model import ForceModel
 save_path = Path("./results")
 save_path.mkdir(exist_ok=True)
 
-spinal_results_path = Path(
-    r"C:\Users\raulc\Research\papers_server\in_progress\simulator\spinal_network_results.pkl"
-)
+spinal_results_path = save_path / Path("watanabe__spinal_network_results.pkl")
 
 # Simulation parameters (must match spike train generation)
-dt = 0.1  # ms - Integration timestep
+dt = 0.025  # ms - Integration timestep
 tstop = 180 * 1e3  # ms - Total simulation duration (180 seconds)
 
 # Motor neuron pool parameters
-naMN = 100  # Number of alpha motor neurons
+naMN = 400  # Number of alpha motor neurons
 
-print("=" * 80)
-print("Watanabe Paper - Force Computation")
-print("=" * 80)
-print(f"\nSimulation parameters:")
-print(f"  - Duration: {tstop/1000:.1f} s")
-print(f"  - Timestep: {dt} ms")
-print(f"  - Motor neurons: {naMN}")
+# Memory optimization parameters
+motor_unit_batch_size = 50  # Process motor units in batches instead of all at once
 
 ##############################################################################
 # Load Spike Train Results
 # ------------------------
 
-print(f"\nLoading spike trains from:")
-print(f"  {spinal_results_path}")
-
 with open(spinal_results_path, "rb") as f:
     results: neo.Block = joblib.load(f)
-    print("[OK] Spike trains loaded successfully")
 
 # Extract alpha motor neuron spike trains
 aMN_results: neo.Segment = results.filter(name="aMN", container=True)[0]
 aMN_spikes = aMN_results.spiketrains
-
-print(f"  - Alpha motor neurons: {len(aMN_spikes)}")
-print(f"  - Duration: {aMN_spikes[0].t_stop.rescale('s')}")
 
 ##############################################################################
 # Setup Force Model Parameters
@@ -78,77 +66,76 @@ print(f"  - Duration: {aMN_spikes[0].t_stop.rescale('s')}")
 # These determine motor unit properties (twitch amplitude, contraction time)
 recruitment_thresholds, _ = simulator.RecruitmentThresholds(
     N=naMN,
-    recruitment_range__ratio=50,  # Physiological recruitment range (50:1)
+    recruitment_range__ratio=100,
     mode="combined",
-    deluca__slope=5,
+    deluca__slope=10,
 )
 
-# Force model parameters
 force_params = {
-    "recording_frequency__Hz": 100,  # 100 Hz sampling (sufficient for force)
+    "recording_frequency__Hz": 2048,
     "longest_duration_rise_time__ms": 90.0,  # Slowest motor unit twitch rise time
-    "contraction_time_range__unitless": 3,  # Spread of contraction times
+    "contraction_time_range__unitless": 2,  # Spread of contraction times
 }
 
-print(f"\nForce model parameters:")
-for key, value in force_params.items():
-    print(f"  - {key}: {value}")
-
 # Create force model
-force_model = ForceModel(
-    recruitment_thresholds=recruitment_thresholds, **force_params
-)
-
-print(f"\nForce model statistics:")
-print(f"  - Motor units: {force_model._number_of_neurons}")
-print(f"  - Recruitment ratio: {force_model._recruitment_ratio:.1f}")
-print(
-    f"  - Peak force range: {force_model.peak_twitch_forces__unitless[0]:.3f} - "
-    f"{force_model.peak_twitch_forces__unitless[-1]:.3f}"
-)
-print(
-    f"  - Contraction time range: {force_model.contraction_times__samples[0]:.1f} - "
-    f"{force_model.contraction_times__samples[-1]:.1f} samples"
-)
+force_model = ForceModel(recruitment_thresholds=recruitment_thresholds, **force_params)
 
 ##############################################################################
-# Prepare Spike Trains for Force Generation
-# -----------------------------------------
+# Generate Force Output in Motor Unit Batches (Memory Efficient)
+# --------------------------------------------------------------
 
-# Create a new Block containing only aMN spikes, trimmed to exact duration
-# This ensures consistent timing and avoids edge effects
+print("\nGenerating force output by processing motor units in batches...")
 
-print(f"\nPreparing spike trains for force generation...")
+# Calculate number of batches
+n_batches = int(np.ceil(naMN / motor_unit_batch_size))
 
-aMN_block = neo.Block(name="Alpha Motor Neurons")
-aMN_segment_trimmed = neo.Segment(name="aMN")
+# Initialize force accumulator
+force_duration_samples = int(tstop / 1000 * force_params["recording_frequency__Hz"])
+force_total = np.zeros(force_duration_samples)
 
-# Trim each spike train to exact duration
-for st in aMN_spikes:
-    st_trimmed = st.time_slice(0 * pq.ms, tstop * pq.ms)
-    # Manually set t_stop to exact value to avoid rounding issues
-    st_trimmed.t_stop = tstop * pq.ms
-    aMN_segment_trimmed.spiketrains.append(st_trimmed)
+for batch_idx in range(n_batches):
+    # Define motor unit batch indices
+    mu_start = batch_idx * motor_unit_batch_size
+    mu_end = min((batch_idx + 1) * motor_unit_batch_size, naMN)
 
-aMN_block.segments.append(aMN_segment_trimmed)
+    print(
+        f"\tProcessing motor units {mu_start + 1}-{mu_end} (batch {batch_idx + 1}/{n_batches})..."
+    )
 
-print(f"  - Trimmed spike trains: {len(aMN_segment_trimmed.spiketrains)}")
-print(f"  - Time range: {aMN_segment_trimmed.spiketrains[0].t_start} - {aMN_segment_trimmed.spiketrains[0].t_stop}")
+    # Create batch-specific Block with subset of motor units
+    batch_block = neo.Block(name=f"MU_Batch_{batch_idx}")
+    batch_segment = neo.Segment(name=f"aMN_batch_{batch_idx}")
 
-##############################################################################
-# Generate Force Output
-# ---------------------
+    # Add only spike trains for this batch of motor units
+    for mu_idx in range(mu_start, mu_end):
+        batch_segment.spiketrains.append(aMN_spikes[mu_idx])
 
-print(f"\nGenerating force output...")
-print("  This may take several minutes for 180s simulation...")
+    batch_block.segments.append(batch_segment)
 
-force_output = force_model.generate_force(spike_train__Block=aMN_block)
+    # Create force model for this batch
+    batch_recruitment_thresholds = recruitment_thresholds[mu_start:mu_end]
+    batch_force_model = ForceModel(
+        recruitment_thresholds=batch_recruitment_thresholds, **force_params
+    )
 
-print(f"[OK] Force generation complete!")
-print(f"  - Force samples: {force_output.shape[0]}")
-print(f"  - Sampling rate: {force_output.sampling_rate}")
-print(f"  - Duration: {force_output.t_stop.rescale('s')}")
-print(f"  - Force range: {np.min(force_output.magnitude):.3f} - {np.max(force_output.magnitude):.3f} (unitless)")
+    # Generate force for this batch
+    force_batch = batch_force_model.generate_force(spike_train__Block=batch_block)
+    force_batch_array = force_batch.magnitude.squeeze()
+
+    # Accumulate force (sum contributions from all motor units)
+    force_total += force_batch_array
+
+    # Clean up to free memory
+    del batch_block, batch_segment, batch_force_model, force_batch, force_batch_array
+
+# Create final AnalogSignal
+force_output = neo.AnalogSignal(
+    force_total * pq.dimensionless,
+    t_start=0 * pq.ms,
+    sampling_rate=force_params["recording_frequency__Hz"] * pq.Hz,
+)
+
+print(f"Force generation complete! Final signal shape: {force_output.shape}")
 
 ##############################################################################
 # Save Force Results as Neo Block
@@ -188,23 +175,9 @@ force_block.annotations["force_model_stats"] = {
 force_block.segments.append(force_segment)
 
 # Save using joblib (compatible with Neo)
-output_file = save_path / "watanabe_force_results.pkl"
-print(f"\nSaving force results to:")
-print(f"  {output_file}")
+output_file = save_path / "watanabe__force_results.pkl"
 
 with open(output_file, "wb") as f:
     joblib.dump(force_block, f)
 
-print(f"[OK] Force results saved successfully!")
-
-##############################################################################
-# Summary
-# -------
-
-print("\n" + "=" * 80)
-print("Force Computation Complete!")
-print("=" * 80)
-print(f"\nOutput file: {output_file}")
-print(f"File size: {output_file.stat().st_size / 1024 / 1024:.2f} MB")
-print(f"\nNext step: Run 10c_watanabe_visualize.py to generate plots")
-print("=" * 80)
+print("Force computation complete!")

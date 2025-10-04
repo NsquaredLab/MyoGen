@@ -16,14 +16,17 @@ import matplotlib.pyplot as plt
 import numpy as np
 from neuron import h
 
-from myogen import load_nmodl_mechanisms
+from myogen import load_nmodl_mechanisms, RANDOM_GENERATOR
 from myogen.simulator.neuron.network import Network
 from myogen import simulator
-from myogen.simulator.neuron.populations import (
-    AlphaMN__Pool,
-    DescendingDrive__Pool,
-)
+from myogen.simulator.neuron.populations import AlphaMN__Pool, DescendingDrive__Pool
 from myogen.simulator.neuron.simulation_runner import SimulationRunner
+
+from neuron import coreneuron
+
+coreneuron.enable = True
+
+coreneuron.gpu = True
 
 ##############################################################################
 # Load NEURON Mechanisms and Dependencies
@@ -67,22 +70,21 @@ print(f"  - Time samples: {len(time)}")
 # These numbers represent typical motor pool compositions for a single muscle.
 
 # Motor neurons (output to muscles)
-naMN = 100
+naMN = 400
 
 # Descending drive (cortical input) - shared across motor neurons
 nDD = 400  # Total descending drive neurons (30% connectivity to each MN)
-DDorder = 1  # Poisson process order for realistic spike patterns
+DDorder = 16  # Poisson batch size for threshold generation (higher = better statistics)
 
 # Independent noise (IN) - one per motor neuron
 nIN = naMN  # One independent Poisson noise source per motor neuron
-INorder = 1  # Poisson process order for independent noise
+INorder = 16  # Poisson batch size for threshold generation
+
+# Watanabe paper specifies: mean ISI = 8 ms → firing rate = 125 Hz
+# This firing rate is controlled by the DDdrive signal (see eachStep callback below)
 
 rt, _ = simulator.RecruitmentThresholds(
-    N=naMN,
-    recruitment_range__ratio=100,
-    mode="combined",
-    deluca__slope=10,
-    konstantin__max_threshold__ratio=1.0,
+    N=naMN, recruitment_range__ratio=100, mode="combined", deluca__slope=10
 )
 
 
@@ -103,27 +105,37 @@ plt.show()
 # - Same 20 Hz sinusoid from 120-180s but DC reduced to 58
 time_s = time / 1000.0  # Convert to seconds for easier calculation
 
-# Initialize with constant value
+# Descending drive (DD) - modulated signal
 DDdrive = np.full_like(time, 65.0)
 
 # Phase 2: 20 Hz sinusoid with DC=65, amplitude=20 from 60-120s
 phase2_mask = (time_s >= 60) & (time_s < 120)
 DDdrive[phase2_mask] = 65 + 20 * np.sin(2 * np.pi * 20 * time_s[phase2_mask])
 
-# Phase 3: Same sinusoid from 120-180s but DC=58
+# Phase 3: Same sinusoid from 120-180s but DC reduced to 58
 phase3_mask = (time_s >= 120) & (time_s <= 180)
 DDdrive[phase3_mask] = 58 + 20 * np.sin(2 * np.pi * 20 * time_s[phase3_mask])
 
-# The time array now includes margin, so DDdrive is automatically padded
-# Set extra points beyond 180s to maintain the last phase value (DC=58)
-beyond_180_mask = time_s > 180
-DDdrive[beyond_180_mask] = 58
+# Independent noise (IN) - 125 Hz with random variation
+# ±1 ms ISI variation: 1/(8-1)=143 Hz to 1/(8+1)=111 Hz, so ±16 Hz range
+# Using smaller random noise for smoother variation
+INdrive = 125.0 + RANDOM_GENERATOR.normal(0, 5.0, len(time))  # 125 Hz ± ~5 Hz (σ)
 
+plt.figure(figsize=(12, 6))
+plt.subplot(2, 1, 1)
 plt.plot(time_s, DDdrive)
 plt.xlabel("Time (s)")
-plt.ylabel("Descending Drive (a.u.)")
-plt.title("Descending Drive Pattern Over Time")
+plt.ylabel("DD Drive (Hz)")
+plt.title("Descending Drive Pattern (Modulated)")
 plt.grid()
+
+plt.subplot(2, 1, 2)
+plt.plot(time_s, INdrive)
+plt.xlabel("Time (s)")
+plt.ylabel("IN Drive (Hz)")
+plt.title("Independent Noise Drive (Constant)")
+plt.grid()
+plt.tight_layout()
 plt.show()
 
 ##############################################################################
@@ -136,8 +148,8 @@ plt.show()
 # 3. Independent noise (IN) - one-to-one Poisson noise source per MN
 
 aMN = AlphaMN__Pool(recruitment_thresholds__array=rt)
-DD = DescendingDrive__Pool(n=nDD, poisson_random_process_order=DDorder, timestep__ms=dt)
-IN = DescendingDrive__Pool(n=nIN, poisson_random_process_order=INorder, timestep__ms=dt)
+DD = DescendingDrive__Pool(n=nDD, poisson_batch_size=DDorder, timestep__ms=dt)
+IN = DescendingDrive__Pool(n=nIN, poisson_batch_size=INorder, timestep__ms=dt)
 
 ##############################################################################
 # Define Callback Functions
@@ -151,16 +163,16 @@ def eachStep(
     popD,
     ncD,
     DDdrive,
+    INdrive,
     step_counter,
     tstop,
 ):
     """
     Step-wise integration function called at each simulation timestep.
 
-    Implements the Watanabe paper protocol by driving both descending drive (DD)
-    and independent noise (IN) populations with the same external signal. The
-    Poisson process nature of these populations ensures independent spike trains
-    despite sharing the same input drive.
+    Implements the Watanabe paper protocol by driving descending drive (DD)
+    with a modulated signal and independent noise (IN) with a constant signal.
+    The Poisson process nature of these populations ensures independent spike trains.
 
     Parameters
     ----------
@@ -169,7 +181,9 @@ def eachStep(
     ncD : dict
         Dictionary of network connections ("cmd->DD", "cmd->IN")
     DDdrive : array
-        Time-varying drive signal (same for both DD and IN populations)
+        Time-varying modulated drive signal for descending drive (DD) population (Hz)
+    INdrive : array
+        Constant drive signal for independent noise (IN) population (Hz)
     step_counter : iterator
         Simulation step counter
     tstop : float
@@ -182,19 +196,19 @@ def eachStep(
     i = next(step_counter)
 
     # DESCENDING DRIVE PROCESSING: Convert cortical signals to spikes
-    # Both DD and IN populations receive the same drive signal but generate
-    # independent spike trains due to their Poisson process nature
+    # DD receives modulated drive, IN receives constant drive (both generate
+    # independent spike trains due to their Poisson process nature)
     if i < len(DDdrive):
-        # Drive descending axons (DD) - shared across motor neurons
+        # Drive descending axons (DD) - shared across motor neurons with modulated signal
         for DDcell in popD["DD"]:
             if DDcell.integrate(DDdrive[i]):
                 spike_time = h.t + 1
                 if spike_time < tstop:
                     ncD["cmd->DD"][DDcell.pool__ID].event(spike_time)
 
-        # Drive independent noise sources (IN) - one per motor neuron
+        # Drive independent noise sources (IN) - one per motor neuron with constant signal
         for INcell in popD["IN"]:
-            if INcell.integrate(DDdrive[i]):
+            if INcell.integrate(INdrive[i]):
                 spike_time = h.t + 1
                 if spike_time < tstop:
                     ncD["cmd->IN"][INcell.pool__ID].event(spike_time)
@@ -212,23 +226,48 @@ def eachStep(
 network = Network({"DD": DD, "IN": IN, "aMN": aMN})
 
 ##############################################################################
-# Configure Neural Connections
-# ---------------------------
+# Configure Neural Connections with Scaled Synaptic Weights
+# ---------------------------------------------------------
 #
 # Two types of inputs to motor neurons (per Watanabe paper):
 # 1. Shared descending drive with sparse connectivity (30%)
 # 2. Independent noise with one-to-one mapping
 #
-# Synaptic weight rationale:
-# - DD→aMN: 0.05 μS × ~30 synapses/MN = ~1.5 μS total (shared drive)
-# - IN→aMN: 0.025 μS × 1 synapse/MN = 0.025 μS (independent noise)
-# - Total conductance per MN: ~1.5 μS (physiologically realistic range)
+# CRITICAL: Synaptic weights must be scaled by the number of converging connections
+# to avoid over-excitation. With 30% connectivity, each MN receives ~120 DD inputs.
 
-# Shared descending drive: DD → aMN (30% connectivity)
-network.connect("DD", "aMN", probability=0.3, weight__μS=0.5)
+# Calculate scaled weights
+DD_connectivity = 0.3
+expected_DD_per_MN = int(DD_connectivity * nDD)  # 120 connections per MN
+
+# Target total conductances per MN (physiologically realistic)
+target_total_DD_conductance__μS = 0.05  # Sum of all DD inputs to one MN
+target_IN_conductance__μS = 0.0025  # Single IN input (independent noise)
+
+# Scale DD weight by number of converging connections
+weight_DD__μS = target_total_DD_conductance__μS / expected_DD_per_MN
+
+print(f"\nSynaptic Weight Scaling:")
+print(f"  DD connections per MN: {expected_DD_per_MN}")
+print(f"  DD weight per connection: {weight_DD__μS:.6f} μS")
+print(f"  Total DD conductance per MN: {weight_DD__μS * expected_DD_per_MN:.3f} μS")
+print(f"  IN conductance per MN: {target_IN_conductance__μS:.3f} μS")
+print(
+    f"  DD/IN ratio: {(weight_DD__μS * expected_DD_per_MN) / target_IN_conductance__μS:.1f}x"
+)
+
+network.connect(
+    "DD",
+    "aMN",
+    probability=DD_connectivity,
+    weight__μS=weight_DD__μS,
+    deterministic=True,
+)
 
 # Independent noise: IN → aMN (one-to-one)
-network.connect_one_to_one("IN", "aMN", probability=1.0, weight__μS=0.075)
+network.connect_one_to_one(
+    "IN", "aMN", probability=1.0, weight__μS=target_IN_conductance__μS
+)
 
 
 ##############################################################################
@@ -253,12 +292,12 @@ ncD = {
 #
 
 
-# Create step callback function with access to step counter
 def step_callback(step_counter):
     return eachStep(
         popD=network.populations,
         ncD=ncD,
         DDdrive=DDdrive,
+        INdrive=INdrive,
         step_counter=step_counter,
         tstop=tstop,
     )
@@ -298,13 +337,16 @@ def step_callback(step_counter):
 # cv.atol(1e-4)
 # cv.rtol(1e-3)
 
-# Use implicit integration for better stability at larger dt
-h.secondorder = 2  # Crank-Nicolson method (more stable than default)
+# Use second-order Crank-Nicolson integration (closest to Watanabe paper's RK4)
+# Note: NEURON does not have built-in RK4 for main simulation loop
+# Watanabe paper used fourth-order Runge-Kutta, but NEURON's secondorder=2
+# (Crank-Nicolson) provides second-order accuracy which is a reasonable approximation
+h.secondorder = 2  # Crank-Nicolson method (second-order accurate)
 
-print("\n✓ Using Crank-Nicolson integration (secondorder=2)")
-print(f"   Fixed timestep: {dt} ms")
+print("\nUsing Crank-Nicolson integration (secondorder=2)")
+print(f"Fixed timestep: {dt} ms")
 print(
-    "   More stable than default forward Euler - allows larger dt without instability"
+    "   Note: Watanabe paper used RK4; NEURON's Crank-Nicolson provides 2nd-order accuracy"
 )
 
 ##############################################################################
@@ -340,73 +382,7 @@ print("Simulation completed successfully!")
 
 # Save simulation results if we have them
 if "results" in locals() and results is not None:
-    joblib.dump(results, save_path / "spinal_network_results.pkl")
+    joblib.dump(results, save_path / "watanabe__spinal_network_results.pkl")
     print(f"✓ Results saved to {save_path}")
 else:
     print("✗ No results to save")
-
-##############################################################################
-# Comprehensive Results Visualization
-# ---------------------------------
-#
-# Create a series of plots that tell the complete story of spinal network
-# function, from neural activity to mechanical output.
-
-if "results" in locals() and results is not None:
-    print(f"📊 Generating comprehensive visualizations...")
-
-    # Import plotting utilities
-    from myogen.utils.plotting import (
-        plot_membrane_potentials,
-        plot_raster_spikes,
-    )
-
-    # 1. NEURAL ACTIVITY: Raster plot showing all population spike patterns
-    populations_list = ["aMN", "DD", "IN"]
-    fig1, axes1 = plt.subplots(len(populations_list), 1, figsize=(15, 10))
-    plot_raster_spikes(
-        results,
-        axes1,
-        populations=populations_list,
-        time_range=(0, tstop),
-        title="Watanabe Paper Simulation - Motor Neurons with Shared DD and Independent Noise",
-    )
-    plt.tight_layout()
-    plt.savefig(save_path / "watanabe_raster_plot.png", dpi=150, bbox_inches="tight")
-    plt.show()
-
-    # 2. MOTOR NEURON DYNAMICS: Membrane potentials showing integration
-    fig2, axes2 = plt.subplots(1, 1, figsize=(15, 8))
-    plot_membrane_potentials(
-        results,
-        [axes2],
-        populations=["aMN"],
-        cell_indices=[0, 10, 20, 30, 40, 50, 60, 70],
-        time_range=(0, tstop),
-        title="Motor Neuron Membrane Potentials - Watanabe Paper",
-    )
-    plt.tight_layout()
-    plt.savefig(
-        save_path / "watanabe_membrane_potentials.png", dpi=150, bbox_inches="tight"
-    )
-    plt.show()
-
-    # 3. DESCENDING DRIVE PATTERN: Show the applied drive signal
-    fig3, ax3 = plt.subplots(1, 1, figsize=(15, 6))
-    ax3.plot(time_s, DDdrive, "b-", linewidth=2)
-    ax3.set_xlabel("Time (s)")
-    ax3.set_ylabel("Descending Drive (Hz)")
-    ax3.set_title("Descending Drive Pattern - Watanabe Paper Protocol")
-    ax3.grid(True, alpha=0.3)
-    ax3.axvline(x=60, color="r", linestyle="--", alpha=0.7, label="Phase 2 start")
-    ax3.axvline(x=120, color="r", linestyle="--", alpha=0.7, label="Phase 3 start")
-    ax3.legend()
-    plt.tight_layout()
-    plt.savefig(save_path / "watanabe_drive_pattern.png", dpi=150, bbox_inches="tight")
-    plt.show()
-
-    print(f"✓ All visualizations completed and saved!")
-else:
-    print("⚠ No results available for visualization")
-
-# %%
