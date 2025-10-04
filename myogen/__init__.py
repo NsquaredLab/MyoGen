@@ -73,6 +73,10 @@ def _setup_myogen(quiet: bool = False) -> bool:
                     "myogen.simulator.neuron._cython._poisson_process_generator",
                     ["myogen/simulator/neuron/_cython/_poisson_process_generator.pyx"],
                 ),
+                Extension(
+                    "myogen.simulator.neuron._cython._gamma_process_generator",
+                    ["myogen/simulator/neuron/_cython/_gamma_process_generator.pyx"],
+                ),
             ],
             compiler_directives={"embedsignature": True},
         ),

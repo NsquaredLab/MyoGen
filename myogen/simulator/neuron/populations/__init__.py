@@ -10,7 +10,7 @@ _Pool
     Base class for all neuron populations providing common functionality.
 
 DescendingDrive__Pool
-    Population of descending drive neurons generating cortical input via Poisson processes.
+    Population of descending drive neurons generating cortical input via Poisson or Gamma processes.
 
 AffIa__Pool
     Population of type Ia afferent neurons providing primary proprioceptive feedback
@@ -39,19 +39,25 @@ Usage
 >>> # Create motor neuron population
 >>> motor_pool = AlphaMN__Pool(n=10, model="Powers2017", mode="active")
 >>>
->>> # Create descending drive population
->>> drive_pool = DescendingDrive__Pool(n=5, poisson_random_process_order=16, timestep__ms=0.05)
+>>> # Create descending drive population with Poisson process (default)
+>>> drive_pool = DescendingDrive__Pool(n=5, poisson_batch_size=16,
+...                                     timestep__ms=0.05)
+>>>
+>>> # Create descending drive with Gamma process for more regular firing
+>>> drive_gamma = DescendingDrive__Pool(n=5, timestep__ms=0.05, process_type='gamma',
+...                                      gamma_rate_scale=50, shape=3.0)
 """
 
 from .afferents import AffIa__Pool, AffII__Pool, AffIb__Pool
 from .base import _Pool
-from .descending_drive import DescendingDrive__Pool
+from .descending_drive import DescendingDrive__Pool, DescendingDrive_Gamma__Pool
 from .interneurons import GII__Pool, GIb__Pool
 from .motor_neurons import AlphaMN__Pool
 
 __all__ = [
     "_Pool",
     "DescendingDrive__Pool",
+    "DescendingDrive_Gamma__Pool",
     "AffIa__Pool",
     "AffII__Pool",
     "AffIb__Pool",

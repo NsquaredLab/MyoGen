@@ -1,8 +1,8 @@
 """
 Descending drive neuron populations for cortical input.
 
-This module contains the population class for descending drive neurons that
-simulate cortical input to spinal motor circuits via Poisson processes.
+This module contains the population classes for descending drive neurons that
+simulate cortical input to spinal motor circuits via Poisson and Gamma processes.
 """
 
 from myogen.simulator.neuron import cells
@@ -16,29 +16,133 @@ class DescendingDrive__Pool(_Pool):
     """
     Container for a population of descending drive neurons.
 
-    Manages a collection of DD (descending drive) cells that generate
-    Poisson random processes for cortical input to spinal circuits.
+    Manages a collection of DD cells that generate spike trains using either
+    Poisson or Gamma point processes for cortical input to spinal circuits.
 
     Parameters
     ----------
     n : int
         Number of descending drive neurons to create.
-    poisson_random_process_order : int
-        Order parameter for the Poisson process generation.
+    poisson_batch_size : int, optional
+        Batch size for exponential threshold generation algorithm (only used when
+        process_type="poisson"). Higher values improve statistical accuracy but
+        increase computation. Typical values: 16-50.
+        Required if process_type="poisson", ignored if process_type="gamma".
     timestep__ms : float
         Time step for simulation (ms).
+    process_type : str, optional
+        Type of point process: "poisson" or "gamma", by default "poisson".
+        - "poisson": Irregular firing (CV=1.0)
+        - "gamma": More regular firing with CV controlled by shape parameter
+    gamma_rate_scale : int, optional
+        Rate scaling parameter for Gamma process (only used when process_type="gamma").
+        Sets the firing rate scale. Typical values: 16-50.
+        Required if process_type="gamma", ignored if process_type="poisson".
+    shape : float, optional
+        Shape parameter for Gamma process (only used when process_type="gamma"),
+        by default 3.0. Controls spike regularity:
+        - shape=1: Poisson-like (CV=1.0)
+        - shape=2-5: Typical cortical neuron regularity (CV=0.45-0.71)
+        - Higher values: More regular firing (CV=1/sqrt(shape))
     """
 
-    def __init__(self, n: int, poisson_random_process_order: int, timestep__ms: float):
-        self.n = n
-        self.poisson_random_process_order = poisson_random_process_order
-        self.timestep__ms = timestep__ms
+    def __init__(
+        self,
+        n: int,
+        poisson_batch_size: int | None = None,
+        timestep__ms: float | None = None,
+        process_type: str = "poisson",
+        gamma_rate_scale: int | None = None,
+        shape: float = 3.0,
+    ):
+        if timestep__ms is None:
+            raise ValueError("timestep__ms is required")
 
-        _cells = []
+        self.n = n
+        self.timestep__ms = timestep__ms
+        self.process_type = process_type
+        self.shape = shape
+
+        if process_type.lower() == "gamma":
+            if gamma_rate_scale is None:
+                raise ValueError(
+                    "gamma_rate_scale is required when process_type='gamma'"
+                )
+            self.gamma_rate_scale = gamma_rate_scale
+            _cells = [
+                cells.DD_Gamma(
+                    N=gamma_rate_scale,
+                    dt=timestep__ms,
+                    shape=shape,
+                    pool__ID=i,
+                )
+                for i in range(n)
+            ]
+        elif process_type.lower() == "poisson":
+            if poisson_batch_size is None:
+                raise ValueError(
+                    "poisson_batch_size is required when process_type='poisson'"
+                )
+            self.poisson_batch_size = poisson_batch_size
+            _cells = [
+                cells.DD(N=poisson_batch_size, dt=timestep__ms, pool__ID=i)
+                for i in range(n)
+            ]
+        else:
+            raise ValueError(
+                f"Invalid process_type '{process_type}'. Must be 'poisson' or 'gamma'."
+            )
+
+        super().__init__(cells=_cells)
+
+
+@beartowertype
+class DescendingDrive_Gamma__Pool(_Pool):
+    """
+    Container for a population of descending drive neurons using Gamma process.
+
+    Manages a collection of DD_Gamma cells that generate Gamma-distributed
+    spike trains for more regular cortical input to spinal circuits, typical
+    of cortical neuron firing patterns.
+
+    Note: This class is kept for backward compatibility. Consider using
+    DescendingDrive__Pool with process_type='gamma' instead.
+
+    Parameters
+    ----------
+    n : int
+        Number of descending drive neurons to create.
+    gamma_rate_scale : int
+        Rate scaling parameter for Gamma process. Typical values: 16-50.
+    timestep__ms : float
+        Time step for simulation (ms).
+    shape : float, optional
+        Shape parameter controlling spike regularity, by default 3.0.
+        - shape=1: Poisson-like (irregular) firing
+        - shape=2-5: Typical cortical neuron regularity
+        - Higher values: More regular, clock-like firing
+    """
+
+    def __init__(
+        self,
+        n: int,
+        gamma_rate_scale: int,
+        timestep__ms: float,
+        shape: float = 3.0,
+    ):
+        self.n = n
+        self.gamma_rate_scale = gamma_rate_scale
+        self.timestep__ms = timestep__ms
+        self.shape = shape
 
         super().__init__(
             cells=[
-                cells.DD(N=poisson_random_process_order, dt=timestep__ms, pool__ID=i)
+                cells.DD_Gamma(
+                    N=gamma_rate_scale,
+                    dt=timestep__ms,
+                    shape=shape,
+                    pool__ID=i,
+                )
                 for i in range(n)
             ]
         )

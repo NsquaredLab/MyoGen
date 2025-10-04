@@ -24,6 +24,7 @@ def plot_raster_spikes(
     populations: list[str],
     time_range: tuple[float, float] | None = None,
     dot_size: float = 0.8,
+    alpha: float = 1.0,
     title: str = "Raster Plot",
     xlabel: str = "Time [ms]",
     ylabel: str = "Neuron ID",
@@ -45,6 +46,8 @@ def plot_raster_spikes(
         Time range to plot (start, end) in milliseconds, by default None (full range).
     dot_size : float, optional
         Size of spike markers, by default 0.8.
+    alpha : float, optional
+        Transparency of spike markers (0.0 to 1.0), by default 1.0.
     title : str, optional
         Plot title, by default "Raster Plot".
     xlabel : str, optional
@@ -110,7 +113,7 @@ def plot_raster_spikes(
                 spike_ids = spike_ids[time_mask]
 
             # Plot spikes for this population
-            ax.plot(spike_times, spike_ids, ".", ms=dot_size, **kwargs)
+            ax.plot(spike_times, spike_ids, ".", ms=dot_size, alpha=alpha, **kwargs)
 
         if apply_default_formatting:
             # Only show xlabel on bottom plot

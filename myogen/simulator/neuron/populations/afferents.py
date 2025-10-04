@@ -31,8 +31,8 @@ class AffIa__Pool(_Pool):
         Min and max axon conduction velocities (m/s).
     axon_length__m : float
         Length of the axon (m).
-    poisson_random_process_order : int
-        Order parameter for the Poisson process generation.
+    poisson_batch_size : int
+        Batch size for exponential threshold generation algorithm.
     timestep__ms : float
         Time step for simulation (ms).
     init_order : int
@@ -46,14 +46,14 @@ class AffIa__Pool(_Pool):
         recruitment_thresholds: tuple[float, float] = (0, 40),
         axon_velocities: tuple[float, float] = (58, 72),
         axon_length__m: float = 0.6,
-        poisson_random_process_order: int = 145,
+        poisson_batch_size: int = 145,
         init_order: int = 0,
     ):
         self.n = n
         self.recruitment_thresholds = recruitment_thresholds
         self.axon_velocities = axon_velocities
         self.axon_length = axon_length__m
-        self.poisson_random_process_order = poisson_random_process_order
+        self.poisson_batch_size = poisson_batch_size
         self.timestep__ms = timestep__ms
         self.init_order = init_order
 
@@ -64,7 +64,7 @@ class AffIa__Pool(_Pool):
         for i, (rt_i, vcon_i) in enumerate(zip(rt, vcon)):
             ia = cells.AffIa(
                 RT=rt_i,
-                N=poisson_random_process_order,
+                N=poisson_batch_size,
                 dt=timestep__ms,
                 initN=init_order,
                 pool__ID=i,
@@ -95,8 +95,8 @@ class AffII__Pool(_Pool):
         Min and max axon conduction velocities (m/s).
     axon_length__m : float
         Length of the axon (m).
-    poisson_random_process_order : int
-        Order parameter for the Poisson process generation.
+    poisson_batch_size : int
+        Batch size for exponential threshold generation algorithm.
     timestep__ms : float
         Time step for simulation (ms).
     init_order : int
@@ -110,14 +110,14 @@ class AffII__Pool(_Pool):
         recruitment_thresholds: tuple[float, float] = (0, 50),
         axon_velocities: tuple[float, float] = (32, 52),
         axon_length__m: float = 0.6,
-        poisson_random_process_order: int = 500,
+        poisson_batch_size: int = 500,
         init_order: int = 0,
     ):
         self.n = n
         self.recruitment_thresholds = recruitment_thresholds
         self.axon_velocities = axon_velocities
         self.axon_length = axon_length__m
-        self.poisson_random_process_order = poisson_random_process_order
+        self.poisson_batch_size = poisson_batch_size
         self.timestep__ms = timestep__ms
         self.init_order = init_order
 
@@ -128,7 +128,7 @@ class AffII__Pool(_Pool):
         for i, (rt_i, vcon_i) in enumerate(zip(rt, vcon)):
             ii = cells.AffII(
                 RT=rt_i,
-                N=poisson_random_process_order,
+                N=poisson_batch_size,
                 dt=timestep__ms,
                 initN=init_order,
                 pool__ID=i,
@@ -159,8 +159,8 @@ class AffIb__Pool(_Pool):
         Min and max axon conduction velocities (m/s).
     axon_length : float
         Length of the axon (mm).
-    poisson_random_process_order : int
-        Order parameter for the Poisson process generation.
+    poisson_batch_size : int
+        Batch size for exponential threshold generation algorithm.
     timestep__ms : float
         Time step for simulation (ms).
     init_order : int
@@ -174,14 +174,14 @@ class AffIb__Pool(_Pool):
         recruitment_thresholds: tuple[float, float] = (0, 50),
         axon_velocities: tuple[float, float] = (62, 66),
         axon_length: float = 0.6,
-        poisson_random_process_order: int = 30,
+        poisson_batch_size: int = 30,
         init_order: int = 0,
     ):
         self.n = n
         self.recruitment_thresholds = recruitment_thresholds
         self.axon_velocities = axon_velocities
         self.axon_length = axon_length
-        self.poisson_random_process_order = poisson_random_process_order
+        self.poisson_batch_size = poisson_batch_size
         self.timestep__ms = timestep__ms
         self.init_order = init_order
 
@@ -192,7 +192,7 @@ class AffIb__Pool(_Pool):
         for i, (rt_i, vcon_i) in enumerate(zip(rt, vcon)):
             ib = cells.AffIb(
                 RT=rt_i,
-                N=poisson_random_process_order,
+                N=poisson_batch_size,
                 dt=timestep__ms,
                 initN=init_order,
                 pool__ID=i,

@@ -183,18 +183,36 @@ def _connect_population_to_population(
     target_pop: str,
     populations: dict,
     connection_probability: float,
+    deterministic: bool = False,
     **kwargs,
 ) -> list:
     """
-    Create connections between two neural populations with probabilistic connectivity.
+    Create connections between two neural populations with probabilistic or deterministic connectivity.
 
-    Implements sparse connectivity where each source-target neuron pair connects
-    with the specified probability.
+    Implements sparse connectivity using either:
+    - Probabilistic: Each source-target pair connects with specified probability (default)
+    - Deterministic: Each source connects to exactly N targets where N = probability × n_targets
+
+    Parameters
+    ----------
+    deterministic : bool, optional
+        If True, each source neuron connects to exactly int(connection_probability × n_targets)
+        randomly selected target neurons. If False, uses probabilistic sampling. Default False.
     """
     connections = []
-    for source_neuron in populations[source_pop]:
-        for target_neuron in populations[target_pop]:
-            if RANDOM_GENERATOR.uniform() < connection_probability:
+    target_neurons = populations[target_pop]
+
+    if deterministic and connection_probability < 1.0:
+        # Deterministic connectivity: each source connects to exact number of targets
+        n_connections = int(connection_probability * len(target_neurons))
+
+        for source_neuron in populations[source_pop]:
+            # Randomly select exactly n_connections target neurons
+            selected_targets = RANDOM_GENERATOR.choice(
+                target_neurons, size=n_connections, replace=False
+            )
+
+            for target_neuron in selected_targets:
                 target_synapse = RANDOM_GENERATOR.choice(target_neuron.synapse__list)
                 netcon = _create_netcon(
                     source_neuron,
@@ -212,6 +230,28 @@ def _connect_population_to_population(
                     netcon.threshold = kwargs.get("spike_threshold")
 
                 connections.append(netcon)
+    else:
+        # Probabilistic connectivity: each pair has probability of connecting
+        for source_neuron in populations[source_pop]:
+            for target_neuron in target_neurons:
+                if RANDOM_GENERATOR.uniform() < connection_probability:
+                    target_synapse = RANDOM_GENERATOR.choice(target_neuron.synapse__list)
+                    netcon = _create_netcon(
+                        source_neuron,
+                        target_synapse,
+                        muscle_callback=kwargs.get("muscle_callback"),
+                        id_vector=kwargs.get("id_vector"),
+                        spike_vector=kwargs.get("spike_vector"),
+                        neuron_id=source_neuron.global__ID,
+                    )
+
+                    # Apply custom synaptic parameters if provided
+                    if kwargs.get("synaptic_weight") is not None:
+                        netcon.weight[0] = kwargs.get("synaptic_weight")
+                    if kwargs.get("spike_threshold") is not None:
+                        netcon.threshold = kwargs.get("spike_threshold")
+
+                    connections.append(netcon)
     return connections
 
 
@@ -369,6 +409,7 @@ def _connect_populations(
     muscle=None,
     synaptic_weight: Optional[float] = None,
     spike_threshold: Optional[float] = None,
+    deterministic: bool = False,
 ):
     """
     Create probabilistic network connections between neural populations.
@@ -468,6 +509,7 @@ def _connect_populations(
         "muscle": muscle,
         "synaptic_weight": synaptic_weight,
         "spike_threshold": spike_threshold,
+        "deterministic": deterministic,
     }
 
     # Route to appropriate connection type function
@@ -870,6 +912,7 @@ class Network:
         weight__μS: float = DEFAULT_SYNAPTIC_WEIGHT,
         delay__ms: float = DEFAULT_SYNAPTIC_DELAY,
         threshold__mV: float = DEFAULT_SPIKE_THRESHOLD,
+        deterministic: bool = False,
     ) -> list:
         """
         Connect two neural populations with specified parameters.
@@ -882,13 +925,17 @@ class Network:
             Name of target population (must exist in populations dict).
         probability : float, optional
             Connection probability between 0.0 and 1.0, by default 1.0.
-            Each source-target neuron pair connects with this probability.
+            Each source-target neuron pair connects with this probability (if deterministic=False).
+            If deterministic=True, each source connects to exactly int(probability × n_targets) targets.
         weight__μS : float, optional
             Synaptic weight in microsiemens, by default 0.6.
         delay__ms : float, optional
             Synaptic delay in milliseconds, by default 1.0.
         threshold__mV : float, optional
             Spike threshold in millivolts, by default -10.0.
+        deterministic : bool, optional
+            If True, each source neuron connects to exactly int(probability × n_targets) randomly
+            selected target neurons. If False, uses probabilistic sampling. Default False.
 
         Returns
         -------
@@ -925,6 +972,7 @@ class Network:
             spike_threshold=threshold__mV,
             id_vector=id_vector,
             spike_vector=spike_vector,
+            deterministic=deterministic,
         )
 
         self.connections.append(
@@ -1118,7 +1166,7 @@ class Network:
         Examples
         --------
         >>> # Create independent noise for each motor neuron
-        >>> noise_pool = DescendingDrive__Pool(n=10, poisson_random_process_order=16, timestep__ms=0.05)
+        >>> noise_pool = DescendingDrive__Pool(n=10, poisson_batch_size=16, timestep__ms=0.05)
         >>> mn_pool = AlphaMN__Pool(n=10)
         >>> network = Network({"noise": noise_pool, "mn": mn_pool})
         >>> network.connect_one_to_one("noise", "mn", weight__μS=0.5)
@@ -1244,7 +1292,7 @@ if __name__ == "__main__":
     timestep__ms = 0.05
 
     dd__pool = DescendingDrive__Pool(
-        n=2, poisson_random_process_order=16, timestep__ms=timestep__ms
+        n=2, poisson_batch_size=16, timestep__ms=timestep__ms
     )
 
     n_type1 = 2

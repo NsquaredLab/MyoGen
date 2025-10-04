@@ -216,7 +216,6 @@ class SimulationRunner:
             # Setup spike recording on network
             self._setup_network_spike_recording()
 
-            print("Starting Simulation")
             h.run()
 
             # Close progress bar (with error handling)

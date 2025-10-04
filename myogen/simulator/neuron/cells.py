@@ -12,6 +12,9 @@ from myogen import RANDOM_GENERATOR, SEED
 from myogen.simulator.neuron._cython._poisson_process_generator import (
     _PoissonProcessGenerator__Cython,
 )
+from myogen.simulator.neuron._cython._gamma_process_generator import (
+    _GammaProcessGenerator__Cython,
+)
 from myogen.utils.decorators import beartowertype
 
 
@@ -425,6 +428,89 @@ class DD(_Cell, _PoissonProcessGenerator__Cython):
         -------
         int
             Number of spikes generated in this time step (0 or 1 for Poisson).
+        """
+        return self.compute(y) if y > 0 else 0
+
+
+@beartowertype
+class DD_Gamma(_Cell, _GammaProcessGenerator__Cython):
+    """
+    Descending drive neuron using Gamma process for more regular spike patterns.
+
+    Models descending inputs from higher brain centers (motor cortex, brainstem)
+    as Gamma-distributed spike trains with activity-dependent firing rates. Unlike
+    the Poisson-based DD class, this produces more regular spike patterns typical
+    of cortical neurons, with regularity controlled by the shape parameter.
+
+    Uses a dummy NEURON cell for interface compatibility while generating realistic
+    spike patterns through a Cython-optimized Gamma process generator.
+
+    The firing rate is proportional to the input drive signal, allowing
+    simulation of voluntary motor commands, reflex modulation, and other
+    descending influences on spinal motor circuits.
+
+    Parameters
+    ----------
+    N : int
+        Maximum firing rate in Hz when input drive is at maximum. Determines
+        the scaling factor for converting drive signals to spike rates.
+    dt : float
+        Simulation time step in milliseconds. Must match the integration
+        time step used in the main simulation loop.
+    shape : float, optional
+        Shape parameter (k) controlling spike regularity, by default 3.0.
+        - shape=1: Poisson-like (irregular) firing
+        - shape=2-5: Typical cortical neuron regularity
+        - Higher values: More regular, clock-like firing
+        The coefficient of variation (CV) of ISIs is 1/sqrt(shape).
+    pool__ID : int, optional
+        Pool identifier for grouping related descending neurons, by default None.
+
+    Attributes
+    ----------
+    ns : h.DUMMY
+        NEURON dummy cell for interface compatibility with network connections.
+        Does not contain actual membrane mechanisms.
+
+    Notes
+    -----
+    The Gamma spike generation uses a unique random seed based on the cell's
+    global and class IDs to ensure reproducible but independent spike trains
+    across different DD_Gamma instances while maintaining global reproducibility.
+
+    For shape=1, this is equivalent to Poisson process (same as DD class).
+    For shape>1, produces more regular firing with CV = 1/sqrt(shape):
+    - shape=4 gives CV=0.5 (fairly regular)
+    - shape=9 gives CV=0.33 (very regular)
+    """
+
+    _ids2 = itertools.count(0)
+
+    def __init__(self, N, dt, shape: float = 3.0, pool__ID: int | None = None):
+        self.ns = h.DUMMY()  # Dummy cell
+        _Cell.__init__(self, next(self._ids2), pool__ID)
+        _GammaProcessGenerator__Cython.__init__(
+            self, SEED + (self.class__ID + 1) * (self.global__ID + 1), shape, dt
+        )
+        self.N = N  # Store maximum firing rate
+
+    def __repr__(self) -> str:
+        return _Cell.__repr__(self)
+
+    def integrate(self, y):
+        """
+        Generate Gamma-process spikes based on input drive level.
+
+        Parameters
+        ----------
+        y : float
+            Drive signal level (0-1). Values > 0 generate spikes proportional
+            to the drive strength; values ≤ 0 produce no spikes.
+
+        Returns
+        -------
+        int
+            Number of spikes generated in this time step (0 or 1 for Gamma process).
         """
         return self.compute(y) if y > 0 else 0
 
