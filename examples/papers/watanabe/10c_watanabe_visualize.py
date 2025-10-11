@@ -45,9 +45,7 @@ plt.rcParams["ytick.major.pad"] = 10
 # Setup Paths and Load Data
 # -------------------------
 
-save_path = Path(
-    r"/home/oj98yqyk/code/simulators/MyoGen/examples/papers/watanabe/results"
-)
+save_path = Path(r"./results")
 save_path.mkdir(exist_ok=True)
 
 spinal_results_path = save_path / Path("watanabe__spinal_network_results.pkl")

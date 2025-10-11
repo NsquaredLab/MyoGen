@@ -22,12 +22,6 @@ from myogen import simulator
 from myogen.simulator.neuron.populations import AlphaMN__Pool, DescendingDrive__Pool
 from myogen.simulator.neuron.simulation_runner import SimulationRunner
 
-from neuron import coreneuron
-
-coreneuron.enable = True
-
-coreneuron.gpu = True
-
 ##############################################################################
 # Load NEURON Mechanisms and Dependencies
 # ---------------------------------------
