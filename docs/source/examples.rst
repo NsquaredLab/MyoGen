@@ -15,8 +15,8 @@ Examples are organized into two main galleries:
     :gutter: 3
 
     .. grid-item-card:: Basic Tutorials
-        :link: auto_examples/basic/index
-        :link-type: doc
+        :link: auto_examples/basic/index.html
+        :link-type: url
         :class-card: sd-text-black sd-bg-light
 
         **Getting Started with MyoGen**
@@ -29,8 +29,8 @@ Examples are organized into two main galleries:
         :bdg-primary:`Beginner Friendly` :bdg-info:`10 Examples`
 
     .. grid-item-card:: Paper Reproductions
-        :link: auto_examples/papers/watanabe/index
-        :link-type: doc
+        :link: auto_examples/papers/watanabe/index.html
+        :link-type: url
         :class-card: sd-text-black sd-bg-light
 
         **Scientific Validation**
@@ -178,3 +178,10 @@ Getting Help
 - 📖 **Documentation**: Full API reference and guides
 - 💬 **Issues**: Report bugs or request features on GitHub
 - 🎓 **Tutorials**: Step-by-step learning materials in basic gallery
+
+.. toctree::
+   :hidden:
+   :maxdepth: 2
+
+   auto_examples/basic/index
+   auto_examples/papers/watanabe/index

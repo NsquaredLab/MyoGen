@@ -9,9 +9,11 @@ Reproduction of spinal motor neuron network modeling and corticomuscular coheren
 Reference
 ---------
 
-**Paper**: Watanabe, R. N., & Kohn, A. F. (Year). TBD - Full citation
+**Paper**: Watanabe, R. N., & Kohn, A. F. (2015). Fast Oscillatory Commands from the Motor Cortex Can Be Decoded by the Spinal Cord for Force Control. *Journal of Neuroscience*, 35(40), 13687-13697.
 
-**Key Findings**: This paper demonstrated how spinal motor neuron networks transform descending cortical drive into muscle force output, with specific frequency-dependent coherence patterns between cortical input and motor unit activity.
+**DOI**: `10.1523/JNEUROSCI.1950-15.2015 <https://doi.org/10.1523/JNEUROSCI.1950-15.2015>`_
+
+**Key Findings**: This paper demonstrated how spinal motor neuron networks can decode fast oscillatory commands from the motor cortex (beta and gamma frequencies: 13-70 Hz) for effective force control. Using a biologically compatible neuromuscular computational model, the study showed that recruitment properties of motor neuron pools enable cortical oscillations at beta or higher frequencies to play a functional role in force modulation, challenging previous assumptions about the frequency limitations of motor control.
 
 Overview
 --------

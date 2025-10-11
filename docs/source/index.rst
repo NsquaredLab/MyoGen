@@ -120,4 +120,4 @@ Package Structure
    :caption: 🔬 Examples & Tutorials
    :hidden:
 
-   auto_examples/index
+   examples
