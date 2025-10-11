@@ -235,8 +235,8 @@ DD_connectivity = 0.3
 expected_DD_per_MN = int(DD_connectivity * nDD)  # 120 connections per MN
 
 # Target total conductances per MN (physiologically realistic)
-target_total_DD_conductance__μS = 0.05  # Sum of all DD inputs to one MN
-target_IN_conductance__μS = 0.0025  # Single IN input (independent noise)
+target_total_DD_conductance__μS = 0.2  # Total DD conductance per MN
+target_IN_conductance__μS = 0.1
 
 # Scale DD weight by number of converging connections
 weight_DD__μS = target_total_DD_conductance__μS / expected_DD_per_MN
@@ -254,8 +254,7 @@ network.connect(
     "DD",
     "aMN",
     probability=DD_connectivity,
-    weight__μS=weight_DD__μS,
-    deterministic=True,
+    weight__μS=target_total_DD_conductance__μS,
 )
 
 # Independent noise: IN → aMN (one-to-one)
