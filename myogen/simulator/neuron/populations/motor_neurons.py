@@ -5,6 +5,7 @@ This module contains the population class for alpha motor neurons, which form
 the final common pathway for motor control and drive muscle contraction.
 """
 
+from pathlib import Path
 from typing import Optional, Union
 
 import numpy as np
@@ -12,6 +13,7 @@ import numpy as np
 from myogen.simulator.neuron import cells
 from myogen.utils.decorators import beartowertype
 from myogen.utils.types import RECRUITMENT_THRESHOLDS__ARRAY
+from myogen.utils.config_loader import load_yaml_config, merge_configs
 
 from .base import _exp_interp, _Pool
 
@@ -29,20 +31,30 @@ class AlphaMN__Pool(_Pool):
     ----------
     n : int
         Number of alpha motor neurons to create.
-    model : str
-        Motor neuron model type ("ModALS" or "Powers2017").
-    mode : str
-        Simulation mode ("active" or "passive").
-    axon_velocities : tuple[float, float]
-        Min and max axon conduction velocities (m/s).
-    axon_length : float
-        Length of the axon (mm).
-    gamma : float
-        Neuromodulation level (a.u.).
+    recruitment_thresholds__array : RECRUITMENT_THRESHOLDS__ARRAY, optional
+        Array of recruitment thresholds for each motor neuron, by default None.
+    config_file : str or Path, optional
+        Path to YAML configuration file containing model parameters.
+        If provided, parameters from this file will be used as defaults,
+        which can be overridden by explicitly passed parameters.
+        Can be a filename (searches in myogen/config/), relative path, or absolute path.
+        By default uses "alpha_mn_default.yaml".
+    model : str, optional
+        Motor neuron model type ("NERLab" or "Powers2017"), by default "NERLab".
+    mode : str, optional
+        Simulation mode ("active" or "passive"), by default "active".
+    axon_velocities : tuple[float, float], optional
+        Min and max axon conduction velocities (m/s), by default (50, 65).
+    axon_length : float, optional
+        Length of the axon (mm), by default 0.6.
+    gamma : float, optional
+        Neuromodulation level (a.u.), by default 0.2.
     cell_index : Optional[int], optional
         Specific cell index to create (creates only one cell), by default None.
     lambda_factor : float, optional
         Lambda factor for Powers2017 model persistent sodium scaling, by default 1.0.
+    initial_voltage__mV : float or list[float], optional
+        Initial membrane voltage (mV), by default -67.
     spike_threshold__mV : float, optional
         Spike detection threshold for recording motor neuron spikes, by default 50.0.
         Motor neurons have large action potentials (80-100 mV) requiring higher thresholds.
@@ -99,62 +111,99 @@ class AlphaMN__Pool(_Pool):
         self,
         n: int | None = None,
         recruitment_thresholds__array: RECRUITMENT_THRESHOLDS__ARRAY | None = None,
-        model: str = "NERLab",
-        mode: str = "active",
-        axon_velocities: tuple[float, float] = (50, 65),
-        axon_length: float = 0.6,
-        gamma: float = 0.2,
+        config_file: Union[str, Path, None] = None,
+        model: str | None = None,
+        mode: str | None = None,
+        axon_velocities: tuple[float, float] | None = None,
+        axon_length: float | None = None,
+        gamma: float | None = None,
         cell_index: Optional[int] = None,
-        lambda_factor: float = 1.0,
-        initial_voltage__mV: Union[float, list[float]] = -67,
-        spike_threshold__mV: float = 50.0,
+        lambda_factor: float | None = None,
+        initial_voltage__mV: Union[float, list[float], None] = None,
+        spike_threshold__mV: float | None = None,
         # Powers2017 parameters
         # Soma parameters
-        soma_length_range: tuple[float, float, float] = (2952, 3665, 0.3),
-        soma_diameter_range: tuple[float, float, float] = (22, 30, 0.3),
-        soma_capacitance_range: tuple[float, float, float] = (1.35546, 1.87853, 0.3),
-        soma_passive_conductance_range: tuple[float, float, float] = (
-            8.11e-5,
-            3.77e-4,
-            0.3,
-        ),
-        soma_passive_reversal_range: tuple[float, float, float] = (-71, -72, 0.3),
-        soma_na3rp_conductance_range: tuple[float, float, float] = (0.01, 0.022, 0.3),
-        soma_naps_conductance_range: tuple[float, float, float] = (2.6e-5, 2e-5, 0.3),
-        soma_kdrrl_conductance_range: tuple[float, float, float] = (0.015, 0.02, 0.3),
-        soma_mahp_ca_conductance_range: tuple[float, float, float] = (
-            6.4e-6,
-            1.015e-5,
-            0.075,
-        ),
-        soma_mahp_k_conductance_range: tuple[float, float, float] = (4.5e-4, 6e-4, 0.3),
-        soma_mahp_tau_range: tuple[float, float, float] = (90, 30, 0.3),
-        soma_gh_conductance_range: tuple[float, float, float] = (3e-5, 2.3e-4, 0.3),
+        soma_length_range: tuple[float, float, float] | None = None,
+        soma_diameter_range: tuple[float, float, float] | None = None,
+        soma_capacitance_range: tuple[float, float, float] | None = None,
+        soma_passive_conductance_range: tuple[float, float, float] | None = None,
+        soma_passive_reversal_range: tuple[float, float, float] | None = None,
+        soma_na3rp_conductance_range: tuple[float, float, float] | None = None,
+        soma_naps_conductance_range: tuple[float, float, float] | None = None,
+        soma_kdrrl_conductance_range: tuple[float, float, float] | None = None,
+        soma_mahp_ca_conductance_range: tuple[float, float, float] | None = None,
+        soma_mahp_k_conductance_range: tuple[float, float, float] | None = None,
+        soma_mahp_tau_range: tuple[float, float, float] | None = None,
+        soma_gh_conductance_range: tuple[float, float, float] | None = None,
         # Dendrite parameters
-        dendrite_length_range: tuple[float, float, float] = (1794.13, 2226.91, 0.3),
-        dendrite_diameter_range: tuple[float, float, float] = (8.73071, 11.9055, 0.3),
-        dendrite_passive_conductance_range: tuple[float, float, float] = (
-            7.93e-5,
-            1.75e-4,
-            0.3,
-        ),
-        dendrite_passive_reversal_range: tuple[float, float, float] = (-71, -72, 0.3),
-        dendrite_resistance_range: tuple[float, float, float] = (51.038, 40.755, 0.3),
-        dendrite_capacitance_range: tuple[float, float, float] = (
-            0.867781,
-            0.880407,
-            0.3,
-        ),
-        dendrite_gh_conductance_range: tuple[float, float, float] = (3e-5, 2.3e-4, 0.3),
-        dendrite_ca_conductance_ranges: tuple[tuple[float, float, float], ...] = (
-            (8.5e-5, 1.18e-4, 0.3),
-            (9.5e-5, 1.28e-4, 0.3),
-            (1e-4, 1.38e-4, 0.3),
-            (1.15e-4, 1.53e-4, 0.3),
-        ),
-        dendrite_ca_theta_m_range: tuple[float, float, float] = (-42, -39, 0.3),
-        dendrite_ca_theta_h_range: tuple[float, float, float] = (10, -10, 0.3),
+        dendrite_length_range: tuple[float, float, float] | None = None,
+        dendrite_diameter_range: tuple[float, float, float] | None = None,
+        dendrite_passive_conductance_range: tuple[float, float, float] | None = None,
+        dendrite_passive_reversal_range: tuple[float, float, float] | None = None,
+        dendrite_resistance_range: tuple[float, float, float] | None = None,
+        dendrite_capacitance_range: tuple[float, float, float] | None = None,
+        dendrite_gh_conductance_range: tuple[float, float, float] | None = None,
+        dendrite_ca_conductance_ranges: tuple[tuple[float, float, float], ...] | None = None,
+        dendrite_ca_theta_m_range: tuple[float, float, float] | None = None,
+        dendrite_ca_theta_h_range: tuple[float, float, float] | None = None,
     ):
+        # Load configuration from YAML files with fallback mechanism
+        if config_file is None:
+            config_file = "alpha_mn_default.yaml"
+
+        try:
+            # Always load the default configuration first
+            default_config = load_yaml_config("alpha_mn_default.yaml")
+
+            if config_file == "alpha_mn_default.yaml":
+                config = default_config
+            else:
+                # Load the specific config file and merge with defaults
+                specific_config = load_yaml_config(config_file)
+                config = merge_configs(default_config, specific_config)
+
+        except ImportError:
+            # PyYAML not installed
+            raise ImportError(
+                f"PyYAML is required to load config file '{config_file}'. "
+                "Install it with: pip install pyyaml"
+            )
+
+        # Helper function to get parameter value (explicit param > config > required)
+        def get_param(param_value, config_key):
+            if param_value is not None:
+                return param_value
+            if config_key not in config:
+                # Debug information
+                available_keys = list(config.keys()) if isinstance(config, dict) else "config is not a dict"
+                raise ValueError(
+                    f"Parameter '{config_key}' not found in merged config and not provided explicitly. "
+                    f"Available top-level keys: {available_keys}. "
+                    f"Config file used: '{config_file}'"
+                )
+            return config[config_key]
+
+        def get_nested_param(param_value, *config_keys):
+            """Get parameter from nested config structure."""
+            if param_value is not None:
+                return param_value
+            value = config
+            for key in config_keys:
+                if isinstance(value, dict):
+                    value = value.get(key, {})
+                else:
+                    raise ValueError(
+                        f"Parameter path {' -> '.join(config_keys)} not found in merged config and not provided explicitly. "
+                        f"Failed at key '{key}'. Config file used: '{config_file}'"
+                    )
+            if value == {} or value is None:
+                raise ValueError(
+                    f"Parameter path {' -> '.join(config_keys)} not found in merged config and not provided explicitly. "
+                    f"Config file used: '{config_file}'"
+                )
+            return value
+
+        # Set basic parameters
         self.n = n
         self.recruitment_thresholds__array = recruitment_thresholds__array
 
@@ -166,50 +215,263 @@ class AlphaMN__Pool(_Pool):
                 "Either n or recruitment_thresholds__array must be provided."
             )
 
-        self.model = model
-        self.mode = mode
-        self.axon_velocities = axon_velocities
-        self.axon_length = axon_length
-        self.gamma = gamma
+        self.model = get_param(model, "model")
+        self.mode = get_param(mode, "mode")
+        self.axon_velocities = get_param(axon_velocities, "axon_velocities")
+        self.axon_length = get_param(axon_length, "axon_length")
+        self.gamma = get_param(gamma, "gamma")
         self.cell_index = cell_index
-        self.lambda_factor = lambda_factor
+        self.lambda_factor = get_param(lambda_factor, "lambda_factor")
 
         # Store Powers2017 parameters
-        self.soma_length_range = soma_length_range
-        self.soma_diameter_range = soma_diameter_range
-        self.soma_capacitance_range = soma_capacitance_range
-        self.soma_passive_conductance_range = soma_passive_conductance_range
-        self.soma_passive_reversal_range = soma_passive_reversal_range
-        self.soma_na3rp_conductance_range = soma_na3rp_conductance_range
-        self.soma_naps_conductance_range = soma_naps_conductance_range
-        self.soma_kdrrl_conductance_range = soma_kdrrl_conductance_range
-        self.soma_mahp_ca_conductance_range = soma_mahp_ca_conductance_range
-        self.soma_mahp_k_conductance_range = soma_mahp_k_conductance_range
-        self.soma_mahp_tau_range = soma_mahp_tau_range
-        self.soma_gh_conductance_range = soma_gh_conductance_range
-        self.dendrite_length_range = dendrite_length_range
-        self.dendrite_diameter_range = dendrite_diameter_range
-        self.dendrite_passive_conductance_range = dendrite_passive_conductance_range
-        self.dendrite_passive_reversal_range = dendrite_passive_reversal_range
-        self.dendrite_resistance_range = dendrite_resistance_range
-        self.dendrite_capacitance_range = dendrite_capacitance_range
-        self.dendrite_gh_conductance_range = dendrite_gh_conductance_range
-        self.dendrite_ca_conductance_ranges = dendrite_ca_conductance_ranges
-        self.dendrite_ca_theta_m_range = dendrite_ca_theta_m_range
-        self.dendrite_ca_theta_h_range = dendrite_ca_theta_h_range
+        self.soma_length_range = get_nested_param(
+            soma_length_range, "powers2017", "soma", "length_range"
+        )
+        self.soma_diameter_range = get_nested_param(
+            soma_diameter_range, "powers2017", "soma", "diameter_range"
+        )
+        self.soma_capacitance_range = get_nested_param(
+            soma_capacitance_range, "powers2017", "soma", "capacitance_range"
+        )
+        self.soma_passive_conductance_range = get_nested_param(
+            soma_passive_conductance_range, "powers2017", "soma", "passive_conductance_range"
+        )
+        self.soma_passive_reversal_range = get_nested_param(
+            soma_passive_reversal_range, "powers2017", "soma", "passive_reversal_range"
+        )
+        self.soma_na3rp_conductance_range = get_nested_param(
+            soma_na3rp_conductance_range, "powers2017", "soma", "na3rp_conductance_range"
+        )
+        self.soma_naps_conductance_range = get_nested_param(
+            soma_naps_conductance_range, "powers2017", "soma", "naps_conductance_range"
+        )
+        self.soma_kdrrl_conductance_range = get_nested_param(
+            soma_kdrrl_conductance_range, "powers2017", "soma", "kdrrl_conductance_range"
+        )
+        self.soma_mahp_ca_conductance_range = get_nested_param(
+            soma_mahp_ca_conductance_range, "powers2017", "soma", "mahp_ca_conductance_range"
+        )
+        self.soma_mahp_k_conductance_range = get_nested_param(
+            soma_mahp_k_conductance_range, "powers2017", "soma", "mahp_k_conductance_range"
+        )
+        self.soma_mahp_tau_range = get_nested_param(
+            soma_mahp_tau_range, "powers2017", "soma", "mahp_tau_range"
+        )
+        self.soma_gh_conductance_range = get_nested_param(
+            soma_gh_conductance_range, "powers2017", "soma", "gh_conductance_range"
+        )
+        self.dendrite_length_range = get_nested_param(
+            dendrite_length_range, "powers2017", "dendrite", "length_range"
+        )
+        self.dendrite_diameter_range = get_nested_param(
+            dendrite_diameter_range, "powers2017", "dendrite", "diameter_range"
+        )
+        self.dendrite_passive_conductance_range = get_nested_param(
+            dendrite_passive_conductance_range, "powers2017", "dendrite", "passive_conductance_range"
+        )
+        self.dendrite_passive_reversal_range = get_nested_param(
+            dendrite_passive_reversal_range, "powers2017", "dendrite", "passive_reversal_range"
+        )
+        self.dendrite_resistance_range = get_nested_param(
+            dendrite_resistance_range, "powers2017", "dendrite", "resistance_range"
+        )
+        self.dendrite_capacitance_range = get_nested_param(
+            dendrite_capacitance_range, "powers2017", "dendrite", "capacitance_range"
+        )
+        self.dendrite_gh_conductance_range = get_nested_param(
+            dendrite_gh_conductance_range, "powers2017", "dendrite", "gh_conductance_range"
+        )
+        self.dendrite_ca_conductance_ranges = get_nested_param(
+            dendrite_ca_conductance_ranges, "powers2017", "dendrite", "ca_conductance_ranges"
+        )
+        self.dendrite_ca_theta_m_range = get_nested_param(
+            dendrite_ca_theta_m_range, "powers2017", "dendrite", "ca_theta_m_range"
+        )
+        self.dendrite_ca_theta_h_range = get_nested_param(
+            dendrite_ca_theta_h_range, "powers2017", "dendrite", "ca_theta_h_range"
+        )
 
-        if model == "NERLab":
+        # Store NERLab napp parameters
+        self.napp_m_alpha_A = get_nested_param(
+            None, "nerlab", "napp", "m_alpha_A"
+        )
+        self.napp_m_alpha_v_offset = get_nested_param(
+            None, "nerlab", "napp", "m_alpha_v_offset"
+        )
+        self.napp_m_alpha_k = get_nested_param(
+            None, "nerlab", "napp", "m_alpha_k"
+        )
+        self.napp_m_beta_A = get_nested_param(
+            None, "nerlab", "napp", "m_beta_A"
+        )
+        self.napp_m_beta_v_offset = get_nested_param(
+            None, "nerlab", "napp", "m_beta_v_offset"
+        )
+        self.napp_m_beta_k = get_nested_param(
+            None, "nerlab", "napp", "m_beta_k"
+        )
+
+        self.napp_h_alpha_A = get_nested_param(
+            None, "nerlab", "napp", "h_alpha_A"
+        )
+        self.napp_h_alpha_v_offset = get_nested_param(
+            None, "nerlab", "napp", "h_alpha_v_offset"
+        )
+        self.napp_h_alpha_tau = get_nested_param(
+            None, "nerlab", "napp", "h_alpha_tau"
+        )
+        self.napp_h_beta_A = get_nested_param(
+            None, "nerlab", "napp", "h_beta_A"
+        )
+        self.napp_h_beta_v_offset = get_nested_param(
+            None, "nerlab", "napp", "h_beta_v_offset"
+        )
+        self.napp_h_beta_k = get_nested_param(
+            None, "nerlab", "napp", "h_beta_k"
+        )
+
+        self.napp_p_alpha_A = get_nested_param(
+            None, "nerlab", "napp", "p_alpha_A"
+        )
+        self.napp_p_alpha_v_offset = get_nested_param(
+            None, "nerlab", "napp", "p_alpha_v_offset"
+        )
+        self.napp_p_alpha_k = get_nested_param(
+            None, "nerlab", "napp", "p_alpha_k"
+        )
+        self.napp_p_beta_A = get_nested_param(
+            None, "nerlab", "napp", "p_beta_A"
+        )
+        self.napp_p_beta_v_offset = get_nested_param(
+            None, "nerlab", "napp", "p_beta_v_offset"
+        )
+        self.napp_p_beta_k = get_nested_param(
+            None, "nerlab", "napp", "p_beta_k"
+        )
+
+        self.napp_n_alpha_A = get_nested_param(
+            None, "nerlab", "napp", "n_alpha_A"
+        )
+        self.napp_n_alpha_v_offset = get_nested_param(
+            None, "nerlab", "napp", "n_alpha_v_offset"
+        )
+        self.napp_n_alpha_k = get_nested_param(
+            None, "nerlab", "napp", "n_alpha_k"
+        )
+        self.napp_n_beta_A = get_nested_param(
+            None, "nerlab", "napp", "n_beta_A"
+        )
+        self.napp_n_beta_v_offset = get_nested_param(
+            None, "nerlab", "napp", "n_beta_v_offset"
+        )
+        self.napp_n_beta_tau = get_nested_param(
+            None, "nerlab", "napp", "n_beta_tau"
+        )
+
+        self.napp_r_alpha_A = get_nested_param(
+            None, "nerlab", "napp", "r_alpha_A"
+        )
+        self.napp_r_alpha_v_offset = get_nested_param(
+            None, "nerlab", "napp", "r_alpha_v_offset"
+        )
+        self.napp_r_alpha_k = get_nested_param(
+            None, "nerlab", "napp", "r_alpha_k"
+        )
+
+        # Store NERLab soma parameters
+        self.nerlab_soma_diameter_range = get_nested_param(
+            None, "nerlab", "soma", "diameter_range"
+        )
+        self.nerlab_soma_gnabar_range = get_nested_param(
+            None, "nerlab", "soma", "gnabar_range"
+        )
+        self.nerlab_soma_gnapbar_range = get_nested_param(
+            None, "nerlab", "soma", "gnapbar_range"
+        )
+        self.nerlab_soma_gkfbar_range = get_nested_param(
+            None, "nerlab", "soma", "gkfbar_range"
+        )
+        self.nerlab_soma_gksbar_range = get_nested_param(
+            None, "nerlab", "soma", "gksbar_range"
+        )
+        self.nerlab_soma_mact_range = get_nested_param(
+            None, "nerlab", "soma", "mact_range"
+        )
+        self.nerlab_soma_rinact_range = get_nested_param(
+            None, "nerlab", "soma", "rinact_range"
+        )
+        self.nerlab_soma_gls_range = get_nested_param(
+            None, "nerlab", "soma", "gls_range"
+        )
+        self.nerlab_soma_ena = get_nested_param(
+            None, "nerlab", "soma", "ena"
+        )
+        self.nerlab_soma_ek = get_nested_param(
+            None, "nerlab", "soma", "ek"
+        )
+        self.nerlab_soma_el_napp = get_nested_param(
+            None, "nerlab", "soma", "el_napp"
+        )
+        self.nerlab_soma_vtraub_napp = get_nested_param(
+            None, "nerlab", "soma", "vtraub_napp"
+        )
+        self.nerlab_soma_Ra = get_nested_param(
+            None, "nerlab", "soma", "Ra"
+        )
+        self.nerlab_soma_cm = get_nested_param(
+            None, "nerlab", "soma", "cm"
+        )
+
+        # Store NERLab dendrite parameters
+        self.nerlab_dendrite_diameter_range = get_nested_param(
+            None, "nerlab", "dendrite", "diameter_range"
+        )
+        self.nerlab_dendrite_length_range = get_nested_param(
+            None, "nerlab", "dendrite", "length_range"
+        )
+        self.nerlab_dendrite_gcaLbar_range = get_nested_param(
+            None, "nerlab", "dendrite", "gcaLbar_range"
+        )
+        self.nerlab_dendrite_vtraub_caL_range = get_nested_param(
+            None, "nerlab", "dendrite", "vtraub_caL_range"
+        )
+        self.nerlab_dendrite_ltau_caL_range = get_nested_param(
+            None, "nerlab", "dendrite", "ltau_caL_range"
+        )
+        self.nerlab_dendrite_gl_caL_range = get_nested_param(
+            None, "nerlab", "dendrite", "gl_caL_range"
+        )
+        self.nerlab_dendrite_Ra = get_nested_param(
+            None, "nerlab", "dendrite", "Ra"
+        )
+        self.nerlab_dendrite_cm = get_nested_param(
+            None, "nerlab", "dendrite", "cm"
+        )
+        self.nerlab_dendrite_ecaL = get_nested_param(
+            None, "nerlab", "dendrite", "ecaL"
+        )
+        self.nerlab_dendrite_el_caL = get_nested_param(
+            None, "nerlab", "dendrite", "el_caL"
+        )
+
+        if self.model == "NERLab":
             _cells = self._create_nerlab_cells()
-        elif model == "Powers2017":
+        elif self.model == "Powers2017":
             _cells = self._create_powers2017_cells()
         else:
             raise ValueError("Could not find the specific model for alpha MNs.")
 
+        # Get initial voltage and spike threshold from config if not provided
+        _initial_voltage = get_param(initial_voltage__mV, "initial_voltage__mV")
+        _spike_threshold = get_param(spike_threshold__mV, "spike_threshold__mV")
+
         super().__init__(
             cells=_cells,
-            initial_voltage__mV=initial_voltage__mV,
-            spike_threshold__mV=spike_threshold__mV,
+            initial_voltage__mV=_initial_voltage,
+            spike_threshold__mV=_spike_threshold,
         )
+
+
 
     def _create_nerlab_cells(self) -> list:
         """Create motor neurons using the NERLab model."""
@@ -222,23 +484,23 @@ class AlphaMN__Pool(_Pool):
         else:
             interpF = special_interp
 
-        # Soma parameters (using expInterp with hardcoded values from original)
-        Diam_soma = interpF(78, 113, self.n, curv=1.0 / 14)
-        Gnabar = interpF(0.0325, 0.0775, self.n, curv=1 / 2.5)
-        Gnapbar = interpF(0.00043, 0.00067, self.n, curv=1 / 2.1, negative=True)
-        Gkfbar = interpF(0.0028, 0.0015, self.n, curv=1 / 25, negative=True)
-        Gksbar = interpF(0.02, 0.016, self.n, curv=1.0 / 6, negative=True)
-        Mact = interpF(13, 20, self.n, curv=1 / 3)
-        Rinact = interpF(0.018, 0.063, self.n, curv=1 / 4)
-        Gls = interpF(1.0 / 1050, 1.0 / 650, self.n, curv=1 / 2.5)
+        # Soma parameters (using parameters from YAML config)
+        Diam_soma = interpF(self.nerlab_soma_diameter_range[0], self.nerlab_soma_diameter_range[1], self.n, curv=1.0 / self.nerlab_soma_diameter_range[2])
+        Gnabar = interpF(self.nerlab_soma_gnabar_range[0], self.nerlab_soma_gnabar_range[1], self.n, curv=1 / self.nerlab_soma_gnabar_range[2])
+        Gnapbar = interpF(self.nerlab_soma_gnapbar_range[0], self.nerlab_soma_gnapbar_range[1], self.n, curv=1 / self.nerlab_soma_gnapbar_range[2], negative=True)
+        Gkfbar = interpF(self.nerlab_soma_gkfbar_range[0], self.nerlab_soma_gkfbar_range[1], self.n, curv=1 / self.nerlab_soma_gkfbar_range[2], negative=True)
+        Gksbar = interpF(self.nerlab_soma_gksbar_range[0], self.nerlab_soma_gksbar_range[1], self.n, curv=1.0 / self.nerlab_soma_gksbar_range[2], negative=True)
+        Mact = interpF(self.nerlab_soma_mact_range[0], self.nerlab_soma_mact_range[1], self.n, curv=1 / self.nerlab_soma_mact_range[2])
+        Rinact = interpF(self.nerlab_soma_rinact_range[0], self.nerlab_soma_rinact_range[1], self.n, curv=1 / self.nerlab_soma_rinact_range[2])
+        Gls = interpF(self.nerlab_soma_gls_range[0], self.nerlab_soma_gls_range[1], self.n, curv=1 / self.nerlab_soma_gls_range[2])
 
         # Dendrite parameters
-        Diam_dend = interpF(48.0, 90.0, self.n, curv=1.0 / 5)
-        L_dend = interpF(5500, 10600, self.n, curv=1.0 / 12)
-        GcaLbar = interpF(1.25e-5, 6.2e-6, self.n, curv=1 / 3, negative=True)
-        Vtraub_caL = interpF(35, 34, self.n, curv=1 / 30, negative=True)
-        LTAU_caL = interpF(90, 47, self.n, curv=1 / 3, negative=True)
-        Gl_caL = interpF(1.0 / 13000, 1.0 / 6050, self.n, curv=1 / 2.5)
+        Diam_dend = interpF(self.nerlab_dendrite_diameter_range[0], self.nerlab_dendrite_diameter_range[1], self.n, curv=1.0 / self.nerlab_dendrite_diameter_range[2])
+        L_dend = interpF(self.nerlab_dendrite_length_range[0], self.nerlab_dendrite_length_range[1], self.n, curv=1.0 / self.nerlab_dendrite_length_range[2])
+        GcaLbar = interpF(self.nerlab_dendrite_gcaLbar_range[0], self.nerlab_dendrite_gcaLbar_range[1], self.n, curv=1 / self.nerlab_dendrite_gcaLbar_range[2], negative=True)
+        Vtraub_caL = interpF(self.nerlab_dendrite_vtraub_caL_range[0], self.nerlab_dendrite_vtraub_caL_range[1], self.n, curv=1 / self.nerlab_dendrite_vtraub_caL_range[2], negative=True)
+        LTAU_caL = interpF(self.nerlab_dendrite_ltau_caL_range[0], self.nerlab_dendrite_ltau_caL_range[1], self.n, curv=1 / self.nerlab_dendrite_ltau_caL_range[2], negative=True)
+        Gl_caL = interpF(self.nerlab_dendrite_gl_caL_range[0], self.nerlab_dendrite_gl_caL_range[1], self.n, curv=1 / self.nerlab_dendrite_gl_caL_range[2])
 
         vcon = np.linspace(self.axon_velocities[0], self.axon_velocities[1], self.n)
 
@@ -265,12 +527,12 @@ class AlphaMN__Pool(_Pool):
             # Soma biophysical parameters
             cell.soma.L = Diam_soma[i]
             cell.soma.diam = Diam_soma[i]
-            cell.soma.ena = 120.0
-            cell.soma.ek = -10.0
-            cell.soma.el_napp = 0.0
-            cell.soma.vtraub_napp = 0.0
-            cell.soma.Ra = 70.0
-            cell.soma.cm = 1.0
+            cell.soma.ena = self.nerlab_soma_ena
+            cell.soma.ek = self.nerlab_soma_ek
+            cell.soma.el_napp = self.nerlab_soma_el_napp
+            cell.soma.vtraub_napp = self.nerlab_soma_vtraub_napp
+            cell.soma.Ra = self.nerlab_soma_Ra
+            cell.soma.cm = self.nerlab_soma_cm
             cell.soma.gl_napp = Gls[i]
             cell.soma.gnabar_napp = Gnabar[i]
             cell.soma.gnapbar_napp = Gnapbar[i]
@@ -279,18 +541,52 @@ class AlphaMN__Pool(_Pool):
             cell.soma.mact_napp = Mact[i]
             cell.soma.rinact_napp = Rinact[i]
 
+            # Set napp alpha and beta parameters from config
+            # These parameters control the kinetics of sodium and potassium channels
+            cell.soma.m_alpha_A_napp = self.napp_m_alpha_A
+            cell.soma.m_alpha_v_offset_napp = self.napp_m_alpha_v_offset
+            cell.soma.m_alpha_k_napp = self.napp_m_alpha_k
+            cell.soma.m_beta_A_napp = self.napp_m_beta_A
+            cell.soma.m_beta_v_offset_napp = self.napp_m_beta_v_offset
+            cell.soma.m_beta_k_napp = self.napp_m_beta_k
+
+            cell.soma.h_alpha_A_napp = self.napp_h_alpha_A
+            cell.soma.h_alpha_v_offset_napp = self.napp_h_alpha_v_offset
+            cell.soma.h_alpha_tau_napp = self.napp_h_alpha_tau
+            cell.soma.h_beta_A_napp = self.napp_h_beta_A
+            cell.soma.h_beta_v_offset_napp = self.napp_h_beta_v_offset
+            cell.soma.h_beta_k_napp = self.napp_h_beta_k
+
+            cell.soma.p_alpha_A_napp = self.napp_p_alpha_A
+            cell.soma.p_alpha_v_offset_napp = self.napp_p_alpha_v_offset
+            cell.soma.p_alpha_k_napp = self.napp_p_alpha_k
+            cell.soma.p_beta_A_napp = self.napp_p_beta_A
+            cell.soma.p_beta_v_offset_napp = self.napp_p_beta_v_offset
+            cell.soma.p_beta_k_napp = self.napp_p_beta_k
+
+            cell.soma.n_alpha_A_napp = self.napp_n_alpha_A
+            cell.soma.n_alpha_v_offset_napp = self.napp_n_alpha_v_offset
+            cell.soma.n_alpha_k_napp = self.napp_n_alpha_k
+            cell.soma.n_beta_A_napp = self.napp_n_beta_A
+            cell.soma.n_beta_v_offset_napp = self.napp_n_beta_v_offset
+            cell.soma.n_beta_tau_napp = self.napp_n_beta_tau
+
+            cell.soma.r_alpha_A_napp = self.napp_r_alpha_A
+            cell.soma.r_alpha_v_offset_napp = self.napp_r_alpha_v_offset
+            cell.soma.r_alpha_k_napp = self.napp_r_alpha_k
+
             # Dendrite parameters
-            cell.dend[0].Ra = 70.0
-            cell.dend[0].cm = 1.0
+            cell.dend[0].Ra = self.nerlab_dendrite_Ra
+            cell.dend[0].cm = self.nerlab_dendrite_cm
             cell.dend[0].L = L_dend[i]
             cell.dend[0].diam = Diam_dend[i]
-            cell.dend[0].ecaL = 140
+            cell.dend[0].ecaL = self.nerlab_dendrite_ecaL
             cell.dend[0].gama_caL = self.gamma
             cell.dend[0].gcaLbar_caL = GcaLbar[i]
             cell.dend[0].vtraub_caL = Vtraub_caL[i]
             cell.dend[0].Ltau_caL = LTAU_caL[i]
             cell.dend[0].gl_caL = Gl_caL[i]
-            cell.dend[0].el_caL = 0.0
+            cell.dend[0].el_caL = self.nerlab_dendrite_el_caL
             _cells.append(cell)
 
         return _cells

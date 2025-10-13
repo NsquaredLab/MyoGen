@@ -51,7 +51,7 @@ from myogen.utils.neuron.inject_currents_into_populations import (
     inject_currents_and_simulate_spike_trains,
     inject_currents_into_populations,
 )
-from myogen.utils.nmodl import load_nmodl_mechanisms
+from myogen.utils.nmodl import compile_nmodl_files, load_nmodl_mechanisms
 from myogen.utils.plotting import plot_spike_trains
 
 ##############################################################################
@@ -71,8 +71,7 @@ from myogen.utils.plotting import plot_spike_trains
 #    To use them, the NMODL mechanisms need to be loaded first using the ``load_nmodl_mechanisms`` function.
 #
 # To showcase MyoGen's capabilities, we will create two different motor neuron pools with identical properties but different input currents.
-#
-
+compile_nmodl_files()
 load_nmodl_mechanisms()
 
 save_path = Path("./results")
@@ -82,7 +81,7 @@ recruitment_thresholds = joblib.load(save_path / "thresholds.pkl")
 
 n_pools = 2
 motor_neuron_pools = [
-    AlphaMN__Pool(recruitment_thresholds__array=recruitment_thresholds)
+    AlphaMN__Pool(recruitment_thresholds__array=recruitment_thresholds, config_file="alpha_mn_FDI.yaml")
     for _ in range(n_pools)
 ]
 
