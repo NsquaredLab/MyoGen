@@ -370,11 +370,10 @@ results = runner.run(
         "aMN": list(range(0, naMN, 1)),
     },
 )
-
 print("Simulation completed successfully!")
 
 # Save simulation results if we have them
-if "results" in locals() and results is not None:
+if results in locals() and results is not None:
     joblib.dump(results, save_path / "watanabe__spinal_network_results.pkl")
     print(f"✓ Results saved to {save_path}")
 else:

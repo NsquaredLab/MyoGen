@@ -97,7 +97,7 @@ save_path.mkdir(exist_ok=True)
 
 recruitment_thresholds = joblib.load(save_path / "thresholds.pkl")
 
-motor_neuron_pool = AlphaMN__Pool(recruitment_thresholds__array=recruitment_thresholds)
+motor_neuron_pool = AlphaMN__Pool(recruitment_thresholds__array=recruitment_thresholds, config_file="alpha_mn_VLVM.yaml")
 
 timestep = 0.1  # ms
 h.secondorder = 2  # Crank-Nicolson method (second-order accurate)

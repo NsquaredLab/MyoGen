@@ -88,7 +88,7 @@ print("\nGenerating force output by processing motor units in batches...")
 
 # Calculate number of batches
 n_batches = int(np.ceil(naMN / motor_unit_batch_size))
-
+print(force_params["recording_frequency__Hz"])
 # Initialize force accumulator
 force_duration_samples = int(tstop / 1000 * force_params["recording_frequency__Hz"])
 force_total = np.zeros(force_duration_samples)
@@ -122,6 +122,8 @@ for batch_idx in range(n_batches):
     force_batch = batch_force_model.generate_force(spike_train__Block=batch_block)
     force_batch_array = force_batch.magnitude.squeeze()
 
+    print(force_batch_array.shape)
+    
     # Accumulate force (sum contributions from all motor units)
     force_total += force_batch_array
 
