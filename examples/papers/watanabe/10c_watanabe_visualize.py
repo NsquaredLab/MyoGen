@@ -55,6 +55,10 @@ force_results_path = save_path / "watanabe__force_results.pkl"
 with open(spinal_results_path, "rb") as f:
     results: neo.Block = joblib.load(f)
 
+tstop = results.annotations['time__ms']
+dt = results.annotations['timestep__ms']
+active_MNs = results.annotations['active_MNs']
+
 # Load force results
 with open(force_results_path, "rb") as f:
     force_block: neo.Block = joblib.load(f)
@@ -71,16 +75,16 @@ force_output = force_segment.analogsignals[0]
 # ----------------------------
 
 dt = 0.025  # ms - Integration timestep
-tstop = 180 * 1e3  # ms - Total simulation duration
+tstop = 18 * 1e3  # ms - Total simulation duration
 n_steps = int(tstop / dt)
 time = np.linspace(0, tstop, n_steps + 100)  # Add margin for NEURON overstep
 
 # Define time windows for analysis (matching paper)
-time_windows = [(3, 60), (63, 120), (123, 180)]
+time_windows = [(3, tstop/1000.0/3), (tstop/1000.0/3 + 3, tstop/1000.0/3*2), (tstop/1000.0/3*2 + 3, tstop/1000.0)]
 window_colors = ["#0001f9", "#966562", "#2efe37"]  # Blue, brown, green
 
 # Force plot time windows (continuous segments)
-force_windows = [(0, 60), (60, 120), (120, 180)]
+force_windows = [(0, tstop/1000.0/3), (tstop/1000.0/3, tstop/1000.0/3*2), (tstop/1000.0/3*2, tstop/1000.0)]
 
 ##############################################################################
 # PANELS A-C: Net Membrane Potential Power Spectra
@@ -95,7 +99,7 @@ for idx, (t_start, t_stop) in enumerate(time_windows):
         sig_t_start = analog_sig.t_start.rescale("s").magnitude
         sig_t_stop = analog_sig.t_stop.rescale("s").magnitude
 
-        if sig_t_start <= t_start and sig_t_stop >= t_stop:
+        if (sig_t_start <= t_start) and (sig_t_stop >= t_stop):
             analog_windowed = analog_sig.time_slice(t_start * pq.s, t_stop * pq.s)
             aMN_membrane_potentials.append(analog_windowed.magnitude.flatten())
 
@@ -334,7 +338,7 @@ for window_idx, (t_start, t_stop) in enumerate(force_windows):
 
 ax_force.set_xlabel("Time (s)")
 ax_force.set_ylabel("Force (a.u.)")
-ax_force.set_xlim(0, 180)
+ax_force.set_xlim(0, tstop/1000.0)
 
 # Dynamically set y-axis limits based on data range (skip initial baseline)
 # Skip first 5 seconds to avoid baseline period
@@ -368,7 +372,7 @@ for neuron_idx, spike_train in enumerate(aMN_spikes):
         if np.any(in_window):
             ax_raster.plot(
                 spike_times[in_window],
-                np.ones_like(spike_times[in_window]) * neuron_idx,
+                np.ones_like(spike_times[in_window]) * active_MNs[neuron_idx],
                 ".",
                 color=window_colors[window_idx],
                 markersize=1,
@@ -377,7 +381,7 @@ for neuron_idx, spike_train in enumerate(aMN_spikes):
 
 ax_raster.set_xlabel("Time (s)")
 ax_raster.set_ylabel("MN #")
-ax_raster.set_xlim(0, 180)
+ax_raster.set_xlim(0, tstop/1000.0)
 ax_raster.set_ylim(-1, len(aMN_spikes))
 sns.despine(ax=ax_raster, trim=True)
 

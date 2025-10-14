@@ -100,15 +100,15 @@ plt.show()
 time_s = time / 1000.0  # Convert to seconds for easier calculation
 
 # Descending drive (DD) - modulated signal
-DDdrive = np.full_like(time, 65.0)
+DDdrive = np.full_like(time, 30.0)
 
 # Phase 2: 20 Hz sinusoid with DC=65, amplitude=20 from 60-120s
-phase2_mask = (time_s >= 60) & (time_s < 120)
-DDdrive[phase2_mask] = 65 + 20 * np.sin(2 * np.pi * 20 * time_s[phase2_mask])
+phase2_mask = (time_s >= tstop/1000.0/3) & (time_s < tstop/1000.0/3*2)
+DDdrive[phase2_mask] = 30 + 15 * np.sin(2 * np.pi * 20 * time_s[phase2_mask])
 
 # Phase 3: Same sinusoid from 120-180s but DC reduced to 58
-phase3_mask = (time_s >= 120) & (time_s <= 180)
-DDdrive[phase3_mask] = 58 + 20 * np.sin(2 * np.pi * 20 * time_s[phase3_mask])
+phase3_mask = (time_s >= tstop/1000.0/3*2)
+DDdrive[phase3_mask] = 25 + 15 * np.sin(2 * np.pi * 20 * time_s[phase3_mask])
 
 # Independent noise (IN) - 125 Hz with random variation
 # ±1 ms ISI variation: 1/(8-1)=143 Hz to 1/(8+1)=111 Hz, so ±16 Hz range
@@ -141,7 +141,7 @@ plt.show()
 # 2. Descending drive (DD) - 400 axons with 30% connectivity to each MN
 # 3. Independent noise (IN) - one-to-one Poisson noise source per MN
 
-aMN = AlphaMN__Pool(recruitment_thresholds__array=rt)
+aMN = AlphaMN__Pool(recruitment_thresholds__array=rt, config_file="alpha_mn_VLVM.yaml")
 DD = DescendingDrive__Pool(n=nDD, poisson_batch_size=DDorder, timestep__ms=dt)
 IN = DescendingDrive__Pool(n=nIN, poisson_batch_size=INorder, timestep__ms=dt)
 
@@ -373,7 +373,7 @@ results = runner.run(
 print("Simulation completed successfully!")
 
 # Save simulation results if we have them
-if results in locals() and results is not None:
+if  results is not None:
     joblib.dump(results, save_path / "watanabe__spinal_network_results.pkl")
     print(f"✓ Results saved to {save_path}")
 else:
