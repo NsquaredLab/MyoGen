@@ -383,7 +383,7 @@ class SimulationRunner:
             ):
                 spike_times = self._spike_recording["spkvec"][pop_name].as_numpy()
                 spike_ids = self._spike_recording["idvec"][pop_name].as_numpy()
-
+                
                 for spike_id in sorted(np.unique(spike_ids)):
                     times_for_id = spike_times[spike_ids == spike_id]
                     if len(times_for_id) > 0:
@@ -431,6 +431,7 @@ class SimulationRunner:
         block.annotations["time__ms"] = duration__ms
         block.annotations["timestep__ms"] = timestep__ms
         block.annotations["temperature__celsius"] = self._temperature__celsius
+        block.annotations["active_MNs"] = np.unique(spike_ids).astype(int)
 
         return block
 

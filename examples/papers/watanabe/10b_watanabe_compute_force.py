@@ -86,9 +86,10 @@ force_model = ForceModel(recruitment_thresholds=recruitment_thresholds, **force_
 
 print("\nGenerating force output by processing motor units in batches...")
 
+
 # Calculate number of batches
 n_batches = int(np.ceil(naMN / motor_unit_batch_size))
-print(force_params["recording_frequency__Hz"])
+
 # Initialize force accumulator
 force_duration_samples = int(tstop / 1000 * force_params["recording_frequency__Hz"])
 force_total = np.zeros(force_duration_samples)
@@ -161,15 +162,15 @@ force_block.annotations["recruitment_thresholds"] = recruitment_thresholds
 force_block.annotations["force_model_params"] = force_params
 
 force_block.annotations["force_model_stats"] = {
-    "n_motor_units": force_model._number_of_neurons,
-    "recruitment_ratio": float(force_model._recruitment_ratio),
+    "n_motor_units": global_force_model._number_of_neurons,
+    "recruitment_ratio": float(global_force_model._recruitment_ratio),
     "peak_force_range": [
-        float(force_model.peak_twitch_forces__unitless[0]),
-        float(force_model.peak_twitch_forces__unitless[-1]),
+        float(global_force_model.peak_twitch_forces__unitless[0]),
+        float(global_force_model.peak_twitch_forces__unitless[-1]),
     ],
     "contraction_time_range_samples": [
-        float(force_model.contraction_times__samples[0]),
-        float(force_model.contraction_times__samples[-1]),
+        float(global_force_model.contraction_times__samples[0]),
+        float(global_force_model.contraction_times__samples[-1]),
     ],
 }
 

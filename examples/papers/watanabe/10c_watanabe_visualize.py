@@ -95,7 +95,7 @@ for idx, (t_start, t_stop) in enumerate(time_windows):
         sig_t_start = analog_sig.t_start.rescale("s").magnitude
         sig_t_stop = analog_sig.t_stop.rescale("s").magnitude
 
-        if sig_t_start <= t_start and sig_t_stop >= t_stop:
+        if (sig_t_start <= t_start) and (sig_t_stop >= t_stop):
             analog_windowed = analog_sig.time_slice(t_start * pq.s, t_stop * pq.s)
             aMN_membrane_potentials.append(analog_windowed.magnitude.flatten())
 
@@ -368,7 +368,7 @@ for neuron_idx, spike_train in enumerate(aMN_spikes):
         if np.any(in_window):
             ax_raster.plot(
                 spike_times[in_window],
-                np.ones_like(spike_times[in_window]) * neuron_idx,
+                np.ones_like(spike_times[in_window]) * active_MNs[neuron_idx],
                 ".",
                 color=window_colors[window_idx],
                 markersize=1,
