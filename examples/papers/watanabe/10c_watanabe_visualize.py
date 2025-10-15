@@ -48,7 +48,7 @@ plt.rcParams["ytick.major.pad"] = 10
 save_path = Path(r"./results")
 save_path.mkdir(exist_ok=True)
 
-spinal_results_path = save_path / Path("watanabe__spinal_network_results.pkl")
+spinal_results_path = save_path / Path("watanabe_results_neo.pkl")
 force_results_path = save_path / "watanabe__force_results.pkl"
 
 # Load spike train results
@@ -70,7 +70,7 @@ force_output = force_segment.analogsignals[0]
 # Define Simulation Parameters
 # ----------------------------
 
-dt = 0.025  # ms - Integration timestep
+dt = 0.05  # ms - Integration timestep
 tstop = 180 * 1e3  # ms - Total simulation duration
 n_steps = int(tstop / dt)
 time = np.linspace(0, tstop, n_steps + 100)  # Add margin for NEURON overstep

@@ -35,14 +35,14 @@ from myogen.simulator.core.force.force_model import ForceModel
 save_path = Path("./results")
 save_path.mkdir(exist_ok=True)
 
-spinal_results_path = save_path / Path("watanabe__spinal_network_results.pkl")
+spinal_results_path = save_path / Path("watanabe_results_neo.pkl")
 
 # Simulation parameters (must match spike train generation)
-dt = 0.025  # ms - Integration timestep
+dt = 0.05  # ms - Integration timestep
 tstop = 180 * 1e3  # ms - Total simulation duration (180 seconds)
 
 # Motor neuron pool parameters
-naMN = 400  # Number of alpha motor neurons
+naMN = 100  # Number of alpha motor neurons
 
 # Memory optimization parameters
 motor_unit_batch_size = 50  # Process motor units in batches instead of all at once
@@ -123,7 +123,7 @@ for batch_idx in range(n_batches):
     force_batch_array = force_batch.magnitude.squeeze()
 
     print(force_batch_array.shape)
-    
+
     # Accumulate force (sum contributions from all motor units)
     force_total += force_batch_array
 

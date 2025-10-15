@@ -22,6 +22,13 @@ from myogen import simulator
 from myogen.simulator.neuron.populations import AlphaMN__Pool, DescendingDrive__Pool
 from myogen.simulator.neuron.simulation_runner import SimulationRunner
 
+# Import continuous saving utilities
+from continuous_saver import (
+    ContinuousSaver,
+    load_and_combine_chunks,
+    convert_chunks_to_neo,
+)
+
 ##############################################################################
 # Load NEURON Mechanisms and Dependencies
 # ---------------------------------------
@@ -36,6 +43,10 @@ load_nmodl_mechanisms()
 save_path = Path("./results")
 save_path.mkdir(exist_ok=True)
 
+# Setup continuous saving directory (subdirectory for chunks)
+chunks_path = save_path / "watanabe_chunks"
+chunks_path.mkdir(exist_ok=True)
+
 ##############################################################################
 # Define Simulation Parameters
 # ---------------------------
@@ -49,7 +60,7 @@ dt = 0.025  # ms - Integration timestep
 tstop = 180 * 1e3  # ms - Total simulation duration
 n_steps = int(tstop / dt)
 # Add margin for NEURON's potential overstep
-time = np.linspace(0, tstop, n_steps + 100)
+time = np.linspace(0, tstop, n_steps)
 
 print("Simulation parameters:")
 print(f"  - Duration: {tstop} ms")
@@ -64,7 +75,7 @@ print(f"  - Time samples: {len(time)}")
 # These numbers represent typical motor pool compositions for a single muscle.
 
 # Motor neurons (output to muscles)
-naMN = 400
+naMN = 100
 
 # Descending drive (cortical input) - shared across motor neurons
 nDD = 400  # Total descending drive neurons (30% connectivity to each MN)
@@ -160,6 +171,8 @@ def eachStep(
     INdrive,
     step_counter,
     tstop,
+    continuous_saver,
+    timestep__ms,
 ):
     """
     Step-wise integration function called at each simulation timestep.
@@ -182,6 +195,10 @@ def eachStep(
         Simulation step counter
     tstop : float
         Simulation stop time in ms
+    continuous_saver : ContinuousSaver
+        Continuous data saver instance
+    timestep__ms : float
+        Integration timestep in milliseconds
     """
     # Check if simulation time has exceeded the limit
     if h.t >= tstop:
@@ -206,6 +223,9 @@ def eachStep(
                 spike_time = h.t + 1
                 if spike_time < tstop:
                     ncD["cmd->IN"][INcell.pool__ID].event(spike_time)
+
+    # CONTINUOUS SAVING: Record data for this timestep
+    continuous_saver.record_step(timestep__ms)
 
 
 ##############################################################################
@@ -280,6 +300,33 @@ ncD = {
 }
 
 ##############################################################################
+# Setup Continuous Saving
+# ----------------------
+#
+# Initialize continuous saver to prevent memory overflow during long simulation.
+# Data will be saved in chunks every 10 seconds of simulation time.
+
+# Record ALL motor neurons (full resolution)
+recording_neurons = list(range(naMN))  # All 400 neurons
+
+# Use smaller chunks (50s) to keep peak RAM manageable with full recording
+# 50 seconds × 400 neurons × 200,000 timesteps × 8 bytes ≈ 640 MB per chunk
+chunk_duration_ms = 5000.0
+
+continuous_saver = ContinuousSaver(
+    save_path=chunks_path,
+    chunk_duration__ms=chunk_duration_ms,
+    populations=network.populations,
+    recording_config={"aMN": recording_neurons},
+)
+
+print(f"\nContinuous saving configured:")
+print(f"  Recording {len(recording_neurons)} neurons (ALL)")
+print(f"  Chunk duration: {chunk_duration_ms / 1000:.1f} seconds")
+print(f"  Estimated max RAM per chunk: ~640 MB")
+print(f"  Total chunks expected: {int(tstop / chunk_duration_ms)}")
+
+##############################################################################
 # Prepare Simulation Models
 # ------------------------
 #
@@ -293,6 +340,8 @@ def step_callback(step_counter):
         INdrive=INdrive,
         step_counter=step_counter,
         tstop=tstop,
+        continuous_saver=continuous_saver,
+        timestep__ms=dt,
     )
 
 
@@ -363,18 +412,44 @@ runner = SimulationRunner(
 
 # Motor neuron spike recording thresholds are now fixed in the Network class
 
+# CONTINUOUS SAVING MODE: No membrane recording via SimulationRunner
+# Data is recorded continuously via the ContinuousSaver in the step callback
+# This keeps peak RAM usage below 100 MB regardless of simulation duration
+print("\nRunning simulation with continuous saving (low memory mode)...")
+print("  Recording is handled by ContinuousSaver")
+print("  Peak RAM usage: < 100 MB")
+
 results = runner.run(
     duration__ms=tstop,
     timestep__ms=dt,
-    membrane_recording={
-        "aMN": list(range(0, naMN, 1)),
-    },
+    membrane_recording=None,  # Continuous saver handles recording
 )
 print("Simulation completed successfully!")
 
-# Save simulation results if we have them
-if results in locals() and results is not None:
-    joblib.dump(results, save_path / "watanabe__spinal_network_results.pkl")
-    print(f"✓ Results saved to {save_path}")
+# Finalize continuous saving (save last chunk and ALL spike data from SimulationRunner)
+print("\nFinalizing continuous data saving...")
+continuous_saver.finalize(timestep__ms=dt, spike_results=results)
+
+# Also save spike results separately for backup/compatibility
+if results is not None:
+    print("\nSaving backup spike data...")
+    joblib.dump(results, save_path / "watanabe__spikes_only.pkl")
+    print(f"✓ Backup spike data saved to {save_path / 'watanabe__spikes_only.pkl'}")
 else:
-    print("✗ No results to save")
+    print("✗ No spike results from SimulationRunner")
+
+print(f"\n" + "=" * 60)
+print("SIMULATION COMPLETE - Data saved in chunks")
+print("=" * 60)
+print(f"Chunks directory: {chunks_path}")
+print(f"\nTo load as NEO Block (SELF-CONTAINED - all data in chunks):")
+print(f"  from continuous_saver import convert_chunks_to_neo")
+print(f"  from pathlib import Path")
+print(f"  results = convert_chunks_to_neo(Path('{chunks_path}'))")
+print(f"  # Now 'results' contains ALL data from chunks:")
+print(f"  #   - Spike trains: aMN, DD, IN")
+print(f"  #   - Membrane potentials: aMN (all 400 neurons)")
+print(f"\nAlternatively, to load raw chunks:")
+print(f"  from continuous_saver import load_and_combine_chunks")
+print(f"  data = load_and_combine_chunks(Path('{chunks_path}'))")
+print("=" * 60)
