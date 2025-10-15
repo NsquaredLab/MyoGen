@@ -86,7 +86,9 @@ force_windows = [(0, 60), (60, 120), (120, 180)]
 # PANELS A-C: Net Membrane Potential Power Spectra
 # -------------------------------------------------
 
-fig_mp, axes_mp = plt.subplots(1, 3, figsize=(18, 5))
+# First pass: compute all PSDs to find global min/max
+all_psds = []
+all_freqs = []
 
 for idx, (t_start, t_stop) in enumerate(time_windows):
     # Extract membrane potentials for this time window
@@ -121,10 +123,27 @@ for idx, (t_start, t_stop) in enumerate(time_windows):
             detrend="linear",
         )
 
-        # Normalize power spectrum between 0 and 1
-        psd_mp_normalized = (psd_mp - np.min(psd_mp)) / (
-            np.max(psd_mp) - np.min(psd_mp)
-        )
+        all_psds.append(psd_mp)
+        all_freqs.append(freqs_mp)
+    else:
+        all_psds.append(None)
+        all_freqs.append(None)
+
+# Find global min/max across all PSDs for normalization
+valid_psds = [psd for psd in all_psds if psd is not None]
+global_min = np.min([np.min(psd) for psd in valid_psds])
+global_max = np.max([np.max(psd) for psd in valid_psds])
+
+# Second pass: normalize using global min/max and plot
+fig_mp, axes_mp = plt.subplots(1, 3, figsize=(18, 5))
+
+for idx, (t_start, t_stop) in enumerate(time_windows):
+    if all_psds[idx] is not None:
+        freqs_mp = all_freqs[idx]
+        psd_mp = all_psds[idx]
+
+        # Normalize power spectrum using global min/max
+        psd_mp_normalized = (psd_mp - global_min) / (global_max - global_min)
 
         # Plot
         axes_mp[idx].fill_between(
@@ -249,15 +268,22 @@ for window_idx, (t_start, t_stop) in enumerate(time_windows):
         noverlap_coherence = nperseg_coherence // 2  # 50% overlap instead of 75%
 
         def compute_single_coherence(conv_sig):
-            freqs_coh, coh = scipy_signal.coherence(
-                avg_membrane_potential_resampled,
-                conv_sig,
-                fs=sampling_rate,
-                window="hamming",
-                nperseg=nperseg_coherence,
-                noverlap=noverlap_coherence,
-                detrend="linear",
-            )
+            # Suppress warnings for division by zero in coherence calculation
+            # This can occur when signals have zero power at certain frequencies
+            import warnings
+            with warnings.catch_warnings():
+                warnings.filterwarnings("ignore", category=RuntimeWarning)
+                freqs_coh, coh = scipy_signal.coherence(
+                    avg_membrane_potential_resampled,
+                    conv_sig,
+                    fs=sampling_rate,
+                    window="hamming",
+                    nperseg=nperseg_coherence,
+                    noverlap=noverlap_coherence,
+                    detrend="linear",
+                )
+            # Replace any NaN or Inf values with 0
+            coh = np.nan_to_num(coh, nan=0.0, posinf=0.0, neginf=0.0)
             return freqs_coh, coh
 
         # Parallel computation across all pairs
@@ -368,7 +394,7 @@ for neuron_idx, spike_train in enumerate(aMN_spikes):
         if np.any(in_window):
             ax_raster.plot(
                 spike_times[in_window],
-                np.ones_like(spike_times[in_window]) * active_MNs[neuron_idx],
+                np.ones_like(spike_times[in_window]) * neuron_idx,
                 ".",
                 color=window_colors[window_idx],
                 markersize=1,

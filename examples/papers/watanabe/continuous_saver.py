@@ -394,6 +394,11 @@ def convert_chunks_to_neo(
             unique_ids = sorted(np.unique(spike_ids))
             for spike_id in tqdm(unique_ids, desc=f"    Creating {pop_name} spike trains", leave=False):
                 times_for_id = spike_times[spike_ids == spike_id]
+
+                # Filter out spike times that exceed duration due to floating-point precision
+                # Keep only spikes strictly less than t_stop
+                times_for_id = times_for_id[times_for_id < duration__ms]
+
                 if len(times_for_id) > 0:
                     segment.spiketrains.append(
                         SpikeTrain(

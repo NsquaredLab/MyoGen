@@ -42,10 +42,10 @@ dt = 0.05  # ms - Integration timestep
 tstop = 180 * 1e3  # ms - Total simulation duration (180 seconds)
 
 # Motor neuron pool parameters
-naMN = 100  # Number of alpha motor neurons
+naMN = 800  # Number of alpha motor neurons
 
 # Memory optimization parameters
-motor_unit_batch_size = 50  # Process motor units in batches instead of all at once
+motor_unit_batch_size = 150  # Process motor units in batches instead of all at once
 
 ##############################################################################
 # Load Spike Train Results
@@ -57,6 +57,12 @@ with open(spinal_results_path, "rb") as f:
 # Extract alpha motor neuron spike trains
 aMN_results: neo.Segment = results.filter(name="aMN", container=True)[0]
 aMN_spikes = aMN_results.spiketrains
+
+# Get actual number of motor neurons with spike trains
+n_actual_motor_neurons = len(aMN_spikes)
+print(
+    f"\nLoaded {n_actual_motor_neurons} motor neuron spike trains (out of {naMN} expected)"
+)
 
 ##############################################################################
 # Setup Force Model Parameters
@@ -87,17 +93,17 @@ force_model = ForceModel(recruitment_thresholds=recruitment_thresholds, **force_
 print("\nGenerating force output by processing motor units in batches...")
 
 
-# Calculate number of batches
-n_batches = int(np.ceil(naMN / motor_unit_batch_size))
+# Calculate number of batches based on actual motor neurons with spikes
+n_batches = int(np.ceil(n_actual_motor_neurons / motor_unit_batch_size))
 
 # Initialize force accumulator
 force_duration_samples = int(tstop / 1000 * force_params["recording_frequency__Hz"])
 force_total = np.zeros(force_duration_samples)
 
 for batch_idx in range(n_batches):
-    # Define motor unit batch indices
+    # Define motor unit batch indices (based on actual spike trains available)
     mu_start = batch_idx * motor_unit_batch_size
-    mu_end = min((batch_idx + 1) * motor_unit_batch_size, naMN)
+    mu_end = min((batch_idx + 1) * motor_unit_batch_size, n_actual_motor_neurons)
 
     print(
         f"\tProcessing motor units {mu_start + 1}-{mu_end} (batch {batch_idx + 1}/{n_batches})..."
@@ -161,16 +167,23 @@ force_block.annotations["simulation_params"] = {
 force_block.annotations["recruitment_thresholds"] = recruitment_thresholds
 force_block.annotations["force_model_params"] = force_params
 
+# Create a reference force model for stats (using only motor units with spikes)
+reference_force_model = ForceModel(
+    recruitment_thresholds=recruitment_thresholds[:n_actual_motor_neurons],
+    **force_params,
+)
+
 force_block.annotations["force_model_stats"] = {
-    "n_motor_units": global_force_model._number_of_neurons,
-    "recruitment_ratio": float(global_force_model._recruitment_ratio),
+    "n_motor_units": reference_force_model._number_of_neurons,
+    "n_motor_units_with_spikes": n_actual_motor_neurons,
+    "recruitment_ratio": float(reference_force_model._recruitment_ratio),
     "peak_force_range": [
-        float(global_force_model.peak_twitch_forces__unitless[0]),
-        float(global_force_model.peak_twitch_forces__unitless[-1]),
+        float(reference_force_model.peak_twitch_forces__unitless[0]),
+        float(reference_force_model.peak_twitch_forces__unitless[-1]),
     ],
     "contraction_time_range_samples": [
-        float(global_force_model.contraction_times__samples[0]),
-        float(global_force_model.contraction_times__samples[-1]),
+        float(reference_force_model.contraction_times__samples[0]),
+        float(reference_force_model.contraction_times__samples[-1]),
     ],
 }
 

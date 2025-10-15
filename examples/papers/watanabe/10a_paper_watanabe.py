@@ -23,11 +23,7 @@ from myogen.simulator.neuron.populations import AlphaMN__Pool, DescendingDrive__
 from myogen.simulator.neuron.simulation_runner import SimulationRunner
 
 # Import continuous saving utilities
-from continuous_saver import (
-    ContinuousSaver,
-    load_and_combine_chunks,
-    convert_chunks_to_neo,
-)
+from continuous_saver import ContinuousSaver
 
 ##############################################################################
 # Load NEURON Mechanisms and Dependencies
@@ -75,7 +71,7 @@ print(f"  - Time samples: {len(time)}")
 # These numbers represent typical motor pool compositions for a single muscle.
 
 # Motor neurons (output to muscles)
-naMN = 100
+naMN = 800
 
 # Descending drive (cortical input) - shared across motor neurons
 nDD = 400  # Total descending drive neurons (30% connectivity to each MN)
@@ -111,15 +107,18 @@ plt.show()
 time_s = time / 1000.0  # Convert to seconds for easier calculation
 
 # Descending drive (DD) - modulated signal
-DDdrive = np.full_like(time, 30.0)
+DDdrive = np.full_like(time, 65.0)
+
+# make the first 1 seconds be 0
+DDdrive[time_s < 1] = 0.0
 
 # Phase 2: 20 Hz sinusoid with DC=65, amplitude=20 from 60-120s
 phase2_mask = (time_s >= tstop / 1000.0 / 3) & (time_s < tstop / 1000.0 / 3 * 2)
-DDdrive[phase2_mask] = 30 + 15 * np.sin(2 * np.pi * 20 * time_s[phase2_mask])
+DDdrive[phase2_mask] = 65 + 20 * np.sin(2 * np.pi * 20 * time_s[phase2_mask])
 
 # Phase 3: Same sinusoid from 120-180s but DC reduced to 58
 phase3_mask = time_s >= tstop / 1000.0 / 3 * 2
-DDdrive[phase3_mask] = 25 + 15 * np.sin(2 * np.pi * 20 * time_s[phase3_mask])
+DDdrive[phase3_mask] = 58 + 20 * np.sin(2 * np.pi * 20 * time_s[phase3_mask])
 
 # Independent noise (IN) - 125 Hz with random variation
 # ±1 ms ISI variation: 1/(8-1)=143 Hz to 1/(8+1)=111 Hz, so ±16 Hz range
@@ -255,13 +254,13 @@ DD_connectivity = 0.3
 expected_DD_per_MN = int(DD_connectivity * nDD)  # 120 connections per MN
 
 # Target total conductances per MN (physiologically realistic)
-target_total_DD_conductance__μS = 0.2  # Total DD conductance per MN
-target_IN_conductance__μS = 0.1
+target_total_DD_conductance__μS = 0.1  # Total DD conductance per MN
+target_IN_conductance__μS = 0.05
 
 # Scale DD weight by number of converging connections
 weight_DD__μS = target_total_DD_conductance__μS / expected_DD_per_MN
 
-print(f"\nSynaptic Weight Scaling:")
+print("\nSynaptic Weight Scaling:")
 print(f"  DD connections per MN: {expected_DD_per_MN}")
 print(f"  DD weight per connection: {weight_DD__μS:.6f} μS")
 print(f"  Total DD conductance per MN: {weight_DD__μS * expected_DD_per_MN:.3f} μS")
@@ -307,7 +306,7 @@ ncD = {
 # Data will be saved in chunks every 10 seconds of simulation time.
 
 # Record ALL motor neurons (full resolution)
-recording_neurons = list(range(naMN))  # All 400 neurons
+recording_neurons = list(range(0, naMN, 5))  # All 400 neurons
 
 # Use smaller chunks (50s) to keep peak RAM manageable with full recording
 # 50 seconds × 400 neurons × 200,000 timesteps × 8 bytes ≈ 640 MB per chunk
@@ -320,10 +319,10 @@ continuous_saver = ContinuousSaver(
     recording_config={"aMN": recording_neurons},
 )
 
-print(f"\nContinuous saving configured:")
+print("\nContinuous saving configured:")
 print(f"  Recording {len(recording_neurons)} neurons (ALL)")
 print(f"  Chunk duration: {chunk_duration_ms / 1000:.1f} seconds")
-print(f"  Estimated max RAM per chunk: ~640 MB")
+print("  Estimated max RAM per chunk: ~640 MB")
 print(f"  Total chunks expected: {int(tstop / chunk_duration_ms)}")
 
 ##############################################################################
@@ -438,18 +437,18 @@ if results is not None:
 else:
     print("✗ No spike results from SimulationRunner")
 
-print(f"\n" + "=" * 60)
+print("\n" + "=" * 60)
 print("SIMULATION COMPLETE - Data saved in chunks")
 print("=" * 60)
-print(f"Chunks directory: {chunks_path}")
-print(f"\nTo load as NEO Block (SELF-CONTAINED - all data in chunks):")
-print(f"  from continuous_saver import convert_chunks_to_neo")
-print(f"  from pathlib import Path")
-print(f"  results = convert_chunks_to_neo(Path('{chunks_path}'))")
-print(f"  # Now 'results' contains ALL data from chunks:")
-print(f"  #   - Spike trains: aMN, DD, IN")
-print(f"  #   - Membrane potentials: aMN (all 400 neurons)")
-print(f"\nAlternatively, to load raw chunks:")
-print(f"  from continuous_saver import load_and_combine_chunks")
-print(f"  data = load_and_combine_chunks(Path('{chunks_path}'))")
+print("Chunks directory: {chunks_path}")
+print("\nTo load as NEO Block (SELF-CONTAINED - all data in chunks):")
+print("  from continuous_saver import convert_chunks_to_neo")
+print("  from pathlib import Path")
+print("  results = convert_chunks_to_neo(Path('{chunks_path}'))")
+print("  # Now 'results' contains ALL data from chunks:")
+print("  #   - Spike trains: aMN, DD, IN")
+print("  #   - Membrane potentials: aMN (all 400 neurons)")
+print("\nAlternatively, to load raw chunks:")
+print("  from continuous_saver import load_and_combine_chunks")
+print("  data = load_and_combine_chunks(Path('{chunks_path}'))")
 print("=" * 60)
