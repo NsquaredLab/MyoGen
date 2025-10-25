@@ -66,10 +66,16 @@ def main():
     dd_drive__Hz = dd_params["dd_drive__Hz"]
     gamma_shape = dd_params["gamma_shape"]
 
+    # Load Gfluctdv settings if present
+    gfluctdv_enabled = results.get("gfluctdv_enabled", False)
+    gfluctdv_noise_amplitude = dd_params.get("gfluctdv_noise_amplitude", None)
+
     print(f"\n{STUDY_PREFIX}Force Validation")
     print(
         f"DD: {dd_neurons} neurons, conn_prob={conn_probability:.3f}, drive={dd_drive__Hz:.1f}Hz"
     )
+    if gfluctdv_enabled:
+        print(f"Gfluctdv: ENABLED (noise amplitude={gfluctdv_noise_amplitude:.2e} S/cm²)")
 
     # Setup simulation
     recruitment_thresholds, _ = RecruitmentThresholds(
@@ -84,6 +90,15 @@ def main():
         recruitment_thresholds__array=recruitment_thresholds,
         config_file="alpha_mn_default.yaml",
     )
+
+    # Apply Gfluctdv if it was enabled during DD optimization
+    if gfluctdv_enabled and gfluctdv_noise_amplitude is not None:
+        print("Applying Gfluctdv to motor neurons (matching DD optimization)...")
+        for cell in motor_neuron_pool:
+            cell.insert_Gfluctdv()
+            for d in cell.dend:
+                d.std_e_Gfluctdv = gfluctdv_noise_amplitude
+                d.std_i_Gfluctdv = gfluctdv_noise_amplitude
 
     descending_drive_pool = DescendingDrive__Pool(
         n=dd_neurons,

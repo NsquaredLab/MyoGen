@@ -138,6 +138,10 @@ DD_PEAK__Hz = dd_params["dd_drive__Hz"]
 DD_SHAPE_PARAMETER = dd_params["gamma_shape"]
 DD_SYNAPTIC_WEIGHT = dd_params.get("synaptic_weight", 0.05)
 
+# Load Gfluctdv settings if present
+GFLUCTDV_ENABLED = optimization_results.get("gfluctdv_enabled", False)
+GFLUCTDV_NOISE_AMPLITUDE = dd_params.get("gfluctdv_noise_amplitude", None)
+
 print(f"\n✓ Loaded from: {source_description}")
 print(f"  Source file: {PARAMS_FILE.name}")
 print("\nOptimized DD parameters:")
@@ -148,6 +152,10 @@ print(f"  DD drive level:   {DD_PEAK__Hz:.2f} Hz")
 print(
     f"  Gamma shape:      {DD_SHAPE_PARAMETER:.2f} (CV={1 / DD_SHAPE_PARAMETER**0.5:.3f})"
 )
+if GFLUCTDV_ENABLED:
+    print(
+        f"  Gfluctdv:         ENABLED (noise={GFLUCTDV_NOISE_AMPLITUDE:.2e} S/cm²)"
+    )
 
 ##############################################################################
 # Configuration
@@ -187,52 +195,20 @@ motor_neuron_pool = AlphaMN__Pool(
 # Add Individual Noise to Each Motor Neuron
 # ------------------------------------------
 #
-# Use the **Gfluctdv** mechanism to add stochastic conductance fluctuations
-# to each motor neuron individually. This simulates synaptic background noise
-# using Ornstein-Uhlenbeck processes for realistic temporal correlations.
-#
-# The noise parameters can be customized per neuron to create heterogeneous
-# variability across the motor pool.
+# Apply Gfluctdv mechanism if it was enabled during DD optimization.
+# This ensures consistency with the optimization results.
+# Uses the optimized noise amplitude from the DD optimization.
 
-""" print("\nAdding noise to motor neurons...")
-for i, cell in enumerate(motor_neuron_pool):
-    # Insert Gfluctdv mechanism into soma
-    cell.soma.insert("Gfluctdv")
-
-    # Noise scaling based on neuron order
-    noise_scale = 1.0 + 0.05 * (i / len(motor_neuron_pool))
-
-    # SOMA: excitatory
-    cell.soma.g_e0_Gfluctdv = 1e-6  # baseline mean conductance
-    cell.soma.std_e_Gfluctdv = 2e-6 * noise_scale  # OU noise amplitude
-    cell.soma.tau_e_Gfluctdv = 5.0  # correlation time (ms)
-    cell.soma.E_e_Gfluctdv = 0.0
-
-    # SOMA: inhibitory
-    cell.soma.g_i0_Gfluctdv = 2e-6
-    cell.soma.std_i_Gfluctdv = 4e-6 * noise_scale
-    cell.soma.tau_i_Gfluctdv = 10.0
-    cell.soma.E_i_Gfluctdv = -75.0
-
-    # DENDRITES (optional, lower amplitude)
-    if hasattr(cell, "dend") and len(cell.dend) > 0:
-        for dendrite in cell.dend:
-            dendrite.insert("Gfluctdv")
-            dendrite.g_e0_Gfluctdv = 5e-7
-            dendrite.std_e_Gfluctdv = 1e-6 * noise_scale
-            dendrite.tau_e_Gfluctdv = 5.0
-            dendrite.E_e_Gfluctdv = 0.0
-
-            dendrite.g_i0_Gfluctdv = 1e-6
-            dendrite.std_i_Gfluctdv = 2e-6 * noise_scale
-            dendrite.tau_i_Gfluctdv = 10.0
-            dendrite.E_i_Gfluctdv = -75.0
-
-
-# Enable noise globally (GLOBAL variables - affect all Gfluctdv mechanisms)
-# Note: multex and multin are GLOBAL parameters, not per-segment
-h.multex_Gfluctdv = 1.0  # Enable excitatory noise (1.0 = on, 0.0 = off)
-h.multin_Gfluctdv = 1.0  # Enable inhibitory noise (1.0 = on, 0.0 = off) """
+if GFLUCTDV_ENABLED and GFLUCTDV_NOISE_AMPLITUDE is not None:
+    print(f"\nApplying Gfluctdv to motor neurons (matching DD optimization)...")
+    print(f"  Noise amplitude: {GFLUCTDV_NOISE_AMPLITUDE:.2e} S/cm²")
+    for cell in motor_neuron_pool:
+        cell.insert_Gfluctdv()
+        for d in cell.dend:
+            d.std_e_Gfluctdv = GFLUCTDV_NOISE_AMPLITUDE
+            d.std_i_Gfluctdv = GFLUCTDV_NOISE_AMPLITUDE
+else:
+    print("\nGfluctdv NOT enabled (following DD optimization settings)")
 
 timestep = TIMESTEP__ms  # ms
 h.secondorder = 2  # Crank-Nicolson method (second-order accurate)

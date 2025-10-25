@@ -133,6 +133,14 @@ def run_simulation_and_compute_force(
         config_file="alpha_mn_default.yaml",
     )
 
+    # Apply Gfluctdv if it was enabled during baseline DD optimization
+    if GFLUCTDV_ENABLED and GFLUCTDV_NOISE_AMPLITUDE is not None:
+        for cell in motor_neuron_pool:
+            cell.insert_Gfluctdv()
+            for d in cell.dend:
+                d.std_e_Gfluctdv = GFLUCTDV_NOISE_AMPLITUDE
+                d.std_i_Gfluctdv = GFLUCTDV_NOISE_AMPLITUDE
+
     # Create descending drive pool (using Gamma distribution)
     descending_drive_pool = DescendingDrive__Pool(
         n=dd_neurons,
@@ -486,20 +494,27 @@ def export_results(study, target_force_pct):
     best_trial = study.best_trial
 
     # Prepare results dictionary
+    dd_parameters = {
+        "dd_neurons": best_trial.user_attrs.get("dd_neurons"),
+        "conn_probability": best_trial.user_attrs.get("conn_probability"),
+        "synaptic_weight": best_trial.user_attrs.get("synaptic_weight"),
+        "dd_drive__Hz": best_trial.user_attrs.get("dd_drive__Hz"),
+        "mvc_percent": best_trial.user_attrs.get("mvc_percent"),
+        "gamma_shape": best_trial.user_attrs.get("gamma_shape"),
+    }
+
+    # Include Gfluctdv parameters if they were used
+    if GFLUCTDV_ENABLED and GFLUCTDV_NOISE_AMPLITUDE is not None:
+        dd_parameters["gfluctdv_noise_amplitude"] = GFLUCTDV_NOISE_AMPLITUDE
+
     results = {
         "target_force_pct": target_force_pct,
         "baseline_force__au": BASELINE_FORCE__AU,
         "target_force__au": best_trial.user_attrs.get("force_target"),
         "achieved_force__au": best_trial.user_attrs.get("force_achieved"),
         "force_error": best_trial.user_attrs.get("force_error"),
-        "dd_parameters": {
-            "dd_neurons": best_trial.user_attrs.get("dd_neurons"),
-            "conn_probability": best_trial.user_attrs.get("conn_probability"),
-            "synaptic_weight": best_trial.user_attrs.get("synaptic_weight"),
-            "dd_drive__Hz": best_trial.user_attrs.get("dd_drive__Hz"),
-            "mvc_percent": best_trial.user_attrs.get("mvc_percent"),
-            "gamma_shape": best_trial.user_attrs.get("gamma_shape"),
-        },
+        "gfluctdv_enabled": GFLUCTDV_ENABLED,
+        "dd_parameters": dd_parameters,
         "optimization": {
             "trial_number": best_trial.number,
             "n_trials": len(study.trials),
@@ -538,7 +553,9 @@ def main():
         DD_NEURONS, \
         CONN_PROBABILITY, \
         MVC_SHAPE_VALUE, \
-        STUDY_PREFIX
+        STUDY_PREFIX, \
+        GFLUCTDV_ENABLED, \
+        GFLUCTDV_NOISE_AMPLITUDE
 
     import argparse
 
@@ -616,12 +633,22 @@ def main():
     CONN_PROBABILITY = baseline_results["dd_parameters"]["conn_probability"]
     MVC_SHAPE_VALUE = baseline_results["dd_parameters"]["mvc_shape_value"]
 
+    # Load Gfluctdv settings if present in baseline optimization
+    GFLUCTDV_ENABLED = baseline_results.get("gfluctdv_enabled", False)
+    GFLUCTDV_NOISE_AMPLITUDE = baseline_results["dd_parameters"].get(
+        "gfluctdv_noise_amplitude", None
+    )
+
     # Print configuration
     print(f"Baseline steady-state force: {BASELINE_FORCE__AU:.4f} a.u.")
     print("Configuration:")
     print(f"  DD neurons:       {DD_NEURONS}")
     print(f"  Conn probability: {CONN_PROBABILITY:.3f}")
     print(f"  MVC:              {MVC_PERCENT:.1f}%")
+    if GFLUCTDV_ENABLED:
+        print(
+            f"  Gfluctdv:         ENABLED (noise={GFLUCTDV_NOISE_AMPLITUDE:.2e} S/cm²)"
+        )
     print(
         f"  Gamma shape:      {get_gamma_shape_for_mvc(MVC_PERCENT, MVC_SHAPE_VALUE):.2f} "
         f"(CV={1 / get_gamma_shape_for_mvc(MVC_PERCENT, MVC_SHAPE_VALUE) ** 0.5:.3f})"
