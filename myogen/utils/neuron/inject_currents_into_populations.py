@@ -146,7 +146,7 @@ def inject_currents_and_simulate_spike_trains(
             )
     elif not isinstance(spike_detection_thresholds__mV, (float, int)):
         raise TypeError(
-            f"Spike detection thresholds must be a float, int, or sequence of floats/ints"
+            "Spike detection thresholds must be a float, int, or sequence of floats/ints"
         )
     else:
         spike_detection_thresholds__mV = [spike_detection_thresholds__mV] * n_pools

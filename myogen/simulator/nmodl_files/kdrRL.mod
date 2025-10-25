@@ -57,13 +57,11 @@ DERIVATIVE state {
 }
 
 PROCEDURE rate(v (mV)) {
-	LOCAL b, f TABLE minf,mtau 
-	DEPEND mVh,mslp,tVh,tslp,tmin,taumax 
-	FROM -100 TO 100 WITH 200
+	LOCAL b, f
 
 	b = exp((v - tVh)/tslp)
 	f = (1 + b)^2
-	
+
 	minf = 1/(1+exp(-(v-mVh)/mslp))
 	mtau = tmin + taumax*b/f
 }

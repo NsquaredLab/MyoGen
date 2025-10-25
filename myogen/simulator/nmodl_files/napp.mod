@@ -153,7 +153,6 @@ DERIVATIVE states {
 PROCEDURE rates(v(mV)) {  :Computes rate and other constants at current v.
                       :Call once from HOC to initialize inf at resting v.
     LOCAL  alpha, beta, sum, v2
-    TABLE minf, mtau, hinf, htau, pinf, ptau, ninf, ntau, rinf, rtau DEPEND celsius FROM -100 TO 100 WITH 200
 
 UNITSOFF
 

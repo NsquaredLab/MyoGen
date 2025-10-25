@@ -1,0 +1,207 @@
+axon_length: 0.6
+axon_velocities:
+- 50
+- 65
+gamma: 0.2
+initial_voltage__mV: -67
+lambda_factor: 1.0
+mode: active
+model: NERLab
+nerlab:
+  dendrite:
+    Ra: 70.0
+    cm: 1.0
+    diameter_range:
+    - 48.0
+    - 90.0
+    - 5.0
+    ecaL: 140
+    el_caL: 0.0
+    gcaLbar_range:
+    - 1.25e-05
+    - 6.2e-06
+    - 3
+    gl_caL_range:
+    - 7.69231e-05
+    - 0.000165289
+    - 2.5
+    length_range:
+    - 5500
+    - 10600
+    - 12.0
+    ltau_caL_range:
+    - 90
+    - 47
+    - 3
+    vtraub_caL_range:
+    - 35
+    - 34
+    - 30
+  napp:
+    h_alpha_A: 0.1236729504912361
+    h_alpha_tau: 18.0
+    h_alpha_v_offset: 17.0
+    h_beta_A: 5.368763260972466
+    h_beta_k: 5.0
+    h_beta_v_offset: 40.0
+    m_alpha_A: 1.2610697682540284
+    m_alpha_k: 4.0
+    m_alpha_v_offset: 15.0
+    m_beta_A: 1.4776072683861674
+    m_beta_k: 5.0
+    m_beta_v_offset: 40.0
+    n_alpha_A: 0.005455023668074189
+    n_alpha_k: 7.0
+    n_alpha_v_offset: 15.0
+    n_beta_A: 2.5119870763653753
+    n_beta_tau: 40.0
+    n_beta_v_offset: 10.0
+    p_alpha_A: 0.9883344310324859
+    p_alpha_k: 4.0
+    p_alpha_v_offset: 5.0
+    p_beta_A: 0.4078189469475093
+    p_beta_k: 5.0
+    p_beta_v_offset: 30.0
+    r_alpha_A: 2.4153990993845587
+    r_alpha_k: 4.0
+    r_alpha_v_offset: 55.0
+  soma:
+    Ra: 70.0
+    cm: 1.0
+    diameter_range:
+    - 78
+    - 113
+    - 1.0
+    ek: -10.0
+    el_napp: 0.0
+    ena: 120.0
+    gkfbar_range:
+    - 0.0028
+    - 0.0015
+    - 25
+    gksbar_range:
+    - 0.02
+    - 0.016
+    - 6.0
+    gls_range:
+    - 0.000952381
+    - 0.001538462
+    - 2.5
+    gnabar_range:
+    - 0.0325
+    - 0.0775
+    - 2.5
+    gnapbar_range:
+    - 0.00043
+    - 0.00067
+    - 2.1
+    mact_range:
+    - 13
+    - 20
+    - 3
+    rinact_range:
+    - 0.018
+    - 0.063
+    - 4
+    vtraub_napp: 0.0
+powers2017:
+  dendrite:
+    ca_conductance_ranges:
+    - - 8.5e-05
+      - 0.000118
+      - 0.3
+    - - 9.5e-05
+      - 0.000128
+      - 0.3
+    - - 0.0001
+      - 0.000138
+      - 0.3
+    - - 0.000115
+      - 0.000153
+      - 0.3
+    ca_theta_h_range:
+    - 10
+    - -10
+    - 0.3
+    ca_theta_m_range:
+    - -42
+    - -39
+    - 0.3
+    capacitance_range:
+    - 0.867781
+    - 0.880407
+    - 0.3
+    diameter_range:
+    - 8.73071
+    - 11.9055
+    - 0.3
+    gh_conductance_range:
+    - 3.0e-05
+    - 0.00023
+    - 0.3
+    length_range:
+    - 1794.13
+    - 2226.91
+    - 0.3
+    passive_conductance_range:
+    - 7.93e-05
+    - 0.000175
+    - 0.3
+    passive_reversal_range:
+    - -71
+    - -72
+    - 0.3
+    resistance_range:
+    - 51.038
+    - 40.755
+    - 0.3
+  soma:
+    capacitance_range:
+    - 1.35546
+    - 1.87853
+    - 0.3
+    diameter_range:
+    - 22
+    - 30
+    - 0.3
+    gh_conductance_range:
+    - 3.0e-05
+    - 0.00023
+    - 0.3
+    kdrrl_conductance_range:
+    - 0.015
+    - 0.02
+    - 0.3
+    length_range:
+    - 2952
+    - 3665
+    - 0.3
+    mahp_ca_conductance_range:
+    - 6.4e-06
+    - 1.015e-05
+    - 0.075
+    mahp_k_conductance_range:
+    - 0.00045
+    - 0.0006
+    - 0.3
+    mahp_tau_range:
+    - 90
+    - 30
+    - 0.3
+    na3rp_conductance_range:
+    - 0.01
+    - 0.022
+    - 0.3
+    naps_conductance_range:
+    - 2.6e-05
+    - 2.0e-05
+    - 0.3
+    passive_conductance_range:
+    - 8.11e-05
+    - 0.000377
+    - 0.3
+    passive_reversal_range:
+    - -71
+    - -72
+    - 0.3
+spike_threshold__mV: 50.0

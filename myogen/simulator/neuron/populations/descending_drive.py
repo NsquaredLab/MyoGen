@@ -34,10 +34,6 @@ class DescendingDrive__Pool(_Pool):
         Type of point process: "poisson" or "gamma", by default "poisson".
         - "poisson": Irregular firing (CV=1.0)
         - "gamma": More regular firing with CV controlled by shape parameter
-    gamma_rate_scale : int, optional
-        Rate scaling parameter for Gamma process (only used when process_type="gamma").
-        Sets the firing rate scale. Typical values: 16-50.
-        Required if process_type="gamma", ignored if process_type="poisson".
     shape : float, optional
         Shape parameter for Gamma process (only used when process_type="gamma"),
         by default 3.0. Controls spike regularity:
@@ -52,7 +48,6 @@ class DescendingDrive__Pool(_Pool):
         poisson_batch_size: int | None = None,
         timestep__ms: float | None = None,
         process_type: str = "poisson",
-        gamma_rate_scale: int | None = None,
         shape: float = 3.0,
     ):
         if timestep__ms is None:
@@ -64,14 +59,8 @@ class DescendingDrive__Pool(_Pool):
         self.shape = shape
 
         if process_type.lower() == "gamma":
-            if gamma_rate_scale is None:
-                raise ValueError(
-                    "gamma_rate_scale is required when process_type='gamma'"
-                )
-            self.gamma_rate_scale = gamma_rate_scale
             _cells = [
                 cells.DD_Gamma(
-                    N=gamma_rate_scale,
                     dt=timestep__ms,
                     shape=shape,
                     pool__ID=i,
@@ -112,8 +101,6 @@ class DescendingDrive_Gamma__Pool(_Pool):
     ----------
     n : int
         Number of descending drive neurons to create.
-    gamma_rate_scale : int
-        Rate scaling parameter for Gamma process. Typical values: 16-50.
     timestep__ms : float
         Time step for simulation (ms).
     shape : float, optional
@@ -126,19 +113,16 @@ class DescendingDrive_Gamma__Pool(_Pool):
     def __init__(
         self,
         n: int,
-        gamma_rate_scale: int,
         timestep__ms: float,
         shape: float = 3.0,
     ):
         self.n = n
-        self.gamma_rate_scale = gamma_rate_scale
         self.timestep__ms = timestep__ms
         self.shape = shape
 
         super().__init__(
             cells=[
                 cells.DD_Gamma(
-                    N=gamma_rate_scale,
                     dt=timestep__ms,
                     shape=shape,
                     pool__ID=i,

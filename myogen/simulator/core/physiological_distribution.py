@@ -177,7 +177,7 @@ class RecruitmentThresholds:
         tuple[RECRUITMENT_THRESHOLDS__ARRAY, RECRUITMENT_THRESHOLDS__ARRAY]
             (rt, rtz) recruitment thresholds and zero-based thresholds
         """
-        i = np.arange(self.N)
+        i = np.arange(self.N) + 1
         rt = np.exp((np.log(self.recruitment_range__ratio) / self.N) * i) / 100
         rtz = rt - rt[0]
         return rt, rtz
@@ -201,7 +201,7 @@ class RecruitmentThresholds:
         if self.deluca__slope is None:
             raise ValueError("deluca__slope must be provided for 'deluca' mode.")
 
-        i = np.arange(self.N)
+        i = np.arange(self.N) + 1
         rt = (
             (self.deluca__slope * i / self.N)
             * np.exp(
@@ -234,7 +234,7 @@ class RecruitmentThresholds:
                 "konstantin__max_threshold__ratio must be provided for 'konstantin' mode."
             )
 
-        i = np.arange(self.N)
+        i = np.arange(self.N) + 1
         rt = (
             self.konstantin__max_threshold__ratio / self.recruitment_range__ratio
         ) * np.exp((i - 1) * np.log(self.recruitment_range__ratio) / (self.N - 1))
@@ -267,7 +267,7 @@ class RecruitmentThresholds:
                 "Both deluca__slope and konstantin__max_threshold__ratio must be provided for 'combined' mode."
             )
 
-        i = np.arange(self.N)
+        i = np.arange(self.N) + 1
 
         # Create a De Luca-style curve with slope parameter controlling curvature
         # but properly scaled to respect RR and max threshold

@@ -17,6 +17,7 @@ The first step in using **MyoGen** is to generate the **recruitment thresholds**
 * **Combined** model: Hybrid approach combining De Luca shape with Konstantin scaling (*Ours*)
 """
 
+# %%
 ##############################################################################
 # Import Libraries
 # ----------------
@@ -24,14 +25,47 @@ from pathlib import Path
 
 import joblib
 from matplotlib import pyplot as plt
+import scienceplots  # noqa
+import seaborn as sns
 
 from myogen import simulator
 from myogen.utils.plotting import plot_recruitment_thresholds
 
-# Configure matplotlib for high-quality output
+plt.style.use(["science", "nature"])
+sns.set_context("paper", font_scale=2)
+
+# Disable LaTeX rendering (not required)
+plt.rcParams["text.usetex"] = False
 plt.rcParams["figure.dpi"] = 300
 plt.rcParams["savefig.dpi"] = 300
-plt.rcParams["figure.figsize"] = (1, 1)
+plt.rcParams["figure.figsize"] = (10, 4.5)
+
+# Keep text editable in SVG/PDF exports (for Illustrator)
+plt.rcParams["svg.fonttype"] = "none"
+plt.rcParams["pdf.fonttype"] = 42
+
+# Set font to Liberation Sans or Roboto
+plt.rcParams["font.family"] = "sans-serif"
+plt.rcParams["font.sans-serif"] = ["Liberation Sans", "Roboto", "DejaVu Sans"]
+
+# Remove top and right spines and ticks
+plt.rcParams["axes.spines.top"] = False
+plt.rcParams["axes.spines.right"] = False
+plt.rcParams["xtick.top"] = False
+plt.rcParams["ytick.right"] = False
+
+# Make ticks and axis lines thicker
+plt.rcParams["axes.linewidth"] = 2.0
+plt.rcParams["xtick.major.width"] = 2.0
+plt.rcParams["ytick.major.width"] = 2.0
+
+# Remove minor ticks
+plt.rcParams["xtick.minor.visible"] = False
+plt.rcParams["ytick.minor.visible"] = False
+
+# Adjust subplot spacing to prevent label overlap
+plt.rcParams["figure.subplot.left"] = 0.2
+plt.rcParams["figure.subplot.bottom"] = 0.15
 
 ##############################################################################
 # Define Common Parameters
@@ -45,7 +79,7 @@ plt.rcParams["figure.figsize"] = (1, 1)
 #    The **recruitment_range** is defined as the ratio between the ``maximum`` and ``minimum`` recruitment thresholds.
 #    For example, if the **recruitment_range** is ``50``, the biggest MU will have a **recruitment threshold** ``50`` times bigger than the smallest MU.
 
-n_motor_units = 10  # Number of motor units in the pool
+n_motor_units = 120  # Number of motor units in the pool
 recruitment_range = 100  # Recruitment range (max_threshold / min_threshold)
 
 # Create results directory
@@ -72,7 +106,7 @@ rt_fuglevand, rtz_fuglevand = simulator.RecruitmentThresholds(
     N=n_motor_units, recruitment_range__ratio=recruitment_range, mode="fuglevand"
 )
 
-_, ax = plt.subplots(figsize=(1, 1))
+_, ax = plt.subplots()
 plot_recruitment_thresholds(
     rt_fuglevand, [ax], model_name="Fuglevand", colors="#90b8e0"
 )
@@ -102,12 +136,11 @@ for slope in deluca_slopes:
     )
     deluca_results[slope] = rt
 
-_, ax = plt.subplots(figsize=(1, 1))
+_, ax = plt.subplots()
 plot_recruitment_thresholds(
     deluca_results,
     [ax],
     model_name="De Luca",
-    colors=["#90b8e0", "#af8bff", "#90b8e0", "#af8bff"],
 )
 plt.tight_layout()
 plt.show()
@@ -132,7 +165,7 @@ rt_konstantin, rtz_konstantin = simulator.RecruitmentThresholds(
     mode="konstantin",
 )
 
-_, ax = plt.subplots(figsize=(1, 1))
+_, ax = plt.subplots()
 plot_recruitment_thresholds(
     rt_konstantin,
     [ax],
@@ -183,13 +216,12 @@ joblib.dump(combined_results[5], save_path / "thresholds.pkl")
 # Plot Combined Model Results
 # ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-_, ax = plt.subplots(figsize=(1, 1))
+_, ax = plt.subplots()
 plot_recruitment_thresholds(
     combined_results,
     [ax],
-    model_name="Combined",
     y_max=combined_max_threshold,
-    colors=["#90b8e0", "#af8bff", "#90b8e0", "#af8bff"],
 )
 plt.tight_layout()
+plt.savefig(save_path / "combined_recruitment_thresholds.svg", transparent=True)
 plt.show()

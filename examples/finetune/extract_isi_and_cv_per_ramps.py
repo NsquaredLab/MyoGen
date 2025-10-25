@@ -1,105 +1,186 @@
 """
-Spike Train Generation with Descending Drive
-============================================
+Spike Train Generation with Optimized Descending Drive Parameters
+===================================================================
 
-This example demonstrates **realistic spike train simulation** using **sinusoidal descending drive (DD)**
-instead of direct current injection. This approach provides more physiologically accurate motor control
-patterns by modeling cortical input through descending drive populations.
+This script extracts ISI (inter-spike interval) and CV (coefficient of variation) data from
+motor neuron spike trains driven by **optimized descending drive (DD) parameters**.
 
-.. note::
-    This example bridges the gap between simple current injection (example 01) and full spinal network
-    simulation (network_config.py). It uses:
+The script automatically loads DD parameters from optimization results to ensure consistency
+with the firing rate optimization performed in `optimize_dd_for_target_firing_rate.py`.
 
-    - **DescendingDrive__Pool**: Poisson process neurons modeling cortical input
-    - **AlphaMN__Pool**: Biophysically detailed motor neurons (Powers2017 model)
-    - **Network**: Synaptic connections between DD and motor neuron populations
-    - **Sinusoidal patterns**: Smooth, physiologically relevant input at 0.5-2 Hz
-
-.. important::
-    **Descending Drive (DD)** refers to the cortical and subcortical neural pathways that provide
-    voluntary motor commands to spinal motor neurons. This is more realistic than direct current
-    injection because it models the actual synaptic input patterns from upper motor neurons.
+Prerequisites
+-------------
+You must run `optimize_dd_for_target_firing_rate.py` first to generate
+the optimized DD parameters that this script will load and use.
 """
 
-##############################################################################
-# Import Libraries
-# ----------------
-#
-# .. important::
-#    In **MyoGen** all **random number generation** is handled by the ``RANDOM_GENERATOR`` object.
-#
-#    This object is a wrapper around the ``numpy.random`` module and is used to generate random numbers.
-#
-#    It is intended to be used with the following API:
-#
-#    .. code-block:: python
-#
-#       from myogen import simulator, RANDOM_GENERATOR
-#
-#    To change the default seed, use ``set_random_seed``:
-#
-#    .. code-block:: python
-#
-#       from myogen import set_random_seed
-#       set_random_seed(42)
+import os
 
+os.environ["MPLBACKEND"] = "Agg"
+if "DISPLAY" in os.environ:
+    del os.environ["DISPLAY"]
+
+import argparse
 import itertools
+import json
 from pathlib import Path
 
 import elephant
 import joblib
 import numpy as np
+import pandas as pd
 import quantities as pq
 from matplotlib import pyplot as plt
 from neo import AnalogSignal, Block, Segment, SpikeTrain
 from neuron import h
 from tqdm import tqdm
 
-from myogen import RANDOM_GENERATOR
+from myogen import RANDOM_GENERATOR, set_random_seed
+from myogen.simulator.core.physiological_distribution import RecruitmentThresholds
 from myogen.simulator.neuron import Network
 from myogen.simulator.neuron.populations import AlphaMN__Pool, DescendingDrive__Pool
 from myogen.utils.nmodl import load_nmodl_mechanisms
 
 ##############################################################################
-# Define Parameters
-# -----------------
-# This example simulates a **motor pool** driven by **sinusoidal descending drive** patterns.
-# The DD populations receive smooth sinusoidal input at physiologically relevant frequencies,
-# which then drive the motor neuron pools through realistic synaptic connections.
-#
-# Key parameters:
-#
-# - ``n_dd_neurons``: Number of descending drive neurons per pool
-# - ``dd_frequency__Hz``: Frequency of sinusoidal drive pattern
-# - ``dd_amplitude__Hz``: Amplitude of drive modulation
-# - ``dd_baseline__Hz``: Baseline drive level
-# - ``timestep``: Simulation timestep in ms (high resolution)
-# - ``simulation_time``: Total simulation duration in ms
+# Command-Line Arguments
+#############################################################################
 
-# Connection parameters
+parser = argparse.ArgumentParser(description="Extract ISI/CV data from spike trains")
+parser.add_argument("--muscle", type=str, default="VLVM", help="Muscle type")
+parser.add_argument("--mvc-level", type=int, default=30, help="MVC level %%")
+parser.add_argument("--study-prefix", type=str, default="VLVM_", help="Study prefix")
+parser.add_argument(
+    "--use-baseline", action="store_true", help="Use baseline optimization"
+)
+parser.add_argument("--seed", type=int, default=42, help="Random seed")
+
+args = parser.parse_args()
+
+set_random_seed(args.seed)
+
+USE_BASELINE_OPTIMIZATION = args.use_baseline
+TARGET_FORCE_PCT = args.mvc_level
+STUDY_PREFIX = args.study_prefix
+MUSCLE_TYPE = args.muscle
+MVC_LEVEL = args.mvc_level
+
+##############################################################################
+
+print(f"\n{'=' * 80}")
+print("LOADING OPTIMIZED DD PARAMETERS")
+print(f"{'=' * 80}\n")
+
+if USE_BASELINE_OPTIMIZATION:
+    # Load from baseline firing rate optimization
+    OPTIMIZATION_RESULTS_DIR = Path("../../../results/dd_optimization")
+    PARAMS_FILE = OPTIMIZATION_RESULTS_DIR / f"{STUDY_PREFIX}dd_optimized_params.json"
+
+    print("Loading from BASELINE firing rate optimization...")
+
+    if not PARAMS_FILE.exists():
+        raise FileNotFoundError(
+            f"Baseline optimization results not found at {PARAMS_FILE}.\n"
+            "Please run optimize_dd_for_target_firing_rate.py first."
+        )
+
+    with open(PARAMS_FILE, "r") as f:
+        optimization_results = json.load(f)
+
+    # Extract DD parameters from best firing rate match
+    dd_params = optimization_results["best_firing_rate_match"]
+    source_description = "baseline FR optimization"
+
+else:
+    # Load from force-specific optimization
+    OPTIMIZATION_RESULTS_DIR = Path(
+        "/home/oj98yqyk/code/simulators/MyoGen/results/force_optimization"
+    )
+
+    # List available force optimization files
+    if OPTIMIZATION_RESULTS_DIR.exists():
+        available_files = sorted(
+            OPTIMIZATION_RESULTS_DIR.glob(
+                f"{STUDY_PREFIX}dd_optimized_params_force_*pct.json"
+            )
+        )
+        if available_files:
+            print("Available force optimization results:")
+            for i, file in enumerate(available_files):
+                # Extract percentage from filename
+                pct = file.stem.split("_")[-1].replace("pct", "")
+                print(f"  {i + 1}. {pct}% MVC - {file.name}")
+            print()
+
+    PARAMS_FILE = (
+        OPTIMIZATION_RESULTS_DIR
+        / f"{STUDY_PREFIX}dd_optimized_params_force_{int(TARGET_FORCE_PCT)}pct.json"
+    )
+
+    print(f"Loading from FORCE-SPECIFIC optimization ({TARGET_FORCE_PCT}% MVC)...")
+
+    if not PARAMS_FILE.exists():
+        raise FileNotFoundError(
+            f"Force optimization results not found at {PARAMS_FILE}.\n"
+            f"Please run: python optimize_dd_for_target_force.py --target-force-pct {TARGET_FORCE_PCT}"
+        )
+
+    with open(PARAMS_FILE, "r") as f:
+        optimization_results = json.load(f)
+
+    # Extract DD parameters from force optimization results
+    dd_params = optimization_results["dd_parameters"]
+    source_description = f"{TARGET_FORCE_PCT}% MVC force optimization"
+
+# Extract common DD parameters
+N_DD_NEURONS = dd_params["dd_neurons"]
+DD_CONNECTION_PROBABILITY = dd_params["conn_probability"]
+DD_PEAK__Hz = dd_params["dd_drive__Hz"]
+DD_SHAPE_PARAMETER = dd_params["gamma_shape"]
+DD_SYNAPTIC_WEIGHT = dd_params.get("synaptic_weight", 0.05)
+
+print(f"\n✓ Loaded from: {source_description}")
+print(f"  Source file: {PARAMS_FILE.name}")
+print("\nOptimized DD parameters:")
+print(f"  DD neurons:       {N_DD_NEURONS}")
+print(f"  Conn probability: {DD_CONNECTION_PROBABILITY:.3f}")
+print(f"  Synaptic weight:  {DD_SYNAPTIC_WEIGHT:.4f} μS")
+print(f"  DD drive level:   {DD_PEAK__Hz:.2f} Hz")
+print(
+    f"  Gamma shape:      {DD_SHAPE_PARAMETER:.2f} (CV={1 / DD_SHAPE_PARAMETER**0.5:.3f})"
+)
+
+##############################################################################
+# Configuration
+##############################################################################
+
+CONFIG_FILE = "alpha_mn_default.yaml"
+RAMP_UP_DURATION__ms = 1e3
+PLATEAU_DURATION__ms = 20e3
+RAMP_DOWN_DURATION__ms = 1e3
+REST_BEFORE__ms = 1e3
+REST_AFTER__ms = 1e3
+TIMESTEP__ms = 0.1
 
 ##############################################################################
 # Create Populations
-# ------------------------
-#
-# Like the previous example, we create a **motor neuron pool** using the **AlphaMN__Pool** class.
-#
-# We also create a **DescendingDrive__Pool** to represent the cortical input.
-#
-# .. note:: These neurons are modeled as Poisson point processes to convert the smooth input signal into realistic
-# spike patterns that represent cortical input to the spinal cord.
-#
+##############################################################################
 
 load_nmodl_mechanisms()
 
 save_path = Path("./results")
 save_path.mkdir(exist_ok=True)
 
-recruitment_thresholds = joblib.load(save_path / "thresholds.pkl")
+recruitment_thresholds, _ = RecruitmentThresholds(
+    N=100,
+    recruitment_range__ratio=100,
+    deluca__slope=5,
+    konstantin__max_threshold__ratio=1,
+    mode="combined",
+)
 
 motor_neuron_pool = AlphaMN__Pool(
     recruitment_thresholds__array=recruitment_thresholds,
-    config_file="alpha_mn_default.yaml",
+    config_file=CONFIG_FILE,
 )
 
 ##############################################################################
@@ -153,10 +234,15 @@ for i, cell in enumerate(motor_neuron_pool):
 h.multex_Gfluctdv = 1.0  # Enable excitatory noise (1.0 = on, 0.0 = off)
 h.multin_Gfluctdv = 1.0  # Enable inhibitory noise (1.0 = on, 0.0 = off) """
 
-timestep = 0.1  # ms
+timestep = TIMESTEP__ms  # ms
 h.secondorder = 2  # Crank-Nicolson method (second-order accurate)
+
+# Create descending drive pool using Gamma process for physiologically realistic variability
 descending_drive_pool = DescendingDrive__Pool(
-    n=460, poisson_batch_size=16, timestep__ms=timestep
+    n=N_DD_NEURONS,
+    timestep__ms=timestep,
+    process_type="gamma",
+    shape=DD_SHAPE_PARAMETER,
 )
 ##############################################################################
 # Generate Trapezoidal Drive Pattern
@@ -171,28 +257,32 @@ descending_drive_pool = DescendingDrive__Pool(
 #
 # This is a common experimental paradigm used in motor control studies.
 
-simulation_time = 15000  # ms
+# Calculate simulation time from configured durations
+simulation_time = (
+    REST_BEFORE__ms
+    + RAMP_UP_DURATION__ms
+    + PLATEAU_DURATION__ms
+    + RAMP_DOWN_DURATION__ms
+    + REST_AFTER__ms
+)  # ms
 time_points = int(simulation_time / timestep)
 
-# Trapezoidal parameters
+# Trapezoidal parameters (from configuration)
 dd_baseline__Hz = 0.0  # Baseline drive during rest
-dd_peak__Hz = 44.22613333215523  # Peak drive during plateau
+dd_peak__Hz = DD_PEAK__Hz  # Peak drive during plateau
 
-# Phase durations (ms) - Total trapezoid duration: 13000ms
-ramp_up_duration = 500  # 2s ramp up
-plateau_duration = 10000  # 9s hold
-ramp_down_duration = 500  # 2s ramp down
+# Phase durations from configuration
+ramp_up_duration = RAMP_UP_DURATION__ms
+plateau_duration = PLATEAU_DURATION__ms
+ramp_down_duration = RAMP_DOWN_DURATION__ms
+rest_before = REST_BEFORE__ms
+rest_after = REST_AFTER__ms
 
-# Add rest periods before and after
-rest_before = 1000  # 1s rest before trapezoid
-rest_after = 1000  # 1s rest after trapezoid
-
-# Center the trapezoid at 7.5s (middle of 15s simulation)
-# Calculate phase boundaries with rest period before
-trapezoid_start = rest_before  # Start at 1s
-ramp_up_end = trapezoid_start + ramp_up_duration  # 3s
-plateau_end = ramp_up_end + plateau_duration  # 12s
-ramp_down_end = plateau_end + ramp_down_duration  # 14s
+# Calculate phase boundaries
+trapezoid_start = rest_before
+ramp_up_end = trapezoid_start + ramp_up_duration
+plateau_end = ramp_up_end + plateau_duration
+ramp_down_end = plateau_end + ramp_down_duration
 
 # Create time array
 time_array = np.linspace(0, simulation_time, time_points)
@@ -235,21 +325,24 @@ sinusoidal_drive = AnalogSignal(
     sampling_period=(timestep * pq.ms).rescale(pq.s),
 )
 
-joblib.dump(sinusoidal_drive, save_path / "trapezoid_drive_pattern.pkl")
+joblib.dump(sinusoidal_drive, save_path / f"{STUDY_PREFIX}trapezoid_drive_pattern.pkl")
 print(
-    f"\n Trapezoidal drive pattern (1000ms trapezoid centered in {simulation_time}ms simulation):"
+    f"\n📊 Trapezoidal drive pattern (using optimized DD drive of {dd_peak__Hz:.2f} Hz):"
 )
 print(f"  Rest before: 0 - {trapezoid_start} ms ({dd_baseline__Hz} Hz)")
 print(
-    f"  Ramp up: {trapezoid_start} - {ramp_up_end} ms ({dd_baseline__Hz} → {dd_peak__Hz} Hz)"
+    f"  Ramp up: {trapezoid_start} - {ramp_up_end} ms ({dd_baseline__Hz} → {dd_peak__Hz:.2f} Hz)"
 )
 print(
-    f"  Plateau: {ramp_up_end} - {plateau_end} ms ({dd_peak__Hz} Hz, center at {(ramp_up_end + plateau_end) / 2:.0f}ms)"
+    f"  Plateau: {ramp_up_end} - {plateau_end} ms ({dd_peak__Hz:.2f} Hz, center at {(ramp_up_end + plateau_end) / 2:.0f}ms)"
 )
 print(
-    f"  Ramp down: {plateau_end} - {ramp_down_end} ms ({dd_peak__Hz} → {dd_baseline__Hz} Hz)"
+    f"  Ramp down: {plateau_end} - {ramp_down_end} ms ({dd_peak__Hz:.2f} → {dd_baseline__Hz} Hz)"
 )
 print(f"  Rest after: {ramp_down_end} - {simulation_time} ms ({dd_baseline__Hz} Hz)")
+print("\nUsing optimized DD parameters:")
+print(f"  Gamma shape: {DD_SHAPE_PARAMETER:.2f} (CV={1 / DD_SHAPE_PARAMETER**0.5:.3f})")
+print(f"  Connection probability: {DD_CONNECTION_PROBABILITY:.3f}")
 
 ##############################################################################
 # Create Network and Connections
@@ -268,9 +361,12 @@ print(f"  Rest after: {ramp_down_end} - {simulation_time} ms ({dd_baseline__Hz} 
 
 network = Network({"DD": descending_drive_pool, "aMN": motor_neuron_pool})
 
-# Connect DD neurons to motor neurons with realistic synaptic parameters
+# Connect DD neurons to motor neurons with optimized synaptic parameters
 network.connect(
-    source="DD", target="aMN", probability=0.5367791765777158, weight__μS=0.05
+    source="DD",
+    target="aMN",
+    probability=DD_CONNECTION_PROBABILITY,
+    weight__μS=DD_SYNAPTIC_WEIGHT,
 )
 
 # Set up external input to DD population
@@ -337,7 +433,7 @@ with tqdm(
         for dd_cell in descending_drive_pool:
             if dd_cell.integrate(current_drive):
                 # Record spike time for DD neuron
-                dd_spike_times[dd_cell.pool__ID].append(h.t)
+                dd_spike_times[dd_cell.pool__ID].append(h.t + 1)
                 # Generate spike in DD neuron
                 spike_time = h.t
                 if spike_time < h.tstop:  # Avoid scheduling beyond simulation end
@@ -383,7 +479,9 @@ mn_segment.spiketrains = [
 # We only save the motor neuron spikes  segment
 spike_train_block.segments.append(mn_segment)
 
-joblib.dump(spike_train_block, save_path / "sinusoidal_dd_spike_trains.pkl")
+joblib.dump(
+    spike_train_block, save_path / f"{STUDY_PREFIX}sinusoidal_dd_spike_trains.pkl"
+)
 
 ##############################################################################
 # Calculate Firing Rate Statistics
@@ -431,105 +529,125 @@ if len(mn_firing_rates) > 0:
     )
 
 ##############################################################################
-# Advanced Visualization
-# -----------------------
+# Calculate and Save ISI/CV Statistics
+# -------------------------------------
 #
-# Create comprehensive visualizations showing:
-# 1. Sinusoidal drive input pattern
-# 2. DD population raster plot with drive overlay
-# 3. Motor neuron raster plot showing recruitment
-# 4. Population firing rates over time
+# Calculate ISI and CV for each motor unit and save to CSV file
 
-# Create figure with subplots
-fig, axes = plt.subplots(4, 1, figsize=(15, 12), sharex=True)
 
-# 1. Plot sinusoidal drive pattern
+def calculate_isi_cv_statistics(spiketrains):
+    """
+    Calculate ISI and CV statistics for each motor unit using Elephant library.
+
+    Parameters
+    ----------
+    spiketrains : list of neo.SpikeTrain
+        List of spike train objects to analyze.
+
+    Returns
+    -------
+    pd.DataFrame
+        DataFrame with columns: MU_ID, mean_firing_rate_Hz, CV_ISI
+    """
+    results = []
+    for mu_id, spiketrain in enumerate(spiketrains):
+        if len(spiketrain) > 2:  # Need at least 3 spikes for meaningful CV
+            # Use Elephant to compute ISI
+            isis_values = elephant.statistics.isi(spiketrain.rescale(pq.s))
+
+            if len(isis_values) > 1:
+                # Compute CV of inter-spike intervals
+                isis_array = isis_values.magnitude
+                cv = np.std(isis_array) / np.mean(isis_array)
+
+                # Compute mean firing rate (Hz) using Watanabe 2013 method: 1 / mean(ISI)
+                mean_rate = 1.0 / np.mean(isis_array)
+
+                results.append(
+                    {"MU_ID": mu_id, "mean_firing_rate_Hz": mean_rate, "CV_ISI": cv}
+                )
+
+    return pd.DataFrame(results)
+
+
+# Calculate ISI/CV statistics for motor neurons
+print("\n📊 Calculating ISI and CV statistics...")
+isi_cv_df = calculate_isi_cv_statistics(mn_segment.spiketrains)
+
+# Save to CSV with MVC level suffix
+output_file = save_path / f"{STUDY_PREFIX}isi_cv_data_{MUSCLE_TYPE}_{MVC_LEVEL}.csv"
+isi_cv_df.to_csv(output_file, index=False)
+
+print(f"✅ Saved ISI/CV data to: {output_file}")
+print("   (Generated using optimized DD parameters)")
+print(f"   Total motor units analyzed: {len(isi_cv_df)}")
+if len(isi_cv_df) > 0:
+    print(f"   Mean firing rate: {isi_cv_df['mean_firing_rate_Hz'].mean():.2f} Hz")
+    print(f"   Mean CV: {isi_cv_df['CV_ISI'].mean():.3f}")
+
+##############################################################################
+# Minimal Visualization
+# ----------------------
+#
+# Create simple 2-panel plot for verification:
+# 1. Drive input pattern
+# 2. Motor neuron raster plot
+
+print("\n📊 Creating verification plots...")
+
+# Create figure with 2 subplots
+fig, axes = plt.subplots(2, 1, figsize=(12, 8), sharex=True)
+
+# 1. Plot drive pattern
 time_s = sinusoidal_drive.times.rescale(pq.s).magnitude
 axes[0].plot(time_s, sinusoidal_drive, "b-", linewidth=2, label="DD Input")
 axes[0].axhline(dd_baseline__Hz, color="r", linestyle="--", alpha=0.7, label="Baseline")
 axes[0].set_ylabel("Drive (Hz)")
-axes[0].set_title("Trapezoidal Descending Drive Pattern (Ramp Contraction)")
+axes[0].set_title(
+    f"Trapezoidal Drive Pattern (Optimized DD: {DD_PEAK__Hz:.1f} Hz, "
+    f"Gamma shape: {DD_SHAPE_PARAMETER:.2f})"
+)
 axes[0].legend()
 axes[0].grid(True, alpha=0.3)
 
-# 2. DD population raster plot
-dd_colors = plt.cm.get_cmap("Blues")(np.linspace(0.3, 0.8, len(dd_segment.spiketrains)))
-for i, (spiketrain, color) in enumerate(zip(dd_segment.spiketrains, dd_colors)):
-    if len(spiketrain) > 0:
-        spike_times = spiketrain.rescale(pq.s).magnitude
-        axes[1].scatter(
-            spike_times, [i] * len(spike_times), c=[color], s=0.8, alpha=0.8
-        )
-
-axes[1].set_ylabel("DD Neuron ID")
-axes[1].set_title(f"Descending Drive Population Activity (n={descending_drive_pool.n})")
-axes[1].set_ylim(-1, descending_drive_pool.n)
-axes[1].grid(True, alpha=0.3)
-
-# 3. Motor neuron raster plot (recruitment ordered)
+# 2. Motor neuron raster plot (recruitment ordered)
 mn_colors = plt.cm.get_cmap("Reds")(np.linspace(0.3, 0.9, len(mn_segment.spiketrains)))
 active_mn_count = 0
 for i, (spiketrain, color) in enumerate(zip(mn_segment.spiketrains, mn_colors)):
     if len(spiketrain) > 0:
         spike_times = spiketrain.rescale(pq.s).magnitude
-        axes[2].scatter(
+        axes[1].scatter(
             spike_times, [i] * len(spike_times), c=[color], s=1.0, alpha=0.8
         )
         active_mn_count += 1
 
-axes[2].set_ylabel("Motor Neuron ID\n(Recruitment Order)")
-axes[2].set_title(
-    f"Motor Neuron Population Activity (n={active_mn_count}/{motor_neuron_pool.n} active)"
+axes[1].set_xlabel("Time (s)")
+axes[1].set_ylabel("Motor Neuron ID\n(Recruitment Order)")
+axes[1].set_title(
+    f"Motor Neuron Activity (n={active_mn_count}/{motor_neuron_pool.n} active)"
 )
-axes[2].set_ylim(-1, motor_neuron_pool.n)
-axes[2].grid(True, alpha=0.3)
-
-# 4. Population firing rates over time (binned)
-bin_size_ms = 100
-
-dd_psth = elephant.statistics.time_histogram(
-    dd_segment.spiketrains, bin_size_ms * pq.ms
-)
-dd_rates_binned = (
-    (dd_psth / (bin_size_ms * pq.ms) / descending_drive_pool.n).rescale(pq.Hz).magnitude
-)
-
-mn_psth = elephant.statistics.time_histogram(
-    mn_segment.spiketrains, bin_size_ms * pq.ms
-)
-mn_rates_binned = (
-    (mn_psth / (bin_size_ms * pq.ms) / motor_neuron_pool.n).rescale(pq.Hz).magnitude
-)
-
-bin_centers_s = dd_psth.times.rescale(pq.s).magnitude
-axes[3].plot(
-    bin_centers_s, dd_rates_binned, "b-", linewidth=2, label="DD Population", alpha=0.8
-)
-axes[3].plot(
-    bin_centers_s, mn_rates_binned, "r-", linewidth=2, label="MN Population", alpha=0.8
-)
-
-axes[3].set_xlabel("Time (s)")
-axes[3].set_ylabel("Population Rate (Hz)")
-axes[3].set_title("Population Firing Rates Over Time")
-axes[3].legend()
-axes[3].grid(True, alpha=0.3)
+axes[1].set_ylim(-1, motor_neuron_pool.n)
+axes[1].grid(True, alpha=0.3)
 
 # Format all axes
 for ax in axes:
     ax.set_xlim(0, simulation_time / 1000.0)
 
 plt.tight_layout()
-plt.show()
+plt.savefig(
+    save_path / f"{STUDY_PREFIX}simulation_verification_{MUSCLE_TYPE}_{MVC_LEVEL}.png",
+    dpi=150,
+)
+plt.close(fig)
 
 ##############################################################################
 # Individual Motor Neuron Discharge Rates
 # ----------------------------------------
 #
 # Compute smoothed instantaneous firing rates for each motor neuron
-# using Elephant's kernel-based rate estimation.
+# using a Hanning window (similar to 01_simulate_spike_trains_descending_drive.py)
 
-print("\nComputing smoothed discharge rates per neuron...")
+print("\n📊 Computing smoothed discharge rates per neuron...")
 
 # Parameters
 window_ms = 400  # 400 ms Hanning window
@@ -542,9 +660,6 @@ hanning_window = hanning_window / (hanning_window.sum() * dt_s)  # convert to Hz
 
 mn_instantaneous_rates = []
 active_neuron_ids = []
-
-mean_firing_rates = []
-cv_isi = []
 
 for i, spiketrain in enumerate(mn_segment.spiketrains):
     if len(spiketrain) > 2:
@@ -559,69 +674,48 @@ for i, spiketrain in enumerate(mn_segment.spiketrains):
         mn_instantaneous_rates.append(rate)
         active_neuron_ids.append(i)
 
-        # Compute mean firing rate (Hz) from raw spikes
-        duration_s = simulation_time / 1000.0
-        mean_rate = len(spiketrain) / duration_s
-        mean_firing_rates.append(mean_rate)
-
-        # Compute CV of inter-spike intervals
-        spike_times = spiketrain.rescale(pq.s).magnitude
-        isis = np.diff(spike_times)
-        cv = np.std(isis) / np.mean(isis) if len(isis) > 1 else 0.0
-        cv_isi.append(cv)
-
-        print(f"Neuron {i}: Mean firing rate = {mean_rate:.2f} Hz, CV = {cv:.2f}")
-
-# Population averages
-pop_mean_rate = np.mean(mean_firing_rates)
-pop_mean_cv = np.mean(cv_isi)
-print(
-    f"\nPopulation: Mean firing rate = {pop_mean_rate:.2f} Hz, CV = {pop_mean_cv:.2f}"
-)
-
 print(f"  Computed rates for {len(active_neuron_ids)} active motor neurons")
 
-# Create new figure for individual discharge rates
+# Create figure for discharge rate visualizations
 fig2, axes2 = plt.subplots(2, 1, figsize=(15, 10), sharex=True)
 
 # 1. Heatmap of instantaneous firing rates
 if len(mn_instantaneous_rates) > 0:
     # Stack rates into 2D array (neurons x time)
     rates_array = np.array(mn_instantaneous_rates)
-    time_points = np.linspace(0, simulation_time / 1000.0, rates_array.shape[1])
+    time_points_arr = np.linspace(0, simulation_time / 1000.0, rates_array.shape[1])
 
-    # Plot heatmap (with origin='lower' so MU 0 is at TOP)
+    # Plot heatmap
     im = axes2[0].imshow(
         rates_array,
         aspect="auto",
         cmap="hot",
         interpolation="bilinear",
         extent=[0, simulation_time / 1000.0, 0, len(active_neuron_ids)],
-        origin="lower",  # Puts first row (MU 0) at bottom, but we'll flip with extent
+        origin="lower",
         vmin=0,
-        vmax=np.percentile(
-            rates_array, 95
-        ),  # Cap at 95th percentile for better contrast
+        vmax=np.percentile(rates_array, 95),  # Cap at 95th percentile
     )
 
-    axes2[0].set_ylabel("Motor Neuron ID\n(Recruitment Order, MU 0 at top)")
+    axes2[0].set_ylabel("Motor Neuron ID\n(Recruitment Order)")
     axes2[0].set_title(
-        "Individual Motor Neuron Discharge Rates (Smoothed with 50ms Gaussian)"
+        f"Individual Motor Neuron Discharge Rates - {MUSCLE_TYPE} @ {MVC_LEVEL}% MVC\n"
+        f"(Smoothed with {window_ms}ms Hanning Window)"
     )
     # Add colorbar
     cbar = plt.colorbar(im, ax=axes2[0])
     cbar.set_label("Firing Rate (Hz)")
     axes2[0].grid(False)
 
-    # 2. Individual traces (show ALL active neurons)
-    n_to_plot = len(active_neuron_ids)  # Plot ALL active neurons
+    # 2. Individual traces (show all active neurons)
+    n_to_plot = len(active_neuron_ids)
 
-    # Use colormap for lines (gradient from blue to red showing recruitment order)
+    # Use colormap for lines (gradient showing recruitment order)
     colors = plt.cm.get_cmap("rainbow")(np.linspace(0, 1, n_to_plot))
 
     for neuron_idx in range(n_to_plot):
         axes2[1].plot(
-            time_points,
+            time_points_arr,
             mn_instantaneous_rates[neuron_idx],
             linewidth=0.8,
             color=colors[neuron_idx],
@@ -641,8 +735,12 @@ if len(mn_instantaneous_rates) > 0:
     axes2[1].set_ylim(0, np.max(rates_array) * 1.1)
 
 plt.tight_layout()
-plt.show()
-
-print(
-    "\n✅ Simulation complete with individual neuron noise and discharge rate analysis!"
+plt.savefig(
+    save_path / f"{STUDY_PREFIX}discharge_rates_{MUSCLE_TYPE}_{MVC_LEVEL}.png",
+    dpi=300,
 )
+plt.close(fig2)
+
+print(f"✅ Saved discharge rate plot to: {save_path / f'{STUDY_PREFIX}discharge_rates_{MUSCLE_TYPE}_{MVC_LEVEL}.png'}")
+
+print("\n✅ Simulation complete! ISI/CV data extracted and saved.")

@@ -1,0 +1,9 @@
+for fr in THIRTY TWENTYFIVE TWENTY FIFTEEN TEN FIVE; do ./bash_scripts/run_dd_optimization.sh "$fr" --gamma-shape-min 2.0 --gamma-shape-max 3.0 & done; wait
+
+for fr in THIRTY_gamma2.0-3.0 TWENTYFIVE_gamma2.0-3.0 TWENTY_gamma2.0-3.0 FIFTEEN_gamma2.0-3.0 TEN_gamma2.0-3.0 FIVE_gamma2.0-3.0; do ./bash_scripts/run_compute_force_mvc.sh "$fr" & done; wait
+
+for muscle in THIRTY_gamma2.0-3.0 TWENTYFIVE_gamma2.0-3.0 TWENTY_gamma2.0-3.0 FIFTEEN_gamma2.0-3.0 TEN_gamma2.0-3.0 FIVE_gamma2.0-3.0; do for force in 5 15 30 50; do ./bash_scripts/run_force_optimization.sh "$muscle" "$force" & done; done; wait
+
+for muscle in THIRTY_gamma2.0-3.0 TWENTYFIVE_gamma2.0-3.0 TWENTY_gamma2.0-3.0 FIFTEEN_gamma2.0-3.0 TEN_gamma2.0-3.0 FIVE_gamma2.0-3.0; do for force in 5 15 30 50; do ./bash_scripts/run_extract_isi_cv.sh "$muscle" "$force" & done; done; wait
+
+python examples/finetune/plot_isi_cv_multi_muscle_comparison.py --muscles THIRTY_gamma2.0-3.0 TWENTYFIVE_gamma2.0-3.0 TWENTY_gamma2.0-3.0 FIFTEEN_gamma2.0-3.0 TEN_gamma2.0-3.0 FIVE_gamma2.0-3.0 --results-path ./results --output-format jpg

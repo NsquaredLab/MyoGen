@@ -154,32 +154,66 @@ def _plot_multiple_datasets(
         linestyles = ["-", "--", "-.", ":", "-", "--", "-."]
 
     y_values = []
-    for i, (param, rt) in enumerate(reversed(data.items())):
+    # Plot in order so smallest slope (first item) is on top with highest z-order
+    data_items = list(data.items())
+    for i, (param, rt) in enumerate(data_items):
         times = np.arange(len(rt))
-        rt = np.concatenate([rt[::2], rt[-1:]])
-        times = np.concatenate([times[::2], times[-1:]])
+        # Filter points for markers only
+        rt_filtered = np.concatenate([rt[::5], rt[-1:]])
+        times_filtered = np.concatenate([times[::5], times[-1:]])
 
         plot_kwargs = kwargs.copy() if not apply_default_formatting else {}
 
+        # Calculate z-order: first item (smallest slope) gets highest z-order
+        line_zorder = len(data_items) - i
+        marker_zorder = len(data_items) - i + len(data_items)
+
         if apply_default_formatting:
+            # Plot line with all points (always black)
             ax.plot(
                 times,
                 rt,
-                color=colors[i % len(colors)],
+                color='black',
                 linewidth=2,
-                zorder=0,
+                zorder=line_zorder,
             )
-            ax.scatter(
-                times,
-                rt,
-                color=colors[i % len(colors)],
-                label=f"slope={param}",
-                marker=markers[i % len(markers)],
-                zorder=1,
-            )
+            # Plot markers with different colors for last 3 vs others
+            # Last 3 markers are blue, all others are purple (lila)
+            n_markers = len(times_filtered)
+            if n_markers > 3:
+                # Purple markers for all except last 3
+                ax.scatter(
+                    times_filtered[:-3],
+                    rt_filtered[:-3],
+                    color='#af8bff',
+                    marker=markers[i % len(markers)],
+                    s=100,
+                    zorder=marker_zorder,
+                )
+                # Blue markers for last 3
+                ax.scatter(
+                    times_filtered[-3:],
+                    rt_filtered[-3:],
+                    color='#90b8e0',
+                    label=f"slope={param}",
+                    marker=markers[i % len(markers)],
+                    s=100,
+                    zorder=marker_zorder,
+                )
+            else:
+                # If 3 or fewer markers, make them all blue
+                ax.scatter(
+                    times_filtered,
+                    rt_filtered,
+                    color='#90b8e0',
+                    label=f"slope={param}",
+                    marker=markers[i % len(markers)],
+                    s=100,
+                    zorder=marker_zorder,
+                )
         else:
             ax.plot(times, rt, **plot_kwargs)
-            ax.scatter(times, rt, label=f"slope={param}", **plot_kwargs)
+            ax.scatter(times_filtered, rt_filtered, label=f"slope={param}", **plot_kwargs)
 
         y_values.extend(rt)
 
@@ -203,23 +237,37 @@ def _plot_single_dataset(
 ):
     """Helper function to plot a single dataset."""
     rt = data
+    times = np.arange(len(rt))
+
+    # Show every 5th point plus the last point for markers
+    rt_filtered = np.concatenate([rt[::5], rt[-1:]])
+    times_filtered = np.concatenate([times[::5], times[-1:]])
 
     if apply_default_formatting:
         color = colors or "red"
         marker = markers or "o"
         linestyle = linestyles or "-"
 
+        # Plot line with all points
         ax.plot(
+            times,
             rt,
             color=color,
             linewidth=2,
             linestyle=linestyle,
-            label="Recruitment Thresholds",
+            label="Recruitment Thresholds (%)",
+        )
+        # Plot markers only at filtered points
+        ax.scatter(
+            times_filtered,
+            rt_filtered,
+            color=color,
             marker=marker,
-            markersize=4,
+            s=100,
+            zorder=3,
         )
     else:
-        ax.plot(rt, **kwargs)
+        ax.plot(times, rt, **kwargs)
 
     if y_max is None:
         y_max = np.max(rt)
@@ -231,30 +279,48 @@ def _plot_single_dataset(
 def _apply_default_formatting(ax: Axes, data, y_max, model_name, is_multiple: bool):
     """Helper function to apply default formatting to the plot."""
     ax.set_xlabel("Motor Unit Index")
-    ax.set_ylabel("Recruitment\nThreshold (%)")
+    ax.set_ylabel("Recruitment Threshold (%)")
+    # Ensure ylabel is on one line
+    ax.yaxis.label.set_multialignment('left')
     if model_name is not None:
         ax.set_title(model_name)
 
-    # Set y-axis limits and ticks
-    ax.set_ylim(0, y_max * 1.1)
+    # Set x-axis ticks to show 1 to N with intermediate steps
     if is_multiple and isinstance(data, dict):
+        n_units = max([len(rt) for rt in data.values()])
+    else:
+        n_units = len(data) if not is_multiple else max([len(rt) for rt in data.values()])
+
+    # Create ticks: 1, middle value(s), and N
+    x_ticks = [1, n_units // 2, n_units]
+    ax.set_xticks([t - 1 for t in x_ticks])  # Subtract 1 for 0-indexed plotting
+    ax.set_xticklabels([str(t) for t in x_ticks])
+
+    # Set y-axis limits and ticks
+    if is_multiple:
         y_min = min([np.min(rt) for rt in data.values()])
     else:
-        y_min = (
-            np.min(data)
-            if not is_multiple
-            else min([np.min(rt) for rt in data.values()])
-        )
+        y_min = np.min(data)
+
+    # Add padding below y_min to prevent marker cutoff
+    y_padding = (y_max - y_min) * 0.15
+    ax.set_ylim(y_min - y_padding, y_max * 1.1)
 
     ax.set_yticks(
         [y_min, y_max / 2, y_max],
     )
     ax.set_yticklabels([f"min={y_min:.3f}", f"mid={y_max / 2:.2f}", f"max={y_max:.2f}"])
 
-    # Remove legend box
-    legend = ax.legend()
-    if legend:
-        legend.set_frame_on(False)
+    # Only show legend for multiple datasets
+    if is_multiple:
+        legend = ax.legend(markerscale=1.5)
+        if legend:
+            legend.set_frame_on(False)
+    else:
+        # Remove legend for single dataset plots
+        legend = ax.get_legend()
+        if legend:
+            legend.remove()
 
     # Apply seaborn despine to the specific axis
     sns.despine(ax=ax, offset=10, trim=True)

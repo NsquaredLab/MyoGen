@@ -237,7 +237,7 @@ sinusoidal_drive = AnalogSignal(
 
 joblib.dump(sinusoidal_drive, save_path / "trapezoid_drive_pattern.pkl")
 print(
-    f"\n Trapezoidal drive pattern (1000ms trapezoid centered in {simulation_time}ms simulation):"
+    f"\n📊 Trapezoidal drive pattern (1000ms trapezoid centered in {simulation_time}ms simulation):"
 )
 print(f"  Rest before: 0 - {trapezoid_start} ms ({dd_baseline__Hz} Hz)")
 print(

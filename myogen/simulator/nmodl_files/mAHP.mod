@@ -101,9 +101,6 @@ PROCEDURE rates(cai(mM)) {  LOCAL a,b
  }
 
 PROCEDURE mcarate(v (mV)) {
-	TABLE minfca
-	DEPEND mvhalfca,mslpca 
-	FROM -100 TO 100 WITH 200
-	
+
 	minfca = 1/(1+exp(-(v-mvhalfca)/mslpca))
 }

@@ -45,7 +45,7 @@ Usage
 >>>
 >>> # Create descending drive with Gamma process for more regular firing
 >>> drive_gamma = DescendingDrive__Pool(n=5, timestep__ms=0.05, process_type='gamma',
-...                                      gamma_rate_scale=50, shape=3.0)
+...                                      shape=3.0)
 """
 
 from .afferents import AffIa__Pool, AffII__Pool, AffIb__Pool

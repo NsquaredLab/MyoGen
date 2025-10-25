@@ -445,15 +445,12 @@ class DD_Gamma(_Cell, _GammaProcessGenerator__Cython):
     Uses a dummy NEURON cell for interface compatibility while generating realistic
     spike patterns through a Cython-optimized Gamma process generator.
 
-    The firing rate is proportional to the input drive signal, allowing
-    simulation of voluntary motor commands, reflex modulation, and other
+    The firing rate is controlled directly by the input drive signal (in Hz),
+    allowing simulation of voluntary motor commands, reflex modulation, and other
     descending influences on spinal motor circuits.
 
     Parameters
     ----------
-    N : int
-        Maximum firing rate in Hz when input drive is at maximum. Determines
-        the scaling factor for converting drive signals to spike rates.
     dt : float
         Simulation time step in milliseconds. Must match the integration
         time step used in the main simulation loop.
@@ -486,13 +483,12 @@ class DD_Gamma(_Cell, _GammaProcessGenerator__Cython):
 
     _ids2 = itertools.count(0)
 
-    def __init__(self, N, dt, shape: float = 3.0, pool__ID: int | None = None):
+    def __init__(self, dt, shape: float = 3.0, pool__ID: int | None = None):
         self.ns = h.DUMMY()  # Dummy cell
         _Cell.__init__(self, next(self._ids2), pool__ID)
         _GammaProcessGenerator__Cython.__init__(
             self, SEED + (self.class__ID + 1) * (self.global__ID + 1), shape, dt
         )
-        self.N = N  # Store maximum firing rate
 
     def __repr__(self) -> str:
         return _Cell.__repr__(self)
@@ -504,8 +500,8 @@ class DD_Gamma(_Cell, _GammaProcessGenerator__Cython):
         Parameters
         ----------
         y : float
-            Drive signal level (0-1). Values > 0 generate spikes proportional
-            to the drive strength; values ≤ 0 produce no spikes.
+            Drive signal in Hz (firing rate). Values > 0 generate spikes with
+            the specified rate and regularity; values ≤ 0 produce no spikes.
 
         Returns
         -------
