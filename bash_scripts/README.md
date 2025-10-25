@@ -2,6 +2,44 @@
 
 This directory contains bash scripts for running common MyoGen tasks and optimizations.
 
+## 🚀 Quick Start: Full Pipeline
+
+The **recommended approach** is to use `run_full_pipeline.sh` which automatically runs all 5 steps and correctly propagates gamma shape values:
+
+```bash
+# High CV input (gamma shape 0.5-0.75, CV ≈ 1.15-1.41)
+./bash_scripts/run_full_pipeline.sh --gamma-shape-min 0.5 --gamma-shape-max 0.75
+
+# Regular CV input (gamma shape 2.0-3.0, CV ≈ 0.58-0.71)
+./bash_scripts/run_full_pipeline.sh --gamma-shape-min 2.0 --gamma-shape-max 3.0
+
+# With Gfluctdv membrane noise enabled
+./bash_scripts/run_full_pipeline.sh --gamma-shape-min 0.5 --gamma-shape-max 0.75 --enable-gfluctdv
+
+# Skip already-completed steps (faster reruns)
+./bash_scripts/run_full_pipeline.sh --gamma-shape-min 0.5 --gamma-shape-max 0.75 --skip-dd-optimization
+```
+
+**Pipeline steps:**
+1. DD optimization for all firing rates (THIRTY, TWENTYFIVE, TWENTY, FIFTEEN, TEN, FIVE)
+2. Force computation at MVC for each muscle
+3. Force optimization at multiple force levels (5%, 15%, 30%, 50% MVC)
+4. ISI and CV extraction
+5. Multi-muscle comparison plots
+
+**Options:**
+- `--gamma-shape-min VALUE` - Gamma shape minimum (required)
+- `--gamma-shape-max VALUE` - Gamma shape maximum (required)
+- `--enable-gfluctdv` - Enable Gfluctdv noise mechanism for motor neurons
+- `--skip-dd-optimization` - Skip DD optimization (use existing results)
+- `--skip-force-computation` - Skip force computation
+- `--skip-force-optimization` - Skip force optimization
+- `--skip-isi-extraction` - Skip ISI/CV extraction
+- `--skip-plotting` - Skip final plotting
+- `--output-format FORMAT` - Plot format (jpg, png, pdf, svg; default: jpg)
+
+---
+
 ## Available Scripts
 
 ### `run_dd_optimization.sh`

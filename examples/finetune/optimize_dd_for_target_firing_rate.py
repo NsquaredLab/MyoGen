@@ -47,6 +47,24 @@ def parse_args():
     p.add_argument("--n-motor-units", type=int, default=100)
     p.add_argument("--gamma-shape-min", type=float, default=3.0)
     p.add_argument("--gamma-shape-max", type=float, default=10.0)
+    # Gfluctdv (fluctuating conductance noise) parameters
+    p.add_argument(
+        "--enable-gfluctdv",
+        action="store_true",
+        help="Enable Gfluctdv (fluctuating conductance) noise mechanism for motor neurons"
+    )
+    p.add_argument(
+        "--gfluctdv-noise-min",
+        type=float,
+        default=5e-6,
+        help="Minimum Gfluctdv noise amplitude (S/cm²) for optimization search"
+    )
+    p.add_argument(
+        "--gfluctdv-noise-max",
+        type=float,
+        default=3e-5,
+        help="Maximum Gfluctdv noise amplitude (S/cm²) for optimization search"
+    )
     return p.parse_args()
 
 
@@ -66,6 +84,10 @@ GAMMA_SHAPE_MIN = 3.0
 GAMMA_SHAPE_MAX = 10.0
 SYNAPTIC_WEIGHT = 0.05
 RESULTS_DIR = Path("./results/dd_optimization")
+# Gfluctdv parameters
+ENABLE_GFLUCTDV = False
+GFLUCTDV_NOISE_MIN = 5e-6
+GFLUCTDV_NOISE_MAX = 3e-5
 
 
 def objective(trial):
@@ -79,6 +101,14 @@ def objective(trial):
         )
         gamma_shape = get_gamma_shape_for_mvc(100, mvc_shape_value=mvc_shape_value)
 
+        # Gfluctdv noise amplitude (if enabled)
+        if ENABLE_GFLUCTDV:
+            gfluctdv_noise_amplitude = trial.suggest_float(
+                "gfluctdv_noise_amplitude", GFLUCTDV_NOISE_MIN, GFLUCTDV_NOISE_MAX
+            )
+        else:
+            gfluctdv_noise_amplitude = 0.0
+
         recruitment_thresholds, _ = RecruitmentThresholds(
             N=N_MOTOR_UNITS,
             recruitment_range__ratio=100,
@@ -91,6 +121,16 @@ def objective(trial):
             recruitment_thresholds__array=recruitment_thresholds,
             config_file="alpha_mn_default.yaml",
         )
+
+        # Apply Gfluctdv noise if enabled
+        if ENABLE_GFLUCTDV:
+            for cell in motor_neuron_pool:
+                cell.insert_Gfluctdv()
+                for d in cell.dend:
+                    # Set noise amplitude (std_e and std_i)
+                    d.std_e_Gfluctdv = gfluctdv_noise_amplitude
+                    d.std_i_Gfluctdv = gfluctdv_noise_amplitude
+                    # Keep default correlation times (tau_e = tau_i = 20 ms)
 
         descending_drive_pool = DescendingDrive__Pool(
             n=dd_neurons,
@@ -192,6 +232,8 @@ def objective(trial):
         trial.set_user_attr("dd_drive__Hz", float(dd_drive__Hz))
         trial.set_user_attr("gamma_shape", float(gamma_shape))
         trial.set_user_attr("mvc_shape_value", float(mvc_shape_value))
+        trial.set_user_attr("gfluctdv_enabled", ENABLE_GFLUCTDV)
+        trial.set_user_attr("gfluctdv_noise_amplitude", float(gfluctdv_noise_amplitude))
 
         if trial.number % 1 == 0:
             print(
@@ -215,7 +257,10 @@ def main():
         N_DD_NEURONS_MAX, \
         GAMMA_SHAPE_MIN, \
         GAMMA_SHAPE_MAX, \
-        RESULTS_DIR
+        RESULTS_DIR, \
+        ENABLE_GFLUCTDV, \
+        GFLUCTDV_NOISE_MIN, \
+        GFLUCTDV_NOISE_MAX
 
     args = parse_args()
     load_nmodl_mechanisms()
@@ -232,11 +277,16 @@ def main():
     N_DD_NEURONS_MAX = args.n_dd_neurons_max
     GAMMA_SHAPE_MIN = args.gamma_shape_min
     GAMMA_SHAPE_MAX = args.gamma_shape_max
+    ENABLE_GFLUCTDV = args.enable_gfluctdv
+    GFLUCTDV_NOISE_MIN = args.gfluctdv_noise_min
+    GFLUCTDV_NOISE_MAX = args.gfluctdv_noise_max
     RESULTS_DIR = Path("./results/dd_optimization")
     RESULTS_DIR.mkdir(exist_ok=True, parents=True)
 
+    gfluctdv_status = "ENABLED" if ENABLE_GFLUCTDV else "DISABLED"
     print(
-        f"\nOptimizing: {STUDY_PREFIX} | Target FR: {TARGET_FR_MEAN__HZ:.1f}±{TARGET_FR_STD__HZ:.1f}Hz | Trials: {N_TRIALS}\n"
+        f"\nOptimizing: {STUDY_PREFIX} | Target FR: {TARGET_FR_MEAN__HZ:.1f}±{TARGET_FR_STD__HZ:.1f}Hz | "
+        f"Trials: {N_TRIALS} | Gfluctdv: {gfluctdv_status}\n"
     )
 
     storage_name = f"sqlite:///{RESULTS_DIR}/{STUDY_PREFIX}optuna_dd_optimization.db"
@@ -275,7 +325,7 @@ def main():
     )
 
     def trial_to_dict(t):
-        return {
+        base_params = {
             k: t.user_attrs.get(k)
             for k in [
                 "FR_mean",
@@ -287,6 +337,10 @@ def main():
                 "mvc_shape_value",
             ]
         }
+        # Add Gfluctdv parameters if enabled
+        if ENABLE_GFLUCTDV:
+            base_params["gfluctdv_noise_amplitude"] = t.user_attrs.get("gfluctdv_noise_amplitude")
+        return base_params
 
     results = {
         "target": {
@@ -294,6 +348,7 @@ def main():
             "FR_std__Hz": TARGET_FR_STD__HZ,
             "conn_prob": TARGET_CONN_PROB,
         },
+        "gfluctdv_enabled": ENABLE_GFLUCTDV,
         "best_fr": trial_to_dict(best_fr_trial),
         "best_balanced": trial_to_dict(best_balanced_trial),
         "pareto_front": [trial_to_dict(t) for t in pareto_trials],

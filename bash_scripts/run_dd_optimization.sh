@@ -4,12 +4,16 @@
 # Usage: ./bash_scripts/run_dd_optimization.sh [MUSCLE_NAME] [OPTIONS]
 #
 # Options:
-#   --gamma-shape-min VALUE    Override gamma shape minimum (default: from config)
-#   --gamma-shape-max VALUE    Override gamma shape maximum (default: from config)
+#   --gamma-shape-min VALUE       Override gamma shape minimum (default: from config)
+#   --gamma-shape-max VALUE       Override gamma shape maximum (default: from config)
+#   --enable-gfluctdv             Enable Gfluctdv noise mechanism for motor neurons
+#   --gfluctdv-noise-min VALUE    Minimum Gfluctdv noise amplitude in S/cm² (default: 5e-6)
+#   --gfluctdv-noise-max VALUE    Maximum Gfluctdv noise amplitude in S/cm² (default: 3e-5)
 #
 # Examples:
 #   ./bash_scripts/run_dd_optimization.sh VLVM
 #   ./bash_scripts/run_dd_optimization.sh FDI --gamma-shape-min 5.0 --gamma-shape-max 8.0
+#   ./bash_scripts/run_dd_optimization.sh THIRTY --enable-gfluctdv --gfluctdv-noise-min 1e-5 --gfluctdv-noise-max 5e-5
 #
 # Run in parallel:
 #   ./bash_scripts/run_dd_optimization.sh VLVM &
@@ -157,6 +161,9 @@ shift || true  # Remove first argument, continue if no more args
 # Parse optional arguments
 GAMMA_MIN_OVERRIDE=""
 GAMMA_MAX_OVERRIDE=""
+ENABLE_GFLUCTDV_FLAG=""
+GFLUCTDV_NOISE_MIN_OVERRIDE=""
+GFLUCTDV_NOISE_MAX_OVERRIDE=""
 
 while [[ $# -gt 0 ]]; do
     case $1 in
@@ -166,6 +173,18 @@ while [[ $# -gt 0 ]]; do
             ;;
         --gamma-shape-max)
             GAMMA_MAX_OVERRIDE="$2"
+            shift 2
+            ;;
+        --enable-gfluctdv)
+            ENABLE_GFLUCTDV_FLAG="--enable-gfluctdv"
+            shift
+            ;;
+        --gfluctdv-noise-min)
+            GFLUCTDV_NOISE_MIN_OVERRIDE="$2"
+            shift 2
+            ;;
+        --gfluctdv-noise-max)
+            GFLUCTDV_NOISE_MAX_OVERRIDE="$2"
             shift 2
             ;;
         *)
@@ -208,19 +227,41 @@ else
     FINAL_GAMMA_MAX="${!GAMMA_MAX}"
 fi
 
-# Build study prefix with gamma shape range
-STUDY_PREFIX="${MUSCLE}_gamma${FINAL_GAMMA_MIN}-${FINAL_GAMMA_MAX}_"
+# Build study prefix with gamma shape range and gfluctdv status
+GFLUCTDV_SUFFIX=""
+if [[ -n "$ENABLE_GFLUCTDV_FLAG" ]]; then
+    GFLUCTDV_SUFFIX="gfluctdv_"
+fi
+STUDY_PREFIX="${MUSCLE}_${GFLUCTDV_SUFFIX}gamma${FINAL_GAMMA_MIN}-${FINAL_GAMMA_MAX}_"
+
+# Build python command with optional Gfluctdv parameters
+PYTHON_CMD=(
+    python "$PROJECT_ROOT/examples/finetune/optimize_dd_for_target_firing_rate.py"
+    --study-prefix "${STUDY_PREFIX}"
+    --target-fr-mean "${!FR_MEAN}"
+    --target-fr-std "${!FR_STD}"
+    --target-conn-prob "${!CONN_PROB}"
+    --target-n-dd-neurons "${!N_DD}"
+    --n-trials "${!TRIALS}"
+    --n-dd-neurons-min "${!DD_MIN}"
+    --n-dd-neurons-max "${!DD_MAX}"
+    --n-motor-units "${!N_MU}"
+    --gamma-shape-min "${FINAL_GAMMA_MIN}"
+    --gamma-shape-max "${FINAL_GAMMA_MAX}"
+)
+
+# Add Gfluctdv flags if enabled
+if [[ -n "$ENABLE_GFLUCTDV_FLAG" ]]; then
+    PYTHON_CMD+=("$ENABLE_GFLUCTDV_FLAG")
+fi
+
+if [[ -n "$GFLUCTDV_NOISE_MIN_OVERRIDE" ]]; then
+    PYTHON_CMD+=(--gfluctdv-noise-min "$GFLUCTDV_NOISE_MIN_OVERRIDE")
+fi
+
+if [[ -n "$GFLUCTDV_NOISE_MAX_OVERRIDE" ]]; then
+    PYTHON_CMD+=(--gfluctdv-noise-max "$GFLUCTDV_NOISE_MAX_OVERRIDE")
+fi
 
 # Run optimization
-python "$PROJECT_ROOT/examples/finetune/optimize_dd_for_target_firing_rate.py" \
-    --study-prefix "${STUDY_PREFIX}" \
-    --target-fr-mean "${!FR_MEAN}" \
-    --target-fr-std "${!FR_STD}" \
-    --target-conn-prob "${!CONN_PROB}" \
-    --target-n-dd-neurons "${!N_DD}" \
-    --n-trials "${!TRIALS}" \
-    --n-dd-neurons-min "${!DD_MIN}" \
-    --n-dd-neurons-max "${!DD_MAX}" \
-    --n-motor-units "${!N_MU}" \
-    --gamma-shape-min "${FINAL_GAMMA_MIN}" \
-    --gamma-shape-max "${FINAL_GAMMA_MAX}"
+"${PYTHON_CMD[@]}"
