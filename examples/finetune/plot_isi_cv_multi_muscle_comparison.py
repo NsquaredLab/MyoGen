@@ -372,7 +372,11 @@ def plot_cv_vs_fr_multi_muscle(all_muscle_data, exp_data):
     # 2. Plot simulated data for each muscle and force level
     for muscle_type in sorted(all_muscle_data.keys()):
         muscle_data = all_muscle_data[muscle_type]
-        colormap_name = MUSCLE_COLORMAPS.get(muscle_type, "Greys")
+
+        # Extract short muscle name (first part before underscore)
+        # e.g., "THIRTY_gamma0.5-0.75" → "THIRTY"
+        short_muscle = muscle_type.split("_")[0]
+        colormap_name = MUSCLE_COLORMAPS.get(short_muscle, "Greys")
 
         for force_level in sorted(muscle_data.keys()):
             df = muscle_data[force_level]
@@ -410,9 +414,11 @@ def plot_cv_vs_fr_multi_muscle(all_muscle_data, exp_data):
         Line2D([0], [0], color="none", label="Muscle Types:", marker="")
     )
     for muscle in sorted(all_muscle_data.keys()):
-        color = MUSCLE_LEGEND_COLORS.get(muscle, "#000000")
+        # Extract short muscle name for cleaner legend
+        short_muscle = muscle.split("_")[0]
+        color = MUSCLE_LEGEND_COLORS.get(short_muscle, "#000000")
         legend_elements.append(
-            Patch(facecolor=color, edgecolor="black", label=f"  {muscle}")
+            Patch(facecolor=color, edgecolor="black", label=f"  {short_muscle}")
         )
 
     # Add spacing
