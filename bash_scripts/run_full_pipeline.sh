@@ -103,6 +103,12 @@ fi
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_ROOT="$(dirname "$SCRIPT_DIR")"
 
+# Activate venv if not already active
+if [[ -z "${VIRTUAL_ENV:-}" ]]; then
+    echo "Activating virtual environment..."
+    source "$PROJECT_ROOT/.venv/bin/activate"
+fi
+
 # Build gamma suffix for muscle names
 GFLUCTDV_SUFFIX=""
 if [[ -n "$ENABLE_GFLUCTDV_FLAG" ]]; then
