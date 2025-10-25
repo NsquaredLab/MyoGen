@@ -120,7 +120,7 @@ GAMMA_SUFFIX="${GFLUCTDV_SUFFIX}gamma${GAMMA_SHAPE_MIN}-${GAMMA_SHAPE_MAX}"
 FIRING_RATES=(THIRTY TWENTYFIVE TWENTY FIFTEEN TEN FIVE)
 
 # Define force levels for optimization
-FORCE_LEVELS=(5 15 30 50)
+FORCE_LEVELS=(5 15 30 50 75 90)
 
 echo "========================================================================"
 echo "MyoGen Full Optimization Pipeline"

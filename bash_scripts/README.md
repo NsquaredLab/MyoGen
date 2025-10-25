@@ -23,7 +23,7 @@ The **recommended approach** is to use `run_full_pipeline.sh` which automaticall
 **Pipeline steps:**
 1. DD optimization for all firing rates (THIRTY, TWENTYFIVE, TWENTY, FIFTEEN, TEN, FIVE)
 2. Force computation at MVC for each muscle
-3. Force optimization at multiple force levels (5%, 15%, 30%, 50% MVC)
+3. Force optimization at multiple force levels (5%, 15%, 30%, 50%, 75%, 90% MVC)
 4. ISI and CV extraction
 5. Multi-muscle comparison plots
 
