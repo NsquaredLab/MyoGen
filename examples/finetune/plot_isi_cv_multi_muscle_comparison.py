@@ -193,9 +193,17 @@ def load_multi_muscle_data(results_path, muscle_types):
         for force in force_levels:
             file_path = results_path / f"{study_prefix}isi_cv_data_{short_muscle}_{force}.csv"
             if file_path.exists():
-                df = pd.read_csv(file_path)
-                muscle_data[force] = df
-                print(f"  ✓ Loaded {len(df)} motor units for {force}% from {file_path.name}")
+                try:
+                    df = pd.read_csv(file_path)
+                    if len(df) == 0:
+                        print(f"  ⚠️  Empty data for {force}% in {file_path.name} - skipping")
+                        continue
+                    muscle_data[force] = df
+                    print(f"  ✓ Loaded {len(df)} motor units for {force}% from {file_path.name}")
+                except pd.errors.EmptyDataError:
+                    print(f"  ⚠️  Malformed/empty file for {force}%: {file_path.name} - skipping")
+                except Exception as e:
+                    print(f"  ✗ Error reading {file_path.name}: {e}")
             else:
                 print(f"  ✗ File not found: {file_path}")
 

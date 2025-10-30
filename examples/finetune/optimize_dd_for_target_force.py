@@ -631,7 +631,9 @@ def main():
 
     DD_NEURONS = baseline_results["dd_parameters"]["dd_neurons"]
     CONN_PROBABILITY = baseline_results["dd_parameters"]["conn_probability"]
-    MVC_SHAPE_VALUE = baseline_results["dd_parameters"]["mvc_shape_value"]
+
+    # Get gamma shape - this is the shape value at 100% MVC used in baseline optimization
+    MVC_SHAPE_VALUE = baseline_results["dd_parameters"]["gamma_shape"]
 
     # Load Gfluctdv settings if present in baseline optimization
     GFLUCTDV_ENABLED = baseline_results.get("gfluctdv_enabled", False)

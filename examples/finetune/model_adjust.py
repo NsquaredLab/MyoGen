@@ -744,9 +744,12 @@ plt.show()
 #
 
 
-def calculate_isi_statistics(spiketrains, simulation_time_ms):
+def calculate_isi_statistics(spiketrains, simulation_time_ms, plateau_start_ms=None, plateau_end_ms=None):
     """
     Calculate inter-spike interval (ISI) statistics from spike trains.
+
+    IMPORTANT: ISI and CV should only be computed during the plateau phase
+    where firing is stable, not during ramp-up/down where rates change by design.
 
     Parameters
     ----------
@@ -754,6 +757,12 @@ def calculate_isi_statistics(spiketrains, simulation_time_ms):
         List of spike train objects to analyze.
     simulation_time_ms : float
         Total simulation duration in milliseconds.
+    plateau_start_ms : float, optional
+        Start time of plateau phase in milliseconds.
+        If provided along with plateau_end_ms, only spikes within
+        the plateau phase will be used for ISI/CV calculation.
+    plateau_end_ms : float, optional
+        End time of plateau phase in milliseconds.
 
     Returns
     -------
@@ -767,12 +776,23 @@ def calculate_isi_statistics(spiketrains, simulation_time_ms):
     duration_s = simulation_time_ms / 1000.0
 
     for idx, spiketrain in enumerate(spiketrains):
-        if len(spiketrain) > 2:  # Need at least 3 spikes for meaningful CV
-            # Compute mean firing rate (Hz) from spike count over duration
-            mean_rate = len(spiketrain) / duration_s
+        # Filter to plateau phase if boundaries are provided
+        if plateau_start_ms is not None and plateau_end_ms is not None:
+            # Use time_slice to extract only plateau spikes
+            plateau_spiketrain = spiketrain.time_slice(
+                plateau_start_ms * pq.ms, plateau_end_ms * pq.ms
+            )
+            # Recalculate duration for plateau phase only
+            duration_s = (plateau_end_ms - plateau_start_ms) / 1000.0
+        else:
+            plateau_spiketrain = spiketrain
 
-            # Compute CV of inter-spike intervals
-            spike_times_s = spiketrain.rescale(pq.s).magnitude
+        if len(plateau_spiketrain) > 2:  # Need at least 3 spikes for meaningful CV
+            # Compute mean firing rate (Hz) from spike count over duration
+            mean_rate = len(plateau_spiketrain) / duration_s
+
+            # Compute CV of inter-spike intervals (only from plateau phase)
+            spike_times_s = plateau_spiketrain.rescale(pq.s).magnitude
             isis = np.diff(spike_times_s)
             cv = np.std(isis) / np.mean(isis) if len(isis) > 1 else 0.0
 
@@ -813,14 +833,30 @@ def plot_isi_statistics_with_thresholds():
     isi_data = pd.read_csv(csv_path)
 
     # Calculate ISI statistics from simulated spike trains for each muscle
+    # IMPORTANT: Only analyze plateau phase where firing is stable
     simulated_fr_VLVM, simulated_cv_VLVM, simulated_neuron_idx_VLVM = (
-        calculate_isi_statistics(mn_segment_VLVM.spiketrains, simulation_time)
+        calculate_isi_statistics(
+            mn_segment_VLVM.spiketrains,
+            simulation_time,
+            plateau_start_ms=ramp_up_end,
+            plateau_end_ms=plateau_end
+        )
     )
     simulated_fr_TA, simulated_cv_TA, simulated_neuron_idx_TA = (
-        calculate_isi_statistics(mn_segment_TA.spiketrains, simulation_time)
+        calculate_isi_statistics(
+            mn_segment_TA.spiketrains,
+            simulation_time,
+            plateau_start_ms=ramp_up_end,
+            plateau_end_ms=plateau_end
+        )
     )
     simulated_fr_FDI, simulated_cv_FDI, simulated_neuron_idx_FDI = (
-        calculate_isi_statistics(mn_segment_FDI.spiketrains, simulation_time)
+        calculate_isi_statistics(
+            mn_segment_FDI.spiketrains,
+            simulation_time,
+            plateau_start_ms=ramp_up_end,
+            plateau_end_ms=plateau_end
+        )
     )
 
     # Color palette for muscles (map experimental VM/VL to simulated VLVM)

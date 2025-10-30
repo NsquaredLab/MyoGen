@@ -559,18 +559,27 @@ for i, spiketrain in enumerate(mn_segment.spiketrains):
         mn_instantaneous_rates.append(rate)
         active_neuron_ids.append(i)
 
-        # Compute mean firing rate (Hz) from raw spikes
-        duration_s = simulation_time / 1000.0
-        mean_rate = len(spiketrain) / duration_s
+        # IMPORTANT: Compute ISI/CV only during plateau phase where firing is stable
+        # Filter spike train to plateau phase
+        plateau_spiketrain = spiketrain.time_slice(
+            ramp_up_end * pq.ms, plateau_end * pq.ms
+        )
+
+        # Compute mean firing rate (Hz) from plateau spikes only
+        plateau_duration_s = (plateau_end - ramp_up_end) / 1000.0
+        mean_rate = len(plateau_spiketrain) / plateau_duration_s if len(plateau_spiketrain) > 0 else 0.0
         mean_firing_rates.append(mean_rate)
 
-        # Compute CV of inter-spike intervals
-        spike_times = spiketrain.rescale(pq.s).magnitude
-        isis = np.diff(spike_times)
-        cv = np.std(isis) / np.mean(isis) if len(isis) > 1 else 0.0
+        # Compute CV of inter-spike intervals (plateau phase only)
+        if len(plateau_spiketrain) > 1:
+            spike_times = plateau_spiketrain.rescale(pq.s).magnitude
+            isis = np.diff(spike_times)
+            cv = np.std(isis) / np.mean(isis) if len(isis) > 1 else 0.0
+        else:
+            cv = 0.0
         cv_isi.append(cv)
 
-        print(f"Neuron {i}: Mean firing rate = {mean_rate:.2f} Hz, CV = {cv:.2f}")
+        print(f"Neuron {i}: Mean firing rate (plateau) = {mean_rate:.2f} Hz, CV = {cv:.2f}")
 
 # Population averages
 pop_mean_rate = np.mean(mean_firing_rates)

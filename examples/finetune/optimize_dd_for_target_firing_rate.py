@@ -45,25 +45,29 @@ def parse_args():
     p.add_argument("--n-dd-neurons-min", type=int, default=100)
     p.add_argument("--n-dd-neurons-max", type=int, default=1000)
     p.add_argument("--n-motor-units", type=int, default=100)
-    p.add_argument("--gamma-shape-min", type=float, default=3.0)
-    p.add_argument("--gamma-shape-max", type=float, default=10.0)
+    p.add_argument(
+        "--gamma-shape",
+        type=float,
+        default=3.0,
+        help="Fixed gamma shape parameter for descending drive variability",
+    )
     # Gfluctdv (fluctuating conductance noise) parameters
     p.add_argument(
         "--enable-gfluctdv",
         action="store_true",
-        help="Enable Gfluctdv (fluctuating conductance) noise mechanism for motor neurons"
+        help="Enable Gfluctdv (fluctuating conductance) noise mechanism for motor neurons",
     )
     p.add_argument(
         "--gfluctdv-noise-min",
         type=float,
         default=5e-6,
-        help="Minimum Gfluctdv noise amplitude (S/cm²) for optimization search"
+        help="Minimum Gfluctdv noise amplitude (S/cm²) for optimization search",
     )
     p.add_argument(
         "--gfluctdv-noise-max",
         type=float,
         default=3e-5,
-        help="Maximum Gfluctdv noise amplitude (S/cm²) for optimization search"
+        help="Maximum Gfluctdv noise amplitude (S/cm²) for optimization search",
     )
     return p.parse_args()
 
@@ -80,8 +84,7 @@ TIMEOUT_SECONDS = 3600
 STUDY_PREFIX = "VLVM_"
 N_DD_NEURONS_MIN = 100
 N_DD_NEURONS_MAX = 1000
-GAMMA_SHAPE_MIN = 3.0
-GAMMA_SHAPE_MAX = 10.0
+GAMMA_SHAPE = 3.0
 SYNAPTIC_WEIGHT = 0.05
 RESULTS_DIR = Path("./results/dd_optimization")
 # Gfluctdv parameters
@@ -91,15 +94,18 @@ GFLUCTDV_NOISE_MAX = 3e-5
 
 
 def objective(trial):
-    """Optuna multi-objective optimization function."""
+    """Optuna single-objective optimization function.
+
+    Optimizes network parameters (dd_neurons, conn_prob, dd_drive) to match
+    target firing rate statistics while using fixed gamma shape input.
+    """
     try:
         dd_neurons = trial.suggest_int("dd_neurons", N_DD_NEURONS_MIN, N_DD_NEURONS_MAX)
         conn_probability = trial.suggest_float("conn_prob", 0.1, 1.0)
-        dd_drive__Hz = trial.suggest_float("dd_drive", 5.0, 250.0)
-        mvc_shape_value = trial.suggest_float(
-            "mvc_shape_value", GAMMA_SHAPE_MIN, GAMMA_SHAPE_MAX
-        )
-        gamma_shape = get_gamma_shape_for_mvc(100, mvc_shape_value=mvc_shape_value)
+        dd_drive__Hz = trial.suggest_float("dd_drive", 5.0, 1000.0)
+
+        # Use fixed gamma shape (input parameter, not optimized)
+        gamma_shape = get_gamma_shape_for_mvc(100, mvc_shape_value=GAMMA_SHAPE)
 
         # Gfluctdv noise amplitude (if enabled)
         if ENABLE_GFLUCTDV:
@@ -200,50 +206,51 @@ def objective(trial):
         stats = calculate_firing_rate_statistics(mn_segment.spiketrains)
         n_active = stats["n_active"]
         if n_active < 10:
-            return 1000.0, 1000.0, 1000.0
+            return 1000.0
 
         fr_mean, fr_std = stats["FR_mean"], stats["FR_std"]
-        data = stats["firing_rates"]
 
-        # Calculate Wasserstein distance between actual and theoretical normal distribution
-        if len(data) > 0:
-            wdist = wasserstein_distance(
-                data, np.random.normal(fr_mean, fr_std, len(data))
-            )
-        else:
-            wdist = 0.0
+        # Simple normalized errors (just mean and std)
+        mean_error = abs(fr_mean - TARGET_FR_MEAN__HZ) / TARGET_FR_MEAN__HZ
+        std_error = abs(fr_std - TARGET_FR_STD__HZ) / TARGET_FR_STD__HZ
 
-        mean_error = np.square((fr_mean - TARGET_FR_MEAN__HZ) / TARGET_FR_MEAN__HZ)
-        std_error = np.square((fr_std - TARGET_FR_STD__HZ) / TARGET_FR_STD__HZ)
-        firing_rate_error = mean_error + std_error + wdist
+        # Soft biological plausibility penalties
+        plausibility_penalty = 0.0
+        # Penalize very high connectivity (> 0.7 is less realistic)
+        if conn_probability > 0.7:
+            plausibility_penalty += 0.1 * (conn_probability - 0.7)
+        # Penalize excessive neurons (> 800 is less common)
+        if dd_neurons > 800:
+            plausibility_penalty += 0.1 * ((dd_neurons - 800) / 200)
 
-        conn_prob_deviation = abs(conn_probability - TARGET_CONN_PROB)
-        n_dd_deviation = abs(dd_neurons - TARGET_N_DD_NEURONS) / TARGET_N_DD_NEURONS
+        # Single objective: match target FR stats + prefer realistic parameters
+        objective_value = mean_error + std_error + plausibility_penalty
 
         trial.set_user_attr("n_active", n_active)
         trial.set_user_attr("FR_mean", fr_mean)
         trial.set_user_attr("FR_std", fr_std)
-        trial.set_user_attr("firing_rate_error", firing_rate_error)
-        trial.set_user_attr("wasserstein_distance", float(wdist))
-        trial.set_user_attr("conn_prob_deviation", conn_prob_deviation)
+        trial.set_user_attr("mean_error", float(mean_error))
+        trial.set_user_attr("std_error", float(std_error))
+        trial.set_user_attr("plausibility_penalty", float(plausibility_penalty))
+        trial.set_user_attr("objective_value", float(objective_value))
         trial.set_user_attr("dd_neurons", dd_neurons)
         trial.set_user_attr("conn_probability", float(conn_probability))
         trial.set_user_attr("synaptic_weight", float(SYNAPTIC_WEIGHT))
         trial.set_user_attr("dd_drive__Hz", float(dd_drive__Hz))
         trial.set_user_attr("gamma_shape", float(gamma_shape))
-        trial.set_user_attr("mvc_shape_value", float(mvc_shape_value))
         trial.set_user_attr("gfluctdv_enabled", ENABLE_GFLUCTDV)
         trial.set_user_attr("gfluctdv_noise_amplitude", float(gfluctdv_noise_amplitude))
 
         if trial.number % 1 == 0:
             print(
-                f"Trial {trial.number}: FR={fr_mean:.1f}±{fr_std:.1f}Hz, err={firing_rate_error:.3f}"
+                f"Trial {trial.number}: FR={fr_mean:.1f}±{fr_std:.1f}Hz, "
+                f"obj={objective_value:.3f} (mean_err={mean_error:.3f}, std_err={std_error:.3f})"
             )
 
-        return firing_rate_error, conn_prob_deviation, n_dd_deviation
+        return objective_value
 
     except Exception:
-        return 1000.0, 1000.0, 1000.0
+        return 1000.0
 
 
 def main():
@@ -255,8 +262,7 @@ def main():
         STUDY_PREFIX, \
         N_DD_NEURONS_MIN, \
         N_DD_NEURONS_MAX, \
-        GAMMA_SHAPE_MIN, \
-        GAMMA_SHAPE_MAX, \
+        GAMMA_SHAPE, \
         RESULTS_DIR, \
         ENABLE_GFLUCTDV, \
         GFLUCTDV_NOISE_MIN, \
@@ -275,8 +281,7 @@ def main():
     STUDY_PREFIX = args.study_prefix
     N_DD_NEURONS_MIN = args.n_dd_neurons_min
     N_DD_NEURONS_MAX = args.n_dd_neurons_max
-    GAMMA_SHAPE_MIN = args.gamma_shape_min
-    GAMMA_SHAPE_MAX = args.gamma_shape_max
+    GAMMA_SHAPE = args.gamma_shape
     ENABLE_GFLUCTDV = args.enable_gfluctdv
     GFLUCTDV_NOISE_MIN = args.gfluctdv_noise_min
     GFLUCTDV_NOISE_MAX = args.gfluctdv_noise_max
@@ -291,9 +296,9 @@ def main():
 
     storage_name = f"sqlite:///{RESULTS_DIR}/{STUDY_PREFIX}optuna_dd_optimization.db"
     study = optuna.create_study(
-        directions=["minimize", "minimize", "minimize"],
+        direction="minimize",
         sampler=optuna.samplers.TPESampler(seed=42, multivariate=True),
-        study_name=f"{STUDY_PREFIX}dd_multiobjective_optimization",
+        study_name=f"{STUDY_PREFIX}dd_optimization",
         storage=storage_name,
         load_if_exists=True,
     )
@@ -302,26 +307,15 @@ def main():
         objective, n_trials=N_TRIALS, timeout=TIMEOUT_SECONDS, show_progress_bar=True
     )
 
-    pareto_trials = study.best_trials
-    print(f"Pareto solutions: {len(pareto_trials)}/{len(study.trials)}")
-
-    best_fr_trial = min(pareto_trials, key=lambda t: t.values[0])
-    best_balanced_trial = min(
-        pareto_trials,
-        key=lambda t: sum(
-            t.values[i] / max(trial.values[i] for trial in pareto_trials)
-            for i in range(3)
-        ),
-    )
-
+    best_trial = study.best_trial
+    print(f"\nCompleted {len(study.trials)} trials")
     print(
-        f"\nBest FR: Trial {best_fr_trial.number} | "
-        f"FR={best_fr_trial.user_attrs.get('FR_mean'):.1f}±{best_fr_trial.user_attrs.get('FR_std'):.1f}Hz | "
-        f"drive={best_fr_trial.user_attrs.get('dd_drive__Hz'):.1f}Hz"
-    )
-    print(
-        f"Best Balanced: Trial {best_balanced_trial.number} | "
-        f"FR={best_balanced_trial.user_attrs.get('FR_mean'):.1f}±{best_balanced_trial.user_attrs.get('FR_std'):.1f}Hz"
+        f"\nBest Trial {best_trial.number}: "
+        f"FR={best_trial.user_attrs.get('FR_mean'):.1f}±{best_trial.user_attrs.get('FR_std'):.1f}Hz | "
+        f"Objective={best_trial.value:.3f} | "
+        f"Drive={best_trial.user_attrs.get('dd_drive__Hz'):.1f}Hz | "
+        f"Neurons={best_trial.user_attrs.get('dd_neurons')} | "
+        f"Conn={best_trial.user_attrs.get('conn_probability'):.2f}"
     )
 
     def trial_to_dict(t):
@@ -334,24 +328,29 @@ def main():
                 "conn_probability",
                 "dd_drive__Hz",
                 "gamma_shape",
-                "mvc_shape_value",
+                "mean_error",
+                "std_error",
+                "plausibility_penalty",
+                "objective_value",
             ]
         }
         # Add Gfluctdv parameters if enabled
         if ENABLE_GFLUCTDV:
-            base_params["gfluctdv_noise_amplitude"] = t.user_attrs.get("gfluctdv_noise_amplitude")
+            base_params["gfluctdv_noise_amplitude"] = t.user_attrs.get(
+                "gfluctdv_noise_amplitude"
+            )
         return base_params
 
     results = {
         "target": {
             "FR_mean__Hz": TARGET_FR_MEAN__HZ,
             "FR_std__Hz": TARGET_FR_STD__HZ,
-            "conn_prob": TARGET_CONN_PROB,
         },
-        "gfluctdv_enabled": ENABLE_GFLUCTDV,
-        "best_fr": trial_to_dict(best_fr_trial),
-        "best_balanced": trial_to_dict(best_balanced_trial),
-        "pareto_front": [trial_to_dict(t) for t in pareto_trials],
+        "input_parameters": {
+            "gamma_shape": GAMMA_SHAPE,
+            "gfluctdv_enabled": ENABLE_GFLUCTDV,
+        },
+        "best_trial": trial_to_dict(best_trial),
     }
 
     json_path = RESULTS_DIR / f"{STUDY_PREFIX}dd_optimized_params.json"

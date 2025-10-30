@@ -60,14 +60,14 @@ def main():
     with open(params_file, "r") as f:
         results = json.load(f)
 
-    dd_params = results["best_fr"]
+    dd_params = results["best_trial"]
     dd_neurons = dd_params["dd_neurons"]
     conn_probability = dd_params["conn_probability"]
     dd_drive__Hz = dd_params["dd_drive__Hz"]
     gamma_shape = dd_params["gamma_shape"]
 
     # Load Gfluctdv settings if present
-    gfluctdv_enabled = results.get("gfluctdv_enabled", False)
+    gfluctdv_enabled = results.get("input_parameters", {}).get("gfluctdv_enabled", False)
     gfluctdv_noise_amplitude = dd_params.get("gfluctdv_noise_amplitude", None)
 
     print(f"\n{STUDY_PREFIX}Force Validation")
@@ -205,6 +205,7 @@ def main():
     # Save results
     force_results = {
         "dd_parameters": dd_params,
+        "gfluctdv_enabled": gfluctdv_enabled,
         "firing_rate": {
             "mean__Hz": float(fr_mean),
             "std__Hz": float(fr_std),

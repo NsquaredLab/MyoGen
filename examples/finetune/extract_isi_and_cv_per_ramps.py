@@ -28,13 +28,13 @@ from pathlib import Path
 import elephant
 import joblib
 import numpy as np
-import pandas as pd
 import quantities as pq
 from matplotlib import pyplot as plt
 from neo import AnalogSignal, Block, Segment, SpikeTrain
 from neuron import h
 from tqdm import tqdm
 
+from examples.finetune.helper import calculate_firing_rate_statistics
 from myogen import RANDOM_GENERATOR, set_random_seed
 from myogen.simulator.core.physiological_distribution import RecruitmentThresholds
 from myogen.simulator.neuron import Network
@@ -153,9 +153,7 @@ print(
     f"  Gamma shape:      {DD_SHAPE_PARAMETER:.2f} (CV={1 / DD_SHAPE_PARAMETER**0.5:.3f})"
 )
 if GFLUCTDV_ENABLED:
-    print(
-        f"  Gfluctdv:         ENABLED (noise={GFLUCTDV_NOISE_AMPLITUDE:.2e} S/cm²)"
-    )
+    print(f"  Gfluctdv:         ENABLED (noise={GFLUCTDV_NOISE_AMPLITUDE:.2e} S/cm²)")
 
 ##############################################################################
 # Configuration
@@ -163,7 +161,7 @@ if GFLUCTDV_ENABLED:
 
 CONFIG_FILE = "alpha_mn_default.yaml"
 RAMP_UP_DURATION__ms = 1e3
-PLATEAU_DURATION__ms = 20e3
+PLATEAU_DURATION__ms = 2e3
 RAMP_DOWN_DURATION__ms = 1e3
 REST_BEFORE__ms = 1e3
 REST_AFTER__ms = 1e3
@@ -200,7 +198,7 @@ motor_neuron_pool = AlphaMN__Pool(
 # Uses the optimized noise amplitude from the DD optimization.
 
 if GFLUCTDV_ENABLED and GFLUCTDV_NOISE_AMPLITUDE is not None:
-    print(f"\nApplying Gfluctdv to motor neurons (matching DD optimization)...")
+    print("\nApplying Gfluctdv to motor neurons (matching DD optimization)...")
     print(f"  Noise amplitude: {GFLUCTDV_NOISE_AMPLITUDE:.2e} S/cm²")
     for cell in motor_neuron_pool:
         cell.insert_Gfluctdv()
@@ -290,9 +288,6 @@ for i, t in enumerate(time_array):
         trapezoid_drive[i] = dd_baseline__Hz
 
 # Add small noise for realism
-trapezoid_drive = trapezoid_drive + np.clip(
-    RANDOM_GENERATOR.normal(0, 1.0, size=time_points), 0, None
-)
 
 # Create AnalogSignal
 sinusoidal_drive = AnalogSignal(
@@ -511,44 +506,16 @@ if len(mn_firing_rates) > 0:
 # Calculate ISI and CV for each motor unit and save to CSV file
 
 
-def calculate_isi_cv_statistics(spiketrains):
-    """
-    Calculate ISI and CV statistics for each motor unit using Elephant library.
-
-    Parameters
-    ----------
-    spiketrains : list of neo.SpikeTrain
-        List of spike train objects to analyze.
-
-    Returns
-    -------
-    pd.DataFrame
-        DataFrame with columns: MU_ID, mean_firing_rate_Hz, CV_ISI
-    """
-    results = []
-    for mu_id, spiketrain in enumerate(spiketrains):
-        if len(spiketrain) > 2:  # Need at least 3 spikes for meaningful CV
-            # Use Elephant to compute ISI
-            isis_values = elephant.statistics.isi(spiketrain.rescale(pq.s))
-
-            if len(isis_values) > 1:
-                # Compute CV of inter-spike intervals
-                isis_array = isis_values.magnitude
-                cv = np.std(isis_array) / np.mean(isis_array)
-
-                # Compute mean firing rate (Hz) using Watanabe 2013 method: 1 / mean(ISI)
-                mean_rate = 1.0 / np.mean(isis_array)
-
-                results.append(
-                    {"MU_ID": mu_id, "mean_firing_rate_Hz": mean_rate, "CV_ISI": cv}
-                )
-
-    return pd.DataFrame(results)
-
-
 # Calculate ISI/CV statistics for motor neurons
 print("\n📊 Calculating ISI and CV statistics...")
-isi_cv_df = calculate_isi_cv_statistics(mn_segment.spiketrains)
+print(f"  Analyzing only plateau phase: {ramp_up_end:.1f} - {plateau_end:.1f} ms")
+isi_cv_df = calculate_firing_rate_statistics(
+    mn_segment.spiketrains,
+    plateau_start_ms=ramp_up_end,
+    plateau_end_ms=plateau_end,
+    return_per_neuron=True,
+    min_spikes_for_cv=3,
+)
 
 # Save to CSV with MVC level suffix
 output_file = save_path / f"{STUDY_PREFIX}isi_cv_data_{MUSCLE_TYPE}_{MVC_LEVEL}.csv"
@@ -717,6 +684,8 @@ plt.savefig(
 )
 plt.close(fig2)
 
-print(f"✅ Saved discharge rate plot to: {save_path / f'{STUDY_PREFIX}discharge_rates_{MUSCLE_TYPE}_{MVC_LEVEL}.png'}")
+print(
+    f"✅ Saved discharge rate plot to: {save_path / f'{STUDY_PREFIX}discharge_rates_{MUSCLE_TYPE}_{MVC_LEVEL}.png'}"
+)
 
 print("\n✅ Simulation complete! ISI/CV data extracted and saved.")
