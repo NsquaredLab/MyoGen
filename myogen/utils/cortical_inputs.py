@@ -2,7 +2,8 @@ from typing import cast
 
 import numpy as np
 
-from myogen.utils.types import CORTICAL_INPUT__MATRIX, beartowertype
+from myogen.utils.decorators import beartowertype
+from myogen.utils.types import CORTICAL_INPUT__MATRIX
 
 
 @beartowertype

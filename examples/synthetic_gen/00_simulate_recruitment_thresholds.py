@@ -49,7 +49,7 @@ n_motor_units = 100  # Number of motor units in the pool
 recruitment_range = 100  # Recruitment range (max_threshold / min_threshold)
 
 # Create results directory
-save_path = Path("./results")
+save_path = Path("./results/synthetic_gen")
 save_path.mkdir(exist_ok=True)
 
 ##############################################################################

@@ -208,10 +208,11 @@ class IntramuscularEMG:
                 "Muscle model must have fiber assignments. Call muscle.assign_mfs2mns() first."
             )
 
-        self._motor_units = []
+        # Initialize list with None for all MUs (will be filled with simulators)
+        self._motor_units = [None] * self._n_motor_units
 
         for mu_idx in tqdm(
-            self._MUs_to_simulate,
+            range(self._n_motor_units),
             desc="Creating motor unit simulators",
             unit="Simulator",
         ):
@@ -220,24 +221,22 @@ class IntramuscularEMG:
             if not np.any(fiber_mask):
                 continue
 
-            # Create motor unit simulator
-            self._motor_units.append(
-                MotorUnitSim(
-                    muscle_fiber_centers__mm=self._muscle_model.muscle_fiber_centers__mm[
-                        fiber_mask
-                    ],
-                    muscle_length__mm=self._muscle_model.length__mm,
-                    muscle_fiber_diameters__mm=self._muscle_model.muscle_fiber_diameters__mm[
-                        fiber_mask
-                    ],
-                    muscle_fiber_conduction_velocity__mm_per_s=self._muscle_model.muscle_fiber_conduction_velocities__mm_per_s[
-                        fiber_mask
-                    ],
-                    neuromuscular_junction_conduction_velocities__mm_per_s=self._branch_cvs__mm_per_s,
-                    nominal_center__mm=self._muscle_model.innervation_center_positions__mm[
-                        mu_idx
-                    ],
-                )
+            # Create motor unit simulator at the correct index
+            self._motor_units[mu_idx] = MotorUnitSim(
+                muscle_fiber_centers__mm=self._muscle_model.muscle_fiber_centers__mm[
+                    fiber_mask
+                ],
+                muscle_length__mm=self._muscle_model.length__mm,
+                muscle_fiber_diameters__mm=self._muscle_model.muscle_fiber_diameters__mm[
+                    fiber_mask
+                ],
+                muscle_fiber_conduction_velocity__mm_per_s=self._muscle_model.muscle_fiber_conduction_velocities__mm_per_s[
+                    fiber_mask
+                ],
+                neuromuscular_junction_conduction_velocities__mm_per_s=self._branch_cvs__mm_per_s,
+                nominal_center__mm=self._muscle_model.innervation_center_positions__mm[
+                    mu_idx
+                ],
             )
 
     def _simulate_neuromuscular_junctions(self) -> None:
@@ -287,33 +286,48 @@ class IntramuscularEMG:
         if not self._motor_units:
             raise ValueError("Must call _initialize_motor_units() first")
 
-        # Calculate SFAPs for each motor unit
-        for i, mu_sim in enumerate(self._motor_units):
+        # Calculate SFAPs for each motor unit (skip None entries)
+        for mu_idx, mu_sim in enumerate(self._motor_units):
+            if mu_sim is None:
+                continue
             mu_sim.calc_sfaps(
-                index=i,
+                index=mu_idx,
                 dt=self._dt,
                 dz=self._dz,
                 electrode_positions=self._electrode_array.pts,
             )
 
         # Calculate MUAPs (no jitter for templates)
-        muaps_list: list[np.ndarray] = []
+        muaps_list: list[np.ndarray | None] = []
         max_length = 0
 
         for mu_sim in tqdm(self._motor_units, desc="Computing MUAPs", unit="MU"):
+            if mu_sim is None:
+                muaps_list.append(None)
+                continue
             muap = mu_sim.calc_muap(jitter_std=0.0)  # No jitter for templates
             muaps_list.append(muap)
             max_length = max(max_length, muap.shape[0])
 
         block = Block()
-        for muap in muaps_list:
-            block.segments.append(segment := Segment(name=f"MUAP_{muap.shape[0]}"))
-            segment.analogsignals.append(
-                AnalogSignal(
-                    muap * pq.dimensionless,
-                    sampling_rate=self._sampling_frequency__Hz * pq.Hz,
+        for mu_idx, muap in enumerate(muaps_list):
+            if muap is None:
+                # Create empty segment for MUs with no fibers
+                block.segments.append(segment := Segment(name=f"MUAP_None"))
+                segment.analogsignals.append(
+                    AnalogSignal(
+                        np.zeros((1, len(self._electrode_array.pts))) * pq.dimensionless,
+                        sampling_rate=self._sampling_frequency__Hz * pq.Hz,
+                    )
                 )
-            )
+            else:
+                block.segments.append(segment := Segment(name=f"MUAP_{muap.shape[0]}"))
+                segment.analogsignals.append(
+                    AnalogSignal(
+                        muap * pq.dimensionless,
+                        sampling_rate=self._sampling_frequency__Hz * pq.Hz,
+                    )
+                )
 
         self._muaps__Block = block
 
@@ -526,16 +540,11 @@ class IntramuscularEMG:
                     # Process all active MUs on GPU
                     convolutions = []
                     for mu_idx in MUs_to_simulate.intersection(pool_active_neurons):
-                        # Find the MUAP index in our list of simulated MUs
-                        muap_idx = (
-                            self._MUs_to_simulate.index(mu_idx)
-                            if mu_idx in self._MUs_to_simulate
-                            else None
-                        )
-                        if muap_idx is not None and muap_idx < muap_gpu.shape[0]:
+                        # Use mu_idx directly since muap_shapes now contains all MUs
+                        if mu_idx < muap_gpu.shape[0]:
                             conv = cp.correlate(
                                 spike_gpu[pool_idx, mu_idx],
-                                muap_gpu[muap_idx, e_idx],
+                                muap_gpu[mu_idx, e_idx],
                                 mode="same",
                             )
                             convolutions.append(conv)
@@ -564,16 +573,11 @@ class IntramuscularEMG:
                     # Process all active MUs
                     convolutions = []
                     for mu_idx in MUs_to_simulate.intersection(pool_active_neurons):
-                        # Find the MUAP index in our list of simulated MUs
-                        muap_idx = (
-                            self._MUs_to_simulate.index(mu_idx)
-                            if mu_idx in self._MUs_to_simulate
-                            else None
-                        )
-                        if muap_idx is not None and muap_idx < muap_shapes.shape[0]:
+                        # Use mu_idx directly since muap_shapes now contains all MUs
+                        if mu_idx < muap_shapes.shape[0]:
                             conv = np.correlate(
                                 spike_trains[pool_idx, mu_idx],
-                                muap_shapes[muap_idx, e_idx],
+                                muap_shapes[mu_idx, e_idx],
                                 mode="same",
                             )
                             convolutions.append(conv)
@@ -641,14 +645,16 @@ class IntramuscularEMG:
         Add noise to the electrode array.
 
         This method adds realistic noise to the simulated intramuscular EMG signals
-        based on a specified signal-to-noise ratio. The noise characteristics
-        can be customized to match different recording conditions.
+        based on a specified signal-to-noise ratio. The noise is calculated
+        and applied independently for each electrode channel to ensure that
+        channels with different signal amplitudes maintain the specified SNR.
 
         Parameters
         ----------
         snr__dB : float
             Signal-to-noise ratio in dB. Higher values result in cleaner signals.
             Typical intramuscular EMG has SNR ranging from 15-50 dB.
+            The SNR is applied independently to each electrode channel.
         noise_type : str, default="gaussian"
             Type of noise to add. Currently supports "gaussian" for white noise.
 
@@ -662,6 +668,12 @@ class IntramuscularEMG:
         ------
         ValueError
             If intramuscular EMG has not been simulated. Call simulate_intramuscular_emg() first.
+
+        Notes
+        -----
+        The noise is computed per-channel (per electrode) to maintain the specified
+        SNR independently across all channels. This ensures that electrodes with
+        different signal amplitudes receive appropriately scaled noise.
         """
         if self._intramuscular_emg__Block is None:
             raise ValueError(
@@ -676,21 +688,28 @@ class IntramuscularEMG:
 
             # Get the EMG signal data
             emg_signal = segment.analogsignals[0]
-            emg_array = emg_signal.magnitude
+            emg_array = emg_signal.magnitude  # Shape: (time, n_electrodes)
 
-            # Calculate signal power
-            signal_power = np.mean(emg_array**2)
+            # Calculate signal power PER CHANNEL (per electrode)
+            # Mean along time axis (axis=0) gives power per electrode
+            signal_power_per_channel = np.mean(emg_array**2, axis=0)  # Shape: (n_electrodes,)
 
-            # Calculate noise power
+            # Calculate noise power per channel
             snr_linear = 10 ** (snr__dB / 10)
-            noise_power = signal_power / snr_linear
+            noise_power_per_channel = signal_power_per_channel / snr_linear
+            noise_std_per_channel = np.sqrt(noise_power_per_channel)  # Shape: (n_electrodes,)
 
             # Generate noise
             if noise_type.lower() == "gaussian":
-                noise_std = np.sqrt(noise_power)
+                # Generate standard normal noise, then scale per channel
                 noise = RANDOM_GENERATOR.normal(
-                    loc=0.0, scale=noise_std, size=emg_array.shape
+                    loc=0.0, scale=1.0, size=emg_array.shape
                 )
+                # Broadcast noise_std_per_channel along time axis
+                # noise shape: (time, n_electrodes)
+                # noise_std_per_channel shape: (n_electrodes,)
+                # Broadcasting: (time, n_electrodes) * (1, n_electrodes)
+                noise = noise * noise_std_per_channel[np.newaxis, :]
             else:
                 raise ValueError(f"Unsupported noise type: {noise_type}")
 

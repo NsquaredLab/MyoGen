@@ -37,7 +37,7 @@ from myogen.utils.plotting.muscle import plot_innervation_areas_2d, plot_mf_cent
 # Since the **recruitment thresholds** are already generated, we can load them from the previous example using ``joblib``.
 
 # Load recruitment thresholds
-save_path = Path("./results")
+save_path = Path("./results/synthetic_gen")
 
 recruitment_thresholds = joblib.load(save_path / "thresholds.pkl")
 

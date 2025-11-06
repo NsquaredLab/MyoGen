@@ -1069,7 +1069,9 @@ def main():
                 total_motor_units += len(df)
                 total_combinations += 1
 
-    print(f"Total: {total_motor_units} MUs | {len(all_data)} muscles | {total_combinations} combinations ✅")
+    print(
+        f"Total: {total_motor_units} MUs | {len(all_data)} muscles | {total_combinations} combinations ✅"
+    )
 
 
 if __name__ == "__main__":

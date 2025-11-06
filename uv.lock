@@ -957,6 +957,7 @@ dependencies = [
     { name = "matplotlib" },
     { name = "mpi4py" },
     { name = "neuron", marker = "sys_platform == 'linux'" },
+    { name = "noise" },
     { name = "numba" },
     { name = "numpy" },
     { name = "optuna" },
@@ -1001,6 +1002,7 @@ requires-dist = [
     { name = "matplotlib", specifier = ">=3.10.1" },
     { name = "mpi4py", specifier = ">=4.0.3" },
     { name = "neuron", marker = "sys_platform == 'linux'", specifier = "==8.2.7" },
+    { name = "noise", specifier = ">=1.2.2" },
     { name = "numba", specifier = ">=0.61.2" },
     { name = "numpy", specifier = ">=1.26" },
     { name = "optuna", specifier = ">=4.5.0" },
@@ -1090,6 +1092,12 @@ wheels = [
     { url = "https://files.pythonhosted.org/packages/3e/69/5a8d498fd3096726768ab875b0e9a633cfdb68f976a6d520b6158b07ed7c/neuron-8.2.7-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:df6374137d6218e817645d37c06c8d0cd4a3afc910de70ffd63b7a4a2f57d633", size = 14926180, upload-time = "2025-05-22T23:49:08.907Z" },
     { url = "https://files.pythonhosted.org/packages/48/6c/f0191f7c7f757a0943669cd3793c215ca58133b8c5c722d7670553cd614f/neuron-8.2.7-cp313-cp313-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:daa7e1b63bf7154b62928dcb141494e311a5607c3394c6aed3b0f94a52d8ad93", size = 14894860, upload-time = "2025-05-22T23:49:17.741Z" },
 ]
+
+[[package]]
+name = "noise"
+version = "1.2.2"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/18/29/bb830ee6d934311e17a7a4fa1368faf3e73fbb09c0d80fc44e41828df177/noise-1.2.2.tar.gz", hash = "sha256:57a2797436574391ff63a111e852e53a4164ecd81ad23639641743cd1a209b65", size = 125615, upload-time = "2015-03-29T02:57:45.115Z" }
 
 [[package]]
 name = "numba"

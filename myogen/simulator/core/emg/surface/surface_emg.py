@@ -199,11 +199,14 @@ class SurfaceEMG:
             self._sampling_points_in_t_and_z_domains,
         )
 
-        # Pre-calculate innervation zones
+        # Get total number of motor units
+        n_motor_units = len(number_of_fibers_per_MUs)
+
+        # Pre-calculate innervation zones for all MUs
         innervation_zones = RANDOM_GENERATOR.uniform(
             low=-innervation_zone_variance / 2,
             high=innervation_zone_variance / 2,
-            size=len(self._MUs_to_simulate),
+            size=n_motor_units,
         )
 
         block = Block()
@@ -215,8 +218,8 @@ class SurfaceEMG:
             A_matrix = None
             B_incomplete = None
 
-            # Process each motor unit
-            for MU_number, MU_index in enumerate(self._MUs_to_simulate):
+            # Process all motor units (not just selected ones for consistent normalization)
+            for MU_index in range(n_motor_units):
                 segment = Segment(name=f"MUAP_{MU_index}")
                 group.segments.append(segment)
 
@@ -231,18 +234,26 @@ class SurfaceEMG:
                 number_of_fibers = number_of_fibers_per_MUs[MU_index]
 
                 if number_of_fibers == 0:
+                    # Add empty signal for MUs with no fibers
+                    segment.analogsignals.append(
+                        GridAnalogSignal(
+                            signal=np.zeros((len(t), electrode_array.num_rows, electrode_array.num_cols)) * pq.dimensionless,
+                            t_start=0 * pq.ms,
+                            sampling_rate=self._sampling_frequency__Hz * pq.Hz,
+                        )
+                    )
                     continue
 
                 # Get fiber positions
                 position_of_fibers = self._muscle_model.resulting_fiber_assignment(
                     MU_index
                 )
-                innervation_zone = innervation_zones[MU_number]
+                innervation_zone = innervation_zones[MU_index]
 
                 # Process each fiber
                 for fiber_number in tqdm(
                     range(number_of_fibers),
-                    desc=f"Electrode Array {array_idx + 1}/{len(self._electrode_arrays)} MU {MU_number + 1}/{len(self._MUs_to_simulate)}",
+                    desc=f"Electrode Array {array_idx + 1}/{len(self._electrode_arrays)} MU {MU_index + 1}/{n_motor_units}",
                     unit="fiber(s)",
                 ):
                     fiber_position = position_of_fibers[fiber_number]
@@ -488,13 +499,11 @@ class SurfaceEMG:
                                 [
                                     cp.correlate(
                                         spike_gpu[pool_idx, mu_idx],
-                                        muap_gpu[i, row_idx, col_idx],
+                                        muap_gpu[mu_idx, row_idx, col_idx],
                                         mode="same",
                                     )
-                                    for i, mu_idx in enumerate(
-                                        MUs_to_simulate.intersection(
-                                            pool_active_neurons
-                                        )
+                                    for mu_idx in MUs_to_simulate.intersection(
+                                        pool_active_neurons
                                     )
                                 ]
                             )
@@ -519,12 +528,12 @@ class SurfaceEMG:
                         for col_idx in range(n_cols):
                             # Process all active MUs
                             convolutions = []
-                            for i, mu_idx in enumerate(
-                                MUs_to_simulate.intersection(pool_active_neurons)
+                            for mu_idx in MUs_to_simulate.intersection(
+                                pool_active_neurons
                             ):
                                 conv = np.correlate(
                                     spike_trains[pool_idx, mu_idx],
-                                    muap_shapes[i, row_idx, col_idx],
+                                    muap_shapes[mu_idx, row_idx, col_idx],
                                     mode="same",
                                 )
                                 convolutions.append(conv)
@@ -591,14 +600,16 @@ class SurfaceEMG:
         Add noise to all electrode arrays.
 
         This method adds realistic noise to the simulated surface EMG signals
-        based on a specified signal-to-noise ratio. The noise characteristics
-        can be customized to match different recording conditions.
+        based on a specified signal-to-noise ratio. The noise is calculated
+        and applied independently for each electrode channel to ensure that
+        channels with different signal amplitudes maintain the specified SNR.
 
         Parameters
         ----------
         snr__dB : float
             Signal-to-noise ratio in dB. Higher values result in cleaner signals.
             Typical physiological EMG has SNR ranging from 10-40 dB.
+            The SNR is applied independently to each electrode channel.
         noise_type : str, default="gaussian"
             Type of noise to add. Currently supports "gaussian" for white noise.
 
@@ -612,6 +623,12 @@ class SurfaceEMG:
         ------
         ValueError
             If surface EMG has not been simulated. Call simulate_surface_emg() first.
+
+        Notes
+        -----
+        The noise is computed per-channel (per electrode) to maintain the specified
+        SNR independently across all channels. This ensures that electrodes with
+        different signal amplitudes receive appropriately scaled noise.
         """
         if self._surface_emg__Block is None:
             raise ValueError(
@@ -630,21 +647,28 @@ class SurfaceEMG:
 
                 # Get the EMG signal data
                 emg_signal = segment.analogsignals[0]
-                emg_array = emg_signal.magnitude
+                emg_array = emg_signal.magnitude  # Shape: (time, rows, cols)
 
-                # Calculate signal power
-                signal_power = np.mean(emg_array**2)
+                # Calculate signal power PER CHANNEL (per electrode)
+                # Mean along time axis (axis=0) gives power per spatial location
+                signal_power_per_channel = np.mean(emg_array**2, axis=0)  # Shape: (rows, cols)
 
-                # Calculate noise power
+                # Calculate noise power per channel
                 snr_linear = 10 ** (snr__dB / 10)
-                noise_power = signal_power / snr_linear
+                noise_power_per_channel = signal_power_per_channel / snr_linear
+                noise_std_per_channel = np.sqrt(noise_power_per_channel)  # Shape: (rows, cols)
 
                 # Generate noise
                 if noise_type.lower() == "gaussian":
-                    noise_std = np.sqrt(noise_power)
+                    # Generate standard normal noise, then scale per channel
                     noise = RANDOM_GENERATOR.normal(
-                        loc=0.0, scale=noise_std, size=emg_array.shape
+                        loc=0.0, scale=1.0, size=emg_array.shape
                     )
+                    # Broadcast noise_std_per_channel along time axis
+                    # noise shape: (time, rows, cols)
+                    # noise_std_per_channel shape: (rows, cols)
+                    # Broadcasting: (time, rows, cols) * (1, rows, cols)
+                    noise = noise * noise_std_per_channel[np.newaxis, :, :]
                 else:
                     raise ValueError(f"Unsupported noise type: {noise_type}")
 

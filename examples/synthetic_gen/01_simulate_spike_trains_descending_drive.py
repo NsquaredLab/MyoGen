@@ -55,6 +55,7 @@ import quantities as pq
 from matplotlib import pyplot as plt
 from neo import AnalogSignal, Block, Segment, SpikeTrain
 from neuron import h
+from noise import pnoise1
 from tqdm import tqdm
 
 from myogen import RANDOM_GENERATOR
@@ -93,8 +94,7 @@ from myogen.utils.nmodl import load_nmodl_mechanisms
 #
 
 load_nmodl_mechanisms()
-
-save_path = Path("./results")
+save_path = Path("/home/oj98yqyk/code/simulators/MyoGen/results/synthetic_gen")
 save_path.mkdir(exist_ok=True)
 
 recruitment_thresholds = joblib.load(save_path / "thresholds.pkl")
@@ -173,7 +173,7 @@ descending_drive_pool = DescendingDrive__Pool(
 #
 # This is a common experimental paradigm used in motor control studies.
 
-simulation_time = 15000  # ms
+simulation_time = int(5000 * 2 + 10e3 + 2e3)  # ms
 time_points = int(simulation_time / timestep)
 
 # Trapezoidal parameters
@@ -181,9 +181,9 @@ dd_baseline__Hz = 0.0  # Baseline drive during rest
 dd_peak__Hz = 65  # Peak drive during plateau
 
 # Phase durations (ms) - Total trapezoid duration: 13000ms
-ramp_up_duration = 500  # 2s ramp up
+ramp_up_duration = 5000  # 2s ramp up
 plateau_duration = 10000  # 9s hold
-ramp_down_duration = 500  # 2s ramp down
+ramp_down_duration = 5000  # 2s ramp down
 
 # Add rest periods before and after
 rest_before = 1000  # 1s rest before trapezoid
@@ -225,10 +225,31 @@ for i, t in enumerate(time_array):
         # Phase 4: Rest after
         trapezoid_drive[i] = dd_baseline__Hz
 
-# Add small noise for realism
-trapezoid_drive = trapezoid_drive + np.clip(
-    RANDOM_GENERATOR.normal(0, 1.0, size=time_points), 0, None
+# Add Perlin noise for realistic smooth temporal variations
+# Generate Perlin noise with parameters tuned for biological variability
+perlin_seed = int(RANDOM_GENERATOR.integers(0, 2**31 - 1))
+perlin_noise = np.array(
+    [
+        pnoise1(
+            i * 0.000025,  # scale: controls frequency (smaller = slower variations)
+            octaves=10,  # number of noise layers for detail
+            persistence=0.3,  # amplitude decay per octave
+            base=perlin_seed,
+        )
+        for i in range(time_points)
+    ]
 )
+
+plt.plot(perlin_noise)
+plt.show()
+
+perlin_noise /= np.max(np.abs(perlin_noise))  # Normalize to ±1
+
+# shift and scale the noise to 0 - 30 Hz
+perlin_noise = (perlin_noise + 1) / 2 * 20
+
+# Scale Perlin noise to desired amplitude (±30 Hz) and subtract only positive values
+trapezoid_drive = trapezoid_drive - perlin_noise
 
 # Create AnalogSignal
 sinusoidal_drive = AnalogSignal(

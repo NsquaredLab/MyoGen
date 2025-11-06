@@ -21,6 +21,8 @@ import numpy as np
 from joblib import Parallel, delayed
 import joblib
 import matplotlib.pyplot as plt
+import matplotlib.gridspec as gridspec
+from matplotlib.patches import Rectangle
 import seaborn as sns
 import neo
 import elephant
@@ -47,6 +49,10 @@ plt.rcParams["ytick.major.pad"] = 10
 
 save_path = Path(r"./results")
 save_path.mkdir(exist_ok=True)
+
+# Create watanabe subdirectory for plots
+watanabe_plots_dir = save_path / "watanabe"
+watanabe_plots_dir.mkdir(exist_ok=True)
 
 spinal_results_path = save_path / Path("watanabe_results_neo.pkl")
 force_results_path = save_path / "watanabe__force_results.pkl"
@@ -145,12 +151,14 @@ for idx, (t_start, t_stop) in enumerate(time_windows):
         # Normalize power spectrum using global min/max
         psd_mp_normalized = (psd_mp - global_min) / (global_max - global_min)
 
-        # Plot
+        # Plot (rasterized to reduce file size)
         axes_mp[idx].fill_between(
-            freqs_mp, psd_mp_normalized, color=window_colors[idx], alpha=0.7
+            freqs_mp, psd_mp_normalized, color=window_colors[idx], alpha=0.7,
+            rasterized=True
         )
         axes_mp[idx].plot(
-            freqs_mp, psd_mp_normalized, color=window_colors[idx], linewidth=1.5
+            freqs_mp, psd_mp_normalized, color=window_colors[idx], linewidth=1.5,
+            rasterized=True
         )
         axes_mp[idx].set_xlabel("Frequency (Hz)")
         if idx == 0:
@@ -164,8 +172,8 @@ for idx, (t_start, t_stop) in enumerate(time_windows):
 
 plt.tight_layout()
 plt.savefig(
-    save_path / "membrane_potential_power_spectra_all_windows.png",
-    dpi=150,
+    watanabe_plots_dir / "membrane_potential_power_spectra_all_windows.pdf",
+    dpi=300,
     bbox_inches="tight",
 )
 plt.show()
@@ -329,8 +337,8 @@ for window_idx, (t_start, t_stop) in enumerate(time_windows):
 
 plt.tight_layout()
 plt.savefig(
-    save_path / "coherence_spectra_all_windows.png",
-    dpi=150,
+    watanabe_plots_dir / "coherence_spectra_all_windows.pdf",
+    dpi=300,
     bbox_inches="tight",
 )
 plt.show()
@@ -361,31 +369,74 @@ for window_idx, (t_start, t_stop) in enumerate(force_windows):
 ax_force.set_xlabel("Time (s)")
 ax_force.set_ylabel("Force (a.u.)")
 ax_force.set_xlim(0, 180)
+ax_force.set_xticks(np.arange(0, 181, 20))  # Ticks every 20s from 0 to 180
 
-# Dynamically set y-axis limits based on data range (skip initial baseline)
-# Skip first 5 seconds to avoid baseline period
-skip_samples = int(5 * sampling_rate_force)
-force_signal_active = force_signal[skip_samples:]
-y_min = np.min(force_signal_active)
-y_max = np.max(force_signal_active)
-y_range = y_max - y_min
-padding = 0.05 * y_range  # 5% padding
-ax_force.set_ylim(y_min - padding, y_max + padding)
+# Set y-axis limits from 0 to 60
+ax_force.set_ylim(0, 60)
+ax_force.set_yticks(np.arange(0, 61, 20))  # Ticks every 20 from 0 to 60
 
 sns.despine(ax=ax_force, trim=True)
 
 plt.tight_layout()
-plt.savefig(save_path / "watanabe_force_timeseries.png", dpi=150, bbox_inches="tight")
+plt.savefig(watanabe_plots_dir / "watanabe_force_timeseries.pdf", dpi=300, bbox_inches="tight")
 plt.show()
 
 ##############################################################################
 # PANEL H: Full Duration Raster Plot
 # ----------------------------------
 
-fig_raster, ax_raster = plt.subplots(1, 1, figsize=(15, 6))
+# Sort spike trains by mean firing rate (highest to lowest)
+# This puts low firing rate neurons at the TOP of the raster plot
+firing_rates = []
+for spike_train in aMN_spikes:
+    duration_s = float(spike_train.t_stop.rescale("s").magnitude)
+    mean_fr = len(spike_train) / duration_s if duration_s > 0 else 0
+    firing_rates.append(mean_fr)
+
+# Get sorted indices (highest to lowest firing rate)
+# Highest FR → plot_idx=0 → y=0 (bottom), Lowest FR → plot_idx=N-1 → y=N-1 (top)
+sorted_indices = np.argsort(firing_rates)[::-1]  # Highest first
+aMN_spikes_sorted = [aMN_spikes[i] for i in sorted_indices]
+
+# Find optimal zoom window in first phase (0-60s) with highest neuron activity
+print("\nSearching for optimal zoom window in first phase (0-60s)...")
+best_window_start = 40.8  # Default
+max_active_neurons = 0
+best_max_idx = 0
+
+# Do a comprehensive search every 1 second
+for window_start in np.arange(5, 59, 1):  # Sample every 1s from 5s to 59s
+    window_end = window_start + 0.1
+    active_neuron_indices = []
+
+    for plot_idx, spike_train in enumerate(aMN_spikes_sorted):
+        spike_times = spike_train.times.rescale("s").magnitude
+        has_spikes = np.any((spike_times >= window_start) & (spike_times < window_end))
+        if has_spikes:
+            active_neuron_indices.append(plot_idx)
+
+    n_active = len(active_neuron_indices)
+    max_idx = max(active_neuron_indices) if active_neuron_indices else 0
+
+    # Select based on number of active neurons, with max_idx as tiebreaker
+    if n_active > max_active_neurons or (n_active == max_active_neurons and max_idx > best_max_idx):
+        max_active_neurons = n_active
+        best_max_idx = max_idx
+        best_window_start = window_start
+        print(f"  ★ Window {window_start:.1f}-{window_end:.1f}s: {n_active} active neurons, max index: {max_idx}")
+
+best_window_end = best_window_start + 0.1
+print(f"\n✓ Selected window: {best_window_start:.1f}-{best_window_end:.1f}s with {max_active_neurons} active neurons (max index: {best_max_idx})\n")
+
+# Create figure with GridSpec layout: zoom insets above, main raster below
+fig_raster = plt.figure(figsize=(15, 9))
+gs = gridspec.GridSpec(2, 2, figure=fig_raster, height_ratios=[1, 2], hspace=0.3, wspace=0.2)
+
+# Main raster plot (bottom row, spanning both columns)
+ax_raster = fig_raster.add_subplot(gs[1, :])
 
 # Plot all motor neuron spikes with colors based on time window (using force windows)
-for neuron_idx, spike_train in enumerate(aMN_spikes):
+for plot_idx, spike_train in enumerate(aMN_spikes_sorted):
     spike_times = spike_train.times.rescale("s").magnitude
 
     # Color spikes based on which time window they fall in
@@ -394,21 +445,101 @@ for neuron_idx, spike_train in enumerate(aMN_spikes):
         if np.any(in_window):
             ax_raster.plot(
                 spike_times[in_window],
-                np.ones_like(spike_times[in_window]) * neuron_idx,
+                np.ones_like(spike_times[in_window]) * plot_idx,
                 ".",
                 color=window_colors[window_idx],
                 markersize=1,
                 alpha=1.0,
+                rasterized=True,  # Rasterize scatter points for smaller PDF
             )
 
 ax_raster.set_xlabel("Time (s)")
 ax_raster.set_ylabel("MN #")
 ax_raster.set_xlim(0, 180)
-ax_raster.set_ylim(-1, len(aMN_spikes))
+ax_raster.set_xticks(np.arange(0, 181, 20))  # Ticks every 20s from 0 to 180
+ax_raster.set_ylim(0, 800)
+ax_raster.set_yticks(np.arange(0, 801, 200))  # Ticks every 200 from 0 to 800
 sns.despine(ax=ax_raster, trim=True)
+
+# Add zoom insets showing detailed spike timing above the main plot
+zoom_windows = [(best_window_start, best_window_end), (80.8, 80.9)]
+
+for zoom_idx, (t_start_zoom, t_stop_zoom) in enumerate(zoom_windows):
+    # First pass: Calculate max active neuron index in this zoom window
+    max_active_neuron_idx = 0
+    for plot_idx, spike_train in enumerate(aMN_spikes_sorted):
+        spike_times = spike_train.times.rescale("s").magnitude
+        has_spikes = np.any((spike_times >= t_start_zoom) & (spike_times < t_stop_zoom))
+        if has_spikes:
+            max_active_neuron_idx = plot_idx
+
+    # Add padding for visual spacing (5% or at least 20 neurons)
+    y_padding = max(20, int(max_active_neuron_idx * 0.05))
+    y_max = max_active_neuron_idx + y_padding
+
+    print(f"Zoom window {t_start_zoom:.1f}-{t_stop_zoom:.1f}s: max active neuron index = {max_active_neuron_idx}, y_max = {y_max}")
+
+    # Create zoom inset axes from GridSpec (top row)
+    ax_inset = fig_raster.add_subplot(gs[0, zoom_idx])
+
+    # Re-plot spike data for this zoom window
+    for plot_idx, spike_train in enumerate(aMN_spikes_sorted):
+        spike_times = spike_train.times.rescale("s").magnitude
+
+        # Filter spikes in zoom window
+        in_zoom = (spike_times >= t_start_zoom) & (spike_times < t_stop_zoom)
+        if np.any(in_zoom):
+            # Color based on which force window they fall in
+            for window_idx, (t_start, t_stop) in enumerate(force_windows):
+                in_window = (spike_times >= t_start) & (spike_times < t_stop)
+                in_both = in_zoom & in_window
+                if np.any(in_both):
+                    ax_inset.plot(
+                        spike_times[in_both],
+                        np.ones_like(spike_times[in_both]) * plot_idx,
+                        ".",
+                        color=window_colors[window_idx],
+                        markersize=2.5,  # Larger markers for zoom
+                        alpha=1.0,
+                        rasterized=True,
+                    )
+
+    # Style the inset with dynamic y-axis limits
+    ax_inset.set_xlim(t_start_zoom, t_stop_zoom)
+    ax_inset.set_ylim(0, y_max)
+
+    # Calculate appropriate y-ticks based on y_max
+    if y_max <= 100:
+        y_tick_step = 25
+    elif y_max <= 300:
+        y_tick_step = 50
+    elif y_max <= 500:
+        y_tick_step = 100
+    else:
+        y_tick_step = 200
+    ax_inset.set_yticks(np.arange(0, y_max + 1, y_tick_step))
+
+    # Set custom x-ticks for insets (midpoint between start and stop)
+    x_mid = (t_start_zoom + t_stop_zoom) / 2
+    ax_inset.set_xticks([t_start_zoom, x_mid, t_stop_zoom])
+
+    sns.despine(ax=ax_inset, trim=True)
+
+    # Draw rectangle on main plot showing zoom region (matching the actual neuron range)
+    rect = Rectangle(
+        (t_start_zoom, 0),
+        t_stop_zoom - t_start_zoom,
+        y_max,
+        linewidth=1.5,
+        edgecolor='black',
+        facecolor='none',
+        linestyle='--',
+        alpha=0.7
+    )
+    ax_raster.add_patch(rect)
 
 plt.tight_layout()
 plt.savefig(
-    save_path / "watanabe_raster_full_duration.png", dpi=150, bbox_inches="tight"
+    watanabe_plots_dir / "watanabe_raster_full_duration.pdf", dpi=300, bbox_inches="tight"
 )
 plt.show()
