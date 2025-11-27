@@ -125,12 +125,12 @@ def load_spike_times_from_xml(xml_path):
     spike_dict = {}
 
     try:
-        with open(xml_path, 'r') as f:
+        with open(xml_path, "r") as f:
             content = f.read()
 
         # Find the emglab_spike_events section
-        start_tag = '<emglab_spike_events>'
-        end_tag = '</emglab_spike_events>'
+        start_tag = "<emglab_spike_events>"
+        end_tag = "</emglab_spike_events>"
 
         start_idx = content.find(start_tag)
         end_idx = content.find(end_tag)
@@ -139,10 +139,10 @@ def load_spike_times_from_xml(xml_path):
             return None
 
         # Extract the data section
-        data_section = content[start_idx + len(start_tag):end_idx].strip()
+        data_section = content[start_idx + len(start_tag) : end_idx].strip()
 
         # Parse each line: time unit chan
-        for line in data_section.split('\n'):
+        for line in data_section.split("\n"):
             line = line.strip()
             if not line:
                 continue
@@ -210,36 +210,36 @@ def compute_spike_train_agreement(ground_truth_ms, decomposed_ms, tolerance_ms=5
     # Handle empty arrays
     if len(gt) == 0 and len(dec) == 0:
         return {
-            'tp': 0,
-            'fp': 0,
-            'fn': 0,
-            'sensitivity': 1.0,  # No spikes to detect, perfect
-            'precision': 1.0,    # No false positives
-            'f1_score': 1.0,
-            'n_ground_truth': 0,
-            'n_decomposed': 0,
+            "tp": 0,
+            "fp": 0,
+            "fn": 0,
+            "sensitivity": 1.0,  # No spikes to detect, perfect
+            "precision": 1.0,  # No false positives
+            "f1_score": 1.0,
+            "n_ground_truth": 0,
+            "n_decomposed": 0,
         }
     elif len(gt) == 0:
         return {
-            'tp': 0,
-            'fp': len(dec),
-            'fn': 0,
-            'sensitivity': np.nan,  # Undefined
-            'precision': 0.0,
-            'f1_score': 0.0,
-            'n_ground_truth': 0,
-            'n_decomposed': len(dec),
+            "tp": 0,
+            "fp": len(dec),
+            "fn": 0,
+            "sensitivity": np.nan,  # Undefined
+            "precision": 0.0,
+            "f1_score": 0.0,
+            "n_ground_truth": 0,
+            "n_decomposed": len(dec),
         }
     elif len(dec) == 0:
         return {
-            'tp': 0,
-            'fp': 0,
-            'fn': len(gt),
-            'sensitivity': 0.0,
-            'precision': np.nan,  # Undefined
-            'f1_score': 0.0,
-            'n_ground_truth': len(gt),
-            'n_decomposed': 0,
+            "tp": 0,
+            "fp": 0,
+            "fn": len(gt),
+            "sensitivity": 0.0,
+            "precision": np.nan,  # Undefined
+            "f1_score": 0.0,
+            "n_ground_truth": len(gt),
+            "n_decomposed": 0,
         }
 
     # Match decomposed spikes to ground truth spikes
@@ -278,18 +278,20 @@ def compute_spike_train_agreement(ground_truth_ms, decomposed_ms, tolerance_ms=5
         f1_score = 0.0
 
     return {
-        'tp': int(tp),
-        'fp': int(fp),
-        'fn': int(fn),
-        'sensitivity': sensitivity,
-        'precision': precision,
-        'f1_score': f1_score,
-        'n_ground_truth': len(gt),
-        'n_decomposed': len(dec),
+        "tp": int(tp),
+        "fp": int(fp),
+        "fn": int(fn),
+        "sensitivity": sensitivity,
+        "precision": precision,
+        "f1_score": f1_score,
+        "n_ground_truth": len(gt),
+        "n_decomposed": len(dec),
     }
 
 
-def compute_agreement_matrix(gt_spike_trains, decomposed_spike_trains, tolerance_ms=5.0):
+def compute_agreement_matrix(
+    gt_spike_trains, decomposed_spike_trains, tolerance_ms=5.0
+):
     """
     Compute exhaustive agreement matrix between all pairs of spike trains.
 
@@ -324,7 +326,7 @@ def compute_agreement_matrix(gt_spike_trains, decomposed_spike_trains, tolerance
     for i, gt_train in enumerate(gt_spike_trains):
         for j, dec_train in enumerate(decomposed_spike_trains):
             metrics = compute_spike_train_agreement(gt_train, dec_train, tolerance_ms)
-            agreement_matrix[i, j] = metrics['f1_score']
+            agreement_matrix[i, j] = metrics["f1_score"]
             detailed_metrics[(i, j)] = metrics
 
     return agreement_matrix, detailed_metrics
@@ -374,7 +376,9 @@ def find_optimal_assignment(agreement_matrix):
     return assignments, unmatched_gt, unmatched_dec
 
 
-def plot_confusion_matrix(agreement_matrix, gt_labels, dec_labels, assignments, output_path):
+def plot_confusion_matrix(
+    agreement_matrix, gt_labels, dec_labels, assignments, output_path
+):
     """
     Plot confusion matrix (agreement heatmap) with optimal assignments highlighted.
 
@@ -383,71 +387,147 @@ def plot_confusion_matrix(agreement_matrix, gt_labels, dec_labels, assignments, 
     agreement_matrix : np.ndarray
         Agreement matrix with F1 scores.
     gt_labels : list
-        Labels for ground truth units (rows).
+        Labels for ground truth units (rows in original matrix).
     dec_labels : list
-        Labels for decomposed units (columns).
+        Labels for decomposed units (columns in original matrix).
     assignments : list of tuples
         Optimal assignments as (gt_idx, dec_idx, f1_score) tuples.
     output_path : Path
         Output file path for saving the plot.
     """
     # Set up matplotlib style
-    plt.style.use('default')
-    sns.set_context("paper", font_scale=1.2)
+    plt.style.use("default")
+    sns.set_context("paper", font_scale=1.6)
 
-    # Create figure (wider aspect ratio for better readability)
-    fig, ax = plt.subplots(figsize=(max(14, len(dec_labels) * 1.2),
-                                     max(6, len(gt_labels) * 0.5)))
+    # Rename GT labels to descending sequential numbers BEFORE sorting (so they'll be jumbled after)
+    gt_labels = [f"GT_{len(gt_labels) - i}" for i in range(len(gt_labels))]
+    dec_labels = [f"DEC_{i + 1}" for i in range(len(dec_labels))]
 
-    # Create custom white-to-green colormap (white 0-0.5, then gradient to green)
-    colors = ['#FFFFFF', '#FFFFFF', '#2ca02c', '#0d5e0d']  # white -> white -> medium green -> dark green
-    positions = [0.0, 0.5, 0.75, 1.0]  # Stay white until 0.5, then gradient
+    # Reorder rows (GT) and columns (DEC) to form diagonal pattern
+    # Sort matched pairs by decomposed index to create clean diagonal
+    matched_pairs = sorted(
+        [(dec_idx, gt_idx, f1) for gt_idx, dec_idx, f1 in assignments]
+    )
+
+    # New row order: matched GT units (sorted by their DEC partner), then unmatched
+    matched_gt_indices = [gt_idx for _, gt_idx, _ in matched_pairs]
+    all_gt_indices = list(range(len(gt_labels)))
+    unmatched_gt_indices = [i for i in all_gt_indices if i not in matched_gt_indices]
+    new_row_order = matched_gt_indices + unmatched_gt_indices
+
+    # New column order: matched DEC units (in order), then unmatched
+    matched_dec_indices = [dec_idx for dec_idx, _, _ in matched_pairs]
+    all_dec_indices = list(range(len(dec_labels)))
+    unmatched_dec_indices = [i for i in all_dec_indices if i not in matched_dec_indices]
+    new_col_order = matched_dec_indices + unmatched_dec_indices
+
+    # Reorder matrix rows and columns
+    reordered_matrix = agreement_matrix[np.ix_(new_row_order, new_col_order)]
+    reordered_gt_labels = [gt_labels[i] for i in new_row_order]
+    reordered_dec_labels = [dec_labels[i] for i in new_col_order]
+
+    # Create index mappings for drawing assignment boxes
+    old_to_new_gt = {old: new for new, old in enumerate(new_row_order)}
+    old_to_new_dec = {old: new for new, old in enumerate(new_col_order)}
+
+    # Update assignments with new indices
+    reordered_assignments = [
+        (old_to_new_gt[gt_idx], old_to_new_dec[dec_idx], f1)
+        for gt_idx, dec_idx, f1 in assignments
+    ]
+
+    # Use reordered data for plotting
+    agreement_matrix = reordered_matrix
+    gt_labels = reordered_gt_labels
+    dec_labels = reordered_dec_labels
+    assignments = reordered_assignments
+
+    # Transpose matrix to put decomposed on Y-axis and GT on X-axis
+    agreement_matrix_T = agreement_matrix.T
+
+    # Create figure with dynamic dimensions based on consistent cell size
+    # This ensures cells are the same physical size across all plots (sEMG, iEMG)
+    CELL_SIZE_WIDTH = 0.5  # inches per cell (horizontal)
+    CELL_SIZE_HEIGHT = 0.5  # inches per cell (vertical)
+    MARGIN_X = 2.5  # inches for Y-axis label, ticks, padding
+    MARGIN_Y = 1.5  # inches for X-axis label, ticks, colorbar
+
+    # Calculate figure dimensions: GT units on X-axis, decomposed units on Y-axis
+    fig_width = len(gt_labels) * CELL_SIZE_WIDTH + MARGIN_X
+    fig_height = len(dec_labels) * CELL_SIZE_HEIGHT + MARGIN_Y
+    fig, ax = plt.subplots(figsize=(fig_width, fig_height))
+
+    # Create white-to-green colormap (white from 0.0 to 0.3, then transition to green)
+    colors = ["#ffffff", "#ffffff", "#a6ce39"]  # white -> white -> green
+    positions = [0.0, 0.5, 1.0]
     n_bins = 256
-    cmap = LinearSegmentedColormap.from_list('white_green', list(zip(positions, colors)), N=n_bins)
+    cmap = LinearSegmentedColormap.from_list(
+        "white_green", list(zip(positions, colors)), N=n_bins
+    )
 
-    # Plot heatmap with F1 scores
-    im = ax.imshow(agreement_matrix, cmap=cmap, aspect='auto', vmin=0, vmax=1)
+    # Plot heatmap with F1 scores (aspect='equal' ensures square cells with uniform size)
+    im = ax.imshow(agreement_matrix_T, cmap=cmap, aspect="equal", vmin=0, vmax=1)
 
-    # Add colorbar
-    cbar = plt.colorbar(im, ax=ax)
-    cbar.set_label('F1 Score', rotation=270, labelpad=20)
+    # Add colorbar with height matching the heatmap
+    cbar = plt.colorbar(im, ax=ax, fraction=0.046, pad=0.04, aspect=10)
+    cbar.set_label("F1 Score", rotation=270, labelpad=15, fontsize=14)
+    cbar.ax.tick_params(labelsize=12)
 
-    # Create plot-specific labels (1-indexed integers for visualization)
-    gt_labels_plot = [str(i + 1) for i in range(len(gt_labels))]
-    dec_labels_plot = [str(i + 1) for i in range(len(dec_labels))]
+    # Create plot-specific labels (extract numbers from GT_X, DEC_X format)
+    gt_labels_plot = [label.split("_")[1] for label in gt_labels]
+    dec_labels_plot = [label.split("_")[1] for label in dec_labels]
 
-    # Set ticks and labels
-    ax.set_xticks(np.arange(len(dec_labels)))
-    ax.set_yticks(np.arange(len(gt_labels)))
-    ax.set_xticklabels(dec_labels_plot, rotation=45, ha='right')
-    ax.set_yticklabels(gt_labels_plot)
+    # Set ticks and labels (swapped: GT on X, Decomposed on Y)
+    ax.set_xticks(np.arange(len(gt_labels)))
+    ax.set_yticks(np.arange(len(dec_labels)))
+    ax.set_xticklabels(gt_labels_plot, rotation=0, ha="center", fontsize=12)
+    ax.set_yticklabels(dec_labels_plot, fontsize=12)
 
-    # Labels
-    ax.set_xlabel('Decomposed MU #', fontsize=12)
-    ax.set_ylabel('Ground truth MU #', fontsize=12)
-    ax.set_title('Spike Train Agreement Matrix (F1 Scores)', fontsize=14, pad=20)
+    # Labels (swapped axes)
+    ax.set_xlabel("Ground truth MU #", fontsize=16)
+    ax.set_ylabel("Decomposed MU #", fontsize=16)
 
     # Annotate cells with F1 scores using luminance-based text color
-    for i in range(len(gt_labels)):
-        for j in range(len(dec_labels)):
-            f1 = agreement_matrix[i, j]
+    # After transpose: rows are decomposed (j), columns are GT (i)
+    for i in range(len(dec_labels)):
+        for j in range(len(gt_labels)):
+            f1 = agreement_matrix_T[i, j]
             # Get RGB color from colormap for this F1 value
             rgba = cmap(f1)
             # Calculate relative luminance (perceived brightness)
             luminance = 0.2126 * rgba[0] + 0.7152 * rgba[1] + 0.0722 * rgba[2]
             # Use black text on light backgrounds, white text on dark backgrounds
-            text_color = 'black' if luminance > 0.5 else 'white'
-            ax.text(j, i, f'{f1:.2f}', ha='center', va='center',
-                   color=text_color, fontsize=9)
+            text_color = "black" if luminance > 0.5 else "white"
+            ax.text(
+                j,
+                i,
+                f"{f1:.2f}",
+                ha="center",
+                va="center",
+                color=text_color,
+                fontsize=11,
+            )
 
     # Highlight optimal assignments with boxes
+    # Original assignments are (gt_idx, dec_idx), after transpose we need (dec_idx, gt_idx)
     for gt_idx, dec_idx, _ in assignments:
-        rect = plt.Rectangle((dec_idx - 0.5, gt_idx - 0.5), 1, 1,
-                            fill=False, edgecolor='black', linewidth=3)
+        rect = plt.Rectangle(
+            (gt_idx - 0.5, dec_idx - 0.5),
+            1,
+            1,
+            fill=False,
+            edgecolor="black",
+            linewidth=3,
+        )
         ax.add_patch(rect)
 
     plt.tight_layout()
-    plt.savefig(output_path, dpi=300, bbox_inches='tight')
+    plt.savefig(output_path, format="svg", dpi=300, bbox_inches="tight")
+
+    # Also save as PNG for easy viewing
+    png_path = output_path.with_suffix(".png")
+    plt.savefig(png_path, format="png", dpi=300, bbox_inches="tight")
+
     plt.close(fig)
 
 
@@ -481,8 +561,8 @@ def process_surface_emg_agreement(decomp_path, tolerance_ms):
     # NOTE: For surface EMG, decomp.pkl contains ground truth (with MU indices)
     # and spike_trains.pkl contains decomposed results
     decomp = load_decomposition(decomp_path)
-    gt_spike_trains = decomp['spike_trains']  # Ground truth with MU indices
-    mu_indices = decomp['mu_indices']
+    gt_spike_trains = decomp["spike_trains"]  # Ground truth with MU indices
+    mu_indices = decomp["mu_indices"]
 
     # Load decomposed spike trains
     decomp_spike_trains = load_ground_truth_spike_trains(decomp_folder)
@@ -495,7 +575,9 @@ def process_surface_emg_agreement(decomp_path, tolerance_ms):
     print(f"  Decomposed units: {len(decomp_spike_trains)}")
 
     # Compute exhaustive agreement matrix
-    print(f"  Computing {len(gt_spike_trains)} x {len(decomp_spike_trains)} agreement matrix...")
+    print(
+        f"  Computing {len(gt_spike_trains)} x {len(decomp_spike_trains)} agreement matrix..."
+    )
     agreement_matrix, detailed_metrics = compute_agreement_matrix(
         gt_spike_trains, decomp_spike_trains, tolerance_ms
     )
@@ -520,69 +602,77 @@ def process_surface_emg_agreement(decomp_path, tolerance_ms):
         mu_idx = mu_indices[dec_idx] if dec_idx < len(mu_indices) else dec_idx
         dec_label = f"MU_{mu_idx}"
 
-        results.append({
-            'ground_truth_index': gt_idx,
-            'decomposed_index': dec_idx,
-            'motor_unit_index': mu_idx,
-            'ground_truth_label': gt_label,
-            'decomposed_label': dec_label,
-            'true_positives': metrics['tp'],
-            'false_positives': metrics['fp'],
-            'false_negatives': metrics['fn'],
-            'sensitivity_recall': metrics['sensitivity'],
-            'precision': metrics['precision'],
-            'f1_score': metrics['f1_score'],
-            'n_ground_truth_spikes': metrics['n_ground_truth'],
-            'n_decomposed_spikes': metrics['n_decomposed'],
-            'matched': True,
-        })
+        results.append(
+            {
+                "ground_truth_index": gt_idx,
+                "decomposed_index": dec_idx,
+                "motor_unit_index": mu_idx,
+                "ground_truth_label": gt_label,
+                "decomposed_label": dec_label,
+                "true_positives": metrics["tp"],
+                "false_positives": metrics["fp"],
+                "false_negatives": metrics["fn"],
+                "sensitivity_recall": metrics["sensitivity"],
+                "precision": metrics["precision"],
+                "f1_score": metrics["f1_score"],
+                "n_ground_truth_spikes": metrics["n_ground_truth"],
+                "n_decomposed_spikes": metrics["n_decomposed"],
+                "matched": True,
+            }
+        )
 
     # Add unmatched ground truth units (all spikes are false negatives)
     for gt_idx in unmatched_gt:
         n_spikes = len(gt_spike_trains[gt_idx])
-        results.append({
-            'ground_truth_index': gt_idx,
-            'decomposed_index': -1,
-            'motor_unit_index': -1,
-            'ground_truth_label': f"GT_{gt_idx}",
-            'decomposed_label': "UNMATCHED",
-            'true_positives': 0,
-            'false_positives': 0,
-            'false_negatives': n_spikes,
-            'sensitivity_recall': 0.0,
-            'precision': np.nan,
-            'f1_score': 0.0,
-            'n_ground_truth_spikes': n_spikes,
-            'n_decomposed_spikes': 0,
-            'matched': False,
-        })
+        results.append(
+            {
+                "ground_truth_index": gt_idx,
+                "decomposed_index": -1,
+                "motor_unit_index": -1,
+                "ground_truth_label": f"GT_{gt_idx}",
+                "decomposed_label": "UNMATCHED",
+                "true_positives": 0,
+                "false_positives": 0,
+                "false_negatives": n_spikes,
+                "sensitivity_recall": 0.0,
+                "precision": np.nan,
+                "f1_score": 0.0,
+                "n_ground_truth_spikes": n_spikes,
+                "n_decomposed_spikes": 0,
+                "matched": False,
+            }
+        )
 
     # Add unmatched decomposed units (all spikes are false positives)
     for dec_idx in unmatched_dec:
         mu_idx = mu_indices[dec_idx] if dec_idx < len(mu_indices) else dec_idx
         n_spikes = len(decomp_spike_trains[dec_idx])
-        results.append({
-            'ground_truth_index': -1,
-            'decomposed_index': dec_idx,
-            'motor_unit_index': mu_idx,
-            'ground_truth_label': "UNMATCHED",
-            'decomposed_label': f"MU_{mu_idx}",
-            'true_positives': 0,
-            'false_positives': n_spikes,
-            'false_negatives': 0,
-            'sensitivity_recall': np.nan,
-            'precision': 0.0,
-            'f1_score': 0.0,
-            'n_ground_truth_spikes': 0,
-            'n_decomposed_spikes': n_spikes,
-            'matched': False,
-        })
+        results.append(
+            {
+                "ground_truth_index": -1,
+                "decomposed_index": dec_idx,
+                "motor_unit_index": mu_idx,
+                "ground_truth_label": "UNMATCHED",
+                "decomposed_label": f"MU_{mu_idx}",
+                "true_positives": 0,
+                "false_positives": n_spikes,
+                "false_negatives": 0,
+                "sensitivity_recall": np.nan,
+                "precision": 0.0,
+                "f1_score": 0.0,
+                "n_ground_truth_spikes": 0,
+                "n_decomposed_spikes": n_spikes,
+                "matched": False,
+            }
+        )
 
     # Create labels for confusion matrix
     # Ground truth: MU indices from decomp.pkl (rows)
     # Decomposed: generic DEC labels from spike_trains.pkl (columns)
-    gt_labels = [f"MU_{mu_indices[i]}" if i < len(mu_indices) else f"GT_{i}"
-                 for i in range(len(gt_spike_trains))]
+    gt_labels = [
+        f"MU_{mu_indices[i]}" if i < len(mu_indices) else f"GT_{i}"
+        for i in range(len(gt_spike_trains))
+    ]
     dec_labels = [f"DEC_{i}" for i in range(len(decomp_spike_trains))]
 
     return pd.DataFrame(results), agreement_matrix, assignments, gt_labels, dec_labels
@@ -611,15 +701,17 @@ def process_intramuscular_emg_agreement(decomp_path, tolerance_ms):
 
     # Load decomposition data
     decomp = load_decomposition(decomp_path)
-    gt_spike_trains = decomp['spike_trains']  # Ground truth from decomp.pkl
-    mu_indices = decomp['mu_indices']
+    gt_spike_trains = decomp["spike_trains"]  # Ground truth from decomp.pkl
+    mu_indices = decomp["mu_indices"]
 
     # Load decomposed spike trains from XML
     xml_path = decomp_folder / f"{decomp_folder.name}.xml"
     decomposed_spike_dict = load_spike_times_from_xml(xml_path)
 
     if decomposed_spike_dict is None:
-        print(f"⚠️  XML file not found or invalid: {xml_path.name} - skipping intramuscular EMG agreement")
+        print(
+            f"⚠️  XML file not found or invalid: {xml_path.name} - skipping intramuscular EMG agreement"
+        )
         return None
 
     # Convert XML dict to list (sorted by XML unit ID)
@@ -627,10 +719,14 @@ def process_intramuscular_emg_agreement(decomp_path, tolerance_ms):
     decomposed_spike_trains = [decomposed_spike_dict[uid] for uid in xml_unit_ids]
 
     print(f"\n  Ground truth units: {len(gt_spike_trains)} (MU indices: {mu_indices})")
-    print(f"  Decomposed units: {len(decomposed_spike_trains)} (XML IDs: {xml_unit_ids})")
+    print(
+        f"  Decomposed units: {len(decomposed_spike_trains)} (XML IDs: {xml_unit_ids})"
+    )
 
     # Compute exhaustive agreement matrix
-    print(f"  Computing {len(gt_spike_trains)} x {len(decomposed_spike_trains)} agreement matrix...")
+    print(
+        f"  Computing {len(gt_spike_trains)} x {len(decomposed_spike_trains)} agreement matrix..."
+    )
     agreement_matrix, detailed_metrics = compute_agreement_matrix(
         gt_spike_trains, decomposed_spike_trains, tolerance_ms
     )
@@ -651,67 +747,73 @@ def process_intramuscular_emg_agreement(decomp_path, tolerance_ms):
         mu_idx = mu_indices[gt_idx]
         xml_unit_id = xml_unit_ids[dec_idx]
 
-        results.append({
-            'ground_truth_index': gt_idx,
-            'decomposed_index': dec_idx,
-            'motor_unit_index': mu_idx,
-            'xml_unit_id': xml_unit_id,
-            'ground_truth_label': f"MU_{mu_idx}",
-            'decomposed_label': f"XML_{xml_unit_id}",
-            'true_positives': metrics['tp'],
-            'false_positives': metrics['fp'],
-            'false_negatives': metrics['fn'],
-            'sensitivity_recall': metrics['sensitivity'],
-            'precision': metrics['precision'],
-            'f1_score': metrics['f1_score'],
-            'n_ground_truth_spikes': metrics['n_ground_truth'],
-            'n_decomposed_spikes': metrics['n_decomposed'],
-            'matched': True,
-        })
+        results.append(
+            {
+                "ground_truth_index": gt_idx,
+                "decomposed_index": dec_idx,
+                "motor_unit_index": mu_idx,
+                "xml_unit_id": xml_unit_id,
+                "ground_truth_label": f"MU_{mu_idx}",
+                "decomposed_label": f"XML_{xml_unit_id}",
+                "true_positives": metrics["tp"],
+                "false_positives": metrics["fp"],
+                "false_negatives": metrics["fn"],
+                "sensitivity_recall": metrics["sensitivity"],
+                "precision": metrics["precision"],
+                "f1_score": metrics["f1_score"],
+                "n_ground_truth_spikes": metrics["n_ground_truth"],
+                "n_decomposed_spikes": metrics["n_decomposed"],
+                "matched": True,
+            }
+        )
 
     # Add unmatched ground truth units (all spikes are false negatives)
     for gt_idx in unmatched_gt:
         mu_idx = mu_indices[gt_idx]
         n_spikes = len(gt_spike_trains[gt_idx])
-        results.append({
-            'ground_truth_index': gt_idx,
-            'decomposed_index': -1,
-            'motor_unit_index': mu_idx,
-            'xml_unit_id': -1,
-            'ground_truth_label': f"MU_{mu_idx}",
-            'decomposed_label': "UNMATCHED",
-            'true_positives': 0,
-            'false_positives': 0,
-            'false_negatives': n_spikes,
-            'sensitivity_recall': 0.0,
-            'precision': np.nan,
-            'f1_score': 0.0,
-            'n_ground_truth_spikes': n_spikes,
-            'n_decomposed_spikes': 0,
-            'matched': False,
-        })
+        results.append(
+            {
+                "ground_truth_index": gt_idx,
+                "decomposed_index": -1,
+                "motor_unit_index": mu_idx,
+                "xml_unit_id": -1,
+                "ground_truth_label": f"MU_{mu_idx}",
+                "decomposed_label": "UNMATCHED",
+                "true_positives": 0,
+                "false_positives": 0,
+                "false_negatives": n_spikes,
+                "sensitivity_recall": 0.0,
+                "precision": np.nan,
+                "f1_score": 0.0,
+                "n_ground_truth_spikes": n_spikes,
+                "n_decomposed_spikes": 0,
+                "matched": False,
+            }
+        )
 
     # Add unmatched decomposed units (all spikes are false positives)
     for dec_idx in unmatched_dec:
         xml_unit_id = xml_unit_ids[dec_idx]
         n_spikes = len(decomposed_spike_trains[dec_idx])
-        results.append({
-            'ground_truth_index': -1,
-            'decomposed_index': dec_idx,
-            'motor_unit_index': -1,
-            'xml_unit_id': xml_unit_id,
-            'ground_truth_label': "UNMATCHED",
-            'decomposed_label': f"XML_{xml_unit_id}",
-            'true_positives': 0,
-            'false_positives': n_spikes,
-            'false_negatives': 0,
-            'sensitivity_recall': np.nan,
-            'precision': 0.0,
-            'f1_score': 0.0,
-            'n_ground_truth_spikes': 0,
-            'n_decomposed_spikes': n_spikes,
-            'matched': False,
-        })
+        results.append(
+            {
+                "ground_truth_index": -1,
+                "decomposed_index": dec_idx,
+                "motor_unit_index": -1,
+                "xml_unit_id": xml_unit_id,
+                "ground_truth_label": "UNMATCHED",
+                "decomposed_label": f"XML_{xml_unit_id}",
+                "true_positives": 0,
+                "false_positives": n_spikes,
+                "false_negatives": 0,
+                "sensitivity_recall": np.nan,
+                "precision": 0.0,
+                "f1_score": 0.0,
+                "n_ground_truth_spikes": 0,
+                "n_decomposed_spikes": n_spikes,
+                "matched": False,
+            }
+        )
 
     # Create labels for confusion matrix
     gt_labels = [f"MU_{mu_indices[i]}" for i in range(len(gt_spike_trains))]
@@ -755,8 +857,8 @@ def main():
     folder_name = decomp_folder.name
 
     # Determine EMG type from folder name
-    is_surface = folder_name.startswith('semg_')
-    is_intramuscular = folder_name.startswith('iemg_')
+    is_surface = folder_name.startswith("semg_")
+    is_intramuscular = folder_name.startswith("iemg_")
 
     if not is_surface and not is_intramuscular:
         print("\n⚠️  Could not determine EMG type from folder name")
@@ -767,13 +869,19 @@ def main():
 
     # Process agreement based on EMG type
     if is_surface:
-        print("\n📊 Computing surface EMG spike train agreement with exhaustive matching...")
+        print(
+            "\n📊 Computing surface EMG spike train agreement with exhaustive matching..."
+        )
         print("    Comparing: decomp.pkl vs spike_trains.pkl")
         result = process_surface_emg_agreement(args.decomp_file, args.tolerance_ms)
     else:
-        print("\n📊 Computing intramuscular EMG spike train agreement with exhaustive matching...")
+        print(
+            "\n📊 Computing intramuscular EMG spike train agreement with exhaustive matching..."
+        )
         print("    Comparing: decomp.pkl (ground truth) vs XML file (decomposed)")
-        result = process_intramuscular_emg_agreement(args.decomp_file, args.tolerance_ms)
+        result = process_intramuscular_emg_agreement(
+            args.decomp_file, args.tolerance_ms
+        )
 
     if result is None:
         print("\n❌ No agreement data could be computed")
@@ -786,15 +894,17 @@ def main():
     df_results.to_csv(output_path, index=False)
     print(f"\n✅ Saved optimal assignment results to: {output_path}")
 
-    # Save full agreement matrix to CSV
+    # Save full agreement matrix to CSV (transposed: decomposed on rows, GT on columns)
     matrix_output_path = decomp_folder / "spike_train_agreement_matrix.csv"
-    df_matrix = pd.DataFrame(agreement_matrix, index=gt_labels, columns=dec_labels)
+    df_matrix = pd.DataFrame(agreement_matrix.T, index=dec_labels, columns=gt_labels)
     df_matrix.to_csv(matrix_output_path)
     print(f"✅ Saved agreement matrix to: {matrix_output_path}")
 
     # Plot confusion matrix
-    confusion_matrix_path = decomp_folder / "spike_train_confusion_matrix.png"
-    plot_confusion_matrix(agreement_matrix, gt_labels, dec_labels, assignments, confusion_matrix_path)
+    confusion_matrix_path = decomp_folder / "spike_train_confusion_matrix.svg"
+    plot_confusion_matrix(
+        agreement_matrix, gt_labels, dec_labels, assignments, confusion_matrix_path
+    )
     print(f"✅ Saved confusion matrix plot to: {confusion_matrix_path}")
 
     # Print summary statistics
@@ -803,8 +913,8 @@ def main():
     print("=" * 80)
 
     # Separate matched and unmatched units
-    df_matched = df_results[df_results['matched'] == True]
-    df_unmatched = df_results[df_results['matched'] == False]
+    df_matched = df_results[df_results["matched"] == True]
+    df_unmatched = df_results[df_results["matched"] == False]
 
     print(f"\nTotal units:")
     print(f"  Matched pairs: {len(df_matched)}")
@@ -814,16 +924,22 @@ def main():
     if len(df_matched) > 0:
         print(f"\nMatched units - Average metrics:")
         # Use nanmean to handle any NaN values
-        print(f"  Sensitivity (Recall): {np.nanmean(df_matched['sensitivity_recall']):.3f} ± {np.nanstd(df_matched['sensitivity_recall']):.3f}")
-        print(f"  Precision:            {np.nanmean(df_matched['precision']):.3f} ± {np.nanstd(df_matched['precision']):.3f}")
-        print(f"  F1 Score:             {np.nanmean(df_matched['f1_score']):.3f} ± {np.nanstd(df_matched['f1_score']):.3f}")
+        print(
+            f"  Sensitivity (Recall): {np.nanmean(df_matched['sensitivity_recall']):.3f} ± {np.nanstd(df_matched['sensitivity_recall']):.3f}"
+        )
+        print(
+            f"  Precision:            {np.nanmean(df_matched['precision']):.3f} ± {np.nanstd(df_matched['precision']):.3f}"
+        )
+        print(
+            f"  F1 Score:             {np.nanmean(df_matched['f1_score']):.3f} ± {np.nanstd(df_matched['f1_score']):.3f}"
+        )
 
     # Total spike counts
-    total_tp = df_results['true_positives'].sum()
-    total_fp = df_results['false_positives'].sum()
-    total_fn = df_results['false_negatives'].sum()
-    total_gt = df_results['n_ground_truth_spikes'].sum()
-    total_dec = df_results['n_decomposed_spikes'].sum()
+    total_tp = df_results["true_positives"].sum()
+    total_fp = df_results["false_positives"].sum()
+    total_fn = df_results["false_negatives"].sum()
+    total_gt = df_results["n_ground_truth_spikes"].sum()
+    total_dec = df_results["n_decomposed_spikes"].sum()
 
     print(f"\nTotal spikes:")
     print(f"  Ground truth: {total_gt}")
@@ -833,9 +949,19 @@ def main():
     print(f"  False Negatives: {total_fn}")
 
     # Overall sensitivity and precision
-    overall_sensitivity = total_tp / (total_tp + total_fn) if (total_tp + total_fn) > 0 else 0.0
-    overall_precision = total_tp / (total_tp + total_fp) if (total_tp + total_fp) > 0 else 0.0
-    overall_f1 = 2 * (overall_precision * overall_sensitivity) / (overall_precision + overall_sensitivity) if (overall_precision + overall_sensitivity) > 0 else 0.0
+    overall_sensitivity = (
+        total_tp / (total_tp + total_fn) if (total_tp + total_fn) > 0 else 0.0
+    )
+    overall_precision = (
+        total_tp / (total_tp + total_fp) if (total_tp + total_fp) > 0 else 0.0
+    )
+    overall_f1 = (
+        2
+        * (overall_precision * overall_sensitivity)
+        / (overall_precision + overall_sensitivity)
+        if (overall_precision + overall_sensitivity) > 0
+        else 0.0
+    )
 
     print(f"\nOverall metrics (all spikes combined):")
     print(f"  Sensitivity (Recall): {overall_sensitivity:.3f}")
@@ -848,18 +974,24 @@ def main():
     print("=" * 80)
 
     for _, row in df_matched.iterrows():
-        gt_label = row['ground_truth_label']
-        dec_label = row['decomposed_label']
-        f1 = row['f1_score']
-        print(f"  {gt_label} → {dec_label}  (F1: {f1:.3f}, Sens: {row['sensitivity_recall']:.3f}, Prec: {row['precision']:.3f})")
+        gt_label = row["ground_truth_label"]
+        dec_label = row["decomposed_label"]
+        f1 = row["f1_score"]
+        print(
+            f"  {gt_label} → {dec_label}  (F1: {f1:.3f}, Sens: {row['sensitivity_recall']:.3f}, Prec: {row['precision']:.3f})"
+        )
 
     if len(df_unmatched) > 0:
         print(f"\nUnmatched units:")
         for _, row in df_unmatched.iterrows():
-            if row['ground_truth_index'] == -1:
-                print(f"  {row['decomposed_label']}: No ground truth match (all {row['false_positives']} spikes are FP)")
+            if row["ground_truth_index"] == -1:
+                print(
+                    f"  {row['decomposed_label']}: No ground truth match (all {row['false_positives']} spikes are FP)"
+                )
             else:
-                print(f"  {row['ground_truth_label']}: No decomposed match (all {row['false_negatives']} spikes are FN)")
+                print(
+                    f"  {row['ground_truth_label']}: No decomposed match (all {row['false_negatives']} spikes are FN)"
+                )
 
     print("\n" + "=" * 80)
     print("✅ Done!")
