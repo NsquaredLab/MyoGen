@@ -11,18 +11,18 @@ NEURON	{
 }
 
 PARAMETER {
-	interval	= 100 (ms) <1e-9,1e9>: time between spikes (msec)
-	number	= 3000 <0,1e9>	: number of spikes (independent of noise)
-	start		= 1 (ms)	: start of first spike
-	noise		= 0 <0,1>	: amount of randomness (0.0 - 1.0)
-    xloc = -1 
-    yloc = -1 
-    zloc = -1         : location
-    id = -1
-    type = -1
-    subtype = -1
-    fflag           = 1             : don't change -- indicates that this is an artcell
-    checkInterval = 1.0 (ms) : time between checking if interval has changed
+	interval = 		100 (ms) <1e-9,1e9>	: time between spikes (msec)
+	number = 		3000 <0,1e9>		: number of spikes (independent of noise)
+	start = 		1 (ms)				: start of first spike
+	noise = 		0 <0,1>				: amount of randomness (0.0 - 1.0)
+    xloc = 			-1 
+    yloc = 			-1 
+    zloc = 			-1         			: location
+    id = 			-1
+    type = 			-1
+    subtype = 		-1
+    fflag = 		1             		: don't change -- indicates that this is an artcell
+    checkInterval = 1.0 (ms) 			: time between checking if interval has changed
 }
 
 ASSIGNED {
@@ -74,13 +74,13 @@ FUNCTION invl(mean (ms)) (ms) {
 	}
 	if (noise == 0) {
 		invl = mean
-	}else{
+	} else{
 		invl = (1. - noise)*mean + noise*mean*erand()
 	}
 }
 VERBATIM
-double nrn_random_pick(void* r);
-void* nrn_random_arg(int argpos);
+	double nrn_random_pick(void* r);
+	void* nrn_random_arg(int argpos);
 ENDVERBATIM
 
 FUNCTION erand() {
@@ -92,18 +92,18 @@ VERBATIM
 		: distribution MUST be set to Random.negexp(1)
 		*/
 		_lerand = nrn_random_pick(_p_donotuse);
-	}else{
+	} else {
 		/* only can be used in main thread */
 		if (_nt != nrn_threads) {
-hoc_execerror("multithread random in NetStim"," only via hoc Random");
+			hoc_execerror("multithread random in NetStim"," only via hoc Random");
 		}
-ENDVERBATIM
-		: the old standby. Cannot use if reproducible parallel sim
-		: independent of nhost or which host this instance is on
-		: is desired, since each instance on this cpu draws from
-		: the same stream
-		erand = exprand(1)
-VERBATIM
+		ENDVERBATIM
+				: the old standby. Cannot use if reproducible parallel sim
+				: independent of nhost or which host this instance is on
+				: is desired, since each instance on this cpu draws from
+				: the same stream
+				erand = exprand(1)
+		VERBATIM
 	}
 ENDVERBATIM
 }
@@ -114,7 +114,7 @@ VERBATIM
 	void** pv = (void**)(&_p_donotuse);
 	if (ifarg(1)) {
 		*pv = nrn_random_arg(1);
-	}else{
+	} else {
 		*pv = (void*)0;
 	}
  }

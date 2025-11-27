@@ -34,15 +34,15 @@ NET_RECEIVE (w) {
 DESTRUCTOR {
 VERBATIM
 	void* vv = (void*)(_p_ptr);  
-        if (vv) {
+	if (vv) {
 		hoc_obj_unref(*vector_pobj(vv));
 	}
 ENDVERBATIM
 }
 
 PROCEDURE element() {
-VERBATIM	
-  { void* vv; int i, size; double* px;
+VERBATIM { 
+	void* vv; int i, size; double* px;
 	i = (int)index;
 	if (i >= 0) {
 		vv = (void*)(_p_ptr);
@@ -52,14 +52,14 @@ VERBATIM
 			if (i < size) {
 				etime = px[i];
 				index += 1.;
-			}else{
+			} else {
 				index = -1.;
 			}
-		}else{
+		} else {
 			index = -1.;
 		}
 	}
-  }
+}
 ENDVERBATIM
 }
 

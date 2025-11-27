@@ -9,7 +9,6 @@ NEURON {
 	RANGE acm, alpha :alpha1, alpha2, alpha3, beta, gamma
 }
 
-
 PARAMETER{
     Tc = 100
     Fmax = 1

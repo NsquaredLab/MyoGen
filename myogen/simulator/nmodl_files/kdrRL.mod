@@ -18,21 +18,21 @@ NEURON {
 }
 
 PARAMETER {
-	gMax = 0.1 (S/cm2)
-	mVh = -25 (mV)
-	mslp = 20 (mV)
-	tVh = -39 (mV)			
-	tslp = 5.5 (mV)			
-	tmin = 1.4 (ms)		
-	taumax = 11.9(ms)
+	gMax = 		0.1 	(S/cm2)
+	mVh = 		-25 	(mV)
+	mslp = 		20 		(mV)
+	tVh = 		-39 	(mV)			
+	tslp = 		5.5 	(mV)			
+	tmin = 		1.4 	(ms)		
+	taumax = 	11.9 	(ms)
 }			
 
 ASSIGNED {
-	v   (mV)
-	ek  (mV)
-	ik  (mA/cm2)
-	g   (S/cm2)
-	mtau (ms)
+	v   	(mV)
+	ek  	(mV)
+	ik  	(mA/cm2)
+	g   	(S/cm2)
+	mtau 	(ms)
 	minf
 }
 

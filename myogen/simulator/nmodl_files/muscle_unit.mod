@@ -5,8 +5,8 @@ NEURON {
 
 
 PARAMETER {
-    Tc = 100
-    Fmax = 1
+    Tc =    100
+    Fmax =  1
 }
 
 ASSIGNED {
@@ -23,7 +23,6 @@ INITIAL {
     x2 = 0
     spike = 0
 }
-
 
 BREAKPOINT {
     SOLVE states METHOD cnexp

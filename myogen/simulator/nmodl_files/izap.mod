@@ -25,17 +25,17 @@ UNITS {
 }
 
 PARAMETER {
-  del (ms)
-  dur (ms)
-  f0 (1/s)  : frequency is in Hz
-  f1 (1/s)
-  amp (nA)
+  del   (ms)
+  dur   (ms)
+  f0    (1/s)  : frequency is in Hz
+  f1    (1/s)
+  amp   (nA)
 }
 
 ASSIGNED {
-  f (1/s)
-  i (nA)
-  on (1)
+  f   (1/s)
+  i   (nA)
+  on  (1)
 }
 
 INITIAL {
@@ -49,7 +49,7 @@ INITIAL {
   if (f1<=0) { f1=0 (1/s) }
 
   : do nothing if dur == 0
-  if (dur>0) {
+  if (dur > 0) {
     net_send(del, 1)  : to turn it on and start frequency ramp
   }
 }
@@ -69,7 +69,7 @@ in the formula for theta.
 ENDCOMMENT
 
 BREAKPOINT {
-  if (on==0) {
+  if (on == 0) {
     f = 0
     i = 0
   } else {
@@ -81,7 +81,7 @@ BREAKPOINT {
 NET_RECEIVE (w) {
   : respond only to self-events with flag > 0
   if (flag == 1) {
-    if (on==0) {
+    if (on == 0) {
       on = 1  : turn it on
       net_send(dur, 1)  : to stop frequency ramp, freezing frequency at f1
     } else {

@@ -2,7 +2,7 @@ TITLE Motoneuron L-type Calcium channels
 :
 : The parameters for this current come from V. Booth et al. J Neurophysiol 78:3371-3385, 1997
 : Iterative equations
-: Modified by RP to provide calcium to a separate pool (caL)and to have adjustable equilibrium
+: Modified by RP to provide calcium to a separate pool (caL) and to have adjustable equilibrium
 : potential vca
 
 
@@ -13,25 +13,24 @@ NEURON {
 	GLOBAL vca,kappa_m,kappa_h
 }
 
-
 UNITS {
 	(mA) = (milliamp)
 	(mV) = (millivolt)
 }
 
 PARAMETER {
-	gcabar  = 0.0003  (mho/cm2)
-	ecaL		(mV)	: eca can't be set here, only in hoc
+	gcabar = 	0.0003 	(mho/cm2)
+	ecaL				(mV) : eca can't be set here, only in hoc
 :	celcius = 36	(degC)
-	dt		(ms)
-	tau_m	= 20	(ms)
-	v		(mV)
-        vca=80		(mV)
-	theta_m = -30   (mV)
-	kappa_m = -6	(-mV)
-	tau_h	= 1500	(ms)
-	theta_h = 14   (mV)
-	kappa_h = 4	(-mV)
+	dt					(ms)
+	tau_m = 	20 		(ms)
+	v					(mV)
+    vca = 		80		(mV)
+	theta_m = 	-30   	(mV)
+	kappa_m = 	-6		(-mV)
+	tau_h = 	1500	(ms)
+	theta_h = 	14   	(mV)
+	kappa_h = 	4		(-mV)
 }
 
 STATE {
@@ -71,16 +70,14 @@ INITIAL {
 }
 
 PROCEDURE evaluate_fct(v(mV)) {
-
 	m_inf = 1 / (1 + (Exp((v - theta_m)/ kappa_m))): / tadj
 	h_inf = 1 / (1 + (Exp((v - theta_h)/ kappa_h))): / tadj
-
 }
 
 FUNCTION vtrap(x,y) {
 	if (fabs(x/y) < 1e-6) {
 		vtrap = y*(1 - x/y/2)
-	}else{
+	} else {
 		vtrap = x/(Exp(x/y)-1)
 	}
 }
@@ -88,7 +85,7 @@ FUNCTION vtrap(x,y) {
 FUNCTION Exp(x) {
 	if (x < -100) {
 		Exp = 0
-	}else{
+	} else {
 		Exp = exp(x)
 	}
 } 

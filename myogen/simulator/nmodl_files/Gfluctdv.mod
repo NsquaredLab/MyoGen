@@ -83,8 +83,6 @@ Modified 04/09/08 by RKP so that current can be varied continuously over the cou
 -----------------------------------------------------------------------------
 ENDCOMMENT
 
-
-
 INDEPENDENT {t FROM 0 TO 1 WITH 1 (ms)}
 
 NEURON {
@@ -93,8 +91,7 @@ NEURON {
 	RANGE std_e, std_i, tau_e, tau_i, D_e, D_i
 	RANGE new_seed
 	GLOBAL multex,multin
-        NONSPECIFIC_CURRENT i
-
+	NONSPECIFIC_CURRENT i
 }
 
 UNITS {
@@ -104,38 +101,37 @@ UNITS {
 }
 
 PARAMETER {
-	dt		(ms)
+	dt					(ms)
 
-	E_e	= 0 	(mV)	: reversal potential of excitatory conductance
-	E_i	= -75 	(mV)	: reversal potential of inhibitory conductance
+	E_e	= 		0 		(mV)	: reversal potential of excitatory conductance
+	E_i	= 		-75 	(mV)	: reversal potential of inhibitory conductance
 
+	g_e0 = 		0.0001 	(S/cm2)	: average excitatory conductance
+	g_i0 = 		0.0005 	(S/cm2)	: average inhibitory conductance
 
-     	g_e0 = 0.0001 (S/cm2)	: average excitatory conductance
-     	g_i0 = 0.0005 (S/cm2)	: average inhibitory conductance
+	std_e = 	3e-5 	(S/cm2)	: standard dev of excitatory conductance
+	std_i = 	6e-5 	(S/cm2)	: standard dev of inhibitory conductance
 
-     	std_e = 3e-5 (S/cm2)	: standard dev of excitatory conductance
-     	std_i = 6e-5 (S/cm2)	: standard dev of inhibitory conductance
+	tau_e = 	2.728	(ms)	: time constant of excitatory conductance
+	tau_i = 	10.49	(ms)	: time constant of inhibitory conductance
 
-	tau_e	= 2.728	(ms)	: time constant of excitatory conductance
-	tau_i	= 10.49	(ms)	: time constant of inhibitory conductance
-
-	multex=0
-	multin=0
+	multex = 	0
+	multin = 	0
 }
 
 ASSIGNED {
-	v	(mV)		: membrane voltage
-	i 	(mA/cm2)	: fluctuating current
-	g_e	(S/cm2)		: total excitatory conductance
-	g_i	(S/cm2)		: total inhibitory conductance
-	g_e1	(S/cm2)		: fluctuating excitatory conductance
-	g_i1	(S/cm2)		: fluctuating inhibitory conductance
-	D_e	(umho umho /ms) : excitatory diffusion coefficient
-	D_i	(umho umho /ms) : inhibitory diffusion coefficient
+	v					(mV)			: membrane voltage
+	i 					(mA/cm2)		: fluctuating current
+	g_e					(S/cm2)			: total excitatory conductance
+	g_i					(S/cm2)			: total inhibitory conductance
+	g_e1				(S/cm2)			: fluctuating excitatory conductance
+	g_i1				(S/cm2)			: fluctuating inhibitory conductance
+	D_e					(umho umho /ms) : excitatory diffusion coefficient
+	D_i					(umho umho /ms) : inhibitory diffusion coefficient
 	exp_e
 	exp_i
-	amp_e	(umho)
-	amp_i	(umho)
+	amp_e				(umho)
+	amp_i				(umho)
 }
 
 INITIAL {
@@ -144,7 +140,7 @@ INITIAL {
 	if(tau_e != 0) {
 		D_e = 2 * std_e * std_e / tau_e
 		exp_e = exp(-dt/tau_e)
-		amp_e =sqrt(multex)*std_e * sqrt( (1-exp(-2*dt/tau_e)) )
+		amp_e = sqrt(multex)*std_e * sqrt( (1-exp(-2*dt/tau_e)) )
 	}
 	if(tau_i != 0) {
 		D_i = 2 * std_i * std_i / tau_i
@@ -169,22 +165,22 @@ BREAKPOINT {
 }
 
 
-PROCEDURE oup() {		: use Scop function normrand(mean, std_dev)
+PROCEDURE oup() {	: use Scop function normrand(mean, std_dev)
    if(tau_e!=0) {
-	amp_e =sqrt(multex)*std_e * sqrt( (1-exp(-2*dt/tau_e)) )
-	g_e1 =  exp_e * g_e1 + amp_e * normrand(0,1)
+		amp_e = sqrt(multex)*std_e * sqrt( (1-exp(-2*dt/tau_e)) )
+		g_e1 =  exp_e * g_e1 + amp_e * normrand(0,1)
    }
    if(tau_i!=0) {
-	amp_i = sqrt(multin)*std_i * sqrt( (1-exp(-2*dt/tau_i)) )
-	g_i1 =  exp_i * g_i1 + amp_i * normrand(0,1)
+		amp_i = sqrt(multin)*std_i * sqrt( (1-exp(-2*dt/tau_i)) )
+		g_i1 =  exp_i * g_i1 + amp_i * normrand(0,1)
    }
 }
 
 
-PROCEDURE new_seed(seed) {		: procedure to set the seed
+PROCEDURE new_seed(seed) {	: procedure to set the seed
 	set_seed(seed)
 	VERBATIM
-	  printf("Setting random generator with seed = %g\n", _lseed);
+	  	printf("Setting random generator with seed = %g\n", _lseed);
 	ENDVERBATIM
 }
 

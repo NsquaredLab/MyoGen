@@ -37,54 +37,52 @@ NEURON {
 }
 
 PARAMETER {
-    gnabar = .030 (S/cm2)	<0,1e9>
-    gnapbar = .000033 (S/cm2) <0,1e9>
-    gkfbar = .016 (S/cm2)	<0,1e9>
-    gksbar = .004 (S/cm2)	<0,1e9>
+    gnabar =            .030 (S/cm2) <0,1e9>
+    gnapbar =           .000033 (S/cm2) <0,1e9>
+    gkfbar =            .016 (S/cm2)	<0,1e9>
+    gksbar =            .004 (S/cm2)	<0,1e9>
 
-    gl = .0003 (S/cm2)	<0,1e9>
-    el = -54.3 (mV)
-
-    vtraub = 50.0 (mV)
-    mact = 15.0 (mV)
-    rinact = 0.05 (/ms)
+    gl =                .0003 (S/cm2)	<0,1e9>
+    el =                -54.3 (mV)
+    vtraub =            50.0 (mV)
+    mact =              15.0 (mV)
+    rinact =            0.05 (/ms)
 
     : Alpha and beta parameters for m gate (sodium activation)
-    m_alpha_A = 0.64
-    m_alpha_v_offset = 15.0 (mV)
-    m_alpha_k = 4.0 (mV)
-    m_beta_A = 0.56
-    m_beta_v_offset = 40.0 (mV)
-    m_beta_k = 5.0 (mV)
+    m_alpha_A =         0.64
+    m_alpha_v_offset =  15.0 (mV)
+    m_alpha_k =         4.0 (mV)
+    m_beta_A =          0.56
+    m_beta_v_offset =   40.0 (mV)
+    m_beta_k =          5.0 (mV)
 
     : Alpha and beta parameters for h gate (sodium inactivation)
-    h_alpha_A = 0.928
-    h_alpha_v_offset = 17.0 (mV)
-    h_alpha_tau = 18.0 (mV)
-    h_beta_A = 9.0
-    h_beta_v_offset = 40.0 (mV)
-    h_beta_k = 5.0 (mV)
+    h_alpha_A =         0.928
+    h_alpha_v_offset =  17.0 (mV)
+    h_alpha_tau =       18.0 (mV)
+    h_beta_A =          9.0
+    h_beta_v_offset =   40.0 (mV)
+    h_beta_k =          5.0 (mV)
 
     : Alpha and beta parameters for p gate (persistent sodium activation)
-    p_alpha_A = 0.64
-    p_alpha_v_offset = 5.0 (mV)
-    p_alpha_k = 4.0 (mV)
-    p_beta_A = 0.56
-    p_beta_v_offset = 30.0 (mV)
-    p_beta_k = 5.0 (mV)
-
+    p_alpha_A =         0.64
+    p_alpha_v_offset =  5.0 (mV)
+    p_alpha_k =         4.0 (mV)
+    p_beta_A =          0.56
+    p_beta_v_offset =   30.0 (mV)
+    p_beta_k =          5.0 (mV)
     : Alpha and beta parameters for n gate (fast potassium activation)
-    n_alpha_A = 0.08
-    n_alpha_v_offset = 15.0 (mV)
-    n_alpha_k = 7.0 (mV)
-    n_beta_A = 2.0
-    n_beta_v_offset = 10.0 (mV)
-    n_beta_tau = 40.0 (mV)
+    n_alpha_A =         0.08
+    n_alpha_v_offset =  15.0 (mV)
+    n_alpha_k =         7.0 (mV)
+    n_beta_A =          2.0
+    n_beta_v_offset =   10.0 (mV)
+    n_beta_tau =        40.0 (mV)
 
     : Alpha and beta parameters for r gate (slow potassium activation)
-    r_alpha_A = 3.5
-    r_alpha_v_offset = 55.0 (mV)
-    r_alpha_k = 4.0 (mV)
+    r_alpha_A =         3.5
+    r_alpha_v_offset =  55.0 (mV)
+    r_alpha_k =         4.0 (mV)
 
 }
 
@@ -129,7 +127,6 @@ BREAKPOINT {
     il = gl*(v - el)
 }
 
-
 INITIAL {
     rates(v)
     m = minf
@@ -150,9 +147,10 @@ DERIVATIVE states {
 }
 
 ? rates
-PROCEDURE rates(v(mV)) {  :Computes rate and other constants at current v.
-                      :Call once from HOC to initialize inf at resting v.
-    LOCAL  alpha, beta, sum, v2
+PROCEDURE rates(v(mV)) {  
+    :Computes rate and other constants at current v.
+    :Call once from HOC to initialize inf at resting v.
+    LOCAL alpha, beta, sum, v2
 
 UNITSOFF
 
@@ -193,9 +191,9 @@ UNITSOFF
 FUNCTION vtrap(x,y) {  :Traps for 0 in denominator of rate eqns.
     if (fabs(x/y) < 1e-6) {
         vtrap = y*(1 - x/y/2)
-        }else{
-            vtrap = x/(exp(x/y) - 1)
-        }
+    } else {
+        vtrap = x/(exp(x/y) - 1)
+    }
 }
 
 UNITSON
