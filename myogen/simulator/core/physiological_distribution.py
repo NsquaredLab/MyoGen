@@ -1,4 +1,3 @@
-import warnings
 from typing import Literal
 
 import numpy as np
@@ -108,12 +107,6 @@ class RecruitmentThresholds:
 
             where :math:`b` = ``deluca__slope``, :math:`RT_{max}` = ``konstantin__max_threshold__ratio``, :math:`i = 1, 2, \\ldots, N`
 
-        .. note::
-            - All models ensure :math:`rt(1) < rt(2) < \\ldots < rt(N)` (monotonically increasing)
-            - The recruitment range :math:`RR = rt(N) / rt(1)` is preserved across all models
-            - ``rtz`` is a zero-based version where :math:`rtz(1) = 0`, useful for simulation
-            - Motor units are recruited when excitation :math:`> rt(i)` for unit :math:`i`
-
         Examples
         --------
         >>> # Generate thresholds using Fuglevand model
@@ -169,14 +162,6 @@ class RecruitmentThresholds:
     def _fuglevand_model(
         self,
     ) -> tuple[RECRUITMENT_THRESHOLDS__ARRAY, RECRUITMENT_THRESHOLDS__ARRAY]:
-        """
-        Fuglevand et al. (1993) exponential model.
-
-        Returns
-        -------
-        tuple[RECRUITMENT_THRESHOLDS__ARRAY, RECRUITMENT_THRESHOLDS__ARRAY]
-            (rt, rtz) recruitment thresholds and zero-based thresholds
-        """
         i = np.arange(self.N) + 1
         rt = np.exp((np.log(self.recruitment_range__ratio) / self.N) * i) / 100
         rtz = rt - rt[0]
@@ -185,19 +170,6 @@ class RecruitmentThresholds:
     def _deluca_model(
         self,
     ) -> tuple[RECRUITMENT_THRESHOLDS__ARRAY, RECRUITMENT_THRESHOLDS__ARRAY]:
-        """
-        De Luca & Contessa (2012) model with slope correction.
-
-        Returns
-        -------
-        tuple[RECRUITMENT_THRESHOLDS__ARRAY, RECRUITMENT_THRESHOLDS__ARRAY]
-            (rt, rtz) recruitment thresholds and zero-based thresholds
-
-        Raises
-        ------
-        ValueError
-            If deluca__slope is not provided
-        """
         if self.deluca__slope is None:
             raise ValueError("deluca__slope must be provided for 'deluca' mode.")
 
@@ -216,19 +188,6 @@ class RecruitmentThresholds:
     def _konstantin_model(
         self,
     ) -> tuple[RECRUITMENT_THRESHOLDS__ARRAY, RECRUITMENT_THRESHOLDS__ARRAY]:
-        """
-        Konstantin et al. (2020) model allowing explicit maximum threshold control.
-
-        Returns
-        -------
-        tuple[RECRUITMENT_THRESHOLDS__ARRAY, RECRUITMENT_THRESHOLDS__ARRAY]
-            (rt, rtz) recruitment thresholds and zero-based thresholds
-
-        Raises
-        ------
-        ValueError
-            If konstantin__max_threshold__ratio is not provided
-        """
         if self.konstantin__max_threshold__ratio is None:
             raise ValueError(
                 "konstantin__max_threshold__ratio must be provided for 'konstantin' mode."
@@ -246,22 +205,6 @@ class RecruitmentThresholds:
     def _combined_model(
         self,
     ) -> tuple[RECRUITMENT_THRESHOLDS__ARRAY, RECRUITMENT_THRESHOLDS__ARRAY]:
-        """
-        Combined model using De Luca slope parameter with Konstantin scaling.
-
-        A corrected De Luca model that uses the slope parameter for shape control
-        but properly respects the RR constraint and maximum threshold like the Konstantin model.
-
-        Returns
-        -------
-        tuple[RECRUITMENT_THRESHOLDS__ARRAY, RECRUITMENT_THRESHOLDS__ARRAY]
-            (rt, rtz) recruitment thresholds and zero-based thresholds
-
-        Raises
-        ------
-        ValueError
-            If deluca__slope or konstantin__max_threshold__ratio is not provided
-        """
         if self.deluca__slope is None or self.konstantin__max_threshold__ratio is None:
             raise ValueError(
                 "Both deluca__slope and konstantin__max_threshold__ratio must be provided for 'combined' mode."
@@ -292,59 +235,3 @@ class RecruitmentThresholds:
 
         rtz = rt - rt[0]
         return rt, rtz
-
-
-# Backward compatibility function - DEPRECATED
-@beartowertype
-def generate_mu_recruitment_thresholds(
-    N: int,
-    recruitment_range__ratio: float,
-    deluca__slope: float | None = None,
-    konstantin__max_threshold__ratio: float = 1.0,
-    mode: Literal["fuglevand", "deluca", "konstantin", "combined"] = "konstantin",
-) -> tuple[RECRUITMENT_THRESHOLDS__ARRAY, RECRUITMENT_THRESHOLDS__ARRAY]:
-    """
-    Generate recruitment thresholds for a pool of motor units using different models.
-
-    .. deprecated:: 0.5.0
-        `generate_mu_recruitment_thresholds` is deprecated and will be removed in v1.0.0.
-        Use `RecruitmentThresholds` class instead.
-
-    This is a backward compatibility function that wraps the RecruitmentThresholds class.
-    For new code, prefer using RecruitmentThresholds directly.
-
-    Parameters are identical to RecruitmentThresholds.__init__().
-
-    Returns
-    -------
-    tuple[RECRUITMENT_THRESHOLDS__ARRAY, RECRUITMENT_THRESHOLDS__ARRAY]
-        (rt, rtz) tuple of recruitment thresholds and zero-based thresholds.
-
-    Examples
-    --------
-    .. deprecated:: 0.5.0
-
-    Old usage (deprecated):
-
-    >>> rt, rtz = generate_mu_recruitment_thresholds(N=100, recruitment_range__ratio=50.0)
-
-    New usage (preferred):
-
-    >>> thresholds = RecruitmentThresholds(N=100, recruitment_range__ratio=50.0)
-    >>> rt, rtz = thresholds.rt, thresholds.rtz
-    """
-    warnings.warn(
-        "generate_mu_recruitment_thresholds is deprecated and will be removed in v1.0.0. "
-        "Use RecruitmentThresholds class instead.",
-        DeprecationWarning,
-        stacklevel=2,
-    )
-
-    thresholds = RecruitmentThresholds(
-        N=N,
-        recruitment_range__ratio=recruitment_range__ratio,
-        deluca__slope=deluca__slope,
-        konstantin__max_threshold__ratio=konstantin__max_threshold__ratio,
-        mode=mode,
-    )
-    return thresholds.rt, thresholds.rtz

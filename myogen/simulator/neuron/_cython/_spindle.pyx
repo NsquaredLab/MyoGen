@@ -283,7 +283,7 @@ cdef class _Spindle__Cython():
     @cython.boundscheck(False)
     @cython.wraparound(False)
     @cython.initializedcheck(False)
-    def integrate(self, double L, double V, double A, double gDyn, double gStat):
+    cpdef (double, double) integrate(self, double L, double V, double A, double gDyn, double gStat):
         """
         Integrate the muscle spindle model one time step forward.
         

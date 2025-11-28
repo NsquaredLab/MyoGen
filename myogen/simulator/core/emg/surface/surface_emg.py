@@ -237,7 +237,14 @@ class SurfaceEMG:
                     # Add empty signal for MUs with no fibers
                     segment.analogsignals.append(
                         GridAnalogSignal(
-                            signal=np.zeros((len(t), electrode_array.num_rows, electrode_array.num_cols)) * pq.dimensionless,
+                            signal=np.zeros(
+                                (
+                                    len(t),
+                                    electrode_array.num_rows,
+                                    electrode_array.num_cols,
+                                )
+                            )
+                            * pq.dimensionless,
                             t_start=0 * pq.ms,
                             sampling_rate=self._sampling_frequency__Hz * pq.Hz,
                         )
@@ -283,48 +290,27 @@ class SurfaceEMG:
                     L2 = abs(innervation_zone - fiber_length__mm / 2)
 
                     # Use the new simulate_fiber_v2 function
-                    if fiber_number == 0 or A_matrix is None:
-                        phi_temp, A_matrix, B_incomplete = simulate_fiber_v2(
-                            Fs=self._sampling_frequency__Hz * 1e-3,
-                            v=self._mean_conduction_velocity__m_s,
-                            N=self._sampling_points_in_t_and_z_domains,
-                            M=self._sampling_points_in_theta_domain,
-                            r=self._radius_total,
-                            r_bone=self._radius_bone__mm,
-                            th_fat=self._fat_thickness__mm,
-                            th_skin=self._skin_thickness__mm,
-                            R=R,
-                            L1=L1,
-                            L2=L2,
-                            zi=innervation_zone,
-                            electrode_array=electrode_array,
-                            sig_muscle_rho=self._muscle_conductivity_radial__S_m,
-                            sig_muscle_z=self._muscle_conductivity_longitudinal__S_m,
-                            sig_skin=self._skin_conductivity__S_m,
-                            sig_fat=self._fat_conductivity__S_m,
-                        )
-                    else:
-                        phi_temp, _, _ = simulate_fiber_v2(
-                            Fs=self._sampling_frequency__Hz * 1e-3,
-                            v=self._mean_conduction_velocity__m_s,
-                            N=self._sampling_points_in_t_and_z_domains,
-                            M=self._sampling_points_in_theta_domain,
-                            r=self._radius_total,
-                            r_bone=self._radius_bone__mm,
-                            th_fat=self._fat_thickness__mm,
-                            th_skin=self._skin_thickness__mm,
-                            R=R,
-                            L1=L1,
-                            L2=L2,
-                            zi=innervation_zone,
-                            electrode_array=electrode_array,
-                            sig_muscle_rho=self._muscle_conductivity_radial__S_m,
-                            sig_muscle_z=self._muscle_conductivity_longitudinal__S_m,
-                            sig_skin=self._skin_conductivity__S_m,
-                            sig_fat=self._fat_conductivity__S_m,
-                            A_matrix=A_matrix,
-                            B_incomplete=B_incomplete,
-                        )
+                    phi_temp, A_matrix, B_incomplete = simulate_fiber_v2(
+                        Fs=self._sampling_frequency__Hz * 1e-3,
+                        v=self._mean_conduction_velocity__m_s,
+                        N=self._sampling_points_in_t_and_z_domains,
+                        M=self._sampling_points_in_theta_domain,
+                        r=self._radius_total,
+                        r_bone=self._radius_bone__mm,
+                        th_fat=self._fat_thickness__mm,
+                        th_skin=self._skin_thickness__mm,
+                        R=R,
+                        L1=L1,
+                        L2=L2,
+                        zi=innervation_zone,
+                        electrode_array=electrode_array,
+                        sig_muscle_rho=self._muscle_conductivity_radial__S_m,
+                        sig_muscle_z=self._muscle_conductivity_longitudinal__S_m,
+                        sig_skin=self._skin_conductivity__S_m,
+                        sig_fat=self._fat_conductivity__S_m,
+                        A_matrix=None if fiber_number == 0 else A_matrix,
+                        B_incomplete=None if fiber_number == 0 else B_incomplete,
+                    )
 
                     array_result += phi_temp
 
@@ -651,12 +637,16 @@ class SurfaceEMG:
 
                 # Calculate signal power PER CHANNEL (per electrode)
                 # Mean along time axis (axis=0) gives power per spatial location
-                signal_power_per_channel = np.mean(emg_array**2, axis=0)  # Shape: (rows, cols)
+                signal_power_per_channel = np.mean(
+                    emg_array**2, axis=0
+                )  # Shape: (rows, cols)
 
                 # Calculate noise power per channel
                 snr_linear = 10 ** (snr__dB / 10)
                 noise_power_per_channel = signal_power_per_channel / snr_linear
-                noise_std_per_channel = np.sqrt(noise_power_per_channel)  # Shape: (rows, cols)
+                noise_std_per_channel = np.sqrt(
+                    noise_power_per_channel
+                )  # Shape: (rows, cols)
 
                 # Generate noise
                 if noise_type.lower() == "gaussian":

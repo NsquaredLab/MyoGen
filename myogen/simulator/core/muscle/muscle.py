@@ -421,6 +421,7 @@ class Muscle:
         observed in histological studies.
 
         Results are stored in the following properties after execution:
+
             - `mf_centers`: Array of shape (n_fibers, 2) with fiber positions [x, y] in mm
             - `number_of_muscle_fibers`: Total number of muscle fibers
             - `muscle_border`: Array of border points for visualization
@@ -542,12 +543,18 @@ class Muscle:
         # Out-of-muscle area compensation
         # Calculates how much of the MU's gaussian distribution is outside of the
         # muscle border and inflates the rest of the distribution according to it
-        borderfun_pos = lambda x: np.real(np.sqrt(self._radius__mm**2 - x**2))
-        borderfun_neg = lambda x: np.real(-np.sqrt(self._radius__mm**2 - x**2))
+        def borderfun_pos(x):
+            return np.real(np.sqrt(self._radius__mm**2 - x**2))
+
+        def borderfun_neg(x):
+            return np.real(-np.sqrt(self._radius__mm**2 - x**2))
+
         out_circle_coeff = np.ones(self._number_of_neurons)
 
         c = chi2.ppf(conf, 2)
-        sigma = lambda ia: np.eye(2) * ia / np.pi / c
+
+        def sigma(ia):
+            return np.eye(2) * ia / np.pi / c
 
         for mu in tqdm(
             range(self._number_of_neurons),

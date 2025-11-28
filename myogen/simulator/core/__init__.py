@@ -7,10 +7,6 @@ the simulator package, organized to eliminate circular dependencies.
 
 from .emg import SurfaceEMG
 from .muscle import Muscle
-from .physiological_distribution import generate_mu_recruitment_thresholds
+from .physiological_distribution import RecruitmentThresholds
 
-__all__ = [
-    "Muscle",
-    "generate_mu_recruitment_thresholds",
-    "SurfaceEMG",
-]
+__all__ = ["Muscle", "RecruitmentThresholds", "SurfaceEMG"]

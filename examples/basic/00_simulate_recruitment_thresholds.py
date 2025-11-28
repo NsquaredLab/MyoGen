@@ -29,7 +29,7 @@ from myogen import simulator
 from myogen.utils.plotting import plot_recruitment_thresholds
 
 # Configure matplotlib for high-quality output
-plt.rcParams["figure.dpi"] = 300
+plt.rcParams["figure.dpi"] = 72
 plt.rcParams["savefig.dpi"] = 300
 plt.rcParams["figure.figsize"] = (1, 1)
 
@@ -72,7 +72,7 @@ rt_fuglevand, rtz_fuglevand = simulator.RecruitmentThresholds(
     N=n_motor_units, recruitment_range__ratio=recruitment_range, mode="fuglevand"
 )
 
-_, ax = plt.subplots(figsize=(1, 1))
+_, ax = plt.subplots()
 plot_recruitment_thresholds(
     rt_fuglevand, [ax], model_name="Fuglevand", colors="#90b8e0"
 )
@@ -102,7 +102,7 @@ for slope in deluca_slopes:
     )
     deluca_results[slope] = rt
 
-_, ax = plt.subplots(figsize=(1, 1))
+_, ax = plt.subplots()
 plot_recruitment_thresholds(
     deluca_results,
     [ax],
@@ -132,7 +132,7 @@ rt_konstantin, rtz_konstantin = simulator.RecruitmentThresholds(
     mode="konstantin",
 )
 
-_, ax = plt.subplots(figsize=(1, 1))
+_, ax = plt.subplots()
 plot_recruitment_thresholds(
     rt_konstantin,
     [ax],
@@ -183,7 +183,7 @@ joblib.dump(combined_results[5], save_path / "thresholds.pkl")
 # Plot Combined Model Results
 # ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-_, ax = plt.subplots(figsize=(1, 1))
+_, ax = plt.subplots()
 plot_recruitment_thresholds(
     combined_results,
     [ax],

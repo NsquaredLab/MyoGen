@@ -1,8 +1,5 @@
 import numpy as np
-from Cython.Build import cythonize
 from numpy.random import Generator
-from setuptools import Extension, setup
-from myogen.utils.nmodl import load_nmodl_mechanisms
 
 SEED: int = 180319  # Seed for reproducibility
 RANDOM_GENERATOR: Generator = np.random.default_rng(SEED)
@@ -50,32 +47,42 @@ def _setup_myogen(quiet: bool = False) -> bool:
     bool
         True if setup completed successfully, False otherwise
     """
+    from Cython.Build import cythonize
+    from setuptools import Extension, setup
+
     setup(
         ext_modules=cythonize(
             [
                 Extension(
                     "myogen.simulator.neuron._cython._spindle",
                     ["myogen/simulator/neuron/_cython/_spindle.pyx"],
+                    extra_compile_args=["-O3", "-march=native", "-ffast-math"],
                 ),
                 Extension(
                     "myogen.simulator.neuron._cython._hill",
                     ["myogen/simulator/neuron/_cython/_hill.pyx"],
+                    extra_compile_args=["-O3", "-march=native", "-ffast-math"],
                 ),
                 Extension(
                     "myogen.simulator.neuron._cython._gto",
                     ["myogen/simulator/neuron/_cython/_gto.pyx"],
-                ),
-                Extension(
-                    "myogen.simulator.neuron._cython._emg",
-                    ["myogen/simulator/neuron/_cython/_emg.pyx"],
+                    extra_compile_args=["-O3", "-march=native", "-ffast-math"],
                 ),
                 Extension(
                     "myogen.simulator.neuron._cython._poisson_process_generator",
                     ["myogen/simulator/neuron/_cython/_poisson_process_generator.pyx"],
+                    extra_compile_args=["-O3", "-march=native", "-ffast-math"],
                 ),
                 Extension(
                     "myogen.simulator.neuron._cython._gamma_process_generator",
                     ["myogen/simulator/neuron/_cython/_gamma_process_generator.pyx"],
+                    extra_compile_args=["-O3", "-march=native", "-ffast-math"],
+                ),
+                Extension(
+                    "myogen.simulator.neuron._cython._simulate_fiber",
+                    ["myogen/simulator/neuron/_cython/_simulate_fiber.pyx"],
+                    extra_compile_args=["-O3", "-march=native", "-ffast-math", "-fopenmp"],
+                    extra_link_args=["-fopenmp"],
                 ),
             ],
             compiler_directives={"embedsignature": True},
@@ -98,6 +105,8 @@ def _setup_myogen(quiet: bool = False) -> bool:
             print(f"Error during MyoGen setup: {e}")
         return False
 
+
+from myogen.utils.nmodl import load_nmodl_mechanisms
 
 __all__ = [
     "RANDOM_GENERATOR",

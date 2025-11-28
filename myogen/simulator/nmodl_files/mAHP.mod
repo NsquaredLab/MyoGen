@@ -83,7 +83,7 @@
 DERIVATIVE states { 
  	drive_channel = - (10000) * ica/ (2 * FARADAY * depth)
  	if (drive_channel <= 0.) { drive_channel = 0. }	: cannot pump inward
- 	cai' = drive_channel + (cainf-cai)/taur
+ 	cai' = drive_channel + (cainf-cai)/tau
 
 	rates(cai)    
 	n' = (ninf-n)/ntau
