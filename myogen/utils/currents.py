@@ -1,22 +1,87 @@
-from typing import cast
-
 import numpy as np
 import quantities as pq
 from neo.core import AnalogSignal
 
 from myogen.utils.decorators import beartowertype
-from myogen.utils.types import CURRENT__AnalogSignal
+from myogen.utils.types import (
+    CURRENT__AnalogSignal,
+    Quantity__Hz,
+    Quantity__ms,
+    Quantity__nA,
+    Quantity__rad,
+    Quantity__uV,
+)
+
+
+def _broadcast_and_validate(
+    param_name: str,
+    value: pq.Quantity | list[pq.Quantity],
+    n_pools: int,
+) -> list[pq.Quantity]:
+    """Convert scalar or list of quantities to validated list.
+
+    Handles three cases:
+    1. Scalar value (non-array/list): broadcast to list of n_pools
+    2. Scalar Quantity (0-dim array): broadcast to list of n_pools
+    3. List/array with length n_pools: use as-is
+    4. List/array with wrong length: raise ValueError
+
+    Note: pq.Quantity is a subclass of np.ndarray, so scalar Quantities
+    (e.g., 5.0 * pq.ms) are 0-dimensional arrays that need special handling.
+
+    Parameters
+    ----------
+    param_name : str
+        Name of the parameter (for error messages)
+    value : pq.Quantity | list[pq.Quantity]
+        The parameter value to broadcast/validate. Can be:
+        - Scalar Quantity (e.g., 5.0 * pq.ms)
+        - List of Quantities (e.g., [1*pq.ms, 2*pq.ms, 3*pq.ms])
+        - Array of Quantities
+    n_pools : int
+        Expected length of the output list
+
+    Returns
+    -------
+    list[pq.Quantity]
+        List of length n_pools with Quantity values
+
+    Raises
+    ------
+    ValueError
+        If value is a list/array and its length doesn't match n_pools
+    """
+    # Check if value is a scalar (including 0-dimensional Quantity arrays)
+    # This handles both non-array scalars and scalar Quantities
+    is_scalar = not isinstance(value, (np.ndarray, list)) or (
+        isinstance(value, np.ndarray) and value.ndim == 0
+    )
+
+    if is_scalar:
+        # Broadcast scalar to list of n_pools elements
+        value_list = [value] * n_pools
+    else:
+        # Value is already a list or multi-element array
+        value_list = value
+
+        # Validate that length matches expected n_pools
+        if len(value_list) != n_pools:
+            raise ValueError(
+                f"Length of {param_name} ({len(value_list)}) must match n_pools ({n_pools})"
+            )
+
+    return value_list  # type: ignore
 
 
 @beartowertype
 def create_sinusoidal_current(
     n_pools: int,
     t_points: int,
-    timestep__ms: float,
-    amplitudes__muV: float | list[float],
-    frequencies__Hz: float | list[float],
-    offsets__muV: float | list[float],
-    phases__rad: float | list[float] = 0.0,
+    timestep__ms: Quantity__ms,
+    amplitudes__uV: Quantity__uV | list[Quantity__uV],
+    frequencies__Hz: Quantity__Hz | list[Quantity__Hz],
+    offsets__uV: Quantity__uV | list[Quantity__uV],
+    phases__rad: Quantity__rad | list[Quantity__rad] = 0.0 * pq.rad,
 ) -> CURRENT__AnalogSignal:
     """Create a matrix of sinusoidal currents for multiple pools.
 
@@ -26,83 +91,45 @@ def create_sinusoidal_current(
         Number of current pools to generate
     t_points : int
         Number of time points
-    timestep__ms : float
-        Time step in milliseconds
-    amplitudes__muV : float | list[float]
+    timestep__ms : Quantity__ms
+        Time step in milliseconds as a Quantity
+    amplitudes__uV : Quantity__uV | list[Quantity__uV]
         Amplitude(s) of the sinusoidal current(s) in microvolts.
-
-        Must be:
-            - Single float: used for all pools
-            - List of floats: must match n_pools
-    frequencies__Hz : float | list[float]
+    frequencies__Hz : Quantity__Hz | list[Quantity__Hz]
         Frequency(s) of the sinusoidal current(s) in Hertz.
-
-        Must be:
-            - Single float: used for all pools
-            - List of floats: must match n_pools
-    offsets__muV : float | list[float]
+    offsets__uV : Quantity__uV | list[Quantity__uV]
         DC offset(s) to add to the sinusoidal current(s) in microvolts.
-
-        Must be:
-            - Single float: used for all pools
-            - List of floats: must match n_pools
-    phases__rad : float | list[float]
+    phases__rad : Quantity__rad | list[Quantity__rad]
         Phase(s) of the sinusoidal current(s) in radians.
-
-        Must be:
-            - Single float: used for all pools
-            - List of floats: must match n_pools
 
     Raises
     ------
     ValueError
         If the amplitudes, frequencies, offsets, or phases are lists and the length of the parameters does not match n_pools
 
+    Notes
+    -----
+    If a parameter is provided as a single Quantity, it is broadcasted to all pools.
+    If provided as a list, its length must match n_pools.
+
     Returns
     -------
     INPUT_CURRENT__AnalogSignal
         Analog signal of shape (t_points, n_pools) * pq.nA containing sinusoidal currents
     """
-    t = np.arange(0, t_points * timestep__ms, timestep__ms)
+    # Convert timestep to milliseconds for time array
+    timestep_ms = timestep__ms.magnitude
+    t = np.arange(0, t_points * timestep_ms, timestep_ms)
 
-    # Convert parameters to lists
-    amplitudes_list = cast(
-        list[float],
-        [amplitudes__muV] * n_pools
-        if isinstance(amplitudes__muV, float)
-        else amplitudes__muV,
+    # Convert quantities to lists of floats in expected units
+    amplitudes_list = _broadcast_and_validate(
+        "amplitudes__muV", amplitudes__uV, n_pools
     )
-    frequencies_list = cast(
-        list[float],
-        [frequencies__Hz] * n_pools
-        if isinstance(frequencies__Hz, float)
-        else frequencies__Hz,
+    frequencies_list = _broadcast_and_validate(
+        "frequencies__Hz", frequencies__Hz, n_pools
     )
-    offsets_list = cast(
-        list[float],
-        [offsets__muV] * n_pools if isinstance(offsets__muV, float) else offsets__muV,
-    )
-    phases_list = cast(
-        list[float],
-        [phases__rad] * n_pools if isinstance(phases__rad, float) else phases__rad,
-    )
-
-    if len(amplitudes_list) != n_pools:
-        raise ValueError(
-            f"Length of amplitudes__muV ({len(amplitudes_list)}) must match n_pools ({n_pools})"
-        )
-    if len(frequencies_list) != n_pools:
-        raise ValueError(
-            f"Length of frequencies__Hz ({len(frequencies_list)}) must match n_pools ({n_pools})"
-        )
-    if len(offsets_list) != n_pools:
-        raise ValueError(
-            f"Length of offsets__muV ({len(offsets_list)}) must match n_pools ({n_pools})"
-        )
-    if len(phases_list) != n_pools:
-        raise ValueError(
-            f"Length of phases__rad ({len(phases_list)}) must match n_pools ({n_pools})"
-        )
+    offsets_list = _broadcast_and_validate("offsets__uV", offsets__uV, n_pools)
+    phases_list = _broadcast_and_validate("phases__rad", phases__rad, n_pools)
 
     return AnalogSignal(
         signal=np.stack(
@@ -119,8 +146,8 @@ def create_sinusoidal_current(
             axis=-1,
         )
         * pq.nA,
-        t_start=0 * pq.ms,
-        sampling_period=timestep__ms * pq.ms,
+        t_start=0 * pq.s,
+        sampling_period=timestep__ms.rescale(pq.s),
     )
 
 
@@ -128,7 +155,7 @@ def create_sinusoidal_current(
 def create_sawtooth_current(
     n_pools: int,
     t_points: int,
-    timestep__ms: float,
+    timestep__ms: Quantity__ms,
     amplitudes__muV: float | list[float],
     frequencies__Hz: float | list[float],
     offsets__muV: float | list[float] = 0.0,
@@ -192,54 +219,16 @@ def create_sawtooth_current(
     """
     t = np.arange(0, t_points * timestep__ms, timestep__ms)
 
-    # Convert parameters to lists
-    amplitudes_list = cast(
-        list[float],
-        [amplitudes__muV] * n_pools
-        if isinstance(amplitudes__muV, float)
-        else amplitudes__muV,
+    # Convert parameters to lists and validate
+    amplitudes_list = _broadcast_and_validate(
+        "amplitudes__muV", amplitudes__muV, n_pools
     )
-    frequencies_list = cast(
-        list[float],
-        [frequencies__Hz] * n_pools
-        if isinstance(frequencies__Hz, float)
-        else frequencies__Hz,
+    frequencies_list = _broadcast_and_validate(
+        "frequencies__Hz", frequencies__Hz, n_pools
     )
-    offsets_list = cast(
-        list[float],
-        [offsets__muV] * n_pools if isinstance(offsets__muV, float) else offsets__muV,
-    )
-    widths_list = cast(
-        list[float],
-        [widths__ratio] * n_pools
-        if isinstance(widths__ratio, float)
-        else widths__ratio,
-    )
-    phases_list = cast(
-        list[float],
-        [phases__rad] * n_pools if isinstance(phases__rad, float) else phases__rad,
-    )
-
-    if len(amplitudes_list) != n_pools:
-        raise ValueError(
-            f"Length of amplitudes__muV ({len(amplitudes_list)}) must match n_pools ({n_pools})"
-        )
-    if len(frequencies_list) != n_pools:
-        raise ValueError(
-            f"Length of frequencies__Hz ({len(frequencies_list)}) must match n_pools ({n_pools})"
-        )
-    if len(offsets_list) != n_pools:
-        raise ValueError(
-            f"Length of offsets__muV ({len(offsets_list)}) must match n_pools ({n_pools})"
-        )
-    if len(widths_list) != n_pools:
-        raise ValueError(
-            f"Length of widths__ratio ({len(widths_list)}) must match n_pools ({n_pools})"
-        )
-    if len(phases_list) != n_pools:
-        raise ValueError(
-            f"Length of phases__rad ({len(phases_list)}) must match n_pools ({n_pools})"
-        )
+    offsets_list = _broadcast_and_validate("offsets__muV", offsets__muV, n_pools)
+    widths_list = _broadcast_and_validate("widths__ratio", widths__ratio, n_pools)
+    phases_list = _broadcast_and_validate("phases__rad", phases__rad, n_pools)
 
     return AnalogSignal(
         signal=np.stack(
@@ -285,8 +274,8 @@ def create_sawtooth_current(
             axis=-1,
         )
         * pq.nA,
-        t_start=0 * pq.ms,
-        sampling_period=timestep__ms * pq.ms,
+        t_start=0 * pq.s,
+        sampling_period=(timestep__ms * pq.ms).rescale(pq.s),
     )
 
 
@@ -338,36 +327,14 @@ def create_step_current(
     INPUT_CURRENT__AnalogSignal
         Analog signal of shape (t_points, n_pools) * pq.nA containing step currents
     """
-    # Convert parameters to lists
-    step_heights_list = cast(
-        list[float],
-        [step_heights__muV] * n_pools
-        if isinstance(step_heights__muV, float)
-        else step_heights__muV,
+    # Convert parameters to lists and validate
+    step_heights_list = _broadcast_and_validate(
+        "step_heights__muV", step_heights__muV, n_pools
     )
-    step_durations_list = cast(
-        list[float],
-        [step_durations__ms] * n_pools
-        if isinstance(step_durations__ms, float)
-        else step_durations__ms,
+    step_durations_list = _broadcast_and_validate(
+        "step_durations__ms", step_durations__ms, n_pools
     )
-    offsets_list = cast(
-        list[float],
-        [offsets__muV] * n_pools if isinstance(offsets__muV, float) else offsets__muV,
-    )
-
-    if len(step_heights_list) != n_pools:
-        raise ValueError(
-            f"Length of step_heights__muV ({len(step_heights_list)}) must match n_pools ({n_pools})"
-        )
-    if len(step_durations_list) != n_pools:
-        raise ValueError(
-            f"Length of step_durations__ms ({len(step_durations_list)}) must match n_pools ({n_pools})"
-        )
-    if len(offsets_list) != n_pools:
-        raise ValueError(
-            f"Length of offsets__muV ({len(offsets_list)}) must match n_pools ({n_pools})"
-        )
+    offsets_list = _broadcast_and_validate("offsets__muV", offsets__muV, n_pools)
 
     def create_step_for_pool(i: int) -> np.ndarray:
         current = np.zeros(t_points)
@@ -380,8 +347,8 @@ def create_step_current(
     return AnalogSignal(
         signal=np.stack([create_step_for_pool(i) for i in range(n_pools)], axis=-1)
         * pq.nA,
-        t_start=0 * pq.ms,
-        sampling_period=timestep__ms * pq.ms,
+        t_start=0 * pq.s,
+        sampling_period=(timestep__ms * pq.ms).rescale(pq.s),
     )
 
 
@@ -436,36 +403,14 @@ def create_ramp_current(
     INPUT_CURRENT__AnalogSignal
         Analog signal of shape (t_points, n_pools) * pq.nA containing ramp currents
     """
-    # Convert parameters to lists
-    start_currents_list = cast(
-        list[float],
-        [start_currents__muV] * n_pools
-        if isinstance(start_currents__muV, float)
-        else start_currents__muV,
+    # Convert parameters to lists and validate
+    start_currents_list = _broadcast_and_validate(
+        "start_currents__muV", start_currents__muV, n_pools
     )
-    end_currents_list = cast(
-        list[float],
-        [end_currents__muV] * n_pools
-        if isinstance(end_currents__muV, float)
-        else end_currents__muV,
+    end_currents_list = _broadcast_and_validate(
+        "end_currents__muV", end_currents__muV, n_pools
     )
-    offsets_list = cast(
-        list[float],
-        [offsets__muV] * n_pools if isinstance(offsets__muV, float) else offsets__muV,
-    )
-
-    if len(start_currents_list) != n_pools:
-        raise ValueError(
-            f"Length of start_currents__muV ({len(start_currents_list)}) must match n_pools ({n_pools})"
-        )
-    if len(end_currents_list) != n_pools:
-        raise ValueError(
-            f"Length of end_currents__muV ({len(end_currents_list)}) must match n_pools ({n_pools})"
-        )
-    if len(offsets_list) != n_pools:
-        raise ValueError(
-            f"Length of offsets__muV ({len(offsets_list)}) must match n_pools ({n_pools})"
-        )
+    offsets_list = _broadcast_and_validate("offsets__muV", offsets__muV, n_pools)
 
     return AnalogSignal(
         signal=np.stack(
@@ -477,8 +422,8 @@ def create_ramp_current(
             axis=-1,
         )
         * pq.nA,
-        t_start=0 * pq.ms,
-        sampling_period=timestep__ms * pq.ms,
+        t_start=0 * pq.s,
+        sampling_period=(timestep__ms * pq.ms).rescale(pq.s),
     )
 
 
@@ -486,13 +431,13 @@ def create_ramp_current(
 def create_trapezoid_current(
     n_pools: int,
     t_points: int,
-    timestep__ms: float,
-    amplitudes__nA: float | list[float],
-    rise_times__ms: float | list[float] = 100.0,
-    plateau_times__ms: float | list[float] = 200.0,
-    fall_times__ms: float | list[float] = 100.0,
-    offsets__nA: float | list[float] = 0.0,
-    delays__ms: float | list[float] = 0.0,
+    timestep__ms: Quantity__ms,
+    amplitudes__nA: Quantity__nA | list[Quantity__nA],
+    rise_times__ms: Quantity__ms | list[Quantity__ms] = 100.0 * pq.ms,
+    plateau_times__ms: Quantity__ms | list[Quantity__ms] = 200.0 * pq.ms,
+    fall_times__ms: Quantity__ms | list[Quantity__ms] = 100.0 * pq.ms,
+    offsets__nA: Quantity__nA | list[Quantity__nA] = 0.0 * pq.nA,
+    delays__ms: Quantity__ms | list[Quantity__ms] = 0.0 * pq.ms,
 ) -> CURRENT__AnalogSignal:
     """Create a matrix of trapezoidal currents for multiple pools.
 
@@ -554,66 +499,17 @@ def create_trapezoid_current(
     INPUT_CURRENT__AnalogSignal
         Analog signal of shape (t_points, n_pools) * pq.nA containing trapezoidal currents
     """
-    # Convert parameters to lists
-    amplitudes_list = cast(
-        list[float],
-        [amplitudes__nA] * n_pools
-        if isinstance(amplitudes__nA, float)
-        else amplitudes__nA,
+    # Convert parameters to lists and validate
+    amplitudes_list = _broadcast_and_validate("amplitudes__nA", amplitudes__nA, n_pools)
+    rise_times_list = _broadcast_and_validate("rise_times__ms", rise_times__ms, n_pools)
+    plateau_times_list = _broadcast_and_validate(
+        "plateau_times__ms", plateau_times__ms, n_pools
     )
-    rise_times_list = cast(
-        list[float],
-        [rise_times__ms] * n_pools
-        if isinstance(rise_times__ms, float)
-        else rise_times__ms,
-    )
-    plateau_times_list = cast(
-        list[float],
-        [plateau_times__ms] * n_pools
-        if isinstance(plateau_times__ms, float)
-        else plateau_times__ms,
-    )
-    fall_times_list = cast(
-        list[float],
-        [fall_times__ms] * n_pools
-        if isinstance(fall_times__ms, float)
-        else fall_times__ms,
-    )
-    offsets_list = cast(
-        list[float],
-        [offsets__nA] * n_pools if isinstance(offsets__nA, float) else offsets__nA,
-    )
-    delays_list = cast(
-        list[float],
-        [delays__ms] * n_pools if isinstance(delays__ms, float) else delays__ms,
-    )
+    fall_times_list = _broadcast_and_validate("fall_times__ms", fall_times__ms, n_pools)
+    offsets_list = _broadcast_and_validate("offsets__nA", offsets__nA, n_pools)
+    delays_list = _broadcast_and_validate("delays__ms", delays__ms, n_pools)
 
-    if len(amplitudes_list) != n_pools:
-        raise ValueError(
-            f"Length of amplitudes__muV ({len(amplitudes_list)}) must match n_pools ({n_pools})"
-        )
-    if len(rise_times_list) != n_pools:
-        raise ValueError(
-            f"Length of rise_times__ms ({len(rise_times_list)}) must match n_pools ({n_pools})"
-        )
-    if len(plateau_times_list) != n_pools:
-        raise ValueError(
-            f"Length of plateau_times__ms ({len(plateau_times_list)}) must match n_pools ({n_pools})"
-        )
-    if len(fall_times_list) != n_pools:
-        raise ValueError(
-            f"Length of fall_times__ms ({len(fall_times_list)}) must match n_pools ({n_pools})"
-        )
-    if len(offsets_list) != n_pools:
-        raise ValueError(
-            f"Length of offsets__muV ({len(offsets_list)}) must match n_pools ({n_pools})"
-        )
-    if len(delays_list) != n_pools:
-        raise ValueError(
-            f"Length of delays__ms ({len(delays_list)}) must match n_pools ({n_pools})"
-        )
-
-    def create_trapezoid_for_pool(i: int) -> np.ndarray:
+    def create_trapezoid_for_pool(i: int):
         # Calculate indices for each phase
         delay_points = int(delays_list[i] / timestep__ms)
         rise_points = int(rise_times_list[i] / timestep__ms)
@@ -657,5 +553,5 @@ def create_trapezoid_current(
     return AnalogSignal(
         signal=np.stack([create_trapezoid_for_pool(i) for i in range(n_pools)], axis=-1)
         * pq.nA,
-        sampling_period=timestep__ms * pq.ms,
+        sampling_period=timestep__ms.rescale(pq.s),
     )

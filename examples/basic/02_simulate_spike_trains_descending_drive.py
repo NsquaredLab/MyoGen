@@ -21,6 +21,8 @@ patterns by modeling cortical input through descending drive populations.
     injection because it models the actual synaptic input patterns from upper motor neurons.
 """
 
+# %%
+
 ##############################################################################
 # Import Libraries
 # ----------------
@@ -61,24 +63,9 @@ from myogen import RANDOM_GENERATOR
 from myogen.simulator.neuron import Network
 from myogen.simulator.neuron.populations import AlphaMN__Pool, DescendingDrive__Pool
 from myogen.utils.nmodl import load_nmodl_mechanisms
+from myogen.utils.types import pps
 
-##############################################################################
-# Define Parameters
-# -----------------
-# This example simulates a **motor pool** driven by **sinusoidal descending drive** patterns.
-# The DD populations receive smooth sinusoidal input at physiologically relevant frequencies,
-# which then drive the motor neuron pools through realistic synaptic connections.
-#
-# Key parameters:
-#
-# - ``n_dd_neurons``: Number of descending drive neurons per pool
-# - ``dd_frequency__Hz``: Frequency of sinusoidal drive pattern
-# - ``dd_amplitude__Hz``: Amplitude of drive modulation
-# - ``dd_baseline__Hz``: Baseline drive level
-# - ``timestep``: Simulation timestep in ms (high resolution)
-# - ``simulation_time``: Total simulation duration in ms
-
-# Connection parameters
+plt.style.use("fivethirtyeight")
 
 ##############################################################################
 # Create Populations
@@ -104,61 +91,10 @@ motor_neuron_pool = AlphaMN__Pool(
     config_file="alpha_mn_default.yaml",
 )
 
-##############################################################################
-# Add Individual Noise to Each Motor Neuron
-# ------------------------------------------
-#
-# Use the **Gfluctdv** mechanism to add stochastic conductance fluctuations
-# to each motor neuron individually. This simulates synaptic background noise
-# using Ornstein-Uhlenbeck processes for realistic temporal correlations.
-#
-# The noise parameters can be customized per neuron to create heterogeneous
-# variability across the motor pool.
-
-""" print("\nAdding noise to motor neurons...")
-for i, cell in enumerate(motor_neuron_pool):
-    # Insert Gfluctdv mechanism into soma
-    cell.soma.insert("Gfluctdv")
-
-    # Noise scaling based on neuron order
-    noise_scale = 1.0 + 0.05 * (i / len(motor_neuron_pool))
-
-    # SOMA: excitatory
-    cell.soma.g_e0_Gfluctdv = 1e-6  # baseline mean conductance
-    cell.soma.std_e_Gfluctdv = 2e-6 * noise_scale  # OU noise amplitude
-    cell.soma.tau_e_Gfluctdv = 5.0  # correlation time (ms)
-    cell.soma.E_e_Gfluctdv = 0.0
-
-    # SOMA: inhibitory
-    cell.soma.g_i0_Gfluctdv = 2e-6
-    cell.soma.std_i_Gfluctdv = 4e-6 * noise_scale
-    cell.soma.tau_i_Gfluctdv = 10.0
-    cell.soma.E_i_Gfluctdv = -75.0
-
-    # DENDRITES (optional, lower amplitude)
-    if hasattr(cell, "dend") and len(cell.dend) > 0:
-        for dendrite in cell.dend:
-            dendrite.insert("Gfluctdv")
-            dendrite.g_e0_Gfluctdv = 5e-7
-            dendrite.std_e_Gfluctdv = 1e-6 * noise_scale
-            dendrite.tau_e_Gfluctdv = 5.0
-            dendrite.E_e_Gfluctdv = 0.0
-
-            dendrite.g_i0_Gfluctdv = 1e-6
-            dendrite.std_i_Gfluctdv = 2e-6 * noise_scale
-            dendrite.tau_i_Gfluctdv = 10.0
-            dendrite.E_i_Gfluctdv = -75.0
-
-
-# Enable noise globally (GLOBAL variables - affect all Gfluctdv mechanisms)
-# Note: multex and multin are GLOBAL parameters, not per-segment
-h.multex_Gfluctdv = 1.0  # Enable excitatory noise (1.0 = on, 0.0 = off)
-h.multin_Gfluctdv = 1.0  # Enable inhibitory noise (1.0 = on, 0.0 = off) """
-
-timestep = 0.1  # ms
+timestep = 0.1 * pq.ms
 h.secondorder = 2  # Crank-Nicolson method (second-order accurate)
 descending_drive_pool = DescendingDrive__Pool(
-    n=400, poisson_batch_size=5, timestep__ms=timestep
+    n=100, poisson_batch_size=5, timestep__ms=timestep
 )
 ##############################################################################
 # Generate Trapezoidal Drive Pattern
@@ -173,21 +109,21 @@ descending_drive_pool = DescendingDrive__Pool(
 #
 # This is a common experimental paradigm used in motor control studies.
 
-simulation_time = 15000  # ms
+simulation_time = 15000 * pq.ms
 time_points = int(simulation_time / timestep)
 
 # Trapezoidal parameters
-dd_baseline__Hz = 0.0  # Baseline drive during rest
-dd_peak__Hz = 65  # Peak drive during plateau
+dd_baseline__pps = 0.0 * pps  # Baseline drive during rest
+dd_peak__pps = 65 * pps  # Peak drive during plateau
 
 # Phase durations (ms) - Total trapezoid duration: 13000ms
-ramp_up_duration = 500  # 2s ramp up
-plateau_duration = 10000  # 9s hold
-ramp_down_duration = 500  # 2s ramp down
+ramp_up_duration = 500 * pq.ms  # 2s ramp up
+plateau_duration = 10000 * pq.ms  # 9s hold
+ramp_down_duration = 500 * pq.ms  # 2s ramp down
 
 # Add rest periods before and after
-rest_before = 1000  # 1s rest before trapezoid
-rest_after = 1000  # 1s rest after trapezoid
+rest_before = 1000 * pq.ms  # 1s rest before trapezoid
+rest_after = 1000 * pq.ms  # 1s rest after trapezoid
 
 # Center the trapezoid at 7.5s (middle of 15s simulation)
 # Calculate phase boundaries with rest period before
@@ -197,61 +133,60 @@ plateau_end = ramp_up_end + plateau_duration  # 12s
 ramp_down_end = plateau_end + ramp_down_duration  # 14s
 
 # Create time array
-time_array = np.linspace(0, simulation_time, time_points)
+time_array = np.linspace(0, simulation_time.magnitude, time_points) * pq.ms
 
 # Initialize drive signal (all baseline)
-trapezoid_drive = np.ones(time_points) * dd_baseline__Hz
+trapezoid_drive = np.ones(time_points) * dd_baseline__pps
 
 for i, t in enumerate(time_array):
     if t < trapezoid_start:
         # Phase 0: Rest before
-        trapezoid_drive[i] = dd_baseline__Hz
+        trapezoid_drive[i] = dd_baseline__pps
     elif t < ramp_up_end:
         # Phase 1: Ramp up
         elapsed = t - trapezoid_start
-        trapezoid_drive[i] = dd_baseline__Hz + (dd_peak__Hz - dd_baseline__Hz) * (
+        trapezoid_drive[i] = dd_baseline__pps + (dd_peak__pps - dd_baseline__pps) * (
             elapsed / ramp_up_duration
         )
     elif t < plateau_end:
         # Phase 2: Plateau
-        trapezoid_drive[i] = dd_peak__Hz
+        trapezoid_drive[i] = dd_peak__pps
     elif t < ramp_down_end:
         # Phase 3: Ramp down
         elapsed = t - plateau_end
-        trapezoid_drive[i] = dd_peak__Hz - (dd_peak__Hz - dd_baseline__Hz) * (
+        trapezoid_drive[i] = dd_peak__pps - (dd_peak__pps - dd_baseline__pps) * (
             elapsed / ramp_down_duration
         )
     else:
         # Phase 4: Rest after
-        trapezoid_drive[i] = dd_baseline__Hz
+        trapezoid_drive[i] = dd_baseline__pps
 
 # Add small noise for realism
-trapezoid_drive = trapezoid_drive + np.clip(
-    RANDOM_GENERATOR.normal(0, 1.0, size=time_points), 0, None
+trapezoid_drive = (
+    trapezoid_drive
+    + np.clip(RANDOM_GENERATOR.normal(0, 1.0, size=time_points), 0, None) * pps
 )
 
 # Create AnalogSignal
-sinusoidal_drive = AnalogSignal(
-    signal=trapezoid_drive,
-    units=pq.Hz,
-    sampling_period=(timestep * pq.ms).rescale(pq.s),
+trapezoid_drive_signal = AnalogSignal(
+    signal=trapezoid_drive, sampling_period=timestep.rescale(pq.s)
 )
 
-joblib.dump(sinusoidal_drive, save_path / "trapezoid_drive_pattern.pkl")
+joblib.dump(trapezoid_drive_signal, save_path / "trapezoid_drive_pattern.pkl")
 print(
     f"\n Trapezoidal drive pattern (1000ms trapezoid centered in {simulation_time}ms simulation):"
 )
-print(f"  Rest before: 0 - {trapezoid_start} ms ({dd_baseline__Hz} Hz)")
+print(f"\tRest before: 0 - {trapezoid_start} ms ({dd_baseline__pps} pps)")
 print(
-    f"  Ramp up: {trapezoid_start} - {ramp_up_end} ms ({dd_baseline__Hz} → {dd_peak__Hz} Hz)"
+    f"\tRamp up: {trapezoid_start} - {ramp_up_end} ms ({dd_baseline__pps} → {dd_peak__pps} pps)"
 )
 print(
-    f"  Plateau: {ramp_up_end} - {plateau_end} ms ({dd_peak__Hz} Hz, center at {(ramp_up_end + plateau_end) / 2:.0f}ms)"
+    f"\tPlateau: {ramp_up_end} - {plateau_end} ms ({dd_peak__pps} pps, center at {(ramp_up_end + plateau_end) / 2:.0f}ms)"
 )
 print(
-    f"  Ramp down: {plateau_end} - {ramp_down_end} ms ({dd_peak__Hz} → {dd_baseline__Hz} Hz)"
+    f"\tRamp down: {plateau_end} - {ramp_down_end} ms ({dd_peak__pps} → {dd_baseline__pps} pps)"
 )
-print(f"  Rest after: {ramp_down_end} - {simulation_time} ms ({dd_baseline__Hz} Hz)")
+print(f"\tRest after: {ramp_down_end} - {simulation_time} ms ({dd_baseline__pps} pps)")
 
 ##############################################################################
 # Create Network and Connections
@@ -271,7 +206,7 @@ print(f"  Rest after: {ramp_down_end} - {simulation_time} ms ({dd_baseline__Hz} 
 network = Network({"DD": descending_drive_pool, "aMN": motor_neuron_pool})
 
 # Connect DD neurons to motor neurons with realistic synaptic parameters
-network.connect(source="DD", target="aMN", probability=0.5, weight__μS=0.05)
+network.connect(source="DD", target="aMN", probability=0.5, weight__μS=0.15)
 
 # Set up external input to DD population
 network.connect_from_external(source="cortical_input", target="DD", weight__μS=1.0)
@@ -325,13 +260,13 @@ total_steps = int(simulation_time / timestep)
 
 step_counter = 0
 with tqdm(
-    total=simulation_time,
+    total=float(simulation_time),
     desc="Running simulation",
     unit="ms",
     bar_format="{l_bar}{bar}| {n:.2f}/{total:.2f} ms [{elapsed}<{remaining}, {rate_fmt}]",
 ) as pbar:
     while h.t < h.tstop:
-        current_drive = sinusoidal_drive[min(step_counter, len(sinusoidal_drive) - 1)]
+        current_drive = trapezoid_drive_signal[min(step_counter, len(trapezoid_drive_signal) - 1)]
 
         # Drive DD neurons with current input level
         for dd_cell in descending_drive_pool:
@@ -346,7 +281,7 @@ with tqdm(
         # Progress simulation
         h.fadvance()
         step_counter += 1
-        pbar.update(timestep)
+        pbar.update(float(timestep))
 
 
 ##############################################################################
@@ -354,14 +289,14 @@ with tqdm(
 # ---------------------------------
 #
 
-spike_train_block = Block(name="Sinusoidal DD Spike Trains")
+spike_train_block = Block(name="Trapezoidal DD Spike Trains")
 
 dd_segment = Segment(name="Descending Drive")
 dd_segment.spiketrains = [
     SpikeTrain(
-        spike_times * pq.ms,
-        t_stop=simulation_time * pq.ms,
-        sampling_rate=(1 / h.dt * (1 / pq.ms)),
+        (spike_times * pq.ms).rescale(pq.s),  # type: ignore
+        t_stop=simulation_time.rescale(pq.s),
+        sampling_rate=(1 / (h.dt * pq.ms)).rescale(pq.Hz),
         sampling_period=h.dt * pq.ms,
         name=f"DD_{i}",
     )
@@ -371,9 +306,9 @@ dd_segment.spiketrains = [
 mn_segment = Segment(name="Motor Neurons")
 mn_segment.spiketrains = [
     SpikeTrain(
-        recorder.as_numpy() * pq.ms,
-        t_stop=simulation_time * pq.ms,
-        sampling_rate=(1 / h.dt * (1 / pq.ms)),
+        (recorder.as_numpy() * pq.ms).rescale(pq.s),  # type: ignore
+        t_stop=simulation_time.rescale(pq.s),
+        sampling_rate=(1 / (h.dt * pq.ms)).rescale(pq.Hz),
         sampling_period=h.dt * pq.ms,
         name=f"MN_{i}",
     )
@@ -383,7 +318,7 @@ mn_segment.spiketrains = [
 # We only save the motor neuron spikes  segment
 spike_train_block.segments.append(mn_segment)
 
-joblib.dump(spike_train_block, save_path / "sinusoidal_dd_spike_trains.pkl")
+joblib.dump(spike_train_block, save_path / "trapezoid_dd_spike_trains.pkl")
 
 ##############################################################################
 # Calculate Firing Rate Statistics
@@ -396,8 +331,8 @@ print("\nFiring rate analysis:")
 dd_firing_rates = np.array(
     [
         elephant.statistics.mean_firing_rate(st__s.time_slice(st__s.min(), st__s.max()))
-        for st__ms in dd_segment.spiketrains
-        if len(st__s := st__ms.rescale(pq.s)) > 0
+        for st__s in dd_segment.spiketrains
+        if len(st__s) > 0
     ]
 )
 
@@ -405,8 +340,8 @@ dd_firing_rates = np.array(
 mn_firing_rates = np.array(
     [
         elephant.statistics.mean_firing_rate(st__s.time_slice(st__s.min(), st__s.max()))
-        for st__ms in mn_segment.spiketrains
-        if len(st__s := st__ms.rescale(pq.s)) > 0
+        for st__s in mn_segment.spiketrains
+        if len(st__s) > 0
     ]
 )
 
@@ -414,20 +349,20 @@ print("Descending Drive neurons:")
 print(f"\tActive neurons: {len(dd_firing_rates)}/{descending_drive_pool.n}")
 if len(dd_firing_rates) > 0:
     print(
-        f"\tMean firing rate: {np.mean(dd_firing_rates):.1f} ± {np.std(dd_firing_rates):.1f} Hz"
+        f"\tMean firing rate: {np.mean(dd_firing_rates):.1f} ± {np.std(dd_firing_rates):.1f} pps"
     )
     print(
-        f"\tRate range: {np.min(dd_firing_rates):.1f} - {np.max(dd_firing_rates):.1f} Hz"
+        f"\tRate range: {np.min(dd_firing_rates):.1f} - {np.max(dd_firing_rates):.1f} pps"
     )
 
 print("Motor neurons:")
 print(f"\tActive neurons: {len(mn_firing_rates)}/{motor_neuron_pool.n}")
 if len(mn_firing_rates) > 0:
     print(
-        f"\tMean firing rate: {np.mean(mn_firing_rates):.1f} ± {np.std(mn_firing_rates):.1f} Hz"
+        f"\tMean firing rate: {np.mean(mn_firing_rates):.1f} ± {np.std(mn_firing_rates):.1f} pps"
     )
     print(
-        f"\tRate range: {np.min(mn_firing_rates):.1f} - {np.max(mn_firing_rates):.1f} Hz"
+        f"\tRate range: {np.min(mn_firing_rates):.1f} - {np.max(mn_firing_rates):.1f} pps"
     )
 
 ##############################################################################
@@ -443,10 +378,12 @@ if len(mn_firing_rates) > 0:
 # Create figure with subplots
 fig, axes = plt.subplots(4, 1, figsize=(15, 12), sharex=True)
 
-# 1. Plot sinusoidal drive pattern
-time_s = sinusoidal_drive.times.rescale(pq.s).magnitude
-axes[0].plot(time_s, sinusoidal_drive, "b-", linewidth=2, label="DD Input")
-axes[0].axhline(dd_baseline__Hz, color="r", linestyle="--", alpha=0.7, label="Baseline")
+# 1. Plot trapezoidal drive pattern
+time_s = trapezoid_drive_signal.times.rescale(pq.s).magnitude
+axes[0].plot(time_s, trapezoid_drive_signal, "b-", linewidth=2, label="DD Input")
+axes[0].axhline(
+    dd_baseline__pps, color="r", linestyle="--", alpha=0.7, label="Baseline"
+)
 axes[0].set_ylabel("Drive (Hz)")
 axes[0].set_title("Trapezoidal Descending Drive Pattern (Ramp Contraction)")
 axes[0].legend()
@@ -456,9 +393,8 @@ axes[0].grid(True, alpha=0.3)
 dd_colors = plt.cm.get_cmap("Blues")(np.linspace(0.3, 0.8, len(dd_segment.spiketrains)))
 for i, (spiketrain, color) in enumerate(zip(dd_segment.spiketrains, dd_colors)):
     if len(spiketrain) > 0:
-        spike_times = spiketrain.rescale(pq.s).magnitude
         axes[1].scatter(
-            spike_times, [i] * len(spike_times), c=[color], s=0.8, alpha=0.8
+            spiketrain.magnitude, [i] * len(spiketrain), c=[color], s=0.8, alpha=0.8
         )
 
 axes[1].set_ylabel("DD Neuron ID")
@@ -517,7 +453,7 @@ axes[3].grid(True, alpha=0.3)
 
 # Format all axes
 for ax in axes:
-    ax.set_xlim(0, simulation_time / 1000.0)
+    ax.set_xlim(0, simulation_time.rescale(pq.s).magnitude)
 
 plt.tight_layout()
 plt.show()
@@ -532,9 +468,9 @@ plt.show()
 print("\nComputing smoothed discharge rates per neuron...")
 
 # Parameters
-window_ms = 400  # 400 ms Hanning window
-dt_s = timestep / 1000.0  # simulation timestep in seconds
-window_samples = int(window_ms / 1000.0 / dt_s)
+window_ms = 400 * pq.ms  # 400 ms Hanning window
+dt_s = timestep.rescale(pq.s)  # simulation timestep in seconds
+window_samples = int(window_ms.rescale(pq.s) / dt_s)
 
 # Hanning window normalized to preserve rate
 hanning_window = np.hanning(window_samples)
@@ -549,9 +485,9 @@ cv_isi = []
 for i, spiketrain in enumerate(mn_segment.spiketrains):
     if len(spiketrain) > 2:
         # Convert spike times to a binary spike train
-        t = np.arange(0, simulation_time / 1000.0, dt_s)
+        t = np.arange(0, simulation_time.rescale(pq.s).magnitude, dt_s.magnitude)
         spikes = np.zeros_like(t)
-        spike_indices = np.searchsorted(t, spiketrain.rescale(pq.s).magnitude)
+        spike_indices = np.searchsorted(t, spiketrain.magnitude)
         spikes[spike_indices[spike_indices < len(t)]] = 1
 
         # Convolve with Hanning window
@@ -561,9 +497,7 @@ for i, spiketrain in enumerate(mn_segment.spiketrains):
 
         # IMPORTANT: Compute ISI/CV only during plateau phase where firing is stable
         # Filter spike train to plateau phase
-        plateau_spiketrain = spiketrain.time_slice(
-            ramp_up_end * pq.ms, plateau_end * pq.ms
-        )
+        plateau_spiketrain = spiketrain.time_slice(ramp_up_end, plateau_end)
 
         # Compute mean firing rate (Hz) from plateau spikes only
         plateau_duration_s = (plateau_end - ramp_up_end) / 1000.0
@@ -583,10 +517,6 @@ for i, spiketrain in enumerate(mn_segment.spiketrains):
             cv = 0.0
         cv_isi.append(cv)
 
-        print(
-            f"Neuron {i}: Mean firing rate (plateau) = {mean_rate:.2f} Hz, CV = {cv:.2f}"
-        )
-
 # Population averages
 pop_mean_rate = np.mean(mean_firing_rates)
 pop_mean_cv = np.mean(cv_isi)
@@ -603,7 +533,9 @@ fig2, axes2 = plt.subplots(2, 1, figsize=(15, 10), sharex=True)
 if len(mn_instantaneous_rates) > 0:
     # Stack rates into 2D array (neurons x time)
     rates_array = np.array(mn_instantaneous_rates)
-    time_points = np.linspace(0, simulation_time / 1000.0, rates_array.shape[1])
+    time_points = np.linspace(
+        0, simulation_time.rescale(pq.s).magnitude, rates_array.shape[1]
+    )
 
     # Plot heatmap (with origin='lower' so MU 0 is at TOP)
     im = axes2[0].imshow(
@@ -611,25 +543,23 @@ if len(mn_instantaneous_rates) > 0:
         aspect="auto",
         cmap="hot",
         interpolation="bilinear",
-        extent=[0, simulation_time / 1000.0, 0, len(active_neuron_ids)],
+        extent=[0, simulation_time.rescale(pq.s).magnitude, 0, len(active_neuron_ids)],
         origin="lower",  # Puts first row (MU 0) at bottom, but we'll flip with extent
         vmin=0,
-        vmax=np.percentile(
-            rates_array, 95
-        ),  # Cap at 95th percentile for better contrast
+        vmax=np.percentile(rates_array, 95),
     )
 
     axes2[0].set_ylabel("Motor Neuron ID\n(Recruitment Order, MU 0 at top)")
     axes2[0].set_title(
-        "Individual Motor Neuron Discharge Rates (Smoothed with 50ms Gaussian)"
+        "Individual Motor Neuron Discharge Rates (Smoothed with 400ms Hanning Window)"
     )
     # Add colorbar
     cbar = plt.colorbar(im, ax=axes2[0])
     cbar.set_label("Firing Rate (Hz)")
     axes2[0].grid(False)
 
-    # 2. Individual traces (show ALL active neurons)
-    n_to_plot = len(active_neuron_ids)  # Plot ALL active neurons
+    # 2. Individual traces
+    n_to_plot = len(active_neuron_ids)
 
     # Use colormap for lines (gradient from blue to red showing recruitment order)
     colors = plt.cm.get_cmap("rainbow")(np.linspace(0, 1, n_to_plot))
@@ -652,7 +582,7 @@ if len(mn_instantaneous_rates) > 0:
         axes2[1].legend(loc="upper right", ncol=3, fontsize=6)
 
     axes2[1].grid(True, alpha=0.3)
-    axes2[1].set_xlim(0, simulation_time / 1000.0)
+    axes2[1].set_xlim(0, simulation_time.rescale(pq.s).magnitude)
     axes2[1].set_ylim(0, np.max(rates_array) * 1.1)
 
 plt.tight_layout()

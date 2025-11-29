@@ -7,6 +7,7 @@ simulate cortical input to spinal motor circuits via Poisson and Gamma processes
 
 from myogen.simulator.neuron import cells
 from myogen.utils.decorators import beartowertype
+from myogen.utils.types import Quantity__ms
 
 from .base import _Pool
 
@@ -46,7 +47,7 @@ class DescendingDrive__Pool(_Pool):
         self,
         n: int,
         poisson_batch_size: int | None = None,
-        timestep__ms: float | None = None,
+        timestep__ms: Quantity__ms | None = None,
         process_type: str = "poisson",
         shape: float = 3.0,
     ):
@@ -61,7 +62,7 @@ class DescendingDrive__Pool(_Pool):
         if process_type.lower() == "gamma":
             _cells = [
                 cells.DD_Gamma(
-                    dt=timestep__ms,
+                    timestep__ms=timestep__ms.magnitude,
                     shape=shape,
                     pool__ID=i,
                 )
@@ -101,8 +102,8 @@ class DescendingDrive_Gamma__Pool(_Pool):
     ----------
     n : int
         Number of descending drive neurons to create.
-    timestep__ms : float
-        Time step for simulation (ms).
+    timestep__ms : Quantity__ms
+        Time step for simulation as a Quantity with units of milliseconds.
     shape : float, optional
         Shape parameter controlling spike regularity, by default 3.0.
         - shape=1: Poisson-like (irregular) firing
@@ -113,7 +114,7 @@ class DescendingDrive_Gamma__Pool(_Pool):
     def __init__(
         self,
         n: int,
-        timestep__ms: float,
+        timestep__ms: Quantity__ms,
         shape: float = 3.0,
     ):
         self.n = n
@@ -123,7 +124,7 @@ class DescendingDrive_Gamma__Pool(_Pool):
         super().__init__(
             cells=[
                 cells.DD_Gamma(
-                    dt=timestep__ms,
+                    timestep__ms=timestep__ms,
                     shape=shape,
                     pool__ID=i,
                 )

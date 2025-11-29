@@ -1,18 +1,57 @@
-from typing import Annotated
+from typing import Annotated, TypeAlias
 
 import numpy as np
 import numpy.typing as npt
 import quantities as pq
 from beartype.typing import Sequence
-from beartype.vale import Is
+from beartype.vale import Is, IsAttr, IsEqual
 from neo.core.analogsignal import AnalogSignal
 from neo.core.block import Block
 from neo.core.spiketrainlist import SpikeTrainList
 
+
+# ============================================================================
+# Quantity Dimension Validators (using IsAttr for better type checker support)
+# ============================================================================
+
+
+def __make_quantity_type(reference_unit: pq.Quantity):
+    return Annotated[
+        pq.Quantity,
+        IsAttr[
+            "dimensionality",
+            IsAttr["unicode", IsEqual[reference_unit.dimensionality.unicode]],
+        ],
+    ]
+
+
+pps = pq.UnitQuantity(
+    "pulses per second", pq.s**-1, symbol="pps", u_symbol="pps", doc="pulses per second"
+)
+
+# Create type aliases for common units
+Quantity__ms: TypeAlias = __make_quantity_type(pq.ms)  # type: ignore
+Quantity__uV: TypeAlias = __make_quantity_type(pq.uV)  # type: ignore
+Quantity__nA: TypeAlias = __make_quantity_type(pq.nA)  # type: ignore
+Quantity__Hz: TypeAlias = __make_quantity_type(pq.Hz)  # type: ignore
+Quantity__rad: TypeAlias = __make_quantity_type(pq.rad)  # type: ignore
+Quantity__deg: TypeAlias = __make_quantity_type(pq.deg)  # type: ignore
+Quantity__nA: TypeAlias = __make_quantity_type(pq.nA)  # type: ignore
+Quantity__mV: TypeAlias = __make_quantity_type(pq.mV)  # type: ignore
+Quantity__pps: TypeAlias = __make_quantity_type(pps)  # type: ignore
+Quantity__per_mm2: TypeAlias = __make_quantity_type(pq.mm**-2)  # type: ignore
+Quantity__mm: TypeAlias = __make_quantity_type(pq.mm)  # type: ignore
+Quantity__mm2: TypeAlias = __make_quantity_type(pq.mm**2)  # type: ignore
+Quantity__m_per_s: TypeAlias = __make_quantity_type(pq.m / pq.s)  # type: ignore
+Quantity__mm_per_s: TypeAlias = __make_quantity_type(pq.mm / pq.s)  # type: ignore
+Quantity__S_per_m: TypeAlias = __make_quantity_type(pq.S / pq.m)  # type: ignore
+
 # Type aliases for numpy arrays with specific dimensions
 
 # Current neo.AnalogSignal: (time_points, input_currents) * pq.nA
-CURRENT__AnalogSignal = Annotated[AnalogSignal, Is[lambda x: x.units == pq.nA]]
+CURRENT__AnalogSignal = Annotated[
+    AnalogSignal, Is[lambda x: x.units == pq.nA and x.sampling_period.units == pq.s]
+]
 
 FORCE__AnalogSignal = Annotated[
     AnalogSignal, Is[lambda x: (x.units == pq.dimensionless) or (x.units == pq.N)]

@@ -93,9 +93,9 @@ def plot_innervation_areas_2d(
     max_index = np.max(indices_to_plot)
 
     if apply_default_formatting:
-        # Use a repeating palette of 10 colors
-        base_colors = plt.cm.tab10(np.linspace(0, 1, 10))  # type: ignore
-        colors = [base_colors[i % 8] for i in range(len(indices_to_plot))]
+        # Use current style's default color cycle (adapts to any plt.style)
+        base_colors = plt.rcParams['axes.prop_cycle'].by_key()['color']
+        colors = [base_colors[i % len(base_colors)] for i in range(len(indices_to_plot))]
 
         alphas = np.logspace(np.log10(0.1), np.log10(1.0), len(indices_to_plot))
 

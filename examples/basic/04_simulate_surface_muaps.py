@@ -10,13 +10,18 @@ First step is to create **MUAPs** from the **muscle model**.
     The **MUAPs** are the **action potentials** of the **motor units** at the surface of the skin.
 """
 
+# %%
+
 from pathlib import Path
 
 import joblib
 import matplotlib.pyplot as plt
+import quantities as pq
 
 from myogen import simulator
 from myogen.utils.plotting import plot_muap_grid
+
+plt.style.use("fivethirtyeight")
 
 ##############################################################################
 # Define Parameters
@@ -34,7 +39,7 @@ from myogen.utils.plotting import plot_muap_grid
 # - ``skin_thickness``: Skin thickness
 
 # Define simulation parameters
-sampling_frequency = 2048.0  # Hz - standard for surface EMG
+sampling_frequency = 2048.0 * pq.Hz
 
 ##############################################################################
 # Load Muscle Model
@@ -61,18 +66,18 @@ muscle: simulator.Muscle = joblib.load(save_path / "muscle_model.pkl")
 electrode_array_monopolar = simulator.SurfaceElectrodeArray(
     num_rows=5,
     num_cols=5,
-    inter_electrode_distances__mm=2,
-    electrode_radius__mm=1,
+    inter_electrode_distances__mm=2 * pq.mm,
+    electrode_radius__mm=1 * pq.mm,
     differentiation_mode="monopolar",
-    bending_radius__mm=muscle.radius__mm
-    + muscle.skin_thickness__mm
-    + muscle.fat_thickness__mm,
+    bending_radius__mm=muscle.radius__mm + muscle.skin_thickness__mm + muscle.fat_thickness__mm,
 )
 
 surface_emg = simulator.SurfaceEMG(
     muscle_model=muscle,
     electrode_arrays=[electrode_array_monopolar],
     sampling_frequency__Hz=sampling_frequency,
+    sampling_points_in_t_and_z_domains=300,
+    MUs_to_simulate=list(range(0, 10)),  # Sim
 )
 
 ##############################################################################
@@ -126,9 +131,9 @@ fig.suptitle("MUAP 0")
 plot_muap_grid(
     surface_muap__Block=muaps,
     axs=[ax],
-    muap_indices=[0],
+    muap_indices=[50],
     time_slice=slice(100, -100),
-    apply_default_formatting=True,
+    apply_default_formatting=False,
 )
 plt.tight_layout()
 plt.show()

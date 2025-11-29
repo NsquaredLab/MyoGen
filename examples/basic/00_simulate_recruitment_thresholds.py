@@ -17,6 +17,8 @@ The first step in using **MyoGen** is to generate the **recruitment thresholds**
 * **Combined** model: Hybrid approach combining De Luca shape with Konstantin scaling (*Ours*)
 """
 
+# %%
+
 ##############################################################################
 # Import Libraries
 # ----------------
@@ -24,14 +26,9 @@ from pathlib import Path
 
 import joblib
 from matplotlib import pyplot as plt
-
 from myogen import simulator
-from myogen.utils.plotting import plot_recruitment_thresholds
 
-# Configure matplotlib for high-quality output
-plt.rcParams["figure.dpi"] = 72
-plt.rcParams["savefig.dpi"] = 300
-plt.rcParams["figure.figsize"] = (1, 1)
+plt.style.use("fivethirtyeight")
 
 ##############################################################################
 # Define Common Parameters
@@ -68,14 +65,14 @@ save_path.mkdir(exist_ok=True)
 #
 #       from myogen import simulator
 
-rt_fuglevand, rtz_fuglevand = simulator.RecruitmentThresholds(
+rt_fuglevand, _ = simulator.RecruitmentThresholds(
     N=n_motor_units, recruitment_range__ratio=recruitment_range, mode="fuglevand"
 )
 
-_, ax = plt.subplots()
-plot_recruitment_thresholds(
-    rt_fuglevand, [ax], model_name="Fuglevand", colors="#90b8e0"
-)
+plt.plot(rt_fuglevand * 100, "-o", label="Fuglevand Model")
+plt.title("Fuglevand Recruitment Thresholds")
+plt.xlabel("Motor Unit (#)")
+plt.ylabel("Recruitment Threshold (%)")
 plt.tight_layout()
 plt.show()
 
@@ -90,25 +87,22 @@ plt.show()
 #
 # - ``deluca__slope``: Controls the shape of the distribution
 
-deluca_slopes = [0.001, 5, 25, 50]  # Different slope values to demonstrate variety
-
-deluca_results = {}
-for slope in deluca_slopes:
-    rt, _ = simulator.RecruitmentThresholds(
+deluca_results = {
+    slope: simulator.RecruitmentThresholds(
         N=n_motor_units,
         recruitment_range__ratio=recruitment_range,
         deluca__slope=slope,
         mode="deluca",
-    )
-    deluca_results[slope] = rt
+    )[0]
+    for slope in [0.001, 5, 25, 50]
+}
 
-_, ax = plt.subplots()
-plot_recruitment_thresholds(
-    deluca_results,
-    [ax],
-    model_name="De Luca",
-    colors=["#90b8e0", "#af8bff", "#90b8e0", "#af8bff"],
-)
+for s, rt in deluca_results.items():
+    plt.plot(rt * 100, "-o", label=f"Slope={s}")
+plt.title("De Luca Recruitment Thresholds")
+plt.xlabel("Motor Unit (#)")
+plt.ylabel("Recruitment Threshold (%)")
+plt.legend()
 plt.tight_layout()
 plt.show()
 
@@ -123,24 +117,17 @@ plt.show()
 #
 # - ``konstantin__max_threshold``: Maximum recruitment threshold
 
-konstantin_max_threshold = 1.0  # Maximum recruitment threshold
-
-rt_konstantin, rtz_konstantin = simulator.RecruitmentThresholds(
+rt_konstantin, _ = simulator.RecruitmentThresholds(
     N=n_motor_units,
     recruitment_range__ratio=recruitment_range,
-    konstantin__max_threshold__ratio=konstantin_max_threshold,
+    konstantin__max_threshold__ratio=1.0,
     mode="konstantin",
 )
 
-_, ax = plt.subplots()
-plot_recruitment_thresholds(
-    rt_konstantin,
-    [ax],
-    model_name="Konstantin",
-    y_max=konstantin_max_threshold,
-    colors="#90b8e0",
-    markers="s",
-)
+plt.plot(rt_konstantin * 100, "-o", label="Konstantin Model")
+plt.title("Konstantin Recruitment Thresholds")
+plt.xlabel("Motor Unit (#)")
+plt.ylabel("Recruitment Threshold (%)")
 plt.tight_layout()
 plt.show()
 
@@ -154,21 +141,27 @@ plt.show()
 # **Additional parameters:**
 #
 # - ``deluca__slope``: Controls the shape of the distribution
-# - ``konstantin__max_threshold``: Maximum recruitment threshold
+# - ``konstantin__max_threshold``: Maximum recruitment threshold # Slopes for combined model
 
-combined_slopes = [0.001, 5, 25, 50]  # Slopes for combined model
-combined_max_threshold = 1.0  # Maximum threshold for combined model
-
-combined_results = {}
-for slope in combined_slopes:
-    rt, _ = simulator.RecruitmentThresholds(
+combined_results = {
+    slope: simulator.RecruitmentThresholds(
         N=n_motor_units,
         recruitment_range__ratio=recruitment_range,
         deluca__slope=slope,
-        konstantin__max_threshold__ratio=combined_max_threshold,
+        konstantin__max_threshold__ratio=1.0,
         mode="combined",
-    )
-    combined_results[slope] = rt
+    )[0]
+    for slope in [0.001, 5, 25, 50]
+}
+
+for s, rt in combined_results.items():
+    plt.plot(rt * 100, "-o", label=f"Slope={s}")
+plt.title("De Luca Recruitment Thresholds")
+plt.xlabel("Motor Unit (#)")
+plt.ylabel("Recruitment Threshold (%)")
+plt.legend()
+plt.tight_layout()
+plt.show()
 
 ##############################################################################
 # Save Recruitment Thresholds
@@ -178,18 +171,3 @@ for slope in combined_slopes:
 #    All **MyoGen** objects can be saved to a file using ``joblib``. This is useful to **avoid re-running expensive simulations** if you need to use the same parameters.
 
 joblib.dump(combined_results[5], save_path / "thresholds.pkl")
-
-##############################################################################
-# Plot Combined Model Results
-# ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-_, ax = plt.subplots()
-plot_recruitment_thresholds(
-    combined_results,
-    [ax],
-    model_name="Combined",
-    y_max=combined_max_threshold,
-    colors=["#90b8e0", "#af8bff", "#90b8e0", "#af8bff"],
-)
-plt.tight_layout()
-plt.show()

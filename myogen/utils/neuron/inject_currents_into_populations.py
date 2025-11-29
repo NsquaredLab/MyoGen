@@ -6,7 +6,7 @@ from neuron import h
 
 from myogen.simulator.neuron.populations import _Pool
 from myogen.utils.decorators import beartowertype
-from myogen.utils.types import CURRENT__AnalogSignal, SPIKE_TRAIN__Block
+from myogen.utils.types import CURRENT__AnalogSignal, Quantity__mV, SPIKE_TRAIN__Block
 
 
 @beartowertype
@@ -83,7 +83,8 @@ def inject_currents_into_populations(
 def inject_currents_and_simulate_spike_trains(
     populations: Sequence[_Pool],
     input_current__AnalogSignal: CURRENT__AnalogSignal,
-    spike_detection_thresholds__mV: float | Sequence[float] = -10.0,
+    spike_detection_thresholds__mV: Quantity__mV | Sequence[Quantity__mV] = -10.0
+    * pq.mV,
 ) -> SPIKE_TRAIN__Block:
     """
     Injects input currents into populations and returns recorded spike trains.
@@ -126,7 +127,7 @@ def inject_currents_and_simulate_spike_trains(
     # First, set up current injection using the existing function
     inject_currents_into_populations(populations, input_current__AnalogSignal)
 
-    simulation_time__ms = input_current__AnalogSignal.t_stop.rescale(pq.ms).magnitude
+    simulation_time__ms = input_current__AnalogSignal.t_stop.rescale(pq.ms)
 
     # Validate input dimensions
     n_pools = len(populations)
@@ -138,17 +139,7 @@ def inject_currents_and_simulate_spike_trains(
             f"({n_current_channels})"
         )
 
-    if isinstance(spike_detection_thresholds__mV, Sequence):
-        if len(spike_detection_thresholds__mV) != n_pools:
-            raise ValueError(
-                f"Number of spike detection thresholds ({len(spike_detection_thresholds__mV)}) "
-                f"must match number of populations ({n_pools})"
-            )
-    elif not isinstance(spike_detection_thresholds__mV, (float, int)):
-        raise TypeError(
-            "Spike detection thresholds must be a float, int, or sequence of floats/ints"
-        )
-    else:
+    if not isinstance(spike_detection_thresholds__mV, Sequence):
         spike_detection_thresholds__mV = [spike_detection_thresholds__mV] * n_pools
 
     # Set up spike recording for all neurons
@@ -186,10 +177,10 @@ def inject_currents_and_simulate_spike_trains(
 
         segment.spiketrains = [
             SpikeTrain(
-                spike_recorder.as_numpy() * pq.ms,
-                t_stop=simulation_time__ms * pq.ms,
-                sampling_rate=(1 / h.dt * (1 / pq.ms)),
-                sampling_period=h.dt * pq.ms,
+                (spike_recorder.as_numpy() * pq.ms).rescale(pq.s),
+                t_stop=simulation_time__ms.rescale(pq.s),
+                sampling_rate=(1 / (h.dt * pq.ms)).rescale(pq.Hz),
+                sampling_period=(h.dt * pq.ms).rescale(pq.s),
                 name=str(int(neuron_idx)),
                 description=f"Pool {pool_idx}, Neuron {neuron_idx}",
             )

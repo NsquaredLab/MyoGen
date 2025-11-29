@@ -16,6 +16,7 @@ from myogen.simulator.neuron._cython._gamma_process_generator import (
     _GammaProcessGenerator__Cython,
 )
 from myogen.utils.decorators import beartowertype
+from myogen.utils.types import Quantity__ms
 
 
 class _Cell:
@@ -451,7 +452,7 @@ class DD_Gamma(_Cell, _GammaProcessGenerator__Cython):
 
     Parameters
     ----------
-    dt : float
+    timestep__ms : Quantity__ms
         Simulation time step in milliseconds. Must match the integration
         time step used in the main simulation loop.
     shape : float, optional
@@ -483,11 +484,19 @@ class DD_Gamma(_Cell, _GammaProcessGenerator__Cython):
 
     _ids2 = itertools.count(0)
 
-    def __init__(self, dt, shape: float = 3.0, pool__ID: int | None = None):
+    def __init__(
+        self,
+        timestep__ms: Quantity__ms,
+        shape: float = 3.0,
+        pool__ID: int | None = None,
+    ):
         self.ns = h.DUMMY()  # Dummy cell
         _Cell.__init__(self, next(self._ids2), pool__ID)
         _GammaProcessGenerator__Cython.__init__(
-            self, SEED + (self.class__ID + 1) * (self.global__ID + 1), shape, dt
+            self,
+            SEED + (self.class__ID + 1) * (self.global__ID + 1),
+            shape,
+            timestep__ms.magnitude,
         )
 
     def __repr__(self) -> str:
@@ -500,7 +509,7 @@ class DD_Gamma(_Cell, _GammaProcessGenerator__Cython):
         Parameters
         ----------
         y : float
-            Drive signal in Hz (firing rate). Values > 0 generate spikes with
+            Drive signal in pps (firing rate). Values > 0 generate spikes with
             the specified rate and regularity; values ≤ 0 produce no spikes.
 
         Returns
@@ -534,8 +543,8 @@ class AffIa(_Cell, _PoissonProcessGenerator__Cython):
     N : int
         Maximum firing rate in Hz when fully activated. Determines the
         gain of the length-to-frequency transduction.
-    dt : float
-        Simulation time step in milliseconds.
+    timestep__ms : Quantity__ms
+        Simulation time step as a Quantity with units of milliseconds.
     initN : int, optional
         Initial spike count for rate computation, by default 0.
     class__ID : int, optional
@@ -566,7 +575,7 @@ class AffIa(_Cell, _PoissonProcessGenerator__Cython):
         self,
         RT,
         N,
-        dt,
+        timestep__ms: Quantity__ms,
         initN=0,
         class__ID: Optional[int] = None,
         pool__ID: int | None = None,
@@ -583,7 +592,7 @@ class AffIa(_Cell, _PoissonProcessGenerator__Cython):
             self,
             seed=SEED + (self.class__ID + 1) * (self.global__ID + 1),
             N=N,
-            dt=dt,
+            dt=timestep__ms.magnitude,
             Ninit=initN,
         )
 

@@ -27,12 +27,8 @@ from scipy.special import iv as In, kv as Kn, jv as Jn
 # Initialize NumPy C API
 cnp.import_array()
 
-# CuPy availability check
-try:
-    import cupy as cp
-    HAS_CUPY = True
-except ImportError:
-    HAS_CUPY = False
+# Pure CPU implementation - no GPU/CuPy
+# This Cython version is optimized for CPU-only execution with parallelization
 
 
 #######################################################################################################
@@ -396,7 +392,10 @@ cpdef tuple simulate_fiber_v2(
     # Extract electrode configuration
     cdef Py_ssize_t channels_0 = electrode_array.num_rows
     cdef Py_ssize_t channels_1 = electrode_array.num_cols
-    cdef double rele = electrode_array.electrode_radius__mm
+
+    # Extract magnitude from Quantity objects
+    import quantities as pq
+    cdef double rele = float(electrode_array.electrode_radius__mm.rescale(pq.mm).magnitude)
 
     ###################################################################################################
     ## 1. Constants
@@ -419,15 +418,24 @@ cpdef tuple simulate_fiber_v2(
     ## 2. I(k_t, k_z)
     ###################################################################################################
 
-    cdef double A_coef = 96.0  # mV/mm^3 (Farina, 2001, eq 16)
-    z = np.linspace(-(N - 1) * (v / Fs) / 2, (N - 1) * (v / Fs) / 2, N, dtype=np.float64)
+    cdef double lambda_z = 1.0  # mm, typical for FDI (you can tune)
+
+    cdef double A_coef = 96.0  # mV/mm^3 from Farina 2001 eq. 16
+
+    # correct spatial window
+    z_max = 6 * lambda_z  
+    z = np.linspace(-z_max, z_max, N)
 
     aux = np.zeros_like(z)
     positive_mask = z >= 0
+
+    z_norm = z[positive_mask] / lambda_z
+    z_norm = np.clip(z_norm, 0, 6)  # enforce support used in Farina's model
+
     aux[positive_mask] = (
         A_coef
-        * np.exp(-z[positive_mask])
-        * (3 * z[positive_mask] ** 2 - z[positive_mask] ** 3)
+        * np.exp(-z_norm)
+        * (3*z_norm**2 - z_norm**3)
     )
 
     psi = -f_minus_t(aux)
@@ -604,24 +612,14 @@ cpdef tuple simulate_fiber_v2(
         A_flat = A_flat[..., 2:, 2:]
         B_flat = B_flat[..., 2:, :]
 
-        if HAS_CUPY:
-            A_gpu = cp.asarray(A_flat)
-            B_gpu = cp.asarray(B_flat)
-            X = cp.linalg.solve(A_gpu, B_gpu)
-            X = cp.asnumpy(X)
-        else:
-            X = np.linalg.solve(A_flat, B_flat)
+        # Pure CPU solve (optimized for small-to-medium problems)
+        X = np.linalg.solve(A_flat, B_flat)
 
         X = X.reshape(n_theta, n_z, 5, 1)
         H_vc = X[..., 3, 0] + X[..., 4, 0]
     else:
-        if HAS_CUPY:
-            A_gpu = cp.asarray(A_flat)
-            B_gpu = cp.asarray(B_flat)
-            X = cp.linalg.solve(A_gpu, B_gpu)
-            X = cp.asnumpy(X)
-        else:
-            X = np.linalg.solve(A_flat, B_flat)
+        # Pure CPU solve (optimized for small-to-medium problems)
+        X = np.linalg.solve(A_flat, B_flat)
 
         X = X.reshape(n_theta, n_z, 7, 1)
         H_vc = X[..., 5, 0] + X[..., 6, 0]
@@ -667,7 +665,10 @@ cpdef tuple simulate_fiber_v2(
     H_glo_imag = np.array(np.imag(H_glo), dtype=np.float64, copy=True, order='C')
 
     # Extract electrode positions (ensure writable, contiguous)
-    pos_theta = np.array(electrode_array.pos_theta, dtype=np.float64, copy=True, order='C')
+    # Extract magnitude from Quantity objects
+    import quantities as pq
+    pos_theta = np.array(electrode_array.pos_theta.rescale(pq.rad).magnitude, dtype=np.float64, copy=True, order='C')
+    pos_z = np.array(electrode_array.pos_z.rescale(pq.mm).magnitude, dtype=np.float64, copy=True, order='C')
     ktheta_mesh_view = np.array(ktheta_mesh_kzktheta, dtype=np.float64, copy=True, order='C')
 
     # Allocate B_kz
@@ -707,10 +708,7 @@ cpdef tuple simulate_fiber_v2(
             arg = np.multiply(I_kzkt, auxiliar)
             arg2 = np.multiply(
                 arg,
-                np.exp(
-                    1j * electrode_array.pos_z[channel_z, channel_theta] * kz_mesh_kzkt
-                )
-                * k_z_diff,
+                np.exp(1j * pos_z[channel_z, channel_theta] * kz_mesh_kzkt) * k_z_diff,
             )
             PHI = np.sum(arg2, axis=0)
             phi_np[channel_z, channel_theta, :] = np.real(

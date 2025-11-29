@@ -65,7 +65,7 @@ class AffIa__Pool(_Pool):
             ia = cells.AffIa(
                 RT=rt_i,
                 N=poisson_batch_size,
-                dt=timestep__ms,
+                timestep__ms=timestep__ms,
                 initN=init_order,
                 pool__ID=i,
             )

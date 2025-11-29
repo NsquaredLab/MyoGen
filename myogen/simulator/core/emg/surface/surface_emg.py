@@ -10,11 +10,13 @@ except ImportError:
     HAS_CUPY = False
 
 import logging
+from copy import deepcopy
 
 import elephant
 import elephant.utils
 import numpy as np
 import quantities as pq
+from joblib import Parallel, delayed
 from neo import Block, Group, Segment
 from tqdm import tqdm
 
@@ -27,6 +29,7 @@ from myogen.utils.types import (
     SPIKE_TRAIN__Block,
     SURFACE_EMG__Block,
     SURFACE_MUAP__Block,
+    Quantity__Hz,
 )
 
 
@@ -84,7 +87,7 @@ class SurfaceEMG:
         self,
         muscle_model: Muscle,
         electrode_arrays: list[SurfaceElectrodeArray],
-        sampling_frequency__Hz: float = 2048.0,
+        sampling_frequency__Hz: Quantity__Hz = 2048.0 * pq.Hz,
         sampling_points_in_t_and_z_domains: int = 256,
         sampling_points_in_theta_domain: int = 180,
         MUs_to_simulate: list[int] | None = None,
@@ -97,55 +100,56 @@ class SurfaceEMG:
         self.sampling_points_in_theta_domain = sampling_points_in_theta_domain
         self.MUs_to_simulate = MUs_to_simulate
 
-        # Private copies for internal modifications
+        # Private copies for internal modifications (extract magnitudes)
         self._muscle_model = muscle_model
         self._electrode_arrays = electrode_arrays
-        self._sampling_frequency__Hz = sampling_frequency__Hz
+        self._sampling_frequency__Hz = float(sampling_frequency__Hz.rescale(pq.Hz).magnitude)
         self._sampling_points_in_t_and_z_domains = sampling_points_in_t_and_z_domains
         self._sampling_points_in_theta_domain = sampling_points_in_theta_domain
         self._MUs_to_simulate = MUs_to_simulate
 
         # Derived properties from muscle model - immutable public access
-        self.mean_conduction_velocity__m_s = (
-            self._muscle_model.mean_conduction_velocity__m_s
-        )
+        self.mean_conduction_velocity__m_s = self._muscle_model.mean_conduction_velocity__m_s
         self.mean_fiber_length__mm = self._muscle_model.mean_fiber_length__mm
         self.var_fiber_length__mm = self._muscle_model.var_fiber_length__mm
         self.radius_bone__mm = self._muscle_model.radius_bone__mm
         self.fat_thickness__mm = self._muscle_model.fat_thickness__mm
         self.skin_thickness__mm = self._muscle_model.skin_thickness__mm
-        self.muscle_conductivity_radial__S_m = (
-            self._muscle_model.muscle_conductivity_radial__S_m
-        )
+        self.muscle_conductivity_radial__S_m = self._muscle_model.muscle_conductivity_radial__S_m
         self.muscle_conductivity_longitudinal__S_m = (
             self._muscle_model.muscle_conductivity_longitudinal__S_m
         )
         self.fat_conductivity__S_m = self._muscle_model.fat_conductivity__S_m
         self.skin_conductivity__S_m = self._muscle_model.skin_conductivity__S_m
 
-        # Private copies for internal modifications
-        self._mean_conduction_velocity__m_s = (
+        # Private copies for internal modifications (extract magnitudes if Quantity objects)
+        def _extract_value(val):
+            """Helper to extract magnitude from Quantity or return float directly."""
+            if hasattr(val, "magnitude"):
+                return float(val.magnitude)
+            return float(val)
+
+        self._mean_conduction_velocity__m_s = _extract_value(
             self._muscle_model.mean_conduction_velocity__m_s
         )
-        self._mean_fiber_length__mm = self._muscle_model.mean_fiber_length__mm
-        self._var_fiber_length__mm = self._muscle_model.var_fiber_length__mm
-        self._radius_bone__mm = self._muscle_model.radius_bone__mm
-        self._fat_thickness__mm = self._muscle_model.fat_thickness__mm
-        self._skin_thickness__mm = self._muscle_model.skin_thickness__mm
-        self._muscle_conductivity_radial__S_m = (
+        self._mean_fiber_length__mm = _extract_value(self._muscle_model.mean_fiber_length__mm)
+        self._var_fiber_length__mm = _extract_value(self._muscle_model.var_fiber_length__mm)
+        self._radius_bone__mm = _extract_value(self._muscle_model.radius_bone__mm)
+        self._fat_thickness__mm = _extract_value(self._muscle_model.fat_thickness__mm)
+        self._skin_thickness__mm = _extract_value(self._muscle_model.skin_thickness__mm)
+        self._muscle_conductivity_radial__S_m = _extract_value(
             self._muscle_model.muscle_conductivity_radial__S_m
         )
-        self._muscle_conductivity_longitudinal__S_m = (
+        self._muscle_conductivity_longitudinal__S_m = _extract_value(
             self._muscle_model.muscle_conductivity_longitudinal__S_m
         )
-        self._fat_conductivity__S_m = self._muscle_model.fat_conductivity__S_m
-        self._skin_conductivity__S_m = self._muscle_model.skin_conductivity__S_m
+        self._fat_conductivity__S_m = _extract_value(self._muscle_model.fat_conductivity__S_m)
+        self._skin_conductivity__S_m = _extract_value(self._muscle_model.skin_conductivity__S_m)
 
         # Calculate total radius - immutable and private
+        self._radius_muscle__mm = _extract_value(self._muscle_model.radius__mm)
         self.radius_total = (
-            self._muscle_model.radius__mm
-            + self._fat_thickness__mm
-            + self._skin_thickness__mm
+            self._radius_muscle__mm + self._fat_thickness__mm + self._skin_thickness__mm
         )
         self._radius_total = self.radius_total
 
@@ -155,13 +159,24 @@ class SurfaceEMG:
         self._noisy_surface_emg__Block: Optional[SURFACE_EMG__Block] = None
         self._spike_train__Block: Optional[SPIKE_TRAIN__Block] = None
 
-    def simulate_muaps(self) -> SURFACE_MUAP__Block:
+    def simulate_muaps(self, n_jobs: int = -2) -> SURFACE_MUAP__Block:
         """
         Simulate MUAPs for all electrode arrays using the provided muscle model.
 
         This method generates Motor Unit Action Potential (MUAP) templates that represent
         the electrical signature of each motor unit as recorded by the surface electrodes.
-        The simulation uses the multi-layered cylindrical volume conductor model.
+        The simulation uses the multi-layered cylindrical volume conductor model with
+        parallel processing for improved performance.
+
+        Parameters
+        ----------
+        n_jobs : int, optional
+            Number of parallel workers for motor unit processing. Default is -2.
+            - n_jobs=-1: Use all CPU cores
+            - n_jobs=-2: Use all cores except one (recommended, keeps system responsive)
+            - n_jobs=-3: Use all cores except two
+            - n_jobs=1: No parallelization
+            - n_jobs=N: Use exactly N cores
 
         Returns
         -------
@@ -173,6 +188,9 @@ class SurfaceEMG:
         -----
         This method must be called before simulate_surface_emg(). The generated MUAP
         templates are used as basis functions for EMG signal synthesis.
+
+        The motor units are processed in parallel using joblib, with each motor unit's
+        fibers processed sequentially to maintain optimization efficiency.
         """
         # Set default MUs to simulate
         if self._MUs_to_simulate is None:
@@ -186,16 +204,12 @@ class SurfaceEMG:
         )  # 10% of the mean fiber length (see Botelho et al. 2019 [6]_)
 
         # Extract fiber counts
-        number_of_fibers_per_MUs = (
-            self._muscle_model.resulting_number_of_innervated_fibers
-        )
+        number_of_fibers_per_MUs = self._muscle_model.resulting_number_of_innervated_fibers
 
         # Create time array
         t = np.linspace(
             0,
-            (self._sampling_points_in_t_and_z_domains - 1)
-            / self._sampling_frequency__Hz
-            * 1e-3,
+            (self._sampling_points_in_t_and_z_domains - 1) / self._sampling_frequency__Hz * 1e-3,
             self._sampling_points_in_t_and_z_domains,
         )
 
@@ -209,75 +223,79 @@ class SurfaceEMG:
             size=n_motor_units,
         )
 
-        block = Block()
-        for array_idx, electrode_array in enumerate(self._electrode_arrays):
-            group = Group(name=f"ElectrodeArray_{array_idx}")
-            block.groups.append(group)
+        # Pre-allocate result shape (optimization: avoid repeated shape calculations)
+        result_shape = (
+            self._electrode_arrays[0].num_rows,
+            self._electrode_arrays[0].num_cols,
+            len(t),
+        )
 
-            # Matrix optimization variables
-            A_matrix = None
-            B_incomplete = None
+        # Helper function to process a single motor unit
+        def _process_single_mu(
+            MU_index: int,
+            electrode_array_original: SurfaceElectrodeArray,
+        ) -> tuple[np.ndarray, str]:
+            """
+            Process a single motor unit (all its fibers) in parallel.
 
-            # Process all motor units (not just selected ones for consistent normalization)
-            for MU_index in range(n_motor_units):
-                segment = Segment(name=f"MUAP_{MU_index}")
-                group.segments.append(segment)
+            Parameters
+            ----------
+            MU_index : int
+                Index of the motor unit to process.
+            electrode_array_original : SurfaceElectrodeArray
+                Original electrode array (will be deep-copied to avoid threading issues).
 
-                array_result = np.zeros(
-                    (
-                        electrode_array.num_rows,
-                        electrode_array.num_cols,
-                        len(t),
-                    )
-                )
+            Returns
+            -------
+            tuple[np.ndarray, str]
+                Tuple of (array_result, segment_name) where array_result is the accumulated
+                MUAP signal for this MU and segment_name is the name for the segment.
+            """
+            try:
+                # Deep copy electrode array to avoid threading issues
+                electrode_array = deepcopy(electrode_array_original)
+
+                # Pre-allocated result array (optimization: use pre-computed shape)
+                array_result = np.zeros(result_shape, dtype=np.float64)
 
                 number_of_fibers = number_of_fibers_per_MUs[MU_index]
 
                 if number_of_fibers == 0:
-                    # Add empty signal for MUs with no fibers
-                    segment.analogsignals.append(
-                        GridAnalogSignal(
-                            signal=np.zeros(
-                                (
-                                    len(t),
-                                    electrode_array.num_rows,
-                                    electrode_array.num_cols,
-                                )
-                            )
-                            * pq.dimensionless,
-                            t_start=0 * pq.ms,
-                            sampling_rate=self._sampling_frequency__Hz * pq.Hz,
-                        )
-                    )
-                    continue
+                    # Return empty signal for MUs with no fibers
+                    return array_result, f"MUAP_{MU_index}"
 
                 # Get fiber positions
-                position_of_fibers = self._muscle_model.resulting_fiber_assignment(
-                    MU_index
-                )
+                position_of_fibers_raw = self._muscle_model.resulting_fiber_assignment(MU_index)
+                # Extract magnitude if Quantity, otherwise use as-is
+                if hasattr(position_of_fibers_raw, "magnitude"):
+                    position_of_fibers = position_of_fibers_raw.magnitude
+                else:
+                    position_of_fibers = position_of_fibers_raw
+
                 innervation_zone = innervation_zones[MU_index]
 
-                # Process each fiber
-                for fiber_number in tqdm(
-                    range(number_of_fibers),
-                    desc=f"Electrode Array {array_idx + 1}/{len(self._electrode_arrays)} MU {MU_index + 1}/{n_motor_units}",
-                    unit="fiber(s)",
-                ):
-                    fiber_position = position_of_fibers[fiber_number]
+                # Batch generate random fiber lengths (optimization: single RNG call)
+                fiber_length_variations = RANDOM_GENERATOR.uniform(
+                    low=-self._var_fiber_length__mm,
+                    high=self._var_fiber_length__mm,
+                    size=number_of_fibers,
+                )
 
-                    # Calculate fiber distance from center
-                    R = np.sqrt(fiber_position[0] ** 2 + fiber_position[1] ** 2)
+                # Pre-compute geometric values for all fibers (optimization: vectorized)
+                R_values = np.sqrt(position_of_fibers[:, 0] ** 2 + position_of_fibers[:, 1] ** 2)
+                theta_values = np.arctan2(position_of_fibers[:, 1], position_of_fibers[:, 0])
+                fiber_lengths = self._mean_fiber_length__mm + fiber_length_variations
 
-                    # Generate fiber length
-                    fiber_length__mm = (
-                        self._mean_fiber_length__mm
-                        + RANDOM_GENERATOR.uniform(
-                            low=-self._var_fiber_length__mm,
-                            high=self._var_fiber_length__mm,
-                        )
-                    )
+                # Matrix optimization variables (local to this MU)
+                A_matrix = None
+                B_incomplete = None
 
-                    theta = np.arctan2(fiber_position[1], fiber_position[0])
+                # Process each fiber (inner loop - must remain sequential)
+                for fiber_number in range(number_of_fibers):
+                    # Use pre-computed values (optimization: vectorized calculations)
+                    R = R_values[fiber_number]
+                    theta = theta_values[fiber_number]
+                    fiber_length__mm = fiber_lengths[fiber_number]
 
                     electrode_array._center_point__mm_deg = (
                         electrode_array._center_point__mm_deg[0],
@@ -314,10 +332,56 @@ class SurfaceEMG:
 
                     array_result += phi_temp
 
+                return array_result, f"MUAP_{MU_index}"
+
+            except Exception as e:
+                # Log error and return empty result to avoid crashing entire parallel job
+                logging.error(
+                    f"Failed to process MU {MU_index} for electrode array {array_idx}: {e}"
+                )
+                # Return empty signal with error marker (optimization: use pre-computed shape)
+                empty_result = np.zeros(result_shape, dtype=np.float64)
+                return empty_result, f"MUAP_{MU_index}_FAILED"
+
+        block = Block()
+        for array_idx, electrode_array in enumerate(self._electrode_arrays):
+            group = Group(name=f"ElectrodeArray_{array_idx}")
+            block.groups.append(group)
+
+            # Process all motor units in parallel
+            logging.info(
+                f"Processing {n_motor_units} motor units for electrode array {array_idx + 1}/{len(self._electrode_arrays)} using parallel processing..."
+            )
+
+            # Parallel execution of motor units with tqdm progress bar
+            # batch_size="auto" optimizes task distribution across workers
+            results = []
+            with tqdm(
+                total=n_motor_units,
+                desc=f"Electrode Array {array_idx + 1}/{len(self._electrode_arrays)}",
+                unit="MU",
+            ) as pbar:
+                for result in Parallel(
+                    n_jobs=n_jobs,
+                    return_as="generator",
+                    verbose=0,
+                    batch_size="auto",
+                )(
+                    delayed(_process_single_mu)(MU_index, electrode_array)
+                    for MU_index in range(n_motor_units)
+                ):
+                    results.append(result)
+                    pbar.update(1)
+
+            # Collect results and create segments
+            for array_result, segment_name in results:
+                segment = Segment(name=segment_name)
+                group.segments.append(segment)
+
                 segment.analogsignals.append(
                     GridAnalogSignal(
                         signal=np.transpose(array_result, (2, 0, 1)) * pq.dimensionless,
-                        t_start=0 * pq.ms,
+                        t_start=0 * pq.s,
                         sampling_rate=self._sampling_frequency__Hz * pq.Hz,
                     )
                 )
@@ -327,9 +391,7 @@ class SurfaceEMG:
 
         return block
 
-    def simulate_surface_emg(
-        self, spike_train__Block: SPIKE_TRAIN__Block
-    ) -> SURFACE_EMG__Block:
+    def simulate_surface_emg(self, spike_train__Block: SPIKE_TRAIN__Block) -> SURFACE_EMG__Block:
         """
         Generate surface EMG signals for all electrode arrays using the provided spike train block.
 
@@ -354,9 +416,7 @@ class SurfaceEMG:
             If MUAP templates have not been generated. Call simulate_muaps() first.
         """
         if self._muaps__Block is None:
-            raise ValueError(
-                "MUAP templates have not been generated. Call simulate_muaps() first."
-            )
+            raise ValueError("MUAP templates have not been generated. Call simulate_muaps() first.")
 
         # Store spike train data privately
         self._spike_train__Block = spike_train__Block
@@ -438,14 +498,12 @@ class SurfaceEMG:
                         muap_shapes[muap_nr, row, col] = np.interp(
                             x=np.arange(
                                 start=0,
-                                stop=muap_array.shape[-1]
-                                / self._sampling_frequency__Hz,
+                                stop=muap_array.shape[-1] / self._sampling_frequency__Hz,
                                 step=spiketrain_timestep__ms.rescale(pq.s).magnitude,
                             ),
                             xp=np.arange(
                                 start=0,
-                                stop=muap_array.shape[-1]
-                                / self._sampling_frequency__Hz,
+                                stop=muap_array.shape[-1] / self._sampling_frequency__Hz,
                                 step=muap_timestep__ms.rescale(pq.s).magnitude,
                             ),
                             fp=muap_array[muap_nr, row, col],
@@ -456,9 +514,7 @@ class SurfaceEMG:
             n_cols = muap_shapes.shape[2]
 
             # Initialize result array
-            sample_conv = np.convolve(
-                spike_trains[0, 0], muap_shapes[0, 0, 0], mode="same"
-            )
+            sample_conv = np.convolve(spike_trains[0, 0], muap_shapes[0, 0, 0], mode="same")
 
             surface_emg = np.zeros((n_pools, n_rows, n_cols, len(sample_conv)))
 
@@ -488,9 +544,7 @@ class SurfaceEMG:
                                         muap_gpu[mu_idx, row_idx, col_idx],
                                         mode="same",
                                     )
-                                    for mu_idx in MUs_to_simulate.intersection(
-                                        pool_active_neurons
-                                    )
+                                    for mu_idx in MUs_to_simulate.intersection(pool_active_neurons)
                                 ]
                             )
                             # Sum across MUAPs on GPU
@@ -514,9 +568,7 @@ class SurfaceEMG:
                         for col_idx in range(n_cols):
                             # Process all active MUs
                             convolutions = []
-                            for mu_idx in MUs_to_simulate.intersection(
-                                pool_active_neurons
-                            ):
+                            for mu_idx in MUs_to_simulate.intersection(pool_active_neurons):
                                 conv = np.correlate(
                                     spike_trains[pool_idx, mu_idx],
                                     muap_shapes[mu_idx, row_idx, col_idx],
@@ -579,9 +631,7 @@ class SurfaceEMG:
         self._surface_emg__Block = block
         return block
 
-    def add_noise(
-        self, snr__dB: float, noise_type: str = "gaussian"
-    ) -> SURFACE_EMG__Block:
+    def add_noise(self, snr__dB: float, noise_type: str = "gaussian") -> SURFACE_EMG__Block:
         """
         Add noise to all electrode arrays.
 
@@ -637,23 +687,17 @@ class SurfaceEMG:
 
                 # Calculate signal power PER CHANNEL (per electrode)
                 # Mean along time axis (axis=0) gives power per spatial location
-                signal_power_per_channel = np.mean(
-                    emg_array**2, axis=0
-                )  # Shape: (rows, cols)
+                signal_power_per_channel = np.mean(emg_array**2, axis=0)  # Shape: (rows, cols)
 
                 # Calculate noise power per channel
                 snr_linear = 10 ** (snr__dB / 10)
                 noise_power_per_channel = signal_power_per_channel / snr_linear
-                noise_std_per_channel = np.sqrt(
-                    noise_power_per_channel
-                )  # Shape: (rows, cols)
+                noise_std_per_channel = np.sqrt(noise_power_per_channel)  # Shape: (rows, cols)
 
                 # Generate noise
                 if noise_type.lower() == "gaussian":
                     # Generate standard normal noise, then scale per channel
-                    noise = RANDOM_GENERATOR.normal(
-                        loc=0.0, scale=1.0, size=emg_array.shape
-                    )
+                    noise = RANDOM_GENERATOR.normal(loc=0.0, scale=1.0, size=emg_array.shape)
                     # Broadcast noise_std_per_channel along time axis
                     # noise shape: (time, rows, cols)
                     # noise_std_per_channel shape: (rows, cols)
@@ -695,9 +739,7 @@ class SurfaceEMG:
             If MUAP templates have not been computed yet.
         """
         if self._muaps__Block is None:
-            raise ValueError(
-                "MUAP templates not computed. Call simulate_muaps() first."
-            )
+            raise ValueError("MUAP templates not computed. Call simulate_muaps() first.")
         return self._muaps__Block
 
     @property
@@ -716,9 +758,7 @@ class SurfaceEMG:
             If surface EMG has not been computed yet.
         """
         if self._surface_emg__Block is None:
-            raise ValueError(
-                "Surface EMG signals not computed. Call simulate_surface_emg() first."
-            )
+            raise ValueError("Surface EMG signals not computed. Call simulate_surface_emg() first.")
         return self._surface_emg__Block
 
     @property
@@ -737,9 +777,7 @@ class SurfaceEMG:
             If noisy surface EMG has not been computed yet.
         """
         if self._noisy_surface_emg__Block is None:
-            raise ValueError(
-                "Noisy surface EMG signals not computed. Call add_noise() first."
-            )
+            raise ValueError("Noisy surface EMG signals not computed. Call add_noise() first.")
         return self._noisy_surface_emg__Block
 
     @property
@@ -758,7 +796,5 @@ class SurfaceEMG:
             If spike train block has not been set yet.
         """
         if self._spike_train__Block is None:
-            raise ValueError(
-                "Spike train block not set. Call simulate_surface_emg() first."
-            )
+            raise ValueError("Spike train block not set. Call simulate_surface_emg() first.")
         return self._spike_train__Block

@@ -138,6 +138,15 @@ class RecruitmentThresholds:
         """Allow tuple unpacking: rt, rtz = thresholds"""
         return iter((self.rt, self.rtz))
 
+    def __getitem__(self, index: int) -> RECRUITMENT_THRESHOLDS__ARRAY:
+        """Allow indexing: thresholds[0] -> rt, thresholds[1] -> rtz"""
+        if index == 0:
+            return self.rt
+        elif index == 1:
+            return self.rtz
+        else:
+            raise IndexError("Index out of range. Use 0 for rt and 1 for rtz.")
+
     def _generate_thresholds(
         self,
     ) -> tuple[RECRUITMENT_THRESHOLDS__ARRAY, RECRUITMENT_THRESHOLDS__ARRAY]:

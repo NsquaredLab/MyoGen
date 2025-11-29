@@ -11,6 +11,8 @@ The example shows two approaches:
 Both approaches produce identical results, but the manual approach helps you understand the underlying mechanisms.
 """
 
+# %%
+
 ##############################################################################
 # Import Libraries
 # ----------------
@@ -40,9 +42,11 @@ import joblib
 import neuron
 import numpy as np
 import quantities as pq
+import seaborn as sns
 from matplotlib import pyplot as plt
 from neo import Block, Segment, SpikeTrain
 from neuron import h
+from viziphant.rasterplot import rasterplot_rates
 
 from myogen import RANDOM_GENERATOR
 from myogen.simulator.neuron.populations import AlphaMN__Pool
@@ -51,8 +55,9 @@ from myogen.utils.neuron.inject_currents_into_populations import (
     inject_currents_and_simulate_spike_trains,
     inject_currents_into_populations,
 )
-from myogen.utils.nmodl import compile_nmodl_files, load_nmodl_mechanisms
-from myogen.utils.plotting import plot_spike_trains
+from myogen.utils.nmodl import load_nmodl_mechanisms
+
+plt.style.use("fivethirtyeight")
 
 ##############################################################################
 # Create Motor Neuron Populations (Pools)
@@ -71,7 +76,6 @@ from myogen.utils.plotting import plot_spike_trains
 #    To use them, the NMODL mechanisms need to be loaded first using the ``load_nmodl_mechanisms`` function.
 #
 # To showcase MyoGen's capabilities, we will create two different motor neuron pools with identical properties but different input currents.
-compile_nmodl_files()
 load_nmodl_mechanisms()
 
 save_path = Path("./results")
@@ -81,7 +85,10 @@ recruitment_thresholds = joblib.load(save_path / "thresholds.pkl")
 
 n_pools = 2
 motor_neuron_pools = [
-    AlphaMN__Pool(recruitment_thresholds__array=recruitment_thresholds, config_file="alpha_mn_FDI.yaml")
+    AlphaMN__Pool(
+        recruitment_thresholds__array=recruitment_thresholds,
+        config_file="alpha_mn_FDI.yaml",
+    )
     for _ in range(n_pools)
 ]
 
@@ -99,22 +106,22 @@ motor_neuron_pools = [
 # .. note::
 #    The generated input current is an instance of the ``AnalogSignal`` class from the ``neo`` package.
 
-timestep = 0.05  # ms
-simulation_time = 4000  # ms
+timestep = 0.05 * pq.ms
+simulation_time = 4000 * pq.ms
 
-rise_time_ms = list(RANDOM_GENERATOR.uniform(100, 500, size=n_pools))
-plateau_time_ms = list(RANDOM_GENERATOR.uniform(1000, 2000, size=n_pools))
-fall_time_ms = list(RANDOM_GENERATOR.uniform(1000, 2000, size=n_pools))
+rise_time_ms = list(RANDOM_GENERATOR.uniform(100, 500, size=n_pools)) * pq.ms
+plateau_time_ms = list(RANDOM_GENERATOR.uniform(1000, 2000, size=n_pools)) * pq.ms
+fall_time_ms = list(RANDOM_GENERATOR.uniform(1000, 2000, size=n_pools)) * pq.ms
 
 input_current__AnalogSignal = create_trapezoid_current(
     n_pools,
     int(simulation_time / timestep),
     timestep,
-    amplitudes__nA=[15.0] * n_pools,
+    amplitudes__nA=[15.0 * pq.nA] * n_pools,
     rise_times__ms=rise_time_ms,
     plateau_times__ms=plateau_time_ms,
     fall_times__ms=fall_time_ms,
-    delays__ms=500.0,
+    delays__ms=500.0 * pq.ms,
 )
 
 print(
@@ -144,8 +151,8 @@ inject_currents_into_populations(motor_neuron_pools, input_current__AnalogSignal
 # For each neuron, we create a ``NetCon`` (network connection) object that detects
 # spikes when the membrane voltage crosses a threshold, and records spike times.
 
-spike_detection_threshold__mV = 50.0
-simulation_time__ms = input_current__AnalogSignal.t_stop.rescale(pq.ms).magnitude
+spike_detection_threshold__mV = 50.0 * pq.mV
+simulation_time__ms = input_current__AnalogSignal.t_stop.rescale(pq.ms)
 
 spike_recorders = []
 
@@ -184,7 +191,6 @@ for pool in motor_neuron_pools:
 h.finitialize()  # Initialize all mechanisms and variables
 neuron.run(simulation_time__ms)
 
-
 # Step 4: Convert recorded data to neo.Block format
 # =================================================
 # The spike times are now stored in NEURON vectors. We convert them to
@@ -200,14 +206,14 @@ for pool_idx, pool_spike_recorders in enumerate(spike_recorders):
     segment.spiketrains = []
     for neuron_idx, spike_recorder in enumerate(pool_spike_recorders):
         # Convert NEURON vector to numpy array and add units
-        spike_times = spike_recorder.as_numpy() * pq.ms
+        spike_times = (spike_recorder.as_numpy() * pq.ms).rescale(pq.s)
 
         # Create SpikeTrain object with metadata
         spiketrain = SpikeTrain(
             spike_times,
-            t_stop=simulation_time__ms * pq.ms,
-            sampling_rate=(1 / h.dt * (1 / pq.ms)),  # Based on NEURON's dt
-            sampling_period=h.dt * pq.ms,
+            t_stop=simulation_time__ms.rescale(pq.s),
+            sampling_rate=(1 / (h.dt * pq.ms)).rescale(pq.Hz),
+            sampling_period=(h.dt * pq.ms).rescale(pq.s),
             name=str(neuron_idx),
             description=f"Pool {pool_idx}, Neuron {neuron_idx}",
         )
@@ -233,7 +239,7 @@ joblib.dump(spike_train__Block_manual, save_path / "spike_train__Block_manual.pk
 spike_train__Block = inject_currents_and_simulate_spike_trains(
     populations=motor_neuron_pools,
     input_current__AnalogSignal=input_current__AnalogSignal,
-    spike_detection_thresholds__mV=50,
+    spike_detection_thresholds__mV=50 * pq.mV,
 )
 
 joblib.dump(spike_train__Block, save_path / "spike_train__Block_utility.pkl")
@@ -267,8 +273,8 @@ firing_rates = [
             elephant.statistics.mean_firing_rate(
                 st__s.time_slice(st__s.min(), st__s.max())
             )
-            for st__ms in spike_train__segment.spiketrains
-            if len(st__s := st__ms.rescale(pq.s)) > 0
+            for st__s in spike_train__segment.spiketrains
+            if len(st__s) > 0
         ]
     )
     for spike_train__segment in spike_train__Block.segments
@@ -292,22 +298,79 @@ for pool_idx, firing_rates_per_pool in enumerate(firing_rates):
 ##############################################################################
 # Visualize Spike Trains
 # ----------------------
-#
-# The **spike trains** can be visualized using the ``plot_spike_trains`` function.
-#
-# .. note::
-#    **Plotting helper functions** are available in the ``myogen.utils.plotting`` module.
-#
-#    .. code-block:: python
-#
-#       from myogen.utils.plotting import plot_spike_trains
+# )
+spike_train_list = list(spike_train__Block.segments[0].spiketrains)
+active_spiketrains = [st for st in spike_train_list if len(st) > 0]
 
-with plt.xkcd():
-    _, axs = plt.subplots(nrows=2, figsize=(10, 6))
-    plot_spike_trains(
-        spike_trains__Block=spike_train__Block,
-        axs=axs,
-        pool_current__AnalogSignal=input_current__AnalogSignal,
+ax, axhistx, axhisty = rasterplot_rates(
+    spike_train_list, filter_function=lambda st: len(st) > 0
+)
+ax.plot(
+    input_current__AnalogSignal.times,
+    input_current__AnalogSignal.magnitude.T[0]
+    / input_current__AnalogSignal.magnitude.T[0].max()
+    * len(active_spiketrains),
+    color="black",
+)
+
+axhisty.set_xlabel("FR (pps)")
+
+# Clear the auto-generated histogram and add custom KDE using elephant because it looks better
+axhistx.clear()
+
+
+if len(active_spiketrains) > 0:
+    from elephant.kernels import GaussianKernel
+
+    rate = elephant.statistics.instantaneous_rate(
+        active_spiketrains,
+        sampling_period=(h.dt * pq.ms).rescale(pq.s),
+        kernel=GaussianKernel(sigma=15 * pq.ms),  # type: ignore
     )
-plt.tight_layout()
+
+    axhistx.plot(
+        rate.times.rescale(pq.s).magnitude,
+        rate.magnitude.mean(axis=1).flatten(),
+        linewidth=2,
+    )
+    axhistx.set_ylabel("FR (pps)")
+    axhistx.set_xlim(ax.get_xlim())  # Match x-axis with raster plot
+
+ax.set_ylabel("Neuron Index (#)")
+ax.set_xlabel("Time (s)")
+
+# remove top and right spines for cleaner look
+sns.despine(ax=ax)
+
+# Make figure bigger with more white space at borders
+fig = plt.gcf()
+fig.set_size_inches(12, 6)
+
+# Add whitespace between axes (manually adjust positions since rasterplot_rates uses absolute positioning)
+gap = 0.025  # Gap size between axes
+bottom_margin = 0.03  # Margin from bottom
+
+ax_pos = ax.get_position()
+axhistx_pos = axhistx.get_position()
+axhisty_pos = axhisty.get_position()
+
+# Raise ax and axhisty from bottom, move top histogram up and right histogram right to create gaps
+ax.set_position([ax_pos.x0, ax_pos.y0 + bottom_margin, ax_pos.width, ax_pos.height])
+axhistx.set_position(
+    [
+        axhistx_pos.x0,
+        axhistx_pos.y0 + gap + bottom_margin,
+        axhistx_pos.width,
+        axhistx_pos.height,
+    ]
+)
+axhisty.set_position(
+    [
+        axhisty_pos.x0 + gap,
+        axhisty_pos.y0 + bottom_margin,
+        axhisty_pos.width,
+        axhisty_pos.height,
+    ]
+)
+
 plt.show()

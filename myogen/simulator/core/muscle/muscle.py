@@ -5,19 +5,27 @@ from typing import Optional
 import numpy as np
 import pandas as pd
 import skfmm
+from joblib import Parallel, delayed
 from scipy.integrate import dblquad
 from scipy.stats import chi2, multivariate_normal
 from sklearn.neighbors import NearestNeighbors
 from tqdm import tqdm
+import quantities as pq
 
 from myogen import RANDOM_GENERATOR
-from myogen.utils.types import RECRUITMENT_THRESHOLDS__ARRAY
+from myogen.utils.types import (
+    RECRUITMENT_THRESHOLDS__ARRAY,
+    Quantity__S_per_m,
+    Quantity__m_per_s,
+    Quantity__mm,
+    Quantity__mm2,
+    Quantity__mm_per_s,
+    Quantity__per_mm2,
+)
 from myogen.utils.decorators import beartowertype
 
 
-def _perform_fast_marching(
-    speed_map: np.ndarray, seed_points: np.ndarray
-) -> np.ndarray:
+def _perform_fast_marching(speed_map: np.ndarray, seed_points: np.ndarray) -> np.ndarray:
     """
     Perform fast marching using scikit-fmm to compute distance maps.
 
@@ -177,20 +185,20 @@ class Muscle:
     def __init__(
         self,
         recruitment_thresholds: RECRUITMENT_THRESHOLDS__ARRAY,
-        radius__mm: float = 6.91,
-        length__mm: float = 30.0,
-        fiber_density__fibers_per_mm2: float = 400,
+        radius__mm: Quantity__mm = 6.91 * pq.mm,
+        length__mm: Quantity__mm = 30.0 * pq.mm,
+        fiber_density__fibers_per_mm2: Quantity__per_mm2 = 400 * pq.mm**-2,
         max_innervation_area_to_total_muscle_area__ratio: float = 1 / 4,
-        mean_conduction_velocity__m_s: float = 4.2,
-        mean_fiber_length__mm: float = 31.7,
-        var_fiber_length__mm: float = 2.8,
-        radius_bone__mm: float = 0,
-        fat_thickness__mm: float = 0.3,
-        skin_thickness__mm: float = 1.29,
-        muscle_conductivity_radial__S_m: float = 0.09,
-        muscle_conductivity_longitudinal__S_m: float = 0.4,
-        fat_conductivity__S_m: float = 4.7e-2,
-        skin_conductivity__S_m: float = 4.88e-4,
+        mean_conduction_velocity__m_per_s: Quantity__m_per_s = 4.2 * pq.m / pq.s,
+        mean_fiber_length__mm: Quantity__mm = 31.7 * pq.mm,
+        var_fiber_length__mm: Quantity__mm = 2.8 * pq.mm,
+        radius_bone__mm: Quantity__mm = 0 * pq.mm,
+        fat_thickness__mm: Quantity__mm = 0.3 * pq.mm,
+        skin_thickness__mm: Quantity__mm = 1.29 * pq.mm,
+        muscle_conductivity_radial__S_per_m: Quantity__S_per_m = 0.09 * pq.S / pq.m,
+        muscle_conductivity_longitudinal__S_per_m: Quantity__S_per_m = 0.4 * pq.S / pq.m,
+        fat_conductivity__S_per_m: Quantity__S_per_m = 4.7e-2 * pq.S / pq.m,
+        skin_conductivity__S_per_m: Quantity__S_per_m = 4.88e-4 * pq.S / pq.m,
         grid_resolution: int = 256,
         autorun: bool = False,
     ) -> None:
@@ -201,18 +209,16 @@ class Muscle:
         self.max_innervation_area_to_total_muscle_area__ratio = (
             max_innervation_area_to_total_muscle_area__ratio
         )
-        self.mean_conduction_velocity__m_s = mean_conduction_velocity__m_s
+        self.mean_conduction_velocity__m_s = mean_conduction_velocity__m_per_s
         self.mean_fiber_length__mm = mean_fiber_length__mm
         self.var_fiber_length__mm = var_fiber_length__mm
         self.radius_bone__mm = radius_bone__mm
         self.fat_thickness__mm = fat_thickness__mm
         self.skin_thickness__mm = skin_thickness__mm
-        self.muscle_conductivity_radial__S_m = muscle_conductivity_radial__S_m
-        self.muscle_conductivity_longitudinal__S_m = (
-            muscle_conductivity_longitudinal__S_m
-        )
-        self.fat_conductivity__S_m = fat_conductivity__S_m
-        self.skin_conductivity__S_m = skin_conductivity__S_m
+        self.muscle_conductivity_radial__S_m = muscle_conductivity_radial__S_per_m
+        self.muscle_conductivity_longitudinal__S_m = muscle_conductivity_longitudinal__S_per_m
+        self.fat_conductivity__S_m = fat_conductivity__S_per_m
+        self.skin_conductivity__S_m = skin_conductivity__S_per_m
         self.grid_resolution = grid_resolution
         self.autorun = autorun
         # Private copies for internal modifications
@@ -222,37 +228,35 @@ class Muscle:
         self._max_innervation_area_to_total_muscle_area__ratio = (
             max_innervation_area_to_total_muscle_area__ratio
         )
-        self._mean_conduction_velocity__m_s = mean_conduction_velocity__m_s
+        self._mean_conduction_velocity__m_s = mean_conduction_velocity__m_per_s
         self._mean_fiber_length__mm = mean_fiber_length__mm
         self._var_fiber_length__mm = var_fiber_length__mm
         self._radius_bone__mm = radius_bone__mm
         self._fat_thickness__mm = fat_thickness__mm
         self._skin_thickness__mm = skin_thickness__mm
-        self._muscle_conductivity_radial__S_m = muscle_conductivity_radial__S_m
-        self._muscle_conductivity_longitudinal__S_m = (
-            muscle_conductivity_longitudinal__S_m
-        )
-        self._fat_conductivity__S_m = fat_conductivity__S_m
-        self._skin_conductivity__S_m = skin_conductivity__S_m
+        self._muscle_conductivity_radial__S_m = muscle_conductivity_radial__S_per_m
+        self._muscle_conductivity_longitudinal__S_m = muscle_conductivity_longitudinal__S_per_m
+        self._fat_conductivity__S_m = fat_conductivity__S_per_m
+        self._skin_conductivity__S_m = skin_conductivity__S_per_m
         self._grid_resolution = grid_resolution
         self._autorun = autorun
         self._recruitment_thresholds = recruitment_thresholds.copy()
 
         # Derived properties
-        self.muscle_area__mm2 = np.pi * np.power(self._radius__mm, 2)
+        self.muscle_area__mm2 = np.pi * (self._radius__mm**2)
         self.max_innervation_area_scaling_factor = (
             1 / self._max_innervation_area_to_total_muscle_area__ratio
         )
         self._number_of_neurons = len(self._recruitment_thresholds)
 
         # Simulation results - stored privately, accessed via properties
-        self._innervation_center_positions__mm: Optional[np.ndarray] = None
-        self._muscle_fiber_centers__mm: Optional[np.ndarray] = None
+        self._innervation_center_positions__mm: Optional[Quantity__mm] = None
+        self._muscle_fiber_centers__mm: Optional[Quantity__mm] = None
         self._assignment: Optional[np.ndarray] = None
-        self._muscle_fiber_diameters__mm: Optional[np.ndarray] = None
-        self._muscle_fiber_conduction_velocities__mm_per_s: Optional[np.ndarray] = None
+        self._muscle_fiber_diameters__mm: Optional[Quantity__mm] = None
+        self._muscle_fiber_conduction_velocities__mm_per_s: Optional[Quantity__mm_per_s] = None
         self._number_of_muscle_fibers: Optional[int] = None
-        self._muscle_border__mm: Optional[np.ndarray] = None
+        self._muscle_border__mm: Optional[Quantity__mm] = None
 
         # Validate the ratio
         if not (0 < max_innervation_area_to_total_muscle_area__ratio <= 1):
@@ -270,10 +274,12 @@ class Muscle:
         )
 
         self.desired_number_of_innervated_fibers = np.round(
-            self.desired_innervation_areas__mm2
-            / np.sum(self.desired_innervation_areas__mm2)
-            * self.muscle_area__mm2
-            * self._fiber_density__fibers_per_mm2
+            (
+                self.desired_innervation_areas__mm2
+                / np.sum(self.desired_innervation_areas__mm2)
+                * self.muscle_area__mm2
+                * self._fiber_density__fibers_per_mm2
+            ).magnitude
         ).astype(int)
 
         if autorun:
@@ -307,41 +313,40 @@ class Muscle:
         # Generate muscle fiber diameters using log-normal distribution
         # Based on physiological measurements (Brooke & Kaiser, 1970)
         # Mean diameter ~50μm, range 20-80μm
-        mean_diameter = 50e-3  # mm (50 μm)
-        std_diameter = 15e-3  # mm (15 μm)
+        mean_diameter__mm = 50e-3  # mm (50 μm)
+        std_diameter__mm = 15e-3  # mm (15 μm)
 
-        self._muscle_fiber_diameters__mm = RANDOM_GENERATOR.lognormal(
-            mean=np.log(mean_diameter), sigma=0.3, size=n_fibers
+        self._muscle_fiber_diameters__mm = (
+            RANDOM_GENERATOR.lognormal(mean=np.log(mean_diameter__mm), sigma=0.3, size=n_fibers)
+            * pq.mm
         )
 
         # Ensure diameters are within physiological range (20-80 μm)
         self._muscle_fiber_diameters__mm = np.clip(
-            self._muscle_fiber_diameters__mm, 20e-3, 80e-3
+            self._muscle_fiber_diameters__mm, 20e-3 * pq.mm, 80e-3 * pq.mm
         )
 
         # Generate conduction velocities based on fiber diameter
         # CV = k * diameter + c, where k ≈ 4.5-6.0 (m/s)/mm, c ≈ 0.5-1.0 m/s
         # Based on Hakansson (1956) and later studies
-        k = 5.5  # (m/s)/mm
-        c = 0.8  # m/s
+        k = 5.5 * (pq.m / pq.s) / pq.mm  # (m/s)/mm
+        c = 0.8 * pq.m / pq.s  # m/s
 
         # Add some biological variability
-        cv_base = (
-            k * (self._muscle_fiber_diameters__mm * 1000) + c
-        )  # Convert mm to m for diameter
-        cv_noise = RANDOM_GENERATOR.normal(0, 0.2, n_fibers)  # 20% CV variation
+        cv_base = k * self._muscle_fiber_diameters__mm + c
+        cv_noise = RANDOM_GENERATOR.normal(0, 0.2, n_fibers) * pq.m / pq.s  # 20% CV variation
 
         self._muscle_fiber_conduction_velocities__mm_per_s = cv_base + cv_noise
 
         # Ensure velocities are within physiological range (2-6 m/s)
         self._muscle_fiber_conduction_velocities__mm_per_s = np.clip(
-            self._muscle_fiber_conduction_velocities__mm_per_s, 2.0, 6.0
+            self._muscle_fiber_conduction_velocities__mm_per_s, 2.0 * pq.m / pq.s, 6.0 * pq.m / pq.s
         )
 
-        # Convert back to mm/s for consistency with the rest of the code
+        # Convert to mm/s for consistency with the rest of the code
         self._muscle_fiber_conduction_velocities__mm_per_s = (
-            self._muscle_fiber_conduction_velocities__mm_per_s * 1000
-        )  # m/s to mm/s
+            self._muscle_fiber_conduction_velocities__mm_per_s.rescale(pq.mm / pq.s)
+        )
 
     def distribute_innervation_centers(self) -> None:
         """
@@ -368,10 +373,7 @@ class Muscle:
             np.arange(self._grid_resolution),
         )
         density_map[
-            np.sqrt(
-                (X - self._grid_resolution / 2) ** 2
-                + (Y - self._grid_resolution / 2) ** 2
-            )
+            np.sqrt((X - self._grid_resolution / 2) ** 2 + (Y - self._grid_resolution / 2) ** 2)
             > self._grid_resolution / 2 - 1
         ] = 1e-10
 
@@ -386,6 +388,8 @@ class Muscle:
             x, y = np.unravel_index(ind, (self._grid_resolution, self._grid_resolution))
             vertices[:, i] = [x, y]
 
+        vertices = vertices * pq.mm
+
         # MATLAB: obj.innervation_center_positions = vertices(:,end:-1:2)';
         # This takes columns from end down to 2 (1-indexed), then transposes
         # In Python: vertices[:, -1:0:-1] gives us columns from end down to 1 (0-indexed)
@@ -397,15 +401,13 @@ class Muscle:
             and self._innervation_center_positions__mm.shape[1] == 2
         ):
             center_offset = (
-                self._innervation_center_positions__mm - self._grid_resolution / 2
+                self._innervation_center_positions__mm - (self._grid_resolution / 2) * pq.mm
             )
-            max_dist = np.max(
-                np.sqrt(center_offset[:, 0] ** 2 + center_offset[:, 1] ** 2)
-            )
+            max_dist = np.max(np.sqrt(center_offset[:, 0] ** 2 + center_offset[:, 1] ** 2))
             if max_dist > 0:  # Avoid division by zero
                 self._innervation_center_positions__mm = (
-                    center_offset / max_dist * self._radius__mm
-                )
+                    center_offset / max_dist
+                ) * self._radius__mm
             else:
                 self._innervation_center_positions__mm = (
                     center_offset  # Keep original if max_dist is 0
@@ -439,29 +441,27 @@ class Muscle:
 
         # Expected number of muscle fibers in the muscle
         self._number_of_muscle_fibers = int(
-            np.rint((self._radius__mm**2) * np.pi * self._fiber_density__fibers_per_mm2)
+            np.rint(((self._radius__mm**2) * np.pi * self._fiber_density__fibers_per_mm2).magnitude)
         )
 
-        self._muscle_fiber_centers__mm = pd.read_csv(
-            Path(inspect.getfile(self.__class__)).parent / "voronoi_pi1e5.csv",
-            header=None,
-        ).values
+        self._muscle_fiber_centers__mm = (
+            pd.read_csv(
+                Path(inspect.getfile(self.__class__)).parent / "voronoi_pi1e5.csv",
+                header=None,
+            ).values
+            * pq.mm
+        )
 
         # Adjust the loaded innervation_center_positions to the expected number of fibers and muscle radius
-        self._muscle_fiber_centers__mm = (
-            self._muscle_fiber_centers__mm - 5
-        ) / 4  # 4 may be unnecessary here
+        self._muscle_fiber_centers__mm = (self._muscle_fiber_centers__mm - (5 * pq.mm)) / 4
         dists = np.sqrt(
-            self._muscle_fiber_centers__mm[:, 0] ** 2
-            + self._muscle_fiber_centers__mm[:, 1] ** 2
+            self._muscle_fiber_centers__mm[:, 0] ** 2 + self._muscle_fiber_centers__mm[:, 1] ** 2
         )
         sorted_indices = np.argsort(dists)
 
         if len(sorted_indices) >= self._number_of_muscle_fibers + 1:
             self._muscle_fiber_centers__mm = (
-                self._muscle_fiber_centers__mm[
-                    sorted_indices[: self._number_of_muscle_fibers], :
-                ]
+                self._muscle_fiber_centers__mm[sorted_indices[: self._number_of_muscle_fibers], :]
                 / dists[sorted_indices[self._number_of_muscle_fibers]]
                 * self._radius__mm
             )
@@ -476,14 +476,17 @@ class Muscle:
         # Create muscle border for plotting
         phi_circle = np.linspace(0, 2 * np.pi, 1000)
         phi_circle = phi_circle[:-1]
-        self._muscle_border__mm = np.column_stack(
-            [
-                self._radius__mm * np.cos(phi_circle),
-                self._radius__mm * np.sin(phi_circle),
-            ]
+        self._muscle_border__mm = (
+            np.column_stack(
+                [
+                    self._radius__mm.magnitude * np.cos(phi_circle),
+                    self._radius__mm.magnitude * np.sin(phi_circle),
+                ]
+            )
+            * pq.mm
         )
 
-    def assign_mfs2mns(self, n_neighbours: int = 3, conf: float = 0.999) -> None:
+    def assign_mfs2mns(self, n_neighbours: int = 3, conf: float = 0.999, n_jobs: int = -2) -> None:
         """
         Assign muscle fibers to motor neurons using biologically realistic principles.
 
@@ -508,6 +511,13 @@ class Muscle:
             Confidence interval that defines the relationship between innervation
             area and Gaussian distribution variance. Higher values create tighter,
             more compact territories. Should be between 0.9 and 0.999.
+        n_jobs : int, default -2
+            Number of parallel workers for out-of-circle coefficient computation.
+            - n_jobs=-1: Use all CPU cores
+            - n_jobs=-2: Use all cores except one (recommended, keeps system responsive)
+            - n_jobs=-3: Use all cores except two
+            - n_jobs=1: No parallelization
+            - n_jobs=N: Use exactly N cores
 
         Results are stored in the `assignment` property after execution.
 
@@ -536,34 +546,65 @@ class Muscle:
 
         if self._muscle_fiber_centers__mm is None:
             raise ValueError(
-                "Muscle fiber centers not computed. "
-                "Call generate_muscle_fiber_centers() first."
+                "Muscle fiber centers not computed. Call generate_muscle_fiber_centers() first."
             )
 
         # Out-of-muscle area compensation
         # Calculates how much of the MU's gaussian distribution is outside of the
         # muscle border and inflates the rest of the distribution according to it
-        def borderfun_pos(x):
-            return np.real(np.sqrt(self._radius__mm**2 - x**2))
-
-        def borderfun_neg(x):
-            return np.real(-np.sqrt(self._radius__mm**2 - x**2))
-
-        out_circle_coeff = np.ones(self._number_of_neurons)
+        # Work with magnitude to avoid quantity issues in integration
+        radius_magnitude = self._radius__mm.magnitude
 
         c = chi2.ppf(conf, 2)
 
         def sigma(ia):
-            return np.eye(2) * ia / np.pi / c
+            # ia should be in mm^2, extract magnitude if it's a quantity
+            ia_magnitude = ia.magnitude if hasattr(ia, "magnitude") else ia
+            return np.eye(2) * ia_magnitude / np.pi / c
 
-        for mu in tqdm(
-            range(self._number_of_neurons),
-            desc="Calculating out-of-circle coefficients",
-            unit="MU",
-        ):
-            # Create multivariate normal distribution for this motor unit
-            mean = self._innervation_center_positions__mm[mu]
-            cov = sigma(self.desired_innervation_areas__mm2[mu])
+        # Helper function for parallel computation of out-of-circle coefficients
+        def _compute_out_circle_coeff_single_mu(
+            mu_index: int,
+            radius_mag: float,
+            innervation_center_mean: np.ndarray,
+            desired_area,
+            c_value: float,
+        ) -> float:
+            """
+            Compute out-of-circle coefficient for a single motor unit.
+
+            This function is designed to be called in parallel for each motor unit.
+
+            Parameters
+            ----------
+            mu_index : int
+                Motor unit index (for reference only, not used in computation).
+            radius_mag : float
+                Muscle radius magnitude in mm.
+            innervation_center_mean : np.ndarray
+                Innervation center position [x, y] in mm (magnitude only).
+            desired_area : float
+                Desired innervation area in mm² (magnitude only).
+            c_value : float
+                Chi-squared value for confidence interval.
+
+            Returns
+            -------
+            float
+                Out-of-circle coefficient for this motor unit.
+            """
+
+            def borderfun_pos(x):
+                return np.real(np.sqrt(radius_mag**2 - x**2))
+
+            def borderfun_neg(x):
+                return np.real(-np.sqrt(radius_mag**2 - x**2))
+
+            # Compute covariance matrix
+            ia_magnitude = (
+                desired_area.magnitude if hasattr(desired_area, "magnitude") else desired_area
+            )
+            cov = np.eye(2) * ia_magnitude / np.pi / c_value
 
             def probfun(y, x):
                 points = (
@@ -571,81 +612,123 @@ class Muscle:
                     if hasattr(x, "ravel")
                     else np.array([[x, y]])
                 )
-                return multivariate_normal.pdf(points, mean=mean, cov=cov).reshape(
-                    np.array(x).shape
-                )
+                return multivariate_normal.pdf(
+                    points, mean=innervation_center_mean, cov=cov
+                ).reshape(np.array(x).shape)
 
             # Use dblquad for integration (equivalent to MATLAB's integral2)
             in_circle_int = dblquad(
                 probfun,
-                -self._radius__mm,
-                self._radius__mm,
+                -radius_mag,
+                radius_mag,
                 borderfun_neg,
                 borderfun_pos,
             )[0]  # dblquad returns (integral, error)
-            out_circle_coeff[mu] = 1 / in_circle_int
+
+            return 1 / in_circle_int
+
+        # Parallel computation of out-of-circle coefficients
+        results = []
+        with tqdm(
+            total=self._number_of_neurons,
+            desc="Calculating out-of-circle coefficients",
+            unit="MU",
+        ) as pbar:
+            for coeff in Parallel(
+                n_jobs=n_jobs,
+                return_as="generator",
+                verbose=0,
+                batch_size="auto",
+            )(
+                delayed(_compute_out_circle_coeff_single_mu)(
+                    mu,
+                    radius_magnitude,
+                    self._innervation_center_positions__mm[mu].magnitude,
+                    self.desired_innervation_areas__mm2[mu],
+                    c,
+                )
+                for mu in range(self._number_of_neurons)
+            ):
+                results.append(coeff)
+                pbar.update(1)
+
+        out_circle_coeff = np.array(results)
 
         # Find nearest neighbors for suppression (equivalent to MATLAB's knnsearch)
+        # Use magnitudes for sklearn compatibility
         if n_neighbours > 0:
             nbrs = NearestNeighbors(n_neighbors=n_neighbours + 1).fit(
-                self._muscle_fiber_centers__mm
+                self._muscle_fiber_centers__mm.magnitude
             )
-            _, neighbours = nbrs.kneighbors(self._muscle_fiber_centers__mm)
-            neighbours = neighbours[
-                :, 1:
-            ]  # Exclude self (equivalent to neighbours(:,2:end))
+            _, neighbours = nbrs.kneighbors(self._muscle_fiber_centers__mm.magnitude)
+            neighbours = neighbours[:, 1:]  # Exclude self (equivalent to neighbours(:,2:end))
+
+        # Pre-compute constant values for vectorized assignment (optimization)
+        # A priori probabilities (constant for all fibers)
+        apriori_probs = self.desired_number_of_innervated_fibers / self._number_of_muscle_fibers
+
+        # Pre-compute means and covariances for all motor units
+        mu_means = np.array(
+            [
+                self._innervation_center_positions__mm[mu].magnitude
+                for mu in range(self._number_of_neurons)
+            ]
+        )  # Shape: (n_neurons, 2)
+
+        mu_covs = np.array(
+            [
+                sigma(self.desired_innervation_areas__mm2[mu])
+                for mu in range(self._number_of_neurons)
+            ]
+        )  # Shape: (n_neurons, 2, 2)
+
+        # Pre-compute inverse covariances and determinants for faster PDF computation
+        mu_cov_invs = np.array([np.linalg.pinv(cov) for cov in mu_covs])
+        mu_cov_dets = np.array([np.linalg.det(cov) for cov in mu_covs])
 
         # Assignment procedure
         self._assignment = np.full(self._number_of_muscle_fibers, np.nan)
         randomized_mf = RANDOM_GENERATOR.permutation(self._number_of_muscle_fibers)
 
-        for mf in tqdm(
-            randomized_mf, desc="Assigning muscle fibers to motor neurons", unit="MF"
-        ):
-            probs = np.zeros(self._number_of_neurons)
+        for mf in tqdm(randomized_mf, desc="Assigning muscle fibers to motor neurons", unit="MF"):
+            # Vectorized computation of likelihoods for all motor units
+            # Compute differences: (n_neurons, 2)
+            diffs = self._muscle_fiber_centers__mm[mf, :].magnitude - mu_means
 
-            for mu in range(self._number_of_neurons):
-                # Suppression assignment if neighbours are from the same MU
-                # Promotes intermingling
-                if n_neighbours > 0 and np.any(self._assignment[neighbours[mf]] == mu):
-                    probs[mu] = 0
-                else:
-                    # A priori probability of the assignment
-                    apriori_prob = (
-                        self.desired_number_of_innervated_fibers[mu]
-                        / self._number_of_muscle_fibers
-                    )
+            # Compute Mahalanobis distances efficiently
+            # For each MU: (x - mean)^T * inv(cov) * (x - mean)
+            mahal_dists = np.sum(
+                np.sum(diffs[:, np.newaxis, :] * mu_cov_invs, axis=2) * diffs, axis=1
+            )
 
-                    # Likelihood coming from clustered nature of mf distribution
-                    # Use scipy's multivariate_normal.pdf (equivalent to MATLAB's mvnpdf)
-                    mean = self._innervation_center_positions__mm[mu]
-                    cov = sigma(self.desired_innervation_areas__mm2[mu])
-                    clust_hood = multivariate_normal.pdf(
-                        self._muscle_fiber_centers__mm[mf, :], mean=mean, cov=cov
-                    )
-                    clust_hood = clust_hood * out_circle_coeff[mu]
+            # Compute PDF values for all MUs at once
+            clust_hoods = 1.0 / np.sqrt((2 * np.pi) ** 2 * mu_cov_dets) * np.exp(-0.5 * mahal_dists)
+            clust_hoods *= out_circle_coeff
 
-                    # Final a posteriori probability
-                    probs[mu] = apriori_prob * clust_hood
+            # Compute posterior probabilities (vectorized)
+            probs = apriori_probs * clust_hoods
+
+            # Apply neighbor suppression
+            if n_neighbours > 0:
+                neighbor_assignments = self._assignment[neighbours[mf]]
+                for mu in range(self._number_of_neurons):
+                    if np.any(neighbor_assignments == mu):
+                        probs[mu] = 0
 
             # Normalize probabilities
-            probs = probs / np.sum(probs)
-
-            # should something bad happen with the probabilities, we should not crash
-            probs = np.nan_to_num(probs, nan=0.0)
-            if np.sum(probs) == 0:
+            prob_sum = np.sum(probs)
+            if prob_sum > 0:
+                probs = probs / prob_sum
+            else:
+                # Fallback if all probabilities are zero
                 probs = np.ones(self._number_of_neurons) / self._number_of_neurons
 
             # Sample from the probability distribution (equivalent to MATLAB's randsample)
-            self._assignment[mf] = RANDOM_GENERATOR.choice(
-                self._number_of_neurons, p=probs
-            )
+            self._assignment[mf] = RANDOM_GENERATOR.choice(self._number_of_neurons, p=probs)
 
-        print(
-            f"Assignment completed. {self._number_of_muscle_fibers} muscle fibers assigned."
-        )
+        print(f"Assignment completed. {self._number_of_muscle_fibers} muscle fibers assigned.")
 
-    def resulting_fiber_assignment(self, mu: int) -> np.ndarray:
+    def resulting_fiber_assignment(self, mu: int) -> Quantity__mm:
         """
         Get the muscle fiber positions assigned to a specific motor unit.
 
@@ -656,7 +739,7 @@ class Muscle:
 
         Returns
         -------
-        np.ndarray
+        Quantity__mm
             Array of shape (n_assigned_fibers, 2) containing the [x, y] coordinates
             (in mm) of all muscle fibers assigned to the specified motor unit.
             If no fibers are assigned to the motor unit, returns an empty array.
@@ -688,8 +771,7 @@ class Muscle:
 
         if self._muscle_fiber_centers__mm is None:
             raise ValueError(
-                "Muscle fiber centers not computed. "
-                "Call generate_muscle_fiber_centers() first."
+                "Muscle fiber centers not computed. Call generate_muscle_fiber_centers() first."
             )
 
         if not (0 <= mu < len(self._recruitment_thresholds)):
@@ -699,9 +781,7 @@ class Muscle:
             )
 
         return self._muscle_fiber_centers__mm[
-            np.where(
-                self._assignment == np.arange(len(self._recruitment_thresholds))[mu]
-            )[0]
+            np.where(self._assignment == np.arange(len(self._recruitment_thresholds))[mu])[0]
         ]
 
     @property
@@ -743,12 +823,10 @@ class Muscle:
                 "Call assign_mfs2mns() first to assign fibers to motor units."
             )
 
-        return np.bincount(
-            self._assignment.astype(int), minlength=self._number_of_neurons
-        )
+        return np.bincount(self._assignment.astype(int), minlength=self._number_of_neurons)
 
     @property
-    def resulting_innervation_areas__mm2(self) -> np.ndarray:
+    def resulting_innervation_areas__mm2(self) -> Quantity__mm2:
         """
         Calculate the actual innervation areas for each motor unit based on assigned fibers.
 
@@ -759,7 +837,7 @@ class Muscle:
 
         Returns
         -------
-        np.ndarray
+        Quantity__mm2
             Array of length n_motor_units containing the innervation area (in mm²)
             for each motor unit. Areas are calculated as π × r², where r is the
             maximum distance from the innervation center to any assigned fiber.
@@ -797,36 +875,35 @@ class Muscle:
 
         if self._muscle_fiber_centers__mm is None:
             raise ValueError(
-                "Muscle fiber centers not computed. "
-                "Call generate_muscle_fiber_centers() first."
+                "Muscle fiber centers not computed. Call generate_muscle_fiber_centers() first."
             )
 
-        return np.array(
-            [
-                np.pi
-                * (
-                    np.max(
-                        np.linalg.norm(
-                            self._muscle_fiber_centers__mm[self._assignment == mu]
-                            - self._innervation_center_positions__mm[mu],
-                            axis=-1,
-                        )
-                    )
-                    ** 2
-                )
-                for mu in range(self._number_of_neurons)
-            ]
-        )
+        areas = []
+        for mu in range(self._number_of_neurons):
+            # Calculate distances in mm
+            distances = np.linalg.norm(
+                self._muscle_fiber_centers__mm[self._assignment == mu]
+                - self._innervation_center_positions__mm[mu],
+                axis=-1,
+            )
+            # Get maximum distance and compute area
+            max_distance = np.max(distances) if len(distances) > 0 else 0 * pq.mm
+            area = np.pi * (max_distance**2)
+            # Keep as quantity - extract magnitude for the array
+            areas.append(area.magnitude if hasattr(area, "magnitude") else area)
+
+        # Return as quantity array with mm^2 units
+        return np.array(areas) * pq.mm**2
 
     # Property accessors for computed results
     @property
-    def innervation_center_positions__mm(self) -> np.ndarray:
+    def innervation_center_positions__mm(self) -> Quantity__mm:
         """
         Motor unit innervation center positions [x, y] in mm.
 
         Returns
         -------
-        np.ndarray
+        Quantity__mm
             Array of shape (n_motor_units, 2) containing [x, y] coordinates in mm.
 
         Raises
@@ -842,13 +919,13 @@ class Muscle:
         return self._innervation_center_positions__mm
 
     @property
-    def muscle_fiber_centers__mm(self) -> np.ndarray:
+    def muscle_fiber_centers__mm(self) -> Quantity__mm:
         """
         Muscle fiber center positions [x, y] in mm.
 
         Returns
         -------
-        np.ndarray
+        Quantity__mm
             Array of shape (n_fibers, 2) containing [x, y] coordinates in mm.
 
         Raises
@@ -858,19 +935,18 @@ class Muscle:
         """
         if self._muscle_fiber_centers__mm is None:
             raise ValueError(
-                "Muscle fiber centers not computed. "
-                "Call generate_muscle_fiber_centers() first."
+                "Muscle fiber centers not computed. Call generate_muscle_fiber_centers() first."
             )
         return self._muscle_fiber_centers__mm
 
     @property
-    def muscle_fiber_diameters__mm(self) -> np.ndarray:
+    def muscle_fiber_diameters__mm(self) -> Quantity__mm:
         """
         Muscle fiber diameters in mm.
 
         Returns
         -------
-        np.ndarray
+        Quantity__mm
             Array of muscle fiber diameters in mm.
 
         Raises
@@ -886,13 +962,13 @@ class Muscle:
         return self._muscle_fiber_diameters__mm
 
     @property
-    def muscle_fiber_conduction_velocities__mm_per_s(self) -> np.ndarray:
+    def muscle_fiber_conduction_velocities__mm_per_s(self) -> Quantity__mm_per_s:
         """
         Muscle fiber conduction velocities in mm/s.
 
         Returns
         -------
-        np.ndarray
+        Quantity__mm_per_s
             Array of muscle fiber conduction velocities in mm/s.
 
         Raises
@@ -947,20 +1023,19 @@ class Muscle:
         """
         if self._number_of_muscle_fibers is None:
             raise ValueError(
-                "Muscle fiber centers not computed. "
-                "Call generate_muscle_fiber_centers() first."
+                "Muscle fiber centers not computed. Call generate_muscle_fiber_centers() first."
             )
         return self._number_of_muscle_fibers
 
     @property
-    def muscle_border__mm(self) -> np.ndarray:
+    def muscle_border__mm(self) -> Quantity__mm:
         """
         Muscle boundary points for visualization.
 
         Returns
         -------
-        np.ndarray
-            Array of boundary points for the circular muscle cross-section.
+        Quantity__mm
+            Array of boundary points for the circular muscle cross-section in mm.
 
         Raises
         ------
@@ -969,13 +1044,12 @@ class Muscle:
         """
         if self._muscle_border__mm is None:
             raise ValueError(
-                "Muscle fiber centers not computed. "
-                "Call generate_muscle_fiber_centers() first."
+                "Muscle fiber centers not computed. Call generate_muscle_fiber_centers() first."
             )
         return self._muscle_border__mm
 
     @property
-    def recruitment_thresholds(self) -> np.ndarray:
+    def recruitment_thresholds(self) -> RECRUITMENT_THRESHOLDS__ARRAY:
         """
         Motor unit recruitment thresholds.
 
