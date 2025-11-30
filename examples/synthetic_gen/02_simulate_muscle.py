@@ -63,6 +63,7 @@ grid_resolution = 256  # Spatial resolution for muscle discretization
 # Create muscle model
 muscle = simulator.Muscle(
     recruitment_thresholds=recruitment_thresholds,
+    radius_bone__mm=1.0,  # Non-zero bone radius required for proper MUAP amplitudes
     fiber_density__fibers_per_mm2=400,  # For faster simulation
     autorun=True,
 )

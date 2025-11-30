@@ -71,9 +71,7 @@ def main():
     gfluctdv_noise_amplitude = dd_params.get("gfluctdv_noise_amplitude", None)
 
     print(f"\n{STUDY_PREFIX}Force Validation")
-    print(
-        f"DD: {dd_neurons} neurons, conn_prob={conn_probability:.3f}, drive={dd_drive__Hz:.1f}Hz"
-    )
+    print(f"DD: {dd_neurons} neurons, conn_prob={conn_probability:.3f}, drive={dd_drive__Hz:.1f}Hz")
     if gfluctdv_enabled:
         print(f"Gfluctdv: ENABLED (noise amplitude={gfluctdv_noise_amplitude:.2e} S/cm²)")
 
@@ -178,16 +176,14 @@ def main():
     fr_std = stats["FR_std"]
     n_active = stats["n_active"]
 
-    print(
-        f"Firing rate: {fr_mean:.1f}±{fr_std:.1f} Hz ({n_active}/{N_MOTOR_UNITS} active)"
-    )
+    print(f"Firing rate: {fr_mean:.1f}±{fr_std:.1f} Hz ({n_active}/{N_MOTOR_UNITS} active)")
 
     # Generate force
     force_model = ForceModel(
         recruitment_thresholds=recruitment_thresholds,
         recording_frequency__Hz=2048,
         longest_duration_rise_time__ms=90.0,
-        contraction_time_range__unitless=3,
+        contraction_time_range_factor=3,
     )
 
     force_output = force_model.generate_force(spike_train__Block=spike_train__Block)

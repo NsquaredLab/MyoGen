@@ -102,23 +102,23 @@ class Muscle:
         Radius of the muscle cross-section in millimeters. Default is set to 6.91 mm as determined by Jacobson et al. 1992 [3]_.
     length__mm : float, default=30.0
         Length of the muscle in millimeters. Default is set to 30.0 mm as determined by no one.
-    fiber_density__fibers_per_mm2 : float, default=400
-        Density of muscle fibers per square millimeter. Default is set to 400 fibers/mm² as determined by no one.
+    fiber_density__fibers_per_mm2 : float, default=350
+        Density of muscle fibers per square millimeter. Default is set to 350 fibers/mm² as determined by Bettelho et al. 2019 [7]_.
     max_innervation_area_to_total_muscle_area__ratio : float, default=0.25
         Ratio defining the maximum territory size relative to total muscle area.
         Default is set to 0.25 as determined by no one but it is a good starting point.
         A value of 0.25 means the largest motor unit can innervate up to 25%
         of the total muscle cross-sectional area.
         Must be in range (0, 1].
-    mean_conduction_velocity__m_s : float, default=4.2
+    mean_conduction_velocity__m_per_s : float, default=4.2
         Mean conduction velocity in m/s. Default is set to 4.2 m/s as determined by Nishizono et al. 1990 [4]_.
         Experimental range determined by Nishizono et al. 1990 [4]_ is between 3.2 and 5.0 m/s.
     mean_fiber_length__mm : float, default=31.7
         Mean fiber length in mm. Default is set to 31.7 mm as determined by Jacobson et al. 1992 [3]_ (Table 1).
     var_fiber_length__mm : float, default=2.8
         Fiber length variance in mm. Default is set to 2.8 mm as determined by Jacobson et al. 1992 [3]_ (Table 1).
-    radius_bone__mm : float, default=0
-        Bone radius in mm. Default is set to 0 mm as the FDI muscle doesn't surround a bone.
+    radius_bone__mm : float, default=1
+        Bone radius in mm. Default is set to 1 mm.
     fat_thickness__mm : float, default=0.3
         Fat thickness in mm. Default is set to 0.3 mm as determined by Störchle et al. 2018 [5]_.
     skin_thickness__mm : float, default=1.29
@@ -127,9 +127,9 @@ class Muscle:
         Muscle conductivity in radial direction. Default is set to 0.09 S/m as determined by Botelho et al. 2019 [7]_ (Table 1).
     muscle_conductivity_longitudinal__S_m : float, default=0.4
         Muscle conductivity in longitudinal direction. Default is set to 0.4 S/m as determined by Botelho et al. 2019 [7]_ (Table 1).
-    fat_conductivity__S_m : float, default=4.7E-2
-        Fat conductivity. Default is set to 4.7E-2 S/m as determined by Botelho et al. 2019 [7]_ (Table 1).
-    skin_conductivity__S_m : float, default=4.88E-4
+    fat_conductivity__S_per_m : float, default=4.07E-2
+        Fat conductivity. Default is set to 4.07E-2 S/m as determined by Botelho et al. 2019 [7]_ (Table 1).
+    skin_conductivity__S_per_m : float, default=4.88E-4
         Skin conductivity. Default is set to 4.88E-4 S/m as determined by Botelho et al. 2019 [7]_ (Table 1).
     grid_resolution : int, default=256
         Resolution of the computational grid used for innervation the muscle.
@@ -187,7 +187,7 @@ class Muscle:
         recruitment_thresholds: RECRUITMENT_THRESHOLDS__ARRAY,
         radius__mm: Quantity__mm = 6.91 * pq.mm,
         length__mm: Quantity__mm = 30.0 * pq.mm,
-        fiber_density__fibers_per_mm2: Quantity__per_mm2 = 400 * pq.mm**-2,
+        fiber_density__fibers_per_mm2: Quantity__per_mm2 = 350 * pq.mm**-2,
         max_innervation_area_to_total_muscle_area__ratio: float = 1 / 4,
         mean_conduction_velocity__m_per_s: Quantity__m_per_s = 4.2 * pq.m / pq.s,
         mean_fiber_length__mm: Quantity__mm = 31.7 * pq.mm,
@@ -197,7 +197,7 @@ class Muscle:
         skin_thickness__mm: Quantity__mm = 1.29 * pq.mm,
         muscle_conductivity_radial__S_per_m: Quantity__S_per_m = 0.09 * pq.S / pq.m,
         muscle_conductivity_longitudinal__S_per_m: Quantity__S_per_m = 0.4 * pq.S / pq.m,
-        fat_conductivity__S_per_m: Quantity__S_per_m = 4.7e-2 * pq.S / pq.m,
+        fat_conductivity__S_per_m: Quantity__S_per_m = 4.07e-2 * pq.S / pq.m,
         skin_conductivity__S_per_m: Quantity__S_per_m = 4.88e-4 * pq.S / pq.m,
         grid_resolution: int = 256,
         autorun: bool = False,
@@ -472,6 +472,24 @@ class Muscle:
                 * self._radius__mm
             )
             self._number_of_muscle_fibers = len(self._muscle_fiber_centers__mm)
+
+        # Remove fibers inside the bone boundary
+        # Fibers should only exist in the muscle tissue, not in the bone core
+        if self._radius_bone__mm.magnitude > 0:
+            fiber_radial_dists = np.sqrt(
+                self._muscle_fiber_centers__mm[:, 0] ** 2
+                + self._muscle_fiber_centers__mm[:, 1] ** 2
+            )
+            valid_fiber_mask = fiber_radial_dists > self._radius_bone__mm
+            n_fibers_removed = np.sum(~valid_fiber_mask)
+
+            if n_fibers_removed > 0:
+                self._muscle_fiber_centers__mm = self._muscle_fiber_centers__mm[valid_fiber_mask]
+                self._number_of_muscle_fibers = len(self._muscle_fiber_centers__mm)
+                print(
+                    f"Removed {n_fibers_removed} fibers inside bone radius "
+                    f"(r < {self._radius_bone__mm.magnitude:.3f} mm)"
+                )
 
         # Create muscle border for plotting
         phi_circle = np.linspace(0, 2 * np.pi, 1000)

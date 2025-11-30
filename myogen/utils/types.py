@@ -30,6 +30,7 @@ pps = pq.UnitQuantity(
 )
 
 # Create type aliases for common units
+Quantity__s: TypeAlias = __make_quantity_type(pq.s)  # type: ignore
 Quantity__ms: TypeAlias = __make_quantity_type(pq.ms)  # type: ignore
 Quantity__uV: TypeAlias = __make_quantity_type(pq.uV)  # type: ignore
 Quantity__nA: TypeAlias = __make_quantity_type(pq.nA)  # type: ignore

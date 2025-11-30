@@ -3,6 +3,7 @@
 # cython: wraparound=False
 # cython: initializedcheck=False
 # cython: cdivision=True
+# cython: warn.maybe_uninitialized=False
 # distutils: define_macros=NPY_NO_DEPRECATED_API=NPY_1_7_API_VERSION
 
 """
@@ -11,6 +12,12 @@ Cython-optimized implementation of simulate_fiber_v2.
 This module provides a high-performance version of the single fiber EMG simulation
 using the 4-layer cylindrical volume conductor model (Farina et al., 2004).
 
+Features:
+- Log-space Bessel arithmetic to prevent numerical overflow
+- Exponentially scaled Bessel functions (ive, kve)
+- Overflow protection with MAX_LOG_SAFE threshold
+- Parallelized Bessel function computation
+
 Expected performance: 5-10x speedup over Python implementation.
 """
 
@@ -18,11 +25,12 @@ import numpy as np
 cimport numpy as cnp
 cimport cython
 from cython.parallel import prange
-from libc.math cimport exp, sqrt, sin, cos, M_PI as pi, fabs
+from libc.math cimport exp, sqrt, sin, cos, M_PI as pi, fabs, log as clog, INFINITY
 from scipy.special.cython_special cimport iv as In_cython, kv as Kn_cython, jv as Jn_cython
+from scipy.special.cython_special cimport ive as In_scaled_cython, kve as Kn_scaled_cython
 
 # Import Python versions for arrays
-from scipy.special import iv as In, kv as Kn, jv as Jn
+from scipy.special import iv as In, kv as Kn, jv as Jn, ive as In_scaled, kve as Kn_scaled
 
 # Initialize NumPy C API
 cnp.import_array()
@@ -51,6 +59,73 @@ cdef inline double Kn_tilde_scalar(double n, double x) nogil:
     This is related to the derivative of the modified Bessel function of the second kind.
     """
     return (Kn_cython(n + 1.0, x) + Kn_cython(n - 1.0, x)) / 2.0
+
+
+cdef inline double log_In_scalar(double n, double x) nogil:
+    """
+    Compute log(In(n,x)) in a numerically stable way using scaled Bessel.
+
+    Uses: log(In(n,z)) = log(In_scaled(n,z)) + |z|
+    where In_scaled(n,z) = In(n,z)*exp(-|z|)
+    """
+    cdef double In_s = In_scaled_cython(n, x)
+    if In_s > 0:
+        return clog(In_s) + fabs(x)
+    else:
+        return -INFINITY
+
+
+cdef inline double log_Kn_scalar(double n, double x) nogil:
+    """
+    Compute log(Kn(n,x)) in a numerically stable way using scaled Bessel.
+
+    Uses: log(Kn(n,z)) = log(Kn_scaled(n,z)) - z
+    where Kn_scaled(n,z) = Kn(n,z)*exp(z)
+    """
+    cdef double Kn_s = Kn_scaled_cython(n, x)
+    if Kn_s > 0:
+        return clog(Kn_s) - x
+    else:
+        return -INFINITY
+
+
+cdef inline double logaddexp_scalar(double a, double b) nogil:
+    """
+    Compute log(exp(a) + exp(b)) in a numerically stable way.
+
+    Implements the log-sum-exp trick.
+    """
+    cdef double max_val
+    if a == -INFINITY and b == -INFINITY:
+        return -INFINITY
+    elif a > b:
+        max_val = a
+        return a + clog(1.0 + exp(b - a))
+    else:
+        max_val = b
+        return b + clog(1.0 + exp(a - b))
+
+
+cdef inline double log_In_tilde_scalar(double n, double x) nogil:
+    """
+    Compute log(In_tilde(n,x)) = log((In(n+1,x) + In(n-1,x))/2) using log-space.
+
+    Uses log-sum-exp trick to avoid overflow.
+    """
+    cdef double log_In_p1 = log_In_scalar(n + 1.0, x)
+    cdef double log_In_m1 = log_In_scalar(n - 1.0, x)
+    return logaddexp_scalar(log_In_p1, log_In_m1) - clog(2.0)
+
+
+cdef inline double log_Kn_tilde_scalar(double n, double x) nogil:
+    """
+    Compute log(Kn_tilde(n,x)) = log((Kn(n+1,x) + Kn(n-1,x))/2) using log-space.
+
+    Uses log-sum-exp trick to avoid overflow.
+    """
+    cdef double log_Kn_p1 = log_Kn_scalar(n + 1.0, x)
+    cdef double log_Kn_m1 = log_Kn_scalar(n - 1.0, x)
+    return logaddexp_scalar(log_Kn_p1, log_Kn_m1) - clog(2.0)
 
 
 @cython.boundscheck(False)
@@ -124,7 +199,7 @@ cdef void compute_bessel_arrays(
         for j in range(n_j):
             n = K_THETA[i, j]
 
-            # Regular Bessel functions
+            # Regular Bessel functions (NO unit conversion - matches original Farina implementation)
             In_a[i, j] = In_cython(n, a * K_Z[i, j])
             In_b[i, j] = In_cython(n, b * K_Z[i, j])
             In_c[i, j] = In_cython(n, c * K_Z[i, j])
@@ -258,49 +333,6 @@ cdef void compute_B_kz(
                     # Complex multiplication: H_glo * exp(1j * phase)
                     sum_real = sum_real + (H_glo_real[i, j] * cos_phase - H_glo_imag[i, j] * sin_phase)
                 B_kz[ch_z, ch_theta, i] = sum_real * factor
-
-
-@cython.boundscheck(False)
-@cython.wraparound(False)
-cdef void compute_phi(
-    double complex[:, ::1] I_kzkt,
-    double[:, :, ::1] B_kz,
-    double[:, ::1] pos_z,
-    double[:, ::1] kz_mesh,
-    double k_z_diff,
-    Py_ssize_t len_psi,
-    double[:, :, ::1] phi
-) noexcept nogil:
-    """
-    Compute final phi (EMG signals) for all channels.
-
-    Parallelized channel loop. Uses manual complex arithmetic and
-    will call NumPy IFFT from the main function.
-    """
-    cdef Py_ssize_t ch_z, ch_theta, i, j
-    cdef Py_ssize_t n_kz = I_kzkt.shape[0]
-    cdef Py_ssize_t n_kt = I_kzkt.shape[1]
-    cdef double complex sum_val, I_val, B_val, exp_val
-    cdef double phase, factor
-
-    factor = k_z_diff / (2.0 * pi)
-
-    # Note: This computes the intermediate result
-    # The actual IFFT will be done in Python/NumPy
-    for ch_z in prange(phi.shape[0], nogil=True):
-        for ch_theta in range(phi.shape[1]):
-            for j in range(n_kt):
-                sum_val = 0.0 + 0.0j
-                for i in range(n_kz):
-                    phase = pos_z[ch_z, ch_theta] * kz_mesh[i, j]
-                    # Complex: I_kzkt * B_kz * exp(1j * pos_z * kz)
-                    I_val = I_kzkt[i, j]
-                    B_val = B_kz[ch_z, ch_theta, i] + 0.0j
-                    exp_val = cos(phase) + 1.0j * sin(phase)
-                    sum_val = sum_val + I_val * B_val * exp_val
-                # Store intermediate result (will be processed with IFFT)
-                phi[ch_z, ch_theta, j] = sum_val.real * factor
-
 
 #######################################################################################################
 ##################################### Main Function ####################################################
@@ -570,17 +602,6 @@ cpdef tuple simulate_fiber_v2(
             sig_bone, sig_muscle_rho, sig_muscle_z, sig_fat, sig_skin
         )
 
-        # Build B vector (incomplete - will update with fiber-specific terms)
-        B = B_np
-        sqrt_sig_ratio = sqrt(sig_muscle_z / sig_muscle_rho)
-
-        for i_b in range(n_theta):
-            for j_b in range(n_z):
-                B[i_b, j_b, 0, 0] = In_am_np[i_b, j_b] / sig_muscle_rho
-                B[i_b, j_b, 1, 0] = sqrt_sig_ratio * In_tilde_am_np[i_b, j_b]
-                B[i_b, j_b, 2, 0] = Kn_bm_np[i_b, j_b] / sig_muscle_rho
-                B[i_b, j_b, 3, 0] = -sqrt_sig_ratio * (-1.0) * Kn_tilde_bm_np[i_b, j_b]
-
         A_matrix = A_mat_np.copy()
         B_incomplete = B_np.copy()
     else:
@@ -589,20 +610,47 @@ cpdef tuple simulate_fiber_v2(
         A_mat = A_mat_np
         B = B_np
 
-        # Still need In_Rm and Kn_Rm for fiber-specific B update
-        In_Rm_np = In(K_THETA, Rm * K_Z)
-        Kn_Rm_np = Kn(K_THETA, Rm * K_Z)
+    # Build B vector using LOG-SPACE arithmetic to prevent overflow
+    # Compute products as: In*Kn = exp(log(In) + log(Kn))
+    # Safety threshold: exp(700) ≈ 1e304 (near float64 max)
+    cdef double MAX_LOG_SAFE = 700.0
+    cdef double log_val, n, k_z_val
 
-    # Update B vector with fiber-specific terms (Kn_Rm and In_Rm)
-    Kn_Rm_view = Kn_Rm_np
-    In_Rm_view = In_Rm_np
+    B = B_np  # Get view
+    sqrt_sig_ratio = sqrt(sig_muscle_z / sig_muscle_rho)
 
-    for i_update in range(n_theta):
-        for j_update in range(n_z):
-            B[i_update, j_update, 0, 0] *= Kn_Rm_view[i_update, j_update]
-            B[i_update, j_update, 1, 0] *= Kn_Rm_view[i_update, j_update]
-            B[i_update, j_update, 2, 0] *= -In_Rm_view[i_update, j_update]
-            B[i_update, j_update, 3, 0] *= In_Rm_view[i_update, j_update]
+    for i_b in range(n_theta):
+        for j_b in range(n_z):
+            n = K_THETA_view[i_b, j_b]
+            k_z_val = K_Z_view[i_b, j_b]
+
+            # B[0,0] = In_am * Kn_Rm / sig_muscle_rho
+            log_val = log_In_scalar(n, am * k_z_val) + log_Kn_scalar(n, Rm * k_z_val)
+            if log_val < MAX_LOG_SAFE:
+                B[i_b, j_b, 0, 0] = exp(log_val) / sig_muscle_rho
+            else:
+                B[i_b, j_b, 0, 0] = 0.0
+
+            # B[1,0] = sqrt(sig_z/sig_rho) * In_tilde_am * Kn_Rm
+            log_val = log_In_tilde_scalar(n, am * k_z_val) + log_Kn_scalar(n, Rm * k_z_val)
+            if log_val < MAX_LOG_SAFE:
+                B[i_b, j_b, 1, 0] = sqrt_sig_ratio * exp(log_val)
+            else:
+                B[i_b, j_b, 1, 0] = 0.0
+
+            # B[2,0] = -Kn_bm * In_Rm / sig_muscle_rho
+            log_val = log_Kn_scalar(n, bm * k_z_val) + log_In_scalar(n, Rm * k_z_val)
+            if log_val < MAX_LOG_SAFE:
+                B[i_b, j_b, 2, 0] = -exp(log_val) / sig_muscle_rho
+            else:
+                B[i_b, j_b, 2, 0] = 0.0
+
+            # B[3,0] = sqrt(sig_z/sig_rho) * Kn_tilde_bm * In_Rm
+            log_val = log_Kn_tilde_scalar(n, bm * k_z_val) + log_In_scalar(n, Rm * k_z_val)
+            if log_val < MAX_LOG_SAFE:
+                B[i_b, j_b, 3, 0] = sqrt_sig_ratio * exp(log_val)
+            else:
+                B[i_b, j_b, 3, 0] = 0.0
 
     # Solve linear system
     A_flat = np.asarray(A_mat).reshape(-1, 7, 7)

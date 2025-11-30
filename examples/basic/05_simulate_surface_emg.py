@@ -10,6 +10,8 @@ After having created the **MUAPs**, we can finally simulate the **surface EMG** 
     In **Myogen**, we can simulate the **surface EMG** by convolving the **MUAPs** with the **spike trains** of the **motor units**.
 """
 
+# %%
+
 ##############################################################################
 # Import Libraries
 # -----------------
@@ -24,6 +26,8 @@ from matplotlib import pyplot as plt
 from myogen import simulator
 from myogen.utils.types import CURRENT__AnalogSignal, SPIKE_TRAIN__Block
 
+plt.style.use("fivethirtyeight")
+
 ##############################################################################
 # Load Necessary Models
 # ----------------------------
@@ -31,11 +35,9 @@ from myogen.utils.types import CURRENT__AnalogSignal, SPIKE_TRAIN__Block
 
 save_path = Path("./results")
 
-spike_train__Block: SPIKE_TRAIN__Block = joblib.load(
-    save_path / "sinusoidal_dd_spike_trains.pkl"
-)
+spike_train__Block: SPIKE_TRAIN__Block = joblib.load(save_path / "trapezoid_dd_spike_trains.pkl")
 input_current__AnalogSignal: CURRENT__AnalogSignal = joblib.load(
-    save_path / "sinusoidal_drive_pattern.pkl"
+    save_path / "trapezoid_drive_pattern.pkl"
 )
 surface_emg: simulator.SurfaceEMG = joblib.load(save_path / "surface_emg.pkl")
 
@@ -45,9 +47,7 @@ surface_emg: simulator.SurfaceEMG = joblib.load(save_path / "surface_emg.pkl")
 #
 # To simulate the **surface EMG**, we need to run the ``simulate_surface_emg`` method of the **SurfaceEMG** object.
 
-surface_emg_signals = surface_emg.simulate_surface_emg(
-    spike_train__Block=spike_train__Block
-)
+surface_emg_signals = surface_emg.simulate_surface_emg(spike_train__Block=spike_train__Block)
 
 print("Surface EMG simulation completed!")
 # Access the first group (electrode array) and first segment (pool)
@@ -75,53 +75,45 @@ noisy_surface_emg__Block = surface_emg.add_noise(snr__dB=5.0)
 
 # Load input current as AnalogSignal
 
-with plt.xkcd():
-    plt.rcParams.update({"font.size": 24})
-    # Create single plot with normalized signals
-    fig, ax = plt.subplots(figsize=(12, 6))
+plt.rcParams.update({"font.size": 24})
+# Create single plot with normalized signals
+fig, ax = plt.subplots(figsize=(12, 6))
 
-    # Get EMG signal from noisy surface EMG (first pool, electrode at row 2, col 2)
-    emg_signal = (
-        noisy_surface_emg__Block.groups[0]
-        .segments[0]
-        .analogsignals[0][:, 2, 2]
-        .magnitude
-    )
-    current_signal = input_current__AnalogSignal[:, 0].magnitude
+# Get EMG signal from noisy surface EMG (first pool, electrode at row 2, col 2)
+emg_signal = noisy_surface_emg__Block.groups[0].segments[0].analogsignals[0][:, 2, 2].magnitude
+current_signal = input_current__AnalogSignal[:, 0].magnitude
 
-    # Normalize EMG by dividing by maximum
-    emg_normalized = emg_signal / np.max(np.abs(emg_signal))
+# Normalize current between 0 and 1
+current_normalized = (current_signal - np.min(current_signal)) / (
+    np.max(current_signal) - np.min(current_signal)
+)
 
-    # Normalize current between 0 and 1
-    current_normalized = (current_signal - np.min(current_signal)) / (
-        np.max(current_signal) - np.min(current_signal)
-    )
+current_normalized *= np.max(emg_signal)  # Scale to match EMG amplitude range
 
 # Plot both normalized signals on same axis
 ax.plot(
-    np.arange(len(emg_normalized)) / surface_emg.sampling_frequency__Hz,
-    emg_normalized,
+    np.arange(len(emg_signal)) / surface_emg.sampling_frequency__Hz,
+    emg_signal,
     linewidth=2,
     label="Surface EMG",
 )
 
-with plt.xkcd():
-    ax.plot(
-        input_current__AnalogSignal.times.rescale(pq.s).magnitude,
-        current_normalized,
-        linewidth=2,
-        label="Input Current",
-        alpha=0.7,
-        zorder=-1,
-    )
+ax.plot(
+    input_current__AnalogSignal.times.rescale(pq.s).magnitude,
+    current_normalized,
+    linewidth=2,
+    label="Input Current",
+    alpha=0.7,
+    zorder=-1,
+)
 
-    ax.set_xlabel("Time (s)")
-    ax.set_ylabel("Normalized Amplitude")
-    ax.legend()
+ax.set_xlabel("Time (s)")
+ax.set_ylabel("Amplitude (mV)")
+ax.legend()
 
-    sns.despine(trim=True, left=False, bottom=False, right=True, top=True, offset=5)
+sns.despine(trim=True, left=False, bottom=False, right=True, top=True, offset=5)
 
-    plt.title("Normalized Surface EMG and Input Current")
+plt.title("Normalized Surface EMG and Input Current")
 
 plt.tight_layout()
 plt.show()

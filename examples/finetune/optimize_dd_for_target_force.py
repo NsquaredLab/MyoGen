@@ -250,7 +250,7 @@ def run_simulation_and_compute_force(
         recruitment_thresholds=recruitment_thresholds,
         recording_frequency__Hz=RECORDING_FREQUENCY__HZ,
         longest_duration_rise_time__ms=LONGEST_DURATION_RISE_TIME__MS,
-        contraction_time_range__unitless=CONTRACTION_TIME_RANGE,
+        contraction_time_range_factor=CONTRACTION_TIME_RANGE,
     )
 
     # Generate force
@@ -308,15 +308,13 @@ def objective(trial, target_force__au, recruitment_thresholds):
             print(f"    Gamma shape: {gamma_shape:.2f} (CV={1 / gamma_shape**0.5:.3f})")
 
         # Run simulation and compute force
-        force_mean_steady, n_active, fr_mean, fr_std, wdist = (
-            run_simulation_and_compute_force(
-                dd_neurons,
-                conn_probability,
-                synaptic_weight,
-                dd_drive__Hz,
-                gamma_shape,
-                recruitment_thresholds,
-            )
+        force_mean_steady, n_active, fr_mean, fr_std, wdist = run_simulation_and_compute_force(
+            dd_neurons,
+            conn_probability,
+            synaptic_weight,
+            dd_drive__Hz,
+            gamma_shape,
+            recruitment_thresholds,
         )
 
         # Check if we have enough active neurons
@@ -412,13 +410,13 @@ def optimize_for_force_level(target_force_pct, n_trials=N_TRIALS, reset_study=Fa
     )
 
     # Create study
-    storage_name = f"sqlite:///{RESULTS_DIR}/{STUDY_PREFIX}optuna_force_{int(target_force_pct)}pct.db"
+    storage_name = (
+        f"sqlite:///{RESULTS_DIR}/{STUDY_PREFIX}optuna_force_{int(target_force_pct)}pct.db"
+    )
 
     # Delete existing database if reset requested
     if reset_study:
-        db_path = (
-            RESULTS_DIR / f"{STUDY_PREFIX}optuna_force_{int(target_force_pct)}pct.db"
-        )
+        db_path = RESULTS_DIR / f"{STUDY_PREFIX}optuna_force_{int(target_force_pct)}pct.db"
         if db_path.exists():
             db_path.unlink()
             print(f"✓ Deleted old study database: {db_path}\n")
@@ -448,9 +446,7 @@ def optimize_for_force_level(target_force_pct, n_trials=N_TRIALS, reset_study=Fa
 
     print(f"Best trial: {best_trial.number}")
     print(f"  Force error: {best_trial.value:.2%}")
-    print(
-        f"  Active neurons: {best_trial.user_attrs.get('n_active', 'N/A')}/{N_MOTOR_UNITS}"
-    )
+    print(f"  Active neurons: {best_trial.user_attrs.get('n_active', 'N/A')}/{N_MOTOR_UNITS}")
     print("\nForce results:")
     print(f"  Target:   {target_force__au:.4f} a.u. ({target_force_pct}% of baseline)")
     print(
@@ -464,13 +460,9 @@ def optimize_for_force_level(target_force_pct, n_trials=N_TRIALS, reset_study=Fa
     print(f"  Synaptic weight:  {best_trial.user_attrs.get('synaptic_weight'):.4f} μS")
     print(f"  DD drive level:   {best_trial.user_attrs.get('dd_drive__Hz'):.2f} Hz")
     mvc_val = best_trial.user_attrs.get("mvc_percent", MVC_PERCENT)
-    gamma_shape_val = best_trial.user_attrs.get(
-        "gamma_shape", get_gamma_shape_for_mvc(MVC_PERCENT)
-    )
+    gamma_shape_val = best_trial.user_attrs.get("gamma_shape", get_gamma_shape_for_mvc(MVC_PERCENT))
     print(f"  MVC:              {mvc_val:.1f}%")
-    print(
-        f"  Gamma shape:      {gamma_shape_val:.2f} (CV={1 / gamma_shape_val**0.5:.3f})"
-    )
+    print(f"  Gamma shape:      {gamma_shape_val:.2f} (CV={1 / gamma_shape_val**0.5:.3f})")
 
     return study
 
@@ -524,17 +516,14 @@ def export_results(study, target_force_pct):
 
     # Save to JSON
     json_path = (
-        RESULTS_DIR
-        / f"{STUDY_PREFIX}dd_optimized_params_force_{int(target_force_pct)}pct.json"
+        RESULTS_DIR / f"{STUDY_PREFIX}dd_optimized_params_force_{int(target_force_pct)}pct.json"
     )
     with open(json_path, "w") as f:
         json.dump(results, f, indent=2)
     print(f"\nSaved parameters to: {json_path}")
 
     # Save study
-    study_path = (
-        RESULTS_DIR / f"{STUDY_PREFIX}study_force_{int(target_force_pct)}pct.pkl"
-    )
+    study_path = RESULTS_DIR / f"{STUDY_PREFIX}study_force_{int(target_force_pct)}pct.pkl"
     joblib.dump(study, study_path)
     print(f"Saved study to: {study_path}")
 
@@ -559,9 +548,7 @@ def main():
 
     import argparse
 
-    parser = argparse.ArgumentParser(
-        description="Optimize DD parameters for target force level"
-    )
+    parser = argparse.ArgumentParser(description="Optimize DD parameters for target force level")
     parser.add_argument(
         "--target-force-pct",
         type=float,
@@ -648,9 +635,7 @@ def main():
     print(f"  Conn probability: {CONN_PROBABILITY:.3f}")
     print(f"  MVC:              {MVC_PERCENT:.1f}%")
     if GFLUCTDV_ENABLED:
-        print(
-            f"  Gfluctdv:         ENABLED (noise={GFLUCTDV_NOISE_AMPLITUDE:.2e} S/cm²)"
-        )
+        print(f"  Gfluctdv:         ENABLED (noise={GFLUCTDV_NOISE_AMPLITUDE:.2e} S/cm²)")
     print(
         f"  Gamma shape:      {get_gamma_shape_for_mvc(MVC_PERCENT, MVC_SHAPE_VALUE):.2f} "
         f"(CV={1 / get_gamma_shape_for_mvc(MVC_PERCENT, MVC_SHAPE_VALUE) ** 0.5:.3f})"

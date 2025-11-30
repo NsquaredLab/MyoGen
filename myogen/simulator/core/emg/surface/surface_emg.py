@@ -18,6 +18,7 @@ import numpy as np
 import quantities as pq
 from joblib import Parallel, delayed
 from neo import Block, Group, Segment
+from scipy.signal import resample
 from tqdm import tqdm
 
 from myogen import RANDOM_GENERATOR
@@ -56,10 +57,11 @@ class SurfaceEMG:
         impacts computational cost (scales quadratically).
         Higher values provide better numerical accuracy at the expense of simulation time.
         Default is set to 256 samples.
-    sampling_points_in_theta_domain : int, default=180
+    sampling_points_in_theta_domain : int, default=32
         Angular discretization for cylindrical coordinate system in degrees.
-        Higher values provide better spatial resolution for circumferential electrode placement studies.
-        Default is set to 180 points, which provides 2° angular resolution.
+        Higher values provide better spatial resolution but cause numerical overflow in Bessel functions.
+        Default is set to 32 points to avoid numerical instability.
+        WARNING: Values >64 cause extreme Bessel function overflow leading to incorrect results.
         This is suitable for most EMG studies.
     MUs_to_simulate : list[int], optional
         Indices of motor units to simulate. If None, all motor units are simulated.
@@ -89,8 +91,9 @@ class SurfaceEMG:
         electrode_arrays: list[SurfaceElectrodeArray],
         sampling_frequency__Hz: Quantity__Hz = 2048.0 * pq.Hz,
         sampling_points_in_t_and_z_domains: int = 256,
-        sampling_points_in_theta_domain: int = 180,
+        sampling_points_in_theta_domain: int = 32,
         MUs_to_simulate: list[int] | None = None,
+        internal_sampling_frequency__Hz: Quantity__Hz | None = None,
     ):
         # Immutable public arguments - never modify these
         self.muscle_model = muscle_model
@@ -100,10 +103,28 @@ class SurfaceEMG:
         self.sampling_points_in_theta_domain = sampling_points_in_theta_domain
         self.MUs_to_simulate = MUs_to_simulate
 
+        # Internal sampling frequency for higher resolution MUAP computation
+        # If not specified, defaults to 10 kHz for better MUAP resolution
+        if internal_sampling_frequency__Hz is None:
+            internal_sampling_frequency__Hz = 10000.0 * pq.Hz
+        self.internal_sampling_frequency__Hz = internal_sampling_frequency__Hz
+
         # Private copies for internal modifications (extract magnitudes)
         self._muscle_model = muscle_model
         self._electrode_arrays = electrode_arrays
         self._sampling_frequency__Hz = float(sampling_frequency__Hz.rescale(pq.Hz).magnitude)
+        self._internal_sampling_frequency__Hz = float(
+            internal_sampling_frequency__Hz.rescale(pq.Hz).magnitude
+        )
+
+        # Calculate upsampling factor and internal sample count
+        self._upsampling_factor = (
+            self._internal_sampling_frequency__Hz / self._sampling_frequency__Hz
+        )
+        self._internal_sampling_points = int(
+            np.round(sampling_points_in_t_and_z_domains * self._upsampling_factor)
+        )
+
         self._sampling_points_in_t_and_z_domains = sampling_points_in_t_and_z_domains
         self._sampling_points_in_theta_domain = sampling_points_in_theta_domain
         self._MUs_to_simulate = MUs_to_simulate
@@ -206,11 +227,11 @@ class SurfaceEMG:
         # Extract fiber counts
         number_of_fibers_per_MUs = self._muscle_model.resulting_number_of_innervated_fibers
 
-        # Create time array
-        t = np.linspace(
+        # Create time array at INTERNAL sampling frequency for higher resolution
+        t_internal = np.linspace(
             0,
-            (self._sampling_points_in_t_and_z_domains - 1) / self._sampling_frequency__Hz * 1e-3,
-            self._sampling_points_in_t_and_z_domains,
+            (self._internal_sampling_points - 1) / self._internal_sampling_frequency__Hz * 1e-3,
+            self._internal_sampling_points,
         )
 
         # Get total number of motor units
@@ -223,11 +244,19 @@ class SurfaceEMG:
             size=n_motor_units,
         )
 
-        # Pre-allocate result shape (optimization: avoid repeated shape calculations)
-        result_shape = (
+        # Pre-allocate result shape at INTERNAL resolution (optimization: avoid repeated shape calculations)
+        # Will be downsampled to output resolution after simulation
+        internal_result_shape = (
             self._electrode_arrays[0].num_rows,
             self._electrode_arrays[0].num_cols,
-            len(t),
+            len(t_internal),
+        )
+
+        # Final output shape after downsampling
+        output_result_shape = (
+            self._electrode_arrays[0].num_rows,
+            self._electrode_arrays[0].num_cols,
+            self._sampling_points_in_t_and_z_domains,
         )
 
         # Helper function to process a single motor unit
@@ -255,14 +284,15 @@ class SurfaceEMG:
                 # Deep copy electrode array to avoid threading issues
                 electrode_array = deepcopy(electrode_array_original)
 
-                # Pre-allocated result array (optimization: use pre-computed shape)
-                array_result = np.zeros(result_shape, dtype=np.float64)
+                # Pre-allocated result array at INTERNAL resolution (optimization: use pre-computed shape)
+                array_result_internal = np.zeros(internal_result_shape, dtype=np.float64)
 
                 number_of_fibers = number_of_fibers_per_MUs[MU_index]
 
                 if number_of_fibers == 0:
-                    # Return empty signal for MUs with no fibers
-                    return array_result, f"MUAP_{MU_index}"
+                    # Return empty signal (downsampled to output resolution)
+                    array_result_downsampled = np.zeros(output_result_shape, dtype=np.float64)
+                    return array_result_downsampled, f"MUAP_{MU_index}"
 
                 # Get fiber positions
                 position_of_fibers_raw = self._muscle_model.resulting_fiber_assignment(MU_index)
@@ -307,11 +337,11 @@ class SurfaceEMG:
                     L1 = abs(innervation_zone + fiber_length__mm / 2)
                     L2 = abs(innervation_zone - fiber_length__mm / 2)
 
-                    # Use the new simulate_fiber_v2 function
+                    # Use the new simulate_fiber_v2 function with INTERNAL sampling frequency
                     phi_temp, A_matrix, B_incomplete = simulate_fiber_v2(
-                        Fs=self._sampling_frequency__Hz * 1e-3,
+                        Fs=self._internal_sampling_frequency__Hz * 1e-3,
                         v=self._mean_conduction_velocity__m_s,
-                        N=self._sampling_points_in_t_and_z_domains,
+                        N=self._internal_sampling_points,
                         M=self._sampling_points_in_theta_domain,
                         r=self._radius_total,
                         r_bone=self._radius_bone__mm,
@@ -330,17 +360,23 @@ class SurfaceEMG:
                         B_incomplete=None if fiber_number == 0 else B_incomplete,
                     )
 
-                    array_result += phi_temp
+                    array_result_internal += phi_temp
 
-                return array_result, f"MUAP_{MU_index}"
+                # Downsample from internal resolution to output resolution
+                # resample operates on the last axis (time), which is axis=2
+                array_result_downsampled = resample(
+                    array_result_internal, self._sampling_points_in_t_and_z_domains, axis=2
+                )
+
+                return array_result_downsampled, f"MUAP_{MU_index}"
 
             except Exception as e:
                 # Log error and return empty result to avoid crashing entire parallel job
                 logging.error(
                     f"Failed to process MU {MU_index} for electrode array {array_idx}: {e}"
                 )
-                # Return empty signal with error marker (optimization: use pre-computed shape)
-                empty_result = np.zeros(result_shape, dtype=np.float64)
+                # Return empty signal with error marker at output resolution
+                empty_result = np.zeros(output_result_shape, dtype=np.float64)
                 return empty_result, f"MUAP_{MU_index}_FAILED"
 
         block = Block()
@@ -348,39 +384,50 @@ class SurfaceEMG:
             group = Group(name=f"ElectrodeArray_{array_idx}")
             block.groups.append(group)
 
-            # Process all motor units in parallel
+            # Process only specified motor units in parallel
+            n_mus_to_compute = len(self._MUs_to_simulate)
             logging.info(
-                f"Processing {n_motor_units} motor units for electrode array {array_idx + 1}/{len(self._electrode_arrays)} using parallel processing..."
+                f"Processing {n_mus_to_compute}/{n_motor_units} motor units for electrode array {array_idx + 1}/{len(self._electrode_arrays)} using parallel processing..."
             )
 
             # Parallel execution of motor units with tqdm progress bar
             # batch_size="auto" optimizes task distribution across workers
-            results = []
+            # Only compute MUs in the subset
+            results = {}  # Use dict to map MU_index -> result
             with tqdm(
-                total=n_motor_units,
+                total=n_mus_to_compute,
                 desc=f"Electrode Array {array_idx + 1}/{len(self._electrode_arrays)}",
-                unit="MU",
             ) as pbar:
-                for result in Parallel(
+                for array_result, segment_name in Parallel(
                     n_jobs=n_jobs,
                     return_as="generator",
                     verbose=0,
                     batch_size="auto",
                 )(
                     delayed(_process_single_mu)(MU_index, electrode_array)
-                    for MU_index in range(n_motor_units)
+                    for MU_index in self._MUs_to_simulate
                 ):
-                    results.append(result)
+                    # Extract MU index from segment name "MUAP_{MU_index}"
+                    mu_idx = int(segment_name.split("_")[1].split("_")[0])
+                    results[mu_idx] = (array_result, segment_name)
                     pbar.update(1)
 
-            # Collect results and create segments
-            for array_result, segment_name in results:
+            # Create segments for ALL MUs (maintaining index order)
+            # Non-computed MUs get empty signals at output resolution
+            for MU_index in range(n_motor_units):
+                if MU_index in results:
+                    array_result, segment_name = results[MU_index]
+                else:
+                    # Create empty MUAP for non-computed MUs at output resolution
+                    array_result = np.zeros(output_result_shape, dtype=np.float64)
+                    segment_name = f"MUAP_{MU_index}"
+
                 segment = Segment(name=segment_name)
                 group.segments.append(segment)
 
                 segment.analogsignals.append(
                     GridAnalogSignal(
-                        signal=np.transpose(array_result, (2, 0, 1)) * pq.dimensionless,
+                        signal=np.transpose(array_result, (2, 0, 1)) * pq.mV,
                         t_start=0 * pq.s,
                         sampling_rate=self._sampling_frequency__Hz * pq.Hz,
                     )
@@ -518,7 +565,7 @@ class SurfaceEMG:
 
             surface_emg = np.zeros((n_pools, n_rows, n_cols, len(sample_conv)))
 
-            muap_shapes /= np.max(np.abs(muap_shapes))  # Normalize MUAP shapes
+            # No normalization needed - MUAPs are in absolute units (mV) from biophysical model
 
             # Perform convolution for each pool using GPU acceleration if available
             if HAS_CUPY:
@@ -621,8 +668,7 @@ class SurfaceEMG:
                 # Create GridAnalogSignal for this pool's EMG data
                 segment.analogsignals.append(
                     GridAnalogSignal(
-                        signal=np.transpose(surface_emg_resampled[pool_idx], (2, 0, 1))
-                        * pq.dimensionless,
+                        signal=np.transpose(surface_emg_resampled[pool_idx], (2, 0, 1)) * pq.mV,
                         sampling_rate=self._sampling_frequency__Hz * pq.Hz,
                     )
                 )

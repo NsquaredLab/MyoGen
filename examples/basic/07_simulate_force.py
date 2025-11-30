@@ -32,6 +32,7 @@ References
 # %%
 import matplotlib.pyplot as plt
 import numpy as np
+import quantities as pq
 
 from myogen import simulator
 from myogen.simulator.core.force.force_model import ForceModel
@@ -41,8 +42,9 @@ from myogen.utils.neuron.inject_currents_into_populations import (
     inject_currents_and_simulate_spike_trains,
 )
 from myogen.utils.nmodl import load_nmodl_mechanisms
-from myogen.utils.plotting import plot_spike_trains
 from myogen.utils.plotting.force import plot_twitch_parameter_assignment, plot_twitches
+
+plt.style.use("fivethirtyeight")
 
 ##############################################################################
 # Load NMODL Mechanisms
@@ -71,14 +73,14 @@ n_motor_units = 50
 recruitment_range = 50  # Recruitment range (max_threshold / min_threshold)
 
 # Force model parameters
-recording_frequency__Hz = 2048  # 2048 Hz sampling rate
-longest_duration_rise_time__ms = 90.0  # Maximum twitch rise time
+recording_frequency__Hz = 2048 * pq.Hz  # 2048 Hz sampling rate
+longest_duration_rise_time__ms = 90.0 * pq.ms  # Maximum twitch rise time
 contraction_time_range = 3  # Contraction time range factor
 
 # Simulation parameters
 simulation_duration__ms = 10000.0  # 10 seconds
-timestep__ms = 0.05  # 0.05 ms time step
-t_points = int(simulation_duration__ms / timestep__ms)
+timestep__ms = 0.05 * pq.ms  # 0.05 ms time step
+t_points = int(simulation_duration__ms / timestep__ms.magnitude)
 
 ##############################################################################
 # Generate Recruitment Thresholds
@@ -106,18 +108,18 @@ force_model = ForceModel(
     recruitment_thresholds=recruitment_thresholds,
     recording_frequency__Hz=recording_frequency__Hz,
     longest_duration_rise_time__ms=longest_duration_rise_time__ms,
-    contraction_time_range__unitless=contraction_time_range,
+    contraction_time_range_factor=contraction_time_range,
 )
 
 # Display force model statistics
 print("Force model statistics:")
-print(f"  - Number of motor units: {force_model._number_of_neurons}")
-print(f"  - Recruitment ratio: {force_model._recruitment_ratio:.1f}")
+print(f"\tNumber of motor units: {force_model._number_of_neurons}")
+print(f"\tRecruitment ratio: {force_model._recruitment_ratio:.1f}")
 print(
-    f"  - Peak force range: {force_model.peak_twitch_forces__unitless[0]:.3f} - {force_model.peak_twitch_forces__unitless[-1]:.3f}"
+    f"\tPeak force range: {force_model.peak_twitch_forces__unitless[0]:.3f} - {force_model.peak_twitch_forces__unitless[-1]:.3f}"
 )
 print(
-    f"  - Contraction time range: {force_model.contraction_times__samples[0]:.1f} - {force_model.contraction_times__samples[-1]:.1f} samples"
+    f"\tContraction time range: {force_model.contraction_times__samples[0]:.1f} - {force_model.contraction_times__samples[-1]:.1f} samples"
 )
 
 ##############################################################################
@@ -131,12 +133,12 @@ plt.figure(figsize=(8, 12))
 
 ax1 = plt.subplot(2, 1, 1)
 plot_twitch_parameter_assignment(
-    force_model, ax1, [1, 5, 10], flip_x=True, apply_default_formatting=True
+    force_model, ax1, [10, 20, 40], flip_x=True, apply_default_formatting=True
 )
 ax1.set_title("Twitch Parameter Assignment")
 
 ax2 = plt.subplot(2, 1, 2)
-plot_twitches(force_model, ax2, apply_default_formatting=True)
+plot_twitches(force_model, ax2, [10, 20, 40], apply_default_formatting=True)
 ax2.set_title("Motor Unit Twitches")
 
 plt.tight_layout()
@@ -150,12 +152,12 @@ plt.show()
 # drive motor unit recruitment and firing patterns.
 
 # Parameters for trapezoid current
-trap_amplitude = 15.0  # Peak amplitude
-trap_rise_time = 5000.0  # Rise duration (ms)
-trap_plateau_time = 8000.0  # Plateau duration (ms)
-trap_fall_time = 3000.0  # Fall duration (ms)
-trap_offset = 5.0  # Baseline current
-trap_delay = 0.0  # Initial delay (ms)
+trap_amplitude = 15.0 * pq.nA  # Peak amplitude
+trap_rise_time = 5000.0 * pq.ms  # Rise duration (ms)
+trap_plateau_time = 8000.0 * pq.ms  # Plateau duration (ms)
+trap_fall_time = 3000.0 * pq.ms  # Fall duration (ms)
+trap_offset = 5.0 * pq.nA  # Baseline current
+trap_delay = 0.0 * pq.ms  # Initial delay (ms)
 
 input_current__AnalogSignal = create_trapezoid_current(
     n_pools=1,
@@ -168,23 +170,6 @@ input_current__AnalogSignal = create_trapezoid_current(
     offsets__nA=[trap_offset],
     delays__ms=[trap_delay],
 )
-
-# Plot the input current
-plt.figure(figsize=(12, 4))
-with plt.xkcd():
-    plt.plot(
-        input_current__AnalogSignal.times.rescale("s"),
-        input_current__AnalogSignal[:, 0],
-        "g-",
-        linewidth=2,
-    )
-    plt.xlabel("Time (s)")
-    plt.ylabel("Current (µV)")
-    plt.title("Input Current Waveform")
-    plt.grid(True, alpha=0.3)
-
-plt.tight_layout()
-plt.show()
 
 ##############################################################################
 # Create Motor Neuron Pool and Generate Spike Trains
@@ -200,27 +185,8 @@ motor_neuron_pool = AlphaMN__Pool(recruitment_thresholds__array=recruitment_thre
 spike_train__Block = inject_currents_and_simulate_spike_trains(
     populations=[motor_neuron_pool],
     input_current__AnalogSignal=input_current__AnalogSignal,
-    spike_detection_thresholds__mV=50,
+    spike_detection_thresholds__mV=50 * pq.mV,
 )
-
-##############################################################################
-# Visualize Spike Trains
-# -----------------------
-#
-# Let's visualize the generated spike trains to see the motor unit recruitment
-# and firing patterns.
-
-plt.figure(figsize=(12, 8))
-
-with plt.xkcd():
-    ax = plt.gca()
-    plot_spike_trains(spike_trains__Block=spike_train__Block, axs=[ax])
-    ax.set_title("Motor Unit Spike Trains")
-    ax.set_xlabel("Time (s)")
-    ax.set_ylabel("Motor Unit Number")
-
-plt.tight_layout()
-plt.show()
 
 ##############################################################################
 # Generate Force Output
@@ -246,55 +212,35 @@ noisy_force = force_output.magnitude[:, 0] + np.random.randn(
 # Let's plot the generated force alongside the input current to see how
 # the muscle responds to the electrical stimulation.
 
-plt.figure(figsize=(12, 10))
+plt.figure(figsize=(8, 10))
 
-with plt.xkcd():
-    # Plot input current
-    ax1 = plt.subplot(3, 1, 1)
+ax1 = plt.subplot(2, 1, 1)
+
 ax1.plot(
-    input_current__AnalogSignal.times.rescale("s"),
-    input_current__AnalogSignal[:, 0],
-    "g-",
-    linewidth=2,
-    label="Input Current",
-)
-with plt.xkcd():
-    ax1.set_ylabel("Current (nA)")
-    ax1.set_title("Input Current and Force Response")
-    ax1.grid(True, alpha=0.3)
-    ax1.legend()
-
-    # Plot clean force
-    ax2 = plt.subplot(3, 1, 2)
-ax2.plot(
     force_output.times.rescale("s"),
     force_output[:, 0],
-    "b-",
     linewidth=2,
     label="Clean Force",
 )
-with plt.xkcd():
-    ax2.set_ylabel("Force (a.u.)")
-    ax2.set_title("Simulated Force Output")
-    ax2.grid(True, alpha=0.3)
-    ax2.legend()
 
-    # Plot noisy force (more realistic)
-    ax3 = plt.subplot(3, 1, 3)
-ax3.plot(
+ax1.set_ylabel("Force (a.u.)")
+ax1.set_title("Simulated Force Output")
+ax1.grid(True, alpha=0.3)
+
+# Plot noisy force (more realistic)
+ax2 = plt.subplot(2, 1, 2)
+ax2.plot(
     force_output.times.rescale("s"),
     noisy_force,
-    "r-",
     linewidth=1,
     alpha=0.8,
     label="Noisy Force",
 )
-with plt.xkcd():
-    ax3.set_xlabel("Time (s)")
-    ax3.set_ylabel("Force (a.u.)")
-    ax3.set_title("Realistic Force Output (with noise)")
-    ax3.grid(True, alpha=0.3)
-    ax3.legend()
+
+ax2.set_xlabel("Time (s)")
+ax2.set_ylabel("Force (a.u.)")
+ax2.set_title("Realistic Force Output (with noise)")
+ax2.grid(True, alpha=0.3)
 
 plt.tight_layout()
 plt.show()

@@ -21,6 +21,8 @@ Key Features:
 """
 # sphinx_gallery_thumbnail_number = -1
 
+# %%
+
 ##############################################################################
 # Import Libraries
 # ----------------
@@ -28,24 +30,29 @@ Key Features:
 from pathlib import Path
 
 import joblib
-import matplotlib
 import matplotlib.pyplot as plt
 import numpy as np
+import quantities as pq
 import seaborn as sns
 
 from myogen import simulator
 from myogen.utils.types import CURRENT__AnalogSignal, SPIKE_TRAIN__Block
 
+plt.style.use("fivethirtyeight")
+
 ##############################################################################
 # Define Parameters
 # -----------------
 #
-
-# Simulation parameters
+# All parameters now use quantities for type safety and unit validation.
 
 # Electrode parameters
-inter_electrode_distance = 0.5  # mm
-electrode_position = (0.0, 0.0, 0.0)  # mm (start of muscle)
+inter_electrode_distance = 2.0 * pq.mm  # Electrode spacing (typical: 1-5 mm)
+electrode_position = (
+    0.0 * pq.mm,  # Center of muscle (x)
+    0.0 * pq.mm,  # Center of muscle (y)
+    15.0 * pq.mm,  # Middle of muscle (z) - near endplate zone
+)
 
 
 ##############################################################################
@@ -56,20 +63,18 @@ electrode_position = (0.0, 0.0, 0.0)  # mm (start of muscle)
 
 muscle: simulator.Muscle = joblib.load("results/muscle_model.pkl")
 
-##############################################################################
+#######################################
 # Create Intramuscular Electrode Array
 # ------------------------------------
 #
 # Set up a **differential needle electrode** for intramuscular recordings.
+# All distance and angle parameters use quantities for type-safe unit validation.
 
 electrode = simulator.IntramuscularElectrodeArray(
     num_electrodes=4,
     inter_electrode_distance__mm=inter_electrode_distance,
     differentiation_mode="consecutive",
     position__mm=electrode_position,
-    orientation__rad=(-np.pi / 2, 0, -np.pi / 2),  # perpendicular to muscle
-    trajectory_distance__mm=0.125,  # mm
-    trajectory_steps=1,  # number of steps
 )
 
 ##############################################################################
@@ -77,27 +82,62 @@ electrode = simulator.IntramuscularElectrodeArray(
 # --------------------------------------
 #
 # Create the **intramuscular EMG simulator** with the muscle model and electrode.
+# All simulation parameters now use quantities for type safety and unit validation.
+
+MUs_to_simulate = [0, 25, 50, 90]
 
 print("Initializing iEMG simulator...")
 iemg_sim = simulator.IntramuscularEMG(
-    muscle_model=muscle,
-    electrode_array=electrode,
+    muscle_model=muscle, electrode_array=electrode, MUs_to_simulate=MUs_to_simulate
 )
 
 ##############################################################################
 # Calculate Motor Unit Action Potentials
 # --------------------------------------
 #
-# Compute the **MUAPs** for each motor unit at the electrode positions.
-
+# Compute the **MUAPs** for the selected motor units at the electrode positions.
+# Using parallel processing for faster computation.
 
 print("Computing motor unit action potentials...")
-iemg_sim.simulate_muaps()
+muaps__Block = iemg_sim.simulate_muaps(n_jobs=2)  # Use 2 parallel jobs
 
-# iemg_sim = joblib.load("./results/iemg_simulator.pkl")
+# Display MUAP amplitudes for the selected MUs
+print("\n=== MUAP Amplitudes ===")
+for mu_idx in MUs_to_simulate:
+    segment = muaps__Block.segments[mu_idx]
+    if segment.name != "MUAP_None":
+        signal = segment.analogsignals[0].magnitude
+        ptp_values = np.ptp(signal, axis=0)
+        max_ptp = np.max(ptp_values)
+        print(f"MU {mu_idx:2d}): Max PtP = {max_ptp * 1000:6.1f} µV")
 
 joblib.dump(iemg_sim, "./results/iemg_simulator.pkl")
 
+##############################################################################
+# Visualize Individual MUAP Shapes
+# ---------------------------------
+#
+# Display the **MUAP waveforms** for the three selected motor units to
+# demonstrate how motor unit size affects MUAP amplitude and shape.
+
+fig, axes = plt.subplots(len(MUs_to_simulate), 1, figsize=(12, 8), sharex=True)
+
+for plot_idx, mu_idx in enumerate(MUs_to_simulate):
+    segment = muaps__Block.segments[mu_idx]
+    if segment.name != "MUAP_None":
+        muap_signal = segment.analogsignals[0][:, 0]  # First electrode channel
+        time_axis = muap_signal.times.rescale("ms").magnitude
+        amplitude_uV = muap_signal.magnitude * 1000  # Convert mV to µV
+
+        axes[plot_idx].plot(time_axis, amplitude_uV, linewidth=2)
+        axes[plot_idx].set_ylabel("Amplitude (µV)")
+        axes[plot_idx].grid(True, alpha=0.3)
+        axes[plot_idx].set_title(f"MU {mu_idx}: PtP: {np.ptp(amplitude_uV):.1f} µV")
+
+axes[-1].set_xlabel("Time (ms)")
+sns.despine(trim=True, left=False, bottom=False, right=True, top=True, offset=5)
+plt.tight_layout()
+plt.show()
 
 ##############################################################################
 # Load Input Currents and Spike Trains
@@ -106,11 +146,9 @@ joblib.dump(iemg_sim, "./results/iemg_simulator.pkl")
 
 save_path = Path("./results")
 
-spike_train__Block: SPIKE_TRAIN__Block = joblib.load(
-    save_path / "sinusoidal_dd_spike_trains.pkl"
-)
+spike_train__Block: SPIKE_TRAIN__Block = joblib.load(save_path / "trapezoid_dd_spike_trains.pkl")
 input_current__AnalogSignal: CURRENT__AnalogSignal = joblib.load(
-    save_path / "sinusoidal_drive_pattern.pkl"
+    save_path / "trapezoid_drive_pattern.pkl"
 )
 
 ##############################################################################
@@ -126,79 +164,49 @@ print("Intramuscular EMG simulation completed!")
 # Access the first segment (pool) analogsignal
 first_emg_signal = emg_signals.segments[0].analogsignals[0]
 print(f"Generated EMG shape: {first_emg_signal.shape}")
-print(f"  - {first_emg_signal.shape[0]} time samples")
-print(f"  - {first_emg_signal.shape[1]} electrode channels")
-print(
-    f"  - Signal RMS (before noise): {np.sqrt(np.mean(first_emg_signal.magnitude**2)):.3f}"
-)
+print(f"\t{first_emg_signal.shape[0]} time samples")
+print(f"\t{first_emg_signal.shape[1]} electrode channels")
+print(f"\tSignal RMS (before noise): {np.sqrt(np.mean(first_emg_signal.magnitude**2)):.3f}")
 
 print("Adding realistic noise (SNR = 20 dB)...")
 noisy_emg_signals__Block = iemg_sim.add_noise(snr__dB=20)
 first_noisy_signal = noisy_emg_signals__Block.segments[0].analogsignals[0]
-print(
-    f"  - Signal RMS (after noise): {np.sqrt(np.mean(first_noisy_signal.magnitude**2)):.3f}"
-)
+print(f"\tSignal RMS (after noise): {np.sqrt(np.mean(first_noisy_signal.magnitude**2)):.3f}")
 
 ##############################################################################
 # Visualize Intramuscular EMG Results
 # ----------------------------------
 #
-# Create an **xkcd-style plot** comparing the **intramuscular EMG** signal
-# with the input current, similar to the surface EMG example.
+# Compare the **intramuscular EMG** signal with the input current.
 #
 # .. note::
-#   The intramuscular EMG provides **high spatial resolution** and can detect
-#   individual motor unit action potentials (MUAPs) with excellent signal quality.
+#   In this example, only **three motor units** (small, medium, large) contribute
+#   to the EMG signal. This demonstrates how individual MUAPs sum to create the
+#   composite EMG signal, and how different motor unit sizes affect signal amplitude.
 
-# Clear matplotlib cache and set up xkcd style
-matplotlib.get_cachedir()
-with plt.xkcd():
-    plt.rcParams.update({"font.size": 24})
+plt.figure(figsize=(12, 6))
 
-    # Create single plot with normalized signals
-    fig, ax = plt.subplots(figsize=(12, 6))
+# Get the signals - use first electrode from the Block
+iemg_signal = noisy_emg_signals__Block.segments[0].analogsignals[0][:, 0]
+current_signal = input_current__AnalogSignal[:, 0]  # First current pool
 
-    # Get the signals - use first electrode from the Block
-    iemg_signal = noisy_emg_signals__Block.segments[0].analogsignals[0][:, 0]
-    current_signal = input_current__AnalogSignal[:, 0]  # First current pool
+# Create time axes
+emg_time = iemg_signal.times.rescale("s").magnitude
+current_time = input_current__AnalogSignal.times.rescale("s").magnitude
 
-    # Create time axes
-    emg_time = iemg_signal.times.rescale("s").magnitude
-    current_time = input_current__AnalogSignal.times.rescale("s").magnitude
-
-    # Normalize iEMG signal by dividing by maximum absolute value
-    iemg_normalized = iemg_signal / np.max(np.abs(iemg_signal))
-
-    # Normalize current between 0 and 1
-    current_normalized = (current_signal - np.min(current_signal)) / (
-        np.max(current_signal) - np.min(current_signal)
-    )
-
-# Plot both normalized signals on same axis
-ax.plot(
-    emg_time,
-    iemg_normalized,
-    linewidth=2,
-    label="Intramuscular EMG",
+# Normalize current between 0 and 1
+current_normalized = (
+    (current_signal - np.min(current_signal))
+    / (np.max(current_signal) - np.min(current_signal))
+    * np.max(iemg_signal.magnitude)
 )
 
-with plt.xkcd():
-    ax.plot(
-        current_time,
-        current_normalized,
-        linewidth=2,
-        label="Input Current",
-        alpha=0.7,
-    )
+plt.plot(emg_time, iemg_signal.magnitude, label="Intramuscular EMG", linewidth=1)
+plt.plot(current_time, current_normalized, label="Input Current", linewidth=1)
 
-    ax.set_xlabel("Time (s)")
-    ax.set_ylabel("Normalized Amplitude")
-    ax.grid(True, alpha=0.3)
-    ax.legend()
-
-    sns.despine(trim=True, left=False, bottom=False, right=True, top=True, offset=5)
-
-    plt.title("Normalized Intramuscular EMG and Input Current")
+plt.xlabel("Time (s)")
+plt.ylabel("Amplitude (mV)")
+plt.legend()
 
 plt.tight_layout()
 plt.show()
