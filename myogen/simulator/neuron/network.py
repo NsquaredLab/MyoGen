@@ -22,9 +22,11 @@ from myogen.utils.decorators import beartowertype
 
 # Network Constants
 MOTOR_NEURON_CONNECTION = "aMN->Muscle"
+import quantities as pq
+
 DEFAULT_SYNAPTIC_WEIGHT = 0.6  # μS
 DEFAULT_SPIKE_THRESHOLD = -10.0  # mV
-DEFAULT_SYNAPTIC_DELAY = 1.0  # ms
+DEFAULT_SYNAPTIC_DELAY = 1.0 * pq.ms  # ms
 EXTERNAL_INPUT_LABEL = "Spindle"
 EXTERNAL_TARGET_LABEL = "Muscle"
 
@@ -40,9 +42,7 @@ def _create_basic_netcon(source_neuron, target_neuron) -> h.NetCon:
     3. Point process neuron (has ns attribute)
     """
     if hasattr(source_neuron, "soma"):
-        return h.NetCon(
-            source_neuron.soma(0.5)._ref_v, target_neuron, sec=source_neuron.soma
-        )
+        return h.NetCon(source_neuron.soma(0.5)._ref_v, target_neuron, sec=source_neuron.soma)
     elif source_neuron is None:
         return h.NetCon(None, target_neuron.ns)
     else:
@@ -62,7 +62,7 @@ def _setup_muscle_activation(
 
         def muscle_activation_wrapper():
             return muscle_callback(
-                source_neuron.pool__ID, muscle, 1 + source_neuron.axon_delay__ms
+                source_neuron.pool__ID, muscle, 1 + float(source_neuron.axon_delay__ms)
             )
 
         netcon.record(muscle_activation_wrapper)
@@ -89,10 +89,7 @@ def _apply_default_synaptic_params(netcon: h.NetCon, source_neuron):
     netcon.delay = DEFAULT_SYNAPTIC_DELAY  # 1ms synaptic + axon delay
 
     # Add axonal delay if source neuron has it
-    if (
-        hasattr(source_neuron, "axon_delay__ms")
-        and source_neuron.axon_delay__ms is not None
-    ):
+    if hasattr(source_neuron, "axon_delay__ms") and source_neuron.axon_delay__ms is not None:
         netcon.delay = (
             DEFAULT_SYNAPTIC_DELAY + source_neuron.axon_delay__ms
         )  # 1ms synaptic + axon delay
@@ -255,9 +252,7 @@ def _connect_population_to_population(
     return connections
 
 
-def _connect_population_to_external(
-    source_pop: str, populations: dict, **kwargs
-) -> list:
+def _connect_population_to_external(source_pop: str, populations: dict, **kwargs) -> list:
     """
     Create connections from a neural population to an external target (e.g., muscle).
 
@@ -284,9 +279,7 @@ def _connect_population_to_external(
     return connections
 
 
-def _connect_external_to_population(
-    target_pop: Optional[str], populations: dict, **kwargs
-) -> list:
+def _connect_external_to_population(target_pop: Optional[str], populations: dict, **kwargs) -> list:
     """
     Create connections from an external source (e.g., spindle) to a neural population.
 
@@ -492,14 +485,10 @@ def _connect_populations(
         )
 
     if source_pop is not None and source_pop not in populations:
-        raise ValueError(
-            f"Source population '{source_pop}' not found in population dictionary"
-        )
+        raise ValueError(f"Source population '{source_pop}' not found in population dictionary")
 
     if target_pop is not None and target_pop not in populations:
-        raise ValueError(
-            f"Target population '{target_pop}' not found in population dictionary"
-        )
+        raise ValueError(f"Target population '{target_pop}' not found in population dictionary")
 
     # Prepare keyword arguments for helper functions
     connection_kwargs = {
@@ -524,14 +513,10 @@ def _connect_populations(
         )
     elif source_pop is not None and target_pop is None:
         # Population to external target (e.g., muscle)
-        return _connect_population_to_external(
-            source_pop, populations, **connection_kwargs
-        )
+        return _connect_population_to_external(source_pop, populations, **connection_kwargs)
     else:
         # External source to population (e.g., spindle input)
-        return _connect_external_to_population(
-            target_pop, populations, **connection_kwargs
-        )
+        return _connect_external_to_population(target_pop, populations, **connection_kwargs)
 
 
 # Helper functions for print_network_connections
@@ -693,9 +678,7 @@ def _setup_spike_vectors(connection_config: dict, id_vector, spike_vector) -> tu
 
     if id_vector is not None and source_population in id_vector:
         source_id_vector = id_vector[source_population]
-        source_spike_vector = (
-            spike_vector[source_population] if spike_vector is not None else None
-        )
+        source_spike_vector = spike_vector[source_population] if spike_vector is not None else None
 
         return source_id_vector, source_spike_vector
 
@@ -798,10 +781,8 @@ def _create_network(
 
     for connection_name, connection_config in connections_config.items():
         # Extract connection parameters and muscle settings
-        callback_function, muscle_object, custom_threshold = (
-            _extract_connection_parameters(
-                connection_name, connection_config, muscle_callback, muscle
-            )
+        callback_function, muscle_object, custom_threshold = _extract_connection_parameters(
+            connection_name, connection_config, muscle_callback, muscle
         )
 
         # Setup spike recording vectors for this connection's source population
@@ -836,9 +817,7 @@ class Network:
     while maintaining compatibility with existing NEURON-based infrastructure.
     """
 
-    def __init__(
-        self, populations: dict[str, _Pool], spike_recording: Optional[dict] = None
-    ):
+    def __init__(self, populations: dict[str, _Pool], spike_recording: Optional[dict] = None):
         """
         Initialize network with neural populations.
 
@@ -1217,9 +1196,7 @@ class Network:
         """Get list of all connection specifications."""
         return self.connections.copy()
 
-    def get_netcons(
-        self, source: Optional[str] = None, target: Optional[str] = None
-    ) -> list:
+    def get_netcons(self, source: Optional[str] = None, target: Optional[str] = None) -> list:
         """
         Get NEURON NetCon objects with optional filtering by source and target.
 
@@ -1269,14 +1246,9 @@ class Network:
                     f"(p={conn['probability']}, w={conn['weight__μS']}μS)"
                 )
             elif conn["type"] == "muscle":
-                print(
-                    f"  {i + 1}. {conn['source']} → muscle (w={conn['weight__μS']}μS)"
-                )
+                print(f"  {i + 1}. {conn['source']} → muscle (w={conn['weight__μS']}μS)")
             elif conn["type"] == "external":
-                print(
-                    f"  {i + 1}. {conn['source']} → {conn['target']} "
-                    f"(w={conn['weight__μS']}μS)"
-                )
+                print(f"  {i + 1}. {conn['source']} → {conn['target']} (w={conn['weight__μS']}μS)")
             elif conn["type"] == "one_to_one":
                 print(
                     f"  {i + 1}. {conn['source']} → {conn['target']} [1-to-1] "
@@ -1291,9 +1263,7 @@ if __name__ == "__main__":
 
     timestep__ms = 0.05
 
-    dd__pool = DescendingDrive__Pool(
-        n=2, poisson_batch_size=16, timestep__ms=timestep__ms
-    )
+    dd__pool = DescendingDrive__Pool(n=2, poisson_batch_size=16, timestep__ms=timestep__ms)
 
     n_type1 = 2
     n_type2 = 2
@@ -1397,9 +1367,7 @@ if __name__ == "__main__":
     # Add connections with clean API using unit conventions
     network.connect("Ia", "aMN", probability=0.9, weight__μS=0.6)
     network.connect("gII", "aMN", probability=0.9, weight__μS=0.3)
-    network.connect_to_muscle(
-        "aMN", muscle=None, activation_callback=foo, weight__μS=1.0
-    )
+    network.connect_to_muscle("aMN", muscle=None, activation_callback=foo, weight__μS=1.0)
     network.connect_from_external("spindle", "Ia", weight__μS=0.8)
 
     # Print network summary

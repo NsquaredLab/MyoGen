@@ -12,7 +12,7 @@
  	SUFFIX mAHP
  	USEION k READ ek WRITE ik
  	USEION ca READ eca WRITE ica
- 	RANGE n, gkcamax,gcamax,ik,cai,ica,depth,taur
+ 	RANGE n, gkcamax,gcamax,ik,cai,ica,depth,tau
  	GLOBAL fKCa, bKCa, caix
  }
 

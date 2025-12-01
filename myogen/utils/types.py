@@ -3,16 +3,9 @@ from typing import Annotated, TypeAlias
 import numpy as np
 import numpy.typing as npt
 import quantities as pq
-from beartype.typing import Sequence
 from beartype.vale import Is, IsAttr, IsEqual
 from neo.core.analogsignal import AnalogSignal
 from neo.core.block import Block
-from neo.core.spiketrainlist import SpikeTrainList
-
-
-# ============================================================================
-# Quantity Dimension Validators (using IsAttr for better type checker support)
-# ============================================================================
 
 
 def __make_quantity_type(reference_unit: pq.Quantity):
@@ -46,6 +39,8 @@ Quantity__mm2: TypeAlias = __make_quantity_type(pq.mm**2)  # type: ignore
 Quantity__m_per_s: TypeAlias = __make_quantity_type(pq.m / pq.s)  # type: ignore
 Quantity__mm_per_s: TypeAlias = __make_quantity_type(pq.mm / pq.s)  # type: ignore
 Quantity__S_per_m: TypeAlias = __make_quantity_type(pq.S / pq.m)  # type: ignore
+Quantity__m: TypeAlias = __make_quantity_type(pq.m)  # type: ignore
+Quantity__mV: TypeAlias = __make_quantity_type(pq.mV)  # type: ignore
 
 # Type aliases for numpy arrays with specific dimensions
 
@@ -63,9 +58,6 @@ CORTICAL_INPUT__MATRIX = Annotated[
     npt.NDArray[np.floating],
     Is[lambda x: x.ndim == 2],
 ]
-
-# Spike train tensor: (pools, neurons_per_pool, time_points)
-SPIKE_TRAIN__TENSOR = Sequence[SpikeTrainList]
 
 # Spike train neo.Block: (mu_pools - segments; time_points, spike_train - spiketrains)
 SPIKE_TRAIN__Block = Annotated[

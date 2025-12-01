@@ -11,6 +11,7 @@ from myogen.simulator.neuron.network import Network
 from neuron import h
 
 from myogen.utils.decorators import beartowertype
+from myogen.utils.types import Quantity__m_per_s, Quantity__ms
 
 
 @beartowertype
@@ -117,17 +118,13 @@ class SimulationRunner:
                 user_specified = self.model_outputs[model_name]
                 if user_specified is None:
                     # Use defaults for this model
-                    resolved[model_name] = self._DEFAULT_MODEL_OUTPUTS.get(
-                        model_class_name, []
-                    )
+                    resolved[model_name] = self._DEFAULT_MODEL_OUTPUTS.get(model_class_name, [])
                 else:
                     # Use explicit user specification
                     resolved[model_name] = user_specified
             else:
                 # Use smart defaults based on model class
-                resolved[model_name] = self._DEFAULT_MODEL_OUTPUTS.get(
-                    model_class_name, []
-                )
+                resolved[model_name] = self._DEFAULT_MODEL_OUTPUTS.get(model_class_name, [])
 
         return resolved
 
@@ -163,8 +160,8 @@ class SimulationRunner:
 
     def run(
         self,
-        duration__ms: float,
-        timestep__ms: float,
+        duration__ms: Quantity__ms,
+        timestep__ms: Quantity__ms,
         membrane_recording: Optional[dict[str, list[int]]] = None,
     ) -> Block:
         """
@@ -172,9 +169,9 @@ class SimulationRunner:
 
         Parameters
         ----------
-        duration__ms : float
+        duration__ms : Quantity__ms
             Total simulation duration in milliseconds.
-        timestep__ms : float
+        timestep__ms : Quantity__ms
             Integration timestep in milliseconds.
         membrane_recording : Optional[Dict[str, List[int]]], optional
             Populations and cell indices for membrane potential recording.
@@ -244,7 +241,7 @@ class SimulationRunner:
             raise RuntimeError(f"Simulation failed: {str(e)}") from e
 
     def _setup_neuron_environment(
-        self, duration__ms: float, timestep__ms: float
+        self, duration__ms: Quantity__ms, timestep__ms: Quantity__ms
     ) -> None:
         """Configure NEURON global simulation parameters."""
         h.load_file("stdrun.hoc")
@@ -260,7 +257,7 @@ class SimulationRunner:
 
         # Initialize progress bar
         self._progress_bar = tqdm(
-            total=duration__ms,
+            total=duration__ms.magnitude,
             desc="Simulation Progress",
             unit="ms",
         )
@@ -268,9 +265,7 @@ class SimulationRunner:
         # Reset step counter for step callback
         self._step_counter = count(0)
 
-    def _setup_membrane_recording(
-        self, membrane_recording: dict[str, list[int]]
-    ) -> None:
+    def _setup_membrane_recording(self, membrane_recording: dict[str, list[int]]) -> None:
         """Setup membrane potential recording vectors for specified populations."""
         self._trace_vectors = {}
 
@@ -367,7 +362,7 @@ class SimulationRunner:
                         f"does not have attribute '{attr_name}'"
                     )
 
-    def _collect_results(self, duration__ms: float, timestep__ms: float) -> Block:
+    def _collect_results(self, duration__ms: Quantity__ms, timestep__ms: Quantity__ms) -> Block:
         """
         Collect simulation results from network, models, and recordings.
 
@@ -378,22 +373,20 @@ class SimulationRunner:
         for pop_name in self._populations.keys():
             segment = Segment(name=pop_name)
 
-            if self._spike_recording and pop_name in self._spike_recording.get(
-                "spkvec", {}
-            ):
+            if self._spike_recording and pop_name in self._spike_recording.get("spkvec", {}):
                 spike_times = self._spike_recording["spkvec"][pop_name].as_numpy()
                 spike_ids = self._spike_recording["idvec"][pop_name].as_numpy()
-                
+
                 for spike_id in sorted(np.unique(spike_ids)):
                     times_for_id = spike_times[spike_ids == spike_id]
                     if len(times_for_id) > 0:
                         segment.spiketrains.append(
                             SpikeTrain(
                                 name=str(int(spike_id)),
-                                times=times_for_id * pq.ms,
-                                t_start=0.0 * pq.ms,
-                                t_stop=duration__ms * pq.ms,
-                                sampling_rate=1.0 / (timestep__ms * pq.ms),
+                                times=(times_for_id * pq.ms).rescale(pq.s),
+                                t_start=0.0 * pq.s,
+                                t_stop=duration__ms.rescale(pq.s),
+                                sampling_rate=(1.0 / timestep__ms.rescale(pq.s)).rescale(pq.Hz),
                             )
                         )
 
@@ -401,7 +394,7 @@ class SimulationRunner:
                 segment.analogsignals.append(
                     AnalogSignal(
                         name=str(cell_idx),
-                        sampling_period=timestep__ms * pq.ms,
+                        sampling_period=timestep__ms.rescale(pq.s),
                         signal=vector * pq.mV,
                     )
                 )
@@ -419,7 +412,7 @@ class SimulationRunner:
                     segment.analogsignals.append(
                         AnalogSignal(
                             name=attr_name,
-                            sampling_period=timestep__ms * pq.ms,
+                            sampling_period=timestep__ms.rescale(pq.s),
                             signal=attr_value * pq.dimensionless,
                         )
                     )

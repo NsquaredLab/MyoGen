@@ -100,7 +100,7 @@ def main():
 
     descending_drive_pool = DescendingDrive__Pool(
         n=dd_neurons,
-        timestep__ms=TIMESTEP_MS,
+        timestep__ms=TIMESTEP_MS * pq.ms,
         process_type="gamma",
         shape=float(gamma_shape),
     )
@@ -181,8 +181,8 @@ def main():
     # Generate force
     force_model = ForceModel(
         recruitment_thresholds=recruitment_thresholds,
-        recording_frequency__Hz=2048,
-        longest_duration_rise_time__ms=90.0,
+        recording_frequency__Hz=2048 * pq.Hz,
+        longest_duration_rise_time__ms=90.0 * pq.ms,
         contraction_time_range_factor=3,
     )
 

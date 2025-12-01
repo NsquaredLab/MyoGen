@@ -418,24 +418,18 @@ def plot_cv_vs_fr_multi_muscle(all_muscle_data, exp_data):
     legend_elements = []
 
     # Section 1: Muscle types (colored patches)
-    legend_elements.append(
-        Line2D([0], [0], color="none", label="Muscle Types:", marker="")
-    )
+    legend_elements.append(Line2D([0], [0], color="none", label="Muscle Types:", marker=""))
     for muscle in sorted(all_muscle_data.keys()):
         # Extract short muscle name for cleaner legend
         short_muscle = muscle.split("_")[0]
         color = MUSCLE_LEGEND_COLORS.get(short_muscle, "#000000")
-        legend_elements.append(
-            Patch(facecolor=color, edgecolor="black", label=f"  {short_muscle}")
-        )
+        legend_elements.append(Patch(facecolor=color, edgecolor="black", label=f"  {short_muscle}"))
 
     # Add spacing
     legend_elements.append(Line2D([0], [0], color="none", label=" ", marker=""))
 
     # Section 2: Force levels (marker shapes)
-    legend_elements.append(
-        Line2D([0], [0], color="none", label="Force Levels:", marker="")
-    )
+    legend_elements.append(Line2D([0], [0], color="none", label="Force Levels:", marker=""))
     for force in sorted(all_force_levels):
         marker = force_markers[force]
         legend_elements.append(
@@ -487,7 +481,7 @@ def main():
         "--muscles",
         type=str,
         nargs="+",
-        required=True,
+        default=["VLVM"],
         help="Muscle types to compare (e.g., THIRTY TWENTYFIVE TWENTY FIFTEEN TEN FIVE)",
     )
     parser.add_argument(
@@ -520,9 +514,7 @@ def main():
     all_muscle_data = load_multi_muscle_data(args.results_path, muscles)
 
     if not all_muscle_data:
-        print(
-            "\n❌ No simulation data found. Please run extract_isi_and_cv_per_ramps.py first."
-        )
+        print("\n❌ No simulation data found. Please run extract_isi_and_cv_per_ramps.py first.")
         exit(1)
 
     # Load experimental data
@@ -536,10 +528,7 @@ def main():
 
     # Generate descriptive output filename
     muscle_str = "_".join(muscles)
-    output_file = (
-        args.results_path
-        / f"isi_cv_comparison_{muscle_str}.{args.output_format}"
-    )
+    output_file = args.results_path / f"isi_cv_comparison_{muscle_str}.{args.output_format}"
     plt.tight_layout()
 
     # Set quality based on format
@@ -570,18 +559,12 @@ def main():
                 f"    Mean firing rate:     {df['mean_firing_rate_Hz'].mean():.2f} ± "
                 f"{df['mean_firing_rate_Hz'].std():.2f} Hz"
             )
-            print(
-                f"    Mean CV:              {df['CV_ISI'].mean():.3f} ± "
-                f"{df['CV_ISI'].std():.3f}"
-            )
+            print(f"    Mean CV:              {df['CV_ISI'].mean():.3f} ± {df['CV_ISI'].std():.3f}")
             print(
                 f"    FR range:             {df['mean_firing_rate_Hz'].min():.2f} - "
                 f"{df['mean_firing_rate_Hz'].max():.2f} Hz"
             )
-            print(
-                f"    CV range:             {df['CV_ISI'].min():.3f} - "
-                f"{df['CV_ISI'].max():.3f}"
-            )
+            print(f"    CV range:             {df['CV_ISI'].min():.3f} - {df['CV_ISI'].max():.3f}")
 
     print(f"\n{'=' * 80}")
     print(f"Total motor units plotted: {total_motor_units}")

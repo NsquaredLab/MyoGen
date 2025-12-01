@@ -265,13 +265,19 @@ def create_sawtooth_current(
                     amplitudes_list[i].magnitude
                     * np.where(
                         (
-                            (2 * np.pi * frequencies_list[i].magnitude * t / 1000 + phases_list[i].magnitude)
+                            (
+                                2 * np.pi * frequencies_list[i].magnitude * t / 1000
+                                + phases_list[i].magnitude
+                            )
                             / (2 * np.pi)
                         )
                         % 1
                         < widths_list[i],
                         (
-                            (2 * np.pi * frequencies_list[i].magnitude * t / 1000 + phases_list[i].magnitude)
+                            (
+                                2 * np.pi * frequencies_list[i].magnitude * t / 1000
+                                + phases_list[i].magnitude
+                            )
                             / (2 * np.pi)
                         )
                         % 1
@@ -279,7 +285,10 @@ def create_sawtooth_current(
                         (
                             1
                             - (
-                                (2 * np.pi * frequencies_list[i].magnitude * t / 1000 + phases_list[i].magnitude)
+                                (
+                                    2 * np.pi * frequencies_list[i].magnitude * t / 1000
+                                    + phases_list[i].magnitude
+                                )
                                 / (2 * np.pi)
                             )
                             % 1

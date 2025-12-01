@@ -44,17 +44,16 @@ def load_yaml_config(config_path: Union[str, Path]) -> dict[str, Any]:
     --------
     >>> # Load default configuration
     >>> config = load_yaml_config("alpha_mn_default.yaml")
-    >>> 
+    >>>
     >>> # Load custom configuration with absolute path
     >>> config = load_yaml_config("/path/to/my_config.yaml")
-    >>> 
+    >>>
     >>> # Load custom configuration with relative path
     >>> config = load_yaml_config("./configs/custom_alpha_mn.yaml")
     """
     if yaml is None:
         raise ImportError(
-            "PyYAML is required to load configuration files. "
-            "Install it with: pip install pyyaml"
+            "PyYAML is required to load configuration files. Install it with: pip install pyyaml"
         )
 
     config_path = Path(config_path)
@@ -64,7 +63,7 @@ def load_yaml_config(config_path: Union[str, Path]) -> dict[str, Any]:
         # Get the myogen package directory
         myogen_dir = Path(__file__).parent.parent
         config_dir = myogen_dir / "config"
-        
+
         # Try to find the file in the config directory
         potential_path = config_dir / config_path
         if potential_path.exists():
@@ -142,12 +141,11 @@ def merge_configs(base_config: dict, override_config: dict) -> dict:
     {'a': 1, 'b': {'c': 10, 'd': 3}, 'e': 4}
     """
     result = base_config.copy()
-    
+
     for key, value in override_config.items():
         if key in result and isinstance(result[key], dict) and isinstance(value, dict):
             result[key] = merge_configs(result[key], value)
         else:
             result[key] = value
-    
-    return result
 
+    return result

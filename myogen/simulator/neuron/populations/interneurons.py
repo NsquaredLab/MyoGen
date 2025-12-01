@@ -100,7 +100,7 @@ class GII__Pool(_Pool):
         sgMax_kdrRL = np.linspace(*kdrrl_conductance_range, n)
         sgcamax_mAHP = np.linspace(*mahp_ca_conductance_range, n)
         sgkcamax_mAHP = np.linspace(*mahp_k_conductance_range, n)
-        staur_mAHP = np.linspace(*mahp_tau_range, n)
+        stau_mAHP = np.linspace(*mahp_tau_range, n)
         sghbar_gh = np.linspace(*gh_conductance_range, n)
         vcon = np.linspace(*axon_velocities, n)
 
@@ -118,7 +118,7 @@ class GII__Pool(_Pool):
             sgMax_kdrRL_i,
             sgcamax_mAHP_i,
             sgkcamax_mAHP_i,
-            staur_mAHP_i,
+            stau_mAHP_i,
             sghbar_gh_i,
             vcon_i,
         ) in enumerate(
@@ -130,7 +130,7 @@ class GII__Pool(_Pool):
                 sgMax_kdrRL[init:end],
                 sgcamax_mAHP[init:end],
                 sgkcamax_mAHP[init:end],
-                staur_mAHP[init:end],
+                stau_mAHP[init:end],
                 sghbar_gh[init:end],
                 vcon[init:end],
             )
@@ -144,10 +144,11 @@ class GII__Pool(_Pool):
             gII.soma.gMax_kdrRL = sgMax_kdrRL_i
             gII.soma.gcamax_mAHP = sgcamax_mAHP_i
             gII.soma.gkcamax_mAHP = sgkcamax_mAHP_i
-            gII.soma.taur_mAHP = staur_mAHP_i
+            gII.soma.tau_mAHP = stau_mAHP_i
             gII.soma.ghbar_gh = sghbar_gh_i
 
-            gII.create_axon(length__m=axon_length, conduction_velocity__m_per_s=vcon_i)
+            import quantities as pq
+            gII.create_axon(length__m=axon_length * pq.m, conduction_velocity__m_per_s=vcon_i * pq.m / pq.s)
             _cells.append(gII)
 
         super().__init__(cells=_cells, initial_voltage__mV=initial_voltage__mV)
@@ -232,7 +233,7 @@ class GIb__Pool(_Pool):
         sgMax_kdrRL = np.linspace(*kdrrl_conductance_range, n)
         sgcamax_mAHP = np.linspace(*mahp_ca_conductance_range, n)
         sgkcamax_mAHP = np.linspace(*mahp_k_conductance_range, n)
-        staur_mAHP = np.linspace(*mahp_tau_range, n)
+        stau_mAHP = np.linspace(*mahp_tau_range, n)
         sghbar_gh = np.linspace(*gh_conductance_range, n)
         vcon = np.linspace(*axon_velocities, n)
 
@@ -250,7 +251,7 @@ class GIb__Pool(_Pool):
             sgMax_kdrRL_i,
             sgcamax_mAHP_i,
             sgkcamax_mAHP_i,
-            staur_mAHP_i,
+            stau_mAHP_i,
             sghbar_gh_i,
             vcon_i,
         ) in enumerate(
@@ -262,7 +263,7 @@ class GIb__Pool(_Pool):
                 sgMax_kdrRL[init:end],
                 sgcamax_mAHP[init:end],
                 sgkcamax_mAHP[init:end],
-                staur_mAHP[init:end],
+                stau_mAHP[init:end],
                 sghbar_gh[init:end],
                 vcon[init:end],
             )
@@ -276,10 +277,11 @@ class GIb__Pool(_Pool):
             gIb.soma.gMax_kdrRL = sgMax_kdrRL_i
             gIb.soma.gcamax_mAHP = sgcamax_mAHP_i
             gIb.soma.gkcamax_mAHP = sgkcamax_mAHP_i
-            gIb.soma.taur_mAHP = staur_mAHP_i
+            gIb.soma.tau_mAHP = stau_mAHP_i
             gIb.soma.ghbar_gh = sghbar_gh_i
 
-            gIb.create_axon(length__m=axon_length, conduction_velocity__m_per_s=vcon_i)
+            import quantities as pq
+            gIb.create_axon(length__m=axon_length * pq.m, conduction_velocity__m_per_s=vcon_i * pq.m / pq.s)
 
             _cells.append(gIb)
 

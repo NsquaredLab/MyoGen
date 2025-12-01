@@ -62,7 +62,7 @@ class DescendingDrive__Pool(_Pool):
         if process_type.lower() == "gamma":
             _cells = [
                 cells.DD_Gamma(
-                    timestep__ms=timestep__ms.magnitude,
+                    timestep__ms=timestep__ms,
                     shape=shape,
                     pool__ID=i,
                 )
@@ -70,14 +70,9 @@ class DescendingDrive__Pool(_Pool):
             ]
         elif process_type.lower() == "poisson":
             if poisson_batch_size is None:
-                raise ValueError(
-                    "poisson_batch_size is required when process_type='poisson'"
-                )
+                raise ValueError("poisson_batch_size is required when process_type='poisson'")
             self.poisson_batch_size = poisson_batch_size
-            _cells = [
-                cells.DD(N=poisson_batch_size, dt=timestep__ms, pool__ID=i)
-                for i in range(n)
-            ]
+            _cells = [cells.DD(N=poisson_batch_size, dt=timestep__ms, pool__ID=i) for i in range(n)]
         else:
             raise ValueError(
                 f"Invalid process_type '{process_type}'. Must be 'poisson' or 'gamma'."

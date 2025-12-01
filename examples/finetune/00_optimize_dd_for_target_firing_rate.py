@@ -17,7 +17,6 @@ import optuna
 import quantities as pq
 from neo import Segment, SpikeTrain
 from neuron import h
-from scipy.stats import wasserstein_distance
 
 from examples.finetune.helper import (
     calculate_firing_rate_statistics,
@@ -75,13 +74,13 @@ def parse_args():
 SIMULATION_TIME_MS = 3000.0
 TIMESTEP_MS = 0.1
 N_MOTOR_UNITS = 100
-TARGET_FR_MEAN__HZ = (16.31 + 17.33) / 2
-TARGET_FR_STD__HZ = 2.5
+TARGET_FR_MEAN__HZ = 30
+TARGET_FR_STD__HZ = 4.5
 TARGET_CONN_PROB = 0.30
 TARGET_N_DD_NEURONS = 400
 N_TRIALS = 100
-TIMEOUT_SECONDS = 3600
-STUDY_PREFIX = "VLVM_"
+TIMEOUT_SECONDS = 36000
+STUDY_PREFIX = "TEST_"
 N_DD_NEURONS_MIN = 100
 N_DD_NEURONS_MAX = 1000
 GAMMA_SHAPE = 3.0
@@ -140,7 +139,7 @@ def objective(trial):
 
         descending_drive_pool = DescendingDrive__Pool(
             n=dd_neurons,
-            timestep__ms=TIMESTEP_MS,
+            timestep__ms=TIMESTEP_MS * pq.ms,
             process_type="gamma",
             shape=gamma_shape,  # type: ignore
         )
@@ -152,9 +151,7 @@ def objective(trial):
             probability=conn_probability,
             weight__μS=SYNAPTIC_WEIGHT,
         )
-        network.connect_from_external(
-            source="cortical_input", target="DD", weight__μS=1.0
-        )
+        network.connect_from_external(source="cortical_input", target="DD", weight__μS=1.0)
         dd_netcons = network.get_netcons("cortical_input", "DD")
         mn_spike_recorders = []
         for cell in motor_neuron_pool:
@@ -249,7 +246,8 @@ def objective(trial):
 
         return objective_value
 
-    except Exception:
+    except Exception as e:
+        print(f"Trial {trial.number} failed with error: {e}")
         return 1000.0
 
 
@@ -303,9 +301,7 @@ def main():
         load_if_exists=True,
     )
 
-    study.optimize(
-        objective, n_trials=N_TRIALS, timeout=TIMEOUT_SECONDS, show_progress_bar=True
-    )
+    study.optimize(objective, n_trials=N_TRIALS, timeout=TIMEOUT_SECONDS, show_progress_bar=True)
 
     best_trial = study.best_trial
     print(f"\nCompleted {len(study.trials)} trials")
@@ -336,9 +332,7 @@ def main():
         }
         # Add Gfluctdv parameters if enabled
         if ENABLE_GFLUCTDV:
-            base_params["gfluctdv_noise_amplitude"] = t.user_attrs.get(
-                "gfluctdv_noise_amplitude"
-            )
+            base_params["gfluctdv_noise_amplitude"] = t.user_attrs.get("gfluctdv_noise_amplitude")
         return base_params
 
     results = {

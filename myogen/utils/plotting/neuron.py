@@ -97,7 +97,7 @@ def plot_raster_spikes(
 
         for i, spiketrain in enumerate(segment.spiketrains):
             for spike_time in spiketrain.times:
-                spike_times.append(float(spike_time.magnitude))
+                spike_times.append(float(spike_time.rescale("ms").magnitude))
                 spike_ids.append(i)
 
         if spike_times:
@@ -106,9 +106,7 @@ def plot_raster_spikes(
 
             # Apply time range filter if specified
             if time_range is not None:
-                time_mask = (spike_times >= time_range[0]) & (
-                    spike_times <= time_range[1]
-                )
+                time_mask = (spike_times >= time_range[0]) & (spike_times <= time_range[1])
                 spike_times = spike_times[time_mask]
                 spike_ids = spike_ids[time_mask]
 
@@ -207,9 +205,7 @@ def plot_membrane_potentials(
                 break
 
         if segment is None or not segment.analogsignals:
-            warnings.warn(
-                f"No membrane potential data found for population '{population}'"
-            )
+            warnings.warn(f"No membrane potential data found for population '{population}'")
             if apply_default_formatting:
                 ax.set_xlabel(xlabel if pop_idx == len(populations) - 1 else "")
                 ax.set_ylabel(ylabel)
@@ -412,9 +408,7 @@ def plot_muscle_dynamics(
         ax = ax_list[plot_idx]
         for act_type in include_activations:
             if act_type in signal_data["act"]:
-                ax.plot(
-                    plot_time, signal_data["act"][act_type], label=act_type, **kwargs
-                )
+                ax.plot(plot_time, signal_data["act"][act_type], label=act_type, **kwargs)
 
         if apply_default_formatting:
             ax.set_ylabel("Activation [a.u.]")
@@ -563,9 +557,7 @@ def plot_antagonist_muscle_comparison(
         if "muscle_force" in flexor_data:
             ax.plot(plot_time, flexor_data["muscle_force"], label="Flexor", **kwargs)
         if "muscle_force" in extensor_data:
-            ax.plot(
-                plot_time, extensor_data["muscle_force"], label="Extensor", **kwargs
-            )
+            ax.plot(plot_time, extensor_data["muscle_force"], label="Extensor", **kwargs)
 
         if apply_default_formatting:
             ax.set_ylabel("Force [F0]")
@@ -772,9 +764,7 @@ def plot_spindle_dynamics(
         ax = ax_list[plot_idx]
         for act_type in include_activations:
             if act_type in spindle_data["act"]:
-                ax.plot(
-                    plot_time, spindle_data["act"][act_type], label=act_type, **kwargs
-                )
+                ax.plot(plot_time, spindle_data["act"][act_type], label=act_type, **kwargs)
 
         if apply_default_formatting:
             ax.set_ylabel("Activation [a.u.]")
@@ -817,9 +807,7 @@ def plot_spindle_dynamics(
         ax = ax_list[plot_idx]
         for aff_type in include_afferents:
             if aff_type in spindle_data["aff"]:
-                ax.plot(
-                    plot_time, spindle_data["aff"][aff_type], label=aff_type, **kwargs
-                )
+                ax.plot(plot_time, spindle_data["aff"][aff_type], label=aff_type, **kwargs)
 
         if apply_default_formatting:
             ax.set_ylabel("Firing Rate [Hz]")

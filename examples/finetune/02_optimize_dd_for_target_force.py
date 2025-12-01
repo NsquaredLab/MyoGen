@@ -144,7 +144,7 @@ def run_simulation_and_compute_force(
     # Create descending drive pool (using Gamma distribution)
     descending_drive_pool = DescendingDrive__Pool(
         n=dd_neurons,
-        timestep__ms=TIMESTEP_MS,
+        timestep__ms=TIMESTEP_MS * pq.ms,
         process_type="gamma",
         shape=gamma_shape,
     )
@@ -248,8 +248,8 @@ def run_simulation_and_compute_force(
     # Create force model
     force_model = ForceModel(
         recruitment_thresholds=recruitment_thresholds,
-        recording_frequency__Hz=RECORDING_FREQUENCY__HZ,
-        longest_duration_rise_time__ms=LONGEST_DURATION_RISE_TIME__MS,
+        recording_frequency__Hz=RECORDING_FREQUENCY__HZ * pq.Hz,
+        longest_duration_rise_time__ms=LONGEST_DURATION_RISE_TIME__MS * pq.ms,
         contraction_time_range_factor=CONTRACTION_TIME_RANGE,
     )
 

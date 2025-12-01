@@ -22,9 +22,7 @@ def _exp_decrescent(x, a, b, c):
 
 
 @beartowertype
-def _exp_interp(
-    first: float, last: float, n: int, curv: float = 0.33, negative: bool = False
-):
+def _exp_interp(first: float, last: float, n: int, curv: float = 0.33, negative: bool = False):
     assert curv <= 0.5
     c1 = first <= last
     if negative:

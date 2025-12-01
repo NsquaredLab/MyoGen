@@ -12,6 +12,7 @@ import numpy as np
 
 from myogen.simulator.neuron._cython._spindle import _Spindle__Cython
 from myogen.utils.decorators import beartowertype
+from myogen.utils.types import Quantity__ms
 
 
 @beartowertype
@@ -28,9 +29,9 @@ class SpindleModel:
 
     Parameters
     ----------
-    simulation_time__ms : float
+    simulation_time__ms : Quantity__ms
         Total simulation time in milliseconds
-    time_step__ms : float
+    time_step__ms : Quantity__ms
         Integration time step in milliseconds
     spindle_parameters : Dict[str, Any]
         Dictionary containing spindle model parameters
@@ -38,8 +39,8 @@ class SpindleModel:
 
     def __init__(
         self,
-        simulation_time__ms: float,
-        time_step__ms: float,
+        simulation_time__ms: Quantity__ms,
+        time_step__ms: Quantity__ms,
         spindle_parameters: Dict[str, Any],
     ):
         self.simulation_time__ms = simulation_time__ms
@@ -76,8 +77,8 @@ class SpindleModel:
         expected by the Spindle cython constructor.
         """
         return _Spindle__Cython(
-            tstop=self._simulation_time__ms,
-            dt=self._time_step__ms,
+            tstop=self._simulation_time__ms.magnitude,
+            dt=self._time_step__ms.magnitude,
             spinD=self._spindle_parameters,
         )
 
@@ -155,11 +156,7 @@ class SpindleModel:
 
     def __repr__(self) -> str:
         """String representation of the spindle model."""
-        return (
-            f"SpindleModel("
-            f"t_sim={self.simulation_time__ms}ms, "
-            f"dt={self.time_step__ms}ms)"
-        )
+        return f"SpindleModel(t_sim={self.simulation_time__ms}ms, dt={self.time_step__ms}ms)"
 
     @staticmethod
     def create_default_spindle_parameters(

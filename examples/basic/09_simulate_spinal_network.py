@@ -46,6 +46,8 @@ handle force feedback, both contributing to reflex modulation.
 creates the closed-loop system where neural activity affects movement, which in turn affects sensory feedback.
 """
 
+# %%
+
 ##############################################################################
 # Import Libraries
 # ----------------
@@ -85,6 +87,8 @@ from myogen.utils.plotting import (
     plot_spindle_dynamics,
 )
 
+import quantities as pq
+
 ##############################################################################
 # Load NEURON Mechanisms and Dependencies
 # ---------------------------------------
@@ -96,16 +100,11 @@ from myogen.utils.plotting import (
 load_nmodl_mechanisms()
 
 # Setup results directory
-save_path = Path("./results")
+save_path = Path(r"/home/oj98yqyk/code/simulators/MyoGen/examples/basic/results")
 save_path.mkdir(exist_ok=True)
 
-# Load dependencies from previous examples
-try:
-    recruitment_thresholds = joblib.load(save_path / "thresholds.pkl")
-    print("✓ Loaded recruitment thresholds from example 00")
-except FileNotFoundError:
-    print("⚠ Run example 00 first to generate recruitment thresholds")
-    raise
+recruitment_thresholds = joblib.load(save_path / "thresholds.pkl")
+print("✓ Loaded recruitment thresholds from example 00")
 
 ##############################################################################
 # Define Simulation Parameters
@@ -116,14 +115,14 @@ except FileNotFoundError:
 # mechanical system.
 
 # Temporal parameters - high resolution for accurate neural integration
-dt = 0.005  # ms - Integration timestep
+dt = 0.005 * pq.ms  # Integration timestep with units
 tstop = 2e3  # ms - Total simulation duration
-time = np.arange(0, tstop, dt)
+time = np.arange(0, tstop, dt.magnitude)  # Time vector (use magnitude for numpy)
 
 print("Simulation parameters:")
-print(f"  - Duration: {tstop} ms")
-print(f"  - Timestep: {dt} ms")
-print(f"  - Time samples: {len(time)}")
+print(f"\tDuration: {tstop} ms")
+print(f"\tTimestep: {dt} ms")
+print(f"\tTime samples: {len(time)}")
 
 ##############################################################################
 # Define Neural Population Sizes
@@ -189,12 +188,8 @@ gDynDrive = 70  # Hz - Dynamic fusimotor drive (affects velocity sensitivity)
 gStatDrive = 70  # Hz - Static fusimotor drive (affects length sensitivity)
 
 # Add physiological variability to fusimotor drives
-gDyn = np.interp(time, [0, tstop], [gDynDrive, gDynDrive]) + np.random.normal(
-    0, 3, len(time)
-)
-gStat = np.interp(time, [0, tstop], [gStatDrive, gStatDrive]) + np.random.normal(
-    0, 3, len(time)
-)
+gDyn = np.interp(time, [0, tstop], [gDynDrive, gDynDrive]) + np.random.normal(0, 3, len(time))
+gStat = np.interp(time, [0, tstop], [gStatDrive, gStatDrive]) + np.random.normal(0, 3, len(time))
 
 # Package fusimotor drives for the simulation
 gMN = {
@@ -239,16 +234,16 @@ print(f"  - Initial angle: {artAng[0]}°")
 
 # Create separate motor neuron pools for antagonist muscles
 # Motor neuron pools (default spike_threshold__mV=50.0 for proper spike detection)
-aMN_flex = AlphaMN__Pool(n=naMN)  # Flexor α-motoneurons
-aMN_ext = AlphaMN__Pool(n=naMN)  # Extensor α-motoneurons
+aMN_flex = AlphaMN__Pool(
+    recruitment_thresholds__array=recruitment_thresholds
+)  # Flexor α-motoneurons
+aMN_ext = AlphaMN__Pool(
+    recruitment_thresholds__array=recruitment_thresholds
+)  # Extensor α-motoneurons
 
 # Create separate descending drive populations for proper antagonist control
-DD_flex = DescendingDrive__Pool(
-    n=nDD // 2, poisson_batch_size=DDorder, timestep__ms=dt
-)
-DD_ext = DescendingDrive__Pool(
-    n=nDD // 2, poisson_batch_size=DDorder, timestep__ms=dt
-)
+DD_flex = DescendingDrive__Pool(n=nDD // 2, poisson_batch_size=DDorder, timestep__ms=dt)
+DD_ext = DescendingDrive__Pool(n=nDD // 2, poisson_batch_size=DDorder, timestep__ms=dt)
 
 # Create afferent populations (shared between muscles for this example)
 Ia = AffIa__Pool(n=nIa, timestep__ms=dt)  # Primary spindle afferents
@@ -272,14 +267,14 @@ print(
 
 # Golgi Tendon Organ - monitors muscle force/tension
 gto = GolgiTendonOrganModel(
-    simulation_time__ms=tstop,
+    simulation_time__ms=tstop * pq.ms,
     time_step__ms=dt,
     gto_parameters=GolgiTendonOrganModel.create_default_gto_parameters(),
 )
 
 # Muscle Spindle - monitors muscle length and velocity
 spin = SpindleModel(
-    simulation_time__ms=tstop,
+    simulation_time__ms=tstop * pq.ms,
     time_step__ms=dt,
     spindle_parameters=SpindleModel.create_default_spindle_parameters(),
 )
@@ -296,7 +291,7 @@ print("✓ Initialized proprioceptive models (spindle, GTO)")
 
 # Flexor muscle model
 hill_flexor = HillModel(
-    simulation_time__ms=tstop,
+    simulation_time__ms=tstop * pq.ms,
     time_step__ms=dt,
     muscle_parameters=HillModel.create_default_muscle_parameters(),
     n_motor_units_type1=nType1,
@@ -307,7 +302,7 @@ hill_flexor = HillModel(
 
 # Extensor muscle model
 hill_extensor = HillModel(
-    simulation_time__ms=tstop,
+    simulation_time__ms=tstop * pq.ms,
     time_step__ms=dt,
     muscle_parameters=HillModel.create_default_muscle_parameters(),
     n_motor_units_type1=nType1,
@@ -389,9 +384,8 @@ def eachStep(
 
     # CLOSED-LOOP DYNAMICS: Update joint angle based on net muscle torque
     new_angle, _ = joint_dyn.integrate(
-        torque__Nm=muscle_flex.signed_muscle_torque[i]
-        + muscle_ext.signed_muscle_torque[i],
-        dt__s=dt * 0.001,
+        torque__Nm=muscle_flex.signed_muscle_torque[i] + muscle_ext.signed_muscle_torque[i],
+        dt__s=float(dt.rescale(pq.s).magnitude),
     )
     # Update joint angle array for next timestep
     if i < len(artAng) - 1:
@@ -414,7 +408,8 @@ def eachStep(
     for Ia in popD["Ia"]:
         if Iay >= Ia.RT:
             if Ia.integrate(Iay):
-                spike_time = h.t + Ia.axon_delay__ms
+                # Ensure h.t is converted to a quantities object with units of ms
+                spike_time = h.t + float(Ia.axon_delay__ms)
                 if spike_time < tstop:
                     ncD["Spindle->Ia"][Ia.pool__ID].event(spike_time)
 
@@ -422,7 +417,7 @@ def eachStep(
     for II in popD["II"]:
         if IIy >= II.RT:
             if II.integrate(IIy):
-                spike_time = h.t + II.axon_delay__ms
+                spike_time = h.t + float(II.axon_delay__ms)
                 if spike_time < tstop:
                     ncD["Spindle->II"][II.pool__ID].event(spike_time)
                     ii_spikes += 1
@@ -431,7 +426,7 @@ def eachStep(
     for Ib in popD["Ib"]:
         if Iby >= Ib.RT:
             if Ib.integrate(Iby):
-                spike_time = h.t + Ib.axon_delay__ms
+                spike_time = h.t + float(Ib.axon_delay__ms)
                 if spike_time < tstop:
                     ncD["GTO->Ib"][Ib.pool__ID].event(spike_time)
                     ib_spikes += 1
@@ -567,10 +562,10 @@ def step_callback(step_counter):
 #
 # Execute the complete simulation with all integrated components.
 
-print("\n🚀 Starting spinal network simulation...")
-print(f"   Duration: {tstop} ms")
-print(f"   Timestep: {dt} ms")
-print(f"   Populations: {len(network.populations)}")
+print("\nStarting spinal network simulation...")
+print(f"\tDuration: {tstop} ms")
+print(f"\tTimestep: {dt} ms")
+print(f"\tPopulations: {len(network.populations)}")
 
 runner = SimulationRunner(
     network=network,
@@ -581,7 +576,7 @@ runner = SimulationRunner(
 # Motor neuron spike recording thresholds are now fixed in the Network class
 
 results = runner.run(
-    duration__ms=tstop,
+    duration__ms=tstop * pq.ms,
     timestep__ms=dt,
     membrane_recording={
         "aMN_flex": [0, 5, 10, 15, 20, 30, 40, 50, 60, 70],
@@ -589,12 +584,12 @@ results = runner.run(
     },
 )
 
-print(f"✓ Simulation completed successfully!")
+print("Simulation completed successfully!")
 
 # Save simulation results
 joblib.dump(results, save_path / "spinal_network_results.pkl")
 joblib.dump(artAng, save_path / "joint_angles.pkl")
-print(f"✓ Results saved to {save_path}")
+print("Results saved to {save_path}")
 
 ##############################################################################
 # Comprehensive Results Visualization
@@ -603,7 +598,7 @@ print(f"✓ Results saved to {save_path}")
 # Create a series of plots that tell the complete story of spinal network
 # function, from neural activity to mechanical output.
 
-print(f"\n📊 Generating comprehensive visualizations...")
+print("\nGenerating comprehensive visualizations...")
 
 # 1. NEURAL ACTIVITY: Raster plot showing all population spike patterns
 populations_list = [
@@ -727,5 +722,3 @@ plot_gto_dynamics(
 plt.tight_layout()
 plt.savefig(save_path / "gto_dynamics.png", dpi=150, bbox_inches="tight")
 plt.show()
-
-print(f"✓ All visualizations completed and saved!")

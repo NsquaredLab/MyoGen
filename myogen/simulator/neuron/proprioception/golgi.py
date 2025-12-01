@@ -12,6 +12,7 @@ import numpy as np
 
 from myogen.simulator.neuron._cython._gto import _GolgiTendonOrgan__Cython
 from myogen.utils.decorators import beartowertype
+from myogen.utils.types import Quantity__ms
 
 
 @beartowertype
@@ -33,9 +34,9 @@ class GolgiTendonOrganModel:
 
     Parameters
     ----------
-    simulation_time__ms : float
+    simulation_time__ms : Quantity__ms
         Total simulation time in milliseconds
-    time_step__ms : float
+    time_step__ms : Quantity__ms
         Integration time step in milliseconds
     gto_parameters : Dict[str, Any]
         Dictionary containing GTO model parameters
@@ -43,8 +44,8 @@ class GolgiTendonOrganModel:
 
     def __init__(
         self,
-        simulation_time__ms: float,
-        time_step__ms: float,
+        simulation_time__ms: Quantity__ms,
+        time_step__ms: Quantity__ms,
         gto_parameters: Dict[str, Any],
     ):
         # Store original parameters (immutable)
@@ -83,8 +84,8 @@ class GolgiTendonOrganModel:
         """
         return _GolgiTendonOrgan__Cython(
             gtoD=self._gto_parameters,
-            tstop__ms=self._simulation_time__ms,
-            dt__ms=self._time_step__ms,
+            tstop__ms=self._simulation_time__ms.magnitude,
+            dt__ms=self._time_step__ms.magnitude,
         )
 
     def integrate(self, muscle_force__N: float) -> float:
@@ -111,9 +112,7 @@ class GolgiTendonOrganModel:
     def __repr__(self) -> str:
         """String representation of the GTO model."""
         return (
-            f"GolgiTendonOrganModel("
-            f"t_sim={self.simulation_time__ms}ms, "
-            f"dt={self.time_step__ms}ms)"
+            f"GolgiTendonOrganModel(t_sim={self.simulation_time__ms}ms, dt={self.time_step__ms}ms)"
         )
 
     @staticmethod
@@ -203,6 +202,4 @@ class GolgiTendonOrganModel:
             return create_default_gto_parameters()
 
         else:
-            raise ValueError(
-                f"Unknown muscle type: {muscle_type}. Use 'FDI', 'Sol', or 'generic'."
-            )
+            raise ValueError(f"Unknown muscle type: {muscle_type}. Use 'FDI', 'Sol', or 'generic'.")

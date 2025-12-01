@@ -12,6 +12,7 @@ import numpy as np
 
 from myogen.simulator.neuron._cython._hill import _HillMuscleModel__Cython
 from myogen.utils.decorators import beartowertype
+from myogen.utils.types import Quantity__ms
 
 
 @beartowertype
@@ -48,8 +49,8 @@ class HillModel:
     @beartowertype
     def __init__(
         self,
-        simulation_time__ms: float,
-        time_step__ms: float,
+        simulation_time__ms: Quantity__ms,
+        time_step__ms: Quantity__ms,
         muscle_parameters: Dict[str, Any],
         n_motor_units_type1: int,
         n_motor_units_type2: int,
@@ -101,12 +102,9 @@ class HillModel:
             raise ValueError("n_motor_units_type2 must be non-negative")
 
         if self._initial_muscle_length__L0 != -1.0 and (
-            self._initial_muscle_length__L0 < 0.7
-            or self._initial_muscle_length__L0 > 1.3
+            self._initial_muscle_length__L0 < 0.7 or self._initial_muscle_length__L0 > 1.3
         ):
-            raise ValueError(
-                "initial_muscle_length__L0 must be -1 or between 0.7 and 1.3"
-            )
+            raise ValueError("initial_muscle_length__L0 must be -1 or between 0.7 and 1.3")
 
         if self._muscle_role not in ["flexor", "extensor"]:
             raise ValueError("muscle_role must be 'flexor' or 'extensor'")

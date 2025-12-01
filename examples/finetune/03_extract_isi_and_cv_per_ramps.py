@@ -35,7 +35,7 @@ from neuron import h
 from tqdm import tqdm
 
 from examples.finetune.helper import calculate_firing_rate_statistics
-from myogen import RANDOM_GENERATOR, set_random_seed
+from myogen import set_random_seed
 from myogen.simulator.core.physiological_distribution import RecruitmentThresholds
 from myogen.simulator.neuron import Network
 from myogen.simulator.neuron.populations import AlphaMN__Pool, DescendingDrive__Pool
@@ -49,9 +49,7 @@ parser = argparse.ArgumentParser(description="Extract ISI/CV data from spike tra
 parser.add_argument("--muscle", type=str, default="VLVM", help="Muscle type")
 parser.add_argument("--mvc-level", type=int, default=30, help="MVC level %%")
 parser.add_argument("--study-prefix", type=str, default="VLVM_", help="Study prefix")
-parser.add_argument(
-    "--use-baseline", action="store_true", help="Use baseline optimization"
-)
+parser.add_argument("--use-baseline", action="store_true", help="Use baseline optimization")
 parser.add_argument("--seed", type=int, default=42, help="Random seed")
 
 args = parser.parse_args()
@@ -99,9 +97,7 @@ else:
     # List available force optimization files
     if OPTIMIZATION_RESULTS_DIR.exists():
         available_files = sorted(
-            OPTIMIZATION_RESULTS_DIR.glob(
-                f"{STUDY_PREFIX}dd_optimized_params_force_*pct.json"
-            )
+            OPTIMIZATION_RESULTS_DIR.glob(f"{STUDY_PREFIX}dd_optimized_params_force_*pct.json")
         )
         if available_files:
             print("Available force optimization results:")
@@ -149,9 +145,7 @@ print(f"  DD neurons:       {N_DD_NEURONS}")
 print(f"  Conn probability: {DD_CONNECTION_PROBABILITY:.3f}")
 print(f"  Synaptic weight:  {DD_SYNAPTIC_WEIGHT:.4f} μS")
 print(f"  DD drive level:   {DD_PEAK__Hz:.2f} Hz")
-print(
-    f"  Gamma shape:      {DD_SHAPE_PARAMETER:.2f} (CV={1 / DD_SHAPE_PARAMETER**0.5:.3f})"
-)
+print(f"  Gamma shape:      {DD_SHAPE_PARAMETER:.2f} (CV={1 / DD_SHAPE_PARAMETER**0.5:.3f})")
 if GFLUCTDV_ENABLED:
     print(f"  Gfluctdv:         ENABLED (noise={GFLUCTDV_NOISE_AMPLITUDE:.2e} S/cm²)")
 
@@ -214,7 +208,7 @@ h.secondorder = 2  # Crank-Nicolson method (second-order accurate)
 # Create descending drive pool using Gamma process for physiologically realistic variability
 descending_drive_pool = DescendingDrive__Pool(
     n=N_DD_NEURONS,
-    timestep__ms=timestep,
+    timestep__ms=timestep * pq.ms,
     process_type="gamma",
     shape=DD_SHAPE_PARAMETER,
 )
@@ -297,23 +291,17 @@ sinusoidal_drive = AnalogSignal(
 )
 
 joblib.dump(sinusoidal_drive, save_path / f"{STUDY_PREFIX}trapezoid_drive_pattern.pkl")
+print(f"\nTrapezoidal drive pattern (using optimized DD drive of {dd_peak__Hz:.2f} Hz):")
+print(f"\tRest before: 0 - {trapezoid_start} ms ({dd_baseline__Hz} Hz)")
+print(f"\tRamp up: {trapezoid_start} - {ramp_up_end} ms ({dd_baseline__Hz} → {dd_peak__Hz:.2f} Hz)")
 print(
-    f"\n📊 Trapezoidal drive pattern (using optimized DD drive of {dd_peak__Hz:.2f} Hz):"
+    f"\tPlateau: {ramp_up_end} - {plateau_end} ms ({dd_peak__Hz:.2f} Hz, center at {(ramp_up_end + plateau_end) / 2:.0f}ms)"
 )
-print(f"  Rest before: 0 - {trapezoid_start} ms ({dd_baseline__Hz} Hz)")
-print(
-    f"  Ramp up: {trapezoid_start} - {ramp_up_end} ms ({dd_baseline__Hz} → {dd_peak__Hz:.2f} Hz)"
-)
-print(
-    f"  Plateau: {ramp_up_end} - {plateau_end} ms ({dd_peak__Hz:.2f} Hz, center at {(ramp_up_end + plateau_end) / 2:.0f}ms)"
-)
-print(
-    f"  Ramp down: {plateau_end} - {ramp_down_end} ms ({dd_peak__Hz:.2f} → {dd_baseline__Hz} Hz)"
-)
-print(f"  Rest after: {ramp_down_end} - {simulation_time} ms ({dd_baseline__Hz} Hz)")
+print(f"\tRamp down: {plateau_end} - {ramp_down_end} ms ({dd_peak__Hz:.2f} → {dd_baseline__Hz} Hz)")
+print(f"\tRest after: {ramp_down_end} - {simulation_time} ms ({dd_baseline__Hz} Hz)")
 print("\nUsing optimized DD parameters:")
-print(f"  Gamma shape: {DD_SHAPE_PARAMETER:.2f} (CV={1 / DD_SHAPE_PARAMETER**0.5:.3f})")
-print(f"  Connection probability: {DD_CONNECTION_PROBABILITY:.3f}")
+print(f"\tGamma shape: {DD_SHAPE_PARAMETER:.2f} (CV={1 / DD_SHAPE_PARAMETER**0.5:.3f})")
+print(f"\tConnection probability: {DD_CONNECTION_PROBABILITY:.3f}")
 
 ##############################################################################
 # Create Network and Connections
@@ -379,8 +367,7 @@ h.tstop = simulation_time
 
 # Initialize voltages for all pools
 for section, voltage in itertools.chain.from_iterable(
-    zip(*pool.get_initialization_data())
-    for pool in [motor_neuron_pool, descending_drive_pool]
+    zip(*pool.get_initialization_data()) for pool in [motor_neuron_pool, descending_drive_pool]
 ):
     section.v = voltage
 
@@ -450,9 +437,7 @@ mn_segment.spiketrains = [
 # We only save the motor neuron spikes  segment
 spike_train_block.segments.append(mn_segment)
 
-joblib.dump(
-    spike_train_block, save_path / f"{STUDY_PREFIX}sinusoidal_dd_spike_trains.pkl"
-)
+joblib.dump(spike_train_block, save_path / f"{STUDY_PREFIX}sinusoidal_dd_spike_trains.pkl")
 
 ##############################################################################
 # Calculate Firing Rate Statistics
@@ -482,22 +467,14 @@ mn_firing_rates = np.array(
 print("Descending Drive neurons:")
 print(f"\tActive neurons: {len(dd_firing_rates)}/{descending_drive_pool.n}")
 if len(dd_firing_rates) > 0:
-    print(
-        f"\tMean firing rate: {np.mean(dd_firing_rates):.1f} ± {np.std(dd_firing_rates):.1f} Hz"
-    )
-    print(
-        f"\tRate range: {np.min(dd_firing_rates):.1f} - {np.max(dd_firing_rates):.1f} Hz"
-    )
+    print(f"\tMean firing rate: {np.mean(dd_firing_rates):.1f} ± {np.std(dd_firing_rates):.1f} Hz")
+    print(f"\tRate range: {np.min(dd_firing_rates):.1f} - {np.max(dd_firing_rates):.1f} Hz")
 
 print("Motor neurons:")
 print(f"\tActive neurons: {len(mn_firing_rates)}/{motor_neuron_pool.n}")
 if len(mn_firing_rates) > 0:
-    print(
-        f"\tMean firing rate: {np.mean(mn_firing_rates):.1f} ± {np.std(mn_firing_rates):.1f} Hz"
-    )
-    print(
-        f"\tRate range: {np.min(mn_firing_rates):.1f} - {np.max(mn_firing_rates):.1f} Hz"
-    )
+    print(f"\tMean firing rate: {np.mean(mn_firing_rates):.1f} ± {np.std(mn_firing_rates):.1f} Hz")
+    print(f"\tRate range: {np.min(mn_firing_rates):.1f} - {np.max(mn_firing_rates):.1f} Hz")
 
 ##############################################################################
 # Calculate and Save ISI/CV Statistics
@@ -521,12 +498,11 @@ isi_cv_df = calculate_firing_rate_statistics(
 output_file = save_path / f"{STUDY_PREFIX}isi_cv_data_{MUSCLE_TYPE}_{MVC_LEVEL}.csv"
 isi_cv_df.to_csv(output_file, index=False)
 
-print(f"✅ Saved ISI/CV data to: {output_file}")
-print("   (Generated using optimized DD parameters)")
-print(f"   Total motor units analyzed: {len(isi_cv_df)}")
+print(f"Saved ISI/CV data to: {output_file}")
+print(f"\tTotal motor units analyzed: {len(isi_cv_df)}")
 if len(isi_cv_df) > 0:
-    print(f"   Mean firing rate: {isi_cv_df['mean_firing_rate_Hz'].mean():.2f} Hz")
-    print(f"   Mean CV: {isi_cv_df['CV_ISI'].mean():.3f}")
+    print(f"\tMean firing rate: {isi_cv_df['mean_firing_rate_Hz'].mean():.2f} Hz")
+    print(f"\tMean CV: {isi_cv_df['CV_ISI'].mean():.3f}")
 
 ##############################################################################
 # Minimal Visualization
@@ -536,7 +512,7 @@ if len(isi_cv_df) > 0:
 # 1. Drive input pattern
 # 2. Motor neuron raster plot
 
-print("\n📊 Creating verification plots...")
+print("\nCreating verification plots...")
 
 # Create figure with 2 subplots
 fig, axes = plt.subplots(2, 1, figsize=(12, 8), sharex=True)
@@ -559,16 +535,12 @@ active_mn_count = 0
 for i, (spiketrain, color) in enumerate(zip(mn_segment.spiketrains, mn_colors)):
     if len(spiketrain) > 0:
         spike_times = spiketrain.rescale(pq.s).magnitude
-        axes[1].scatter(
-            spike_times, [i] * len(spike_times), c=[color], s=1.0, alpha=0.8
-        )
+        axes[1].scatter(spike_times, [i] * len(spike_times), c=[color], s=1.0, alpha=0.8)
         active_mn_count += 1
 
 axes[1].set_xlabel("Time (s)")
 axes[1].set_ylabel("Motor Neuron ID\n(Recruitment Order)")
-axes[1].set_title(
-    f"Motor Neuron Activity (n={active_mn_count}/{motor_neuron_pool.n} active)"
-)
+axes[1].set_title(f"Motor Neuron Activity (n={active_mn_count}/{motor_neuron_pool.n} active)")
 axes[1].set_ylim(-1, motor_neuron_pool.n)
 axes[1].grid(True, alpha=0.3)
 
@@ -590,7 +562,7 @@ plt.close(fig)
 # Compute smoothed instantaneous firing rates for each motor neuron
 # using a Hanning window (similar to 01_simulate_spike_trains_descending_drive.py)
 
-print("\n📊 Computing smoothed discharge rates per neuron...")
+print("\nComputing smoothed discharge rates per neuron...")
 
 # Parameters
 window_ms = 400  # 400 ms Hanning window
@@ -617,7 +589,7 @@ for i, spiketrain in enumerate(mn_segment.spiketrains):
         mn_instantaneous_rates.append(rate)
         active_neuron_ids.append(i)
 
-print(f"  Computed rates for {len(active_neuron_ids)} active motor neurons")
+print(f"\tComputed rates for {len(active_neuron_ids)} active motor neurons")
 
 # Create figure for discharge rate visualizations
 fig2, axes2 = plt.subplots(2, 1, figsize=(15, 10), sharex=True)
@@ -685,7 +657,5 @@ plt.savefig(
 plt.close(fig2)
 
 print(
-    f"✅ Saved discharge rate plot to: {save_path / f'{STUDY_PREFIX}discharge_rates_{MUSCLE_TYPE}_{MVC_LEVEL}.png'}"
+    f"Saved discharge rate plot to: {save_path / f'{STUDY_PREFIX}discharge_rates_{MUSCLE_TYPE}_{MVC_LEVEL}.png'}"
 )
-
-print("\n✅ Simulation complete! ISI/CV data extracted and saved.")

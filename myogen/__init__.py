@@ -61,7 +61,7 @@ def _setup_myogen(quiet: bool = False) -> bool:
                 Extension(
                     "myogen.simulator.neuron._cython._hill",
                     ["myogen/simulator/neuron/_cython/_hill.pyx"],
-                    extra_compile_args=["-O3", "-march=native", "-ffast-math"],
+                    extra_compile_args=["-O3", "-march=native"],
                 ),
                 Extension(
                     "myogen.simulator.neuron._cython._gto",
@@ -97,7 +97,7 @@ def _setup_myogen(quiet: bool = False) -> bool:
                 ),
             ],
             compiler_directives={"embedsignature": True},
-            nthreads=-2,
+            nthreads=4,
         ),
         script_args=["build_ext", "--inplace"],
         include_dirs=[np.get_include()],

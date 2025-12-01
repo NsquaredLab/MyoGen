@@ -14,7 +14,6 @@ from myogen.utils.types import (
     RECRUITMENT_THRESHOLDS__ARRAY,
     FORCE__AnalogSignal,
     Quantity__Hz,
-    Quantity__mm,
     Quantity__ms,
     SPIKE_TRAIN__Block,
 )
@@ -148,7 +147,9 @@ class ForceModel:
         )  # referred in [1] as RP
 
         self._longest_duration_rise_time__samples = float(
-            (self._longest_duration_rise_time__ms.rescale('s') * self._recording_frequency__Hz).magnitude
+            (
+                self._longest_duration_rise_time__ms.rescale("s") * self._recording_frequency__Hz
+            ).magnitude
         )  # referred in [1] as T_L (see eq. 14)
 
         # Simulation results - stored privately, accessed via properties
@@ -328,7 +329,7 @@ class ForceModel:
 
         # Calculate target length for resampling to recording frequency
         spiketrain_timestep__s = spiketrain_timestep__ms / 1000.0
-        force_timestep__s = float((1.0 / self._recording_frequency__Hz).rescale('s').magnitude)
+        force_timestep__s = float((1.0 / self._recording_frequency__Hz).rescale("s").magnitude)
 
         # IPI signal generation out of spikes signal (for gain nonlinearity)
         _, ipi = sawtooth2ipi(

@@ -141,9 +141,7 @@ class GridAnalogSignal(AnalogSignal):
                         row_indices = np.arange(rows)
                     else:
                         row_indices = np.arange(*row_idx.indices(rows))
-                elif hasattr(row_idx, "__iter__") and not isinstance(
-                    row_idx, (str, np.integer)
-                ):
+                elif hasattr(row_idx, "__iter__") and not isinstance(row_idx, (str, np.integer)):
                     row_indices = np.asarray(row_idx)
                 else:
                     row_indices = np.array([row_idx])
@@ -153,9 +151,7 @@ class GridAnalogSignal(AnalogSignal):
                         col_indices = np.arange(cols)
                     else:
                         col_indices = np.arange(*col_idx.indices(cols))
-                elif hasattr(col_idx, "__iter__") and not isinstance(
-                    col_idx, (str, np.integer)
-                ):
+                elif hasattr(col_idx, "__iter__") and not isinstance(col_idx, (str, np.integer)):
                     col_indices = np.asarray(col_idx)
                 else:
                     col_indices = np.array([col_idx])
@@ -185,9 +181,7 @@ class GridAnalogSignal(AnalogSignal):
                     if hasattr(result, "annotations") and result.annotations:
                         kwargs.update(result.annotations)
 
-                    return GridAnalogSignal(
-                        result.reshape(-1, *new_grid_size), **kwargs
-                    )
+                    return GridAnalogSignal(result.reshape(-1, *new_grid_size), **kwargs)
                 else:
                     # For single time point or very small results, just return the Neo result
                     if result.magnitude.ndim == 0 or (

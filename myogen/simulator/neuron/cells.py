@@ -3,20 +3,21 @@ Neural Cell Models for Spinal Cord Simulations.
 """
 
 import itertools
-from typing import Optional, Literal
+from typing import Literal, Optional
 
 import numpy as np
+import quantities as pq
 from neuron import h
 
 from myogen import RANDOM_GENERATOR, SEED
-from myogen.simulator.neuron._cython._poisson_process_generator import (
-    _PoissonProcessGenerator__Cython,
-)
 from myogen.simulator.neuron._cython._gamma_process_generator import (
     _GammaProcessGenerator__Cython,
 )
+from myogen.simulator.neuron._cython._poisson_process_generator import (
+    _PoissonProcessGenerator__Cython,
+)
 from myogen.utils.decorators import beartowertype
-from myogen.utils.types import Quantity__ms
+from myogen.utils.types import Quantity__m, Quantity__m_per_s, Quantity__ms, Quantity__mV
 
 
 class _Cell:
@@ -75,9 +76,9 @@ class _Cell:
         self.create_axon()
         self.synapse__list = []
 
-        self.axon_length__m: float | None = None
-        self.conduction_velocity__m_per_s: float | None = None
-        self.axon_delay__ms: float | None = None
+        self.axon_length__m: Quantity__m | None = None
+        self.conduction_velocity__m_per_s: Quantity__m_per_s | None = None
+        self.axon_delay__ms: Quantity__ms | None = None
 
     @beartowertype
     def __repr__(self) -> str:
@@ -130,7 +131,9 @@ class _Cell:
 
     @beartowertype
     def create_axon(
-        self, length__m: float = 0, conduction_velocity__m_per_s: float = 50
+        self,
+        length__m: Quantity__m = 0 * pq.m,
+        conduction_velocity__m_per_s: Quantity__m_per_s = 50 * pq.m / pq.s,
     ):
         """
         Define axonal conduction properties for spike propagation delays.
@@ -141,27 +144,27 @@ class _Cell:
 
         Parameters
         ----------
-        length__m : float, optional
+        length__m : Quantity__m, default 0 m
             Axonal length in meters, by default 0. When 0, no propagation
             delay is introduced.
-        conduction_velocity__m_per_s : float, optional
+        conduction_velocity__m_per_s : Quantity__m_per_s, default 50 m/s
             Axonal conduction velocity in meters per second, by default 50.
             Typical values range from 0.5-2 m/s for unmyelinated axons to
             50-120 m/s for myelinated motor axons.
         """
         self.axon_length__m = length__m
         self.conduction_velocity__m_per_s = conduction_velocity__m_per_s
-        self.axon_delay__ms = (
-            self.axon_length__m / self.conduction_velocity__m_per_s * 1e3
+        self.axon_delay__ms = (self.axon_length__m / self.conduction_velocity__m_per_s).rescale(
+            pq.ms
         )
 
     def create_synapses(
         self,
-        synapse_location: h.Section,
-        reversal_potential__mV: float = 0,
-        rise_time_constant__ms: float = 0.2,
-        decay_time_constant__ms: float = 0.3,
-    ) -> h.Exp2Syn:
+        synapse_location: h.Section,  # type: ignore
+        reversal_potential__mV: Quantity__mV = 0 * pq.mV,
+        rise_time_constant__ms: Quantity__ms = 0.2 * pq.ms,
+        decay_time_constant__ms: Quantity__ms = 0.3 * pq.ms,
+    ) -> h.Exp2Syn:  # type: ignore
         """
         Add an exponentially decaying synapse to the specified location.
 
@@ -263,9 +266,7 @@ class INgII(_Cell):
     _ids2 = itertools.count(0)
 
     def __init__(self, class__ID: Optional[int] = None, pool__ID: int | None = None):
-        super().__init__(
-            class__ID if class__ID is not None else next(self._ids2), pool__ID
-        )
+        super().__init__(class__ID if class__ID is not None else next(self._ids2), pool__ID)
         self.create_synapses(self.soma)
 
     def _create_sections(self):
@@ -322,14 +323,12 @@ class INgII(_Cell):
         self.soma.thinf_na3rp = -50  # Inactivation half-point (mV)
 
         # Potassium delayed rectifier (action potential repolarization)
-        self.soma.gMax_kdrRL = (
-            0.015  # Max conductance: rheobase, AHP duration/magnitude
-        )
+        self.soma.gMax_kdrRL = 0.015  # Max conductance: rheobase, AHP duration/magnitude
 
         # Calcium-dependent potassium (afterhyperpolarization)
         self.soma.gcamax_mAHP = 3e-6  # Ca²⁺ conductance: AHP magnitude (direct)
         self.soma.gkcamax_mAHP = 0.0005  # K(Ca) conductance: AHP magnitude (direct)
-        self.soma.taur_mAHP = 70.0  # Ca²⁺ removal time constant: AHP duration (direct)
+        self.soma.tau_mAHP = 70.0  # Ca²⁺ removal time constant: AHP duration (direct)
 
 
 @beartowertype
@@ -585,9 +584,7 @@ class AffIa(_Cell, _PoissonProcessGenerator__Cython):
         self.RT = RT  # Recruitment Threshold
         self.IFR = RANDOM_GENERATOR.normal(5, 2.5)  # Individual variability
 
-        _Cell.__init__(
-            self, class__ID if class__ID is not None else next(self._ids2), pool__ID
-        )
+        _Cell.__init__(self, class__ID if class__ID is not None else next(self._ids2), pool__ID)
         _PoissonProcessGenerator__Cython.__init__(
             self,
             seed=SEED + (self.class__ID + 1) * (self.global__ID + 1),
@@ -652,9 +649,7 @@ class AffII(AffIa):
     _ids2 = itertools.count(0)
 
     def __init__(self, RT, N, pool__ID: int | None = None, *args, **kwargs):
-        super().__init__(
-            RT, N, class__ID=next(self._ids2), pool__ID=pool__ID, *args, **kwargs
-        )
+        super().__init__(RT, N, class__ID=next(self._ids2), pool__ID=pool__ID, *args, **kwargs)
 
 
 @beartowertype
@@ -694,9 +689,7 @@ class AffIb(AffIa):
     _ids2 = itertools.count(0)
 
     def __init__(self, RT, N, pool__ID: int | None = None, *args, **kwargs):
-        super().__init__(
-            RT, N, class__ID=next(self._ids2), pool__ID=pool__ID, *args, **kwargs
-        )
+        super().__init__(RT, N, class__ID=next(self._ids2), pool__ID=pool__ID, *args, **kwargs)
 
 
 # MOTORNEURON
@@ -784,9 +777,7 @@ class AlphaMN(_Cell):
         registered with the NEURON simulation environment.
         """
         self.soma = h.Section(name="soma", cell=self)
-        self.dend = [
-            h.Section(name="dend", cell=self) for _ in range(self.dendrites__count)
-        ]
+        self.dend = [h.Section(name="dend", cell=self) for _ in range(self.dendrites__count)]
 
     def _define_geometry(self):
         """
@@ -960,34 +951,20 @@ class AlphaMN(_Cell):
 
             # Global channel parameters
             h.vslope_naps = 5  # activation slope for persistent sodium channels (mV)
-            h.asvh_naps = (
-                -90
-            )  # slow inactivation voltage half-point for persistent sodium (mV)
-            h.bsvh_naps = (
-                -22
-            )  # slow inactivation voltage parameter for persistent sodium (mV)
+            h.asvh_naps = -90  # slow inactivation voltage half-point for persistent sodium (mV)
+            h.bsvh_naps = -22  # slow inactivation voltage parameter for persistent sodium (mV)
             h.mvhalfca_mAHP = (
                 -22
             )  # calcium activation voltage half-point for Ca-dependent K channels (mV)
             h.mtauca_mAHP = 2  # calcium time constant for Ca-dependent K channels (ms)
-            h.tau_m_L_Ca_inact = (
-                40  # activation time constant for L-type calcium channels (ms)
-            )
+            h.tau_m_L_Ca_inact = 40  # activation time constant for L-type calcium channels (ms)
             h.tau_h_L_Ca_inact = (
                 2500.0  # inactivation time constant for L-type calcium channels (ms)
             )
-            h.kappa_h_L_Ca_inact = (
-                5.0  # inactivation slope factor for L-type calcium channels
-            )
-            h.mVh_kdrRL = (
-                -21.0
-            )  # half-activation voltage for K delayed rectifier channels (mV)
-            h.tmin_kdrRL = (
-                0.8  # minimum time constant for K delayed rectifier channels (ms)
-            )
-            h.taumax_kdrRL = (
-                20.0  # maximum time constant for K delayed rectifier channels (ms)
-            )
+            h.kappa_h_L_Ca_inact = 5.0  # inactivation slope factor for L-type calcium channels
+            h.mVh_kdrRL = -21.0  # half-activation voltage for K delayed rectifier channels (mV)
+            h.tmin_kdrRL = 0.8  # minimum time constant for K delayed rectifier channels (ms)
+            h.taumax_kdrRL = 20.0  # maximum time constant for K delayed rectifier channels (ms)
             h.htau_gh = 30.0  # time constant for h-current channels (ms)
 
             # Dendritic mechanisms
@@ -1013,43 +990,3 @@ class AlphaMN(_Cell):
                     d.half_gh = -77.0
                     d.theta_m_L_Ca_inact = -42.0
                     d.theta_h_L_Ca_inact = 10.0
-
-
-if __name__ == "__main__":
-    import matplotlib.pyplot as plt
-    import neo
-    import quantities as pq
-    from elephant import statistics
-
-    from myogen import load_nmodl_mechanisms
-
-    load_nmodl_mechanisms()
-
-    # Sim parameters
-    tstop = 20000  # [ms]
-    dt = 0.05  # [ms]
-    t = np.arange(0, tstop + dt, dt)
-    S = np.zeros(len(t), dtype=np.intc)
-    # Modulating signals
-    fs = 0.5  # Modulating frequency [Hz]
-    # y = 50 * np.sin(2 * np.pi * fs * t / 1000) + 10  # Sinusoidal
-    # y = 10 + 5*(t/1000)
-    # y = 20*np.ones(axon_length__m(t))
-    y = np.interp(t, [0, tstop / 2, tstop], [0, 50, 0])
-    x = AffII(RT=25, N=25, dt=dt)
-    for i in range(len(t)):
-        if y[i] >= x.RT:
-            S[i] = x.integrate(y[i])
-    window = 250
-
-    yest = statistics.instantaneous_rate(
-        neo.SpikeTrain(np.argwhere(S)[:, 0] * dt * pq.ms, tstop),
-        sampling_period=dt * pq.ms,
-        # kernel=kernels.RectangularKernel(sigma=window * pq.ms),
-        border_correction=True,
-    )[:, 0]
-
-    plt.plot(t, y)
-    plt.plot(t, S)
-    plt.plot(yest.times, yest.magnitude)
-    plt.show()

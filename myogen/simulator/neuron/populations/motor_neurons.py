@@ -175,7 +175,9 @@ class AlphaMN__Pool(_Pool):
                 return param_value
             if config_key not in config:
                 # Debug information
-                available_keys = list(config.keys()) if isinstance(config, dict) else "config is not a dict"
+                available_keys = (
+                    list(config.keys()) if isinstance(config, dict) else "config is not a dict"
+                )
                 raise ValueError(
                     f"Parameter '{config_key}' not found in merged config and not provided explicitly. "
                     f"Available top-level keys: {available_keys}. "
@@ -211,9 +213,7 @@ class AlphaMN__Pool(_Pool):
             self.n = len(self.recruitment_thresholds__array)
 
         if self.n is None and self.recruitment_thresholds__array is None:
-            raise ValueError(
-                "Either n or recruitment_thresholds__array must be provided."
-            )
+            raise ValueError("Either n or recruitment_thresholds__array must be provided.")
 
         self.model = get_param(model, "model")
         self.mode = get_param(mode, "mode")
@@ -267,7 +267,10 @@ class AlphaMN__Pool(_Pool):
             dendrite_diameter_range, "powers2017", "dendrite", "diameter_range"
         )
         self.dendrite_passive_conductance_range = get_nested_param(
-            dendrite_passive_conductance_range, "powers2017", "dendrite", "passive_conductance_range"
+            dendrite_passive_conductance_range,
+            "powers2017",
+            "dendrite",
+            "passive_conductance_range",
         )
         self.dendrite_passive_reversal_range = get_nested_param(
             dendrite_passive_reversal_range, "powers2017", "dendrite", "passive_reversal_range"
@@ -292,135 +295,53 @@ class AlphaMN__Pool(_Pool):
         )
 
         # Store NERLab napp parameters
-        self.napp_m_alpha_A = get_nested_param(
-            None, "nerlab", "napp", "m_alpha_A"
-        )
-        self.napp_m_alpha_v_offset = get_nested_param(
-            None, "nerlab", "napp", "m_alpha_v_offset"
-        )
-        self.napp_m_alpha_k = get_nested_param(
-            None, "nerlab", "napp", "m_alpha_k"
-        )
-        self.napp_m_beta_A = get_nested_param(
-            None, "nerlab", "napp", "m_beta_A"
-        )
-        self.napp_m_beta_v_offset = get_nested_param(
-            None, "nerlab", "napp", "m_beta_v_offset"
-        )
-        self.napp_m_beta_k = get_nested_param(
-            None, "nerlab", "napp", "m_beta_k"
-        )
+        self.napp_m_alpha_A = get_nested_param(None, "nerlab", "napp", "m_alpha_A")
+        self.napp_m_alpha_v_offset = get_nested_param(None, "nerlab", "napp", "m_alpha_v_offset")
+        self.napp_m_alpha_k = get_nested_param(None, "nerlab", "napp", "m_alpha_k")
+        self.napp_m_beta_A = get_nested_param(None, "nerlab", "napp", "m_beta_A")
+        self.napp_m_beta_v_offset = get_nested_param(None, "nerlab", "napp", "m_beta_v_offset")
+        self.napp_m_beta_k = get_nested_param(None, "nerlab", "napp", "m_beta_k")
 
-        self.napp_h_alpha_A = get_nested_param(
-            None, "nerlab", "napp", "h_alpha_A"
-        )
-        self.napp_h_alpha_v_offset = get_nested_param(
-            None, "nerlab", "napp", "h_alpha_v_offset"
-        )
-        self.napp_h_alpha_tau = get_nested_param(
-            None, "nerlab", "napp", "h_alpha_tau"
-        )
-        self.napp_h_beta_A = get_nested_param(
-            None, "nerlab", "napp", "h_beta_A"
-        )
-        self.napp_h_beta_v_offset = get_nested_param(
-            None, "nerlab", "napp", "h_beta_v_offset"
-        )
-        self.napp_h_beta_k = get_nested_param(
-            None, "nerlab", "napp", "h_beta_k"
-        )
+        self.napp_h_alpha_A = get_nested_param(None, "nerlab", "napp", "h_alpha_A")
+        self.napp_h_alpha_v_offset = get_nested_param(None, "nerlab", "napp", "h_alpha_v_offset")
+        self.napp_h_alpha_tau = get_nested_param(None, "nerlab", "napp", "h_alpha_tau")
+        self.napp_h_beta_A = get_nested_param(None, "nerlab", "napp", "h_beta_A")
+        self.napp_h_beta_v_offset = get_nested_param(None, "nerlab", "napp", "h_beta_v_offset")
+        self.napp_h_beta_k = get_nested_param(None, "nerlab", "napp", "h_beta_k")
 
-        self.napp_p_alpha_A = get_nested_param(
-            None, "nerlab", "napp", "p_alpha_A"
-        )
-        self.napp_p_alpha_v_offset = get_nested_param(
-            None, "nerlab", "napp", "p_alpha_v_offset"
-        )
-        self.napp_p_alpha_k = get_nested_param(
-            None, "nerlab", "napp", "p_alpha_k"
-        )
-        self.napp_p_beta_A = get_nested_param(
-            None, "nerlab", "napp", "p_beta_A"
-        )
-        self.napp_p_beta_v_offset = get_nested_param(
-            None, "nerlab", "napp", "p_beta_v_offset"
-        )
-        self.napp_p_beta_k = get_nested_param(
-            None, "nerlab", "napp", "p_beta_k"
-        )
+        self.napp_p_alpha_A = get_nested_param(None, "nerlab", "napp", "p_alpha_A")
+        self.napp_p_alpha_v_offset = get_nested_param(None, "nerlab", "napp", "p_alpha_v_offset")
+        self.napp_p_alpha_k = get_nested_param(None, "nerlab", "napp", "p_alpha_k")
+        self.napp_p_beta_A = get_nested_param(None, "nerlab", "napp", "p_beta_A")
+        self.napp_p_beta_v_offset = get_nested_param(None, "nerlab", "napp", "p_beta_v_offset")
+        self.napp_p_beta_k = get_nested_param(None, "nerlab", "napp", "p_beta_k")
 
-        self.napp_n_alpha_A = get_nested_param(
-            None, "nerlab", "napp", "n_alpha_A"
-        )
-        self.napp_n_alpha_v_offset = get_nested_param(
-            None, "nerlab", "napp", "n_alpha_v_offset"
-        )
-        self.napp_n_alpha_k = get_nested_param(
-            None, "nerlab", "napp", "n_alpha_k"
-        )
-        self.napp_n_beta_A = get_nested_param(
-            None, "nerlab", "napp", "n_beta_A"
-        )
-        self.napp_n_beta_v_offset = get_nested_param(
-            None, "nerlab", "napp", "n_beta_v_offset"
-        )
-        self.napp_n_beta_tau = get_nested_param(
-            None, "nerlab", "napp", "n_beta_tau"
-        )
+        self.napp_n_alpha_A = get_nested_param(None, "nerlab", "napp", "n_alpha_A")
+        self.napp_n_alpha_v_offset = get_nested_param(None, "nerlab", "napp", "n_alpha_v_offset")
+        self.napp_n_alpha_k = get_nested_param(None, "nerlab", "napp", "n_alpha_k")
+        self.napp_n_beta_A = get_nested_param(None, "nerlab", "napp", "n_beta_A")
+        self.napp_n_beta_v_offset = get_nested_param(None, "nerlab", "napp", "n_beta_v_offset")
+        self.napp_n_beta_tau = get_nested_param(None, "nerlab", "napp", "n_beta_tau")
 
-        self.napp_r_alpha_A = get_nested_param(
-            None, "nerlab", "napp", "r_alpha_A"
-        )
-        self.napp_r_alpha_v_offset = get_nested_param(
-            None, "nerlab", "napp", "r_alpha_v_offset"
-        )
-        self.napp_r_alpha_k = get_nested_param(
-            None, "nerlab", "napp", "r_alpha_k"
-        )
+        self.napp_r_alpha_A = get_nested_param(None, "nerlab", "napp", "r_alpha_A")
+        self.napp_r_alpha_v_offset = get_nested_param(None, "nerlab", "napp", "r_alpha_v_offset")
+        self.napp_r_alpha_k = get_nested_param(None, "nerlab", "napp", "r_alpha_k")
 
         # Store NERLab soma parameters
-        self.nerlab_soma_diameter_range = get_nested_param(
-            None, "nerlab", "soma", "diameter_range"
-        )
-        self.nerlab_soma_gnabar_range = get_nested_param(
-            None, "nerlab", "soma", "gnabar_range"
-        )
-        self.nerlab_soma_gnapbar_range = get_nested_param(
-            None, "nerlab", "soma", "gnapbar_range"
-        )
-        self.nerlab_soma_gkfbar_range = get_nested_param(
-            None, "nerlab", "soma", "gkfbar_range"
-        )
-        self.nerlab_soma_gksbar_range = get_nested_param(
-            None, "nerlab", "soma", "gksbar_range"
-        )
-        self.nerlab_soma_mact_range = get_nested_param(
-            None, "nerlab", "soma", "mact_range"
-        )
-        self.nerlab_soma_rinact_range = get_nested_param(
-            None, "nerlab", "soma", "rinact_range"
-        )
-        self.nerlab_soma_gls_range = get_nested_param(
-            None, "nerlab", "soma", "gls_range"
-        )
-        self.nerlab_soma_ena = get_nested_param(
-            None, "nerlab", "soma", "ena"
-        )
-        self.nerlab_soma_ek = get_nested_param(
-            None, "nerlab", "soma", "ek"
-        )
-        self.nerlab_soma_el_napp = get_nested_param(
-            None, "nerlab", "soma", "el_napp"
-        )
-        self.nerlab_soma_vtraub_napp = get_nested_param(
-            None, "nerlab", "soma", "vtraub_napp"
-        )
-        self.nerlab_soma_Ra = get_nested_param(
-            None, "nerlab", "soma", "Ra"
-        )
-        self.nerlab_soma_cm = get_nested_param(
-            None, "nerlab", "soma", "cm"
-        )
+        self.nerlab_soma_diameter_range = get_nested_param(None, "nerlab", "soma", "diameter_range")
+        self.nerlab_soma_gnabar_range = get_nested_param(None, "nerlab", "soma", "gnabar_range")
+        self.nerlab_soma_gnapbar_range = get_nested_param(None, "nerlab", "soma", "gnapbar_range")
+        self.nerlab_soma_gkfbar_range = get_nested_param(None, "nerlab", "soma", "gkfbar_range")
+        self.nerlab_soma_gksbar_range = get_nested_param(None, "nerlab", "soma", "gksbar_range")
+        self.nerlab_soma_mact_range = get_nested_param(None, "nerlab", "soma", "mact_range")
+        self.nerlab_soma_rinact_range = get_nested_param(None, "nerlab", "soma", "rinact_range")
+        self.nerlab_soma_gls_range = get_nested_param(None, "nerlab", "soma", "gls_range")
+        self.nerlab_soma_ena = get_nested_param(None, "nerlab", "soma", "ena")
+        self.nerlab_soma_ek = get_nested_param(None, "nerlab", "soma", "ek")
+        self.nerlab_soma_el_napp = get_nested_param(None, "nerlab", "soma", "el_napp")
+        self.nerlab_soma_vtraub_napp = get_nested_param(None, "nerlab", "soma", "vtraub_napp")
+        self.nerlab_soma_Ra = get_nested_param(None, "nerlab", "soma", "Ra")
+        self.nerlab_soma_cm = get_nested_param(None, "nerlab", "soma", "cm")
 
         # Store NERLab dendrite parameters
         self.nerlab_dendrite_diameter_range = get_nested_param(
@@ -441,18 +362,10 @@ class AlphaMN__Pool(_Pool):
         self.nerlab_dendrite_gl_caL_range = get_nested_param(
             None, "nerlab", "dendrite", "gl_caL_range"
         )
-        self.nerlab_dendrite_Ra = get_nested_param(
-            None, "nerlab", "dendrite", "Ra"
-        )
-        self.nerlab_dendrite_cm = get_nested_param(
-            None, "nerlab", "dendrite", "cm"
-        )
-        self.nerlab_dendrite_ecaL = get_nested_param(
-            None, "nerlab", "dendrite", "ecaL"
-        )
-        self.nerlab_dendrite_el_caL = get_nested_param(
-            None, "nerlab", "dendrite", "el_caL"
-        )
+        self.nerlab_dendrite_Ra = get_nested_param(None, "nerlab", "dendrite", "Ra")
+        self.nerlab_dendrite_cm = get_nested_param(None, "nerlab", "dendrite", "cm")
+        self.nerlab_dendrite_ecaL = get_nested_param(None, "nerlab", "dendrite", "ecaL")
+        self.nerlab_dendrite_el_caL = get_nested_param(None, "nerlab", "dendrite", "el_caL")
 
         if self.model == "NERLab":
             _cells = self._create_nerlab_cells()
@@ -471,8 +384,6 @@ class AlphaMN__Pool(_Pool):
             spike_threshold__mV=_spike_threshold,
         )
 
-
-
     def _create_nerlab_cells(self) -> list:
         """Create motor neurons using the NERLab model."""
 
@@ -485,22 +396,98 @@ class AlphaMN__Pool(_Pool):
             interpF = special_interp
 
         # Soma parameters (using parameters from YAML config)
-        Diam_soma = interpF(self.nerlab_soma_diameter_range[0], self.nerlab_soma_diameter_range[1], self.n, curv=1.0 / self.nerlab_soma_diameter_range[2])
-        Gnabar = interpF(self.nerlab_soma_gnabar_range[0], self.nerlab_soma_gnabar_range[1], self.n, curv=1 / self.nerlab_soma_gnabar_range[2])
-        Gnapbar = interpF(self.nerlab_soma_gnapbar_range[0], self.nerlab_soma_gnapbar_range[1], self.n, curv=1 / self.nerlab_soma_gnapbar_range[2], negative=True)
-        Gkfbar = interpF(self.nerlab_soma_gkfbar_range[0], self.nerlab_soma_gkfbar_range[1], self.n, curv=1 / self.nerlab_soma_gkfbar_range[2], negative=True)
-        Gksbar = interpF(self.nerlab_soma_gksbar_range[0], self.nerlab_soma_gksbar_range[1], self.n, curv=1.0 / self.nerlab_soma_gksbar_range[2], negative=True)
-        Mact = interpF(self.nerlab_soma_mact_range[0], self.nerlab_soma_mact_range[1], self.n, curv=1 / self.nerlab_soma_mact_range[2])
-        Rinact = interpF(self.nerlab_soma_rinact_range[0], self.nerlab_soma_rinact_range[1], self.n, curv=1 / self.nerlab_soma_rinact_range[2])
-        Gls = interpF(self.nerlab_soma_gls_range[0], self.nerlab_soma_gls_range[1], self.n, curv=1 / self.nerlab_soma_gls_range[2])
+        Diam_soma = interpF(
+            self.nerlab_soma_diameter_range[0],
+            self.nerlab_soma_diameter_range[1],
+            self.n,
+            curv=1.0 / self.nerlab_soma_diameter_range[2],
+        )
+        Gnabar = interpF(
+            self.nerlab_soma_gnabar_range[0],
+            self.nerlab_soma_gnabar_range[1],
+            self.n,
+            curv=1 / self.nerlab_soma_gnabar_range[2],
+        )
+        Gnapbar = interpF(
+            self.nerlab_soma_gnapbar_range[0],
+            self.nerlab_soma_gnapbar_range[1],
+            self.n,
+            curv=1 / self.nerlab_soma_gnapbar_range[2],
+            negative=True,
+        )
+        Gkfbar = interpF(
+            self.nerlab_soma_gkfbar_range[0],
+            self.nerlab_soma_gkfbar_range[1],
+            self.n,
+            curv=1 / self.nerlab_soma_gkfbar_range[2],
+            negative=True,
+        )
+        Gksbar = interpF(
+            self.nerlab_soma_gksbar_range[0],
+            self.nerlab_soma_gksbar_range[1],
+            self.n,
+            curv=1.0 / self.nerlab_soma_gksbar_range[2],
+            negative=True,
+        )
+        Mact = interpF(
+            self.nerlab_soma_mact_range[0],
+            self.nerlab_soma_mact_range[1],
+            self.n,
+            curv=1 / self.nerlab_soma_mact_range[2],
+        )
+        Rinact = interpF(
+            self.nerlab_soma_rinact_range[0],
+            self.nerlab_soma_rinact_range[1],
+            self.n,
+            curv=1 / self.nerlab_soma_rinact_range[2],
+        )
+        Gls = interpF(
+            self.nerlab_soma_gls_range[0],
+            self.nerlab_soma_gls_range[1],
+            self.n,
+            curv=1 / self.nerlab_soma_gls_range[2],
+        )
 
         # Dendrite parameters
-        Diam_dend = interpF(self.nerlab_dendrite_diameter_range[0], self.nerlab_dendrite_diameter_range[1], self.n, curv=1.0 / self.nerlab_dendrite_diameter_range[2])
-        L_dend = interpF(self.nerlab_dendrite_length_range[0], self.nerlab_dendrite_length_range[1], self.n, curv=1.0 / self.nerlab_dendrite_length_range[2])
-        GcaLbar = interpF(self.nerlab_dendrite_gcaLbar_range[0], self.nerlab_dendrite_gcaLbar_range[1], self.n, curv=1 / self.nerlab_dendrite_gcaLbar_range[2], negative=True)
-        Vtraub_caL = interpF(self.nerlab_dendrite_vtraub_caL_range[0], self.nerlab_dendrite_vtraub_caL_range[1], self.n, curv=1 / self.nerlab_dendrite_vtraub_caL_range[2], negative=True)
-        LTAU_caL = interpF(self.nerlab_dendrite_ltau_caL_range[0], self.nerlab_dendrite_ltau_caL_range[1], self.n, curv=1 / self.nerlab_dendrite_ltau_caL_range[2], negative=True)
-        Gl_caL = interpF(self.nerlab_dendrite_gl_caL_range[0], self.nerlab_dendrite_gl_caL_range[1], self.n, curv=1 / self.nerlab_dendrite_gl_caL_range[2])
+        Diam_dend = interpF(
+            self.nerlab_dendrite_diameter_range[0],
+            self.nerlab_dendrite_diameter_range[1],
+            self.n,
+            curv=1.0 / self.nerlab_dendrite_diameter_range[2],
+        )
+        L_dend = interpF(
+            self.nerlab_dendrite_length_range[0],
+            self.nerlab_dendrite_length_range[1],
+            self.n,
+            curv=1.0 / self.nerlab_dendrite_length_range[2],
+        )
+        GcaLbar = interpF(
+            self.nerlab_dendrite_gcaLbar_range[0],
+            self.nerlab_dendrite_gcaLbar_range[1],
+            self.n,
+            curv=1 / self.nerlab_dendrite_gcaLbar_range[2],
+            negative=True,
+        )
+        Vtraub_caL = interpF(
+            self.nerlab_dendrite_vtraub_caL_range[0],
+            self.nerlab_dendrite_vtraub_caL_range[1],
+            self.n,
+            curv=1 / self.nerlab_dendrite_vtraub_caL_range[2],
+            negative=True,
+        )
+        LTAU_caL = interpF(
+            self.nerlab_dendrite_ltau_caL_range[0],
+            self.nerlab_dendrite_ltau_caL_range[1],
+            self.n,
+            curv=1 / self.nerlab_dendrite_ltau_caL_range[2],
+            negative=True,
+        )
+        Gl_caL = interpF(
+            self.nerlab_dendrite_gl_caL_range[0],
+            self.nerlab_dendrite_gl_caL_range[1],
+            self.n,
+            curv=1 / self.nerlab_dendrite_gl_caL_range[2],
+        )
 
         vcon = np.linspace(self.axon_velocities[0], self.axon_velocities[1], self.n)
 
@@ -520,8 +507,12 @@ class AlphaMN__Pool(_Pool):
                 class__ID=self.cell_index,
                 pool__ID=i,
             )
+            # Convert to quantities for create_axon
+            import quantities as pq
+
             cell.create_axon(
-                length__m=self.axon_length, conduction_velocity__m_per_s=vcon[i]
+                length__m=self.axon_length * pq.m,
+                conduction_velocity__m_per_s=vcon[i] * pq.m / pq.s,
             )
 
             # Soma biophysical parameters
@@ -624,9 +615,7 @@ class AlphaMN__Pool(_Pool):
         dghbar_gh = interpF(*self.dendrite_gh_conductance_range)
 
         # L-type calcium channels for each dendrite
-        d_ca_conductances = [
-            interpF(*ca_range) for ca_range in self.dendrite_ca_conductance_ranges
-        ]
+        d_ca_conductances = [interpF(*ca_range) for ca_range in self.dendrite_ca_conductance_ranges]
         dtheta_m_L_Ca_inact = interpF(*self.dendrite_ca_theta_m_range)
         dtheta_h_L_Ca_inact = interpF(*self.dendrite_ca_theta_h_range)
 
@@ -651,8 +640,12 @@ class AlphaMN__Pool(_Pool):
             # Set soma parameters
             cell.soma.L = sL[i]
             cell.soma.diam = sdiam[i]
+            # Convert to quantities for create_axon
+            import quantities as pq
+
             cell.create_axon(
-                length__m=self.axon_length, conduction_velocity__m_per_s=vcon[i]
+                length__m=self.axon_length * pq.m,
+                conduction_velocity__m_per_s=vcon[i] * pq.m / pq.s,
             )
             cell.soma.g_pas = sg_pas[i]
             cell.soma.e_pas = se_pas[i]
