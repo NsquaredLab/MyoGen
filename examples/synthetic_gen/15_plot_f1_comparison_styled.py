@@ -76,8 +76,8 @@ DEFAULT_SEMG_DIR = "results/synthetic_gen/semg_mu_41_42_43_plus18_snr10"
 DEFAULT_OUTPUT = "results/synthetic_gen/plots/f1_comparison_styled.png"
 
 # Visual style constants
-COLOR_IEMG = '#1f77b4'  # Blue for intramuscular
-COLOR_SEMG = '#ff7f0e'  # Orange for surface
+COLOR_IEMG = "#1f77b4"  # Blue for intramuscular
+COLOR_SEMG = "#ff7f0e"  # Orange for surface
 
 ##############################################################################
 # Data Loading Functions
@@ -130,8 +130,8 @@ def plot_f1_comparison_styled(iemg_df, semg_df, output_path, width=10, height=6)
         Figure height in inches (default: 6).
     """
     # Extract matched units only
-    iemg_matched = iemg_df[iemg_df['matched'] == True]['f1_score'].values
-    semg_matched = semg_df[semg_df['matched'] == True]['f1_score'].values
+    iemg_matched = iemg_df[iemg_df["matched"] == True]["f1_score"].values
+    semg_matched = semg_df[semg_df["matched"] == True]["f1_score"].values
 
     # Create figure
     fig, ax = plt.subplots(figsize=(width, height))
@@ -139,7 +139,7 @@ def plot_f1_comparison_styled(iemg_df, semg_df, output_path, width=10, height=6)
     # Prepare data for box plot
     data = [iemg_matched, semg_matched]
     positions = [1, 2]
-    labels = ['iEMG', 'sEMG']
+    labels = ["iEMG", "sEMG"]
     colors = [COLOR_IEMG, COLOR_SEMG]
 
     # Create box plots with thick lines
@@ -149,17 +149,17 @@ def plot_f1_comparison_styled(iemg_df, semg_df, output_path, width=10, height=6)
         widths=0.5,
         patch_artist=True,
         showfliers=False,
-        medianprops=dict(color='black', linewidth=3),
+        medianprops=dict(color="black", linewidth=3),
         boxprops=dict(linewidth=2),
         whiskerprops=dict(linewidth=2),
-        capprops=dict(linewidth=2)
+        capprops=dict(linewidth=2),
     )
 
     # Color the boxes
-    for patch, color in zip(bp['boxes'], colors):
+    for patch, color in zip(bp["boxes"], colors):
         patch.set_facecolor(color)
         patch.set_alpha(0.6)
-        patch.set_edgecolor('black')
+        patch.set_edgecolor("black")
         patch.set_linewidth(2)
 
     # Overlay individual points with jitter
@@ -172,34 +172,28 @@ def plot_f1_comparison_styled(iemg_df, semg_df, output_path, width=10, height=6)
             alpha=0.8,
             s=150,
             color=color,
-            edgecolors='black',
+            edgecolors="black",
             linewidth=1.5,
             zorder=3,
-            marker='o'
+            marker="o",
         )
 
     # Formatting
     ax.set_xticks(positions)
-    ax.set_xticklabels(labels, fontsize=18, fontweight='bold')
-    ax.set_ylabel('F1 Score', fontsize=20, fontweight='bold')
+    ax.set_xticklabels(labels, fontsize=18, fontweight="bold")
+    ax.set_ylabel("F1 Score", fontsize=20, fontweight="bold")
     ax.set_ylim(-0.05, 1.05)
-    ax.tick_params(axis='both', labelsize=16, width=2, length=6)
+    ax.tick_params(axis="both", labelsize=16, width=2, length=6)
 
     # Add horizontal grid lines
-    ax.grid(axis='y', alpha=0.3, linestyle='--', linewidth=1.5)
+    ax.grid(axis="y", alpha=0.3, linestyle="--", linewidth=1.5)
     ax.set_axisbelow(True)
 
     # Add mean lines with thicker style
     for values, pos, color in zip(data, positions, colors):
         mean_val = np.mean(values)
         ax.hlines(
-            mean_val,
-            pos - 0.35,
-            pos + 0.35,
-            colors=color,
-            linewidth=4,
-            linestyle='-',
-            zorder=4
+            mean_val, pos - 0.35, pos + 0.35, colors=color, linewidth=4, linestyle="-", zorder=4
         )
 
     # Add statistics text annotations
@@ -210,19 +204,27 @@ def plot_f1_comparison_styled(iemg_df, semg_df, output_path, width=10, height=6)
 
     # Text boxes with statistics
     ax.text(
-        1, 0.05,
-        f'μ = {iemg_mean:.3f}\nσ = {iemg_std:.3f}\nn = {len(iemg_matched)}',
-        ha='center', va='bottom',
+        1,
+        0.05,
+        f"u = {iemg_mean:.3f}\nσ = {iemg_std:.3f}\nn = {len(iemg_matched)}",
+        ha="center",
+        va="bottom",
         fontsize=14,
-        bbox=dict(boxstyle='round', facecolor=COLOR_IEMG, alpha=0.2, edgecolor='black', linewidth=1.5)
+        bbox=dict(
+            boxstyle="round", facecolor=COLOR_IEMG, alpha=0.2, edgecolor="black", linewidth=1.5
+        ),
     )
 
     ax.text(
-        2, 0.05,
-        f'μ = {semg_mean:.3f}\nσ = {semg_std:.3f}\nn = {len(semg_matched)}',
-        ha='center', va='bottom',
+        2,
+        0.05,
+        f"u = {semg_mean:.3f}\nσ = {semg_std:.3f}\nn = {len(semg_matched)}",
+        ha="center",
+        va="bottom",
         fontsize=14,
-        bbox=dict(boxstyle='round', facecolor=COLOR_SEMG, alpha=0.2, edgecolor='black', linewidth=1.5)
+        bbox=dict(
+            boxstyle="round", facecolor=COLOR_SEMG, alpha=0.2, edgecolor="black", linewidth=1.5
+        ),
     )
 
     # Remove spines using seaborn
@@ -233,7 +235,7 @@ def plot_f1_comparison_styled(iemg_df, semg_df, output_path, width=10, height=6)
 
     # Save figure
     output_path.parent.mkdir(parents=True, exist_ok=True)
-    plt.savefig(output_path, dpi=300, bbox_inches='tight')
+    plt.savefig(output_path, dpi=300, bbox_inches="tight")
     plt.close(fig)
 
 
@@ -247,50 +249,44 @@ def main():
     parser = argparse.ArgumentParser(
         description="Create styled F1 score comparison plot",
         formatter_class=argparse.RawDescriptionHelpFormatter,
-        epilog=__doc__
+        epilog=__doc__,
     )
 
     parser.add_argument(
-        '--iemg-dir',
+        "--iemg-dir",
         type=Path,
         default=Path(DEFAULT_IEMG_DIR),
-        help=f"Directory containing iEMG results (default: {DEFAULT_IEMG_DIR})"
+        help=f"Directory containing iEMG results (default: {DEFAULT_IEMG_DIR})",
     )
 
     parser.add_argument(
-        '--semg-dir',
+        "--semg-dir",
         type=Path,
         default=Path(DEFAULT_SEMG_DIR),
-        help=f"Directory containing sEMG results (default: {DEFAULT_SEMG_DIR})"
+        help=f"Directory containing sEMG results (default: {DEFAULT_SEMG_DIR})",
     )
 
     parser.add_argument(
-        '--output',
+        "--output",
         type=Path,
         default=Path(DEFAULT_OUTPUT),
-        help=f"Output path for figure (default: {DEFAULT_OUTPUT})"
+        help=f"Output path for figure (default: {DEFAULT_OUTPUT})",
     )
 
     parser.add_argument(
-        '--width',
-        type=float,
-        default=10,
-        help="Figure width in inches (default: 10)"
+        "--width", type=float, default=10, help="Figure width in inches (default: 10)"
     )
 
     parser.add_argument(
-        '--height',
-        type=float,
-        default=6,
-        help="Figure height in inches (default: 6)"
+        "--height", type=float, default=6, help="Figure height in inches (default: 6)"
     )
 
     parser.add_argument(
-        '--format',
+        "--format",
         type=str,
-        default='png',
-        choices=['png', 'jpg', 'svg', 'pdf'],
-        help="Output format (default: png)"
+        default="png",
+        choices=["png", "jpg", "svg", "pdf"],
+        help="Output format (default: png)",
     )
 
     args = parser.parse_args()
@@ -300,8 +296,8 @@ def main():
     print("=" * 80)
 
     # Update output path with format
-    if args.format != 'png':
-        args.output = args.output.with_suffix(f'.{args.format}')
+    if args.format != "png":
+        args.output = args.output.with_suffix(f".{args.format}")
 
     # Validate input directories
     if not args.iemg_dir.exists():
@@ -318,13 +314,9 @@ def main():
     semg_agreement = load_agreement_data(args.semg_dir)
 
     # Create plot
-    print(f"\n🎨 Creating styled plot ({args.width}\" × {args.height}\")...")
+    print(f'\n🎨 Creating styled plot ({args.width}" × {args.height}")...')
     plot_f1_comparison_styled(
-        iemg_agreement,
-        semg_agreement,
-        args.output,
-        width=args.width,
-        height=args.height
+        iemg_agreement, semg_agreement, args.output, width=args.width, height=args.height
     )
 
     print(f"\n💾 Saved: {args.output}")

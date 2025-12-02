@@ -62,11 +62,11 @@ class AlphaMN__Pool(_Pool):
     Powers2017 Model Parameters (required when model="Powers2017")
     --------------------------------------------------------
     soma_length_range : tuple[float, float, float], optional
-        Soma length [min, max, curve] (μm).
+        Soma length [min, max, curve] (um).
     soma_diameter_range : tuple[float, float, float], optional
-        Soma diameter [min, max, curve] (μm).
+        Soma diameter [min, max, curve] (um).
     soma_capacitance_range : tuple[float, float, float], optional
-        Soma capacitance [min, max, curve] (μF/cm²).
+        Soma capacitance [min, max, curve] (uF/cm²).
     soma_passive_conductance_range : tuple[float, float, float], optional
         Soma passive conductance [min, max, curve] (S/cm²).
     soma_passive_reversal_range : tuple[float, float, float], optional
@@ -86,9 +86,9 @@ class AlphaMN__Pool(_Pool):
     soma_gh_conductance_range : tuple[float, float, float], optional
         Soma h-current conductance [min, max, curve] (S/cm²).
     dendrite_length_range : tuple[float, float, float], optional
-        Dendrite length [min, max, curve] (μm).
+        Dendrite length [min, max, curve] (um).
     dendrite_diameter_range : tuple[float, float, float], optional
-        Dendrite diameter [min, max, curve] (μm).
+        Dendrite diameter [min, max, curve] (um).
     dendrite_passive_conductance_range : tuple[float, float, float], optional
         Dendrite passive conductance [min, max, curve] (S/cm²).
     dendrite_passive_reversal_range : tuple[float, float, float], optional
@@ -96,7 +96,7 @@ class AlphaMN__Pool(_Pool):
     dendrite_resistance_range : tuple[float, float, float], optional
         Dendrite axial resistance [min, max, curve] (Ω·cm).
     dendrite_capacitance_range : tuple[float, float, float], optional
-        Dendrite capacitance [min, max, curve] (μF/cm²).
+        Dendrite capacitance [min, max, curve] (uF/cm²).
     dendrite_gh_conductance_range : tuple[float, float, float], optional
         Dendrite h-current conductance [min, max, curve] (S/cm²).
     dendrite_ca_conductance_ranges : tuple[tuple[float, float, float], ...], optional

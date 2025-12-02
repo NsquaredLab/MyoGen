@@ -7,6 +7,7 @@ integrating with both the legacy NEURON-based populations and the modern MyoGen 
 
 from typing import Callable, Optional
 
+import quantities as pq
 from neuron import h
 
 from myogen import RANDOM_GENERATOR
@@ -19,13 +20,13 @@ from myogen.simulator.neuron.populations import (
     _Pool,
 )
 from myogen.utils.decorators import beartowertype
+from myogen.utils.types import Quantity__mV, Quantity__ms, Quantity__uS
 
 # Network Constants
 MOTOR_NEURON_CONNECTION = "aMN->Muscle"
-import quantities as pq
 
-DEFAULT_SYNAPTIC_WEIGHT = 0.6  # μS
-DEFAULT_SPIKE_THRESHOLD = -10.0  # mV
+DEFAULT_SYNAPTIC_WEIGHT = 0.6 * pq.uS  # uS
+DEFAULT_SPIKE_THRESHOLD = -10.0 * pq.mV  # mV
 DEFAULT_SYNAPTIC_DELAY = 1.0 * pq.ms  # ms
 EXTERNAL_INPUT_LABEL = "Spindle"
 EXTERNAL_TARGET_LABEL = "Muscle"
@@ -142,7 +143,7 @@ def _create_netcon(
     -------
     h.NetCon
         NEURON NetCon object with default synaptic properties:
-        - weight[0] = 0.6 μS
+        - weight[0] = 0.6 uS
         - threshold = -10 mV
         - delay = 1 ms + axonal delay (if available)
 
@@ -888,9 +889,9 @@ class Network:
         source: str,
         target: str,
         probability: float = 1.0,
-        weight__μS: float = DEFAULT_SYNAPTIC_WEIGHT,
-        delay__ms: float = DEFAULT_SYNAPTIC_DELAY,
-        threshold__mV: float = DEFAULT_SPIKE_THRESHOLD,
+        weight__uS: Quantity__uS = DEFAULT_SYNAPTIC_WEIGHT,
+        delay__ms: Quantity__ms = DEFAULT_SYNAPTIC_DELAY,
+        threshold__mV: Quantity__mV = DEFAULT_SPIKE_THRESHOLD,
         deterministic: bool = False,
     ) -> list:
         """
@@ -906,7 +907,7 @@ class Network:
             Connection probability between 0.0 and 1.0, by default 1.0.
             Each source-target neuron pair connects with this probability (if deterministic=False).
             If deterministic=True, each source connects to exactly int(probability × n_targets) targets.
-        weight__μS : float, optional
+        weight__uS : float, optional
             Synaptic weight in microsiemens, by default 0.6.
         delay__ms : float, optional
             Synaptic delay in milliseconds, by default 1.0.
@@ -947,8 +948,8 @@ class Network:
             source_pop=source,
             target_pop=target,
             connection_probability=probability,
-            synaptic_weight=weight__μS,
-            spike_threshold=threshold__mV,
+            synaptic_weight=weight__uS.magnitude,
+            spike_threshold=threshold__mV.magnitude,
             id_vector=id_vector,
             spike_vector=spike_vector,
             deterministic=deterministic,
@@ -960,9 +961,9 @@ class Network:
                 "source": source,
                 "target": target,
                 "probability": probability,
-                "weight__μS": weight__μS,
+                "weight__uS": weight__uS.magnitude,
                 "delay__ms": delay__ms,
-                "threshold__mV": threshold__mV,
+                "threshold__mV": threshold__mV.magnitude,
             }
         )
         self._netcons_by_connection[(source, target)] = netcons
@@ -974,8 +975,8 @@ class Network:
         source: str,
         muscle,
         activation_callback: Callable,
-        weight__μS: float = DEFAULT_SYNAPTIC_WEIGHT,
-        threshold__mV: float = DEFAULT_SPIKE_THRESHOLD,
+        weight__uS: Quantity__uS = DEFAULT_SYNAPTIC_WEIGHT,
+        threshold__mV: Quantity__mV = DEFAULT_SPIKE_THRESHOLD,
     ) -> list:
         """
         Connect a neural population to a muscle with activation callback.
@@ -989,7 +990,7 @@ class Network:
         activation_callback : Callable
             Function called when motor neurons fire.
             Expected signature: callback(neuron_id, muscle, delay_time)
-        weight__μS : float, optional
+        weight__uS : float, optional
             Synaptic weight in microsiemens, by default 1.0.
         threshold__mV : float, optional
             Spike threshold in millivolts, by default -10.0.
@@ -1017,8 +1018,8 @@ class Network:
             connection_probability=1.0,  # All motor neurons connect
             muscle_callback=activation_callback,
             muscle=muscle,
-            synaptic_weight=weight__μS,
-            spike_threshold=threshold__mV,
+            synaptic_weight=weight__uS.magnitude,
+            spike_threshold=threshold__mV.magnitude,
             id_vector=id_vector,
             spike_vector=spike_vector,
         )
@@ -1030,8 +1031,8 @@ class Network:
                 "target": "muscle",
                 "muscle": muscle,
                 "callback": activation_callback,
-                "weight__μS": weight__μS,
-                "threshold__mV": threshold__mV,
+                "weight__uS": weight__uS.magnitude,
+                "threshold__mV": threshold__mV.magnitude,
             }
         )
         self._netcons_by_connection[(source, "muscle")] = netcons
@@ -1042,9 +1043,9 @@ class Network:
         self,
         source: str,
         target: str,
-        weight__μS: float = DEFAULT_SYNAPTIC_WEIGHT,
-        delay__ms: float = DEFAULT_SYNAPTIC_DELAY,
-        threshold__mV: float = DEFAULT_SPIKE_THRESHOLD,
+        weight__uS: Quantity__uS = DEFAULT_SYNAPTIC_WEIGHT,
+        delay__ms: Quantity__ms = DEFAULT_SYNAPTIC_DELAY,
+        threshold__mV: Quantity__mV = DEFAULT_SPIKE_THRESHOLD,
     ) -> list:
         """
         Connect external input source to a neural population.
@@ -1055,7 +1056,7 @@ class Network:
             Name/label for external input source (e.g., "spindle", "cortical_drive").
         target : str
             Name of target neural population.
-        weight__μS : float, optional
+        weight__uS : Quantity__uS, optional
             Synaptic weight in microsiemens, by default 0.8.
         delay__ms : float, optional
             Synaptic delay in milliseconds, by default 1.0.
@@ -1079,9 +1080,9 @@ class Network:
         for target_neuron in target_neurons:
             # Create NetCon from None (external source) to target neuron
             nc = h.NetCon(None, target_neuron.ns)
-            nc.weight[0] = weight__μS
-            nc.delay = delay__ms
-            nc.threshold = threshold__mV
+            nc.weight[0] = weight__uS.magnitude
+            nc.delay = delay__ms.magnitude
+            nc.threshold = threshold__mV.magnitude
             netcons.append(nc)
 
         self.connections.append(
@@ -1089,9 +1090,9 @@ class Network:
                 "type": "external",
                 "source": source,
                 "target": target,
-                "weight__μS": weight__μS,
-                "delay__ms": delay__ms,
-                "threshold__mV": threshold__mV,
+                "weight__uS": weight__uS.magnitude,
+                "delay__ms": delay__ms.magnitude,
+                "threshold__mV": threshold__mV.magnitude,
             }
         )
         self._netcons_by_connection[(source, target)] = netcons
@@ -1103,9 +1104,9 @@ class Network:
         source: str,
         target: str,
         probability: float = 1.0,
-        weight__μS: float = DEFAULT_SYNAPTIC_WEIGHT,
-        delay__ms: float = DEFAULT_SYNAPTIC_DELAY,
-        threshold__mV: float = DEFAULT_SPIKE_THRESHOLD,
+        weight__uS: Quantity__uS = DEFAULT_SYNAPTIC_WEIGHT,
+        delay__ms: Quantity__ms = DEFAULT_SYNAPTIC_DELAY,
+        threshold__mV: Quantity__mV = DEFAULT_SPIKE_THRESHOLD,
     ) -> list:
         """
         Connect two neural populations with one-to-one mapping.
@@ -1124,11 +1125,11 @@ class Network:
         probability : float, optional
             Probability that each source[i] -> target[i] connection is made, by default 1.0.
             Must be between 0.0 and 1.0.
-        weight__μS : float, optional
+        weight__uS : Quantity__uS, optional
             Synaptic weight in microsiemens, by default 0.6.
-        delay__ms : float, optional
+        delay__ms : Quantity__ms, optional
             Synaptic delay in milliseconds, by default 1.0.
-        threshold__mV : float, optional
+        threshold__mV : Quantity__mV, optional
             Spike threshold in millivolts, by default -10.0.
 
         Returns
@@ -1148,7 +1149,7 @@ class Network:
         >>> noise_pool = DescendingDrive__Pool(n=10, poisson_batch_size=16, timestep__ms=0.05)
         >>> mn_pool = AlphaMN__Pool(n=10)
         >>> network = Network({"noise": noise_pool, "mn": mn_pool})
-        >>> network.connect_one_to_one("noise", "mn", weight__μS=0.5)
+        >>> network.connect_one_to_one("noise", "mn", weight__uS=0.5)
         """
         # Validation
         if source not in self.populations:
@@ -1171,7 +1172,7 @@ class Network:
             target_pop=target,
             populations=self.populations,
             connection_probability=probability,
-            synaptic_weight=weight__μS,
+            synaptic_weight=weight__uS.magnitude,
             spike_threshold=threshold__mV,
             id_vector=id_vector,
             spike_vector=spike_vector,
@@ -1183,7 +1184,7 @@ class Network:
                 "source": source,
                 "target": target,
                 "probability": probability,
-                "weight__μS": weight__μS,
+                "weight__uS": weight__uS,
                 "delay__ms": delay__ms,
                 "threshold__mV": threshold__mV,
             }
@@ -1243,16 +1244,16 @@ class Network:
             if conn["type"] == "neural":
                 print(
                     f"  {i + 1}. {conn['source']} → {conn['target']} "
-                    f"(p={conn['probability']}, w={conn['weight__μS']}μS)"
+                    f"(p={conn['probability']}, w={conn['weight__uS']}uS)"
                 )
             elif conn["type"] == "muscle":
-                print(f"  {i + 1}. {conn['source']} → muscle (w={conn['weight__μS']}μS)")
+                print(f"  {i + 1}. {conn['source']} → muscle (w={conn['weight__uS']}uS)")
             elif conn["type"] == "external":
-                print(f"  {i + 1}. {conn['source']} → {conn['target']} (w={conn['weight__μS']}μS)")
+                print(f"  {i + 1}. {conn['source']} → {conn['target']} (w={conn['weight__uS']}uS)")
             elif conn["type"] == "one_to_one":
                 print(
                     f"  {i + 1}. {conn['source']} → {conn['target']} [1-to-1] "
-                    f"(p={conn['probability']}, w={conn['weight__μS']}μS)"
+                    f"(p={conn['probability']}, w={conn['weight__uS']}uS)"
                 )
 
 
@@ -1365,10 +1366,10 @@ if __name__ == "__main__":
     network = Network(population_params)
 
     # Add connections with clean API using unit conventions
-    network.connect("Ia", "aMN", probability=0.9, weight__μS=0.6)
-    network.connect("gII", "aMN", probability=0.9, weight__μS=0.3)
-    network.connect_to_muscle("aMN", muscle=None, activation_callback=foo, weight__μS=1.0)
-    network.connect_from_external("spindle", "Ia", weight__μS=0.8)
+    network.connect("Ia", "aMN", probability=0.9, weight__uS=0.6)
+    network.connect("gII", "aMN", probability=0.9, weight__uS=0.3)
+    network.connect_to_muscle("aMN", muscle=None, activation_callback=foo, weight__uS=1.0)
+    network.connect_from_external("spindle", "Ia", weight__uS=0.8)
 
     # Print network summary
     network.print_network()

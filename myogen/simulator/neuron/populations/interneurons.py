@@ -12,7 +12,7 @@ import numpy as np
 from myogen.simulator.neuron import cells
 from myogen.utils.decorators import beartowertype
 
-from .base import _get_interneuron_diameter_range__μm, _Pool
+from .base import _get_interneuron_diameter_range__um, _Pool
 
 
 @beartowertype
@@ -27,10 +27,10 @@ class GII__Pool(_Pool):
     ----------
     n : int
         Number of group II interneurons to create.
-    soma_length_range__μm : tuple[float, float]
-        Min and max soma length (μm). By default, it is set to the estimated range for interneurons from Bui et al. 2003 [1]_.
+    soma_length_range__um : tuple[float, float]
+        Min and max soma length (um). By default, it is set to the estimated range for interneurons from Bui et al. 2003 [1]_.
     soma_diameter_range : tuple[float, float]
-        Min and max soma diameter (μm). By default, it is set to the estimated range for interneurons from Bui et al. 2003 [1]_.
+        Min and max soma diameter (um). By default, it is set to the estimated range for interneurons from Bui et al. 2003 [1]_.
     passive_conductance_range : tuple[float, float]
         Min and max passive membrane conductance (S/cm²).
     na3rp_conductance_range : tuple[float, float]
@@ -61,12 +61,8 @@ class GII__Pool(_Pool):
     def __init__(
         self,
         n: int,
-        soma_length_range__μm: tuple[
-            float, float
-        ] = _get_interneuron_diameter_range__μm(),
-        soma_diameter_range: tuple[
-            float, float
-        ] = _get_interneuron_diameter_range__μm(),
+        soma_length_range__um: tuple[float, float] = _get_interneuron_diameter_range__um(),
+        soma_diameter_range: tuple[float, float] = _get_interneuron_diameter_range__um(),
         passive_conductance_range: tuple[float, float] = (3e-5, 7e-5),
         na3rp_conductance_range: tuple[float, float] = (0.003, 0.01),
         kdrrl_conductance_range: tuple[float, float] = (0.015, 0.015),
@@ -80,7 +76,7 @@ class GII__Pool(_Pool):
         initial_voltage__mV: Union[float, list[float]] = -70.0,
     ):
         self.n = n
-        self.soma_length_range__μm = soma_length_range__μm
+        self.soma_length_range__um = soma_length_range__um
         self.soma_diameter_range = soma_diameter_range
         self.passive_conductance_range = passive_conductance_range
         self.na3rp_conductance_range = na3rp_conductance_range
@@ -93,7 +89,7 @@ class GII__Pool(_Pool):
         self.axon_length = axon_length
         self.cell_index = cell_index
 
-        sL = np.linspace(*soma_length_range__μm, n)
+        sL = np.linspace(*soma_length_range__um, n)
         sdiam = np.linspace(*soma_diameter_range, n)
         sg_pas = np.linspace(*passive_conductance_range, n)
         sgbar_na3rp = np.linspace(*na3rp_conductance_range, n)
@@ -148,7 +144,10 @@ class GII__Pool(_Pool):
             gII.soma.ghbar_gh = sghbar_gh_i
 
             import quantities as pq
-            gII.create_axon(length__m=axon_length * pq.m, conduction_velocity__m_per_s=vcon_i * pq.m / pq.s)
+
+            gII.create_axon(
+                length__m=axon_length * pq.m, conduction_velocity__m_per_s=vcon_i * pq.m / pq.s
+            )
             _cells.append(gII)
 
         super().__init__(cells=_cells, initial_voltage__mV=initial_voltage__mV)
@@ -168,9 +167,9 @@ class GIb__Pool(_Pool):
     n : int
         Number of group Ib interneurons to create.
     soma_length_range : tuple[float, float]
-        Min and max soma length (μm).
+        Min and max soma length (um).
     soma_diameter_range : tuple[float, float]
-        Min and max soma diameter (μm).
+        Min and max soma diameter (um).
     passive_conductance_range : tuple[float, float]
         Min and max passive membrane conductance (S/cm²).
     na3rp_conductance_range : tuple[float, float]
@@ -196,10 +195,8 @@ class GIb__Pool(_Pool):
     def __init__(
         self,
         n: int,
-        soma_length_range: tuple[float, float] = _get_interneuron_diameter_range__μm(),
-        soma_diameter_range: tuple[
-            float, float
-        ] = _get_interneuron_diameter_range__μm(),
+        soma_length_range: tuple[float, float] = _get_interneuron_diameter_range__um(),
+        soma_diameter_range: tuple[float, float] = _get_interneuron_diameter_range__um(),
         passive_conductance_range: tuple[float, float] = (3e-5, 8e-5),
         na3rp_conductance_range: tuple[float, float] = (0.01, 0.03),
         kdrrl_conductance_range: tuple[float, float] = (0.035, 0.028),
@@ -281,7 +278,10 @@ class GIb__Pool(_Pool):
             gIb.soma.ghbar_gh = sghbar_gh_i
 
             import quantities as pq
-            gIb.create_axon(length__m=axon_length * pq.m, conduction_velocity__m_per_s=vcon_i * pq.m / pq.s)
+
+            gIb.create_axon(
+                length__m=axon_length * pq.m, conduction_velocity__m_per_s=vcon_i * pq.m / pq.s
+            )
 
             _cells.append(gIb)
 

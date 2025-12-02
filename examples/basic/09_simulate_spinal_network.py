@@ -464,22 +464,22 @@ print(f"✓ Created network with {len(network.populations)} populations")
 # spinal reflex pathways, including both excitatory and inhibitory connections.
 
 # DESCENDING CONTROL: Direct cortical drive to motor neurons
-network.connect("DD_flex", "aMN_flex", probability=0.3, weight__μS=0.05)
-network.connect("DD_ext", "aMN_ext", probability=0.3, weight__μS=0.05)
+network.connect("DD_flex", "aMN_flex", probability=0.3, weight__uS=0.05)
+network.connect("DD_ext", "aMN_ext", probability=0.3, weight__uS=0.05)
 
 # MONOSYNAPTIC STRETCH REFLEX: Ia afferents excite homonymous motor neurons
-network.connect("Ia", "aMN_flex", probability=0.3, weight__μS=0.05)
-network.connect("Ia", "aMN_ext", probability=0.3, weight__μS=0.05)
+network.connect("Ia", "aMN_flex", probability=0.3, weight__uS=0.05)
+network.connect("Ia", "aMN_ext", probability=0.3, weight__uS=0.05)
 
 # POLYSYNAPTIC PATHWAYS: Secondary afferents through interneurons
-network.connect("II", "gII", probability=0.6, weight__μS=0.0073)
-network.connect("gII", "aMN_flex", probability=0.2, weight__μS=0.05)
-network.connect("gII", "aMN_ext", probability=0.2, weight__μS=0.05)
+network.connect("II", "gII", probability=0.6, weight__uS=0.0073)
+network.connect("gII", "aMN_flex", probability=0.2, weight__uS=0.05)
+network.connect("gII", "aMN_ext", probability=0.2, weight__uS=0.05)
 
 # INHIBITORY REFLEXES: Force feedback through Ib interneurons
-network.connect("Ib", "gIb", probability=0.5, weight__μS=0.0073)
-network.connect("gIb", "aMN_flex", probability=0.1, weight__μS=-0.05)  # Inhibitory
-network.connect("gIb", "aMN_ext", probability=0.1, weight__μS=-0.05)  # Inhibitory
+network.connect("Ib", "gIb", probability=0.5, weight__uS=0.0073)
+network.connect("gIb", "aMN_flex", probability=0.1, weight__uS=-0.05)  # Inhibitory
+network.connect("gIb", "aMN_ext", probability=0.1, weight__uS=-0.05)  # Inhibitory
 
 print("✓ Configured synaptic connections")
 print("  - Excitatory: DD→MN, Ia→MN, II→gII, gII→MN")
@@ -494,10 +494,10 @@ print("  - Inhibitory: gIb→MN (autogenic inhibition)")
 
 # Connect motor neurons to muscles (spike threshold automatically uses population default of 50.0 mV)
 network.connect_to_muscle(
-    "aMN_flex", muscle=hill_flexor, activation_callback=spkEvent, weight__μS=1.0
+    "aMN_flex", muscle=hill_flexor, activation_callback=spkEvent, weight__uS=1.0
 )
 network.connect_to_muscle(
-    "aMN_ext", muscle=hill_extensor, activation_callback=spkEvent, weight__μS=1.0
+    "aMN_ext", muscle=hill_extensor, activation_callback=spkEvent, weight__uS=1.0
 )
 
 print("✓ Connected motor neurons to muscles")
@@ -508,13 +508,13 @@ print("✓ Connected motor neurons to muscles")
 #
 # Setup external input pathways for sensory feedback and descending commands.
 
-network.connect_from_external("cmd_flex", "DD_flex", weight__μS=1.0)
-network.connect_from_external("cmd_ext", "DD_ext", weight__μS=1.0)
-network.connect_from_external("spindle", "Ia", weight__μS=1.0)
-network.connect_from_external("spindle", "II", weight__μS=1.0)
-network.connect_from_external("gto", "Ib", weight__μS=1.0)
+network.connect_from_external("cmd_flex", "DD_flex", weight__uS=1.0)
+network.connect_from_external("cmd_ext", "DD_ext", weight__uS=1.0)
+network.connect_from_external("spindle", "Ia", weight__uS=1.0)
+network.connect_from_external("spindle", "II", weight__uS=1.0)
+network.connect_from_external("gto", "Ib", weight__uS=1.0)
 # Add test drive for Group II interneurons (commented out due to INgII missing .ns attribute)
-# network.connect_from_external("test_gII", "gII", weight__μS=1.0)
+# network.connect_from_external("test_gII", "gII", weight__uS=1.0)
 
 # Get NetCons for manual triggering during simulation
 ncD = {

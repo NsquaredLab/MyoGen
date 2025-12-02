@@ -216,49 +216,49 @@ def load_spike_times_from_xml(xml_path):
     # Parse XML by simple text processing
     # Format: <emglab_spike_events> contains lines like "time unit chan"
     spike_dict = {}
-    
+
     try:
-        with open(xml_path, 'r') as f:
+        with open(xml_path, "r") as f:
             content = f.read()
-        
+
         # Find the emglab_spike_events section
-        start_tag = '<emglab_spike_events>'
-        end_tag = '</emglab_spike_events>'
-        
+        start_tag = "<emglab_spike_events>"
+        end_tag = "</emglab_spike_events>"
+
         start_idx = content.find(start_tag)
         end_idx = content.find(end_tag)
-        
+
         if start_idx == -1 or end_idx == -1:
             raise ValueError("Could not find <emglab_spike_events> tags in XML file")
-        
+
         # Extract the data section
-        data_section = content[start_idx + len(start_tag):end_idx].strip()
-        
+        data_section = content[start_idx + len(start_tag) : end_idx].strip()
+
         # Parse each line: time unit chan
-        for line in data_section.split('\n'):
+        for line in data_section.split("\n"):
             line = line.strip()
             if not line:
                 continue
-            
+
             parts = line.split()
             if len(parts) < 2:
                 continue
-            
+
             time_s = float(parts[0])
             unit_id = int(parts[1])
             # Ignore chan (parts[2]) as requested
-            
+
             if unit_id not in spike_dict:
                 spike_dict[unit_id] = []
             spike_dict[unit_id].append(time_s)
-    
+
     except Exception as e:
         raise RuntimeError(f"Failed to parse XML file: {e}")
-    
+
     # Sort spike times for each unit
     for unit_id in spike_dict:
         spike_dict[unit_id] = sorted(spike_dict[unit_id])
-    
+
     return spike_dict
 
 
@@ -307,11 +307,11 @@ def calculate_pnr(decomp, rest_duration_s=0.5, use_signal_extraction=True):
     -----
     PNR ≥ 30 dB is generally considered high-quality decomposition.
     """
-    emg_signal = decomp['emg_signal']
-    muap_templates = decomp['muap_templates']
-    mu_indices = decomp['mu_indices']
-    sampling_rate_hz = decomp['sampling_rate_hz']
-    snr_db = decomp['snr_db']
+    emg_signal = decomp["emg_signal"]
+    muap_templates = decomp["muap_templates"]
+    mu_indices = decomp["mu_indices"]
+    sampling_rate_hz = decomp["sampling_rate_hz"]
+    snr_db = decomp["snr_db"]
 
     # Determine EMG type and reshape if needed
     if emg_signal.ndim == 2:
@@ -354,7 +354,6 @@ def calculate_pnr(decomp, rest_duration_s=0.5, use_signal_extraction=True):
     noise_rms_per_channel_snr = np.sqrt(noise_power_per_channel)
     noise_rms_snr = np.mean(noise_rms_per_channel_snr)
 
-
     # ========================================================================
     # Calculate MUAP amplitudes (peak-to-peak) per motor unit
     # ========================================================================
@@ -362,7 +361,7 @@ def calculate_pnr(decomp, rest_duration_s=0.5, use_signal_extraction=True):
     pnr_rest_values = []
     pnr_snr_values = []
 
-    spike_trains = decomp['spike_trains']
+    spike_trains = decomp["spike_trains"]
 
     # Extract MUAP amplitudes and calculate DEMUSE PNR
     # Use BEST ELECTRODE method for PNR calculation
@@ -429,7 +428,9 @@ def calculate_pnr(decomp, rest_duration_s=0.5, use_signal_extraction=True):
                 print(f"    MUAP template shape: {muap_template_sta.shape}")
                 print(f"    MUAP amplitude (best channel): {muap_amplitude:.6e}")
                 print(f"    Best electrode index: {best_electrode_idx}")
-                print(f"    MUAP template range: [{np.min(muap_template_sta):.6e}, {np.max(muap_template_sta):.6e}]")
+                print(
+                    f"    MUAP template range: [{np.min(muap_template_sta):.6e}, {np.max(muap_template_sta):.6e}]"
+                )
 
             # ================================================================
             # Step 2: Reconstruct this MU's signal contribution
@@ -521,9 +522,9 @@ def calculate_pnr(decomp, rest_duration_s=0.5, use_signal_extraction=True):
 
             # Debug first electrode
             if ch_idx == 0:
-                orig_power = np.mean(emg_2d[:, ch_idx]**2)
+                orig_power = np.mean(emg_2d[:, ch_idx] ** 2)
                 mu_sum_power = np.mean(total_mu_signal**2)
-                residual_power = np.mean(residual_per_electrode[ch_idx]**2)
+                residual_power = np.mean(residual_per_electrode[ch_idx] ** 2)
                 print(f"\n  DEBUG - Electrode 0 residual calculation:")
                 print(f"    Original EMG power: {orig_power:.6e}")
                 print(f"    Sum of all MU signals power: {mu_sum_power:.6e}")
@@ -531,7 +532,9 @@ def calculate_pnr(decomp, rest_duration_s=0.5, use_signal_extraction=True):
                 print(f"    First 5 MU powers:")
                 for mu_idx, mu_power in mu_powers_for_debug[:5]:
                     print(f"      MU {mu_idx}: {mu_power:.6e}")
-                print(f"    Sum of individual MU powers: {sum(p for _, p in mu_powers_for_debug):.6e}")
+                print(
+                    f"    Sum of individual MU powers: {sum(p for _, p in mu_powers_for_debug):.6e}"
+                )
 
         # ================================================================
         # Step 4: Calculate PNR for each MU using windowed approach
@@ -604,7 +607,9 @@ def calculate_pnr(decomp, rest_duration_s=0.5, use_signal_extraction=True):
             pnr_rest_values.append(pnr_db)
 
         # Store global residual noise RMS (average across electrodes)
-        global_residual_rms = np.mean([np.sqrt(np.mean(res**2)) for res in residual_per_electrode.values()])
+        global_residual_rms = np.mean(
+            [np.sqrt(np.mean(res**2)) for res in residual_per_electrode.values()]
+        )
         noise_rms_per_mu = [global_residual_rms] * len(mu_indices)
 
         # Also calculate SNR-based PNR for comparison (using background noise)
@@ -638,8 +643,12 @@ def calculate_pnr(decomp, rest_duration_s=0.5, use_signal_extraction=True):
             muap_amplitudes.append(mean_muap_amplitude)
 
             # Fallback PNR calculation
-            pnr_rest_dB = 20 * np.log10(mean_muap_amplitude / noise_rms_rest) if noise_rms_rest > 0 else 0.0
-            pnr_snr_dB = 20 * np.log10(mean_muap_amplitude / noise_rms_snr) if noise_rms_snr > 0 else 0.0
+            pnr_rest_dB = (
+                20 * np.log10(mean_muap_amplitude / noise_rms_rest) if noise_rms_rest > 0 else 0.0
+            )
+            pnr_snr_dB = (
+                20 * np.log10(mean_muap_amplitude / noise_rms_snr) if noise_rms_snr > 0 else 0.0
+            )
 
             pnr_rest_values.append(pnr_rest_dB)
             pnr_snr_values.append(pnr_snr_dB)
@@ -648,12 +657,12 @@ def calculate_pnr(decomp, rest_duration_s=0.5, use_signal_extraction=True):
         noise_rms_per_mu = np.array(noise_rms_per_mu)
 
     return {
-        'mu_indices': mu_indices,
-        'pnr_rest_dB': np.array(pnr_rest_values),
-        'pnr_snr_dB': np.array(pnr_snr_values),
-        'muap_amplitudes_uV': np.array(muap_amplitudes),
-        'noise_rms_rest_uV': noise_rms_rest,
-        'noise_rms_snr_uV': noise_rms_snr,
+        "mu_indices": mu_indices,
+        "pnr_rest_dB": np.array(pnr_rest_values),
+        "pnr_snr_dB": np.array(pnr_snr_values),
+        "muap_amplitudes_uV": np.array(muap_amplitudes),
+        "noise_rms_rest_uV": noise_rms_rest,
+        "noise_rms_snr_uV": noise_rms_snr,
     }
 
 
@@ -670,29 +679,33 @@ def save_pnr_to_csv(pnr_data, output_path):
     """
     import csv
 
-    with open(output_path, 'w', newline='') as f:
+    with open(output_path, "w", newline="") as f:
         writer = csv.writer(f)
 
         # Write header
-        writer.writerow([
-            'motor_unit_index',
-            'pnr_demuse_dB',
-            'pnr_amplitude_based_dB',
-            'muap_peak_to_peak_amplitude',
-            'residual_noise_rms',
-            'background_noise_rms'
-        ])
+        writer.writerow(
+            [
+                "motor_unit_index",
+                "pnr_demuse_dB",
+                "pnr_amplitude_based_dB",
+                "muap_peak_to_peak_amplitude",
+                "residual_noise_rms",
+                "background_noise_rms",
+            ]
+        )
 
         # Write data rows
-        for i, mu_idx in enumerate(pnr_data['mu_indices']):
-            writer.writerow([
-                mu_idx,
-                f"{pnr_data['pnr_rest_dB'][i]:.2f}",
-                f"{pnr_data['pnr_snr_dB'][i]:.2f}",
-                f"{pnr_data['muap_amplitudes_uV'][i]:.6f}",
-                f"{pnr_data['noise_rms_rest_uV']:.6f}",
-                f"{pnr_data['noise_rms_snr_uV']:.6f}"
-            ])
+        for i, mu_idx in enumerate(pnr_data["mu_indices"]):
+            writer.writerow(
+                [
+                    mu_idx,
+                    f"{pnr_data['pnr_rest_dB'][i]:.2f}",
+                    f"{pnr_data['pnr_snr_dB'][i]:.2f}",
+                    f"{pnr_data['muap_amplitudes_uV'][i]:.6f}",
+                    f"{pnr_data['noise_rms_rest_uV']:.6f}",
+                    f"{pnr_data['noise_rms_snr_uV']:.6f}",
+                ]
+            )
 
 
 ##############################################################################
@@ -722,7 +735,7 @@ def plot_emg_signal_channel(signal_data, time_vector, channel_idx, output_path):
 
     # Format axes
     ax.set_xlabel("Time (s)", fontsize=12)
-    ax.set_ylabel("Amplitude (μV)", fontsize=12)
+    ax.set_ylabel("Amplitude (uV)", fontsize=12)
     ax.set_title(f"EMG Signal - Channel {channel_idx}", fontsize=14)
     ax.tick_params(axis="both", labelsize=10)
     ax.grid(True, alpha=0.3, linestyle="--", linewidth=0.5)
@@ -775,9 +788,7 @@ def plot_all_emg_signals(decomp, output_folder):
     print(f"\n📊 Creating {n_channels} EMG signal plots...")
     for ch_idx in range(n_channels):
         output_path = output_folder / f"channel_{ch_idx:02d}.svg"
-        plot_emg_signal_channel(
-            signals_2d[:, ch_idx], time_vector, ch_idx, output_path
-        )
+        plot_emg_signal_channel(signals_2d[:, ch_idx], time_vector, ch_idx, output_path)
 
     return n_channels
 
@@ -787,7 +798,16 @@ def plot_all_emg_signals(decomp, output_folder):
 ##############################################################################
 
 
-def plot_muap_mini_iemg(muap_template, mu_idx, sampling_rate_hz, color, output_path, mu_indices, global_ylim, pnr_value=None):
+def plot_muap_mini_iemg(
+    muap_template,
+    mu_idx,
+    sampling_rate_hz,
+    color,
+    output_path,
+    mu_indices,
+    global_ylim,
+    pnr_value=None,
+):
     """
     Plot a single MUAP for iEMG in mini style.
 
@@ -827,13 +847,7 @@ def plot_muap_mini_iemg(muap_template, mu_idx, sampling_rate_hz, color, output_p
         print(f"  Debug - First MU color (RGB): {color_rgb}")
 
     for e_idx in range(n_electrodes):
-        ax.plot(
-            time_ms,
-            muap_template[:, e_idx],
-            color=color_rgb,
-            linewidth=2.0,
-            alpha=1.0
-        )
+        ax.plot(time_ms, muap_template[:, e_idx], color=color_rgb, linewidth=2.0, alpha=1.0)
 
     # Format axes with explicit limits
     ax.set_xlim(time_ms[0], time_ms[-1])
@@ -858,7 +872,9 @@ def plot_muap_mini_iemg(muap_template, mu_idx, sampling_rate_hz, color, output_p
     plt.close(fig)
 
 
-def plot_muap_mini_semg(muap_template, mu_idx, sampling_rate_hz, color, output_path, pnr_value=None):
+def plot_muap_mini_semg(
+    muap_template, mu_idx, sampling_rate_hz, color, output_path, pnr_value=None
+):
     """
     Plot a single MUAP for sEMG in mini style (grid of waveforms).
 
@@ -889,8 +905,9 @@ def plot_muap_mini_semg(muap_template, mu_idx, sampling_rate_hz, color, output_p
     # Scale figure size based on grid dimensions
     fig_width = max(8, n_cols * 1.5)
     fig_height = max(6, n_rows * 1.5)
-    fig, axes = plt.subplots(n_rows, n_cols, figsize=(fig_width, fig_height),
-                             sharex=True, sharey=True)
+    fig, axes = plt.subplots(
+        n_rows, n_cols, figsize=(fig_width, fig_height), sharex=True, sharey=True
+    )
 
     # Handle single electrode case
     if n_rows == 1 and n_cols == 1:
@@ -932,7 +949,7 @@ def plot_muap_mini_semg(muap_template, mu_idx, sampling_rate_hz, color, output_p
             end_idx -= start_idx
             start_idx = 0
         if end_idx >= n_samples:
-            start_idx -= (end_idx - n_samples + 1)
+            start_idx -= end_idx - n_samples + 1
             end_idx = n_samples - 1
 
         # Final bounds check
@@ -940,8 +957,8 @@ def plot_muap_mini_semg(muap_template, mu_idx, sampling_rate_hz, color, output_p
         end_idx = min(n_samples - 1, end_idx)
 
         # Crop arrays to 40ms window
-        muap_template = muap_template[start_idx:end_idx+1, :, :]
-        time_ms = time_ms[start_idx:end_idx+1]
+        muap_template = muap_template[start_idx : end_idx + 1, :, :]
+        time_ms = time_ms[start_idx : end_idx + 1]
         n_samples = len(time_ms)  # Update sample count
 
     # Plot waveform for each electrode in grid layout
@@ -964,22 +981,23 @@ def plot_muap_mini_semg(muap_template, mu_idx, sampling_rate_hz, color, output_p
             # Keep spines but make them thin
             for spine in ax.spines.values():
                 spine.set_linewidth(0.5)
-                spine.set_color('gray')
+                spine.set_color("gray")
                 spine.set_alpha(0.3)
 
     # Add shared axis labels for the entire grid
-    fig.text(0.5, 0.02, 'Time (ms)', ha='center', fontsize=12)
-    fig.text(0.02, 0.5, 'Amplitude', va='center', rotation='vertical', fontsize=12)
+    fig.text(0.5, 0.02, "Time (ms)", ha="center", fontsize=12)
+    fig.text(0.02, 0.5, "Amplitude", va="center", rotation="vertical", fontsize=12)
 
     # Add title with MU index and PNR if available
     if pnr_value is not None:
-        fig.suptitle(f'MU {mu_idx} - Surface EMG Grid | PNR: {pnr_value:.1f} dB', fontsize=14, y=0.98)
+        fig.suptitle(
+            f"MU {mu_idx} - Surface EMG Grid | PNR: {pnr_value:.1f} dB", fontsize=14, y=0.98
+        )
     else:
-        fig.suptitle(f'MU {mu_idx} - Surface EMG Grid', fontsize=14, y=0.98)
+        fig.suptitle(f"MU {mu_idx} - Surface EMG Grid", fontsize=14, y=0.98)
 
     # Adjust subplot spacing for compact grid
-    plt.subplots_adjust(left=0.08, right=0.98, bottom=0.08, top=0.94,
-                       hspace=0.05, wspace=0.05)
+    plt.subplots_adjust(left=0.08, right=0.98, bottom=0.08, top=0.94, hspace=0.05, wspace=0.05)
 
     plt.savefig(output_path, dpi=plt.rcParams["savefig.dpi"], bbox_inches="tight")
     plt.close(fig)
@@ -1042,7 +1060,9 @@ def plot_all_muaps(decomp, output_folder):
     # Debug first MUAP AFTER normalization
     if n_mus > 0:
         first_muap_norm = muap_templates_normalized[0]
-        print(f"  Debug - First MUAP range (normalized): [{first_muap_norm.min():.6f}, {first_muap_norm.max():.6f}]")
+        print(
+            f"  Debug - First MUAP range (normalized): [{first_muap_norm.min():.6f}, {first_muap_norm.max():.6f}]"
+        )
 
     # Use FIXED y-axis limits for all plots: [-1, 1] with padding
     global_ylim = (-1.15, 1.15)
@@ -1053,7 +1073,9 @@ def plot_all_muaps(decomp, output_folder):
     pnr_data = calculate_pnr(decomp)
 
     # Create lookup dictionary for PNR values (use DEMUSE method for plots)
-    pnr_lookup = {mu_idx: pnr_val for mu_idx, pnr_val in zip(pnr_data['mu_indices'], pnr_data['pnr_rest_dB'])}
+    pnr_lookup = {
+        mu_idx: pnr_val for mu_idx, pnr_val in zip(pnr_data["mu_indices"], pnr_data["pnr_rest_dB"])
+    }
 
     # Use NORMALIZED templates for plotting (only selected MUs)
     for idx, mu_idx in enumerate(mu_indices):
@@ -1063,7 +1085,16 @@ def plot_all_muaps(decomp, output_folder):
         pnr_value = pnr_lookup.get(mu_idx, None)
 
         if is_iemg:
-            plot_muap_mini_iemg(muap, mu_idx, sampling_rate_hz, color, output_path, mu_indices, global_ylim, pnr_value)
+            plot_muap_mini_iemg(
+                muap,
+                mu_idx,
+                sampling_rate_hz,
+                color,
+                output_path,
+                mu_indices,
+                global_ylim,
+                pnr_value,
+            )
         elif is_semg:
             plot_muap_mini_semg(muap, mu_idx, sampling_rate_hz, color, output_path, pnr_value)
 
@@ -1089,10 +1120,10 @@ def plot_input_current(current_data, output_path):
     fig, ax = plt.subplots(figsize=(10, 8))
 
     # Handle Neo AnalogSignal objects
-    if hasattr(current_data, 'magnitude'):
+    if hasattr(current_data, "magnitude"):
         # It's a Neo AnalogSignal
         current = current_data.magnitude.flatten()
-        time_s = current_data.times.rescale('s').magnitude
+        time_s = current_data.times.rescale("s").magnitude
     else:
         # It's a dictionary
         # Extract current and time data
@@ -1164,8 +1195,15 @@ def plot_spike_train_single(spike_times, mu_idx, color, output_path, duration_s)
 
     # Plot spikes as dots at y=0 with colored edges only
     y_positions = np.zeros(len(spike_times))
-    ax.scatter(spike_times, y_positions, facecolors='none', edgecolors=color_rgb,
-               s=30, linewidths=1.5, marker='o')
+    ax.scatter(
+        spike_times,
+        y_positions,
+        facecolors="none",
+        edgecolors=color_rgb,
+        s=30,
+        linewidths=1.5,
+        marker="o",
+    )
 
     # Format axes
     ax.set_xlabel("Time (s)", fontsize=10)
@@ -1173,12 +1211,12 @@ def plot_spike_train_single(spike_times, mu_idx, color, output_path, duration_s)
     ax.set_title(f"MU {mu_idx} Spike Train", fontsize=12)
     ax.set_xlim(0, duration_s)
     ax.set_ylim(-0.5, 0.5)
-    
+
     # Remove y-axis ticks since there's only one row
     ax.set_yticks([])
-    
+
     ax.tick_params(axis="x", labelsize=9)
-    ax.grid(True, alpha=0.3, linestyle="--", linewidth=0.5, axis='x')
+    ax.grid(True, alpha=0.3, linestyle="--", linewidth=0.5, axis="x")
     sns.despine(ax=ax, left=True, offset=5, trim=True)
 
     plt.tight_layout()
@@ -1214,27 +1252,27 @@ def plot_all_spike_trains(spike_dict, mu_indices, output_folder, duration_s):
 
     # The XML file uses sequential unit IDs (1, 2, 3, ...) for the selected MUs
     xml_unit_ids = sorted(spike_dict.keys())
-    
+
     if len(xml_unit_ids) != n_mus:
         print(f"⚠️  Warning: Number of units in XML ({len(xml_unit_ids)}) != selected MUs ({n_mus})")
         print(f"    XML units: {xml_unit_ids}")
         print(f"    Expected MU indices: {mu_indices}")
 
     print(f"  Creating {n_mus} decomposed spike train plots...")
-    
+
     # Map XML unit IDs to mu_indices positions and plot each one
     plots_created = 0
     for idx in range(min(len(xml_unit_ids), n_mus)):
         xml_unit_id = xml_unit_ids[idx]
         mu_idx = mu_indices[idx]
-        
+
         if xml_unit_id not in spike_dict:
             continue
-        
+
         spike_times = spike_dict[xml_unit_id]
         if len(spike_times) == 0:
             continue
-        
+
         # Get color for this MU
         color = colors[idx]
 
@@ -1266,32 +1304,32 @@ def plot_spike_trains_from_decomp(decomp, output_folder):
     """
     output_folder.mkdir(parents=True, exist_ok=True)
 
-    spike_trains = decomp['spike_trains']
-    mu_indices = decomp['mu_indices']
-    duration_s = decomp['time_duration_s']
-    
+    spike_trains = decomp["spike_trains"]
+    mu_indices = decomp["mu_indices"]
+    duration_s = decomp["time_duration_s"]
+
     # Get rainbow colors for motor units
     n_mus = len(mu_indices)
     colors = get_recruitment_colors(n_mus)
 
     print(f"  Creating {n_mus} ground truth spike train plots...")
-    
+
     plots_created = 0
     for idx, mu_idx in enumerate(mu_indices):
         spike_times_ms = spike_trains[idx]
-        
+
         if len(spike_times_ms) == 0:
             continue
-        
+
         # Convert from milliseconds to seconds
         spike_times_s = spike_times_ms / 1000.0
-        
+
         # Get color for this MU
         color = colors[idx]
-        
+
         # Create output file with "simulated" prefix to indicate ground truth
         output_path = output_folder / f"spike_train_simulated_mu_{mu_idx:03d}.svg"
-        
+
         # Plot this spike train
         plot_spike_train_single(spike_times_s, mu_idx, color, output_path, duration_s)
         plots_created += 1
@@ -1366,7 +1404,9 @@ def main():
 
     # Plot EMG signals
     n_signal_plots = plot_all_emg_signals(decomp, signals_folder)
-    print(f"✅ Created {n_signal_plots} signal plots in {signals_folder.relative_to(decomp_folder)}/")
+    print(
+        f"✅ Created {n_signal_plots} signal plots in {signals_folder.relative_to(decomp_folder)}/"
+    )
 
     # Plot MUAPs and calculate PNR
     n_muap_plots, pnr_data = plot_all_muaps(decomp, muaps_folder)
@@ -1379,12 +1419,18 @@ def main():
 
     # Print PNR summary
     print(f"\n📊 PNR Summary:")
-    print(f"   DEMUSE method (power-based): {pnr_data['pnr_rest_dB'].mean():.1f} ± {pnr_data['pnr_rest_dB'].std():.1f} dB (range: {pnr_data['pnr_rest_dB'].min():.1f} - {pnr_data['pnr_rest_dB'].max():.1f} dB)")
-    print(f"   Amplitude-based (for reference): {pnr_data['pnr_snr_dB'].mean():.1f} ± {pnr_data['pnr_snr_dB'].std():.1f} dB (range: {pnr_data['pnr_snr_dB'].min():.1f} - {pnr_data['pnr_snr_dB'].max():.1f} dB)")
+    print(
+        f"   DEMUSE method (power-based): {pnr_data['pnr_rest_dB'].mean():.1f} ± {pnr_data['pnr_rest_dB'].std():.1f} dB (range: {pnr_data['pnr_rest_dB'].min():.1f} - {pnr_data['pnr_rest_dB'].max():.1f} dB)"
+    )
+    print(
+        f"   Amplitude-based (for reference): {pnr_data['pnr_snr_dB'].mean():.1f} ± {pnr_data['pnr_snr_dB'].std():.1f} dB (range: {pnr_data['pnr_snr_dB'].min():.1f} - {pnr_data['pnr_snr_dB'].max():.1f} dB)"
+    )
 
     # Count high-quality MUs (PNR >= 30 dB)
-    high_quality_count = np.sum(pnr_data['pnr_rest_dB'] >= 30.0)
-    print(f"   High-quality MUs (PNR ≥ 30 dB): {high_quality_count} / {len(pnr_data['mu_indices'])}")
+    high_quality_count = np.sum(pnr_data["pnr_rest_dB"] >= 30.0)
+    print(
+        f"   High-quality MUs (PNR ≥ 30 dB): {high_quality_count} / {len(pnr_data['mu_indices'])}"
+    )
 
     # Plot input current
     print("\n📂 Loading input current...")
@@ -1404,7 +1450,9 @@ def main():
     spikes_folder = plots_folder / "spikes"
     try:
         n_gt_plots = plot_spike_trains_from_decomp(decomp, spikes_folder)
-        print(f"✅ Created {n_gt_plots} ground truth spike train plots in {spikes_folder.relative_to(decomp_folder)}/")
+        print(
+            f"✅ Created {n_gt_plots} ground truth spike train plots in {spikes_folder.relative_to(decomp_folder)}/"
+        )
     except Exception as e:
         print(f"⚠️  Failed to plot ground truth spike trains: {e}")
 
@@ -1422,7 +1470,9 @@ def main():
             spikes_folder = plots_folder / "spikes"
 
             n_spike_plots = plot_all_spike_trains(spike_dict, mu_indices, spikes_folder, duration_s)
-            print(f"✅ Created {n_spike_plots} decomposed spike train plots in {spikes_folder.relative_to(decomp_folder)}/")
+            print(
+                f"✅ Created {n_spike_plots} decomposed spike train plots in {spikes_folder.relative_to(decomp_folder)}/"
+            )
         except Exception as e:
             print(f"⚠️  Failed to plot decomposed spike trains: {e}")
     else:

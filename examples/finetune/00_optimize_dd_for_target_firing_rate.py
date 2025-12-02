@@ -35,7 +35,7 @@ warnings.filterwarnings("ignore")
 def parse_args():
     """Parse command-line arguments."""
     p = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter)
-    p.add_argument("--study-prefix", type=str, default="VLVM_")
+    p.add_argument("--study-prefix", type=str, default="TEST_")
     p.add_argument("--target-fr-mean", type=float, default=(16.31 + 17.33) / 2)
     p.add_argument("--target-fr-std", type=float, default=2.5)
     p.add_argument("--target-conn-prob", type=float, default=0.30)
@@ -149,9 +149,9 @@ def objective(trial):
             source="DD",
             target="aMN",
             probability=conn_probability,
-            weight__μS=SYNAPTIC_WEIGHT,
+            weight__uS=SYNAPTIC_WEIGHT * pq.uS,
         )
-        network.connect_from_external(source="cortical_input", target="DD", weight__μS=1.0)
+        network.connect_from_external(source="cortical_input", target="DD", weight__uS=1.0 * pq.uS)
         dd_netcons = network.get_netcons("cortical_input", "DD")
         mn_spike_recorders = []
         for cell in motor_neuron_pool:
@@ -201,11 +201,12 @@ def objective(trial):
         ]
 
         stats = calculate_firing_rate_statistics(mn_segment.spiketrains)
-        n_active = stats["n_active"]
+        n_active: int = int(stats["n_active"])
         if n_active < 10:
             return 1000.0
 
-        fr_mean, fr_std = stats["FR_mean"], stats["FR_std"]
+        fr_mean: float = float(stats["FR_mean"])
+        fr_std: float = float(stats["FR_std"])
 
         # Simple normalized errors (just mean and std)
         mean_error = abs(fr_mean - TARGET_FR_MEAN__HZ) / TARGET_FR_MEAN__HZ

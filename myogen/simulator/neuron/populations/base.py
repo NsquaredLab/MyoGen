@@ -40,7 +40,7 @@ def _exp_interp(first: float, last: float, n: int, curv: float = 0.33, negative:
     return param
 
 
-def _get_interneuron_diameter_range__μm() -> tuple[float, float]:
+def _get_interneuron_diameter_range__um() -> tuple[float, float]:
     """Estimate interneuron soma diameter range based on Biu et al. 2003 [1]_.
 
     Returns

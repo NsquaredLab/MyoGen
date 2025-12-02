@@ -46,9 +46,9 @@ from myogen.utils.nmodl import load_nmodl_mechanisms
 #############################################################################
 
 parser = argparse.ArgumentParser(description="Extract ISI/CV data from spike trains")
-parser.add_argument("--muscle", type=str, default="VLVM", help="Muscle type")
+parser.add_argument("--muscle", type=str, default="TEST", help="Muscle type")
 parser.add_argument("--mvc-level", type=int, default=30, help="MVC level %%")
-parser.add_argument("--study-prefix", type=str, default="VLVM_", help="Study prefix")
+parser.add_argument("--study-prefix", type=str, default="TEST_", help="Study prefix")
 parser.add_argument("--use-baseline", action="store_true", help="Use baseline optimization")
 parser.add_argument("--seed", type=int, default=42, help="Random seed")
 
@@ -141,13 +141,13 @@ GFLUCTDV_NOISE_AMPLITUDE = dd_params.get("gfluctdv_noise_amplitude", None)
 print(f"\n✓ Loaded from: {source_description}")
 print(f"  Source file: {PARAMS_FILE.name}")
 print("\nOptimized DD parameters:")
-print(f"  DD neurons:       {N_DD_NEURONS}")
-print(f"  Conn probability: {DD_CONNECTION_PROBABILITY:.3f}")
-print(f"  Synaptic weight:  {DD_SYNAPTIC_WEIGHT:.4f} μS")
-print(f"  DD drive level:   {DD_PEAK__Hz:.2f} Hz")
-print(f"  Gamma shape:      {DD_SHAPE_PARAMETER:.2f} (CV={1 / DD_SHAPE_PARAMETER**0.5:.3f})")
+print(f"\tDD neurons: {N_DD_NEURONS}")
+print(f"\tConn probability: {DD_CONNECTION_PROBABILITY:.3f}")
+print(f"\tSynaptic weight: {DD_SYNAPTIC_WEIGHT:.4f} uS")
+print(f"\tDD drive level: {DD_PEAK__Hz:.2f} Hz")
+print(f"\tGamma shape: {DD_SHAPE_PARAMETER:.2f} (CV={1 / DD_SHAPE_PARAMETER**0.5:.3f})")
 if GFLUCTDV_ENABLED:
-    print(f"  Gfluctdv:         ENABLED (noise={GFLUCTDV_NOISE_AMPLITUDE:.2e} S/cm²)")
+    print(f"\tGfluctdv: ENABLED (noise={GFLUCTDV_NOISE_AMPLITUDE:.2e} S/cm²)")
 
 ##############################################################################
 # Configuration
@@ -193,7 +193,7 @@ motor_neuron_pool = AlphaMN__Pool(
 
 if GFLUCTDV_ENABLED and GFLUCTDV_NOISE_AMPLITUDE is not None:
     print("\nApplying Gfluctdv to motor neurons (matching DD optimization)...")
-    print(f"  Noise amplitude: {GFLUCTDV_NOISE_AMPLITUDE:.2e} S/cm²")
+    print(f"\tNoise amplitude: {GFLUCTDV_NOISE_AMPLITUDE:.2e} S/cm²")
     for cell in motor_neuron_pool:
         cell.insert_Gfluctdv()
         for d in cell.dend:
@@ -325,12 +325,11 @@ network.connect(
     source="DD",
     target="aMN",
     probability=DD_CONNECTION_PROBABILITY,
-    weight__μS=DD_SYNAPTIC_WEIGHT,
+    weight__uS=DD_SYNAPTIC_WEIGHT * pq.uS,
 )
 
 # Set up external input to DD population
-network.connect_from_external(source="cortical_input", target="DD", weight__μS=1.0)
-
+network.connect_from_external(source="cortical_input", target="DD", weight__uS=1.0 * pq.uS)
 # Get NetCons for manual DD stimulation
 dd_netcons = network.get_netcons("cortical_input", "DD")
 
@@ -391,9 +390,10 @@ with tqdm(
         for dd_cell in descending_drive_pool:
             if dd_cell.integrate(current_drive):
                 # Record spike time for DD neuron
-                dd_spike_times[dd_cell.pool__ID].append(h.t + 1)
-                # Generate spike in DD neuron
-                spike_time = h.t
+                spike_time = h.t + 1
+
+                dd_spike_times[dd_cell.pool__ID].append(spike_time)
+
                 if spike_time < h.tstop:  # Avoid scheduling beyond simulation end
                     dd_netcons[dd_cell.pool__ID].event(spike_time)
 
@@ -413,10 +413,10 @@ spike_train_block = Block(name="Sinusoidal DD Spike Trains")
 dd_segment = Segment(name="Descending Drive")
 dd_segment.spiketrains = [
     SpikeTrain(
-        spike_times * pq.ms,
-        t_stop=simulation_time * pq.ms,
-        sampling_rate=(1 / h.dt * (1 / pq.ms)),
-        sampling_period=h.dt * pq.ms,
+        (spike_times * pq.ms).rescale(pq.s),
+        t_stop=(simulation_time * pq.ms).rescale(pq.s),
+        sampling_rate=(1 / (h.dt * pq.ms)).rescale(pq.Hz),
+        sampling_period=(h.dt * pq.ms).rescale(pq.s),
         name=f"DD_{i}",
     )
     for i, spike_times in enumerate(dd_spike_times)
@@ -425,10 +425,10 @@ dd_segment.spiketrains = [
 mn_segment = Segment(name="Motor Neurons")
 mn_segment.spiketrains = [
     SpikeTrain(
-        recorder.as_numpy() * pq.ms,
-        t_stop=simulation_time * pq.ms,
-        sampling_rate=(1 / h.dt * (1 / pq.ms)),
-        sampling_period=h.dt * pq.ms,
+        (recorder.as_numpy() * pq.ms).rescale(pq.s),
+        t_stop=(simulation_time * pq.ms).rescale(pq.s),
+        sampling_rate=(1 / (h.dt * pq.ms)).rescale(pq.Hz),
+        sampling_period=(h.dt * pq.ms).rescale(pq.s),
         name=f"MN_{i}",
     )
     for i, recorder in enumerate(mn_spike_recorders)
@@ -450,8 +450,8 @@ print("\nFiring rate analysis:")
 dd_firing_rates = np.array(
     [
         elephant.statistics.mean_firing_rate(st__s.time_slice(st__s.min(), st__s.max()))
-        for st__ms in dd_segment.spiketrains
-        if len(st__s := st__ms.rescale(pq.s)) > 0
+        for st__s in dd_segment.spiketrains
+        if len(st__s) > 0
     ]
 )
 
@@ -459,8 +459,8 @@ dd_firing_rates = np.array(
 mn_firing_rates = np.array(
     [
         elephant.statistics.mean_firing_rate(st__s.time_slice(st__s.min(), st__s.max()))
-        for st__ms in mn_segment.spiketrains
-        if len(st__s := st__ms.rescale(pq.s)) > 0
+        for st__s in mn_segment.spiketrains
+        if len(st__s) > 0
     ]
 )
 
@@ -484,8 +484,8 @@ if len(mn_firing_rates) > 0:
 
 
 # Calculate ISI/CV statistics for motor neurons
-print("\n📊 Calculating ISI and CV statistics...")
-print(f"  Analyzing only plateau phase: {ramp_up_end:.1f} - {plateau_end:.1f} ms")
+print("\nCalculating ISI and CV statistics...")
+print(f"\tAnalyzing only plateau phase: {ramp_up_end:.1f} - {plateau_end:.1f} ms")
 isi_cv_df = calculate_firing_rate_statistics(
     mn_segment.spiketrains,
     plateau_start_ms=ramp_up_end,

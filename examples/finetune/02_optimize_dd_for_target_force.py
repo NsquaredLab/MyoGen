@@ -14,7 +14,7 @@ The optimization tunes:
 Fixed parameters (from baseline):
 - DD neuron count (from baseline optimization)
 - DD-to-MN connection probability (from baseline)
-- DD-to-MN synaptic weight: 0.05 μS
+- DD-to-MN synaptic weight: 0.05 uS
 - DD process type: Gamma distribution
 - Gamma rate scale: 32
 - Gamma shape parameter: Derived from MVC percentage via get_gamma_shape_for_mvc()
@@ -36,10 +36,9 @@ from pathlib import Path
 import joblib
 import numpy as np
 import optuna
-from neo import SpikeTrain, Segment, Block
 import quantities as pq
+from neo import Block, Segment, SpikeTrain
 from neuron import h
-from scipy.stats import wasserstein_distance
 
 from examples.finetune.helper import (
     calculate_firing_rate_statistics,
@@ -74,7 +73,7 @@ N_TRIALS = 100
 TIMEOUT_SECONDS = 3600  # 1 hour
 
 # Use the same prefix as in optimization
-STUDY_PREFIX = "VLVM_"
+STUDY_PREFIX = "TEST_"
 
 # Descending Drive parameters
 MVC_PERCENT = 30.0  # MVC percentage for gamma shape parameter (adjustable)
@@ -106,7 +105,7 @@ def run_simulation_and_compute_force(
     conn_probability : float
         DD-to-MN connection probability
     synaptic_weight : float
-        DD-to-MN synaptic weight (μS)
+        DD-to-MN synaptic weight (uS)
     dd_drive__Hz : float
         DD constant drive level (Hz)
     gamma_shape : float
@@ -124,8 +123,6 @@ def run_simulation_and_compute_force(
         Mean firing rate (Hz)
     float
         Standard deviation of firing rate (Hz)
-    float
-        Wasserstein distance between actual and theoretical normal distribution
     """
     # Create motor neuron pool with DEFAULT config
     motor_neuron_pool = AlphaMN__Pool(
@@ -161,10 +158,10 @@ def run_simulation_and_compute_force(
         source="DD",
         target="aMN",
         probability=conn_probability,
-        weight__μS=synaptic_weight,
+        weight__uS=synaptic_weight * pq.uS,
     )
 
-    network.connect_from_external(source="cortical_input", target="DD", weight__μS=1.0)
+    network.connect_from_external(source="cortical_input", target="DD", weight__uS=1.0 * pq.uS)
     dd_netcons = network.get_netcons("cortical_input", "DD")
 
     # Setup spike recording
@@ -237,13 +234,6 @@ def run_simulation_and_compute_force(
     stats = calculate_firing_rate_statistics(mn_segment.spiketrains)
     fr_mean = stats["FR_mean"]
     fr_std = stats["FR_std"]
-    data = stats["firing_rates"]
-
-    # Calculate Wasserstein distance between actual and theoretical normal distribution
-    if len(data) > 0:
-        wdist = wasserstein_distance(data, np.random.normal(fr_mean, fr_std, len(data)))
-    else:
-        wdist = 0.0
 
     # Create force model
     force_model = ForceModel(
@@ -262,7 +252,7 @@ def run_simulation_and_compute_force(
     steady_state_force = force_signal[steady_state_start_idx:]
     force_mean_steady = np.mean(steady_state_force)
 
-    return force_mean_steady, n_active, fr_mean, fr_std, wdist
+    return force_mean_steady, n_active, fr_mean, fr_std
 
 
 ##############################################################################
@@ -299,16 +289,16 @@ def objective(trial, target_force__au, recruitment_thresholds):
 
         # Diagnostic: Print DD parameters every 10 trials
         if trial.number % 10 == 0:
-            print(f"\n  Trial {trial.number} DD parameters:")
-            print(f"    DD neurons: {dd_neurons}")
-            print(f"    Conn prob: {conn_probability:.3f}")
-            print(f"    Weight: {synaptic_weight:.4f} μS (fixed)")
-            print(f"    Drive: {dd_drive__Hz:.1f} Hz")
-            print(f"    MVC: {MVC_PERCENT:.1f}%")
-            print(f"    Gamma shape: {gamma_shape:.2f} (CV={1 / gamma_shape**0.5:.3f})")
+            print(f"\nTrial {trial.number} DD parameters:")
+            print(f"\tDD neurons: {dd_neurons}")
+            print(f"\tConn prob: {conn_probability:.3f}")
+            print(f"\tWeight: {synaptic_weight:.4f} uS (fixed)")
+            print(f"\tDrive: {dd_drive__Hz:.1f} Hz")
+            print(f"\tMVC: {MVC_PERCENT:.1f}%")
+            print(f"\tGamma shape: {gamma_shape:.2f} (CV={1 / gamma_shape**0.5:.3f})")
 
         # Run simulation and compute force
-        force_mean_steady, n_active, fr_mean, fr_std, wdist = run_simulation_and_compute_force(
+        force_mean_steady, n_active, fr_mean, fr_std = run_simulation_and_compute_force(
             dd_neurons,
             conn_probability,
             synaptic_weight,
@@ -338,18 +328,17 @@ def objective(trial, target_force__au, recruitment_thresholds):
         trial.set_user_attr("gamma_shape", float(gamma_shape))
         trial.set_user_attr("FR_mean", float(fr_mean))
         trial.set_user_attr("FR_std", float(fr_std))
-        trial.set_user_attr("wasserstein_distance", float(wdist))
 
         # Print diagnostic info every 10 trials
         if trial.number % 10 == 0:
             print(
-                f"  Trial {trial.number} results:\n"
-                f"    Force: {force_mean_steady:.4f} a.u. (target: {target_force__au:.4f} a.u.)\n"
-                f"    Error: {force_error:.2%}\n"
-                f"    FR: {fr_mean:.1f}±{fr_std:.1f} Hz (Wasserstein: {wdist:.3f})\n"
-                f"    MVC: {MVC_PERCENT:.1f}%\n"
-                f"    Gamma shape: {gamma_shape:.2f} (CV={1 / gamma_shape**0.5:.3f})\n"
-                f"    Active neurons: {n_active}/{N_MOTOR_UNITS}"
+                f"\nTrial {trial.number} results:\n"
+                f"\tForce: {force_mean_steady:.4f} a.u. (target: {target_force__au:.4f} a.u.)\n"
+                f"\tError: {force_error:.2%}\n"
+                f"\tFR: {fr_mean:.1f}±{fr_std:.1f} Hz\n"
+                f"\tMVC: {MVC_PERCENT:.1f}%\n"
+                f"\tGamma shape: {gamma_shape:.2f} (CV={1 / gamma_shape**0.5:.3f})\n"
+                f"\tActive neurons: {n_active}/{N_MOTOR_UNITS}"
             )
 
         return force_error
@@ -445,25 +434,24 @@ def optimize_for_force_level(target_force_pct, n_trials=N_TRIALS, reset_study=Fa
     best_trial = study.best_trial
 
     print(f"Best trial: {best_trial.number}")
-    print(f"  Force error: {best_trial.value:.2%}")
-    print(f"  Active neurons: {best_trial.user_attrs.get('n_active', 'N/A')}/{N_MOTOR_UNITS}")
+    print(f"\tForce error: {best_trial.value:.2%}")
+    print(f"\tActive neurons: {best_trial.user_attrs.get('n_active', 'N/A')}/{N_MOTOR_UNITS}")
     print("\nForce results:")
-    print(f"  Target:   {target_force__au:.4f} a.u. ({target_force_pct}% of baseline)")
+    print(f"\tTarget:   {target_force__au:.4f} a.u. ({target_force_pct}% of baseline)")
     print(
-        f"  Achieved: {best_trial.user_attrs.get('force_achieved', 'N/A'):.4f} a.u. "
+        f"\tAchieved: {best_trial.user_attrs.get('force_achieved', 'N/A'):.4f} a.u. "
         f"(error: {best_trial.user_attrs.get('force_error', 'N/A'):.1%})"
     )
 
     print("\nOptimized DD parameters:")
-    print(f"  DD neurons:       {best_trial.user_attrs.get('dd_neurons')}")
-    print(f"  Conn probability: {best_trial.user_attrs.get('conn_probability'):.3f}")
-    print(f"  Synaptic weight:  {best_trial.user_attrs.get('synaptic_weight'):.4f} μS")
-    print(f"  DD drive level:   {best_trial.user_attrs.get('dd_drive__Hz'):.2f} Hz")
+    print(f"\tDD neurons:       {best_trial.user_attrs.get('dd_neurons')}")
+    print(f"\tConn probability: {best_trial.user_attrs.get('conn_probability'):.3f}")
+    print(f"\tSynaptic weight:  {best_trial.user_attrs.get('synaptic_weight'):.4f} uS")
+    print(f"\tDD drive level:   {best_trial.user_attrs.get('dd_drive__Hz'):.2f} Hz")
     mvc_val = best_trial.user_attrs.get("mvc_percent", MVC_PERCENT)
     gamma_shape_val = best_trial.user_attrs.get("gamma_shape", get_gamma_shape_for_mvc(MVC_PERCENT))
-    print(f"  MVC:              {mvc_val:.1f}%")
-    print(f"  Gamma shape:      {gamma_shape_val:.2f} (CV={1 / gamma_shape_val**0.5:.3f})")
-
+    print(f"\tMVC:              {mvc_val:.1f}%")
+    print(f"\tGamma shape:      {gamma_shape_val:.2f} (CV={1 / gamma_shape_val**0.5:.3f})")
     return study
 
 
@@ -631,13 +619,13 @@ def main():
     # Print configuration
     print(f"Baseline steady-state force: {BASELINE_FORCE__AU:.4f} a.u.")
     print("Configuration:")
-    print(f"  DD neurons:       {DD_NEURONS}")
-    print(f"  Conn probability: {CONN_PROBABILITY:.3f}")
-    print(f"  MVC:              {MVC_PERCENT:.1f}%")
+    print(f"\tDD neurons: {DD_NEURONS}")
+    print(f"\tConn probability: {CONN_PROBABILITY:.3f}")
+    print(f"\tMVC: {MVC_PERCENT:.1f}%")
     if GFLUCTDV_ENABLED:
-        print(f"  Gfluctdv:         ENABLED (noise={GFLUCTDV_NOISE_AMPLITUDE:.2e} S/cm²)")
+        print(f"\tGfluctdv: ENABLED (noise={GFLUCTDV_NOISE_AMPLITUDE:.2e} S/cm²)")
     print(
-        f"  Gamma shape:      {get_gamma_shape_for_mvc(MVC_PERCENT, MVC_SHAPE_VALUE):.2f} "
+        f"\tGamma shape: \t{get_gamma_shape_for_mvc(MVC_PERCENT, MVC_SHAPE_VALUE):.2f} "
         f"(CV={1 / get_gamma_shape_for_mvc(MVC_PERCENT, MVC_SHAPE_VALUE) ** 0.5:.3f})"
     )
 

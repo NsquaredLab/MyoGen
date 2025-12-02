@@ -109,7 +109,7 @@ for mu_idx in MUs_to_simulate:
         signal = segment.analogsignals[0].magnitude
         ptp_values = np.ptp(signal, axis=0)
         max_ptp = np.max(ptp_values)
-        print(f"MU {mu_idx:2d}): Max PtP = {max_ptp * 1000:6.1f} µV")
+        print(f"MU {mu_idx:2d}): Max PtP = {max_ptp * 1000:6.1f} uV")
 
 joblib.dump(iemg_sim, "./results/iemg_simulator.pkl")
 
@@ -127,12 +127,12 @@ for plot_idx, mu_idx in enumerate(MUs_to_simulate):
     if segment.name != "MUAP_None":
         muap_signal = segment.analogsignals[0][:, 0]  # First electrode channel
         time_axis = muap_signal.times.rescale("ms").magnitude
-        amplitude_uV = muap_signal.magnitude * 1000  # Convert mV to µV
+        amplitude_uV = muap_signal.magnitude * 1000  # Convert mV to uV
 
         axes[plot_idx].plot(time_axis, amplitude_uV, linewidth=2)
-        axes[plot_idx].set_ylabel("Amplitude (µV)")
+        axes[plot_idx].set_ylabel("Amplitude (uV)")
         axes[plot_idx].grid(True, alpha=0.3)
-        axes[plot_idx].set_title(f"MU {mu_idx}: PtP: {np.ptp(amplitude_uV):.1f} µV")
+        axes[plot_idx].set_title(f"MU {mu_idx}: PtP: {np.ptp(amplitude_uV):.1f} uV")
 
 axes[-1].set_xlabel("Time (ms)")
 sns.despine(trim=True, left=False, bottom=False, right=True, top=True, offset=5)

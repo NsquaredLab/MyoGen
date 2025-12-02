@@ -36,6 +36,8 @@ from matplotlib.patches import Polygon, Patch
 from matplotlib.lines import Line2D
 from scipy.spatial import ConvexHull
 
+plt.style.use("fivethirtyeight")
+
 ##############################################################################
 # Configure Matplotlib Style
 # ---------------------------
@@ -85,6 +87,7 @@ RESULTS_PATH = Path("./results")
 
 # Muscle-specific colormaps (base color to white gradients)
 MUSCLE_COLORMAPS = {
+    "TEST": "Reds",
     "THIRTY": "Reds",
     "TWENTYFIVE": "Blues",
     "TWENTY": "Greens",
@@ -95,6 +98,7 @@ MUSCLE_COLORMAPS = {
 
 # Base colors for legend (extracted from colormaps)
 MUSCLE_LEGEND_COLORS = {
+    "TEST": "#d62728",  # Red
     "THIRTY": "#d62728",  # Red
     "TWENTYFIVE": "#1f77b4",  # Blue
     "TWENTY": "#2ca02c",  # Green
@@ -184,10 +188,10 @@ def load_multi_muscle_data(results_path, muscle_types):
         force_levels = auto_detect_force_levels(results_path, muscle, study_prefix, short_muscle)
 
         if not force_levels:
-            print(f"⚠️  No data found for {muscle}")
+            print(f"No data found for {muscle}")
             continue
 
-        print(f"✓ Detected force levels for {muscle}: {force_levels}")
+        print(f"Detected force levels for {muscle}: {force_levels}")
 
         muscle_data = {}
         for force in force_levels:
@@ -196,16 +200,16 @@ def load_multi_muscle_data(results_path, muscle_types):
                 try:
                     df = pd.read_csv(file_path)
                     if len(df) == 0:
-                        print(f"  ⚠️  Empty data for {force}% in {file_path.name} - skipping")
+                        print(f"Empty data for {force}% in {file_path.name} - skipping")
                         continue
                     muscle_data[force] = df
-                    print(f"  ✓ Loaded {len(df)} motor units for {force}% from {file_path.name}")
+                    print(f"Loaded {len(df)} motor units for {force}% from {file_path.name}")
                 except pd.errors.EmptyDataError:
-                    print(f"  ⚠️  Malformed/empty file for {force}%: {file_path.name} - skipping")
+                    print(f"Malformed/empty file for {force}%: {file_path.name} - skipping")
                 except Exception as e:
-                    print(f"  ✗ Error reading {file_path.name}: {e}")
+                    print(f"Error reading {file_path.name}: {e}")
             else:
-                print(f"  ✗ File not found: {file_path}")
+                print(f"File not found: {file_path}")
 
         if muscle_data:
             all_data[muscle] = muscle_data
@@ -233,10 +237,10 @@ def load_experimental_data(csv_path):
     """
     if csv_path.exists():
         df = pd.read_csv(csv_path)
-        print(f"✓ Loaded experimental data: {len(df)} records")
+        print(f"Loaded experimental data: {len(df)} records")
         return df
     else:
-        print(f"✗ Experimental data file not found: {csv_path}")
+        print(f"Experimental data file not found: {csv_path}")
         return None
 
 
@@ -441,7 +445,7 @@ def plot_cv_vs_fr_multi_muscle(all_muscle_data, exp_data):
                 markerfacecolor="gray",
                 markeredgecolor="black",
                 markersize=8,
-                label=f"  {force}%",
+                label=f"{force}%",
                 linewidth=0,
             )
         )
@@ -451,7 +455,9 @@ def plot_cv_vs_fr_multi_muscle(all_muscle_data, exp_data):
         handles=legend_elements,
         frameon=True,
         fontsize=9,
-        loc="upper left",
+        framealpha=1.0,
+        edgecolor="none",
+        loc="upper right",
         ncol=1,
     )
 
@@ -462,7 +468,7 @@ def plot_cv_vs_fr_multi_muscle(all_muscle_data, exp_data):
     ax.set_ylim(4, 25)
     ax.set_title("ISI Statistics Comparison - Multi-Muscle", fontsize=14)
     ax.tick_params(axis="both", labelsize=10)
-    sns.despine(ax=ax, offset=10, trim=True)
+    # sns.despine(ax=ax, offset=10, trim=True)
 
     return fig, ax
 
@@ -481,7 +487,7 @@ def main():
         "--muscles",
         type=str,
         nargs="+",
-        default=["VLVM"],
+        default=["TEST"],
         help="Muscle types to compare (e.g., THIRTY TWENTYFIVE TWENTY FIFTEEN TEN FIVE)",
     )
     parser.add_argument(
@@ -506,24 +512,24 @@ def main():
     print("=" * 80)
     print("Multi-Muscle ISI/CV Comparison Plot")
     print("=" * 80)
-    print(f"  Muscles: {', '.join(muscles)}")
-    print(f"  Output Format: {args.output_format.upper()}")
+    print(f"\tMuscles: {', '.join(muscles)}")
+    print(f"\tOutput Format: {args.output_format.upper()}")
 
     # Load simulation data with auto-detection
-    print("\n📂 Loading simulation data (auto-detecting force levels)...")
+    print("\nLoading simulation data (auto-detecting force levels)...")
     all_muscle_data = load_multi_muscle_data(args.results_path, muscles)
 
     if not all_muscle_data:
-        print("\n❌ No simulation data found. Please run extract_isi_and_cv_per_ramps.py first.")
+        print("\nNo simulation data found. Please run extract_isi_and_cv_per_ramps.py first.")
         exit(1)
 
     # Load experimental data
-    print("\n📂 Loading experimental data...")
+    print("\nLoading experimental data...")
     exp_csv_path = Path(__file__).parent / "ISI_statistics.csv"
     exp_data = load_experimental_data(exp_csv_path)
 
     # Create comparison plot
-    print("\n📊 Creating multi-muscle comparison plot...")
+    print("\nCreating multi-muscle comparison plot...")
     fig, ax = plot_cv_vs_fr_multi_muscle(all_muscle_data, exp_data)
 
     # Generate descriptive output filename
@@ -537,11 +543,11 @@ def main():
     else:
         plt.savefig(output_file, dpi=300, bbox_inches="tight", transparent=True)
 
-    print(f"\n✅ Plot saved to: {output_file}")
+    print(f"\nPlot saved to: {output_file}")
 
     # Print summary statistics
     print("\n" + "=" * 80)
-    print("📊 SUMMARY STATISTICS")
+    print("SUMMARY STATISTICS")
     print("=" * 80)
 
     total_motor_units = 0
@@ -553,24 +559,24 @@ def main():
             df = muscle_data[force_level]
             total_motor_units += len(df)
 
-            print(f"\n  {force_level}% Force:")
-            print(f"    Motor units (N):      {len(df)}")
+            print(f"\n{force_level}% Force:")
+            print(f"\tMotor units (N): {len(df)}")
             print(
-                f"    Mean firing rate:     {df['mean_firing_rate_Hz'].mean():.2f} ± "
+                f"\tMean firing rate: {df['mean_firing_rate_Hz'].mean():.2f} ± "
                 f"{df['mean_firing_rate_Hz'].std():.2f} Hz"
             )
-            print(f"    Mean CV:              {df['CV_ISI'].mean():.3f} ± {df['CV_ISI'].std():.3f}")
+            print(f"\tMean CV: {df['CV_ISI'].mean():.3f} ± {df['CV_ISI'].std():.3f}")
             print(
-                f"    FR range:             {df['mean_firing_rate_Hz'].min():.2f} - "
+                f"\tFR range: {df['mean_firing_rate_Hz'].min():.2f} - "
                 f"{df['mean_firing_rate_Hz'].max():.2f} Hz"
             )
-            print(f"    CV range:             {df['CV_ISI'].min():.3f} - {df['CV_ISI'].max():.3f}")
+            print(f"\tCV range: {df['CV_ISI'].min():.3f} - {df['CV_ISI'].max():.3f}")
 
     print(f"\n{'=' * 80}")
     print(f"Total motor units plotted: {total_motor_units}")
     print(f"Total muscle types: {len(all_muscle_data)}")
     print("=" * 80)
-    print("✅ Analysis complete!")
+    print("Analysis complete!")
     print("=" * 80)
 
 

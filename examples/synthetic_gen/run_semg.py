@@ -86,16 +86,16 @@ def get_active_motor_units(spike_train_path):
         Sorted list of MU indices that have at least one spike
     """
     spike_train_block = joblib.load(spike_train_path)
-    
+
     # Get motor neuron segment (should be first/only segment)
     mn_segment = spike_train_block.segments[0]
-    
+
     # Find MUs with spikes
     active_mus = []
     for i, spiketrain in enumerate(mn_segment.spiketrains):
         if len(spiketrain) > 0:
             active_mus.append(i)
-    
+
     return active_mus
 
 
@@ -163,7 +163,7 @@ def parse_mus(mus_str, active_mus=None):
         current = ""
         for i, char in enumerate(mus_str):
             if char == "-":
-                if current == "" or mus_str[i-1] == "-":
+                if current == "" or mus_str[i - 1] == "-":
                     # This is a negative sign, not a separator
                     current += char
                 else:
@@ -174,7 +174,7 @@ def parse_mus(mus_str, active_mus=None):
                 current += char
         if current:
             parts.append(current)
-        
+
         if len(parts) == 2:
             # Range: start-end
             start = convert_index(parts[0])
@@ -221,7 +221,7 @@ def generate_filename_suffix(mus, snr, num_rows=None, num_cols=None):
         if len(mus) <= 5:
             mu_str = "mu_" + "_".join(map(str, mus))
         else:
-            mu_str = "mu_" + "_".join(map(str, mus[:3])) + f"_plus{len(mus)-3}"
+            mu_str = "mu_" + "_".join(map(str, mus[:3])) + f"_plus{len(mus) - 3}"
 
     snr_str = f"snr{int(snr)}"
 
@@ -316,76 +316,84 @@ def generate_trapezoid_drive(
 
 
 def main():
-    parser = argparse.ArgumentParser(
-        description="Simulate surface EMG with custom parameters"
-    )
+    parser = argparse.ArgumentParser(description="Simulate surface EMG with custom parameters")
     parser.add_argument(
         "--mus",
         type=str,
         default="0,5,10,15,20,25,30",
         help='Motor units to simulate: "all", "0,5,10", "0-20", or "0-100-10"',
     )
-    parser.add_argument(
-        "--snr", type=float, default=5.0, help="Signal-to-noise ratio in dB"
-    )
-    parser.add_argument(
-        "--no-plot", action="store_true", help="Skip plotting (faster execution)"
-    )
+    parser.add_argument("--snr", type=float, default=5.0, help="Signal-to-noise ratio in dB")
+    parser.add_argument("--no-plot", action="store_true", help="Skip plotting (faster execution)")
 
     # Electrode grid parameters
     parser.add_argument(
-        "--num-rows", type=int, default=5,
-        help="Number of electrode rows in the grid (default: 5)"
+        "--num-rows", type=int, default=5, help="Number of electrode rows in the grid (default: 5)"
     )
     parser.add_argument(
-        "--num-cols", type=int, default=5,
-        help="Number of electrode columns in the grid (default: 5)"
+        "--num-cols",
+        type=int,
+        default=5,
+        help="Number of electrode columns in the grid (default: 5)",
     )
 
     # Trapezoid drive pattern parameters (optional)
     parser.add_argument(
-        "--sim-time", type=float, default=None,
-        help="Simulation time in ms (default: load from pkl)"
+        "--sim-time",
+        type=float,
+        default=None,
+        help="Simulation time in ms (default: load from pkl)",
     )
     parser.add_argument(
-        "--timestep", type=float, default=None,
-        help="Time step in ms (default: load from pkl)"
+        "--timestep", type=float, default=None, help="Time step in ms (default: load from pkl)"
     )
     parser.add_argument(
-        "--rise-time", type=float, default=None,
-        help="Trapezoid rise time in ms (default: load from pkl)"
+        "--rise-time",
+        type=float,
+        default=None,
+        help="Trapezoid rise time in ms (default: load from pkl)",
     )
     parser.add_argument(
-        "--plateau-time", type=float, default=None,
-        help="Trapezoid plateau time in ms (default: load from pkl)"
+        "--plateau-time",
+        type=float,
+        default=None,
+        help="Trapezoid plateau time in ms (default: load from pkl)",
     )
     parser.add_argument(
-        "--fall-time", type=float, default=None,
-        help="Trapezoid fall time in ms (default: load from pkl)"
+        "--fall-time",
+        type=float,
+        default=None,
+        help="Trapezoid fall time in ms (default: load from pkl)",
     )
     parser.add_argument(
-        "--rest-before", type=float, default=None,
-        help="Rest period before trapezoid in ms (default: load from pkl)"
+        "--rest-before",
+        type=float,
+        default=None,
+        help="Rest period before trapezoid in ms (default: load from pkl)",
     )
     parser.add_argument(
-        "--rest-after", type=float, default=None,
-        help="Rest period after trapezoid in ms (default: load from pkl)"
+        "--rest-after",
+        type=float,
+        default=None,
+        help="Rest period after trapezoid in ms (default: load from pkl)",
     )
     parser.add_argument(
-        "--baseline-hz", type=float, default=None,
-        help="Baseline drive in Hz (default: load from pkl)"
+        "--baseline-hz",
+        type=float,
+        default=None,
+        help="Baseline drive in Hz (default: load from pkl)",
     )
     parser.add_argument(
-        "--peak-hz", type=float, default=None,
-        help="Peak drive in Hz (default: load from pkl)"
+        "--peak-hz", type=float, default=None, help="Peak drive in Hz (default: load from pkl)"
     )
     parser.add_argument(
-        "--noise-std", type=float, default=None,
-        help="Noise standard deviation in Hz (default: load from pkl)"
+        "--noise-std",
+        type=float,
+        default=None,
+        help="Noise standard deviation in Hz (default: load from pkl)",
     )
     parser.add_argument(
-        "--no-noise", action="store_true",
-        help="Disable noise in trapezoid generation"
+        "--no-noise", action="store_true", help="Disable noise in trapezoid generation"
     )
 
     args = parser.parse_args()
@@ -397,7 +405,9 @@ def main():
     # Get active motor units from spike train data (for negative index support)
     if spike_train_file.exists():
         active_mus = get_active_motor_units(spike_train_file)
-        print(f"Found {len(active_mus)} active motor units (indices {min(active_mus)}-{max(active_mus)})")
+        print(
+            f"Found {len(active_mus)} active motor units (indices {min(active_mus)}-{max(active_mus)})"
+        )
     else:
         print("Warning: Spike train file not found. Negative indices not supported.")
         active_mus = None
@@ -433,19 +443,21 @@ def main():
     )
 
     # Check if any trapezoid parameters were provided
-    trapezoid_params_provided = any([
-        args.sim_time is not None,
-        args.timestep is not None,
-        args.rise_time is not None,
-        args.plateau_time is not None,
-        args.fall_time is not None,
-        args.rest_before is not None,
-        args.rest_after is not None,
-        args.baseline_hz is not None,
-        args.peak_hz is not None,
-        args.noise_std is not None,
-        args.no_noise,
-    ])
+    trapezoid_params_provided = any(
+        [
+            args.sim_time is not None,
+            args.timestep is not None,
+            args.rise_time is not None,
+            args.plateau_time is not None,
+            args.fall_time is not None,
+            args.rest_before is not None,
+            args.rest_after is not None,
+            args.baseline_hz is not None,
+            args.peak_hz is not None,
+            args.noise_std is not None,
+            args.no_noise,
+        ]
+    )
 
     if trapezoid_params_provided:
         # Generate custom trapezoid
@@ -470,11 +482,15 @@ def main():
 
         # Save generated trapezoid to subdirectory
         trapezoid_file = save_path / "trapezoid_drive.pkl"
-        with open(trapezoid_file, 'wb') as f:
+        with open(trapezoid_file, "wb") as f:
             pickle.dump(input_current__AnalogSignal, f)
         print(f"  → Generated trapezoid parameters:")
-        print(f"     Peak: {trap_kwargs['peak__Hz']:.1f} Hz, Plateau: {trap_kwargs['plateau_time__ms']:.0f} ms")
-        print(f"     Rise: {trap_kwargs['rise_time__ms']:.0f} ms, Fall: {trap_kwargs['fall_time__ms']:.0f} ms")
+        print(
+            f"     Peak: {trap_kwargs['peak__Hz']:.1f} Hz, Plateau: {trap_kwargs['plateau_time__ms']:.0f} ms"
+        )
+        print(
+            f"     Rise: {trap_kwargs['rise_time__ms']:.0f} ms, Fall: {trap_kwargs['fall_time__ms']:.0f} ms"
+        )
         print(f"  → Saved to: {trapezoid_file}")
     else:
         # Load existing trapezoid
@@ -493,9 +509,7 @@ def main():
         inter_electrode_distances__mm=2,
         electrode_radius__mm=1,
         differentiation_mode="monopolar",
-        bending_radius__mm=muscle.radius__mm
-        + muscle.skin_thickness__mm
-        + muscle.fat_thickness__mm,
+        bending_radius__mm=muscle.radius__mm + muscle.skin_thickness__mm + muscle.fat_thickness__mm,
     )
 
     ##########################################################################
@@ -534,9 +548,7 @@ def main():
     ##########################################################################
 
     print("\nSimulating surface EMG...")
-    surface_emg_signals = surface_emg.simulate_surface_emg(
-        spike_train__Block=spike_train__Block
-    )
+    surface_emg_signals = surface_emg.simulate_surface_emg(spike_train__Block=spike_train__Block)
 
     first_emg_signal = surface_emg_signals.groups[0].segments[0].analogsignals[0]
     print(f"Generated EMG shape: {first_emg_signal.shape}")
@@ -559,7 +571,7 @@ def main():
 
     # Save EMG signals
     emg_file = save_path / "signals.pkl"
-    with open(emg_file, 'wb') as f:
+    with open(emg_file, "wb") as f:
         pickle.dump(noisy_surface_emg__Block, f)
     print(f"✓ EMG signals: {emg_file}")
 
@@ -624,7 +636,7 @@ def main():
     }
 
     decomp_file = save_path / "decomp.pkl"
-    with open(decomp_file, 'wb') as f:
+    with open(decomp_file, "wb") as f:
         pickle.dump(decomposition_package, f)
     print(f"✓ Decomposition package: {decomp_file}")
 
@@ -637,24 +649,24 @@ def main():
 
     if not args.no_plot:
         print("\nGenerating plot...")
-        
+
         # Extract surface EMG data
         emg_signal_obj = noisy_surface_emg__Block.groups[0].segments[0].analogsignals[0]
         emg_data = emg_signal_obj.magnitude  # Shape: (time, rows, cols)
         emg_times = emg_signal_obj.times.rescale(pq.s).magnitude
-        
+
         current_signal = input_current__AnalogSignal[:, 0].magnitude
         current_times = input_current__AnalogSignal.times.rescale(pq.s).magnitude
-        
+
         # Normalize current for overlay
         current_normalized = (current_signal - np.min(current_signal)) / (
             np.max(current_signal) - np.min(current_signal)
         )
-        
+
         # Select 4 electrodes to plot (2x2 grid from center)
         n_rows, n_cols = emg_data.shape[1], emg_data.shape[2]
         center_row, center_col = n_rows // 2, n_cols // 2
-        
+
         # Define electrode positions to plot
         electrode_positions = [
             (center_row - 1, center_col - 1),
@@ -662,54 +674,60 @@ def main():
             (center_row, center_col - 1),
             (center_row, center_col),
         ]
-        
+
         # Create figure with 2x2 grid of subplots
         fig, axes = plt.subplots(2, 2, figsize=(14, 8), sharex=True)
         axes = axes.flatten()
-        
+
         # Plot each electrode
         for i, (row, col) in enumerate(electrode_positions):
             ax = axes[i]
-            
+
             # Extract EMG signal for this electrode
             emg_channel = emg_data[:, row, col]
-            
+
             # Plot EMG signal
             ax.plot(emg_times, emg_channel, linewidth=0.5, color="#2874A6", alpha=0.8, label="sEMG")
-            
+
             # Overlay input current on first subplot
             if i == 0:
                 ax2 = ax.twinx()
-                ax2.plot(current_times, current_normalized, linewidth=1.5, color="#E67E22",
-                        alpha=0.7, label="Input Current")
+                ax2.plot(
+                    current_times,
+                    current_normalized,
+                    linewidth=1.5,
+                    color="#E67E22",
+                    alpha=0.7,
+                    label="Input Current",
+                )
                 ax2.set_ylabel("Normalized Current", fontsize=9, color="#E67E22")
-                ax2.tick_params(axis='y', labelcolor="#E67E22")
+                ax2.tick_params(axis="y", labelcolor="#E67E22")
                 ax2.set_ylim([0, 1])
-                
+
                 # Combine legends
                 lines1, labels1 = ax.get_legend_handles_labels()
                 lines2, labels2 = ax2.get_legend_handles_labels()
                 ax.legend(lines1 + lines2, labels1 + labels2, loc="upper right", fontsize=8)
-            
+
             # Formatting
-            ax.set_ylabel(f"Electrode ({row},{col})\n[µV]", fontsize=9)
+            ax.set_ylabel(f"Electrode ({row},{col})\n[uV]", fontsize=9)
             ax.set_title(f"Electrode ({row},{col})", fontsize=10, pad=5)
             ax.grid(True, alpha=0.3, linewidth=0.5)
             sns.despine(ax=ax, trim=True, offset=5)
-            
+
             # X-labels on bottom row
             if i >= 2:
                 ax.set_xlabel("Time [s]", fontsize=10)
-        
+
         # Overall title
         fig.suptitle(
             f"Surface EMG: {len(mu_indices)} MUs, SNR={snr_db}dB",
             fontsize=14,
             fontweight="bold",
         )
-        
+
         plt.tight_layout()
-        
+
         plot_file = save_path / "emg_plot.png"
         plt.savefig(plot_file, dpi=300, bbox_inches="tight", facecolor="white")
         print(f"✓ EMG plot saved: {plot_file}")
@@ -743,12 +761,16 @@ def main():
             spatial_pattern = muap[peak_idx, :, :]  # Shape: (rows, cols)
 
             # Plot spatial pattern as heatmap
-            im = ax.imshow(spatial_pattern, cmap='RdBu_r', aspect='auto',
-                          vmin=-np.max(np.abs(spatial_pattern)),
-                          vmax=np.max(np.abs(spatial_pattern)))
+            im = ax.imshow(
+                spatial_pattern,
+                cmap="RdBu_r",
+                aspect="auto",
+                vmin=-np.max(np.abs(spatial_pattern)),
+                vmax=np.max(np.abs(spatial_pattern)),
+            )
 
             # Add colorbar
-            plt.colorbar(im, ax=ax, fraction=0.046, pad=0.04, label='µV')
+            plt.colorbar(im, ax=ax, fraction=0.046, pad=0.04, label="uV")
 
             # Formatting
             ax.set_title(f"MU {mu_idx}", fontsize=10, fontweight="bold")
@@ -759,7 +781,7 @@ def main():
 
         # Hide unused subplots
         for i in range(n_mus_to_plot, len(axes)):
-            axes[i].axis('off')
+            axes[i].axis("off")
 
         # Overall title
         fig_muap.suptitle(
@@ -780,8 +802,9 @@ def main():
         n_cols_temp = 3
         n_rows_temp = int(np.ceil(n_mus_to_plot / n_cols_temp))
 
-        fig_muap_temp, axes_temp = plt.subplots(n_rows_temp, n_cols_temp,
-                                                figsize=(14, n_rows_temp * 2.5), sharex=True)
+        fig_muap_temp, axes_temp = plt.subplots(
+            n_rows_temp, n_cols_temp, figsize=(14, n_rows_temp * 2.5), sharex=True
+        )
         axes_temp = axes_temp.flatten() if n_mus_to_plot > 1 else [axes_temp]
 
         # Get center electrode position
@@ -801,12 +824,15 @@ def main():
             center_waveform = muap[:, center_row, center_col]
 
             # Plot waveform
-            ax.plot(muap_times, center_waveform, linewidth=1.5, color='#2874A6')
+            ax.plot(muap_times, center_waveform, linewidth=1.5, color="#2874A6")
 
             # Formatting
-            ax.set_title(f"MU {mu_idx} - Electrode ({center_row},{center_col})",
-                        fontsize=10, fontweight="bold")
-            ax.set_ylabel("Amplitude [µV]", fontsize=9)
+            ax.set_title(
+                f"MU {mu_idx} - Electrode ({center_row},{center_col})",
+                fontsize=10,
+                fontweight="bold",
+            )
+            ax.set_ylabel("Amplitude [uV]", fontsize=9)
             ax.grid(True, alpha=0.3, linewidth=0.5)
             sns.despine(ax=ax, trim=True, offset=5)
 
@@ -816,7 +842,7 @@ def main():
 
         # Hide unused subplots
         for i in range(n_mus_to_plot, len(axes_temp)):
-            axes_temp[i].axis('off')
+            axes_temp[i].axis("off")
 
         # Overall title
         fig_muap_temp.suptitle(

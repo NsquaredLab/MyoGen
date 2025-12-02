@@ -124,7 +124,9 @@ def plot_emg_grid(decomp, output_path, time_window=None):
 
     # Validate shape
     if emg_signal.ndim != 3:
-        raise ValueError(f"Expected 3D EMG signal (n_samples, rows, cols), got shape {emg_signal.shape}")
+        raise ValueError(
+            f"Expected 3D EMG signal (n_samples, rows, cols), got shape {emg_signal.shape}"
+        )
 
     n_samples, n_rows, n_cols = emg_signal.shape
 
@@ -155,11 +157,10 @@ def plot_emg_grid(decomp, output_path, time_window=None):
     amplitude_range = global_max - global_min
     y_margin = amplitude_range * 0.05  # 5% margin
 
-    print(f"  Amplitude range: [{global_min:.2e}, {global_max:.2e}] μV")
+    print(f"  Amplitude range: [{global_min:.2e}, {global_max:.2e}] uV")
 
     # Create figure with subplots
-    fig, axes = plt.subplots(n_rows, n_cols, figsize=(16, 12),
-                             sharex=True, sharey=True)
+    fig, axes = plt.subplots(n_rows, n_cols, figsize=(16, 12), sharex=True, sharey=True)
 
     # Ensure axes is 2D array
     if n_rows == 1 and n_cols == 1:
@@ -176,43 +177,49 @@ def plot_emg_grid(decomp, output_path, time_window=None):
             signal = emg_signal[:, row, col]
 
             # Plot signal
-            ax.plot(time_s, signal, color='#1f77b4', linewidth=0.5, alpha=0.8)
+            ax.plot(time_s, signal, color="#1f77b4", linewidth=0.5, alpha=0.8)
 
             # Set consistent y-limits
             ax.set_ylim(global_min - y_margin, global_max + y_margin)
 
             # Add electrode label
-            ax.text(0.02, 0.98, f'[{row},{col}]',
-                   transform=ax.transAxes,
-                   verticalalignment='top',
-                   fontsize=9,
-                   bbox=dict(boxstyle='round', facecolor='white', alpha=0.8, pad=0.3))
+            ax.text(
+                0.02,
+                0.98,
+                f"[{row},{col}]",
+                transform=ax.transAxes,
+                verticalalignment="top",
+                fontsize=9,
+                bbox=dict(boxstyle="round", facecolor="white", alpha=0.8, pad=0.3),
+            )
 
             # Remove all axis elements for clean look
             ax.set_xticks([])
             ax.set_yticks([])
-            ax.spines['top'].set_visible(False)
-            ax.spines['right'].set_visible(False)
-            ax.spines['bottom'].set_visible(False)
-            ax.spines['left'].set_visible(False)
+            ax.spines["top"].set_visible(False)
+            ax.spines["right"].set_visible(False)
+            ax.spines["bottom"].set_visible(False)
+            ax.spines["left"].set_visible(False)
 
     # Add shared axis labels
-    fig.text(0.5, 0.02, 'Time (s)', ha='center', fontsize=14, weight='bold')
-    fig.text(0.02, 0.5, 'Amplitude (μV)', va='center', rotation='vertical',
-             fontsize=14, weight='bold')
+    fig.text(0.5, 0.02, "Time (s)", ha="center", fontsize=14, weight="bold")
+    fig.text(
+        0.02, 0.5, "Amplitude (uV)", va="center", rotation="vertical", fontsize=14, weight="bold"
+    )
 
     # Add title with metadata
-    snr_db = decomp.get('snr_db', 'N/A')
-    title = f'Surface EMG - {n_rows}×{n_cols} Electrode Grid\n'
-    title += f'Duration: {duration_s:.1f}s | Sampling Rate: {sampling_rate_hz:.0f} Hz | SNR: {snr_db} dB'
-    fig.suptitle(title, fontsize=16, weight='bold', y=0.98)
+    snr_db = decomp.get("snr_db", "N/A")
+    title = f"Surface EMG - {n_rows}×{n_cols} Electrode Grid\n"
+    title += (
+        f"Duration: {duration_s:.1f}s | Sampling Rate: {sampling_rate_hz:.0f} Hz | SNR: {snr_db} dB"
+    )
+    fig.suptitle(title, fontsize=16, weight="bold", y=0.98)
 
     # Adjust spacing
-    plt.subplots_adjust(left=0.06, right=0.98, bottom=0.06, top=0.94,
-                       hspace=0.08, wspace=0.08)
+    plt.subplots_adjust(left=0.06, right=0.98, bottom=0.06, top=0.94, hspace=0.08, wspace=0.08)
 
     # Save figure
-    plt.savefig(output_path, dpi=plt.rcParams["savefig.dpi"], bbox_inches='tight')
+    plt.savefig(output_path, dpi=plt.rcParams["savefig.dpi"], bbox_inches="tight")
     plt.close(fig)
 
     print(f"✅ Saved EMG grid plot: {output_path}")
@@ -225,9 +232,7 @@ def plot_emg_grid(decomp, output_path, time_window=None):
 
 def main():
     """Main execution function."""
-    parser = argparse.ArgumentParser(
-        description="Visualize 5×5 surface EMG electrode grid"
-    )
+    parser = argparse.ArgumentParser(description="Visualize 5×5 surface EMG electrode grid")
     parser.add_argument(
         "--decomp-file",
         type=Path,

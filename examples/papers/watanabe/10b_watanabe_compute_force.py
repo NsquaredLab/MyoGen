@@ -37,12 +37,29 @@ save_path.mkdir(exist_ok=True)
 
 spinal_results_path = save_path / Path("watanabe_results_neo.pkl")
 
-# Simulation parameters (must match spike train generation)
-dt = 0.05  # ms - Integration timestep
-tstop = 180 * 1e3  # ms - Total simulation duration (180 seconds)
+# Load simulation parameters from 10a
+params_file = save_path / "watanabe__simulation_params.pkl"
 
-# Motor neuron pool parameters
-naMN = 800  # Number of alpha motor neurons
+if not params_file.exists():
+    raise FileNotFoundError(
+        f"Simulation parameters file not found: {params_file}\n"
+        "Please run 10a_paper_watanabe.py first to generate the simulation data."
+    )
+
+sim_params = joblib.load(params_file)
+dt = sim_params["dt__ms"]  # ms - Integration timestep
+tstop = sim_params["tstop__ms"]  # ms - Total simulation duration
+naMN = sim_params["naMN"]  # Number of alpha motor neurons
+segment_duration__s = sim_params["segment_duration__s"]
+
+print("=" * 70)
+print("SIMULATION PARAMETERS")
+print("=" * 70)
+print(f"Segment duration: {segment_duration__s} s")
+print(f"Total duration: {tstop / 1000} s ({tstop} ms)")
+print(f"Timestep: {dt} ms")
+print(f"Motor neurons: {naMN}")
+print()
 
 # Memory optimization parameters
 motor_unit_batch_size = 150  # Process motor units in batches instead of all at once
@@ -60,9 +77,7 @@ aMN_spikes = aMN_results.spiketrains
 
 # Get actual number of motor neurons with spike trains
 n_actual_motor_neurons = len(aMN_spikes)
-print(
-    f"\nLoaded {n_actual_motor_neurons} motor neuron spike trains (out of {naMN} expected)"
-)
+print(f"\nLoaded {n_actual_motor_neurons} motor neuron spike trains (out of {naMN} expected)")
 
 ##############################################################################
 # Setup Force Model Parameters
@@ -78,9 +93,9 @@ recruitment_thresholds, _ = simulator.RecruitmentThresholds(
 )
 
 force_params = {
-    "recording_frequency__Hz": 2048,
-    "longest_duration_rise_time__ms": 90.0,  # Slowest motor unit twitch rise time
-    "contraction_time_range__unitless": 2,  # Spread of contraction times
+    "recording_frequency__Hz": 2048 * pq.Hz,  # Sampling frequency for force output
+    "longest_duration_rise_time__ms": 90.0 * pq.ms,  # Slowest motor unit twitch rise time
+    "contraction_time_range_factor": 2,  # Spread of contraction times
 }
 
 # Create force model
@@ -97,7 +112,9 @@ print("\nGenerating force output by processing motor units in batches...")
 n_batches = int(np.ceil(n_actual_motor_neurons / motor_unit_batch_size))
 
 # Initialize force accumulator
-force_duration_samples = int(tstop / 1000 * force_params["recording_frequency__Hz"])
+# Extract magnitude from Quantity for integer calculation
+recording_freq_Hz = force_params["recording_frequency__Hz"].rescale("Hz").magnitude
+force_duration_samples = int(tstop / 1000 * recording_freq_Hz)
 force_total = np.zeros(force_duration_samples)
 
 for batch_idx in range(n_batches):
@@ -141,7 +158,7 @@ for batch_idx in range(n_batches):
 force_output = neo.AnalogSignal(
     force_total * pq.dimensionless,
     t_start=0 * pq.ms,
-    sampling_rate=force_params["recording_frequency__Hz"] * pq.Hz,
+    sampling_rate=force_params["recording_frequency__Hz"],  # Already has Hz units
 )
 
 print(f"Force generation complete! Final signal shape: {force_output.shape}")

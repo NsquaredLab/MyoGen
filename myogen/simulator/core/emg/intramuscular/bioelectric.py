@@ -92,9 +92,7 @@ def get_tm_current_ddz(z: np.ndarray, D1: float = 96.0) -> np.ndarray:
     Vm = np.zeros_like(z, dtype=np.float64)
     pos_mask = z > 0
     z_pos = z[pos_mask]
-    Vm[pos_mask] = (
-        D1 * ((6 * z_pos - 3 * z_pos**2) - (3 * z_pos**2 - z_pos**3)) * np.exp(-z_pos)
-    )
+    Vm[pos_mask] = D1 * ((6 * z_pos - 3 * z_pos**2) - (3 * z_pos**2 - z_pos**3)) * np.exp(-z_pos)
     return Vm
 
 
@@ -238,7 +236,7 @@ def get_current_density(
     v : float
         Conduction speed in mm/s
     d : float, optional
-        Fiber diameter in mm (default: 55e-3 mm = 55 µm)
+        Fiber diameter in mm (default: 55e-3 mm = 55 um)
     suppress_endplate_density : bool, optional
         Whether to suppress density at endplate region (default: True)
     endplate_width : float, optional
@@ -282,9 +280,7 @@ def get_current_density(
     if suppress_endplate_density:
 
         def endplate_terminator(z_inline):
-            return (z_inline <= (zi - endplate_width)) | (
-                z_inline >= (zi + endplate_width)
-            )
+            return (z_inline <= (zi - endplate_width)) | (z_inline >= (zi + endplate_width))
 
         iap *= endplate_terminator(Z[:-1, :])
 
@@ -293,7 +289,7 @@ def get_current_density(
     sigma_i_S_per_m = 1.01
     sigma_i = sigma_i_S_per_m / 1000.0  # S/mm (CORRECTED: was *1000, now /1000)
 
-    # Fiber diameter is already in mm (default d=55e-3 mm = 55 µm)
+    # Fiber diameter is already in mm (default d=55e-3 mm = 55 um)
     # Compute cross-sectional area in mm²
     area_mm2 = np.pi * (d / 2) ** 2  # CORRECTED: removed extra /4
 
@@ -352,9 +348,7 @@ def get_current_density_fast(
     # This is a simplified version - full implementation would require
     # proper lookup table indexing and bounds checking
     # For now, fall back to the regular version
-    return get_current_density(
-        t, z, zi, L1, L2, v, d, suppress_endplate_density, endplate_width
-    )
+    return get_current_density(t, z, zi, L1, L2, v, d, suppress_endplate_density, endplate_width)
 
 
 def calculate_sfap(
@@ -422,11 +416,7 @@ def calculate_sfap(
         # Find closest fiber position point
         distances = np.sqrt(
             np.sum(
-                (
-                    fiber_positions
-                    - [electrode_position[0], electrode_position[1], z_point]
-                )
-                ** 2,
+                (fiber_positions - [electrode_position[0], electrode_position[1], z_point]) ** 2,
                 axis=1,
             )
         )

@@ -312,16 +312,16 @@ class Muscle:
 
         # Generate muscle fiber diameters using log-normal distribution
         # Based on physiological measurements (Brooke & Kaiser, 1970)
-        # Mean diameter ~50μm, range 20-80μm
-        mean_diameter__mm = 50e-3  # mm (50 μm)
-        std_diameter__mm = 15e-3  # mm (15 μm)
+        # Mean diameter ~50um, range 20-80um
+        mean_diameter__mm = 50e-3  # mm (50 um)
+        std_diameter__mm = 15e-3  # mm (15 um)
 
         self._muscle_fiber_diameters__mm = (
             RANDOM_GENERATOR.lognormal(mean=np.log(mean_diameter__mm), sigma=0.3, size=n_fibers)
             * pq.mm
         )
 
-        # Ensure diameters are within physiological range (20-80 μm)
+        # Ensure diameters are within physiological range (20-80 um)
         self._muscle_fiber_diameters__mm = np.clip(
             self._muscle_fiber_diameters__mm, 20e-3 * pq.mm, 80e-3 * pq.mm
         )

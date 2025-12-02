@@ -95,8 +95,7 @@ elif isinstance(loaded_data, simulator.IntramuscularEMG):
         print("  → Extracting noisy EMG signals from simulator")
         emg_data = loaded_data._noisy_emg_signals__Block
     elif (
-        hasattr(loaded_data, "_emg_signals__Block")
-        and loaded_data._emg_signals__Block is not None
+        hasattr(loaded_data, "_emg_signals__Block") and loaded_data._emg_signals__Block is not None
     ):
         print("  → Extracting clean EMG signals from simulator")
         emg_data = loaded_data._emg_signals__Block
@@ -114,8 +113,7 @@ elif isinstance(loaded_data, simulator.SurfaceEMG):
         print("  → Extracting noisy EMG signals from simulator")
         emg_data = loaded_data._noisy_emg_signals__Block
     elif (
-        hasattr(loaded_data, "_emg_signals__Block")
-        and loaded_data._emg_signals__Block is not None
+        hasattr(loaded_data, "_emg_signals__Block") and loaded_data._emg_signals__Block is not None
     ):
         print("  → Extracting clean EMG signals from simulator")
         emg_data = loaded_data._emg_signals__Block
@@ -227,9 +225,7 @@ if emg_type == "surface":
     n_rows, n_cols = shape_info["n_rows"], shape_info["n_cols"]
     # Reshape to (time × channels)
     signals = signals.reshape(signals.shape[0], -1)
-    print(
-        f"Reshaped surface EMG to: {signals.shape[0]} samples × {signals.shape[1]} channels"
-    )
+    print(f"Reshaped surface EMG to: {signals.shape[0]} samples × {signals.shape[1]} channels")
 
 ##############################################################################
 # Create Channel Plots
@@ -289,14 +285,14 @@ def plot_channels(signals, times, n_channels, max_channels_per_fig=8):
                 # Convert linear channel index to (row, col)
                 row = ch_idx // shape_info["n_cols"]
                 col = ch_idx % shape_info["n_cols"]
-                ax.set_ylabel(f"Ch ({row},{col})\n[µV]", fontsize=9)
+                ax.set_ylabel(f"Ch ({row},{col})\n[uV]", fontsize=9)
                 ax.set_title(
                     f"Electrode ({row},{col}) - Channel {ch_idx + 1}/{n_channels}",
                     fontsize=10,
                     pad=5,
                 )
             else:
-                ax.set_ylabel(f"Ch {ch_idx + 1}\n[µV]", fontsize=9)
+                ax.set_ylabel(f"Ch {ch_idx + 1}\n[uV]", fontsize=9)
                 ax.set_title(f"Channel {ch_idx + 1}/{n_channels}", fontsize=10, pad=5)
 
             # Add grid and remove spines
@@ -317,17 +313,13 @@ def plot_channels(signals, times, n_channels, max_channels_per_fig=8):
         plt.tight_layout()
         figures.append(fig)
 
-        print(
-            f"Created figure {fig_idx + 1}/{n_figures} with channels {start_ch + 1}-{end_ch}"
-        )
+        print(f"Created figure {fig_idx + 1}/{n_figures} with channels {start_ch + 1}-{end_ch}")
 
     return figures
 
 
 print("\nGenerating plots...")
-figures = plot_channels(
-    signals, times, shape_info["n_channels"], MAX_CHANNELS_PER_FIGURE
-)
+figures = plot_channels(signals, times, shape_info["n_channels"], MAX_CHANNELS_PER_FIGURE)
 
 ##############################################################################
 # Save Plots as PNG
@@ -372,7 +364,7 @@ for ch_idx in range(n_channels):
 
 # Formatting
 ax.set_xlabel("Time [s]", fontsize=12)
-ax.set_ylabel("Channel + Offset [µV]", fontsize=12)
+ax.set_ylabel("Channel + Offset [uV]", fontsize=12)
 ax.set_title(
     f"{emg_type.capitalize()} EMG - All Channels Overview ({n_channels} channels)",
     fontsize=14,

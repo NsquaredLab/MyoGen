@@ -12,8 +12,8 @@ import warnings
 from pathlib import Path
 
 import numpy as np
-from neo import SpikeTrain, Segment, Block
 import quantities as pq
+from neo import Block, Segment, SpikeTrain
 from neuron import h
 
 from examples.finetune.helper import calculate_firing_rate_statistics
@@ -30,7 +30,7 @@ warnings.filterwarnings("ignore")
 def parse_args():
     """Parse command-line arguments."""
     p = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter)
-    p.add_argument("--study-prefix", type=str, default="VLVM_")
+    p.add_argument("--study-prefix", type=str, default="TEST_")
     p.add_argument("--simulation-time", type=float, default=10000.0)
     p.add_argument("--n-motor-units", type=int, default=100)
     return p.parse_args()
@@ -110,9 +110,9 @@ def main():
         source="DD",
         target="aMN",
         probability=conn_probability,
-        weight__μS=SYNAPTIC_WEIGHT,
+        weight__uS=SYNAPTIC_WEIGHT * pq.uS,
     )
-    network.connect_from_external(source="cortical_input", target="DD", weight__μS=1.0)
+    network.connect_from_external(source="cortical_input", target="DD", weight__uS=1.0 * pq.uS)
     dd_netcons = network.get_netcons("cortical_input", "DD")
 
     # Setup recording

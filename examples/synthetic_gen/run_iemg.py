@@ -85,16 +85,16 @@ def get_active_motor_units(spike_train_path):
         Sorted list of MU indices that have at least one spike
     """
     spike_train_block = joblib.load(spike_train_path)
-    
+
     # Get motor neuron segment (should be first/only segment)
     mn_segment = spike_train_block.segments[0]
-    
+
     # Find MUs with spikes
     active_mus = []
     for i, spiketrain in enumerate(mn_segment.spiketrains):
         if len(spiketrain) > 0:
             active_mus.append(i)
-    
+
     return active_mus
 
 
@@ -162,7 +162,7 @@ def parse_mus(mus_str, active_mus=None):
         current = ""
         for i, char in enumerate(mus_str):
             if char == "-":
-                if current == "" or mus_str[i-1] == "-":
+                if current == "" or mus_str[i - 1] == "-":
                     # This is a negative sign, not a separator
                     current += char
                 else:
@@ -173,7 +173,7 @@ def parse_mus(mus_str, active_mus=None):
                 current += char
         if current:
             parts.append(current)
-        
+
         if len(parts) == 2:
             # Range: start-end
             start = convert_index(parts[0])
@@ -216,7 +216,7 @@ def generate_filename_suffix(mus, snr):
         if len(mus) <= 5:
             mu_str = "mu_" + "_".join(map(str, mus))
         else:
-            mu_str = "mu_" + "_".join(map(str, mus[:3])) + f"_plus{len(mus)-3}"
+            mu_str = "mu_" + "_".join(map(str, mus[:3])) + f"_plus{len(mus) - 3}"
 
     snr_str = f"snr{int(snr)}"
     return f"{mu_str}_{snr_str}"
@@ -313,57 +313,66 @@ def main():
         default="0,5,10,15,20,25,30",
         help='Motor units to simulate: "all", "0,5,10", "0-20", or "0-100-10"',
     )
-    parser.add_argument(
-        "--snr", type=float, default=20.0, help="Signal-to-noise ratio in dB"
-    )
-    parser.add_argument(
-        "--no-plot", action="store_true", help="Skip plotting (faster execution)"
-    )
+    parser.add_argument("--snr", type=float, default=20.0, help="Signal-to-noise ratio in dB")
+    parser.add_argument("--no-plot", action="store_true", help="Skip plotting (faster execution)")
 
     # Trapezoid drive pattern parameters (optional)
     parser.add_argument(
-        "--sim-time", type=float, default=None,
-        help="Simulation time in ms (default: load from pkl)"
+        "--sim-time",
+        type=float,
+        default=None,
+        help="Simulation time in ms (default: load from pkl)",
     )
     parser.add_argument(
-        "--timestep", type=float, default=None,
-        help="Time step in ms (default: load from pkl)"
+        "--timestep", type=float, default=None, help="Time step in ms (default: load from pkl)"
     )
     parser.add_argument(
-        "--rise-time", type=float, default=None,
-        help="Trapezoid rise time in ms (default: load from pkl)"
+        "--rise-time",
+        type=float,
+        default=None,
+        help="Trapezoid rise time in ms (default: load from pkl)",
     )
     parser.add_argument(
-        "--plateau-time", type=float, default=None,
-        help="Trapezoid plateau time in ms (default: load from pkl)"
+        "--plateau-time",
+        type=float,
+        default=None,
+        help="Trapezoid plateau time in ms (default: load from pkl)",
     )
     parser.add_argument(
-        "--fall-time", type=float, default=None,
-        help="Trapezoid fall time in ms (default: load from pkl)"
+        "--fall-time",
+        type=float,
+        default=None,
+        help="Trapezoid fall time in ms (default: load from pkl)",
     )
     parser.add_argument(
-        "--rest-before", type=float, default=None,
-        help="Rest period before trapezoid in ms (default: load from pkl)"
+        "--rest-before",
+        type=float,
+        default=None,
+        help="Rest period before trapezoid in ms (default: load from pkl)",
     )
     parser.add_argument(
-        "--rest-after", type=float, default=None,
-        help="Rest period after trapezoid in ms (default: load from pkl)"
+        "--rest-after",
+        type=float,
+        default=None,
+        help="Rest period after trapezoid in ms (default: load from pkl)",
     )
     parser.add_argument(
-        "--baseline-hz", type=float, default=None,
-        help="Baseline drive in Hz (default: load from pkl)"
+        "--baseline-hz",
+        type=float,
+        default=None,
+        help="Baseline drive in Hz (default: load from pkl)",
     )
     parser.add_argument(
-        "--peak-hz", type=float, default=None,
-        help="Peak drive in Hz (default: load from pkl)"
+        "--peak-hz", type=float, default=None, help="Peak drive in Hz (default: load from pkl)"
     )
     parser.add_argument(
-        "--noise-std", type=float, default=None,
-        help="Noise standard deviation in Hz (default: load from pkl)"
+        "--noise-std",
+        type=float,
+        default=None,
+        help="Noise standard deviation in Hz (default: load from pkl)",
     )
     parser.add_argument(
-        "--no-noise", action="store_true",
-        help="Disable noise in trapezoid generation"
+        "--no-noise", action="store_true", help="Disable noise in trapezoid generation"
     )
 
     args = parser.parse_args()
@@ -375,7 +384,9 @@ def main():
     # Get active motor units from spike train data (for negative index support)
     if spike_train_file.exists():
         active_mus = get_active_motor_units(spike_train_file)
-        print(f"Found {len(active_mus)} active motor units (indices {min(active_mus)}-{max(active_mus)})")
+        print(
+            f"Found {len(active_mus)} active motor units (indices {min(active_mus)}-{max(active_mus)})"
+        )
     else:
         print("Warning: Spike train file not found. Negative indices not supported.")
         active_mus = None
@@ -408,19 +419,21 @@ def main():
     )
 
     # Check if any trapezoid parameters were provided
-    trapezoid_params_provided = any([
-        args.sim_time is not None,
-        args.timestep is not None,
-        args.rise_time is not None,
-        args.plateau_time is not None,
-        args.fall_time is not None,
-        args.rest_before is not None,
-        args.rest_after is not None,
-        args.baseline_hz is not None,
-        args.peak_hz is not None,
-        args.noise_std is not None,
-        args.no_noise,
-    ])
+    trapezoid_params_provided = any(
+        [
+            args.sim_time is not None,
+            args.timestep is not None,
+            args.rise_time is not None,
+            args.plateau_time is not None,
+            args.fall_time is not None,
+            args.rest_before is not None,
+            args.rest_after is not None,
+            args.baseline_hz is not None,
+            args.peak_hz is not None,
+            args.noise_std is not None,
+            args.no_noise,
+        ]
+    )
 
     if trapezoid_params_provided:
         # Generate custom trapezoid
@@ -445,11 +458,15 @@ def main():
 
         # Save generated trapezoid to subdirectory
         trapezoid_file = save_path / "trapezoid_drive.pkl"
-        with open(trapezoid_file, 'wb') as f:
+        with open(trapezoid_file, "wb") as f:
             pickle.dump(input_current__AnalogSignal, f)
         print(f"  → Generated trapezoid parameters:")
-        print(f"     Peak: {trap_kwargs['peak__Hz']:.1f} Hz, Plateau: {trap_kwargs['plateau_time__ms']:.0f} ms")
-        print(f"     Rise: {trap_kwargs['rise_time__ms']:.0f} ms, Fall: {trap_kwargs['fall_time__ms']:.0f} ms")
+        print(
+            f"     Peak: {trap_kwargs['peak__Hz']:.1f} Hz, Plateau: {trap_kwargs['plateau_time__ms']:.0f} ms"
+        )
+        print(
+            f"     Rise: {trap_kwargs['rise_time__ms']:.0f} ms, Fall: {trap_kwargs['fall_time__ms']:.0f} ms"
+        )
         print(f"  → Saved to: {trapezoid_file}")
     else:
         # Load existing trapezoid
@@ -501,9 +518,7 @@ def main():
     ##########################################################################
 
     print("\nSimulating intramuscular EMG signals...")
-    emg_signals = iemg_sim.simulate_intramuscular_emg(
-        spike_train__Block=spike_train__Block
-    )
+    emg_signals = iemg_sim.simulate_intramuscular_emg(spike_train__Block=spike_train__Block)
 
     first_emg_signal = emg_signals.segments[0].analogsignals[0]
     print(f"Generated EMG shape: {first_emg_signal.shape}")
@@ -525,7 +540,7 @@ def main():
 
     # Save EMG signals
     emg_file = save_path / "signals.pkl"
-    with open(emg_file, 'wb') as f:
+    with open(emg_file, "wb") as f:
         pickle.dump(noisy_emg_signals__Block, f)
     print(f"✓ EMG signals: {emg_file}")
 
@@ -582,7 +597,7 @@ def main():
     }
 
     decomp_file = save_path / "decomp.pkl"
-    with open(decomp_file, 'wb') as f:
+    with open(decomp_file, "wb") as f:
         pickle.dump(decomposition_package, f)
     print(f"✓ Decomposition package: {decomp_file}")
 
@@ -595,65 +610,73 @@ def main():
 
     if not args.no_plot:
         print("\nGenerating plot...")
-        
+
         # Extract EMG signals and time axis
         emg_signal_obj = noisy_emg_signals__Block.segments[0].analogsignals[0]
         emg_data = emg_signal_obj.magnitude  # Shape: (time, n_channels)
         emg_times = emg_signal_obj.times.rescale("s").magnitude
-        
+
         current_signal = input_current__AnalogSignal[:, 0].magnitude
         current_times = input_current__AnalogSignal.times.rescale("s").magnitude
-        
+
         # Normalize current for overlay
         current_normalized = (current_signal - np.min(current_signal)) / (
             np.max(current_signal) - np.min(current_signal)
         )
-        
+
         # Determine how many channels to plot (max 4)
         n_channels = min(4, emg_data.shape[1])
-        
+
         # Create figure with subplots
         fig, axes = plt.subplots(n_channels, 1, figsize=(12, n_channels * 2), sharex=True)
         if n_channels == 1:
             axes = [axes]
-        
+
         # Plot each channel
         for i, ax in enumerate(axes):
             # Plot EMG signal
-            ax.plot(emg_times, emg_data[:, i], linewidth=0.5, color="#2874A6", alpha=0.8, label="iEMG")
-            
+            ax.plot(
+                emg_times, emg_data[:, i], linewidth=0.5, color="#2874A6", alpha=0.8, label="iEMG"
+            )
+
             # Overlay input current on first subplot
             if i == 0:
                 ax2 = ax.twinx()
-                ax2.plot(current_times, current_normalized, linewidth=1.5, color="#E67E22", 
-                        alpha=0.7, label="Input Current")
+                ax2.plot(
+                    current_times,
+                    current_normalized,
+                    linewidth=1.5,
+                    color="#E67E22",
+                    alpha=0.7,
+                    label="Input Current",
+                )
                 ax2.set_ylabel("Normalized Current", fontsize=9, color="#E67E22")
-                ax2.tick_params(axis='y', labelcolor="#E67E22")
+                ax2.tick_params(axis="y", labelcolor="#E67E22")
                 ax2.set_ylim([0, 1])
-                
+
                 # Combine legends
                 lines1, labels1 = ax.get_legend_handles_labels()
                 lines2, labels2 = ax2.get_legend_handles_labels()
                 ax.legend(lines1 + lines2, labels1 + labels2, loc="upper right", fontsize=8)
-            
+
             # Formatting
-            ax.set_ylabel(f"Ch {i + 1}\n[µV]", fontsize=9)
+            ax.set_ylabel(f"Ch {i + 1}\n[uV]", fontsize=9)
             ax.grid(True, alpha=0.3, linewidth=0.5)
             sns.despine(ax=ax, trim=True, offset=5)
-            
+
             # Only show x-label on bottom subplot
             if i == len(axes) - 1:
                 ax.set_xlabel("Time [s]", fontsize=10)
-        
+
         # Overall title
         fig.suptitle(
             f"Intramuscular EMG: {len(mu_indices)} MUs, SNR={snr_db}dB",
             fontsize=14,
             fontweight="bold",
         )
-        
+
         plt.tight_layout()
-        
+
         plot_file = save_path / "emg_plot.png"
         plt.savefig(plot_file, dpi=300, bbox_inches="tight", facecolor="white")
         print(f"✓ EMG plot saved: {plot_file}")
@@ -685,11 +708,11 @@ def main():
 
             # Plot all channels for this MUAP
             for ch in range(muap.shape[1]):
-                ax.plot(muap_times, muap[:, ch], linewidth=1, alpha=0.7, label=f"Ch {ch+1}")
+                ax.plot(muap_times, muap[:, ch], linewidth=1, alpha=0.7, label=f"Ch {ch + 1}")
 
             # Formatting
             ax.set_title(f"MU {mu_idx}", fontsize=10, fontweight="bold")
-            ax.set_ylabel("Amplitude [µV]", fontsize=9)
+            ax.set_ylabel("Amplitude [uV]", fontsize=9)
             ax.grid(True, alpha=0.3, linewidth=0.5)
             sns.despine(ax=ax, trim=True, offset=5)
 
@@ -703,7 +726,7 @@ def main():
 
         # Hide unused subplots
         for i in range(n_mus_to_plot, len(axes)):
-            axes[i].axis('off')
+            axes[i].axis("off")
 
         # Overall title
         fig_muap.suptitle(

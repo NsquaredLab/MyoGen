@@ -15,7 +15,7 @@ spike_threshold__mV: 50.0  # Spike detection threshold (mV)
 nerlab:
   # Soma parameters for NERLab model
   soma:
-    diameter_range: [78, 113, 1.0]  # [min, max, curve] (μm)
+    diameter_range: [78, 113, 1.0]  # [min, max, curve] (um)
     gnabar_range: [0.0325, 0.0775, 2.5]  # [min, max, curve] (S/cm²)
     gnapbar_range: [0.00043, 0.00067, 2.1]  # [min, max, curve] (S/cm²)
     gkfbar_range: [0.0028, 0.0015, 25]  # [min, max, curve] (S/cm²)
@@ -30,12 +30,12 @@ nerlab:
     el_napp: 0.0  # mV
     vtraub_napp: 0.0  # mV
     Ra: 70.0  # Ω·cm
-    cm: 1.0  # μF/cm²
+    cm: 1.0  # uF/cm²
 
   # Dendrite parameters for NERLab model
   dendrite:
-    diameter_range: [48.0, 90.0, 5.0]  # [min, max, curve] (μm)
-    length_range: [5500, 10600, 12.0]  # [min, max, curve] (μm)
+    diameter_range: [48.0, 90.0, 5.0]  # [min, max, curve] (um)
+    length_range: [5500, 10600, 12.0]  # [min, max, curve] (um)
     gcaLbar_range: [1.25e-5, 6.2e-6, 3]  # [min, max, curve] (S/cm²)
     vtraub_caL_range: [35, 34, 30]  # [min, max, curve] (mV)
     ltau_caL_range: [90, 47, 3]  # [min, max, curve] (ms)
@@ -43,7 +43,7 @@ nerlab:
 
     # Fixed dendrite parameters
     Ra: 70.0  # Ω·cm
-    cm: 1.0  # μF/cm²
+    cm: 1.0  # uF/cm²
     ecaL: 140  # mV
     el_caL: 0.0  # mV
 
@@ -91,9 +91,9 @@ nerlab:
 powers2017:
   # Soma parameters
   soma:
-    length_range: [2952, 3665, 0.3]  # μm
-    diameter_range: [22, 30, 0.3]  # μm
-    capacitance_range: [1.35546, 1.87853, 0.3]  # μF/cm²
+    length_range: [2952, 3665, 0.3]  # um
+    diameter_range: [22, 30, 0.3]  # um
+    capacitance_range: [1.35546, 1.87853, 0.3]  # uF/cm²
     passive_conductance_range: [8.11e-5, 3.77e-4, 0.3]  # S/cm²
     passive_reversal_range: [-71, -72, 0.3]  # mV
     na3rp_conductance_range: [0.01, 0.022, 0.3]  # S/cm²
@@ -106,12 +106,12 @@ powers2017:
 
   # Dendrite parameters
   dendrite:
-    length_range: [1794.13, 2226.91, 0.3]  # μm
-    diameter_range: [8.73071, 11.9055, 0.3]  # μm
+    length_range: [1794.13, 2226.91, 0.3]  # um
+    diameter_range: [8.73071, 11.9055, 0.3]  # um
     passive_conductance_range: [7.93e-5, 1.75e-4, 0.3]  # S/cm²
     passive_reversal_range: [-71, -72, 0.3]  # mV
     resistance_range: [51.038, 40.755, 0.3]  # Ω·cm
-    capacitance_range: [0.867781, 0.880407, 0.3]  # μF/cm²
+    capacitance_range: [0.867781, 0.880407, 0.3]  # uF/cm²
     gh_conductance_range: [3.0e-5, 2.3e-4, 0.3]  # S/cm²
     
     # L-type Ca conductance ranges for each dendrite (4 dendrites)

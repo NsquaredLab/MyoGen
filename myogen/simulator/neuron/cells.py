@@ -252,7 +252,7 @@ class INgII(_Cell):
     Notes
     -----
     The geometry and biophysics are based on cat spinal cord measurements:
-    - Membrane area: ~81,390 μm² (Bui et al., 2003)
+    - Membrane area: ~81,390 um² (Bui et al., 2003)
     - Input resistance: ~20 MΩ (from g_pas = 5e-5 S/cm²)
     - Resting potential: -71 mV
     - Active channels: Na+, K+, h-current, Ca²⁺-dependent K+
@@ -282,16 +282,16 @@ class INgII(_Cell):
         assuming spherical geometry.
         """
         # Data from Bui et al., 2003 Ia Inhibitory interneurons
-        Amu = 81390 + 3113  # Mean membrane area (μm²)
+        Amu = 81390 + 3113  # Mean membrane area (um²)
         Aci = 1.96 * (891.5 + 46.141) / np.sqrt(8)  # Area confidence interval
         i = 0  # Use lower bound of area distribution
         A = [Amu - Aci, Amu + Aci]
         D = np.sqrt(A[i] / np.pi)  # Diameter from area, assuming sphere
 
-        self.soma.L = D  # Length = diameter for sphere (μm)
-        self.soma.diam = D  # Diameter (μm)
+        self.soma.L = D  # Length = diameter for sphere (um)
+        self.soma.diam = D  # Diameter (um)
         self.soma.Ra = 70  # Axial resistance (Ω⋅cm)
-        self.soma.cm = 1  # Membrane capacitance (μF/cm²)
+        self.soma.cm = 1  # Membrane capacitance (uF/cm²)
         self.soma.nseg = 1  # Single compartment
 
     def _define_biophysics(self):
@@ -789,22 +789,22 @@ class AlphaMN(_Cell):
         physiological total dendritic surface area.
         """
         # Soma geometry (cat lumbar motor neurons)
-        self.soma.L = 2952  # Length (μm) - effective sphere diameter
-        self.soma.diam = 22  # Diameter (μm)
+        self.soma.L = 2952  # Length (um) - effective sphere diameter
+        self.soma.diam = 22  # Diameter (um)
         self.soma.Ra = 0.001  # Axial resistance (Ω⋅cm) - very low for soma
-        self.soma.cm = 1.35546  # Membrane capacitance (μF/cm²)
+        self.soma.cm = 1.35546  # Membrane capacitance (uF/cm²)
         self.soma.nseg = self.segments__count
 
         # Dendritic geometry - dimensions scale with dendrite count
         for d in self.dend:
             if self.dendrites__count == 4:
-                d.L = 1794.13  # Length (μm) per dendrite
-                d.diam = 8.73071  # Diameter (μm)
+                d.L = 1794.13  # Length (um) per dendrite
+                d.diam = 8.73071  # Diameter (um)
             if self.dendrites__count == 1:
                 d.L = 2848  # Single large dendrite
                 d.diam = 22  # Larger diameter
             d.Ra = 51.038  # Dendritic axial resistance (Ω⋅cm)
-            d.cm = 0.867781  # Dendritic membrane capacitance (μF/cm²)
+            d.cm = 0.867781  # Dendritic membrane capacitance (uF/cm²)
             d.nseg = self.segments__count
 
     def _build_topology(self):

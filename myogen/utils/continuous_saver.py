@@ -6,17 +6,20 @@ Provides memory-efficient continuous data saving for very long NEURON simulation
 by periodically flushing data chunks to disk instead of keeping everything in RAM.
 """
 
+from collections import defaultdict
 from pathlib import Path
 from typing import Optional
-import numpy as np
+
 import joblib
-from collections import defaultdict
-from neuron import h
-from tqdm import tqdm
+import numpy as np
 
 # NEO imports for standard output format
 import quantities as pq
 from neo import AnalogSignal, Block, Segment, SpikeTrain
+from neuron import h
+from tqdm import tqdm
+
+from myogen.utils.types import Quantity__ms
 
 
 class ContinuousSaver:
@@ -41,7 +44,7 @@ class ContinuousSaver:
     def __init__(
         self,
         save_path: Path,
-        chunk_duration__ms: float = 10000.0,
+        chunk_duration__ms: Quantity__ms = 10000.0 * pq.ms,
         populations: Optional[dict] = None,
         recording_config: Optional[dict] = None,
     ):
@@ -60,10 +63,10 @@ class ContinuousSaver:
         # Spike recording
         self.spike_data = defaultdict(lambda: {"times": [], "ids": []})
 
-        print(f"ContinuousSaver initialized:")
-        print(f"  Save path: {self.save_path}")
-        print(f"  Chunk duration: {chunk_duration__ms} ms")
-        print(f"  Recording config: {recording_config}")
+        print("ContinuousSaver initialized:")
+        print(f"\tSave path: {self.save_path}")
+        print(f"\tChunk duration: {chunk_duration__ms} ms")
+        print(f"\tRecording config: {recording_config}")
 
     def record_step(self, timestep__ms: float) -> None:
         """
@@ -143,8 +146,10 @@ class ContinuousSaver:
         n_neurons = sum(len(cells) for cells in self.current_chunk_data.values())
         chunk_size_mb = (n_timepoints * n_neurons * 8) / (1024**2)  # 8 bytes per float
 
-        print(f"Saved chunk {self.chunk_id}: {self.current_chunk_times[0]:.1f}-{self.current_chunk_times[-1]:.1f} ms "
-              f"({n_timepoints} steps, {n_neurons} neurons, ~{chunk_size_mb:.1f} MB)")
+        print(
+            f"Saved chunk {self.chunk_id}: {self.current_chunk_times[0]:.1f}-{self.current_chunk_times[-1]:.1f} ms "
+            f"({n_timepoints} steps, {n_neurons} neurons, ~{chunk_size_mb:.1f} MB)"
+        )
 
         # Clear memory
         self.current_chunk_data.clear()
@@ -152,7 +157,7 @@ class ContinuousSaver:
         self.chunk_id += 1
         self.last_save_time = h.t
 
-    def finalize(self, timestep__ms: float, spike_results=None) -> None:
+    def finalize(self, timestep__ms: Quantity__ms, spike_results=None) -> None:
         """
         Save final chunk and spike data.
 
@@ -160,7 +165,7 @@ class ContinuousSaver:
 
         Parameters
         ----------
-        timestep__ms : float
+        timestep__ms : Quantity__ms
             Integration timestep in milliseconds
         spike_results : NEO Block, optional
             NEO Block containing spike trains from SimulationRunner.
@@ -176,7 +181,7 @@ class ContinuousSaver:
 
         if spike_results is not None:
             # Extract spike data from NEO Block (from SimulationRunner)
-            print(f"\nExtracting spike data from SimulationRunner results...")
+            print("\nExtracting spike data from SimulationRunner results...")
             from neo import Block
 
             if isinstance(spike_results, Block):
@@ -188,7 +193,7 @@ class ContinuousSaver:
 
                         for st in seg.spiketrains:
                             neuron_id = int(st.name)
-                            spike_times = st.times.rescale('ms').magnitude
+                            spike_times = st.times.rescale("ms").magnitude
                             times_list.extend(spike_times)
                             ids_list.extend([neuron_id] * len(spike_times))
 
@@ -197,7 +202,9 @@ class ContinuousSaver:
                             "ids": np.array(ids_list),
                         }
 
-                        print(f"  {pop_name}: {len(times_list)} spikes from {len(seg.spiketrains)} neurons")
+                        print(
+                            f"{pop_name}: {len(times_list)} spikes from {len(seg.spiketrains)} neurons"
+                        )
         else:
             # Use manually recorded spike data (legacy)
             for pop_name, data in self.spike_data.items():
@@ -216,11 +223,11 @@ class ContinuousSaver:
         }
         joblib.dump(metadata, self.save_path / "metadata.pkl")
 
-        print(f"\nContinuous saving complete:")
-        print(f"  Total chunks saved: {self.chunk_id}")
-        print(f"  Spike data saved: {spike_filename}")
-        print(f"  Populations with spikes: {list(spike_data_arrays.keys())}")
-        print(f"  All data in: {self.save_path}")
+        print("\nContinuous saving complete:")
+        print(f"\tTotal chunks saved: {self.chunk_id}")
+        print(f"\tSpike data saved: {spike_filename}")
+        print(f"\tPopulations with spikes: {list(spike_data_arrays.keys())}")
+        print(f"\tAll data in: {self.save_path}")
 
 
 def load_and_combine_chunks(save_path: Path, output_filename: Optional[str] = None):
@@ -286,23 +293,21 @@ def load_and_combine_chunks(save_path: Path, output_filename: Optional[str] = No
     combined["metadata"] = metadata
 
     print(f"Combined {total_chunks} chunks:")
-    print(f"  Total time points: {len(combined['times'])}")
-    print(f"  Time range: {combined['times'][0]:.1f} - {combined['times'][-1]:.1f} ms")
-    print(f"  Duration: {(combined['times'][-1] - combined['times'][0])/1000:.1f} seconds")
+    print(f"\tTotal time points: {len(combined['times'])}")
+    print(f"\tTime range: {combined['times'][0]:.1f} - {combined['times'][-1]:.1f} ms")
+    print(f"\tDuration: {(combined['times'][-1] - combined['times'][0]) / 1000:.1f} seconds")
 
     # Optionally save combined data
     if output_filename:
         output_path = save_path / output_filename
         joblib.dump(combined, output_path, compress=3)
-        print(f"  Saved combined data to: {output_path}")
+        print(f"\tSaved combined data to: {output_path}")
 
     return combined
 
 
 def convert_chunks_to_neo(
-    save_path: Path,
-    duration__ms: Optional[float] = None,
-    spike_data_file: Optional[Path] = None
+    save_path: Path, duration__ms: Optional[float] = None, spike_data_file: Optional[Path] = None
 ) -> Block:
     """
     Load chunks and convert to NEO Block format (compatible with SimulationRunner output).
@@ -328,7 +333,7 @@ def convert_chunks_to_neo(
     """
     save_path = Path(save_path)
 
-    print(f"Converting chunks to NEO Block format...")
+    print("Converting chunks to NEO Block format...")
 
     # Load metadata
     metadata = joblib.load(save_path / "metadata.pkl")
@@ -338,7 +343,7 @@ def convert_chunks_to_neo(
     # Load spike data - either from external file or from chunks
     if spike_data_file is not None:
         # Load spike data from SimulationRunner results (NEO Block)
-        print(f"  Loading spike data from: {spike_data_file}")
+        print("\tLoading spike data from: {spike_data_file}")
         spike_results = joblib.load(spike_data_file)
         use_neo_spikes = True
     else:
@@ -349,7 +354,7 @@ def convert_chunks_to_neo(
             spike_data = joblib.load(spike_filename)
             use_neo_spikes = False
         else:
-            print(f"  Warning: No spike data found")
+            print("\tWarning: No spike data found")
             spike_data = {}
             use_neo_spikes = False
 
@@ -359,18 +364,18 @@ def convert_chunks_to_neo(
 
     # Infer duration if not provided
     if duration__ms is None:
-        last_chunk = joblib.load(save_path / f"chunk_{total_chunks-1:04d}.pkl")
+        last_chunk = joblib.load(save_path / f"chunk_{total_chunks - 1:04d}.pkl")
         duration__ms = last_chunk["time_end"]
 
-    print(f"  Duration: {duration__ms} ms")
-    print(f"  Timestep: {timestep__ms} ms")
-    print(f"  Total chunks: {total_chunks}")
+    print(f"\tDuration: {duration__ms} ms")
+    print(f"\tTimestep: {timestep__ms} ms")
+    print(f"\tTotal chunks: {total_chunks}")
 
     # Create NEO Block
     block = Block()
 
     # Add spike data for each population
-    print(f"  Adding spike trains...")
+    print("\tAdding spike trains...")
 
     if use_neo_spikes:
         # Use spike data from SimulationRunner NEO Block
@@ -381,7 +386,7 @@ def convert_chunks_to_neo(
                 for st in seg.spiketrains:
                     new_segment.spiketrains.append(st)
                 block.segments.append(new_segment)
-                print(f"    {seg.name}: {len(new_segment.spiketrains)} spike trains")
+                print(f"\t{seg.name}: {len(new_segment.spiketrains)} spike trains")
     else:
         # Use spike data from chunks (legacy format)
         for pop_name, spikes in spike_data.items():
@@ -392,7 +397,9 @@ def convert_chunks_to_neo(
 
             # Create spike trains for each neuron
             unique_ids = sorted(np.unique(spike_ids))
-            for spike_id in tqdm(unique_ids, desc=f"    Creating {pop_name} spike trains", leave=False):
+            for spike_id in tqdm(
+                unique_ids, desc=f"\tCreating {pop_name} spike trains", leave=False
+            ):
                 times_for_id = spike_times[spike_ids == spike_id]
 
                 # Filter out spike times that exceed duration due to floating-point precision
@@ -403,18 +410,18 @@ def convert_chunks_to_neo(
                     segment.spiketrains.append(
                         SpikeTrain(
                             name=str(int(spike_id)),
-                            times=times_for_id * pq.ms,
-                            t_start=0.0 * pq.ms,
-                            t_stop=duration__ms * pq.ms,
-                            sampling_rate=1.0 / (timestep__ms * pq.ms),
+                            times=(times_for_id * pq.ms).rescale(pq.s),
+                            t_start=0.0 * pq.s,
+                            t_stop=(duration__ms * pq.ms).rescale(pq.s),
+                            sampling_rate=(1.0 / (timestep__ms * pq.ms)).rescale(pq.Hz),
                         )
                     )
 
             block.segments.append(segment)
-            print(f"    {pop_name}: {len(segment.spiketrains)} spike trains")
+            print(f"\t{pop_name}: {len(segment.spiketrains)} spike trains")
 
     # Add membrane potential data by loading and combining chunks
-    print(f"  Loading and combining membrane data from {total_chunks} chunks...")
+    print(f"\tLoading and combining membrane data from {total_chunks} chunks...")
 
     # Determine which populations have membrane recordings
     first_chunk_membrane = first_chunk["membrane_data"]
@@ -434,7 +441,7 @@ def convert_chunks_to_neo(
         # Get all cell indices for this population
         cell_indices = sorted(first_chunk_membrane[pop_name].keys())
 
-        print(f"    {pop_name}: Combining {len(cell_indices)} neurons from {total_chunks} chunks...")
+        print(f"\t{pop_name}: Combining {len(cell_indices)} neurons from {total_chunks} chunks...")
 
         # OPTIMIZED: Load each chunk once and extract all neurons
         # This reduces file reads from (neurons × chunks) to just (chunks)
@@ -444,7 +451,9 @@ def convert_chunks_to_neo(
         neuron_data = {cell_idx: [] for cell_idx in cell_indices}
 
         # Load chunks once and distribute data to neurons
-        for chunk_id in tqdm(range(total_chunks), desc=f"    Loading {pop_name} chunks", unit="chunk"):
+        for chunk_id in tqdm(
+            range(total_chunks), desc=f"\tLoading {pop_name} chunks", unit="chunk"
+        ):
             chunk = joblib.load(save_path / f"chunk_{chunk_id:04d}.pkl")
 
             if pop_name in chunk["membrane_data"]:
@@ -453,27 +462,29 @@ def convert_chunks_to_neo(
                         neuron_data[cell_idx].append(chunk["membrane_data"][pop_name][cell_idx])
 
         # Concatenate data for each neuron and create AnalogSignals
-        print(f"    {pop_name}: Creating analog signals...")
-        for cell_idx in tqdm(cell_indices, desc=f"    Creating {pop_name} signals", leave=False, unit="signal"):
+        print(f"\t{pop_name}: Creating analog signals...")
+        for cell_idx in tqdm(
+            cell_indices, desc=f"\tCreating {pop_name} signals", leave=False, unit="signal"
+        ):
             if neuron_data[cell_idx]:
                 combined_voltage = np.concatenate(neuron_data[cell_idx])
 
                 segment.analogsignals.append(
                     AnalogSignal(
                         name=str(cell_idx),
-                        sampling_period=timestep__ms * pq.ms,
+                        sampling_period=(timestep__ms * pq.ms).rescale(pq.s),
                         signal=combined_voltage * pq.mV,
                     )
                 )
 
-        print(f"    {pop_name}: {len(segment.analogsignals)} analog signals created")
+        print(f"\t{pop_name}: {len(segment.analogsignals)} analog signals created")
 
     # Add metadata annotations
     block.annotations["time__ms"] = duration__ms
     block.annotations["timestep__ms"] = timestep__ms
     block.annotations["temperature__celsius"] = 36.0  # Default from SimulationRunner
 
-    print(f"\n✓ NEO Block created successfully")
-    print(f"  Total segments: {len(block.segments)}")
+    print("\nNEO Block created successfully")
+    print(f"\tTotal segments: {len(block.segments)}")
 
     return block

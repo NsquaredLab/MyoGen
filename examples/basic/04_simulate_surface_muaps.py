@@ -129,13 +129,13 @@ for muap_index in range(len(muaps.groups[0].segments)):
     muap_signal = muaps.groups[0].segments[muap_index].analogsignals[0]
     muap_data_mV = muap_signal.magnitude  # Shape: (time, rows, cols)
 
-    muap_data_uV = muap_signal.rescale(pq.uV).magnitude  # Convert to µV for plotting
+    muap_data_uV = muap_signal.rescale(pq.uV).magnitude  # Convert to uV for plotting
 
     # Print amplitude diagnostics
     print(f"\nMUAP {muap_index} amplitude range:")
-    print(f"\tMin: {np.min(muap_data_mV):.6f} mV ({np.min(muap_data_uV):.2f} µV)")
-    print(f"\tMax: {np.max(muap_data_mV):.6f} mV ({np.max(muap_data_uV):.2f} µV)")
-    print(f"\tPeak-to-peak: {np.ptp(muap_data_mV):.6f} mV ({np.ptp(muap_data_uV):.2f} µV)")
+    print(f"\tMin: {np.min(muap_data_mV):.6f} mV ({np.min(muap_data_uV):.2f} uV)")
+    print(f"\tMax: {np.max(muap_data_mV):.6f} mV ({np.max(muap_data_uV):.2f} uV)")
+    print(f"\tPeak-to-peak: {np.ptp(muap_data_mV):.6f} mV ({np.ptp(muap_data_uV):.2f} uV)")
 
     # Get grid dimensions
     n_rows, n_cols = muap_data_uV.shape[1], muap_data_uV.shape[2]

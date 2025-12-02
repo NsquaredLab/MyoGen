@@ -41,6 +41,7 @@ Quantity__mm_per_s: TypeAlias = __make_quantity_type(pq.mm / pq.s)  # type: igno
 Quantity__S_per_m: TypeAlias = __make_quantity_type(pq.S / pq.m)  # type: ignore
 Quantity__m: TypeAlias = __make_quantity_type(pq.m)  # type: ignore
 Quantity__mV: TypeAlias = __make_quantity_type(pq.mV)  # type: ignore
+Quantity__uS: TypeAlias = __make_quantity_type(pq.uS)  # type: ignore
 
 # Type aliases for numpy arrays with specific dimensions
 

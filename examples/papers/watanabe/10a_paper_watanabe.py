@@ -14,16 +14,16 @@ from pathlib import Path
 import joblib
 import matplotlib.pyplot as plt
 import numpy as np
+import quantities as pq
 from neuron import h
 
-from myogen import load_nmodl_mechanisms, RANDOM_GENERATOR
+from myogen import RANDOM_GENERATOR, load_nmodl_mechanisms, simulator
 from myogen.simulator.neuron.network import Network
-from myogen import simulator
 from myogen.simulator.neuron.populations import AlphaMN__Pool, DescendingDrive__Pool
 from myogen.simulator.neuron.simulation_runner import SimulationRunner
+from myogen.utils.continuous_saver import ContinuousSaver
 
-# Import continuous saving utilities
-from continuous_saver import ContinuousSaver
+plt.style.use("fivethirtyeight")
 
 ##############################################################################
 # Load NEURON Mechanisms and Dependencies
@@ -53,15 +53,17 @@ chunks_path.mkdir(exist_ok=True)
 
 # Temporal parameters - high resolution for accurate neural integration
 dt = 0.025  # ms - Integration timestep
-tstop = 180 * 1e3  # ms - Total simulation duration
+segment_duration__s = 5  # seconds - Duration of each phase (3 phases total)
+tstop = segment_duration__s * 3 * 1e3  # ms - Total simulation duration (3 phases)
 n_steps = int(tstop / dt)
 # Add margin for NEURON's potential overstep
 time = np.linspace(0, tstop, n_steps)
 
 print("Simulation parameters:")
-print(f"  - Duration: {tstop} ms")
-print(f"  - Timestep: {dt} ms")
-print(f"  - Time samples: {len(time)}")
+print(f"\tSegment duration: {segment_duration__s} s")
+print(f"\tTotal duration: {tstop / 1e3} s ({tstop} ms)")
+print(f"\tTimestep: {dt} ms")
+print(f"\tTime samples: {len(time)}")
 
 ##############################################################################
 # Define Neural Population Sizes
@@ -100,10 +102,10 @@ plt.show()
 # Define Descending Drive Patterns
 # -------------------------------
 #
-# Create DD drive pattern as specified:
-# - Constant 65 until 60s
-# - 20 Hz sinusoid with DC 65, amplitude 20 from 60-120s
-# - Same 20 Hz sinusoid from 120-180s but DC reduced to 58
+# Create DD drive pattern with three phases:
+# - Phase 1: Constant 65 for first segment (0 to segment_duration__s)
+# - Phase 2: 20 Hz sinusoid with DC=65, amplitude 20 (segment_duration__s to 2*segment_duration__s)
+# - Phase 3: Same 20 Hz sinusoid but DC reduced to 58 (2*segment_duration__s to 3*segment_duration__s)
 time_s = time / 1000.0  # Convert to seconds for easier calculation
 
 # Descending drive (DD) - modulated signal
@@ -112,12 +114,12 @@ DDdrive = np.full_like(time, 65.0)
 # make the first 1 seconds be 0
 DDdrive[time_s < 1] = 0.0
 
-# Phase 2: 20 Hz sinusoid with DC=65, amplitude=20 from 60-120s
-phase2_mask = (time_s >= tstop / 1000.0 / 3) & (time_s < tstop / 1000.0 / 3 * 2)
+# Phase 2: 20 Hz sinusoid with DC=65, amplitude=20 for second segment
+phase2_mask = (time_s >= segment_duration__s) & (time_s < 2 * segment_duration__s)
 DDdrive[phase2_mask] = 65 + 20 * np.sin(2 * np.pi * 20 * time_s[phase2_mask])
 
-# Phase 3: Same sinusoid from 120-180s but DC reduced to 58
-phase3_mask = time_s >= tstop / 1000.0 / 3 * 2
+# Phase 3: Same sinusoid for third segment but DC reduced to 58
+phase3_mask = time_s >= 2 * segment_duration__s
 DDdrive[phase3_mask] = 58 + 20 * np.sin(2 * np.pi * 20 * time_s[phase3_mask])
 
 # Independent noise (IN) - 125 Hz with random variation
@@ -151,9 +153,9 @@ plt.show()
 # 2. Descending drive (DD) - 400 axons with 30% connectivity to each MN
 # 3. Independent noise (IN) - one-to-one Poisson noise source per MN
 
-aMN = AlphaMN__Pool(recruitment_thresholds__array=rt, config_file="alpha_mn_VLVM.yaml")
-DD = DescendingDrive__Pool(n=nDD, poisson_batch_size=DDorder, timestep__ms=dt)
-IN = DescendingDrive__Pool(n=nIN, poisson_batch_size=INorder, timestep__ms=dt)
+aMN = AlphaMN__Pool(recruitment_thresholds__array=rt)
+DD = DescendingDrive__Pool(n=nDD, poisson_batch_size=DDorder, timestep__ms=dt * pq.ms)
+IN = DescendingDrive__Pool(n=nIN, poisson_batch_size=INorder, timestep__ms=dt * pq.ms)
 
 ##############################################################################
 # Define Callback Functions
@@ -254,32 +256,28 @@ DD_connectivity = 0.3
 expected_DD_per_MN = int(DD_connectivity * nDD)  # 120 connections per MN
 
 # Target total conductances per MN (physiologically realistic)
-target_total_DD_conductance__μS = 0.1  # Total DD conductance per MN
-target_IN_conductance__μS = 0.05
+target_total_DD_conductance__uS = 0.1 * pq.uS  # Total DD conductance per MN
+target_IN_conductance__uS = 0.05 * pq.uS  # IN conductance per MN
 
 # Scale DD weight by number of converging connections
-weight_DD__μS = target_total_DD_conductance__μS / expected_DD_per_MN
+weight_DD__uS = target_total_DD_conductance__uS / expected_DD_per_MN
 
 print("\nSynaptic Weight Scaling:")
-print(f"  DD connections per MN: {expected_DD_per_MN}")
-print(f"  DD weight per connection: {weight_DD__μS:.6f} μS")
-print(f"  Total DD conductance per MN: {weight_DD__μS * expected_DD_per_MN:.3f} μS")
-print(f"  IN conductance per MN: {target_IN_conductance__μS:.3f} μS")
-print(
-    f"  DD/IN ratio: {(weight_DD__μS * expected_DD_per_MN) / target_IN_conductance__μS:.1f}x"
-)
+print(f"\tDD connections per MN: {expected_DD_per_MN}")
+print(f"\tDD weight per connection: {weight_DD__uS:.6f} uS")
+print(f"\tTotal DD conductance per MN: {weight_DD__uS * expected_DD_per_MN:.3f} uS")
+print(f"\tIN conductance per MN: {target_IN_conductance__uS:.3f} uS")
+print(f"\tDD/IN ratio: {(weight_DD__uS * expected_DD_per_MN) / target_IN_conductance__uS:.1f}x")
 
 network.connect(
     "DD",
     "aMN",
     probability=DD_connectivity,
-    weight__μS=target_total_DD_conductance__μS,
+    weight__uS=target_total_DD_conductance__uS,
 )
 
 # Independent noise: IN → aMN (one-to-one)
-network.connect_one_to_one(
-    "IN", "aMN", probability=1.0, weight__μS=target_IN_conductance__μS
-)
+network.connect_one_to_one("IN", "aMN", probability=1.0, weight__uS=target_IN_conductance__uS)
 
 
 ##############################################################################
@@ -290,8 +288,8 @@ network.connect_one_to_one(
 # Both populations receive the same external drive signal but generate independent
 # spike trains due to their Poisson process nature.
 
-network.connect_from_external("cmd", "DD", weight__μS=1.0)
-network.connect_from_external("cmd", "IN", weight__μS=1.0)
+network.connect_from_external("cmd", "DD", weight__uS=1.0 * pq.uS)
+network.connect_from_external("cmd", "IN", weight__uS=1.0 * pq.uS)
 
 ncD = {
     "cmd->DD": network.get_netcons("cmd", "DD"),
@@ -310,7 +308,7 @@ recording_neurons = list(range(0, naMN, 5))  # All 400 neurons
 
 # Use smaller chunks (50s) to keep peak RAM manageable with full recording
 # 50 seconds × 400 neurons × 200,000 timesteps × 8 bytes ≈ 640 MB per chunk
-chunk_duration_ms = 5000.0
+chunk_duration_ms = 5000.0 * pq.ms
 
 continuous_saver = ContinuousSaver(
     save_path=chunks_path,
@@ -320,10 +318,10 @@ continuous_saver = ContinuousSaver(
 )
 
 print("\nContinuous saving configured:")
-print(f"  Recording {len(recording_neurons)} neurons (ALL)")
-print(f"  Chunk duration: {chunk_duration_ms / 1000:.1f} seconds")
-print("  Estimated max RAM per chunk: ~640 MB")
-print(f"  Total chunks expected: {int(tstop / chunk_duration_ms)}")
+print(f"\tRecording {len(recording_neurons)} neurons (ALL)")
+print(f"\tChunk duration: {chunk_duration_ms / 1000:.1f} seconds")
+print("\tEstimated max RAM per chunk: ~640 MB")
+print(f"\tTotal chunks expected: {int(tstop / chunk_duration_ms)}")
 
 ##############################################################################
 # Prepare Simulation Models
@@ -386,9 +384,7 @@ h.secondorder = 2  # Crank-Nicolson method (second-order accurate)
 
 print("\nUsing Crank-Nicolson integration (secondorder=2)")
 print(f"Fixed timestep: {dt} ms")
-print(
-    "   Note: Watanabe paper used RK4; NEURON's Crank-Nicolson provides 2nd-order accuracy"
-)
+print("\tNote: Watanabe paper used RK4; NEURON's Crank-Nicolson provides 2nd-order accuracy")
 
 ##############################################################################
 # Run Spinal Network Simulation
@@ -399,9 +395,9 @@ print(
 # NEURON will use smaller steps automatically during fast dynamics.
 
 print("\nStarting spinal network simulation...")
-print(f"   Duration: {tstop} ms")
-print(f"   Max timestep (CVode): {dt} ms")
-print(f"   Populations: {len(network.populations)}")
+print(f"\tDuration: {tstop} ms")
+print(f"\tMax timestep (CVode): {dt} ms")
+print(f"\tPopulations: {len(network.populations)}")
 
 runner = SimulationRunner(
     network=network,
@@ -415,40 +411,38 @@ runner = SimulationRunner(
 # Data is recorded continuously via the ContinuousSaver in the step callback
 # This keeps peak RAM usage below 100 MB regardless of simulation duration
 print("\nRunning simulation with continuous saving (low memory mode)...")
-print("  Recording is handled by ContinuousSaver")
-print("  Peak RAM usage: < 100 MB")
+print("\tRecording is handled by ContinuousSaver")
+print("\tPeak RAM usage: < 100 MB")
 
 results = runner.run(
-    duration__ms=tstop,
-    timestep__ms=dt,
+    duration__ms=tstop * pq.ms,
+    timestep__ms=dt * pq.ms,
     membrane_recording=None,  # Continuous saver handles recording
 )
 print("Simulation completed successfully!")
 
 # Finalize continuous saving (save last chunk and ALL spike data from SimulationRunner)
 print("\nFinalizing continuous data saving...")
-continuous_saver.finalize(timestep__ms=dt, spike_results=results)
+continuous_saver.finalize(timestep__ms=dt * pq.ms, spike_results=results)
+
+# Save simulation parameters for analysis scripts to use
+print("\nSaving simulation parameters...")
+simulation_params = {
+    "segment_duration__s": segment_duration__s,
+    "tstop__ms": tstop,
+    "dt__ms": dt,
+    "n_steps": n_steps,
+    "naMN": naMN,
+    "nDD": nDD,
+    "nIN": nIN,
+}
+joblib.dump(simulation_params, save_path / "watanabe__simulation_params.pkl")
+print(f"Simulation parameters saved to {save_path / 'watanabe__simulation_params.pkl'}")
 
 # Also save spike results separately for backup/compatibility
 if results is not None:
     print("\nSaving backup spike data...")
     joblib.dump(results, save_path / "watanabe__spikes_only.pkl")
-    print(f"✓ Backup spike data saved to {save_path / 'watanabe__spikes_only.pkl'}")
+    print(f"Backup spike data saved to {save_path / 'watanabe__spikes_only.pkl'}")
 else:
-    print("✗ No spike results from SimulationRunner")
-
-print("\n" + "=" * 60)
-print("SIMULATION COMPLETE - Data saved in chunks")
-print("=" * 60)
-print("Chunks directory: {chunks_path}")
-print("\nTo load as NEO Block (SELF-CONTAINED - all data in chunks):")
-print("  from continuous_saver import convert_chunks_to_neo")
-print("  from pathlib import Path")
-print("  results = convert_chunks_to_neo(Path('{chunks_path}'))")
-print("  # Now 'results' contains ALL data from chunks:")
-print("  #   - Spike trains: aMN, DD, IN")
-print("  #   - Membrane potentials: aMN (all 400 neurons)")
-print("\nAlternatively, to load raw chunks:")
-print("  from continuous_saver import load_and_combine_chunks")
-print("  data = load_and_combine_chunks(Path('{chunks_path}'))")
-print("=" * 60)
+    print("No spike results from SimulationRunner")
