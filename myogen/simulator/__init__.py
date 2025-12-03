@@ -11,16 +11,12 @@ from myogen.simulator.core.emg import (
     SurfaceElectrodeArray,
     SurfaceEMG,
 )
-from myogen.utils.neo import GridAnalogSignal
 from myogen.simulator.core.force import ForceModel
 from myogen.simulator.core.muscle import Muscle
 
 # Always import all public APIs (they will fail gracefully if NMODL not loaded)
 from myogen.simulator.core.physiological_distribution import RecruitmentThresholds
-
-# Spinal neural population models
-# PyNN integration - commented out to avoid auto-loading conflicts
-# from myogen.simulator import pyNN
+from myogen.utils.neo import GridAnalogSignal
 
 __all__ = [
     "RecruitmentThresholds",
@@ -31,5 +27,4 @@ __all__ = [
     "IntramuscularElectrodeArray",
     "ForceModel",
     "GridAnalogSignal",
-    # "pyNN",  # commented out to avoid auto-loading conflicts
 ]

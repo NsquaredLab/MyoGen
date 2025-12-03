@@ -935,6 +935,11 @@ class Network:
         if not 0.0 <= probability <= 1.0:
             raise ValueError(f"Probability must be 0.0-1.0, got {probability}")
 
+        # Extract numeric values (handle both Quantity objects and plain floats)
+        weight_value = getattr(weight__uS, 'magnitude', weight__uS)
+        threshold_value = getattr(threshold__mV, 'magnitude', threshold__mV)
+        delay_value = getattr(delay__ms, 'magnitude', delay__ms)
+
         # Extract spike recording vectors for source population
         id_vector = None
         spike_vector = None
@@ -948,8 +953,8 @@ class Network:
             source_pop=source,
             target_pop=target,
             connection_probability=probability,
-            synaptic_weight=weight__uS.magnitude,
-            spike_threshold=threshold__mV.magnitude,
+            synaptic_weight=weight_value,
+            spike_threshold=threshold_value,
             id_vector=id_vector,
             spike_vector=spike_vector,
             deterministic=deterministic,
@@ -961,9 +966,9 @@ class Network:
                 "source": source,
                 "target": target,
                 "probability": probability,
-                "weight__uS": weight__uS.magnitude,
-                "delay__ms": delay__ms,
-                "threshold__mV": threshold__mV.magnitude,
+                "weight__uS": weight_value,
+                "delay__ms": delay_value,
+                "threshold__mV": threshold_value,
             }
         )
         self._netcons_by_connection[(source, target)] = netcons
@@ -1003,6 +1008,10 @@ class Network:
         if source not in self.populations:
             raise ValueError(f"Source population '{source}' not found")
 
+        # Extract numeric values (handle both Quantity objects and plain floats)
+        weight_value = getattr(weight__uS, 'magnitude', weight__uS)
+        threshold_value = getattr(threshold__mV, 'magnitude', threshold__mV)
+
         # Extract spike recording vectors for source population
         id_vector = None
         spike_vector = None
@@ -1018,8 +1027,8 @@ class Network:
             connection_probability=1.0,  # All motor neurons connect
             muscle_callback=activation_callback,
             muscle=muscle,
-            synaptic_weight=weight__uS.magnitude,
-            spike_threshold=threshold__mV.magnitude,
+            synaptic_weight=weight_value,
+            spike_threshold=threshold_value,
             id_vector=id_vector,
             spike_vector=spike_vector,
         )
@@ -1031,8 +1040,8 @@ class Network:
                 "target": "muscle",
                 "muscle": muscle,
                 "callback": activation_callback,
-                "weight__uS": weight__uS.magnitude,
-                "threshold__mV": threshold__mV.magnitude,
+                "weight__uS": weight_value,
+                "threshold__mV": threshold_value,
             }
         )
         self._netcons_by_connection[(source, "muscle")] = netcons
@@ -1071,6 +1080,11 @@ class Network:
         if target not in self.populations:
             raise ValueError(f"Target population '{target}' not found")
 
+        # Extract numeric values (handle both Quantity objects and plain floats)
+        weight_value = getattr(weight__uS, 'magnitude', weight__uS)
+        delay_value = getattr(delay__ms, 'magnitude', delay__ms)
+        threshold_value = getattr(threshold__mV, 'magnitude', threshold__mV)
+
         # Create external NetCons manually to maintain individual access
         from neuron import h
 
@@ -1080,9 +1094,9 @@ class Network:
         for target_neuron in target_neurons:
             # Create NetCon from None (external source) to target neuron
             nc = h.NetCon(None, target_neuron.ns)
-            nc.weight[0] = weight__uS.magnitude
-            nc.delay = delay__ms.magnitude
-            nc.threshold = threshold__mV.magnitude
+            nc.weight[0] = weight_value
+            nc.delay = delay_value
+            nc.threshold = threshold_value
             netcons.append(nc)
 
         self.connections.append(
@@ -1090,9 +1104,9 @@ class Network:
                 "type": "external",
                 "source": source,
                 "target": target,
-                "weight__uS": weight__uS.magnitude,
-                "delay__ms": delay__ms.magnitude,
-                "threshold__mV": threshold__mV.magnitude,
+                "weight__uS": weight_value,
+                "delay__ms": delay_value,
+                "threshold__mV": threshold_value,
             }
         )
         self._netcons_by_connection[(source, target)] = netcons
@@ -1159,6 +1173,11 @@ class Network:
         if not 0.0 <= probability <= 1.0:
             raise ValueError(f"Probability must be 0.0-1.0, got {probability}")
 
+        # Extract numeric values (handle both Quantity objects and plain floats)
+        weight_value = getattr(weight__uS, 'magnitude', weight__uS)
+        delay_value = getattr(delay__ms, 'magnitude', delay__ms)
+        threshold_value = getattr(threshold__mV, 'magnitude', threshold__mV)
+
         # Extract spike recording vectors for source population
         id_vector = None
         spike_vector = None
@@ -1172,8 +1191,8 @@ class Network:
             target_pop=target,
             populations=self.populations,
             connection_probability=probability,
-            synaptic_weight=weight__uS.magnitude,
-            spike_threshold=threshold__mV,
+            synaptic_weight=weight_value,
+            spike_threshold=threshold_value,
             id_vector=id_vector,
             spike_vector=spike_vector,
         )
@@ -1184,9 +1203,9 @@ class Network:
                 "source": source,
                 "target": target,
                 "probability": probability,
-                "weight__uS": weight__uS,
-                "delay__ms": delay__ms,
-                "threshold__mV": threshold__mV,
+                "weight__uS": weight_value,
+                "delay__ms": delay_value,
+                "threshold__mV": threshold_value,
             }
         )
         self._netcons_by_connection[(source, target)] = netcons

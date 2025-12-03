@@ -22,28 +22,54 @@ pps = pq.UnitQuantity(
     "pulses per second", pq.s**-1, symbol="pps", u_symbol="pps", doc="pulses per second"
 )
 
-# Create type aliases for common units
+# ===============================
+# TIME UNITS
+# ===============================
 Quantity__s: TypeAlias = __make_quantity_type(pq.s)  # type: ignore
 Quantity__ms: TypeAlias = __make_quantity_type(pq.ms)  # type: ignore
-Quantity__uV: TypeAlias = __make_quantity_type(pq.uV)  # type: ignore
-Quantity__nA: TypeAlias = __make_quantity_type(pq.nA)  # type: ignore
-Quantity__Hz: TypeAlias = __make_quantity_type(pq.Hz)  # type: ignore
+
+# ===============================
+# ANGLES
+# ===============================
 Quantity__rad: TypeAlias = __make_quantity_type(pq.rad)  # type: ignore
 Quantity__deg: TypeAlias = __make_quantity_type(pq.deg)  # type: ignore
-Quantity__nA: TypeAlias = __make_quantity_type(pq.nA)  # type: ignore
+
+# ===============================
+# ELECTRICAL POTENTIAL
+# ===============================
 Quantity__mV: TypeAlias = __make_quantity_type(pq.mV)  # type: ignore
+Quantity__uV: TypeAlias = __make_quantity_type(pq.uV)  # type: ignore
+
+# ===============================
+# ELECTRICAL CURRENT
+# ===============================
+Quantity__nA: TypeAlias = __make_quantity_type(pq.nA)  # type: ignore
+
+# ===============================
+# ELECTRICAL CONDUCTANCE
+# ===============================
+Quantity__uS: TypeAlias = __make_quantity_type(pq.uS)  # type: ignore
+Quantity__S_per_m: TypeAlias = __make_quantity_type(pq.S / pq.m)  # type: ignore
+
+# ===============================
+# FREQUENCY
+# ===============================
+Quantity__Hz: TypeAlias = __make_quantity_type(pq.Hz)  # type: ignore
 Quantity__pps: TypeAlias = __make_quantity_type(pps)  # type: ignore
-Quantity__per_mm2: TypeAlias = __make_quantity_type(pq.mm**-2)  # type: ignore
+
+# ===============================
+# LENGTH & AREAS
+# ===============================
 Quantity__mm: TypeAlias = __make_quantity_type(pq.mm)  # type: ignore
+Quantity__m: TypeAlias = __make_quantity_type(pq.m)  # type: ignore
 Quantity__mm2: TypeAlias = __make_quantity_type(pq.mm**2)  # type: ignore
+Quantity__per_mm2: TypeAlias = __make_quantity_type(pq.mm**-2)  # type: ignore
+
+# ===============================
+# VELOCITY
+# ===============================
 Quantity__m_per_s: TypeAlias = __make_quantity_type(pq.m / pq.s)  # type: ignore
 Quantity__mm_per_s: TypeAlias = __make_quantity_type(pq.mm / pq.s)  # type: ignore
-Quantity__S_per_m: TypeAlias = __make_quantity_type(pq.S / pq.m)  # type: ignore
-Quantity__m: TypeAlias = __make_quantity_type(pq.m)  # type: ignore
-Quantity__mV: TypeAlias = __make_quantity_type(pq.mV)  # type: ignore
-Quantity__uS: TypeAlias = __make_quantity_type(pq.uS)  # type: ignore
-
-# Type aliases for numpy arrays with specific dimensions
 
 # Current neo.AnalogSignal: (time_points, input_currents) * pq.nA
 CURRENT__AnalogSignal = Annotated[
@@ -147,51 +173,10 @@ INTRAMUSCULAR_EMG__Block = Annotated[
     ],
 ]
 
-
-# Intramuscular MUAP shape tensor: (muap_index, n_electrodes, muap_samples)
-INTRAMUSCULAR_MUAP_SHAPE__TENSOR = Annotated[
-    npt.NDArray[np.floating],
-    Is[lambda x: x.ndim == 3],
-]
-
-# Intramuscular EMG tensor: (mu_pools, n_electrodes, time_points)
-INTRAMUSCULAR_EMG__TENSOR = Annotated[
-    npt.NDArray[np.floating],
-    Is[lambda x: x.ndim == 3],
-]
-
 # Recruitment thresholds array: (n_motor_units,)
 RECRUITMENT_THRESHOLDS__ARRAY = Annotated[
     npt.NDArray[np.floating],
     Is[lambda x: x.ndim == 1],
-]
-
-# ============================================================================
-# Proprioceptive Feedback Types (Phase 1 Integration)
-# ============================================================================
-
-# Spindle afferent output: (time_steps, 2) for [Ia_firing, II_firing]
-SPINDLE_OUTPUT__ARRAY = Annotated[
-    npt.NDArray[np.floating],
-    Is[lambda x: x.ndim == 2 and x.shape[1] == 2],
-]
-
-# GTO afferent output: (time_steps,) for Ib_firing_rate
-GTO_OUTPUT__ARRAY = Annotated[
-    npt.NDArray[np.floating],
-    Is[lambda x: x.ndim == 1],
-]
-
-# Combined afferent firing rates: (time_steps, 3) for [Ia, II, Ib]
-AFFERENT_FIRING__MATRIX = Annotated[
-    npt.NDArray[np.floating],
-    Is[lambda x: x.ndim == 2 and x.shape[1] == 3],
-]
-
-# Muscle mechanical state: (time_steps, 3) for [length, velocity, acceleration]
-MUSCLE_STATE__MATRIX = Annotated[
-    npt.NDArray[np.floating],
-    Is[lambda x: x.ndim == 2 and x.shape[1] == 3],
 ]
 
 # Joint angle trajectory: (time_steps,)
@@ -200,96 +185,8 @@ JOINT_ANGLE__ARRAY = Annotated[
     Is[lambda x: x.ndim == 1],
 ]
 
-# Muscle force output: (time_steps,)
-MUSCLE_FORCE__ARRAY = Annotated[
-    npt.NDArray[np.floating],
-    Is[lambda x: x.ndim == 1],
-]
-
-# Gamma motor neuron drives: (time_steps, 2) for [dynamic, static]
-GAMMA_DRIVE__MATRIX = Annotated[
-    npt.NDArray[np.floating],
-    Is[lambda x: x.ndim == 2 and x.shape[1] == 2],
-]
-
-# Descending motor commands: (time_steps, motor_unit_count)
-DESCENDING_DRIVE__MATRIX = Annotated[
-    npt.NDArray[np.floating],
-    Is[lambda x: x.ndim == 2],
-]
-
-# Alpha motor neuron drive: (time_steps,)
-ALPHA_MN_DRIVE__ARRAY = Annotated[
-    npt.NDArray[np.floating],
-    Is[lambda x: x.ndim == 1],
-]
-
 # Moment arms vs joint angle: (angle_samples, muscle_count)
 MOMENT_ARM__MATRIX = Annotated[
     npt.NDArray[np.floating],
     Is[lambda x: x.ndim == 2],
-]
-
-# External force disturbances: (time_steps,)
-FORCE_DISTURBANCE__ARRAY = Annotated[
-    npt.NDArray[np.floating],
-    Is[lambda x: x.ndim == 1],
-]
-
-# Joint torque output: (time_steps,)
-JOINT_TORQUE__ARRAY = Annotated[
-    npt.NDArray[np.floating],
-    Is[lambda x: x.ndim == 1],
-]
-
-# ============================================================================
-# Parameter Dictionary Types (Phase 1 Integration)
-# ============================================================================
-
-# Hill muscle model parameters
-HILL_MUSCLE_PARAMS = Annotated[
-    dict,
-    Is[lambda x: isinstance(x, dict)],
-]
-
-# Muscle spindle sensitivity parameters
-SPINDLE_PARAMS = Annotated[
-    dict,
-    Is[lambda x: isinstance(x, dict)],
-]
-
-# Golgi tendon organ detection parameters
-GTO_PARAMS = Annotated[
-    dict,
-    Is[lambda x: isinstance(x, dict)],
-]
-
-# Spinal neural population configuration
-SPINAL_POPULATION_CONFIG = Annotated[
-    dict,
-    Is[lambda x: isinstance(x, dict)],
-]
-
-# Proprioceptive system configuration
-PROPRIOCEPTION_CONFIG = Annotated[
-    dict,
-    Is[lambda x: isinstance(x, dict)],
-]
-
-# Biomechanical state for Hill muscle simulation
-HILL_MUSCLE_STATE = Annotated[
-    dict,
-    Is[lambda x: isinstance(x, dict)],
-]
-
-# Joint biomechanics result containing torque and state information
-JOINT_BIOMECHANICS_RESULT = Annotated[
-    dict,
-    Is[lambda x: isinstance(x, dict)],
-]
-
-# Force integration result combining multiple force models
-FORCE_INTEGRATION_RESULT = Annotated[
-    tuple,
-    Is[lambda x: isinstance(x, tuple) and len(x) == 2],
 ]

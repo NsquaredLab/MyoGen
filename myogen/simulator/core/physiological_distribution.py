@@ -1,7 +1,6 @@
 from typing import Literal
 
 import numpy as np
-
 from beartype.typing import Iterator
 
 from myogen.utils.decorators import beartowertype
@@ -73,13 +72,13 @@ class RecruitmentThresholds:
         ----------
         .. [1] Fuglevand, A.J., Winter, D.A., Patla, A.E., 1993. 
                Models of recruitment and rate coding organization in motor-unit pools. 
-               Journal of Neurophysiology 70, 2470–2488. https://doi.org/10.1152/jn.1993.70.6.2470
+               Journal of Neurophysiology 70, 2470-2488. https://doi.org/10.1152/jn.1993.70.6.2470
         .. [2] De Luca, C.J., Contessa, P., 2012. 
                Hierarchical control of motor units in voluntary contractions. 
-               Journal of Neurophysiology 107, 178–195. https://doi.org/10.1152/jn.00961.2010
+               Journal of Neurophysiology 107, 178-195. https://doi.org/10.1152/jn.00961.2010
         .. [3] Konstantin, A., Yu, T., Le Carpentier, E., Aoustin, Y., Farina, D., 2020. 
                Simulation of Motor Unit Action Potential Recordings From Intramuscular Multichannel Scanning Electrodes. 
-               IEEE Transactions on Biomedical Engineering 67, 2005–2014. https://doi.org/10.1109/TBME.2019.2953680
+               IEEE Transactions on Biomedical Engineering 67, 2005-2014. https://doi.org/10.1109/TBME.2019.2953680
 
         Notes
         -----
@@ -185,10 +184,7 @@ class RecruitmentThresholds:
         i = np.arange(self.N) + 1
         rt = (
             (self.deluca__slope * i / self.N)
-            * np.exp(
-                (np.log(self.recruitment_range__ratio / self.deluca__slope) / self.N)
-                * i
-            )
+            * np.exp((np.log(self.recruitment_range__ratio / self.deluca__slope) / self.N) * i)
             / 100
         )
         rtz = rt - rt[0]
@@ -203,12 +199,12 @@ class RecruitmentThresholds:
             )
 
         i = np.arange(self.N) + 1
-        rt = (
-            self.konstantin__max_threshold__ratio / self.recruitment_range__ratio
-        ) * np.exp((i - 1) * np.log(self.recruitment_range__ratio) / (self.N - 1))
-        rtz = (
-            self.konstantin__max_threshold__ratio / self.recruitment_range__ratio
-        ) * (np.exp((i - 1) * np.log(self.recruitment_range__ratio + 1) / self.N) - 1)
+        rt = (self.konstantin__max_threshold__ratio / self.recruitment_range__ratio) * np.exp(
+            (i - 1) * np.log(self.recruitment_range__ratio) / (self.N - 1)
+        )
+        rtz = (self.konstantin__max_threshold__ratio / self.recruitment_range__ratio) * (
+            np.exp((i - 1) * np.log(self.recruitment_range__ratio + 1) / self.N) - 1
+        )
         return rt, rtz
 
     def _combined_model(

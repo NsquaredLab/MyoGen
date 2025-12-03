@@ -1,9 +1,9 @@
 import sys
-from pathlib import Path
 from datetime import datetime
-from typing import Optional, Any, Literal
+from pathlib import Path
+
 import toml
-from sphinx_gallery.sorting import FileNameSortKey, ExplicitOrder
+from sphinx_gallery.sorting import ExplicitOrder, FileNameSortKey
 
 # Setup paths
 base_dir = Path(__file__).parent.parent.parent
@@ -15,15 +15,10 @@ project_info = pyproject_data["project"]
 
 project = project_info["name"]
 author = ", ".join(
-    [
-        f"{a.get('name', '')} ({a.get('email', '')})"
-        for a in project_info.get("authors", [])
-    ]
+    [f"{a.get('name', '')} ({a.get('email', '')})" for a in project_info.get("authors", [])]
 )
 release = version = project_info["version"]
-copyright = (
-    f"2025 - {datetime.now().year}, n-squared lab, FAU Erlangen-Nürnberg, Germany"
-)
+copyright = f"2025 - {datetime.now().year}, n-squared lab, FAU Erlangen-Nürnberg, Germany"
 
 # Import the main package
 import myogen
@@ -199,7 +194,7 @@ html_theme_options = {
     "footer_start": ["copyright"],
     "footer_end": ["sphinx-version"],
     # Enhanced navigation
-    "use_edit_page_button": True,
+    "use_edit_page_button": False,
     "navigation_with_keys": True,
     "show_toc_level": 2,
     "navigation_depth": 4,
@@ -221,6 +216,7 @@ html_static_path = ["_static"]
 html_logo = "_static/myogen_logo.png"
 html_css_files = ["custom.css"]
 html_title = f"{project} {version} Documentation"
+html_show_sourcelink = False
 
 # HTML context
 html_context = {
@@ -249,16 +245,21 @@ intersphinx_mapping = {
 sphinx_gallery_conf = {
     "examples_dirs": [
         str(base_dir / "examples" / "basic"),
+        str(base_dir / "examples" / "finetune"),
         str(base_dir / "examples" / "papers" / "watanabe"),
     ],
     "gallery_dirs": [
         "auto_examples/basic",
+        "auto_examples/finetune",
         "auto_examples/papers/watanabe",
     ],
-    "subsection_order": ExplicitOrder([
-        str(base_dir / "examples" / "basic"),
-        str(base_dir / "examples" / "papers" / "watanabe"),
-    ]),
+    "subsection_order": ExplicitOrder(
+        [
+            str(base_dir / "examples" / "basic"),
+            str(base_dir / "examples" / "finetune"),
+            str(base_dir / "examples" / "papers" / "watanabe"),
+        ]
+    ),
     "filename_pattern": r"\.py",
     "remove_config_comments": True,
     "within_subsection_order": FileNameSortKey,

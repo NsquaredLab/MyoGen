@@ -34,7 +34,7 @@ from neo import AnalogSignal, Block, Segment, SpikeTrain
 from neuron import h
 from tqdm import tqdm
 
-from examples.finetune.helper import calculate_firing_rate_statistics
+from myogen.utils.helper import calculate_firing_rate_statistics
 from myogen import set_random_seed
 from myogen.simulator.core.physiological_distribution import RecruitmentThresholds
 from myogen.simulator.neuron import Network
@@ -70,7 +70,7 @@ print(f"{'=' * 80}\n")
 
 if USE_BASELINE_OPTIMIZATION:
     # Load from baseline firing rate optimization
-    OPTIMIZATION_RESULTS_DIR = Path("../../../results/dd_optimization")
+    OPTIMIZATION_RESULTS_DIR = Path("./results/dd_optimization")
     PARAMS_FILE = OPTIMIZATION_RESULTS_DIR / f"{STUDY_PREFIX}dd_optimized_params.json"
 
     print("Loading from BASELINE firing rate optimization...")
@@ -90,9 +90,7 @@ if USE_BASELINE_OPTIMIZATION:
 
 else:
     # Load from force-specific optimization
-    OPTIMIZATION_RESULTS_DIR = Path(
-        "/home/oj98yqyk/code/simulators/MyoGen/results/force_optimization"
-    )
+    OPTIMIZATION_RESULTS_DIR = Path("./results/force_optimization")
 
     # List available force optimization files
     if OPTIMIZATION_RESULTS_DIR.exists():

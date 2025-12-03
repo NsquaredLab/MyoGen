@@ -525,7 +525,14 @@ def main():
 
     # Load experimental data
     print("\nLoading experimental data...")
-    exp_csv_path = Path(__file__).parent / "ISI_statistics.csv"
+    # Handle __file__ not being defined (e.g., in sphinx-gallery or interactive sessions)
+    try:
+        script_dir = Path(__file__).parent
+    except NameError:
+        # Fallback to current working directory
+        script_dir = Path.cwd()
+
+    exp_csv_path = script_dir / "ISI_statistics.csv"
     exp_data = load_experimental_data(exp_csv_path)
 
     # Create comparison plot

@@ -11,8 +11,9 @@ All functions will return an Axes or a list of Axes for use in matplotlib.
    :template: autosummary/function.rst
    :recursive:
 
-   plot_recruitment_thresholds
-   plot_spike_trains
-   plot_surface_emg
-   plot_muap_grid
-   plot_input_current__matrix 
+   plot_raster_spikes
+   plot_membrane_potentials
+   plot_muscle_dynamics
+   plot_antagonist_muscle_comparison
+   plot_spindle_dynamics
+   plot_gto_dynamics 

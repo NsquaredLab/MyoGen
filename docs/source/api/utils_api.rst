@@ -10,17 +10,6 @@ The utils module is organized into the following submodules:
 
 .. currentmodule:: myogen.utils
 
-Setup Functions
-^^^^^^^^^^^^^^^
-
-.. autosummary::
-   :toctree: ../generated/
-   :template: autosummary/function.rst
-   :recursive:
-
-   setup_myogen
-   load_nmodl_files
-
 Submodules
 ^^^^^^^^^^	
 

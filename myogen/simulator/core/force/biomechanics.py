@@ -6,16 +6,13 @@ moment arms, and joint torques - essential for linking neural activation
 to movement mechanics in musculoskeletal simulations.
 """
 
-import numpy as np
-from typing import Literal, Tuple, Optional, Dict, List, Union
 from dataclasses import dataclass
-from myogen.utils.types import (
-    JOINT_ANGLE__ARRAY,
-    MOMENT_ARM__MATRIX,
-    JOINT_TORQUE__ARRAY,
-    MUSCLE_FORCE__ARRAY,
-)
+from typing import List, Literal, Optional, Tuple, Union
+
+import numpy as np
+
 from myogen.utils.decorators import beartowertype
+from myogen.utils.types import JOINT_ANGLE__ARRAY, MOMENT_ARM__MATRIX
 
 
 @dataclass
@@ -82,9 +79,7 @@ class JointBiomechanics:
     ) -> None:
         # Validate inputs
         if joint_type not in ["hinge", "ball_socket"]:
-            raise ValueError(
-                f"joint_type must be 'hinge' or 'ball_socket', got '{joint_type}'"
-            )
+            raise ValueError(f"joint_type must be 'hinge' or 'ball_socket', got '{joint_type}'")
 
         if len(muscle_geometries) == 0:
             raise ValueError("At least one muscle geometry must be provided")
@@ -118,9 +113,7 @@ class JointBiomechanics:
 
         # Set up angle array for calculations
         min_angle, max_angle = joint_geometry.range_of_motion__degrees
-        self.joint_angles__degrees = np.linspace(
-            min_angle, max_angle, 181
-        )  # 1 degree resolution
+        self.joint_angles__degrees = np.linspace(min_angle, max_angle, 181)  # 1 degree resolution
 
         # Initialize or validate moment arm data
         if moment_arm_data__cm is not None:
@@ -180,9 +173,7 @@ class JointBiomechanics:
             # Simplified model: moment arm varies sinusoidally with joint angle
             # This is a common approximation for many joints
             angle_rad = np.radians(joint_angle__degrees)
-            base_moment_arm = (
-                self._joint_geometry.radius__cm * 0.8
-            )  # 80% of joint radius
+            base_moment_arm = self._joint_geometry.radius__cm * 0.8  # 80% of joint radius
 
             # Vary moment arm with joint angle (sinusoidal approximation)
             moment_arm = base_moment_arm * np.abs(np.sin(angle_rad + np.pi / 4))
@@ -191,9 +182,7 @@ class JointBiomechanics:
             return max(moment_arm, 0.1)  # minimum 1 mm moment arm
         else:
             # Detailed geometric calculation
-            return self._compute_geometric_moment_arm(
-                joint_angle__degrees, muscle_geometry
-            )
+            return self._compute_geometric_moment_arm(joint_angle__degrees, muscle_geometry)
 
     def _compute_geometric_moment_arm(
         self, joint_angle__degrees: float, muscle_geometry: MuscleGeometry
@@ -251,9 +240,7 @@ class JointBiomechanics:
 
         return max(moment_arm, 0.1)  # minimum 1 mm moment arm
 
-    def compute_muscle_length(
-        self, joint_angle__degrees: float, muscle_index: int
-    ) -> float:
+    def compute_muscle_length(self, joint_angle__degrees: float, muscle_index: int) -> float:
         """
         Compute muscle length from joint angle.
 
@@ -298,19 +285,13 @@ class JointBiomechanics:
             muscle_length = muscle_geom.optimal_length__cm + length_change
 
             # Constrain to reasonable range
-            min_length = (
-                muscle_geom.optimal_length__cm - muscle_geom.max_length_change__cm
-            )
-            max_length = (
-                muscle_geom.optimal_length__cm + muscle_geom.max_length_change__cm
-            )
+            min_length = muscle_geom.optimal_length__cm - muscle_geom.max_length_change__cm
+            max_length = muscle_geom.optimal_length__cm + muscle_geom.max_length_change__cm
 
             return np.clip(muscle_length, min_length, max_length)
         else:
             # Detailed geometric calculation
-            return self._compute_geometric_muscle_length(
-                joint_angle__degrees, muscle_index
-            )
+            return self._compute_geometric_muscle_length(joint_angle__degrees, muscle_index)
 
     def _compute_geometric_muscle_length(
         self, joint_angle__degrees: float, muscle_index: int
@@ -394,9 +375,7 @@ class JointBiomechanics:
 
         if forces.ndim == 0:  # Single muscle
             if self.n_muscles != 1:
-                raise ValueError(
-                    f"Single force provided but {self.n_muscles} muscles defined"
-                )
+                raise ValueError(f"Single force provided but {self.n_muscles} muscles defined")
             forces = np.array([forces])
         elif len(forces) != self.n_muscles:
             raise ValueError(
@@ -405,10 +384,7 @@ class JointBiomechanics:
 
         # Get moment arms for current joint angle
         moment_arms = np.array(
-            [
-                self.get_moment_arm(joint_angle__degrees, i)
-                for i in range(self.n_muscles)
-            ]
+            [self.get_moment_arm(joint_angle__degrees, i) for i in range(self.n_muscles)]
         )
 
         # Compute torques (force × moment arm)

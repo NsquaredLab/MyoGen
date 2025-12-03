@@ -85,11 +85,7 @@ recruitment_thresholds = joblib.load(save_path / "thresholds.pkl")
 
 n_pools = 2
 motor_neuron_pools = [
-    AlphaMN__Pool(
-        recruitment_thresholds__array=recruitment_thresholds,
-        config_file="alpha_mn_FDI.yaml",
-    )
-    for _ in range(n_pools)
+    AlphaMN__Pool(recruitment_thresholds__array=recruitment_thresholds) for _ in range(n_pools)
 ]
 
 ##############################################################################
@@ -270,9 +266,7 @@ for i, (manual_seg, utility_seg) in enumerate(
 firing_rates = [
     np.array(
         [
-            elephant.statistics.mean_firing_rate(
-                st__s.time_slice(st__s.min(), st__s.max())
-            )
+            elephant.statistics.mean_firing_rate(st__s.time_slice(st__s.min(), st__s.max()))
             for st__s in spike_train__segment.spiketrains
             if len(st__s) > 0
         ]
@@ -302,9 +296,7 @@ for pool_idx, firing_rates_per_pool in enumerate(firing_rates):
 spike_train_list = list(spike_train__Block.segments[0].spiketrains)
 active_spiketrains = [st for st in spike_train_list if len(st) > 0]
 
-ax, axhistx, axhisty = rasterplot_rates(
-    spike_train_list, filter_function=lambda st: len(st) > 0
-)
+ax, axhistx, axhisty = rasterplot_rates(spike_train_list, filter_function=lambda st: len(st) > 0)
 ax.plot(
     input_current__AnalogSignal.times,
     input_current__AnalogSignal.magnitude.T[0]

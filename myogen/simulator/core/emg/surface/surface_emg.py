@@ -27,10 +27,10 @@ from myogen.simulator.core.emg.surface.simulate_fiber import simulate_fiber_v2
 from myogen.simulator.core.muscle import Muscle
 from myogen.utils.decorators import beartowertype
 from myogen.utils.types import (
+    Quantity__Hz,
     SPIKE_TRAIN__Block,
     SURFACE_EMG__Block,
     SURFACE_MUAP__Block,
-    Quantity__Hz,
 )
 
 

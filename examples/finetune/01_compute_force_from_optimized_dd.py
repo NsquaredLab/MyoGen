@@ -16,7 +16,7 @@ import quantities as pq
 from neo import Block, Segment, SpikeTrain
 from neuron import h
 
-from examples.finetune.helper import calculate_firing_rate_statistics
+from myogen.utils.helper import calculate_firing_rate_statistics
 from myogen import RANDOM_GENERATOR
 from myogen.simulator import RecruitmentThresholds
 from myogen.simulator.core.force.force_model import ForceModel

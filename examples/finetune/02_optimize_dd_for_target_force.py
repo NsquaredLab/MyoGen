@@ -40,7 +40,7 @@ import quantities as pq
 from neo import Block, Segment, SpikeTrain
 from neuron import h
 
-from examples.finetune.helper import (
+from myogen.utils.helper import (
     calculate_firing_rate_statistics,
     get_gamma_shape_for_mvc,
 )

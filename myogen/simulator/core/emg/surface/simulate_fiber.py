@@ -25,7 +25,7 @@
 # zi             -> Innervation zone (z = 0 for the mean innervation zone of the M.U)
 # alpha          -> Inclination angle (in degrees) between the eletrode matrix and the muscle fibers
 # channels       -> Matrix of electrodes (tuple). The columns are aligned with the muscle fibers if alpha = 0
-# electrode_grid_center         -> Matrix of electrodes electrode_grid_center (tuple -> (z electrode_grid_center in mm, theta electrode_grid_center in degrees))
+# electrode_grid_center -> Matrix of electrodes centers (tuple -> (z electrode_grid_center in mm, theta electrode_grid_center in degrees))
 # d_ele          -> Distance between neighboring electrodes
 # rele           -> Electrode radius (circular electrodes)
 # sig_bone       -> Bone conductivity

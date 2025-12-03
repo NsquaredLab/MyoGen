@@ -8,7 +8,6 @@ including grid-based electrode array handling.
 import numpy as np
 from neo import AnalogSignal
 
-
 from .decorators import beartowertype
 
 
@@ -18,7 +17,7 @@ class GridAnalogSignal(AnalogSignal):
     Grid-based AnalogSignal wrapper for electrode arrays.
 
     This class extends Neo's AnalogSignal to handle 2D electrode grids,
-    storing the data in standard AnalogSignal format (time × channels)
+    storing the data in standard AnalogSignal format (time x channels)
     but providing grid-based indexing (time, row, col).
 
     Parameters
