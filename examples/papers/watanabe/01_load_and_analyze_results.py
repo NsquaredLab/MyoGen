@@ -1,10 +1,44 @@
 """
-Load and Analyze Watanabe Simulation Results
-=============================================
+Load and Analyze Membrane Potentials and Spike Trains
+======================================================
 
-This script demonstrates loading the chunked simulation data as a NEO Block,
-which is compatible with all existing analysis code that expects SimulationRunner output.
+This example demonstrates **post-simulation analysis** of the Watanabe et al. (2013)
+spinal network model. It shows how to load chunked simulation data, convert it to
+NEO format, and analyze membrane potentials, spike trains, and population dynamics.
+
+.. note::
+    **Analysis workflow**:
+
+    1. Load simulation parameters from previous run
+    2. Convert chunked data to NEO Block format (compatible with all analysis tools)
+    3. Analyze membrane potentials for representative motor neurons
+    4. Generate spike raster plots showing recruitment patterns
+    5. Compute population firing rates across simulation phases
+    6. Save visualizations for publication
+
+.. important::
+    **Prerequisites**: This example requires simulation output from:
+
+    - Run ``00_watanabe_spinal_network_simulation.py`` first
+    - Generates chunked data in ``results/watanabe_chunks/``
+    - Creates simulation parameters in ``results/watanabe__simulation_params.pkl``
+
+**Key Features**:
+
+- **Chunked data loading**: Efficient memory usage for long simulations (15+ seconds)
+- **NEO format conversion**: Seamless compatibility with existing analysis pipelines
+- **Three-phase analysis**: Separate visualization of constant and modulated drive phases
+- **Publication-quality plots**: Membrane potentials, spike rasters, population rates
+
+**Use Case**: Analyze motor unit recruitment, synchronization, and firing patterns
+to validate model predictions against experimental data from Watanabe et al. (2013).
 """
+
+# %%
+
+##############################################################################
+# Import Libraries
+# ----------------
 
 from pathlib import Path
 
@@ -15,6 +49,9 @@ import numpy as np
 from myogen.utils.continuous_saver import convert_chunks_to_neo
 
 plt.style.use("fivethirtyeight")
+
+# Get colors 1, 2, 3 from the style color cycle for the three phases
+phase_colors = plt.rcParams["axes.prop_cycle"].by_key()["color"][1:4]
 
 ##############################################################################
 # Load Simulation Parameters
@@ -28,7 +65,7 @@ params_file = results_path / "watanabe__simulation_params.pkl"
 if not params_file.exists():
     raise FileNotFoundError(
         f"Simulation parameters file not found: {params_file}\n"
-        "Please run 10a_paper_watanabe.py first to generate the simulation data."
+        "Please run 00_watanabe_spinal_network_simulation.py first to generate the simulation data."
     )
 
 sim_params = joblib.load(params_file)
@@ -129,24 +166,26 @@ if aMN_segment and len(aMN_segment.analogsignals) > 0:
         ax.grid(True, alpha=0.3)
 
         # Highlight the three experimental phases
-        ax.axvspan(0, phase1_end, alpha=0.1, color="gray", label="Phase 1: Constant")
-        ax.axvspan(phase1_end, phase2_end, alpha=0.1, color="blue", label="Phase 2: Sinusoid DC=65")
-        ax.axvspan(phase2_end, phase3_end, alpha=0.1, color="red", label="Phase 3: Sinusoid DC=58")
+        ax.axvspan(0, phase1_end, alpha=0.2, color=phase_colors[0], label="Phase 1: Constant")
+        ax.axvspan(phase1_end, phase2_end, alpha=0.2, color=phase_colors[1], label="Phase 2: Sinusoid DC=65")
+        ax.axvspan(phase2_end, phase3_end, alpha=0.2, color=phase_colors[2], label="Phase 3: Sinusoid DC=58")
 
         if ax == axes[0]:
-            ax.legend(loc="upper right", fontsize=8)
+            ax.legend(loc="upper right", framealpha=1.0, edgecolor="none")
 
     axes[-1].set_xlabel("Time (s)")
     plt.tight_layout()
-    plt.savefig(chunks_path.parent / "watanabe_membrane_potentials.png", dpi=150)
-    print(f"\n✓ Saved plot: {chunks_path.parent / 'watanabe_membrane_potentials.png'}")
+    plt.savefig(
+        chunks_path.parent / "watanabe_membrane_potentials.png", dpi=150, bbox_inches="tight"
+    )
+    print(f"\n(OK) Saved plot: {chunks_path.parent / 'watanabe_membrane_potentials.png'}")
     plt.show()
 
 ##############################################################################
-# Analyze Spike Data
-# ------------------
+# Analyze Spike Data Summary
+# ---------------------------
 #
-# Access spike trains from NEO SpikeTrain objects
+# Print summary statistics for all neural populations
 
 print("\n" + "=" * 70)
 print("ANALYZING SPIKE DATA")
@@ -165,9 +204,17 @@ for seg in results.segments:
         if duration_s > 0 and n_units > 0:
             print(f"\t\tMean firing rate: {n_spikes / n_units / duration_s:.2f} Hz")
 
+##############################################################################
+# Generate Spike Raster Plot
+# ---------------------------
+#
+# Visualize spike timing across all motor neurons with phase highlighting
+
 # Plot raster plot for aMN population
 if aMN_segment and len(aMN_segment.spiketrains) > 0:
-    print("\nGenerating spike raster plot...")
+    print("\n" + "=" * 70)
+    print("GENERATING SPIKE RASTER PLOT")
+    print("=" * 70)
 
     fig, ax = plt.subplots(figsize=(14, 6))
 
@@ -180,7 +227,6 @@ if aMN_segment and len(aMN_segment.spiketrains) > 0:
                 spike_times_s,
                 [neuron_id] * len(spike_times_s),
                 s=0.5,
-                c="black",
                 alpha=0.5,
             )
 
@@ -190,18 +236,26 @@ if aMN_segment and len(aMN_segment.spiketrains) > 0:
     ax.grid(True, alpha=0.3)
 
     # Highlight the three experimental phases
-    ax.axvspan(0, phase1_end, alpha=0.1, color="gray", label="Phase 1: Constant")
-    ax.axvspan(phase1_end, phase2_end, alpha=0.1, color="blue", label="Phase 2: Sinusoid DC=65")
-    ax.axvspan(phase2_end, phase3_end, alpha=0.1, color="red", label="Phase 3: Sinusoid DC=58")
-    ax.legend(loc="upper right")
+    ax.axvspan(0, phase1_end, alpha=0.2, color=phase_colors[0], label="Phase 1: Constant")
+    ax.axvspan(phase1_end, phase2_end, alpha=0.2, color=phase_colors[1], label="Phase 2: Sinusoid DC=65")
+    ax.axvspan(phase2_end, phase3_end, alpha=0.2, color=phase_colors[2], label="Phase 3: Sinusoid DC=58")
+    ax.legend(loc="upper right", framealpha=1.0, edgecolor="none")
 
     plt.tight_layout()
-    plt.savefig(chunks_path.parent / "watanabe_spike_raster.png", dpi=150)
-    print(f"✓ Saved plot: {chunks_path.parent / 'watanabe_spike_raster.png'}")
+    plt.savefig(chunks_path.parent / "watanabe_spike_raster.png", dpi=150, bbox_inches="tight")
+    print(f"(OK) Saved plot: {chunks_path.parent / 'watanabe_spike_raster.png'}")
     plt.show()
 
-    # Plot population firing rate over time
-    print("\nGenerating population firing rate plot...")
+##############################################################################
+# Analyze Population Firing Rate
+# -------------------------------
+#
+# Compute and visualize population-level firing rate dynamics over time
+
+if aMN_segment and len(aMN_segment.spiketrains) > 0:
+    print("\n" + "=" * 70)
+    print("GENERATING POPULATION FIRING RATE PLOT")
+    print("=" * 70)
 
     fig, ax = plt.subplots(figsize=(14, 4))
 
@@ -229,14 +283,14 @@ if aMN_segment and len(aMN_segment.spiketrains) > 0:
     ax.grid(True, alpha=0.3)
 
     # Highlight the three experimental phases
-    ax.axvspan(0, phase1_end, alpha=0.1, color="gray", label="Phase 1")
-    ax.axvspan(phase1_end, phase2_end, alpha=0.1, color="blue", label="Phase 2")
-    ax.axvspan(phase2_end, phase3_end, alpha=0.1, color="red", label="Phase 3")
-    ax.legend()
+    ax.axvspan(0, phase1_end, alpha=0.2, color=phase_colors[0], label="Phase 1")
+    ax.axvspan(phase1_end, phase2_end, alpha=0.2, color=phase_colors[1], label="Phase 2")
+    ax.axvspan(phase2_end, phase3_end, alpha=0.2, color=phase_colors[2], label="Phase 3")
+    ax.legend(framealpha=1.0, edgecolor="none")
 
     plt.tight_layout()
-    plt.savefig(chunks_path.parent / "watanabe_firing_rate.png", dpi=150)
-    print(f"✓ Saved plot: {chunks_path.parent / 'watanabe_firing_rate.png'}")
+    plt.savefig(chunks_path.parent / "watanabe_firing_rate.png", dpi=150, bbox_inches="tight")
+    print(f"(OK) Saved plot: {chunks_path.parent / 'watanabe_firing_rate.png'}")
     plt.show()
 
 ##############################################################################
@@ -250,7 +304,6 @@ if aMN_segment and len(aMN_segment.spiketrains) > 0:
 #
 print("\nSaving NEO Block for future use...")
 
-
 neo_output_path = chunks_path.parent / "watanabe_results_neo.pkl"
 joblib.dump(results, neo_output_path, compress=0)  # No compression = faster
-print(f"✓ NEO Block saved to: {neo_output_path}")
+print(f"(OK) NEO Block saved to: {neo_output_path}")

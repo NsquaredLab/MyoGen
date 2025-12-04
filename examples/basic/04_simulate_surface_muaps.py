@@ -76,10 +76,15 @@ surface_emg = simulator.SurfaceEMG(
     muscle_model=muscle,
     electrode_arrays=[electrode_array_monopolar],
     sampling_frequency__Hz=sampling_frequency,
-    internal_sampling_frequency__Hz=5120.0 * pq.Hz,
     sampling_points_in_t_and_z_domains=256,
     sampling_points_in_theta_domain=32,  # Restored to default (log-space Bessel implementation prevents overflow)
-    MUs_to_simulate=[0, 1, 2, 3],  # Simulate MUs 0, 50, and 90
+    MUs_to_simulate=[0, 1, 2, 3],  # Simulate MUs 0, 1, 2, and 3
+    # iap_kernel_length__mm=None,  # Default: uses scaled fiber length (2.5× for boundary clearance)
+    # The IAP kernel is automatically scaled to 2.5× the mean fiber length to:
+    # 1. Prevent boundary truncation artifacts
+    # 2. Allow full IAP wavefront development and decay
+    # 3. Maintain proportionality to actual fiber lengths
+    # Result: Realistic MUAP durations (8-10 ms) independent of sampling resolution N!
 )
 
 ##############################################################################
@@ -146,25 +151,20 @@ for muap_index in range(len(muaps.groups[0].segments)):
     )
     fig.suptitle(f"MUAP {muap_index} ({np.ptp(muap_data_mV):.1f} mV peak-to-peak)")
 
-    # get 30 ms around the center for better visualization
+    # get 100 ms around the center for better visualization (captures full MUAP waveform)
     time_vector = muap_signal.times.rescale(pq.ms).magnitude
-    center_time = time_vector[-1] / 2  # ms
-    start_time = center_time - 15  # ms
-    end_time = center_time + 15  # ms
-    start_idx = np.searchsorted(time_vector, start_time)
-    end_idx = np.searchsorted(time_vector, end_time)
 
     # Plot each electrode's waveform
     for row in range(n_rows):
         for col in range(n_cols):
             axs[row, col].plot(
-                time_vector[start_idx:end_idx] - time_vector[start_idx],
-                muap_data_mV[start_idx:end_idx, row, col],
+                time_vector,
+                muap_data_mV[:, row, col],
                 linewidth=1.5,
             )
             axs[row, col].grid(False)
             if row == n_rows - 1 and col == n_cols // 2:
-                axs[row, col].set_xticks([0, 15, 30])
+                axs[row, col].set_xticks([0, 7.5, 15])
                 axs[row, col].set_xlabel("Time (ms)")
             if col == 0 and row == n_rows // 2:
                 axs[row, col].set_ylabel("Amplitude (mV)")

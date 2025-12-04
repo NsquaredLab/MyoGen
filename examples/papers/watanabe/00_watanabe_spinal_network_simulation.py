@@ -1,13 +1,50 @@
 """
-Paper Watanabe
-=====================================================
+Run Spinal Network Simulation with Shared Descending Drive
+===========================================================
+
+This example reproduces the computational model from **Watanabe et al. (2013)**,
+which investigates motor unit synchronization through shared synaptic input and
+independent noise in a biophysically realistic spinal network.
+
+.. note::
+    **Scientific Context**:
+
+    This simulation replicates the key findings from:
+    *Watanabe K, Kouzaki M, Moritani T (2013) "Task-dependent influences of*
+    *somatosensory feedback on the motor unit activity"*
+
+    The model demonstrates how:
+
+    - **Shared descending drive** creates correlated firing between motor units
+    - **Independent noise** reduces synchronization and increases firing variability
+    - **Sinusoidal modulation** (20 Hz) of descending drive mimics physiological tremor
+
+.. important::
+    **Model Architecture**:
+
+    - **800 Alpha Motor Neurons**: Output pool with physiological recruitment thresholds
+    - **400 Descending Drive (DD) neurons**: Shared input with 30% connectivity per MN
+    - **800 Independent Noise (IN) neurons**: One-to-one noise source per MN
+    - **Three simulation phases**: Constant drive, sinusoidal modulation (DC=65),
+      sinusoidal modulation (DC=58)
+
+**Key Parameters** (matching Watanabe et al. 2013):
+
+- Integration timestep: 0.025 ms (matching paper's high-resolution requirement)
+- DD firing rate: ~65 Hz (modulated with 20 Hz sinusoid)
+- IN firing rate: ~125 Hz (constant, mean ISI = 8 ms)
+- DD connectivity: 30% (sparse connectivity mimicking physiological convergence)
+- Simulation duration: 15 seconds (3 phases × 5 seconds each)
+
+**Use Case**: Reproduce published results on motor unit synchronization,
+validate spinal network models, study effects of shared vs. independent drive.
 """
+
+# %%
+
 ##############################################################################
 # Import Libraries
 # ----------------
-#
-
-# %%
 
 from pathlib import Path
 
@@ -94,8 +131,8 @@ rt, _ = simulator.RecruitmentThresholds(
 plt.plot(rt, "-o")
 plt.xlabel("Motor Unit Index")
 plt.ylabel("Recruitment Threshold (a.u.)")
-plt.title("Combined Model Recruitment Thresholds")
-plt.grid()
+plt.title("Recruitment Thresholds")
+plt.tight_layout()
 plt.show()
 
 ##############################################################################

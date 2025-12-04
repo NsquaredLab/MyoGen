@@ -35,6 +35,7 @@ extensions = [
     "myst_parser",
     "sphinxcontrib.mermaid",
     "sphinx_design",
+    "hoverxref.extension",
 ]
 
 mermaid_version = "11.9.0"
@@ -73,6 +74,30 @@ napoleon_type_aliases = {
     "list[int]": ":class:`list`\\[:class:`int`]",
     "list[float]": ":class:`list`\\[:class:`float`]",
     "list[str]": ":class:`list`\\[:class:`str`]",
+    # MyoGen Quantity types - link to type documentation
+    "Quantity__s": ":data:`~myogen.utils.types.Quantity__s`",
+    "Quantity__ms": ":data:`~myogen.utils.types.Quantity__ms`",
+    "Quantity__rad": ":data:`~myogen.utils.types.Quantity__rad`",
+    "Quantity__deg": ":data:`~myogen.utils.types.Quantity__deg`",
+    "Quantity__mV": ":data:`~myogen.utils.types.Quantity__mV`",
+    "Quantity__uV": ":data:`~myogen.utils.types.Quantity__uV`",
+    "Quantity__nA": ":data:`~myogen.utils.types.Quantity__nA`",
+    "Quantity__uS": ":data:`~myogen.utils.types.Quantity__uS`",
+    "Quantity__S_per_m": ":data:`~myogen.utils.types.Quantity__S_per_m`",
+    "Quantity__Hz": ":data:`~myogen.utils.types.Quantity__Hz`",
+    "Quantity__pps": ":data:`~myogen.utils.types.Quantity__pps`",
+    "Quantity__mm": ":data:`~myogen.utils.types.Quantity__mm`",
+    "Quantity__m": ":data:`~myogen.utils.types.Quantity__m`",
+    "Quantity__mm2": ":data:`~myogen.utils.types.Quantity__mm2`",
+    "Quantity__per_mm2": ":data:`~myogen.utils.types.Quantity__per_mm2`",
+    "Quantity__m_per_s": ":data:`~myogen.utils.types.Quantity__m_per_s`",
+    "Quantity__mm_per_s": ":data:`~myogen.utils.types.Quantity__mm_per_s`",
+    # Quantity tuple types
+    "tuple[Quantity__m_per_s, Quantity__m_per_s]": ":class:`tuple`\\[:data:`~myogen.utils.types.Quantity__m_per_s`, :data:`~myogen.utils.types.Quantity__m_per_s`]",
+    # AnalogSignal types
+    "CURRENT__AnalogSignal": ":data:`~myogen.utils.types.CURRENT__AnalogSignal`",
+    "INPUT_CURRENT__AnalogSignal": ":data:`~myogen.utils.types.CURRENT__AnalogSignal`",  # Alias to CURRENT__AnalogSignal
+    "FORCE__AnalogSignal": ":data:`~myogen.utils.types.FORCE__AnalogSignal`",
     # MyoGen custom types - link to documentation
     "INPUT_CURRENT__MATRIX": ":data:`~myogen.utils.types.INPUT_CURRENT__MATRIX`",
     "SPIKE_TRAIN__MATRIX": ":data:`~myogen.utils.types.SPIKE_TRAIN__MATRIX`",
@@ -209,7 +234,7 @@ html_theme_options = {
     # Header and footer customization
     "header_links_before_dropdown": 4,
     # Announcement bar
-    "announcement": "⚠️ MyoGen is under active development. API may change.",
+    "announcement": "MyoGen is under active development. API may change.",
 }
 
 html_static_path = ["_static"]
@@ -239,7 +264,43 @@ intersphinx_mapping = {
     "sklearn": ("https://scikit-learn.org/stable/", None),
     "neuroml": ("https://neuroml.readthedocs.io/en/stable/", None),
     "neo": ("https://neo.readthedocs.io/en/latest/", None),
+    "beartype": ("https://beartype.readthedocs.io/en/latest/", None),
+    "quantities": ("https://python-quantities.readthedocs.io/en/latest/", None),
 }
+
+# Sphinx-hoverxref configuration for hover previews
+hoverxref_auto_ref = True  # Automatically add tooltips to all references
+hoverxref_domains = ["py"]  # Enable for Python domain
+hoverxref_roles = [
+    "class",
+    "func",
+    "meth",
+    "attr",
+    "data",
+    "mod",
+    "obj",
+]  # Roles to enable hover preview for
+hoverxref_role_types = {
+    "class": "tooltip",  # Use tooltip style for classes
+    "func": "tooltip",  # Use tooltip style for functions
+    "meth": "tooltip",  # Use tooltip style for methods
+    "attr": "tooltip",  # Use tooltip style for attributes
+    "data": "tooltip",  # Use tooltip style for data
+    "mod": "modal",  # Use modal style for modules (larger preview)
+    "ref": "tooltip",  # Use tooltip for references
+    "obj": "tooltip",  # Use tooltip style for generic objects
+}
+hoverxref_tooltip_maxwidth = 600  # Maximum width of tooltip in pixels
+hoverxref_tooltip_animation_duration = 200  # Animation duration in milliseconds
+hoverxref_intersphinx = [
+    "python",
+    "numpy",
+    "scipy",
+    "matplotlib",
+]  # Enable hover previews for intersphinx references
+
+# Embed tooltip content for local viewing (fixes "Loading..." issue with file:// URLs)
+hoverxref_tooltip_lazy = False  # Disable lazy loading to embed content directly in HTML
 
 # Sphinx Gallery configuration
 sphinx_gallery_conf = {
@@ -276,7 +337,30 @@ suppress_warnings = [
 ]
 
 
+def prettify_type_alias(_app, what, _name, _obj, _options, lines):
+    """Pretty-print type alias beartype annotations."""
+    import re
+
+    # Only process data (type aliases)
+    if what != "data":
+        return
+
+    # Check for beartype Annotated types and format them better
+    for i, line in enumerate(lines):
+        if "alias of" in line and "Annotated[" in line:
+            # Extract the annotation content
+            match = re.search(r"alias of (.+)", line)
+            if match:
+                annotation = match.group(1)
+                # Format as a code block for better readability
+                lines[i] = "**Type Alias:**\n\n.. code-block:: python\n\n   " + annotation.replace(", ", ",\n   ")
+                lines.insert(i + 1, "")
+
+
 def setup(app):
     """Setup function for custom configurations."""
     app.add_css_file("custom.css")
     app.add_js_file("custom.js")
+
+    # Add custom autodoc processor to pretty-print type alias display
+    app.connect("autodoc-process-docstring", prettify_type_alias)

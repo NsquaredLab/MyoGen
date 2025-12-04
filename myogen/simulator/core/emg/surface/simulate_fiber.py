@@ -239,6 +239,7 @@ def _simulate_fiber_v2_python(
     A_matrix: np.ndarray | None = None,
     B_incomplete: np.ndarray | None = None,
     use_gpu: bool = True,
+    fiber_length__mm: float | None = None,
 ):
     """
     Simulate a single fiber (Python implementation).
@@ -252,7 +253,7 @@ def _simulate_fiber_v2_python(
     v : float
         Conduction velocity in m/s.
     N : int
-        Number of points in t and z domains.
+        Number of points in t and z domains (controls resolution).
     M : int
         Number of points in theta domain.
     r : float
@@ -287,6 +288,21 @@ def _simulate_fiber_v2_python(
         Pre-computed A matrix for optimization
     B_incomplete : np.ndarray, optional
         Pre-computed B matrix for optimization
+    use_gpu : bool, optional
+        If True, may use GPU acceleration if available, by default True.
+    fiber_length__mm : float, optional
+        Physical fiber length for IAP kernel evaluation in mm. This defines the spatial
+        extent over which the intracellular action potential kernel is computed.
+        If None (default), uses legacy behavior: (N-1) * (v/Fs) mm, which incorrectly
+        ties MUAP duration to sampling resolution.
+
+        **Recommended**: Set this explicitly (e.g., 50-100 mm for typical motor units)
+        to ensure MUAP duration is physically accurate and independent of N.
+
+        The actual MUAP duration will be approximately: fiber_length__mm / (2 * v) ms
+        (factor of 2 due to internal scaling for Rosenfalck model).
+
+        Example: fiber_length__mm=100 with v=4 m/s → ~12.5 ms MUAP duration.
 
     Returns
     -------
@@ -314,7 +330,20 @@ def _simulate_fiber_v2_python(
 
     ## Model angular frequencies
     k_theta = np.linspace(-(M - 1) / 2, (M - 1) / 2, M)
-    k_t = 2 * math.pi * np.linspace(-Fs / 2, Fs / 2, N)
+
+    # Calculate effective Fs based on grid spacing
+    # When fiber_length__mm is specified, we must use the corresponding Fs for FFT consistency
+    if fiber_length__mm is not None:
+        # z-grid spans fiber_length__mm with N points (before z /= 2 scaling)
+        # Grid spacing (before scaling): dz = fiber_length__mm / (N-1)
+        # For FFT: dz = v / Fs_eff → Fs_eff = v * (N-1) / fiber_length__mm
+        # Note: The z /= 2 scaling affects the IAP kernel evaluation but the FFT
+        # operates on the array structure, so we use the pre-scaling grid spacing
+        Fs_effective = v * (N - 1) / fiber_length__mm  # kHz
+    else:
+        Fs_effective = Fs
+
+    k_t = 2 * math.pi * np.linspace(-Fs_effective / 2, Fs_effective / 2, N)
     k_z = k_t / v
     (kt_mesh_kzkt, kz_mesh_kzkt) = np.meshgrid(k_t, k_z)
 
@@ -332,9 +361,16 @@ def _simulate_fiber_v2_python(
     # IMPORTANT: This matches the original Farina implementation exactly (no normalization)
     A = 96 // 10  # mV/mm^3 (amplitude parameter from Farina 2001, eq 16)
 
-    z = np.linspace(-(N - 1) * (v / Fs) / 2, (N - 1) * (v / Fs) / 2, N, dtype=np.longdouble)
+    # Define spatial grid for IAP kernel evaluation
+    if fiber_length__mm is None:
+        # Legacy behavior: z-range depends on N (INCORRECT - causes MUAP duration to scale with N)
+        z = np.linspace(-(N - 1) * (v / Fs) / 2, (N - 1) * (v / Fs) / 2, N, dtype=np.longdouble)
+    else:
+        # Correct behavior: z-range defined by physical fiber length (independent of N)
+        # N controls only the resolution, not the physical extent
+        z = np.linspace(-fiber_length__mm / 2, fiber_length__mm / 2, N, dtype=np.longdouble)
 
-    z /= 2  # mm
+    z /= 2  # mm - scaling for Rosenfalck model
 
     # Rosenfalck action potential: A * exp(-z) * (3z² - z³) for z ≥ 0
     # Uses raw z values in mm (NOT normalized) to match original implementation
@@ -364,7 +400,8 @@ def _simulate_fiber_v2_python(
     I_kzkt = np.multiply(I_kzkt, (aux1 - aux2))
     # print(f"DEBUG: I_kzkt range = [{np.min(np.abs(I_kzkt)):.6e}, {np.max(np.abs(I_kzkt)):.6e}]")
 
-    t = np.linspace(0, (N - 1) / Fs, N)
+    # Time grid: use the effective Fs (matches grid spacing)
+    t = np.linspace(0, (N - 1) / Fs_effective, N)
 
     ###################################################################################################
     ## 3. H_vc(k_z, k_theta)
@@ -815,6 +852,25 @@ def _simulate_fiber_v2_python(
                 )
             )
 
+    # Center the MUAP signal in the time window by finding the peak and shifting
+    # For each electrode channel, find the peak and center it
+    N_time = phi.shape[2]
+    center_idx = N_time // 2
+
+    # Find the peak location (use center electrode as reference)
+    center_electrode_row = phi.shape[0] // 2
+    center_electrode_col = phi.shape[1] // 2
+    center_signal = phi[center_electrode_row, center_electrode_col, :]
+
+    # Find peak (max absolute value)
+    peak_idx = np.argmax(np.abs(center_signal))
+
+    # Calculate shift needed to center the peak
+    shift = center_idx - peak_idx
+
+    # Apply circular shift to all channels
+    phi = np.roll(phi, shift, axis=2)
+
     # print(f"DEBUG: Final phi range = [{np.min(phi):.6e}, {np.max(phi):.6e}]")
     # print(f"DEBUG: Final phi peak-to-peak = {np.ptp(phi):.6e}")
 
@@ -845,6 +901,7 @@ def simulate_fiber_v2(
     B_incomplete: np.ndarray | None = None,
     use_cython: bool = True,
     use_gpu: bool = True,
+    fiber_length__mm: float | None = None,
 ):
     """
     Simulate a single fiber (dispatcher to Cython or Python implementation).
@@ -859,7 +916,7 @@ def simulate_fiber_v2(
     v : float
         Conduction velocity in m/s.
     N : int
-        Number of points in t and z domains.
+        Number of points in t and z domains (controls resolution).
     M : int
         Number of points in theta domain.
     r : float
@@ -901,6 +958,22 @@ def simulate_fiber_v2(
         If True (default), Python version may use GPU (CuPy) if available.
         Cython version always uses CPU. For typical EMG simulations, CPU is faster
         due to GPU memory transfer overhead. Default is True.
+    fiber_length__mm : float, optional
+        Physical fiber length for IAP kernel evaluation in mm. This defines the spatial
+        extent over which the intracellular action potential kernel is computed.
+        If None (default), uses legacy behavior: (N-1) * (v/Fs) mm, which incorrectly
+        ties MUAP duration to sampling resolution.
+
+        **Recommended**: Set this explicitly (e.g., 50-100 mm for typical motor units)
+        to ensure MUAP duration is physically accurate and independent of N.
+
+        The actual MUAP duration will be approximately: fiber_length__mm / (2 * v) ms
+        (factor of 2 due to internal scaling for Rosenfalck model).
+
+        Example: fiber_length__mm=100 with v=4 m/s → ~12.5 ms MUAP duration.
+
+        **Note**: Currently only supported in Python implementation. Cython version
+        does not yet support this parameter and will use legacy behavior.
 
     Returns
     -------
@@ -932,50 +1005,65 @@ def simulate_fiber_v2(
     **Recommendation:** Use default settings (use_cython=True) for best performance.
     """
     if use_cython and HAS_CYTHON_FIBER:
-        assert _simulate_fiber_v2_cython is not None  # Type checker hint
-        return _simulate_fiber_v2_cython(
-            Fs,
-            v,
-            N,
-            M,
-            r,
-            r_bone,
-            th_fat,
-            th_skin,
-            R,
-            L1,
-            L2,
-            zi,
-            electrode_array,
-            sig_muscle_rho,
-            sig_muscle_z,
-            sig_fat,
-            sig_skin,
-            sig_bone,
-            A_matrix,
-            B_incomplete,
-        )
-    else:
-        return _simulate_fiber_v2_python(
-            Fs,
-            v,
-            N,
-            M,
-            r,
-            r_bone,
-            th_fat,
-            th_skin,
-            R,
-            L1,
-            L2,
-            zi,
-            electrode_array,
-            sig_muscle_rho,
-            sig_muscle_z,
-            sig_fat,
-            sig_skin,
-            sig_bone,
-            A_matrix,
-            B_incomplete,
-            use_gpu,
-        )
+        # Cython version doesn't support fiber_length__mm yet
+        if fiber_length__mm is not None:
+            import warnings
+
+            warnings.warn(
+                "fiber_length__mm parameter is not supported by the Cython implementation. "
+                "Falling back to Python implementation. To use Cython, either set "
+                "fiber_length__mm=None (legacy behavior) or set use_cython=False.",
+                UserWarning,
+                stacklevel=2,
+            )
+            # Fall through to Python implementation
+        else:
+            assert _simulate_fiber_v2_cython is not None  # Type checker hint
+            return _simulate_fiber_v2_cython(
+                Fs,
+                v,
+                N,
+                M,
+                r,
+                r_bone,
+                th_fat,
+                th_skin,
+                R,
+                L1,
+                L2,
+                zi,
+                electrode_array,
+                sig_muscle_rho,
+                sig_muscle_z,
+                sig_fat,
+                sig_skin,
+                sig_bone,
+                A_matrix,
+                B_incomplete,
+            )
+
+    # Use Python implementation (either explicitly requested or Cython unavailable/incompatible)
+    return _simulate_fiber_v2_python(
+        Fs,
+        v,
+        N,
+        M,
+        r,
+        r_bone,
+        th_fat,
+        th_skin,
+        R,
+        L1,
+        L2,
+        zi,
+        electrode_array,
+        sig_muscle_rho,
+        sig_muscle_z,
+        sig_fat,
+        sig_skin,
+        sig_bone,
+        A_matrix,
+        B_incomplete,
+        use_gpu,
+        fiber_length__mm,
+    )

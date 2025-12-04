@@ -102,7 +102,7 @@ for s, rt in deluca_results.items():
 plt.title("De Luca Recruitment Thresholds")
 plt.xlabel("Motor Unit (#)")
 plt.ylabel("Recruitment Threshold (%)")
-plt.legend()
+plt.legend(framealpha=1.0, edgecolor="none")
 plt.tight_layout()
 plt.show()
 
@@ -156,10 +156,10 @@ combined_results = {
 
 for s, rt in combined_results.items():
     plt.plot(rt * 100, "-o", label=f"Slope={s}")
-plt.title("De Luca Recruitment Thresholds")
+plt.title("Sîmpetru Recruitment Thresholds")
 plt.xlabel("Motor Unit (#)")
 plt.ylabel("Recruitment Threshold (%)")
-plt.legend()
+plt.legend(framealpha=1.0, edgecolor="none")
 plt.tight_layout()
 plt.show()
 

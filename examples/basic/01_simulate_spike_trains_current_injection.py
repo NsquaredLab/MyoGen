@@ -2,13 +2,15 @@
 Spike Train Generation with Current Injection
 =======================================
 
-This example demonstrates how to simulate spike trains of cell populations (here alpha motor neurons) using current injection.
+This example demonstrates how to simulate spike trains in a population of alpha motor neurons using current injection.
 
-The example shows two approaches:
-1. **Manual step-by-step approach** - demonstrates each phase of the NEURON simulation pipeline for educational purposes
-2. **Utility function approach** - uses the convenient inject_currents_and_simulate_spike_trains function for routine use
+Two complementary workflows are presented:
 
-Both approaches produce identical results, but the manual approach helps you understand the underlying mechanisms.
+1. Manual step-by-step workflow — explicitly walks through each stage of the NEURON simulation pipeline. This workflow is intended to clarify the underlying mechanisms.
+
+2. Utility-function workflow — uses the high-level :func:`~myogen.utils.neuron.inject_currents_into_populations.inject_currents_and_simulate_spike_trains` function for routine simulations.
+
+Both workflows yield identical results; the manual version is provided purely for explanatory purposes.
 """
 
 # %%
@@ -18,9 +20,9 @@ Both approaches produce identical results, but the manual approach helps you und
 # ----------------
 #
 # .. important::
-#    In **MyoGen** all **random number generation** is handled by the ``RANDOM_GENERATOR`` object.
+#    In **MyoGen** all **random number generation** is handled by the :data:`~myogen.RANDOM_GENERATOR` object.
 #
-#    This object is a wrapper around the ``numpy.random`` module and is used to generate random numbers.
+#    This object is a wrapper around the :mod:`numpy.random` module and is used to generate random numbers.
 #
 #    It is intended to be used with the following API:
 #
@@ -28,7 +30,7 @@ Both approaches produce identical results, but the manual approach helps you und
 #
 #       from myogen import simulator, RANDOM_GENERATOR
 #
-#    To change the default seed, use ``set_random_seed``:
+#    To change the default seed, use :func:`~myogen.set_random_seed`:
 #
 #    .. code-block:: python
 #
@@ -68,12 +70,12 @@ plt.style.use("fivethirtyeight")
 #
 # A population can easily be created by specifying the number of cells. Plausible default parameters are already set.
 #
-# For a motor neuron population (refferred to as **motor pool**), we can use the **AlphaMN__Pool** class.
+# For a motor neuron population (refferred to as **motor pool**), we can use the :class:`~myogen.simulator.neuron.populations.AlphaMN__Pool` class.
 # This class can also use the recruitment thresholds generated in the previous example to distribute the motor units properties in a physiologically plausible manner.
 #
 # .. important::
 #    These **Population** classes are custom build and use therefore custom NMODL mechanisms.
-#    To use them, the NMODL mechanisms need to be loaded first using the ``load_nmodl_mechanisms`` function.
+#    To use them, the NMODL mechanisms need to be loaded first using the :func:`~myogen.utils.nmodl.load_nmodl_mechanisms` function.
 #
 # To showcase MyoGen's capabilities, we will create two different motor neuron pools with identical properties but different input currents.
 load_nmodl_mechanisms()
@@ -94,13 +96,13 @@ motor_neuron_pools = [
 #
 # To drive the motor units, we use a **common input current profile**.
 #
-# In this example, we use a **trapezoid-shaped input current** which is generated using the ``create_trapezoid_current`` function.
+# In this example, we use a **trapezoid-shaped input current** which is generated using the :func:`~myogen.utils.currents.create_trapezoid_current` function.
 #
 # .. note::
-#    More convenient functions for generating input current profiles are available in the ``myogen.utils.currents`` module.
+#    More convenient functions for generating input current profiles are available in the :mod:`myogen.utils.currents` module.
 #
 # .. note::
-#    The generated input current is an instance of the ``AnalogSignal`` class from the ``neo`` package.
+#    The generated input current is an instance of the :class:`neo.core.AnalogSignal` class from the :mod:`neo` package.
 
 timestep = 0.05 * pq.ms
 simulation_time = 4000 * pq.ms
@@ -138,13 +140,13 @@ joblib.dump(input_current__AnalogSignal, save_path / "input_current__AnalogSigna
 # Step 1: Set up current injection manually
 # =========================================
 # We need to inject time-varying currents into each motor neuron.
-# This uses NEURON's ``IClamp`` (current clamp) mechanism with ``Vector.play()``.
+# This uses NEURON's :class:`neuron.h.IClamp` (current clamp) mechanism with :meth:`neuron.h.Vector.play`.
 
 inject_currents_into_populations(motor_neuron_pools, input_current__AnalogSignal)
 
 # Step 2: Set up spike recording manually
 # =======================================
-# For each neuron, we create a ``NetCon`` (network connection) object that detects
+# For each neuron, we create a :class:`neuron.h.NetCon` (network connection) object that detects
 # spikes when the membrane voltage crosses a threshold, and records spike times.
 
 spike_detection_threshold__mV = 50.0 * pq.mV
@@ -187,10 +189,10 @@ for pool in motor_neuron_pools:
 h.finitialize()  # Initialize all mechanisms and variables
 neuron.run(simulation_time__ms)
 
-# Step 4: Convert recorded data to neo.Block format
-# =================================================
+# Step 4: Convert recorded data to :class:`neo.core.Block` format
+# ==================================================================
 # The spike times are now stored in NEURON vectors. We convert them to
-# the standardized neo.Block format for analysis and compatibility.
+# the standardized :class:`neo.core.Block` format for analysis and compatibility.
 
 spike_train__Block_manual = Block(name="Manual Simulation Results")
 
@@ -198,13 +200,13 @@ for pool_idx, pool_spike_recorders in enumerate(spike_recorders):
     # Create a segment for this motor unit pool
     segment = Segment(name=f"Pool {pool_idx}")
 
-    # Convert each neuron's spike times to a SpikeTrain object
+    # Convert each neuron's spike times to a :class:`neo.core.SpikeTrain` object
     segment.spiketrains = []
     for neuron_idx, spike_recorder in enumerate(pool_spike_recorders):
         # Convert NEURON vector to numpy array and add units
         spike_times = (spike_recorder.as_numpy() * pq.ms).rescale(pq.s)
 
-        # Create SpikeTrain object with metadata
+        # Create :class:`neo.core.SpikeTrain` object with metadata
         spiketrain = SpikeTrain(
             spike_times,
             t_stop=simulation_time__ms.rescale(pq.s),
@@ -224,7 +226,7 @@ joblib.dump(spike_train__Block_manual, save_path / "spike_train__Block_manual.pk
 # ------------------------------------
 #
 # The manual approach above shows you exactly what happens during simulation.
-# However, since this is a common task, MyoGen provides the ``inject_currents_and_simulate_spike_trains``
+# However, since this is a common task, MyoGen provides the :func:`~myogen.utils.neuron.inject_currents_into_populations.inject_currents_and_simulate_spike_trains`
 # utility function that encapsulates all these steps in a single call.
 #
 # This is the recommended approach for routine simulations, while the manual

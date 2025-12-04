@@ -94,7 +94,7 @@ def plot_innervation_areas_2d(
 
     if apply_default_formatting:
         # Use current style's default color cycle (adapts to any plt.style)
-        base_colors = plt.rcParams['axes.prop_cycle'].by_key()['color']
+        base_colors = plt.rcParams["axes.prop_cycle"].by_key()["color"]
         colors = [base_colors[i % len(base_colors)] for i in range(len(indices_to_plot))]
 
         alphas = np.logspace(np.log10(0.1), np.log10(1.0), len(indices_to_plot))
@@ -139,7 +139,7 @@ def plot_innervation_areas_2d(
         ax.set_aspect("equal")
         ax.set_xlabel("X (mm)")
         ax.set_ylabel("Y (mm)")
-        ax.set_title("Motor neuron innervation areas over muscle cross-section")
+        ax.set_title("Motor neuron innervation areas")
     else:
         # Basic plotting without default formatting
         for i, m in enumerate(indices_to_plot):
@@ -319,6 +319,4 @@ def show_innervation_areas_3d(
         plt.style.use("default")
         fig = plt.figure(figsize=(12, 10), facecolor="white")
         ax = fig.add_subplot(111, projection="3d")  # type: ignore
-    return plot_innervation_areas_3d(
-        muscle_model, ax, indices_to_plot, z_spacing, stretch_factor
-    )  # type: ignore
+    return plot_innervation_areas_3d(muscle_model, ax, indices_to_plot, z_spacing, stretch_factor)  # type: ignore

@@ -104,7 +104,7 @@ save_path = Path(r"/home/oj98yqyk/code/simulators/MyoGen/examples/basic/results"
 save_path.mkdir(exist_ok=True)
 
 recruitment_thresholds = joblib.load(save_path / "thresholds.pkl")
-print("✓ Loaded recruitment thresholds from example 00")
+print("(OK) Loaded recruitment thresholds from example 00")
 
 ##############################################################################
 # Define Simulation Parameters
@@ -255,7 +255,7 @@ gII = GII__Pool(n=ngII)  # Group II interneurons
 gIb = GIb__Pool(n=ngIb)  # Group Ib interneurons
 
 print(
-    f"✓ Created {len([aMN_flex, aMN_ext, DD_flex, DD_ext, Ia, II, Ib, gII, gIb])} neural populations"
+    f"(OK) Created {len([aMN_flex, aMN_ext, DD_flex, DD_ext, Ia, II, Ib, gII, gIb])} neural populations"
 )
 
 ##############################################################################
@@ -279,7 +279,7 @@ spin = SpindleModel(
     spindle_parameters=SpindleModel.create_default_spindle_parameters(),
 )
 
-print("✓ Initialized proprioceptive models (spindle, GTO)")
+print("(OK) Initialized proprioceptive models (spindle, GTO)")
 
 ##############################################################################
 # Create Muscle Models
@@ -311,7 +311,7 @@ hill_extensor = HillModel(
     muscle_role="extensor",
 )
 
-print("✓ Created antagonist muscle models (flexor, extensor)")
+print("(OK) Created antagonist muscle models (flexor, extensor)")
 print(f"  - Motor units per muscle: {nType1 + nType2}")
 print(f"  - Force capacity: ~{hill_flexor.F0:.1f} N per muscle")
 
@@ -454,7 +454,7 @@ network = Network(
     }
 )
 
-print(f"✓ Created network with {len(network.populations)} populations")
+print(f"(OK) Created network with {len(network.populations)} populations")
 
 ##############################################################################
 # Configure Neural Connections
@@ -481,7 +481,7 @@ network.connect("Ib", "gIb", probability=0.5, weight__uS=0.0073)
 network.connect("gIb", "aMN_flex", probability=0.1, weight__uS=-0.05)  # Inhibitory
 network.connect("gIb", "aMN_ext", probability=0.1, weight__uS=-0.05)  # Inhibitory
 
-print("✓ Configured synaptic connections")
+print("(OK) Configured synaptic connections")
 print("  - Excitatory: DD→MN, Ia→MN, II→gII, gII→MN")
 print("  - Inhibitory: gIb→MN (autogenic inhibition)")
 
@@ -500,7 +500,7 @@ network.connect_to_muscle(
     "aMN_ext", muscle=hill_extensor, activation_callback=spkEvent, weight__uS=1.0
 )
 
-print("✓ Connected motor neurons to muscles")
+print("(OK) Connected motor neurons to muscles")
 
 ##############################################################################
 # Configure External Inputs
@@ -525,7 +525,7 @@ ncD = {
     "GTO->Ib": network.get_netcons("gto", "Ib"),
 }
 
-print("✓ Configured external input pathways")
+print("(OK) Configured external input pathways")
 
 ##############################################################################
 # Prepare Simulation Models

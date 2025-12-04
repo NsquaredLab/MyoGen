@@ -103,17 +103,16 @@ ax.plot(
     current_normalized,
     linewidth=2,
     label="Input Current",
-    alpha=0.7,
-    zorder=-1,
+    alpha=1,
+    zorder=4,
 )
 
 ax.set_xlabel("Time (s)")
 ax.set_ylabel("Amplitude (mV)")
-ax.legend()
 
 sns.despine(trim=True, left=False, bottom=False, right=True, top=True, offset=5)
 
-plt.title("Normalized Surface EMG and Input Current")
+plt.title("Surface EMG\nand Input Current")
 
 plt.tight_layout()
 plt.show()

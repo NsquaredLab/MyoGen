@@ -2,7 +2,7 @@
 
 This directory contains bash scripts for running common MyoGen tasks and optimizations.
 
-## 🚀 Quick Start: Full Pipeline
+## Quick Start: Full Pipeline
 
 The **recommended approach** is to use `run_full_pipeline.sh` which automatically runs all 5 steps and correctly propagates gamma shape values:
 

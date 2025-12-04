@@ -550,4 +550,4 @@ if len(mn_instantaneous_rates) > 0:
 plt.tight_layout()
 plt.show()
 
-print("\n✅ Simulation complete with individual neuron noise and discharge rate analysis!")
+print("\n[DONE] Simulation complete with individual neuron noise and discharge rate analysis!")

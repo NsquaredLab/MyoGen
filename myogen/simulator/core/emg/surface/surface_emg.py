@@ -68,6 +68,23 @@ class SurfaceEMG:
         Default is None. For computational efficiency, consider
         simulating subsets for initial analysis.
         Indices correspond to the recruitment order (0 is recruited first).
+    internal_sampling_frequency__Hz : Quantity__Hz, optional
+        Internal sampling frequency for MUAP computation before downsampling.
+        If None, defaults to 10 kHz. Higher values provide better temporal resolution
+        but increase computation time. Default is 10 kHz.
+    iap_kernel_length__mm : float, optional
+        Physical spatial extent for intracellular action potential (IAP) kernel evaluation in mm.
+        If None (default), uses individual fiber lengths from muscle model, ensuring
+        MUAP duration is physiologically accurate and independent of sampling resolution.
+
+        **Recommended**: Leave as None to use fiber-specific lengths for most realistic MUAPs.
+
+        Alternatively, set to a fixed value (e.g., 80-100 mm) to use the same kernel
+        extent for all fibers, which can simplify analysis but may be less physiologically
+        accurate for muscles with variable fiber lengths.
+
+        This parameter controls the spatial extent over which the IAP waveform is computed,
+        directly affecting MUAP duration: duration ≈ iap_kernel_length__mm / (2 * v) ms.
 
     Attributes
     ----------
@@ -94,6 +111,7 @@ class SurfaceEMG:
         sampling_points_in_theta_domain: int = 32,
         MUs_to_simulate: list[int] | None = None,
         internal_sampling_frequency__Hz: Quantity__Hz | None = None,
+        iap_kernel_length__mm: float | None = None,
     ):
         # Immutable public arguments - never modify these
         self.muscle_model = muscle_model
@@ -102,6 +120,7 @@ class SurfaceEMG:
         self.sampling_points_in_t_and_z_domains = sampling_points_in_t_and_z_domains
         self.sampling_points_in_theta_domain = sampling_points_in_theta_domain
         self.MUs_to_simulate = MUs_to_simulate
+        self.iap_kernel_length__mm = iap_kernel_length__mm
 
         # Internal sampling frequency for higher resolution MUAP computation
         # If not specified, defaults to 10 kHz for better MUAP resolution
@@ -128,6 +147,7 @@ class SurfaceEMG:
         self._sampling_points_in_t_and_z_domains = sampling_points_in_t_and_z_domains
         self._sampling_points_in_theta_domain = sampling_points_in_theta_domain
         self._MUs_to_simulate = MUs_to_simulate
+        self._iap_kernel_length__mm = iap_kernel_length__mm
 
         # Derived properties from muscle model - immutable public access
         self.mean_conduction_velocity__m_s = self._muscle_model.mean_conduction_velocity__m_s
@@ -337,6 +357,15 @@ class SurfaceEMG:
                     L1 = abs(innervation_zone + fiber_length__mm / 2)
                     L2 = abs(innervation_zone - fiber_length__mm / 2)
 
+                    # Determine IAP kernel length: use fixed value or scaled mean fiber length
+                    # IMPORTANT: Use scaled mean, not individual fiber_length__mm, to avoid boundary artifacts
+                    if self._iap_kernel_length__mm is not None:
+                        kernel_length = self._iap_kernel_length__mm
+                    else:
+                        # Use scaled mean fiber length (2.5×) for all fibers to prevent boundary truncation
+                        IAP_SCALE_FACTOR = 2.5
+                        kernel_length = self._mean_fiber_length__mm * IAP_SCALE_FACTOR
+
                     # Use the new simulate_fiber_v2 function with INTERNAL sampling frequency
                     phi_temp, A_matrix, B_incomplete = simulate_fiber_v2(
                         Fs=self._internal_sampling_frequency__Hz * 1e-3,
@@ -358,6 +387,7 @@ class SurfaceEMG:
                         sig_fat=self._fat_conductivity__S_m,
                         A_matrix=None if fiber_number == 0 else A_matrix,
                         B_incomplete=None if fiber_number == 0 else B_incomplete,
+                        fiber_length__mm=kernel_length,  # NEW: Use fiber-specific or fixed IAP kernel length
                     )
 
                     array_result_internal += phi_temp
@@ -412,6 +442,33 @@ class SurfaceEMG:
                     results[mu_idx] = (array_result, segment_name)
                     pbar.update(1)
 
+            # Calculate actual MUAP duration based on fiber lengths
+            # Use iap_kernel_length__mm if specified, otherwise use scaled fiber length from muscle model
+            if self._iap_kernel_length__mm is not None:
+                kernel_length_mm = self._iap_kernel_length__mm
+            else:
+                # Scale fiber length to avoid boundary truncation of IAP kernel
+                # The IAP kernel needs ~2.5x the fiber length to fully develop and decay
+                # This prevents edge artifacts while maintaining proportionality to fiber length
+                IAP_SCALE_FACTOR = 2.5
+                kernel_length_mm = self._mean_fiber_length__mm * IAP_SCALE_FACTOR
+
+            # Physical duration based on IAP kernel length (after /=2 scaling in simulate_fiber)
+            # Duration = (kernel_length_mm / 2) / velocity
+            muap_duration__s = (
+                kernel_length_mm / 2.0
+            ) / self._mean_conduction_velocity__m_s / 1000.0  # Convert ms to s
+
+            # Create custom time array for this duration
+            times__s = np.linspace(0, muap_duration__s, self._sampling_points_in_t_and_z_domains)
+
+            # Calculate effective sampling rate for these times
+            effective_sampling_rate__Hz = (
+                self._sampling_points_in_t_and_z_domains - 1
+            ) / muap_duration__s
+
+            use_custom_times = True
+
             # Create segments for ALL MUs (maintaining index order)
             # Non-computed MUs get empty signals at output resolution
             for MU_index in range(n_motor_units):
@@ -425,11 +482,13 @@ class SurfaceEMG:
                 segment = Segment(name=segment_name)
                 group.segments.append(segment)
 
+                # Use actual physical duration based on fiber lengths
                 segment.analogsignals.append(
                     GridAnalogSignal(
                         signal=np.transpose(array_result, (2, 0, 1)) * pq.mV,
                         t_start=0 * pq.s,
-                        sampling_rate=self._sampling_frequency__Hz * pq.Hz,
+                        times=times__s * pq.s,
+                        sampling_rate=effective_sampling_rate__Hz * pq.Hz,
                     )
                 )
 

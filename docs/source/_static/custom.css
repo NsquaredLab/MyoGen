@@ -186,19 +186,71 @@ dl.py.class > dt {
     white-space: nowrap !important;
 }
 
-/* Swap left and right sidebars */
-.bd-container {
-    display: flex;
+/* Type alias display uses standard Sphinx highlight classes */
+dl.py.data dd p .highlight-python {
+    margin: 0.5rem 0;
 }
 
-.bd-sidebar-primary {
-    order: 3 !important;  /* Move primary (nav) sidebar to right */
+dl.py.data dd p .highlight-python pre {
+    line-height: 1.8;
 }
 
-.bd-main {
-    order: 2 !important;  /* Keep main content in middle */
+/* Preserve link styling inside formatted type aliases */
+dl.py.data dd .highlight pre code .xref,
+dl.py.data dd .highlight pre code a,
+dl.py.data dd .highlight pre code .reference {
+    color: #2980b9 !important;
+    text-decoration: none;
 }
 
-.bd-sidebar-secondary {
-    order: 1 !important;  /* Move secondary (TOC) sidebar to left */
+dl.py.data dd .highlight pre code .xref:hover,
+dl.py.data dd .highlight pre code a:hover,
+dl.py.data dd .highlight pre code .reference:hover {
+    color: #3091d1 !important;
+    text-decoration: underline;
+}
+
+/* Ensure Pygments syntax highlighting colors work */
+/* But links should always be blue, even if they have other classes */
+dl.py.data dd .highlight pre code a .nc,
+dl.py.data dd .highlight pre code a.nc {
+    color: #2980b9 !important;
+    font-weight: bold;
+}
+
+dl.py.data dd .highlight pre code .nc {
+    color: #458588;
+    font-weight: bold;
+}
+
+dl.py.data dd .highlight pre code a .nn,
+dl.py.data dd .highlight pre code a.nn {
+    color: #2980b9 !important;
+}
+
+dl.py.data dd .highlight pre code .nn {
+    color: #b16286;
+}
+
+dl.py.data dd .highlight pre code a .n,
+dl.py.data dd .highlight pre code a.n {
+    color: #2980b9 !important;
+}
+
+dl.py.data dd .highlight pre code .n {
+    color: #83a598;
+}
+
+dl.py.data dd .highlight pre code .s1 {
+    color: #b8bb26;
+}
+
+dl.py.data dd .highlight pre code .p {
+    color: #ebdbb2;
+}
+
+/* Style for "alias of" text */
+dl.py.data dd p strong {
+    font-weight: 600;
+    color: var(--color-api-name);
 }

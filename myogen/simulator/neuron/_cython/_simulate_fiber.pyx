@@ -19,6 +19,21 @@ Features:
 - Parallelized Bessel function computation
 
 Expected performance: 5-10x speedup over Python implementation.
+
+TODO: Add support for fiber_length__mm parameter
+----------------------------------------------
+The Python implementation in simulate_fiber.py has been updated to accept an optional
+fiber_length__mm parameter that defines the physical spatial extent for IAP kernel
+evaluation, making MUAP duration independent of sampling resolution N.
+
+This Cython implementation needs to be updated with the same parameter:
+1. Add fiber_length__mm parameter to simulate_fiber_v2() signature
+2. Update z-grid calculation (search for "z = np.linspace" in this file)
+3. Replace: z = np.linspace(-(N-1)*(v/Fs)/2, (N-1)*(v/Fs)/2, N)
+   With: if fiber_length__mm is None: [legacy] else: z = np.linspace(-fiber_length__mm/2, fiber_length__mm/2, N)
+
+Until this is implemented, passing fiber_length__mm will trigger a fallback to the
+Python implementation with a user warning.
 """
 
 import numpy as np

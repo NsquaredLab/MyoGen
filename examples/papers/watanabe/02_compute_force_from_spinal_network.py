@@ -1,24 +1,49 @@
 """
-Watanabe Paper - Force Computation
-===================================
+Compute Muscle Force from Spinal Network Spike Trains
+======================================================
 
-This script loads pre-generated spike trains and computes muscle force output
-using the Fuglevand force model. The force output is saved as a Neo Block for
-later visualization.
+This example demonstrates **muscle force generation** from the Watanabe spinal network
+simulation. It loads pre-computed spike trains and converts them to realistic muscle
+force output using the Fuglevand force model with batched processing for memory efficiency.
 
-**Pipeline:**
-1. Load spike trains from 10a (spinal_network_results.pkl)
-2. Setup force model parameters
-3. Compute force from motor neuron spike trains
-4. Save force output as Neo Block (watanabe_force_results.pkl)
+.. note::
+    **Force computation pipeline**:
 
-**Outputs:**
-- watanabe_force_results.pkl: Neo Block containing force AnalogSignal and metadata
+    1. Load spike train data from previous analysis (NEO Block format)
+    2. Extract alpha motor neuron spike trains
+    3. Setup Fuglevand force model with physiological parameters
+    4. Process motor units in batches (150 units at a time) for memory efficiency
+    5. Accumulate force contributions from all motor units
+    6. Save force output as NEO Block with comprehensive metadata
+
+.. important::
+    **Prerequisites**: This example requires outputs from:
+
+    - ``00_watanabe_spinal_network_simulation.py``: Simulation parameters
+    - ``01_load_and_analyze_results.py``: NEO-formatted spike train data (``watanabe_results_neo.pkl``)
+
+**Key Features**:
+
+- **Batched processing**: Handles 800 motor units efficiently by processing 150 at a time
+- **Fuglevand force model**: Physiologically realistic twitch dynamics with 100:1 force range
+- **High sampling rate**: 2048 Hz force output for detailed temporal analysis
+- **Motor unit diversity**: 2x contraction time range with 90 ms slowest twitch rise time
+- **NEO format output**: Complete metadata preservation for reproducible analysis
+- **Memory efficient**: Batch processing with explicit garbage collection
+
+**Use Case**: Generate realistic muscle force output from motor neuron spike trains
+for biomechanical analysis, force-EMG relationship studies, and validation against
+experimental force recordings from Watanabe et al. (2013).
 """
 
 # %%
 
+##############################################################################
+# Import Libraries
+# ----------------
+
 from pathlib import Path
+
 import joblib
 import neo
 import numpy as np
@@ -28,22 +53,21 @@ from myogen import simulator
 from myogen.simulator.core.force.force_model import ForceModel
 
 ##############################################################################
-# Setup Paths and Parameters
-# --------------------------
+# Setup Paths and Load Parameters
+# -------------------------------
 
-# Paths
 save_path = Path("./results")
 save_path.mkdir(exist_ok=True)
 
-spinal_results_path = save_path / Path("watanabe_results_neo.pkl")
+spinal_results_path = save_path / "watanabe_results_neo.pkl"
 
-# Load simulation parameters from 10a
+# Load simulation parameters
 params_file = save_path / "watanabe__simulation_params.pkl"
 
 if not params_file.exists():
     raise FileNotFoundError(
         f"Simulation parameters file not found: {params_file}\n"
-        "Please run 10a_paper_watanabe.py first to generate the simulation data."
+        "Please run 00_watanabe_spinal_network_simulation.py first to generate the simulation data."
     )
 
 sim_params = joblib.load(params_file)
@@ -61,12 +85,16 @@ print(f"Timestep: {dt} ms")
 print(f"Motor neurons: {naMN}")
 print()
 
-# Memory optimization parameters
-motor_unit_batch_size = 150  # Process motor units in batches instead of all at once
+# Memory optimization: process motor units in batches
+motor_unit_batch_size = 150
 
 ##############################################################################
 # Load Spike Train Results
 # ------------------------
+
+print("=" * 70)
+print("LOADING SPIKE TRAIN DATA")
+print("=" * 70)
 
 with open(spinal_results_path, "rb") as f:
     results: neo.Block = joblib.load(f)
@@ -77,11 +105,17 @@ aMN_spikes = aMN_results.spiketrains
 
 # Get actual number of motor neurons with spike trains
 n_actual_motor_neurons = len(aMN_spikes)
-print(f"\nLoaded {n_actual_motor_neurons} motor neuron spike trains (out of {naMN} expected)")
+print(f"Loaded {n_actual_motor_neurons} motor neuron spike trains (out of {naMN} expected)")
 
 ##############################################################################
 # Setup Force Model Parameters
 # ----------------------------
+#
+# The Fuglevand force model generates realistic motor unit twitch dynamics
+
+print("\n" + "=" * 70)
+print("CONFIGURING FORCE MODEL")
+print("=" * 70)
 
 # Generate recruitment thresholds for motor neuron pool
 # These determine motor unit properties (twitch amplitude, contraction time)
@@ -95,36 +129,44 @@ recruitment_thresholds, _ = simulator.RecruitmentThresholds(
 force_params = {
     "recording_frequency__Hz": 2048 * pq.Hz,  # Sampling frequency for force output
     "longest_duration_rise_time__ms": 90.0 * pq.ms,  # Slowest motor unit twitch rise time
-    "contraction_time_range_factor": 2,  # Spread of contraction times
+    "contraction_time_range_factor": 2,  # Spread of contraction times across motor units
 }
 
-# Create force model
-force_model = ForceModel(recruitment_thresholds=recruitment_thresholds, **force_params)
+print(f"Recording frequency: {force_params['recording_frequency__Hz']}")
+print(f"Slowest twitch rise time: {force_params['longest_duration_rise_time__ms']}")
+print(f"Contraction time range factor: {force_params['contraction_time_range_factor']}")
+print(f"Recruitment range ratio: 100:1 (smallest to largest motor unit)")
 
 ##############################################################################
-# Generate Force Output in Motor Unit Batches (Memory Efficient)
-# --------------------------------------------------------------
+# Generate Force Output in Batches
+# --------------------------------
+#
+# Process motor units in batches for memory efficiency with large populations
 
-print("\nGenerating force output by processing motor units in batches...")
-
+print("\n" + "=" * 70)
+print("GENERATING FORCE OUTPUT (BATCHED PROCESSING)")
+print("=" * 70)
+print(f"Processing {n_actual_motor_neurons} motor units in batches of {motor_unit_batch_size}")
 
 # Calculate number of batches based on actual motor neurons with spikes
 n_batches = int(np.ceil(n_actual_motor_neurons / motor_unit_batch_size))
 
 # Initialize force accumulator
-# Extract magnitude from Quantity for integer calculation
 recording_freq_Hz = force_params["recording_frequency__Hz"].rescale("Hz").magnitude
 force_duration_samples = int(tstop / 1000 * recording_freq_Hz)
 force_total = np.zeros(force_duration_samples)
+
+print(f"Total batches: {n_batches}")
+print(f"Force signal samples: {force_duration_samples}")
+print(f"Force signal duration: {tstop / 1000:.1f} s")
 
 for batch_idx in range(n_batches):
     # Define motor unit batch indices (based on actual spike trains available)
     mu_start = batch_idx * motor_unit_batch_size
     mu_end = min((batch_idx + 1) * motor_unit_batch_size, n_actual_motor_neurons)
 
-    print(
-        f"\tProcessing motor units {mu_start + 1}-{mu_end} (batch {batch_idx + 1}/{n_batches})..."
-    )
+    print(f"\nProcessing batch {batch_idx + 1}/{n_batches}:")
+    print(f"  Motor units: {mu_start + 1}-{mu_end} ({mu_end - mu_start} units)")
 
     # Create batch-specific Block with subset of motor units
     batch_block = neo.Block(name=f"MU_Batch_{batch_idx}")
@@ -146,7 +188,8 @@ for batch_idx in range(n_batches):
     force_batch = batch_force_model.generate_force(spike_train__Block=batch_block)
     force_batch_array = force_batch.magnitude.squeeze()
 
-    print(force_batch_array.shape)
+    print(f"  Batch force shape: {force_batch_array.shape}")
+    print(f"  Batch force range: [{force_batch_array.min():.3f}, {force_batch_array.max():.3f}]")
 
     # Accumulate force (sum contributions from all motor units)
     force_total += force_batch_array
@@ -158,14 +201,26 @@ for batch_idx in range(n_batches):
 force_output = neo.AnalogSignal(
     force_total * pq.dimensionless,
     t_start=0 * pq.ms,
-    sampling_rate=force_params["recording_frequency__Hz"],  # Already has Hz units
+    sampling_rate=force_params["recording_frequency__Hz"],
 )
 
-print(f"Force generation complete! Final signal shape: {force_output.shape}")
+print("\n" + "=" * 70)
+print("FORCE GENERATION COMPLETE")
+print("=" * 70)
+print(f"Final force signal shape: {force_output.shape}")
+print(f"Final force range: [{force_total.min():.3f}, {force_total.max():.3f}]")
+print(f"Sampling rate: {force_output.sampling_rate}")
+print(f"Duration: {float(force_output.duration.rescale('s')):.2f} s")
 
 ##############################################################################
-# Save Force Results as Neo Block
+# Save Force Results as NEO Block
 # -------------------------------
+#
+# Store force output with comprehensive metadata for reproducible analysis
+
+print("\n" + "=" * 70)
+print("SAVING FORCE RESULTS")
+print("=" * 70)
 
 # Create Neo Block to store force results with metadata
 force_block = neo.Block(name="Watanabe Force Results")
@@ -179,6 +234,7 @@ force_block.annotations["simulation_params"] = {
     "dt_ms": dt,
     "tstop_ms": tstop,
     "n_motor_neurons": naMN,
+    "segment_duration_s": segment_duration__s,
 }
 
 force_block.annotations["recruitment_thresholds"] = recruitment_thresholds
@@ -213,4 +269,5 @@ output_file = save_path / "watanabe__force_results.pkl"
 with open(output_file, "wb") as f:
     joblib.dump(force_block, f)
 
-print("Force computation complete!")
+print(f"Force results saved to: {output_file}")
+print(f"File size: {output_file.stat().st_size / 1e6:.2f} MB")

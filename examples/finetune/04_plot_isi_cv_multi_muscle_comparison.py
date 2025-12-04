@@ -1,22 +1,44 @@
 """
-Multi-Muscle ISI and CV Statistics Comparison Plot
-===================================================
+Multi-Muscle ISI and CV Statistics Comparison
+==============================================
 
-This script loads and visualizes ISI/CV data from multiple muscle types across
-multiple force levels (auto-detected) and compares them against experimental data.
+This example demonstrates **comparative analysis** of ISI/CV statistics across multiple
+muscle types and force levels. It automatically detects available data files and creates
+publication-quality visualizations comparing simulated motor unit firing patterns against
+experimental data.
 
-Each muscle type is assigned a distinct color-to-white gradient colormap, with
-points fading from the base color (early recruited units) to white (late recruited
-units) based on recruitment order. All glyphs have black edges for visibility.
+.. note::
+    **Analysis workflow**:
 
-Force levels are distinguished by marker shapes (auto-detected from available data).
+    1. Auto-detect available force levels for each muscle type
+    2. Load ISI/CV statistics from previous simulations (example 03)
+    3. Load experimental reference data for comparison
+    4. Create multi-muscle comparison plot with color-coded muscles and force levels
+    5. Generate summary statistics for all conditions
 
-Usage:
-------
-python plot_isi_cv_multi_muscle_comparison.py \
-    --muscles THIRTY TWENTYFIVE TWENTY FIFTEEN TEN FIVE \
-    --output-format jpg
+.. important::
+    **Prerequisites**: This example requires ISI/CV data files:
+
+    - Run ``03_extract_isi_and_cv_per_ramps.py`` for each muscle/force combination
+    - Generates CSV files: ``{prefix}isi_cv_data_{muscle}_{force}.csv``
+    - Optional: ``ISI_statistics.csv`` for experimental data overlay
+
+**Visualization Strategy**: Creates a comprehensive comparison showing:
+
+- **Muscle types**: Distinguished by color gradients (red, blue, green, etc.)
+- **Force levels**: Distinguished by marker shapes (circle, square, triangle, etc.)
+- **Recruitment order**: Early-recruited units show full color, late-recruited fade to white
+- **Experimental data**: Gray convex hulls and scatter points for reference
+
+**Use Cases**: Compare motor unit firing patterns across different muscle types,
+force levels, and experimental conditions for validation and analysis.
 """
+
+# %%
+
+##############################################################################
+# Import Libraries
+# ----------------
 
 import os
 
@@ -24,66 +46,89 @@ os.environ["MPLBACKEND"] = "Agg"
 if "DISPLAY" in os.environ:
     del os.environ["DISPLAY"]
 
-import argparse
+import warnings
 from pathlib import Path
 
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-import scienceplots  # noqa
-import seaborn as sns
-from matplotlib.patches import Polygon, Patch
 from matplotlib.lines import Line2D
+from matplotlib.patches import Patch, Polygon
 from scipy.spatial import ConvexHull
 
-plt.style.use("fivethirtyeight")
+# Optional: scienceplots for publication-quality styling
+try:
+    import scienceplots  # noqa
+    import seaborn as sns
+
+    HAS_SCIENCEPLOTS = True
+except ImportError:
+    HAS_SCIENCEPLOTS = False
+    warnings.warn("scienceplots not available - using default matplotlib style")
+
+warnings.filterwarnings("ignore")
 
 ##############################################################################
 # Configure Matplotlib Style
 # ---------------------------
+#
+# Setup publication-quality styling for scientific plots.
 
-plt.style.use(["science", "nature"])
-sns.set_context("paper", font_scale=2)
+if HAS_SCIENCEPLOTS:
+    # Use scienceplots for publication-quality styling
+    plt.style.use(["science", "nature"])
+    sns.set_context("paper", font_scale=2)
+else:
+    # Fallback to manual styling without scienceplots
+    plt.style.use("fivethirtyeight")
 
-# Disable LaTeX rendering
-plt.rcParams["text.usetex"] = False
+# Configure rendering and output quality
+plt.rcParams["text.usetex"] = False  # Disable LaTeX for compatibility
 plt.rcParams["figure.dpi"] = 300
 plt.rcParams["savefig.dpi"] = 300
 plt.rcParams["figure.figsize"] = (10, 8)
 
-# Keep text editable in SVG/PDF exports
+# Keep text editable in vector exports
 plt.rcParams["svg.fonttype"] = "none"
 plt.rcParams["pdf.fonttype"] = 42
 
-# Set font
+# Font configuration
 plt.rcParams["font.family"] = "sans-serif"
 plt.rcParams["font.sans-serif"] = ["Liberation Sans", "Roboto", "DejaVu Sans"]
 
-# Remove top and right spines
+# Clean axes styling
 plt.rcParams["axes.spines.top"] = False
 plt.rcParams["axes.spines.right"] = False
 plt.rcParams["xtick.top"] = False
 plt.rcParams["ytick.right"] = False
 
-# Make ticks and axis lines thicker
+# Axis thickness
 plt.rcParams["axes.linewidth"] = 2.0
 plt.rcParams["xtick.major.width"] = 2.0
 plt.rcParams["ytick.major.width"] = 2.0
 
-# Remove minor ticks
+# Hide minor ticks
 plt.rcParams["xtick.minor.visible"] = False
 plt.rcParams["ytick.minor.visible"] = False
 
-# Adjust subplot spacing
+# Layout spacing
 plt.rcParams["figure.subplot.left"] = 0.15
 plt.rcParams["figure.subplot.bottom"] = 0.12
 
 ##############################################################################
-# CONFIGURATION
+# Configuration
 # -------------
+#
+# Set analysis parameters and visualization options.
 
-# Default path to results directory
+# Data paths
 RESULTS_PATH = Path("./results")
+
+# Muscle types to analyze
+MUSCLES = ["TEST"]  # Can extend to multiple: ["THIRTY", "TWENTYFIVE", "TWENTY"]
+
+# Output format
+OUTPUT_FORMAT = "png"  # Options: "png", "jpg", "svg", "pdf"
 
 # Muscle-specific colormaps (base color to white gradients)
 MUSCLE_COLORMAPS = {
@@ -110,7 +155,7 @@ MUSCLE_LEGEND_COLORS = {
 # Experimental data colors (all gray)
 EXP_COLORS = {"VM": "#808080", "VL": "#808080", "TA": "#808080", "FDI": "#808080"}
 
-# Available marker styles (will cycle through these for force levels)
+# Available marker styles (cycle through these for force levels)
 AVAILABLE_MARKERS = ["o", "s", "^", "D", "v", "p", "*", "h", "<", ">", "d", "P", "X"]
 
 
@@ -474,118 +519,99 @@ def plot_cv_vs_fr_multi_muscle(all_muscle_data, exp_data):
 
 
 ##############################################################################
-# Main Execution
-# --------------
+# Load Simulation Data
+# ---------------------
+#
+# Load ISI/CV statistics from previous simulations with auto-detection of
+# available force levels.
 
+print("=" * 80)
+print("Multi-Muscle ISI/CV Comparison Plot")
+print("=" * 80)
+print(f"\tMuscles: {', '.join(MUSCLES)}")
+print(f"\tOutput Format: {OUTPUT_FORMAT.upper()}")
 
-def main():
-    """Main execution function."""
-    parser = argparse.ArgumentParser(
-        description="Plot ISI/CV comparison for multiple muscles with auto-detected force levels"
-    )
-    parser.add_argument(
-        "--muscles",
-        type=str,
-        nargs="+",
-        default=["TEST"],
-        help="Muscle types to compare (e.g., THIRTY TWENTYFIVE TWENTY FIFTEEN TEN FIVE)",
-    )
-    parser.add_argument(
-        "--results-path",
-        type=Path,
-        default=RESULTS_PATH,
-        help=f"Path to results directory (default: {RESULTS_PATH})",
-    )
-    parser.add_argument(
-        "--output-format",
-        type=str,
-        default="jpg",
-        choices=["jpg", "png", "svg", "pdf"],
-        help="Output format for figures (default: jpg)",
-    )
+print("\nLoading simulation data (auto-detecting force levels)...")
+all_muscle_data = load_multi_muscle_data(RESULTS_PATH, MUSCLES)
 
-    args = parser.parse_args()
+if not all_muscle_data:
+    print("\nNo simulation data found. Please run 03_extract_isi_and_cv_per_ramps.py first.")
+    raise FileNotFoundError("No ISI/CV data files found in results directory")
 
-    # Use muscle names as provided (no conversion)
-    muscles = args.muscles
+##############################################################################
+# Load Experimental Data
+# ----------------------
+#
+# Load optional experimental reference data for comparison.
 
-    print("=" * 80)
-    print("Multi-Muscle ISI/CV Comparison Plot")
-    print("=" * 80)
-    print(f"\tMuscles: {', '.join(muscles)}")
-    print(f"\tOutput Format: {args.output_format.upper()}")
+print("\nLoading experimental data...")
 
-    # Load simulation data with auto-detection
-    print("\nLoading simulation data (auto-detecting force levels)...")
-    all_muscle_data = load_multi_muscle_data(args.results_path, muscles)
+# Handle __file__ not being defined (e.g., in sphinx-gallery or interactive sessions)
+try:
+    script_dir = Path(__file__).parent
+except NameError:
+    # Fallback to current working directory
+    script_dir = Path.cwd()
 
-    if not all_muscle_data:
-        print("\nNo simulation data found. Please run extract_isi_and_cv_per_ramps.py first.")
-        exit(1)
+exp_csv_path = script_dir / "ISI_statistics.csv"
+exp_data = load_experimental_data(exp_csv_path)
 
-    # Load experimental data
-    print("\nLoading experimental data...")
-    # Handle __file__ not being defined (e.g., in sphinx-gallery or interactive sessions)
-    try:
-        script_dir = Path(__file__).parent
-    except NameError:
-        # Fallback to current working directory
-        script_dir = Path.cwd()
+##############################################################################
+# Create Comparison Plot
+# ----------------------
+#
+# Generate multi-muscle comparison visualization.
 
-    exp_csv_path = script_dir / "ISI_statistics.csv"
-    exp_data = load_experimental_data(exp_csv_path)
+print("\nCreating multi-muscle comparison plot...")
+fig, ax = plot_cv_vs_fr_multi_muscle(all_muscle_data, exp_data)
 
-    # Create comparison plot
-    print("\nCreating multi-muscle comparison plot...")
-    fig, ax = plot_cv_vs_fr_multi_muscle(all_muscle_data, exp_data)
+# Save figure
+muscle_str = "_".join(MUSCLES)
+output_file = RESULTS_PATH / f"isi_cv_comparison_{muscle_str}.{OUTPUT_FORMAT}"
+plt.tight_layout()
 
-    # Generate descriptive output filename
-    muscle_str = "_".join(muscles)
-    output_file = args.results_path / f"isi_cv_comparison_{muscle_str}.{args.output_format}"
-    plt.tight_layout()
+# Set quality based on format
+if OUTPUT_FORMAT in ["jpg", "jpeg"]:
+    plt.savefig(output_file, dpi=300, bbox_inches="tight", pil_kwargs={"quality": 95})
+else:
+    plt.savefig(output_file, dpi=300, bbox_inches="tight", transparent=True)
 
-    # Set quality based on format
-    if args.output_format in ["jpg", "jpeg"]:
-        plt.savefig(output_file, dpi=300, bbox_inches="tight", pil_kwargs={"quality": 95})
-    else:
-        plt.savefig(output_file, dpi=300, bbox_inches="tight", transparent=True)
+plt.show()
+print(f"\nPlot saved to: {output_file}")
 
-    print(f"\nPlot saved to: {output_file}")
+##############################################################################
+# Summary Statistics
+# ------------------
+#
+# Print detailed statistics for all analyzed conditions.
 
-    # Print summary statistics
-    print("\n" + "=" * 80)
-    print("SUMMARY STATISTICS")
-    print("=" * 80)
+print("\n" + "=" * 80)
+print("SUMMARY STATISTICS")
+print("=" * 80)
 
-    total_motor_units = 0
-    for muscle in sorted(all_muscle_data.keys()):
-        print(f"\n{muscle}:")
-        muscle_data = all_muscle_data[muscle]
+total_motor_units = 0
+for muscle in sorted(all_muscle_data.keys()):
+    print(f"\n{muscle}:")
+    muscle_data = all_muscle_data[muscle]
 
-        for force_level in sorted(muscle_data.keys()):
-            df = muscle_data[force_level]
-            total_motor_units += len(df)
+    for force_level in sorted(muscle_data.keys()):
+        df = muscle_data[force_level]
+        total_motor_units += len(df)
 
-            print(f"\n{force_level}% Force:")
-            print(f"\tMotor units (N): {len(df)}")
-            print(
-                f"\tMean firing rate: {df['mean_firing_rate_Hz'].mean():.2f} ± "
-                f"{df['mean_firing_rate_Hz'].std():.2f} Hz"
-            )
-            print(f"\tMean CV: {df['CV_ISI'].mean():.3f} ± {df['CV_ISI'].std():.3f}")
-            print(
-                f"\tFR range: {df['mean_firing_rate_Hz'].min():.2f} - "
-                f"{df['mean_firing_rate_Hz'].max():.2f} Hz"
-            )
-            print(f"\tCV range: {df['CV_ISI'].min():.3f} - {df['CV_ISI'].max():.3f}")
+        print(f"\n  {force_level}% Force:")
+        print(f"    Motor units (N): {len(df)}")
+        print(
+            f"    Mean firing rate: {df['mean_firing_rate_Hz'].mean():.2f} ± "
+            f"{df['mean_firing_rate_Hz'].std():.2f} Hz"
+        )
+        print(f"    Mean CV: {df['CV_ISI'].mean():.3f} ± {df['CV_ISI'].std():.3f}")
+        print(
+            f"    FR range: {df['mean_firing_rate_Hz'].min():.2f} - "
+            f"{df['mean_firing_rate_Hz'].max():.2f} Hz"
+        )
+        print(f"    CV range: {df['CV_ISI'].min():.3f} - {df['CV_ISI'].max():.3f}")
 
-    print(f"\n{'=' * 80}")
-    print(f"Total motor units plotted: {total_motor_units}")
-    print(f"Total muscle types: {len(all_muscle_data)}")
-    print("=" * 80)
-    print("Analysis complete!")
-    print("=" * 80)
-
-
-if __name__ == "__main__":
-    main()
+print(f"\n{'=' * 80}")
+print(f"Total motor units plotted: {total_motor_units}")
+print(f"Total muscle types: {len(all_muscle_data)}")
+print("=" * 80)

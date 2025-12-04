@@ -3,6 +3,26 @@ Base classes and utility functions for neuron population management.
 
 This module provides the foundational `_Pool` class and helper functions used
 by all neuron population classes in the MyoGen simulator.
+
+Naming Convention
+-----------------
+MyoGen uses a double-underscore (`__`) separator in neuron pool class names to improve
+readability and maintain consistency. The pattern is:
+
+    {NeuronType}__{Container}
+
+Examples:
+    - ``AlphaMN__Pool`` - Pool of alpha motor neurons
+    - ``AffIa__Pool`` - Pool of type Ia afferent neurons
+    - ``GII__Pool`` - Pool of group II interneurons
+    - ``DescendingDrive__Pool`` - Pool of descending drive neurons
+
+The double underscore clearly separates the neuron type from the container class,
+making the code more readable than alternatives like ``AlphaMNPool`` or ``AlphaMN_Pool``.
+This convention is used throughout the neuron populations module.
+
+Note: The base class uses a single underscore prefix (``_Pool``) following Python's
+convention for internal/private classes not intended for direct instantiation by users.
 """
 
 from typing import Optional, Union

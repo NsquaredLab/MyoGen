@@ -45,10 +45,10 @@ def _find_mknrndll() -> Optional[Path]:
             mknrndll_path = location / "mknrndll.bat"
             print(f"  Checking: {mknrndll_path}")
             if mknrndll_path.exists():
-                print(f"  ✓ Found: {mknrndll_path}")
+                print(f"  (OK) Found: {mknrndll_path}")
                 return mknrndll_path
             else:
-                print("  ✗ Not found")
+                print("  (X) Not found")
 
     # Try to find it in PATH
     print("Searching for mknrndll.bat in PATH...")
@@ -58,12 +58,12 @@ def _find_mknrndll() -> Optional[Path]:
         )
         if result.returncode == 0:
             found_path = Path(result.stdout.strip())
-            print(f"  ✓ Found in PATH: {found_path}")
+            print(f"  (OK) Found in PATH: {found_path}")
             return found_path
         else:
-            print("  ✗ Not found in PATH")
+            print("  (X) Not found in PATH")
     except Exception as e:
-        print(f"  ✗ Error searching PATH: {e}")
+        print(f"  (X) Error searching PATH: {e}")
 
     print("mknrndll.bat not found. Please ensure NEURON is properly installed.")
     return None

@@ -1,60 +1,117 @@
 Type Definitions
 ================
 
-This module contains type definitions for structured data and type safety.
+This module contains type definitions for structured data and type safety with Beartype validation.
 
 .. currentmodule:: myogen.utils.types
 
-Type Aliases
-^^^^^^^^^^^^
+Physical Quantity Types
+^^^^^^^^^^^^^^^^^^^^^^^
 
-The following type aliases are available for use with beartype validation:
+Time Units
+----------
 
-.. py:data:: INPUT_CURRENT__MATRIX
-   :type: TypeAlias
+.. autosummary::
+   :toctree: ../generated/
+   :template: autosummary/data.rst
 
-   2D array representing input current patterns.
+   Quantity__s
+   Quantity__ms
 
-   **Shape:** ``(n_units, n_timesteps)``
+Angles
+------
 
-.. py:data:: CORTICAL_INPUT__MATRIX
-   :type: TypeAlias
+.. autosummary::
+   :toctree: ../generated/
+   :template: autosummary/data.rst
 
-   2D array representing cortical input patterns.
+   Quantity__rad
+   Quantity__deg
 
-   **Shape:** ``(n_units, n_timesteps)``
+Electrical Potential
+--------------------
 
-.. py:data:: SPIKE_TRAIN__MATRIX
-   :type: TypeAlias
+.. autosummary::
+   :toctree: ../generated/
+   :template: autosummary/data.rst
 
-   2D boolean array representing spike train patterns.
+   Quantity__mV
+   Quantity__uV
 
-   **Shape:** ``(n_units, n_timesteps)``
+Electrical Current
+------------------
 
-.. py:data:: SURFACE_MUAP_SHAPE__TENSOR
-   :type: TypeAlias
+.. autosummary::
+   :toctree: ../generated/
+   :template: autosummary/data.rst
 
-   4D array representing surface motor unit action potential shapes.
+   Quantity__nA
 
-   **Shape:** ``(n_units, n_rows, n_cols, n_timesteps)``
+Electrical Conductance
+----------------------
 
-.. py:data:: INTRAMUSCULAR_MUAP_SHAPE__TENSOR
-   :type: TypeAlias
+.. autosummary::
+   :toctree: ../generated/
+   :template: autosummary/data.rst
 
-   3D array representing intramuscular motor unit action potential shapes.
+   Quantity__uS
+   Quantity__S_per_m
 
-   **Shape:** ``(n_units, n_channels, n_timesteps)``
+Frequency
+---------
 
-.. py:data:: SURFACE_EMG__TENSOR
-   :type: TypeAlias
+.. autosummary::
+   :toctree: ../generated/
+   :template: autosummary/data.rst
 
-   4D array representing surface EMG signals.
+   Quantity__Hz
+   Quantity__pps
 
-   **Shape:** ``(n_rows, n_cols, n_timesteps)``
+Length & Areas
+--------------
 
-.. py:data:: INTRAMUSCULAR_EMG__TENSOR
-   :type: TypeAlias
+.. autosummary::
+   :toctree: ../generated/
+   :template: autosummary/data.rst
 
-   3D array representing intramuscular EMG signals.
+   Quantity__mm
+   Quantity__m
+   Quantity__mm2
+   Quantity__per_mm2
 
-   **Shape:** ``(n_channels, n_timesteps)`` 
+Velocity
+--------
+
+.. autosummary::
+   :toctree: ../generated/
+   :template: autosummary/data.rst
+
+   Quantity__m_per_s
+   Quantity__mm_per_s
+
+Signal Types (Neo)
+^^^^^^^^^^^^^^^^^^
+
+.. autosummary::
+   :toctree: ../generated/
+   :template: autosummary/data.rst
+
+   CURRENT__AnalogSignal
+   FORCE__AnalogSignal
+   SPIKE_TRAIN__Block
+   SURFACE_MUAP__Block
+   SURFACE_EMG__Block
+   INTRAMUSCULAR_MUAP__Block
+   INTRAMUSCULAR_EMG__Block
+
+Array Types
+^^^^^^^^^^^
+
+.. autosummary::
+   :toctree: ../generated/
+   :template: autosummary/data.rst
+
+   CORTICAL_INPUT__MATRIX
+   RECRUITMENT_THRESHOLDS__ARRAY
+   JOINT_ANGLE__ARRAY
+   MOMENT_ARM__MATRIX

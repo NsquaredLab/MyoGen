@@ -1,20 +1,43 @@
 """
-Watanabe Paper - Results Visualization
-======================================
+Generate Publication-Quality Figures and Analysis Plots
+========================================================
 
-This script loads pre-computed spike trains and force output to generate
-all figures for the Watanabe paper reproduction.
+This example generates **publication-quality figures** for the Watanabe et al. (2013)
+spinal network model reproduction. It creates comprehensive visualizations including
+coherence analysis, force timeseries, and detailed raster plots.
 
-**Pipeline:**
-1. Load spike trains from 10a (spinal_network_results.pkl)
-2. Load force output from 10b (watanabe_force_results.pkl)
-3. Generate all visualizations (panels A-H and supplementary figures)
+.. note::
+    **Visualization pipeline**:
 
-**Outputs:**
-- Multiple PNG figures in ./results/ directory
+    1. Load simulation parameters and results from previous scripts
+    2. Calculate corticomuscular coherence spectra with composite spike trains
+    3. Generate force timeseries with phase-coded colors
+    4. Create full-duration raster plot with adaptive zoom insets
+    5. Save all figures in PDF format for publication
+
+.. important::
+    **Prerequisites**: This example requires outputs from:
+
+    - ``00_watanabe_spinal_network_simulation.py``: Simulation parameters and results
+    - ``01_load_and_analyze_results.py``: NEO-formatted data blocks
+    - ``02_compute_force_from_spinal_network.py``: Force model output (``watanabe__force_results.pkl``)
+
+**Key Features**:
+
+- **Coherence analysis**: Corticomuscular coherence with 100 random motor unit pairs
+- **Phase-coded coloring**: Three distinct colors for constant and modulated drive phases
+- **Adaptive raster plots**: Automatic zoom window selection for maximum neuron recruitment
+- **Publication quality**: Vector PDF outputs with optimized DPI and rasterization
+
+**Use Case**: Generate figures for scientific publications, validate model predictions
+against experimental data, analyze motor unit synchronization patterns.
 """
 
 # %%
+
+##############################################################################
+# Import Libraries
+# ----------------
 
 from pathlib import Path
 
@@ -49,7 +72,7 @@ params_file = save_path / "watanabe__simulation_params.pkl"
 if not params_file.exists():
     raise FileNotFoundError(
         f"Simulation parameters file not found: {params_file}\n"
-        "Please run 10a_paper_watanabe.py first to generate the simulation data."
+        "Please run 00_watanabe_spinal_network_simulation.py first to generate the simulation data."
     )
 
 sim_params = joblib.load(params_file)
@@ -111,102 +134,8 @@ force_windows = [
 ]
 
 ##############################################################################
-# PANELS A-C: Net Membrane Potential Power Spectra
-# -------------------------------------------------
-
-# First pass: compute all PSDs to find global min/max
-all_psds = []
-all_freqs = []
-
-for idx, (t_start, t_stop) in enumerate(time_windows):
-    # Extract membrane potentials for this time window
-    aMN_membrane_potentials = []
-    for analog_sig in aMN_results.analogsignals:
-        sig_t_start = analog_sig.t_start.rescale("s").magnitude
-        sig_t_stop = analog_sig.t_stop.rescale("s").magnitude
-
-        if (sig_t_start <= t_start) and (sig_t_stop >= t_stop):
-            analog_windowed = analog_sig.time_slice(t_start * pq.s, t_stop * pq.s)
-            aMN_membrane_potentials.append(analog_windowed.magnitude.flatten())
-
-    if len(aMN_membrane_potentials) > 0:
-        # Average across all motor neurons
-        avg_membrane_potential = np.mean(aMN_membrane_potentials, axis=0)
-
-        # Get sampling rate
-        mp_sampling_rate = aMN_results.analogsignals[0].sampling_rate.rescale("Hz").magnitude
-
-        # Compute power spectrum using Welch's method with built-in detrending
-        signal_length = len(avg_membrane_potential)
-
-        # Scale nperseg for consistent frequency resolution across segment durations
-        # Target: ~0.5 Hz resolution for good spectral detail around 20 Hz
-        target_freq_res_psd = 0.5  # Hz
-        ideal_nperseg_psd = int(mp_sampling_rate / target_freq_res_psd)
-        max_nperseg_psd = int(signal_length * 0.8)  # Leave room for overlap
-        nperseg_psd = min(ideal_nperseg_psd, max_nperseg_psd, 300000)
-        noverlap_psd = int(nperseg_psd * 0.75)  # 75% overlap for smoother spectrum
-
-        freqs_mp, psd_mp = scipy_signal.welch(
-            avg_membrane_potential,
-            fs=mp_sampling_rate,
-            window="hamming",
-            nperseg=nperseg_psd,
-            noverlap=noverlap_psd,
-            nfft=max(signal_length, nperseg_psd),  # Zero-pad if needed
-            detrend="linear",
-        )
-
-        all_psds.append(psd_mp)
-        all_freqs.append(freqs_mp)
-    else:
-        all_psds.append(None)
-        all_freqs.append(None)
-
-# Find global min/max across all PSDs for normalization
-valid_psds = [psd for psd in all_psds if psd is not None]
-global_min = np.min([np.min(psd) for psd in valid_psds])
-global_max = np.max([np.max(psd) for psd in valid_psds])
-
-# Second pass: normalize using global min/max and plot
-fig_mp, axes_mp = plt.subplots(1, 3, figsize=(18, 5))
-
-for idx, (t_start, t_stop) in enumerate(time_windows):
-    if all_psds[idx] is not None:
-        freqs_mp = all_freqs[idx]
-        psd_mp = all_psds[idx]
-
-        # Normalize power spectrum using global min/max
-        psd_mp_normalized = (psd_mp - global_min) / (global_max - global_min)
-
-        # Plot (rasterized to reduce file size)
-        axes_mp[idx].fill_between(
-            freqs_mp, psd_mp_normalized, color=window_colors[idx], alpha=0.7, rasterized=True
-        )
-        axes_mp[idx].plot(
-            freqs_mp, psd_mp_normalized, color=window_colors[idx], linewidth=1.5, rasterized=True
-        )
-        axes_mp[idx].set_xlabel("Frequency (Hz)")
-        if idx == 0:
-            axes_mp[idx].set_ylabel("Membrane Potential\nSpectrum (A.U.)")
-        axes_mp[idx].set_xlim(0, 25)
-        axes_mp[idx].set_xticks([0, 5, 10, 15, 20, 25])
-        axes_mp[idx].set_ylim(0, 1.05)
-        axes_mp[idx].set_yticks([0, 0.5, 1])
-
-        sns.despine(ax=axes_mp[idx], trim=True)
-
-plt.tight_layout()
-plt.savefig(
-    watanabe_plots_dir / "membrane_potential_power_spectra_all_windows.pdf",
-    dpi=300,
-    bbox_inches="tight",
-)
-plt.show()
-
-##############################################################################
-# PANELS D-F: Corticomuscular Coherence Spectra
-# ----------------------------------------------
+# Corticomuscular Coherence Spectra
+# ----------------------------------
 
 # Create figure with 3 panels
 fig_coh, axes_coh = plt.subplots(1, 3, figsize=(18, 5))
@@ -374,8 +303,8 @@ plt.savefig(
 plt.show()
 
 ##############################################################################
-# PANEL G: Force Timeseries
-# -------------------------
+# Force Timeseries
+# ----------------
 
 # Extract force signal in original unitless scale
 force_signal = force_output.magnitude[:, 0]
@@ -415,8 +344,8 @@ plt.savefig(watanabe_plots_dir / "watanabe_force_timeseries.pdf", dpi=300, bbox_
 plt.show()
 
 ##############################################################################
-# PANEL H: Full Duration Raster Plot
-# ----------------------------------
+# Full Duration Raster Plot
+# --------------------------
 
 # Sort spike trains by mean firing rate (highest to lowest)
 # This puts low firing rate neurons at the TOP of the raster plot
@@ -464,12 +393,12 @@ for window_start in np.arange(phase1_search_start, phase1_search_end, search_int
         best_max_idx = max_idx
         best_window_start = window_start
         print(
-            f"  ★ Window {window_start:.1f}-{window_end:.1f}s: {n_active} active neurons, max index: {max_idx}"
+            f"  * Window {window_start:.1f}-{window_end:.1f}s: {n_active} active neurons, max index: {max_idx}"
         )
 
 best_window_end = best_window_start + 0.1
 print(
-    f"\n✓ Selected window: {best_window_start:.1f}-{best_window_end:.1f}s with {max_active_neurons} active neurons (max index: {best_max_idx})\n"
+    f"\n(OK) Selected window: {best_window_start:.1f}-{best_window_end:.1f}s with {max_active_neurons} active neurons (max index: {best_max_idx})\n"
 )
 
 # Create figure with GridSpec layout: zoom insets above, main raster below
