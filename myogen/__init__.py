@@ -81,19 +81,7 @@ def _setup_myogen(quiet: bool = False) -> bool:
                 Extension(
                     "myogen.simulator.neuron._cython._simulate_fiber",
                     ["myogen/simulator/neuron/_cython/_simulate_fiber.pyx"],
-                    extra_compile_args=[
-                        "-O3",
-                        "-march=native",
-                        "-ffast-math",
-                        "-fopenmp",
-                        "-Wno-maybe-uninitialized",
-                    ],
-                    extra_link_args=[
-                        "-fopenmp",
-                        "-Wl,--no-as-needed",  # Force libmvec to be linked even if not directly needed
-                        "-lmvec",  # Link vector math library
-                    ],
-                    libraries=["mvec"],  # Explicitly link libmvec for vectorized math
+                    extra_compile_args=["-O3", "-march=native", "-ffast-math"],
                 ),
             ],
             compiler_directives={"embedsignature": True},
