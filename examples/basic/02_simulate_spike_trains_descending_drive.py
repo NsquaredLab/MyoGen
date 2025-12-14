@@ -199,10 +199,10 @@ print(f"\tRest after: {ramp_down_end} - {simulation_time} ms ({dd_baseline__pps}
 network = Network({"DD": descending_drive_pool, "aMN": motor_neuron_pool})
 
 # Connect DD neurons to motor neurons with realistic synaptic parameters
-network.connect(source="DD", target="aMN", probability=0.5, weight__uS=0.15)
+network.connect(source="DD", target="aMN", probability=0.5, weight__uS=0.15 * pq.uS)
 
 # Set up external input to DD population
-network.connect_from_external(source="cortical_input", target="DD", weight__uS=1.0)
+network.connect_from_external(source="cortical_input", target="DD", weight__uS=1.0 * pq.uS)
 
 # Get NetCons for manual DD stimulation
 dd_netcons = network.get_netcons("cortical_input", "DD")

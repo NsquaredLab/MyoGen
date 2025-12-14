@@ -57,7 +57,7 @@ uv run poe setup_myogen
 > [!TIP]
 > Install [UV](https://docs.astral.sh/uv/) first: `curl -LsSf https://astral.sh/uv/install.sh | sh`
 
-**GPU acceleration** (optional):
+**GPU acceleration of convoutions** (optional):
 ```bash
 uv pip install cupy-cuda12x  # 5-10× speedup
 ```
