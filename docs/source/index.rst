@@ -117,6 +117,13 @@ Package Structure
 
 .. toctree::
    :maxdepth: 2
+   :caption: User Guide
+   :hidden:
+
+   neo_blocks_guide
+
+.. toctree::
+   :maxdepth: 2
    :caption: Examples & Tutorials
    :hidden:
 

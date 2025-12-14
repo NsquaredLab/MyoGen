@@ -11,9 +11,9 @@ from typing import Optional, Union
 import numpy as np
 
 from myogen.simulator.neuron import cells
+from myogen.utils.config_loader import load_yaml_config, merge_configs
 from myogen.utils.decorators import beartowertype
 from myogen.utils.types import RECRUITMENT_THRESHOLDS__ARRAY
-from myogen.utils.config_loader import load_yaml_config, merge_configs
 
 from .base import _exp_interp, _Pool
 
@@ -388,105 +388,120 @@ class AlphaMN__Pool(_Pool):
         """Create motor neurons using the NERLab model."""
 
         def special_interp(x, y, n, curv=None, negative=None):
-            return self.recruitment_thresholds__array * (y - x) + x
+            if negative:
+                # Reverse the interpolation direction
+                return self.recruitment_thresholds__array * (x - y) + y
+            else:
+                # Normal direction
+                return self.recruitment_thresholds__array * (y - x) + x
 
         if self.recruitment_thresholds__array is None:
             interpF = _exp_interp
         else:
             interpF = special_interp
 
+        self.t = self.n
+
         # Soma parameters (using parameters from YAML config)
         Diam_soma = interpF(
             self.nerlab_soma_diameter_range[0],
             self.nerlab_soma_diameter_range[1],
-            self.n,
+            self.t,
             curv=1.0 / self.nerlab_soma_diameter_range[2],
+            negative=self.nerlab_soma_diameter_range[3],
         )
         Gnabar = interpF(
             self.nerlab_soma_gnabar_range[0],
             self.nerlab_soma_gnabar_range[1],
-            self.n,
+            self.t,
             curv=1 / self.nerlab_soma_gnabar_range[2],
+            negative=self.nerlab_soma_gnabar_range[3],
         )
         Gnapbar = interpF(
             self.nerlab_soma_gnapbar_range[0],
             self.nerlab_soma_gnapbar_range[1],
-            self.n,
+            self.t,
             curv=1 / self.nerlab_soma_gnapbar_range[2],
-            negative=True,
+            negative=self.nerlab_soma_gnapbar_range[3],
         )
         Gkfbar = interpF(
             self.nerlab_soma_gkfbar_range[0],
             self.nerlab_soma_gkfbar_range[1],
-            self.n,
+            self.t,
             curv=1 / self.nerlab_soma_gkfbar_range[2],
-            negative=True,
+            negative=self.nerlab_soma_gkfbar_range[3],
         )
         Gksbar = interpF(
             self.nerlab_soma_gksbar_range[0],
             self.nerlab_soma_gksbar_range[1],
-            self.n,
+            self.t,
             curv=1.0 / self.nerlab_soma_gksbar_range[2],
-            negative=True,
+            negative=self.nerlab_soma_gksbar_range[3],
         )
         Mact = interpF(
             self.nerlab_soma_mact_range[0],
             self.nerlab_soma_mact_range[1],
-            self.n,
+            self.t,
             curv=1 / self.nerlab_soma_mact_range[2],
+            negative=self.nerlab_soma_mact_range[3],
         )
         Rinact = interpF(
             self.nerlab_soma_rinact_range[0],
             self.nerlab_soma_rinact_range[1],
-            self.n,
+            self.t,
             curv=1 / self.nerlab_soma_rinact_range[2],
+            negative=self.nerlab_soma_rinact_range[3],
         )
         Gls = interpF(
             self.nerlab_soma_gls_range[0],
             self.nerlab_soma_gls_range[1],
-            self.n,
+            self.t,
             curv=1 / self.nerlab_soma_gls_range[2],
+            negative=self.nerlab_soma_gls_range[3],
         )
 
         # Dendrite parameters
         Diam_dend = interpF(
             self.nerlab_dendrite_diameter_range[0],
             self.nerlab_dendrite_diameter_range[1],
-            self.n,
+            self.t,
             curv=1.0 / self.nerlab_dendrite_diameter_range[2],
+            negative=self.nerlab_dendrite_diameter_range[3],
         )
         L_dend = interpF(
             self.nerlab_dendrite_length_range[0],
             self.nerlab_dendrite_length_range[1],
-            self.n,
+            self.t,
             curv=1.0 / self.nerlab_dendrite_length_range[2],
+            negative=self.nerlab_dendrite_length_range[3],
         )
         GcaLbar = interpF(
             self.nerlab_dendrite_gcaLbar_range[0],
             self.nerlab_dendrite_gcaLbar_range[1],
-            self.n,
+            self.t,
             curv=1 / self.nerlab_dendrite_gcaLbar_range[2],
-            negative=True,
+            negative=self.nerlab_dendrite_gcaLbar_range[3],
         )
         Vtraub_caL = interpF(
             self.nerlab_dendrite_vtraub_caL_range[0],
             self.nerlab_dendrite_vtraub_caL_range[1],
-            self.n,
+            self.t,
             curv=1 / self.nerlab_dendrite_vtraub_caL_range[2],
-            negative=True,
+            negative=self.nerlab_dendrite_vtraub_caL_range[3],
         )
         LTAU_caL = interpF(
             self.nerlab_dendrite_ltau_caL_range[0],
             self.nerlab_dendrite_ltau_caL_range[1],
-            self.n,
+            self.t,
             curv=1 / self.nerlab_dendrite_ltau_caL_range[2],
-            negative=True,
+            negative=self.nerlab_dendrite_ltau_caL_range[3],
         )
         Gl_caL = interpF(
             self.nerlab_dendrite_gl_caL_range[0],
             self.nerlab_dendrite_gl_caL_range[1],
-            self.n,
+            self.t,
             curv=1 / self.nerlab_dendrite_gl_caL_range[2],
+            negative=self.nerlab_dendrite_gl_caL_range[3],
         )
 
         vcon = np.linspace(self.axon_velocities[0], self.axon_velocities[1], self.n)

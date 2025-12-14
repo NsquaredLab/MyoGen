@@ -15,14 +15,14 @@ spike_threshold__mV: 50.0  # Spike detection threshold (mV)
 nerlab:
   # Soma parameters for NERLab model
   soma:
-    diameter_range: [78, 113, 1.0]  # [min, max, curve] (um)
-    gnabar_range: [0.0325, 0.0775, 2.5]  # [min, max, curve] (S/cm²)
-    gnapbar_range: [0.00043, 0.00067, 2.1]  # [min, max, curve] (S/cm²)
-    gkfbar_range: [0.0028, 0.0015, 25]  # [min, max, curve] (S/cm²)
-    gksbar_range: [0.02, 0.016, 6.0]  # [min, max, curve] (S/cm²)
-    mact_range: [13, 20, 3]  # [min, max, curve]
-    rinact_range: [0.018, 0.063, 4]  # [min, max, curve]
-    gls_range: [0.000952381, 0.001538462, 2.5]  # [min, max, curve] (S/cm²) - 1/1050 to 1/650
+    diameter_range: [78, 113, 14, false]  # [min, max, curve] (um)
+    gnabar_range: [0.0325, 0.0775, 2.5, false]  # [min, max, curve] (S/cm²)
+    gnapbar_range: [0.00043, 0.00067, 2.1, true]  # [min, max, curve] (S/cm²)
+    gkfbar_range: [0.0028, 0.0015, 25, true]  # [min, max, curve] (S/cm²)
+    gksbar_range: [0.02, 0.016, 6.0, true]  # [min, max, curve] (S/cm²)
+    mact_range: [13, 20, 3, false]  # [min, max, curve]
+    rinact_range: [0.018, 0.063, 4, false]  # [min, max, curve]
+    gls_range: [0.000952381, 0.001538462, 2.5, false]  # [min, max, curve] (S/cm²) - 1/1050 to 1/650
 
     # Fixed soma parameters
     ena: 120.0  # mV
@@ -34,12 +34,12 @@ nerlab:
 
   # Dendrite parameters for NERLab model
   dendrite:
-    diameter_range: [48.0, 90.0, 5.0]  # [min, max, curve] (um)
-    length_range: [5500, 10600, 12.0]  # [min, max, curve] (um)
-    gcaLbar_range: [1.25e-5, 6.2e-6, 3]  # [min, max, curve] (S/cm²)
-    vtraub_caL_range: [35, 34, 30]  # [min, max, curve] (mV)
-    ltau_caL_range: [90, 47, 3]  # [min, max, curve] (ms)
-    gl_caL_range: [7.69231e-5, 0.000165289, 2.5]  # [min, max, curve] (S/cm²) - 1/13000 to 1/6050
+    diameter_range: [48.0, 90.0, 5.0, false]  # [min, max, curve] (um)
+    length_range: [5500, 10600, 12.0, false]  # [min, max, curve] (um)
+    gcaLbar_range: [1.25e-5, 6.2e-6, 3, true]  # [min, max, curve] (S/cm²)
+    vtraub_caL_range: [35, 34, 30,true]  # [min, max, curve] (mV)
+    ltau_caL_range: [90, 47, 3, true]  # [min, max, curve] (ms)
+    gl_caL_range: [7.69231e-5, 0.000165289, 2.5, false]  # [min, max, curve] (S/cm²) - 1/13000 to 1/6050
 
     # Fixed dendrite parameters
     Ra: 70.0  # Ω·cm

@@ -153,7 +153,7 @@ class HillModel:
         Returns
         -------
         tuple[float, float, float]
-            Muscle length (normalized to L0), velocity (L0/s), acceleration (L0/s�)
+            Muscle length (normalized to L0), velocity (L0/s), acceleration (L0/s^2)
         """
         return self._hill_model.integrate(np.radians(joint_angle__deg))
 
@@ -169,7 +169,7 @@ class HillModel:
 
     @property
     def muscle_acceleration(self) -> np.ndarray:
-        """Get muscle acceleration time series (L0/s�)."""
+        """Get muscle acceleration time series (L0/s^2)."""
         return np.asarray(self._hill_model.A)
 
     @property
@@ -179,7 +179,7 @@ class HillModel:
 
     @property
     def muscle_torque(self) -> np.ndarray:
-        """Get muscle torque time series (F0�m)."""
+        """Get muscle torque time series (F0*m)."""
         return np.asarray(self._hill_model.torque)
 
     @property
@@ -201,7 +201,7 @@ class HillModel:
 
     @property
     def motor_unit_forces(self) -> np.ndarray:
-        """Get individual motor unit forces matrix (N_units � time_points)."""
+        """Get individual motor unit forces matrix (N_units x time_points)."""
         return np.asarray(self._hill_model.f)
 
     @property
@@ -262,7 +262,7 @@ class HillModel:
                 "m": 4.67e-3,  # Muscle mass [kg]
                 # Passive elements
                 "Kpe": 5,  # Passive elastic element stiffness [F0/L0]
-                "b": 0.01,  # Muscle fiber viscous element [F0�s/L0]
+                "b": 0.01,  # Muscle fiber viscous element [F0*s/L0]
                 "Em_0": 0.5,  # Normalized muscle deformation
                 # Tendon parameters
                 "LT_0": 49e-3,  # Tendon length for max isometric force [m]
