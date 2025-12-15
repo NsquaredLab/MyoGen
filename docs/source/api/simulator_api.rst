@@ -3,25 +3,48 @@ Simulator Module
 
 .. currentmodule:: myogen.simulator
 
-Motor Unit Recruitment Thresholds
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Neuron Populations
+^^^^^^^^^^^^^^^^^^
 
-.. autosummary::
-   :toctree: ../generated/
-   :template: autosummary/function.rst
-   :recursive:
+.. currentmodule:: myogen.simulator.neuron.populations
 
-   generate_mu_recruitment_thresholds
-
-Motor Neuron Pool
-^^^^^^^^^^^^^^^^^
+Base Class
+----------
 
 .. autosummary::
    :toctree: ../generated/
    :template: autosummary/class.rst
    :recursive:
 
-   MotorNeuronPool
+   _Pool
+
+Population Classes
+------------------
+
+.. autosummary::
+   :toctree: ../generated/
+   :template: autosummary/class.rst
+   :recursive:
+
+   AlphaMN__Pool
+   DescendingDrive__Pool
+   AffIa__Pool
+   AffII__Pool
+   AffIb__Pool
+   GII__Pool
+   GIb__Pool
+
+.. currentmodule:: myogen.simulator
+
+Motor Unit Recruitment Thresholds
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. autosummary::
+   :toctree: ../generated/
+   :template: autosummary/class.rst
+   :recursive:
+
+   RecruitmentThresholds
 
 Muscle Model
 ^^^^^^^^^^^^

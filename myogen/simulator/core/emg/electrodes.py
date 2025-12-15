@@ -5,9 +5,12 @@ Electrode configuration framework for EMG simulation.
 from typing import Literal
 
 import numpy as np
+import numpy.matlib  # noqa
+import quantities as pq
 from scipy.spatial.transform import Rotation as R
 
-from myogen.utils.types import beartowertype
+from myogen.utils.decorators import beartowertype
+from myogen.utils.types import Quantity__deg, Quantity__mm, Quantity__rad
 
 
 @beartowertype
@@ -58,11 +61,11 @@ class SurfaceElectrodeArray:
         self,
         num_rows: int,
         num_cols: int,
-        inter_electrode_distances__mm: float,
-        electrode_radius__mm: float,
-        center_point__mm_deg: tuple[float, float] = (0.0, 0.0),
-        bending_radius__mm: float = 0.0,
-        rotation_angle__deg: float = 0.0,
+        inter_electrode_distances__mm: Quantity__mm,
+        electrode_radius__mm: Quantity__mm,
+        center_point__mm_deg: tuple[Quantity__mm, Quantity__deg] = (0.0 * pq.mm, 0.0 * pq.deg),
+        bending_radius__mm: Quantity__mm = 0.0 * pq.mm,
+        rotation_angle__deg: Quantity__deg = 0.0 * pq.deg,
         differentiation_mode: Literal[
             "monopolar", "bipolar_longitudinal", "bipolar_transversal", "laplacian"
         ] = "monopolar",
@@ -77,14 +80,19 @@ class SurfaceElectrodeArray:
         self.electrode_radius__mm = electrode_radius__mm
         self.differentiation_mode = differentiation_mode
 
-        # Private copies for internal modifications
+        # Private copies for internal modifications (extract magnitudes)
         self._num_rows = num_rows
         self._num_cols = num_cols
-        self._center_point__mm_deg = center_point__mm_deg
-        self._bending_radius__mm = bending_radius__mm
-        self._rotation_angle__deg = rotation_angle__deg
-        self._inter_electrode_distances__mm = inter_electrode_distances__mm
-        self._electrode_radius__mm = electrode_radius__mm
+        self._center_point__mm_deg = (
+            float(center_point__mm_deg[0].rescale(pq.mm).magnitude),
+            float(center_point__mm_deg[1].rescale(pq.deg).magnitude),
+        )
+        self._bending_radius__mm = float(bending_radius__mm.rescale(pq.mm).magnitude)
+        self._rotation_angle__deg = float(rotation_angle__deg.rescale(pq.deg).magnitude)
+        self._inter_electrode_distances__mm = float(
+            inter_electrode_distances__mm.rescale(pq.mm).magnitude
+        )
+        self._electrode_radius__mm = float(electrode_radius__mm.rescale(pq.mm).magnitude)
         self._differentiation_mode = differentiation_mode
 
         self.num_electrodes = num_rows * num_cols
@@ -122,12 +130,10 @@ class SurfaceElectrodeArray:
             _pos_z[index_center, :] = self._center_point__mm_deg[0]
             for i in range(1, index_center + 1):
                 _pos_z[index_center + i, :] = (
-                    _pos_z[index_center + i - 1, :]
-                    + self._inter_electrode_distances__mm
+                    _pos_z[index_center + i - 1, :] + self._inter_electrode_distances__mm
                 )
                 _pos_z[index_center - i, :] = (
-                    _pos_z[index_center - i + 1, :]
-                    - self._inter_electrode_distances__mm
+                    _pos_z[index_center - i + 1, :] - self._inter_electrode_distances__mm
                 )
         else:
             index_center1 = int(self._num_rows / 2)
@@ -140,12 +146,10 @@ class SurfaceElectrodeArray:
             )
             for i in range(1, index_center2 + 1):
                 _pos_z[index_center1 + i, :] = (
-                    _pos_z[index_center1 + i - 1, :]
-                    + self._inter_electrode_distances__mm
+                    _pos_z[index_center1 + i - 1, :] + self._inter_electrode_distances__mm
                 )
                 _pos_z[index_center2 - i, :] = (
-                    _pos_z[index_center2 - i + 1, :]
-                    - self._inter_electrode_distances__mm
+                    _pos_z[index_center2 - i + 1, :] - self._inter_electrode_distances__mm
                 )
 
         _pos_theta = np.zeros((self._num_rows, self._num_cols))
@@ -185,9 +189,7 @@ class SurfaceElectrodeArray:
         ## Rotated detection system (Farina, 2004), eq (36)
         displacement = self._center_point__mm_deg[0] * np.ones(_pos_z.shape)
         _pos_z = (
-            -self._bending_radius__mm
-            * np.sin(self._rotation_angle__deg * np.pi / 180)
-            * _pos_theta
+            -self._bending_radius__mm * np.sin(self._rotation_angle__deg * np.pi / 180) * _pos_theta
             + np.cos(self._rotation_angle__deg * np.pi / 180) * (_pos_z - displacement)
             + displacement
         )
@@ -203,13 +205,13 @@ class SurfaceElectrodeArray:
         self._pos_theta = _pos_theta
 
     @property
-    def pos_z(self) -> np.ndarray:
+    def pos_z(self) -> Quantity__mm:
         """
         Longitudinal positions of electrodes in mm.
 
         Returns
         -------
-        np.ndarray
+        Quantity__mm
             Array of shape (num_rows, num_cols) containing z-coordinates
             of each electrode position in mm.
 
@@ -223,16 +225,16 @@ class SurfaceElectrodeArray:
                 "Electrode grid not computed. This should be automatically created "
                 "during class initialization. Please check constructor execution."
             )
-        return self._pos_z
+        return self._pos_z * pq.mm
 
     @property
-    def pos_theta(self) -> np.ndarray:
+    def pos_theta(self) -> Quantity__rad:
         """
         Angular positions of electrodes in radians.
 
         Returns
         -------
-        np.ndarray
+        Quantity__rad
             Array of shape (num_rows, num_cols) containing angular coordinates
             of each electrode position in radians.
 
@@ -246,16 +248,16 @@ class SurfaceElectrodeArray:
                 "Electrode grid not computed. This should be automatically created "
                 "during class initialization. Please check constructor execution."
             )
-        return self._pos_theta
+        return self._pos_theta * pq.rad
 
     @property
-    def electrode_positions(self) -> tuple[np.ndarray, np.ndarray]:
+    def electrode_positions(self) -> tuple[Quantity__mm, Quantity__rad]:
         """
         Complete electrode position arrays (z, theta) in physical coordinates.
 
         Returns
         -------
-        tuple[np.ndarray, np.ndarray]
+        tuple[Quantity__mm, Quantity__rad]
             Tuple containing:
             - pos_z: Longitudinal positions in mm, shape (num_rows, num_cols)
             - pos_theta: Angular positions in radians, shape (num_rows, num_cols)
@@ -379,11 +381,19 @@ class IntramuscularElectrodeArray:
     def __init__(
         self,
         num_electrodes: int,
-        inter_electrode_distance__mm: float = 0.5,
-        position__mm: tuple[float, float, float] = (0.0, 0.0, 0.0),
-        orientation__rad: tuple[float, float, float] = (0.0, 0.0, 0.0),
+        inter_electrode_distance__mm: Quantity__mm = 0.5 * pq.mm,
+        position__mm: tuple[Quantity__mm, Quantity__mm, Quantity__mm] = (
+            0.0 * pq.mm,
+            0.0 * pq.mm,
+            0.0 * pq.mm,
+        ),
+        orientation__rad: tuple[Quantity__rad, Quantity__rad, Quantity__rad] = (
+            0.0 * pq.rad,
+            0.0 * pq.rad,
+            0.0 * pq.rad,
+        ),
         differentiation_mode: Literal["consecutive", "reference"] = "consecutive",
-        trajectory_distance__mm: float = 0.0,
+        trajectory_distance__mm: Quantity__mm = 0.0 * pq.mm,
         trajectory_steps: int = 1,
     ):
         # Immutable public arguments - never modify these
@@ -395,13 +405,23 @@ class IntramuscularElectrodeArray:
         self.trajectory_distance__mm = trajectory_distance__mm
         self.trajectory_steps = trajectory_steps
 
-        # Private copies for internal modifications
+        # Private copies for internal modifications (extract magnitudes)
         self._num_electrodes = num_electrodes
-        self._inter_electrode_distance__mm = inter_electrode_distance__mm
-        self._position__mm = position__mm
-        self._orientation__rad = orientation__rad
+        self._inter_electrode_distance__mm = float(
+            inter_electrode_distance__mm.rescale(pq.mm).magnitude
+        )
+        self._position__mm = (
+            float(position__mm[0].rescale(pq.mm).magnitude),
+            float(position__mm[1].rescale(pq.mm).magnitude),
+            float(position__mm[2].rescale(pq.mm).magnitude),
+        )
+        self._orientation__rad = (
+            float(orientation__rad[0].rescale(pq.rad).magnitude),
+            float(orientation__rad[1].rescale(pq.rad).magnitude),
+            float(orientation__rad[2].rescale(pq.rad).magnitude),
+        )
         self._differentiation_mode = differentiation_mode
-        self._trajectory_distance__mm = trajectory_distance__mm
+        self._trajectory_distance__mm = float(trajectory_distance__mm.rescale(pq.mm).magnitude)
         self._trajectory_steps = trajectory_steps
 
         self.num_points = num_electrodes  # Alias for compatibility
@@ -410,8 +430,7 @@ class IntramuscularElectrodeArray:
         self._pts_origin = np.concatenate(
             [
                 np.zeros((self._num_electrodes, 2)),
-                np.arange(self._num_electrodes)[..., None]
-                * self._inter_electrode_distance__mm,
+                np.arange(self._num_electrodes)[..., None] * self._inter_electrode_distance__mm,
             ],
             axis=-1,
         )
@@ -422,9 +441,7 @@ class IntramuscularElectrodeArray:
 
         match differentiation_mode:
             case "consecutive":
-                eye_mat = np.eye(
-                    self._pts_origin.shape[0] - 1, self._pts_origin.shape[0]
-                )
+                eye_mat = np.eye(self._pts_origin.shape[0] - 1, self._pts_origin.shape[0])
                 self._diff_mat = eye_mat - np.roll(eye_mat, shift=1, axis=1)
             case "reference":
                 self._diff_mat = np.roll(
@@ -436,17 +453,16 @@ class IntramuscularElectrodeArray:
 
         self._n_channels = self._diff_mat.shape[0]
 
-        self.set_position(
-            position__mm=self._position__mm, orientation__rad=self._orientation__rad
-        )
+        # Use public (Quantity) parameters for method calls
+        self.set_position(position__mm=position__mm, orientation__rad=orientation__rad)
         self.set_linear_trajectory(
-            distance__mm=self._trajectory_distance__mm, n_nodes=self._trajectory_steps
+            distance__mm=trajectory_distance__mm, n_nodes=self._trajectory_steps
         )
 
     def set_position(
         self,
-        position__mm: tuple[float, float, float],
-        orientation__rad: tuple[float, float, float],
+        position__mm: tuple[Quantity__mm, Quantity__mm, Quantity__mm],
+        orientation__rad: tuple[Quantity__rad, Quantity__rad, Quantity__rad],
     ) -> None:
         """
         Set the position and orientation of the intramuscular electrode array.
@@ -494,19 +510,25 @@ class IntramuscularElectrodeArray:
         """
         self._pts_init = np.copy(self._pts_origin)
 
-        self._pts_init = self.rodrigues_rot(
-            self._pts_init, [1, 0, 0], orientation__rad[0]
+        # Extract magnitude values for internal calculations
+        orientation__rad_values = (
+            float(orientation__rad[0].rescale(pq.rad).magnitude),
+            float(orientation__rad[1].rescale(pq.rad).magnitude),
+            float(orientation__rad[2].rescale(pq.rad).magnitude),
         )
-        self._pts_init = self.rodrigues_rot(
-            self._pts_init, [0, 1, 0], orientation__rad[1]
-        )
-        self._pts_init = self.rodrigues_rot(
-            self._pts_init, [0, 0, 1], orientation__rad[2]
+        position__mm_values = np.array(
+            [
+                float(position__mm[0].rescale(pq.mm).magnitude),
+                float(position__mm[1].rescale(pq.mm).magnitude),
+                float(position__mm[2].rescale(pq.mm).magnitude),
+            ]
         )
 
-        self._pts_init += np.matlib.repmat(
-            np.array(position__mm)[None], self._pts_init.shape[0], 1
-        )
+        self._pts_init = self.rodrigues_rot(self._pts_init, [1, 0, 0], orientation__rad_values[0])
+        self._pts_init = self.rodrigues_rot(self._pts_init, [0, 1, 0], orientation__rad_values[1])
+        self._pts_init = self.rodrigues_rot(self._pts_init, [0, 0, 1], orientation__rad_values[2])
+
+        self._pts_init += np.matlib.repmat(position__mm_values[None], self._pts_init.shape[0], 1)
         self._pts = np.copy(self._pts_init)
 
     def rodrigues_rot(self, v, k, theta):
@@ -554,9 +576,7 @@ class IntramuscularElectrodeArray:
         r = R.from_rotvec(k * theta)  # Create rotation from axis-angle
         return r.apply(v)  # Rotates v (works with (3,), (N, 3))
 
-    def set_linear_trajectory(
-        self, distance__mm: float, n_nodes: int | None = None
-    ) -> None:
+    def set_linear_trajectory(self, distance__mm: Quantity__mm, n_nodes: int | None = None) -> None:
         """
         Configure linear trajectory movement for the electrode array.
 
@@ -597,13 +617,16 @@ class IntramuscularElectrodeArray:
         calc_observation_points : Calculate electrode positions along trajectory
         traj_mixing_mat : Generate mixing matrices for trajectory interpolation
         """
+        # Extract magnitude value for internal calculations
+        distance__mm_value = float(distance__mm.rescale(pq.mm).magnitude)
+
         if n_nodes is None:
-            n_nodes = max(np.ceil(distance__mm / 0.5), 1)
+            n_nodes = max(np.ceil(distance__mm_value / 0.5), 1)
 
         self.n_nodes = n_nodes
-        self._trajectory_step = distance__mm / self.n_nodes
+        self._trajectory_step = distance__mm_value / self.n_nodes
 
-        self.traj_transforms = np.linspace(start=0, stop=distance__mm, num=self.n_nodes)
+        self.traj_transforms = np.linspace(start=0, stop=distance__mm_value, num=self.n_nodes)
         self.traj_transforms = np.hstack(
             [
                 np.zeros((max(self.traj_transforms.shape), 2)),
@@ -612,14 +635,15 @@ class IntramuscularElectrodeArray:
             ]
         )
 
+        # Use private orientation values (already extracted as floats)
         self.traj_transforms[:, :3] = self.rodrigues_rot(
-            self.traj_transforms[:, :3], [1, 0, 0], self.orientation__rad[0]
+            self.traj_transforms[:, :3], [1, 0, 0], self._orientation__rad[0]
         )
         self.traj_transforms[:, :3] = self.rodrigues_rot(
-            self.traj_transforms[:, :3], [0, 1, 0], self.orientation__rad[1]
+            self.traj_transforms[:, :3], [0, 1, 0], self._orientation__rad[1]
         )
         self.traj_transforms[:, :3] = self.rodrigues_rot(
-            self.traj_transforms[:, :3], [0, 0, 1], self.orientation__rad[2]
+            self.traj_transforms[:, :3], [0, 0, 1], self._orientation__rad[2]
         )
 
         self.calc_observation_points()
@@ -738,15 +762,15 @@ class IntramuscularElectrodeArray:
         )
 
     @property
-    def electrode_positions(self) -> np.ndarray:
+    def electrode_positions(self) -> Quantity__mm:
         """
         Current electrode positions in 3D space (mm).
 
         Returns
         -------
-        np.ndarray
+        Quantity__mm
             Array of shape (n_nodes * num_electrodes, 3) containing x, y, z coordinates
-            of each electrode position for all trajectory nodes.
+            of each electrode position for all trajectory nodes, in mm.
 
         Raises
         ------
@@ -758,7 +782,7 @@ class IntramuscularElectrodeArray:
                 "Electrode positions not computed. Run set_linear_trajectory() first "
                 "to calculate trajectory and electrode positions."
             )
-        return self.pts
+        return self.pts * pq.mm
 
     @property
     def differential_matrix(self) -> np.ndarray:
@@ -808,15 +832,15 @@ class IntramuscularElectrodeArray:
         return self.traj_transforms
 
     @property
-    def initial_positions(self) -> np.ndarray:
+    def initial_positions(self) -> Quantity__mm:
         """
         Initial electrode positions after position/orientation setup.
 
         Returns
         -------
-        np.ndarray
+        Quantity__mm
             Array of shape (num_electrodes, 3) containing initial x, y, z coordinates
-            of electrodes before trajectory movement is applied.
+            of electrodes before trajectory movement is applied, in mm.
 
         Raises
         ------
@@ -828,7 +852,7 @@ class IntramuscularElectrodeArray:
                 "Initial electrode positions not computed. Run set_position() first "
                 "to configure electrode array placement and orientation."
             )
-        return self._pts_init
+        return self._pts_init * pq.mm
 
     @property
     def num_channels(self) -> int:

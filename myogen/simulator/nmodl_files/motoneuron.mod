@@ -103,7 +103,7 @@ INITIAL {
 BREAKPOINT {
     : Solve differential equations
     SOLVE states METHOD cnexp
-    : Sodium current (m^3h formulation)
+    : Sodium current (m^3*h formulation)
     ina = gna*m*m*m*h*(v - ena)
     : Fast potassium current (n^4 formulation)
     ikf = gk_fast*n*n*n*n*(v - ekf)

@@ -1,0 +1,58 @@
+# ============================================================================
+# Full Pipeline Commands (MANUAL - Old approach, deprecated)
+# ============================================================================
+# NOTE: These commands are kept for reference but are error-prone due to
+# hardcoded muscle names. Use run_full_pipeline.sh instead!
+
+for fr in THIRTY TWENTYFIVE TWENTY FIFTEEN TEN FIVE; do ./bash_scripts/run_dd_optimization.sh "$fr" --gamma-shape 3.0 & done; wait
+
+for fr in THIRTY_gamma3.0 TWENTYFIVE_gamma3.0 TWENTY_gamma3.0 FIFTEEN_gamma3.0 TEN_gamma3.0 FIVE_gamma3.0; do ./bash_scripts/run_compute_force_mvc.sh "$fr" & done; wait
+
+for muscle in THIRTY_gamma3.0 TWENTYFIVE_gamma3.0 TWENTY_gamma3.0 FIFTEEN_gamma3.0 TEN_gamma3.0 FIVE_gamma3.0; do for force in 5 15 30 50 75 90; do ./bash_scripts/run_force_optimization.sh "$muscle" "$force" & done; done; wait
+
+for muscle in THIRTY_gamma3.0 TWENTYFIVE_gamma3.0 TWENTY_gamma3.0 FIFTEEN_gamma3.0 TEN_gamma3.0 FIVE_gamma3.0; do for force in 5 15 30 50 75 90; do ./bash_scripts/run_extract_isi_cv.sh "$muscle" "$force" & done; done; wait
+
+python examples/finetune/plot_isi_cv_multi_muscle_comparison.py --muscles THIRTY_gamma3.0 TWENTYFIVE_gamma3.0 TWENTY_gamma3.0 FIFTEEN_gamma3.0 TEN_gamma3.0 FIVE_gamma3.0 --results-path ./results --output-format jpg
+
+
+# ============================================================================
+# Full Pipeline Commands (AUTOMATED - Recommended approach)
+# ============================================================================
+# Use run_full_pipeline.sh for automatic propagation of gamma shape values
+
+# Regular CV input (gamma shape 3.0, CV ≈ 0.58)
+./bash_scripts/run_full_pipeline.sh --gamma-shape 3.0
+
+# High CV input (gamma shape 0.5, CV ≈ 1.41)
+./bash_scripts/run_full_pipeline.sh --gamma-shape 0.5
+
+# High CV input with Gfluctdv membrane noise (COMBINED VARIABILITY)
+./bash_scripts/run_full_pipeline.sh --gamma-shape 0.5 --enable-gfluctdv
+
+# Skip already-completed steps (faster reruns)
+./bash_scripts/run_full_pipeline.sh --gamma-shape 2.5 --skip-dd-optimization
+
+# Custom output format for plots
+./bash_scripts/run_full_pipeline.sh --gamma-shape 3.0 --output-format pdf
+
+# Skip only plotting (run analysis but not final plots)
+./bash_scripts/run_full_pipeline.sh --gamma-shape 0.5 --skip-plotting
+
+
+# ============================================================================
+# Comparison Study Example: DD input variability vs Membrane noise
+# ============================================================================
+
+# Strategy 1: Input variability only (high CV DD, no membrane noise)
+./bash_scripts/run_full_pipeline.sh --gamma-shape 0.5
+
+# Strategy 2: Combined variability (high CV DD + Gfluctdv)
+./bash_scripts/run_full_pipeline.sh --gamma-shape 0.5 --enable-gfluctdv
+
+# Strategy 3: Baseline (regular CV DD, no membrane noise)
+./bash_scripts/run_full_pipeline.sh --gamma-shape 3.0
+
+# Results will be in separate directories:
+#   - THIRTY_gamma0.5_*
+#   - THIRTY_gfluctdv_gamma0.5_*
+#   - THIRTY_gamma3.0_*

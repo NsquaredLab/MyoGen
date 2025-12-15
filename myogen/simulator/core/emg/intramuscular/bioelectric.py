@@ -92,9 +92,7 @@ def get_tm_current_ddz(z: np.ndarray, D1: float = 96.0) -> np.ndarray:
     Vm = np.zeros_like(z, dtype=np.float64)
     pos_mask = z > 0
     z_pos = z[pos_mask]
-    Vm[pos_mask] = (
-        D1 * ((6 * z_pos - 3 * z_pos**2) - (3 * z_pos**2 - z_pos**3)) * np.exp(-z_pos)
-    )
+    Vm[pos_mask] = D1 * ((6 * z_pos - 3 * z_pos**2) - (3 * z_pos**2 - z_pos**3)) * np.exp(-z_pos)
     return Vm
 
 
@@ -130,9 +128,14 @@ def get_elementary_current_response(
     np.ndarray
         Elementary current response (transfer function)
     """
+    # ---- FIXED UNIT CONVERSIONS ----
+    # Convert conductivities from S/m to S/mm to match spatial units (mm)
+    sigma_r_S_per_mm = sigma_r / 1000.0  # CORRECTED: convert S/m → S/mm
+    sigma_z_S_per_mm = sigma_z / 1000.0  # CORRECTED: convert S/m → S/mm
+
     return np.divide(
-        1 / 4 / np.pi / sigma_r,
-        np.sqrt(sigma_z / sigma_r * r**2 + (z - z_electrode) ** 2),
+        1 / 4 / np.pi / sigma_r_S_per_mm,
+        np.sqrt(sigma_z_S_per_mm / sigma_r_S_per_mm * r**2 + (z - z_electrode) ** 2),
     )
 
 
@@ -212,7 +215,7 @@ def hr_shift_template(x, delay):
 
 
 def get_current_density(
-    t, z, zi, L1, L2, v, d=55e-6, suppress_endplate_density=True, endplate_width=0.5
+    t, z, zi, L1, L2, v, d=55e-3, suppress_endplate_density=True, endplate_width=0.5
 ):
     """
     Model the individual action potential (IAP) or single fiber action potential (SFAP) in space and time.
@@ -233,7 +236,7 @@ def get_current_density(
     v : float
         Conduction speed in mm/s
     d : float, optional
-        Fiber diameter in mm (default: 55 µm)
+        Fiber diameter in mm (default: 55e-3 mm = 55 um)
     suppress_endplate_density : bool, optional
         Whether to suppress density at endplate region (default: True)
     endplate_width : float, optional
@@ -277,16 +280,21 @@ def get_current_density(
     if suppress_endplate_density:
 
         def endplate_terminator(z_inline):
-            return (z_inline <= (zi - endplate_width)) | (
-                z_inline >= (zi + endplate_width)
-            )
+            return (z_inline <= (zi - endplate_width)) | (z_inline >= (zi + endplate_width))
 
         iap *= endplate_terminator(Z[:-1, :])
 
-    # Scale using intracellular conductivity
-    sigma_i = 1.01 * 1000  # [S/m] converted to S/mm
-    d *= 1000  # convert fiber diameter from mm to µm for consistency with original scaling
-    iap *= sigma_i * np.pi * ((d / 2) ** 2) / 4
+    # ---- FIXED UNIT CONVERSIONS ----
+    # Intracellular conductivity: 1.01 S/m → convert to S/mm
+    sigma_i_S_per_m = 1.01
+    sigma_i = sigma_i_S_per_m / 1000.0  # S/mm (CORRECTED: was *1000, now /1000)
+
+    # Fiber diameter is already in mm (default d=55e-3 mm = 55 um)
+    # Compute cross-sectional area in mm²
+    area_mm2 = np.pi * (d / 2) ** 2  # CORRECTED: removed extra /4
+
+    # Scale current density by intracellular conductivity and fiber cross-section area
+    iap *= sigma_i * area_mm2
 
     return iap
 
@@ -340,9 +348,7 @@ def get_current_density_fast(
     # This is a simplified version - full implementation would require
     # proper lookup table indexing and bounds checking
     # For now, fall back to the regular version
-    return get_current_density(
-        t, z, zi, L1, L2, v, d, suppress_endplate_density, endplate_width
-    )
+    return get_current_density(t, z, zi, L1, L2, v, d, suppress_endplate_density, endplate_width)
 
 
 def calculate_sfap(
@@ -410,11 +416,7 @@ def calculate_sfap(
         # Find closest fiber position point
         distances = np.sqrt(
             np.sum(
-                (
-                    fiber_positions
-                    - [electrode_position[0], electrode_position[1], z_point]
-                )
-                ** 2,
+                (fiber_positions - [electrode_position[0], electrode_position[1], z_point]) ** 2,
                 axis=1,
             )
         )

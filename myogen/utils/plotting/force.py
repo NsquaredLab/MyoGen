@@ -1,11 +1,12 @@
 from typing import Any
 
+import matplotlib.pyplot as plt
 import numpy as np
 import seaborn as sns
 from matplotlib.axes import Axes
 
 from myogen.simulator import ForceModel
-from myogen.utils.types import beartowertype
+from myogen.utils.decorators import beartowertype
 
 
 @beartowertype
@@ -42,9 +43,7 @@ def plot_twitch_parameter_assignment(
 
     # Convert data to plotting coordinates
     x_data = (
-        force_model.contraction_times__samples
-        / force_model.recording_frequency__Hz
-        * 1000
+        force_model.contraction_times__samples / float(force_model.recording_frequency__Hz) * 1000
     )
     y_data = force_model.peak_twitch_forces__unitless
 
@@ -56,6 +55,10 @@ def plot_twitch_parameter_assignment(
     if MU_to_highlight is not None:
         # Convert to 0-indexed numpy array for easier manipulation
         mu_indices = np.array(MU_to_highlight) - 1
+
+        # Get default matplotlib color cycle
+        prop_cycle = plt.rcParams["axes.prop_cycle"]
+        colors = prop_cycle.by_key()["color"][1:]  # Skip first color to avoid black
 
         # Calculate normal vectors for label positioning
         def calculate_normal_vector(
@@ -97,9 +100,12 @@ def plot_twitch_parameter_assignment(
 
         # Calculate offset distance (5% of the y-axis range)
         y_range = np.max(y_data) - np.min(y_data)
-        offset_distance = 0.05 * y_range
+        offset_distance = 0.1 * y_range
 
-        for MU in mu_indices:
+        for i, MU in enumerate(mu_indices):
+            # Get color from cycle
+            color = colors[i % len(colors)]
+
             # Calculate normal vector at this point
             normal_x, normal_y = calculate_normal_vector(MU, x_data, y_data)
 
@@ -111,18 +117,18 @@ def plot_twitch_parameter_assignment(
                 label_x,
                 label_y,
                 f"MU {MU + 1}",
-                color="red",
+                color=color,
                 ha="center",
                 va="center",
             )
 
-        # Highlight the selected MUs with red dots
-        ax.plot(
-            x_data[mu_indices],
-            y_data[mu_indices],
-            "o",
-            color="red",
-        )
+            # Highlight the selected MU with colored dot
+            ax.plot(
+                x_data[MU],
+                y_data[MU],
+                "o",
+                color=color,
+            )
 
     if flip_x:
         ax.invert_xaxis()
@@ -140,6 +146,7 @@ def plot_twitch_parameter_assignment(
 def plot_twitches(
     force_model: ForceModel,
     ax: Axes,
+    MU_to_highlight: list[int] | None = None,
     apply_default_formatting: bool = True,
     **kwargs: Any,
 ) -> Axes:
@@ -152,6 +159,9 @@ def plot_twitches(
         The force model to plot.
     ax : Axes
         The axes to plot on.
+    MU_to_highlight : list[int], optional
+        The MUs to highlight with matplotlib default colors. If provided, these MUs will be
+        plotted with colors from the default color cycle, while all other MUs will be black.
     apply_default_formatting : bool, optional
         Whether to apply default formatting to the plot, by default True
     **kwargs : Any
@@ -163,18 +173,46 @@ def plot_twitches(
         The axes with the plot.
     """
 
+    # Calculate timeline for all twitches
+    max_twitch_length = force_model.twitch_mat.shape[0]
     timeline = (
-        np.arange(force_model.twitch_list[0].shape[0])
-        / force_model.recording_frequency__Hz
+        np.arange(max_twitch_length)
+        / float(force_model.recording_frequency__Hz.rescale("Hz").magnitude)
         * 1000
     )
 
+    # Get default matplotlib color cycle
+    prop_cycle = plt.rcParams["axes.prop_cycle"]
+    colors = prop_cycle.by_key()["color"]  # Skip first color to avoid black
+
+    if MU_to_highlight is not None:
+        # Convert to 0-indexed numpy array
+        mu_indices = np.array(MU_to_highlight) - 1
+
+        # Plot all MUs
+        for i in range(force_model.twitch_mat.shape[1]):
+            # Get timeline for this specific twitch (may be shorter than max)
+            twitch = force_model.twitch_list[i]
+            twitch_timeline = timeline[: len(twitch)]
+
+            if i in mu_indices:
+                # Highlighted MU - use color from cycle
+                color_idx = np.where(mu_indices == i)[0][0]
+                color = colors[1:][color_idx % len(colors)]
+                ax.plot(twitch_timeline, twitch, color=color, linewidth=2, zorder=10)
+            else:
+                # Non-highlighted MU - use black
+                ax.plot(twitch_timeline, twitch, color=colors[0], linewidth=1.0)
+    else:
+        # No highlighting - plot all in black as before
+        if apply_default_formatting:
+            ax.plot(timeline, force_model.twitch_mat, color=colors[0], linewidth=1.0)
+        else:
+            ax.plot(timeline, force_model.twitch_mat, color=colors[0], **kwargs)
+
     if apply_default_formatting:
-        ax.plot(timeline, force_model.twitch_mat, "black")
         ax.set_xlabel("Time (ms)")
         ax.set_ylabel("Twitch Force (a. u.)")
         sns.despine(ax=ax, top=True, right=True, trim=True, offset=0)
-    else:
-        ax.plot(timeline, force_model.twitch_mat, **kwargs)
 
     return ax

@@ -13,7 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Type System Enhancement**: New `RECRUITMENT_THRESHOLDS__ARRAY` custom type alias for 1D recruitment threshold arrays with runtime validation via Beartype
 - **Development Guidelines**: Comprehensive `CLAUDE.md` with development protocols:
   - Git workflow with logical commit chunking and co-authorship requirements
-  - Example development guidelines with plt.xkcd() usage and Sphinx Gallery format
+  - Example development guidelines with professional plotting styles and Sphinx Gallery format
   - API testing requirements and font warning suppression protocols
   - CHANGELOG.md update requirements for all changes
 - **Naming Standards**: Enhanced CLAUDE.md with comprehensive naming conventions:

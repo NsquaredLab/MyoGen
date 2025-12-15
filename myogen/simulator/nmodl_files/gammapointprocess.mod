@@ -23,17 +23,17 @@ NEURON  {
 }
 
 PARAMETER {
-    alpha = 1                     : shape parameter of gamma distribution. 1 = Poisson process.
-    beta = 0.1 (/ms) <1e-9,1e9>   : rate parameter of gamma distribution
-                                  : mean interval is alpha/beta
-    start = 1 (ms)                : start of first spike
-    duration = 1000 (ms)          : input duration
+    alpha =     1                           : shape parameter of gamma distribution. 1 = Poisson process.
+    beta =      0.1     (/ms) <1e-9,1e9>    : rate parameter of gamma distribution
+                                            : mean interval is alpha/beta
+    start =     1       (ms)                : start of first spike
+    duration =  1000    (ms)                : input duration
 }
 
 ASSIGNED {
-    event (ms)
+    event               (ms)
     on
-    end (ms)
+    end                 (ms)
 }
 
 PROCEDURE seed(x) {
@@ -80,14 +80,14 @@ FUNCTION rand_gamma(alpha(1), beta(/ms)) (1) {
     LOCAL i, Z, U, T
     i = 1
     Z = 1.0
-    while (i <= alpha){
+    while (i <= alpha) {
         U = scop_random()
         Z = Z*U
         i = i + 1
     }
     T = -log(Z)/alpha
     i = 1
-    while (T>0){
+    while (T>0) { 
         T = T - beta*dt
         i = i + 1
     }

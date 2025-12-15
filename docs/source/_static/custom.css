@@ -165,6 +165,27 @@ dl.py.class > dt {
     text-decoration: underline;
 }
 
+/* Make internal Quantity type links in signatures match external Python doc links */
+.sig-param .reference.internal,
+.sig .reference.internal {
+    color: var(--color-link) !important;
+}
+
+.sig-param .reference.internal:hover,
+.sig .reference.internal:hover {
+    color: var(--color-link-hover) !important;
+    text-decoration: underline;
+}
+
+/* Ensure hoverxref tooltip links have consistent styling */
+a.hxr-hoverxref.reference.internal {
+    color: var(--color-link) !important;
+}
+
+a.hxr-hoverxref.reference.internal:hover {
+    color: var(--color-link-hover) !important;
+}
+
 /* Custom spacing for MyoGen API cards */
 .myogen-card {
     padding: 0.5rem 0.5rem !important;
@@ -175,4 +196,82 @@ dl.py.class > dt {
 .sig-param .o {
   margin-left: 0.3em;
   margin-right: 0.3em;
+}
+
+/* Ensure stretched link text is hidden */
+.sd-hide-link-text {
+    font-size: 0 !important;
+    line-height: 0 !important;
+    overflow: hidden !important;
+    clip: rect(0, 0, 0, 0) !important;
+    white-space: nowrap !important;
+}
+
+/* Type alias display uses standard Sphinx highlight classes */
+dl.py.data dd p .highlight-python {
+    margin: 0.5rem 0;
+}
+
+dl.py.data dd p .highlight-python pre {
+    line-height: 1.8;
+}
+
+/* Preserve link styling inside formatted type aliases */
+dl.py.data dd .highlight pre code .xref,
+dl.py.data dd .highlight pre code a,
+dl.py.data dd .highlight pre code .reference {
+    color: #2980b9 !important;
+    text-decoration: none;
+}
+
+dl.py.data dd .highlight pre code .xref:hover,
+dl.py.data dd .highlight pre code a:hover,
+dl.py.data dd .highlight pre code .reference:hover {
+    color: #3091d1 !important;
+    text-decoration: underline;
+}
+
+/* Ensure Pygments syntax highlighting colors work */
+/* But links should always be blue, even if they have other classes */
+dl.py.data dd .highlight pre code a .nc,
+dl.py.data dd .highlight pre code a.nc {
+    color: #2980b9 !important;
+    font-weight: bold;
+}
+
+dl.py.data dd .highlight pre code .nc {
+    color: #458588;
+    font-weight: bold;
+}
+
+dl.py.data dd .highlight pre code a .nn,
+dl.py.data dd .highlight pre code a.nn {
+    color: #2980b9 !important;
+}
+
+dl.py.data dd .highlight pre code .nn {
+    color: #b16286;
+}
+
+dl.py.data dd .highlight pre code a .n,
+dl.py.data dd .highlight pre code a.n {
+    color: #2980b9 !important;
+}
+
+dl.py.data dd .highlight pre code .n {
+    color: #83a598;
+}
+
+dl.py.data dd .highlight pre code .s1 {
+    color: #b8bb26;
+}
+
+dl.py.data dd .highlight pre code .p {
+    color: #ebdbb2;
+}
+
+/* Style for "alias of" text */
+dl.py.data dd p strong {
+    font-weight: 600;
+    color: var(--color-api-name);
 }

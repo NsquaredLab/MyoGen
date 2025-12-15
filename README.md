@@ -1,94 +1,152 @@
-<img src="./docs/source/_static/myogen_logo.png" height="250">
+<div align="center">
+  <h1 style="display: flex; align-items: center; justify-content: center; gap: 10px;">
+    <span>Welcome to</span>
+    <img src="./docs/source/_static/myogen_logo.png" height="100" alt="MyoGen Logo">
+  </h1>
 
-> [!TIP]
-> Dive deeper into our features and usage with the official [documentation](https://nsquaredlab.github.io/MyoGen/).
+  <h2>The modular and extandable simulation toolkit for neurophysiology</h2>
 
-# MyoGen - EMG simulation made accessible
+  [![Documentation](https://img.shields.io/badge/docs-latest-blue.svg)](https://nsquaredlab.github.io/MyoGen/)
+  [![Python 3.12+](https://img.shields.io/badge/python-3.12+-blue.svg)](https://www.python.org/downloads/)
+  [![Version](https://img.shields.io/badge/version-0.4.0-orange.svg)](https://github.com/NsquaredLab/MyoGen)
 
-## What is MyoGen?
+  [Installation](https://nsquaredlab.github.io/MyoGen/#installation) •
+  [Documentation](https://nsquaredlab.github.io/MyoGen/) •
+  [Examples](https://nsquaredlab.github.io/MyoGen/examples/) •
+  [How to Cite](https://nsquaredlab.github.io/MyoGen/#how-to-cite)
+</div>
 
-MyoGen is a biophysical simulation toolkit for generating surface and intramuscular electromyography (EMG) signals. Built on established physiological principles and validated anatomical data, MyoGen provides researchers, engineers, and educators with an accessible platform for EMG signal simulation that spans from motor unit recruitment to surface electrode recordings.
+# Overview
 
-The toolkit implements a complete simulation pipeline: from motor unit recruitment thresholds and spike train generation using the NEURON simulator, through anatomically accurate muscle modeling with realistic fiber distributions, to surface EMG signal synthesis via Motor Unit Action Potentials (MUAPs). This end-to-end approach enables users to understand and validate EMG processing algorithms, develop new analysis methods, and explore neuromuscular system behavior under various conditions.
+MyoGen is a **modular and extensible neuromuscular simulation framework** for generating physiologically grounded motor-unit activity, muscle force, and surface EMG signals.  
 
-Key features include:
-- **Motor Unit Recruitment Modeling**: Four validated models (Fuglevand, De Luca, Konstantin, Combined) for physiologically realistic recruitment patterns
-- **Biophysical Spike Train Simulation**: NEURON-based motor neuron modeling with detailed calcium dynamics and membrane properties  
-- **Anatomically Accurate Muscle Models**: Spatial distribution of motor units and muscle fibers based on anatomical measurements
-- **Surface EMG Synthesis**: Multi-layered volume conductor modeling for realistic surface EMG signal generation
-- **Multi-Electrode Array Support**: Simulation of high-density electrode grids with configurable spatial arrangements
-- **Flexible Input Current Patterns**: Built-in generators for sinusoidal, ramp, step, trapezoid, and sawtooth stimulation waveforms
-- **GPU Acceleration**: Automatic CuPy integration for fast parallel processing of large-scale simulations
-- **Comprehensive Visualization**: Built-in plotting tools for recruitment thresholds, spike trains, muscle anatomy, MUAPs, and surface EMG
-- **Reproducible Research**: Deterministic random number generation and parameter saving for reproducible simulations
+It supports end-to-end modeling of the neuromuscular pathway, from descending neural drive and spinal motor neuron dynamics to muscle activation and bioelectric signal formation at the electrode level.
+MyoGen is designed for algorithm validation, hypothesis-driven research, and education, providing configurable building blocks that can be independently combined and extended.
 
-> [!WARNING]  
-> MyoGen is still under development and the API is subject to change.
+# Highlights
 
-## Installation
+🧬 **Biophysically inspired neuron models** — NEURON-based motor neurons with validated calcium dynamics and membrane properties
 
-### Clone the repository
+🎯 **Everything is inspectable** — Complete access to every motor unit, spike time, fiber location etc. for rigorous algorithm testing
+
+⚡️ **Vectorized & parallel** — Multi-core CPU processing with NumPy/Numba vectorization for fast computation
+
+🔬 **End-to-end simulation** — From motor unit recruitment to high-density surface EMG in a single framework
+
+📊 **Reproducible science** — Deterministic random seeds and standardized Neo Block outputs for exact replication
+
+🧰 **Comprehensive toolkit** — Surface EMG, intramuscular EMG, force generation, and spinal network modeling
+
+# Installation
+
+**Prerequisites**: Python ≥3.12, Linux/Windows/macOS
+
+> [!IMPORTANT]
+> **Windows users**: Install [NEURON 8.2.6](https://github.com/neuronsimulator/nrn/releases/download/8.2.6/nrn-8.2.6.w64-mingw-py-38-39-310-311-312-setup.exe) before running `uv sync`
+
 ```bash
+# Clone and install
 git clone https://github.com/NsquaredLab/MyoGen.git
 cd MyoGen
-```
-
-### (Windows only) Install NEURON 8.2.6
-
-> [!WARNING]  
-> Make sure to install version 8.2.6.
-
-Link: https://github.com/neuronsimulator/nrn/releases/download/8.2.6/nrn-8.2.6.w64-mingw-py-38-39-310-311-312-setup.exe
-
-### Install UV
-https://docs.astral.sh/uv/#highlights
-
-### Create environment
-```bash
 uv sync
+
+# Activate environment
+source .venv/bin/activate  # Linux/macOS
+.venv\Scripts\activate     # Windows
+
+# Compile NEURON mechanisms (required)
+uv run poe setup_myogen
 ```
 
-### Add cupy if CUDA is available
-```bash
-uv pip install cupy-cuda12x
-```
+> [!TIP]
+> Install [uv](https://docs.astral.sh/uv/) first
 
-### Activate the environment
-```bash
-source .venv/bin/activate
-```
-
-### Run the setup to compile the NMODL files correctly
-> [!WARNING]  
-> This step is required. Please do not skip it.
+**GPU acceleration of convoutions** (optional):
 
 ```bash
-python -c "from myogen.utils import setup_myogen; setup_myogen()"
+uv pip install cupy-cuda12x  # 5-10× speedup
 ```
 
-#### NMODL/NEURON Issues
+# Quick Start
 
-If you encounter NMODL compilation or loading issues:
+Generate motor unit action potentials (MUAPs):
 
-1. **Automatic handling**: MyoGen automatically handles NMODL loading. Just import and use:
-   ```python
-   from myogen import simulator  # NMODL files loaded automatically
-   ```
+```python
+from myogen import simulator
+import quantities as pq
 
-2. **Manual setup** (if needed):
-   ```python
-   from myogen.utils import setup_myogen
-   setup_myogen()  # Explicit setup with verbose output
-   from myogen import simulator
-   ```
+# 1. Generate recruitment thresholds (100 motor units)
+thresholds, _ = simulator.RecruitmentThresholds(
+    N=100,
+    recruitment_range__ratio=50,
+    mode="fuglevand"
+)
 
-3. **Force recompilation**:
-   ```python
-   from myogen.utils import setup_myogen
-   setup_myogen(force_nmodl_reload=True)  # Force recompilation
-   ```
+# 2. Create muscle model with fiber distribution
+muscle = simulator.Muscle(
+    recruitment_thresholds=thresholds,
+    radius_bone__mm=1.0 * pq.mm,
+    fiber_density__fibers_per_mm2=400 * pq.mm**-2,
+    fat_thickness__mm=10 * pq.mm,
+    autorun=True
+)
 
-## How to Use
+# 3. Set up surface electrode array
+electrode_array = simulator.SurfaceElectrodeArray(
+    num_rows=5,
+    num_cols=5,
+    inter_electrode_distances__mm=5 * pq.mm,
+    electrode_radius__mm=5 * pq.mm,
+    bending_radius__mm=muscle.radius__mm + muscle.skin_thickness__mm + muscle.fat_thickness__mm,
+)
 
-See the [documentation](https://nsquaredlab.github.io/MyoGen/) for more details.
+# 4. Create surface EMG simulator
+surface_emg = simulator.SurfaceEMG(
+    muscle_model=muscle,
+    electrode_arrays=[electrode_array],
+    sampling_frequency__Hz=2048.0,
+    MUs_to_simulate=[0, 1, 2, 3, 4]  # First 5 motor units
+)
 
+# 5. Simulate MUAPs (parallel processing)
+muaps = surface_emg.simulate_muaps(n_jobs=-2)
+```
+
+**Access MUAP data**:
+
+```python
+import numpy as np
+
+# Get MUAP from motor unit 0
+muap_signal = muaps.groups[0].segments[0].analogsignals[0]
+print(f"MUAP shape: {muap_signal.shape}")  # (time, rows, cols)
+
+# Extract from specific electrode (row 2, col 2)
+electrode_muap = muap_signal[:, 2, 2]
+peak_amplitude = np.max(np.abs(electrode_muap.magnitude))
+print(f"Peak amplitude: {peak_amplitude:.3f} {electrode_muap.units}")
+```
+
+**For full EMG simulation** with spike trains, see [examples](https://nsquaredlab.github.io/MyoGen/examples/)
+
+# Documentation
+
+📖 **[Read the full documentation](https://nsquaredlab.github.io/MyoGen/)**
+
+- [User Guide](https://nsquaredlab.github.io/MyoGen/neo_blocks_guide.html) — Working with simulation outputs
+- [API Reference](https://nsquaredlab.github.io/MyoGen/api/) — Complete class documentation
+- [Examples](examples/) — 9 step-by-step tutorials from recruitment to EMG
+
+# How to Cite
+
+If you use MyoGen in your research, please cite:
+
+TBD
+
+# Contributing
+
+Contributions welcome! See [issues](https://github.com/NsquaredLab/MyoGen/issues) if you want to add a feature or fix a bug.
+
+# License
+
+MyoGen is AGPL licensed. See [LICENSE](https://github.com/NsquaredLab/MyoGen/LICENSE.md) for details.
