@@ -42,6 +42,6 @@ Currently available paper reproductions:
 
   J. Neurosci. 35(40):13687-13697. `DOI: 10.1523/JNEUROSCI.1950-15.2015 <https://doi.org/10.1523/JNEUROSCI.1950-15.2015>`_
 
-  Demonstrates how spinal motor neuron pools decode beta and gamma frequency oscillations (13-70 Hz) from descending cortical drive for force modulation.
+  Demonstrates how spinal motor neuron pools decode frequency oscillations from descending cortical drive for force modulation.
 
 More reproductions will be added over time as MyoGen capabilities expand.
