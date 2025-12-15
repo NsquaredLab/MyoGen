@@ -311,6 +311,7 @@ def format_annotation(annotation, config=None):
         # Try importing the type alias and returning it directly
         try:
             from myogen.utils import types
+
             return getattr(types, simplified)
         except Exception:
             # If that fails, return RST reference
@@ -491,20 +492,20 @@ hoverxref_tooltip_lazy = False  # Disable lazy loading to embed content directly
 # Sphinx Gallery configuration
 sphinx_gallery_conf = {
     "examples_dirs": [
-        str(base_dir / "examples" / "basic"),
-        str(base_dir / "examples" / "finetune"),
-        str(base_dir / "examples" / "papers" / "watanabe"),
+        str(base_dir / "examples" / "01_basic"),
+        str(base_dir / "examples" / "02_finetune"),
+        str(base_dir / "examples" / "03_papers" / "watanabe"),
     ],
     "gallery_dirs": [
-        "auto_examples/basic",
-        "auto_examples/finetune",
-        "auto_examples/papers/watanabe",
+        "auto_examples/01_basic",
+        "auto_examples/02_finetune",
+        "auto_examples/03_papers/watanabe",
     ],
     "subsection_order": ExplicitOrder(
         [
-            str(base_dir / "examples" / "basic"),
-            str(base_dir / "examples" / "finetune"),
-            str(base_dir / "examples" / "papers" / "watanabe"),
+            str(base_dir / "examples" / "01_basic"),
+            str(base_dir / "examples" / "02_finetune"),
+            str(base_dir / "examples" / "03_papers" / "watanabe"),
         ]
     ),
     "filename_pattern": r"\.py",
@@ -562,50 +563,50 @@ def post_process_html(_app, exception):
 
     # Map of unit strings to type alias names
     quantity_units = {
-        's': 'Quantity__s',
-        'ms': 'Quantity__ms',
-        'rad': 'Quantity__rad',
-        'deg': 'Quantity__deg',
-        'mV': 'Quantity__mV',
-        'uV': 'Quantity__uV',
-        'nA': 'Quantity__nA',
-        'uS': 'Quantity__uS',
-        'S/m': 'Quantity__S_per_m',
-        'Hz': 'Quantity__Hz',
-        'pps': 'Quantity__pps',
-        'mm': 'Quantity__mm',
-        'm': 'Quantity__m',
-        'mm\\*\\*2': 'Quantity__mm2',
-        '1/mm\\*\\*2': 'Quantity__per_mm2',
-        'm/s': 'Quantity__m_per_s',
-        'mm/s': 'Quantity__mm_per_s',
+        "s": "Quantity__s",
+        "ms": "Quantity__ms",
+        "rad": "Quantity__rad",
+        "deg": "Quantity__deg",
+        "mV": "Quantity__mV",
+        "uV": "Quantity__uV",
+        "nA": "Quantity__nA",
+        "uS": "Quantity__uS",
+        "S/m": "Quantity__S_per_m",
+        "Hz": "Quantity__Hz",
+        "pps": "Quantity__pps",
+        "mm": "Quantity__mm",
+        "m": "Quantity__m",
+        "mm\\*\\*2": "Quantity__mm2",
+        "1/mm\\*\\*2": "Quantity__per_mm2",
+        "m/s": "Quantity__m_per_s",
+        "mm/s": "Quantity__mm_per_s",
     }
 
     # Build replacement patterns for all units
     replacements = []
     for unit, alias_name in quantity_units.items():
-        pattern = base_pattern.replace('UNIT', unit)
+        pattern = base_pattern.replace("UNIT", unit)
         # Use full module path in filename: myogen.utils.types.Quantity__X.html
         replacement = f'<a class="reference internal" href="myogen.utils.types.{alias_name}.html#myogen.utils.types.{alias_name}" title="myogen.utils.types.{alias_name}"><span class="pre">{alias_name}</span></a>'
         replacements.append((pattern, replacement))
 
     # Add replacements for Block types (simpler pattern - just plain text in <p> tags)
     block_types = [
-        'SPIKE_TRAIN__Block',
-        'SURFACE_EMG__Block',
-        'SURFACE_MUAP__Block',
-        'INTRAMUSCULAR_EMG__Block',
-        'INTRAMUSCULAR_MUAP__Block',
+        "SPIKE_TRAIN__Block",
+        "SURFACE_EMG__Block",
+        "SURFACE_MUAP__Block",
+        "INTRAMUSCULAR_EMG__Block",
+        "INTRAMUSCULAR_MUAP__Block",
     ]
 
     for block_type in block_types:
         # Pattern: <p>BLOCK_TYPE</p> or <em>BLOCK_TYPE</em> in parameter lists
-        pattern = f'<p>{block_type}</p>'
+        pattern = f"<p>{block_type}</p>"
         replacement = f'<p><a class="reference internal" href="myogen.utils.types.{block_type}.html#myogen.utils.types.{block_type}" title="myogen.utils.types.{block_type}"><code class="xref py py-data docutils literal notranslate"><span class="pre">{block_type}</span></code></a></p>'
         replacements.append((pattern, replacement))
 
         # Also handle Block types in parameter descriptions
-        pattern_em = f'<em>{block_type}</em>'
+        pattern_em = f"<em>{block_type}</em>"
         replacement_em = f'<em><a class="reference internal" href="myogen.utils.types.{block_type}.html#myogen.utils.types.{block_type}" title="myogen.utils.types.{block_type}"><code class="xref py py-data docutils literal notranslate"><span class="pre">{block_type}</span></code></a></em>'
         replacements.append((pattern_em, replacement_em))
 
