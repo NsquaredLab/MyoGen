@@ -1,0 +1,256 @@
+:orphan:
+
+.. _basic-examples:
+
+==================
+Basics
+==================
+
+| This example gallery contains tutorials demonstrating core functionality and workflow patterns.
+| These examples cover the essential building blocks, from motor unit recruitment to EMG signal generation.
+|
+| The examples are self-contained and can be run independently, though they may depend on each other for context.  
+| Following the numbered order provides the best learning experience.
+
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbnails">
+
+.. thumbnail-parent-div-open
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="The first step in using MyoGen is to generate the recruitment thresholds of the motor units (MUs).">
+
+.. only:: html
+
+  .. image:: /auto_examples/01_basic/images/thumb/sphx_glr_01_simulate_recruitment_thresholds_thumb.png
+    :alt:
+
+  :doc:`/auto_examples/01_basic/01_simulate_recruitment_thresholds`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Recruitment Thresholds</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="This example demonstrates how to simulate spike trains in a population of alpha motor neurons using current injection.">
+
+.. only:: html
+
+  .. image:: /auto_examples/01_basic/images/thumb/sphx_glr_02_simulate_spike_trains_current_injection_thumb.png
+    :alt:
+
+  :doc:`/auto_examples/01_basic/02_simulate_spike_trains_current_injection`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Spike Train Generation with Current Injection</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="This example demonstrates realistic spike train simulation using sinusoidal descending drive (DD) instead of direct current injection. This approach provides more physiologically accurate motor control patterns by modeling cortical input through descending drive populations.">
+
+.. only:: html
+
+  .. image:: /auto_examples/01_basic/images/thumb/sphx_glr_03_simulate_spike_trains_descending_drive_thumb.png
+    :alt:
+
+  :doc:`/auto_examples/01_basic/03_simulate_spike_trains_descending_drive`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Spike Train Generation with Descending Drive</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="The spike trains alone are not enough to create EMG signals.">
+
+.. only:: html
+
+  .. image:: /auto_examples/01_basic/images/thumb/sphx_glr_04_simulate_muscle_thumb.png
+    :alt:
+
+  :doc:`/auto_examples/01_basic/04_simulate_muscle`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Muscle Model</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="After having created the muscle model, we can simulate the surface EMG by creating a surface EMG model.">
+
+.. only:: html
+
+  .. image:: /auto_examples/01_basic/images/thumb/sphx_glr_05_simulate_surface_muaps_thumb.png
+    :alt:
+
+  :doc:`/auto_examples/01_basic/05_simulate_surface_muaps`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Surface Motor Unit Action Potentials</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="After having created the MUAPs, we can finally simulate the surface EMG by creating a surface EMG model.">
+
+.. only:: html
+
+  .. image:: /auto_examples/01_basic/images/thumb/sphx_glr_06_simulate_surface_emg_thumb.png
+    :alt:
+
+  :doc:`/auto_examples/01_basic/06_simulate_surface_emg`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Surface EMG Signals</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="MyoGen provides various functions to generate different types of input currents for motor neuron pool simulations. These currents can be used to drive motor unit recruitment and firing patterns.">
+
+.. only:: html
+
+  .. image:: /auto_examples/01_basic/images/thumb/sphx_glr_07_simulate_currents_thumb.png
+    :alt:
+
+  :doc:`/auto_examples/01_basic/07_simulate_currents`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Current Generation</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="After generating spike trains from motor neuron pools, the next step is to simulate the force output produced by the muscle. MyoGen provides a comprehensive force model based on the classic Fuglevand et al. (1993) approach.">
+
+.. only:: html
+
+  .. image:: /auto_examples/01_basic/images/thumb/sphx_glr_08_simulate_force_thumb.png
+    :alt:
+
+  :doc:`/auto_examples/01_basic/08_simulate_force`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Force Generation</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="This example demonstrates how to simulate intramuscular EMG signals using needle electrodes. It shows the complete pipeline from muscle model creation to EMG signal generation with realistic noise and motor unit detectability.">
+
+.. only:: html
+
+  .. image:: /auto_examples/01_basic/images/thumb/sphx_glr_09_simulate_intramuscular_emg_thumb.png
+    :alt:
+
+  :doc:`/auto_examples/01_basic/09_simulate_intramuscular_emg`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Intramuscular EMG Signals</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="This example demonstrates how to extract electrophysiological parameters from MyoGen motor neurons using the Fuglevand recruitment model.">
+
+.. only:: html
+
+  .. image:: /auto_examples/01_basic/images/thumb/sphx_glr_10_extract_neuron_parameters_thumb.png
+    :alt:
+
+  :doc:`/auto_examples/01_basic/10_extract_neuron_parameters`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Extract Neuron Parameters</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="This example demonstrates complete spinal reflex network modeling with a comprehensive tendon tap protocol that systematically varies mechanical perturbations, fusimotor drive, and cortical activity. This sophisticated experimental design reveals how the nervous system modulates stretch reflex gain.">
+
+.. only:: html
+
+  .. image:: /auto_examples/01_basic/images/thumb/sphx_glr_11_simulate_spinal_network_thumb.png
+    :alt:
+
+  :doc:`/auto_examples/01_basic/11_simulate_spinal_network`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Spinal Network Simulation with Systematic Tendon Tap Protocol</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="This example demonstrates how to extract and work with data from the different Neo Block types used in MyoGen:">
+
+.. only:: html
+
+  .. image:: /auto_examples/01_basic/images/thumb/sphx_glr_12_extract_data_from_neo_blocks_thumb.png
+    :alt:
+
+  :doc:`/auto_examples/01_basic/12_extract_data_from_neo_blocks`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Extracting Data from Neo Blocks</div>
+    </div>
+
+
+.. thumbnail-parent-div-close
+
+.. raw:: html
+
+    </div>
+
+
+.. toctree::
+   :hidden:
+
+   /auto_examples/01_basic/01_simulate_recruitment_thresholds
+   /auto_examples/01_basic/02_simulate_spike_trains_current_injection
+   /auto_examples/01_basic/03_simulate_spike_trains_descending_drive
+   /auto_examples/01_basic/04_simulate_muscle
+   /auto_examples/01_basic/05_simulate_surface_muaps
+   /auto_examples/01_basic/06_simulate_surface_emg
+   /auto_examples/01_basic/07_simulate_currents
+   /auto_examples/01_basic/08_simulate_force
+   /auto_examples/01_basic/09_simulate_intramuscular_emg
+   /auto_examples/01_basic/10_extract_neuron_parameters
+   /auto_examples/01_basic/11_simulate_spinal_network
+   /auto_examples/01_basic/12_extract_data_from_neo_blocks
+
+
+
+.. only:: html
+
+ .. rst-class:: sphx-glr-signature
+
+    `Gallery generated by Sphinx-Gallery <https://sphinx-gallery.github.io>`_

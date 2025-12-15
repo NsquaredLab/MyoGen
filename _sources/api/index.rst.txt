@@ -10,6 +10,12 @@ MyoGen is organized into the following modules:
    :gutter: 0
    :margin: 0
 
+   .. card:: MyoGen Core
+      :link: myogen_api.html
+      :class-card: sd-shadow-xs sd-bg-light myogen-card
+
+      Package-level functions and global objects for random number generation and setup.
+
    .. card:: Simulator
       :link: simulator_api.html
       :class-card: sd-shadow-xs sd-bg-light myogen-card
@@ -56,5 +62,6 @@ If you have questions or need further help, please refer to the `README <../../R
    :caption: API Modules
    :hidden:
 
+   myogen_api
    simulator_api
    utils_api

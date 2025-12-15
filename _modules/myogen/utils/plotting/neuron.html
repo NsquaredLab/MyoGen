@@ -1,0 +1,1779 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>myogen.utils.plotting.neuron &#8212; MyoGen 0.4.0 Documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../../../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=5349f25f" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/css/tooltipster.custom.css" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/css/tooltipster.bundle.min.css" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/css/tooltipster-sideTip-shadow.min.css" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/css/tooltipster-sideTip-punk.min.css" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/css/tooltipster-sideTip-noir.min.css" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/css/tooltipster-sideTip-light.min.css" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/css/tooltipster-sideTip-borderless.min.css" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/css/micromodal.css" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/custom.css?v=9b95bd4c" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery.css?v=d2d258e8" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery-binder.css?v=f4aeca0c" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/custom.css?v=9b95bd4c" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../../../../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+    <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+    <script src="../../../../_static/documentation_options.js?v=1437fa6d"></script>
+    <script src="../../../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../../_static/js/hoverxref.js"></script>
+    <script src="../../../../_static/js/tooltipster.bundle.min.js"></script>
+    <script src="../../../../_static/js/micromodal.min.js"></script>
+    <script src="../../../../_static/custom.js?v=e0e269b1"></script>
+    <script src="../../../../_static/design-tabs.js?v=f930bc37"></script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script type="module" src="https://cdn.jsdelivr.net/npm/mermaid@11.9.0/dist/mermaid.esm.min.mjs"></script>
+    <script type="module" src="https://cdn.jsdelivr.net/npm/@mermaid-js/layout-elk@0.2.0/dist/mermaid-layout-elk.esm.min.mjs"></script>
+    <script type="module">import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@11.9.0/dist/mermaid.esm.min.mjs";import elkLayouts from "https://cdn.jsdelivr.net/npm/@mermaid-js/layout-elk@0.2.0/dist/mermaid-layout-elk.esm.min.mjs";mermaid.registerLayoutLoaders(elkLayouts);mermaid.initialize({startOnLoad:false});</script>
+    <script src="https://cdn.jsdelivr.net/npm/d3@7.9.0/dist/d3.min.js"></script>
+    <script type="module">import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@11.9.0/dist/mermaid.esm.min.mjs";
+
+const defaultStyle = document.createElement('style');
+defaultStyle.textContent = `pre.mermaid {
+    /* Same as .mermaid-container > pre */
+    display: block;
+    width: 100%;
+}
+
+pre.mermaid > svg {
+    /* Same as .mermaid-container > pre > svg */
+    height: 500px;
+    width: 100%;
+    max-width: 100% !important;
+}
+`;
+document.head.appendChild(defaultStyle);
+
+const fullscreenStyle = document.createElement('style');
+fullscreenStyle.textContent = `.mermaid-container {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+}
+
+.mermaid-container > pre {
+    display: block;
+    width: 100%;
+}
+
+.mermaid-container > pre > svg {
+    height: 500px;
+    width: 100%;
+    max-width: 100% !important;
+}
+
+.mermaid-fullscreen-btn {
+    width: 28px;
+    height: 28px;
+    background: rgba(255, 255, 255, 0.95);
+    border: 1px solid rgba(0, 0, 0, 0.3);
+    border-radius: 4px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+    font-size: 14px;
+    line-height: 1;
+    padding: 0;
+    color: #333;
+}
+
+.mermaid-fullscreen-btn:hover {
+    opacity: 100% !important;
+    background: rgba(255, 255, 255, 1);
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3);
+    transform: scale(1.1);
+}
+
+.mermaid-fullscreen-btn.dark-theme {
+    background: rgba(50, 50, 50, 0.95);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    color: #e0e0e0;
+}
+
+.mermaid-fullscreen-btn.dark-theme:hover {
+    background: rgba(60, 60, 60, 1);
+    box-shadow: 0 3px 10px rgba(255, 255, 255, 0.2);
+}
+
+.mermaid-fullscreen-modal {
+    display: none;
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 95vw;
+    height: 100vh;
+    background: rgba(255, 255, 255, 0.98);
+    z-index: 9999;
+    padding: 20px;
+    overflow: auto;
+}
+
+.mermaid-fullscreen-modal.dark-theme {
+    background: rgba(0, 0, 0, 0.98);
+}
+
+.mermaid-fullscreen-modal.active {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.mermaid-container-fullscreen {
+    position: relative;
+    width: 95vw;
+    height: 90vh;
+    max-width: 95vw;
+    max-height: 90vh;
+    background: white;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+    overflow: auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.mermaid-container-fullscreen.dark-theme {
+    background: #1a1a1a;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8);
+}
+
+.mermaid-container-fullscreen pre.mermaid {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.mermaid-container-fullscreen .mermaid svg {
+    height: 100% !important;
+    width: 100% !important;
+    cursor: grab;
+}
+
+.mermaid-fullscreen-close {
+    position: fixed !important;
+    top: 20px !important;
+    right: 20px !important;
+    width: 40px;
+    height: 40px;
+    background: rgba(255, 255, 255, 0.95);
+    border: 1px solid rgba(0, 0, 0, 0.2);
+    border-radius: 50%;
+    cursor: pointer;
+    z-index: 10000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    transition: all 0.2s;
+    font-size: 24px;
+    line-height: 1;
+    color: #333;
+}
+
+.mermaid-fullscreen-close:hover {
+    background: white;
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
+    transform: scale(1.1);
+}
+
+.mermaid-fullscreen-close.dark-theme {
+    background: rgba(50, 50, 50, 0.95);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: #e0e0e0;
+}
+
+.mermaid-fullscreen-close.dark-theme:hover {
+    background: rgba(60, 60, 60, 1);
+    box-shadow: 0 6px 16px rgba(255, 255, 255, 0.2);
+}
+
+.mermaid-fullscreen-modal .mermaid-fullscreen-btn {
+    display: none !important;
+}`;
+document.head.appendChild(fullscreenStyle);
+
+// Detect if page has dark background
+const isDarkTheme = () => {
+    const bgColor = window.getComputedStyle(document.body).backgroundColor;
+    const match = bgColor.match(/rgb\((\d+),\s*(\d+),\s*(\d+)/);
+    if (match) {
+        const r = parseInt(match[1]);
+        const g = parseInt(match[2]);
+        const b = parseInt(match[3]);
+        const brightness = (r * 299 + g * 587 + b * 114) / 1000;
+        return brightness < 128;
+    }
+    return false;
+};
+
+const load = async () => {
+    await mermaid.run();
+
+    const all_mermaids = document.querySelectorAll(".mermaid");
+    const mermaids_processed = document.querySelectorAll(".mermaid[data-processed='true']");
+
+    if ("False" === "True") {
+        const mermaids_to_add_zoom = -1 === -1 ? all_mermaids.length : -1;
+        if(mermaids_to_add_zoom > 0) {
+            var svgs = d3.selectAll("");
+            if(all_mermaids.length !== mermaids_processed.length) {
+                setTimeout(load, 200);
+                return;
+            } else if(svgs.size() !== mermaids_to_add_zoom) {
+                setTimeout(load, 200);
+                return;
+            } else {
+                svgs.each(function() {
+                    var svg = d3.select(this);
+                    svg.html("<g class='wrapper'>" + svg.html() + "</g>");
+                    var inner = svg.select("g");
+                    var zoom = d3.zoom().on("zoom", function(event) {
+                        inner.attr("transform", event.transform);
+                    });
+                    svg.call(zoom);
+                });
+            }
+        }
+    } else if(all_mermaids.length !== mermaids_processed.length) {
+        // Wait for mermaid to process all diagrams
+        setTimeout(load, 200);
+        return;
+    }
+
+    const darkTheme = isDarkTheme();
+
+    // Stop here if not adding fullscreen capability
+    if ("True" !== "True") return;
+
+    const modal = document.createElement('div');
+    modal.className = 'mermaid-fullscreen-modal' + (darkTheme ? ' dark-theme' : '');
+    modal.setAttribute('role', 'dialog');
+    modal.setAttribute('aria-modal', 'true');
+    modal.setAttribute('aria-label', 'Fullscreen diagram viewer');
+    modal.innerHTML = `
+        <button class="mermaid-fullscreen-close${darkTheme ? ' dark-theme' : ''}" aria-label="Close fullscreen">✕</button>
+        <div class="mermaid-container-fullscreen${darkTheme ? ' dark-theme' : ''}"></div>
+    `;
+    document.body.appendChild(modal);
+
+    const modalContent = modal.querySelector('.mermaid-container-fullscreen');
+    const closeBtn = modal.querySelector('.mermaid-fullscreen-close');
+
+    let previousScrollOffset = [window.scrollX, window.scrollY];
+
+    const closeModal = () => {
+        modal.classList.remove('active');
+        modalContent.innerHTML = '';
+        document.body.style.overflow = ''
+        window.scrollTo({left: previousScrollOffset[0], top: previousScrollOffset[1], behavior: 'instant'});
+    };
+
+    closeBtn.addEventListener('click', closeModal);
+    modal.addEventListener('click', (e) => {
+        if (e.target === modal) closeModal();
+    });
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && modal.classList.contains('active')) {
+            closeModal();
+        }
+    });
+
+    const allButtons = [];
+
+    document.querySelectorAll('.mermaid').forEach((mermaidDiv) => {
+        if (mermaidDiv.parentNode.classList.contains('mermaid-container') ||
+            mermaidDiv.closest('.mermaid-fullscreen-modal')) {
+            return;
+        }
+
+        const container = document.createElement('div');
+        container.className = 'mermaid-container';
+        mermaidDiv.parentNode.insertBefore(container, mermaidDiv);
+        container.appendChild(mermaidDiv);
+
+        const fullscreenBtn = document.createElement('button');
+        fullscreenBtn.className = 'mermaid-fullscreen-btn' + (darkTheme ? ' dark-theme' : '');
+        fullscreenBtn.setAttribute('aria-label', 'View diagram in fullscreen');
+        fullscreenBtn.textContent = '⛶';
+        fullscreenBtn.style.opacity = '50%';
+
+        // Calculate dynamic position based on diagram's margin and padding
+        const diagramStyle = window.getComputedStyle(mermaidDiv);
+        const marginTop = parseFloat(diagramStyle.marginTop) || 0;
+        const marginRight = parseFloat(diagramStyle.marginRight) || 0;
+        const paddingTop = parseFloat(diagramStyle.paddingTop) || 0;
+        const paddingRight = parseFloat(diagramStyle.paddingRight) || 0;
+        fullscreenBtn.style.top = `${marginTop + paddingTop + 4}px`;
+        fullscreenBtn.style.right = `${marginRight + paddingRight + 4}px`;
+
+        fullscreenBtn.addEventListener('click', () => {
+            previousScrollOffset = [window.scroll, window.scrollY];
+            const clone = mermaidDiv.cloneNode(true);
+            modalContent.innerHTML = '';
+            modalContent.appendChild(clone);
+
+            const svg = clone.querySelector('svg');
+            if (svg) {
+                svg.removeAttribute('width');
+                svg.removeAttribute('height');
+                svg.style.width = '100%';
+                svg.style.height = 'auto';
+                svg.style.maxWidth = '100%';
+                svg.style.sdisplay = 'block';
+
+                if ("False" === "True") {
+                    setTimeout(() => {
+                        const g = svg.querySelector('g');
+                        if (g) {
+                            var svgD3 = d3.select(svg);
+                            svgD3.html("<g class='wrapper'>" + svgD3.html() + "</g>");
+                            var inner = svgD3.select("g");
+                            var zoom = d3.zoom().on("zoom", function(event) {
+                                inner.attr("transform", event.transform);
+                            });
+                            svgD3.call(zoom);
+                        }
+                    }, 100);
+                }
+            }
+
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        });
+
+        container.appendChild(fullscreenBtn);
+        allButtons.push(fullscreenBtn);
+    });
+
+    // Update theme classes when theme changes
+    const updateTheme = () => {
+        const dark = isDarkTheme();
+        allButtons.forEach(btn => {
+            if (dark) {
+                btn.classList.add('dark-theme');
+            } else {
+                btn.classList.remove('dark-theme');
+            }
+        });
+        if (dark) {
+            modal.classList.add('dark-theme');
+            modalContent.classList.add('dark-theme');
+            closeBtn.classList.add('dark-theme');
+        } else {
+            modal.classList.remove('dark-theme');
+            modalContent.classList.remove('dark-theme');
+            closeBtn.classList.remove('dark-theme');
+        }
+    };
+
+    // Watch for theme changes
+    const observer = new MutationObserver(updateTheme);
+    observer.observe(document.documentElement, {
+        attributes: true,
+        attributeFilter: ['class', 'style', 'data-theme']
+    });
+    observer.observe(document.body, {
+        attributes: true,
+        attributeFilter: ['class', 'style']
+    });
+};
+
+window.addEventListener("load", load);
+</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/myogen/utils/plotting/neuron';</script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="0.4.0" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search MyoGen docs..."
+         aria-label="Search MyoGen docs..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+<aside class="bd-header-announcement" aria-label="Announcement">
+  <div class="bd-header-announcement__content">MyoGen is under active development. API may change.</div>
+</aside>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class=" navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../../../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../../../_static/myogen_logo.png" class="logo__image only-light" alt="MyoGen 0.4.0 Documentation - Home"/>
+    <img src="../../../../_static/myogen_logo.png" class="logo__image only-dark pst-js-only" alt="MyoGen 0.4.0 Documentation - Home"/>
+  
+  
+</a></div>
+    
+      <div class="navbar-item">
+<div class="nav-item">
+  <div class="version-switcher__container dropdown">
+      <button id="version-switcher-button" type="button" class="version-switcher__button btn btn-sm navbar-btn" aria-haspopup="true" aria-expanded="false">
+          Version 0.4.0
+      </button>
+      
+      
+      
+  </div>
+</div> </div>
+    
+      <div class="navbar-item"><div class="nav-item">
+   <span>
+      made at the <a href="https://www.nsquared.tf.fau.de/" target="_blank">N² Lab</a>
+   </span>
+</div> </div>
+    
+  </div>
+  
+  <div class=" navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../api/index.html">
+    API Documentation
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../neo_blocks_guide.html">
+    Working with Neo Block Data Structures
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../examples.html">
+    Examples
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/NSquaredLab/MyoGen" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+    </div>
+  
+
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar hide-on-wide">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../api/index.html">
+    API Documentation
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../neo_blocks_guide.html">
+    Working with Neo Block Data Structures
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../examples.html">
+    Examples
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/NSquaredLab/MyoGen" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../../../index.html" class="nav-link">Module code</a></li>
+    
+    
+    <li class="breadcrumb-item"><a href="../../../myogen.html" class="nav-link">myogen</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">myogen.utils.plotting.neuron</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <h1>Source code for myogen.utils.plotting.neuron</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Modular plotting functions for neuron simulation results.</span>
+
+<span class="sd">This module provides specialized plotting functions for different aspects of</span>
+<span class="sd">neuromuscular simulation results from MyoGen&#39;s neuron simulator, including</span>
+<span class="sd">raster plots, membrane traces, and physiological model dynamics.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">warnings</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">beartype.cave</span><span class="w"> </span><span class="kn">import</span> <span class="n">IterableType</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">matplotlib.axes</span><span class="w"> </span><span class="kn">import</span> <span class="n">Axes</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">neo</span><span class="w"> </span><span class="kn">import</span> <span class="n">Block</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">myogen.utils.decorators</span><span class="w"> </span><span class="kn">import</span> <span class="n">beartowertype</span>
+
+
+<div class="viewcode-block" id="plot_raster_spikes">
+<a class="viewcode-back" href="../../../../generated/myogen.utils.plotting.plot_raster_spikes.html#myogen.utils.plotting.plot_raster_spikes">[docs]</a>
+<span class="nd">@beartowertype</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">plot_raster_spikes</span><span class="p">(</span>
+    <span class="n">results</span><span class="p">:</span> <span class="n">Block</span><span class="p">,</span>
+    <span class="n">axs</span><span class="p">:</span> <span class="n">IterableType</span><span class="p">[</span><span class="n">Axes</span><span class="p">],</span>
+    <span class="n">populations</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+    <span class="n">time_range</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">dot_size</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.8</span><span class="p">,</span>
+    <span class="n">alpha</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">,</span>
+    <span class="n">title</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;Raster Plot&quot;</span><span class="p">,</span>
+    <span class="n">xlabel</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;Time [ms]&quot;</span><span class="p">,</span>
+    <span class="n">ylabel</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;Neuron ID&quot;</span><span class="p">,</span>
+    <span class="n">apply_default_formatting</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">IterableType</span><span class="p">[</span><span class="n">Axes</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Plot spike raster plots for neural populations, one per axis.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    results : Block</span>
+<span class="sd">        NEO Block containing spike train segments for each population.</span>
+<span class="sd">    axs : IterableType[Axes]</span>
+<span class="sd">        Matplotlib axes to plot on. Must have as many axes as populations.</span>
+<span class="sd">    populations : list[str]</span>
+<span class="sd">        List of population names to plot.</span>
+<span class="sd">    time_range : tuple[float, float], optional</span>
+<span class="sd">        Time range to plot (start, end) in milliseconds, by default None (full range).</span>
+<span class="sd">    dot_size : float, optional</span>
+<span class="sd">        Size of spike markers, by default 0.8.</span>
+<span class="sd">    alpha : float, optional</span>
+<span class="sd">        Transparency of spike markers (0.0 to 1.0), by default 1.0.</span>
+<span class="sd">    title : str, optional</span>
+<span class="sd">        Plot title, by default &quot;Raster Plot&quot;.</span>
+<span class="sd">    xlabel : str, optional</span>
+<span class="sd">        X-axis label, by default &quot;Time [ms]&quot;.</span>
+<span class="sd">    ylabel : str, optional</span>
+<span class="sd">        Y-axis label, by default &quot;Neuron ID&quot;.</span>
+<span class="sd">    apply_default_formatting : bool, optional</span>
+<span class="sd">        Whether to apply default formatting, by default True.</span>
+<span class="sd">    **kwargs : Any</span>
+<span class="sd">        Additional keyword arguments passed to matplotlib plot functions.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    IterableType[Axes]</span>
+<span class="sd">        The axes that were plotted on.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">ax_list</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">axs</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">ax_list</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">populations</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;plot_raster_spikes requires </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">populations</span><span class="p">)</span><span class="si">}</span><span class="s2"> axes (one per population), got </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">ax_list</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="p">)</span>
+
+    <span class="c1"># Plot each population on its own axis</span>
+    <span class="k">for</span> <span class="n">pop_idx</span><span class="p">,</span> <span class="n">pop_name</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">populations</span><span class="p">):</span>
+        <span class="n">ax</span> <span class="o">=</span> <span class="n">ax_list</span><span class="p">[</span><span class="n">pop_idx</span><span class="p">]</span>
+
+        <span class="c1"># Find segment for this population</span>
+        <span class="n">segment</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">for</span> <span class="n">seg</span> <span class="ow">in</span> <span class="n">results</span><span class="o">.</span><span class="n">segments</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">seg</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="n">pop_name</span><span class="p">:</span>
+                <span class="n">segment</span> <span class="o">=</span> <span class="n">seg</span>
+                <span class="k">break</span>
+
+        <span class="k">if</span> <span class="n">segment</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">segment</span><span class="o">.</span><span class="n">spiketrains</span><span class="p">:</span>
+            <span class="c1"># No spikes for this population, skip but still format axis</span>
+            <span class="k">if</span> <span class="n">apply_default_formatting</span><span class="p">:</span>
+                <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="n">xlabel</span> <span class="k">if</span> <span class="n">pop_idx</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">populations</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span> <span class="k">else</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+                <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="n">ylabel</span><span class="p">)</span>
+                <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">title</span><span class="si">}</span><span class="s2"> - </span><span class="si">{</span><span class="n">pop_name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">time_range</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">ax</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">(</span><span class="n">time_range</span><span class="p">)</span>
+            <span class="k">continue</span>
+
+        <span class="c1"># Extract spike times and IDs from spike trains</span>
+        <span class="n">spike_times</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">spike_ids</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">spiketrain</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">segment</span><span class="o">.</span><span class="n">spiketrains</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">spike_time</span> <span class="ow">in</span> <span class="n">spiketrain</span><span class="o">.</span><span class="n">times</span><span class="p">:</span>
+                <span class="n">spike_times</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">spike_time</span><span class="o">.</span><span class="n">rescale</span><span class="p">(</span><span class="s2">&quot;ms&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">magnitude</span><span class="p">))</span>
+                <span class="n">spike_ids</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">spike_times</span><span class="p">:</span>
+            <span class="n">spike_times</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">spike_times</span><span class="p">)</span>
+            <span class="n">spike_ids</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">spike_ids</span><span class="p">)</span>
+
+            <span class="c1"># Apply time range filter if specified</span>
+            <span class="k">if</span> <span class="n">time_range</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">time_mask</span> <span class="o">=</span> <span class="p">(</span><span class="n">spike_times</span> <span class="o">&gt;=</span> <span class="n">time_range</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">spike_times</span> <span class="o">&lt;=</span> <span class="n">time_range</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+                <span class="n">spike_times</span> <span class="o">=</span> <span class="n">spike_times</span><span class="p">[</span><span class="n">time_mask</span><span class="p">]</span>
+                <span class="n">spike_ids</span> <span class="o">=</span> <span class="n">spike_ids</span><span class="p">[</span><span class="n">time_mask</span><span class="p">]</span>
+
+            <span class="c1"># Plot spikes for this population</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">spike_times</span><span class="p">,</span> <span class="n">spike_ids</span><span class="p">,</span> <span class="s2">&quot;.&quot;</span><span class="p">,</span> <span class="n">ms</span><span class="o">=</span><span class="n">dot_size</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="n">alpha</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">apply_default_formatting</span><span class="p">:</span>
+            <span class="c1"># Only show xlabel on bottom plot</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="n">xlabel</span> <span class="k">if</span> <span class="n">pop_idx</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">populations</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span> <span class="k">else</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="n">ylabel</span><span class="p">)</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">title</span><span class="si">}</span><span class="s2"> - </span><span class="si">{</span><span class="n">pop_name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">time_range</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">ax</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">(</span><span class="n">time_range</span><span class="p">)</span>
+
+            <span class="c1"># Set y-axis to show neuron IDs from 0 to max</span>
+            <span class="k">if</span> <span class="n">spike_times</span><span class="o">.</span><span class="n">size</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">ax</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">(</span><span class="o">-</span><span class="mf">0.5</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">segment</span><span class="o">.</span><span class="n">spiketrains</span><span class="p">)</span> <span class="o">-</span> <span class="mf">0.5</span><span class="p">)</span>
+
+            <span class="c1"># Remove spines for cleaner appearance when multiple populations</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">populations</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">ax</span><span class="o">.</span><span class="n">spines</span><span class="p">[</span><span class="s2">&quot;right&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">set_visible</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+                <span class="n">ax</span><span class="o">.</span><span class="n">spines</span><span class="p">[</span><span class="s2">&quot;top&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">set_visible</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+                <span class="c1"># Remove bottom spine for all except the last plot</span>
+                <span class="k">if</span> <span class="n">pop_idx</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">populations</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">:</span>
+                    <span class="n">ax</span><span class="o">.</span><span class="n">spines</span><span class="p">[</span><span class="s2">&quot;bottom&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">set_visible</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+                    <span class="n">ax</span><span class="o">.</span><span class="n">tick_params</span><span class="p">(</span><span class="n">bottom</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">labelbottom</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">axs</span></div>
+
+
+
+<div class="viewcode-block" id="plot_membrane_potentials">
+<a class="viewcode-back" href="../../../../generated/myogen.utils.plotting.plot_membrane_potentials.html#myogen.utils.plotting.plot_membrane_potentials">[docs]</a>
+<span class="nd">@beartowertype</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">plot_membrane_potentials</span><span class="p">(</span>
+    <span class="n">results</span><span class="p">:</span> <span class="n">Block</span><span class="p">,</span>
+    <span class="n">axs</span><span class="p">:</span> <span class="n">IterableType</span><span class="p">[</span><span class="n">Axes</span><span class="p">],</span>
+    <span class="n">populations</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;aMN&quot;</span><span class="p">,</span>
+    <span class="n">cell_indices</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">30</span><span class="p">,</span> <span class="mi">40</span><span class="p">],</span>
+    <span class="n">time_range</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">title</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;Membrane Potential&quot;</span><span class="p">,</span>
+    <span class="n">xlabel</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;Time [ms]&quot;</span><span class="p">,</span>
+    <span class="n">ylabel</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;Voltage [mV]&quot;</span><span class="p">,</span>
+    <span class="n">apply_default_formatting</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">IterableType</span><span class="p">[</span><span class="n">Axes</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Plot membrane potential traces for selected cells across populations.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    results : Block</span>
+<span class="sd">        NEO Block containing analog signal segments for membrane potentials.</span>
+<span class="sd">    axs : IterableType[Axes]</span>
+<span class="sd">        Matplotlib axes to plot on. If populations is a list, must have as many axes as populations.</span>
+<span class="sd">    populations : list[str] | str, optional</span>
+<span class="sd">        Population name(s) to plot. If list, plots one per axis. By default &quot;aMN&quot;.</span>
+<span class="sd">    cell_indices : list[int], optional</span>
+<span class="sd">        List of cell indices to plot, by default [0, 10, 20, 30, 40].</span>
+<span class="sd">    time_range : tuple[float, float], optional</span>
+<span class="sd">        Time range to plot (start, end) in milliseconds, by default None (full range).</span>
+<span class="sd">    title : str, optional</span>
+<span class="sd">        Plot title, by default &quot;Membrane Potential&quot;.</span>
+<span class="sd">    xlabel : str, optional</span>
+<span class="sd">        X-axis label, by default &quot;Time [ms]&quot;.</span>
+<span class="sd">    ylabel : str, optional</span>
+<span class="sd">        Y-axis label, by default &quot;Voltage [mV]&quot;.</span>
+<span class="sd">    apply_default_formatting : bool, optional</span>
+<span class="sd">        Whether to apply default formatting, by default True.</span>
+<span class="sd">    **kwargs : Any</span>
+<span class="sd">        Additional keyword arguments passed to matplotlib plot functions.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    IterableType[Axes]</span>
+<span class="sd">        The axes that were plotted on.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">ax_list</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">axs</span><span class="p">)</span>
+
+    <span class="c1"># Handle backward compatibility - convert single population to list</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">populations</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="n">populations</span> <span class="o">=</span> <span class="p">[</span><span class="n">populations</span><span class="p">]</span>
+
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">ax_list</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">populations</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;plot_membrane_potentials requires </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">populations</span><span class="p">)</span><span class="si">}</span><span class="s2"> axes (one per population), got </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">ax_list</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="p">)</span>
+
+    <span class="c1"># Plot each population on its own axis</span>
+    <span class="k">for</span> <span class="n">pop_idx</span><span class="p">,</span> <span class="n">population</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">populations</span><span class="p">):</span>
+        <span class="n">ax</span> <span class="o">=</span> <span class="n">ax_list</span><span class="p">[</span><span class="n">pop_idx</span><span class="p">]</span>
+
+        <span class="c1"># Find segment for this population</span>
+        <span class="n">segment</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">for</span> <span class="n">seg</span> <span class="ow">in</span> <span class="n">results</span><span class="o">.</span><span class="n">segments</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">seg</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="n">population</span><span class="p">:</span>
+                <span class="n">segment</span> <span class="o">=</span> <span class="n">seg</span>
+                <span class="k">break</span>
+
+        <span class="k">if</span> <span class="n">segment</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">segment</span><span class="o">.</span><span class="n">analogsignals</span><span class="p">:</span>
+            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;No membrane potential data found for population &#39;</span><span class="si">{</span><span class="n">population</span><span class="si">}</span><span class="s2">&#39;&quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">apply_default_formatting</span><span class="p">:</span>
+                <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="n">xlabel</span> <span class="k">if</span> <span class="n">pop_idx</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">populations</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span> <span class="k">else</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+                <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="n">ylabel</span><span class="p">)</span>
+                <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">title</span><span class="si">}</span><span class="s2"> - </span><span class="si">{</span><span class="n">population</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">time_range</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">ax</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">(</span><span class="n">time_range</span><span class="p">)</span>
+            <span class="k">continue</span>
+
+        <span class="c1"># Plot traces for requested cell indices</span>
+        <span class="k">for</span> <span class="n">signal</span> <span class="ow">in</span> <span class="n">segment</span><span class="o">.</span><span class="n">analogsignals</span><span class="p">:</span>
+            <span class="n">cell_id</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">signal</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">cell_id</span> <span class="ow">in</span> <span class="n">cell_indices</span><span class="p">:</span>
+                <span class="n">times</span> <span class="o">=</span> <span class="n">signal</span><span class="o">.</span><span class="n">times</span><span class="o">.</span><span class="n">rescale</span><span class="p">(</span><span class="s2">&quot;ms&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">magnitude</span>
+                <span class="n">voltage</span> <span class="o">=</span> <span class="n">signal</span><span class="o">.</span><span class="n">magnitude</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
+
+                <span class="c1"># Apply time range filter if specified</span>
+                <span class="k">if</span> <span class="n">time_range</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">time_mask</span> <span class="o">=</span> <span class="p">(</span><span class="n">times</span> <span class="o">&gt;=</span> <span class="n">time_range</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">times</span> <span class="o">&lt;=</span> <span class="n">time_range</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+                    <span class="n">times</span> <span class="o">=</span> <span class="n">times</span><span class="p">[</span><span class="n">time_mask</span><span class="p">]</span>
+                    <span class="n">voltage</span> <span class="o">=</span> <span class="n">voltage</span><span class="p">[</span><span class="n">time_mask</span><span class="p">]</span>
+
+                <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">times</span><span class="p">,</span> <span class="n">voltage</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">population</span><span class="si">}</span><span class="s2">[</span><span class="si">{</span><span class="n">cell_id</span><span class="si">}</span><span class="s2">]&quot;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">apply_default_formatting</span><span class="p">:</span>
+            <span class="c1"># Only show xlabel on bottom plot</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="n">xlabel</span> <span class="k">if</span> <span class="n">pop_idx</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">populations</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span> <span class="k">else</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="n">ylabel</span><span class="p">)</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">title</span><span class="si">}</span><span class="s2"> - </span><span class="si">{</span><span class="n">population</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="s2">&quot;upper right&quot;</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">time_range</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">ax</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">(</span><span class="n">time_range</span><span class="p">)</span>
+
+            <span class="c1"># Remove spines for cleaner appearance when multiple populations</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">populations</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">ax</span><span class="o">.</span><span class="n">spines</span><span class="p">[</span><span class="s2">&quot;right&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">set_visible</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+                <span class="n">ax</span><span class="o">.</span><span class="n">spines</span><span class="p">[</span><span class="s2">&quot;top&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">set_visible</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+                <span class="c1"># Remove bottom spine for all except the last plot</span>
+                <span class="k">if</span> <span class="n">pop_idx</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">populations</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">:</span>
+                    <span class="n">ax</span><span class="o">.</span><span class="n">spines</span><span class="p">[</span><span class="s2">&quot;bottom&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">set_visible</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+                    <span class="n">ax</span><span class="o">.</span><span class="n">tick_params</span><span class="p">(</span><span class="n">bottom</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">labelbottom</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">axs</span></div>
+
+
+
+<div class="viewcode-block" id="plot_muscle_dynamics">
+<a class="viewcode-back" href="../../../../generated/myogen.utils.plotting.plot_muscle_dynamics.html#myogen.utils.plotting.plot_muscle_dynamics">[docs]</a>
+<span class="nd">@beartowertype</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">plot_muscle_dynamics</span><span class="p">(</span>
+    <span class="n">results</span><span class="p">:</span> <span class="n">Block</span><span class="p">,</span>
+    <span class="n">joint_angle</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+    <span class="n">time</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+    <span class="n">axs</span><span class="p">:</span> <span class="n">IterableType</span><span class="p">[</span><span class="n">Axes</span><span class="p">],</span>
+    <span class="n">muscle_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;hill&quot;</span><span class="p">,</span>
+    <span class="n">include_signals</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;artAng&quot;</span><span class="p">,</span> <span class="s2">&quot;L&quot;</span><span class="p">,</span> <span class="s2">&quot;force&quot;</span><span class="p">,</span> <span class="s2">&quot;torque&quot;</span><span class="p">],</span>
+    <span class="n">include_activations</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;TypeI&quot;</span><span class="p">,</span> <span class="s2">&quot;TypeII&quot;</span><span class="p">],</span>
+    <span class="n">normalize</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="n">time_range</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">title</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;Muscle Hill Model Dynamics&quot;</span><span class="p">,</span>
+    <span class="n">xlabel</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;Time [ms]&quot;</span><span class="p">,</span>
+    <span class="n">apply_default_formatting</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">IterableType</span><span class="p">[</span><span class="n">Axes</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Plot muscle dynamics from Hill model.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    results : Block</span>
+<span class="sd">        NEO Block containing muscle model segment.</span>
+<span class="sd">    joint_angle : np.ndarray</span>
+<span class="sd">        Joint angle time series data.</span>
+<span class="sd">    time : np.ndarray</span>
+<span class="sd">        Time vector in milliseconds.</span>
+<span class="sd">    axs : IterableType[Axes]</span>
+<span class="sd">        Matplotlib axes to plot on (one per signal).</span>
+<span class="sd">    muscle_name : str, optional</span>
+<span class="sd">        Name of muscle segment to plot, by default &quot;hill&quot;.</span>
+<span class="sd">    include_signals : list[str], optional</span>
+<span class="sd">        Signals to plot, by default [&quot;artAng&quot;, &quot;L&quot;, &quot;force&quot;, &quot;torque&quot;].</span>
+<span class="sd">    include_activations : list[str], optional</span>
+<span class="sd">        Activation types to plot, by default [&quot;TypeI&quot;, &quot;TypeII&quot;].</span>
+<span class="sd">    normalize : bool, optional</span>
+<span class="sd">        Whether to normalize signals, by default True.</span>
+<span class="sd">    time_range : tuple[float, float], optional</span>
+<span class="sd">        Time range to plot, by default None.</span>
+<span class="sd">    title : str, optional</span>
+<span class="sd">        Plot title, by default &quot;Muscle Hill Model Dynamics&quot;.</span>
+<span class="sd">    xlabel : str, optional</span>
+<span class="sd">        X-axis label, by default &quot;Time [ms]&quot;.</span>
+<span class="sd">    apply_default_formatting : bool, optional</span>
+<span class="sd">        Whether to apply default formatting, by default True.</span>
+<span class="sd">    **kwargs : Any</span>
+<span class="sd">        Additional keyword arguments passed to matplotlib plot functions.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    IterableType[Axes]</span>
+<span class="sd">        The axes that were plotted on.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">ax_list</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">axs</span><span class="p">)</span>
+
+    <span class="c1"># Find muscle segment by name</span>
+    <span class="n">muscle_segment</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">for</span> <span class="n">seg</span> <span class="ow">in</span> <span class="n">results</span><span class="o">.</span><span class="n">segments</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">seg</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="n">muscle_name</span><span class="p">:</span>
+            <span class="n">muscle_segment</span> <span class="o">=</span> <span class="n">seg</span>
+            <span class="k">break</span>
+
+    <span class="k">if</span> <span class="n">muscle_segment</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;No muscle dynamics data found for &#39;</span><span class="si">{</span><span class="n">muscle_name</span><span class="si">}</span><span class="s2">&#39; in results&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">axs</span>
+
+    <span class="c1"># Create signal data dictionary</span>
+    <span class="n">signal_data</span> <span class="o">=</span> <span class="p">{}</span>
+
+    <span class="c1"># Add joint angle if requested</span>
+    <span class="k">if</span> <span class="s2">&quot;artAng&quot;</span> <span class="ow">in</span> <span class="n">include_signals</span><span class="p">:</span>
+        <span class="n">signal_data</span><span class="p">[</span><span class="s2">&quot;artAng&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">joint_angle</span><span class="p">,</span> <span class="s2">&quot;Joint Angle [deg]&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Extract muscle signals from analog signals</span>
+    <span class="k">for</span> <span class="n">signal</span> <span class="ow">in</span> <span class="n">muscle_segment</span><span class="o">.</span><span class="n">analogsignals</span><span class="p">:</span>
+        <span class="n">signal_name</span> <span class="o">=</span> <span class="n">signal</span><span class="o">.</span><span class="n">name</span>
+        <span class="n">signal_array</span> <span class="o">=</span> <span class="n">signal</span><span class="o">.</span><span class="n">magnitude</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="n">signal_name</span> <span class="o">==</span> <span class="s2">&quot;muscle_length&quot;</span> <span class="ow">and</span> <span class="s2">&quot;L&quot;</span> <span class="ow">in</span> <span class="n">include_signals</span><span class="p">:</span>
+            <span class="n">signal_data</span><span class="p">[</span><span class="s2">&quot;L&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">signal_array</span><span class="p">,</span> <span class="s2">&quot;Length [L0]&quot;</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">signal_name</span> <span class="o">==</span> <span class="s2">&quot;muscle_force&quot;</span> <span class="ow">and</span> <span class="s2">&quot;force&quot;</span> <span class="ow">in</span> <span class="n">include_signals</span><span class="p">:</span>
+            <span class="n">signal_data</span><span class="p">[</span><span class="s2">&quot;force&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">signal_array</span><span class="p">,</span> <span class="s2">&quot;Force [F0]&quot;</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">signal_name</span> <span class="o">==</span> <span class="s2">&quot;muscle_torque&quot;</span> <span class="ow">and</span> <span class="s2">&quot;torque&quot;</span> <span class="ow">in</span> <span class="n">include_signals</span><span class="p">:</span>
+            <span class="n">signal_data</span><span class="p">[</span><span class="s2">&quot;torque&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">signal_array</span><span class="p">,</span> <span class="s2">&quot;Torque [F0·cm]&quot;</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">signal_name</span> <span class="o">==</span> <span class="s2">&quot;type1_activation&quot;</span> <span class="ow">and</span> <span class="s2">&quot;TypeI&quot;</span> <span class="ow">in</span> <span class="n">include_activations</span><span class="p">:</span>
+            <span class="k">if</span> <span class="s2">&quot;act&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">signal_data</span><span class="p">:</span>
+                <span class="n">signal_data</span><span class="p">[</span><span class="s2">&quot;act&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+            <span class="n">signal_data</span><span class="p">[</span><span class="s2">&quot;act&quot;</span><span class="p">][</span><span class="s2">&quot;TypeI&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">signal_array</span>
+        <span class="k">elif</span> <span class="n">signal_name</span> <span class="o">==</span> <span class="s2">&quot;type2_activation&quot;</span> <span class="ow">and</span> <span class="s2">&quot;TypeII&quot;</span> <span class="ow">in</span> <span class="n">include_activations</span><span class="p">:</span>
+            <span class="k">if</span> <span class="s2">&quot;act&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">signal_data</span><span class="p">:</span>
+                <span class="n">signal_data</span><span class="p">[</span><span class="s2">&quot;act&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+            <span class="n">signal_data</span><span class="p">[</span><span class="s2">&quot;act&quot;</span><span class="p">][</span><span class="s2">&quot;TypeII&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">signal_array</span>
+
+    <span class="c1"># Apply time range filter</span>
+    <span class="n">plot_time</span> <span class="o">=</span> <span class="n">time</span>
+    <span class="k">if</span> <span class="n">time_range</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">time_mask</span> <span class="o">=</span> <span class="p">(</span><span class="n">time</span> <span class="o">&gt;=</span> <span class="n">time_range</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">time</span> <span class="o">&lt;=</span> <span class="n">time_range</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+        <span class="n">plot_time</span> <span class="o">=</span> <span class="n">time</span><span class="p">[</span><span class="n">time_mask</span><span class="p">]</span>
+        <span class="c1"># Apply same mask to all signal data</span>
+        <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">signal_data</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">key</span> <span class="o">!=</span> <span class="s2">&quot;act&quot;</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">2</span><span class="p">:</span>
+                    <span class="c1"># Ensure signal array and time mask have compatible lengths</span>
+                    <span class="n">signal_array</span> <span class="o">=</span> <span class="n">value</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+                    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">signal_array</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">time_mask</span><span class="p">):</span>
+                        <span class="c1"># Trim signal array to match time array length</span>
+                        <span class="n">min_length</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">signal_array</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">time_mask</span><span class="p">))</span>
+                        <span class="n">signal_array</span> <span class="o">=</span> <span class="n">signal_array</span><span class="p">[:</span><span class="n">min_length</span><span class="p">]</span>
+                        <span class="n">time_mask_trimmed</span> <span class="o">=</span> <span class="n">time_mask</span><span class="p">[:</span><span class="n">min_length</span><span class="p">]</span>
+                        <span class="n">signal_data</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">signal_array</span><span class="p">[</span><span class="n">time_mask_trimmed</span><span class="p">],</span> <span class="n">value</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">signal_data</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">signal_array</span><span class="p">[</span><span class="n">time_mask</span><span class="p">],</span> <span class="n">value</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="nb">print</span><span class="p">(</span>
+                        <span class="sa">f</span><span class="s2">&quot;Warning: signal_data[&#39;</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">&#39;] is a tuple but has length </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">value</span><span class="p">)</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s2">&quot;</span>
+                    <span class="p">)</span>
+            <span class="k">elif</span> <span class="n">key</span> <span class="o">==</span> <span class="s2">&quot;act&quot;</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">act_type</span><span class="p">,</span> <span class="n">act_data</span> <span class="ow">in</span> <span class="n">value</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                    <span class="c1"># Handle activation data length mismatch</span>
+                    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">act_data</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">time_mask</span><span class="p">):</span>
+                        <span class="n">min_length</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">act_data</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">time_mask</span><span class="p">))</span>
+                        <span class="n">act_data_trimmed</span> <span class="o">=</span> <span class="n">act_data</span><span class="p">[:</span><span class="n">min_length</span><span class="p">]</span>
+                        <span class="n">time_mask_trimmed</span> <span class="o">=</span> <span class="n">time_mask</span><span class="p">[:</span><span class="n">min_length</span><span class="p">]</span>
+                        <span class="n">signal_data</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="n">act_type</span><span class="p">]</span> <span class="o">=</span> <span class="n">act_data_trimmed</span><span class="p">[</span><span class="n">time_mask_trimmed</span><span class="p">]</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">signal_data</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="n">act_type</span><span class="p">]</span> <span class="o">=</span> <span class="n">act_data</span><span class="p">[</span><span class="n">time_mask</span><span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;Warning: signal_data[&#39;</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">&#39;] is not a tuple or &#39;act&#39;: type=</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">value</span><span class="p">)</span><span class="si">}</span><span class="s2">, value=</span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="p">)</span>
+
+    <span class="c1"># Plot signals</span>
+    <span class="n">plot_idx</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="c1"># Regular signals</span>
+    <span class="k">for</span> <span class="n">signal_name</span> <span class="ow">in</span> <span class="n">include_signals</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">signal_name</span> <span class="ow">in</span> <span class="n">signal_data</span> <span class="ow">and</span> <span class="n">plot_idx</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">ax_list</span><span class="p">):</span>
+            <span class="n">ax</span> <span class="o">=</span> <span class="n">ax_list</span><span class="p">[</span><span class="n">plot_idx</span><span class="p">]</span>
+            <span class="n">data</span><span class="p">,</span> <span class="n">ylabel</span> <span class="o">=</span> <span class="n">signal_data</span><span class="p">[</span><span class="n">signal_name</span><span class="p">]</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">plot_time</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">apply_default_formatting</span><span class="p">:</span>
+                <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="n">ylabel</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">plot_idx</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="n">title</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">plot_idx</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">ax_list</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">:</span>
+                    <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="n">xlabel</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">time_range</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">ax</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">(</span><span class="n">time_range</span><span class="p">)</span>
+
+            <span class="n">plot_idx</span> <span class="o">+=</span> <span class="mi">1</span>
+
+    <span class="c1"># Activations (if any to plot)</span>
+    <span class="k">if</span> <span class="n">include_activations</span> <span class="ow">and</span> <span class="s2">&quot;act&quot;</span> <span class="ow">in</span> <span class="n">signal_data</span> <span class="ow">and</span> <span class="n">plot_idx</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">ax_list</span><span class="p">):</span>
+        <span class="n">ax</span> <span class="o">=</span> <span class="n">ax_list</span><span class="p">[</span><span class="n">plot_idx</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">act_type</span> <span class="ow">in</span> <span class="n">include_activations</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">act_type</span> <span class="ow">in</span> <span class="n">signal_data</span><span class="p">[</span><span class="s2">&quot;act&quot;</span><span class="p">]:</span>
+                <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">plot_time</span><span class="p">,</span> <span class="n">signal_data</span><span class="p">[</span><span class="s2">&quot;act&quot;</span><span class="p">][</span><span class="n">act_type</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="n">act_type</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">apply_default_formatting</span><span class="p">:</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;Activation [a.u.]&quot;</span><span class="p">)</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">plot_idx</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="n">title</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">plot_idx</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">ax_list</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="n">xlabel</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">time_range</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">ax</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">(</span><span class="n">time_range</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">axs</span></div>
+
+
+
+<div class="viewcode-block" id="plot_antagonist_muscle_comparison">
+<a class="viewcode-back" href="../../../../generated/myogen.utils.plotting.plot_antagonist_muscle_comparison.html#myogen.utils.plotting.plot_antagonist_muscle_comparison">[docs]</a>
+<span class="nd">@beartowertype</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">plot_antagonist_muscle_comparison</span><span class="p">(</span>
+    <span class="n">results</span><span class="p">:</span> <span class="n">Block</span><span class="p">,</span>
+    <span class="n">joint_angle</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+    <span class="n">time</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+    <span class="n">axs</span><span class="p">:</span> <span class="n">IterableType</span><span class="p">[</span><span class="n">Axes</span><span class="p">],</span>
+    <span class="n">flexor_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;hill_flexor&quot;</span><span class="p">,</span>
+    <span class="n">extensor_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;hill_extensor&quot;</span><span class="p">,</span>
+    <span class="n">include_signals</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;artAng&quot;</span><span class="p">,</span> <span class="s2">&quot;force&quot;</span><span class="p">,</span> <span class="s2">&quot;torque&quot;</span><span class="p">],</span>
+    <span class="n">time_range</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">title</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;Antagonist Muscle Comparison&quot;</span><span class="p">,</span>
+    <span class="n">xlabel</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;Time [ms]&quot;</span><span class="p">,</span>
+    <span class="n">apply_default_formatting</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">IterableType</span><span class="p">[</span><span class="n">Axes</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Plot comparison of antagonist muscle dynamics.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    results : Block</span>
+<span class="sd">        NEO Block containing both muscle model segments.</span>
+<span class="sd">    joint_angle : np.ndarray</span>
+<span class="sd">        Joint angle time series data.</span>
+<span class="sd">    time : np.ndarray</span>
+<span class="sd">        Time vector in milliseconds.</span>
+<span class="sd">    axs : IterableType[Axes]</span>
+<span class="sd">        Matplotlib axes to plot on (one per signal).</span>
+<span class="sd">    flexor_name : str, optional</span>
+<span class="sd">        Name of flexor muscle segment, by default &quot;hill_flexor&quot;.</span>
+<span class="sd">    extensor_name : str, optional</span>
+<span class="sd">        Name of extensor muscle segment, by default &quot;hill_extensor&quot;.</span>
+<span class="sd">    include_signals : list[str], optional</span>
+<span class="sd">        Signals to compare, by default [&quot;artAng&quot;, &quot;force&quot;, &quot;torque&quot;].</span>
+<span class="sd">    time_range : tuple[float, float], optional</span>
+<span class="sd">        Time range to plot, by default None.</span>
+<span class="sd">    title : str, optional</span>
+<span class="sd">        Plot title, by default &quot;Antagonist Muscle Comparison&quot;.</span>
+<span class="sd">    xlabel : str, optional</span>
+<span class="sd">        X-axis label, by default &quot;Time [ms]&quot;.</span>
+<span class="sd">    apply_default_formatting : bool, optional</span>
+<span class="sd">        Whether to apply default formatting, by default True.</span>
+<span class="sd">    **kwargs : Any</span>
+<span class="sd">        Additional keyword arguments passed to matplotlib plot functions.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    IterableType[Axes]</span>
+<span class="sd">        The axes that were plotted on.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">ax_list</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">axs</span><span class="p">)</span>
+
+    <span class="c1"># Find muscle segments</span>
+    <span class="n">flexor_segment</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">extensor_segment</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">for</span> <span class="n">seg</span> <span class="ow">in</span> <span class="n">results</span><span class="o">.</span><span class="n">segments</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">seg</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="n">flexor_name</span><span class="p">:</span>
+            <span class="n">flexor_segment</span> <span class="o">=</span> <span class="n">seg</span>
+        <span class="k">elif</span> <span class="n">seg</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="n">extensor_name</span><span class="p">:</span>
+            <span class="n">extensor_segment</span> <span class="o">=</span> <span class="n">seg</span>
+
+    <span class="k">if</span> <span class="n">flexor_segment</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">extensor_segment</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s2">&quot;Could not find both flexor and extensor muscle segments&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">axs</span>
+
+    <span class="c1"># Extract data from both muscles</span>
+    <span class="n">flexor_data</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">extensor_data</span> <span class="o">=</span> <span class="p">{}</span>
+
+    <span class="k">for</span> <span class="n">signal</span> <span class="ow">in</span> <span class="n">flexor_segment</span><span class="o">.</span><span class="n">analogsignals</span><span class="p">:</span>
+        <span class="n">flexor_data</span><span class="p">[</span><span class="n">signal</span><span class="o">.</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">signal</span><span class="o">.</span><span class="n">magnitude</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
+
+    <span class="k">for</span> <span class="n">signal</span> <span class="ow">in</span> <span class="n">extensor_segment</span><span class="o">.</span><span class="n">analogsignals</span><span class="p">:</span>
+        <span class="n">extensor_data</span><span class="p">[</span><span class="n">signal</span><span class="o">.</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">signal</span><span class="o">.</span><span class="n">magnitude</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
+
+    <span class="c1"># Apply time range filter</span>
+    <span class="n">plot_time</span> <span class="o">=</span> <span class="n">time</span>
+    <span class="k">if</span> <span class="n">time_range</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">time_mask</span> <span class="o">=</span> <span class="p">(</span><span class="n">time</span> <span class="o">&gt;=</span> <span class="n">time_range</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">time</span> <span class="o">&lt;=</span> <span class="n">time_range</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+        <span class="n">plot_time</span> <span class="o">=</span> <span class="n">time</span><span class="p">[</span><span class="n">time_mask</span><span class="p">]</span>
+
+        <span class="c1"># Handle length mismatches for joint angle</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">joint_angle</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">time_mask</span><span class="p">):</span>
+            <span class="n">min_length</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">joint_angle</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">time_mask</span><span class="p">))</span>
+            <span class="n">joint_angle</span> <span class="o">=</span> <span class="n">joint_angle</span><span class="p">[:</span><span class="n">min_length</span><span class="p">]</span>
+            <span class="n">time_mask_trimmed</span> <span class="o">=</span> <span class="n">time_mask</span><span class="p">[:</span><span class="n">min_length</span><span class="p">]</span>
+            <span class="n">joint_angle</span> <span class="o">=</span> <span class="n">joint_angle</span><span class="p">[</span><span class="n">time_mask_trimmed</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">joint_angle</span> <span class="o">=</span> <span class="n">joint_angle</span><span class="p">[</span><span class="n">time_mask</span><span class="p">]</span>
+
+        <span class="c1"># Apply mask to muscle data with length checks</span>
+        <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">flexor_data</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">flexor_data</span><span class="p">[</span><span class="n">key</span><span class="p">])</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">time_mask</span><span class="p">):</span>
+                <span class="n">min_length</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">flexor_data</span><span class="p">[</span><span class="n">key</span><span class="p">]),</span> <span class="nb">len</span><span class="p">(</span><span class="n">time_mask</span><span class="p">))</span>
+                <span class="n">data_trimmed</span> <span class="o">=</span> <span class="n">flexor_data</span><span class="p">[</span><span class="n">key</span><span class="p">][:</span><span class="n">min_length</span><span class="p">]</span>
+                <span class="n">time_mask_trimmed</span> <span class="o">=</span> <span class="n">time_mask</span><span class="p">[:</span><span class="n">min_length</span><span class="p">]</span>
+                <span class="n">flexor_data</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">data_trimmed</span><span class="p">[</span><span class="n">time_mask_trimmed</span><span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">flexor_data</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">flexor_data</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="n">time_mask</span><span class="p">]</span>
+
+        <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">extensor_data</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">extensor_data</span><span class="p">[</span><span class="n">key</span><span class="p">])</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">time_mask</span><span class="p">):</span>
+                <span class="n">min_length</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">extensor_data</span><span class="p">[</span><span class="n">key</span><span class="p">]),</span> <span class="nb">len</span><span class="p">(</span><span class="n">time_mask</span><span class="p">))</span>
+                <span class="n">data_trimmed</span> <span class="o">=</span> <span class="n">extensor_data</span><span class="p">[</span><span class="n">key</span><span class="p">][:</span><span class="n">min_length</span><span class="p">]</span>
+                <span class="n">time_mask_trimmed</span> <span class="o">=</span> <span class="n">time_mask</span><span class="p">[:</span><span class="n">min_length</span><span class="p">]</span>
+                <span class="n">extensor_data</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">data_trimmed</span><span class="p">[</span><span class="n">time_mask_trimmed</span><span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">extensor_data</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">extensor_data</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="n">time_mask</span><span class="p">]</span>
+
+    <span class="c1"># Plot signals</span>
+    <span class="n">plot_idx</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="c1"># Joint angle</span>
+    <span class="k">if</span> <span class="s2">&quot;artAng&quot;</span> <span class="ow">in</span> <span class="n">include_signals</span> <span class="ow">and</span> <span class="n">plot_idx</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">ax_list</span><span class="p">):</span>
+        <span class="n">ax</span> <span class="o">=</span> <span class="n">ax_list</span><span class="p">[</span><span class="n">plot_idx</span><span class="p">]</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">plot_time</span><span class="p">,</span> <span class="n">joint_angle</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Joint Angle&quot;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">apply_default_formatting</span><span class="p">:</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;Joint Angle [deg]&quot;</span><span class="p">)</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">plot_idx</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="n">title</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">plot_idx</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">ax_list</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="n">xlabel</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">time_range</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">ax</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">(</span><span class="n">time_range</span><span class="p">)</span>
+        <span class="n">plot_idx</span> <span class="o">+=</span> <span class="mi">1</span>
+
+    <span class="c1"># Force comparison</span>
+    <span class="k">if</span> <span class="s2">&quot;force&quot;</span> <span class="ow">in</span> <span class="n">include_signals</span> <span class="ow">and</span> <span class="n">plot_idx</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">ax_list</span><span class="p">):</span>
+        <span class="n">ax</span> <span class="o">=</span> <span class="n">ax_list</span><span class="p">[</span><span class="n">plot_idx</span><span class="p">]</span>
+        <span class="k">if</span> <span class="s2">&quot;muscle_force&quot;</span> <span class="ow">in</span> <span class="n">flexor_data</span><span class="p">:</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">plot_time</span><span class="p">,</span> <span class="n">flexor_data</span><span class="p">[</span><span class="s2">&quot;muscle_force&quot;</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Flexor&quot;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="k">if</span> <span class="s2">&quot;muscle_force&quot;</span> <span class="ow">in</span> <span class="n">extensor_data</span><span class="p">:</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">plot_time</span><span class="p">,</span> <span class="n">extensor_data</span><span class="p">[</span><span class="s2">&quot;muscle_force&quot;</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Extensor&quot;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">apply_default_formatting</span><span class="p">:</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;Force [F0]&quot;</span><span class="p">)</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">plot_idx</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="n">title</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">plot_idx</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">ax_list</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="n">xlabel</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">time_range</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">ax</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">(</span><span class="n">time_range</span><span class="p">)</span>
+        <span class="n">plot_idx</span> <span class="o">+=</span> <span class="mi">1</span>
+
+    <span class="c1"># Torque comparison (including net torque)</span>
+    <span class="k">if</span> <span class="s2">&quot;torque&quot;</span> <span class="ow">in</span> <span class="n">include_signals</span> <span class="ow">and</span> <span class="n">plot_idx</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">ax_list</span><span class="p">):</span>
+        <span class="n">ax</span> <span class="o">=</span> <span class="n">ax_list</span><span class="p">[</span><span class="n">plot_idx</span><span class="p">]</span>
+        <span class="k">if</span> <span class="s2">&quot;muscle_torque&quot;</span> <span class="ow">in</span> <span class="n">flexor_data</span> <span class="ow">and</span> <span class="s2">&quot;muscle_torque&quot;</span> <span class="ow">in</span> <span class="n">extensor_data</span><span class="p">:</span>
+            <span class="n">flex_torque</span> <span class="o">=</span> <span class="n">flexor_data</span><span class="p">[</span><span class="s2">&quot;muscle_torque&quot;</span><span class="p">]</span>
+            <span class="n">ext_torque</span> <span class="o">=</span> <span class="o">-</span><span class="n">extensor_data</span><span class="p">[</span><span class="s2">&quot;muscle_torque&quot;</span><span class="p">]</span>  <span class="c1"># Negative for extensor</span>
+            <span class="n">net_torque</span> <span class="o">=</span> <span class="n">flex_torque</span> <span class="o">+</span> <span class="n">ext_torque</span>
+
+            <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">plot_time</span><span class="p">,</span> <span class="n">flex_torque</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Flexor&quot;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">plot_time</span><span class="p">,</span> <span class="n">ext_torque</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Extensor&quot;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">plot_time</span><span class="p">,</span> <span class="n">net_torque</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Net&quot;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">apply_default_formatting</span><span class="p">:</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;Torque [F0·cm]&quot;</span><span class="p">)</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">plot_idx</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="n">title</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">plot_idx</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">ax_list</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="n">xlabel</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">time_range</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">ax</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">(</span><span class="n">time_range</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">axs</span></div>
+
+
+
+<div class="viewcode-block" id="plot_spindle_dynamics">
+<a class="viewcode-back" href="../../../../generated/myogen.utils.plotting.plot_spindle_dynamics.html#myogen.utils.plotting.plot_spindle_dynamics">[docs]</a>
+<span class="nd">@beartowertype</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">plot_spindle_dynamics</span><span class="p">(</span>
+    <span class="n">results</span><span class="p">:</span> <span class="n">Block</span><span class="p">,</span>
+    <span class="n">axs</span><span class="p">:</span> <span class="n">IterableType</span><span class="p">[</span><span class="n">Axes</span><span class="p">],</span>
+    <span class="n">muscle_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;hill_flexor&quot;</span><span class="p">,</span>
+    <span class="n">include_signals</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;L&quot;</span><span class="p">],</span>
+    <span class="n">include_activations</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;Bag1&quot;</span><span class="p">,</span> <span class="s2">&quot;Bag2&quot;</span><span class="p">,</span> <span class="s2">&quot;Chain&quot;</span><span class="p">],</span>
+    <span class="n">include_tensions</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;Bag1&quot;</span><span class="p">,</span> <span class="s2">&quot;Bag2&quot;</span><span class="p">,</span> <span class="s2">&quot;Chain&quot;</span><span class="p">],</span>
+    <span class="n">include_afferents</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;Ia&quot;</span><span class="p">,</span> <span class="s2">&quot;II&quot;</span><span class="p">],</span>
+    <span class="n">time_range</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">title</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;Spindle Model Dynamics&quot;</span><span class="p">,</span>
+    <span class="n">xlabel</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;Time [ms]&quot;</span><span class="p">,</span>
+    <span class="n">apply_default_formatting</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">IterableType</span><span class="p">[</span><span class="n">Axes</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Plot spindle model dynamics.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    results : Block</span>
+<span class="sd">        NEO Block containing spindle model segment.</span>
+<span class="sd">    axs : IterableType[Axes]</span>
+<span class="sd">        Matplotlib axes to plot on (one per signal group).</span>
+<span class="sd">    muscle_name : str, optional</span>
+<span class="sd">        Name of muscle segment to use for length and time data, by default &quot;hill_flexor&quot;.</span>
+<span class="sd">    include_signals : list[str], optional</span>
+<span class="sd">        Basic signals to plot, by default [&quot;L&quot;].</span>
+<span class="sd">    include_activations : list[str], optional</span>
+<span class="sd">        Intrafusal activations to plot, by default [&quot;Bag1&quot;, &quot;Bag2&quot;, &quot;Chain&quot;].</span>
+<span class="sd">    include_tensions : list[str], optional</span>
+<span class="sd">        Intrafusal tensions to plot, by default [&quot;Bag1&quot;, &quot;Bag2&quot;, &quot;Chain&quot;].</span>
+<span class="sd">    include_afferents : list[str], optional</span>
+<span class="sd">        Afferent firing rates to plot, by default [&quot;Ia&quot;, &quot;II&quot;].</span>
+<span class="sd">    time_range : tuple[float, float], optional</span>
+<span class="sd">        Time range to plot, by default None.</span>
+<span class="sd">    title : str, optional</span>
+<span class="sd">        Plot title, by default &quot;Spindle Model Dynamics&quot;.</span>
+<span class="sd">    xlabel : str, optional</span>
+<span class="sd">        X-axis label, by default &quot;Time [ms]&quot;.</span>
+<span class="sd">    apply_default_formatting : bool, optional</span>
+<span class="sd">        Whether to apply default formatting, by default True.</span>
+<span class="sd">    **kwargs : Any</span>
+<span class="sd">        Additional keyword arguments passed to matplotlib plot functions.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    IterableType[Axes]</span>
+<span class="sd">        The axes that were plotted on.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">ax_list</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">axs</span><span class="p">)</span>
+
+    <span class="c1"># Find spindle segment</span>
+    <span class="n">spindle_segment</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">for</span> <span class="n">seg</span> <span class="ow">in</span> <span class="n">results</span><span class="o">.</span><span class="n">segments</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">seg</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="s2">&quot;spin&quot;</span><span class="p">:</span>
+            <span class="n">spindle_segment</span> <span class="o">=</span> <span class="n">seg</span>
+            <span class="k">break</span>
+
+    <span class="k">if</span> <span class="n">spindle_segment</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s2">&quot;No spindle dynamics data found in results&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">axs</span>
+
+    <span class="c1"># Extract spindle data</span>
+    <span class="n">spindle_data</span> <span class="o">=</span> <span class="p">{}</span>
+
+    <span class="c1"># Get muscle length from specified muscle segment for &quot;L&quot; signal</span>
+    <span class="k">if</span> <span class="s2">&quot;L&quot;</span> <span class="ow">in</span> <span class="n">include_signals</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">seg</span> <span class="ow">in</span> <span class="n">results</span><span class="o">.</span><span class="n">segments</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">seg</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="n">muscle_name</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">signal</span> <span class="ow">in</span> <span class="n">seg</span><span class="o">.</span><span class="n">analogsignals</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">signal</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="s2">&quot;muscle_length&quot;</span><span class="p">:</span>
+                        <span class="n">spindle_data</span><span class="p">[</span><span class="s2">&quot;L&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">signal</span><span class="o">.</span><span class="n">magnitude</span><span class="o">.</span><span class="n">flatten</span><span class="p">(),</span> <span class="s2">&quot;Length [L0]&quot;</span><span class="p">)</span>
+                        <span class="k">break</span>
+                <span class="k">break</span>
+
+    <span class="c1"># Extract spindle-specific signals</span>
+    <span class="k">for</span> <span class="n">signal</span> <span class="ow">in</span> <span class="n">spindle_segment</span><span class="o">.</span><span class="n">analogsignals</span><span class="p">:</span>
+        <span class="n">signal_name</span> <span class="o">=</span> <span class="n">signal</span><span class="o">.</span><span class="n">name</span>
+        <span class="n">signal_array</span> <span class="o">=</span> <span class="n">signal</span><span class="o">.</span><span class="n">magnitude</span>
+
+        <span class="k">if</span> <span class="n">signal_name</span> <span class="o">==</span> <span class="s2">&quot;bag1_activation&quot;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="s2">&quot;act&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">spindle_data</span><span class="p">:</span>
+                <span class="n">spindle_data</span><span class="p">[</span><span class="s2">&quot;act&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+            <span class="n">spindle_data</span><span class="p">[</span><span class="s2">&quot;act&quot;</span><span class="p">][</span><span class="s2">&quot;Bag1&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">signal_array</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
+        <span class="k">elif</span> <span class="n">signal_name</span> <span class="o">==</span> <span class="s2">&quot;bag2_activation&quot;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="s2">&quot;act&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">spindle_data</span><span class="p">:</span>
+                <span class="n">spindle_data</span><span class="p">[</span><span class="s2">&quot;act&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+            <span class="n">spindle_data</span><span class="p">[</span><span class="s2">&quot;act&quot;</span><span class="p">][</span><span class="s2">&quot;Bag2&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">signal_array</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
+        <span class="k">elif</span> <span class="n">signal_name</span> <span class="o">==</span> <span class="s2">&quot;chain_activation&quot;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="s2">&quot;act&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">spindle_data</span><span class="p">:</span>
+                <span class="n">spindle_data</span><span class="p">[</span><span class="s2">&quot;act&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+            <span class="n">spindle_data</span><span class="p">[</span><span class="s2">&quot;act&quot;</span><span class="p">][</span><span class="s2">&quot;Chain&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">signal_array</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
+        <span class="k">elif</span> <span class="n">signal_name</span> <span class="o">==</span> <span class="s2">&quot;intrafusal_tensions&quot;</span><span class="p">:</span>
+            <span class="c1"># Handle 2D tensions array (3 x time_points) or (time_points x 3)</span>
+            <span class="k">if</span> <span class="n">signal_array</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">signal_array</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>  <span class="c1"># (3, time_points)</span>
+                    <span class="n">spindle_data</span><span class="p">[</span><span class="s2">&quot;tension&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+                        <span class="s2">&quot;Bag1&quot;</span><span class="p">:</span> <span class="n">signal_array</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="p">:],</span>
+                        <span class="s2">&quot;Bag2&quot;</span><span class="p">:</span> <span class="n">signal_array</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="p">:],</span>
+                        <span class="s2">&quot;Chain&quot;</span><span class="p">:</span> <span class="n">signal_array</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="p">:],</span>
+                    <span class="p">}</span>
+                <span class="k">elif</span> <span class="n">signal_array</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>  <span class="c1"># (time_points, 3)</span>
+                    <span class="n">spindle_data</span><span class="p">[</span><span class="s2">&quot;tension&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+                        <span class="s2">&quot;Bag1&quot;</span><span class="p">:</span> <span class="n">signal_array</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">],</span>
+                        <span class="s2">&quot;Bag2&quot;</span><span class="p">:</span> <span class="n">signal_array</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">],</span>
+                        <span class="s2">&quot;Chain&quot;</span><span class="p">:</span> <span class="n">signal_array</span><span class="p">[:,</span> <span class="mi">2</span><span class="p">],</span>
+                    <span class="p">}</span>
+        <span class="k">elif</span> <span class="n">signal_name</span> <span class="o">==</span> <span class="s2">&quot;primary_afferent_firing__Hz&quot;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="s2">&quot;aff&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">spindle_data</span><span class="p">:</span>
+                <span class="n">spindle_data</span><span class="p">[</span><span class="s2">&quot;aff&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+            <span class="n">spindle_data</span><span class="p">[</span><span class="s2">&quot;aff&quot;</span><span class="p">][</span><span class="s2">&quot;Ia&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">signal_array</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
+        <span class="k">elif</span> <span class="n">signal_name</span> <span class="o">==</span> <span class="s2">&quot;secondary_afferent_firing__Hz&quot;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="s2">&quot;aff&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">spindle_data</span><span class="p">:</span>
+                <span class="n">spindle_data</span><span class="p">[</span><span class="s2">&quot;aff&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+            <span class="n">spindle_data</span><span class="p">[</span><span class="s2">&quot;aff&quot;</span><span class="p">][</span><span class="s2">&quot;II&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">signal_array</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
+
+    <span class="c1"># Get time vector from specified muscle segment</span>
+    <span class="n">time_vector</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">for</span> <span class="n">seg</span> <span class="ow">in</span> <span class="n">results</span><span class="o">.</span><span class="n">segments</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">seg</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="n">muscle_name</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">signal</span> <span class="ow">in</span> <span class="n">seg</span><span class="o">.</span><span class="n">analogsignals</span><span class="p">:</span>
+                <span class="n">time_vector</span> <span class="o">=</span> <span class="n">signal</span><span class="o">.</span><span class="n">times</span><span class="o">.</span><span class="n">rescale</span><span class="p">(</span><span class="s2">&quot;ms&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">magnitude</span>
+                <span class="k">break</span>
+            <span class="k">break</span>
+
+    <span class="k">if</span> <span class="n">time_vector</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s2">&quot;Could not find time vector for spindle plotting&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">axs</span>
+
+    <span class="c1"># Apply time range filter</span>
+    <span class="n">plot_time</span> <span class="o">=</span> <span class="n">time_vector</span>
+    <span class="k">if</span> <span class="n">time_range</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">time_mask</span> <span class="o">=</span> <span class="p">(</span><span class="n">time_vector</span> <span class="o">&gt;=</span> <span class="n">time_range</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">time_vector</span> <span class="o">&lt;=</span> <span class="n">time_range</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+        <span class="n">plot_time</span> <span class="o">=</span> <span class="n">time_vector</span><span class="p">[</span><span class="n">time_mask</span><span class="p">]</span>
+        <span class="c1"># Apply same mask to all signal data</span>
+        <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">spindle_data</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;L&quot;</span><span class="p">]</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>
+                <span class="n">spindle_data</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">value</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="n">time_mask</span><span class="p">],</span> <span class="n">value</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+            <span class="k">elif</span> <span class="n">key</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;act&quot;</span><span class="p">,</span> <span class="s2">&quot;tension&quot;</span><span class="p">,</span> <span class="s2">&quot;aff&quot;</span><span class="p">]:</span>
+                <span class="k">for</span> <span class="n">subkey</span><span class="p">,</span> <span class="n">subvalue</span> <span class="ow">in</span> <span class="n">value</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                    <span class="n">spindle_data</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="n">subkey</span><span class="p">]</span> <span class="o">=</span> <span class="n">subvalue</span><span class="p">[</span><span class="n">time_mask</span><span class="p">]</span>
+
+    <span class="c1"># Plot signals</span>
+    <span class="n">plot_idx</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="c1"># Basic signals (like length)</span>
+    <span class="k">for</span> <span class="n">signal_name</span> <span class="ow">in</span> <span class="n">include_signals</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">signal_name</span> <span class="ow">in</span> <span class="n">spindle_data</span> <span class="ow">and</span> <span class="n">plot_idx</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">ax_list</span><span class="p">):</span>
+            <span class="n">ax</span> <span class="o">=</span> <span class="n">ax_list</span><span class="p">[</span><span class="n">plot_idx</span><span class="p">]</span>
+            <span class="n">data</span><span class="p">,</span> <span class="n">ylabel</span> <span class="o">=</span> <span class="n">spindle_data</span><span class="p">[</span><span class="n">signal_name</span><span class="p">]</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">plot_time</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">apply_default_formatting</span><span class="p">:</span>
+                <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="n">ylabel</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">plot_idx</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="n">title</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">plot_idx</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">ax_list</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">:</span>
+                    <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="n">xlabel</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">time_range</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">ax</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">(</span><span class="n">time_range</span><span class="p">)</span>
+
+            <span class="n">plot_idx</span> <span class="o">+=</span> <span class="mi">1</span>
+
+    <span class="c1"># Activations</span>
+    <span class="k">if</span> <span class="n">include_activations</span> <span class="ow">and</span> <span class="s2">&quot;act&quot;</span> <span class="ow">in</span> <span class="n">spindle_data</span> <span class="ow">and</span> <span class="n">plot_idx</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">ax_list</span><span class="p">):</span>
+        <span class="n">ax</span> <span class="o">=</span> <span class="n">ax_list</span><span class="p">[</span><span class="n">plot_idx</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">act_type</span> <span class="ow">in</span> <span class="n">include_activations</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">act_type</span> <span class="ow">in</span> <span class="n">spindle_data</span><span class="p">[</span><span class="s2">&quot;act&quot;</span><span class="p">]:</span>
+                <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">plot_time</span><span class="p">,</span> <span class="n">spindle_data</span><span class="p">[</span><span class="s2">&quot;act&quot;</span><span class="p">][</span><span class="n">act_type</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="n">act_type</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">apply_default_formatting</span><span class="p">:</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;Activation [a.u.]&quot;</span><span class="p">)</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">plot_idx</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="n">title</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">plot_idx</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">ax_list</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="n">xlabel</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">time_range</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">ax</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">(</span><span class="n">time_range</span><span class="p">)</span>
+
+        <span class="n">plot_idx</span> <span class="o">+=</span> <span class="mi">1</span>
+
+    <span class="c1"># Tensions</span>
+    <span class="k">if</span> <span class="n">include_tensions</span> <span class="ow">and</span> <span class="s2">&quot;tension&quot;</span> <span class="ow">in</span> <span class="n">spindle_data</span> <span class="ow">and</span> <span class="n">plot_idx</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">ax_list</span><span class="p">):</span>
+        <span class="n">ax</span> <span class="o">=</span> <span class="n">ax_list</span><span class="p">[</span><span class="n">plot_idx</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">tension_type</span> <span class="ow">in</span> <span class="n">include_tensions</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">tension_type</span> <span class="ow">in</span> <span class="n">spindle_data</span><span class="p">[</span><span class="s2">&quot;tension&quot;</span><span class="p">]:</span>
+                <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
+                    <span class="n">plot_time</span><span class="p">,</span>
+                    <span class="n">spindle_data</span><span class="p">[</span><span class="s2">&quot;tension&quot;</span><span class="p">][</span><span class="n">tension_type</span><span class="p">],</span>
+                    <span class="n">label</span><span class="o">=</span><span class="n">tension_type</span><span class="p">,</span>
+                    <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+                <span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">apply_default_formatting</span><span class="p">:</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;Tension [F0]&quot;</span><span class="p">)</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">plot_idx</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="n">title</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">plot_idx</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">ax_list</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="n">xlabel</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">time_range</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">ax</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">(</span><span class="n">time_range</span><span class="p">)</span>
+
+        <span class="n">plot_idx</span> <span class="o">+=</span> <span class="mi">1</span>
+
+    <span class="c1"># Afferents</span>
+    <span class="k">if</span> <span class="n">include_afferents</span> <span class="ow">and</span> <span class="s2">&quot;aff&quot;</span> <span class="ow">in</span> <span class="n">spindle_data</span> <span class="ow">and</span> <span class="n">plot_idx</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">ax_list</span><span class="p">):</span>
+        <span class="n">ax</span> <span class="o">=</span> <span class="n">ax_list</span><span class="p">[</span><span class="n">plot_idx</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">aff_type</span> <span class="ow">in</span> <span class="n">include_afferents</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">aff_type</span> <span class="ow">in</span> <span class="n">spindle_data</span><span class="p">[</span><span class="s2">&quot;aff&quot;</span><span class="p">]:</span>
+                <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">plot_time</span><span class="p">,</span> <span class="n">spindle_data</span><span class="p">[</span><span class="s2">&quot;aff&quot;</span><span class="p">][</span><span class="n">aff_type</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="n">aff_type</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">apply_default_formatting</span><span class="p">:</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;Firing Rate [Hz]&quot;</span><span class="p">)</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">plot_idx</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="n">title</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">plot_idx</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">ax_list</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="n">xlabel</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">time_range</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">ax</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">(</span><span class="n">time_range</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">axs</span></div>
+
+
+
+<div class="viewcode-block" id="plot_gto_dynamics">
+<a class="viewcode-back" href="../../../../generated/myogen.utils.plotting.plot_gto_dynamics.html#myogen.utils.plotting.plot_gto_dynamics">[docs]</a>
+<span class="nd">@beartowertype</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">plot_gto_dynamics</span><span class="p">(</span>
+    <span class="n">results</span><span class="p">:</span> <span class="n">Block</span><span class="p">,</span>
+    <span class="n">axs</span><span class="p">:</span> <span class="n">IterableType</span><span class="p">[</span><span class="n">Axes</span><span class="p">],</span>
+    <span class="n">muscle_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;hill_flexor&quot;</span><span class="p">,</span>
+    <span class="n">include_signals</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;force&quot;</span><span class="p">,</span> <span class="s2">&quot;Ib&quot;</span><span class="p">],</span>
+    <span class="n">time_range</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">title</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;GTO Model Dynamics&quot;</span><span class="p">,</span>
+    <span class="n">xlabel</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;Time [ms]&quot;</span><span class="p">,</span>
+    <span class="n">apply_default_formatting</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">IterableType</span><span class="p">[</span><span class="n">Axes</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Plot Golgi tendon organ (GTO) dynamics.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    results : Block</span>
+<span class="sd">        NEO Block containing GTO model segment.</span>
+<span class="sd">    axs : IterableType[Axes]</span>
+<span class="sd">        Matplotlib axes to plot on (one per signal).</span>
+<span class="sd">    muscle_name : str, optional</span>
+<span class="sd">        Name of muscle segment to use for force and time data, by default &quot;hill_flexor&quot;.</span>
+<span class="sd">    include_signals : list[str], optional</span>
+<span class="sd">        Signals to plot, by default [&quot;force&quot;, &quot;Ib&quot;].</span>
+<span class="sd">    time_range : tuple[float, float], optional</span>
+<span class="sd">        Time range to plot, by default None.</span>
+<span class="sd">    title : str, optional</span>
+<span class="sd">        Plot title, by default &quot;GTO Model Dynamics&quot;.</span>
+<span class="sd">    xlabel : str, optional</span>
+<span class="sd">        X-axis label, by default &quot;Time [ms]&quot;.</span>
+<span class="sd">    apply_default_formatting : bool, optional</span>
+<span class="sd">        Whether to apply default formatting, by default True.</span>
+<span class="sd">    **kwargs : Any</span>
+<span class="sd">        Additional keyword arguments passed to matplotlib plot functions.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    IterableType[Axes]</span>
+<span class="sd">        The axes that were plotted on.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">ax_list</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">axs</span><span class="p">)</span>
+
+    <span class="c1"># Find GTO segment</span>
+    <span class="n">gto_segment</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">for</span> <span class="n">seg</span> <span class="ow">in</span> <span class="n">results</span><span class="o">.</span><span class="n">segments</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">seg</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="s2">&quot;gto&quot;</span><span class="p">:</span>
+            <span class="n">gto_segment</span> <span class="o">=</span> <span class="n">seg</span>
+            <span class="k">break</span>
+
+    <span class="k">if</span> <span class="n">gto_segment</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s2">&quot;No GTO dynamics data found in results&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">axs</span>
+
+    <span class="c1"># Extract GTO data</span>
+    <span class="n">gto_data</span> <span class="o">=</span> <span class="p">{}</span>
+
+    <span class="c1"># Get muscle force from specified muscle segment for &quot;force&quot; signal</span>
+    <span class="k">if</span> <span class="s2">&quot;force&quot;</span> <span class="ow">in</span> <span class="n">include_signals</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">seg</span> <span class="ow">in</span> <span class="n">results</span><span class="o">.</span><span class="n">segments</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">seg</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="n">muscle_name</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">signal</span> <span class="ow">in</span> <span class="n">seg</span><span class="o">.</span><span class="n">analogsignals</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">signal</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="s2">&quot;muscle_force&quot;</span><span class="p">:</span>
+                        <span class="n">gto_data</span><span class="p">[</span><span class="s2">&quot;force&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">signal</span><span class="o">.</span><span class="n">magnitude</span><span class="o">.</span><span class="n">flatten</span><span class="p">(),</span> <span class="s2">&quot;Force [F0]&quot;</span><span class="p">)</span>
+                        <span class="k">break</span>
+                <span class="k">break</span>
+
+    <span class="c1"># Extract GTO-specific signals</span>
+    <span class="k">for</span> <span class="n">signal</span> <span class="ow">in</span> <span class="n">gto_segment</span><span class="o">.</span><span class="n">analogsignals</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">signal</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="s2">&quot;ib_afferent_firing__Hz&quot;</span> <span class="ow">and</span> <span class="s2">&quot;Ib&quot;</span> <span class="ow">in</span> <span class="n">include_signals</span><span class="p">:</span>
+            <span class="n">gto_data</span><span class="p">[</span><span class="s2">&quot;Ib&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">signal</span><span class="o">.</span><span class="n">magnitude</span><span class="o">.</span><span class="n">flatten</span><span class="p">(),</span> <span class="s2">&quot;Firing Rate [Hz]&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Get time vector from specified muscle segment</span>
+    <span class="n">time_vector</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">for</span> <span class="n">seg</span> <span class="ow">in</span> <span class="n">results</span><span class="o">.</span><span class="n">segments</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">seg</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="n">muscle_name</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">signal</span> <span class="ow">in</span> <span class="n">seg</span><span class="o">.</span><span class="n">analogsignals</span><span class="p">:</span>
+                <span class="n">time_vector</span> <span class="o">=</span> <span class="n">signal</span><span class="o">.</span><span class="n">times</span><span class="o">.</span><span class="n">rescale</span><span class="p">(</span><span class="s2">&quot;ms&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">magnitude</span>
+                <span class="k">break</span>
+            <span class="k">break</span>
+
+    <span class="k">if</span> <span class="n">time_vector</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s2">&quot;Could not find time vector for GTO plotting&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">axs</span>
+
+    <span class="c1"># Apply time range filter</span>
+    <span class="n">plot_time</span> <span class="o">=</span> <span class="n">time_vector</span>
+    <span class="k">if</span> <span class="n">time_range</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">time_mask</span> <span class="o">=</span> <span class="p">(</span><span class="n">time_vector</span> <span class="o">&gt;=</span> <span class="n">time_range</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">time_vector</span> <span class="o">&lt;=</span> <span class="n">time_range</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+        <span class="n">plot_time</span> <span class="o">=</span> <span class="n">time_vector</span><span class="p">[</span><span class="n">time_mask</span><span class="p">]</span>
+        <span class="c1"># Apply same mask to all signal data</span>
+        <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">gto_data</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>
+                <span class="n">gto_data</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">value</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="n">time_mask</span><span class="p">],</span> <span class="n">value</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+
+    <span class="c1"># Plot signals</span>
+    <span class="n">plot_idx</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="k">for</span> <span class="n">signal_name</span> <span class="ow">in</span> <span class="n">include_signals</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">signal_name</span> <span class="ow">in</span> <span class="n">gto_data</span> <span class="ow">and</span> <span class="n">plot_idx</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">ax_list</span><span class="p">):</span>
+            <span class="n">ax</span> <span class="o">=</span> <span class="n">ax_list</span><span class="p">[</span><span class="n">plot_idx</span><span class="p">]</span>
+            <span class="n">data</span><span class="p">,</span> <span class="n">ylabel</span> <span class="o">=</span> <span class="n">gto_data</span><span class="p">[</span><span class="n">signal_name</span><span class="p">]</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">plot_time</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">apply_default_formatting</span><span class="p">:</span>
+                <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="n">ylabel</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">plot_idx</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="n">title</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">plot_idx</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">ax_list</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">:</span>
+                    <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="n">xlabel</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">time_range</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">ax</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">(</span><span class="n">time_range</span><span class="p">)</span>
+
+            <span class="n">plot_idx</span> <span class="o">+=</span> <span class="mi">1</span>
+
+    <span class="k">return</span> <span class="n">axs</span></div>
+
+</pre></div>
+
+                </article>
+              
+              
+              
+              
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2025 - 2025, n-squared lab, FAU Erlangen-Nürnberg, Germany.
+      <br/>
+    
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.2.3.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

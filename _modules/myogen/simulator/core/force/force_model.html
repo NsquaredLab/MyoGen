@@ -29,14 +29,22 @@
   <link href="../../../../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
 <link href="../../../../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
 
-    <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=8f2a1f02" />
-    <link rel="stylesheet" type="text/css" href="../../../../../_static/custom.css?v=34f00721" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=5349f25f" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/css/tooltipster.custom.css" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/css/tooltipster.bundle.min.css" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/css/tooltipster-sideTip-shadow.min.css" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/css/tooltipster-sideTip-punk.min.css" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/css/tooltipster-sideTip-noir.min.css" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/css/tooltipster-sideTip-light.min.css" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/css/tooltipster-sideTip-borderless.min.css" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/css/micromodal.css" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/custom.css?v=9b95bd4c" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/sg_gallery.css?v=d2d258e8" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/sg_gallery-binder.css?v=f4aeca0c" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/sphinx-design.min.css?v=95c83b7e" />
-    <link rel="stylesheet" type="text/css" href="../../../../../_static/custom.css?v=34f00721" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/custom.css?v=9b95bd4c" />
   
   <!-- So that users can add custom icons -->
   <script src="../../../../../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
@@ -44,18 +52,382 @@
   <link rel="preload" as="script" href="../../../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="../../../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
+    <script src="../../../../../_static/jquery.js?v=5d32c60e"></script>
+    <script src="../../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
     <script src="../../../../../_static/documentation_options.js?v=1437fa6d"></script>
     <script src="../../../../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
-    <script src="../../../../../_static/custom.js?v=a236ca48"></script>
+    <script src="../../../../../_static/js/hoverxref.js"></script>
+    <script src="../../../../../_static/js/tooltipster.bundle.min.js"></script>
+    <script src="../../../../../_static/js/micromodal.min.js"></script>
+    <script src="../../../../../_static/custom.js?v=e0e269b1"></script>
     <script src="../../../../../_static/design-tabs.js?v=f930bc37"></script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script type="module" src="https://cdn.jsdelivr.net/npm/mermaid@11.9.0/dist/mermaid.esm.min.mjs"></script>
-    <script type="module" src="https://cdn.jsdelivr.net/npm/@mermaid-js/layout-elk@0.1.4/dist/mermaid-layout-elk.esm.min.mjs"></script>
-    <script type="module">import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@11.9.0/dist/mermaid.esm.min.mjs";import elkLayouts from "https://cdn.jsdelivr.net/npm/@mermaid-js/layout-elk@0.1.4/dist/mermaid-layout-elk.esm.min.mjs";mermaid.registerLayoutLoaders(elkLayouts);mermaid.initialize({startOnLoad:false});</script>
+    <script type="module" src="https://cdn.jsdelivr.net/npm/@mermaid-js/layout-elk@0.2.0/dist/mermaid-layout-elk.esm.min.mjs"></script>
+    <script type="module">import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@11.9.0/dist/mermaid.esm.min.mjs";import elkLayouts from "https://cdn.jsdelivr.net/npm/@mermaid-js/layout-elk@0.2.0/dist/mermaid-layout-elk.esm.min.mjs";mermaid.registerLayoutLoaders(elkLayouts);mermaid.initialize({startOnLoad:false});</script>
     <script src="https://cdn.jsdelivr.net/npm/d3@7.9.0/dist/d3.min.js"></script>
-    <script type="module">
-import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@11.9.0/dist/mermaid.esm.min.mjs";
-window.addEventListener("load", () => mermaid.run());
+    <script type="module">import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@11.9.0/dist/mermaid.esm.min.mjs";
+
+const defaultStyle = document.createElement('style');
+defaultStyle.textContent = `pre.mermaid {
+    /* Same as .mermaid-container > pre */
+    display: block;
+    width: 100%;
+}
+
+pre.mermaid > svg {
+    /* Same as .mermaid-container > pre > svg */
+    height: 500px;
+    width: 100%;
+    max-width: 100% !important;
+}
+`;
+document.head.appendChild(defaultStyle);
+
+const fullscreenStyle = document.createElement('style');
+fullscreenStyle.textContent = `.mermaid-container {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+}
+
+.mermaid-container > pre {
+    display: block;
+    width: 100%;
+}
+
+.mermaid-container > pre > svg {
+    height: 500px;
+    width: 100%;
+    max-width: 100% !important;
+}
+
+.mermaid-fullscreen-btn {
+    width: 28px;
+    height: 28px;
+    background: rgba(255, 255, 255, 0.95);
+    border: 1px solid rgba(0, 0, 0, 0.3);
+    border-radius: 4px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+    font-size: 14px;
+    line-height: 1;
+    padding: 0;
+    color: #333;
+}
+
+.mermaid-fullscreen-btn:hover {
+    opacity: 100% !important;
+    background: rgba(255, 255, 255, 1);
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3);
+    transform: scale(1.1);
+}
+
+.mermaid-fullscreen-btn.dark-theme {
+    background: rgba(50, 50, 50, 0.95);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    color: #e0e0e0;
+}
+
+.mermaid-fullscreen-btn.dark-theme:hover {
+    background: rgba(60, 60, 60, 1);
+    box-shadow: 0 3px 10px rgba(255, 255, 255, 0.2);
+}
+
+.mermaid-fullscreen-modal {
+    display: none;
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 95vw;
+    height: 100vh;
+    background: rgba(255, 255, 255, 0.98);
+    z-index: 9999;
+    padding: 20px;
+    overflow: auto;
+}
+
+.mermaid-fullscreen-modal.dark-theme {
+    background: rgba(0, 0, 0, 0.98);
+}
+
+.mermaid-fullscreen-modal.active {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.mermaid-container-fullscreen {
+    position: relative;
+    width: 95vw;
+    height: 90vh;
+    max-width: 95vw;
+    max-height: 90vh;
+    background: white;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+    overflow: auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.mermaid-container-fullscreen.dark-theme {
+    background: #1a1a1a;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8);
+}
+
+.mermaid-container-fullscreen pre.mermaid {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.mermaid-container-fullscreen .mermaid svg {
+    height: 100% !important;
+    width: 100% !important;
+    cursor: grab;
+}
+
+.mermaid-fullscreen-close {
+    position: fixed !important;
+    top: 20px !important;
+    right: 20px !important;
+    width: 40px;
+    height: 40px;
+    background: rgba(255, 255, 255, 0.95);
+    border: 1px solid rgba(0, 0, 0, 0.2);
+    border-radius: 50%;
+    cursor: pointer;
+    z-index: 10000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    transition: all 0.2s;
+    font-size: 24px;
+    line-height: 1;
+    color: #333;
+}
+
+.mermaid-fullscreen-close:hover {
+    background: white;
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
+    transform: scale(1.1);
+}
+
+.mermaid-fullscreen-close.dark-theme {
+    background: rgba(50, 50, 50, 0.95);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: #e0e0e0;
+}
+
+.mermaid-fullscreen-close.dark-theme:hover {
+    background: rgba(60, 60, 60, 1);
+    box-shadow: 0 6px 16px rgba(255, 255, 255, 0.2);
+}
+
+.mermaid-fullscreen-modal .mermaid-fullscreen-btn {
+    display: none !important;
+}`;
+document.head.appendChild(fullscreenStyle);
+
+// Detect if page has dark background
+const isDarkTheme = () => {
+    const bgColor = window.getComputedStyle(document.body).backgroundColor;
+    const match = bgColor.match(/rgb\((\d+),\s*(\d+),\s*(\d+)/);
+    if (match) {
+        const r = parseInt(match[1]);
+        const g = parseInt(match[2]);
+        const b = parseInt(match[3]);
+        const brightness = (r * 299 + g * 587 + b * 114) / 1000;
+        return brightness < 128;
+    }
+    return false;
+};
+
+const load = async () => {
+    await mermaid.run();
+
+    const all_mermaids = document.querySelectorAll(".mermaid");
+    const mermaids_processed = document.querySelectorAll(".mermaid[data-processed='true']");
+
+    if ("False" === "True") {
+        const mermaids_to_add_zoom = -1 === -1 ? all_mermaids.length : -1;
+        if(mermaids_to_add_zoom > 0) {
+            var svgs = d3.selectAll("");
+            if(all_mermaids.length !== mermaids_processed.length) {
+                setTimeout(load, 200);
+                return;
+            } else if(svgs.size() !== mermaids_to_add_zoom) {
+                setTimeout(load, 200);
+                return;
+            } else {
+                svgs.each(function() {
+                    var svg = d3.select(this);
+                    svg.html("<g class='wrapper'>" + svg.html() + "</g>");
+                    var inner = svg.select("g");
+                    var zoom = d3.zoom().on("zoom", function(event) {
+                        inner.attr("transform", event.transform);
+                    });
+                    svg.call(zoom);
+                });
+            }
+        }
+    } else if(all_mermaids.length !== mermaids_processed.length) {
+        // Wait for mermaid to process all diagrams
+        setTimeout(load, 200);
+        return;
+    }
+
+    const darkTheme = isDarkTheme();
+
+    // Stop here if not adding fullscreen capability
+    if ("True" !== "True") return;
+
+    const modal = document.createElement('div');
+    modal.className = 'mermaid-fullscreen-modal' + (darkTheme ? ' dark-theme' : '');
+    modal.setAttribute('role', 'dialog');
+    modal.setAttribute('aria-modal', 'true');
+    modal.setAttribute('aria-label', 'Fullscreen diagram viewer');
+    modal.innerHTML = `
+        <button class="mermaid-fullscreen-close${darkTheme ? ' dark-theme' : ''}" aria-label="Close fullscreen">✕</button>
+        <div class="mermaid-container-fullscreen${darkTheme ? ' dark-theme' : ''}"></div>
+    `;
+    document.body.appendChild(modal);
+
+    const modalContent = modal.querySelector('.mermaid-container-fullscreen');
+    const closeBtn = modal.querySelector('.mermaid-fullscreen-close');
+
+    let previousScrollOffset = [window.scrollX, window.scrollY];
+
+    const closeModal = () => {
+        modal.classList.remove('active');
+        modalContent.innerHTML = '';
+        document.body.style.overflow = ''
+        window.scrollTo({left: previousScrollOffset[0], top: previousScrollOffset[1], behavior: 'instant'});
+    };
+
+    closeBtn.addEventListener('click', closeModal);
+    modal.addEventListener('click', (e) => {
+        if (e.target === modal) closeModal();
+    });
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && modal.classList.contains('active')) {
+            closeModal();
+        }
+    });
+
+    const allButtons = [];
+
+    document.querySelectorAll('.mermaid').forEach((mermaidDiv) => {
+        if (mermaidDiv.parentNode.classList.contains('mermaid-container') ||
+            mermaidDiv.closest('.mermaid-fullscreen-modal')) {
+            return;
+        }
+
+        const container = document.createElement('div');
+        container.className = 'mermaid-container';
+        mermaidDiv.parentNode.insertBefore(container, mermaidDiv);
+        container.appendChild(mermaidDiv);
+
+        const fullscreenBtn = document.createElement('button');
+        fullscreenBtn.className = 'mermaid-fullscreen-btn' + (darkTheme ? ' dark-theme' : '');
+        fullscreenBtn.setAttribute('aria-label', 'View diagram in fullscreen');
+        fullscreenBtn.textContent = '⛶';
+        fullscreenBtn.style.opacity = '50%';
+
+        // Calculate dynamic position based on diagram's margin and padding
+        const diagramStyle = window.getComputedStyle(mermaidDiv);
+        const marginTop = parseFloat(diagramStyle.marginTop) || 0;
+        const marginRight = parseFloat(diagramStyle.marginRight) || 0;
+        const paddingTop = parseFloat(diagramStyle.paddingTop) || 0;
+        const paddingRight = parseFloat(diagramStyle.paddingRight) || 0;
+        fullscreenBtn.style.top = `${marginTop + paddingTop + 4}px`;
+        fullscreenBtn.style.right = `${marginRight + paddingRight + 4}px`;
+
+        fullscreenBtn.addEventListener('click', () => {
+            previousScrollOffset = [window.scroll, window.scrollY];
+            const clone = mermaidDiv.cloneNode(true);
+            modalContent.innerHTML = '';
+            modalContent.appendChild(clone);
+
+            const svg = clone.querySelector('svg');
+            if (svg) {
+                svg.removeAttribute('width');
+                svg.removeAttribute('height');
+                svg.style.width = '100%';
+                svg.style.height = 'auto';
+                svg.style.maxWidth = '100%';
+                svg.style.sdisplay = 'block';
+
+                if ("False" === "True") {
+                    setTimeout(() => {
+                        const g = svg.querySelector('g');
+                        if (g) {
+                            var svgD3 = d3.select(svg);
+                            svgD3.html("<g class='wrapper'>" + svgD3.html() + "</g>");
+                            var inner = svgD3.select("g");
+                            var zoom = d3.zoom().on("zoom", function(event) {
+                                inner.attr("transform", event.transform);
+                            });
+                            svgD3.call(zoom);
+                        }
+                    }, 100);
+                }
+            }
+
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        });
+
+        container.appendChild(fullscreenBtn);
+        allButtons.push(fullscreenBtn);
+    });
+
+    // Update theme classes when theme changes
+    const updateTheme = () => {
+        const dark = isDarkTheme();
+        allButtons.forEach(btn => {
+            if (dark) {
+                btn.classList.add('dark-theme');
+            } else {
+                btn.classList.remove('dark-theme');
+            }
+        });
+        if (dark) {
+            modal.classList.add('dark-theme');
+            modalContent.classList.add('dark-theme');
+            closeBtn.classList.add('dark-theme');
+        } else {
+            modal.classList.remove('dark-theme');
+            modalContent.classList.remove('dark-theme');
+            closeBtn.classList.remove('dark-theme');
+        }
+    };
+
+    // Watch for theme changes
+    const observer = new MutationObserver(updateTheme);
+    observer.observe(document.documentElement, {
+        attributes: true,
+        attributeFilter: ['class', 'style', 'data-theme']
+    });
+    observer.observe(document.body, {
+        attributes: true,
+        attributeFilter: ['class', 'style']
+    });
+};
+
+window.addEventListener("load", load);
 </script>
     <script>DOCUMENTATION_OPTIONS.pagename = '_modules/myogen/simulator/core/force/force_model';</script>
     <link rel="index" title="Index" href="../../../../../genindex.html" />
@@ -101,7 +473,7 @@ window.addEventListener("load", () => mermaid.run());
   <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
 </div>
 <aside class="bd-header-announcement" aria-label="Announcement">
-  <div class="bd-header-announcement__content">⚠️ MyoGen is under active development. API may change.</div>
+  <div class="bd-header-announcement__content">MyoGen is under active development. API may change.</div>
 </aside>
 
   
@@ -173,7 +545,14 @@ window.addEventListener("load", () => mermaid.run());
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../../../auto_examples/index.html">
+  <a class="nav-link nav-internal" href="../../../../../neo_blocks_guide.html">
+    Working with Neo Block Data Structures
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../examples.html">
     Examples
   </a>
 </li>
@@ -269,7 +648,14 @@ window.addEventListener("load", () => mermaid.run());
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../../../auto_examples/index.html">
+  <a class="nav-link nav-internal" href="../../../../../neo_blocks_guide.html">
+    Working with Neo Block Data Structures
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../examples.html">
     Examples
   </a>
 </li>
@@ -350,6 +736,9 @@ window.addEventListener("load", () => mermaid.run());
     
     <li class="breadcrumb-item"><a href="../../../../index.html" class="nav-link">Module code</a></li>
     
+    
+    <li class="breadcrumb-item"><a href="../../../../myogen.html" class="nav-link">myogen</a></li>
+    
     <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">myogen.simulator.core.force.force_model</span></li>
   </ul>
 </nav>
@@ -368,17 +757,27 @@ window.addEventListener("load", () => mermaid.run());
                 <article class="bd-article">
                   
   <h1>Source code for myogen.simulator.core.force.force_model</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Optional</span>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Optional</span>
 
+<span class="kn">import</span><span class="w"> </span><span class="nn">elephant</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">elephant.utils</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">quantities</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pq</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">scipy.sparse</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">sp</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">neo</span><span class="w"> </span><span class="kn">import</span> <span class="n">AnalogSignal</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">tqdm</span><span class="w"> </span><span class="kn">import</span> <span class="n">tqdm</span>
 
+<span class="kn">from</span><span class="w"> </span><span class="nn">myogen.utils.decorators</span><span class="w"> </span><span class="kn">import</span> <span class="n">beartowertype</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">myogen.utils.types</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">RECRUITMENT_THRESHOLDS__ARRAY</span><span class="p">,</span>
-    <span class="n">SPIKE_TRAIN__MATRIX</span><span class="p">,</span>
-    <span class="n">beartowertype</span><span class="p">,</span>
+    <span class="n">FORCE__AnalogSignal</span><span class="p">,</span>
+    <span class="n">Quantity__Hz</span><span class="p">,</span>
+    <span class="n">Quantity__ms</span><span class="p">,</span>
+    <span class="n">SPIKE_TRAIN__Block</span><span class="p">,</span>
 <span class="p">)</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">.force_utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">spikes2sawtooth</span><span class="p">,</span> <span class="n">sawtooth2ipi</span><span class="p">,</span> <span class="n">get_gain</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">.force_utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_gain_vectorized</span><span class="p">,</span> <span class="n">sawtooth2ipi</span><span class="p">,</span> <span class="n">spikes2sawtooth</span>
 
 
 <div class="viewcode-block" id="ForceModel">
@@ -398,14 +797,14 @@ window.addEventListener("load", () => mermaid.run());
 <span class="sd">    recruitment_thresholds : RECRUITMENT_THRESHOLDS__ARRAY</span>
 <span class="sd">        Recruitment thresholds for each motor unit. Array of values typically ranging</span>
 <span class="sd">        from 0 to 1 where larger motor units have higher thresholds.</span>
-<span class="sd">    recording_frequency__Hz : float</span>
+<span class="sd">    recording_frequency__Hz : Quantity__Hz</span>
 <span class="sd">        Recording frequency in Hz. Determines temporal resolution of force calculations.</span>
-<span class="sd">        Typical values: 1000-10000 Hz.</span>
-<span class="sd">    longest_duration_rise_time__ms : float, default=90.0</span>
-<span class="sd">        Longest duration of the rise time in milliseconds. This parameter (T_L in [1])</span>
+<span class="sd">        Typical values: 100-1000 Hz.</span>
+<span class="sd">    longest_duration_rise_time__ms : Quantity__ms, default=90.0 * pq.ms</span>
+<span class="sd">        Longest duration of the rise time in milliseconds. This parameter (T_L in _[1])</span>
 <span class="sd">        determines the contraction time of the slowest motor unit. Typical range: 50-150 ms.</span>
-<span class="sd">    contraction_time_range__unitless : float, default=3.0</span>
-<span class="sd">        Contraction time range factor (RT in [1]). Determines the spread of contraction</span>
+<span class="sd">    contraction_time_range_factor : float, default=3.0</span>
+<span class="sd">        Contraction time range factor (RT in _[1]). Determines the spread of contraction</span>
 <span class="sd">        times across motor units. Generally between 2 and 5. Higher values create</span>
 <span class="sd">        larger differences between fast and slow motor units.</span>
 
@@ -454,9 +853,9 @@ window.addEventListener("load", () => mermaid.run());
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">recruitment_thresholds</span><span class="p">:</span> <span class="n">RECRUITMENT_THRESHOLDS__ARRAY</span><span class="p">,</span>
-        <span class="n">recording_frequency__Hz</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
-        <span class="n">longest_duration_rise_time__ms</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">90.0</span><span class="p">,</span>
-        <span class="n">contraction_time_range__unitless</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">3.0</span><span class="p">,</span>
+        <span class="n">recording_frequency__Hz</span><span class="p">:</span> <span class="n">Quantity__Hz</span><span class="p">,</span>
+        <span class="n">longest_duration_rise_time__ms</span><span class="p">:</span> <span class="n">Quantity__ms</span> <span class="o">=</span> <span class="mf">90.0</span> <span class="o">*</span> <span class="n">pq</span><span class="o">.</span><span class="n">ms</span><span class="p">,</span>
+        <span class="n">contraction_time_range_factor</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">3.0</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="c1"># Input validation</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">recruitment_thresholds</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
@@ -486,9 +885,9 @@ window.addEventListener("load", () => mermaid.run());
                 <span class="s2">&quot;Typical values range from 50-150 ms for human motor units.&quot;</span>
             <span class="p">)</span>
 
-        <span class="k">if</span> <span class="n">contraction_time_range__unitless</span> <span class="o">&lt;=</span> <span class="mf">1.0</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">contraction_time_range_factor</span> <span class="o">&lt;=</span> <span class="mf">1.0</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;contraction_time_range__unitless must be greater than 1.0, got </span><span class="si">{</span><span class="n">contraction_time_range__unitless</span><span class="si">}</span><span class="s2">. &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;contraction_time_range__unitless must be greater than 1.0, got </span><span class="si">{</span><span class="n">contraction_time_range_factor</span><span class="si">}</span><span class="s2">. &quot;</span>
                 <span class="s2">&quot;This parameter determines the spread of contraction times. Typical values are 2.0-5.0.&quot;</span>
             <span class="p">)</span>
 
@@ -496,13 +895,13 @@ window.addEventListener("load", () => mermaid.run());
         <span class="bp">self</span><span class="o">.</span><span class="n">recruitment_thresholds</span> <span class="o">=</span> <span class="n">recruitment_thresholds</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">recording_frequency__Hz</span> <span class="o">=</span> <span class="n">recording_frequency__Hz</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">longest_duration_rise_time__ms</span> <span class="o">=</span> <span class="n">longest_duration_rise_time__ms</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">contraction_time_range__unitless</span> <span class="o">=</span> <span class="n">contraction_time_range__unitless</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">contraction_time_range__unitless</span> <span class="o">=</span> <span class="n">contraction_time_range_factor</span>
 
         <span class="c1"># Private copies for internal modifications</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_recruitment_thresholds</span> <span class="o">=</span> <span class="n">recruitment_thresholds</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_recording_frequency__Hz</span> <span class="o">=</span> <span class="n">recording_frequency__Hz</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_longest_duration_rise_time__ms</span> <span class="o">=</span> <span class="n">longest_duration_rise_time__ms</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_contraction_time_range__unitless</span> <span class="o">=</span> <span class="n">contraction_time_range__unitless</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_contraction_time_range__unitless</span> <span class="o">=</span> <span class="n">contraction_time_range_factor</span>
 
         <span class="c1"># Derived properties</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_number_of_neurons</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_recruitment_thresholds</span><span class="p">)</span>
@@ -510,8 +909,10 @@ window.addEventListener("load", () => mermaid.run());
             <span class="bp">self</span><span class="o">.</span><span class="n">_recruitment_thresholds</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">_recruitment_thresholds</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
         <span class="p">)</span>  <span class="c1"># referred in [1] as RP</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">_longest_duration_rise_time__samples</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_longest_duration_rise_time__ms</span> <span class="o">/</span> <span class="mi">1000</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_recording_frequency__Hz</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_longest_duration_rise_time__samples</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span>
+            <span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_longest_duration_rise_time__ms</span><span class="o">.</span><span class="n">rescale</span><span class="p">(</span><span class="s2">&quot;s&quot;</span><span class="p">)</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_recording_frequency__Hz</span>
+            <span class="p">)</span><span class="o">.</span><span class="n">magnitude</span>
         <span class="p">)</span>  <span class="c1"># referred in [1] as T_L (see eq. 14)</span>
 
         <span class="c1"># Simulation results - stored privately, accessed via properties</span>
@@ -539,15 +940,9 @@ window.addEventListener("load", () => mermaid.run());
             <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_number_of_neurons</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
         <span class="p">)</span>  <span class="c1"># referred in [1] as P(i) (see eq. 13)</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">_contraction_times__samples</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_longest_duration_rise_time__samples</span>
-            <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">power</span><span class="p">(</span>
-                <span class="mi">1</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">_peak_twitch_forces__unitless</span><span class="p">,</span>
-                <span class="mi">1</span>
-                <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">emath</span><span class="o">.</span><span class="n">logn</span><span class="p">(</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">_contraction_time_range__unitless</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_recruitment_ratio</span>
-                <span class="p">),</span>
-            <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_contraction_times__samples</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_longest_duration_rise_time__samples</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">power</span><span class="p">(</span>
+            <span class="mi">1</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">_peak_twitch_forces__unitless</span><span class="p">,</span>
+            <span class="mi">1</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">emath</span><span class="o">.</span><span class="n">logn</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_contraction_time_range__unitless</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_recruitment_ratio</span><span class="p">),</span>
         <span class="p">)</span>  <span class="c1"># referred in [1] as T(i) (see eq. 14)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_initialize_twitches</span><span class="p">()</span>
@@ -567,13 +962,9 @@ window.addEventListener("load", () => mermaid.run());
 <span class="sd">        ValueError</span>
 <span class="sd">            If twitch parameters have not been computed first.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_peak_twitch_forces__unitless</span> <span class="ow">is</span> <span class="kc">None</span>
-            <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">_contraction_times__samples</span> <span class="ow">is</span> <span class="kc">None</span>
-        <span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_peak_twitch_forces__unitless</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">_contraction_times__samples</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                <span class="s2">&quot;Twitch parameters not computed. &quot;</span>
-                <span class="s2">&quot;Call _compute_twitch_parameters() first.&quot;</span>
+                <span class="s2">&quot;Twitch parameters not computed. Call _compute_twitch_parameters() first.&quot;</span>
             <span class="p">)</span>
 
         <span class="c1"># 5 is a rule of thumb number so we capture the entire twitch.</span>
@@ -601,28 +992,27 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="ForceModel.generate_force">
 <a class="viewcode-back" href="../../../../../generated/myogen.simulator.ForceModel.generate_force.html#myogen.simulator.ForceModel.generate_force">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">generate_force</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">spike_train__matrix</span><span class="p">:</span> <span class="n">SPIKE_TRAIN__MATRIX</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">generate_force</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">spike_train__Block</span><span class="p">:</span> <span class="n">SPIKE_TRAIN__Block</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">FORCE__AnalogSignal</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Generate force output from motor unit spike trains using the Fuglevand model.</span>
 
 <span class="sd">        This method simulates muscle force by converting spike trains into force output</span>
 <span class="sd">        through individual motor unit twitches with nonlinear gain modulation based on</span>
 <span class="sd">        discharge rate. Each motor unit contributes to the total force according to its</span>
-<span class="sd">        twitch properties and firing pattern.</span>
+<span class="sd">        twitch properties and firing pattern. The output is resampled to match the</span>
+<span class="sd">        recording_frequency__Hz parameter.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        spike_train__matrix : SPIKE_TRAIN__MATRIX</span>
-<span class="sd">            Spike train matrix with shape (n_pools, n_neurons, n_time_points).</span>
-<span class="sd">            Binary array where 1 indicates a spike occurrence.</span>
-<span class="sd">            The number of neurons (axis 1) must match the number of recruitment thresholds.</span>
+<span class="sd">        spike_train__Block : SPIKE_TRAIN__Block</span>
+<span class="sd">            Spike train block containing spike train data for multiple motor neuron pools.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        np.ndarray</span>
-<span class="sd">            Force output array with shape (n_pools, n_time_points).</span>
-<span class="sd">            Force values in arbitrary units representing muscle force over time.</span>
-<span class="sd">            Each row corresponds to one motor neuron pool&#39;s force response.</span>
+<span class="sd">        FORCE__AnalogSignal</span>
+<span class="sd">            Force output neo.AnalogSignal representing muscle force over time.</span>
+<span class="sd">            Each channel corresponds to one motor neuron pool&#39;s force response.</span>
+<span class="sd">            Sampling rate matches the recording_frequency__Hz parameter.</span>
 
 <span class="sd">        Raises</span>
 <span class="sd">        ------</span>
@@ -637,16 +1027,8 @@ window.addEventListener("load", () => mermaid.run());
 <span class="sd">        2. Calculate nonlinear gain based on discharge rates</span>
 <span class="sd">        3. Sum weighted twitch responses for each spike</span>
 <span class="sd">        4. Apply gain modulation to final force output</span>
+<span class="sd">        5. Resample output to match recording_frequency__Hz</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="c1"># Validate input dimensions</span>
-        <span class="k">if</span> <span class="n">spike_train__matrix</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_number_of_neurons</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;Spike train matrix has </span><span class="si">{</span><span class="n">spike_train__matrix</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s2"> neurons, &quot;</span>
-                <span class="sa">f</span><span class="s2">&quot;but force model was initialized with </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_number_of_neurons</span><span class="si">}</span><span class="s2"> motor units. &quot;</span>
-                <span class="s2">&quot;The number of neurons in the spike train matrix must match the number of recruitment thresholds.&quot;</span>
-            <span class="p">)</span>
-
-        <span class="c1"># Check that twitch parameters are available</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_twitch_list</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
                 <span class="s2">&quot;Twitch parameters not available. &quot;</span>
@@ -654,36 +1036,149 @@ window.addEventListener("load", () => mermaid.run());
                 <span class="s2">&quot;Please reinitialize the ForceModel.&quot;</span>
             <span class="p">)</span>
 
-        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
-            <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_generate_force</span><span class="p">(</span><span class="n">spike_train</span><span class="o">.</span><span class="n">T</span><span class="p">)</span> <span class="k">for</span> <span class="n">spike_train</span> <span class="ow">in</span> <span class="n">spike_train__matrix</span><span class="p">]</span>
+        <span class="c1"># Extract timing information from spike trains</span>
+        <span class="n">spiketrain_timestep__ms</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span>
+            <span class="n">spike_train__Block</span><span class="o">.</span><span class="n">segments</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">spiketrains</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">sampling_period</span><span class="o">.</span><span class="n">rescale</span><span class="p">(</span><span class="s2">&quot;ms&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">magnitude</span>
+        <span class="p">)</span>
+
+        <span class="n">forces</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">segment</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">spike_train__Block</span><span class="o">.</span><span class="n">segments</span><span class="p">):</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">segment</span><span class="o">.</span><span class="n">spiketrains</span><span class="p">)</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_number_of_neurons</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;MU pool </span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2"> has </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">segment</span><span class="o">.</span><span class="n">spiketrains</span><span class="p">)</span><span class="si">}</span><span class="s2"> neurons, &quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;but force model was initialized with </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_number_of_neurons</span><span class="si">}</span><span class="s2"> motor units. &quot;</span>
+                    <span class="s2">&quot;The number of neurons in the spike train neo.Block must match the number of recruitment thresholds.&quot;</span>
+                <span class="p">)</span>
+
+            <span class="n">elephant_utils_logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="n">elephant</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="vm">__file__</span><span class="p">)</span>
+            <span class="n">original_level</span> <span class="o">=</span> <span class="n">elephant_utils_logger</span><span class="o">.</span><span class="n">level</span>
+            <span class="n">elephant_utils_logger</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">ERROR</span><span class="p">)</span>
+
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">spike_array</span> <span class="o">=</span> <span class="p">(</span>
+                    <span class="n">elephant</span><span class="o">.</span><span class="n">conversion</span><span class="o">.</span><span class="n">BinnedSpikeTrain</span><span class="p">(</span>
+                        <span class="n">segment</span><span class="o">.</span><span class="n">spiketrains</span><span class="p">,</span>
+                        <span class="n">bin_size</span><span class="o">=</span><span class="n">segment</span><span class="o">.</span><span class="n">spiketrains</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">sampling_period</span><span class="p">,</span>
+                        <span class="n">t_start</span><span class="o">=</span><span class="n">segment</span><span class="o">.</span><span class="n">t_start</span><span class="p">,</span>
+                        <span class="n">t_stop</span><span class="o">=</span><span class="n">segment</span><span class="o">.</span><span class="n">t_stop</span><span class="p">,</span>
+                    <span class="p">)</span>
+                    <span class="o">.</span><span class="n">to_sparse_bool_array</span><span class="p">()</span>
+                    <span class="o">.</span><span class="n">T</span>
+                <span class="p">)</span>
+
+                <span class="c1"># Generate force with resampling handled internally</span>
+                <span class="n">force_output</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_generate_force</span><span class="p">(</span>
+                    <span class="n">spike_array</span><span class="p">,</span> <span class="n">spiketrain_timestep__ms</span><span class="p">,</span> <span class="n">prefix</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Pool </span><span class="si">{</span><span class="n">i</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="p">)</span>
+                <span class="n">forces</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">force_output</span><span class="p">)</span>
+
+            <span class="k">finally</span><span class="p">:</span>
+                <span class="n">elephant_utils_logger</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">original_level</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">AnalogSignal</span><span class="p">(</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">stack</span><span class="p">(</span><span class="n">forces</span><span class="p">,</span> <span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">pq</span><span class="o">.</span><span class="n">dimensionless</span><span class="p">,</span>
+            <span class="n">t_start</span><span class="o">=</span><span class="n">spike_train__Block</span><span class="o">.</span><span class="n">segments</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">t_start</span><span class="o">.</span><span class="n">rescale</span><span class="p">(</span><span class="s2">&quot;s&quot;</span><span class="p">),</span>
+            <span class="n">sampling_rate</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_recording_frequency__Hz</span><span class="p">,</span>
         <span class="p">)</span></div>
 
 
-    <span class="k">def</span><span class="w"> </span><span class="nf">_generate_force</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">spikes</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">prefix</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Generate force offline from spike trains.&quot;&quot;&quot;</span>
-        <span class="n">L</span> <span class="o">=</span> <span class="n">spikes</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_generate_force</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">spikes</span><span class="p">,</span> <span class="n">spiketrain_timestep__ms</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">prefix</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Generate force offline from spike trains with resampling to recording frequency.&quot;&quot;&quot;</span>
+        <span class="c1"># Convert sparse to dense once at the start</span>
+        <span class="k">if</span> <span class="n">sp</span><span class="o">.</span><span class="n">issparse</span><span class="p">(</span><span class="n">spikes</span><span class="p">):</span>
+            <span class="n">spikes_dense</span> <span class="o">=</span> <span class="n">spikes</span><span class="o">.</span><span class="n">toarray</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">spikes_dense</span> <span class="o">=</span> <span class="n">spikes</span>
+
+        <span class="n">L</span> <span class="o">=</span> <span class="n">spikes_dense</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="c1"># Calculate target length for resampling to recording frequency</span>
+        <span class="n">spiketrain_timestep__s</span> <span class="o">=</span> <span class="n">spiketrain_timestep__ms</span> <span class="o">/</span> <span class="mf">1000.0</span>
+        <span class="n">force_timestep__s</span> <span class="o">=</span> <span class="nb">float</span><span class="p">((</span><span class="mf">1.0</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">_recording_frequency__Hz</span><span class="p">)</span><span class="o">.</span><span class="n">rescale</span><span class="p">(</span><span class="s2">&quot;s&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">magnitude</span><span class="p">)</span>
 
         <span class="c1"># IPI signal generation out of spikes signal (for gain nonlinearity)</span>
         <span class="n">_</span><span class="p">,</span> <span class="n">ipi</span> <span class="o">=</span> <span class="n">sawtooth2ipi</span><span class="p">(</span>
-            <span class="n">spikes2sawtooth</span><span class="p">(</span>
-                <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">([</span><span class="n">spikes</span><span class="p">[</span><span class="mi">1</span><span class="p">:],</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_number_of_neurons</span><span class="p">))])</span>
-            <span class="p">)</span>
+            <span class="n">spikes2sawtooth</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">([</span><span class="n">spikes_dense</span><span class="p">[</span><span class="mi">1</span><span class="p">:],</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_number_of_neurons</span><span class="p">))])),</span>
+            <span class="n">spikes_dense</span><span class="p">,</span>
         <span class="p">)</span>
 
-        <span class="n">gain</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full_like</span><span class="p">(</span><span class="n">spikes</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span>
-        <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_number_of_neurons</span><span class="p">):</span>
-            <span class="n">gain</span><span class="p">[:,</span> <span class="n">n</span><span class="p">]</span> <span class="o">=</span> <span class="n">get_gain</span><span class="p">(</span><span class="n">ipi</span><span class="p">[:,</span> <span class="n">n</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">_contraction_times__samples</span><span class="p">[</span><span class="n">n</span><span class="p">])</span>
+        <span class="n">gain</span> <span class="o">=</span> <span class="n">get_gain_vectorized</span><span class="p">(</span><span class="n">ipi</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_contraction_times__samples</span><span class="p">)</span>
 
-        <span class="c1"># Generate force</span>
+        <span class="c1"># Optimize twitch resampling - pre-compute interpolation grids</span>
+        <span class="n">resampled_twitches</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">force_twitch</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_twitch_list</span><span class="p">:</span>
+            <span class="c1"># Pre-compute grid arrays - ensure exact length match</span>
+            <span class="n">twitch_length</span> <span class="o">=</span> <span class="n">force_twitch</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">xp_orig</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">twitch_length</span><span class="p">)</span> <span class="o">*</span> <span class="n">force_timestep__s</span>
+            <span class="n">twitch_duration_s</span> <span class="o">=</span> <span class="p">(</span><span class="n">twitch_length</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">force_timestep__s</span>
+            <span class="n">x_new</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">twitch_duration_s</span> <span class="o">+</span> <span class="n">spiketrain_timestep__s</span><span class="p">,</span> <span class="n">spiketrain_timestep__s</span><span class="p">)</span>
+
+            <span class="n">resampled_twitches</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">interp</span><span class="p">(</span><span class="n">x_new</span><span class="p">,</span> <span class="n">xp_orig</span><span class="p">,</span> <span class="n">force_twitch</span><span class="p">))</span>
+
+        <span class="c1"># Generate force at spike train sampling rate - optimized to only iterate over spikes</span>
         <span class="n">force</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">L</span><span class="p">)</span>
-        <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span>
-            <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_number_of_neurons</span><span class="p">),</span> <span class="n">desc</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">prefix</span><span class="si">}</span><span class="s2"> Twitch trains are generated&quot;</span>
-        <span class="p">):</span>
+
+        <span class="c1"># Try to use Numba if available for additional speedup</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">force</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_generate_force_numba</span><span class="p">(</span>
+                <span class="n">force</span><span class="p">,</span> <span class="n">spikes_dense</span><span class="p">,</span> <span class="n">gain</span><span class="p">,</span> <span class="n">resampled_twitches</span><span class="p">,</span> <span class="n">L</span><span class="p">,</span> <span class="n">prefix</span>
+            <span class="p">)</span>
+        <span class="k">except</span> <span class="p">(</span><span class="ne">ImportError</span><span class="p">,</span> <span class="ne">AttributeError</span><span class="p">):</span>
+            <span class="c1"># Fallback to optimized NumPy version</span>
+            <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span>
+                <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_number_of_neurons</span><span class="p">),</span>
+                <span class="n">desc</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">prefix</span><span class="si">}</span><span class="s2"> Twitch trains are generated&quot;</span><span class="p">,</span>
+                <span class="n">unit</span><span class="o">=</span><span class="s2">&quot;MU&quot;</span><span class="p">,</span>
+                <span class="n">disable</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+            <span class="p">):</span>
+                <span class="c1"># Only iterate over spike times, not all time points</span>
+                <span class="n">spike_indices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">spikes_dense</span><span class="p">[:,</span> <span class="n">n</span><span class="p">])[</span><span class="mi">0</span><span class="p">]</span>
+                <span class="n">twitch</span> <span class="o">=</span> <span class="n">resampled_twitches</span><span class="p">[</span><span class="n">n</span><span class="p">]</span>
+
+                <span class="k">for</span> <span class="n">spike_t</span> <span class="ow">in</span> <span class="n">spike_indices</span><span class="p">:</span>
+                    <span class="n">to_take</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">twitch</span><span class="p">),</span> <span class="n">L</span> <span class="o">-</span> <span class="n">spike_t</span><span class="p">)</span>
+                    <span class="n">force</span><span class="p">[</span><span class="n">spike_t</span> <span class="p">:</span> <span class="n">spike_t</span> <span class="o">+</span> <span class="n">to_take</span><span class="p">]</span> <span class="o">+=</span> <span class="n">gain</span><span class="p">[</span><span class="n">spike_t</span><span class="p">,</span> <span class="n">n</span><span class="p">]</span> <span class="o">*</span> <span class="n">twitch</span><span class="p">[:</span><span class="n">to_take</span><span class="p">]</span>
+
+        <span class="c1"># Final resampling to target frequency</span>
+        <span class="n">output_times</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">L</span> <span class="o">*</span> <span class="n">spiketrain_timestep__s</span><span class="p">,</span> <span class="n">force_timestep__s</span><span class="p">)</span>
+        <span class="n">input_times</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">L</span> <span class="o">*</span> <span class="n">spiketrain_timestep__s</span><span class="p">,</span> <span class="n">spiketrain_timestep__s</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">interp</span><span class="p">(</span><span class="n">output_times</span><span class="p">,</span> <span class="n">input_times</span><span class="p">,</span> <span class="n">force</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_generate_force_numba</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">force</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+        <span class="n">spikes</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+        <span class="n">gain</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+        <span class="n">resampled_twitches</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span>
+        <span class="n">L</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">prefix</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Generate force using Numba JIT compilation for maximum speed.&quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="kn">import</span><span class="w"> </span><span class="nn">numba</span>
+        <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ImportError</span><span class="p">(</span><span class="s2">&quot;Numba not available, falling back to NumPy&quot;</span><span class="p">)</span>
+
+        <span class="nd">@numba</span><span class="o">.</span><span class="n">jit</span><span class="p">(</span><span class="n">nopython</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">parallel</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">add_twitches_jit</span><span class="p">(</span><span class="n">force</span><span class="p">,</span> <span class="n">spikes</span><span class="p">,</span> <span class="n">gain</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">twitch</span><span class="p">,</span> <span class="n">L</span><span class="p">):</span>
+<span class="w">            </span><span class="sd">&quot;&quot;&quot;Inner loop compiled with Numba for speed.&quot;&quot;&quot;</span>
             <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">L</span><span class="p">):</span>
                 <span class="k">if</span> <span class="n">spikes</span><span class="p">[</span><span class="n">t</span><span class="p">,</span> <span class="n">n</span><span class="p">]:</span>
-                    <span class="n">twitch_to_add</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_twitch_list</span><span class="p">[</span><span class="n">n</span><span class="p">]</span>
-                    <span class="n">to_take</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">twitch_to_add</span><span class="p">),</span> <span class="n">L</span> <span class="o">-</span> <span class="n">t</span><span class="p">)</span>
-                    <span class="n">force</span><span class="p">[</span><span class="n">t</span> <span class="p">:</span> <span class="n">t</span> <span class="o">+</span> <span class="n">to_take</span><span class="p">]</span> <span class="o">+=</span> <span class="n">gain</span><span class="p">[</span><span class="n">t</span><span class="p">,</span> <span class="n">n</span><span class="p">]</span> <span class="o">*</span> <span class="n">twitch_to_add</span><span class="p">[:</span><span class="n">to_take</span><span class="p">]</span>
+                    <span class="n">to_take</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">twitch</span><span class="p">),</span> <span class="n">L</span> <span class="o">-</span> <span class="n">t</span><span class="p">)</span>
+                    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">to_take</span><span class="p">):</span>
+                        <span class="n">force</span><span class="p">[</span><span class="n">t</span> <span class="o">+</span> <span class="n">i</span><span class="p">]</span> <span class="o">+=</span> <span class="n">gain</span><span class="p">[</span><span class="n">t</span><span class="p">,</span> <span class="n">n</span><span class="p">]</span> <span class="o">*</span> <span class="n">twitch</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+            <span class="k">return</span> <span class="n">force</span>
+
+        <span class="c1"># Process each neuron</span>
+        <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span>
+            <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_number_of_neurons</span><span class="p">),</span>
+            <span class="n">desc</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">prefix</span><span class="si">}</span><span class="s2"> Twitch trains (Numba)&quot;</span><span class="p">,</span>
+            <span class="n">unit</span><span class="o">=</span><span class="s2">&quot;MU&quot;</span><span class="p">,</span>
+        <span class="p">):</span>
+            <span class="n">force</span> <span class="o">=</span> <span class="n">add_twitches_jit</span><span class="p">(</span><span class="n">force</span><span class="p">,</span> <span class="n">spikes</span><span class="p">,</span> <span class="n">gain</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">resampled_twitches</span><span class="p">[</span><span class="n">n</span><span class="p">],</span> <span class="n">L</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">force</span>
 

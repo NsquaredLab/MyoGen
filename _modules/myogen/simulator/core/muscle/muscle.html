@@ -29,14 +29,22 @@
   <link href="../../../../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
 <link href="../../../../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
 
-    <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=8f2a1f02" />
-    <link rel="stylesheet" type="text/css" href="../../../../../_static/custom.css?v=34f00721" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=5349f25f" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/css/tooltipster.custom.css" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/css/tooltipster.bundle.min.css" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/css/tooltipster-sideTip-shadow.min.css" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/css/tooltipster-sideTip-punk.min.css" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/css/tooltipster-sideTip-noir.min.css" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/css/tooltipster-sideTip-light.min.css" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/css/tooltipster-sideTip-borderless.min.css" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/css/micromodal.css" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/custom.css?v=9b95bd4c" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/sg_gallery.css?v=d2d258e8" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/sg_gallery-binder.css?v=f4aeca0c" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/sphinx-design.min.css?v=95c83b7e" />
-    <link rel="stylesheet" type="text/css" href="../../../../../_static/custom.css?v=34f00721" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/custom.css?v=9b95bd4c" />
   
   <!-- So that users can add custom icons -->
   <script src="../../../../../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
@@ -44,18 +52,382 @@
   <link rel="preload" as="script" href="../../../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="../../../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
+    <script src="../../../../../_static/jquery.js?v=5d32c60e"></script>
+    <script src="../../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
     <script src="../../../../../_static/documentation_options.js?v=1437fa6d"></script>
     <script src="../../../../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
-    <script src="../../../../../_static/custom.js?v=a236ca48"></script>
+    <script src="../../../../../_static/js/hoverxref.js"></script>
+    <script src="../../../../../_static/js/tooltipster.bundle.min.js"></script>
+    <script src="../../../../../_static/js/micromodal.min.js"></script>
+    <script src="../../../../../_static/custom.js?v=e0e269b1"></script>
     <script src="../../../../../_static/design-tabs.js?v=f930bc37"></script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script type="module" src="https://cdn.jsdelivr.net/npm/mermaid@11.9.0/dist/mermaid.esm.min.mjs"></script>
-    <script type="module" src="https://cdn.jsdelivr.net/npm/@mermaid-js/layout-elk@0.1.4/dist/mermaid-layout-elk.esm.min.mjs"></script>
-    <script type="module">import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@11.9.0/dist/mermaid.esm.min.mjs";import elkLayouts from "https://cdn.jsdelivr.net/npm/@mermaid-js/layout-elk@0.1.4/dist/mermaid-layout-elk.esm.min.mjs";mermaid.registerLayoutLoaders(elkLayouts);mermaid.initialize({startOnLoad:false});</script>
+    <script type="module" src="https://cdn.jsdelivr.net/npm/@mermaid-js/layout-elk@0.2.0/dist/mermaid-layout-elk.esm.min.mjs"></script>
+    <script type="module">import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@11.9.0/dist/mermaid.esm.min.mjs";import elkLayouts from "https://cdn.jsdelivr.net/npm/@mermaid-js/layout-elk@0.2.0/dist/mermaid-layout-elk.esm.min.mjs";mermaid.registerLayoutLoaders(elkLayouts);mermaid.initialize({startOnLoad:false});</script>
     <script src="https://cdn.jsdelivr.net/npm/d3@7.9.0/dist/d3.min.js"></script>
-    <script type="module">
-import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@11.9.0/dist/mermaid.esm.min.mjs";
-window.addEventListener("load", () => mermaid.run());
+    <script type="module">import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@11.9.0/dist/mermaid.esm.min.mjs";
+
+const defaultStyle = document.createElement('style');
+defaultStyle.textContent = `pre.mermaid {
+    /* Same as .mermaid-container > pre */
+    display: block;
+    width: 100%;
+}
+
+pre.mermaid > svg {
+    /* Same as .mermaid-container > pre > svg */
+    height: 500px;
+    width: 100%;
+    max-width: 100% !important;
+}
+`;
+document.head.appendChild(defaultStyle);
+
+const fullscreenStyle = document.createElement('style');
+fullscreenStyle.textContent = `.mermaid-container {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+}
+
+.mermaid-container > pre {
+    display: block;
+    width: 100%;
+}
+
+.mermaid-container > pre > svg {
+    height: 500px;
+    width: 100%;
+    max-width: 100% !important;
+}
+
+.mermaid-fullscreen-btn {
+    width: 28px;
+    height: 28px;
+    background: rgba(255, 255, 255, 0.95);
+    border: 1px solid rgba(0, 0, 0, 0.3);
+    border-radius: 4px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+    font-size: 14px;
+    line-height: 1;
+    padding: 0;
+    color: #333;
+}
+
+.mermaid-fullscreen-btn:hover {
+    opacity: 100% !important;
+    background: rgba(255, 255, 255, 1);
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3);
+    transform: scale(1.1);
+}
+
+.mermaid-fullscreen-btn.dark-theme {
+    background: rgba(50, 50, 50, 0.95);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    color: #e0e0e0;
+}
+
+.mermaid-fullscreen-btn.dark-theme:hover {
+    background: rgba(60, 60, 60, 1);
+    box-shadow: 0 3px 10px rgba(255, 255, 255, 0.2);
+}
+
+.mermaid-fullscreen-modal {
+    display: none;
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 95vw;
+    height: 100vh;
+    background: rgba(255, 255, 255, 0.98);
+    z-index: 9999;
+    padding: 20px;
+    overflow: auto;
+}
+
+.mermaid-fullscreen-modal.dark-theme {
+    background: rgba(0, 0, 0, 0.98);
+}
+
+.mermaid-fullscreen-modal.active {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.mermaid-container-fullscreen {
+    position: relative;
+    width: 95vw;
+    height: 90vh;
+    max-width: 95vw;
+    max-height: 90vh;
+    background: white;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+    overflow: auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.mermaid-container-fullscreen.dark-theme {
+    background: #1a1a1a;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8);
+}
+
+.mermaid-container-fullscreen pre.mermaid {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.mermaid-container-fullscreen .mermaid svg {
+    height: 100% !important;
+    width: 100% !important;
+    cursor: grab;
+}
+
+.mermaid-fullscreen-close {
+    position: fixed !important;
+    top: 20px !important;
+    right: 20px !important;
+    width: 40px;
+    height: 40px;
+    background: rgba(255, 255, 255, 0.95);
+    border: 1px solid rgba(0, 0, 0, 0.2);
+    border-radius: 50%;
+    cursor: pointer;
+    z-index: 10000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    transition: all 0.2s;
+    font-size: 24px;
+    line-height: 1;
+    color: #333;
+}
+
+.mermaid-fullscreen-close:hover {
+    background: white;
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
+    transform: scale(1.1);
+}
+
+.mermaid-fullscreen-close.dark-theme {
+    background: rgba(50, 50, 50, 0.95);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: #e0e0e0;
+}
+
+.mermaid-fullscreen-close.dark-theme:hover {
+    background: rgba(60, 60, 60, 1);
+    box-shadow: 0 6px 16px rgba(255, 255, 255, 0.2);
+}
+
+.mermaid-fullscreen-modal .mermaid-fullscreen-btn {
+    display: none !important;
+}`;
+document.head.appendChild(fullscreenStyle);
+
+// Detect if page has dark background
+const isDarkTheme = () => {
+    const bgColor = window.getComputedStyle(document.body).backgroundColor;
+    const match = bgColor.match(/rgb\((\d+),\s*(\d+),\s*(\d+)/);
+    if (match) {
+        const r = parseInt(match[1]);
+        const g = parseInt(match[2]);
+        const b = parseInt(match[3]);
+        const brightness = (r * 299 + g * 587 + b * 114) / 1000;
+        return brightness < 128;
+    }
+    return false;
+};
+
+const load = async () => {
+    await mermaid.run();
+
+    const all_mermaids = document.querySelectorAll(".mermaid");
+    const mermaids_processed = document.querySelectorAll(".mermaid[data-processed='true']");
+
+    if ("False" === "True") {
+        const mermaids_to_add_zoom = -1 === -1 ? all_mermaids.length : -1;
+        if(mermaids_to_add_zoom > 0) {
+            var svgs = d3.selectAll("");
+            if(all_mermaids.length !== mermaids_processed.length) {
+                setTimeout(load, 200);
+                return;
+            } else if(svgs.size() !== mermaids_to_add_zoom) {
+                setTimeout(load, 200);
+                return;
+            } else {
+                svgs.each(function() {
+                    var svg = d3.select(this);
+                    svg.html("<g class='wrapper'>" + svg.html() + "</g>");
+                    var inner = svg.select("g");
+                    var zoom = d3.zoom().on("zoom", function(event) {
+                        inner.attr("transform", event.transform);
+                    });
+                    svg.call(zoom);
+                });
+            }
+        }
+    } else if(all_mermaids.length !== mermaids_processed.length) {
+        // Wait for mermaid to process all diagrams
+        setTimeout(load, 200);
+        return;
+    }
+
+    const darkTheme = isDarkTheme();
+
+    // Stop here if not adding fullscreen capability
+    if ("True" !== "True") return;
+
+    const modal = document.createElement('div');
+    modal.className = 'mermaid-fullscreen-modal' + (darkTheme ? ' dark-theme' : '');
+    modal.setAttribute('role', 'dialog');
+    modal.setAttribute('aria-modal', 'true');
+    modal.setAttribute('aria-label', 'Fullscreen diagram viewer');
+    modal.innerHTML = `
+        <button class="mermaid-fullscreen-close${darkTheme ? ' dark-theme' : ''}" aria-label="Close fullscreen">✕</button>
+        <div class="mermaid-container-fullscreen${darkTheme ? ' dark-theme' : ''}"></div>
+    `;
+    document.body.appendChild(modal);
+
+    const modalContent = modal.querySelector('.mermaid-container-fullscreen');
+    const closeBtn = modal.querySelector('.mermaid-fullscreen-close');
+
+    let previousScrollOffset = [window.scrollX, window.scrollY];
+
+    const closeModal = () => {
+        modal.classList.remove('active');
+        modalContent.innerHTML = '';
+        document.body.style.overflow = ''
+        window.scrollTo({left: previousScrollOffset[0], top: previousScrollOffset[1], behavior: 'instant'});
+    };
+
+    closeBtn.addEventListener('click', closeModal);
+    modal.addEventListener('click', (e) => {
+        if (e.target === modal) closeModal();
+    });
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && modal.classList.contains('active')) {
+            closeModal();
+        }
+    });
+
+    const allButtons = [];
+
+    document.querySelectorAll('.mermaid').forEach((mermaidDiv) => {
+        if (mermaidDiv.parentNode.classList.contains('mermaid-container') ||
+            mermaidDiv.closest('.mermaid-fullscreen-modal')) {
+            return;
+        }
+
+        const container = document.createElement('div');
+        container.className = 'mermaid-container';
+        mermaidDiv.parentNode.insertBefore(container, mermaidDiv);
+        container.appendChild(mermaidDiv);
+
+        const fullscreenBtn = document.createElement('button');
+        fullscreenBtn.className = 'mermaid-fullscreen-btn' + (darkTheme ? ' dark-theme' : '');
+        fullscreenBtn.setAttribute('aria-label', 'View diagram in fullscreen');
+        fullscreenBtn.textContent = '⛶';
+        fullscreenBtn.style.opacity = '50%';
+
+        // Calculate dynamic position based on diagram's margin and padding
+        const diagramStyle = window.getComputedStyle(mermaidDiv);
+        const marginTop = parseFloat(diagramStyle.marginTop) || 0;
+        const marginRight = parseFloat(diagramStyle.marginRight) || 0;
+        const paddingTop = parseFloat(diagramStyle.paddingTop) || 0;
+        const paddingRight = parseFloat(diagramStyle.paddingRight) || 0;
+        fullscreenBtn.style.top = `${marginTop + paddingTop + 4}px`;
+        fullscreenBtn.style.right = `${marginRight + paddingRight + 4}px`;
+
+        fullscreenBtn.addEventListener('click', () => {
+            previousScrollOffset = [window.scroll, window.scrollY];
+            const clone = mermaidDiv.cloneNode(true);
+            modalContent.innerHTML = '';
+            modalContent.appendChild(clone);
+
+            const svg = clone.querySelector('svg');
+            if (svg) {
+                svg.removeAttribute('width');
+                svg.removeAttribute('height');
+                svg.style.width = '100%';
+                svg.style.height = 'auto';
+                svg.style.maxWidth = '100%';
+                svg.style.sdisplay = 'block';
+
+                if ("False" === "True") {
+                    setTimeout(() => {
+                        const g = svg.querySelector('g');
+                        if (g) {
+                            var svgD3 = d3.select(svg);
+                            svgD3.html("<g class='wrapper'>" + svgD3.html() + "</g>");
+                            var inner = svgD3.select("g");
+                            var zoom = d3.zoom().on("zoom", function(event) {
+                                inner.attr("transform", event.transform);
+                            });
+                            svgD3.call(zoom);
+                        }
+                    }, 100);
+                }
+            }
+
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        });
+
+        container.appendChild(fullscreenBtn);
+        allButtons.push(fullscreenBtn);
+    });
+
+    // Update theme classes when theme changes
+    const updateTheme = () => {
+        const dark = isDarkTheme();
+        allButtons.forEach(btn => {
+            if (dark) {
+                btn.classList.add('dark-theme');
+            } else {
+                btn.classList.remove('dark-theme');
+            }
+        });
+        if (dark) {
+            modal.classList.add('dark-theme');
+            modalContent.classList.add('dark-theme');
+            closeBtn.classList.add('dark-theme');
+        } else {
+            modal.classList.remove('dark-theme');
+            modalContent.classList.remove('dark-theme');
+            closeBtn.classList.remove('dark-theme');
+        }
+    };
+
+    // Watch for theme changes
+    const observer = new MutationObserver(updateTheme);
+    observer.observe(document.documentElement, {
+        attributes: true,
+        attributeFilter: ['class', 'style', 'data-theme']
+    });
+    observer.observe(document.body, {
+        attributes: true,
+        attributeFilter: ['class', 'style']
+    });
+};
+
+window.addEventListener("load", load);
 </script>
     <script>DOCUMENTATION_OPTIONS.pagename = '_modules/myogen/simulator/core/muscle/muscle';</script>
     <link rel="index" title="Index" href="../../../../../genindex.html" />
@@ -101,7 +473,7 @@ window.addEventListener("load", () => mermaid.run());
   <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
 </div>
 <aside class="bd-header-announcement" aria-label="Announcement">
-  <div class="bd-header-announcement__content">⚠️ MyoGen is under active development. API may change.</div>
+  <div class="bd-header-announcement__content">MyoGen is under active development. API may change.</div>
 </aside>
 
   
@@ -173,7 +545,14 @@ window.addEventListener("load", () => mermaid.run());
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../../../auto_examples/index.html">
+  <a class="nav-link nav-internal" href="../../../../../neo_blocks_guide.html">
+    Working with Neo Block Data Structures
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../examples.html">
     Examples
   </a>
 </li>
@@ -269,7 +648,14 @@ window.addEventListener("load", () => mermaid.run());
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../../../auto_examples/index.html">
+  <a class="nav-link nav-internal" href="../../../../../neo_blocks_guide.html">
+    Working with Neo Block Data Structures
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../examples.html">
     Examples
   </a>
 </li>
@@ -350,6 +736,9 @@ window.addEventListener("load", () => mermaid.run());
     
     <li class="breadcrumb-item"><a href="../../../../index.html" class="nav-link">Module code</a></li>
     
+    
+    <li class="breadcrumb-item"><a href="../../../../myogen.html" class="nav-link">myogen</a></li>
+    
     <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">myogen.simulator.core.muscle.muscle</span></li>
   </ul>
 </nav>
@@ -375,18 +764,27 @@ window.addEventListener("load", () => mermaid.run());
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">skfmm</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">joblib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Parallel</span><span class="p">,</span> <span class="n">delayed</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">scipy.integrate</span><span class="w"> </span><span class="kn">import</span> <span class="n">dblquad</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">scipy.stats</span><span class="w"> </span><span class="kn">import</span> <span class="n">chi2</span><span class="p">,</span> <span class="n">multivariate_normal</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.neighbors</span><span class="w"> </span><span class="kn">import</span> <span class="n">NearestNeighbors</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">tqdm</span><span class="w"> </span><span class="kn">import</span> <span class="n">tqdm</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">quantities</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pq</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">myogen</span><span class="w"> </span><span class="kn">import</span> <span class="n">RANDOM_GENERATOR</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">myogen.utils.types</span><span class="w"> </span><span class="kn">import</span> <span class="n">beartowertype</span><span class="p">,</span> <span class="n">RECRUITMENT_THRESHOLDS__ARRAY</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">myogen.utils.types</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">RECRUITMENT_THRESHOLDS__ARRAY</span><span class="p">,</span>
+    <span class="n">Quantity__S_per_m</span><span class="p">,</span>
+    <span class="n">Quantity__m_per_s</span><span class="p">,</span>
+    <span class="n">Quantity__mm</span><span class="p">,</span>
+    <span class="n">Quantity__mm2</span><span class="p">,</span>
+    <span class="n">Quantity__mm_per_s</span><span class="p">,</span>
+    <span class="n">Quantity__per_mm2</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">myogen.utils.decorators</span><span class="w"> </span><span class="kn">import</span> <span class="n">beartowertype</span>
 
 
-<span class="k">def</span><span class="w"> </span><span class="nf">_perform_fast_marching</span><span class="p">(</span>
-    <span class="n">speed_map</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">seed_points</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_perform_fast_marching</span><span class="p">(</span><span class="n">speed_map</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">seed_points</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Perform fast marching using scikit-fmm to compute distance maps.</span>
 
@@ -465,23 +863,23 @@ window.addEventListener("load", () => mermaid.run());
 <span class="sd">        Radius of the muscle cross-section in millimeters. Default is set to 6.91 mm as determined by Jacobson et al. 1992 [3]_.</span>
 <span class="sd">    length__mm : float, default=30.0</span>
 <span class="sd">        Length of the muscle in millimeters. Default is set to 30.0 mm as determined by no one.</span>
-<span class="sd">    fiber_density__fibers_per_mm2 : float, default=400</span>
-<span class="sd">        Density of muscle fibers per square millimeter. Default is set to 400 fibers/mm² as determined by no one.</span>
+<span class="sd">    fiber_density__fibers_per_mm2 : float, default=350</span>
+<span class="sd">        Density of muscle fibers per square millimeter. Default is set to 350 fibers/mm² as determined by Bettelho et al. 2019 [7]_.</span>
 <span class="sd">    max_innervation_area_to_total_muscle_area__ratio : float, default=0.25</span>
 <span class="sd">        Ratio defining the maximum territory size relative to total muscle area.</span>
 <span class="sd">        Default is set to 0.25 as determined by no one but it is a good starting point.</span>
 <span class="sd">        A value of 0.25 means the largest motor unit can innervate up to 25%</span>
 <span class="sd">        of the total muscle cross-sectional area.</span>
 <span class="sd">        Must be in range (0, 1].</span>
-<span class="sd">    mean_conduction_velocity__m_s : float, default=4.2</span>
+<span class="sd">    mean_conduction_velocity__m_per_s : float, default=4.2</span>
 <span class="sd">        Mean conduction velocity in m/s. Default is set to 4.2 m/s as determined by Nishizono et al. 1990 [4]_.</span>
 <span class="sd">        Experimental range determined by Nishizono et al. 1990 [4]_ is between 3.2 and 5.0 m/s.</span>
 <span class="sd">    mean_fiber_length__mm : float, default=31.7</span>
 <span class="sd">        Mean fiber length in mm. Default is set to 31.7 mm as determined by Jacobson et al. 1992 [3]_ (Table 1).</span>
 <span class="sd">    var_fiber_length__mm : float, default=2.8</span>
 <span class="sd">        Fiber length variance in mm. Default is set to 2.8 mm as determined by Jacobson et al. 1992 [3]_ (Table 1).</span>
-<span class="sd">    radius_bone__mm : float, default=0</span>
-<span class="sd">        Bone radius in mm. Default is set to 0 mm as the FDI muscle doesn&#39;t surround a bone.</span>
+<span class="sd">    radius_bone__mm : float, default=1</span>
+<span class="sd">        Bone radius in mm. Default is set to 1 mm.</span>
 <span class="sd">    fat_thickness__mm : float, default=0.3</span>
 <span class="sd">        Fat thickness in mm. Default is set to 0.3 mm as determined by Störchle et al. 2018 [5]_.</span>
 <span class="sd">    skin_thickness__mm : float, default=1.29</span>
@@ -490,9 +888,9 @@ window.addEventListener("load", () => mermaid.run());
 <span class="sd">        Muscle conductivity in radial direction. Default is set to 0.09 S/m as determined by Botelho et al. 2019 [7]_ (Table 1).</span>
 <span class="sd">    muscle_conductivity_longitudinal__S_m : float, default=0.4</span>
 <span class="sd">        Muscle conductivity in longitudinal direction. Default is set to 0.4 S/m as determined by Botelho et al. 2019 [7]_ (Table 1).</span>
-<span class="sd">    fat_conductivity__S_m : float, default=4.7E-2</span>
-<span class="sd">        Fat conductivity. Default is set to 4.7E-2 S/m as determined by Botelho et al. 2019 [7]_ (Table 1).</span>
-<span class="sd">    skin_conductivity__S_m : float, default=4.88E-4</span>
+<span class="sd">    fat_conductivity__S_per_m : float, default=4.07E-2</span>
+<span class="sd">        Fat conductivity. Default is set to 4.07E-2 S/m as determined by Botelho et al. 2019 [7]_ (Table 1).</span>
+<span class="sd">    skin_conductivity__S_per_m : float, default=4.88E-4</span>
 <span class="sd">        Skin conductivity. Default is set to 4.88E-4 S/m as determined by Botelho et al. 2019 [7]_ (Table 1).</span>
 <span class="sd">    grid_resolution : int, default=256</span>
 <span class="sd">        Resolution of the computational grid used for innervation the muscle.</span>
@@ -550,20 +948,20 @@ window.addEventListener("load", () => mermaid.run());
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">recruitment_thresholds</span><span class="p">:</span> <span class="n">RECRUITMENT_THRESHOLDS__ARRAY</span><span class="p">,</span>
-        <span class="n">radius__mm</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">6.91</span><span class="p">,</span>
-        <span class="n">length__mm</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">30.0</span><span class="p">,</span>
-        <span class="n">fiber_density__fibers_per_mm2</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">400</span><span class="p">,</span>
+        <span class="n">radius__mm</span><span class="p">:</span> <span class="n">Quantity__mm</span> <span class="o">=</span> <span class="mf">6.91</span> <span class="o">*</span> <span class="n">pq</span><span class="o">.</span><span class="n">mm</span><span class="p">,</span>
+        <span class="n">length__mm</span><span class="p">:</span> <span class="n">Quantity__mm</span> <span class="o">=</span> <span class="mf">30.0</span> <span class="o">*</span> <span class="n">pq</span><span class="o">.</span><span class="n">mm</span><span class="p">,</span>
+        <span class="n">fiber_density__fibers_per_mm2</span><span class="p">:</span> <span class="n">Quantity__per_mm2</span> <span class="o">=</span> <span class="mi">350</span> <span class="o">*</span> <span class="n">pq</span><span class="o">.</span><span class="n">mm</span><span class="o">**-</span><span class="mi">2</span><span class="p">,</span>
         <span class="n">max_innervation_area_to_total_muscle_area__ratio</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">/</span> <span class="mi">4</span><span class="p">,</span>
-        <span class="n">mean_conduction_velocity__m_s</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">4.2</span><span class="p">,</span>
-        <span class="n">mean_fiber_length__mm</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">31.7</span><span class="p">,</span>
-        <span class="n">var_fiber_length__mm</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">2.8</span><span class="p">,</span>
-        <span class="n">radius_bone__mm</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
-        <span class="n">fat_thickness__mm</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.3</span><span class="p">,</span>
-        <span class="n">skin_thickness__mm</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.29</span><span class="p">,</span>
-        <span class="n">muscle_conductivity_radial__S_m</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.09</span><span class="p">,</span>
-        <span class="n">muscle_conductivity_longitudinal__S_m</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.4</span><span class="p">,</span>
-        <span class="n">fat_conductivity__S_m</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">4.7e-2</span><span class="p">,</span>
-        <span class="n">skin_conductivity__S_m</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">4.88e-4</span><span class="p">,</span>
+        <span class="n">mean_conduction_velocity__m_per_s</span><span class="p">:</span> <span class="n">Quantity__m_per_s</span> <span class="o">=</span> <span class="mf">4.2</span> <span class="o">*</span> <span class="n">pq</span><span class="o">.</span><span class="n">m</span> <span class="o">/</span> <span class="n">pq</span><span class="o">.</span><span class="n">s</span><span class="p">,</span>
+        <span class="n">mean_fiber_length__mm</span><span class="p">:</span> <span class="n">Quantity__mm</span> <span class="o">=</span> <span class="mf">31.7</span> <span class="o">*</span> <span class="n">pq</span><span class="o">.</span><span class="n">mm</span><span class="p">,</span>
+        <span class="n">var_fiber_length__mm</span><span class="p">:</span> <span class="n">Quantity__mm</span> <span class="o">=</span> <span class="mf">2.8</span> <span class="o">*</span> <span class="n">pq</span><span class="o">.</span><span class="n">mm</span><span class="p">,</span>
+        <span class="n">radius_bone__mm</span><span class="p">:</span> <span class="n">Quantity__mm</span> <span class="o">=</span> <span class="mi">0</span> <span class="o">*</span> <span class="n">pq</span><span class="o">.</span><span class="n">mm</span><span class="p">,</span>
+        <span class="n">fat_thickness__mm</span><span class="p">:</span> <span class="n">Quantity__mm</span> <span class="o">=</span> <span class="mf">0.3</span> <span class="o">*</span> <span class="n">pq</span><span class="o">.</span><span class="n">mm</span><span class="p">,</span>
+        <span class="n">skin_thickness__mm</span><span class="p">:</span> <span class="n">Quantity__mm</span> <span class="o">=</span> <span class="mf">1.29</span> <span class="o">*</span> <span class="n">pq</span><span class="o">.</span><span class="n">mm</span><span class="p">,</span>
+        <span class="n">muscle_conductivity_radial__S_per_m</span><span class="p">:</span> <span class="n">Quantity__S_per_m</span> <span class="o">=</span> <span class="mf">0.09</span> <span class="o">*</span> <span class="n">pq</span><span class="o">.</span><span class="n">S</span> <span class="o">/</span> <span class="n">pq</span><span class="o">.</span><span class="n">m</span><span class="p">,</span>
+        <span class="n">muscle_conductivity_longitudinal__S_per_m</span><span class="p">:</span> <span class="n">Quantity__S_per_m</span> <span class="o">=</span> <span class="mf">0.4</span> <span class="o">*</span> <span class="n">pq</span><span class="o">.</span><span class="n">S</span> <span class="o">/</span> <span class="n">pq</span><span class="o">.</span><span class="n">m</span><span class="p">,</span>
+        <span class="n">fat_conductivity__S_per_m</span><span class="p">:</span> <span class="n">Quantity__S_per_m</span> <span class="o">=</span> <span class="mf">4.07e-2</span> <span class="o">*</span> <span class="n">pq</span><span class="o">.</span><span class="n">S</span> <span class="o">/</span> <span class="n">pq</span><span class="o">.</span><span class="n">m</span><span class="p">,</span>
+        <span class="n">skin_conductivity__S_per_m</span><span class="p">:</span> <span class="n">Quantity__S_per_m</span> <span class="o">=</span> <span class="mf">4.88e-4</span> <span class="o">*</span> <span class="n">pq</span><span class="o">.</span><span class="n">S</span> <span class="o">/</span> <span class="n">pq</span><span class="o">.</span><span class="n">m</span><span class="p">,</span>
         <span class="n">grid_resolution</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">256</span><span class="p">,</span>
         <span class="n">autorun</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
@@ -574,18 +972,16 @@ window.addEventListener("load", () => mermaid.run());
         <span class="bp">self</span><span class="o">.</span><span class="n">max_innervation_area_to_total_muscle_area__ratio</span> <span class="o">=</span> <span class="p">(</span>
             <span class="n">max_innervation_area_to_total_muscle_area__ratio</span>
         <span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">mean_conduction_velocity__m_s</span> <span class="o">=</span> <span class="n">mean_conduction_velocity__m_s</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mean_conduction_velocity__m_s</span> <span class="o">=</span> <span class="n">mean_conduction_velocity__m_per_s</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">mean_fiber_length__mm</span> <span class="o">=</span> <span class="n">mean_fiber_length__mm</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">var_fiber_length__mm</span> <span class="o">=</span> <span class="n">var_fiber_length__mm</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">radius_bone__mm</span> <span class="o">=</span> <span class="n">radius_bone__mm</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">fat_thickness__mm</span> <span class="o">=</span> <span class="n">fat_thickness__mm</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">skin_thickness__mm</span> <span class="o">=</span> <span class="n">skin_thickness__mm</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">muscle_conductivity_radial__S_m</span> <span class="o">=</span> <span class="n">muscle_conductivity_radial__S_m</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">muscle_conductivity_longitudinal__S_m</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="n">muscle_conductivity_longitudinal__S_m</span>
-        <span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">fat_conductivity__S_m</span> <span class="o">=</span> <span class="n">fat_conductivity__S_m</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">skin_conductivity__S_m</span> <span class="o">=</span> <span class="n">skin_conductivity__S_m</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">muscle_conductivity_radial__S_m</span> <span class="o">=</span> <span class="n">muscle_conductivity_radial__S_per_m</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">muscle_conductivity_longitudinal__S_m</span> <span class="o">=</span> <span class="n">muscle_conductivity_longitudinal__S_per_m</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fat_conductivity__S_m</span> <span class="o">=</span> <span class="n">fat_conductivity__S_per_m</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">skin_conductivity__S_m</span> <span class="o">=</span> <span class="n">skin_conductivity__S_per_m</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">grid_resolution</span> <span class="o">=</span> <span class="n">grid_resolution</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">autorun</span> <span class="o">=</span> <span class="n">autorun</span>
         <span class="c1"># Private copies for internal modifications</span>
@@ -595,37 +991,35 @@ window.addEventListener("load", () => mermaid.run());
         <span class="bp">self</span><span class="o">.</span><span class="n">_max_innervation_area_to_total_muscle_area__ratio</span> <span class="o">=</span> <span class="p">(</span>
             <span class="n">max_innervation_area_to_total_muscle_area__ratio</span>
         <span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_mean_conduction_velocity__m_s</span> <span class="o">=</span> <span class="n">mean_conduction_velocity__m_s</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_mean_conduction_velocity__m_s</span> <span class="o">=</span> <span class="n">mean_conduction_velocity__m_per_s</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_mean_fiber_length__mm</span> <span class="o">=</span> <span class="n">mean_fiber_length__mm</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_var_fiber_length__mm</span> <span class="o">=</span> <span class="n">var_fiber_length__mm</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_radius_bone__mm</span> <span class="o">=</span> <span class="n">radius_bone__mm</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_fat_thickness__mm</span> <span class="o">=</span> <span class="n">fat_thickness__mm</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_skin_thickness__mm</span> <span class="o">=</span> <span class="n">skin_thickness__mm</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_muscle_conductivity_radial__S_m</span> <span class="o">=</span> <span class="n">muscle_conductivity_radial__S_m</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_muscle_conductivity_longitudinal__S_m</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="n">muscle_conductivity_longitudinal__S_m</span>
-        <span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_fat_conductivity__S_m</span> <span class="o">=</span> <span class="n">fat_conductivity__S_m</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_skin_conductivity__S_m</span> <span class="o">=</span> <span class="n">skin_conductivity__S_m</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_muscle_conductivity_radial__S_m</span> <span class="o">=</span> <span class="n">muscle_conductivity_radial__S_per_m</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_muscle_conductivity_longitudinal__S_m</span> <span class="o">=</span> <span class="n">muscle_conductivity_longitudinal__S_per_m</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_fat_conductivity__S_m</span> <span class="o">=</span> <span class="n">fat_conductivity__S_per_m</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_skin_conductivity__S_m</span> <span class="o">=</span> <span class="n">skin_conductivity__S_per_m</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_grid_resolution</span> <span class="o">=</span> <span class="n">grid_resolution</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_autorun</span> <span class="o">=</span> <span class="n">autorun</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_recruitment_thresholds</span> <span class="o">=</span> <span class="n">recruitment_thresholds</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
 
         <span class="c1"># Derived properties</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">muscle_area__mm2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">power</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_radius__mm</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">muscle_area__mm2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_radius__mm</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">max_innervation_area_scaling_factor</span> <span class="o">=</span> <span class="p">(</span>
             <span class="mi">1</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">_max_innervation_area_to_total_muscle_area__ratio</span>
         <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_number_of_neurons</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_recruitment_thresholds</span><span class="p">)</span>
 
         <span class="c1"># Simulation results - stored privately, accessed via properties</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_innervation_center_positions__mm</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_muscle_fiber_centers__mm</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_innervation_center_positions__mm</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Quantity__mm</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_muscle_fiber_centers__mm</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Quantity__mm</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_assignment</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_muscle_fiber_diameters__mm</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_muscle_fiber_conduction_velocities__mm_per_s</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_muscle_fiber_diameters__mm</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Quantity__mm</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_muscle_fiber_conduction_velocities__mm_per_s</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Quantity__mm_per_s</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_number_of_muscle_fibers</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_muscle_border__mm</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_muscle_border__mm</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Quantity__mm</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
 
         <span class="c1"># Validate the ratio</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="mi">0</span> <span class="o">&lt;</span> <span class="n">max_innervation_area_to_total_muscle_area__ratio</span> <span class="o">&lt;=</span> <span class="mi">1</span><span class="p">):</span>
@@ -643,10 +1037,12 @@ window.addEventListener("load", () => mermaid.run());
         <span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">desired_number_of_innervated_fibers</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">desired_innervation_areas__mm2</span>
-            <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">desired_innervation_areas__mm2</span><span class="p">)</span>
-            <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">muscle_area__mm2</span>
-            <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fiber_density__fibers_per_mm2</span>
+            <span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">desired_innervation_areas__mm2</span>
+                <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">desired_innervation_areas__mm2</span><span class="p">)</span>
+                <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">muscle_area__mm2</span>
+                <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fiber_density__fibers_per_mm2</span>
+            <span class="p">)</span><span class="o">.</span><span class="n">magnitude</span>
         <span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">autorun</span><span class="p">:</span>
@@ -680,42 +1076,41 @@ window.addEventListener("load", () => mermaid.run());
 
         <span class="c1"># Generate muscle fiber diameters using log-normal distribution</span>
         <span class="c1"># Based on physiological measurements (Brooke &amp; Kaiser, 1970)</span>
-        <span class="c1"># Mean diameter ~50μm, range 20-80μm</span>
-        <span class="n">mean_diameter</span> <span class="o">=</span> <span class="mf">50e-3</span>  <span class="c1"># mm (50 μm)</span>
-        <span class="n">std_diameter</span> <span class="o">=</span> <span class="mf">15e-3</span>  <span class="c1"># mm (15 μm)</span>
+        <span class="c1"># Mean diameter ~50um, range 20-80um</span>
+        <span class="n">mean_diameter__mm</span> <span class="o">=</span> <span class="mf">50e-3</span>  <span class="c1"># mm (50 um)</span>
+        <span class="n">std_diameter__mm</span> <span class="o">=</span> <span class="mf">15e-3</span>  <span class="c1"># mm (15 um)</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">_muscle_fiber_diameters__mm</span> <span class="o">=</span> <span class="n">RANDOM_GENERATOR</span><span class="o">.</span><span class="n">lognormal</span><span class="p">(</span>
-            <span class="n">mean</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">mean_diameter</span><span class="p">),</span> <span class="n">sigma</span><span class="o">=</span><span class="mf">0.3</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="n">n_fibers</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_muscle_fiber_diameters__mm</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">RANDOM_GENERATOR</span><span class="o">.</span><span class="n">lognormal</span><span class="p">(</span><span class="n">mean</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">mean_diameter__mm</span><span class="p">),</span> <span class="n">sigma</span><span class="o">=</span><span class="mf">0.3</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="n">n_fibers</span><span class="p">)</span>
+            <span class="o">*</span> <span class="n">pq</span><span class="o">.</span><span class="n">mm</span>
         <span class="p">)</span>
 
-        <span class="c1"># Ensure diameters are within physiological range (20-80 μm)</span>
+        <span class="c1"># Ensure diameters are within physiological range (20-80 um)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_muscle_fiber_diameters__mm</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_muscle_fiber_diameters__mm</span><span class="p">,</span> <span class="mf">20e-3</span><span class="p">,</span> <span class="mf">80e-3</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_muscle_fiber_diameters__mm</span><span class="p">,</span> <span class="mf">20e-3</span> <span class="o">*</span> <span class="n">pq</span><span class="o">.</span><span class="n">mm</span><span class="p">,</span> <span class="mf">80e-3</span> <span class="o">*</span> <span class="n">pq</span><span class="o">.</span><span class="n">mm</span>
         <span class="p">)</span>
 
         <span class="c1"># Generate conduction velocities based on fiber diameter</span>
         <span class="c1"># CV = k * diameter + c, where k ≈ 4.5-6.0 (m/s)/mm, c ≈ 0.5-1.0 m/s</span>
         <span class="c1"># Based on Hakansson (1956) and later studies</span>
-        <span class="n">k</span> <span class="o">=</span> <span class="mf">5.5</span>  <span class="c1"># (m/s)/mm</span>
-        <span class="n">c</span> <span class="o">=</span> <span class="mf">0.8</span>  <span class="c1"># m/s</span>
+        <span class="n">k</span> <span class="o">=</span> <span class="mf">5.5</span> <span class="o">*</span> <span class="p">(</span><span class="n">pq</span><span class="o">.</span><span class="n">m</span> <span class="o">/</span> <span class="n">pq</span><span class="o">.</span><span class="n">s</span><span class="p">)</span> <span class="o">/</span> <span class="n">pq</span><span class="o">.</span><span class="n">mm</span>  <span class="c1"># (m/s)/mm</span>
+        <span class="n">c</span> <span class="o">=</span> <span class="mf">0.8</span> <span class="o">*</span> <span class="n">pq</span><span class="o">.</span><span class="n">m</span> <span class="o">/</span> <span class="n">pq</span><span class="o">.</span><span class="n">s</span>  <span class="c1"># m/s</span>
 
         <span class="c1"># Add some biological variability</span>
-        <span class="n">cv_base</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="n">k</span> <span class="o">*</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_muscle_fiber_diameters__mm</span> <span class="o">*</span> <span class="mi">1000</span><span class="p">)</span> <span class="o">+</span> <span class="n">c</span>
-        <span class="p">)</span>  <span class="c1"># Convert mm to m for diameter</span>
-        <span class="n">cv_noise</span> <span class="o">=</span> <span class="n">RANDOM_GENERATOR</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">,</span> <span class="n">n_fibers</span><span class="p">)</span>  <span class="c1"># 20% CV variation</span>
+        <span class="n">cv_base</span> <span class="o">=</span> <span class="n">k</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_muscle_fiber_diameters__mm</span> <span class="o">+</span> <span class="n">c</span>
+        <span class="n">cv_noise</span> <span class="o">=</span> <span class="n">RANDOM_GENERATOR</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">,</span> <span class="n">n_fibers</span><span class="p">)</span> <span class="o">*</span> <span class="n">pq</span><span class="o">.</span><span class="n">m</span> <span class="o">/</span> <span class="n">pq</span><span class="o">.</span><span class="n">s</span>  <span class="c1"># 20% CV variation</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_muscle_fiber_conduction_velocities__mm_per_s</span> <span class="o">=</span> <span class="n">cv_base</span> <span class="o">+</span> <span class="n">cv_noise</span>
 
         <span class="c1"># Ensure velocities are within physiological range (2-6 m/s)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_muscle_fiber_conduction_velocities__mm_per_s</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_muscle_fiber_conduction_velocities__mm_per_s</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">,</span> <span class="mf">6.0</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_muscle_fiber_conduction_velocities__mm_per_s</span><span class="p">,</span> <span class="mf">2.0</span> <span class="o">*</span> <span class="n">pq</span><span class="o">.</span><span class="n">m</span> <span class="o">/</span> <span class="n">pq</span><span class="o">.</span><span class="n">s</span><span class="p">,</span> <span class="mf">6.0</span> <span class="o">*</span> <span class="n">pq</span><span class="o">.</span><span class="n">m</span> <span class="o">/</span> <span class="n">pq</span><span class="o">.</span><span class="n">s</span>
         <span class="p">)</span>
 
-        <span class="c1"># Convert back to mm/s for consistency with the rest of the code</span>
+        <span class="c1"># Convert to mm/s for consistency with the rest of the code</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_muscle_fiber_conduction_velocities__mm_per_s</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_muscle_fiber_conduction_velocities__mm_per_s</span> <span class="o">*</span> <span class="mi">1000</span>
-        <span class="p">)</span>  <span class="c1"># m/s to mm/s</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_muscle_fiber_conduction_velocities__mm_per_s</span><span class="o">.</span><span class="n">rescale</span><span class="p">(</span><span class="n">pq</span><span class="o">.</span><span class="n">mm</span> <span class="o">/</span> <span class="n">pq</span><span class="o">.</span><span class="n">s</span><span class="p">)</span>
+        <span class="p">)</span>
 
 <div class="viewcode-block" id="Muscle.distribute_innervation_centers">
 <a class="viewcode-back" href="../../../../../generated/myogen.simulator.Muscle.distribute_innervation_centers.html#myogen.simulator.Muscle.distribute_innervation_centers">[docs]</a>
@@ -744,10 +1139,7 @@ window.addEventListener("load", () => mermaid.run());
             <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_grid_resolution</span><span class="p">),</span>
         <span class="p">)</span>
         <span class="n">density_map</span><span class="p">[</span>
-            <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span>
-                <span class="p">(</span><span class="n">X</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">_grid_resolution</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span>
-                <span class="o">+</span> <span class="p">(</span><span class="n">Y</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">_grid_resolution</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span>
-            <span class="p">)</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">((</span><span class="n">X</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">_grid_resolution</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="p">(</span><span class="n">Y</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">_grid_resolution</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span>
             <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">_grid_resolution</span> <span class="o">/</span> <span class="mi">2</span> <span class="o">-</span> <span class="mi">1</span>
         <span class="p">]</span> <span class="o">=</span> <span class="mf">1e-10</span>
 
@@ -762,6 +1154,8 @@ window.addEventListener("load", () => mermaid.run());
             <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unravel_index</span><span class="p">(</span><span class="n">ind</span><span class="p">,</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_grid_resolution</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_grid_resolution</span><span class="p">))</span>
             <span class="n">vertices</span><span class="p">[:,</span> <span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">]</span>
 
+        <span class="n">vertices</span> <span class="o">=</span> <span class="n">vertices</span> <span class="o">*</span> <span class="n">pq</span><span class="o">.</span><span class="n">mm</span>
+
         <span class="c1"># MATLAB: obj.innervation_center_positions = vertices(:,end:-1:2)&#39;;</span>
         <span class="c1"># This takes columns from end down to 2 (1-indexed), then transposes</span>
         <span class="c1"># In Python: vertices[:, -1:0:-1] gives us columns from end down to 1 (0-indexed)</span>
@@ -773,15 +1167,13 @@ window.addEventListener("load", () => mermaid.run());
             <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_innervation_center_positions__mm</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="mi">2</span>
         <span class="p">):</span>
             <span class="n">center_offset</span> <span class="o">=</span> <span class="p">(</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_innervation_center_positions__mm</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">_grid_resolution</span> <span class="o">/</span> <span class="mi">2</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_innervation_center_positions__mm</span> <span class="o">-</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_grid_resolution</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="n">pq</span><span class="o">.</span><span class="n">mm</span>
             <span class="p">)</span>
-            <span class="n">max_dist</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span>
-                <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">center_offset</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="n">center_offset</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span>
-            <span class="p">)</span>
+            <span class="n">max_dist</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">center_offset</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="n">center_offset</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">**</span> <span class="mi">2</span><span class="p">))</span>
             <span class="k">if</span> <span class="n">max_dist</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>  <span class="c1"># Avoid division by zero</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_innervation_center_positions__mm</span> <span class="o">=</span> <span class="p">(</span>
-                    <span class="n">center_offset</span> <span class="o">/</span> <span class="n">max_dist</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_radius__mm</span>
-                <span class="p">)</span>
+                    <span class="n">center_offset</span> <span class="o">/</span> <span class="n">max_dist</span>
+                <span class="p">)</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_radius__mm</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_innervation_center_positions__mm</span> <span class="o">=</span> <span class="p">(</span>
                     <span class="n">center_offset</span>  <span class="c1"># Keep original if max_dist is 0</span>
@@ -800,6 +1192,7 @@ window.addEventListener("load", () => mermaid.run());
 <span class="sd">        observed in histological studies.</span>
 
 <span class="sd">        Results are stored in the following properties after execution:</span>
+
 <span class="sd">            - `mf_centers`: Array of shape (n_fibers, 2) with fiber positions [x, y] in mm</span>
 <span class="sd">            - `number_of_muscle_fibers`: Total number of muscle fibers</span>
 <span class="sd">            - `muscle_border`: Array of border points for visualization</span>
@@ -817,29 +1210,27 @@ window.addEventListener("load", () => mermaid.run());
 
         <span class="c1"># Expected number of muscle fibers in the muscle</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_number_of_muscle_fibers</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span>
-            <span class="n">np</span><span class="o">.</span><span class="n">rint</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">_radius__mm</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fiber_density__fibers_per_mm2</span><span class="p">)</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">rint</span><span class="p">(((</span><span class="bp">self</span><span class="o">.</span><span class="n">_radius__mm</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fiber_density__fibers_per_mm2</span><span class="p">)</span><span class="o">.</span><span class="n">magnitude</span><span class="p">)</span>
         <span class="p">)</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">_muscle_fiber_centers__mm</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span>
-            <span class="n">Path</span><span class="p">(</span><span class="n">inspect</span><span class="o">.</span><span class="n">getfile</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="p">))</span><span class="o">.</span><span class="n">parent</span> <span class="o">/</span> <span class="s2">&quot;voronoi_pi1e5.csv&quot;</span><span class="p">,</span>
-            <span class="n">header</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-        <span class="p">)</span><span class="o">.</span><span class="n">values</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_muscle_fiber_centers__mm</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span>
+                <span class="n">Path</span><span class="p">(</span><span class="n">inspect</span><span class="o">.</span><span class="n">getfile</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="p">))</span><span class="o">.</span><span class="n">parent</span> <span class="o">/</span> <span class="s2">&quot;voronoi_pi1e5.csv&quot;</span><span class="p">,</span>
+                <span class="n">header</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+            <span class="p">)</span><span class="o">.</span><span class="n">values</span>
+            <span class="o">*</span> <span class="n">pq</span><span class="o">.</span><span class="n">mm</span>
+        <span class="p">)</span>
 
         <span class="c1"># Adjust the loaded innervation_center_positions to the expected number of fibers and muscle radius</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_muscle_fiber_centers__mm</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_muscle_fiber_centers__mm</span> <span class="o">-</span> <span class="mi">5</span>
-        <span class="p">)</span> <span class="o">/</span> <span class="mi">4</span>  <span class="c1"># 4 may be unnecessary here</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_muscle_fiber_centers__mm</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_muscle_fiber_centers__mm</span> <span class="o">-</span> <span class="p">(</span><span class="mi">5</span> <span class="o">*</span> <span class="n">pq</span><span class="o">.</span><span class="n">mm</span><span class="p">))</span> <span class="o">/</span> <span class="mi">4</span>
         <span class="n">dists</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_muscle_fiber_centers__mm</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">**</span> <span class="mi">2</span>
-            <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_muscle_fiber_centers__mm</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">**</span> <span class="mi">2</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_muscle_fiber_centers__mm</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_muscle_fiber_centers__mm</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">**</span> <span class="mi">2</span>
         <span class="p">)</span>
         <span class="n">sorted_indices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argsort</span><span class="p">(</span><span class="n">dists</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">sorted_indices</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_number_of_muscle_fibers</span> <span class="o">+</span> <span class="mi">1</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_muscle_fiber_centers__mm</span> <span class="o">=</span> <span class="p">(</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_muscle_fiber_centers__mm</span><span class="p">[</span>
-                    <span class="n">sorted_indices</span><span class="p">[:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_number_of_muscle_fibers</span><span class="p">],</span> <span class="p">:</span>
-                <span class="p">]</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_muscle_fiber_centers__mm</span><span class="p">[</span><span class="n">sorted_indices</span><span class="p">[:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_number_of_muscle_fibers</span><span class="p">],</span> <span class="p">:]</span>
                 <span class="o">/</span> <span class="n">dists</span><span class="p">[</span><span class="n">sorted_indices</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_number_of_muscle_fibers</span><span class="p">]]</span>
                 <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_radius__mm</span>
             <span class="p">)</span>
@@ -851,29 +1242,51 @@ window.addEventListener("load", () => mermaid.run());
             <span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_number_of_muscle_fibers</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_muscle_fiber_centers__mm</span><span class="p">)</span>
 
+        <span class="c1"># Remove fibers inside the bone boundary</span>
+        <span class="c1"># Fibers should only exist in the muscle tissue, not in the bone core</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_radius_bone__mm</span><span class="o">.</span><span class="n">magnitude</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">fiber_radial_dists</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_muscle_fiber_centers__mm</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">**</span> <span class="mi">2</span>
+                <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_muscle_fiber_centers__mm</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">**</span> <span class="mi">2</span>
+            <span class="p">)</span>
+            <span class="n">valid_fiber_mask</span> <span class="o">=</span> <span class="n">fiber_radial_dists</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">_radius_bone__mm</span>
+            <span class="n">n_fibers_removed</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="o">~</span><span class="n">valid_fiber_mask</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">n_fibers_removed</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_muscle_fiber_centers__mm</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_muscle_fiber_centers__mm</span><span class="p">[</span><span class="n">valid_fiber_mask</span><span class="p">]</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_number_of_muscle_fibers</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_muscle_fiber_centers__mm</span><span class="p">)</span>
+                <span class="nb">print</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;Removed </span><span class="si">{</span><span class="n">n_fibers_removed</span><span class="si">}</span><span class="s2"> fibers inside bone radius &quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;(r &lt; </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_radius_bone__mm</span><span class="o">.</span><span class="n">magnitude</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2"> mm)&quot;</span>
+                <span class="p">)</span>
+
         <span class="c1"># Create muscle border for plotting</span>
         <span class="n">phi_circle</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">,</span> <span class="mi">1000</span><span class="p">)</span>
         <span class="n">phi_circle</span> <span class="o">=</span> <span class="n">phi_circle</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_muscle_border__mm</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">column_stack</span><span class="p">(</span>
-            <span class="p">[</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_radius__mm</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">phi_circle</span><span class="p">),</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_radius__mm</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">phi_circle</span><span class="p">),</span>
-            <span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_muscle_border__mm</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">column_stack</span><span class="p">(</span>
+                <span class="p">[</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_radius__mm</span><span class="o">.</span><span class="n">magnitude</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">phi_circle</span><span class="p">),</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_radius__mm</span><span class="o">.</span><span class="n">magnitude</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">phi_circle</span><span class="p">),</span>
+                <span class="p">]</span>
+            <span class="p">)</span>
+            <span class="o">*</span> <span class="n">pq</span><span class="o">.</span><span class="n">mm</span>
         <span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="Muscle.assign_mfs2mns">
 <a class="viewcode-back" href="../../../../../generated/myogen.simulator.Muscle.assign_mfs2mns.html#myogen.simulator.Muscle.assign_mfs2mns">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">assign_mfs2mns</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_neighbours</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">3</span><span class="p">,</span> <span class="n">conf</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.999</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">assign_mfs2mns</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_neighbours</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">3</span><span class="p">,</span> <span class="n">conf</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.999</span><span class="p">,</span> <span class="n">n_jobs</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="o">-</span><span class="mi">2</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Assign muscle fibers to motor neurons using biologically realistic principles.</span>
 
 <span class="sd">        This method implements an assignment algorithm that balances</span>
 <span class="sd">        multiple biological constraints:</span>
-<span class="sd">            1. Proximity: Fibers closer to innervation centers are more likely to be assigned</span>
-<span class="sd">            2. Territory size: Each motor unit has a target number of fibers based on its size</span>
-<span class="sd">            3. Self-avoidance: Neighboring fibers avoid belonging to the same motor unit</span>
-<span class="sd">            4. Gaussian territories: Fiber territories follow roughly Gaussian distributions</span>
+
+<span class="sd">        1. Proximity: Fibers closer to innervation centers are more likely to be assigned</span>
+<span class="sd">        2. Territory size: Each motor unit has a target number of fibers based on its size</span>
+<span class="sd">        3. Self-avoidance: Neighboring fibers avoid belonging to the same motor unit</span>
+<span class="sd">        4. Gaussian territories: Fiber territories follow roughly Gaussian distributions</span>
 
 <span class="sd">        The assignment uses a probabilistic approach where each fiber is assigned</span>
 <span class="sd">        based on the posterior probability computed from prior probabilities (target</span>
@@ -889,6 +1302,14 @@ window.addEventListener("load", () => mermaid.run());
 <span class="sd">            Confidence interval that defines the relationship between innervation</span>
 <span class="sd">            area and Gaussian distribution variance. Higher values create tighter,</span>
 <span class="sd">            more compact territories. Should be between 0.9 and 0.999.</span>
+<span class="sd">        n_jobs : int, default -2</span>
+<span class="sd">            Number of parallel workers for out-of-circle coefficient computation.</span>
+
+<span class="sd">            - n_jobs=-1: Use all CPU cores</span>
+<span class="sd">            - n_jobs=-2: Use all cores except one (recommended, keeps system responsive)</span>
+<span class="sd">            - n_jobs=-3: Use all cores except two</span>
+<span class="sd">            - n_jobs=1: No parallelization</span>
+<span class="sd">            - n_jobs=N: Use exactly N cores</span>
 
 <span class="sd">        Results are stored in the `assignment` property after execution.</span>
 
@@ -917,28 +1338,65 @@ window.addEventListener("load", () => mermaid.run());
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_muscle_fiber_centers__mm</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                <span class="s2">&quot;Muscle fiber centers not computed. &quot;</span>
-                <span class="s2">&quot;Call generate_muscle_fiber_centers() first.&quot;</span>
+                <span class="s2">&quot;Muscle fiber centers not computed. Call generate_muscle_fiber_centers() first.&quot;</span>
             <span class="p">)</span>
 
         <span class="c1"># Out-of-muscle area compensation</span>
         <span class="c1"># Calculates how much of the MU&#39;s gaussian distribution is outside of the</span>
         <span class="c1"># muscle border and inflates the rest of the distribution according to it</span>
-        <span class="n">borderfun_pos</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">real</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_radius__mm</span><span class="o">**</span><span class="mi">2</span> <span class="o">-</span> <span class="n">x</span><span class="o">**</span><span class="mi">2</span><span class="p">))</span>
-        <span class="n">borderfun_neg</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">real</span><span class="p">(</span><span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_radius__mm</span><span class="o">**</span><span class="mi">2</span> <span class="o">-</span> <span class="n">x</span><span class="o">**</span><span class="mi">2</span><span class="p">))</span>
-        <span class="n">out_circle_coeff</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_number_of_neurons</span><span class="p">)</span>
+        <span class="c1"># Work with magnitude to avoid quantity issues in integration</span>
+        <span class="n">radius_magnitude</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_radius__mm</span><span class="o">.</span><span class="n">magnitude</span>
 
         <span class="n">c</span> <span class="o">=</span> <span class="n">chi2</span><span class="o">.</span><span class="n">ppf</span><span class="p">(</span><span class="n">conf</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
-        <span class="n">sigma</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">ia</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="n">ia</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="n">c</span>
 
-        <span class="k">for</span> <span class="n">mu</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span>
-            <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_number_of_neurons</span><span class="p">),</span>
-            <span class="n">desc</span><span class="o">=</span><span class="s2">&quot;Calculating out-of-circle coefficients&quot;</span><span class="p">,</span>
-            <span class="n">unit</span><span class="o">=</span><span class="s2">&quot;MU&quot;</span><span class="p">,</span>
-        <span class="p">):</span>
-            <span class="c1"># Create multivariate normal distribution for this motor unit</span>
-            <span class="n">mean</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_innervation_center_positions__mm</span><span class="p">[</span><span class="n">mu</span><span class="p">]</span>
-            <span class="n">cov</span> <span class="o">=</span> <span class="n">sigma</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">desired_innervation_areas__mm2</span><span class="p">[</span><span class="n">mu</span><span class="p">])</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">sigma</span><span class="p">(</span><span class="n">ia</span><span class="p">):</span>
+            <span class="c1"># ia should be in mm^2, extract magnitude if it&#39;s a quantity</span>
+            <span class="n">ia_magnitude</span> <span class="o">=</span> <span class="n">ia</span><span class="o">.</span><span class="n">magnitude</span> <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">ia</span><span class="p">,</span> <span class="s2">&quot;magnitude&quot;</span><span class="p">)</span> <span class="k">else</span> <span class="n">ia</span>
+            <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="n">ia_magnitude</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="n">c</span>
+
+        <span class="c1"># Helper function for parallel computation of out-of-circle coefficients</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">_compute_out_circle_coeff_single_mu</span><span class="p">(</span>
+            <span class="n">mu_index</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+            <span class="n">radius_mag</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+            <span class="n">innervation_center_mean</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+            <span class="n">desired_area</span><span class="p">,</span>
+            <span class="n">c_value</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+        <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">            </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            Compute out-of-circle coefficient for a single motor unit.</span>
+
+<span class="sd">            This function is designed to be called in parallel for each motor unit.</span>
+
+<span class="sd">            Parameters</span>
+<span class="sd">            ----------</span>
+<span class="sd">            mu_index : int</span>
+<span class="sd">                Motor unit index (for reference only, not used in computation).</span>
+<span class="sd">            radius_mag : float</span>
+<span class="sd">                Muscle radius magnitude in mm.</span>
+<span class="sd">            innervation_center_mean : np.ndarray</span>
+<span class="sd">                Innervation center position [x, y] in mm (magnitude only).</span>
+<span class="sd">            desired_area : float</span>
+<span class="sd">                Desired innervation area in mm² (magnitude only).</span>
+<span class="sd">            c_value : float</span>
+<span class="sd">                Chi-squared value for confidence interval.</span>
+
+<span class="sd">            Returns</span>
+<span class="sd">            -------</span>
+<span class="sd">            float</span>
+<span class="sd">                Out-of-circle coefficient for this motor unit.</span>
+<span class="sd">            &quot;&quot;&quot;</span>
+
+            <span class="k">def</span><span class="w"> </span><span class="nf">borderfun_pos</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+                <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">real</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">radius_mag</span><span class="o">**</span><span class="mi">2</span> <span class="o">-</span> <span class="n">x</span><span class="o">**</span><span class="mi">2</span><span class="p">))</span>
+
+            <span class="k">def</span><span class="w"> </span><span class="nf">borderfun_neg</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+                <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">real</span><span class="p">(</span><span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">radius_mag</span><span class="o">**</span><span class="mi">2</span> <span class="o">-</span> <span class="n">x</span><span class="o">**</span><span class="mi">2</span><span class="p">))</span>
+
+            <span class="c1"># Compute covariance matrix</span>
+            <span class="n">ia_magnitude</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="n">desired_area</span><span class="o">.</span><span class="n">magnitude</span> <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">desired_area</span><span class="p">,</span> <span class="s2">&quot;magnitude&quot;</span><span class="p">)</span> <span class="k">else</span> <span class="n">desired_area</span>
+            <span class="p">)</span>
+            <span class="n">cov</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="n">ia_magnitude</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="n">c_value</span>
 
             <span class="k">def</span><span class="w"> </span><span class="nf">probfun</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
                 <span class="n">points</span> <span class="o">=</span> <span class="p">(</span>
@@ -946,84 +1404,126 @@ window.addEventListener("load", () => mermaid.run());
                     <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="s2">&quot;ravel&quot;</span><span class="p">)</span>
                     <span class="k">else</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">]])</span>
                 <span class="p">)</span>
-                <span class="k">return</span> <span class="n">multivariate_normal</span><span class="o">.</span><span class="n">pdf</span><span class="p">(</span><span class="n">points</span><span class="p">,</span> <span class="n">mean</span><span class="o">=</span><span class="n">mean</span><span class="p">,</span> <span class="n">cov</span><span class="o">=</span><span class="n">cov</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span>
-                    <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="o">.</span><span class="n">shape</span>
-                <span class="p">)</span>
+                <span class="k">return</span> <span class="n">multivariate_normal</span><span class="o">.</span><span class="n">pdf</span><span class="p">(</span>
+                    <span class="n">points</span><span class="p">,</span> <span class="n">mean</span><span class="o">=</span><span class="n">innervation_center_mean</span><span class="p">,</span> <span class="n">cov</span><span class="o">=</span><span class="n">cov</span>
+                <span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
 
             <span class="c1"># Use dblquad for integration (equivalent to MATLAB&#39;s integral2)</span>
             <span class="n">in_circle_int</span> <span class="o">=</span> <span class="n">dblquad</span><span class="p">(</span>
                 <span class="n">probfun</span><span class="p">,</span>
-                <span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">_radius__mm</span><span class="p">,</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_radius__mm</span><span class="p">,</span>
+                <span class="o">-</span><span class="n">radius_mag</span><span class="p">,</span>
+                <span class="n">radius_mag</span><span class="p">,</span>
                 <span class="n">borderfun_neg</span><span class="p">,</span>
                 <span class="n">borderfun_pos</span><span class="p">,</span>
             <span class="p">)[</span><span class="mi">0</span><span class="p">]</span>  <span class="c1"># dblquad returns (integral, error)</span>
-            <span class="n">out_circle_coeff</span><span class="p">[</span><span class="n">mu</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">/</span> <span class="n">in_circle_int</span>
+
+            <span class="k">return</span> <span class="mi">1</span> <span class="o">/</span> <span class="n">in_circle_int</span>
+
+        <span class="c1"># Parallel computation of out-of-circle coefficients</span>
+        <span class="n">results</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">with</span> <span class="n">tqdm</span><span class="p">(</span>
+            <span class="n">total</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_number_of_neurons</span><span class="p">,</span>
+            <span class="n">desc</span><span class="o">=</span><span class="s2">&quot;Calculating out-of-circle coefficients&quot;</span><span class="p">,</span>
+            <span class="n">unit</span><span class="o">=</span><span class="s2">&quot;MU&quot;</span><span class="p">,</span>
+        <span class="p">)</span> <span class="k">as</span> <span class="n">pbar</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">coeff</span> <span class="ow">in</span> <span class="n">Parallel</span><span class="p">(</span>
+                <span class="n">n_jobs</span><span class="o">=</span><span class="n">n_jobs</span><span class="p">,</span>
+                <span class="n">return_as</span><span class="o">=</span><span class="s2">&quot;generator&quot;</span><span class="p">,</span>
+                <span class="n">verbose</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+                <span class="n">batch_size</span><span class="o">=</span><span class="s2">&quot;auto&quot;</span><span class="p">,</span>
+            <span class="p">)(</span>
+                <span class="n">delayed</span><span class="p">(</span><span class="n">_compute_out_circle_coeff_single_mu</span><span class="p">)(</span>
+                    <span class="n">mu</span><span class="p">,</span>
+                    <span class="n">radius_magnitude</span><span class="p">,</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_innervation_center_positions__mm</span><span class="p">[</span><span class="n">mu</span><span class="p">]</span><span class="o">.</span><span class="n">magnitude</span><span class="p">,</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">desired_innervation_areas__mm2</span><span class="p">[</span><span class="n">mu</span><span class="p">],</span>
+                    <span class="n">c</span><span class="p">,</span>
+                <span class="p">)</span>
+                <span class="k">for</span> <span class="n">mu</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_number_of_neurons</span><span class="p">)</span>
+            <span class="p">):</span>
+                <span class="n">results</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">coeff</span><span class="p">)</span>
+                <span class="n">pbar</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+        <span class="n">out_circle_coeff</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">results</span><span class="p">)</span>
 
         <span class="c1"># Find nearest neighbors for suppression (equivalent to MATLAB&#39;s knnsearch)</span>
+        <span class="c1"># Use magnitudes for sklearn compatibility</span>
         <span class="k">if</span> <span class="n">n_neighbours</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
             <span class="n">nbrs</span> <span class="o">=</span> <span class="n">NearestNeighbors</span><span class="p">(</span><span class="n">n_neighbors</span><span class="o">=</span><span class="n">n_neighbours</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_muscle_fiber_centers__mm</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_muscle_fiber_centers__mm</span><span class="o">.</span><span class="n">magnitude</span>
             <span class="p">)</span>
-            <span class="n">_</span><span class="p">,</span> <span class="n">neighbours</span> <span class="o">=</span> <span class="n">nbrs</span><span class="o">.</span><span class="n">kneighbors</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_muscle_fiber_centers__mm</span><span class="p">)</span>
-            <span class="n">neighbours</span> <span class="o">=</span> <span class="n">neighbours</span><span class="p">[</span>
-                <span class="p">:,</span> <span class="mi">1</span><span class="p">:</span>
-            <span class="p">]</span>  <span class="c1"># Exclude self (equivalent to neighbours(:,2:end))</span>
+            <span class="n">_</span><span class="p">,</span> <span class="n">neighbours</span> <span class="o">=</span> <span class="n">nbrs</span><span class="o">.</span><span class="n">kneighbors</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_muscle_fiber_centers__mm</span><span class="o">.</span><span class="n">magnitude</span><span class="p">)</span>
+            <span class="n">neighbours</span> <span class="o">=</span> <span class="n">neighbours</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">:]</span>  <span class="c1"># Exclude self (equivalent to neighbours(:,2:end))</span>
+
+        <span class="c1"># Pre-compute constant values for vectorized assignment (optimization)</span>
+        <span class="c1"># A priori probabilities (constant for all fibers)</span>
+        <span class="n">apriori_probs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">desired_number_of_innervated_fibers</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">_number_of_muscle_fibers</span>
+
+        <span class="c1"># Pre-compute means and covariances for all motor units</span>
+        <span class="n">mu_means</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
+            <span class="p">[</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_innervation_center_positions__mm</span><span class="p">[</span><span class="n">mu</span><span class="p">]</span><span class="o">.</span><span class="n">magnitude</span>
+                <span class="k">for</span> <span class="n">mu</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_number_of_neurons</span><span class="p">)</span>
+            <span class="p">]</span>
+        <span class="p">)</span>  <span class="c1"># Shape: (n_neurons, 2)</span>
+
+        <span class="n">mu_covs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
+            <span class="p">[</span>
+                <span class="n">sigma</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">desired_innervation_areas__mm2</span><span class="p">[</span><span class="n">mu</span><span class="p">])</span>
+                <span class="k">for</span> <span class="n">mu</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_number_of_neurons</span><span class="p">)</span>
+            <span class="p">]</span>
+        <span class="p">)</span>  <span class="c1"># Shape: (n_neurons, 2, 2)</span>
+
+        <span class="c1"># Pre-compute inverse covariances and determinants for faster PDF computation</span>
+        <span class="n">mu_cov_invs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">pinv</span><span class="p">(</span><span class="n">cov</span><span class="p">)</span> <span class="k">for</span> <span class="n">cov</span> <span class="ow">in</span> <span class="n">mu_covs</span><span class="p">])</span>
+        <span class="n">mu_cov_dets</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">det</span><span class="p">(</span><span class="n">cov</span><span class="p">)</span> <span class="k">for</span> <span class="n">cov</span> <span class="ow">in</span> <span class="n">mu_covs</span><span class="p">])</span>
 
         <span class="c1"># Assignment procedure</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_assignment</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_number_of_muscle_fibers</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span>
         <span class="n">randomized_mf</span> <span class="o">=</span> <span class="n">RANDOM_GENERATOR</span><span class="o">.</span><span class="n">permutation</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_number_of_muscle_fibers</span><span class="p">)</span>
 
-        <span class="k">for</span> <span class="n">mf</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span>
-            <span class="n">randomized_mf</span><span class="p">,</span> <span class="n">desc</span><span class="o">=</span><span class="s2">&quot;Assigning muscle fibers to motor neurons&quot;</span><span class="p">,</span> <span class="n">unit</span><span class="o">=</span><span class="s2">&quot;MF&quot;</span>
-        <span class="p">):</span>
-            <span class="n">probs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_number_of_neurons</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">mf</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span><span class="n">randomized_mf</span><span class="p">,</span> <span class="n">desc</span><span class="o">=</span><span class="s2">&quot;Assigning muscle fibers to motor neurons&quot;</span><span class="p">,</span> <span class="n">unit</span><span class="o">=</span><span class="s2">&quot;MF&quot;</span><span class="p">):</span>
+            <span class="c1"># Vectorized computation of likelihoods for all motor units</span>
+            <span class="c1"># Compute differences: (n_neurons, 2)</span>
+            <span class="n">diffs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_muscle_fiber_centers__mm</span><span class="p">[</span><span class="n">mf</span><span class="p">,</span> <span class="p">:]</span><span class="o">.</span><span class="n">magnitude</span> <span class="o">-</span> <span class="n">mu_means</span>
 
-            <span class="k">for</span> <span class="n">mu</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_number_of_neurons</span><span class="p">):</span>
-                <span class="c1"># Suppression assignment if neighbours are from the same MU</span>
-                <span class="c1"># Promotes intermingling</span>
-                <span class="k">if</span> <span class="n">n_neighbours</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_assignment</span><span class="p">[</span><span class="n">neighbours</span><span class="p">[</span><span class="n">mf</span><span class="p">]]</span> <span class="o">==</span> <span class="n">mu</span><span class="p">):</span>
-                    <span class="n">probs</span><span class="p">[</span><span class="n">mu</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
-                <span class="k">else</span><span class="p">:</span>
-                    <span class="c1"># A priori probability of the assignment</span>
-                    <span class="n">apriori_prob</span> <span class="o">=</span> <span class="p">(</span>
-                        <span class="bp">self</span><span class="o">.</span><span class="n">desired_number_of_innervated_fibers</span><span class="p">[</span><span class="n">mu</span><span class="p">]</span>
-                        <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">_number_of_muscle_fibers</span>
-                    <span class="p">)</span>
+            <span class="c1"># Compute Mahalanobis distances efficiently</span>
+            <span class="c1"># For each MU: (x - mean)^T * inv(cov) * (x - mean)</span>
+            <span class="n">mahal_dists</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span>
+                <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">diffs</span><span class="p">[:,</span> <span class="n">np</span><span class="o">.</span><span class="n">newaxis</span><span class="p">,</span> <span class="p">:]</span> <span class="o">*</span> <span class="n">mu_cov_invs</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="n">diffs</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span>
+            <span class="p">)</span>
 
-                    <span class="c1"># Likelihood coming from clustered nature of mf distribution</span>
-                    <span class="c1"># Use scipy&#39;s multivariate_normal.pdf (equivalent to MATLAB&#39;s mvnpdf)</span>
-                    <span class="n">mean</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_innervation_center_positions__mm</span><span class="p">[</span><span class="n">mu</span><span class="p">]</span>
-                    <span class="n">cov</span> <span class="o">=</span> <span class="n">sigma</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">desired_innervation_areas__mm2</span><span class="p">[</span><span class="n">mu</span><span class="p">])</span>
-                    <span class="n">clust_hood</span> <span class="o">=</span> <span class="n">multivariate_normal</span><span class="o">.</span><span class="n">pdf</span><span class="p">(</span>
-                        <span class="bp">self</span><span class="o">.</span><span class="n">_muscle_fiber_centers__mm</span><span class="p">[</span><span class="n">mf</span><span class="p">,</span> <span class="p">:],</span> <span class="n">mean</span><span class="o">=</span><span class="n">mean</span><span class="p">,</span> <span class="n">cov</span><span class="o">=</span><span class="n">cov</span>
-                    <span class="p">)</span>
-                    <span class="n">clust_hood</span> <span class="o">=</span> <span class="n">clust_hood</span> <span class="o">*</span> <span class="n">out_circle_coeff</span><span class="p">[</span><span class="n">mu</span><span class="p">]</span>
+            <span class="c1"># Compute PDF values for all MUs at once</span>
+            <span class="n">clust_hoods</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">((</span><span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">mu_cov_dets</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="mf">0.5</span> <span class="o">*</span> <span class="n">mahal_dists</span><span class="p">)</span>
+            <span class="n">clust_hoods</span> <span class="o">*=</span> <span class="n">out_circle_coeff</span>
 
-                    <span class="c1"># Final a posteriori probability</span>
-                    <span class="n">probs</span><span class="p">[</span><span class="n">mu</span><span class="p">]</span> <span class="o">=</span> <span class="n">apriori_prob</span> <span class="o">*</span> <span class="n">clust_hood</span>
+            <span class="c1"># Compute posterior probabilities (vectorized)</span>
+            <span class="n">probs</span> <span class="o">=</span> <span class="n">apriori_probs</span> <span class="o">*</span> <span class="n">clust_hoods</span>
+
+            <span class="c1"># Apply neighbor suppression</span>
+            <span class="k">if</span> <span class="n">n_neighbours</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">neighbor_assignments</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_assignment</span><span class="p">[</span><span class="n">neighbours</span><span class="p">[</span><span class="n">mf</span><span class="p">]]</span>
+                <span class="k">for</span> <span class="n">mu</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_number_of_neurons</span><span class="p">):</span>
+                    <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">neighbor_assignments</span> <span class="o">==</span> <span class="n">mu</span><span class="p">):</span>
+                        <span class="n">probs</span><span class="p">[</span><span class="n">mu</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
 
             <span class="c1"># Normalize probabilities</span>
-            <span class="n">probs</span> <span class="o">=</span> <span class="n">probs</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">probs</span><span class="p">)</span>
-
-            <span class="c1"># should something bad happen with the probabilities, we should not crash</span>
-            <span class="n">probs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan_to_num</span><span class="p">(</span><span class="n">probs</span><span class="p">,</span> <span class="n">nan</span><span class="o">=</span><span class="mf">0.0</span><span class="p">)</span>
-            <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">probs</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">prob_sum</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">probs</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">prob_sum</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">probs</span> <span class="o">=</span> <span class="n">probs</span> <span class="o">/</span> <span class="n">prob_sum</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="c1"># Fallback if all probabilities are zero</span>
                 <span class="n">probs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_number_of_neurons</span><span class="p">)</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">_number_of_neurons</span>
 
             <span class="c1"># Sample from the probability distribution (equivalent to MATLAB&#39;s randsample)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_assignment</span><span class="p">[</span><span class="n">mf</span><span class="p">]</span> <span class="o">=</span> <span class="n">RANDOM_GENERATOR</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_number_of_neurons</span><span class="p">,</span> <span class="n">p</span><span class="o">=</span><span class="n">probs</span>
-            <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_assignment</span><span class="p">[</span><span class="n">mf</span><span class="p">]</span> <span class="o">=</span> <span class="n">RANDOM_GENERATOR</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_number_of_neurons</span><span class="p">,</span> <span class="n">p</span><span class="o">=</span><span class="n">probs</span><span class="p">)</span>
 
-        <span class="nb">print</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;Assignment completed. </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_number_of_muscle_fibers</span><span class="si">}</span><span class="s2"> muscle fibers assigned.&quot;</span>
-        <span class="p">)</span></div>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Assignment completed. </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_number_of_muscle_fibers</span><span class="si">}</span><span class="s2"> muscle fibers assigned.&quot;</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="Muscle.resulting_fiber_assignment">
 <a class="viewcode-back" href="../../../../../generated/myogen.simulator.Muscle.resulting_fiber_assignment.html#myogen.simulator.Muscle.resulting_fiber_assignment">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">resulting_fiber_assignment</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mu</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">resulting_fiber_assignment</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mu</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Quantity__mm</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Get the muscle fiber positions assigned to a specific motor unit.</span>
 
@@ -1034,7 +1534,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        np.ndarray</span>
+<span class="sd">        Quantity__mm</span>
 <span class="sd">            Array of shape (n_assigned_fibers, 2) containing the [x, y] coordinates</span>
 <span class="sd">            (in mm) of all muscle fibers assigned to the specified motor unit.</span>
 <span class="sd">            If no fibers are assigned to the motor unit, returns an empty array.</span>
@@ -1066,8 +1566,7 @@ window.addEventListener("load", () => mermaid.run());
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_muscle_fiber_centers__mm</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                <span class="s2">&quot;Muscle fiber centers not computed. &quot;</span>
-                <span class="s2">&quot;Call generate_muscle_fiber_centers() first.&quot;</span>
+                <span class="s2">&quot;Muscle fiber centers not computed. Call generate_muscle_fiber_centers() first.&quot;</span>
             <span class="p">)</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="mi">0</span> <span class="o">&lt;=</span> <span class="n">mu</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_recruitment_thresholds</span><span class="p">)):</span>
@@ -1077,9 +1576,7 @@ window.addEventListener("load", () => mermaid.run());
             <span class="p">)</span>
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_muscle_fiber_centers__mm</span><span class="p">[</span>
-            <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_assignment</span> <span class="o">==</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_recruitment_thresholds</span><span class="p">))[</span><span class="n">mu</span><span class="p">]</span>
-            <span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_assignment</span> <span class="o">==</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_recruitment_thresholds</span><span class="p">))[</span><span class="n">mu</span><span class="p">])[</span><span class="mi">0</span><span class="p">]</span>
         <span class="p">]</span></div>
 
 
@@ -1122,12 +1619,10 @@ window.addEventListener("load", () => mermaid.run());
                 <span class="s2">&quot;Call assign_mfs2mns() first to assign fibers to motor units.&quot;</span>
             <span class="p">)</span>
 
-        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">bincount</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_assignment</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">),</span> <span class="n">minlength</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_number_of_neurons</span>
-        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">bincount</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_assignment</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">),</span> <span class="n">minlength</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_number_of_neurons</span><span class="p">)</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">resulting_innervation_areas__mm2</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">resulting_innervation_areas__mm2</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Quantity__mm2</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Calculate the actual innervation areas for each motor unit based on assigned fibers.</span>
 
@@ -1138,7 +1633,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        np.ndarray</span>
+<span class="sd">        Quantity__mm2</span>
 <span class="sd">            Array of length n_motor_units containing the innervation area (in mm²)</span>
 <span class="sd">            for each motor unit. Areas are calculated as π × r², where r is the</span>
 <span class="sd">            maximum distance from the innervation center to any assigned fiber.</span>
@@ -1176,36 +1671,35 @@ window.addEventListener("load", () => mermaid.run());
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_muscle_fiber_centers__mm</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                <span class="s2">&quot;Muscle fiber centers not computed. &quot;</span>
-                <span class="s2">&quot;Call generate_muscle_fiber_centers() first.&quot;</span>
+                <span class="s2">&quot;Muscle fiber centers not computed. Call generate_muscle_fiber_centers() first.&quot;</span>
             <span class="p">)</span>
 
-        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
-            <span class="p">[</span>
-                <span class="n">np</span><span class="o">.</span><span class="n">pi</span>
-                <span class="o">*</span> <span class="p">(</span>
-                    <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span>
-                        <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span>
-                            <span class="bp">self</span><span class="o">.</span><span class="n">_muscle_fiber_centers__mm</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_assignment</span> <span class="o">==</span> <span class="n">mu</span><span class="p">]</span>
-                            <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">_innervation_center_positions__mm</span><span class="p">[</span><span class="n">mu</span><span class="p">],</span>
-                            <span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span>
-                        <span class="p">)</span>
-                    <span class="p">)</span>
-                    <span class="o">**</span> <span class="mi">2</span>
-                <span class="p">)</span>
-                <span class="k">for</span> <span class="n">mu</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_number_of_neurons</span><span class="p">)</span>
-            <span class="p">]</span>
-        <span class="p">)</span>
+        <span class="n">areas</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">mu</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_number_of_neurons</span><span class="p">):</span>
+            <span class="c1"># Calculate distances in mm</span>
+            <span class="n">distances</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_muscle_fiber_centers__mm</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_assignment</span> <span class="o">==</span> <span class="n">mu</span><span class="p">]</span>
+                <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">_innervation_center_positions__mm</span><span class="p">[</span><span class="n">mu</span><span class="p">],</span>
+                <span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="c1"># Get maximum distance and compute area</span>
+            <span class="n">max_distance</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">distances</span><span class="p">)</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">distances</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="mi">0</span> <span class="o">*</span> <span class="n">pq</span><span class="o">.</span><span class="n">mm</span>
+            <span class="n">area</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="p">(</span><span class="n">max_distance</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+            <span class="c1"># Keep as quantity - extract magnitude for the array</span>
+            <span class="n">areas</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">area</span><span class="o">.</span><span class="n">magnitude</span> <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">area</span><span class="p">,</span> <span class="s2">&quot;magnitude&quot;</span><span class="p">)</span> <span class="k">else</span> <span class="n">area</span><span class="p">)</span>
+
+        <span class="c1"># Return as quantity array with mm^2 units</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">areas</span><span class="p">)</span> <span class="o">*</span> <span class="n">pq</span><span class="o">.</span><span class="n">mm</span><span class="o">**</span><span class="mi">2</span>
 
     <span class="c1"># Property accessors for computed results</span>
     <span class="nd">@property</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">innervation_center_positions__mm</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">innervation_center_positions__mm</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Quantity__mm</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Motor unit innervation center positions [x, y] in mm.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        np.ndarray</span>
+<span class="sd">        Quantity__mm</span>
 <span class="sd">            Array of shape (n_motor_units, 2) containing [x, y] coordinates in mm.</span>
 
 <span class="sd">        Raises</span>
@@ -1221,13 +1715,13 @@ window.addEventListener("load", () => mermaid.run());
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_innervation_center_positions__mm</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">muscle_fiber_centers__mm</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">muscle_fiber_centers__mm</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Quantity__mm</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Muscle fiber center positions [x, y] in mm.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        np.ndarray</span>
+<span class="sd">        Quantity__mm</span>
 <span class="sd">            Array of shape (n_fibers, 2) containing [x, y] coordinates in mm.</span>
 
 <span class="sd">        Raises</span>
@@ -1237,19 +1731,18 @@ window.addEventListener("load", () => mermaid.run());
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_muscle_fiber_centers__mm</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                <span class="s2">&quot;Muscle fiber centers not computed. &quot;</span>
-                <span class="s2">&quot;Call generate_muscle_fiber_centers() first.&quot;</span>
+                <span class="s2">&quot;Muscle fiber centers not computed. Call generate_muscle_fiber_centers() first.&quot;</span>
             <span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_muscle_fiber_centers__mm</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">muscle_fiber_diameters__mm</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">muscle_fiber_diameters__mm</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Quantity__mm</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Muscle fiber diameters in mm.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        np.ndarray</span>
+<span class="sd">        Quantity__mm</span>
 <span class="sd">            Array of muscle fiber diameters in mm.</span>
 
 <span class="sd">        Raises</span>
@@ -1265,13 +1758,13 @@ window.addEventListener("load", () => mermaid.run());
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_muscle_fiber_diameters__mm</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">muscle_fiber_conduction_velocities__mm_per_s</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">muscle_fiber_conduction_velocities__mm_per_s</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Quantity__mm_per_s</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Muscle fiber conduction velocities in mm/s.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        np.ndarray</span>
+<span class="sd">        Quantity__mm_per_s</span>
 <span class="sd">            Array of muscle fiber conduction velocities in mm/s.</span>
 
 <span class="sd">        Raises</span>
@@ -1326,20 +1819,19 @@ window.addEventListener("load", () => mermaid.run());
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_number_of_muscle_fibers</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                <span class="s2">&quot;Muscle fiber centers not computed. &quot;</span>
-                <span class="s2">&quot;Call generate_muscle_fiber_centers() first.&quot;</span>
+                <span class="s2">&quot;Muscle fiber centers not computed. Call generate_muscle_fiber_centers() first.&quot;</span>
             <span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_number_of_muscle_fibers</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">muscle_border__mm</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">muscle_border__mm</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Quantity__mm</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Muscle boundary points for visualization.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        np.ndarray</span>
-<span class="sd">            Array of boundary points for the circular muscle cross-section.</span>
+<span class="sd">        Quantity__mm</span>
+<span class="sd">            Array of boundary points for the circular muscle cross-section in mm.</span>
 
 <span class="sd">        Raises</span>
 <span class="sd">        ------</span>
@@ -1348,13 +1840,12 @@ window.addEventListener("load", () => mermaid.run());
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_muscle_border__mm</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                <span class="s2">&quot;Muscle fiber centers not computed. &quot;</span>
-                <span class="s2">&quot;Call generate_muscle_fiber_centers() first.&quot;</span>
+                <span class="s2">&quot;Muscle fiber centers not computed. Call generate_muscle_fiber_centers() first.&quot;</span>
             <span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_muscle_border__mm</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">recruitment_thresholds</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">recruitment_thresholds</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RECRUITMENT_THRESHOLDS__ARRAY</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Motor unit recruitment thresholds.</span>
 

@@ -1,0 +1,1520 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../../../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>myogen.simulator.neuron.populations.motor_neurons &#8212; MyoGen 0.4.0 Documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../../../../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=5349f25f" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/css/tooltipster.custom.css" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/css/tooltipster.bundle.min.css" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/css/tooltipster-sideTip-shadow.min.css" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/css/tooltipster-sideTip-punk.min.css" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/css/tooltipster-sideTip-noir.min.css" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/css/tooltipster-sideTip-light.min.css" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/css/tooltipster-sideTip-borderless.min.css" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/css/micromodal.css" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/custom.css?v=9b95bd4c" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/sg_gallery.css?v=d2d258e8" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/sg_gallery-binder.css?v=f4aeca0c" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/custom.css?v=9b95bd4c" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../../../../../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../../../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="../../../../../_static/jquery.js?v=5d32c60e"></script>
+    <script src="../../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+    <script src="../../../../../_static/documentation_options.js?v=1437fa6d"></script>
+    <script src="../../../../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../../../_static/js/hoverxref.js"></script>
+    <script src="../../../../../_static/js/tooltipster.bundle.min.js"></script>
+    <script src="../../../../../_static/js/micromodal.min.js"></script>
+    <script src="../../../../../_static/custom.js?v=e0e269b1"></script>
+    <script src="../../../../../_static/design-tabs.js?v=f930bc37"></script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script type="module" src="https://cdn.jsdelivr.net/npm/mermaid@11.9.0/dist/mermaid.esm.min.mjs"></script>
+    <script type="module" src="https://cdn.jsdelivr.net/npm/@mermaid-js/layout-elk@0.2.0/dist/mermaid-layout-elk.esm.min.mjs"></script>
+    <script type="module">import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@11.9.0/dist/mermaid.esm.min.mjs";import elkLayouts from "https://cdn.jsdelivr.net/npm/@mermaid-js/layout-elk@0.2.0/dist/mermaid-layout-elk.esm.min.mjs";mermaid.registerLayoutLoaders(elkLayouts);mermaid.initialize({startOnLoad:false});</script>
+    <script src="https://cdn.jsdelivr.net/npm/d3@7.9.0/dist/d3.min.js"></script>
+    <script type="module">import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@11.9.0/dist/mermaid.esm.min.mjs";
+
+const defaultStyle = document.createElement('style');
+defaultStyle.textContent = `pre.mermaid {
+    /* Same as .mermaid-container > pre */
+    display: block;
+    width: 100%;
+}
+
+pre.mermaid > svg {
+    /* Same as .mermaid-container > pre > svg */
+    height: 500px;
+    width: 100%;
+    max-width: 100% !important;
+}
+`;
+document.head.appendChild(defaultStyle);
+
+const fullscreenStyle = document.createElement('style');
+fullscreenStyle.textContent = `.mermaid-container {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+}
+
+.mermaid-container > pre {
+    display: block;
+    width: 100%;
+}
+
+.mermaid-container > pre > svg {
+    height: 500px;
+    width: 100%;
+    max-width: 100% !important;
+}
+
+.mermaid-fullscreen-btn {
+    width: 28px;
+    height: 28px;
+    background: rgba(255, 255, 255, 0.95);
+    border: 1px solid rgba(0, 0, 0, 0.3);
+    border-radius: 4px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+    font-size: 14px;
+    line-height: 1;
+    padding: 0;
+    color: #333;
+}
+
+.mermaid-fullscreen-btn:hover {
+    opacity: 100% !important;
+    background: rgba(255, 255, 255, 1);
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3);
+    transform: scale(1.1);
+}
+
+.mermaid-fullscreen-btn.dark-theme {
+    background: rgba(50, 50, 50, 0.95);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    color: #e0e0e0;
+}
+
+.mermaid-fullscreen-btn.dark-theme:hover {
+    background: rgba(60, 60, 60, 1);
+    box-shadow: 0 3px 10px rgba(255, 255, 255, 0.2);
+}
+
+.mermaid-fullscreen-modal {
+    display: none;
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 95vw;
+    height: 100vh;
+    background: rgba(255, 255, 255, 0.98);
+    z-index: 9999;
+    padding: 20px;
+    overflow: auto;
+}
+
+.mermaid-fullscreen-modal.dark-theme {
+    background: rgba(0, 0, 0, 0.98);
+}
+
+.mermaid-fullscreen-modal.active {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.mermaid-container-fullscreen {
+    position: relative;
+    width: 95vw;
+    height: 90vh;
+    max-width: 95vw;
+    max-height: 90vh;
+    background: white;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+    overflow: auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.mermaid-container-fullscreen.dark-theme {
+    background: #1a1a1a;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8);
+}
+
+.mermaid-container-fullscreen pre.mermaid {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.mermaid-container-fullscreen .mermaid svg {
+    height: 100% !important;
+    width: 100% !important;
+    cursor: grab;
+}
+
+.mermaid-fullscreen-close {
+    position: fixed !important;
+    top: 20px !important;
+    right: 20px !important;
+    width: 40px;
+    height: 40px;
+    background: rgba(255, 255, 255, 0.95);
+    border: 1px solid rgba(0, 0, 0, 0.2);
+    border-radius: 50%;
+    cursor: pointer;
+    z-index: 10000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    transition: all 0.2s;
+    font-size: 24px;
+    line-height: 1;
+    color: #333;
+}
+
+.mermaid-fullscreen-close:hover {
+    background: white;
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
+    transform: scale(1.1);
+}
+
+.mermaid-fullscreen-close.dark-theme {
+    background: rgba(50, 50, 50, 0.95);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: #e0e0e0;
+}
+
+.mermaid-fullscreen-close.dark-theme:hover {
+    background: rgba(60, 60, 60, 1);
+    box-shadow: 0 6px 16px rgba(255, 255, 255, 0.2);
+}
+
+.mermaid-fullscreen-modal .mermaid-fullscreen-btn {
+    display: none !important;
+}`;
+document.head.appendChild(fullscreenStyle);
+
+// Detect if page has dark background
+const isDarkTheme = () => {
+    const bgColor = window.getComputedStyle(document.body).backgroundColor;
+    const match = bgColor.match(/rgb\((\d+),\s*(\d+),\s*(\d+)/);
+    if (match) {
+        const r = parseInt(match[1]);
+        const g = parseInt(match[2]);
+        const b = parseInt(match[3]);
+        const brightness = (r * 299 + g * 587 + b * 114) / 1000;
+        return brightness < 128;
+    }
+    return false;
+};
+
+const load = async () => {
+    await mermaid.run();
+
+    const all_mermaids = document.querySelectorAll(".mermaid");
+    const mermaids_processed = document.querySelectorAll(".mermaid[data-processed='true']");
+
+    if ("False" === "True") {
+        const mermaids_to_add_zoom = -1 === -1 ? all_mermaids.length : -1;
+        if(mermaids_to_add_zoom > 0) {
+            var svgs = d3.selectAll("");
+            if(all_mermaids.length !== mermaids_processed.length) {
+                setTimeout(load, 200);
+                return;
+            } else if(svgs.size() !== mermaids_to_add_zoom) {
+                setTimeout(load, 200);
+                return;
+            } else {
+                svgs.each(function() {
+                    var svg = d3.select(this);
+                    svg.html("<g class='wrapper'>" + svg.html() + "</g>");
+                    var inner = svg.select("g");
+                    var zoom = d3.zoom().on("zoom", function(event) {
+                        inner.attr("transform", event.transform);
+                    });
+                    svg.call(zoom);
+                });
+            }
+        }
+    } else if(all_mermaids.length !== mermaids_processed.length) {
+        // Wait for mermaid to process all diagrams
+        setTimeout(load, 200);
+        return;
+    }
+
+    const darkTheme = isDarkTheme();
+
+    // Stop here if not adding fullscreen capability
+    if ("True" !== "True") return;
+
+    const modal = document.createElement('div');
+    modal.className = 'mermaid-fullscreen-modal' + (darkTheme ? ' dark-theme' : '');
+    modal.setAttribute('role', 'dialog');
+    modal.setAttribute('aria-modal', 'true');
+    modal.setAttribute('aria-label', 'Fullscreen diagram viewer');
+    modal.innerHTML = `
+        <button class="mermaid-fullscreen-close${darkTheme ? ' dark-theme' : ''}" aria-label="Close fullscreen">✕</button>
+        <div class="mermaid-container-fullscreen${darkTheme ? ' dark-theme' : ''}"></div>
+    `;
+    document.body.appendChild(modal);
+
+    const modalContent = modal.querySelector('.mermaid-container-fullscreen');
+    const closeBtn = modal.querySelector('.mermaid-fullscreen-close');
+
+    let previousScrollOffset = [window.scrollX, window.scrollY];
+
+    const closeModal = () => {
+        modal.classList.remove('active');
+        modalContent.innerHTML = '';
+        document.body.style.overflow = ''
+        window.scrollTo({left: previousScrollOffset[0], top: previousScrollOffset[1], behavior: 'instant'});
+    };
+
+    closeBtn.addEventListener('click', closeModal);
+    modal.addEventListener('click', (e) => {
+        if (e.target === modal) closeModal();
+    });
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && modal.classList.contains('active')) {
+            closeModal();
+        }
+    });
+
+    const allButtons = [];
+
+    document.querySelectorAll('.mermaid').forEach((mermaidDiv) => {
+        if (mermaidDiv.parentNode.classList.contains('mermaid-container') ||
+            mermaidDiv.closest('.mermaid-fullscreen-modal')) {
+            return;
+        }
+
+        const container = document.createElement('div');
+        container.className = 'mermaid-container';
+        mermaidDiv.parentNode.insertBefore(container, mermaidDiv);
+        container.appendChild(mermaidDiv);
+
+        const fullscreenBtn = document.createElement('button');
+        fullscreenBtn.className = 'mermaid-fullscreen-btn' + (darkTheme ? ' dark-theme' : '');
+        fullscreenBtn.setAttribute('aria-label', 'View diagram in fullscreen');
+        fullscreenBtn.textContent = '⛶';
+        fullscreenBtn.style.opacity = '50%';
+
+        // Calculate dynamic position based on diagram's margin and padding
+        const diagramStyle = window.getComputedStyle(mermaidDiv);
+        const marginTop = parseFloat(diagramStyle.marginTop) || 0;
+        const marginRight = parseFloat(diagramStyle.marginRight) || 0;
+        const paddingTop = parseFloat(diagramStyle.paddingTop) || 0;
+        const paddingRight = parseFloat(diagramStyle.paddingRight) || 0;
+        fullscreenBtn.style.top = `${marginTop + paddingTop + 4}px`;
+        fullscreenBtn.style.right = `${marginRight + paddingRight + 4}px`;
+
+        fullscreenBtn.addEventListener('click', () => {
+            previousScrollOffset = [window.scroll, window.scrollY];
+            const clone = mermaidDiv.cloneNode(true);
+            modalContent.innerHTML = '';
+            modalContent.appendChild(clone);
+
+            const svg = clone.querySelector('svg');
+            if (svg) {
+                svg.removeAttribute('width');
+                svg.removeAttribute('height');
+                svg.style.width = '100%';
+                svg.style.height = 'auto';
+                svg.style.maxWidth = '100%';
+                svg.style.sdisplay = 'block';
+
+                if ("False" === "True") {
+                    setTimeout(() => {
+                        const g = svg.querySelector('g');
+                        if (g) {
+                            var svgD3 = d3.select(svg);
+                            svgD3.html("<g class='wrapper'>" + svgD3.html() + "</g>");
+                            var inner = svgD3.select("g");
+                            var zoom = d3.zoom().on("zoom", function(event) {
+                                inner.attr("transform", event.transform);
+                            });
+                            svgD3.call(zoom);
+                        }
+                    }, 100);
+                }
+            }
+
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        });
+
+        container.appendChild(fullscreenBtn);
+        allButtons.push(fullscreenBtn);
+    });
+
+    // Update theme classes when theme changes
+    const updateTheme = () => {
+        const dark = isDarkTheme();
+        allButtons.forEach(btn => {
+            if (dark) {
+                btn.classList.add('dark-theme');
+            } else {
+                btn.classList.remove('dark-theme');
+            }
+        });
+        if (dark) {
+            modal.classList.add('dark-theme');
+            modalContent.classList.add('dark-theme');
+            closeBtn.classList.add('dark-theme');
+        } else {
+            modal.classList.remove('dark-theme');
+            modalContent.classList.remove('dark-theme');
+            closeBtn.classList.remove('dark-theme');
+        }
+    };
+
+    // Watch for theme changes
+    const observer = new MutationObserver(updateTheme);
+    observer.observe(document.documentElement, {
+        attributes: true,
+        attributeFilter: ['class', 'style', 'data-theme']
+    });
+    observer.observe(document.body, {
+        attributes: true,
+        attributeFilter: ['class', 'style']
+    });
+};
+
+window.addEventListener("load", load);
+</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/myogen/simulator/neuron/populations/motor_neurons';</script>
+    <link rel="index" title="Index" href="../../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="0.4.0" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search MyoGen docs..."
+         aria-label="Search MyoGen docs..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+<aside class="bd-header-announcement" aria-label="Announcement">
+  <div class="bd-header-announcement__content">MyoGen is under active development. API may change.</div>
+</aside>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class=" navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../../../../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../../../../_static/myogen_logo.png" class="logo__image only-light" alt="MyoGen 0.4.0 Documentation - Home"/>
+    <img src="../../../../../_static/myogen_logo.png" class="logo__image only-dark pst-js-only" alt="MyoGen 0.4.0 Documentation - Home"/>
+  
+  
+</a></div>
+    
+      <div class="navbar-item">
+<div class="nav-item">
+  <div class="version-switcher__container dropdown">
+      <button id="version-switcher-button" type="button" class="version-switcher__button btn btn-sm navbar-btn" aria-haspopup="true" aria-expanded="false">
+          Version 0.4.0
+      </button>
+      
+      
+      
+  </div>
+</div> </div>
+    
+      <div class="navbar-item"><div class="nav-item">
+   <span>
+      made at the <a href="https://www.nsquared.tf.fau.de/" target="_blank">N² Lab</a>
+   </span>
+</div> </div>
+    
+  </div>
+  
+  <div class=" navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../api/index.html">
+    API Documentation
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../neo_blocks_guide.html">
+    Working with Neo Block Data Structures
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../examples.html">
+    Examples
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/NSquaredLab/MyoGen" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+    </div>
+  
+
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar hide-on-wide">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../api/index.html">
+    API Documentation
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../neo_blocks_guide.html">
+    Working with Neo Block Data Structures
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../examples.html">
+    Examples
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/NSquaredLab/MyoGen" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../../../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../../../../index.html" class="nav-link">Module code</a></li>
+    
+    
+    <li class="breadcrumb-item"><a href="../../../../myogen.html" class="nav-link">myogen</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">myogen.simulator.neuron.populations.motor_neurons</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <h1>Source code for myogen.simulator.neuron.populations.motor_neurons</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Alpha motor neuron populations for motor output.</span>
+
+<span class="sd">This module contains the population class for alpha motor neurons, which form</span>
+<span class="sd">the final common pathway for motor control and drive muscle contraction.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">myogen.simulator.neuron</span><span class="w"> </span><span class="kn">import</span> <span class="n">cells</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">myogen.utils.config_loader</span><span class="w"> </span><span class="kn">import</span> <span class="n">load_yaml_config</span><span class="p">,</span> <span class="n">merge_configs</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">myogen.utils.decorators</span><span class="w"> </span><span class="kn">import</span> <span class="n">beartowertype</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">myogen.utils.types</span><span class="w"> </span><span class="kn">import</span> <span class="n">RECRUITMENT_THRESHOLDS__ARRAY</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">.base</span><span class="w"> </span><span class="kn">import</span> <span class="n">_exp_interp</span><span class="p">,</span> <span class="n">_Pool</span>
+
+
+<div class="viewcode-block" id="AlphaMN__Pool">
+<a class="viewcode-back" href="../../../../../generated/myogen.simulator.neuron.populations.AlphaMN__Pool.html#myogen.simulator.neuron.populations.AlphaMN__Pool">[docs]</a>
+<span class="nd">@beartowertype</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">AlphaMN__Pool</span><span class="p">(</span><span class="n">_Pool</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Container for a population of alpha motor neurons.</span>
+
+<span class="sd">    Manages a collection of AlphaMN (alpha motor neuron) cells with different</span>
+<span class="sd">    biophysical models: ModALS or Powers2017. These cells form the final</span>
+<span class="sd">    common pathway for motor control.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    n : int</span>
+<span class="sd">        Number of alpha motor neurons to create.</span>
+<span class="sd">    recruitment_thresholds__array : RECRUITMENT_THRESHOLDS__ARRAY, optional</span>
+<span class="sd">        Array of recruitment thresholds for each motor neuron, by default None.</span>
+<span class="sd">    config_file : str or Path, optional</span>
+<span class="sd">        Path to YAML configuration file containing model parameters.</span>
+<span class="sd">        If provided, parameters from this file will be used as defaults,</span>
+<span class="sd">        which can be overridden by explicitly passed parameters.</span>
+<span class="sd">        Can be a filename (searches in myogen/config/), relative path, or absolute path.</span>
+<span class="sd">        By default uses &quot;alpha_mn_default.yaml&quot;.</span>
+<span class="sd">    model : str, optional</span>
+<span class="sd">        Motor neuron model type (&quot;NERLab&quot; or &quot;Powers2017&quot;), by default &quot;NERLab&quot;.</span>
+<span class="sd">    mode : str, optional</span>
+<span class="sd">        Simulation mode (&quot;active&quot; or &quot;passive&quot;), by default &quot;active&quot;.</span>
+<span class="sd">    axon_velocities : tuple[float, float], optional</span>
+<span class="sd">        Min and max axon conduction velocities (m/s), by default (50, 65).</span>
+<span class="sd">    axon_length : float, optional</span>
+<span class="sd">        Length of the axon (mm), by default 0.6.</span>
+<span class="sd">    gamma : float, optional</span>
+<span class="sd">        Neuromodulation level (a.u.), by default 0.2.</span>
+<span class="sd">    cell_index : Optional[int], optional</span>
+<span class="sd">        Specific cell index to create (creates only one cell), by default None.</span>
+<span class="sd">    lambda_factor : float, optional</span>
+<span class="sd">        Lambda factor for Powers2017 model persistent sodium scaling, by default 1.0.</span>
+<span class="sd">    initial_voltage__mV : float or list[float], optional</span>
+<span class="sd">        Initial membrane voltage (mV), by default -67.</span>
+<span class="sd">    spike_threshold__mV : float, optional</span>
+<span class="sd">        Spike detection threshold for recording motor neuron spikes, by default 50.0.</span>
+<span class="sd">        Motor neurons have large action potentials (80-100 mV) requiring higher thresholds.</span>
+
+<span class="sd">    Powers2017 Model Parameters (required when model=&quot;Powers2017&quot;)</span>
+<span class="sd">    --------------------------------------------------------</span>
+<span class="sd">    soma_length_range : tuple[float, float, float], optional</span>
+<span class="sd">        Soma length [min, max, curve] (um).</span>
+<span class="sd">    soma_diameter_range : tuple[float, float, float], optional</span>
+<span class="sd">        Soma diameter [min, max, curve] (um).</span>
+<span class="sd">    soma_capacitance_range : tuple[float, float, float], optional</span>
+<span class="sd">        Soma capacitance [min, max, curve] (uF/cm²).</span>
+<span class="sd">    soma_passive_conductance_range : tuple[float, float, float], optional</span>
+<span class="sd">        Soma passive conductance [min, max, curve] (S/cm²).</span>
+<span class="sd">    soma_passive_reversal_range : tuple[float, float, float], optional</span>
+<span class="sd">        Soma passive reversal potential [min, max, curve] (mV).</span>
+<span class="sd">    soma_na3rp_conductance_range : tuple[float, float, float], optional</span>
+<span class="sd">        Soma Na3RP conductance [min, max, curve] (S/cm²).</span>
+<span class="sd">    soma_naps_conductance_range : tuple[float, float, float], optional</span>
+<span class="sd">        Soma NaPS conductance [min, max, curve] (S/cm²).</span>
+<span class="sd">    soma_kdrrl_conductance_range : tuple[float, float, float], optional</span>
+<span class="sd">        Soma KDRRL conductance [min, max, curve] (S/cm²).</span>
+<span class="sd">    soma_mahp_ca_conductance_range : tuple[float, float, float], optional</span>
+<span class="sd">        Soma mAHP calcium conductance [min, max, curve] (S/cm²).</span>
+<span class="sd">    soma_mahp_k_conductance_range : tuple[float, float, float], optional</span>
+<span class="sd">        Soma mAHP potassium conductance [min, max, curve] (S/cm²).</span>
+<span class="sd">    soma_mahp_tau_range : tuple[float, float, float], optional</span>
+<span class="sd">        Soma mAHP time constant [min, max, curve] (ms).</span>
+<span class="sd">    soma_gh_conductance_range : tuple[float, float, float], optional</span>
+<span class="sd">        Soma h-current conductance [min, max, curve] (S/cm²).</span>
+<span class="sd">    dendrite_length_range : tuple[float, float, float], optional</span>
+<span class="sd">        Dendrite length [min, max, curve] (um).</span>
+<span class="sd">    dendrite_diameter_range : tuple[float, float, float], optional</span>
+<span class="sd">        Dendrite diameter [min, max, curve] (um).</span>
+<span class="sd">    dendrite_passive_conductance_range : tuple[float, float, float], optional</span>
+<span class="sd">        Dendrite passive conductance [min, max, curve] (S/cm²).</span>
+<span class="sd">    dendrite_passive_reversal_range : tuple[float, float, float], optional</span>
+<span class="sd">        Dendrite passive reversal potential [min, max, curve] (mV).</span>
+<span class="sd">    dendrite_resistance_range : tuple[float, float, float], optional</span>
+<span class="sd">        Dendrite axial resistance [min, max, curve] (Ω·cm).</span>
+<span class="sd">    dendrite_capacitance_range : tuple[float, float, float], optional</span>
+<span class="sd">        Dendrite capacitance [min, max, curve] (uF/cm²).</span>
+<span class="sd">    dendrite_gh_conductance_range : tuple[float, float, float], optional</span>
+<span class="sd">        Dendrite h-current conductance [min, max, curve] (S/cm²).</span>
+<span class="sd">    dendrite_ca_conductance_ranges : tuple[tuple[float, float, float], ...], optional</span>
+<span class="sd">        L-type Ca conductance ranges for each dendrite (4 tuples).</span>
+<span class="sd">    dendrite_ca_theta_m_range : tuple[float, float, float], optional</span>
+<span class="sd">        Ca channel activation threshold [min, max, curve] (mV).</span>
+<span class="sd">    dendrite_ca_theta_h_range : tuple[float, float, float], optional</span>
+<span class="sd">        Ca channel inactivation threshold [min, max, curve] (mV).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="AlphaMN__Pool.__init__">
+<a class="viewcode-back" href="../../../../../generated/myogen.simulator.neuron.populations.AlphaMN__Pool.__init__.html#myogen.simulator.neuron.populations.AlphaMN__Pool.__init__">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">n</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">recruitment_thresholds__array</span><span class="p">:</span> <span class="n">RECRUITMENT_THRESHOLDS__ARRAY</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">config_file</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">model</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">mode</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">axon_velocities</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">axon_length</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">gamma</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">cell_index</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">lambda_factor</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">initial_voltage__mV</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">spike_threshold__mV</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="c1"># Powers2017 parameters</span>
+        <span class="c1"># Soma parameters</span>
+        <span class="n">soma_length_range</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">soma_diameter_range</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">soma_capacitance_range</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">soma_passive_conductance_range</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">soma_passive_reversal_range</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">soma_na3rp_conductance_range</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">soma_naps_conductance_range</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">soma_kdrrl_conductance_range</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">soma_mahp_ca_conductance_range</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">soma_mahp_k_conductance_range</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">soma_mahp_tau_range</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">soma_gh_conductance_range</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="c1"># Dendrite parameters</span>
+        <span class="n">dendrite_length_range</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">dendrite_diameter_range</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">dendrite_passive_conductance_range</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">dendrite_passive_reversal_range</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">dendrite_resistance_range</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">dendrite_capacitance_range</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">dendrite_gh_conductance_range</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">dendrite_ca_conductance_ranges</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">],</span> <span class="o">...</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">dendrite_ca_theta_m_range</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">dendrite_ca_theta_h_range</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="c1"># Load configuration from YAML files with fallback mechanism</span>
+        <span class="k">if</span> <span class="n">config_file</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">config_file</span> <span class="o">=</span> <span class="s2">&quot;alpha_mn_default.yaml&quot;</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="c1"># Always load the default configuration first</span>
+            <span class="n">default_config</span> <span class="o">=</span> <span class="n">load_yaml_config</span><span class="p">(</span><span class="s2">&quot;alpha_mn_default.yaml&quot;</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">config_file</span> <span class="o">==</span> <span class="s2">&quot;alpha_mn_default.yaml&quot;</span><span class="p">:</span>
+                <span class="n">config</span> <span class="o">=</span> <span class="n">default_config</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="c1"># Load the specific config file and merge with defaults</span>
+                <span class="n">specific_config</span> <span class="o">=</span> <span class="n">load_yaml_config</span><span class="p">(</span><span class="n">config_file</span><span class="p">)</span>
+                <span class="n">config</span> <span class="o">=</span> <span class="n">merge_configs</span><span class="p">(</span><span class="n">default_config</span><span class="p">,</span> <span class="n">specific_config</span><span class="p">)</span>
+
+        <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+            <span class="c1"># PyYAML not installed</span>
+            <span class="k">raise</span> <span class="ne">ImportError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;PyYAML is required to load config file &#39;</span><span class="si">{</span><span class="n">config_file</span><span class="si">}</span><span class="s2">&#39;. &quot;</span>
+                <span class="s2">&quot;Install it with: pip install pyyaml&quot;</span>
+            <span class="p">)</span>
+
+        <span class="c1"># Helper function to get parameter value (explicit param &gt; config &gt; required)</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">get_param</span><span class="p">(</span><span class="n">param_value</span><span class="p">,</span> <span class="n">config_key</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">param_value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">param_value</span>
+            <span class="k">if</span> <span class="n">config_key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">config</span><span class="p">:</span>
+                <span class="c1"># Debug information</span>
+                <span class="n">available_keys</span> <span class="o">=</span> <span class="p">(</span>
+                    <span class="nb">list</span><span class="p">(</span><span class="n">config</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">config</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span> <span class="k">else</span> <span class="s2">&quot;config is not a dict&quot;</span>
+                <span class="p">)</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;Parameter &#39;</span><span class="si">{</span><span class="n">config_key</span><span class="si">}</span><span class="s2">&#39; not found in merged config and not provided explicitly. &quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;Available top-level keys: </span><span class="si">{</span><span class="n">available_keys</span><span class="si">}</span><span class="s2">. &quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;Config file used: &#39;</span><span class="si">{</span><span class="n">config_file</span><span class="si">}</span><span class="s2">&#39;&quot;</span>
+                <span class="p">)</span>
+            <span class="k">return</span> <span class="n">config</span><span class="p">[</span><span class="n">config_key</span><span class="p">]</span>
+
+        <span class="k">def</span><span class="w"> </span><span class="nf">get_nested_param</span><span class="p">(</span><span class="n">param_value</span><span class="p">,</span> <span class="o">*</span><span class="n">config_keys</span><span class="p">):</span>
+<span class="w">            </span><span class="sd">&quot;&quot;&quot;Get parameter from nested config structure.&quot;&quot;&quot;</span>
+            <span class="k">if</span> <span class="n">param_value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">param_value</span>
+            <span class="n">value</span> <span class="o">=</span> <span class="n">config</span>
+            <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">config_keys</span><span class="p">:</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+                    <span class="n">value</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="p">{})</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                        <span class="sa">f</span><span class="s2">&quot;Parameter path </span><span class="si">{</span><span class="s1">&#39; -&gt; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">config_keys</span><span class="p">)</span><span class="si">}</span><span class="s2"> not found in merged config and not provided explicitly. &quot;</span>
+                        <span class="sa">f</span><span class="s2">&quot;Failed at key &#39;</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">&#39;. Config file used: &#39;</span><span class="si">{</span><span class="n">config_file</span><span class="si">}</span><span class="s2">&#39;&quot;</span>
+                    <span class="p">)</span>
+            <span class="k">if</span> <span class="n">value</span> <span class="o">==</span> <span class="p">{}</span> <span class="ow">or</span> <span class="n">value</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;Parameter path </span><span class="si">{</span><span class="s1">&#39; -&gt; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">config_keys</span><span class="p">)</span><span class="si">}</span><span class="s2"> not found in merged config and not provided explicitly. &quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;Config file used: &#39;</span><span class="si">{</span><span class="n">config_file</span><span class="si">}</span><span class="s2">&#39;&quot;</span>
+                <span class="p">)</span>
+            <span class="k">return</span> <span class="n">value</span>
+
+        <span class="c1"># Set basic parameters</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">n</span> <span class="o">=</span> <span class="n">n</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">recruitment_thresholds__array</span> <span class="o">=</span> <span class="n">recruitment_thresholds__array</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">recruitment_thresholds__array</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">n</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">recruitment_thresholds__array</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">n</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">recruitment_thresholds__array</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Either n or recruitment_thresholds__array must be provided.&quot;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">model</span> <span class="o">=</span> <span class="n">get_param</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="s2">&quot;model&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mode</span> <span class="o">=</span> <span class="n">get_param</span><span class="p">(</span><span class="n">mode</span><span class="p">,</span> <span class="s2">&quot;mode&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">axon_velocities</span> <span class="o">=</span> <span class="n">get_param</span><span class="p">(</span><span class="n">axon_velocities</span><span class="p">,</span> <span class="s2">&quot;axon_velocities&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">axon_length</span> <span class="o">=</span> <span class="n">get_param</span><span class="p">(</span><span class="n">axon_length</span><span class="p">,</span> <span class="s2">&quot;axon_length&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">gamma</span> <span class="o">=</span> <span class="n">get_param</span><span class="p">(</span><span class="n">gamma</span><span class="p">,</span> <span class="s2">&quot;gamma&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cell_index</span> <span class="o">=</span> <span class="n">cell_index</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">lambda_factor</span> <span class="o">=</span> <span class="n">get_param</span><span class="p">(</span><span class="n">lambda_factor</span><span class="p">,</span> <span class="s2">&quot;lambda_factor&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Store Powers2017 parameters</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">soma_length_range</span> <span class="o">=</span> <span class="n">get_nested_param</span><span class="p">(</span>
+            <span class="n">soma_length_range</span><span class="p">,</span> <span class="s2">&quot;powers2017&quot;</span><span class="p">,</span> <span class="s2">&quot;soma&quot;</span><span class="p">,</span> <span class="s2">&quot;length_range&quot;</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">soma_diameter_range</span> <span class="o">=</span> <span class="n">get_nested_param</span><span class="p">(</span>
+            <span class="n">soma_diameter_range</span><span class="p">,</span> <span class="s2">&quot;powers2017&quot;</span><span class="p">,</span> <span class="s2">&quot;soma&quot;</span><span class="p">,</span> <span class="s2">&quot;diameter_range&quot;</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">soma_capacitance_range</span> <span class="o">=</span> <span class="n">get_nested_param</span><span class="p">(</span>
+            <span class="n">soma_capacitance_range</span><span class="p">,</span> <span class="s2">&quot;powers2017&quot;</span><span class="p">,</span> <span class="s2">&quot;soma&quot;</span><span class="p">,</span> <span class="s2">&quot;capacitance_range&quot;</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">soma_passive_conductance_range</span> <span class="o">=</span> <span class="n">get_nested_param</span><span class="p">(</span>
+            <span class="n">soma_passive_conductance_range</span><span class="p">,</span> <span class="s2">&quot;powers2017&quot;</span><span class="p">,</span> <span class="s2">&quot;soma&quot;</span><span class="p">,</span> <span class="s2">&quot;passive_conductance_range&quot;</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">soma_passive_reversal_range</span> <span class="o">=</span> <span class="n">get_nested_param</span><span class="p">(</span>
+            <span class="n">soma_passive_reversal_range</span><span class="p">,</span> <span class="s2">&quot;powers2017&quot;</span><span class="p">,</span> <span class="s2">&quot;soma&quot;</span><span class="p">,</span> <span class="s2">&quot;passive_reversal_range&quot;</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">soma_na3rp_conductance_range</span> <span class="o">=</span> <span class="n">get_nested_param</span><span class="p">(</span>
+            <span class="n">soma_na3rp_conductance_range</span><span class="p">,</span> <span class="s2">&quot;powers2017&quot;</span><span class="p">,</span> <span class="s2">&quot;soma&quot;</span><span class="p">,</span> <span class="s2">&quot;na3rp_conductance_range&quot;</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">soma_naps_conductance_range</span> <span class="o">=</span> <span class="n">get_nested_param</span><span class="p">(</span>
+            <span class="n">soma_naps_conductance_range</span><span class="p">,</span> <span class="s2">&quot;powers2017&quot;</span><span class="p">,</span> <span class="s2">&quot;soma&quot;</span><span class="p">,</span> <span class="s2">&quot;naps_conductance_range&quot;</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">soma_kdrrl_conductance_range</span> <span class="o">=</span> <span class="n">get_nested_param</span><span class="p">(</span>
+            <span class="n">soma_kdrrl_conductance_range</span><span class="p">,</span> <span class="s2">&quot;powers2017&quot;</span><span class="p">,</span> <span class="s2">&quot;soma&quot;</span><span class="p">,</span> <span class="s2">&quot;kdrrl_conductance_range&quot;</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">soma_mahp_ca_conductance_range</span> <span class="o">=</span> <span class="n">get_nested_param</span><span class="p">(</span>
+            <span class="n">soma_mahp_ca_conductance_range</span><span class="p">,</span> <span class="s2">&quot;powers2017&quot;</span><span class="p">,</span> <span class="s2">&quot;soma&quot;</span><span class="p">,</span> <span class="s2">&quot;mahp_ca_conductance_range&quot;</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">soma_mahp_k_conductance_range</span> <span class="o">=</span> <span class="n">get_nested_param</span><span class="p">(</span>
+            <span class="n">soma_mahp_k_conductance_range</span><span class="p">,</span> <span class="s2">&quot;powers2017&quot;</span><span class="p">,</span> <span class="s2">&quot;soma&quot;</span><span class="p">,</span> <span class="s2">&quot;mahp_k_conductance_range&quot;</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">soma_mahp_tau_range</span> <span class="o">=</span> <span class="n">get_nested_param</span><span class="p">(</span>
+            <span class="n">soma_mahp_tau_range</span><span class="p">,</span> <span class="s2">&quot;powers2017&quot;</span><span class="p">,</span> <span class="s2">&quot;soma&quot;</span><span class="p">,</span> <span class="s2">&quot;mahp_tau_range&quot;</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">soma_gh_conductance_range</span> <span class="o">=</span> <span class="n">get_nested_param</span><span class="p">(</span>
+            <span class="n">soma_gh_conductance_range</span><span class="p">,</span> <span class="s2">&quot;powers2017&quot;</span><span class="p">,</span> <span class="s2">&quot;soma&quot;</span><span class="p">,</span> <span class="s2">&quot;gh_conductance_range&quot;</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dendrite_length_range</span> <span class="o">=</span> <span class="n">get_nested_param</span><span class="p">(</span>
+            <span class="n">dendrite_length_range</span><span class="p">,</span> <span class="s2">&quot;powers2017&quot;</span><span class="p">,</span> <span class="s2">&quot;dendrite&quot;</span><span class="p">,</span> <span class="s2">&quot;length_range&quot;</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dendrite_diameter_range</span> <span class="o">=</span> <span class="n">get_nested_param</span><span class="p">(</span>
+            <span class="n">dendrite_diameter_range</span><span class="p">,</span> <span class="s2">&quot;powers2017&quot;</span><span class="p">,</span> <span class="s2">&quot;dendrite&quot;</span><span class="p">,</span> <span class="s2">&quot;diameter_range&quot;</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dendrite_passive_conductance_range</span> <span class="o">=</span> <span class="n">get_nested_param</span><span class="p">(</span>
+            <span class="n">dendrite_passive_conductance_range</span><span class="p">,</span>
+            <span class="s2">&quot;powers2017&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;dendrite&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;passive_conductance_range&quot;</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dendrite_passive_reversal_range</span> <span class="o">=</span> <span class="n">get_nested_param</span><span class="p">(</span>
+            <span class="n">dendrite_passive_reversal_range</span><span class="p">,</span> <span class="s2">&quot;powers2017&quot;</span><span class="p">,</span> <span class="s2">&quot;dendrite&quot;</span><span class="p">,</span> <span class="s2">&quot;passive_reversal_range&quot;</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dendrite_resistance_range</span> <span class="o">=</span> <span class="n">get_nested_param</span><span class="p">(</span>
+            <span class="n">dendrite_resistance_range</span><span class="p">,</span> <span class="s2">&quot;powers2017&quot;</span><span class="p">,</span> <span class="s2">&quot;dendrite&quot;</span><span class="p">,</span> <span class="s2">&quot;resistance_range&quot;</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dendrite_capacitance_range</span> <span class="o">=</span> <span class="n">get_nested_param</span><span class="p">(</span>
+            <span class="n">dendrite_capacitance_range</span><span class="p">,</span> <span class="s2">&quot;powers2017&quot;</span><span class="p">,</span> <span class="s2">&quot;dendrite&quot;</span><span class="p">,</span> <span class="s2">&quot;capacitance_range&quot;</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dendrite_gh_conductance_range</span> <span class="o">=</span> <span class="n">get_nested_param</span><span class="p">(</span>
+            <span class="n">dendrite_gh_conductance_range</span><span class="p">,</span> <span class="s2">&quot;powers2017&quot;</span><span class="p">,</span> <span class="s2">&quot;dendrite&quot;</span><span class="p">,</span> <span class="s2">&quot;gh_conductance_range&quot;</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dendrite_ca_conductance_ranges</span> <span class="o">=</span> <span class="n">get_nested_param</span><span class="p">(</span>
+            <span class="n">dendrite_ca_conductance_ranges</span><span class="p">,</span> <span class="s2">&quot;powers2017&quot;</span><span class="p">,</span> <span class="s2">&quot;dendrite&quot;</span><span class="p">,</span> <span class="s2">&quot;ca_conductance_ranges&quot;</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dendrite_ca_theta_m_range</span> <span class="o">=</span> <span class="n">get_nested_param</span><span class="p">(</span>
+            <span class="n">dendrite_ca_theta_m_range</span><span class="p">,</span> <span class="s2">&quot;powers2017&quot;</span><span class="p">,</span> <span class="s2">&quot;dendrite&quot;</span><span class="p">,</span> <span class="s2">&quot;ca_theta_m_range&quot;</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dendrite_ca_theta_h_range</span> <span class="o">=</span> <span class="n">get_nested_param</span><span class="p">(</span>
+            <span class="n">dendrite_ca_theta_h_range</span><span class="p">,</span> <span class="s2">&quot;powers2017&quot;</span><span class="p">,</span> <span class="s2">&quot;dendrite&quot;</span><span class="p">,</span> <span class="s2">&quot;ca_theta_h_range&quot;</span>
+        <span class="p">)</span>
+
+        <span class="c1"># Store NERLab napp parameters</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">napp_m_alpha_A</span> <span class="o">=</span> <span class="n">get_nested_param</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="s2">&quot;nerlab&quot;</span><span class="p">,</span> <span class="s2">&quot;napp&quot;</span><span class="p">,</span> <span class="s2">&quot;m_alpha_A&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">napp_m_alpha_v_offset</span> <span class="o">=</span> <span class="n">get_nested_param</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="s2">&quot;nerlab&quot;</span><span class="p">,</span> <span class="s2">&quot;napp&quot;</span><span class="p">,</span> <span class="s2">&quot;m_alpha_v_offset&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">napp_m_alpha_k</span> <span class="o">=</span> <span class="n">get_nested_param</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="s2">&quot;nerlab&quot;</span><span class="p">,</span> <span class="s2">&quot;napp&quot;</span><span class="p">,</span> <span class="s2">&quot;m_alpha_k&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">napp_m_beta_A</span> <span class="o">=</span> <span class="n">get_nested_param</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="s2">&quot;nerlab&quot;</span><span class="p">,</span> <span class="s2">&quot;napp&quot;</span><span class="p">,</span> <span class="s2">&quot;m_beta_A&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">napp_m_beta_v_offset</span> <span class="o">=</span> <span class="n">get_nested_param</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="s2">&quot;nerlab&quot;</span><span class="p">,</span> <span class="s2">&quot;napp&quot;</span><span class="p">,</span> <span class="s2">&quot;m_beta_v_offset&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">napp_m_beta_k</span> <span class="o">=</span> <span class="n">get_nested_param</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="s2">&quot;nerlab&quot;</span><span class="p">,</span> <span class="s2">&quot;napp&quot;</span><span class="p">,</span> <span class="s2">&quot;m_beta_k&quot;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">napp_h_alpha_A</span> <span class="o">=</span> <span class="n">get_nested_param</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="s2">&quot;nerlab&quot;</span><span class="p">,</span> <span class="s2">&quot;napp&quot;</span><span class="p">,</span> <span class="s2">&quot;h_alpha_A&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">napp_h_alpha_v_offset</span> <span class="o">=</span> <span class="n">get_nested_param</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="s2">&quot;nerlab&quot;</span><span class="p">,</span> <span class="s2">&quot;napp&quot;</span><span class="p">,</span> <span class="s2">&quot;h_alpha_v_offset&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">napp_h_alpha_tau</span> <span class="o">=</span> <span class="n">get_nested_param</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="s2">&quot;nerlab&quot;</span><span class="p">,</span> <span class="s2">&quot;napp&quot;</span><span class="p">,</span> <span class="s2">&quot;h_alpha_tau&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">napp_h_beta_A</span> <span class="o">=</span> <span class="n">get_nested_param</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="s2">&quot;nerlab&quot;</span><span class="p">,</span> <span class="s2">&quot;napp&quot;</span><span class="p">,</span> <span class="s2">&quot;h_beta_A&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">napp_h_beta_v_offset</span> <span class="o">=</span> <span class="n">get_nested_param</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="s2">&quot;nerlab&quot;</span><span class="p">,</span> <span class="s2">&quot;napp&quot;</span><span class="p">,</span> <span class="s2">&quot;h_beta_v_offset&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">napp_h_beta_k</span> <span class="o">=</span> <span class="n">get_nested_param</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="s2">&quot;nerlab&quot;</span><span class="p">,</span> <span class="s2">&quot;napp&quot;</span><span class="p">,</span> <span class="s2">&quot;h_beta_k&quot;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">napp_p_alpha_A</span> <span class="o">=</span> <span class="n">get_nested_param</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="s2">&quot;nerlab&quot;</span><span class="p">,</span> <span class="s2">&quot;napp&quot;</span><span class="p">,</span> <span class="s2">&quot;p_alpha_A&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">napp_p_alpha_v_offset</span> <span class="o">=</span> <span class="n">get_nested_param</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="s2">&quot;nerlab&quot;</span><span class="p">,</span> <span class="s2">&quot;napp&quot;</span><span class="p">,</span> <span class="s2">&quot;p_alpha_v_offset&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">napp_p_alpha_k</span> <span class="o">=</span> <span class="n">get_nested_param</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="s2">&quot;nerlab&quot;</span><span class="p">,</span> <span class="s2">&quot;napp&quot;</span><span class="p">,</span> <span class="s2">&quot;p_alpha_k&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">napp_p_beta_A</span> <span class="o">=</span> <span class="n">get_nested_param</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="s2">&quot;nerlab&quot;</span><span class="p">,</span> <span class="s2">&quot;napp&quot;</span><span class="p">,</span> <span class="s2">&quot;p_beta_A&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">napp_p_beta_v_offset</span> <span class="o">=</span> <span class="n">get_nested_param</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="s2">&quot;nerlab&quot;</span><span class="p">,</span> <span class="s2">&quot;napp&quot;</span><span class="p">,</span> <span class="s2">&quot;p_beta_v_offset&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">napp_p_beta_k</span> <span class="o">=</span> <span class="n">get_nested_param</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="s2">&quot;nerlab&quot;</span><span class="p">,</span> <span class="s2">&quot;napp&quot;</span><span class="p">,</span> <span class="s2">&quot;p_beta_k&quot;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">napp_n_alpha_A</span> <span class="o">=</span> <span class="n">get_nested_param</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="s2">&quot;nerlab&quot;</span><span class="p">,</span> <span class="s2">&quot;napp&quot;</span><span class="p">,</span> <span class="s2">&quot;n_alpha_A&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">napp_n_alpha_v_offset</span> <span class="o">=</span> <span class="n">get_nested_param</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="s2">&quot;nerlab&quot;</span><span class="p">,</span> <span class="s2">&quot;napp&quot;</span><span class="p">,</span> <span class="s2">&quot;n_alpha_v_offset&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">napp_n_alpha_k</span> <span class="o">=</span> <span class="n">get_nested_param</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="s2">&quot;nerlab&quot;</span><span class="p">,</span> <span class="s2">&quot;napp&quot;</span><span class="p">,</span> <span class="s2">&quot;n_alpha_k&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">napp_n_beta_A</span> <span class="o">=</span> <span class="n">get_nested_param</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="s2">&quot;nerlab&quot;</span><span class="p">,</span> <span class="s2">&quot;napp&quot;</span><span class="p">,</span> <span class="s2">&quot;n_beta_A&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">napp_n_beta_v_offset</span> <span class="o">=</span> <span class="n">get_nested_param</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="s2">&quot;nerlab&quot;</span><span class="p">,</span> <span class="s2">&quot;napp&quot;</span><span class="p">,</span> <span class="s2">&quot;n_beta_v_offset&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">napp_n_beta_tau</span> <span class="o">=</span> <span class="n">get_nested_param</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="s2">&quot;nerlab&quot;</span><span class="p">,</span> <span class="s2">&quot;napp&quot;</span><span class="p">,</span> <span class="s2">&quot;n_beta_tau&quot;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">napp_r_alpha_A</span> <span class="o">=</span> <span class="n">get_nested_param</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="s2">&quot;nerlab&quot;</span><span class="p">,</span> <span class="s2">&quot;napp&quot;</span><span class="p">,</span> <span class="s2">&quot;r_alpha_A&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">napp_r_alpha_v_offset</span> <span class="o">=</span> <span class="n">get_nested_param</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="s2">&quot;nerlab&quot;</span><span class="p">,</span> <span class="s2">&quot;napp&quot;</span><span class="p">,</span> <span class="s2">&quot;r_alpha_v_offset&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">napp_r_alpha_k</span> <span class="o">=</span> <span class="n">get_nested_param</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="s2">&quot;nerlab&quot;</span><span class="p">,</span> <span class="s2">&quot;napp&quot;</span><span class="p">,</span> <span class="s2">&quot;r_alpha_k&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Store NERLab soma parameters</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">nerlab_soma_diameter_range</span> <span class="o">=</span> <span class="n">get_nested_param</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="s2">&quot;nerlab&quot;</span><span class="p">,</span> <span class="s2">&quot;soma&quot;</span><span class="p">,</span> <span class="s2">&quot;diameter_range&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">nerlab_soma_gnabar_range</span> <span class="o">=</span> <span class="n">get_nested_param</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="s2">&quot;nerlab&quot;</span><span class="p">,</span> <span class="s2">&quot;soma&quot;</span><span class="p">,</span> <span class="s2">&quot;gnabar_range&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">nerlab_soma_gnapbar_range</span> <span class="o">=</span> <span class="n">get_nested_param</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="s2">&quot;nerlab&quot;</span><span class="p">,</span> <span class="s2">&quot;soma&quot;</span><span class="p">,</span> <span class="s2">&quot;gnapbar_range&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">nerlab_soma_gkfbar_range</span> <span class="o">=</span> <span class="n">get_nested_param</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="s2">&quot;nerlab&quot;</span><span class="p">,</span> <span class="s2">&quot;soma&quot;</span><span class="p">,</span> <span class="s2">&quot;gkfbar_range&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">nerlab_soma_gksbar_range</span> <span class="o">=</span> <span class="n">get_nested_param</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="s2">&quot;nerlab&quot;</span><span class="p">,</span> <span class="s2">&quot;soma&quot;</span><span class="p">,</span> <span class="s2">&quot;gksbar_range&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">nerlab_soma_mact_range</span> <span class="o">=</span> <span class="n">get_nested_param</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="s2">&quot;nerlab&quot;</span><span class="p">,</span> <span class="s2">&quot;soma&quot;</span><span class="p">,</span> <span class="s2">&quot;mact_range&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">nerlab_soma_rinact_range</span> <span class="o">=</span> <span class="n">get_nested_param</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="s2">&quot;nerlab&quot;</span><span class="p">,</span> <span class="s2">&quot;soma&quot;</span><span class="p">,</span> <span class="s2">&quot;rinact_range&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">nerlab_soma_gls_range</span> <span class="o">=</span> <span class="n">get_nested_param</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="s2">&quot;nerlab&quot;</span><span class="p">,</span> <span class="s2">&quot;soma&quot;</span><span class="p">,</span> <span class="s2">&quot;gls_range&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">nerlab_soma_ena</span> <span class="o">=</span> <span class="n">get_nested_param</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="s2">&quot;nerlab&quot;</span><span class="p">,</span> <span class="s2">&quot;soma&quot;</span><span class="p">,</span> <span class="s2">&quot;ena&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">nerlab_soma_ek</span> <span class="o">=</span> <span class="n">get_nested_param</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="s2">&quot;nerlab&quot;</span><span class="p">,</span> <span class="s2">&quot;soma&quot;</span><span class="p">,</span> <span class="s2">&quot;ek&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">nerlab_soma_el_napp</span> <span class="o">=</span> <span class="n">get_nested_param</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="s2">&quot;nerlab&quot;</span><span class="p">,</span> <span class="s2">&quot;soma&quot;</span><span class="p">,</span> <span class="s2">&quot;el_napp&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">nerlab_soma_vtraub_napp</span> <span class="o">=</span> <span class="n">get_nested_param</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="s2">&quot;nerlab&quot;</span><span class="p">,</span> <span class="s2">&quot;soma&quot;</span><span class="p">,</span> <span class="s2">&quot;vtraub_napp&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">nerlab_soma_Ra</span> <span class="o">=</span> <span class="n">get_nested_param</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="s2">&quot;nerlab&quot;</span><span class="p">,</span> <span class="s2">&quot;soma&quot;</span><span class="p">,</span> <span class="s2">&quot;Ra&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">nerlab_soma_cm</span> <span class="o">=</span> <span class="n">get_nested_param</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="s2">&quot;nerlab&quot;</span><span class="p">,</span> <span class="s2">&quot;soma&quot;</span><span class="p">,</span> <span class="s2">&quot;cm&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Store NERLab dendrite parameters</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">nerlab_dendrite_diameter_range</span> <span class="o">=</span> <span class="n">get_nested_param</span><span class="p">(</span>
+            <span class="kc">None</span><span class="p">,</span> <span class="s2">&quot;nerlab&quot;</span><span class="p">,</span> <span class="s2">&quot;dendrite&quot;</span><span class="p">,</span> <span class="s2">&quot;diameter_range&quot;</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">nerlab_dendrite_length_range</span> <span class="o">=</span> <span class="n">get_nested_param</span><span class="p">(</span>
+            <span class="kc">None</span><span class="p">,</span> <span class="s2">&quot;nerlab&quot;</span><span class="p">,</span> <span class="s2">&quot;dendrite&quot;</span><span class="p">,</span> <span class="s2">&quot;length_range&quot;</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">nerlab_dendrite_gcaLbar_range</span> <span class="o">=</span> <span class="n">get_nested_param</span><span class="p">(</span>
+            <span class="kc">None</span><span class="p">,</span> <span class="s2">&quot;nerlab&quot;</span><span class="p">,</span> <span class="s2">&quot;dendrite&quot;</span><span class="p">,</span> <span class="s2">&quot;gcaLbar_range&quot;</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">nerlab_dendrite_vtraub_caL_range</span> <span class="o">=</span> <span class="n">get_nested_param</span><span class="p">(</span>
+            <span class="kc">None</span><span class="p">,</span> <span class="s2">&quot;nerlab&quot;</span><span class="p">,</span> <span class="s2">&quot;dendrite&quot;</span><span class="p">,</span> <span class="s2">&quot;vtraub_caL_range&quot;</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">nerlab_dendrite_ltau_caL_range</span> <span class="o">=</span> <span class="n">get_nested_param</span><span class="p">(</span>
+            <span class="kc">None</span><span class="p">,</span> <span class="s2">&quot;nerlab&quot;</span><span class="p">,</span> <span class="s2">&quot;dendrite&quot;</span><span class="p">,</span> <span class="s2">&quot;ltau_caL_range&quot;</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">nerlab_dendrite_gl_caL_range</span> <span class="o">=</span> <span class="n">get_nested_param</span><span class="p">(</span>
+            <span class="kc">None</span><span class="p">,</span> <span class="s2">&quot;nerlab&quot;</span><span class="p">,</span> <span class="s2">&quot;dendrite&quot;</span><span class="p">,</span> <span class="s2">&quot;gl_caL_range&quot;</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">nerlab_dendrite_Ra</span> <span class="o">=</span> <span class="n">get_nested_param</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="s2">&quot;nerlab&quot;</span><span class="p">,</span> <span class="s2">&quot;dendrite&quot;</span><span class="p">,</span> <span class="s2">&quot;Ra&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">nerlab_dendrite_cm</span> <span class="o">=</span> <span class="n">get_nested_param</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="s2">&quot;nerlab&quot;</span><span class="p">,</span> <span class="s2">&quot;dendrite&quot;</span><span class="p">,</span> <span class="s2">&quot;cm&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">nerlab_dendrite_ecaL</span> <span class="o">=</span> <span class="n">get_nested_param</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="s2">&quot;nerlab&quot;</span><span class="p">,</span> <span class="s2">&quot;dendrite&quot;</span><span class="p">,</span> <span class="s2">&quot;ecaL&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">nerlab_dendrite_el_caL</span> <span class="o">=</span> <span class="n">get_nested_param</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="s2">&quot;nerlab&quot;</span><span class="p">,</span> <span class="s2">&quot;dendrite&quot;</span><span class="p">,</span> <span class="s2">&quot;el_caL&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span> <span class="o">==</span> <span class="s2">&quot;NERLab&quot;</span><span class="p">:</span>
+            <span class="n">_cells</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_create_nerlab_cells</span><span class="p">()</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span> <span class="o">==</span> <span class="s2">&quot;Powers2017&quot;</span><span class="p">:</span>
+            <span class="n">_cells</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_create_powers2017_cells</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Could not find the specific model for alpha MNs.&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Get initial voltage and spike threshold from config if not provided</span>
+        <span class="n">_initial_voltage</span> <span class="o">=</span> <span class="n">get_param</span><span class="p">(</span><span class="n">initial_voltage__mV</span><span class="p">,</span> <span class="s2">&quot;initial_voltage__mV&quot;</span><span class="p">)</span>
+        <span class="n">_spike_threshold</span> <span class="o">=</span> <span class="n">get_param</span><span class="p">(</span><span class="n">spike_threshold__mV</span><span class="p">,</span> <span class="s2">&quot;spike_threshold__mV&quot;</span><span class="p">)</span>
+
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="n">cells</span><span class="o">=</span><span class="n">_cells</span><span class="p">,</span>
+            <span class="n">initial_voltage__mV</span><span class="o">=</span><span class="n">_initial_voltage</span><span class="p">,</span>
+            <span class="n">spike_threshold__mV</span><span class="o">=</span><span class="n">_spike_threshold</span><span class="p">,</span>
+        <span class="p">)</span></div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_create_nerlab_cells</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Create motor neurons using the NERLab model.&quot;&quot;&quot;</span>
+
+        <span class="k">def</span><span class="w"> </span><span class="nf">special_interp</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">curv</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">negative</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">negative</span><span class="p">:</span>
+                <span class="c1"># Reverse the interpolation direction</span>
+                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">recruitment_thresholds__array</span> <span class="o">*</span> <span class="p">(</span><span class="n">x</span> <span class="o">-</span> <span class="n">y</span><span class="p">)</span> <span class="o">+</span> <span class="n">y</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="c1"># Normal direction</span>
+                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">recruitment_thresholds__array</span> <span class="o">*</span> <span class="p">(</span><span class="n">y</span> <span class="o">-</span> <span class="n">x</span><span class="p">)</span> <span class="o">+</span> <span class="n">x</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">recruitment_thresholds__array</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">interpF</span> <span class="o">=</span> <span class="n">_exp_interp</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">interpF</span> <span class="o">=</span> <span class="n">special_interp</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">t</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">n</span>
+
+        <span class="c1"># Soma parameters (using parameters from YAML config)</span>
+        <span class="n">Diam_soma</span> <span class="o">=</span> <span class="n">interpF</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">nerlab_soma_diameter_range</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">nerlab_soma_diameter_range</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">t</span><span class="p">,</span>
+            <span class="n">curv</span><span class="o">=</span><span class="mf">1.0</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">nerlab_soma_diameter_range</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span>
+            <span class="n">negative</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">nerlab_soma_diameter_range</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span>
+        <span class="p">)</span>
+        <span class="n">Gnabar</span> <span class="o">=</span> <span class="n">interpF</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">nerlab_soma_gnabar_range</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">nerlab_soma_gnabar_range</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">t</span><span class="p">,</span>
+            <span class="n">curv</span><span class="o">=</span><span class="mi">1</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">nerlab_soma_gnabar_range</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span>
+            <span class="n">negative</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">nerlab_soma_gnabar_range</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span>
+        <span class="p">)</span>
+        <span class="n">Gnapbar</span> <span class="o">=</span> <span class="n">interpF</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">nerlab_soma_gnapbar_range</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">nerlab_soma_gnapbar_range</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">t</span><span class="p">,</span>
+            <span class="n">curv</span><span class="o">=</span><span class="mi">1</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">nerlab_soma_gnapbar_range</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span>
+            <span class="n">negative</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">nerlab_soma_gnapbar_range</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span>
+        <span class="p">)</span>
+        <span class="n">Gkfbar</span> <span class="o">=</span> <span class="n">interpF</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">nerlab_soma_gkfbar_range</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">nerlab_soma_gkfbar_range</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">t</span><span class="p">,</span>
+            <span class="n">curv</span><span class="o">=</span><span class="mi">1</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">nerlab_soma_gkfbar_range</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span>
+            <span class="n">negative</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">nerlab_soma_gkfbar_range</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span>
+        <span class="p">)</span>
+        <span class="n">Gksbar</span> <span class="o">=</span> <span class="n">interpF</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">nerlab_soma_gksbar_range</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">nerlab_soma_gksbar_range</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">t</span><span class="p">,</span>
+            <span class="n">curv</span><span class="o">=</span><span class="mf">1.0</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">nerlab_soma_gksbar_range</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span>
+            <span class="n">negative</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">nerlab_soma_gksbar_range</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span>
+        <span class="p">)</span>
+        <span class="n">Mact</span> <span class="o">=</span> <span class="n">interpF</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">nerlab_soma_mact_range</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">nerlab_soma_mact_range</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">t</span><span class="p">,</span>
+            <span class="n">curv</span><span class="o">=</span><span class="mi">1</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">nerlab_soma_mact_range</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span>
+            <span class="n">negative</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">nerlab_soma_mact_range</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span>
+        <span class="p">)</span>
+        <span class="n">Rinact</span> <span class="o">=</span> <span class="n">interpF</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">nerlab_soma_rinact_range</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">nerlab_soma_rinact_range</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">t</span><span class="p">,</span>
+            <span class="n">curv</span><span class="o">=</span><span class="mi">1</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">nerlab_soma_rinact_range</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span>
+            <span class="n">negative</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">nerlab_soma_rinact_range</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span>
+        <span class="p">)</span>
+        <span class="n">Gls</span> <span class="o">=</span> <span class="n">interpF</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">nerlab_soma_gls_range</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">nerlab_soma_gls_range</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">t</span><span class="p">,</span>
+            <span class="n">curv</span><span class="o">=</span><span class="mi">1</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">nerlab_soma_gls_range</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span>
+            <span class="n">negative</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">nerlab_soma_gls_range</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span>
+        <span class="p">)</span>
+
+        <span class="c1"># Dendrite parameters</span>
+        <span class="n">Diam_dend</span> <span class="o">=</span> <span class="n">interpF</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">nerlab_dendrite_diameter_range</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">nerlab_dendrite_diameter_range</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">t</span><span class="p">,</span>
+            <span class="n">curv</span><span class="o">=</span><span class="mf">1.0</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">nerlab_dendrite_diameter_range</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span>
+            <span class="n">negative</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">nerlab_dendrite_diameter_range</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span>
+        <span class="p">)</span>
+        <span class="n">L_dend</span> <span class="o">=</span> <span class="n">interpF</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">nerlab_dendrite_length_range</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">nerlab_dendrite_length_range</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">t</span><span class="p">,</span>
+            <span class="n">curv</span><span class="o">=</span><span class="mf">1.0</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">nerlab_dendrite_length_range</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span>
+            <span class="n">negative</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">nerlab_dendrite_length_range</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span>
+        <span class="p">)</span>
+        <span class="n">GcaLbar</span> <span class="o">=</span> <span class="n">interpF</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">nerlab_dendrite_gcaLbar_range</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">nerlab_dendrite_gcaLbar_range</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">t</span><span class="p">,</span>
+            <span class="n">curv</span><span class="o">=</span><span class="mi">1</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">nerlab_dendrite_gcaLbar_range</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span>
+            <span class="n">negative</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">nerlab_dendrite_gcaLbar_range</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span>
+        <span class="p">)</span>
+        <span class="n">Vtraub_caL</span> <span class="o">=</span> <span class="n">interpF</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">nerlab_dendrite_vtraub_caL_range</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">nerlab_dendrite_vtraub_caL_range</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">t</span><span class="p">,</span>
+            <span class="n">curv</span><span class="o">=</span><span class="mi">1</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">nerlab_dendrite_vtraub_caL_range</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span>
+            <span class="n">negative</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">nerlab_dendrite_vtraub_caL_range</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span>
+        <span class="p">)</span>
+        <span class="n">LTAU_caL</span> <span class="o">=</span> <span class="n">interpF</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">nerlab_dendrite_ltau_caL_range</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">nerlab_dendrite_ltau_caL_range</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">t</span><span class="p">,</span>
+            <span class="n">curv</span><span class="o">=</span><span class="mi">1</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">nerlab_dendrite_ltau_caL_range</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span>
+            <span class="n">negative</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">nerlab_dendrite_ltau_caL_range</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span>
+        <span class="p">)</span>
+        <span class="n">Gl_caL</span> <span class="o">=</span> <span class="n">interpF</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">nerlab_dendrite_gl_caL_range</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">nerlab_dendrite_gl_caL_range</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">t</span><span class="p">,</span>
+            <span class="n">curv</span><span class="o">=</span><span class="mi">1</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">nerlab_dendrite_gl_caL_range</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span>
+            <span class="n">negative</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">nerlab_dendrite_gl_caL_range</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span>
+        <span class="p">)</span>
+
+        <span class="n">vcon</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">axon_velocities</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">axon_velocities</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">n</span><span class="p">)</span>
+
+        <span class="c1"># Determine cell creation range</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">cell_index</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">init</span><span class="p">,</span> <span class="n">end</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cell_index</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">cell_index</span> <span class="o">+</span> <span class="mi">1</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">init</span><span class="p">,</span> <span class="n">end</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">n</span>
+
+        <span class="n">_cells</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">init</span><span class="p">,</span> <span class="n">end</span><span class="p">):</span>
+            <span class="n">cell</span> <span class="o">=</span> <span class="n">cells</span><span class="o">.</span><span class="n">AlphaMN</span><span class="p">(</span>
+                <span class="n">segments__count</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+                <span class="n">mode</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">mode</span><span class="p">,</span>
+                <span class="n">dendrites__count</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+                <span class="n">model</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">,</span>
+                <span class="n">class__ID</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">cell_index</span><span class="p">,</span>
+                <span class="n">pool__ID</span><span class="o">=</span><span class="n">i</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="c1"># Convert to quantities for create_axon</span>
+            <span class="kn">import</span><span class="w"> </span><span class="nn">quantities</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pq</span>
+
+            <span class="n">cell</span><span class="o">.</span><span class="n">create_axon</span><span class="p">(</span>
+                <span class="n">length__m</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">axon_length</span> <span class="o">*</span> <span class="n">pq</span><span class="o">.</span><span class="n">m</span><span class="p">,</span>
+                <span class="n">conduction_velocity__m_per_s</span><span class="o">=</span><span class="n">vcon</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">*</span> <span class="n">pq</span><span class="o">.</span><span class="n">m</span> <span class="o">/</span> <span class="n">pq</span><span class="o">.</span><span class="n">s</span><span class="p">,</span>
+            <span class="p">)</span>
+
+            <span class="c1"># Soma biophysical parameters</span>
+            <span class="n">cell</span><span class="o">.</span><span class="n">soma</span><span class="o">.</span><span class="n">L</span> <span class="o">=</span> <span class="n">Diam_soma</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+            <span class="n">cell</span><span class="o">.</span><span class="n">soma</span><span class="o">.</span><span class="n">diam</span> <span class="o">=</span> <span class="n">Diam_soma</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+            <span class="n">cell</span><span class="o">.</span><span class="n">soma</span><span class="o">.</span><span class="n">ena</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nerlab_soma_ena</span>
+            <span class="n">cell</span><span class="o">.</span><span class="n">soma</span><span class="o">.</span><span class="n">ek</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nerlab_soma_ek</span>
+            <span class="n">cell</span><span class="o">.</span><span class="n">soma</span><span class="o">.</span><span class="n">el_napp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nerlab_soma_el_napp</span>
+            <span class="n">cell</span><span class="o">.</span><span class="n">soma</span><span class="o">.</span><span class="n">vtraub_napp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nerlab_soma_vtraub_napp</span>
+            <span class="n">cell</span><span class="o">.</span><span class="n">soma</span><span class="o">.</span><span class="n">Ra</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nerlab_soma_Ra</span>
+            <span class="n">cell</span><span class="o">.</span><span class="n">soma</span><span class="o">.</span><span class="n">cm</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nerlab_soma_cm</span>
+            <span class="n">cell</span><span class="o">.</span><span class="n">soma</span><span class="o">.</span><span class="n">gl_napp</span> <span class="o">=</span> <span class="n">Gls</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+            <span class="n">cell</span><span class="o">.</span><span class="n">soma</span><span class="o">.</span><span class="n">gnabar_napp</span> <span class="o">=</span> <span class="n">Gnabar</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+            <span class="n">cell</span><span class="o">.</span><span class="n">soma</span><span class="o">.</span><span class="n">gnapbar_napp</span> <span class="o">=</span> <span class="n">Gnapbar</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+            <span class="n">cell</span><span class="o">.</span><span class="n">soma</span><span class="o">.</span><span class="n">gkfbar_napp</span> <span class="o">=</span> <span class="n">Gkfbar</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+            <span class="n">cell</span><span class="o">.</span><span class="n">soma</span><span class="o">.</span><span class="n">gksbar_napp</span> <span class="o">=</span> <span class="n">Gksbar</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+            <span class="n">cell</span><span class="o">.</span><span class="n">soma</span><span class="o">.</span><span class="n">mact_napp</span> <span class="o">=</span> <span class="n">Mact</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+            <span class="n">cell</span><span class="o">.</span><span class="n">soma</span><span class="o">.</span><span class="n">rinact_napp</span> <span class="o">=</span> <span class="n">Rinact</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+
+            <span class="c1"># Set napp alpha and beta parameters from config</span>
+            <span class="c1"># These parameters control the kinetics of sodium and potassium channels</span>
+            <span class="n">cell</span><span class="o">.</span><span class="n">soma</span><span class="o">.</span><span class="n">m_alpha_A_napp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">napp_m_alpha_A</span>
+            <span class="n">cell</span><span class="o">.</span><span class="n">soma</span><span class="o">.</span><span class="n">m_alpha_v_offset_napp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">napp_m_alpha_v_offset</span>
+            <span class="n">cell</span><span class="o">.</span><span class="n">soma</span><span class="o">.</span><span class="n">m_alpha_k_napp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">napp_m_alpha_k</span>
+            <span class="n">cell</span><span class="o">.</span><span class="n">soma</span><span class="o">.</span><span class="n">m_beta_A_napp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">napp_m_beta_A</span>
+            <span class="n">cell</span><span class="o">.</span><span class="n">soma</span><span class="o">.</span><span class="n">m_beta_v_offset_napp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">napp_m_beta_v_offset</span>
+            <span class="n">cell</span><span class="o">.</span><span class="n">soma</span><span class="o">.</span><span class="n">m_beta_k_napp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">napp_m_beta_k</span>
+
+            <span class="n">cell</span><span class="o">.</span><span class="n">soma</span><span class="o">.</span><span class="n">h_alpha_A_napp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">napp_h_alpha_A</span>
+            <span class="n">cell</span><span class="o">.</span><span class="n">soma</span><span class="o">.</span><span class="n">h_alpha_v_offset_napp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">napp_h_alpha_v_offset</span>
+            <span class="n">cell</span><span class="o">.</span><span class="n">soma</span><span class="o">.</span><span class="n">h_alpha_tau_napp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">napp_h_alpha_tau</span>
+            <span class="n">cell</span><span class="o">.</span><span class="n">soma</span><span class="o">.</span><span class="n">h_beta_A_napp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">napp_h_beta_A</span>
+            <span class="n">cell</span><span class="o">.</span><span class="n">soma</span><span class="o">.</span><span class="n">h_beta_v_offset_napp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">napp_h_beta_v_offset</span>
+            <span class="n">cell</span><span class="o">.</span><span class="n">soma</span><span class="o">.</span><span class="n">h_beta_k_napp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">napp_h_beta_k</span>
+
+            <span class="n">cell</span><span class="o">.</span><span class="n">soma</span><span class="o">.</span><span class="n">p_alpha_A_napp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">napp_p_alpha_A</span>
+            <span class="n">cell</span><span class="o">.</span><span class="n">soma</span><span class="o">.</span><span class="n">p_alpha_v_offset_napp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">napp_p_alpha_v_offset</span>
+            <span class="n">cell</span><span class="o">.</span><span class="n">soma</span><span class="o">.</span><span class="n">p_alpha_k_napp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">napp_p_alpha_k</span>
+            <span class="n">cell</span><span class="o">.</span><span class="n">soma</span><span class="o">.</span><span class="n">p_beta_A_napp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">napp_p_beta_A</span>
+            <span class="n">cell</span><span class="o">.</span><span class="n">soma</span><span class="o">.</span><span class="n">p_beta_v_offset_napp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">napp_p_beta_v_offset</span>
+            <span class="n">cell</span><span class="o">.</span><span class="n">soma</span><span class="o">.</span><span class="n">p_beta_k_napp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">napp_p_beta_k</span>
+
+            <span class="n">cell</span><span class="o">.</span><span class="n">soma</span><span class="o">.</span><span class="n">n_alpha_A_napp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">napp_n_alpha_A</span>
+            <span class="n">cell</span><span class="o">.</span><span class="n">soma</span><span class="o">.</span><span class="n">n_alpha_v_offset_napp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">napp_n_alpha_v_offset</span>
+            <span class="n">cell</span><span class="o">.</span><span class="n">soma</span><span class="o">.</span><span class="n">n_alpha_k_napp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">napp_n_alpha_k</span>
+            <span class="n">cell</span><span class="o">.</span><span class="n">soma</span><span class="o">.</span><span class="n">n_beta_A_napp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">napp_n_beta_A</span>
+            <span class="n">cell</span><span class="o">.</span><span class="n">soma</span><span class="o">.</span><span class="n">n_beta_v_offset_napp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">napp_n_beta_v_offset</span>
+            <span class="n">cell</span><span class="o">.</span><span class="n">soma</span><span class="o">.</span><span class="n">n_beta_tau_napp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">napp_n_beta_tau</span>
+
+            <span class="n">cell</span><span class="o">.</span><span class="n">soma</span><span class="o">.</span><span class="n">r_alpha_A_napp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">napp_r_alpha_A</span>
+            <span class="n">cell</span><span class="o">.</span><span class="n">soma</span><span class="o">.</span><span class="n">r_alpha_v_offset_napp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">napp_r_alpha_v_offset</span>
+            <span class="n">cell</span><span class="o">.</span><span class="n">soma</span><span class="o">.</span><span class="n">r_alpha_k_napp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">napp_r_alpha_k</span>
+
+            <span class="c1"># Dendrite parameters</span>
+            <span class="n">cell</span><span class="o">.</span><span class="n">dend</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">Ra</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nerlab_dendrite_Ra</span>
+            <span class="n">cell</span><span class="o">.</span><span class="n">dend</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">cm</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nerlab_dendrite_cm</span>
+            <span class="n">cell</span><span class="o">.</span><span class="n">dend</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">L</span> <span class="o">=</span> <span class="n">L_dend</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+            <span class="n">cell</span><span class="o">.</span><span class="n">dend</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">diam</span> <span class="o">=</span> <span class="n">Diam_dend</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+            <span class="n">cell</span><span class="o">.</span><span class="n">dend</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">ecaL</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nerlab_dendrite_ecaL</span>
+            <span class="n">cell</span><span class="o">.</span><span class="n">dend</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">gama_caL</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">gamma</span>
+            <span class="n">cell</span><span class="o">.</span><span class="n">dend</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">gcaLbar_caL</span> <span class="o">=</span> <span class="n">GcaLbar</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+            <span class="n">cell</span><span class="o">.</span><span class="n">dend</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">vtraub_caL</span> <span class="o">=</span> <span class="n">Vtraub_caL</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+            <span class="n">cell</span><span class="o">.</span><span class="n">dend</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">Ltau_caL</span> <span class="o">=</span> <span class="n">LTAU_caL</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+            <span class="n">cell</span><span class="o">.</span><span class="n">dend</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">gl_caL</span> <span class="o">=</span> <span class="n">Gl_caL</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+            <span class="n">cell</span><span class="o">.</span><span class="n">dend</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">el_caL</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nerlab_dendrite_el_caL</span>
+            <span class="n">_cells</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">cell</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">_cells</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_create_powers2017_cells</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Create motor neurons using the Powers2017 model.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">recruitment_thresholds__array</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">interpF</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span><span class="p">:</span> <span class="n">_exp_interp</span><span class="p">(</span><span class="n">first</span><span class="o">=</span><span class="n">x</span><span class="p">,</span> <span class="n">last</span><span class="o">=</span><span class="n">y</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">n</span><span class="p">,</span> <span class="n">curv</span><span class="o">=</span><span class="n">z</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">interpF</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">_</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">recruitment_thresholds__array</span> <span class="o">*</span> <span class="p">(</span><span class="n">y</span> <span class="o">-</span> <span class="n">x</span><span class="p">)</span> <span class="o">+</span> <span class="n">x</span>
+
+        <span class="c1"># Geometry parameters</span>
+        <span class="n">sL</span> <span class="o">=</span> <span class="n">interpF</span><span class="p">(</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">soma_length_range</span><span class="p">)</span>
+        <span class="n">sdiam</span> <span class="o">=</span> <span class="n">interpF</span><span class="p">(</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">soma_diameter_range</span><span class="p">)</span>
+        <span class="n">scm</span> <span class="o">=</span> <span class="n">interpF</span><span class="p">(</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">soma_capacitance_range</span><span class="p">)</span>
+
+        <span class="c1"># Biophysics parameters</span>
+        <span class="n">sg_pas</span> <span class="o">=</span> <span class="n">interpF</span><span class="p">(</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">soma_passive_conductance_range</span><span class="p">)</span>
+        <span class="n">se_pas</span> <span class="o">=</span> <span class="n">interpF</span><span class="p">(</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">soma_passive_reversal_range</span><span class="p">)</span>
+        <span class="n">sgbar_na3rp</span> <span class="o">=</span> <span class="n">interpF</span><span class="p">(</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">soma_na3rp_conductance_range</span><span class="p">)</span>
+        <span class="n">sgbar_naps</span> <span class="o">=</span> <span class="n">interpF</span><span class="p">(</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">soma_naps_conductance_range</span><span class="p">)</span>
+        <span class="n">sgMax_kdrRL</span> <span class="o">=</span> <span class="n">interpF</span><span class="p">(</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">soma_kdrrl_conductance_range</span><span class="p">)</span>
+        <span class="n">sgcamax_mAHP</span> <span class="o">=</span> <span class="n">interpF</span><span class="p">(</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">soma_mahp_ca_conductance_range</span><span class="p">)</span>
+        <span class="n">sgkcamax_mAHP</span> <span class="o">=</span> <span class="n">interpF</span><span class="p">(</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">soma_mahp_k_conductance_range</span><span class="p">)</span>
+        <span class="n">staur_mAHP</span> <span class="o">=</span> <span class="n">interpF</span><span class="p">(</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">soma_mahp_tau_range</span><span class="p">)</span>
+        <span class="n">sghbar_gh</span> <span class="o">=</span> <span class="n">interpF</span><span class="p">(</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">soma_gh_conductance_range</span><span class="p">)</span>
+
+        <span class="c1"># Dendrite parameters</span>
+        <span class="n">dL</span> <span class="o">=</span> <span class="n">interpF</span><span class="p">(</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">dendrite_length_range</span><span class="p">)</span>
+        <span class="n">ddiam</span> <span class="o">=</span> <span class="n">interpF</span><span class="p">(</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">dendrite_diameter_range</span><span class="p">)</span>
+        <span class="n">dg_pas</span> <span class="o">=</span> <span class="n">interpF</span><span class="p">(</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">dendrite_passive_conductance_range</span><span class="p">)</span>
+        <span class="n">de_pas</span> <span class="o">=</span> <span class="n">interpF</span><span class="p">(</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">dendrite_passive_reversal_range</span><span class="p">)</span>
+        <span class="n">dRa</span> <span class="o">=</span> <span class="n">interpF</span><span class="p">(</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">dendrite_resistance_range</span><span class="p">)</span>
+        <span class="n">dcm</span> <span class="o">=</span> <span class="n">interpF</span><span class="p">(</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">dendrite_capacitance_range</span><span class="p">)</span>
+        <span class="n">dghbar_gh</span> <span class="o">=</span> <span class="n">interpF</span><span class="p">(</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">dendrite_gh_conductance_range</span><span class="p">)</span>
+
+        <span class="c1"># L-type calcium channels for each dendrite</span>
+        <span class="n">d_ca_conductances</span> <span class="o">=</span> <span class="p">[</span><span class="n">interpF</span><span class="p">(</span><span class="o">*</span><span class="n">ca_range</span><span class="p">)</span> <span class="k">for</span> <span class="n">ca_range</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">dendrite_ca_conductance_ranges</span><span class="p">]</span>
+        <span class="n">dtheta_m_L_Ca_inact</span> <span class="o">=</span> <span class="n">interpF</span><span class="p">(</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">dendrite_ca_theta_m_range</span><span class="p">)</span>
+        <span class="n">dtheta_h_L_Ca_inact</span> <span class="o">=</span> <span class="n">interpF</span><span class="p">(</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">dendrite_ca_theta_h_range</span><span class="p">)</span>
+
+        <span class="n">vcon</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">axon_velocities</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">n</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">cell_index</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">init</span><span class="p">,</span> <span class="n">end</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cell_index</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">cell_index</span> <span class="o">+</span> <span class="mi">1</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">init</span><span class="p">,</span> <span class="n">end</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">n</span>
+
+        <span class="n">_cells</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">init</span><span class="p">,</span> <span class="n">end</span><span class="p">):</span>
+            <span class="n">cell</span> <span class="o">=</span> <span class="n">cells</span><span class="o">.</span><span class="n">AlphaMN</span><span class="p">(</span>
+                <span class="n">segments__count</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+                <span class="n">mode</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">mode</span><span class="p">,</span>
+                <span class="n">dendrites__count</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span>
+                <span class="n">model</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">,</span>
+                <span class="n">class__ID</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">cell_index</span><span class="p">,</span>
+                <span class="n">pool__ID</span><span class="o">=</span><span class="n">i</span><span class="p">,</span>
+            <span class="p">)</span>
+
+            <span class="c1"># Set soma parameters</span>
+            <span class="n">cell</span><span class="o">.</span><span class="n">soma</span><span class="o">.</span><span class="n">L</span> <span class="o">=</span> <span class="n">sL</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+            <span class="n">cell</span><span class="o">.</span><span class="n">soma</span><span class="o">.</span><span class="n">diam</span> <span class="o">=</span> <span class="n">sdiam</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+            <span class="c1"># Convert to quantities for create_axon</span>
+            <span class="kn">import</span><span class="w"> </span><span class="nn">quantities</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pq</span>
+
+            <span class="n">cell</span><span class="o">.</span><span class="n">create_axon</span><span class="p">(</span>
+                <span class="n">length__m</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">axon_length</span> <span class="o">*</span> <span class="n">pq</span><span class="o">.</span><span class="n">m</span><span class="p">,</span>
+                <span class="n">conduction_velocity__m_per_s</span><span class="o">=</span><span class="n">vcon</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">*</span> <span class="n">pq</span><span class="o">.</span><span class="n">m</span> <span class="o">/</span> <span class="n">pq</span><span class="o">.</span><span class="n">s</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="n">cell</span><span class="o">.</span><span class="n">soma</span><span class="o">.</span><span class="n">g_pas</span> <span class="o">=</span> <span class="n">sg_pas</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+            <span class="n">cell</span><span class="o">.</span><span class="n">soma</span><span class="o">.</span><span class="n">e_pas</span> <span class="o">=</span> <span class="n">se_pas</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+            <span class="n">cell</span><span class="o">.</span><span class="n">soma</span><span class="o">.</span><span class="n">cm</span> <span class="o">=</span> <span class="n">scm</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+            <span class="n">cell</span><span class="o">.</span><span class="n">soma</span><span class="o">.</span><span class="n">gbar_na3rp</span> <span class="o">=</span> <span class="n">sgbar_na3rp</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+            <span class="n">cell</span><span class="o">.</span><span class="n">soma</span><span class="o">.</span><span class="n">gbar_naps</span> <span class="o">=</span> <span class="n">sgbar_naps</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">lambda_factor</span>
+            <span class="n">cell</span><span class="o">.</span><span class="n">soma</span><span class="o">.</span><span class="n">gMax_kdrRL</span> <span class="o">=</span> <span class="n">sgMax_kdrRL</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+            <span class="n">cell</span><span class="o">.</span><span class="n">soma</span><span class="o">.</span><span class="n">gcamax_mAHP</span> <span class="o">=</span> <span class="n">sgcamax_mAHP</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+            <span class="n">cell</span><span class="o">.</span><span class="n">soma</span><span class="o">.</span><span class="n">gkcamax_mAHP</span> <span class="o">=</span> <span class="n">sgkcamax_mAHP</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+            <span class="n">cell</span><span class="o">.</span><span class="n">soma</span><span class="o">.</span><span class="n">taur_mAHP</span> <span class="o">=</span> <span class="n">staur_mAHP</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+            <span class="n">cell</span><span class="o">.</span><span class="n">soma</span><span class="o">.</span><span class="n">ghbar_gh</span> <span class="o">=</span> <span class="n">sghbar_gh</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+
+            <span class="c1"># Set dendrite parameters</span>
+            <span class="k">for</span> <span class="n">j</span><span class="p">,</span> <span class="n">d</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">cell</span><span class="o">.</span><span class="n">dend</span><span class="p">):</span>
+                <span class="n">d</span><span class="o">.</span><span class="n">L</span> <span class="o">=</span> <span class="n">dL</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+                <span class="n">d</span><span class="o">.</span><span class="n">diam</span> <span class="o">=</span> <span class="n">ddiam</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+                <span class="n">d</span><span class="o">.</span><span class="n">g_pas</span> <span class="o">=</span> <span class="n">dg_pas</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+                <span class="n">d</span><span class="o">.</span><span class="n">e_pas</span> <span class="o">=</span> <span class="n">de_pas</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+                <span class="n">d</span><span class="o">.</span><span class="n">Ra</span> <span class="o">=</span> <span class="n">dRa</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+                <span class="n">d</span><span class="o">.</span><span class="n">cm</span> <span class="o">=</span> <span class="n">dcm</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+                <span class="n">d</span><span class="o">.</span><span class="n">ghbar_gh</span> <span class="o">=</span> <span class="n">dghbar_gh</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">mode</span> <span class="o">==</span> <span class="s2">&quot;active&quot;</span><span class="p">:</span>
+                    <span class="n">d</span><span class="o">.</span><span class="n">gcabar_L_Ca_inact</span> <span class="o">=</span> <span class="n">d_ca_conductances</span><span class="p">[</span><span class="n">j</span><span class="p">][</span><span class="n">i</span><span class="p">]</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">gamma</span>
+                    <span class="n">d</span><span class="o">.</span><span class="n">theta_m_L_Ca_inact</span> <span class="o">=</span> <span class="n">dtheta_m_L_Ca_inact</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+                    <span class="n">d</span><span class="o">.</span><span class="n">theta_h_L_Ca_inact</span> <span class="o">=</span> <span class="n">dtheta_h_L_Ca_inact</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+
+            <span class="n">_cells</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">cell</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">_cells</span></div>
+
+</pre></div>
+
+                </article>
+              
+              
+              
+              
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../../../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2025 - 2025, n-squared lab, FAU Erlangen-Nürnberg, Germany.
+      <br/>
+    
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.2.3.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

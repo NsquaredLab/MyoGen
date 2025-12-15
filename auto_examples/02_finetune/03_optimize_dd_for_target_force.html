@@ -1,0 +1,1382 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Optimizing Descending Drive for Target Force Levels &#8212; MyoGen 0.4.0 Documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=5349f25f" />
+    <link rel="stylesheet" type="text/css" href="../../_static/css/tooltipster.custom.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/css/tooltipster.bundle.min.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/css/tooltipster-sideTip-shadow.min.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/css/tooltipster-sideTip-punk.min.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/css/tooltipster-sideTip-noir.min.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/css/tooltipster-sideTip-light.min.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/css/tooltipster-sideTip-borderless.min.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/css/micromodal.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/custom.css?v=9b95bd4c" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery.css?v=d2d258e8" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-binder.css?v=f4aeca0c" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../../_static/custom.css?v=9b95bd4c" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="../../_static/jquery.js?v=5d32c60e"></script>
+    <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+    <script src="../../_static/documentation_options.js?v=1437fa6d"></script>
+    <script src="../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/js/hoverxref.js"></script>
+    <script src="../../_static/js/tooltipster.bundle.min.js"></script>
+    <script src="../../_static/js/micromodal.min.js"></script>
+    <script src="../../_static/custom.js?v=e0e269b1"></script>
+    <script src="../../_static/design-tabs.js?v=f930bc37"></script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'auto_examples/02_finetune/03_optimize_dd_for_target_force';</script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="0.4.0" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search MyoGen docs..."
+         aria-label="Search MyoGen docs..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+<aside class="bd-header-announcement" aria-label="Announcement">
+  <div class="bd-header-announcement__content">MyoGen is under active development. API may change.</div>
+</aside>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class=" navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../_static/myogen_logo.png" class="logo__image only-light" alt="MyoGen 0.4.0 Documentation - Home"/>
+    <img src="../../_static/myogen_logo.png" class="logo__image only-dark pst-js-only" alt="MyoGen 0.4.0 Documentation - Home"/>
+  
+  
+</a></div>
+    
+      <div class="navbar-item">
+<div class="nav-item">
+  <div class="version-switcher__container dropdown">
+      <button id="version-switcher-button" type="button" class="version-switcher__button btn btn-sm navbar-btn" aria-haspopup="true" aria-expanded="false">
+          Version 0.4.0
+      </button>
+      
+      
+      
+  </div>
+</div> </div>
+    
+      <div class="navbar-item"><div class="nav-item">
+   <span>
+      made at the <a href="https://www.nsquared.tf.fau.de/" target="_blank">N² Lab</a>
+   </span>
+</div> </div>
+    
+  </div>
+  
+  <div class=" navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../api/index.html">
+    API Documentation
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../neo_blocks_guide.html">
+    Working with Neo Block Data Structures
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../examples.html">
+    Examples
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/NSquaredLab/MyoGen" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+    </div>
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../api/index.html">
+    API Documentation
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../neo_blocks_guide.html">
+    Working with Neo Block Data Structures
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../examples.html">
+    Examples
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/NSquaredLab/MyoGen" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+<nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"></div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Optimizing Descending Drive for Target Force Levels</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <div class="sphx-glr-download-link-note admonition note">
+<p class="admonition-title">Note</p>
+<p><a class="hxr-hoverxref hxr-tooltip reference internal" href="#sphx-glr-download-auto-examples-02-finetune-03-optimize-dd-for-target-force-py"><span class="std std-ref">Go to the end</span></a>
+to download the full example code.</p>
+</div>
+<section class="sphx-glr-example-title" id="optimizing-descending-drive-for-target-force-levels">
+<span id="sphx-glr-auto-examples-02-finetune-03-optimize-dd-for-target-force-py"></span><h1>Optimizing Descending Drive for Target Force Levels<a class="headerlink" href="#optimizing-descending-drive-for-target-force-levels" title="Link to this heading">#</a></h1>
+<p>This example demonstrates <strong>force-level optimization</strong> by tuning descending drive parameters
+to achieve specific muscle force outputs. Unlike firing rate optimization (example 00), this
+approach targets biomechanically relevant force production.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><strong>Force-based optimization workflow</strong>:</p>
+<ol class="arabic simple">
+<li><p>Load baseline force from previous optimization (example 01)</p></li>
+<li><p>Specify target force as percentage of baseline (e.g., 30% MVC)</p></li>
+<li><p>Optimize DD drive frequency to match target force</p></li>
+<li><p>Keep network structure fixed (neurons, connectivity from baseline)</p></li>
+</ol>
+</div>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p><strong>Prerequisites</strong>: This example requires results from previous examples:</p>
+<ul class="simple">
+<li><p>Run <code class="docutils literal notranslate"><span class="pre">00_optimize_dd_for_target_firing_rate.py</span></code> first</p></li>
+<li><p>Run <code class="docutils literal notranslate"><span class="pre">01_compute_force_from_optimized_dd.py</span></code> second</p></li>
+<li><p>Generates baseline force measurements needed here</p></li>
+</ul>
+</div>
+<p><strong>Optimization Strategy</strong>: We optimize only the DD drive frequency while keeping the network
+architecture fixed. This simulates modulating cortical drive to achieve different force levels
+while maintaining the same motor unit pool and connectivity.</p>
+<section id="import-libraries">
+<h2>Import Libraries<a class="headerlink" href="#import-libraries" title="Link to this heading">#</a></h2>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+
+<a href="https://docs.python.org/3/library/os.html#os.environ" title="os.environ" class="sphx-glr-backref-module-os sphx-glr-backref-type-py-data"><span class="n">os</span><span class="o">.</span><span class="n">environ</span></a><span class="p">[</span><span class="s2">&quot;MPLBACKEND&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;Agg&quot;</span>
+<span class="k">if</span> <span class="s2">&quot;DISPLAY&quot;</span> <span class="ow">in</span> <a href="https://docs.python.org/3/library/os.html#os.environ" title="os.environ" class="sphx-glr-backref-module-os sphx-glr-backref-type-py-data"><span class="n">os</span><span class="o">.</span><span class="n">environ</span></a><span class="p">:</span>
+    <span class="k">del</span> <a href="https://docs.python.org/3/library/os.html#os.environ" title="os.environ" class="sphx-glr-backref-module-os sphx-glr-backref-type-py-data"><span class="n">os</span><span class="o">.</span><span class="n">environ</span></a><span class="p">[</span><span class="s2">&quot;DISPLAY&quot;</span><span class="p">]</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">warnings</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <a href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="pathlib.Path" class="sphx-glr-backref-module-pathlib sphx-glr-backref-type-py-class"><span class="n">Path</span></a>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">joblib</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">optuna</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">quantities</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pq</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">neo</span><span class="w"> </span><span class="kn">import</span> <a href="https://neo.readthedocs.io/en/latest/api_reference.html#neo.core.Block" title="neo.core.block.Block" class="sphx-glr-backref-module-neo-core-block sphx-glr-backref-type-py-class"><span class="n">Block</span></a><span class="p">,</span> <a href="https://neo.readthedocs.io/en/latest/api_reference.html#neo.core.Segment" title="neo.core.segment.Segment" class="sphx-glr-backref-module-neo-core-segment sphx-glr-backref-type-py-class"><span class="n">Segment</span></a><span class="p">,</span> <a href="https://neo.readthedocs.io/en/latest/api_reference.html#neo.core.SpikeTrain" title="neo.core.spiketrain.SpikeTrain" class="sphx-glr-backref-module-neo-core-spiketrain sphx-glr-backref-type-py-class"><span class="n">SpikeTrain</span></a>
+<span class="kn">from</span><span class="w"> </span><span class="nn">neuron</span><span class="w"> </span><span class="kn">import</span> <span class="n">h</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">myogen</span><span class="w"> </span><span class="kn">import</span> <span class="n">RANDOM_GENERATOR</span><span class="p">,</span> <span class="n">set_random_seed</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">myogen.simulator</span><span class="w"> </span><span class="kn">import</span> <span class="n">RecruitmentThresholds</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">myogen.simulator.core.force.force_model</span><span class="w"> </span><span class="kn">import</span> <span class="n">ForceModel</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">myogen.simulator.neuron</span><span class="w"> </span><span class="kn">import</span> <span class="n">Network</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">myogen.simulator.neuron.populations</span><span class="w"> </span><span class="kn">import</span> <span class="n">AlphaMN__Pool</span><span class="p">,</span> <span class="n">DescendingDrive__Pool</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">myogen.utils.helper</span><span class="w"> </span><span class="kn">import</span> <span class="n">calculate_firing_rate_statistics</span><span class="p">,</span> <span class="n">get_gamma_shape_for_mvc</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">myogen.utils.nmodl</span><span class="w"> </span><span class="kn">import</span> <span class="n">load_nmodl_mechanisms</span>
+
+<a href="https://docs.python.org/3/library/warnings.html#warnings.filterwarnings" title="warnings.filterwarnings" class="sphx-glr-backref-module-warnings sphx-glr-backref-type-py-function"><span class="n">warnings</span><span class="o">.</span><span class="n">filterwarnings</span></a><span class="p">(</span><span class="s2">&quot;ignore&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">style</span><span class="o">.</span><span class="n">use</span><span class="p">(</span><span class="s2">&quot;fivethirtyeight&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="configuration">
+<h2>Configuration<a class="headerlink" href="#configuration" title="Link to this heading">#</a></h2>
+<p>Set simulation and optimization parameters.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Simulation parameters</span>
+<a href="https://docs.python.org/3/library/functions.html#float" title="builtins.float" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">SIMULATION_TIME_MS</span></a> <span class="o">=</span> <span class="mf">5000.0</span>  <span class="c1"># Shorter simulation for efficient optimization</span>
+<a href="https://docs.python.org/3/library/functions.html#float" title="builtins.float" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">TIMESTEP_MS</span></a> <span class="o">=</span> <span class="mf">0.1</span>
+<a href="https://docs.python.org/3/library/functions.html#int" title="builtins.int" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">N_MOTOR_UNITS</span></a> <span class="o">=</span> <span class="mi">100</span>
+
+<span class="c1"># Force model parameters</span>
+<a href="https://docs.python.org/3/library/functions.html#int" title="builtins.int" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">RECORDING_FREQUENCY__HZ</span></a> <span class="o">=</span> <span class="mi">2048</span>
+<a href="https://docs.python.org/3/library/functions.html#float" title="builtins.float" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">LONGEST_DURATION_RISE_TIME__MS</span></a> <span class="o">=</span> <span class="mf">90.0</span>
+<a href="https://docs.python.org/3/library/functions.html#int" title="builtins.int" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">CONTRACTION_TIME_RANGE</span></a> <span class="o">=</span> <span class="mi">3</span>
+
+<span class="c1"># Optimization settings</span>
+<a href="https://docs.python.org/3/library/functions.html#int" title="builtins.int" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">N_TRIALS</span></a> <span class="o">=</span> <span class="mi">25</span>  <span class="c1"># Reduced for example (increase for production)</span>
+<a href="https://docs.python.org/3/library/functions.html#int" title="builtins.int" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">TIMEOUT_SECONDS</span></a> <span class="o">=</span> <span class="mi">3600</span>
+
+<span class="c1"># Target force level</span>
+<a href="https://docs.python.org/3/library/functions.html#float" title="builtins.float" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">TARGET_FORCE_PCT</span></a> <span class="o">=</span> <span class="mf">30.0</span>  <span class="c1"># 30% of baseline force (adjustable)</span>
+<a href="https://docs.python.org/3/library/functions.html#float" title="builtins.float" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">MVC_PERCENT</span></a> <span class="o">=</span> <span class="mf">30.0</span>  <span class="c1"># MVC percentage for gamma shape calculation</span>
+
+<span class="c1"># Directories - use project root to share across examples</span>
+<span class="c1"># Handle both manual execution and Sphinx Gallery (where __file__ is not defined)</span>
+<span class="k">try</span><span class="p">:</span>
+    <a href="https://docs.python.org/3/library/pathlib.html#pathlib.PosixPath" title="pathlib.PosixPath" class="sphx-glr-backref-module-pathlib sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">_script_dir</span></a> <span class="o">=</span> <a href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="pathlib.Path" class="sphx-glr-backref-module-pathlib sphx-glr-backref-type-py-class"><span class="n">Path</span></a><span class="p">(</span><span class="vm">__file__</span><span class="p">)</span><span class="o">.</span><span class="n">parent</span>
+<span class="k">except</span> <span class="ne">NameError</span><span class="p">:</span>
+    <a href="https://docs.python.org/3/library/pathlib.html#pathlib.PosixPath" title="pathlib.PosixPath" class="sphx-glr-backref-module-pathlib sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">_script_dir</span></a> <span class="o">=</span> <a href="https://docs.python.org/3/library/pathlib.html#pathlib.Path.cwd" title="pathlib.Path.cwd" class="sphx-glr-backref-module-pathlib sphx-glr-backref-type-py-method"><span class="n">Path</span><span class="o">.</span><span class="n">cwd</span></a><span class="p">()</span>
+<a href="https://docs.python.org/3/library/pathlib.html#pathlib.PosixPath" title="pathlib.PosixPath" class="sphx-glr-backref-module-pathlib sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">BASELINE_DIR</span></a> <span class="o">=</span> <a href="https://docs.python.org/3/library/pathlib.html#pathlib.PurePath.parent" title="pathlib.PurePath.parent" class="sphx-glr-backref-module-pathlib sphx-glr-backref-type-py-attribute"><span class="n">_script_dir</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">parent</span></a> <span class="o">/</span> <span class="s2">&quot;results&quot;</span> <span class="o">/</span> <span class="s2">&quot;force_validation&quot;</span>
+<a href="https://docs.python.org/3/library/pathlib.html#pathlib.PosixPath" title="pathlib.PosixPath" class="sphx-glr-backref-module-pathlib sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">RESULTS_DIR</span></a> <span class="o">=</span> <a href="https://docs.python.org/3/library/pathlib.html#pathlib.PurePath.parent" title="pathlib.PurePath.parent" class="sphx-glr-backref-module-pathlib sphx-glr-backref-type-py-attribute"><span class="n">_script_dir</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">parent</span></a> <span class="o">/</span> <span class="s2">&quot;results&quot;</span> <span class="o">/</span> <span class="s2">&quot;force_optimization&quot;</span>
+<a href="https://docs.python.org/3/library/pathlib.html#pathlib.Path.mkdir" title="pathlib.Path.mkdir" class="sphx-glr-backref-module-pathlib sphx-glr-backref-type-py-method"><span class="n">RESULTS_DIR</span><span class="o">.</span><span class="n">mkdir</span></a><span class="p">(</span><span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="load-baseline-force-data">
+<h2>Load Baseline Force Data<a class="headerlink" href="#load-baseline-force-data" title="Link to this heading">#</a></h2>
+<p>Load the baseline force measurements from example 01.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Loading Baseline Force Data&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;=&quot;</span> <span class="o">*</span> <span class="mi">50</span><span class="p">)</span>
+
+<a href="https://docs.python.org/3/library/pathlib.html#pathlib.PosixPath" title="pathlib.PosixPath" class="sphx-glr-backref-module-pathlib sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">baseline_file</span></a> <span class="o">=</span> <a href="https://docs.python.org/3/library/pathlib.html#pathlib.PosixPath" title="pathlib.PosixPath" class="sphx-glr-backref-module-pathlib sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">BASELINE_DIR</span></a> <span class="o">/</span> <span class="s2">&quot;force_results.json&quot;</span>
+
+<span class="k">if</span> <span class="ow">not</span> <a href="https://docs.python.org/3/library/pathlib.html#pathlib.Path.exists" title="pathlib.Path.exists" class="sphx-glr-backref-module-pathlib sphx-glr-backref-type-py-method"><span class="n">baseline_file</span><span class="o">.</span><span class="n">exists</span></a><span class="p">():</span>
+    <span class="k">raise</span> <span class="ne">FileNotFoundError</span><span class="p">(</span>
+        <span class="sa">f</span><span class="s2">&quot;Baseline force results not found: </span><span class="si">{</span><a href="https://docs.python.org/3/library/pathlib.html#pathlib.PosixPath" title="pathlib.PosixPath" class="sphx-glr-backref-module-pathlib sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">baseline_file</span></a><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="sa">f</span><span class="s2">&quot;Run 01_compute_force_from_optimized_dd.py first!&quot;</span>
+    <span class="p">)</span>
+
+<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><a href="https://docs.python.org/3/library/pathlib.html#pathlib.PosixPath" title="pathlib.PosixPath" class="sphx-glr-backref-module-pathlib sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">baseline_file</span></a><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+    <a href="https://docs.python.org/3/library/stdtypes.html#dict" title="builtins.dict" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">baseline_results</span></a> <span class="o">=</span> <a href="https://docs.python.org/3/library/json.html#json.load" title="json.load" class="sphx-glr-backref-module-json sphx-glr-backref-type-py-function"><span class="n">json</span><span class="o">.</span><span class="n">load</span></a><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+
+<span class="c1"># Extract baseline parameters</span>
+<a href="https://docs.python.org/3/library/functions.html#float" title="builtins.float" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">BASELINE_FORCE__AU</span></a> <span class="o">=</span> <a href="https://docs.python.org/3/library/stdtypes.html#dict" title="builtins.dict" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">baseline_results</span></a><span class="p">[</span><span class="s2">&quot;force&quot;</span><span class="p">][</span><span class="s2">&quot;mean__au&quot;</span><span class="p">]</span>
+<a href="https://docs.python.org/3/library/functions.html#int" title="builtins.int" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">DD_NEURONS</span></a> <span class="o">=</span> <a href="https://docs.python.org/3/library/stdtypes.html#dict" title="builtins.dict" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">baseline_results</span></a><span class="p">[</span><span class="s2">&quot;dd_parameters&quot;</span><span class="p">][</span><span class="s2">&quot;dd_neurons&quot;</span><span class="p">]</span>
+<a href="https://docs.python.org/3/library/functions.html#float" title="builtins.float" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">CONN_PROBABILITY</span></a> <span class="o">=</span> <a href="https://docs.python.org/3/library/stdtypes.html#dict" title="builtins.dict" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">baseline_results</span></a><span class="p">[</span><span class="s2">&quot;dd_parameters&quot;</span><span class="p">][</span><span class="s2">&quot;conn_probability&quot;</span><span class="p">]</span>
+<a href="https://docs.python.org/3/library/functions.html#float" title="builtins.float" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">SYNAPTIC_WEIGHT</span></a> <span class="o">=</span> <a href="https://docs.python.org/3/library/stdtypes.html#dict" title="builtins.dict" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">baseline_results</span></a><span class="p">[</span><span class="s2">&quot;dd_parameters&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;synaptic_weight&quot;</span><span class="p">,</span> <span class="mf">0.05</span><span class="p">)</span>
+<a href="https://docs.python.org/3/library/functions.html#float" title="builtins.float" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">MVC_SHAPE_VALUE</span></a> <span class="o">=</span> <a href="https://docs.python.org/3/library/stdtypes.html#dict" title="builtins.dict" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">baseline_results</span></a><span class="p">[</span><span class="s2">&quot;dd_parameters&quot;</span><span class="p">][</span><span class="s2">&quot;gamma_shape&quot;</span><span class="p">]</span>
+
+<span class="c1"># Gfluctdv settings from baseline</span>
+<a href="https://docs.python.org/3/library/functions.html#bool" title="builtins.bool" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">GFLUCTDV_ENABLED</span></a> <span class="o">=</span> <a href="https://docs.python.org/3/library/stdtypes.html#dict" title="builtins.dict" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">baseline_results</span></a><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;gfluctdv_enabled&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+<span class="n">GFLUCTDV_NOISE_AMPLITUDE</span> <span class="o">=</span> <a href="https://docs.python.org/3/library/stdtypes.html#dict" title="builtins.dict" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">baseline_results</span></a><span class="p">[</span><span class="s2">&quot;dd_parameters&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;gfluctdv_noise_amplitude&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Baseline force: </span><span class="si">{</span><a href="https://docs.python.org/3/library/functions.html#float" title="builtins.float" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">BASELINE_FORCE__AU</span></a><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2"> a.u.&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;DD neurons: </span><span class="si">{</span><a href="https://docs.python.org/3/library/functions.html#int" title="builtins.int" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">DD_NEURONS</span></a><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Connection probability: </span><span class="si">{</span><a href="https://docs.python.org/3/library/functions.html#float" title="builtins.float" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">CONN_PROBABILITY</span></a><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Synaptic weight: </span><span class="si">{</span><a href="https://docs.python.org/3/library/functions.html#float" title="builtins.float" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">SYNAPTIC_WEIGHT</span></a><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2"> µS&quot;</span><span class="p">)</span>
+<span class="k">if</span> <a href="https://docs.python.org/3/library/functions.html#bool" title="builtins.bool" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">GFLUCTDV_ENABLED</span></a><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Gfluctdv: ENABLED (</span><span class="si">{</span><span class="n">GFLUCTDV_NOISE_AMPLITUDE</span><span class="si">:</span><span class="s2">.2e</span><span class="si">}</span><span class="s2"> S/cm²)&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;=&quot;</span> <span class="o">*</span> <span class="mi">50</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Loading Baseline Force Data
+==================================================
+Baseline force: 33.5107 a.u.
+DD neurons: 101
+Connection probability: 0.930
+Synaptic weight: 0.0500 µS
+==================================================
+</pre></div>
+</div>
+</section>
+<section id="initialize-neuron">
+<h2>Initialize NEURON<a class="headerlink" href="#initialize-neuron" title="Link to this heading">#</a></h2>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">set_random_seed</span><span class="p">(</span><span class="mi">42</span><span class="p">)</span>
+<span class="n">load_nmodl_mechanisms</span><span class="p">()</span>
+<a href="https://docs.python.org/3/library/functions.html#int" title="builtins.int" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">h</span><span class="o">.</span><span class="n">secondorder</span></a> <span class="o">=</span> <span class="mi">2</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Random seed set to 42.
+</pre></div>
+</div>
+</section>
+<section id="define-simulation-function">
+<h2>Define Simulation Function<a class="headerlink" href="#define-simulation-function" title="Link to this heading">#</a></h2>
+<p>Helper function to run a single simulation and compute force.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">run_simulation_and_compute_force</span><span class="p">(</span><span class="n">dd_drive__Hz</span><span class="p">,</span> <span class="n">gamma_shape</span><span class="p">,</span> <a href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">recruitment_thresholds</span></a><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Run network simulation and compute resulting force.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    dd_drive__Hz : float</span>
+<span class="sd">        DD drive frequency</span>
+<span class="sd">    gamma_shape : float</span>
+<span class="sd">        Gamma distribution shape parameter</span>
+<span class="sd">    recruitment_thresholds : np.ndarray</span>
+<span class="sd">        Motor unit recruitment thresholds</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    tuple</span>
+<span class="sd">        (force_mean, n_active, fr_mean, fr_std)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Create motor neuron pool</span>
+    <span class="n">motor_neuron_pool</span> <span class="o">=</span> <span class="n">AlphaMN__Pool</span><span class="p">(</span>
+        <span class="n">recruitment_thresholds__array</span><span class="o">=</span><a href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">recruitment_thresholds</span></a><span class="p">,</span>
+        <span class="n">config_file</span><span class="o">=</span><span class="s2">&quot;alpha_mn_default.yaml&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="c1"># Apply Gfluctdv if enabled</span>
+    <span class="k">if</span> <a href="https://docs.python.org/3/library/functions.html#bool" title="builtins.bool" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">GFLUCTDV_ENABLED</span></a> <span class="ow">and</span> <span class="n">GFLUCTDV_NOISE_AMPLITUDE</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">cell</span> <span class="ow">in</span> <span class="n">motor_neuron_pool</span><span class="p">:</span>
+            <span class="n">cell</span><span class="o">.</span><span class="n">insert_Gfluctdv</span><span class="p">()</span>
+            <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">cell</span><span class="o">.</span><span class="n">dend</span><span class="p">:</span>
+                <span class="n">d</span><span class="o">.</span><span class="n">std_e_Gfluctdv</span> <span class="o">=</span> <span class="n">GFLUCTDV_NOISE_AMPLITUDE</span>
+                <span class="n">d</span><span class="o">.</span><span class="n">std_i_Gfluctdv</span> <span class="o">=</span> <span class="n">GFLUCTDV_NOISE_AMPLITUDE</span>
+
+    <span class="c1"># Create descending drive pool</span>
+    <span class="n">descending_drive_pool</span> <span class="o">=</span> <span class="n">DescendingDrive__Pool</span><span class="p">(</span>
+        <span class="n">n</span><span class="o">=</span><a href="https://docs.python.org/3/library/functions.html#int" title="builtins.int" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">DD_NEURONS</span></a><span class="p">,</span>
+        <span class="n">timestep__ms</span><span class="o">=</span><a href="https://docs.python.org/3/library/functions.html#float" title="builtins.float" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">TIMESTEP_MS</span></a> <span class="o">*</span> <span class="n">pq</span><span class="o">.</span><span class="n">ms</span><span class="p">,</span>
+        <span class="n">process_type</span><span class="o">=</span><span class="s2">&quot;gamma&quot;</span><span class="p">,</span>
+        <span class="n">shape</span><span class="o">=</span><span class="n">gamma_shape</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="c1"># Build network</span>
+    <span class="n">network</span> <span class="o">=</span> <span class="n">Network</span><span class="p">({</span><span class="s2">&quot;DD&quot;</span><span class="p">:</span> <span class="n">descending_drive_pool</span><span class="p">,</span> <span class="s2">&quot;aMN&quot;</span><span class="p">:</span> <span class="n">motor_neuron_pool</span><span class="p">})</span>
+    <span class="n">network</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span>
+        <span class="n">source</span><span class="o">=</span><span class="s2">&quot;DD&quot;</span><span class="p">,</span>
+        <span class="n">target</span><span class="o">=</span><span class="s2">&quot;aMN&quot;</span><span class="p">,</span>
+        <span class="n">probability</span><span class="o">=</span><a href="https://docs.python.org/3/library/functions.html#float" title="builtins.float" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">CONN_PROBABILITY</span></a><span class="p">,</span>
+        <span class="n">weight__uS</span><span class="o">=</span><a href="https://docs.python.org/3/library/functions.html#float" title="builtins.float" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">SYNAPTIC_WEIGHT</span></a> <span class="o">*</span> <span class="n">pq</span><span class="o">.</span><span class="n">uS</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">network</span><span class="o">.</span><span class="n">connect_from_external</span><span class="p">(</span><span class="n">source</span><span class="o">=</span><span class="s2">&quot;cortical_input&quot;</span><span class="p">,</span> <span class="n">target</span><span class="o">=</span><span class="s2">&quot;DD&quot;</span><span class="p">,</span> <span class="n">weight__uS</span><span class="o">=</span><span class="mf">1.0</span> <span class="o">*</span> <span class="n">pq</span><span class="o">.</span><span class="n">uS</span><span class="p">)</span>
+    <span class="n">dd_netcons</span> <span class="o">=</span> <span class="n">network</span><span class="o">.</span><span class="n">get_netcons</span><span class="p">(</span><span class="s2">&quot;cortical_input&quot;</span><span class="p">,</span> <span class="s2">&quot;DD&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Setup spike recording</span>
+    <span class="n">mn_spike_recorders</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">cell</span> <span class="ow">in</span> <span class="n">motor_neuron_pool</span><span class="p">:</span>
+        <span class="n">spike_recorder</span> <span class="o">=</span> <span class="n">h</span><span class="o">.</span><span class="n">Vector</span><span class="p">()</span>
+        <span class="n">nc</span> <span class="o">=</span> <span class="n">h</span><span class="o">.</span><span class="n">NetCon</span><span class="p">(</span><span class="n">cell</span><span class="o">.</span><span class="n">soma</span><span class="p">(</span><span class="mf">0.5</span><span class="p">)</span><span class="o">.</span><span class="n">_ref_v</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="n">sec</span><span class="o">=</span><span class="n">cell</span><span class="o">.</span><span class="n">soma</span><span class="p">)</span>
+        <span class="n">nc</span><span class="o">.</span><span class="n">threshold</span> <span class="o">=</span> <span class="mi">50</span>
+        <span class="n">nc</span><span class="o">.</span><span class="n">record</span><span class="p">(</span><span class="n">spike_recorder</span><span class="p">)</span>
+        <span class="n">mn_spike_recorders</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">spike_recorder</span><span class="p">)</span>
+
+    <span class="c1"># Create constant drive signal</span>
+    <span class="n">time_points</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><a href="https://docs.python.org/3/library/functions.html#float" title="builtins.float" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">SIMULATION_TIME_MS</span></a> <span class="o">/</span> <a href="https://docs.python.org/3/library/functions.html#float" title="builtins.float" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">TIMESTEP_MS</span></a><span class="p">)</span>
+    <span class="n">drive_signal</span> <span class="o">=</span> <a href="https://numpy.org/doc/stable/reference/generated/numpy.ones.html#numpy.ones" title="numpy.ones" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-function"><span class="n">np</span><span class="o">.</span><span class="n">ones</span></a><span class="p">(</span><span class="n">time_points</span><span class="p">)</span> <span class="o">*</span> <span class="n">dd_drive__Hz</span> <span class="o">+</span> <a href="https://numpy.org/doc/stable/reference/generated/numpy.clip.html#numpy.clip" title="numpy.clip" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-function"><span class="n">np</span><span class="o">.</span><span class="n">clip</span></a><span class="p">(</span>
+        <a href="https://numpy.org/doc/stable/reference/random/generated/numpy.random.Generator.normal.html#numpy.random.Generator.normal" title="numpy.random.Generator.normal" class="sphx-glr-backref-module-numpy-random sphx-glr-backref-type-py-method"><span class="n">RANDOM_GENERATOR</span><span class="o">.</span><span class="n">normal</span></a><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="n">time_points</span><span class="p">),</span> <span class="mi">0</span><span class="p">,</span> <span class="kc">None</span>
+    <span class="p">)</span>
+
+    <span class="c1"># Initialize simulation</span>
+    <span class="n">h</span><span class="o">.</span><span class="n">load_file</span><span class="p">(</span><span class="s2">&quot;stdrun.hoc&quot;</span><span class="p">)</span>
+    <a href="https://docs.python.org/3/library/functions.html#float" title="builtins.float" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">h</span><span class="o">.</span><span class="n">dt</span></a> <span class="o">=</span> <a href="https://docs.python.org/3/library/functions.html#float" title="builtins.float" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">TIMESTEP_MS</span></a>
+    <a href="https://docs.python.org/3/library/functions.html#float" title="builtins.float" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">h</span><span class="o">.</span><span class="n">tstop</span></a> <span class="o">=</span> <a href="https://docs.python.org/3/library/functions.html#float" title="builtins.float" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">SIMULATION_TIME_MS</span></a>
+
+    <span class="k">for</span> <span class="n">section</span><span class="p">,</span> <span class="n">voltage</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="n">motor_neuron_pool</span><span class="o">.</span><span class="n">get_initialization_data</span><span class="p">()):</span>
+        <span class="n">section</span><span class="o">.</span><span class="n">v</span> <span class="o">=</span> <span class="n">voltage</span>
+    <span class="k">for</span> <span class="n">section</span><span class="p">,</span> <span class="n">voltage</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="n">descending_drive_pool</span><span class="o">.</span><span class="n">get_initialization_data</span><span class="p">()):</span>
+        <span class="n">section</span><span class="o">.</span><span class="n">v</span> <span class="o">=</span> <span class="n">voltage</span>
+
+    <span class="n">h</span><span class="o">.</span><span class="n">finitialize</span><span class="p">()</span>
+
+    <span class="c1"># Run simulation</span>
+    <span class="n">step_counter</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">while</span> <a href="https://docs.python.org/3/library/functions.html#float" title="builtins.float" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">h</span><span class="o">.</span><span class="n">t</span></a> <span class="o">&lt;</span> <a href="https://docs.python.org/3/library/functions.html#float" title="builtins.float" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">h</span><span class="o">.</span><span class="n">tstop</span></a><span class="p">:</span>
+        <span class="n">current_drive</span> <span class="o">=</span> <span class="n">drive_signal</span><span class="p">[</span><span class="nb">min</span><span class="p">(</span><span class="n">step_counter</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">drive_signal</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)]</span>
+        <span class="k">for</span> <span class="n">dd_cell</span> <span class="ow">in</span> <span class="n">descending_drive_pool</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">dd_cell</span><span class="o">.</span><span class="n">integrate</span><span class="p">(</span><span class="n">current_drive</span><span class="p">):</span>
+                <span class="k">if</span> <a href="https://docs.python.org/3/library/functions.html#float" title="builtins.float" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">h</span><span class="o">.</span><span class="n">t</span></a> <span class="o">&lt;</span> <a href="https://docs.python.org/3/library/functions.html#float" title="builtins.float" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">h</span><span class="o">.</span><span class="n">tstop</span></a><span class="p">:</span>
+                    <span class="n">dd_netcons</span><span class="p">[</span><span class="n">dd_cell</span><span class="o">.</span><span class="n">pool__ID</span><span class="p">]</span><span class="o">.</span><span class="n">event</span><span class="p">(</span><a href="https://docs.python.org/3/library/functions.html#float" title="builtins.float" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">h</span><span class="o">.</span><span class="n">t</span></a> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="n">h</span><span class="o">.</span><span class="n">fadvance</span><span class="p">()</span>
+        <span class="n">step_counter</span> <span class="o">+=</span> <span class="mi">1</span>
+
+    <span class="c1"># Convert to Neo format</span>
+    <span class="n">dt_s</span> <span class="o">=</span> <a href="https://docs.python.org/3/library/functions.html#float" title="builtins.float" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">h</span><span class="o">.</span><span class="n">dt</span></a> <span class="o">/</span> <span class="mf">1000.0</span>
+    <span class="n">mn_segment</span> <span class="o">=</span> <a href="https://neo.readthedocs.io/en/latest/api_reference.html#neo.core.Segment" title="neo.core.segment.Segment" class="sphx-glr-backref-module-neo-core-segment sphx-glr-backref-type-py-class"><span class="n">Segment</span></a><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;Motor Neurons&quot;</span><span class="p">)</span>
+    <span class="n">mn_segment</span><span class="o">.</span><span class="n">spiketrains</span> <span class="o">=</span> <span class="p">[</span>
+        <a href="https://neo.readthedocs.io/en/latest/api_reference.html#neo.core.SpikeTrain" title="neo.core.spiketrain.SpikeTrain" class="sphx-glr-backref-module-neo-core-spiketrain sphx-glr-backref-type-py-class"><span class="n">SpikeTrain</span></a><span class="p">(</span>
+            <span class="n">recorder</span><span class="o">.</span><span class="n">as_numpy</span><span class="p">()</span> <span class="o">/</span> <span class="mi">1000</span> <span class="o">*</span> <span class="n">pq</span><span class="o">.</span><span class="n">s</span><span class="p">,</span>
+            <span class="n">t_stop</span><span class="o">=</span><a href="https://docs.python.org/3/library/functions.html#float" title="builtins.float" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">SIMULATION_TIME_MS</span></a> <span class="o">/</span> <span class="mi">1000</span> <span class="o">*</span> <span class="n">pq</span><span class="o">.</span><span class="n">s</span><span class="p">,</span>
+            <span class="n">sampling_rate</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span> <span class="o">/</span> <span class="n">dt_s</span> <span class="o">*</span> <span class="n">pq</span><span class="o">.</span><span class="n">Hz</span><span class="p">),</span>
+            <span class="n">sampling_period</span><span class="o">=</span><span class="n">dt_s</span> <span class="o">*</span> <span class="n">pq</span><span class="o">.</span><span class="n">s</span><span class="p">,</span>
+            <span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;MN_</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">recorder</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">mn_spike_recorders</span><span class="p">)</span>
+    <span class="p">]</span>
+
+    <span class="n">spike_train__Block</span> <span class="o">=</span> <a href="https://neo.readthedocs.io/en/latest/api_reference.html#neo.core.Block" title="neo.core.block.Block" class="sphx-glr-backref-module-neo-core-block sphx-glr-backref-type-py-class"><span class="n">Block</span></a><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;Motor Unit Pool&quot;</span><span class="p">)</span>
+    <span class="n">spike_train__Block</span><span class="o">.</span><span class="n">segments</span> <span class="o">=</span> <span class="p">[</span><span class="n">mn_segment</span><span class="p">]</span>
+
+    <span class="c1"># Calculate statistics</span>
+    <span class="n">n_active</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="mi">1</span> <span class="k">for</span> <span class="n">st</span> <span class="ow">in</span> <span class="n">mn_segment</span><span class="o">.</span><span class="n">spiketrains</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">st</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">stats</span> <span class="o">=</span> <span class="n">calculate_firing_rate_statistics</span><span class="p">(</span><span class="n">mn_segment</span><span class="o">.</span><span class="n">spiketrains</span><span class="p">)</span>
+    <span class="n">fr_mean</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">stats</span><span class="p">[</span><span class="s2">&quot;FR_mean&quot;</span><span class="p">])</span>
+    <span class="n">fr_std</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">stats</span><span class="p">[</span><span class="s2">&quot;FR_std&quot;</span><span class="p">])</span>
+
+    <span class="c1"># Generate force</span>
+    <span class="n">force_model</span> <span class="o">=</span> <span class="n">ForceModel</span><span class="p">(</span>
+        <a href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">recruitment_thresholds</span></a><span class="o">=</span><a href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">recruitment_thresholds</span></a><span class="p">,</span>
+        <span class="n">recording_frequency__Hz</span><span class="o">=</span><a href="https://docs.python.org/3/library/functions.html#int" title="builtins.int" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">RECORDING_FREQUENCY__HZ</span></a> <span class="o">*</span> <span class="n">pq</span><span class="o">.</span><span class="n">Hz</span><span class="p">,</span>
+        <span class="n">longest_duration_rise_time__ms</span><span class="o">=</span><a href="https://docs.python.org/3/library/functions.html#float" title="builtins.float" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">LONGEST_DURATION_RISE_TIME__MS</span></a> <span class="o">*</span> <span class="n">pq</span><span class="o">.</span><span class="n">ms</span><span class="p">,</span>
+        <span class="n">contraction_time_range_factor</span><span class="o">=</span><a href="https://docs.python.org/3/library/functions.html#int" title="builtins.int" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">CONTRACTION_TIME_RANGE</span></a><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="n">force_output</span> <span class="o">=</span> <span class="n">force_model</span><span class="o">.</span><span class="n">generate_force</span><span class="p">(</span><span class="n">spike_train__Block</span><span class="o">=</span><span class="n">spike_train__Block</span><span class="p">)</span>
+    <span class="n">force_signal</span> <span class="o">=</span> <span class="n">force_output</span><span class="o">.</span><span class="n">magnitude</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span>
+
+    <span class="c1"># Calculate steady-state force</span>
+    <span class="n">steady_idx</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">force_signal</span><span class="p">)</span> <span class="o">//</span> <span class="mi">2</span>
+    <span class="n">force_mean</span> <span class="o">=</span> <a href="https://numpy.org/doc/stable/reference/generated/numpy.mean.html#numpy.mean" title="numpy.mean" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-function"><span class="n">np</span><span class="o">.</span><span class="n">mean</span></a><span class="p">(</span><span class="n">force_signal</span><span class="p">[</span><span class="n">steady_idx</span><span class="p">:])</span>
+
+    <span class="k">return</span> <span class="n">force_mean</span><span class="p">,</span> <span class="n">n_active</span><span class="p">,</span> <span class="n">fr_mean</span><span class="p">,</span> <span class="n">fr_std</span>
+</pre></div>
+</div>
+</section>
+<section id="define-objective-function">
+<h2>Define Objective Function<a class="headerlink" href="#define-objective-function" title="Link to this heading">#</a></h2>
+<p>Optuna objective function that minimizes force error.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Calculate target force</span>
+<a href="https://docs.python.org/3/library/functions.html#float" title="builtins.float" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">TARGET_FORCE__AU</span></a> <span class="o">=</span> <a href="https://docs.python.org/3/library/functions.html#float" title="builtins.float" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">BASELINE_FORCE__AU</span></a> <span class="o">*</span> <span class="p">(</span><a href="https://docs.python.org/3/library/functions.html#float" title="builtins.float" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">TARGET_FORCE_PCT</span></a> <span class="o">/</span> <span class="mf">100.0</span><span class="p">)</span>
+
+<span class="c1"># Generate recruitment thresholds</span>
+<a href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">recruitment_thresholds</span></a><span class="p">,</span> <a href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">_</span></a> <span class="o">=</span> <span class="n">RecruitmentThresholds</span><span class="p">(</span>
+    <span class="n">N</span><span class="o">=</span><a href="https://docs.python.org/3/library/functions.html#int" title="builtins.int" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">N_MOTOR_UNITS</span></a><span class="p">,</span>
+    <span class="n">recruitment_range__ratio</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
+    <span class="n">deluca__slope</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span>
+    <span class="n">konstantin__max_threshold__ratio</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span>
+    <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;combined&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">objective</span><span class="p">(</span><span class="n">trial</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Optimize DD drive frequency to match target force.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    trial : optuna.Trial</span>
+<span class="sd">        Optimization trial</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    float</span>
+<span class="sd">        Relative force error (minimize)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="c1"># Optimize only DD drive frequency</span>
+        <span class="n">dd_drive__Hz</span> <span class="o">=</span> <span class="n">trial</span><span class="o">.</span><span class="n">suggest_float</span><span class="p">(</span><span class="s2">&quot;dd_drive&quot;</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">100.0</span><span class="p">)</span>
+        <span class="n">gamma_shape</span> <span class="o">=</span> <span class="n">get_gamma_shape_for_mvc</span><span class="p">(</span><a href="https://docs.python.org/3/library/functions.html#float" title="builtins.float" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">MVC_PERCENT</span></a><span class="p">,</span> <a href="https://docs.python.org/3/library/functions.html#float" title="builtins.float" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">MVC_SHAPE_VALUE</span></a><span class="p">)</span>
+
+        <span class="c1"># Run simulation</span>
+        <span class="n">force_mean</span><span class="p">,</span> <span class="n">n_active</span><span class="p">,</span> <span class="n">fr_mean</span><span class="p">,</span> <span class="n">fr_std</span> <span class="o">=</span> <span class="n">run_simulation_and_compute_force</span><span class="p">(</span>
+            <span class="n">dd_drive__Hz</span><span class="p">,</span> <span class="n">gamma_shape</span><span class="p">,</span> <a href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">recruitment_thresholds</span></a>
+        <span class="p">)</span>
+
+        <span class="c1"># Check minimum recruitment</span>
+        <span class="k">if</span> <span class="n">n_active</span> <span class="o">&lt;</span> <span class="mi">5</span><span class="p">:</span>
+            <span class="k">return</span> <span class="mf">1000.0</span> <span class="o">+</span> <span class="p">(</span><span class="mi">5</span> <span class="o">-</span> <span class="n">n_active</span><span class="p">)</span> <span class="o">*</span> <span class="mf">100.0</span>
+
+        <span class="c1"># Calculate relative error</span>
+        <span class="n">force_error</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">force_mean</span> <span class="o">-</span> <a href="https://docs.python.org/3/library/functions.html#float" title="builtins.float" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">TARGET_FORCE__AU</span></a><span class="p">)</span> <span class="o">/</span> <a href="https://docs.python.org/3/library/functions.html#float" title="builtins.float" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">TARGET_FORCE__AU</span></a>
+
+        <span class="c1"># Store metadata</span>
+        <span class="n">trial</span><span class="o">.</span><span class="n">set_user_attr</span><span class="p">(</span><span class="s2">&quot;force_achieved&quot;</span><span class="p">,</span> <span class="nb">float</span><span class="p">(</span><span class="n">force_mean</span><span class="p">))</span>
+        <span class="n">trial</span><span class="o">.</span><span class="n">set_user_attr</span><span class="p">(</span><span class="s2">&quot;force_error&quot;</span><span class="p">,</span> <span class="nb">float</span><span class="p">(</span><span class="n">force_error</span><span class="p">))</span>
+        <span class="n">trial</span><span class="o">.</span><span class="n">set_user_attr</span><span class="p">(</span><span class="s2">&quot;n_active&quot;</span><span class="p">,</span> <span class="n">n_active</span><span class="p">)</span>
+        <span class="n">trial</span><span class="o">.</span><span class="n">set_user_attr</span><span class="p">(</span><span class="s2">&quot;dd_drive__Hz&quot;</span><span class="p">,</span> <span class="nb">float</span><span class="p">(</span><span class="n">dd_drive__Hz</span><span class="p">))</span>
+        <span class="n">trial</span><span class="o">.</span><span class="n">set_user_attr</span><span class="p">(</span><span class="s2">&quot;FR_mean&quot;</span><span class="p">,</span> <span class="nb">float</span><span class="p">(</span><span class="n">fr_mean</span><span class="p">))</span>
+        <span class="n">trial</span><span class="o">.</span><span class="n">set_user_attr</span><span class="p">(</span><span class="s2">&quot;FR_std&quot;</span><span class="p">,</span> <span class="nb">float</span><span class="p">(</span><span class="n">fr_std</span><span class="p">))</span>
+
+        <span class="k">if</span> <span class="n">trial</span><span class="o">.</span><span class="n">number</span> <span class="o">%</span> <span class="mi">5</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Trial </span><span class="si">{</span><span class="n">trial</span><span class="o">.</span><span class="n">number</span><span class="si">}</span><span class="s2">: &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;Force=</span><span class="si">{</span><span class="n">force_mean</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2"> (target=</span><span class="si">{</span><a href="https://docs.python.org/3/library/functions.html#float" title="builtins.float" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">TARGET_FORCE__AU</span></a><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">), &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;Error=</span><span class="si">{</span><span class="n">force_error</span><span class="si">:</span><span class="s2">.1%</span><span class="si">}</span><span class="s2">, &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;Drive=</span><span class="si">{</span><span class="n">dd_drive__Hz</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2">Hz&quot;</span>
+            <span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">force_error</span>
+
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Trial </span><span class="si">{</span><span class="n">trial</span><span class="o">.</span><span class="n">number</span><span class="si">}</span><span class="s2"> failed: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="mf">1000.0</span>
+</pre></div>
+</div>
+</section>
+<section id="run-optimization">
+<h2>Run Optimization<a class="headerlink" href="#run-optimization" title="Link to this heading">#</a></h2>
+<p>Use Optuna TPE sampler to find optimal DD drive frequency.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Optimizing for </span><span class="si">{</span><a href="https://docs.python.org/3/library/functions.html#float" title="builtins.float" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">TARGET_FORCE_PCT</span></a><span class="si">}</span><span class="s2">% of Baseline Force&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;=&quot;</span> <span class="o">*</span> <span class="mi">50</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Target force: </span><span class="si">{</span><a href="https://docs.python.org/3/library/functions.html#float" title="builtins.float" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">TARGET_FORCE__AU</span></a><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2"> a.u.&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Trials: </span><span class="si">{</span><a href="https://docs.python.org/3/library/functions.html#int" title="builtins.int" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">N_TRIALS</span></a><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="c1"># Get colors from style</span>
+<a href="https://docs.python.org/3/library/stdtypes.html#list" title="builtins.list" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">colors</span></a> <span class="o">=</span> <a href="https://matplotlib.org/stable/api/matplotlib_configuration_api.html#matplotlib.RcParams" title="matplotlib.RcParams" class="sphx-glr-backref-module-matplotlib sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span></a><span class="p">[</span><span class="s2">&quot;axes.prop_cycle&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">by_key</span><span class="p">()[</span><span class="s2">&quot;color&quot;</span><span class="p">]</span>
+
+<a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">storage_name</span></a> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;sqlite:///</span><span class="si">{</span><a href="https://docs.python.org/3/library/pathlib.html#pathlib.PosixPath" title="pathlib.PosixPath" class="sphx-glr-backref-module-pathlib sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">RESULTS_DIR</span></a><span class="si">}</span><span class="s2">/optuna_force_</span><span class="si">{</span><span class="nb">int</span><span class="p">(</span><a href="https://docs.python.org/3/library/functions.html#float" title="builtins.float" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">TARGET_FORCE_PCT</span></a><span class="p">)</span><span class="si">}</span><span class="s2">pct.db&quot;</span>
+<span class="n">study</span> <span class="o">=</span> <span class="n">optuna</span><span class="o">.</span><span class="n">create_study</span><span class="p">(</span>
+    <span class="n">direction</span><span class="o">=</span><span class="s2">&quot;minimize&quot;</span><span class="p">,</span>
+    <span class="n">sampler</span><span class="o">=</span><a href="https://docs.python.org/3/library/abc.html#abc.ABC" title="abc.ABC" class="sphx-glr-backref-module-abc sphx-glr-backref-type-py-class"><span class="n">optuna</span><span class="o">.</span><span class="n">samplers</span><span class="o">.</span><span class="n">TPESampler</span></a><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="mi">42</span><span class="p">),</span>
+    <span class="n">study_name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;force_</span><span class="si">{</span><span class="nb">int</span><span class="p">(</span><a href="https://docs.python.org/3/library/functions.html#float" title="builtins.float" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">TARGET_FORCE_PCT</span></a><span class="p">)</span><span class="si">}</span><span class="s2">pct&quot;</span><span class="p">,</span>
+    <span class="n">storage</span><span class="o">=</span><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">storage_name</span></a><span class="p">,</span>
+    <span class="n">load_if_exists</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">study</span><span class="o">.</span><span class="n">optimize</span><span class="p">(</span><span class="n">objective</span><span class="p">,</span> <span class="n">n_trials</span><span class="o">=</span><a href="https://docs.python.org/3/library/functions.html#int" title="builtins.int" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">N_TRIALS</span></a><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><a href="https://docs.python.org/3/library/functions.html#int" title="builtins.int" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">TIMEOUT_SECONDS</span></a><span class="p">,</span> <span class="n">show_progress_bar</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Optimizing for 30.0% of Baseline Force
+==================================================
+Target force: 10.0532 a.u.
+Trials: 25
+
+
+  0%|          | 0/25 [00:00&lt;?, ?it/s]
+
+Pool 1 Twitch trains (Numba):   0%|          | 0/100 [00:00&lt;?, ?MU/s]
+
+Pool 1 Twitch trains (Numba):   1%|          | 1/100 [00:00&lt;00:12,  7.85MU/s]
+Pool 1 Twitch trains (Numba): 100%|██████████| 100/100 [00:00&lt;00:00, 762.61MU/s]
+Trial 0: Force=0.1844 (target=10.0532), Error=98.2%, Drive=38.1Hz
+
+
+[I 2025-12-15 16:52:19,958] Trial 0 finished with value: 0.9816572606220695 and parameters: {&#39;dd_drive&#39;: 38.07947176588889}. Best is trial 0 with value: 0.9816572606220695.
+
+  0%|          | 0/25 [00:03&lt;?, ?it/s]
+Best trial: 0. Best value: 0.981657:   0%|          | 0/25 [00:03&lt;?, ?it/s]
+Best trial: 0. Best value: 0.981657:   4%|▍         | 1/25 [00:03&lt;01:34,  3.92s/it]
+Best trial: 0. Best value: 0.981657:   4%|▍         | 1/25 [00:03&lt;01:34,  3.92s/it, 3.92/3600 seconds]
+
+Pool 1 Twitch trains (Numba):   0%|          | 0/100 [00:00&lt;?, ?MU/s]
+
+Pool 1 Twitch trains (Numba):   1%|          | 1/100 [00:00&lt;00:12,  7.84MU/s]
+Pool 1 Twitch trains (Numba): 100%|██████████| 100/100 [00:00&lt;00:00, 739.28MU/s]
+
+
+[I 2025-12-15 16:52:24,361] Trial 1 finished with value: 3.4636812181242855 and parameters: {&#39;dd_drive&#39;: 95.1207163345817}. Best is trial 0 with value: 0.9816572606220695.
+
+Best trial: 0. Best value: 0.981657:   4%|▍         | 1/25 [00:08&lt;01:34,  3.92s/it, 3.92/3600 seconds]
+Best trial: 0. Best value: 0.981657:   4%|▍         | 1/25 [00:08&lt;01:34,  3.92s/it, 3.92/3600 seconds]
+Best trial: 0. Best value: 0.981657:   8%|▊         | 2/25 [00:08&lt;01:36,  4.20s/it, 3.92/3600 seconds]
+Best trial: 0. Best value: 0.981657:   8%|▊         | 2/25 [00:08&lt;01:36,  4.20s/it, 8.32/3600 seconds]
+
+Pool 1 Twitch trains (Numba):   0%|          | 0/100 [00:00&lt;?, ?MU/s]
+
+Pool 1 Twitch trains (Numba):   1%|          | 1/100 [00:00&lt;00:12,  7.81MU/s]
+Pool 1 Twitch trains (Numba): 100%|██████████| 100/100 [00:00&lt;00:00, 743.97MU/s]
+
+
+[I 2025-12-15 16:52:28,598] Trial 2 finished with value: 1.3472252495263366 and parameters: {&#39;dd_drive&#39;: 73.46740023932911}. Best is trial 0 with value: 0.9816572606220695.
+
+Best trial: 0. Best value: 0.981657:   8%|▊         | 2/25 [00:12&lt;01:36,  4.20s/it, 8.32/3600 seconds]
+Best trial: 0. Best value: 0.981657:   8%|▊         | 2/25 [00:12&lt;01:36,  4.20s/it, 8.32/3600 seconds]
+Best trial: 0. Best value: 0.981657:  12%|█▏        | 3/25 [00:12&lt;01:32,  4.22s/it, 8.32/3600 seconds]
+Best trial: 0. Best value: 0.981657:  12%|█▏        | 3/25 [00:12&lt;01:32,  4.22s/it, 12.56/3600 seconds]
+
+Pool 1 Twitch trains (Numba):   0%|          | 0/100 [00:00&lt;?, ?MU/s]
+
+Pool 1 Twitch trains (Numba):   1%|          | 1/100 [00:00&lt;00:12,  7.86MU/s]
+Pool 1 Twitch trains (Numba): 100%|██████████| 100/100 [00:00&lt;00:00, 751.77MU/s]
+
+
+[I 2025-12-15 16:52:32,753] Trial 3 finished with value: 0.2201652151736662 and parameters: {&#39;dd_drive&#39;: 60.26718993550662}. Best is trial 3 with value: 0.2201652151736662.
+
+Best trial: 0. Best value: 0.981657:  12%|█▏        | 3/25 [00:16&lt;01:32,  4.22s/it, 12.56/3600 seconds]
+Best trial: 3. Best value: 0.220165:  12%|█▏        | 3/25 [00:16&lt;01:32,  4.22s/it, 12.56/3600 seconds]
+Best trial: 3. Best value: 0.220165:  16%|█▌        | 4/25 [00:16&lt;01:28,  4.19s/it, 12.56/3600 seconds]
+Best trial: 3. Best value: 0.220165:  16%|█▌        | 4/25 [00:16&lt;01:28,  4.19s/it, 16.71/3600 seconds]
+
+Pool 1 Twitch trains (Numba):   0%|          | 0/100 [00:00&lt;?, ?MU/s]
+
+Pool 1 Twitch trains (Numba):   1%|          | 1/100 [00:00&lt;00:12,  7.79MU/s]
+Pool 1 Twitch trains (Numba): 100%|██████████| 100/100 [00:00&lt;00:00, 758.30MU/s]
+
+
+[I 2025-12-15 16:52:36,483] Trial 4 finished with value: 1500.0 and parameters: {&#39;dd_drive&#39;: 16.445845403801215}. Best is trial 3 with value: 0.2201652151736662.
+
+Best trial: 3. Best value: 0.220165:  16%|█▌        | 4/25 [00:20&lt;01:28,  4.19s/it, 16.71/3600 seconds]
+Best trial: 3. Best value: 0.220165:  16%|█▌        | 4/25 [00:20&lt;01:28,  4.19s/it, 16.71/3600 seconds]
+Best trial: 3. Best value: 0.220165:  20%|██        | 5/25 [00:20&lt;01:20,  4.03s/it, 16.71/3600 seconds]
+Best trial: 3. Best value: 0.220165:  20%|██        | 5/25 [00:20&lt;01:20,  4.03s/it, 20.44/3600 seconds]
+
+Pool 1 Twitch trains (Numba):   0%|          | 0/100 [00:00&lt;?, ?MU/s]
+
+Pool 1 Twitch trains (Numba):   1%|          | 1/100 [00:00&lt;00:12,  7.82MU/s]
+Pool 1 Twitch trains (Numba): 100%|██████████| 100/100 [00:00&lt;00:00, 761.38MU/s]
+
+
+[I 2025-12-15 16:52:40,220] Trial 5 finished with value: 1500.0 and parameters: {&#39;dd_drive&#39;: 16.443457513284063}. Best is trial 3 with value: 0.2201652151736662.
+
+Best trial: 3. Best value: 0.220165:  20%|██        | 5/25 [00:24&lt;01:20,  4.03s/it, 20.44/3600 seconds]
+Best trial: 3. Best value: 0.220165:  20%|██        | 5/25 [00:24&lt;01:20,  4.03s/it, 20.44/3600 seconds]
+Best trial: 3. Best value: 0.220165:  24%|██▍       | 6/25 [00:24&lt;01:14,  3.93s/it, 20.44/3600 seconds]
+Best trial: 3. Best value: 0.220165:  24%|██▍       | 6/25 [00:24&lt;01:14,  3.93s/it, 24.18/3600 seconds]
+
+Pool 1 Twitch trains (Numba):   0%|          | 0/100 [00:00&lt;?, ?MU/s]
+
+Pool 1 Twitch trains (Numba):   1%|          | 1/100 [00:00&lt;00:12,  7.85MU/s]
+Pool 1 Twitch trains (Numba): 100%|██████████| 100/100 [00:00&lt;00:00, 763.60MU/s]
+
+
+[I 2025-12-15 16:52:43,847] Trial 6 finished with value: 1500.0 and parameters: {&#39;dd_drive&#39;: 6.750277604651747}. Best is trial 3 with value: 0.2201652151736662.
+
+Best trial: 3. Best value: 0.220165:  24%|██▍       | 6/25 [00:27&lt;01:14,  3.93s/it, 24.18/3600 seconds]
+Best trial: 3. Best value: 0.220165:  24%|██▍       | 6/25 [00:27&lt;01:14,  3.93s/it, 24.18/3600 seconds]
+Best trial: 3. Best value: 0.220165:  28%|██▊       | 7/25 [00:27&lt;01:08,  3.83s/it, 24.18/3600 seconds]
+Best trial: 3. Best value: 0.220165:  28%|██▊       | 7/25 [00:27&lt;01:08,  3.83s/it, 27.81/3600 seconds]
+
+Pool 1 Twitch trains (Numba):   0%|          | 0/100 [00:00&lt;?, ?MU/s]
+
+Pool 1 Twitch trains (Numba):   1%|          | 1/100 [00:00&lt;00:12,  7.87MU/s]
+Pool 1 Twitch trains (Numba): 100%|██████████| 100/100 [00:00&lt;00:00, 744.84MU/s]
+
+
+[I 2025-12-15 16:52:48,229] Trial 7 finished with value: 2.5652703018178444 and parameters: {&#39;dd_drive&#39;: 86.75143843171858}. Best is trial 3 with value: 0.2201652151736662.
+
+Best trial: 3. Best value: 0.220165:  28%|██▊       | 7/25 [00:32&lt;01:08,  3.83s/it, 27.81/3600 seconds]
+Best trial: 3. Best value: 0.220165:  28%|██▊       | 7/25 [00:32&lt;01:08,  3.83s/it, 27.81/3600 seconds]
+Best trial: 3. Best value: 0.220165:  32%|███▏      | 8/25 [00:32&lt;01:08,  4.01s/it, 27.81/3600 seconds]
+Best trial: 3. Best value: 0.220165:  32%|███▏      | 8/25 [00:32&lt;01:08,  4.01s/it, 32.19/3600 seconds]
+
+Pool 1 Twitch trains (Numba):   0%|          | 0/100 [00:00&lt;?, ?MU/s]
+
+Pool 1 Twitch trains (Numba):   1%|          | 1/100 [00:00&lt;00:12,  7.77MU/s]
+Pool 1 Twitch trains (Numba): 100%|██████████| 100/100 [00:00&lt;00:00, 744.55MU/s]
+
+
+[I 2025-12-15 16:52:52,403] Trial 8 finished with value: 0.2965685168794412 and parameters: {&#39;dd_drive&#39;: 60.510386162577674}. Best is trial 3 with value: 0.2201652151736662.
+
+Best trial: 3. Best value: 0.220165:  32%|███▏      | 8/25 [00:36&lt;01:08,  4.01s/it, 32.19/3600 seconds]
+Best trial: 3. Best value: 0.220165:  32%|███▏      | 8/25 [00:36&lt;01:08,  4.01s/it, 32.19/3600 seconds]
+Best trial: 3. Best value: 0.220165:  36%|███▌      | 9/25 [00:36&lt;01:04,  4.06s/it, 32.19/3600 seconds]
+Best trial: 3. Best value: 0.220165:  36%|███▌      | 9/25 [00:36&lt;01:04,  4.06s/it, 36.36/3600 seconds]
+
+Pool 1 Twitch trains (Numba):   0%|          | 0/100 [00:00&lt;?, ?MU/s]
+
+Pool 1 Twitch trains (Numba):   1%|          | 1/100 [00:00&lt;00:12,  7.79MU/s]
+Pool 1 Twitch trains (Numba): 100%|██████████| 100/100 [00:00&lt;00:00, 742.32MU/s]
+
+
+[I 2025-12-15 16:52:56,682] Trial 9 finished with value: 1.1330349370579178 and parameters: {&#39;dd_drive&#39;: 71.09918520180851}. Best is trial 3 with value: 0.2201652151736662.
+
+Best trial: 3. Best value: 0.220165:  36%|███▌      | 9/25 [00:40&lt;01:04,  4.06s/it, 36.36/3600 seconds]
+Best trial: 3. Best value: 0.220165:  36%|███▌      | 9/25 [00:40&lt;01:04,  4.06s/it, 36.36/3600 seconds]
+Best trial: 3. Best value: 0.220165:  40%|████      | 10/25 [00:40&lt;01:01,  4.13s/it, 36.36/3600 seconds]
+Best trial: 3. Best value: 0.220165:  40%|████      | 10/25 [00:40&lt;01:01,  4.13s/it, 40.64/3600 seconds]
+
+Pool 1 Twitch trains (Numba):   0%|          | 0/100 [00:00&lt;?, ?MU/s]
+
+Pool 1 Twitch trains (Numba):   1%|          | 1/100 [00:00&lt;00:12,  7.82MU/s]
+Pool 1 Twitch trains (Numba): 100%|██████████| 100/100 [00:00&lt;00:00, 756.52MU/s]
+Trial 10: Force=2.1110 (target=10.0532), Error=79.0%, Drive=43.1Hz
+
+
+[I 2025-12-15 16:53:00,719] Trial 10 finished with value: 0.790015564199565 and parameters: {&#39;dd_drive&#39;: 43.06018041455748}. Best is trial 3 with value: 0.2201652151736662.
+
+Best trial: 3. Best value: 0.220165:  40%|████      | 10/25 [00:44&lt;01:01,  4.13s/it, 40.64/3600 seconds]
+Best trial: 3. Best value: 0.220165:  40%|████      | 10/25 [00:44&lt;01:01,  4.13s/it, 40.64/3600 seconds]
+Best trial: 3. Best value: 0.220165:  44%|████▍     | 11/25 [00:44&lt;00:57,  4.10s/it, 40.64/3600 seconds]
+Best trial: 3. Best value: 0.220165:  44%|████▍     | 11/25 [00:44&lt;00:57,  4.10s/it, 44.68/3600 seconds]
+
+Pool 1 Twitch trains (Numba):   0%|          | 0/100 [00:00&lt;?, ?MU/s]
+
+Pool 1 Twitch trains (Numba):   1%|          | 1/100 [00:00&lt;00:31,  3.19MU/s]
+Pool 1 Twitch trains (Numba): 100%|██████████| 100/100 [00:00&lt;00:00, 313.24MU/s]
+
+
+[I 2025-12-15 16:53:05,108] Trial 11 finished with value: 0.09425785876337324 and parameters: {&#39;dd_drive&#39;: 58.481364479192465}. Best is trial 11 with value: 0.09425785876337324.
+
+Best trial: 3. Best value: 0.220165:  44%|████▍     | 11/25 [00:49&lt;00:57,  4.10s/it, 44.68/3600 seconds]
+Best trial: 11. Best value: 0.0942579:  44%|████▍     | 11/25 [00:49&lt;00:57,  4.10s/it, 44.68/3600 seconds]
+Best trial: 11. Best value: 0.0942579:  48%|████▊     | 12/25 [00:49&lt;00:54,  4.19s/it, 44.68/3600 seconds]
+Best trial: 11. Best value: 0.0942579:  48%|████▊     | 12/25 [00:49&lt;00:54,  4.19s/it, 49.07/3600 seconds]
+
+Pool 1 Twitch trains (Numba):   0%|          | 0/100 [00:00&lt;?, ?MU/s]
+
+Pool 1 Twitch trains (Numba):   1%|          | 1/100 [00:00&lt;00:12,  7.86MU/s]
+Pool 1 Twitch trains (Numba): 100%|██████████| 100/100 [00:00&lt;00:00, 755.57MU/s]
+
+
+[I 2025-12-15 16:53:09,222] Trial 12 finished with value: 0.2724368619680916 and parameters: {&#39;dd_drive&#39;: 53.03673551593903}. Best is trial 11 with value: 0.09425785876337324.
+
+Best trial: 11. Best value: 0.0942579:  48%|████▊     | 12/25 [00:53&lt;00:54,  4.19s/it, 49.07/3600 seconds]
+Best trial: 11. Best value: 0.0942579:  48%|████▊     | 12/25 [00:53&lt;00:54,  4.19s/it, 49.07/3600 seconds]
+Best trial: 11. Best value: 0.0942579:  52%|█████▏    | 13/25 [00:53&lt;00:49,  4.16s/it, 49.07/3600 seconds]
+Best trial: 11. Best value: 0.0942579:  52%|█████▏    | 13/25 [00:53&lt;00:49,  4.16s/it, 53.18/3600 seconds]
+
+Pool 1 Twitch trains (Numba):   0%|          | 0/100 [00:00&lt;?, ?MU/s]
+
+Pool 1 Twitch trains (Numba):   1%|          | 1/100 [00:00&lt;00:12,  7.80MU/s]
+Pool 1 Twitch trains (Numba): 100%|██████████| 100/100 [00:00&lt;00:00, 758.74MU/s]
+
+
+[I 2025-12-15 16:53:13,152] Trial 13 finished with value: 1500.0 and parameters: {&#39;dd_drive&#39;: 33.22040156071675}. Best is trial 11 with value: 0.09425785876337324.
+
+Best trial: 11. Best value: 0.0942579:  52%|█████▏    | 13/25 [00:57&lt;00:49,  4.16s/it, 53.18/3600 seconds]
+Best trial: 11. Best value: 0.0942579:  52%|█████▏    | 13/25 [00:57&lt;00:49,  4.16s/it, 53.18/3600 seconds]
+Best trial: 11. Best value: 0.0942579:  56%|█████▌    | 14/25 [00:57&lt;00:45,  4.09s/it, 53.18/3600 seconds]
+Best trial: 11. Best value: 0.0942579:  56%|█████▌    | 14/25 [00:57&lt;00:45,  4.09s/it, 57.11/3600 seconds]
+
+Pool 1 Twitch trains (Numba):   0%|          | 0/100 [00:00&lt;?, ?MU/s]
+
+Pool 1 Twitch trains (Numba):   1%|          | 1/100 [00:00&lt;00:12,  7.86MU/s]
+Pool 1 Twitch trains (Numba): 100%|██████████| 100/100 [00:00&lt;00:00, 749.21MU/s]
+
+
+[I 2025-12-15 16:53:17,473] Trial 14 finished with value: 0.8491625354820779 and parameters: {&#39;dd_drive&#39;: 66.22564555705405}. Best is trial 11 with value: 0.09425785876337324.
+
+Best trial: 11. Best value: 0.0942579:  56%|█████▌    | 14/25 [01:01&lt;00:45,  4.09s/it, 57.11/3600 seconds]
+Best trial: 11. Best value: 0.0942579:  56%|█████▌    | 14/25 [01:01&lt;00:45,  4.09s/it, 57.11/3600 seconds]
+Best trial: 11. Best value: 0.0942579:  60%|██████    | 15/25 [01:01&lt;00:41,  4.16s/it, 57.11/3600 seconds]
+Best trial: 11. Best value: 0.0942579:  60%|██████    | 15/25 [01:01&lt;00:41,  4.16s/it, 61.43/3600 seconds]
+
+Pool 1 Twitch trains (Numba):   0%|          | 0/100 [00:00&lt;?, ?MU/s]
+
+Pool 1 Twitch trains (Numba):   1%|          | 1/100 [00:00&lt;00:12,  7.85MU/s]
+Pool 1 Twitch trains (Numba): 100%|██████████| 100/100 [00:00&lt;00:00, 744.93MU/s]
+Trial 15: Force=29.2321 (target=10.0532), Error=190.8%, Drive=80.4Hz
+
+
+[I 2025-12-15 16:53:21,870] Trial 15 finished with value: 1.907738927748643 and parameters: {&#39;dd_drive&#39;: 80.41778694983704}. Best is trial 11 with value: 0.09425785876337324.
+
+Best trial: 11. Best value: 0.0942579:  60%|██████    | 15/25 [01:05&lt;00:41,  4.16s/it, 61.43/3600 seconds]
+Best trial: 11. Best value: 0.0942579:  60%|██████    | 15/25 [01:05&lt;00:41,  4.16s/it, 61.43/3600 seconds]
+Best trial: 11. Best value: 0.0942579:  64%|██████▍   | 16/25 [01:05&lt;00:38,  4.23s/it, 61.43/3600 seconds]
+Best trial: 11. Best value: 0.0942579:  64%|██████▍   | 16/25 [01:05&lt;00:38,  4.23s/it, 65.83/3600 seconds]
+
+Pool 1 Twitch trains (Numba):   0%|          | 0/100 [00:00&lt;?, ?MU/s]
+
+Pool 1 Twitch trains (Numba):   1%|          | 1/100 [00:00&lt;00:12,  7.88MU/s]
+Pool 1 Twitch trains (Numba): 100%|██████████| 100/100 [00:00&lt;00:00, 756.69MU/s]
+
+
+[I 2025-12-15 16:53:26,057] Trial 16 finished with value: 0.2123145590219665 and parameters: {&#39;dd_drive&#39;: 55.17951528087493}. Best is trial 11 with value: 0.09425785876337324.
+
+Best trial: 11. Best value: 0.0942579:  64%|██████▍   | 16/25 [01:10&lt;00:38,  4.23s/it, 65.83/3600 seconds]
+Best trial: 11. Best value: 0.0942579:  64%|██████▍   | 16/25 [01:10&lt;00:38,  4.23s/it, 65.83/3600 seconds]
+Best trial: 11. Best value: 0.0942579:  68%|██████▊   | 17/25 [01:10&lt;00:33,  4.22s/it, 65.83/3600 seconds]
+Best trial: 11. Best value: 0.0942579:  68%|██████▊   | 17/25 [01:10&lt;00:33,  4.22s/it, 70.02/3600 seconds]
+
+Pool 1 Twitch trains (Numba):   0%|          | 0/100 [00:00&lt;?, ?MU/s]
+
+Pool 1 Twitch trains (Numba):   1%|          | 1/100 [00:00&lt;00:12,  7.89MU/s]
+Pool 1 Twitch trains (Numba): 100%|██████████| 100/100 [00:00&lt;00:00, 760.66MU/s]
+
+
+[I 2025-12-15 16:53:30,188] Trial 17 finished with value: 0.5718447733711671 and parameters: {&#39;dd_drive&#39;: 47.705655657723526}. Best is trial 11 with value: 0.09425785876337324.
+
+Best trial: 11. Best value: 0.0942579:  68%|██████▊   | 17/25 [01:14&lt;00:33,  4.22s/it, 70.02/3600 seconds]
+Best trial: 11. Best value: 0.0942579:  68%|██████▊   | 17/25 [01:14&lt;00:33,  4.22s/it, 70.02/3600 seconds]
+Best trial: 11. Best value: 0.0942579:  72%|███████▏  | 18/25 [01:14&lt;00:29,  4.19s/it, 70.02/3600 seconds]
+Best trial: 11. Best value: 0.0942579:  72%|███████▏  | 18/25 [01:14&lt;00:29,  4.19s/it, 74.15/3600 seconds]
+
+Pool 1 Twitch trains (Numba):   0%|          | 0/100 [00:00&lt;?, ?MU/s]
+
+Pool 1 Twitch trains (Numba):   1%|          | 1/100 [00:00&lt;00:12,  7.88MU/s]
+Pool 1 Twitch trains (Numba): 100%|██████████| 100/100 [00:00&lt;00:00, 766.76MU/s]
+
+
+[I 2025-12-15 16:53:34,080] Trial 18 finished with value: 1500.0 and parameters: {&#39;dd_drive&#39;: 29.551953274623962}. Best is trial 11 with value: 0.09425785876337324.
+
+Best trial: 11. Best value: 0.0942579:  72%|███████▏  | 18/25 [01:18&lt;00:29,  4.19s/it, 74.15/3600 seconds]
+Best trial: 11. Best value: 0.0942579:  72%|███████▏  | 18/25 [01:18&lt;00:29,  4.19s/it, 74.15/3600 seconds]
+Best trial: 11. Best value: 0.0942579:  76%|███████▌  | 19/25 [01:18&lt;00:24,  4.10s/it, 74.15/3600 seconds]
+Best trial: 11. Best value: 0.0942579:  76%|███████▌  | 19/25 [01:18&lt;00:24,  4.10s/it, 78.04/3600 seconds]
+
+Pool 1 Twitch trains (Numba):   0%|          | 0/100 [00:00&lt;?, ?MU/s]
+
+Pool 1 Twitch trains (Numba):   1%|          | 1/100 [00:00&lt;00:12,  7.84MU/s]
+Pool 1 Twitch trains (Numba): 100%|██████████| 100/100 [00:00&lt;00:00, 754.17MU/s]
+
+
+[I 2025-12-15 16:53:38,248] Trial 19 finished with value: 0.27287989862787815 and parameters: {&#39;dd_drive&#39;: 53.13261348405321}. Best is trial 11 with value: 0.09425785876337324.
+
+Best trial: 11. Best value: 0.0942579:  76%|███████▌  | 19/25 [01:22&lt;00:24,  4.10s/it, 78.04/3600 seconds]
+Best trial: 11. Best value: 0.0942579:  76%|███████▌  | 19/25 [01:22&lt;00:24,  4.10s/it, 78.04/3600 seconds]
+Best trial: 11. Best value: 0.0942579:  80%|████████  | 20/25 [01:22&lt;00:20,  4.12s/it, 78.04/3600 seconds]
+Best trial: 11. Best value: 0.0942579:  80%|████████  | 20/25 [01:22&lt;00:20,  4.12s/it, 82.21/3600 seconds]
+
+Pool 1 Twitch trains (Numba):   0%|          | 0/100 [00:00&lt;?, ?MU/s]
+
+Pool 1 Twitch trains (Numba):   1%|          | 1/100 [00:00&lt;00:12,  7.86MU/s]
+Pool 1 Twitch trains (Numba): 100%|██████████| 100/100 [00:00&lt;00:00, 744.91MU/s]
+Trial 20: Force=34.0113 (target=10.0532), Error=238.3%, Drive=83.2Hz
+
+
+[I 2025-12-15 16:53:42,692] Trial 20 finished with value: 2.383131855764495 and parameters: {&#39;dd_drive&#39;: 83.23669056025972}. Best is trial 11 with value: 0.09425785876337324.
+
+Best trial: 11. Best value: 0.0942579:  80%|████████  | 20/25 [01:26&lt;00:20,  4.12s/it, 82.21/3600 seconds]
+Best trial: 11. Best value: 0.0942579:  80%|████████  | 20/25 [01:26&lt;00:20,  4.12s/it, 82.21/3600 seconds]
+Best trial: 11. Best value: 0.0942579:  84%|████████▍ | 21/25 [01:26&lt;00:16,  4.22s/it, 82.21/3600 seconds]
+Best trial: 11. Best value: 0.0942579:  84%|████████▍ | 21/25 [01:26&lt;00:16,  4.22s/it, 86.65/3600 seconds]
+
+Pool 1 Twitch trains (Numba):   0%|          | 0/100 [00:00&lt;?, ?MU/s]
+
+Pool 1 Twitch trains (Numba):   1%|          | 1/100 [00:00&lt;00:12,  7.81MU/s]
+Pool 1 Twitch trains (Numba): 100%|██████████| 100/100 [00:00&lt;00:00, 747.53MU/s]
+
+
+[I 2025-12-15 16:53:46,956] Trial 21 finished with value: 0.2004763875962374 and parameters: {&#39;dd_drive&#39;: 60.423615095150794}. Best is trial 11 with value: 0.09425785876337324.
+
+Best trial: 11. Best value: 0.0942579:  84%|████████▍ | 21/25 [01:30&lt;00:16,  4.22s/it, 86.65/3600 seconds]
+Best trial: 11. Best value: 0.0942579:  84%|████████▍ | 21/25 [01:30&lt;00:16,  4.22s/it, 86.65/3600 seconds]
+Best trial: 11. Best value: 0.0942579:  88%|████████▊ | 22/25 [01:30&lt;00:12,  4.23s/it, 86.65/3600 seconds]
+Best trial: 11. Best value: 0.0942579:  88%|████████▊ | 22/25 [01:30&lt;00:12,  4.23s/it, 90.92/3600 seconds]
+
+Pool 1 Twitch trains (Numba):   0%|          | 0/100 [00:00&lt;?, ?MU/s]
+
+Pool 1 Twitch trains (Numba):   1%|          | 1/100 [00:00&lt;00:12,  7.81MU/s]
+Pool 1 Twitch trains (Numba): 100%|██████████| 100/100 [00:00&lt;00:00, 747.99MU/s]
+
+
+[I 2025-12-15 16:53:51,193] Trial 22 finished with value: 0.29497596010692084 and parameters: {&#39;dd_drive&#39;: 60.05630904081942}. Best is trial 11 with value: 0.09425785876337324.
+
+Best trial: 11. Best value: 0.0942579:  88%|████████▊ | 22/25 [01:35&lt;00:12,  4.23s/it, 90.92/3600 seconds]
+Best trial: 11. Best value: 0.0942579:  88%|████████▊ | 22/25 [01:35&lt;00:12,  4.23s/it, 90.92/3600 seconds]
+Best trial: 11. Best value: 0.0942579:  92%|█████████▏| 23/25 [01:35&lt;00:08,  4.23s/it, 90.92/3600 seconds]
+Best trial: 11. Best value: 0.0942579:  92%|█████████▏| 23/25 [01:35&lt;00:08,  4.23s/it, 95.15/3600 seconds]
+
+Pool 1 Twitch trains (Numba):   0%|          | 0/100 [00:00&lt;?, ?MU/s]
+
+Pool 1 Twitch trains (Numba):   1%|          | 1/100 [00:00&lt;00:12,  7.83MU/s]
+Pool 1 Twitch trains (Numba): 100%|██████████| 100/100 [00:00&lt;00:00, 755.58MU/s]
+
+
+[I 2025-12-15 16:53:55,340] Trial 23 finished with value: 0.5782304412091316 and parameters: {&#39;dd_drive&#39;: 48.78113103909459}. Best is trial 11 with value: 0.09425785876337324.
+
+Best trial: 11. Best value: 0.0942579:  92%|█████████▏| 23/25 [01:39&lt;00:08,  4.23s/it, 95.15/3600 seconds]
+Best trial: 11. Best value: 0.0942579:  92%|█████████▏| 23/25 [01:39&lt;00:08,  4.23s/it, 95.15/3600 seconds]
+Best trial: 11. Best value: 0.0942579:  96%|█████████▌| 24/25 [01:39&lt;00:04,  4.21s/it, 95.15/3600 seconds]
+Best trial: 11. Best value: 0.0942579:  96%|█████████▌| 24/25 [01:39&lt;00:04,  4.21s/it, 99.30/3600 seconds]
+
+Pool 1 Twitch trains (Numba):   0%|          | 0/100 [00:00&lt;?, ?MU/s]
+
+Pool 1 Twitch trains (Numba):   1%|          | 1/100 [00:00&lt;00:32,  3.04MU/s]
+Pool 1 Twitch trains (Numba): 100%|██████████| 100/100 [00:00&lt;00:00, 298.09MU/s]
+
+
+[I 2025-12-15 16:53:59,934] Trial 24 finished with value: 1.385369572206427 and parameters: {&#39;dd_drive&#39;: 73.35818174431321}. Best is trial 11 with value: 0.09425785876337324.
+
+Best trial: 11. Best value: 0.0942579:  96%|█████████▌| 24/25 [01:43&lt;00:04,  4.21s/it, 99.30/3600 seconds]
+Best trial: 11. Best value: 0.0942579:  96%|█████████▌| 24/25 [01:43&lt;00:04,  4.21s/it, 99.30/3600 seconds]
+Best trial: 11. Best value: 0.0942579: 100%|██████████| 25/25 [01:43&lt;00:00,  4.32s/it, 99.30/3600 seconds]
+Best trial: 11. Best value: 0.0942579: 100%|██████████| 25/25 [01:43&lt;00:00,  4.32s/it, 103.89/3600 seconds]
+Best trial: 11. Best value: 0.0942579: 100%|██████████| 25/25 [01:43&lt;00:00,  4.16s/it, 103.89/3600 seconds]
+</pre></div>
+</div>
+</section>
+<section id="analyze-results">
+<h2>Analyze Results<a class="headerlink" href="#analyze-results" title="Link to this heading">#</a></h2>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">best_trial</span> <span class="o">=</span> <span class="n">study</span><span class="o">.</span><span class="n">best_trial</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Optimization Complete&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;=&quot;</span> <span class="o">*</span> <span class="mi">50</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Best trial: </span><span class="si">{</span><span class="n">best_trial</span><span class="o">.</span><span class="n">number</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Force error: </span><span class="si">{</span><span class="n">best_trial</span><span class="o">.</span><span class="n">value</span><span class="si">:</span><span class="s2">.1%</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Force Results:&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Target:   </span><span class="si">{</span><a href="https://docs.python.org/3/library/functions.html#float" title="builtins.float" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">TARGET_FORCE__AU</span></a><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2"> a.u. (</span><span class="si">{</span><a href="https://docs.python.org/3/library/functions.html#float" title="builtins.float" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">TARGET_FORCE_PCT</span></a><span class="si">}</span><span class="s2">% of baseline)&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Achieved: </span><span class="si">{</span><span class="n">best_trial</span><span class="o">.</span><span class="n">user_attrs</span><span class="p">[</span><span class="s1">&#39;force_achieved&#39;</span><span class="p">]</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2"> a.u.&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Error:    </span><span class="si">{</span><span class="n">best_trial</span><span class="o">.</span><span class="n">user_attrs</span><span class="p">[</span><span class="s1">&#39;force_error&#39;</span><span class="p">]</span><span class="si">:</span><span class="s2">.1%</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Optimized Parameters:&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  DD drive: </span><span class="si">{</span><span class="n">best_trial</span><span class="o">.</span><span class="n">user_attrs</span><span class="p">[</span><span class="s1">&#39;dd_drive__Hz&#39;</span><span class="p">]</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2"> Hz&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Active MUs: </span><span class="si">{</span><span class="n">best_trial</span><span class="o">.</span><span class="n">user_attrs</span><span class="p">[</span><span class="s1">&#39;n_active&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><a href="https://docs.python.org/3/library/functions.html#int" title="builtins.int" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">N_MOTOR_UNITS</span></a><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span>
+    <span class="sa">f</span><span class="s2">&quot;  Firing rate: </span><span class="si">{</span><span class="n">best_trial</span><span class="o">.</span><span class="n">user_attrs</span><span class="p">[</span><span class="s1">&#39;FR_mean&#39;</span><span class="p">]</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2">±</span><span class="si">{</span><span class="n">best_trial</span><span class="o">.</span><span class="n">user_attrs</span><span class="p">[</span><span class="s1">&#39;FR_std&#39;</span><span class="p">]</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2"> Hz&quot;</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Optimization Complete
+==================================================
+Best trial: 11
+Force error: 9.4%
+
+Force Results:
+  Target:   10.0532 a.u. (30.0% of baseline)
+  Achieved: 11.0008 a.u.
+  Error:    9.4%
+
+Optimized Parameters:
+  DD drive: 58.48 Hz
+  Active MUs: 60/100
+  Firing rate: 9.9±2.8 Hz
+</pre></div>
+</div>
+</section>
+<section id="save-results">
+<h2>Save Results<a class="headerlink" href="#save-results" title="Link to this heading">#</a></h2>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><a href="https://docs.python.org/3/library/stdtypes.html#dict" title="builtins.dict" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">dd_parameters</span></a> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;dd_neurons&quot;</span><span class="p">:</span> <a href="https://docs.python.org/3/library/functions.html#int" title="builtins.int" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">DD_NEURONS</span></a><span class="p">,</span>
+    <span class="s2">&quot;conn_probability&quot;</span><span class="p">:</span> <a href="https://docs.python.org/3/library/functions.html#float" title="builtins.float" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">CONN_PROBABILITY</span></a><span class="p">,</span>
+    <span class="s2">&quot;synaptic_weight&quot;</span><span class="p">:</span> <a href="https://docs.python.org/3/library/functions.html#float" title="builtins.float" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">SYNAPTIC_WEIGHT</span></a><span class="p">,</span>
+    <span class="s2">&quot;dd_drive__Hz&quot;</span><span class="p">:</span> <span class="n">best_trial</span><span class="o">.</span><span class="n">user_attrs</span><span class="p">[</span><span class="s2">&quot;dd_drive__Hz&quot;</span><span class="p">],</span>
+    <span class="s2">&quot;mvc_percent&quot;</span><span class="p">:</span> <a href="https://docs.python.org/3/library/functions.html#float" title="builtins.float" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">MVC_PERCENT</span></a><span class="p">,</span>
+    <span class="s2">&quot;gamma_shape&quot;</span><span class="p">:</span> <span class="n">get_gamma_shape_for_mvc</span><span class="p">(</span><a href="https://docs.python.org/3/library/functions.html#float" title="builtins.float" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">MVC_PERCENT</span></a><span class="p">,</span> <a href="https://docs.python.org/3/library/functions.html#float" title="builtins.float" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">MVC_SHAPE_VALUE</span></a><span class="p">),</span>
+<span class="p">}</span>
+
+<span class="k">if</span> <a href="https://docs.python.org/3/library/functions.html#bool" title="builtins.bool" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">GFLUCTDV_ENABLED</span></a><span class="p">:</span>
+    <a href="https://docs.python.org/3/library/stdtypes.html#dict" title="builtins.dict" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">dd_parameters</span></a><span class="p">[</span><span class="s2">&quot;gfluctdv_noise_amplitude&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">GFLUCTDV_NOISE_AMPLITUDE</span>
+
+<a href="https://docs.python.org/3/library/stdtypes.html#dict" title="builtins.dict" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">results</span></a> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;target_force_pct&quot;</span><span class="p">:</span> <a href="https://docs.python.org/3/library/functions.html#float" title="builtins.float" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">TARGET_FORCE_PCT</span></a><span class="p">,</span>
+    <span class="s2">&quot;baseline_force__au&quot;</span><span class="p">:</span> <a href="https://docs.python.org/3/library/functions.html#float" title="builtins.float" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">BASELINE_FORCE__AU</span></a><span class="p">,</span>
+    <span class="s2">&quot;target_force__au&quot;</span><span class="p">:</span> <a href="https://docs.python.org/3/library/functions.html#float" title="builtins.float" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">TARGET_FORCE__AU</span></a><span class="p">,</span>
+    <span class="s2">&quot;achieved_force__au&quot;</span><span class="p">:</span> <span class="n">best_trial</span><span class="o">.</span><span class="n">user_attrs</span><span class="p">[</span><span class="s2">&quot;force_achieved&quot;</span><span class="p">],</span>
+    <span class="s2">&quot;force_error&quot;</span><span class="p">:</span> <span class="n">best_trial</span><span class="o">.</span><span class="n">user_attrs</span><span class="p">[</span><span class="s2">&quot;force_error&quot;</span><span class="p">],</span>
+    <span class="s2">&quot;gfluctdv_enabled&quot;</span><span class="p">:</span> <a href="https://docs.python.org/3/library/functions.html#bool" title="builtins.bool" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">GFLUCTDV_ENABLED</span></a><span class="p">,</span>
+    <span class="s2">&quot;dd_parameters&quot;</span><span class="p">:</span> <a href="https://docs.python.org/3/library/stdtypes.html#dict" title="builtins.dict" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">dd_parameters</span></a><span class="p">,</span>
+<span class="p">}</span>
+
+<a href="https://docs.python.org/3/library/pathlib.html#pathlib.PosixPath" title="pathlib.PosixPath" class="sphx-glr-backref-module-pathlib sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">json_path</span></a> <span class="o">=</span> <a href="https://docs.python.org/3/library/pathlib.html#pathlib.PosixPath" title="pathlib.PosixPath" class="sphx-glr-backref-module-pathlib sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">RESULTS_DIR</span></a> <span class="o">/</span> <span class="sa">f</span><span class="s2">&quot;dd_optimized_params_force_</span><span class="si">{</span><span class="nb">int</span><span class="p">(</span><a href="https://docs.python.org/3/library/functions.html#float" title="builtins.float" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">TARGET_FORCE_PCT</span></a><span class="p">)</span><span class="si">}</span><span class="s2">pct.json&quot;</span>
+<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><a href="https://docs.python.org/3/library/pathlib.html#pathlib.PosixPath" title="pathlib.PosixPath" class="sphx-glr-backref-module-pathlib sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">json_path</span></a><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+    <a href="https://docs.python.org/3/library/json.html#json.dump" title="json.dump" class="sphx-glr-backref-module-json sphx-glr-backref-type-py-function"><span class="n">json</span><span class="o">.</span><span class="n">dump</span></a><span class="p">(</span><a href="https://docs.python.org/3/library/stdtypes.html#dict" title="builtins.dict" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">results</span></a><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+
+<span class="n">joblib</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">study</span><span class="p">,</span> <a href="https://docs.python.org/3/library/pathlib.html#pathlib.PosixPath" title="pathlib.PosixPath" class="sphx-glr-backref-module-pathlib sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">RESULTS_DIR</span></a> <span class="o">/</span> <span class="sa">f</span><span class="s2">&quot;study_force_</span><span class="si">{</span><span class="nb">int</span><span class="p">(</span><a href="https://docs.python.org/3/library/functions.html#float" title="builtins.float" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">TARGET_FORCE_PCT</span></a><span class="p">)</span><span class="si">}</span><span class="s2">pct.pkl&quot;</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Saved results: </span><span class="si">{</span><a href="https://docs.python.org/3/library/pathlib.html#pathlib.PosixPath" title="pathlib.PosixPath" class="sphx-glr-backref-module-pathlib sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">json_path</span></a><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Saved results: /home/runner/work/MyoGen/MyoGen/results/force_optimization/dd_optimized_params_force_30pct.json
+</pre></div>
+</div>
+</section>
+<section id="visualize-optimization-history">
+<h2>Visualize Optimization History<a class="headerlink" href="#visualize-optimization-history" title="Link to this heading">#</a></h2>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><a href="https://matplotlib.org/stable/api/_as_gen/matplotlib.figure.Figure.html#matplotlib.figure.Figure" title="matplotlib.figure.Figure" class="sphx-glr-backref-module-matplotlib-figure sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">fig</span></a> <span class="o">=</span> <a href="https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.figure.html#matplotlib.pyplot.figure" title="matplotlib.pyplot.figure" class="sphx-glr-backref-module-matplotlib-pyplot sphx-glr-backref-type-py-function"><span class="n">plt</span><span class="o">.</span><span class="n">figure</span></a><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">14</span><span class="p">,</span> <span class="mi">10</span><span class="p">))</span>
+<a href="https://matplotlib.org/stable/api/_as_gen/matplotlib.gridspec.GridSpec.html#matplotlib.gridspec.GridSpec" title="matplotlib.gridspec.GridSpec" class="sphx-glr-backref-module-matplotlib-gridspec sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">gs</span></a> <span class="o">=</span> <a href="https://matplotlib.org/stable/api/_as_gen/matplotlib.figure.Figure.add_gridspec.html#matplotlib.figure.Figure.add_gridspec" title="matplotlib.figure.Figure.add_gridspec" class="sphx-glr-backref-module-matplotlib-figure sphx-glr-backref-type-py-method"><span class="n">fig</span><span class="o">.</span><span class="n">add_gridspec</span></a><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">hspace</span><span class="o">=</span><span class="mf">0.3</span><span class="p">,</span> <span class="n">wspace</span><span class="o">=</span><span class="mf">0.3</span><span class="p">)</span>
+
+<span class="c1"># Extract trial data</span>
+<a href="https://docs.python.org/3/library/stdtypes.html#list" title="builtins.list" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">trial_numbers</span></a> <span class="o">=</span> <span class="p">[</span><span class="n">t</span><span class="o">.</span><span class="n">number</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">study</span><span class="o">.</span><span class="n">trials</span><span class="p">]</span>
+<a href="https://docs.python.org/3/library/stdtypes.html#list" title="builtins.list" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">force_achieved</span></a> <span class="o">=</span> <span class="p">[</span><span class="n">t</span><span class="o">.</span><span class="n">user_attrs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;force_achieved&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">study</span><span class="o">.</span><span class="n">trials</span><span class="p">]</span>
+<a href="https://docs.python.org/3/library/stdtypes.html#list" title="builtins.list" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">force_errors</span></a> <span class="o">=</span> <span class="p">[</span><span class="n">t</span><span class="o">.</span><span class="n">value</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">study</span><span class="o">.</span><span class="n">trials</span><span class="p">]</span>
+<a href="https://docs.python.org/3/library/stdtypes.html#list" title="builtins.list" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">dd_drive_vals</span></a> <span class="o">=</span> <span class="p">[</span><span class="n">t</span><span class="o">.</span><span class="n">params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;dd_drive&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">study</span><span class="o">.</span><span class="n">trials</span><span class="p">]</span>
+
+<span class="c1"># Left column: shared x-axis for optimization progress and force convergence</span>
+<a href="https://matplotlib.org/stable/api/_as_gen/matplotlib.axes.Axes.html#matplotlib.axes.Axes" title="matplotlib.axes.Axes" class="sphx-glr-backref-module-matplotlib-axes sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">ax_error</span></a> <span class="o">=</span> <a href="https://matplotlib.org/stable/api/_as_gen/matplotlib.figure.Figure.add_subplot.html#matplotlib.figure.Figure.add_subplot" title="matplotlib.figure.Figure.add_subplot" class="sphx-glr-backref-module-matplotlib-figure sphx-glr-backref-type-py-method"><span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span></a><span class="p">(</span><a href="https://matplotlib.org/stable/api/_as_gen/matplotlib.gridspec.GridSpec.html#matplotlib.gridspec.GridSpec" title="matplotlib.gridspec.GridSpec" class="sphx-glr-backref-module-matplotlib-gridspec sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">gs</span></a><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
+<a href="https://matplotlib.org/stable/api/_as_gen/matplotlib.axes.Axes.html#matplotlib.axes.Axes" title="matplotlib.axes.Axes" class="sphx-glr-backref-module-matplotlib-axes sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">ax_force</span></a> <span class="o">=</span> <a href="https://matplotlib.org/stable/api/_as_gen/matplotlib.figure.Figure.add_subplot.html#matplotlib.figure.Figure.add_subplot" title="matplotlib.figure.Figure.add_subplot" class="sphx-glr-backref-module-matplotlib-figure sphx-glr-backref-type-py-method"><span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span></a><span class="p">(</span><a href="https://matplotlib.org/stable/api/_as_gen/matplotlib.gridspec.GridSpec.html#matplotlib.gridspec.GridSpec" title="matplotlib.gridspec.GridSpec" class="sphx-glr-backref-module-matplotlib-gridspec sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">gs</span></a><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">sharex</span><span class="o">=</span><a href="https://matplotlib.org/stable/api/_as_gen/matplotlib.axes.Axes.html#matplotlib.axes.Axes" title="matplotlib.axes.Axes" class="sphx-glr-backref-module-matplotlib-axes sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">ax_error</span></a><span class="p">)</span>
+
+<span class="c1"># 1. Optimization progress (force error) - top left</span>
+<a href="https://matplotlib.org/stable/api/_as_gen/matplotlib.axes.Axes.plot.html#matplotlib.axes.Axes.plot" title="matplotlib.axes.Axes.plot" class="sphx-glr-backref-module-matplotlib-axes sphx-glr-backref-type-py-method"><span class="n">ax_error</span><span class="o">.</span><span class="n">plot</span></a><span class="p">(</span><a href="https://docs.python.org/3/library/stdtypes.html#list" title="builtins.list" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">trial_numbers</span></a><span class="p">,</span> <a href="https://docs.python.org/3/library/stdtypes.html#list" title="builtins.list" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">force_errors</span></a><span class="p">,</span> <span class="s2">&quot;o-&quot;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.6</span><span class="p">,</span> <span class="n">markersize</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><a href="https://docs.python.org/3/library/stdtypes.html#list" title="builtins.list" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">colors</span></a><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+<a href="https://matplotlib.org/stable/api/_as_gen/matplotlib.axes.Axes.axhline.html#matplotlib.axes.Axes.axhline" title="matplotlib.axes.Axes.axhline" class="sphx-glr-backref-module-matplotlib-axes sphx-glr-backref-type-py-method"><span class="n">ax_error</span><span class="o">.</span><span class="n">axhline</span></a><span class="p">(</span>
+    <span class="n">best_trial</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s2">&quot;--&quot;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><a href="https://docs.python.org/3/library/stdtypes.html#list" title="builtins.list" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">colors</span></a><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Best: </span><span class="si">{</span><span class="n">best_trial</span><span class="o">.</span><span class="n">value</span><span class="si">:</span><span class="s2">.2%</span><span class="si">}</span><span class="s2">&quot;</span>
+<span class="p">)</span>
+<a href="https://matplotlib.org/stable/api/_as_gen/matplotlib.axes.Axes.set_ylabel.html#matplotlib.axes.Axes.set_ylabel" title="matplotlib.axes.Axes.set_ylabel" class="sphx-glr-backref-module-matplotlib-axes sphx-glr-backref-type-py-method"><span class="n">ax_error</span><span class="o">.</span><span class="n">set_ylabel</span></a><span class="p">(</span><span class="s2">&quot;Relative Error&quot;</span><span class="p">)</span>
+<a href="https://matplotlib.org/stable/api/_as_gen/matplotlib.axes.Axes.set_title.html#matplotlib.axes.Axes.set_title" title="matplotlib.axes.Axes.set_title" class="sphx-glr-backref-module-matplotlib-axes sphx-glr-backref-type-py-method"><span class="n">ax_error</span><span class="o">.</span><span class="n">set_title</span></a><span class="p">(</span><span class="s2">&quot;Optimization Progress&quot;</span><span class="p">)</span>
+<a href="https://matplotlib.org/stable/api/_as_gen/matplotlib.axes.Axes.set_yscale.html#matplotlib.axes.Axes.set_yscale" title="matplotlib.axes.Axes.set_yscale" class="sphx-glr-backref-module-matplotlib-axes sphx-glr-backref-type-py-method"><span class="n">ax_error</span><span class="o">.</span><span class="n">set_yscale</span></a><span class="p">(</span><span class="s2">&quot;log&quot;</span><span class="p">)</span>
+<a href="https://matplotlib.org/stable/api/_as_gen/matplotlib.axes.Axes.grid.html#matplotlib.axes.Axes.grid" title="matplotlib.axes.Axes.grid" class="sphx-glr-backref-module-matplotlib-axes sphx-glr-backref-type-py-method"><span class="n">ax_error</span><span class="o">.</span><span class="n">grid</span></a><span class="p">(</span><span class="kc">True</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.3</span><span class="p">)</span>
+<a href="https://matplotlib.org/stable/api/_as_gen/matplotlib.axes.Axes.legend.html#matplotlib.axes.Axes.legend" title="matplotlib.axes.Axes.legend" class="sphx-glr-backref-module-matplotlib-axes sphx-glr-backref-type-py-method"><span class="n">ax_error</span><span class="o">.</span><span class="n">legend</span></a><span class="p">(</span><span class="n">framealpha</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">edgecolor</span><span class="o">=</span><span class="s2">&quot;none&quot;</span><span class="p">)</span>
+<a href="https://matplotlib.org/stable/api/_as_gen/matplotlib.axes.Axes.tick_params.html#matplotlib.axes.Axes.tick_params" title="matplotlib.axes.Axes.tick_params" class="sphx-glr-backref-module-matplotlib-axes sphx-glr-backref-type-py-method"><span class="n">ax_error</span><span class="o">.</span><span class="n">tick_params</span></a><span class="p">(</span><span class="n">labelbottom</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+<span class="c1"># 2. Force convergence - bottom left</span>
+<a href="https://matplotlib.org/stable/api/_as_gen/matplotlib.axes.Axes.plot.html#matplotlib.axes.Axes.plot" title="matplotlib.axes.Axes.plot" class="sphx-glr-backref-module-matplotlib-axes sphx-glr-backref-type-py-method"><span class="n">ax_force</span><span class="o">.</span><span class="n">plot</span></a><span class="p">(</span><a href="https://docs.python.org/3/library/stdtypes.html#list" title="builtins.list" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">trial_numbers</span></a><span class="p">,</span> <a href="https://docs.python.org/3/library/stdtypes.html#list" title="builtins.list" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">force_achieved</span></a><span class="p">,</span> <span class="s2">&quot;o-&quot;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.6</span><span class="p">,</span> <span class="n">markersize</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><a href="https://docs.python.org/3/library/stdtypes.html#list" title="builtins.list" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">colors</span></a><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+<a href="https://matplotlib.org/stable/api/_as_gen/matplotlib.axes.Axes.axhline.html#matplotlib.axes.Axes.axhline" title="matplotlib.axes.Axes.axhline" class="sphx-glr-backref-module-matplotlib-axes sphx-glr-backref-type-py-method"><span class="n">ax_force</span><span class="o">.</span><span class="n">axhline</span></a><span class="p">(</span>
+    <a href="https://docs.python.org/3/library/functions.html#float" title="builtins.float" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">TARGET_FORCE__AU</span></a><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s2">&quot;--&quot;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><a href="https://docs.python.org/3/library/stdtypes.html#list" title="builtins.list" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">colors</span></a><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Target: </span><span class="si">{</span><a href="https://docs.python.org/3/library/functions.html#float" title="builtins.float" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">TARGET_FORCE__AU</span></a><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">&quot;</span>
+<span class="p">)</span>
+<a href="https://matplotlib.org/stable/api/_as_gen/matplotlib.axes.Axes.set_xlabel.html#matplotlib.axes.Axes.set_xlabel" title="matplotlib.axes.Axes.set_xlabel" class="sphx-glr-backref-module-matplotlib-axes sphx-glr-backref-type-py-method"><span class="n">ax_force</span><span class="o">.</span><span class="n">set_xlabel</span></a><span class="p">(</span><span class="s2">&quot;Trial&quot;</span><span class="p">)</span>
+<a href="https://matplotlib.org/stable/api/_as_gen/matplotlib.axes.Axes.set_ylabel.html#matplotlib.axes.Axes.set_ylabel" title="matplotlib.axes.Axes.set_ylabel" class="sphx-glr-backref-module-matplotlib-axes sphx-glr-backref-type-py-method"><span class="n">ax_force</span><span class="o">.</span><span class="n">set_ylabel</span></a><span class="p">(</span><span class="s2">&quot;Force (a.u.)&quot;</span><span class="p">)</span>
+<a href="https://matplotlib.org/stable/api/_as_gen/matplotlib.axes.Axes.set_title.html#matplotlib.axes.Axes.set_title" title="matplotlib.axes.Axes.set_title" class="sphx-glr-backref-module-matplotlib-axes sphx-glr-backref-type-py-method"><span class="n">ax_force</span><span class="o">.</span><span class="n">set_title</span></a><span class="p">(</span><span class="s2">&quot;Force Convergence&quot;</span><span class="p">)</span>
+<a href="https://matplotlib.org/stable/api/_as_gen/matplotlib.axes.Axes.legend.html#matplotlib.axes.Axes.legend" title="matplotlib.axes.Axes.legend" class="sphx-glr-backref-module-matplotlib-axes sphx-glr-backref-type-py-method"><span class="n">ax_force</span><span class="o">.</span><span class="n">legend</span></a><span class="p">(</span><span class="n">framealpha</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">edgecolor</span><span class="o">=</span><span class="s2">&quot;none&quot;</span><span class="p">)</span>
+
+<span class="c1"># Right column plots</span>
+<a href="https://matplotlib.org/stable/api/_as_gen/matplotlib.axes.Axes.html#matplotlib.axes.Axes" title="matplotlib.axes.Axes" class="sphx-glr-backref-module-matplotlib-axes sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">ax_hist</span></a> <span class="o">=</span> <a href="https://matplotlib.org/stable/api/_as_gen/matplotlib.figure.Figure.add_subplot.html#matplotlib.figure.Figure.add_subplot" title="matplotlib.figure.Figure.add_subplot" class="sphx-glr-backref-module-matplotlib-figure sphx-glr-backref-type-py-method"><span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span></a><span class="p">(</span><a href="https://matplotlib.org/stable/api/_as_gen/matplotlib.gridspec.GridSpec.html#matplotlib.gridspec.GridSpec" title="matplotlib.gridspec.GridSpec" class="sphx-glr-backref-module-matplotlib-gridspec sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">gs</span></a><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+<a href="https://matplotlib.org/stable/api/_as_gen/matplotlib.axes.Axes.html#matplotlib.axes.Axes" title="matplotlib.axes.Axes" class="sphx-glr-backref-module-matplotlib-axes sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">ax_scatter</span></a> <span class="o">=</span> <a href="https://matplotlib.org/stable/api/_as_gen/matplotlib.figure.Figure.add_subplot.html#matplotlib.figure.Figure.add_subplot" title="matplotlib.figure.Figure.add_subplot" class="sphx-glr-backref-module-matplotlib-figure sphx-glr-backref-type-py-method"><span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span></a><span class="p">(</span><a href="https://matplotlib.org/stable/api/_as_gen/matplotlib.gridspec.GridSpec.html#matplotlib.gridspec.GridSpec" title="matplotlib.gridspec.GridSpec" class="sphx-glr-backref-module-matplotlib-gridspec sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">gs</span></a><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+
+<span class="c1"># 3. DD drive distribution - top right</span>
+<a href="https://matplotlib.org/stable/api/_as_gen/matplotlib.axes.Axes.hist.html#matplotlib.axes.Axes.hist" title="matplotlib.axes.Axes.hist" class="sphx-glr-backref-module-matplotlib-axes sphx-glr-backref-type-py-method"><span class="n">ax_hist</span><span class="o">.</span><span class="n">hist</span></a><span class="p">(</span><a href="https://docs.python.org/3/library/stdtypes.html#list" title="builtins.list" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">dd_drive_vals</span></a><span class="p">,</span> <span class="n">bins</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.7</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><a href="https://docs.python.org/3/library/stdtypes.html#list" title="builtins.list" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">colors</span></a><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
+<a href="https://matplotlib.org/stable/api/_as_gen/matplotlib.axes.Axes.axvline.html#matplotlib.axes.Axes.axvline" title="matplotlib.axes.Axes.axvline" class="sphx-glr-backref-module-matplotlib-axes sphx-glr-backref-type-py-method"><span class="n">ax_hist</span><span class="o">.</span><span class="n">axvline</span></a><span class="p">(</span>
+    <span class="n">best_trial</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;dd_drive&quot;</span><span class="p">],</span>
+    <span class="n">linestyle</span><span class="o">=</span><span class="s2">&quot;--&quot;</span><span class="p">,</span>
+    <span class="n">color</span><span class="o">=</span><a href="https://docs.python.org/3/library/stdtypes.html#list" title="builtins.list" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">colors</span></a><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+    <span class="n">label</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Best: </span><span class="si">{</span><span class="n">best_trial</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;dd_drive&#39;</span><span class="p">]</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2">Hz&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+<a href="https://matplotlib.org/stable/api/_as_gen/matplotlib.axes.Axes.set_xlabel.html#matplotlib.axes.Axes.set_xlabel" title="matplotlib.axes.Axes.set_xlabel" class="sphx-glr-backref-module-matplotlib-axes sphx-glr-backref-type-py-method"><span class="n">ax_hist</span><span class="o">.</span><span class="n">set_xlabel</span></a><span class="p">(</span><span class="s2">&quot;DD Drive (Hz)&quot;</span><span class="p">)</span>
+<a href="https://matplotlib.org/stable/api/_as_gen/matplotlib.axes.Axes.set_ylabel.html#matplotlib.axes.Axes.set_ylabel" title="matplotlib.axes.Axes.set_ylabel" class="sphx-glr-backref-module-matplotlib-axes sphx-glr-backref-type-py-method"><span class="n">ax_hist</span><span class="o">.</span><span class="n">set_ylabel</span></a><span class="p">(</span><span class="s2">&quot;Number of Trials&quot;</span><span class="p">)</span>
+<a href="https://matplotlib.org/stable/api/_as_gen/matplotlib.axes.Axes.set_title.html#matplotlib.axes.Axes.set_title" title="matplotlib.axes.Axes.set_title" class="sphx-glr-backref-module-matplotlib-axes sphx-glr-backref-type-py-method"><span class="n">ax_hist</span><span class="o">.</span><span class="n">set_title</span></a><span class="p">(</span><span class="s2">&quot;Drive Frequency Distribution&quot;</span><span class="p">)</span>
+<a href="https://matplotlib.org/stable/api/_as_gen/matplotlib.axes.Axes.legend.html#matplotlib.axes.Axes.legend" title="matplotlib.axes.Axes.legend" class="sphx-glr-backref-module-matplotlib-axes sphx-glr-backref-type-py-method"><span class="n">ax_hist</span><span class="o">.</span><span class="n">legend</span></a><span class="p">(</span><span class="n">framealpha</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">edgecolor</span><span class="o">=</span><span class="s2">&quot;none&quot;</span><span class="p">)</span>
+
+<span class="c1"># 4. Force vs Drive relationship - bottom right</span>
+<a href="https://matplotlib.org/stable/api/_as_gen/matplotlib.axes.Axes.scatter.html#matplotlib.axes.Axes.scatter" title="matplotlib.axes.Axes.scatter" class="sphx-glr-backref-module-matplotlib-axes sphx-glr-backref-type-py-method"><span class="n">ax_scatter</span><span class="o">.</span><span class="n">scatter</span></a><span class="p">(</span><a href="https://docs.python.org/3/library/stdtypes.html#list" title="builtins.list" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">dd_drive_vals</span></a><span class="p">,</span> <a href="https://docs.python.org/3/library/stdtypes.html#list" title="builtins.list" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">force_achieved</span></a><span class="p">,</span> <span class="n">c</span><span class="o">=</span><a href="https://docs.python.org/3/library/stdtypes.html#list" title="builtins.list" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">force_errors</span></a><span class="p">,</span> <span class="n">s</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.6</span><span class="p">)</span>
+<a href="https://matplotlib.org/stable/api/_as_gen/matplotlib.axes.Axes.scatter.html#matplotlib.axes.Axes.scatter" title="matplotlib.axes.Axes.scatter" class="sphx-glr-backref-module-matplotlib-axes sphx-glr-backref-type-py-method"><span class="n">ax_scatter</span><span class="o">.</span><span class="n">scatter</span></a><span class="p">(</span>
+    <span class="n">best_trial</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;dd_drive&quot;</span><span class="p">],</span>
+    <span class="n">best_trial</span><span class="o">.</span><span class="n">user_attrs</span><span class="p">[</span><span class="s2">&quot;force_achieved&quot;</span><span class="p">],</span>
+    <span class="n">s</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span>
+    <span class="n">marker</span><span class="o">=</span><span class="s2">&quot;*&quot;</span><span class="p">,</span>
+    <span class="n">color</span><span class="o">=</span><a href="https://docs.python.org/3/library/stdtypes.html#list" title="builtins.list" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">colors</span></a><span class="p">[</span><span class="mi">3</span><span class="p">],</span>
+    <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Best Trial&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+<a href="https://matplotlib.org/stable/api/_as_gen/matplotlib.axes.Axes.axhline.html#matplotlib.axes.Axes.axhline" title="matplotlib.axes.Axes.axhline" class="sphx-glr-backref-module-matplotlib-axes sphx-glr-backref-type-py-method"><span class="n">ax_scatter</span><span class="o">.</span><span class="n">axhline</span></a><span class="p">(</span>
+    <a href="https://docs.python.org/3/library/functions.html#float" title="builtins.float" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">TARGET_FORCE__AU</span></a><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s2">&quot;--&quot;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><a href="https://docs.python.org/3/library/stdtypes.html#list" title="builtins.list" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">colors</span></a><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Target Force&quot;</span>
+<span class="p">)</span>
+<a href="https://matplotlib.org/stable/api/_as_gen/matplotlib.axes.Axes.set_xlabel.html#matplotlib.axes.Axes.set_xlabel" title="matplotlib.axes.Axes.set_xlabel" class="sphx-glr-backref-module-matplotlib-axes sphx-glr-backref-type-py-method"><span class="n">ax_scatter</span><span class="o">.</span><span class="n">set_xlabel</span></a><span class="p">(</span><span class="s2">&quot;DD Drive (Hz)&quot;</span><span class="p">)</span>
+<a href="https://matplotlib.org/stable/api/_as_gen/matplotlib.axes.Axes.set_ylabel.html#matplotlib.axes.Axes.set_ylabel" title="matplotlib.axes.Axes.set_ylabel" class="sphx-glr-backref-module-matplotlib-axes sphx-glr-backref-type-py-method"><span class="n">ax_scatter</span><span class="o">.</span><span class="n">set_ylabel</span></a><span class="p">(</span><span class="s2">&quot;Force (a.u.)&quot;</span><span class="p">)</span>
+<a href="https://matplotlib.org/stable/api/_as_gen/matplotlib.axes.Axes.set_title.html#matplotlib.axes.Axes.set_title" title="matplotlib.axes.Axes.set_title" class="sphx-glr-backref-module-matplotlib-axes sphx-glr-backref-type-py-method"><span class="n">ax_scatter</span><span class="o">.</span><span class="n">set_title</span></a><span class="p">(</span><span class="s2">&quot;Force-Drive Relationship&quot;</span><span class="p">)</span>
+<a href="https://matplotlib.org/stable/api/_as_gen/matplotlib.axes.Axes.legend.html#matplotlib.axes.Axes.legend" title="matplotlib.axes.Axes.legend" class="sphx-glr-backref-module-matplotlib-axes sphx-glr-backref-type-py-method"><span class="n">ax_scatter</span><span class="o">.</span><span class="n">legend</span></a><span class="p">(</span><span class="n">framealpha</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">edgecolor</span><span class="o">=</span><span class="s2">&quot;none&quot;</span><span class="p">)</span>
+
+<a href="https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.tight_layout.html#matplotlib.pyplot.tight_layout" title="matplotlib.pyplot.tight_layout" class="sphx-glr-backref-module-matplotlib-pyplot sphx-glr-backref-type-py-function"><span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span></a><span class="p">()</span>
+<a href="https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.savefig.html#matplotlib.pyplot.savefig" title="matplotlib.pyplot.savefig" class="sphx-glr-backref-module-matplotlib-pyplot sphx-glr-backref-type-py-function"><span class="n">plt</span><span class="o">.</span><span class="n">savefig</span></a><span class="p">(</span>
+    <a href="https://docs.python.org/3/library/pathlib.html#pathlib.PosixPath" title="pathlib.PosixPath" class="sphx-glr-backref-module-pathlib sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">RESULTS_DIR</span></a> <span class="o">/</span> <span class="sa">f</span><span class="s2">&quot;optimization_history_</span><span class="si">{</span><span class="nb">int</span><span class="p">(</span><a href="https://docs.python.org/3/library/functions.html#float" title="builtins.float" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">TARGET_FORCE_PCT</span></a><span class="p">)</span><span class="si">}</span><span class="s2">pct.png&quot;</span><span class="p">,</span>
+    <span class="n">dpi</span><span class="o">=</span><span class="mi">150</span><span class="p">,</span>
+    <span class="n">bbox_inches</span><span class="o">=</span><span class="s2">&quot;tight&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+<a href="https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.show.html#matplotlib.pyplot.show" title="matplotlib.pyplot.show" class="sphx-glr-backref-module-matplotlib-pyplot sphx-glr-backref-type-py-function"><span class="n">plt</span><span class="o">.</span><span class="n">show</span></a><span class="p">()</span>
+</pre></div>
+</div>
+<img src="../../_images/sphx_glr_03_optimize_dd_for_target_force_001.png" srcset="../../_images/sphx_glr_03_optimize_dd_for_target_force_001.png" alt="Optimization Progress, Force Convergence, Drive Frequency Distribution, Force-Drive Relationship" class = "sphx-glr-single-img"/><p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (1 minutes 45.006 seconds)</p>
+<div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-auto-examples-02-finetune-03-optimize-dd-for-target-force-py">
+<div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
+<p><a class="reference download internal" download="" href="../../_downloads/300aab552bf6088248666a7a87b6ee88/03_optimize_dd_for_target_force.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">03_optimize_dd_for_target_force.ipynb</span></code></a></p>
+</div>
+<div class="sphx-glr-download sphx-glr-download-python docutils container">
+<p><a class="reference download internal" download="" href="../../_downloads/7faf3eba4fc01a8efe425b9d8a0d8c3a/03_optimize_dd_for_target_force.py"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">03_optimize_dd_for_target_force.py</span></code></a></p>
+</div>
+<div class="sphx-glr-download sphx-glr-download-zip docutils container">
+<p><a class="reference download internal" download="" href="../../_downloads/54fdfb57103b36be2e23358a98fbc86b/03_optimize_dd_for_target_force.zip"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">zipped:</span> <span class="pre">03_optimize_dd_for_target_force.zip</span></code></a></p>
+</div>
+</div>
+<p class="sphx-glr-signature"><a class="reference external" href="https://sphinx-gallery.github.io">Gallery generated by Sphinx-Gallery</a></p>
+</section>
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#import-libraries">Import Libraries</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#configuration">Configuration</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#load-baseline-force-data">Load Baseline Force Data</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#initialize-neuron">Initialize NEURON</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#define-simulation-function">Define Simulation Function</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#define-objective-function">Define Objective Function</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#run-optimization">Run Optimization</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#analyze-results">Analyze Results</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#save-results">Save Results</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#visualize-optimization-history">Visualize Optimization History</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2025 - 2025, n-squared lab, FAU Erlangen-Nürnberg, Germany.
+      <br/>
+    
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.2.3.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

@@ -29,14 +29,22 @@
   <link href="../../../../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
 <link href="../../../../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
 
-    <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=8f2a1f02" />
-    <link rel="stylesheet" type="text/css" href="../../../../../_static/custom.css?v=34f00721" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=5349f25f" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/css/tooltipster.custom.css" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/css/tooltipster.bundle.min.css" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/css/tooltipster-sideTip-shadow.min.css" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/css/tooltipster-sideTip-punk.min.css" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/css/tooltipster-sideTip-noir.min.css" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/css/tooltipster-sideTip-light.min.css" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/css/tooltipster-sideTip-borderless.min.css" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/css/micromodal.css" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/custom.css?v=9b95bd4c" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/sg_gallery.css?v=d2d258e8" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/sg_gallery-binder.css?v=f4aeca0c" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/sphinx-design.min.css?v=95c83b7e" />
-    <link rel="stylesheet" type="text/css" href="../../../../../_static/custom.css?v=34f00721" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/custom.css?v=9b95bd4c" />
   
   <!-- So that users can add custom icons -->
   <script src="../../../../../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
@@ -44,18 +52,382 @@
   <link rel="preload" as="script" href="../../../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="../../../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
+    <script src="../../../../../_static/jquery.js?v=5d32c60e"></script>
+    <script src="../../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
     <script src="../../../../../_static/documentation_options.js?v=1437fa6d"></script>
     <script src="../../../../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
-    <script src="../../../../../_static/custom.js?v=a236ca48"></script>
+    <script src="../../../../../_static/js/hoverxref.js"></script>
+    <script src="../../../../../_static/js/tooltipster.bundle.min.js"></script>
+    <script src="../../../../../_static/js/micromodal.min.js"></script>
+    <script src="../../../../../_static/custom.js?v=e0e269b1"></script>
     <script src="../../../../../_static/design-tabs.js?v=f930bc37"></script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script type="module" src="https://cdn.jsdelivr.net/npm/mermaid@11.9.0/dist/mermaid.esm.min.mjs"></script>
-    <script type="module" src="https://cdn.jsdelivr.net/npm/@mermaid-js/layout-elk@0.1.4/dist/mermaid-layout-elk.esm.min.mjs"></script>
-    <script type="module">import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@11.9.0/dist/mermaid.esm.min.mjs";import elkLayouts from "https://cdn.jsdelivr.net/npm/@mermaid-js/layout-elk@0.1.4/dist/mermaid-layout-elk.esm.min.mjs";mermaid.registerLayoutLoaders(elkLayouts);mermaid.initialize({startOnLoad:false});</script>
+    <script type="module" src="https://cdn.jsdelivr.net/npm/@mermaid-js/layout-elk@0.2.0/dist/mermaid-layout-elk.esm.min.mjs"></script>
+    <script type="module">import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@11.9.0/dist/mermaid.esm.min.mjs";import elkLayouts from "https://cdn.jsdelivr.net/npm/@mermaid-js/layout-elk@0.2.0/dist/mermaid-layout-elk.esm.min.mjs";mermaid.registerLayoutLoaders(elkLayouts);mermaid.initialize({startOnLoad:false});</script>
     <script src="https://cdn.jsdelivr.net/npm/d3@7.9.0/dist/d3.min.js"></script>
-    <script type="module">
-import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@11.9.0/dist/mermaid.esm.min.mjs";
-window.addEventListener("load", () => mermaid.run());
+    <script type="module">import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@11.9.0/dist/mermaid.esm.min.mjs";
+
+const defaultStyle = document.createElement('style');
+defaultStyle.textContent = `pre.mermaid {
+    /* Same as .mermaid-container > pre */
+    display: block;
+    width: 100%;
+}
+
+pre.mermaid > svg {
+    /* Same as .mermaid-container > pre > svg */
+    height: 500px;
+    width: 100%;
+    max-width: 100% !important;
+}
+`;
+document.head.appendChild(defaultStyle);
+
+const fullscreenStyle = document.createElement('style');
+fullscreenStyle.textContent = `.mermaid-container {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+}
+
+.mermaid-container > pre {
+    display: block;
+    width: 100%;
+}
+
+.mermaid-container > pre > svg {
+    height: 500px;
+    width: 100%;
+    max-width: 100% !important;
+}
+
+.mermaid-fullscreen-btn {
+    width: 28px;
+    height: 28px;
+    background: rgba(255, 255, 255, 0.95);
+    border: 1px solid rgba(0, 0, 0, 0.3);
+    border-radius: 4px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+    font-size: 14px;
+    line-height: 1;
+    padding: 0;
+    color: #333;
+}
+
+.mermaid-fullscreen-btn:hover {
+    opacity: 100% !important;
+    background: rgba(255, 255, 255, 1);
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3);
+    transform: scale(1.1);
+}
+
+.mermaid-fullscreen-btn.dark-theme {
+    background: rgba(50, 50, 50, 0.95);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    color: #e0e0e0;
+}
+
+.mermaid-fullscreen-btn.dark-theme:hover {
+    background: rgba(60, 60, 60, 1);
+    box-shadow: 0 3px 10px rgba(255, 255, 255, 0.2);
+}
+
+.mermaid-fullscreen-modal {
+    display: none;
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 95vw;
+    height: 100vh;
+    background: rgba(255, 255, 255, 0.98);
+    z-index: 9999;
+    padding: 20px;
+    overflow: auto;
+}
+
+.mermaid-fullscreen-modal.dark-theme {
+    background: rgba(0, 0, 0, 0.98);
+}
+
+.mermaid-fullscreen-modal.active {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.mermaid-container-fullscreen {
+    position: relative;
+    width: 95vw;
+    height: 90vh;
+    max-width: 95vw;
+    max-height: 90vh;
+    background: white;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+    overflow: auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.mermaid-container-fullscreen.dark-theme {
+    background: #1a1a1a;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8);
+}
+
+.mermaid-container-fullscreen pre.mermaid {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.mermaid-container-fullscreen .mermaid svg {
+    height: 100% !important;
+    width: 100% !important;
+    cursor: grab;
+}
+
+.mermaid-fullscreen-close {
+    position: fixed !important;
+    top: 20px !important;
+    right: 20px !important;
+    width: 40px;
+    height: 40px;
+    background: rgba(255, 255, 255, 0.95);
+    border: 1px solid rgba(0, 0, 0, 0.2);
+    border-radius: 50%;
+    cursor: pointer;
+    z-index: 10000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    transition: all 0.2s;
+    font-size: 24px;
+    line-height: 1;
+    color: #333;
+}
+
+.mermaid-fullscreen-close:hover {
+    background: white;
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
+    transform: scale(1.1);
+}
+
+.mermaid-fullscreen-close.dark-theme {
+    background: rgba(50, 50, 50, 0.95);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: #e0e0e0;
+}
+
+.mermaid-fullscreen-close.dark-theme:hover {
+    background: rgba(60, 60, 60, 1);
+    box-shadow: 0 6px 16px rgba(255, 255, 255, 0.2);
+}
+
+.mermaid-fullscreen-modal .mermaid-fullscreen-btn {
+    display: none !important;
+}`;
+document.head.appendChild(fullscreenStyle);
+
+// Detect if page has dark background
+const isDarkTheme = () => {
+    const bgColor = window.getComputedStyle(document.body).backgroundColor;
+    const match = bgColor.match(/rgb\((\d+),\s*(\d+),\s*(\d+)/);
+    if (match) {
+        const r = parseInt(match[1]);
+        const g = parseInt(match[2]);
+        const b = parseInt(match[3]);
+        const brightness = (r * 299 + g * 587 + b * 114) / 1000;
+        return brightness < 128;
+    }
+    return false;
+};
+
+const load = async () => {
+    await mermaid.run();
+
+    const all_mermaids = document.querySelectorAll(".mermaid");
+    const mermaids_processed = document.querySelectorAll(".mermaid[data-processed='true']");
+
+    if ("False" === "True") {
+        const mermaids_to_add_zoom = -1 === -1 ? all_mermaids.length : -1;
+        if(mermaids_to_add_zoom > 0) {
+            var svgs = d3.selectAll("");
+            if(all_mermaids.length !== mermaids_processed.length) {
+                setTimeout(load, 200);
+                return;
+            } else if(svgs.size() !== mermaids_to_add_zoom) {
+                setTimeout(load, 200);
+                return;
+            } else {
+                svgs.each(function() {
+                    var svg = d3.select(this);
+                    svg.html("<g class='wrapper'>" + svg.html() + "</g>");
+                    var inner = svg.select("g");
+                    var zoom = d3.zoom().on("zoom", function(event) {
+                        inner.attr("transform", event.transform);
+                    });
+                    svg.call(zoom);
+                });
+            }
+        }
+    } else if(all_mermaids.length !== mermaids_processed.length) {
+        // Wait for mermaid to process all diagrams
+        setTimeout(load, 200);
+        return;
+    }
+
+    const darkTheme = isDarkTheme();
+
+    // Stop here if not adding fullscreen capability
+    if ("True" !== "True") return;
+
+    const modal = document.createElement('div');
+    modal.className = 'mermaid-fullscreen-modal' + (darkTheme ? ' dark-theme' : '');
+    modal.setAttribute('role', 'dialog');
+    modal.setAttribute('aria-modal', 'true');
+    modal.setAttribute('aria-label', 'Fullscreen diagram viewer');
+    modal.innerHTML = `
+        <button class="mermaid-fullscreen-close${darkTheme ? ' dark-theme' : ''}" aria-label="Close fullscreen">✕</button>
+        <div class="mermaid-container-fullscreen${darkTheme ? ' dark-theme' : ''}"></div>
+    `;
+    document.body.appendChild(modal);
+
+    const modalContent = modal.querySelector('.mermaid-container-fullscreen');
+    const closeBtn = modal.querySelector('.mermaid-fullscreen-close');
+
+    let previousScrollOffset = [window.scrollX, window.scrollY];
+
+    const closeModal = () => {
+        modal.classList.remove('active');
+        modalContent.innerHTML = '';
+        document.body.style.overflow = ''
+        window.scrollTo({left: previousScrollOffset[0], top: previousScrollOffset[1], behavior: 'instant'});
+    };
+
+    closeBtn.addEventListener('click', closeModal);
+    modal.addEventListener('click', (e) => {
+        if (e.target === modal) closeModal();
+    });
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && modal.classList.contains('active')) {
+            closeModal();
+        }
+    });
+
+    const allButtons = [];
+
+    document.querySelectorAll('.mermaid').forEach((mermaidDiv) => {
+        if (mermaidDiv.parentNode.classList.contains('mermaid-container') ||
+            mermaidDiv.closest('.mermaid-fullscreen-modal')) {
+            return;
+        }
+
+        const container = document.createElement('div');
+        container.className = 'mermaid-container';
+        mermaidDiv.parentNode.insertBefore(container, mermaidDiv);
+        container.appendChild(mermaidDiv);
+
+        const fullscreenBtn = document.createElement('button');
+        fullscreenBtn.className = 'mermaid-fullscreen-btn' + (darkTheme ? ' dark-theme' : '');
+        fullscreenBtn.setAttribute('aria-label', 'View diagram in fullscreen');
+        fullscreenBtn.textContent = '⛶';
+        fullscreenBtn.style.opacity = '50%';
+
+        // Calculate dynamic position based on diagram's margin and padding
+        const diagramStyle = window.getComputedStyle(mermaidDiv);
+        const marginTop = parseFloat(diagramStyle.marginTop) || 0;
+        const marginRight = parseFloat(diagramStyle.marginRight) || 0;
+        const paddingTop = parseFloat(diagramStyle.paddingTop) || 0;
+        const paddingRight = parseFloat(diagramStyle.paddingRight) || 0;
+        fullscreenBtn.style.top = `${marginTop + paddingTop + 4}px`;
+        fullscreenBtn.style.right = `${marginRight + paddingRight + 4}px`;
+
+        fullscreenBtn.addEventListener('click', () => {
+            previousScrollOffset = [window.scroll, window.scrollY];
+            const clone = mermaidDiv.cloneNode(true);
+            modalContent.innerHTML = '';
+            modalContent.appendChild(clone);
+
+            const svg = clone.querySelector('svg');
+            if (svg) {
+                svg.removeAttribute('width');
+                svg.removeAttribute('height');
+                svg.style.width = '100%';
+                svg.style.height = 'auto';
+                svg.style.maxWidth = '100%';
+                svg.style.sdisplay = 'block';
+
+                if ("False" === "True") {
+                    setTimeout(() => {
+                        const g = svg.querySelector('g');
+                        if (g) {
+                            var svgD3 = d3.select(svg);
+                            svgD3.html("<g class='wrapper'>" + svgD3.html() + "</g>");
+                            var inner = svgD3.select("g");
+                            var zoom = d3.zoom().on("zoom", function(event) {
+                                inner.attr("transform", event.transform);
+                            });
+                            svgD3.call(zoom);
+                        }
+                    }, 100);
+                }
+            }
+
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        });
+
+        container.appendChild(fullscreenBtn);
+        allButtons.push(fullscreenBtn);
+    });
+
+    // Update theme classes when theme changes
+    const updateTheme = () => {
+        const dark = isDarkTheme();
+        allButtons.forEach(btn => {
+            if (dark) {
+                btn.classList.add('dark-theme');
+            } else {
+                btn.classList.remove('dark-theme');
+            }
+        });
+        if (dark) {
+            modal.classList.add('dark-theme');
+            modalContent.classList.add('dark-theme');
+            closeBtn.classList.add('dark-theme');
+        } else {
+            modal.classList.remove('dark-theme');
+            modalContent.classList.remove('dark-theme');
+            closeBtn.classList.remove('dark-theme');
+        }
+    };
+
+    // Watch for theme changes
+    const observer = new MutationObserver(updateTheme);
+    observer.observe(document.documentElement, {
+        attributes: true,
+        attributeFilter: ['class', 'style', 'data-theme']
+    });
+    observer.observe(document.body, {
+        attributes: true,
+        attributeFilter: ['class', 'style']
+    });
+};
+
+window.addEventListener("load", load);
 </script>
     <script>DOCUMENTATION_OPTIONS.pagename = '_modules/myogen/simulator/core/emg/electrodes';</script>
     <link rel="index" title="Index" href="../../../../../genindex.html" />
@@ -101,7 +473,7 @@ window.addEventListener("load", () => mermaid.run());
   <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
 </div>
 <aside class="bd-header-announcement" aria-label="Announcement">
-  <div class="bd-header-announcement__content">⚠️ MyoGen is under active development. API may change.</div>
+  <div class="bd-header-announcement__content">MyoGen is under active development. API may change.</div>
 </aside>
 
   
@@ -173,7 +545,14 @@ window.addEventListener("load", () => mermaid.run());
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../../../auto_examples/index.html">
+  <a class="nav-link nav-internal" href="../../../../../neo_blocks_guide.html">
+    Working with Neo Block Data Structures
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../examples.html">
     Examples
   </a>
 </li>
@@ -269,7 +648,14 @@ window.addEventListener("load", () => mermaid.run());
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../../../auto_examples/index.html">
+  <a class="nav-link nav-internal" href="../../../../../neo_blocks_guide.html">
+    Working with Neo Block Data Structures
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../examples.html">
     Examples
   </a>
 </li>
@@ -350,6 +736,9 @@ window.addEventListener("load", () => mermaid.run());
     
     <li class="breadcrumb-item"><a href="../../../../index.html" class="nav-link">Module code</a></li>
     
+    
+    <li class="breadcrumb-item"><a href="../../../../myogen.html" class="nav-link">myogen</a></li>
+    
     <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">myogen.simulator.core.emg.electrodes</span></li>
   </ul>
 </nav>
@@ -375,9 +764,12 @@ window.addEventListener("load", () => mermaid.run());
 <span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Literal</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy.matlib</span>  <span class="c1"># noqa</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">quantities</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pq</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">scipy.spatial.transform</span><span class="w"> </span><span class="kn">import</span> <span class="n">Rotation</span> <span class="k">as</span> <span class="n">R</span>
 
-<span class="kn">from</span><span class="w"> </span><span class="nn">myogen.utils.types</span><span class="w"> </span><span class="kn">import</span> <span class="n">beartowertype</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">myogen.utils.decorators</span><span class="w"> </span><span class="kn">import</span> <span class="n">beartowertype</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">myogen.utils.types</span><span class="w"> </span><span class="kn">import</span> <span class="n">Quantity__deg</span><span class="p">,</span> <span class="n">Quantity__mm</span><span class="p">,</span> <span class="n">Quantity__rad</span>
 
 
 <div class="viewcode-block" id="SurfaceElectrodeArray">
@@ -432,11 +824,11 @@ window.addEventListener("load", () => mermaid.run());
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">num_rows</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
         <span class="n">num_cols</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
-        <span class="n">inter_electrode_distances__mm</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
-        <span class="n">electrode_radius__mm</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
-        <span class="n">center_point__mm_deg</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">),</span>
-        <span class="n">bending_radius__mm</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span>
-        <span class="n">rotation_angle__deg</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span>
+        <span class="n">inter_electrode_distances__mm</span><span class="p">:</span> <span class="n">Quantity__mm</span><span class="p">,</span>
+        <span class="n">electrode_radius__mm</span><span class="p">:</span> <span class="n">Quantity__mm</span><span class="p">,</span>
+        <span class="n">center_point__mm_deg</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">Quantity__mm</span><span class="p">,</span> <span class="n">Quantity__deg</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mf">0.0</span> <span class="o">*</span> <span class="n">pq</span><span class="o">.</span><span class="n">mm</span><span class="p">,</span> <span class="mf">0.0</span> <span class="o">*</span> <span class="n">pq</span><span class="o">.</span><span class="n">deg</span><span class="p">),</span>
+        <span class="n">bending_radius__mm</span><span class="p">:</span> <span class="n">Quantity__mm</span> <span class="o">=</span> <span class="mf">0.0</span> <span class="o">*</span> <span class="n">pq</span><span class="o">.</span><span class="n">mm</span><span class="p">,</span>
+        <span class="n">rotation_angle__deg</span><span class="p">:</span> <span class="n">Quantity__deg</span> <span class="o">=</span> <span class="mf">0.0</span> <span class="o">*</span> <span class="n">pq</span><span class="o">.</span><span class="n">deg</span><span class="p">,</span>
         <span class="n">differentiation_mode</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span>
             <span class="s2">&quot;monopolar&quot;</span><span class="p">,</span> <span class="s2">&quot;bipolar_longitudinal&quot;</span><span class="p">,</span> <span class="s2">&quot;bipolar_transversal&quot;</span><span class="p">,</span> <span class="s2">&quot;laplacian&quot;</span>
         <span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;monopolar&quot;</span><span class="p">,</span>
@@ -451,14 +843,19 @@ window.addEventListener("load", () => mermaid.run());
         <span class="bp">self</span><span class="o">.</span><span class="n">electrode_radius__mm</span> <span class="o">=</span> <span class="n">electrode_radius__mm</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">differentiation_mode</span> <span class="o">=</span> <span class="n">differentiation_mode</span>
 
-        <span class="c1"># Private copies for internal modifications</span>
+        <span class="c1"># Private copies for internal modifications (extract magnitudes)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_num_rows</span> <span class="o">=</span> <span class="n">num_rows</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_num_cols</span> <span class="o">=</span> <span class="n">num_cols</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_center_point__mm_deg</span> <span class="o">=</span> <span class="n">center_point__mm_deg</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_bending_radius__mm</span> <span class="o">=</span> <span class="n">bending_radius__mm</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_rotation_angle__deg</span> <span class="o">=</span> <span class="n">rotation_angle__deg</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_inter_electrode_distances__mm</span> <span class="o">=</span> <span class="n">inter_electrode_distances__mm</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_electrode_radius__mm</span> <span class="o">=</span> <span class="n">electrode_radius__mm</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_center_point__mm_deg</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="nb">float</span><span class="p">(</span><span class="n">center_point__mm_deg</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">rescale</span><span class="p">(</span><span class="n">pq</span><span class="o">.</span><span class="n">mm</span><span class="p">)</span><span class="o">.</span><span class="n">magnitude</span><span class="p">),</span>
+            <span class="nb">float</span><span class="p">(</span><span class="n">center_point__mm_deg</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">rescale</span><span class="p">(</span><span class="n">pq</span><span class="o">.</span><span class="n">deg</span><span class="p">)</span><span class="o">.</span><span class="n">magnitude</span><span class="p">),</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_bending_radius__mm</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">bending_radius__mm</span><span class="o">.</span><span class="n">rescale</span><span class="p">(</span><span class="n">pq</span><span class="o">.</span><span class="n">mm</span><span class="p">)</span><span class="o">.</span><span class="n">magnitude</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_rotation_angle__deg</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">rotation_angle__deg</span><span class="o">.</span><span class="n">rescale</span><span class="p">(</span><span class="n">pq</span><span class="o">.</span><span class="n">deg</span><span class="p">)</span><span class="o">.</span><span class="n">magnitude</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_inter_electrode_distances__mm</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span>
+            <span class="n">inter_electrode_distances__mm</span><span class="o">.</span><span class="n">rescale</span><span class="p">(</span><span class="n">pq</span><span class="o">.</span><span class="n">mm</span><span class="p">)</span><span class="o">.</span><span class="n">magnitude</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_electrode_radius__mm</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">electrode_radius__mm</span><span class="o">.</span><span class="n">rescale</span><span class="p">(</span><span class="n">pq</span><span class="o">.</span><span class="n">mm</span><span class="p">)</span><span class="o">.</span><span class="n">magnitude</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_differentiation_mode</span> <span class="o">=</span> <span class="n">differentiation_mode</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">num_electrodes</span> <span class="o">=</span> <span class="n">num_rows</span> <span class="o">*</span> <span class="n">num_cols</span>
@@ -497,12 +894,10 @@ window.addEventListener("load", () => mermaid.run());
             <span class="n">_pos_z</span><span class="p">[</span><span class="n">index_center</span><span class="p">,</span> <span class="p">:]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_center_point__mm_deg</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
             <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">index_center</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
                 <span class="n">_pos_z</span><span class="p">[</span><span class="n">index_center</span> <span class="o">+</span> <span class="n">i</span><span class="p">,</span> <span class="p">:]</span> <span class="o">=</span> <span class="p">(</span>
-                    <span class="n">_pos_z</span><span class="p">[</span><span class="n">index_center</span> <span class="o">+</span> <span class="n">i</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="p">:]</span>
-                    <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_inter_electrode_distances__mm</span>
+                    <span class="n">_pos_z</span><span class="p">[</span><span class="n">index_center</span> <span class="o">+</span> <span class="n">i</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="p">:]</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_inter_electrode_distances__mm</span>
                 <span class="p">)</span>
                 <span class="n">_pos_z</span><span class="p">[</span><span class="n">index_center</span> <span class="o">-</span> <span class="n">i</span><span class="p">,</span> <span class="p">:]</span> <span class="o">=</span> <span class="p">(</span>
-                    <span class="n">_pos_z</span><span class="p">[</span><span class="n">index_center</span> <span class="o">-</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="p">:]</span>
-                    <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">_inter_electrode_distances__mm</span>
+                    <span class="n">_pos_z</span><span class="p">[</span><span class="n">index_center</span> <span class="o">-</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="p">:]</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">_inter_electrode_distances__mm</span>
                 <span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">index_center1</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_num_rows</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span>
@@ -515,12 +910,10 @@ window.addEventListener("load", () => mermaid.run());
             <span class="p">)</span>
             <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">index_center2</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
                 <span class="n">_pos_z</span><span class="p">[</span><span class="n">index_center1</span> <span class="o">+</span> <span class="n">i</span><span class="p">,</span> <span class="p">:]</span> <span class="o">=</span> <span class="p">(</span>
-                    <span class="n">_pos_z</span><span class="p">[</span><span class="n">index_center1</span> <span class="o">+</span> <span class="n">i</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="p">:]</span>
-                    <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_inter_electrode_distances__mm</span>
+                    <span class="n">_pos_z</span><span class="p">[</span><span class="n">index_center1</span> <span class="o">+</span> <span class="n">i</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="p">:]</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_inter_electrode_distances__mm</span>
                 <span class="p">)</span>
                 <span class="n">_pos_z</span><span class="p">[</span><span class="n">index_center2</span> <span class="o">-</span> <span class="n">i</span><span class="p">,</span> <span class="p">:]</span> <span class="o">=</span> <span class="p">(</span>
-                    <span class="n">_pos_z</span><span class="p">[</span><span class="n">index_center2</span> <span class="o">-</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="p">:]</span>
-                    <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">_inter_electrode_distances__mm</span>
+                    <span class="n">_pos_z</span><span class="p">[</span><span class="n">index_center2</span> <span class="o">-</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="p">:]</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">_inter_electrode_distances__mm</span>
                 <span class="p">)</span>
 
         <span class="n">_pos_theta</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">_num_rows</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_num_cols</span><span class="p">))</span>
@@ -560,9 +953,7 @@ window.addEventListener("load", () => mermaid.run());
         <span class="c1">## Rotated detection system (Farina, 2004), eq (36)</span>
         <span class="n">displacement</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_center_point__mm_deg</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">_pos_z</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
         <span class="n">_pos_z</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">_bending_radius__mm</span>
-            <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_rotation_angle__deg</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">180</span><span class="p">)</span>
-            <span class="o">*</span> <span class="n">_pos_theta</span>
+            <span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">_bending_radius__mm</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_rotation_angle__deg</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">180</span><span class="p">)</span> <span class="o">*</span> <span class="n">_pos_theta</span>
             <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_rotation_angle__deg</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">180</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">_pos_z</span> <span class="o">-</span> <span class="n">displacement</span><span class="p">)</span>
             <span class="o">+</span> <span class="n">displacement</span>
         <span class="p">)</span>
@@ -578,13 +969,13 @@ window.addEventListener("load", () => mermaid.run());
         <span class="bp">self</span><span class="o">.</span><span class="n">_pos_theta</span> <span class="o">=</span> <span class="n">_pos_theta</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">pos_z</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">pos_z</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Quantity__mm</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Longitudinal positions of electrodes in mm.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        np.ndarray</span>
+<span class="sd">        Quantity__mm</span>
 <span class="sd">            Array of shape (num_rows, num_cols) containing z-coordinates</span>
 <span class="sd">            of each electrode position in mm.</span>
 
@@ -598,16 +989,16 @@ window.addEventListener("load", () => mermaid.run());
                 <span class="s2">&quot;Electrode grid not computed. This should be automatically created &quot;</span>
                 <span class="s2">&quot;during class initialization. Please check constructor execution.&quot;</span>
             <span class="p">)</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pos_z</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pos_z</span> <span class="o">*</span> <span class="n">pq</span><span class="o">.</span><span class="n">mm</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">pos_theta</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">pos_theta</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Quantity__rad</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Angular positions of electrodes in radians.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        np.ndarray</span>
+<span class="sd">        Quantity__rad</span>
 <span class="sd">            Array of shape (num_rows, num_cols) containing angular coordinates</span>
 <span class="sd">            of each electrode position in radians.</span>
 
@@ -621,16 +1012,16 @@ window.addEventListener("load", () => mermaid.run());
                 <span class="s2">&quot;Electrode grid not computed. This should be automatically created &quot;</span>
                 <span class="s2">&quot;during class initialization. Please check constructor execution.&quot;</span>
             <span class="p">)</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pos_theta</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pos_theta</span> <span class="o">*</span> <span class="n">pq</span><span class="o">.</span><span class="n">rad</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">electrode_positions</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">electrode_positions</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">Quantity__mm</span><span class="p">,</span> <span class="n">Quantity__rad</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Complete electrode position arrays (z, theta) in physical coordinates.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        tuple[np.ndarray, np.ndarray]</span>
+<span class="sd">        tuple[Quantity__mm, Quantity__rad]</span>
 <span class="sd">            Tuple containing:</span>
 <span class="sd">            - pos_z: Longitudinal positions in mm, shape (num_rows, num_cols)</span>
 <span class="sd">            - pos_theta: Angular positions in radians, shape (num_rows, num_cols)</span>
@@ -762,11 +1153,19 @@ window.addEventListener("load", () => mermaid.run());
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">num_electrodes</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
-        <span class="n">inter_electrode_distance__mm</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.5</span><span class="p">,</span>
-        <span class="n">position__mm</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">),</span>
-        <span class="n">orientation__rad</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">),</span>
+        <span class="n">inter_electrode_distance__mm</span><span class="p">:</span> <span class="n">Quantity__mm</span> <span class="o">=</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">pq</span><span class="o">.</span><span class="n">mm</span><span class="p">,</span>
+        <span class="n">position__mm</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">Quantity__mm</span><span class="p">,</span> <span class="n">Quantity__mm</span><span class="p">,</span> <span class="n">Quantity__mm</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="mf">0.0</span> <span class="o">*</span> <span class="n">pq</span><span class="o">.</span><span class="n">mm</span><span class="p">,</span>
+            <span class="mf">0.0</span> <span class="o">*</span> <span class="n">pq</span><span class="o">.</span><span class="n">mm</span><span class="p">,</span>
+            <span class="mf">0.0</span> <span class="o">*</span> <span class="n">pq</span><span class="o">.</span><span class="n">mm</span><span class="p">,</span>
+        <span class="p">),</span>
+        <span class="n">orientation__rad</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">Quantity__rad</span><span class="p">,</span> <span class="n">Quantity__rad</span><span class="p">,</span> <span class="n">Quantity__rad</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="mf">0.0</span> <span class="o">*</span> <span class="n">pq</span><span class="o">.</span><span class="n">rad</span><span class="p">,</span>
+            <span class="mf">0.0</span> <span class="o">*</span> <span class="n">pq</span><span class="o">.</span><span class="n">rad</span><span class="p">,</span>
+            <span class="mf">0.0</span> <span class="o">*</span> <span class="n">pq</span><span class="o">.</span><span class="n">rad</span><span class="p">,</span>
+        <span class="p">),</span>
         <span class="n">differentiation_mode</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;consecutive&quot;</span><span class="p">,</span> <span class="s2">&quot;reference&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;consecutive&quot;</span><span class="p">,</span>
-        <span class="n">trajectory_distance__mm</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span>
+        <span class="n">trajectory_distance__mm</span><span class="p">:</span> <span class="n">Quantity__mm</span> <span class="o">=</span> <span class="mf">0.0</span> <span class="o">*</span> <span class="n">pq</span><span class="o">.</span><span class="n">mm</span><span class="p">,</span>
         <span class="n">trajectory_steps</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
     <span class="p">):</span>
         <span class="c1"># Immutable public arguments - never modify these</span>
@@ -778,13 +1177,23 @@ window.addEventListener("load", () => mermaid.run());
         <span class="bp">self</span><span class="o">.</span><span class="n">trajectory_distance__mm</span> <span class="o">=</span> <span class="n">trajectory_distance__mm</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">trajectory_steps</span> <span class="o">=</span> <span class="n">trajectory_steps</span>
 
-        <span class="c1"># Private copies for internal modifications</span>
+        <span class="c1"># Private copies for internal modifications (extract magnitudes)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_num_electrodes</span> <span class="o">=</span> <span class="n">num_electrodes</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_inter_electrode_distance__mm</span> <span class="o">=</span> <span class="n">inter_electrode_distance__mm</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_position__mm</span> <span class="o">=</span> <span class="n">position__mm</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_orientation__rad</span> <span class="o">=</span> <span class="n">orientation__rad</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_inter_electrode_distance__mm</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span>
+            <span class="n">inter_electrode_distance__mm</span><span class="o">.</span><span class="n">rescale</span><span class="p">(</span><span class="n">pq</span><span class="o">.</span><span class="n">mm</span><span class="p">)</span><span class="o">.</span><span class="n">magnitude</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_position__mm</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="nb">float</span><span class="p">(</span><span class="n">position__mm</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">rescale</span><span class="p">(</span><span class="n">pq</span><span class="o">.</span><span class="n">mm</span><span class="p">)</span><span class="o">.</span><span class="n">magnitude</span><span class="p">),</span>
+            <span class="nb">float</span><span class="p">(</span><span class="n">position__mm</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">rescale</span><span class="p">(</span><span class="n">pq</span><span class="o">.</span><span class="n">mm</span><span class="p">)</span><span class="o">.</span><span class="n">magnitude</span><span class="p">),</span>
+            <span class="nb">float</span><span class="p">(</span><span class="n">position__mm</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">rescale</span><span class="p">(</span><span class="n">pq</span><span class="o">.</span><span class="n">mm</span><span class="p">)</span><span class="o">.</span><span class="n">magnitude</span><span class="p">),</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_orientation__rad</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="nb">float</span><span class="p">(</span><span class="n">orientation__rad</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">rescale</span><span class="p">(</span><span class="n">pq</span><span class="o">.</span><span class="n">rad</span><span class="p">)</span><span class="o">.</span><span class="n">magnitude</span><span class="p">),</span>
+            <span class="nb">float</span><span class="p">(</span><span class="n">orientation__rad</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">rescale</span><span class="p">(</span><span class="n">pq</span><span class="o">.</span><span class="n">rad</span><span class="p">)</span><span class="o">.</span><span class="n">magnitude</span><span class="p">),</span>
+            <span class="nb">float</span><span class="p">(</span><span class="n">orientation__rad</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">rescale</span><span class="p">(</span><span class="n">pq</span><span class="o">.</span><span class="n">rad</span><span class="p">)</span><span class="o">.</span><span class="n">magnitude</span><span class="p">),</span>
+        <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_differentiation_mode</span> <span class="o">=</span> <span class="n">differentiation_mode</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_trajectory_distance__mm</span> <span class="o">=</span> <span class="n">trajectory_distance__mm</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_trajectory_distance__mm</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">trajectory_distance__mm</span><span class="o">.</span><span class="n">rescale</span><span class="p">(</span><span class="n">pq</span><span class="o">.</span><span class="n">mm</span><span class="p">)</span><span class="o">.</span><span class="n">magnitude</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_trajectory_steps</span> <span class="o">=</span> <span class="n">trajectory_steps</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">num_points</span> <span class="o">=</span> <span class="n">num_electrodes</span>  <span class="c1"># Alias for compatibility</span>
@@ -793,8 +1202,7 @@ window.addEventListener("load", () => mermaid.run());
         <span class="bp">self</span><span class="o">.</span><span class="n">_pts_origin</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">(</span>
             <span class="p">[</span>
                 <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">_num_electrodes</span><span class="p">,</span> <span class="mi">2</span><span class="p">)),</span>
-                <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_num_electrodes</span><span class="p">)[</span><span class="o">...</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span>
-                <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_inter_electrode_distance__mm</span><span class="p">,</span>
+                <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_num_electrodes</span><span class="p">)[</span><span class="o">...</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_inter_electrode_distance__mm</span><span class="p">,</span>
             <span class="p">],</span>
             <span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span>
         <span class="p">)</span>
@@ -805,9 +1213,7 @@ window.addEventListener("load", () => mermaid.run());
 
         <span class="k">match</span> <span class="n">differentiation_mode</span><span class="p">:</span>
             <span class="k">case</span> <span class="s2">&quot;consecutive&quot;</span><span class="p">:</span>
-                <span class="n">eye_mat</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">_pts_origin</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pts_origin</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-                <span class="p">)</span>
+                <span class="n">eye_mat</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_pts_origin</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pts_origin</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_diff_mat</span> <span class="o">=</span> <span class="n">eye_mat</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">roll</span><span class="p">(</span><span class="n">eye_mat</span><span class="p">,</span> <span class="n">shift</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
             <span class="k">case</span> <span class="s2">&quot;reference&quot;</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_diff_mat</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">roll</span><span class="p">(</span>
@@ -819,11 +1225,10 @@ window.addEventListener("load", () => mermaid.run());
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_n_channels</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_diff_mat</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">set_position</span><span class="p">(</span>
-            <span class="n">position__mm</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_position__mm</span><span class="p">,</span> <span class="n">orientation__rad</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_orientation__rad</span>
-        <span class="p">)</span>
+        <span class="c1"># Use public (Quantity) parameters for method calls</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_position</span><span class="p">(</span><span class="n">position__mm</span><span class="o">=</span><span class="n">position__mm</span><span class="p">,</span> <span class="n">orientation__rad</span><span class="o">=</span><span class="n">orientation__rad</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">set_linear_trajectory</span><span class="p">(</span>
-            <span class="n">distance__mm</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_trajectory_distance__mm</span><span class="p">,</span> <span class="n">n_nodes</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_trajectory_steps</span>
+            <span class="n">distance__mm</span><span class="o">=</span><span class="n">trajectory_distance__mm</span><span class="p">,</span> <span class="n">n_nodes</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_trajectory_steps</span>
         <span class="p">)</span></div>
 
 
@@ -831,8 +1236,8 @@ window.addEventListener("load", () => mermaid.run());
 <a class="viewcode-back" href="../../../../../generated/myogen.simulator.IntramuscularElectrodeArray.set_position.html#myogen.simulator.IntramuscularElectrodeArray.set_position">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">set_position</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
-        <span class="n">position__mm</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">],</span>
-        <span class="n">orientation__rad</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">],</span>
+        <span class="n">position__mm</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">Quantity__mm</span><span class="p">,</span> <span class="n">Quantity__mm</span><span class="p">,</span> <span class="n">Quantity__mm</span><span class="p">],</span>
+        <span class="n">orientation__rad</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">Quantity__rad</span><span class="p">,</span> <span class="n">Quantity__rad</span><span class="p">,</span> <span class="n">Quantity__rad</span><span class="p">],</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Set the position and orientation of the intramuscular electrode array.</span>
@@ -880,19 +1285,25 @@ window.addEventListener("load", () => mermaid.run());
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_pts_init</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_pts_origin</span><span class="p">)</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">_pts_init</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rodrigues_rot</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_pts_init</span><span class="p">,</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">orientation__rad</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="c1"># Extract magnitude values for internal calculations</span>
+        <span class="n">orientation__rad_values</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="nb">float</span><span class="p">(</span><span class="n">orientation__rad</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">rescale</span><span class="p">(</span><span class="n">pq</span><span class="o">.</span><span class="n">rad</span><span class="p">)</span><span class="o">.</span><span class="n">magnitude</span><span class="p">),</span>
+            <span class="nb">float</span><span class="p">(</span><span class="n">orientation__rad</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">rescale</span><span class="p">(</span><span class="n">pq</span><span class="o">.</span><span class="n">rad</span><span class="p">)</span><span class="o">.</span><span class="n">magnitude</span><span class="p">),</span>
+            <span class="nb">float</span><span class="p">(</span><span class="n">orientation__rad</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">rescale</span><span class="p">(</span><span class="n">pq</span><span class="o">.</span><span class="n">rad</span><span class="p">)</span><span class="o">.</span><span class="n">magnitude</span><span class="p">),</span>
         <span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_pts_init</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rodrigues_rot</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_pts_init</span><span class="p">,</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">orientation__rad</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
-        <span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_pts_init</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rodrigues_rot</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_pts_init</span><span class="p">,</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">orientation__rad</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+        <span class="n">position__mm_values</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
+            <span class="p">[</span>
+                <span class="nb">float</span><span class="p">(</span><span class="n">position__mm</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">rescale</span><span class="p">(</span><span class="n">pq</span><span class="o">.</span><span class="n">mm</span><span class="p">)</span><span class="o">.</span><span class="n">magnitude</span><span class="p">),</span>
+                <span class="nb">float</span><span class="p">(</span><span class="n">position__mm</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">rescale</span><span class="p">(</span><span class="n">pq</span><span class="o">.</span><span class="n">mm</span><span class="p">)</span><span class="o">.</span><span class="n">magnitude</span><span class="p">),</span>
+                <span class="nb">float</span><span class="p">(</span><span class="n">position__mm</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">rescale</span><span class="p">(</span><span class="n">pq</span><span class="o">.</span><span class="n">mm</span><span class="p">)</span><span class="o">.</span><span class="n">magnitude</span><span class="p">),</span>
+            <span class="p">]</span>
         <span class="p">)</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">_pts_init</span> <span class="o">+=</span> <span class="n">np</span><span class="o">.</span><span class="n">matlib</span><span class="o">.</span><span class="n">repmat</span><span class="p">(</span>
-            <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">position__mm</span><span class="p">)[</span><span class="kc">None</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pts_init</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="mi">1</span>
-        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_pts_init</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rodrigues_rot</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_pts_init</span><span class="p">,</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">orientation__rad_values</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_pts_init</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rodrigues_rot</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_pts_init</span><span class="p">,</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">orientation__rad_values</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_pts_init</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rodrigues_rot</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_pts_init</span><span class="p">,</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">orientation__rad_values</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_pts_init</span> <span class="o">+=</span> <span class="n">np</span><span class="o">.</span><span class="n">matlib</span><span class="o">.</span><span class="n">repmat</span><span class="p">(</span><span class="n">position__mm_values</span><span class="p">[</span><span class="kc">None</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pts_init</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="mi">1</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_pts</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_pts_init</span><span class="p">)</span></div>
 
 
@@ -946,9 +1357,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="IntramuscularElectrodeArray.set_linear_trajectory">
 <a class="viewcode-back" href="../../../../../generated/myogen.simulator.IntramuscularElectrodeArray.set_linear_trajectory.html#myogen.simulator.IntramuscularElectrodeArray.set_linear_trajectory">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">set_linear_trajectory</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="n">distance__mm</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">n_nodes</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_linear_trajectory</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">distance__mm</span><span class="p">:</span> <span class="n">Quantity__mm</span><span class="p">,</span> <span class="n">n_nodes</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Configure linear trajectory movement for the electrode array.</span>
 
@@ -989,13 +1398,16 @@ window.addEventListener("load", () => mermaid.run());
 <span class="sd">        calc_observation_points : Calculate electrode positions along trajectory</span>
 <span class="sd">        traj_mixing_mat : Generate mixing matrices for trajectory interpolation</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Extract magnitude value for internal calculations</span>
+        <span class="n">distance__mm_value</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">distance__mm</span><span class="o">.</span><span class="n">rescale</span><span class="p">(</span><span class="n">pq</span><span class="o">.</span><span class="n">mm</span><span class="p">)</span><span class="o">.</span><span class="n">magnitude</span><span class="p">)</span>
+
         <span class="k">if</span> <span class="n">n_nodes</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">n_nodes</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ceil</span><span class="p">(</span><span class="n">distance__mm</span> <span class="o">/</span> <span class="mf">0.5</span><span class="p">),</span> <span class="mi">1</span><span class="p">)</span>
+            <span class="n">n_nodes</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ceil</span><span class="p">(</span><span class="n">distance__mm_value</span> <span class="o">/</span> <span class="mf">0.5</span><span class="p">),</span> <span class="mi">1</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">n_nodes</span> <span class="o">=</span> <span class="n">n_nodes</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_trajectory_step</span> <span class="o">=</span> <span class="n">distance__mm</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_nodes</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_trajectory_step</span> <span class="o">=</span> <span class="n">distance__mm_value</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_nodes</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">traj_transforms</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">start</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">stop</span><span class="o">=</span><span class="n">distance__mm</span><span class="p">,</span> <span class="n">num</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">n_nodes</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">traj_transforms</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">start</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">stop</span><span class="o">=</span><span class="n">distance__mm_value</span><span class="p">,</span> <span class="n">num</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">n_nodes</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">traj_transforms</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">(</span>
             <span class="p">[</span>
                 <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="nb">max</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">traj_transforms</span><span class="o">.</span><span class="n">shape</span><span class="p">),</span> <span class="mi">2</span><span class="p">)),</span>
@@ -1004,14 +1416,15 @@ window.addEventListener("load", () => mermaid.run());
             <span class="p">]</span>
         <span class="p">)</span>
 
+        <span class="c1"># Use private orientation values (already extracted as floats)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">traj_transforms</span><span class="p">[:,</span> <span class="p">:</span><span class="mi">3</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rodrigues_rot</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">traj_transforms</span><span class="p">[:,</span> <span class="p">:</span><span class="mi">3</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">orientation__rad</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">traj_transforms</span><span class="p">[:,</span> <span class="p">:</span><span class="mi">3</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">_orientation__rad</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
         <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">traj_transforms</span><span class="p">[:,</span> <span class="p">:</span><span class="mi">3</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rodrigues_rot</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">traj_transforms</span><span class="p">[:,</span> <span class="p">:</span><span class="mi">3</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">orientation__rad</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">traj_transforms</span><span class="p">[:,</span> <span class="p">:</span><span class="mi">3</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">_orientation__rad</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
         <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">traj_transforms</span><span class="p">[:,</span> <span class="p">:</span><span class="mi">3</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rodrigues_rot</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">traj_transforms</span><span class="p">[:,</span> <span class="p">:</span><span class="mi">3</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">orientation__rad</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">traj_transforms</span><span class="p">[:,</span> <span class="p">:</span><span class="mi">3</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">_orientation__rad</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
         <span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">calc_observation_points</span><span class="p">()</span></div>
@@ -1143,15 +1556,15 @@ window.addEventListener("load", () => mermaid.run());
 
 
     <span class="nd">@property</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">electrode_positions</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">electrode_positions</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Quantity__mm</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Current electrode positions in 3D space (mm).</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        np.ndarray</span>
+<span class="sd">        Quantity__mm</span>
 <span class="sd">            Array of shape (n_nodes * num_electrodes, 3) containing x, y, z coordinates</span>
-<span class="sd">            of each electrode position for all trajectory nodes.</span>
+<span class="sd">            of each electrode position for all trajectory nodes, in mm.</span>
 
 <span class="sd">        Raises</span>
 <span class="sd">        ------</span>
@@ -1163,7 +1576,7 @@ window.addEventListener("load", () => mermaid.run());
                 <span class="s2">&quot;Electrode positions not computed. Run set_linear_trajectory() first &quot;</span>
                 <span class="s2">&quot;to calculate trajectory and electrode positions.&quot;</span>
             <span class="p">)</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">pts</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">pts</span> <span class="o">*</span> <span class="n">pq</span><span class="o">.</span><span class="n">mm</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">differential_matrix</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
@@ -1213,15 +1626,15 @@ window.addEventListener("load", () => mermaid.run());
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">traj_transforms</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">initial_positions</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">initial_positions</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Quantity__mm</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Initial electrode positions after position/orientation setup.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        np.ndarray</span>
+<span class="sd">        Quantity__mm</span>
 <span class="sd">            Array of shape (num_electrodes, 3) containing initial x, y, z coordinates</span>
-<span class="sd">            of electrodes before trajectory movement is applied.</span>
+<span class="sd">            of electrodes before trajectory movement is applied, in mm.</span>
 
 <span class="sd">        Raises</span>
 <span class="sd">        ------</span>
@@ -1233,7 +1646,7 @@ window.addEventListener("load", () => mermaid.run());
                 <span class="s2">&quot;Initial electrode positions not computed. Run set_position() first &quot;</span>
                 <span class="s2">&quot;to configure electrode array placement and orientation.&quot;</span>
             <span class="p">)</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pts_init</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pts_init</span> <span class="o">*</span> <span class="n">pq</span><span class="o">.</span><span class="n">mm</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">num_channels</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>

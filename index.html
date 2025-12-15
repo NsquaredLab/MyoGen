@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Welcome to &#8212; MyoGen 0.4.0 Documentation</title>
+    <title>Overview &#8212; MyoGen 0.4.0 Documentation</title>
   
   
   
@@ -30,14 +30,22 @@
   <link href="_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
 <link href="_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
 
-    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=8f2a1f02" />
-    <link rel="stylesheet" type="text/css" href="_static/custom.css?v=34f00721" />
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=5349f25f" />
+    <link rel="stylesheet" type="text/css" href="_static/css/tooltipster.custom.css" />
+    <link rel="stylesheet" type="text/css" href="_static/css/tooltipster.bundle.min.css" />
+    <link rel="stylesheet" type="text/css" href="_static/css/tooltipster-sideTip-shadow.min.css" />
+    <link rel="stylesheet" type="text/css" href="_static/css/tooltipster-sideTip-punk.min.css" />
+    <link rel="stylesheet" type="text/css" href="_static/css/tooltipster-sideTip-noir.min.css" />
+    <link rel="stylesheet" type="text/css" href="_static/css/tooltipster-sideTip-light.min.css" />
+    <link rel="stylesheet" type="text/css" href="_static/css/tooltipster-sideTip-borderless.min.css" />
+    <link rel="stylesheet" type="text/css" href="_static/css/micromodal.css" />
+    <link rel="stylesheet" type="text/css" href="_static/custom.css?v=9b95bd4c" />
     <link rel="stylesheet" type="text/css" href="_static/sg_gallery.css?v=d2d258e8" />
     <link rel="stylesheet" type="text/css" href="_static/sg_gallery-binder.css?v=f4aeca0c" />
     <link rel="stylesheet" type="text/css" href="_static/sg_gallery-dataframe.css?v=2082cf3c" />
     <link rel="stylesheet" type="text/css" href="_static/sg_gallery-rendered-html.css?v=1277b6f3" />
     <link rel="stylesheet" type="text/css" href="_static/sphinx-design.min.css?v=95c83b7e" />
-    <link rel="stylesheet" type="text/css" href="_static/custom.css?v=34f00721" />
+    <link rel="stylesheet" type="text/css" href="_static/custom.css?v=9b95bd4c" />
   
   <!-- So that users can add custom icons -->
   <script src="_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
@@ -45,11 +53,18 @@
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
+    <script src="_static/jquery.js?v=5d32c60e"></script>
+    <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
     <script src="_static/documentation_options.js?v=1437fa6d"></script>
     <script src="_static/doctools.js?v=9bcbadda"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
-    <script src="_static/custom.js?v=a236ca48"></script>
+    <script src="_static/js/hoverxref.js"></script>
+    <script src="_static/js/tooltipster.bundle.min.js"></script>
+    <script src="_static/js/micromodal.min.js"></script>
+    <script src="_static/custom.js?v=e0e269b1"></script>
     <script src="_static/design-tabs.js?v=f930bc37"></script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'index';</script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
@@ -95,7 +110,7 @@
   <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
 </div>
 <aside class="bd-header-announcement" aria-label="Announcement">
-  <div class="bd-header-announcement__content">⚠️ MyoGen is under active development. API may change.</div>
+  <div class="bd-header-announcement__content">MyoGen is under active development. API may change.</div>
 </aside>
 
   
@@ -167,7 +182,14 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="auto_examples/index.html">
+  <a class="nav-link nav-internal" href="neo_blocks_guide.html">
+    Working with Neo Block Data Structures
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="examples.html">
     Examples
   </a>
 </li>
@@ -267,7 +289,14 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="auto_examples/index.html">
+  <a class="nav-link nav-internal" href="neo_blocks_guide.html">
+    Working with Neo Block Data Structures
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="examples.html">
     Examples
   </a>
 </li>
@@ -338,77 +367,144 @@
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section id="welcome-to-logo">
-<h1>Welcome to <a class="reference internal" href="_images/myogen_logo.png"><img alt="logo" class="align-middle" src="_images/myogen_logo.png" style="height: 80px;" /></a><a class="headerlink" href="#welcome-to-logo" title="Link to this heading">#</a></h1>
-<p><strong>Biophysical Simulation Toolkit for EMG Signal Generation</strong></p>
-<p>MyoGen is a biophysical simulation toolkit for generating surface and intramuscular electromyography (EMG) signals. Built on established physiological principles and validated anatomical data, MyoGen provides researchers, engineers, and educators with an accessible platform for EMG signal simulation that spans from motor unit recruitment to surface electrode recordings.</p>
-<p>The toolkit implements a complete simulation pipeline: from motor unit recruitment thresholds and spike train generation using the NEURON simulator, through anatomically accurate muscle modeling with realistic fiber distributions, to surface EMG signal synthesis via Motor Unit Action Potentials (MUAPs).</p>
-<div>
-    <form class="bd-search align-items-center" action="search.html" method="get">
-      <input type="search" class="form-control search-front-page" name="q" id="search-input" placeholder="&#128269; Search the docs ..." aria-label="Search the docs ..." autocomplete="off">
-    </form>
+  <div align="center">
+  <h1 style="display: flex; align-items: center; justify-content: center; gap: 10px;">
+    <span>Welcome to</span>
+    <img src="_static/myogen_logo.png" height="100" alt="MyoGen Logo">
+  </h1>
+  <h2>The modular and extandable simulation toolkit for neurophysiology</h2>
+<p><a class="reference external" href="https://nsquaredlab.github.io/MyoGen/"><img alt="Documentation" src="https://img.shields.io/badge/docs-latest-blue.svg" /></a>
+<a class="reference external" href="https://www.python.org/downloads/"><img alt="Python 3.12+" src="https://img.shields.io/badge/python-3.12+-blue.svg" /></a>
+<a class="reference external" href="https://github.com/NsquaredLab/MyoGen"><img alt="Version" src="https://img.shields.io/badge/version-0.4.0-orange.svg" /></a></p>
+<p><a class="reference external" href="https://nsquaredlab.github.io/MyoGen/#installation">Installation</a> •
+<a class="reference external" href="https://nsquaredlab.github.io/MyoGen/">Documentation</a> •
+<a class="reference external" href="https://nsquaredlab.github.io/MyoGen/examples/">Examples</a> •
+<a class="reference external" href="https://nsquaredlab.github.io/MyoGen/#how-to-cite">How to Cite</a></p>
 </div>
-</br><p>Key features include:</p>
-<ul class="simple">
-<li><p><strong>Motor Unit Recruitment Modeling</strong>: Four validated models (Fuglevand, De Luca, Konstantin, Combined) for physiologically realistic recruitment patterns</p></li>
-<li><p><strong>Biophysical Spike Train Simulation</strong>: NEURON-based motor neuron modeling with detailed calcium dynamics and membrane properties</p></li>
-<li><p><strong>Anatomically Accurate Muscle Models</strong>: Spatial distribution of motor units and muscle fibers based on anatomical measurements</p></li>
-<li><p><strong>Surface EMG Synthesis</strong>: Multi-layered volume conductor modeling for realistic surface EMG signal generation</p></li>
-<li><p><strong>Multi-Electrode Array Support</strong>: Simulation of high-density electrode grids with configurable spatial arrangements</p></li>
-<li><p><strong>Flexible Input Current Patterns</strong>: Built-in generators for sinusoidal, ramp, step, trapezoid, and sawtooth stimulation waveforms</p></li>
-<li><p><strong>GPU Acceleration</strong>: Automatic CuPy integration for fast parallel processing of large-scale simulations</p></li>
-<li><p><strong>Comprehensive Visualization</strong>: Built-in plotting tools for recruitment thresholds, spike trains, muscle anatomy, MUAPs, and surface EMG</p></li>
-<li><p><strong>Reproducible Research</strong>: Deterministic random number generation and parameter saving for reproducible simulations</p></li>
-</ul>
-<div class="admonition warning">
-<p class="admonition-title">Warning</p>
-<p>MyoGen is still under development and the API is subject to change.</p>
-</div>
-<section id="installation">
-<h2>Installation<a class="headerlink" href="#installation" title="Link to this heading">#</a></h2>
-<ol class="arabic">
-<li><p><strong>Clone the Repository:</strong></p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>git<span class="w"> </span>clone<span class="w"> </span>https://github.com/NsquaredLab/MyoGen.git
-<span class="nb">cd</span><span class="w"> </span>MyoGen
-</pre></div>
-</div>
-</li>
-<li><p><strong>(Windows only) Install NEURON 8.2.6:</strong></p>
-<div class="admonition warning">
-<p class="admonition-title">Warning</p>
-<p>Make sure to install version 8.2.6.</p>
-</div>
-<p>Download from: <a class="github reference external" href="https://github.com/neuronsimulator/nrn/releases/download/8.2.6/nrn-8.2.6.w64-mingw-py-38-39-310-311-312-setup.exe">neuronsimulator/nrn</a></p>
-</li>
-<li><p><strong>Install UV:</strong></p>
-<p>Follow the instructions at <a class="reference external" href="https://docs.astral.sh/uv/#highlights">https://docs.astral.sh/uv/#highlights</a></p>
-</li>
-<li><p><strong>Create Environment:</strong></p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>uv<span class="w"> </span>sync
-</pre></div>
-</div>
-</li>
-<li><p><strong>Add CuPy if CUDA is Available:</strong></p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>uv<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>cupy-cuda12x
-</pre></div>
-</div>
-</li>
-<li><p><strong>Activate the Environment:</strong></p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">source</span><span class="w"> </span>.venv/bin/activate
-</pre></div>
-</div>
-</li>
-<li><p><strong>Run Setup to Compile NMODL Files:</strong></p>
-<div class="admonition warning">
-<p class="admonition-title">Warning</p>
-<p>This step is required. Please do not skip it.</p>
-</div>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>-c<span class="w"> </span><span class="s2">&quot;from myogen.utils import setup_myogen; setup_myogen()&quot;</span>
-</pre></div>
-</div>
-</li>
-</ol>
+<section class="tex2jax_ignore mathjax_ignore" id="overview">
+<h1>Overview<a class="headerlink" href="#overview" title="Link to this heading">#</a></h1>
+<p>MyoGen is a <strong>modular and extensible neuromuscular simulation framework</strong> for generating physiologically grounded motor-unit activity, muscle force, and surface EMG signals.</p>
+<p>It supports end-to-end modeling of the neuromuscular pathway, from descending neural drive and spinal motor neuron dynamics to muscle activation and bioelectric signal formation at the electrode level.
+MyoGen is designed for algorithm validation, hypothesis-driven research, and education, providing configurable building blocks that can be independently combined and extended.</p>
 </section>
+<section class="tex2jax_ignore mathjax_ignore" id="highlights">
+<h1>Highlights<a class="headerlink" href="#highlights" title="Link to this heading">#</a></h1>
+<p>🧬 <strong>Biophysically inspired neuron models</strong> — NEURON-based motor neurons with validated calcium dynamics and membrane properties</p>
+<p>🎯 <strong>Everything is inspectable</strong> — Complete access to every motor unit, spike time, fiber location etc. for rigorous algorithm testing</p>
+<p>⚡️ <strong>Vectorized &amp; parallel</strong> — Multi-core CPU processing with NumPy/Numba vectorization for fast computation</p>
+<p>🔬 <strong>End-to-end simulation</strong> — From motor unit recruitment to high-density surface EMG in a single framework</p>
+<p>📊 <strong>Reproducible science</strong> — Deterministic random seeds and standardized Neo Block outputs for exact replication</p>
+<p>🧰 <strong>Comprehensive toolkit</strong> — Surface EMG, intramuscular EMG, force generation, and spinal network modeling</p>
+</section>
+<section class="tex2jax_ignore mathjax_ignore" id="installation">
+<h1>Installation<a class="headerlink" href="#installation" title="Link to this heading">#</a></h1>
+<p><strong>Prerequisites</strong>: Python ≥3.12, Linux/Windows/macOS</p>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p><strong>Windows users</strong>: Install <a class="reference external" href="https://github.com/neuronsimulator/nrn/releases/download/8.2.6/nrn-8.2.6.w64-mingw-py-38-39-310-311-312-setup.exe">NEURON 8.2.6</a> before running <code class="docutils literal notranslate"><span class="pre">uv</span> <span class="pre">sync</span></code></p>
+</div>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Clone and install</span>
+git<span class="w"> </span>clone<span class="w"> </span>https://github.com/NsquaredLab/MyoGen.git
+<span class="nb">cd</span><span class="w"> </span>MyoGen
+uv<span class="w"> </span>sync
+
+<span class="c1"># Activate environment</span>
+<span class="nb">source</span><span class="w"> </span>.venv/bin/activate<span class="w">  </span><span class="c1"># Linux/macOS</span>
+.venv<span class="se">\S</span>cripts<span class="se">\a</span>ctivate<span class="w">     </span><span class="c1"># Windows</span>
+
+<span class="c1"># Compile NEURON mechanisms (required)</span>
+uv<span class="w"> </span>run<span class="w"> </span>poe<span class="w"> </span>setup_myogen
+</pre></div>
+</div>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>Install <a class="reference external" href="https://docs.astral.sh/uv/">uv</a> first</p>
+</div>
+<p><strong>GPU acceleration of convoutions</strong> (optional):</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>uv<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>cupy-cuda12x<span class="w">  </span><span class="c1"># 5-10× speedup</span>
+</pre></div>
+</div>
+</section>
+<section class="tex2jax_ignore mathjax_ignore" id="quick-start">
+<h1>Quick Start<a class="headerlink" href="#quick-start" title="Link to this heading">#</a></h1>
+<p>Generate motor unit action potentials (MUAPs):</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">myogen</span><span class="w"> </span><span class="kn">import</span> <span class="n">simulator</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">quantities</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pq</span>
+
+<span class="c1"># 1. Generate recruitment thresholds (100 motor units)</span>
+<span class="n">thresholds</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">simulator</span><span class="o">.</span><span class="n">RecruitmentThresholds</span><span class="p">(</span>
+    <span class="n">N</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
+    <span class="n">recruitment_range__ratio</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span>
+    <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;fuglevand&quot;</span>
+<span class="p">)</span>
+
+<span class="c1"># 2. Create muscle model with fiber distribution</span>
+<span class="n">muscle</span> <span class="o">=</span> <span class="n">simulator</span><span class="o">.</span><span class="n">Muscle</span><span class="p">(</span>
+    <span class="n">recruitment_thresholds</span><span class="o">=</span><span class="n">thresholds</span><span class="p">,</span>
+    <span class="n">radius_bone__mm</span><span class="o">=</span><span class="mf">1.0</span> <span class="o">*</span> <span class="n">pq</span><span class="o">.</span><span class="n">mm</span><span class="p">,</span>
+    <span class="n">fiber_density__fibers_per_mm2</span><span class="o">=</span><span class="mi">400</span> <span class="o">*</span> <span class="n">pq</span><span class="o">.</span><span class="n">mm</span><span class="o">**-</span><span class="mi">2</span><span class="p">,</span>
+    <span class="n">fat_thickness__mm</span><span class="o">=</span><span class="mi">10</span> <span class="o">*</span> <span class="n">pq</span><span class="o">.</span><span class="n">mm</span><span class="p">,</span>
+    <span class="n">autorun</span><span class="o">=</span><span class="kc">True</span>
+<span class="p">)</span>
+
+<span class="c1"># 3. Set up surface electrode array</span>
+<span class="n">electrode_array</span> <span class="o">=</span> <span class="n">simulator</span><span class="o">.</span><span class="n">SurfaceElectrodeArray</span><span class="p">(</span>
+    <span class="n">num_rows</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span>
+    <span class="n">num_cols</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span>
+    <span class="n">inter_electrode_distances__mm</span><span class="o">=</span><span class="mi">5</span> <span class="o">*</span> <span class="n">pq</span><span class="o">.</span><span class="n">mm</span><span class="p">,</span>
+    <span class="n">electrode_radius__mm</span><span class="o">=</span><span class="mi">5</span> <span class="o">*</span> <span class="n">pq</span><span class="o">.</span><span class="n">mm</span><span class="p">,</span>
+    <span class="n">bending_radius__mm</span><span class="o">=</span><span class="n">muscle</span><span class="o">.</span><span class="n">radius__mm</span> <span class="o">+</span> <span class="n">muscle</span><span class="o">.</span><span class="n">skin_thickness__mm</span> <span class="o">+</span> <span class="n">muscle</span><span class="o">.</span><span class="n">fat_thickness__mm</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="c1"># 4. Create surface EMG simulator</span>
+<span class="n">surface_emg</span> <span class="o">=</span> <span class="n">simulator</span><span class="o">.</span><span class="n">SurfaceEMG</span><span class="p">(</span>
+    <span class="n">muscle_model</span><span class="o">=</span><span class="n">muscle</span><span class="p">,</span>
+    <span class="n">electrode_arrays</span><span class="o">=</span><span class="p">[</span><span class="n">electrode_array</span><span class="p">],</span>
+    <span class="n">sampling_frequency__Hz</span><span class="o">=</span><span class="mf">2048.0</span><span class="p">,</span>
+    <span class="n">MUs_to_simulate</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">]</span>  <span class="c1"># First 5 motor units</span>
+<span class="p">)</span>
+
+<span class="c1"># 5. Simulate MUAPs (parallel processing)</span>
+<span class="n">muaps</span> <span class="o">=</span> <span class="n">surface_emg</span><span class="o">.</span><span class="n">simulate_muaps</span><span class="p">(</span><span class="n">n_jobs</span><span class="o">=-</span><span class="mi">2</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><strong>Access MUAP data</strong>:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+
+<span class="c1"># Get MUAP from motor unit 0</span>
+<span class="n">muap_signal</span> <span class="o">=</span> <span class="n">muaps</span><span class="o">.</span><span class="n">groups</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">segments</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">analogsignals</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;MUAP shape: </span><span class="si">{</span><span class="n">muap_signal</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>  <span class="c1"># (time, rows, cols)</span>
+
+<span class="c1"># Extract from specific electrode (row 2, col 2)</span>
+<span class="n">electrode_muap</span> <span class="o">=</span> <span class="n">muap_signal</span><span class="p">[:,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">]</span>
+<span class="n">peak_amplitude</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">electrode_muap</span><span class="o">.</span><span class="n">magnitude</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Peak amplitude: </span><span class="si">{</span><span class="n">peak_amplitude</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">electrode_muap</span><span class="o">.</span><span class="n">units</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><strong>For full EMG simulation</strong> with spike trains, see <a class="reference external" href="https://nsquaredlab.github.io/MyoGen/examples/">examples</a></p>
+</section>
+<section class="tex2jax_ignore mathjax_ignore" id="documentation">
+<h1>Documentation<a class="headerlink" href="#documentation" title="Link to this heading">#</a></h1>
+<p>📖 <strong><a class="reference external" href="https://nsquaredlab.github.io/MyoGen/">Read the full documentation</a></strong></p>
+<ul class="simple">
+<li><p><a class="reference external" href="https://nsquaredlab.github.io/MyoGen/neo_blocks_guide.html">User Guide</a> — Working with simulation outputs</p></li>
+<li><p><a class="reference external" href="https://nsquaredlab.github.io/MyoGen/api/">API Reference</a> — Complete class documentation</p></li>
+<li><p><a class="reference internal" href="examples.html"><span class="doc std std-doc">Examples</span></a> — 9 step-by-step tutorials from recruitment to EMG</p></li>
+</ul>
+</section>
+<section class="tex2jax_ignore mathjax_ignore" id="how-to-cite">
+<h1>How to Cite<a class="headerlink" href="#how-to-cite" title="Link to this heading">#</a></h1>
+<p>If you use MyoGen in your research, please cite:</p>
+<p>TBD</p>
+</section>
+<section class="tex2jax_ignore mathjax_ignore" id="contributing">
+<h1>Contributing<a class="headerlink" href="#contributing" title="Link to this heading">#</a></h1>
+<p>Contributions welcome! See <a class="reference external" href="https://github.com/NsquaredLab/MyoGen/issues">issues</a> if you want to add a feature or fix a bug.</p>
+</section>
+<section class="tex2jax_ignore mathjax_ignore" id="license">
+<h1>License<a class="headerlink" href="#license" title="Link to this heading">#</a></h1>
+<p>MyoGen is AGPL licensed. See <a class="reference external" href="https://github.com/NsquaredLab/MyoGen/LICENSE.md">LICENSE</a> for details.</p>
+<hr class="docutils" />
 <section id="package-structure">
 <h2>Package Structure<a class="headerlink" href="#package-structure" title="Link to this heading">#</a></h2>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>MyoGen/
@@ -429,6 +525,8 @@
 ├── pyproject.toml       # Project metadata and dependencies
 └── uv.lock              # Pinned versions of dependencies
 </pre></div>
+</div>
+<div class="toctree-wrapper compound">
 </div>
 <div class="toctree-wrapper compound">
 </div>
@@ -460,37 +558,22 @@
   </div>
   <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
     <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#installation">Installation</a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#">Overview</a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#highlights">Highlights</a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#installation">Installation</a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#quick-start">Quick Start</a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#documentation">Documentation</a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#how-to-cite">How to Cite</a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#contributing">Contributing</a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#license">License</a><ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#package-structure">Package Structure</a><ul class="visible nav section-nav flex-column">
 </ul>
 </li>
 </ul>
+</li>
+</ul>
+
   </nav></div>
-
-  <div class="sidebar-secondary-item">
-
-  
-  <div class="tocsection editthispage">
-    <a href="https://github.com/NSquaredLab/MyoGen/edit/main/docs/index.rst">
-      <i class="fa-solid fa-pencil"></i>
-      
-      
-        
-          Edit on GitHub
-        
-      
-    </a>
-  </div>
-</div>
-
-  <div class="sidebar-secondary-item">
-  <div role="note" aria-label="source link">
-    <h3>This Page</h3>
-    <ul class="this-page-menu">
-      <li><a href="_sources/index.rst.txt"
-            rel="nofollow">Show Source</a></li>
-    </ul>
-   </div></div>
 
 </div></div>
               

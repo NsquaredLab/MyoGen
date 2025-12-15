@@ -29,14 +29,22 @@
   <link href="../../../../../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
 <link href="../../../../../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
 
-    <link rel="stylesheet" type="text/css" href="../../../../../../_static/pygments.css?v=8f2a1f02" />
-    <link rel="stylesheet" type="text/css" href="../../../../../../_static/custom.css?v=34f00721" />
+    <link rel="stylesheet" type="text/css" href="../../../../../../_static/pygments.css?v=5349f25f" />
+    <link rel="stylesheet" type="text/css" href="../../../../../../_static/css/tooltipster.custom.css" />
+    <link rel="stylesheet" type="text/css" href="../../../../../../_static/css/tooltipster.bundle.min.css" />
+    <link rel="stylesheet" type="text/css" href="../../../../../../_static/css/tooltipster-sideTip-shadow.min.css" />
+    <link rel="stylesheet" type="text/css" href="../../../../../../_static/css/tooltipster-sideTip-punk.min.css" />
+    <link rel="stylesheet" type="text/css" href="../../../../../../_static/css/tooltipster-sideTip-noir.min.css" />
+    <link rel="stylesheet" type="text/css" href="../../../../../../_static/css/tooltipster-sideTip-light.min.css" />
+    <link rel="stylesheet" type="text/css" href="../../../../../../_static/css/tooltipster-sideTip-borderless.min.css" />
+    <link rel="stylesheet" type="text/css" href="../../../../../../_static/css/micromodal.css" />
+    <link rel="stylesheet" type="text/css" href="../../../../../../_static/custom.css?v=9b95bd4c" />
     <link rel="stylesheet" type="text/css" href="../../../../../../_static/sg_gallery.css?v=d2d258e8" />
     <link rel="stylesheet" type="text/css" href="../../../../../../_static/sg_gallery-binder.css?v=f4aeca0c" />
     <link rel="stylesheet" type="text/css" href="../../../../../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
     <link rel="stylesheet" type="text/css" href="../../../../../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
     <link rel="stylesheet" type="text/css" href="../../../../../../_static/sphinx-design.min.css?v=95c83b7e" />
-    <link rel="stylesheet" type="text/css" href="../../../../../../_static/custom.css?v=34f00721" />
+    <link rel="stylesheet" type="text/css" href="../../../../../../_static/custom.css?v=9b95bd4c" />
   
   <!-- So that users can add custom icons -->
   <script src="../../../../../../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
@@ -44,18 +52,382 @@
   <link rel="preload" as="script" href="../../../../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="../../../../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
+    <script src="../../../../../../_static/jquery.js?v=5d32c60e"></script>
+    <script src="../../../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
     <script src="../../../../../../_static/documentation_options.js?v=1437fa6d"></script>
     <script src="../../../../../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
-    <script src="../../../../../../_static/custom.js?v=a236ca48"></script>
+    <script src="../../../../../../_static/js/hoverxref.js"></script>
+    <script src="../../../../../../_static/js/tooltipster.bundle.min.js"></script>
+    <script src="../../../../../../_static/js/micromodal.min.js"></script>
+    <script src="../../../../../../_static/custom.js?v=e0e269b1"></script>
     <script src="../../../../../../_static/design-tabs.js?v=f930bc37"></script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script type="module" src="https://cdn.jsdelivr.net/npm/mermaid@11.9.0/dist/mermaid.esm.min.mjs"></script>
-    <script type="module" src="https://cdn.jsdelivr.net/npm/@mermaid-js/layout-elk@0.1.4/dist/mermaid-layout-elk.esm.min.mjs"></script>
-    <script type="module">import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@11.9.0/dist/mermaid.esm.min.mjs";import elkLayouts from "https://cdn.jsdelivr.net/npm/@mermaid-js/layout-elk@0.1.4/dist/mermaid-layout-elk.esm.min.mjs";mermaid.registerLayoutLoaders(elkLayouts);mermaid.initialize({startOnLoad:false});</script>
+    <script type="module" src="https://cdn.jsdelivr.net/npm/@mermaid-js/layout-elk@0.2.0/dist/mermaid-layout-elk.esm.min.mjs"></script>
+    <script type="module">import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@11.9.0/dist/mermaid.esm.min.mjs";import elkLayouts from "https://cdn.jsdelivr.net/npm/@mermaid-js/layout-elk@0.2.0/dist/mermaid-layout-elk.esm.min.mjs";mermaid.registerLayoutLoaders(elkLayouts);mermaid.initialize({startOnLoad:false});</script>
     <script src="https://cdn.jsdelivr.net/npm/d3@7.9.0/dist/d3.min.js"></script>
-    <script type="module">
-import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@11.9.0/dist/mermaid.esm.min.mjs";
-window.addEventListener("load", () => mermaid.run());
+    <script type="module">import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@11.9.0/dist/mermaid.esm.min.mjs";
+
+const defaultStyle = document.createElement('style');
+defaultStyle.textContent = `pre.mermaid {
+    /* Same as .mermaid-container > pre */
+    display: block;
+    width: 100%;
+}
+
+pre.mermaid > svg {
+    /* Same as .mermaid-container > pre > svg */
+    height: 500px;
+    width: 100%;
+    max-width: 100% !important;
+}
+`;
+document.head.appendChild(defaultStyle);
+
+const fullscreenStyle = document.createElement('style');
+fullscreenStyle.textContent = `.mermaid-container {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+}
+
+.mermaid-container > pre {
+    display: block;
+    width: 100%;
+}
+
+.mermaid-container > pre > svg {
+    height: 500px;
+    width: 100%;
+    max-width: 100% !important;
+}
+
+.mermaid-fullscreen-btn {
+    width: 28px;
+    height: 28px;
+    background: rgba(255, 255, 255, 0.95);
+    border: 1px solid rgba(0, 0, 0, 0.3);
+    border-radius: 4px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+    font-size: 14px;
+    line-height: 1;
+    padding: 0;
+    color: #333;
+}
+
+.mermaid-fullscreen-btn:hover {
+    opacity: 100% !important;
+    background: rgba(255, 255, 255, 1);
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3);
+    transform: scale(1.1);
+}
+
+.mermaid-fullscreen-btn.dark-theme {
+    background: rgba(50, 50, 50, 0.95);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    color: #e0e0e0;
+}
+
+.mermaid-fullscreen-btn.dark-theme:hover {
+    background: rgba(60, 60, 60, 1);
+    box-shadow: 0 3px 10px rgba(255, 255, 255, 0.2);
+}
+
+.mermaid-fullscreen-modal {
+    display: none;
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 95vw;
+    height: 100vh;
+    background: rgba(255, 255, 255, 0.98);
+    z-index: 9999;
+    padding: 20px;
+    overflow: auto;
+}
+
+.mermaid-fullscreen-modal.dark-theme {
+    background: rgba(0, 0, 0, 0.98);
+}
+
+.mermaid-fullscreen-modal.active {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.mermaid-container-fullscreen {
+    position: relative;
+    width: 95vw;
+    height: 90vh;
+    max-width: 95vw;
+    max-height: 90vh;
+    background: white;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+    overflow: auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.mermaid-container-fullscreen.dark-theme {
+    background: #1a1a1a;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8);
+}
+
+.mermaid-container-fullscreen pre.mermaid {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.mermaid-container-fullscreen .mermaid svg {
+    height: 100% !important;
+    width: 100% !important;
+    cursor: grab;
+}
+
+.mermaid-fullscreen-close {
+    position: fixed !important;
+    top: 20px !important;
+    right: 20px !important;
+    width: 40px;
+    height: 40px;
+    background: rgba(255, 255, 255, 0.95);
+    border: 1px solid rgba(0, 0, 0, 0.2);
+    border-radius: 50%;
+    cursor: pointer;
+    z-index: 10000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    transition: all 0.2s;
+    font-size: 24px;
+    line-height: 1;
+    color: #333;
+}
+
+.mermaid-fullscreen-close:hover {
+    background: white;
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
+    transform: scale(1.1);
+}
+
+.mermaid-fullscreen-close.dark-theme {
+    background: rgba(50, 50, 50, 0.95);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: #e0e0e0;
+}
+
+.mermaid-fullscreen-close.dark-theme:hover {
+    background: rgba(60, 60, 60, 1);
+    box-shadow: 0 6px 16px rgba(255, 255, 255, 0.2);
+}
+
+.mermaid-fullscreen-modal .mermaid-fullscreen-btn {
+    display: none !important;
+}`;
+document.head.appendChild(fullscreenStyle);
+
+// Detect if page has dark background
+const isDarkTheme = () => {
+    const bgColor = window.getComputedStyle(document.body).backgroundColor;
+    const match = bgColor.match(/rgb\((\d+),\s*(\d+),\s*(\d+)/);
+    if (match) {
+        const r = parseInt(match[1]);
+        const g = parseInt(match[2]);
+        const b = parseInt(match[3]);
+        const brightness = (r * 299 + g * 587 + b * 114) / 1000;
+        return brightness < 128;
+    }
+    return false;
+};
+
+const load = async () => {
+    await mermaid.run();
+
+    const all_mermaids = document.querySelectorAll(".mermaid");
+    const mermaids_processed = document.querySelectorAll(".mermaid[data-processed='true']");
+
+    if ("False" === "True") {
+        const mermaids_to_add_zoom = -1 === -1 ? all_mermaids.length : -1;
+        if(mermaids_to_add_zoom > 0) {
+            var svgs = d3.selectAll("");
+            if(all_mermaids.length !== mermaids_processed.length) {
+                setTimeout(load, 200);
+                return;
+            } else if(svgs.size() !== mermaids_to_add_zoom) {
+                setTimeout(load, 200);
+                return;
+            } else {
+                svgs.each(function() {
+                    var svg = d3.select(this);
+                    svg.html("<g class='wrapper'>" + svg.html() + "</g>");
+                    var inner = svg.select("g");
+                    var zoom = d3.zoom().on("zoom", function(event) {
+                        inner.attr("transform", event.transform);
+                    });
+                    svg.call(zoom);
+                });
+            }
+        }
+    } else if(all_mermaids.length !== mermaids_processed.length) {
+        // Wait for mermaid to process all diagrams
+        setTimeout(load, 200);
+        return;
+    }
+
+    const darkTheme = isDarkTheme();
+
+    // Stop here if not adding fullscreen capability
+    if ("True" !== "True") return;
+
+    const modal = document.createElement('div');
+    modal.className = 'mermaid-fullscreen-modal' + (darkTheme ? ' dark-theme' : '');
+    modal.setAttribute('role', 'dialog');
+    modal.setAttribute('aria-modal', 'true');
+    modal.setAttribute('aria-label', 'Fullscreen diagram viewer');
+    modal.innerHTML = `
+        <button class="mermaid-fullscreen-close${darkTheme ? ' dark-theme' : ''}" aria-label="Close fullscreen">✕</button>
+        <div class="mermaid-container-fullscreen${darkTheme ? ' dark-theme' : ''}"></div>
+    `;
+    document.body.appendChild(modal);
+
+    const modalContent = modal.querySelector('.mermaid-container-fullscreen');
+    const closeBtn = modal.querySelector('.mermaid-fullscreen-close');
+
+    let previousScrollOffset = [window.scrollX, window.scrollY];
+
+    const closeModal = () => {
+        modal.classList.remove('active');
+        modalContent.innerHTML = '';
+        document.body.style.overflow = ''
+        window.scrollTo({left: previousScrollOffset[0], top: previousScrollOffset[1], behavior: 'instant'});
+    };
+
+    closeBtn.addEventListener('click', closeModal);
+    modal.addEventListener('click', (e) => {
+        if (e.target === modal) closeModal();
+    });
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && modal.classList.contains('active')) {
+            closeModal();
+        }
+    });
+
+    const allButtons = [];
+
+    document.querySelectorAll('.mermaid').forEach((mermaidDiv) => {
+        if (mermaidDiv.parentNode.classList.contains('mermaid-container') ||
+            mermaidDiv.closest('.mermaid-fullscreen-modal')) {
+            return;
+        }
+
+        const container = document.createElement('div');
+        container.className = 'mermaid-container';
+        mermaidDiv.parentNode.insertBefore(container, mermaidDiv);
+        container.appendChild(mermaidDiv);
+
+        const fullscreenBtn = document.createElement('button');
+        fullscreenBtn.className = 'mermaid-fullscreen-btn' + (darkTheme ? ' dark-theme' : '');
+        fullscreenBtn.setAttribute('aria-label', 'View diagram in fullscreen');
+        fullscreenBtn.textContent = '⛶';
+        fullscreenBtn.style.opacity = '50%';
+
+        // Calculate dynamic position based on diagram's margin and padding
+        const diagramStyle = window.getComputedStyle(mermaidDiv);
+        const marginTop = parseFloat(diagramStyle.marginTop) || 0;
+        const marginRight = parseFloat(diagramStyle.marginRight) || 0;
+        const paddingTop = parseFloat(diagramStyle.paddingTop) || 0;
+        const paddingRight = parseFloat(diagramStyle.paddingRight) || 0;
+        fullscreenBtn.style.top = `${marginTop + paddingTop + 4}px`;
+        fullscreenBtn.style.right = `${marginRight + paddingRight + 4}px`;
+
+        fullscreenBtn.addEventListener('click', () => {
+            previousScrollOffset = [window.scroll, window.scrollY];
+            const clone = mermaidDiv.cloneNode(true);
+            modalContent.innerHTML = '';
+            modalContent.appendChild(clone);
+
+            const svg = clone.querySelector('svg');
+            if (svg) {
+                svg.removeAttribute('width');
+                svg.removeAttribute('height');
+                svg.style.width = '100%';
+                svg.style.height = 'auto';
+                svg.style.maxWidth = '100%';
+                svg.style.sdisplay = 'block';
+
+                if ("False" === "True") {
+                    setTimeout(() => {
+                        const g = svg.querySelector('g');
+                        if (g) {
+                            var svgD3 = d3.select(svg);
+                            svgD3.html("<g class='wrapper'>" + svgD3.html() + "</g>");
+                            var inner = svgD3.select("g");
+                            var zoom = d3.zoom().on("zoom", function(event) {
+                                inner.attr("transform", event.transform);
+                            });
+                            svgD3.call(zoom);
+                        }
+                    }, 100);
+                }
+            }
+
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        });
+
+        container.appendChild(fullscreenBtn);
+        allButtons.push(fullscreenBtn);
+    });
+
+    // Update theme classes when theme changes
+    const updateTheme = () => {
+        const dark = isDarkTheme();
+        allButtons.forEach(btn => {
+            if (dark) {
+                btn.classList.add('dark-theme');
+            } else {
+                btn.classList.remove('dark-theme');
+            }
+        });
+        if (dark) {
+            modal.classList.add('dark-theme');
+            modalContent.classList.add('dark-theme');
+            closeBtn.classList.add('dark-theme');
+        } else {
+            modal.classList.remove('dark-theme');
+            modalContent.classList.remove('dark-theme');
+            closeBtn.classList.remove('dark-theme');
+        }
+    };
+
+    // Watch for theme changes
+    const observer = new MutationObserver(updateTheme);
+    observer.observe(document.documentElement, {
+        attributes: true,
+        attributeFilter: ['class', 'style', 'data-theme']
+    });
+    observer.observe(document.body, {
+        attributes: true,
+        attributeFilter: ['class', 'style']
+    });
+};
+
+window.addEventListener("load", load);
 </script>
     <script>DOCUMENTATION_OPTIONS.pagename = '_modules/myogen/simulator/core/emg/surface/surface_emg';</script>
     <link rel="index" title="Index" href="../../../../../../genindex.html" />
@@ -101,7 +473,7 @@ window.addEventListener("load", () => mermaid.run());
   <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
 </div>
 <aside class="bd-header-announcement" aria-label="Announcement">
-  <div class="bd-header-announcement__content">⚠️ MyoGen is under active development. API may change.</div>
+  <div class="bd-header-announcement__content">MyoGen is under active development. API may change.</div>
 </aside>
 
   
@@ -173,7 +545,14 @@ window.addEventListener("load", () => mermaid.run());
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../../../../auto_examples/index.html">
+  <a class="nav-link nav-internal" href="../../../../../../neo_blocks_guide.html">
+    Working with Neo Block Data Structures
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../../examples.html">
     Examples
   </a>
 </li>
@@ -269,7 +648,14 @@ window.addEventListener("load", () => mermaid.run());
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../../../../auto_examples/index.html">
+  <a class="nav-link nav-internal" href="../../../../../../neo_blocks_guide.html">
+    Working with Neo Block Data Structures
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../../examples.html">
     Examples
   </a>
 </li>
@@ -350,6 +736,9 @@ window.addEventListener("load", () => mermaid.run());
     
     <li class="breadcrumb-item"><a href="../../../../../index.html" class="nav-link">Module code</a></li>
     
+    
+    <li class="breadcrumb-item"><a href="../../../../../myogen.html" class="nav-link">myogen</a></li>
+    
     <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">myogen.simulator.core.emg.surface.surface_emg</span></li>
   </ul>
 </nav>
@@ -368,8 +757,9 @@ window.addEventListener("load", () => mermaid.run());
                 <article class="bd-article">
                   
   <h1>Source code for myogen.simulator.core.emg.surface.surface_emg</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">warnings</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Optional</span>
+<span></span><span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Optional</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">myogen.utils.neo</span><span class="w"> </span><span class="kn">import</span> <span class="n">GridAnalogSignal</span>
 
 <span class="k">try</span><span class="p">:</span>
     <span class="kn">import</span><span class="w"> </span><span class="nn">cupy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">cp</span>
@@ -378,22 +768,29 @@ window.addEventListener("load", () => mermaid.run());
 <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
     <span class="n">HAS_CUPY</span> <span class="o">=</span> <span class="kc">False</span>
 
+<span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">copy</span><span class="w"> </span><span class="kn">import</span> <span class="n">deepcopy</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">elephant</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">elephant.utils</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">quantities</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pq</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">joblib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Parallel</span><span class="p">,</span> <span class="n">delayed</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">neo</span><span class="w"> </span><span class="kn">import</span> <span class="n">Block</span><span class="p">,</span> <span class="n">Group</span><span class="p">,</span> <span class="n">Segment</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">scipy.signal</span><span class="w"> </span><span class="kn">import</span> <span class="n">resample</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">tqdm</span><span class="w"> </span><span class="kn">import</span> <span class="n">tqdm</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">myogen</span><span class="w"> </span><span class="kn">import</span> <span class="n">RANDOM_GENERATOR</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">myogen.simulator.core.muscle</span><span class="w"> </span><span class="kn">import</span> <span class="n">Muscle</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">myogen.simulator.core.spike_train</span><span class="w"> </span><span class="kn">import</span> <span class="n">MotorNeuronPool</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">myogen.simulator.core.emg.surface.simulate_fiber</span><span class="w"> </span><span class="kn">import</span> <span class="n">simulate_fiber_v2</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">myogen.simulator.core.emg.electrodes</span><span class="w"> </span><span class="kn">import</span> <span class="n">SurfaceElectrodeArray</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">myogen.simulator.core.emg.surface.simulate_fiber</span><span class="w"> </span><span class="kn">import</span> <span class="n">simulate_fiber_v2</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">myogen.simulator.core.muscle</span><span class="w"> </span><span class="kn">import</span> <span class="n">Muscle</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">myogen.utils.decorators</span><span class="w"> </span><span class="kn">import</span> <span class="n">beartowertype</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">myogen.utils.types</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
-    <span class="n">SURFACE_MUAP_SHAPE__TENSOR</span><span class="p">,</span>
-    <span class="n">SURFACE_EMG__TENSOR</span><span class="p">,</span>
-    <span class="n">beartowertype</span><span class="p">,</span>
+    <span class="n">Quantity__Hz</span><span class="p">,</span>
+    <span class="n">SPIKE_TRAIN__Block</span><span class="p">,</span>
+    <span class="n">SURFACE_EMG__Block</span><span class="p">,</span>
+    <span class="n">SURFACE_MUAP__Block</span><span class="p">,</span>
 <span class="p">)</span>
-
-<span class="c1"># Suppress warnings for cleaner output during batch simulations</span>
-<span class="n">warnings</span><span class="o">.</span><span class="n">filterwarnings</span><span class="p">(</span><span class="s2">&quot;ignore&quot;</span><span class="p">)</span>
 
 
 <div class="viewcode-block" id="SurfaceEMG">
@@ -421,27 +818,45 @@ window.addEventListener("load", () => mermaid.run());
 <span class="sd">        impacts computational cost (scales quadratically).</span>
 <span class="sd">        Higher values provide better numerical accuracy at the expense of simulation time.</span>
 <span class="sd">        Default is set to 256 samples.</span>
-<span class="sd">    sampling_points_in_theta_domain : int, default=180</span>
+<span class="sd">    sampling_points_in_theta_domain : int, default=32</span>
 <span class="sd">        Angular discretization for cylindrical coordinate system in degrees.</span>
-<span class="sd">        Higher values provide better spatial resolution for circumferential electrode placement studies.</span>
-<span class="sd">        Default is set to 180 points, which provides 2° angular resolution.</span>
+<span class="sd">        Higher values provide better spatial resolution but cause numerical overflow in Bessel functions.</span>
+<span class="sd">        Default is set to 32 points to avoid numerical instability.</span>
+<span class="sd">        WARNING: Values &gt;64 cause extreme Bessel function overflow leading to incorrect results.</span>
 <span class="sd">        This is suitable for most EMG studies.</span>
 <span class="sd">    MUs_to_simulate : list[int], optional</span>
 <span class="sd">        Indices of motor units to simulate. If None, all motor units are simulated.</span>
 <span class="sd">        Default is None. For computational efficiency, consider</span>
 <span class="sd">        simulating subsets for initial analysis.</span>
 <span class="sd">        Indices correspond to the recruitment order (0 is recruited first).</span>
+<span class="sd">    internal_sampling_frequency__Hz : Quantity__Hz, optional</span>
+<span class="sd">        Internal sampling frequency for MUAP computation before downsampling.</span>
+<span class="sd">        If None, defaults to 10 kHz. Higher values provide better temporal resolution</span>
+<span class="sd">        but increase computation time. Default is 10 kHz.</span>
+<span class="sd">    iap_kernel_length__mm : float, optional</span>
+<span class="sd">        Physical spatial extent for intracellular action potential (IAP) kernel evaluation in mm.</span>
+<span class="sd">        If None (default), uses individual fiber lengths from muscle model, ensuring</span>
+<span class="sd">        MUAP duration is physiologically accurate and independent of sampling resolution.</span>
+
+<span class="sd">        **Recommended**: Leave as None to use fiber-specific lengths for most realistic MUAPs.</span>
+
+<span class="sd">        Alternatively, set to a fixed value (e.g., 80-100 mm) to use the same kernel</span>
+<span class="sd">        extent for all fibers, which can simplify analysis but may be less physiologically</span>
+<span class="sd">        accurate for muscles with variable fiber lengths.</span>
+
+<span class="sd">        This parameter controls the spatial extent over which the IAP waveform is computed,</span>
+<span class="sd">        directly affecting MUAP duration: duration ≈ iap_kernel_length__mm / (2 * v) ms.</span>
 
 <span class="sd">    Attributes</span>
 <span class="sd">    ----------</span>
-<span class="sd">    muaps : list[SURFACE_MUAP_SHAPE__TENSOR]</span>
-<span class="sd">        Motor Unit Action Potential (MUAP) templates for each electrode array. Available after simulate_muaps().</span>
-<span class="sd">    surface_emg__tensors : list[SURFACE_EMG__TENSOR]</span>
-<span class="sd">        Surface EMG signals for each electrode array. Available after simulate_surface_emg().</span>
-<span class="sd">    noisy_surface_emg__tensors : list[SURFACE_EMG__TENSOR]</span>
-<span class="sd">        Noisy surface EMG signals for each electrode array. Available after add_noise().</span>
-<span class="sd">    motor_neuron_pool : MotorNeuronPool</span>
-<span class="sd">        Motor neuron pool used for EMG generation. Available after simulate_surface_emg().</span>
+<span class="sd">    muaps__Block : SURFACE_MUAP__Block</span>
+<span class="sd">        Motor Unit Action Potential (MUAP) templates for each electrode array as a neo.Block. Available after simulate_muaps().</span>
+<span class="sd">    surface_emg__Block : SURFACE_EMG__Block</span>
+<span class="sd">        Surface EMG signals for each electrode array as a neo.Block. Available after simulate_surface_emg().</span>
+<span class="sd">    noisy_surface_emg__Block : SURFACE_EMG__Block</span>
+<span class="sd">        Noisy surface EMG signals for each electrode array as a neo.Block. Available after add_noise().</span>
+<span class="sd">    spike_train__Block : SPIKE_TRAIN__Block</span>
+<span class="sd">        Spike train block used for EMG generation signals. Available after simulate_surface_emg().</span>
 
 <span class="sd">    References</span>
 <span class="sd">    ----------</span>
@@ -454,10 +869,12 @@ window.addEventListener("load", () => mermaid.run());
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">muscle_model</span><span class="p">:</span> <span class="n">Muscle</span><span class="p">,</span>
         <span class="n">electrode_arrays</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">SurfaceElectrodeArray</span><span class="p">],</span>
-        <span class="n">sampling_frequency__Hz</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">2048.0</span><span class="p">,</span>
+        <span class="n">sampling_frequency__Hz</span><span class="p">:</span> <span class="n">Quantity__Hz</span> <span class="o">=</span> <span class="mf">2048.0</span> <span class="o">*</span> <span class="n">pq</span><span class="o">.</span><span class="n">Hz</span><span class="p">,</span>
         <span class="n">sampling_points_in_t_and_z_domains</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">256</span><span class="p">,</span>
-        <span class="n">sampling_points_in_theta_domain</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">180</span><span class="p">,</span>
+        <span class="n">sampling_points_in_theta_domain</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">32</span><span class="p">,</span>
         <span class="n">MUs_to_simulate</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">internal_sampling_frequency__Hz</span><span class="p">:</span> <span class="n">Quantity__Hz</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">iap_kernel_length__mm</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">):</span>
         <span class="c1"># Immutable public arguments - never modify these</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">muscle_model</span> <span class="o">=</span> <span class="n">muscle_model</span>
@@ -466,86 +883,121 @@ window.addEventListener("load", () => mermaid.run());
         <span class="bp">self</span><span class="o">.</span><span class="n">sampling_points_in_t_and_z_domains</span> <span class="o">=</span> <span class="n">sampling_points_in_t_and_z_domains</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">sampling_points_in_theta_domain</span> <span class="o">=</span> <span class="n">sampling_points_in_theta_domain</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">MUs_to_simulate</span> <span class="o">=</span> <span class="n">MUs_to_simulate</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">iap_kernel_length__mm</span> <span class="o">=</span> <span class="n">iap_kernel_length__mm</span>
 
-        <span class="c1"># Private copies for internal modifications</span>
+        <span class="c1"># Internal sampling frequency for higher resolution MUAP computation</span>
+        <span class="c1"># If not specified, defaults to 10 kHz for better MUAP resolution</span>
+        <span class="k">if</span> <span class="n">internal_sampling_frequency__Hz</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">internal_sampling_frequency__Hz</span> <span class="o">=</span> <span class="mf">10000.0</span> <span class="o">*</span> <span class="n">pq</span><span class="o">.</span><span class="n">Hz</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">internal_sampling_frequency__Hz</span> <span class="o">=</span> <span class="n">internal_sampling_frequency__Hz</span>
+
+        <span class="c1"># Private copies for internal modifications (extract magnitudes)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_muscle_model</span> <span class="o">=</span> <span class="n">muscle_model</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_electrode_arrays</span> <span class="o">=</span> <span class="n">electrode_arrays</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_sampling_frequency__Hz</span> <span class="o">=</span> <span class="n">sampling_frequency__Hz</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_sampling_frequency__Hz</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">sampling_frequency__Hz</span><span class="o">.</span><span class="n">rescale</span><span class="p">(</span><span class="n">pq</span><span class="o">.</span><span class="n">Hz</span><span class="p">)</span><span class="o">.</span><span class="n">magnitude</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_internal_sampling_frequency__Hz</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span>
+            <span class="n">internal_sampling_frequency__Hz</span><span class="o">.</span><span class="n">rescale</span><span class="p">(</span><span class="n">pq</span><span class="o">.</span><span class="n">Hz</span><span class="p">)</span><span class="o">.</span><span class="n">magnitude</span>
+        <span class="p">)</span>
+
+        <span class="c1"># Calculate upsampling factor and internal sample count</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_upsampling_factor</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_internal_sampling_frequency__Hz</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sampling_frequency__Hz</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_internal_sampling_points</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">sampling_points_in_t_and_z_domains</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_upsampling_factor</span><span class="p">)</span>
+        <span class="p">)</span>
+
         <span class="bp">self</span><span class="o">.</span><span class="n">_sampling_points_in_t_and_z_domains</span> <span class="o">=</span> <span class="n">sampling_points_in_t_and_z_domains</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_sampling_points_in_theta_domain</span> <span class="o">=</span> <span class="n">sampling_points_in_theta_domain</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_MUs_to_simulate</span> <span class="o">=</span> <span class="n">MUs_to_simulate</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_iap_kernel_length__mm</span> <span class="o">=</span> <span class="n">iap_kernel_length__mm</span>
 
         <span class="c1"># Derived properties from muscle model - immutable public access</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">mean_conduction_velocity__m_s</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_muscle_model</span><span class="o">.</span><span class="n">mean_conduction_velocity__m_s</span>
-        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mean_conduction_velocity__m_s</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_muscle_model</span><span class="o">.</span><span class="n">mean_conduction_velocity__m_s</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">mean_fiber_length__mm</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_muscle_model</span><span class="o">.</span><span class="n">mean_fiber_length__mm</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">var_fiber_length__mm</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_muscle_model</span><span class="o">.</span><span class="n">var_fiber_length__mm</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">radius_bone__mm</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_muscle_model</span><span class="o">.</span><span class="n">radius_bone__mm</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">fat_thickness__mm</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_muscle_model</span><span class="o">.</span><span class="n">fat_thickness__mm</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">skin_thickness__mm</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_muscle_model</span><span class="o">.</span><span class="n">skin_thickness__mm</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">muscle_conductivity_radial__S_m</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_muscle_model</span><span class="o">.</span><span class="n">muscle_conductivity_radial__S_m</span>
-        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">muscle_conductivity_radial__S_m</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_muscle_model</span><span class="o">.</span><span class="n">muscle_conductivity_radial__S_m</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">muscle_conductivity_longitudinal__S_m</span> <span class="o">=</span> <span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_muscle_model</span><span class="o">.</span><span class="n">muscle_conductivity_longitudinal__S_m</span>
         <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">fat_conductivity__S_m</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_muscle_model</span><span class="o">.</span><span class="n">fat_conductivity__S_m</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">skin_conductivity__S_m</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_muscle_model</span><span class="o">.</span><span class="n">skin_conductivity__S_m</span>
 
-        <span class="c1"># Private copies for internal modifications</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_mean_conduction_velocity__m_s</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="c1"># Private copies for internal modifications (extract magnitudes if Quantity objects)</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">_extract_value</span><span class="p">(</span><span class="n">val</span><span class="p">):</span>
+<span class="w">            </span><span class="sd">&quot;&quot;&quot;Helper to extract magnitude from Quantity or return float directly.&quot;&quot;&quot;</span>
+            <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="s2">&quot;magnitude&quot;</span><span class="p">):</span>
+                <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">val</span><span class="o">.</span><span class="n">magnitude</span><span class="p">)</span>
+            <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">val</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_mean_conduction_velocity__m_s</span> <span class="o">=</span> <span class="n">_extract_value</span><span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_muscle_model</span><span class="o">.</span><span class="n">mean_conduction_velocity__m_s</span>
         <span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_mean_fiber_length__mm</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_muscle_model</span><span class="o">.</span><span class="n">mean_fiber_length__mm</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_var_fiber_length__mm</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_muscle_model</span><span class="o">.</span><span class="n">var_fiber_length__mm</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_radius_bone__mm</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_muscle_model</span><span class="o">.</span><span class="n">radius_bone__mm</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_fat_thickness__mm</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_muscle_model</span><span class="o">.</span><span class="n">fat_thickness__mm</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_skin_thickness__mm</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_muscle_model</span><span class="o">.</span><span class="n">skin_thickness__mm</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_muscle_conductivity_radial__S_m</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_mean_fiber_length__mm</span> <span class="o">=</span> <span class="n">_extract_value</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_muscle_model</span><span class="o">.</span><span class="n">mean_fiber_length__mm</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_var_fiber_length__mm</span> <span class="o">=</span> <span class="n">_extract_value</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_muscle_model</span><span class="o">.</span><span class="n">var_fiber_length__mm</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_radius_bone__mm</span> <span class="o">=</span> <span class="n">_extract_value</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_muscle_model</span><span class="o">.</span><span class="n">radius_bone__mm</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_fat_thickness__mm</span> <span class="o">=</span> <span class="n">_extract_value</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_muscle_model</span><span class="o">.</span><span class="n">fat_thickness__mm</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_skin_thickness__mm</span> <span class="o">=</span> <span class="n">_extract_value</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_muscle_model</span><span class="o">.</span><span class="n">skin_thickness__mm</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_muscle_conductivity_radial__S_m</span> <span class="o">=</span> <span class="n">_extract_value</span><span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_muscle_model</span><span class="o">.</span><span class="n">muscle_conductivity_radial__S_m</span>
         <span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_muscle_conductivity_longitudinal__S_m</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_muscle_conductivity_longitudinal__S_m</span> <span class="o">=</span> <span class="n">_extract_value</span><span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_muscle_model</span><span class="o">.</span><span class="n">muscle_conductivity_longitudinal__S_m</span>
         <span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_fat_conductivity__S_m</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_muscle_model</span><span class="o">.</span><span class="n">fat_conductivity__S_m</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_skin_conductivity__S_m</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_muscle_model</span><span class="o">.</span><span class="n">skin_conductivity__S_m</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_fat_conductivity__S_m</span> <span class="o">=</span> <span class="n">_extract_value</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_muscle_model</span><span class="o">.</span><span class="n">fat_conductivity__S_m</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_skin_conductivity__S_m</span> <span class="o">=</span> <span class="n">_extract_value</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_muscle_model</span><span class="o">.</span><span class="n">skin_conductivity__S_m</span><span class="p">)</span>
 
         <span class="c1"># Calculate total radius - immutable and private</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_radius_muscle__mm</span> <span class="o">=</span> <span class="n">_extract_value</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_muscle_model</span><span class="o">.</span><span class="n">radius__mm</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">radius_total</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_muscle_model</span><span class="o">.</span><span class="n">radius__mm</span>
-            <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fat_thickness__mm</span>
-            <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_skin_thickness__mm</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_radius_muscle__mm</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fat_thickness__mm</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_skin_thickness__mm</span>
         <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_radius_total</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">radius_total</span>
 
         <span class="c1"># Simulation results - stored privately, accessed via properties</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_muaps</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="n">SURFACE_MUAP_SHAPE__TENSOR</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_surface_emg__tensors</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="n">SURFACE_EMG__TENSOR</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_noisy_surface_emg__tensors</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="n">SURFACE_EMG__TENSOR</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_motor_neuron_pool</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">MotorNeuronPool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_muaps__Block</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">SURFACE_MUAP__Block</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_surface_emg__Block</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">SURFACE_EMG__Block</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_noisy_surface_emg__Block</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">SURFACE_EMG__Block</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_spike_train__Block</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">SPIKE_TRAIN__Block</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span></div>
 
 
 <div class="viewcode-block" id="SurfaceEMG.simulate_muaps">
 <a class="viewcode-back" href="../../../../../../generated/myogen.simulator.SurfaceEMG.simulate_muaps.html#myogen.simulator.SurfaceEMG.simulate_muaps">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">simulate_muaps</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">SURFACE_MUAP_SHAPE__TENSOR</span><span class="p">]:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">simulate_muaps</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_jobs</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="o">-</span><span class="mi">2</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">SURFACE_MUAP__Block</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Simulate MUAPs for all electrode arrays using the provided muscle model.</span>
 
 <span class="sd">        This method generates Motor Unit Action Potential (MUAP) templates that represent</span>
 <span class="sd">        the electrical signature of each motor unit as recorded by the surface electrodes.</span>
-<span class="sd">        The simulation uses the multi-layered cylindrical volume conductor model.</span>
+<span class="sd">        The simulation uses the multi-layered cylindrical volume conductor model with</span>
+<span class="sd">        parallel processing for improved performance.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        n_jobs : int, optional</span>
+<span class="sd">            Number of parallel workers for motor unit processing. Default is -2.</span>
+<span class="sd">            - n_jobs=-1: Use all CPU cores</span>
+<span class="sd">            - n_jobs=-2: Use all cores except one (recommended, keeps system responsive)</span>
+<span class="sd">            - n_jobs=-3: Use all cores except two</span>
+<span class="sd">            - n_jobs=1: No parallelization</span>
+<span class="sd">            - n_jobs=N: Use exactly N cores</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        list[SURFACE_MUAP_SHAPE__TENSOR]</span>
-<span class="sd">            List of generated MUAP templates for each electrode array.</span>
+<span class="sd">        SURFACE_MUAP__Block</span>
+<span class="sd">            neo.Block of generated MUAP templates for each electrode array.</span>
 <span class="sd">            Results are stored in the `muaps` property after execution.</span>
 
 <span class="sd">        Notes</span>
 <span class="sd">        -----</span>
 <span class="sd">        This method must be called before simulate_surface_emg(). The generated MUAP</span>
 <span class="sd">        templates are used as basis functions for EMG signal synthesis.</span>
+
+<span class="sd">        The motor units are processed in parallel using joblib, with each motor unit&#39;s</span>
+<span class="sd">        fibers processed sequentially to maintain optimization efficiency.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># Set default MUs to simulate</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_MUs_to_simulate</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -559,157 +1011,278 @@ window.addEventListener("load", () => mermaid.run());
         <span class="p">)</span>  <span class="c1"># 10% of the mean fiber length (see Botelho et al. 2019 [6]_)</span>
 
         <span class="c1"># Extract fiber counts</span>
-        <span class="n">number_of_fibers_per_MUs</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_muscle_model</span><span class="o">.</span><span class="n">resulting_number_of_innervated_fibers</span>
-        <span class="p">)</span>
+        <span class="n">number_of_fibers_per_MUs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_muscle_model</span><span class="o">.</span><span class="n">resulting_number_of_innervated_fibers</span>
 
-        <span class="c1"># Create time array</span>
-        <span class="n">t</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span>
+        <span class="c1"># Create time array at INTERNAL sampling frequency for higher resolution</span>
+        <span class="n">t_internal</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span>
             <span class="mi">0</span><span class="p">,</span>
-            <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_sampling_points_in_t_and_z_domains</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
-            <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sampling_frequency__Hz</span>
-            <span class="o">*</span> <span class="mf">1e-3</span><span class="p">,</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_sampling_points_in_t_and_z_domains</span><span class="p">,</span>
+            <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_internal_sampling_points</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">_internal_sampling_frequency__Hz</span> <span class="o">*</span> <span class="mf">1e-3</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_internal_sampling_points</span><span class="p">,</span>
         <span class="p">)</span>
 
-        <span class="c1"># Pre-calculate innervation zones</span>
+        <span class="c1"># Get total number of motor units</span>
+        <span class="n">n_motor_units</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">number_of_fibers_per_MUs</span><span class="p">)</span>
+
+        <span class="c1"># Pre-calculate innervation zones for all MUs</span>
         <span class="n">innervation_zones</span> <span class="o">=</span> <span class="n">RANDOM_GENERATOR</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span>
             <span class="n">low</span><span class="o">=-</span><span class="n">innervation_zone_variance</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span>
             <span class="n">high</span><span class="o">=</span><span class="n">innervation_zone_variance</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span>
-            <span class="n">size</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_MUs_to_simulate</span><span class="p">),</span>
+            <span class="n">size</span><span class="o">=</span><span class="n">n_motor_units</span><span class="p">,</span>
         <span class="p">)</span>
 
-        <span class="c1"># Initialize output arrays for each electrode array</span>
-        <span class="c1"># Each electrode array can have different dimensions</span>
-        <span class="n">electrode_array_results</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="c1"># Pre-allocate result shape at INTERNAL resolution (optimization: avoid repeated shape calculations)</span>
+        <span class="c1"># Will be downsampled to output resolution after simulation</span>
+        <span class="n">internal_result_shape</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_electrode_arrays</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">num_rows</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_electrode_arrays</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">num_cols</span><span class="p">,</span>
+            <span class="nb">len</span><span class="p">(</span><span class="n">t_internal</span><span class="p">),</span>
+        <span class="p">)</span>
 
-        <span class="k">for</span> <span class="n">array_idx</span><span class="p">,</span> <span class="n">electrode_array</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_electrode_arrays</span><span class="p">):</span>
-            <span class="c1"># Initialize array for this electrode configuration</span>
-            <span class="n">array_result</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span>
-                <span class="p">(</span>
-                    <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_MUs_to_simulate</span><span class="p">),</span>
-                    <span class="n">electrode_array</span><span class="o">.</span><span class="n">num_rows</span><span class="p">,</span>
-                    <span class="n">electrode_array</span><span class="o">.</span><span class="n">num_cols</span><span class="p">,</span>
-                    <span class="nb">len</span><span class="p">(</span><span class="n">t</span><span class="p">),</span>
-                <span class="p">)</span>
-            <span class="p">)</span>
+        <span class="c1"># Final output shape after downsampling</span>
+        <span class="n">output_result_shape</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_electrode_arrays</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">num_rows</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_electrode_arrays</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">num_cols</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_sampling_points_in_t_and_z_domains</span><span class="p">,</span>
+        <span class="p">)</span>
 
-            <span class="c1"># Matrix optimization variables</span>
-            <span class="n">A_matrix</span> <span class="o">=</span> <span class="kc">None</span>
-            <span class="n">B_incomplete</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="c1"># Helper function to process a single motor unit</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">_process_single_mu</span><span class="p">(</span>
+            <span class="n">MU_index</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+            <span class="n">electrode_array_original</span><span class="p">:</span> <span class="n">SurfaceElectrodeArray</span><span class="p">,</span>
+        <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="nb">str</span><span class="p">]:</span>
+<span class="w">            </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            Process a single motor unit (all its fibers) in parallel.</span>
 
-            <span class="c1"># Process each motor unit</span>
-            <span class="k">for</span> <span class="n">MU_number</span><span class="p">,</span> <span class="n">MU_index</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_MUs_to_simulate</span><span class="p">):</span>
+<span class="sd">            Parameters</span>
+<span class="sd">            ----------</span>
+<span class="sd">            MU_index : int</span>
+<span class="sd">                Index of the motor unit to process.</span>
+<span class="sd">            electrode_array_original : SurfaceElectrodeArray</span>
+<span class="sd">                Original electrode array (will be deep-copied to avoid threading issues).</span>
+
+<span class="sd">            Returns</span>
+<span class="sd">            -------</span>
+<span class="sd">            tuple[np.ndarray, str]</span>
+<span class="sd">                Tuple of (array_result, segment_name) where array_result is the accumulated</span>
+<span class="sd">                MUAP signal for this MU and segment_name is the name for the segment.</span>
+<span class="sd">            &quot;&quot;&quot;</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="c1"># Deep copy electrode array to avoid threading issues</span>
+                <span class="n">electrode_array</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">electrode_array_original</span><span class="p">)</span>
+
+                <span class="c1"># Pre-allocated result array at INTERNAL resolution (optimization: use pre-computed shape)</span>
+                <span class="n">array_result_internal</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">internal_result_shape</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+
                 <span class="n">number_of_fibers</span> <span class="o">=</span> <span class="n">number_of_fibers_per_MUs</span><span class="p">[</span><span class="n">MU_index</span><span class="p">]</span>
 
                 <span class="k">if</span> <span class="n">number_of_fibers</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-                    <span class="k">continue</span>
+                    <span class="c1"># Return empty signal (downsampled to output resolution)</span>
+                    <span class="n">array_result_downsampled</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">output_result_shape</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+                    <span class="k">return</span> <span class="n">array_result_downsampled</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;MUAP_</span><span class="si">{</span><span class="n">MU_index</span><span class="si">}</span><span class="s2">&quot;</span>
 
                 <span class="c1"># Get fiber positions</span>
-                <span class="n">position_of_fibers</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_muscle_model</span><span class="o">.</span><span class="n">resulting_fiber_assignment</span><span class="p">(</span>
-                    <span class="n">MU_index</span>
+                <span class="n">position_of_fibers_raw</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_muscle_model</span><span class="o">.</span><span class="n">resulting_fiber_assignment</span><span class="p">(</span><span class="n">MU_index</span><span class="p">)</span>
+                <span class="c1"># Extract magnitude if Quantity, otherwise use as-is</span>
+                <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">position_of_fibers_raw</span><span class="p">,</span> <span class="s2">&quot;magnitude&quot;</span><span class="p">):</span>
+                    <span class="n">position_of_fibers</span> <span class="o">=</span> <span class="n">position_of_fibers_raw</span><span class="o">.</span><span class="n">magnitude</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">position_of_fibers</span> <span class="o">=</span> <span class="n">position_of_fibers_raw</span>
+
+                <span class="n">innervation_zone</span> <span class="o">=</span> <span class="n">innervation_zones</span><span class="p">[</span><span class="n">MU_index</span><span class="p">]</span>
+
+                <span class="c1"># Batch generate random fiber lengths (optimization: single RNG call)</span>
+                <span class="n">fiber_length_variations</span> <span class="o">=</span> <span class="n">RANDOM_GENERATOR</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span>
+                    <span class="n">low</span><span class="o">=-</span><span class="bp">self</span><span class="o">.</span><span class="n">_var_fiber_length__mm</span><span class="p">,</span>
+                    <span class="n">high</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_var_fiber_length__mm</span><span class="p">,</span>
+                    <span class="n">size</span><span class="o">=</span><span class="n">number_of_fibers</span><span class="p">,</span>
                 <span class="p">)</span>
-                <span class="n">innervation_zone</span> <span class="o">=</span> <span class="n">innervation_zones</span><span class="p">[</span><span class="n">MU_number</span><span class="p">]</span>
 
-                <span class="c1"># Process each fiber</span>
-                <span class="k">for</span> <span class="n">fiber_number</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span>
-                    <span class="nb">range</span><span class="p">(</span><span class="n">number_of_fibers</span><span class="p">),</span>
-                    <span class="n">desc</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Electrode Array </span><span class="si">{</span><span class="n">array_idx</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_electrode_arrays</span><span class="p">)</span><span class="si">}</span><span class="s2"> MU </span><span class="si">{</span><span class="n">MU_number</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_MUs_to_simulate</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
-                    <span class="n">unit</span><span class="o">=</span><span class="s2">&quot;fiber(s)&quot;</span><span class="p">,</span>
-                <span class="p">):</span>
-                    <span class="n">fiber_position</span> <span class="o">=</span> <span class="n">position_of_fibers</span><span class="p">[</span><span class="n">fiber_number</span><span class="p">]</span>
+                <span class="c1"># Pre-compute geometric values for all fibers (optimization: vectorized)</span>
+                <span class="n">R_values</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">position_of_fibers</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="n">position_of_fibers</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span>
+                <span class="n">theta_values</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arctan2</span><span class="p">(</span><span class="n">position_of_fibers</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">position_of_fibers</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">])</span>
+                <span class="n">fiber_lengths</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_mean_fiber_length__mm</span> <span class="o">+</span> <span class="n">fiber_length_variations</span>
 
-                    <span class="c1"># Calculate fiber distance from center</span>
-                    <span class="n">R</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">fiber_position</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="n">fiber_position</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span>
+                <span class="c1"># Matrix optimization variables (local to this MU)</span>
+                <span class="n">A_matrix</span> <span class="o">=</span> <span class="kc">None</span>
+                <span class="n">B_incomplete</span> <span class="o">=</span> <span class="kc">None</span>
 
-                    <span class="c1"># Generate fiber length</span>
-                    <span class="n">fiber_length__mm</span> <span class="o">=</span> <span class="p">(</span>
-                        <span class="bp">self</span><span class="o">.</span><span class="n">_mean_fiber_length__mm</span>
-                        <span class="o">+</span> <span class="n">RANDOM_GENERATOR</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span>
-                            <span class="n">low</span><span class="o">=-</span><span class="bp">self</span><span class="o">.</span><span class="n">_var_fiber_length__mm</span><span class="p">,</span>
-                            <span class="n">high</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_var_fiber_length__mm</span><span class="p">,</span>
-                        <span class="p">)</span>
+                <span class="c1"># Process each fiber (inner loop - must remain sequential)</span>
+                <span class="k">for</span> <span class="n">fiber_number</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">number_of_fibers</span><span class="p">):</span>
+                    <span class="c1"># Use pre-computed values (optimization: vectorized calculations)</span>
+                    <span class="n">R</span> <span class="o">=</span> <span class="n">R_values</span><span class="p">[</span><span class="n">fiber_number</span><span class="p">]</span>
+                    <span class="n">theta</span> <span class="o">=</span> <span class="n">theta_values</span><span class="p">[</span><span class="n">fiber_number</span><span class="p">]</span>
+                    <span class="n">fiber_length__mm</span> <span class="o">=</span> <span class="n">fiber_lengths</span><span class="p">[</span><span class="n">fiber_number</span><span class="p">]</span>
+
+                    <span class="n">electrode_array</span><span class="o">.</span><span class="n">_center_point__mm_deg</span> <span class="o">=</span> <span class="p">(</span>
+                        <span class="n">electrode_array</span><span class="o">.</span><span class="n">_center_point__mm_deg</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+                        <span class="n">electrode_array</span><span class="o">.</span><span class="n">_center_point__mm_deg</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">rad2deg</span><span class="p">(</span><span class="n">theta</span><span class="p">),</span>
                     <span class="p">)</span>
+                    <span class="n">electrode_array</span><span class="o">.</span><span class="n">_create_electrode_grid</span><span class="p">()</span>
 
                     <span class="c1"># Calculate fiber end positions</span>
-                    <span class="n">L2</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">innervation_zone</span> <span class="o">-</span> <span class="n">fiber_length__mm</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span>
                     <span class="n">L1</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">innervation_zone</span> <span class="o">+</span> <span class="n">fiber_length__mm</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span>
+                    <span class="n">L2</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">innervation_zone</span> <span class="o">-</span> <span class="n">fiber_length__mm</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span>
 
-                    <span class="c1"># Use the new simulate_fiber_v2 function</span>
-                    <span class="k">if</span> <span class="n">fiber_number</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">A_matrix</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-                        <span class="n">phi_temp</span><span class="p">,</span> <span class="n">A_matrix</span><span class="p">,</span> <span class="n">B_incomplete</span> <span class="o">=</span> <span class="n">simulate_fiber_v2</span><span class="p">(</span>
-                            <span class="n">Fs</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_sampling_frequency__Hz</span> <span class="o">*</span> <span class="mf">1e-3</span><span class="p">,</span>
-                            <span class="n">v</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_mean_conduction_velocity__m_s</span><span class="p">,</span>
-                            <span class="n">N</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_sampling_points_in_t_and_z_domains</span><span class="p">,</span>
-                            <span class="n">M</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_sampling_points_in_theta_domain</span><span class="p">,</span>
-                            <span class="n">r</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_radius_total</span><span class="p">,</span>
-                            <span class="n">r_bone</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_radius_bone__mm</span><span class="p">,</span>
-                            <span class="n">th_fat</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_fat_thickness__mm</span><span class="p">,</span>
-                            <span class="n">th_skin</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_skin_thickness__mm</span><span class="p">,</span>
-                            <span class="n">R</span><span class="o">=</span><span class="n">R</span><span class="p">,</span>
-                            <span class="n">L1</span><span class="o">=</span><span class="n">L1</span><span class="p">,</span>
-                            <span class="n">L2</span><span class="o">=</span><span class="n">L2</span><span class="p">,</span>
-                            <span class="n">zi</span><span class="o">=</span><span class="n">innervation_zone</span><span class="p">,</span>
-                            <span class="n">electrode_array</span><span class="o">=</span><span class="n">electrode_array</span><span class="p">,</span>
-                            <span class="n">sig_muscle_rho</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_muscle_conductivity_radial__S_m</span><span class="p">,</span>
-                            <span class="n">sig_muscle_z</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_muscle_conductivity_longitudinal__S_m</span><span class="p">,</span>
-                            <span class="n">sig_skin</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_skin_conductivity__S_m</span><span class="p">,</span>
-                            <span class="n">sig_fat</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_fat_conductivity__S_m</span><span class="p">,</span>
-                        <span class="p">)</span>
+                    <span class="c1"># Determine IAP kernel length: use fixed value or scaled mean fiber length</span>
+                    <span class="c1"># IMPORTANT: Use scaled mean, not individual fiber_length__mm, to avoid boundary artifacts</span>
+                    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_iap_kernel_length__mm</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                        <span class="n">kernel_length</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_iap_kernel_length__mm</span>
                     <span class="k">else</span><span class="p">:</span>
-                        <span class="n">phi_temp</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">simulate_fiber_v2</span><span class="p">(</span>
-                            <span class="n">Fs</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_sampling_frequency__Hz</span> <span class="o">*</span> <span class="mf">1e-3</span><span class="p">,</span>
-                            <span class="n">v</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_mean_conduction_velocity__m_s</span><span class="p">,</span>
-                            <span class="n">N</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_sampling_points_in_t_and_z_domains</span><span class="p">,</span>
-                            <span class="n">M</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_sampling_points_in_theta_domain</span><span class="p">,</span>
-                            <span class="n">r</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_radius_total</span><span class="p">,</span>
-                            <span class="n">r_bone</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_radius_bone__mm</span><span class="p">,</span>
-                            <span class="n">th_fat</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_fat_thickness__mm</span><span class="p">,</span>
-                            <span class="n">th_skin</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_skin_thickness__mm</span><span class="p">,</span>
-                            <span class="n">R</span><span class="o">=</span><span class="n">R</span><span class="p">,</span>
-                            <span class="n">L1</span><span class="o">=</span><span class="n">L1</span><span class="p">,</span>
-                            <span class="n">L2</span><span class="o">=</span><span class="n">L2</span><span class="p">,</span>
-                            <span class="n">zi</span><span class="o">=</span><span class="n">innervation_zone</span><span class="p">,</span>
-                            <span class="n">electrode_array</span><span class="o">=</span><span class="n">electrode_array</span><span class="p">,</span>
-                            <span class="n">sig_muscle_rho</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_muscle_conductivity_radial__S_m</span><span class="p">,</span>
-                            <span class="n">sig_muscle_z</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_muscle_conductivity_longitudinal__S_m</span><span class="p">,</span>
-                            <span class="n">sig_skin</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_skin_conductivity__S_m</span><span class="p">,</span>
-                            <span class="n">sig_fat</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_fat_conductivity__S_m</span><span class="p">,</span>
-                            <span class="n">A_matrix</span><span class="o">=</span><span class="n">A_matrix</span><span class="p">,</span>
-                            <span class="n">B_incomplete</span><span class="o">=</span><span class="n">B_incomplete</span><span class="p">,</span>
-                        <span class="p">)</span>
+                        <span class="c1"># Use scaled mean fiber length (2.5×) for all fibers to prevent boundary truncation</span>
+                        <span class="n">IAP_SCALE_FACTOR</span> <span class="o">=</span> <span class="mf">2.5</span>
+                        <span class="n">kernel_length</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_mean_fiber_length__mm</span> <span class="o">*</span> <span class="n">IAP_SCALE_FACTOR</span>
 
-                    <span class="n">array_result</span><span class="p">[</span><span class="n">MU_number</span><span class="p">]</span> <span class="o">+=</span> <span class="n">phi_temp</span>
+                    <span class="c1"># Use the new simulate_fiber_v2 function with INTERNAL sampling frequency</span>
+                    <span class="n">phi_temp</span><span class="p">,</span> <span class="n">A_matrix</span><span class="p">,</span> <span class="n">B_incomplete</span> <span class="o">=</span> <span class="n">simulate_fiber_v2</span><span class="p">(</span>
+                        <span class="n">Fs</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_internal_sampling_frequency__Hz</span> <span class="o">*</span> <span class="mf">1e-3</span><span class="p">,</span>
+                        <span class="n">v</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_mean_conduction_velocity__m_s</span><span class="p">,</span>
+                        <span class="n">N</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_internal_sampling_points</span><span class="p">,</span>
+                        <span class="n">M</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_sampling_points_in_theta_domain</span><span class="p">,</span>
+                        <span class="n">r</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_radius_total</span><span class="p">,</span>
+                        <span class="n">r_bone</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_radius_bone__mm</span><span class="p">,</span>
+                        <span class="n">th_fat</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_fat_thickness__mm</span><span class="p">,</span>
+                        <span class="n">th_skin</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_skin_thickness__mm</span><span class="p">,</span>
+                        <span class="n">R</span><span class="o">=</span><span class="n">R</span><span class="p">,</span>
+                        <span class="n">L1</span><span class="o">=</span><span class="n">L1</span><span class="p">,</span>
+                        <span class="n">L2</span><span class="o">=</span><span class="n">L2</span><span class="p">,</span>
+                        <span class="n">zi</span><span class="o">=</span><span class="n">innervation_zone</span><span class="p">,</span>
+                        <span class="n">electrode_array</span><span class="o">=</span><span class="n">electrode_array</span><span class="p">,</span>
+                        <span class="n">sig_muscle_rho</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_muscle_conductivity_radial__S_m</span><span class="p">,</span>
+                        <span class="n">sig_muscle_z</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_muscle_conductivity_longitudinal__S_m</span><span class="p">,</span>
+                        <span class="n">sig_skin</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_skin_conductivity__S_m</span><span class="p">,</span>
+                        <span class="n">sig_fat</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_fat_conductivity__S_m</span><span class="p">,</span>
+                        <span class="n">A_matrix</span><span class="o">=</span><span class="kc">None</span> <span class="k">if</span> <span class="n">fiber_number</span> <span class="o">==</span> <span class="mi">0</span> <span class="k">else</span> <span class="n">A_matrix</span><span class="p">,</span>
+                        <span class="n">B_incomplete</span><span class="o">=</span><span class="kc">None</span> <span class="k">if</span> <span class="n">fiber_number</span> <span class="o">==</span> <span class="mi">0</span> <span class="k">else</span> <span class="n">B_incomplete</span><span class="p">,</span>
+                        <span class="n">fiber_length__mm</span><span class="o">=</span><span class="n">kernel_length</span><span class="p">,</span>  <span class="c1"># NEW: Use fiber-specific or fixed IAP kernel length</span>
+                    <span class="p">)</span>
 
-            <span class="n">electrode_array_results</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">array_result</span><span class="p">)</span>
+                    <span class="n">array_result_internal</span> <span class="o">+=</span> <span class="n">phi_temp</span>
+
+                <span class="c1"># Downsample from internal resolution to output resolution</span>
+                <span class="c1"># resample operates on the last axis (time), which is axis=2</span>
+                <span class="n">array_result_downsampled</span> <span class="o">=</span> <span class="n">resample</span><span class="p">(</span>
+                    <span class="n">array_result_internal</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sampling_points_in_t_and_z_domains</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">2</span>
+                <span class="p">)</span>
+
+                <span class="k">return</span> <span class="n">array_result_downsampled</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;MUAP_</span><span class="si">{</span><span class="n">MU_index</span><span class="si">}</span><span class="s2">&quot;</span>
+
+            <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                <span class="c1"># Log error and return empty result to avoid crashing entire parallel job</span>
+                <span class="n">logging</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;Failed to process MU </span><span class="si">{</span><span class="n">MU_index</span><span class="si">}</span><span class="s2"> for electrode array </span><span class="si">{</span><span class="n">array_idx</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="p">)</span>
+                <span class="c1"># Return empty signal with error marker at output resolution</span>
+                <span class="n">empty_result</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">output_result_shape</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+                <span class="k">return</span> <span class="n">empty_result</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;MUAP_</span><span class="si">{</span><span class="n">MU_index</span><span class="si">}</span><span class="s2">_FAILED&quot;</span>
+
+        <span class="n">block</span> <span class="o">=</span> <span class="n">Block</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">array_idx</span><span class="p">,</span> <span class="n">electrode_array</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_electrode_arrays</span><span class="p">):</span>
+            <span class="n">group</span> <span class="o">=</span> <span class="n">Group</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;ElectrodeArray_</span><span class="si">{</span><span class="n">array_idx</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="n">block</span><span class="o">.</span><span class="n">groups</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">group</span><span class="p">)</span>
+
+            <span class="c1"># Process only specified motor units in parallel</span>
+            <span class="n">n_mus_to_compute</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_MUs_to_simulate</span><span class="p">)</span>
+            <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Processing </span><span class="si">{</span><span class="n">n_mus_to_compute</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">n_motor_units</span><span class="si">}</span><span class="s2"> motor units for electrode array </span><span class="si">{</span><span class="n">array_idx</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_electrode_arrays</span><span class="p">)</span><span class="si">}</span><span class="s2"> using parallel processing...&quot;</span>
+            <span class="p">)</span>
+
+            <span class="c1"># Parallel execution of motor units with tqdm progress bar</span>
+            <span class="c1"># batch_size=&quot;auto&quot; optimizes task distribution across workers</span>
+            <span class="c1"># Only compute MUs in the subset</span>
+            <span class="n">results</span> <span class="o">=</span> <span class="p">{}</span>  <span class="c1"># Use dict to map MU_index -&gt; result</span>
+            <span class="k">with</span> <span class="n">tqdm</span><span class="p">(</span>
+                <span class="n">total</span><span class="o">=</span><span class="n">n_mus_to_compute</span><span class="p">,</span>
+                <span class="n">desc</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Electrode Array </span><span class="si">{</span><span class="n">array_idx</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_electrode_arrays</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+            <span class="p">)</span> <span class="k">as</span> <span class="n">pbar</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">array_result</span><span class="p">,</span> <span class="n">segment_name</span> <span class="ow">in</span> <span class="n">Parallel</span><span class="p">(</span>
+                    <span class="n">n_jobs</span><span class="o">=</span><span class="n">n_jobs</span><span class="p">,</span>
+                    <span class="n">return_as</span><span class="o">=</span><span class="s2">&quot;generator&quot;</span><span class="p">,</span>
+                    <span class="n">verbose</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+                    <span class="n">batch_size</span><span class="o">=</span><span class="s2">&quot;auto&quot;</span><span class="p">,</span>
+                <span class="p">)(</span>
+                    <span class="n">delayed</span><span class="p">(</span><span class="n">_process_single_mu</span><span class="p">)(</span><span class="n">MU_index</span><span class="p">,</span> <span class="n">electrode_array</span><span class="p">)</span>
+                    <span class="k">for</span> <span class="n">MU_index</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_MUs_to_simulate</span>
+                <span class="p">):</span>
+                    <span class="c1"># Extract MU index from segment name &quot;MUAP_{MU_index}&quot;</span>
+                    <span class="n">mu_idx</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">segment_name</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span>
+                    <span class="n">results</span><span class="p">[</span><span class="n">mu_idx</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">array_result</span><span class="p">,</span> <span class="n">segment_name</span><span class="p">)</span>
+                    <span class="n">pbar</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+            <span class="c1"># Calculate actual MUAP duration based on fiber lengths</span>
+            <span class="c1"># Use iap_kernel_length__mm if specified, otherwise use scaled fiber length from muscle model</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_iap_kernel_length__mm</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">kernel_length_mm</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_iap_kernel_length__mm</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="c1"># Scale fiber length to avoid boundary truncation of IAP kernel</span>
+                <span class="c1"># The IAP kernel needs ~2.5x the fiber length to fully develop and decay</span>
+                <span class="c1"># This prevents edge artifacts while maintaining proportionality to fiber length</span>
+                <span class="n">IAP_SCALE_FACTOR</span> <span class="o">=</span> <span class="mf">2.5</span>
+                <span class="n">kernel_length_mm</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_mean_fiber_length__mm</span> <span class="o">*</span> <span class="n">IAP_SCALE_FACTOR</span>
+
+            <span class="c1"># Physical duration based on IAP kernel length (after /=2 scaling in simulate_fiber)</span>
+            <span class="c1"># Duration = (kernel_length_mm / 2) / velocity</span>
+            <span class="n">muap_duration__s</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="n">kernel_length_mm</span> <span class="o">/</span> <span class="mf">2.0</span>
+            <span class="p">)</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">_mean_conduction_velocity__m_s</span> <span class="o">/</span> <span class="mf">1000.0</span>  <span class="c1"># Convert ms to s</span>
+
+            <span class="c1"># Create custom time array for this duration</span>
+            <span class="n">times__s</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">muap_duration__s</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sampling_points_in_t_and_z_domains</span><span class="p">)</span>
+
+            <span class="c1"># Calculate effective sampling rate for these times</span>
+            <span class="n">effective_sampling_rate__Hz</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_sampling_points_in_t_and_z_domains</span> <span class="o">-</span> <span class="mi">1</span>
+            <span class="p">)</span> <span class="o">/</span> <span class="n">muap_duration__s</span>
+
+            <span class="n">use_custom_times</span> <span class="o">=</span> <span class="kc">True</span>
+
+            <span class="c1"># Create segments for ALL MUs (maintaining index order)</span>
+            <span class="c1"># Non-computed MUs get empty signals at output resolution</span>
+            <span class="k">for</span> <span class="n">MU_index</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_motor_units</span><span class="p">):</span>
+                <span class="k">if</span> <span class="n">MU_index</span> <span class="ow">in</span> <span class="n">results</span><span class="p">:</span>
+                    <span class="n">array_result</span><span class="p">,</span> <span class="n">segment_name</span> <span class="o">=</span> <span class="n">results</span><span class="p">[</span><span class="n">MU_index</span><span class="p">]</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="c1"># Create empty MUAP for non-computed MUs at output resolution</span>
+                    <span class="n">array_result</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">output_result_shape</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+                    <span class="n">segment_name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;MUAP_</span><span class="si">{</span><span class="n">MU_index</span><span class="si">}</span><span class="s2">&quot;</span>
+
+                <span class="n">segment</span> <span class="o">=</span> <span class="n">Segment</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">segment_name</span><span class="p">)</span>
+                <span class="n">group</span><span class="o">.</span><span class="n">segments</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">segment</span><span class="p">)</span>
+
+                <span class="c1"># Use actual physical duration based on fiber lengths</span>
+                <span class="n">segment</span><span class="o">.</span><span class="n">analogsignals</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                    <span class="n">GridAnalogSignal</span><span class="p">(</span>
+                        <span class="n">signal</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="n">array_result</span><span class="p">,</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span> <span class="o">*</span> <span class="n">pq</span><span class="o">.</span><span class="n">mV</span><span class="p">,</span>
+                        <span class="n">t_start</span><span class="o">=</span><span class="mi">0</span> <span class="o">*</span> <span class="n">pq</span><span class="o">.</span><span class="n">s</span><span class="p">,</span>
+                        <span class="n">times</span><span class="o">=</span><span class="n">times__s</span> <span class="o">*</span> <span class="n">pq</span><span class="o">.</span><span class="n">s</span><span class="p">,</span>
+                        <span class="n">sampling_rate</span><span class="o">=</span><span class="n">effective_sampling_rate__Hz</span> <span class="o">*</span> <span class="n">pq</span><span class="o">.</span><span class="n">Hz</span><span class="p">,</span>
+                    <span class="p">)</span>
+                <span class="p">)</span>
 
         <span class="c1"># Store results privately</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_muaps</span> <span class="o">=</span> <span class="n">electrode_array_results</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_muaps__Block</span> <span class="o">=</span> <span class="n">block</span>
 
-        <span class="k">return</span> <span class="n">electrode_array_results</span></div>
+        <span class="k">return</span> <span class="n">block</span></div>
 
 
 <div class="viewcode-block" id="SurfaceEMG.simulate_surface_emg">
 <a class="viewcode-back" href="../../../../../../generated/myogen.simulator.SurfaceEMG.simulate_surface_emg.html#myogen.simulator.SurfaceEMG.simulate_surface_emg">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">simulate_surface_emg</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="n">motor_neuron_pool</span><span class="p">:</span> <span class="n">MotorNeuronPool</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">SURFACE_EMG__TENSOR</span><span class="p">]:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">simulate_surface_emg</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">spike_train__Block</span><span class="p">:</span> <span class="n">SPIKE_TRAIN__Block</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">SURFACE_EMG__Block</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Generate surface EMG signals for all electrode arrays using the provided motor neuron pool.</span>
+<span class="sd">        Generate surface EMG signals for all electrode arrays using the provided spike train block.</span>
 
-<span class="sd">        This method convolves the pre-computed MUAP templates with the motor neuron spike trains</span>
+<span class="sd">        This method convolves the pre-computed MUAP templates with the spike trains</span>
 <span class="sd">        to synthesize realistic surface EMG signals. The process includes temporal resampling</span>
-<span class="sd">        to match the motor neuron pool timestep and supports both CPU and GPU acceleration.</span>
+<span class="sd">        to match the spike train timestep and supports both CPU and GPU acceleration.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        motor_neuron_pool : MotorNeuronPool</span>
-<span class="sd">            Motor neuron pool with spike trains computed (see :class:`myogen.simulator.MotorNeuronPool`).</span>
+<span class="sd">        spike_train__Block : SPIKE_TRAIN__Block</span>
+<span class="sd">            Block containing spike trains organized as segments (pools) with spiketrains.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        list[SURFACE_EMG__TENSOR]</span>
-<span class="sd">            Surface EMG signals for each electrode array.</span>
+<span class="sd">        SURFACE_EMG__Block</span>
+<span class="sd">            Surface EMG signals for each electrode array stored in a neo.Block.</span>
 <span class="sd">            Results are stored in the `surface_emg__tensors` property after execution.</span>
 
 <span class="sd">        Raises</span>
@@ -717,38 +1290,80 @@ window.addEventListener("load", () => mermaid.run());
 <span class="sd">        ValueError</span>
 <span class="sd">            If MUAP templates have not been generated. Call simulate_muaps() first.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_muaps</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                <span class="s2">&quot;MUAP templates have not been generated. Call simulate_muaps() first.&quot;</span>
-            <span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_muaps__Block</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;MUAP templates have not been generated. Call simulate_muaps() first.&quot;</span><span class="p">)</span>
 
-        <span class="c1"># Store motor neuron pool privately</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_motor_neuron_pool</span> <span class="o">=</span> <span class="n">motor_neuron_pool</span>
+        <span class="c1"># Store spike train data privately</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_spike_train__Block</span> <span class="o">=</span> <span class="n">spike_train__Block</span>
+
+        <span class="c1"># Extract timestep from the first spike train</span>
+        <span class="n">muap_timestep__ms</span> <span class="o">=</span> <span class="nb">float</span><span class="p">((</span><span class="mi">1</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sampling_frequency__Hz</span><span class="p">)</span> <span class="o">*</span> <span class="mi">1000</span><span class="p">)</span> <span class="o">*</span> <span class="n">pq</span><span class="o">.</span><span class="n">ms</span>
+
+        <span class="c1"># Convert spike train block to numpy arrays</span>
+        <span class="n">n_pools</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">spike_train__Block</span><span class="o">.</span><span class="n">segments</span><span class="p">)</span>
+        <span class="n">n_neurons</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">spike_train__Block</span><span class="o">.</span><span class="n">segments</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">spiketrains</span><span class="p">)</span>
+
+        <span class="c1"># Extract spike train durations to determine time length</span>
+        <span class="n">first_spiketrain</span> <span class="o">=</span> <span class="n">spike_train__Block</span><span class="o">.</span><span class="n">segments</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">spiketrains</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">spiketrain_timestep__ms</span> <span class="o">=</span> <span class="n">first_spiketrain</span><span class="o">.</span><span class="n">sampling_period</span><span class="o">.</span><span class="n">rescale</span><span class="p">(</span><span class="s2">&quot;ms&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Convert spike trains to binary arrays using Elephant, suppressing rounding error logging</span>
+        <span class="n">elephant_utils_logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="n">elephant</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="vm">__file__</span><span class="p">)</span>
+        <span class="n">original_level</span> <span class="o">=</span> <span class="n">elephant_utils_logger</span><span class="o">.</span><span class="n">level</span>
+        <span class="n">elephant_utils_logger</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">ERROR</span><span class="p">)</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">spike_trains</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
+                <span class="p">[</span>
+                    <span class="n">elephant</span><span class="o">.</span><span class="n">conversion</span><span class="o">.</span><span class="n">BinnedSpikeTrain</span><span class="p">(</span>
+                        <span class="n">segment</span><span class="o">.</span><span class="n">spiketrains</span><span class="p">,</span> <span class="n">bin_size</span><span class="o">=</span><span class="n">spiketrain_timestep__ms</span>
+                    <span class="p">)</span>
+                    <span class="o">.</span><span class="n">to_array</span><span class="p">()</span>
+                    <span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">bool</span><span class="p">)</span>
+                    <span class="k">for</span> <span class="n">segment</span> <span class="ow">in</span> <span class="n">spike_train__Block</span><span class="o">.</span><span class="n">segments</span>
+                <span class="p">]</span>
+            <span class="p">)</span>
+        <span class="k">finally</span><span class="p">:</span>
+            <span class="n">elephant_utils_logger</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">original_level</span><span class="p">)</span>
 
         <span class="c1"># Handle MUs to simulate</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_MUs_to_simulate</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">MUs_to_simulate</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span>
-                <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_muscle_model</span><span class="o">.</span><span class="n">resulting_number_of_innervated_fibers</span><span class="p">))</span>
-            <span class="p">)</span>
+            <span class="n">MUs_to_simulate</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">n_neurons</span><span class="p">))</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">MUs_to_simulate</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_MUs_to_simulate</span><span class="p">)</span>
 
-        <span class="n">emg_results</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="c1"># Create active neuron indices (all neurons are active in each pool for spike train block)</span>
+        <span class="n">active_neuron_indices</span> <span class="o">=</span> <span class="p">[</span><span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">n_neurons</span><span class="p">))</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_pools</span><span class="p">)]</span>
 
-        <span class="k">for</span> <span class="n">array_idx</span><span class="p">,</span> <span class="n">muap_array</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_muaps</span><span class="p">):</span>
+        <span class="n">block</span> <span class="o">=</span> <span class="n">Block</span><span class="p">()</span>
+
+        <span class="n">muap_data_list</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">seg</span><span class="o">.</span><span class="n">analogsignals</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">magnitude</span> <span class="k">for</span> <span class="n">seg</span> <span class="ow">in</span> <span class="n">group</span><span class="o">.</span><span class="n">segments</span><span class="p">])</span>
+            <span class="k">for</span> <span class="n">group</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_muaps__Block</span><span class="o">.</span><span class="n">groups</span>
+        <span class="p">]</span>
+
+        <span class="k">for</span> <span class="n">array_idx</span><span class="p">,</span> <span class="n">muap_array</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">muap_data_list</span><span class="p">):</span>
+            <span class="n">emg_group</span> <span class="o">=</span> <span class="n">Group</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;ElectrodeArray_</span><span class="si">{</span><span class="n">array_idx</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="n">block</span><span class="o">.</span><span class="n">groups</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">emg_group</span><span class="p">)</span>
+
+            <span class="n">muap_array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="n">muap_array</span><span class="p">,</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+
             <span class="c1"># Temporal resampling</span>
+            <span class="n">new_muap_time_length</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span>
+                <span class="mi">1</span><span class="p">,</span>
+                <span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span>
+                    <span class="n">muap_array</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span>
+                    <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sampling_frequency__Hz</span>
+                    <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">/</span> <span class="n">spiketrain_timestep__ms</span><span class="o">.</span><span class="n">rescale</span><span class="p">(</span><span class="s2">&quot;s&quot;</span><span class="p">))</span>
+                <span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">),</span>
+            <span class="p">)</span>
+
             <span class="n">muap_shapes</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span>
                 <span class="p">(</span>
                     <span class="n">muap_array</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
                     <span class="n">muap_array</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
                     <span class="n">muap_array</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span>
-                    <span class="nb">int</span><span class="p">(</span>
-                        <span class="n">muap_array</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span>
-                        <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sampling_frequency__Hz</span>
-                        <span class="o">*</span> <span class="mi">1</span>
-                        <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">_motor_neuron_pool</span><span class="o">.</span><span class="n">timestep__ms</span>
-                        <span class="o">*</span> <span class="mi">1000</span>
-                    <span class="p">),</span>
+                    <span class="n">new_muap_time_length</span><span class="p">,</span>
                 <span class="p">)</span>
             <span class="p">)</span>
 
@@ -756,49 +1371,43 @@ window.addEventListener("load", () => mermaid.run());
                 <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">muap_shapes</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]):</span>
                     <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">muap_shapes</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">2</span><span class="p">]):</span>
                         <span class="n">muap_shapes</span><span class="p">[</span><span class="n">muap_nr</span><span class="p">,</span> <span class="n">row</span><span class="p">,</span> <span class="n">col</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">interp</span><span class="p">(</span>
-                            <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span>
-                                <span class="mi">0</span><span class="p">,</span>
-                                <span class="n">muap_array</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sampling_frequency__Hz</span><span class="p">,</span>
-                                <span class="bp">self</span><span class="o">.</span><span class="n">_motor_neuron_pool</span><span class="o">.</span><span class="n">timestep__ms</span> <span class="o">/</span> <span class="mi">1000</span><span class="p">,</span>
+                            <span class="n">x</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span>
+                                <span class="n">start</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+                                <span class="n">stop</span><span class="o">=</span><span class="n">muap_array</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sampling_frequency__Hz</span><span class="p">,</span>
+                                <span class="n">step</span><span class="o">=</span><span class="n">spiketrain_timestep__ms</span><span class="o">.</span><span class="n">rescale</span><span class="p">(</span><span class="n">pq</span><span class="o">.</span><span class="n">s</span><span class="p">)</span><span class="o">.</span><span class="n">magnitude</span><span class="p">,</span>
                             <span class="p">),</span>
-                            <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span>
-                                <span class="mi">0</span><span class="p">,</span>
-                                <span class="n">muap_array</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sampling_frequency__Hz</span><span class="p">,</span>
-                                <span class="mi">1</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sampling_frequency__Hz</span><span class="p">,</span>
+                            <span class="n">xp</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span>
+                                <span class="n">start</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+                                <span class="n">stop</span><span class="o">=</span><span class="n">muap_array</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sampling_frequency__Hz</span><span class="p">,</span>
+                                <span class="n">step</span><span class="o">=</span><span class="n">muap_timestep__ms</span><span class="o">.</span><span class="n">rescale</span><span class="p">(</span><span class="n">pq</span><span class="o">.</span><span class="n">s</span><span class="p">)</span><span class="o">.</span><span class="n">magnitude</span><span class="p">,</span>
                             <span class="p">),</span>
-                            <span class="n">muap_array</span><span class="p">[</span><span class="n">muap_nr</span><span class="p">,</span> <span class="n">row</span><span class="p">,</span> <span class="n">col</span><span class="p">],</span>
+                            <span class="n">fp</span><span class="o">=</span><span class="n">muap_array</span><span class="p">[</span><span class="n">muap_nr</span><span class="p">,</span> <span class="n">row</span><span class="p">,</span> <span class="n">col</span><span class="p">],</span>
                         <span class="p">)</span>
 
-            <span class="n">n_pools</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_motor_neuron_pool</span><span class="o">.</span><span class="n">spike_trains</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="c1"># n_pools already defined above from spike_train_block</span>
             <span class="n">n_rows</span> <span class="o">=</span> <span class="n">muap_shapes</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
             <span class="n">n_cols</span> <span class="o">=</span> <span class="n">muap_shapes</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
 
             <span class="c1"># Initialize result array</span>
-            <span class="n">sample_conv</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">convolve</span><span class="p">(</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_motor_neuron_pool</span><span class="o">.</span><span class="n">spike_trains</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
-                <span class="n">muap_shapes</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
-                <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;same&quot;</span><span class="p">,</span>
-            <span class="p">)</span>
+            <span class="n">sample_conv</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">convolve</span><span class="p">(</span><span class="n">spike_trains</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">muap_shapes</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;same&quot;</span><span class="p">)</span>
 
             <span class="n">surface_emg</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">n_pools</span><span class="p">,</span> <span class="n">n_rows</span><span class="p">,</span> <span class="n">n_cols</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">sample_conv</span><span class="p">)))</span>
 
-            <span class="n">muap_shapes</span> <span class="o">/=</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">muap_shapes</span><span class="p">))</span>  <span class="c1"># Normalize MUAP shapes</span>
+            <span class="c1"># No normalization needed - MUAPs are in absolute units (mV) from biophysical model</span>
 
             <span class="c1"># Perform convolution for each pool using GPU acceleration if available</span>
             <span class="k">if</span> <span class="n">HAS_CUPY</span><span class="p">:</span>
                 <span class="c1"># Use GPU acceleration with CuPy</span>
-                <span class="n">spike_gpu</span> <span class="o">=</span> <span class="n">cp</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_motor_neuron_pool</span><span class="o">.</span><span class="n">spike_trains</span><span class="p">)</span>
+                <span class="n">spike_gpu</span> <span class="o">=</span> <span class="n">cp</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">spike_trains</span><span class="p">)</span>
                 <span class="n">muap_gpu</span> <span class="o">=</span> <span class="n">cp</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">muap_shapes</span><span class="p">)</span>
                 <span class="n">surface_emg_gpu</span> <span class="o">=</span> <span class="n">cp</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">n_pools</span><span class="p">,</span> <span class="n">n_rows</span><span class="p">,</span> <span class="n">n_cols</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">sample_conv</span><span class="p">)))</span>
 
                 <span class="k">for</span> <span class="n">pool_idx</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span>
                     <span class="nb">range</span><span class="p">(</span><span class="n">n_pools</span><span class="p">),</span>
-                    <span class="n">desc</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Electrode Array </span><span class="si">{</span><span class="n">array_idx</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_muaps</span><span class="p">)</span><span class="si">}</span><span class="s2"> Surface EMG (GPU)&quot;</span><span class="p">,</span>
+                    <span class="n">desc</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Electrode Array </span><span class="si">{</span><span class="n">array_idx</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_muaps__Block</span><span class="o">.</span><span class="n">groups</span><span class="p">)</span><span class="si">}</span><span class="s2"> Surface EMG (GPU)&quot;</span><span class="p">,</span>
                     <span class="n">unit</span><span class="o">=</span><span class="s2">&quot;pools&quot;</span><span class="p">,</span>
                 <span class="p">):</span>
-                    <span class="n">active_neuron_indices</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span>
-                        <span class="bp">self</span><span class="o">.</span><span class="n">_motor_neuron_pool</span><span class="o">.</span><span class="n">active_neuron_indices</span><span class="p">[</span><span class="n">pool_idx</span><span class="p">]</span>
-                    <span class="p">)</span>
+                    <span class="n">pool_active_neurons</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">active_neuron_indices</span><span class="p">[</span><span class="n">pool_idx</span><span class="p">])</span>
 
                     <span class="k">for</span> <span class="n">row_idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_rows</span><span class="p">):</span>
                         <span class="k">for</span> <span class="n">col_idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_cols</span><span class="p">):</span>
@@ -807,14 +1416,10 @@ window.addEventListener("load", () => mermaid.run());
                                 <span class="p">[</span>
                                     <span class="n">cp</span><span class="o">.</span><span class="n">correlate</span><span class="p">(</span>
                                         <span class="n">spike_gpu</span><span class="p">[</span><span class="n">pool_idx</span><span class="p">,</span> <span class="n">mu_idx</span><span class="p">],</span>
-                                        <span class="n">muap_gpu</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">row_idx</span><span class="p">,</span> <span class="n">col_idx</span><span class="p">],</span>
+                                        <span class="n">muap_gpu</span><span class="p">[</span><span class="n">mu_idx</span><span class="p">,</span> <span class="n">row_idx</span><span class="p">,</span> <span class="n">col_idx</span><span class="p">],</span>
                                         <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;same&quot;</span><span class="p">,</span>
                                     <span class="p">)</span>
-                                    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">mu_idx</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span>
-                                        <span class="n">MUs_to_simulate</span><span class="o">.</span><span class="n">intersection</span><span class="p">(</span>
-                                            <span class="n">active_neuron_indices</span>
-                                        <span class="p">)</span>
-                                    <span class="p">)</span>
+                                    <span class="k">for</span> <span class="n">mu_idx</span> <span class="ow">in</span> <span class="n">MUs_to_simulate</span><span class="o">.</span><span class="n">intersection</span><span class="p">(</span><span class="n">pool_active_neurons</span><span class="p">)</span>
                                 <span class="p">]</span>
                             <span class="p">)</span>
                             <span class="c1"># Sum across MUAPs on GPU</span>
@@ -829,25 +1434,19 @@ window.addEventListener("load", () => mermaid.run());
                 <span class="c1"># Fallback to CPU computation with NumPy</span>
                 <span class="k">for</span> <span class="n">pool_idx</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span>
                     <span class="nb">range</span><span class="p">(</span><span class="n">n_pools</span><span class="p">),</span>
-                    <span class="n">desc</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Electrode Array </span><span class="si">{</span><span class="n">array_idx</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_muaps</span><span class="p">)</span><span class="si">}</span><span class="s2"> Surface EMG (CPU)&quot;</span><span class="p">,</span>
+                    <span class="n">desc</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Electrode Array </span><span class="si">{</span><span class="n">array_idx</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_muaps__Block</span><span class="o">.</span><span class="n">groups</span><span class="p">)</span><span class="si">}</span><span class="s2"> Surface EMG (CPU)&quot;</span><span class="p">,</span>
                     <span class="n">unit</span><span class="o">=</span><span class="s2">&quot;pools&quot;</span><span class="p">,</span>
                 <span class="p">):</span>
-                    <span class="n">active_neuron_indices</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span>
-                        <span class="bp">self</span><span class="o">.</span><span class="n">_motor_neuron_pool</span><span class="o">.</span><span class="n">active_neuron_indices</span><span class="p">[</span><span class="n">pool_idx</span><span class="p">]</span>
-                    <span class="p">)</span>
+                    <span class="n">pool_active_neurons</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">active_neuron_indices</span><span class="p">[</span><span class="n">pool_idx</span><span class="p">])</span>
 
                     <span class="k">for</span> <span class="n">row_idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_rows</span><span class="p">):</span>
                         <span class="k">for</span> <span class="n">col_idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_cols</span><span class="p">):</span>
                             <span class="c1"># Process all active MUs</span>
                             <span class="n">convolutions</span> <span class="o">=</span> <span class="p">[]</span>
-                            <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">mu_idx</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span>
-                                <span class="n">MUs_to_simulate</span><span class="o">.</span><span class="n">intersection</span><span class="p">(</span><span class="n">active_neuron_indices</span><span class="p">)</span>
-                            <span class="p">):</span>
+                            <span class="k">for</span> <span class="n">mu_idx</span> <span class="ow">in</span> <span class="n">MUs_to_simulate</span><span class="o">.</span><span class="n">intersection</span><span class="p">(</span><span class="n">pool_active_neurons</span><span class="p">):</span>
                                 <span class="n">conv</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">correlate</span><span class="p">(</span>
-                                    <span class="bp">self</span><span class="o">.</span><span class="n">_motor_neuron_pool</span><span class="o">.</span><span class="n">spike_trains</span><span class="p">[</span>
-                                        <span class="n">pool_idx</span><span class="p">,</span> <span class="n">mu_idx</span>
-                                    <span class="p">],</span>
-                                    <span class="n">muap_shapes</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">row_idx</span><span class="p">,</span> <span class="n">col_idx</span><span class="p">],</span>
+                                    <span class="n">spike_trains</span><span class="p">[</span><span class="n">pool_idx</span><span class="p">,</span> <span class="n">mu_idx</span><span class="p">],</span>
+                                    <span class="n">muap_shapes</span><span class="p">[</span><span class="n">mu_idx</span><span class="p">,</span> <span class="n">row_idx</span><span class="p">,</span> <span class="n">col_idx</span><span class="p">],</span>
                                     <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;same&quot;</span><span class="p">,</span>
                                 <span class="p">)</span>
                                 <span class="n">convolutions</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">conv</span><span class="p">)</span>
@@ -857,6 +1456,7 @@ window.addEventListener("load", () => mermaid.run());
                                     <span class="n">convolutions</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span>
                                 <span class="p">)</span>
 
+            <span class="c1"># Temporal resampling</span>
             <span class="n">surface_emg_resampled</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span>
                 <span class="p">(</span>
                     <span class="n">n_pools</span><span class="p">,</span>
@@ -864,7 +1464,7 @@ window.addEventListener("load", () => mermaid.run());
                     <span class="n">n_cols</span><span class="p">,</span>
                     <span class="nb">int</span><span class="p">(</span>
                         <span class="n">surface_emg</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
-                        <span class="o">/</span> <span class="p">(</span><span class="mi">1</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">_motor_neuron_pool</span><span class="o">.</span><span class="n">timestep__ms</span> <span class="o">*</span> <span class="mi">1000</span><span class="p">)</span>
+                        <span class="o">*</span> <span class="n">spiketrain_timestep__ms</span><span class="o">.</span><span class="n">rescale</span><span class="p">(</span><span class="n">pq</span><span class="o">.</span><span class="n">s</span><span class="p">)</span><span class="o">.</span><span class="n">magnitude</span>
                         <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sampling_frequency__Hz</span>
                     <span class="p">),</span>
                 <span class="p">)</span>
@@ -873,95 +1473,136 @@ window.addEventListener("load", () => mermaid.run());
                 <span class="k">for</span> <span class="n">row_idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_rows</span><span class="p">):</span>
                     <span class="k">for</span> <span class="n">col_idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_cols</span><span class="p">):</span>
                         <span class="n">surface_emg_resampled</span><span class="p">[</span><span class="n">pool_idx</span><span class="p">,</span> <span class="n">row_idx</span><span class="p">,</span> <span class="n">col_idx</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">interp</span><span class="p">(</span>
-                            <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span>
-                                <span class="mi">0</span><span class="p">,</span>
-                                <span class="n">surface_emg</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
-                                <span class="o">*</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_motor_neuron_pool</span><span class="o">.</span><span class="n">timestep__ms</span> <span class="o">/</span> <span class="mi">1000</span><span class="p">),</span>
-                                <span class="mi">1</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sampling_frequency__Hz</span><span class="p">,</span>
+                            <span class="n">x</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span>
+                                <span class="n">start</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+                                <span class="n">stop</span><span class="o">=</span><span class="n">surface_emg</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+                                <span class="o">*</span> <span class="n">spiketrain_timestep__ms</span><span class="o">.</span><span class="n">rescale</span><span class="p">(</span><span class="n">pq</span><span class="o">.</span><span class="n">s</span><span class="p">)</span><span class="o">.</span><span class="n">magnitude</span><span class="p">,</span>
+                                <span class="n">step</span><span class="o">=</span><span class="mi">1</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sampling_frequency__Hz</span><span class="p">,</span>
                             <span class="p">),</span>
-                            <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span>
-                                <span class="mi">0</span><span class="p">,</span>
-                                <span class="n">surface_emg</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
-                                <span class="o">*</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_motor_neuron_pool</span><span class="o">.</span><span class="n">timestep__ms</span> <span class="o">/</span> <span class="mi">1000</span><span class="p">),</span>
-                                <span class="bp">self</span><span class="o">.</span><span class="n">_motor_neuron_pool</span><span class="o">.</span><span class="n">timestep__ms</span> <span class="o">/</span> <span class="mi">1000</span><span class="p">,</span>
+                            <span class="n">xp</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span>
+                                <span class="n">start</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+                                <span class="n">stop</span><span class="o">=</span><span class="n">surface_emg</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+                                <span class="o">*</span> <span class="n">spiketrain_timestep__ms</span><span class="o">.</span><span class="n">rescale</span><span class="p">(</span><span class="n">pq</span><span class="o">.</span><span class="n">s</span><span class="p">)</span><span class="o">.</span><span class="n">magnitude</span><span class="p">,</span>
+                                <span class="n">step</span><span class="o">=</span><span class="n">spiketrain_timestep__ms</span><span class="o">.</span><span class="n">rescale</span><span class="p">(</span><span class="n">pq</span><span class="o">.</span><span class="n">s</span><span class="p">)</span><span class="o">.</span><span class="n">magnitude</span><span class="p">,</span>
                             <span class="p">),</span>
-                            <span class="n">surface_emg</span><span class="p">[</span><span class="n">pool_idx</span><span class="p">,</span> <span class="n">row_idx</span><span class="p">,</span> <span class="n">col_idx</span><span class="p">],</span>
+                            <span class="n">fp</span><span class="o">=</span><span class="n">surface_emg</span><span class="p">[</span><span class="n">pool_idx</span><span class="p">,</span> <span class="n">row_idx</span><span class="p">,</span> <span class="n">col_idx</span><span class="p">],</span>
                         <span class="p">)</span>
 
-            <span class="n">emg_results</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">surface_emg_resampled</span><span class="p">)</span>
+            <span class="c1"># Create segments for each motor unit pool within this electrode array group</span>
+            <span class="k">for</span> <span class="n">pool_idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_pools</span><span class="p">):</span>
+                <span class="n">segment</span> <span class="o">=</span> <span class="n">Segment</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Pool_</span><span class="si">{</span><span class="n">pool_idx</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="n">emg_group</span><span class="o">.</span><span class="n">segments</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">segment</span><span class="p">)</span>
+
+                <span class="c1"># Create GridAnalogSignal for this pool&#39;s EMG data</span>
+                <span class="n">segment</span><span class="o">.</span><span class="n">analogsignals</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                    <span class="n">GridAnalogSignal</span><span class="p">(</span>
+                        <span class="n">signal</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="n">surface_emg_resampled</span><span class="p">[</span><span class="n">pool_idx</span><span class="p">],</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span> <span class="o">*</span> <span class="n">pq</span><span class="o">.</span><span class="n">mV</span><span class="p">,</span>
+                        <span class="n">sampling_rate</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_sampling_frequency__Hz</span> <span class="o">*</span> <span class="n">pq</span><span class="o">.</span><span class="n">Hz</span><span class="p">,</span>
+                    <span class="p">)</span>
+                <span class="p">)</span>
 
         <span class="c1"># Store results privately</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_surface_emg__tensors</span> <span class="o">=</span> <span class="n">emg_results</span>
-        <span class="k">return</span> <span class="n">emg_results</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_surface_emg__Block</span> <span class="o">=</span> <span class="n">block</span>
+        <span class="k">return</span> <span class="n">block</span></div>
 
 
 <div class="viewcode-block" id="SurfaceEMG.add_noise">
 <a class="viewcode-back" href="../../../../../../generated/myogen.simulator.SurfaceEMG.add_noise.html#myogen.simulator.SurfaceEMG.add_noise">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">add_noise</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="n">snr_db</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">noise_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;gaussian&quot;</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">SURFACE_EMG__TENSOR</span><span class="p">]:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">add_noise</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">snr__dB</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">noise_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;gaussian&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">SURFACE_EMG__Block</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Add noise to all electrode arrays.</span>
 
 <span class="sd">        This method adds realistic noise to the simulated surface EMG signals</span>
-<span class="sd">        based on a specified signal-to-noise ratio. The noise characteristics</span>
-<span class="sd">        can be customized to match different recording conditions.</span>
+<span class="sd">        based on a specified signal-to-noise ratio. The noise is calculated</span>
+<span class="sd">        and applied independently for each electrode channel to ensure that</span>
+<span class="sd">        channels with different signal amplitudes maintain the specified SNR.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        snr_db : float</span>
+<span class="sd">        snr__dB : float</span>
 <span class="sd">            Signal-to-noise ratio in dB. Higher values result in cleaner signals.</span>
 <span class="sd">            Typical physiological EMG has SNR ranging from 10-40 dB.</span>
+<span class="sd">            The SNR is applied independently to each electrode channel.</span>
 <span class="sd">        noise_type : str, default=&quot;gaussian&quot;</span>
 <span class="sd">            Type of noise to add. Currently supports &quot;gaussian&quot; for white noise.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        list[SURFACE_EMG__TENSOR]</span>
-<span class="sd">            Noisy EMG signals for each electrode array.</span>
-<span class="sd">            Results are stored in the `noisy_surface_emg__tensors` property after execution.</span>
+<span class="sd">        SURFACE_EMG__Block</span>
+<span class="sd">            Noisy EMG signals for each electrode array as a neo.Block.</span>
+<span class="sd">            Results are stored in the `noisy_surface_emg__Block` property after execution.</span>
 
 <span class="sd">        Raises</span>
 <span class="sd">        ------</span>
 <span class="sd">        ValueError</span>
 <span class="sd">            If surface EMG has not been simulated. Call simulate_surface_emg() first.</span>
+
+<span class="sd">        Notes</span>
+<span class="sd">        -----</span>
+<span class="sd">        The noise is computed per-channel (per electrode) to maintain the specified</span>
+<span class="sd">        SNR independently across all channels. This ensures that electrodes with</span>
+<span class="sd">        different signal amplitudes receive appropriately scaled noise.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_surface_emg__tensors</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_surface_emg__Block</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
                 <span class="s2">&quot;Surface EMG has not been simulated. Call simulate_surface_emg() first.&quot;</span>
             <span class="p">)</span>
 
-        <span class="n">noisy_emg_results</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">noisy_block</span> <span class="o">=</span> <span class="n">Block</span><span class="p">()</span>
 
-        <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">emg_array</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_surface_emg__tensors</span><span class="p">):</span>
-            <span class="c1"># Calculate signal power</span>
-            <span class="n">signal_power</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">emg_array</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">array_idx</span><span class="p">,</span> <span class="n">emg_group</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_surface_emg__Block</span><span class="o">.</span><span class="n">groups</span><span class="p">):</span>
+            <span class="n">noisy_group</span> <span class="o">=</span> <span class="n">Group</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;ElectrodeArray_</span><span class="si">{</span><span class="n">array_idx</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="n">noisy_block</span><span class="o">.</span><span class="n">groups</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">noisy_group</span><span class="p">)</span>
 
-            <span class="c1"># Calculate noise power</span>
-            <span class="n">snr_linear</span> <span class="o">=</span> <span class="mi">10</span> <span class="o">**</span> <span class="p">(</span><span class="n">snr_db</span> <span class="o">/</span> <span class="mi">10</span><span class="p">)</span>
-            <span class="n">noise_power</span> <span class="o">=</span> <span class="n">signal_power</span> <span class="o">/</span> <span class="n">snr_linear</span>
+            <span class="k">for</span> <span class="n">pool_idx</span><span class="p">,</span> <span class="n">segment</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">emg_group</span><span class="o">.</span><span class="n">segments</span><span class="p">):</span>
+                <span class="n">noisy_segment</span> <span class="o">=</span> <span class="n">Segment</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Pool_</span><span class="si">{</span><span class="n">pool_idx</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="n">noisy_group</span><span class="o">.</span><span class="n">segments</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">noisy_segment</span><span class="p">)</span>
 
-            <span class="c1"># Generate noise</span>
-            <span class="k">if</span> <span class="n">noise_type</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;gaussian&quot;</span><span class="p">:</span>
-                <span class="n">noise_std</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">noise_power</span><span class="p">)</span>
-                <span class="n">noise</span> <span class="o">=</span> <span class="n">RANDOM_GENERATOR</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span>
-                    <span class="n">loc</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="n">noise_std</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="n">emg_array</span><span class="o">.</span><span class="n">shape</span>
+                <span class="c1"># Get the EMG signal data</span>
+                <span class="n">emg_signal</span> <span class="o">=</span> <span class="n">segment</span><span class="o">.</span><span class="n">analogsignals</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+                <span class="n">emg_array</span> <span class="o">=</span> <span class="n">emg_signal</span><span class="o">.</span><span class="n">magnitude</span>  <span class="c1"># Shape: (time, rows, cols)</span>
+
+                <span class="c1"># Calculate signal power PER CHANNEL (per electrode)</span>
+                <span class="c1"># Mean along time axis (axis=0) gives power per spatial location</span>
+                <span class="n">signal_power_per_channel</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">emg_array</span><span class="o">**</span><span class="mi">2</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>  <span class="c1"># Shape: (rows, cols)</span>
+
+                <span class="c1"># Calculate noise power per channel</span>
+                <span class="n">snr_linear</span> <span class="o">=</span> <span class="mi">10</span> <span class="o">**</span> <span class="p">(</span><span class="n">snr__dB</span> <span class="o">/</span> <span class="mi">10</span><span class="p">)</span>
+                <span class="n">noise_power_per_channel</span> <span class="o">=</span> <span class="n">signal_power_per_channel</span> <span class="o">/</span> <span class="n">snr_linear</span>
+                <span class="n">noise_std_per_channel</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">noise_power_per_channel</span><span class="p">)</span>  <span class="c1"># Shape: (rows, cols)</span>
+
+                <span class="c1"># Generate noise</span>
+                <span class="k">if</span> <span class="n">noise_type</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;gaussian&quot;</span><span class="p">:</span>
+                    <span class="c1"># Generate standard normal noise, then scale per channel</span>
+                    <span class="n">noise</span> <span class="o">=</span> <span class="n">RANDOM_GENERATOR</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="n">emg_array</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+                    <span class="c1"># Broadcast noise_std_per_channel along time axis</span>
+                    <span class="c1"># noise shape: (time, rows, cols)</span>
+                    <span class="c1"># noise_std_per_channel shape: (rows, cols)</span>
+                    <span class="c1"># Broadcasting: (time, rows, cols) * (1, rows, cols)</span>
+                    <span class="n">noise</span> <span class="o">=</span> <span class="n">noise</span> <span class="o">*</span> <span class="n">noise_std_per_channel</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">newaxis</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:]</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unsupported noise type: </span><span class="si">{</span><span class="n">noise_type</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+                <span class="c1"># Add noise</span>
+                <span class="n">noisy_emg</span> <span class="o">=</span> <span class="n">emg_array</span> <span class="o">+</span> <span class="n">noise</span>
+
+                <span class="c1"># Create new GridAnalogSignal with noise</span>
+                <span class="n">noisy_segment</span><span class="o">.</span><span class="n">analogsignals</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                    <span class="n">GridAnalogSignal</span><span class="p">(</span>
+                        <span class="n">signal</span><span class="o">=</span><span class="n">noisy_emg</span> <span class="o">*</span> <span class="n">emg_signal</span><span class="o">.</span><span class="n">units</span><span class="p">,</span>
+                        <span class="n">t_start</span><span class="o">=</span><span class="n">emg_signal</span><span class="o">.</span><span class="n">t_start</span><span class="p">,</span>
+                        <span class="n">sampling_rate</span><span class="o">=</span><span class="n">emg_signal</span><span class="o">.</span><span class="n">sampling_rate</span><span class="p">,</span>
+                    <span class="p">)</span>
                 <span class="p">)</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unsupported noise type: </span><span class="si">{</span><span class="n">noise_type</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-
-            <span class="c1"># Add noise</span>
-            <span class="n">noisy_emg</span> <span class="o">=</span> <span class="n">emg_array</span> <span class="o">+</span> <span class="n">noise</span>
-            <span class="n">noisy_emg_results</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">noisy_emg</span><span class="p">)</span>
 
         <span class="c1"># Store results privately</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_noisy_surface_emg__tensors</span> <span class="o">=</span> <span class="n">noisy_emg_results</span>
-        <span class="k">return</span> <span class="n">noisy_emg_results</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_noisy_surface_emg__Block</span> <span class="o">=</span> <span class="n">noisy_block</span>
+        <span class="k">return</span> <span class="n">noisy_block</span></div>
 
 
     <span class="c1"># Property accessors for computed results</span>
     <span class="nd">@property</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">muaps</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">SURFACE_MUAP_SHAPE__TENSOR</span><span class="p">]:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">muaps__Block</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">SURFACE_MUAP__Block</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Motor Unit Action Potential (MUAP) templates for each electrode array.</span>
 
@@ -975,41 +1616,37 @@ window.addEventListener("load", () => mermaid.run());
 <span class="sd">        ValueError</span>
 <span class="sd">            If MUAP templates have not been computed yet.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_muaps</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                <span class="s2">&quot;MUAP templates not computed. Call simulate_muaps() first.&quot;</span>
-            <span class="p">)</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_muaps</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_muaps__Block</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;MUAP templates not computed. Call simulate_muaps() first.&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_muaps__Block</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">surface_emg__tensors</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">SURFACE_EMG__TENSOR</span><span class="p">]:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">surface_emg__Block</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">SURFACE_EMG__Block</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Surface EMG signals for each electrode array.</span>
+<span class="sd">        Surface EMG signals for each electrode array stored in a neo.Block.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        list[SURFACE_EMG__TENSOR]</span>
-<span class="sd">            Surface EMG signals for each electrode array.</span>
+<span class="sd">        SURFACE_EMG__Block</span>
+<span class="sd">            Surface EMG signals for each electrode array stored in a neo.Block.</span>
 
 <span class="sd">        Raises</span>
 <span class="sd">        ------</span>
 <span class="sd">        ValueError</span>
 <span class="sd">            If surface EMG has not been computed yet.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_surface_emg__tensors</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                <span class="s2">&quot;Surface EMG signals not computed. Call simulate_surface_emg() first.&quot;</span>
-            <span class="p">)</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_surface_emg__tensors</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_surface_emg__Block</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Surface EMG signals not computed. Call simulate_surface_emg() first.&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_surface_emg__Block</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">noisy_surface_emg__tensors</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">SURFACE_EMG__TENSOR</span><span class="p">]:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">noisy_surface_emg__Block</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">SURFACE_EMG__Block</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Noisy surface EMG signals for each electrode array.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        list[SURFACE_EMG__TENSOR]</span>
+<span class="sd">        SURFACE_EMG__Block</span>
 <span class="sd">            Noisy surface EMG signals for each electrode array.</span>
 
 <span class="sd">        Raises</span>
@@ -1017,32 +1654,28 @@ window.addEventListener("load", () => mermaid.run());
 <span class="sd">        ValueError</span>
 <span class="sd">            If noisy surface EMG has not been computed yet.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_noisy_surface_emg__tensors</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                <span class="s2">&quot;Noisy surface EMG signals not computed. Call add_noise() first.&quot;</span>
-            <span class="p">)</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_noisy_surface_emg__tensors</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_noisy_surface_emg__Block</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Noisy surface EMG signals not computed. Call add_noise() first.&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_noisy_surface_emg__Block</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">motor_neuron_pool</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">MotorNeuronPool</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">spike_train__Block</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">SPIKE_TRAIN__Block</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Motor neuron pool used for EMG generation.</span>
+<span class="sd">        Spike train block used for EMG generation.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        MotorNeuronPool</span>
-<span class="sd">            The motor neuron pool used in the simulation.</span>
+<span class="sd">        SPIKE_TRAIN__Block</span>
+<span class="sd">            The spike train block used in the simulation.</span>
 
 <span class="sd">        Raises</span>
 <span class="sd">        ------</span>
 <span class="sd">        ValueError</span>
-<span class="sd">            If motor neuron pool has not been set yet.</span>
+<span class="sd">            If spike train block has not been set yet.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_motor_neuron_pool</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                <span class="s2">&quot;Motor neuron pool not set. Call simulate_surface_emg() first.&quot;</span>
-            <span class="p">)</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_motor_neuron_pool</span></div>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_spike_train__Block</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Spike train block not set. Call simulate_surface_emg() first.&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_spike_train__Block</span></div>
 
 </pre></div>
 

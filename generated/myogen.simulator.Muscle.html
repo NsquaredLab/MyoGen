@@ -30,14 +30,22 @@
   <link href="../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
 <link href="../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
 
-    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=8f2a1f02" />
-    <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=34f00721" />
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=5349f25f" />
+    <link rel="stylesheet" type="text/css" href="../_static/css/tooltipster.custom.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/css/tooltipster.bundle.min.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/css/tooltipster-sideTip-shadow.min.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/css/tooltipster-sideTip-punk.min.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/css/tooltipster-sideTip-noir.min.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/css/tooltipster-sideTip-light.min.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/css/tooltipster-sideTip-borderless.min.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/css/micromodal.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=9b95bd4c" />
     <link rel="stylesheet" type="text/css" href="../_static/sg_gallery.css?v=d2d258e8" />
     <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-binder.css?v=f4aeca0c" />
     <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-dataframe.css?v=2082cf3c" />
     <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
     <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
-    <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=34f00721" />
+    <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=9b95bd4c" />
   
   <!-- So that users can add custom icons -->
   <script src="../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
@@ -45,16 +53,23 @@
   <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
+    <script src="../_static/jquery.js?v=5d32c60e"></script>
+    <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
     <script src="../_static/documentation_options.js?v=1437fa6d"></script>
     <script src="../_static/doctools.js?v=9bcbadda"></script>
     <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
-    <script src="../_static/custom.js?v=a236ca48"></script>
+    <script src="../_static/js/hoverxref.js"></script>
+    <script src="../_static/js/tooltipster.bundle.min.js"></script>
+    <script src="../_static/js/micromodal.min.js"></script>
+    <script src="../_static/custom.js?v=e0e269b1"></script>
     <script src="../_static/design-tabs.js?v=f930bc37"></script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'generated/myogen.simulator.Muscle';</script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="myogen.simulator.Muscle.__init__" href="myogen.simulator.Muscle.__init__.html" />
-    <link rel="prev" title="myogen.simulator.MotorNeuronPool.spike_trains" href="myogen.simulator.MotorNeuronPool.spike_trains.html" />
+    <link rel="prev" title="myogen.simulator.RecruitmentThresholds.__init__" href="myogen.simulator.RecruitmentThresholds.__init__.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="0.4.0" />
@@ -96,7 +111,7 @@
   <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
 </div>
 <aside class="bd-header-announcement" aria-label="Announcement">
-  <div class="bd-header-announcement__content">⚠️ MyoGen is under active development. API may change.</div>
+  <div class="bd-header-announcement__content">MyoGen is under active development. API may change.</div>
 </aside>
 
   
@@ -168,7 +183,14 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../auto_examples/index.html">
+  <a class="nav-link nav-internal" href="../neo_blocks_guide.html">
+    Working with Neo Block Data Structures
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../examples.html">
     Examples
   </a>
 </li>
@@ -266,7 +288,14 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../auto_examples/index.html">
+  <a class="nav-link nav-internal" href="../neo_blocks_guide.html">
+    Working with Neo Block Data Structures
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../examples.html">
     Examples
   </a>
 </li>
@@ -316,16 +345,54 @@
   <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
   <div class="bd-toc-item navbar-nav"><p aria-level="2" class="caption" role="heading"><span class="caption-text">API Modules</span></p>
 <ul class="current nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../api/myogen_api.html">MyoGen Core</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="myogen.set_random_seed.html">set_random_seed</a></li>
+<li class="toctree-l2"><a class="reference internal" href="myogen.load_nmodl_mechanisms.html">load_nmodl_mechanisms</a></li>
+</ul>
+</details></li>
 <li class="toctree-l1 current active has-children"><a class="reference internal" href="../api/simulator_api.html">Simulator Module</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
-<li class="toctree-l2"><a class="reference internal" href="myogen.simulator.generate_mu_recruitment_thresholds.html">generate_mu_recruitment_thresholds</a></li>
-<li class="toctree-l2 has-children"><a class="reference internal" href="myogen.simulator.MotorNeuronPool.html">MotorNeuronPool</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l3"><a class="reference internal" href="myogen.simulator.MotorNeuronPool.__init__.html">myogen.simulator.MotorNeuronPool.__init__</a></li>
-<li class="toctree-l3"><a class="reference internal" href="myogen.simulator.MotorNeuronPool.compute_mvc_current_threshold.html">myogen.simulator.MotorNeuronPool.compute_mvc_current_threshold</a></li>
-<li class="toctree-l3"><a class="reference internal" href="myogen.simulator.MotorNeuronPool.generate_spike_trains.html">myogen.simulator.MotorNeuronPool.generate_spike_trains</a></li>
-<li class="toctree-l3"><a class="reference internal" href="myogen.simulator.MotorNeuronPool.active_neuron_indices.html">myogen.simulator.MotorNeuronPool.active_neuron_indices</a></li>
-<li class="toctree-l3"><a class="reference internal" href="myogen.simulator.MotorNeuronPool.data.html">myogen.simulator.MotorNeuronPool.data</a></li>
-<li class="toctree-l3"><a class="reference internal" href="myogen.simulator.MotorNeuronPool.mvc_current_threshold.html">myogen.simulator.MotorNeuronPool.mvc_current_threshold</a></li>
-<li class="toctree-l3"><a class="reference internal" href="myogen.simulator.MotorNeuronPool.spike_trains.html">myogen.simulator.MotorNeuronPool.spike_trains</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="myogen.simulator.neuron.populations._Pool.html">_Pool</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="myogen.simulator.neuron.populations._Pool.__init__.html">myogen.simulator.neuron.populations._Pool.__init__</a></li>
+<li class="toctree-l3"><a class="reference internal" href="myogen.simulator.neuron.populations._Pool.get_initialization_data.html">myogen.simulator.neuron.populations._Pool.get_initialization_data</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="myogen.simulator.neuron.populations.AlphaMN__Pool.html">AlphaMN__Pool</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="myogen.simulator.neuron.populations.AlphaMN__Pool.__init__.html">myogen.simulator.neuron.populations.AlphaMN__Pool.__init__</a></li>
+<li class="toctree-l3"><a class="reference internal" href="myogen.simulator.neuron.populations.AlphaMN__Pool.get_initialization_data.html">myogen.simulator.neuron.populations.AlphaMN__Pool.get_initialization_data</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="myogen.simulator.neuron.populations.DescendingDrive__Pool.html">DescendingDrive__Pool</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="myogen.simulator.neuron.populations.DescendingDrive__Pool.__init__.html">myogen.simulator.neuron.populations.DescendingDrive__Pool.__init__</a></li>
+<li class="toctree-l3"><a class="reference internal" href="myogen.simulator.neuron.populations.DescendingDrive__Pool.get_initialization_data.html">myogen.simulator.neuron.populations.DescendingDrive__Pool.get_initialization_data</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="myogen.simulator.neuron.populations.AffIa__Pool.html">AffIa__Pool</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="myogen.simulator.neuron.populations.AffIa__Pool.__init__.html">myogen.simulator.neuron.populations.AffIa__Pool.__init__</a></li>
+<li class="toctree-l3"><a class="reference internal" href="myogen.simulator.neuron.populations.AffIa__Pool.get_initialization_data.html">myogen.simulator.neuron.populations.AffIa__Pool.get_initialization_data</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="myogen.simulator.neuron.populations.AffII__Pool.html">AffII__Pool</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="myogen.simulator.neuron.populations.AffII__Pool.__init__.html">myogen.simulator.neuron.populations.AffII__Pool.__init__</a></li>
+<li class="toctree-l3"><a class="reference internal" href="myogen.simulator.neuron.populations.AffII__Pool.get_initialization_data.html">myogen.simulator.neuron.populations.AffII__Pool.get_initialization_data</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="myogen.simulator.neuron.populations.AffIb__Pool.html">AffIb__Pool</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="myogen.simulator.neuron.populations.AffIb__Pool.__init__.html">myogen.simulator.neuron.populations.AffIb__Pool.__init__</a></li>
+<li class="toctree-l3"><a class="reference internal" href="myogen.simulator.neuron.populations.AffIb__Pool.get_initialization_data.html">myogen.simulator.neuron.populations.AffIb__Pool.get_initialization_data</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="myogen.simulator.neuron.populations.GII__Pool.html">GII__Pool</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="myogen.simulator.neuron.populations.GII__Pool.__init__.html">myogen.simulator.neuron.populations.GII__Pool.__init__</a></li>
+<li class="toctree-l3"><a class="reference internal" href="myogen.simulator.neuron.populations.GII__Pool.get_initialization_data.html">myogen.simulator.neuron.populations.GII__Pool.get_initialization_data</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="myogen.simulator.neuron.populations.GIb__Pool.html">GIb__Pool</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="myogen.simulator.neuron.populations.GIb__Pool.__init__.html">myogen.simulator.neuron.populations.GIb__Pool.__init__</a></li>
+<li class="toctree-l3"><a class="reference internal" href="myogen.simulator.neuron.populations.GIb__Pool.get_initialization_data.html">myogen.simulator.neuron.populations.GIb__Pool.get_initialization_data</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="myogen.simulator.RecruitmentThresholds.html">RecruitmentThresholds</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="myogen.simulator.RecruitmentThresholds.__init__.html">myogen.simulator.RecruitmentThresholds.__init__</a></li>
 </ul>
 </details></li>
 <li class="toctree-l2 current active has-children"><a class="current reference internal" href="#">Muscle</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -360,10 +427,10 @@
 <li class="toctree-l3"><a class="reference internal" href="myogen.simulator.SurfaceEMG.add_noise.html">myogen.simulator.SurfaceEMG.add_noise</a></li>
 <li class="toctree-l3"><a class="reference internal" href="myogen.simulator.SurfaceEMG.simulate_muaps.html">myogen.simulator.SurfaceEMG.simulate_muaps</a></li>
 <li class="toctree-l3"><a class="reference internal" href="myogen.simulator.SurfaceEMG.simulate_surface_emg.html">myogen.simulator.SurfaceEMG.simulate_surface_emg</a></li>
-<li class="toctree-l3"><a class="reference internal" href="myogen.simulator.SurfaceEMG.motor_neuron_pool.html">myogen.simulator.SurfaceEMG.motor_neuron_pool</a></li>
-<li class="toctree-l3"><a class="reference internal" href="myogen.simulator.SurfaceEMG.muaps.html">myogen.simulator.SurfaceEMG.muaps</a></li>
-<li class="toctree-l3"><a class="reference internal" href="myogen.simulator.SurfaceEMG.noisy_surface_emg__tensors.html">myogen.simulator.SurfaceEMG.noisy_surface_emg__tensors</a></li>
-<li class="toctree-l3"><a class="reference internal" href="myogen.simulator.SurfaceEMG.surface_emg__tensors.html">myogen.simulator.SurfaceEMG.surface_emg__tensors</a></li>
+<li class="toctree-l3"><a class="reference internal" href="myogen.simulator.SurfaceEMG.muaps__Block.html">myogen.simulator.SurfaceEMG.muaps__Block</a></li>
+<li class="toctree-l3"><a class="reference internal" href="myogen.simulator.SurfaceEMG.noisy_surface_emg__Block.html">myogen.simulator.SurfaceEMG.noisy_surface_emg__Block</a></li>
+<li class="toctree-l3"><a class="reference internal" href="myogen.simulator.SurfaceEMG.spike_train__Block.html">myogen.simulator.SurfaceEMG.spike_train__Block</a></li>
+<li class="toctree-l3"><a class="reference internal" href="myogen.simulator.SurfaceEMG.surface_emg__Block.html">myogen.simulator.SurfaceEMG.surface_emg__Block</a></li>
 </ul>
 </details></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="myogen.simulator.IntramuscularEMG.html">IntramuscularEMG</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -371,10 +438,10 @@
 <li class="toctree-l3"><a class="reference internal" href="myogen.simulator.IntramuscularEMG.add_noise.html">myogen.simulator.IntramuscularEMG.add_noise</a></li>
 <li class="toctree-l3"><a class="reference internal" href="myogen.simulator.IntramuscularEMG.simulate_intramuscular_emg.html">myogen.simulator.IntramuscularEMG.simulate_intramuscular_emg</a></li>
 <li class="toctree-l3"><a class="reference internal" href="myogen.simulator.IntramuscularEMG.simulate_muaps.html">myogen.simulator.IntramuscularEMG.simulate_muaps</a></li>
-<li class="toctree-l3"><a class="reference internal" href="myogen.simulator.IntramuscularEMG.intramuscular_emg__tensor.html">myogen.simulator.IntramuscularEMG.intramuscular_emg__tensor</a></li>
-<li class="toctree-l3"><a class="reference internal" href="myogen.simulator.IntramuscularEMG.motor_neuron_pool.html">myogen.simulator.IntramuscularEMG.motor_neuron_pool</a></li>
-<li class="toctree-l3"><a class="reference internal" href="myogen.simulator.IntramuscularEMG.muaps.html">myogen.simulator.IntramuscularEMG.muaps</a></li>
-<li class="toctree-l3"><a class="reference internal" href="myogen.simulator.IntramuscularEMG.noisy_intramuscular_emg__tensor.html">myogen.simulator.IntramuscularEMG.noisy_intramuscular_emg__tensor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="myogen.simulator.IntramuscularEMG.intramuscular_emg__Block.html">myogen.simulator.IntramuscularEMG.intramuscular_emg__Block</a></li>
+<li class="toctree-l3"><a class="reference internal" href="myogen.simulator.IntramuscularEMG.muaps__Block.html">myogen.simulator.IntramuscularEMG.muaps__Block</a></li>
+<li class="toctree-l3"><a class="reference internal" href="myogen.simulator.IntramuscularEMG.noisy_intramuscular_emg__Block.html">myogen.simulator.IntramuscularEMG.noisy_intramuscular_emg__Block</a></li>
+<li class="toctree-l3"><a class="reference internal" href="myogen.simulator.IntramuscularEMG.spike_train__Block.html">myogen.simulator.IntramuscularEMG.spike_train__Block</a></li>
 </ul>
 </details></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="myogen.simulator.SurfaceElectrodeArray.html">SurfaceElectrodeArray</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -404,34 +471,47 @@
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../api/utils_api.html">Utils Module</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l2"><a class="reference internal" href="myogen.utils.setup_myogen.html">setup_myogen</a></li>
-<li class="toctree-l2"><a class="reference internal" href="myogen.utils.load_nmodl_files.html">load_nmodl_files</a></li>
-<li class="toctree-l2 has-children"><a class="reference internal" href="../api/currents_api.html">Current Generation</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l3"><a class="reference internal" href="myogen.utils.currents.create_ramp_current.html">create_ramp_current</a></li>
-<li class="toctree-l3"><a class="reference internal" href="myogen.utils.currents.create_step_current.html">create_step_current</a></li>
-<li class="toctree-l3"><a class="reference internal" href="myogen.utils.currents.create_sinusoidal_current.html">create_sinusoidal_current</a></li>
-<li class="toctree-l3"><a class="reference internal" href="myogen.utils.currents.create_sawtooth_current.html">create_sawtooth_current</a></li>
-<li class="toctree-l3"><a class="reference internal" href="myogen.utils.currents.create_trapezoid_current.html">create_trapezoid_current</a></li>
-</ul>
-</details></li>
-<li class="toctree-l2 has-children"><a class="reference internal" href="../api/plotting_api.html">Plotting &amp; Visualization</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l3"><a class="reference internal" href="myogen.utils.plotting.plot_recruitment_thresholds.html">plot_recruitment_thresholds</a></li>
-<li class="toctree-l3"><a class="reference internal" href="myogen.utils.plotting.plot_spike_trains.html">plot_spike_trains</a></li>
-<li class="toctree-l3"><a class="reference internal" href="myogen.utils.plotting.plot_surface_emg.html">plot_surface_emg</a></li>
-<li class="toctree-l3"><a class="reference internal" href="myogen.utils.plotting.plot_muap_grid.html">plot_muap_grid</a></li>
-<li class="toctree-l3"><a class="reference internal" href="myogen.utils.plotting.plot_input_current__matrix.html">plot_input_current__matrix</a></li>
-</ul>
-</details></li>
-<li class="toctree-l2 has-children"><a class="reference internal" href="../api/types_api.html">Type Definitions</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l3"><a class="reference internal" href="myogen.utils.types.INPUT_CURRENT__MATRIX.html">INPUT_CURRENT__MATRIX</a></li>
-<li class="toctree-l3"><a class="reference internal" href="myogen.utils.types.CORTICAL_INPUT__MATRIX.html">CORTICAL_INPUT__MATRIX</a></li>
-<li class="toctree-l3"><a class="reference internal" href="myogen.utils.types.SPIKE_TRAIN__MATRIX.html">SPIKE_TRAIN__MATRIX</a></li>
-<li class="toctree-l3"><a class="reference internal" href="myogen.utils.types.SURFACE_MUAP_SHAPE__TENSOR.html">SURFACE_MUAP_SHAPE__TENSOR</a></li>
-<li class="toctree-l3"><a class="reference internal" href="myogen.utils.types.INTRAMUSCULAR_MUAP_SHAPE__TENSOR.html">INTRAMUSCULAR_MUAP_SHAPE__TENSOR</a></li>
-<li class="toctree-l3"><a class="reference internal" href="myogen.utils.types.SURFACE_EMG__TENSOR.html">SURFACE_EMG__TENSOR</a></li>
-<li class="toctree-l3"><a class="reference internal" href="myogen.utils.types.INTRAMUSCULAR_EMG__TENSOR.html">INTRAMUSCULAR_EMG__TENSOR</a></li>
-</ul>
-</details></li>
+<li class="toctree-l2"><a class="reference internal" href="myogen.utils.currents.create_ramp_current.html">create_ramp_current</a></li>
+<li class="toctree-l2"><a class="reference internal" href="myogen.utils.currents.create_step_current.html">create_step_current</a></li>
+<li class="toctree-l2"><a class="reference internal" href="myogen.utils.currents.create_sinusoidal_current.html">create_sinusoidal_current</a></li>
+<li class="toctree-l2"><a class="reference internal" href="myogen.utils.currents.create_sawtooth_current.html">create_sawtooth_current</a></li>
+<li class="toctree-l2"><a class="reference internal" href="myogen.utils.currents.create_trapezoid_current.html">create_trapezoid_current</a></li>
+<li class="toctree-l2"><a class="reference internal" href="myogen.utils.neuron.inject_currents_into_populations.inject_currents_into_populations.html">inject_currents_into_populations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="myogen.utils.neuron.inject_currents_into_populations.inject_currents_and_simulate_spike_trains.html">inject_currents_and_simulate_spike_trains</a></li>
+<li class="toctree-l2"><a class="reference internal" href="myogen.utils.plotting.plot_raster_spikes.html">plot_raster_spikes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="myogen.utils.plotting.plot_membrane_potentials.html">plot_membrane_potentials</a></li>
+<li class="toctree-l2"><a class="reference internal" href="myogen.utils.plotting.plot_muscle_dynamics.html">plot_muscle_dynamics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="myogen.utils.plotting.plot_antagonist_muscle_comparison.html">plot_antagonist_muscle_comparison</a></li>
+<li class="toctree-l2"><a class="reference internal" href="myogen.utils.plotting.plot_spindle_dynamics.html">plot_spindle_dynamics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="myogen.utils.plotting.plot_gto_dynamics.html">plot_gto_dynamics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="myogen.utils.types.Quantity__s.html">Quantity__s</a></li>
+<li class="toctree-l2"><a class="reference internal" href="myogen.utils.types.Quantity__ms.html">Quantity__ms</a></li>
+<li class="toctree-l2"><a class="reference internal" href="myogen.utils.types.Quantity__rad.html">Quantity__rad</a></li>
+<li class="toctree-l2"><a class="reference internal" href="myogen.utils.types.Quantity__deg.html">Quantity__deg</a></li>
+<li class="toctree-l2"><a class="reference internal" href="myogen.utils.types.Quantity__mV.html">Quantity__mV</a></li>
+<li class="toctree-l2"><a class="reference internal" href="myogen.utils.types.Quantity__uV.html">Quantity__uV</a></li>
+<li class="toctree-l2"><a class="reference internal" href="myogen.utils.types.Quantity__nA.html">Quantity__nA</a></li>
+<li class="toctree-l2"><a class="reference internal" href="myogen.utils.types.Quantity__uS.html">Quantity__uS</a></li>
+<li class="toctree-l2"><a class="reference internal" href="myogen.utils.types.Quantity__S_per_m.html">Quantity__S_per_m</a></li>
+<li class="toctree-l2"><a class="reference internal" href="myogen.utils.types.Quantity__Hz.html">Quantity__Hz</a></li>
+<li class="toctree-l2"><a class="reference internal" href="myogen.utils.types.Quantity__pps.html">Quantity__pps</a></li>
+<li class="toctree-l2"><a class="reference internal" href="myogen.utils.types.Quantity__mm.html">Quantity__mm</a></li>
+<li class="toctree-l2"><a class="reference internal" href="myogen.utils.types.Quantity__m.html">Quantity__m</a></li>
+<li class="toctree-l2"><a class="reference internal" href="myogen.utils.types.Quantity__mm2.html">Quantity__mm2</a></li>
+<li class="toctree-l2"><a class="reference internal" href="myogen.utils.types.Quantity__per_mm2.html">Quantity__per_mm2</a></li>
+<li class="toctree-l2"><a class="reference internal" href="myogen.utils.types.Quantity__m_per_s.html">Quantity__m_per_s</a></li>
+<li class="toctree-l2"><a class="reference internal" href="myogen.utils.types.Quantity__mm_per_s.html">Quantity__mm_per_s</a></li>
+<li class="toctree-l2"><a class="reference internal" href="myogen.utils.types.CURRENT__AnalogSignal.html">CURRENT__AnalogSignal</a></li>
+<li class="toctree-l2"><a class="reference internal" href="myogen.utils.types.FORCE__AnalogSignal.html">FORCE__AnalogSignal</a></li>
+<li class="toctree-l2"><a class="reference internal" href="myogen.utils.types.SPIKE_TRAIN__Block.html">SPIKE_TRAIN__Block</a></li>
+<li class="toctree-l2"><a class="reference internal" href="myogen.utils.types.SURFACE_MUAP__Block.html">SURFACE_MUAP__Block</a></li>
+<li class="toctree-l2"><a class="reference internal" href="myogen.utils.types.SURFACE_EMG__Block.html">SURFACE_EMG__Block</a></li>
+<li class="toctree-l2"><a class="reference internal" href="myogen.utils.types.INTRAMUSCULAR_MUAP__Block.html">INTRAMUSCULAR_MUAP__Block</a></li>
+<li class="toctree-l2"><a class="reference internal" href="myogen.utils.types.INTRAMUSCULAR_EMG__Block.html">INTRAMUSCULAR_EMG__Block</a></li>
+<li class="toctree-l2"><a class="reference internal" href="myogen.utils.types.CORTICAL_INPUT__MATRIX.html">CORTICAL_INPUT__MATRIX</a></li>
+<li class="toctree-l2"><a class="reference internal" href="myogen.utils.types.RECRUITMENT_THRESHOLDS__ARRAY.html">RECRUITMENT_THRESHOLDS__ARRAY</a></li>
+<li class="toctree-l2"><a class="reference internal" href="myogen.utils.types.JOINT_ANGLE__ARRAY.html">JOINT_ANGLE__ARRAY</a></li>
+<li class="toctree-l2"><a class="reference internal" href="myogen.utils.types.MOMENT_ARM__MATRIX.html">MOMENT_ARM__MATRIX</a></li>
 </ul>
 </details></li>
 </ul>
@@ -504,28 +584,28 @@
 <em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Muscle</span></span><span class="sig-paren">(</span>
 
 <dl>
-<dd><em class="sig-param"><span class="n"><span class="pre">recruitment_thresholds</span></span></em>,</dd>
-<dd><em class="sig-param"><span class="n"><span class="pre">radius__mm</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">6.91</span></span></em>,</dd>
-<dd><em class="sig-param"><span class="n"><span class="pre">length__mm</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">30.0</span></span></em>,</dd>
-<dd><em class="sig-param"><span class="n"><span class="pre">fiber_density__fibers_per_mm2</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">400</span></span></em>,</dd>
-<dd><em class="sig-param"><span class="n"><span class="pre">max_innervation_area_to_total_muscle_area__ratio</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span> <span class="pre">/</span> <span class="pre">4</span></span></em>,</dd>
-<dd><em class="sig-param"><span class="n"><span class="pre">mean_conduction_velocity__m_s</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">4.2</span></span></em>,</dd>
-<dd><em class="sig-param"><span class="n"><span class="pre">mean_fiber_length__mm</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">31.7</span></span></em>,</dd>
-<dd><em class="sig-param"><span class="n"><span class="pre">var_fiber_length__mm</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2.8</span></span></em>,</dd>
-<dd><em class="sig-param"><span class="n"><span class="pre">radius_bone__mm</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>,</dd>
-<dd><em class="sig-param"><span class="n"><span class="pre">fat_thickness__mm</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.3</span></span></em>,</dd>
-<dd><em class="sig-param"><span class="n"><span class="pre">skin_thickness__mm</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.29</span></span></em>,</dd>
-<dd><em class="sig-param"><span class="n"><span class="pre">muscle_conductivity_radial__S_m</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.09</span></span></em>,</dd>
-<dd><em class="sig-param"><span class="n"><span class="pre">muscle_conductivity_longitudinal__S_m</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.4</span></span></em>,</dd>
-<dd><em class="sig-param"><span class="n"><span class="pre">fat_conductivity__S_m</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">4.7e-2</span></span></em>,</dd>
-<dd><em class="sig-param"><span class="n"><span class="pre">skin_conductivity__S_m</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">4.88e-4</span></span></em>,</dd>
-<dd><em class="sig-param"><span class="n"><span class="pre">grid_resolution</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">256</span></span></em>,</dd>
-<dd><em class="sig-param"><span class="n"><span class="pre">autorun</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">recruitment_thresholds</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">]]</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">radius__mm</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="myogen.utils.types.Quantity__mm.html#myogen.utils.types.Quantity__mm" title="myogen.utils.types.Quantity__mm"><span class="pre">Quantity__mm</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">6.91</span> <span class="pre">*</span> <span class="pre">pq.mm</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">length__mm</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="myogen.utils.types.Quantity__mm.html#myogen.utils.types.Quantity__mm" title="myogen.utils.types.Quantity__mm"><span class="pre">Quantity__mm</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">30.0</span> <span class="pre">*</span> <span class="pre">pq.mm</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">fiber_density__fibers_per_mm2</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="hxr-hoverxref hxr-tooltip reference external" href="https://docs.python.org/3/library/typing.html#typing.Annotated" title="(in Python v3.14)"><span class="pre">Annotated</span></a><span class="p"><span class="pre">[</span></span><span class="pre">Quantity</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://beartype.readthedocs.io/en/latest/api_vale/#beartype.vale.IsAttr" title="(in beartype v0.22.10)"><span class="pre">IsAttr</span></a><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'dimensionality'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://beartype.readthedocs.io/en/latest/api_vale/#beartype.vale.IsAttr" title="(in beartype v0.22.10)"><span class="pre">IsAttr</span></a><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'unicode'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://beartype.readthedocs.io/en/latest/api_vale/#beartype.vale.IsEqual" title="(in beartype v0.22.10)"><span class="pre">IsEqual</span></a><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'1/mm²'</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">350</span> <span class="pre">*</span> <span class="pre">pq.mm**-2</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">max_innervation_area_to_total_muscle_area__ratio</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="hxr-hoverxref hxr-tooltip reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1</span> <span class="pre">/</span> <span class="pre">4</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">mean_conduction_velocity__m_per_s</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="myogen.utils.types.Quantity__m_per_s.html#myogen.utils.types.Quantity__m_per_s" title="myogen.utils.types.Quantity__m_per_s"><span class="pre">Quantity__m_per_s</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">4.2</span> <span class="pre">*</span> <span class="pre">pq.m</span> <span class="pre">/</span> <span class="pre">pq.s</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">mean_fiber_length__mm</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="myogen.utils.types.Quantity__mm.html#myogen.utils.types.Quantity__mm" title="myogen.utils.types.Quantity__mm"><span class="pre">Quantity__mm</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">31.7</span> <span class="pre">*</span> <span class="pre">pq.mm</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">var_fiber_length__mm</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="myogen.utils.types.Quantity__mm.html#myogen.utils.types.Quantity__mm" title="myogen.utils.types.Quantity__mm"><span class="pre">Quantity__mm</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">2.8</span> <span class="pre">*</span> <span class="pre">pq.mm</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">radius_bone__mm</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="myogen.utils.types.Quantity__mm.html#myogen.utils.types.Quantity__mm" title="myogen.utils.types.Quantity__mm"><span class="pre">Quantity__mm</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span> <span class="pre">*</span> <span class="pre">pq.mm</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">fat_thickness__mm</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="myogen.utils.types.Quantity__mm.html#myogen.utils.types.Quantity__mm" title="myogen.utils.types.Quantity__mm"><span class="pre">Quantity__mm</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.3</span> <span class="pre">*</span> <span class="pre">pq.mm</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">skin_thickness__mm</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="myogen.utils.types.Quantity__mm.html#myogen.utils.types.Quantity__mm" title="myogen.utils.types.Quantity__mm"><span class="pre">Quantity__mm</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1.29</span> <span class="pre">*</span> <span class="pre">pq.mm</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">muscle_conductivity_radial__S_per_m</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="myogen.utils.types.Quantity__S_per_m.html#myogen.utils.types.Quantity__S_per_m" title="myogen.utils.types.Quantity__S_per_m"><span class="pre">Quantity__S_per_m</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.09</span> <span class="pre">*</span> <span class="pre">pq.S</span> <span class="pre">/</span> <span class="pre">pq.m</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">muscle_conductivity_longitudinal__S_per_m</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="myogen.utils.types.Quantity__S_per_m.html#myogen.utils.types.Quantity__S_per_m" title="myogen.utils.types.Quantity__S_per_m"><span class="pre">Quantity__S_per_m</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.4</span> <span class="pre">*</span> <span class="pre">pq.S</span> <span class="pre">/</span> <span class="pre">pq.m</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">fat_conductivity__S_per_m</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="myogen.utils.types.Quantity__S_per_m.html#myogen.utils.types.Quantity__S_per_m" title="myogen.utils.types.Quantity__S_per_m"><span class="pre">Quantity__S_per_m</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">4.07e-2</span> <span class="pre">*</span> <span class="pre">pq.S</span> <span class="pre">/</span> <span class="pre">pq.m</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">skin_conductivity__S_per_m</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="myogen.utils.types.Quantity__S_per_m.html#myogen.utils.types.Quantity__S_per_m" title="myogen.utils.types.Quantity__S_per_m"><span class="pre">Quantity__S_per_m</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">4.88e-4</span> <span class="pre">*</span> <span class="pre">pq.S</span> <span class="pre">/</span> <span class="pre">pq.m</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">grid_resolution</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="hxr-hoverxref hxr-tooltip reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">256</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">autorun</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="hxr-hoverxref hxr-tooltip reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>,</dd>
 </dl>
 
-<span class="sig-paren">)</span><a class="reference internal" href="../_modules/myogen/simulator/core/muscle/muscle.html#Muscle"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#myogen.simulator.Muscle" title="Link to this definition">#</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
-<p>A muscle model based on the cylindrical description of the volume conductor by Farina et al. 2004 <a class="footnote-reference brackets" href="#id14" id="id1" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a> and the motor unit distribution by Konstantin et al. 2020 <a class="footnote-reference brackets" href="#id15" id="id2" role="doc-noteref"><span class="fn-bracket">[</span>2<span class="fn-bracket">]</span></a>.</p>
+<span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="hxr-hoverxref hxr-tooltip reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../_modules/myogen/simulator/core/muscle/muscle.html#Muscle"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#myogen.simulator.Muscle" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="hxr-hoverxref hxr-tooltip reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>A muscle model based on the cylindrical description of the volume conductor by Farina et al. 2004 <a class="footnote-reference brackets" href="#id15" id="id1" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a> and the motor unit distribution by Konstantin et al. 2020 <a class="footnote-reference brackets" href="#id16" id="id2" role="doc-noteref"><span class="fn-bracket">[</span>2<span class="fn-bracket">]</span></a>.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>All default values are set to simulate the First Dorsal Interosseous (FDI) muscle. Values are pulled from the literature.</p>
@@ -533,32 +613,34 @@
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>recruitment_thresholds</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">RECRUITMENT_THRESHOLDS__ARRAY</span></code>) – Array of recruitment thresholds for each motor unit (see <cite>myogen.simulator.generate_mu_recruitment_thresholds</cite>).
+<li><p><strong>recruitment_thresholds</strong> (<em>RECRUITMENT_THRESHOLDS__ARRAY</em>) – Array of recruitment thresholds for each motor unit (see <cite>myogen.simulator.generate_mu_recruitment_thresholds</cite>).
 Values range from 0 to 1 with the largest motor units having thresholds near 1.</p></li>
-<li><p><strong>radius__mm</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a>, <em>default</em> <code class="docutils literal notranslate"><span class="pre">6.91</span></code>) – Radius of the muscle cross-section in millimeters. Default is set to 6.91 mm as determined by Jacobson et al. 1992 <a class="footnote-reference brackets" href="#id16" id="id3" role="doc-noteref"><span class="fn-bracket">[</span>3<span class="fn-bracket">]</span></a>.</p></li>
-<li><p><strong>length__mm</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a>, <em>default</em> <code class="docutils literal notranslate"><span class="pre">30.0</span></code>) – Length of the muscle in millimeters. Default is set to 30.0 mm as determined by no one.</p></li>
-<li><p><strong>fiber_density__fibers_per_mm2</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a>, <em>default</em> <code class="docutils literal notranslate"><span class="pre">400</span></code>) – Density of muscle fibers per square millimeter. Default is set to 400 fibers/mm² as determined by no one.</p></li>
-<li><p><strong>max_innervation_area_to_total_muscle_area__ratio</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a>, <em>default</em> <code class="docutils literal notranslate"><span class="pre">0.25</span></code>) – Ratio defining the maximum territory size relative to total muscle area.
+<li><p><strong>radius__mm</strong> (<a class="hxr-hoverxref hxr-tooltip reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a><em>, </em><em>default=6.91</em>) – Radius of the muscle cross-section in millimeters. Default is set to 6.91 mm as determined by Jacobson et al. 1992 <a class="footnote-reference brackets" href="#id17" id="id3" role="doc-noteref"><span class="fn-bracket">[</span>3<span class="fn-bracket">]</span></a>.</p></li>
+<li><p><strong>length__mm</strong> (<a class="hxr-hoverxref hxr-tooltip reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a><em>, </em><em>default=30.0</em>) – Length of the muscle in millimeters. Default is set to 30.0 mm as determined by no one.</p></li>
+<li><p><strong>fiber_density__fibers_per_mm2</strong> (<a class="hxr-hoverxref hxr-tooltip reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a><em>, </em><em>default=350</em>) – Density of muscle fibers per square millimeter. Default is set to 350 fibers/mm² as determined by Bettelho et al. 2019 <a class="footnote-reference brackets" href="#id21" id="id4" role="doc-noteref"><span class="fn-bracket">[</span>7<span class="fn-bracket">]</span></a>.</p></li>
+<li><p><strong>max_innervation_area_to_total_muscle_area__ratio</strong> (<a class="hxr-hoverxref hxr-tooltip reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a><em>, </em><em>default=0.25</em>) – Ratio defining the maximum territory size relative to total muscle area.
 Default is set to 0.25 as determined by no one but it is a good starting point.
 A value of 0.25 means the largest motor unit can innervate up to 25%
 of the total muscle cross-sectional area.
 Must be in range (0, 1].</p></li>
-<li><p><strong>mean_conduction_velocity__m_s</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a>, <em>default</em> <code class="docutils literal notranslate"><span class="pre">4.2</span></code>) – Mean conduction velocity in m/s. Default is set to 4.2 m/s as determined by Nishizono et al. 1990 <a class="footnote-reference brackets" href="#id17" id="id4" role="doc-noteref"><span class="fn-bracket">[</span>4<span class="fn-bracket">]</span></a>.
-Experimental range determined by Nishizono et al. 1990 <a class="footnote-reference brackets" href="#id17" id="id5" role="doc-noteref"><span class="fn-bracket">[</span>4<span class="fn-bracket">]</span></a> is between 3.2 and 5.0 m/s.</p></li>
-<li><p><strong>mean_fiber_length__mm</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a>, <em>default</em> <code class="docutils literal notranslate"><span class="pre">31.7</span></code>) – Mean fiber length in mm. Default is set to 31.7 mm as determined by Jacobson et al. 1992 <a class="footnote-reference brackets" href="#id16" id="id6" role="doc-noteref"><span class="fn-bracket">[</span>3<span class="fn-bracket">]</span></a> (Table 1).</p></li>
-<li><p><strong>var_fiber_length__mm</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a>, <em>default</em> <code class="docutils literal notranslate"><span class="pre">2.8</span></code>) – Fiber length variance in mm. Default is set to 2.8 mm as determined by Jacobson et al. 1992 <a class="footnote-reference brackets" href="#id16" id="id7" role="doc-noteref"><span class="fn-bracket">[</span>3<span class="fn-bracket">]</span></a> (Table 1).</p></li>
-<li><p><strong>radius_bone__mm</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a>, <em>default</em> <code class="docutils literal notranslate"><span class="pre">0</span></code>) – Bone radius in mm. Default is set to 0 mm as the FDI muscle doesn’t surround a bone.</p></li>
-<li><p><strong>fat_thickness__mm</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a>, <em>default</em> <code class="docutils literal notranslate"><span class="pre">0.3</span></code>) – Fat thickness in mm. Default is set to 0.3 mm as determined by Störchle et al. 2018 <a class="footnote-reference brackets" href="#id18" id="id8" role="doc-noteref"><span class="fn-bracket">[</span>5<span class="fn-bracket">]</span></a>.</p></li>
-<li><p><strong>skin_thickness__mm</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a>, <em>default</em> <code class="docutils literal notranslate"><span class="pre">1.29</span></code>) – Skin thickness in mm. Default is set to the male skin thickness average of 1.29 mm as determined by Brodar 1960 <a class="footnote-reference brackets" href="#id19" id="id9" role="doc-noteref"><span class="fn-bracket">[</span>6<span class="fn-bracket">]</span></a>.</p></li>
-<li><p><strong>muscle_conductivity_radial__S_m</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a>, <em>default</em> <code class="docutils literal notranslate"><span class="pre">0.09</span></code>) – Muscle conductivity in radial direction. Default is set to 0.09 S/m as determined by Botelho et al. 2019 <a class="footnote-reference brackets" href="#id20" id="id10" role="doc-noteref"><span class="fn-bracket">[</span>7<span class="fn-bracket">]</span></a> (Table 1).</p></li>
-<li><p><strong>muscle_conductivity_longitudinal__S_m</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a>, <em>default</em> <code class="docutils literal notranslate"><span class="pre">0.4</span></code>) – Muscle conductivity in longitudinal direction. Default is set to 0.4 S/m as determined by Botelho et al. 2019 <a class="footnote-reference brackets" href="#id20" id="id11" role="doc-noteref"><span class="fn-bracket">[</span>7<span class="fn-bracket">]</span></a> (Table 1).</p></li>
-<li><p><strong>fat_conductivity__S_m</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a>, <em>default</em> <code class="docutils literal notranslate"><span class="pre">4.7E-2</span></code>) – Fat conductivity. Default is set to 4.7E-2 S/m as determined by Botelho et al. 2019 <a class="footnote-reference brackets" href="#id20" id="id12" role="doc-noteref"><span class="fn-bracket">[</span>7<span class="fn-bracket">]</span></a> (Table 1).</p></li>
-<li><p><strong>skin_conductivity__S_m</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a>, <em>default</em> <code class="docutils literal notranslate"><span class="pre">4.88E-4</span></code>) – Skin conductivity. Default is set to 4.88E-4 S/m as determined by Botelho et al. 2019 <a class="footnote-reference brackets" href="#id20" id="id13" role="doc-noteref"><span class="fn-bracket">[</span>7<span class="fn-bracket">]</span></a> (Table 1).</p></li>
-<li><p><strong>grid_resolution</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>, <em>default</em> <code class="docutils literal notranslate"><span class="pre">256</span></code>) – Resolution of the computational grid used for innervation the muscle.
+<li><p><strong>mean_conduction_velocity__m_per_s</strong> (<a class="hxr-hoverxref hxr-tooltip reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a><em>, </em><em>default=4.2</em>) – Mean conduction velocity in m/s. Default is set to 4.2 m/s as determined by Nishizono et al. 1990 <a class="footnote-reference brackets" href="#id18" id="id5" role="doc-noteref"><span class="fn-bracket">[</span>4<span class="fn-bracket">]</span></a>.
+Experimental range determined by Nishizono et al. 1990 <a class="footnote-reference brackets" href="#id18" id="id6" role="doc-noteref"><span class="fn-bracket">[</span>4<span class="fn-bracket">]</span></a> is between 3.2 and 5.0 m/s.</p></li>
+<li><p><strong>mean_fiber_length__mm</strong> (<a class="hxr-hoverxref hxr-tooltip reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a><em>, </em><em>default=31.7</em>) – Mean fiber length in mm. Default is set to 31.7 mm as determined by Jacobson et al. 1992 <a class="footnote-reference brackets" href="#id17" id="id7" role="doc-noteref"><span class="fn-bracket">[</span>3<span class="fn-bracket">]</span></a> (Table 1).</p></li>
+<li><p><strong>var_fiber_length__mm</strong> (<a class="hxr-hoverxref hxr-tooltip reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a><em>, </em><em>default=2.8</em>) – Fiber length variance in mm. Default is set to 2.8 mm as determined by Jacobson et al. 1992 <a class="footnote-reference brackets" href="#id17" id="id8" role="doc-noteref"><span class="fn-bracket">[</span>3<span class="fn-bracket">]</span></a> (Table 1).</p></li>
+<li><p><strong>radius_bone__mm</strong> (<a class="hxr-hoverxref hxr-tooltip reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a><em>, </em><em>default=1</em>) – Bone radius in mm. Default is set to 1 mm.</p></li>
+<li><p><strong>fat_thickness__mm</strong> (<a class="hxr-hoverxref hxr-tooltip reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a><em>, </em><em>default=0.3</em>) – Fat thickness in mm. Default is set to 0.3 mm as determined by Störchle et al. 2018 <a class="footnote-reference brackets" href="#id19" id="id9" role="doc-noteref"><span class="fn-bracket">[</span>5<span class="fn-bracket">]</span></a>.</p></li>
+<li><p><strong>skin_thickness__mm</strong> (<a class="hxr-hoverxref hxr-tooltip reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a><em>, </em><em>default=1.29</em>) – Skin thickness in mm. Default is set to the male skin thickness average of 1.29 mm as determined by Brodar 1960 <a class="footnote-reference brackets" href="#id20" id="id10" role="doc-noteref"><span class="fn-bracket">[</span>6<span class="fn-bracket">]</span></a>.</p></li>
+<li><p><strong>muscle_conductivity_radial__S_m</strong> (<a class="hxr-hoverxref hxr-tooltip reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a><em>, </em><em>default=0.09</em>) – Muscle conductivity in radial direction. Default is set to 0.09 S/m as determined by Botelho et al. 2019 <a class="footnote-reference brackets" href="#id21" id="id11" role="doc-noteref"><span class="fn-bracket">[</span>7<span class="fn-bracket">]</span></a> (Table 1).</p></li>
+<li><p><strong>muscle_conductivity_longitudinal__S_m</strong> (<a class="hxr-hoverxref hxr-tooltip reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a><em>, </em><em>default=0.4</em>) – Muscle conductivity in longitudinal direction. Default is set to 0.4 S/m as determined by Botelho et al. 2019 <a class="footnote-reference brackets" href="#id21" id="id12" role="doc-noteref"><span class="fn-bracket">[</span>7<span class="fn-bracket">]</span></a> (Table 1).</p></li>
+<li><p><strong>fat_conductivity__S_per_m</strong> (<a class="hxr-hoverxref hxr-tooltip reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a><em>, </em><em>default=4.07E-2</em>) – Fat conductivity. Default is set to 4.07E-2 S/m as determined by Botelho et al. 2019 <a class="footnote-reference brackets" href="#id21" id="id13" role="doc-noteref"><span class="fn-bracket">[</span>7<span class="fn-bracket">]</span></a> (Table 1).</p></li>
+<li><p><strong>skin_conductivity__S_per_m</strong> (<a class="hxr-hoverxref hxr-tooltip reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a><em>, </em><em>default=4.88E-4</em>) – Skin conductivity. Default is set to 4.88E-4 S/m as determined by Botelho et al. 2019 <a class="footnote-reference brackets" href="#id21" id="id14" role="doc-noteref"><span class="fn-bracket">[</span>7<span class="fn-bracket">]</span></a> (Table 1).</p></li>
+<li><p><strong>grid_resolution</strong> (<a class="hxr-hoverxref hxr-tooltip reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a><em>, </em><em>default=256</em>) – Resolution of the computational grid used for innervation the muscle.
 Higher values provide more accurate spatial distribution but increase computational cost.
 Default is set to 256.</p></li>
-<li><p><strong>autorun</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a>, <em>default</em> <a class="reference external" href="https://docs.python.org/3/library/constants.html#False" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">False</span></code></a>) – If True, automatically executes the complete muscle simulation pipeline: innervation distribution, muscle fiber generation, and fiber-to-motor unit assignment.
+<li><p><strong>autorun</strong> (<a class="hxr-hoverxref hxr-tooltip reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a><em>, </em><em>default=False</em>) – If True, automatically executes the complete muscle simulation pipeline: innervation distribution, muscle fiber generation, and fiber-to-motor unit assignment.
 If False, these steps must be called manually.</p></li>
+<li><p><strong>muscle_conductivity_radial__S_per_m</strong> (<a class="hxr-hoverxref hxr-tooltip reference external" href="https://docs.python.org/3/library/typing.html#typing.Annotated" title="(in Python v3.14)"><em>Annotated</em></a><em>[</em><em>Quantity</em><em>, </em><a class="reference external" href="https://beartype.readthedocs.io/en/latest/api_vale/#beartype.vale.IsAttr" title="(in beartype v0.22.10)"><em>IsAttr</em></a><em>[</em><em>'dimensionality'</em><em>, </em><a class="reference external" href="https://beartype.readthedocs.io/en/latest/api_vale/#beartype.vale.IsAttr" title="(in beartype v0.22.10)"><em>IsAttr</em></a><em>[</em><em>'unicode'</em><em>, </em><a class="reference external" href="https://beartype.readthedocs.io/en/latest/api_vale/#beartype.vale.IsEqual" title="(in beartype v0.22.10)"><em>IsEqual</em></a><em>[</em><em>'S/m'</em><em>]</em><em>]</em><em>]</em><em>]</em>)</p></li>
+<li><p><strong>muscle_conductivity_longitudinal__S_per_m</strong> (<a class="hxr-hoverxref hxr-tooltip reference external" href="https://docs.python.org/3/library/typing.html#typing.Annotated" title="(in Python v3.14)"><em>Annotated</em></a><em>[</em><em>Quantity</em><em>, </em><a class="reference external" href="https://beartype.readthedocs.io/en/latest/api_vale/#beartype.vale.IsAttr" title="(in beartype v0.22.10)"><em>IsAttr</em></a><em>[</em><em>'dimensionality'</em><em>, </em><a class="reference external" href="https://beartype.readthedocs.io/en/latest/api_vale/#beartype.vale.IsAttr" title="(in beartype v0.22.10)"><em>IsAttr</em></a><em>[</em><em>'unicode'</em><em>, </em><a class="reference external" href="https://beartype.readthedocs.io/en/latest/api_vale/#beartype.vale.IsEqual" title="(in beartype v0.22.10)"><em>IsEqual</em></a><em>[</em><em>'S/m'</em><em>]</em><em>]</em><em>]</em><em>]</em>)</p></li>
 </ul>
 </dd>
 </dl>
@@ -568,7 +650,7 @@ If False, these steps must be called manually.</p></li>
 <dd><p>Motor unit innervation center positions [x, y] in mm. Available after distribute_innervation_centers().</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.3)"><code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></a></p>
+<dd class="field-odd"><p>np.ndarray</p>
 </dd>
 </dl>
 </dd></dl>
@@ -579,7 +661,7 @@ If False, these steps must be called manually.</p></li>
 <dd><p>Muscle fiber center positions [x, y] in mm. Available after generate_muscle_fiber_centers().</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.3)"><code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></a></p>
+<dd class="field-odd"><p>np.ndarray</p>
 </dd>
 </dl>
 </dd></dl>
@@ -590,7 +672,7 @@ If False, these steps must be called manually.</p></li>
 <dd><p>Muscle fiber diameters in mm. Available after _generate_fiber_properties().</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.3)"><code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></a></p>
+<dd class="field-odd"><p>np.ndarray</p>
 </dd>
 </dl>
 </dd></dl>
@@ -601,7 +683,7 @@ If False, these steps must be called manually.</p></li>
 <dd><p>Muscle fiber conduction velocities in mm/s. Available after _generate_fiber_properties().</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.3)"><code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></a></p>
+<dd class="field-odd"><p>np.ndarray</p>
 </dd>
 </dl>
 </dd></dl>
@@ -612,7 +694,7 @@ If False, these steps must be called manually.</p></li>
 <dd><p>Motor unit assignment for each muscle fiber. Available after assign_mfs2mns().</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.3)"><code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></a></p>
+<dd class="field-odd"><p>np.ndarray</p>
 </dd>
 </dl>
 </dd></dl>
@@ -623,7 +705,7 @@ If False, these steps must be called manually.</p></li>
 <dd><p>Total number of muscle fibers. Available after generate_muscle_fiber_centers().</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a></p>
+<dd class="field-odd"><p><a class="hxr-hoverxref hxr-tooltip reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -634,7 +716,7 @@ If False, these steps must be called manually.</p></li>
 <dd><p>Muscle boundary points for visualization. Available after generate_muscle_fiber_centers().</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.3)"><code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></a></p>
+<dd class="field-odd"><p>np.ndarray</p>
 </dd>
 </dl>
 </dd></dl>
@@ -645,7 +727,7 @@ If False, these steps must be called manually.</p></li>
 <dd><p>Actual number of fibers per motor unit. Available after assign_mfs2mns().</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.3)"><code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></a></p>
+<dd class="field-odd"><p>np.ndarray</p>
 </dd>
 </dl>
 </dd></dl>
@@ -656,87 +738,87 @@ If False, these steps must be called manually.</p></li>
 <dd><p>Actual innervation areas per motor unit in mm². Available after assign_mfs2mns().</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.3)"><code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></a></p>
+<dd class="field-odd"><p>np.ndarray</p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="field-list simple">
 <dt class="field-odd">Raises<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.13)"><strong>ValueError</strong></a> – If max_innervation_area_to_total_muscle_area__ratio is not in (0, 1].</p>
+<dd class="field-odd"><p><a class="hxr-hoverxref hxr-tooltip reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.14)"><strong>ValueError</strong></a> – If max_innervation_area_to_total_muscle_area__ratio is not in (0, 1].</p>
 </dd>
 <dt class="field-even">Parameters<span class="colon">:</span></dt>
 <dd class="field-even"><ul class="simple">
-<li><p><strong>recruitment_thresholds</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Annotated" title="(in Python v3.13)"><em>Annotated</em></a><em>[</em><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.3)"><em>ndarray</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.13)"><em>tuple</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a><em>, </em><em>...</em><em>]</em><em>, </em><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.dtype.html#numpy.dtype" title="(in NumPy v2.3)"><em>dtype</em></a><em>[</em><a class="reference external" href="https://numpy.org/doc/stable/reference/arrays.scalars.html#numpy.floating" title="(in NumPy v2.3)"><em>floating</em></a><em>]</em><em>]</em><em>, </em><em>beartype.vale.Is</em><em>[</em><em>lambda x: x.ndim == 1</em><em>]</em><em>]</em>)</p></li>
-<li><p><strong>radius__mm</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a>)</p></li>
-<li><p><strong>length__mm</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a>)</p></li>
-<li><p><strong>fiber_density__fibers_per_mm2</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a>)</p></li>
-<li><p><strong>max_innervation_area_to_total_muscle_area__ratio</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a>)</p></li>
-<li><p><strong>mean_conduction_velocity__m_s</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a>)</p></li>
-<li><p><strong>mean_fiber_length__mm</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a>)</p></li>
-<li><p><strong>var_fiber_length__mm</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a>)</p></li>
-<li><p><strong>radius_bone__mm</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a>)</p></li>
-<li><p><strong>fat_thickness__mm</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a>)</p></li>
-<li><p><strong>skin_thickness__mm</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a>)</p></li>
-<li><p><strong>muscle_conductivity_radial__S_m</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a>)</p></li>
-<li><p><strong>muscle_conductivity_longitudinal__S_m</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a>)</p></li>
-<li><p><strong>fat_conductivity__S_m</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a>)</p></li>
-<li><p><strong>skin_conductivity__S_m</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a>)</p></li>
-<li><p><strong>grid_resolution</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a>)</p></li>
-<li><p><strong>autorun</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a>)</p></li>
+<li><p><strong>recruitment_thresholds</strong> (<a class="hxr-hoverxref hxr-tooltip reference external" href="https://docs.python.org/3/library/typing.html#typing.Annotated" title="(in Python v3.14)"><em>Annotated</em></a><em>[</em><a class="hxr-hoverxref hxr-tooltip reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.3)"><em>ndarray</em></a><em>[</em><a class="hxr-hoverxref hxr-tooltip reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.14)"><em>tuple</em></a><em>[</em><a class="hxr-hoverxref hxr-tooltip reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.14)"><em>Any</em></a><em>, </em><em>...</em><em>]</em><em>, </em><a class="hxr-hoverxref hxr-tooltip reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.dtype.html#numpy.dtype" title="(in NumPy v2.3)"><em>dtype</em></a><em>[</em><a class="hxr-hoverxref hxr-tooltip reference external" href="https://numpy.org/doc/stable/reference/arrays.scalars.html#numpy.floating" title="(in NumPy v2.3)"><em>floating</em></a><em>]</em><em>]</em><em>, </em><a class="reference external" href="https://beartype.readthedocs.io/en/latest/api_vale/#beartype.vale.Is" title="(in beartype v0.22.10)"><em>Is</em></a><em>[</em><em>lambda x: x.ndim == 1</em><em>]</em><em>]</em>)</p></li>
+<li><p><strong>radius__mm</strong> (<a class="hxr-hoverxref hxr-tooltip reference external" href="https://docs.python.org/3/library/typing.html#typing.Annotated" title="(in Python v3.14)"><em>Annotated</em></a><em>[</em><em>Quantity</em><em>, </em><a class="reference external" href="https://beartype.readthedocs.io/en/latest/api_vale/#beartype.vale.IsAttr" title="(in beartype v0.22.10)"><em>IsAttr</em></a><em>[</em><em>'dimensionality'</em><em>, </em><a class="reference external" href="https://beartype.readthedocs.io/en/latest/api_vale/#beartype.vale.IsAttr" title="(in beartype v0.22.10)"><em>IsAttr</em></a><em>[</em><em>'unicode'</em><em>, </em><a class="reference external" href="https://beartype.readthedocs.io/en/latest/api_vale/#beartype.vale.IsEqual" title="(in beartype v0.22.10)"><em>IsEqual</em></a><em>[</em><em>'mm'</em><em>]</em><em>]</em><em>]</em><em>]</em>)</p></li>
+<li><p><strong>length__mm</strong> (<a class="hxr-hoverxref hxr-tooltip reference external" href="https://docs.python.org/3/library/typing.html#typing.Annotated" title="(in Python v3.14)"><em>Annotated</em></a><em>[</em><em>Quantity</em><em>, </em><a class="reference external" href="https://beartype.readthedocs.io/en/latest/api_vale/#beartype.vale.IsAttr" title="(in beartype v0.22.10)"><em>IsAttr</em></a><em>[</em><em>'dimensionality'</em><em>, </em><a class="reference external" href="https://beartype.readthedocs.io/en/latest/api_vale/#beartype.vale.IsAttr" title="(in beartype v0.22.10)"><em>IsAttr</em></a><em>[</em><em>'unicode'</em><em>, </em><a class="reference external" href="https://beartype.readthedocs.io/en/latest/api_vale/#beartype.vale.IsEqual" title="(in beartype v0.22.10)"><em>IsEqual</em></a><em>[</em><em>'mm'</em><em>]</em><em>]</em><em>]</em><em>]</em>)</p></li>
+<li><p><strong>fiber_density__fibers_per_mm2</strong> (<a class="hxr-hoverxref hxr-tooltip reference external" href="https://docs.python.org/3/library/typing.html#typing.Annotated" title="(in Python v3.14)"><em>Annotated</em></a><em>[</em><em>Quantity</em><em>, </em><a class="reference external" href="https://beartype.readthedocs.io/en/latest/api_vale/#beartype.vale.IsAttr" title="(in beartype v0.22.10)"><em>IsAttr</em></a><em>[</em><em>'dimensionality'</em><em>, </em><a class="reference external" href="https://beartype.readthedocs.io/en/latest/api_vale/#beartype.vale.IsAttr" title="(in beartype v0.22.10)"><em>IsAttr</em></a><em>[</em><em>'unicode'</em><em>, </em><a class="reference external" href="https://beartype.readthedocs.io/en/latest/api_vale/#beartype.vale.IsEqual" title="(in beartype v0.22.10)"><em>IsEqual</em></a><em>[</em><em>'1/mm²'</em><em>]</em><em>]</em><em>]</em><em>]</em>)</p></li>
+<li><p><strong>max_innervation_area_to_total_muscle_area__ratio</strong> (<a class="hxr-hoverxref hxr-tooltip reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>)</p></li>
+<li><p><strong>mean_conduction_velocity__m_per_s</strong> (<a class="hxr-hoverxref hxr-tooltip reference external" href="https://docs.python.org/3/library/typing.html#typing.Annotated" title="(in Python v3.14)"><em>Annotated</em></a><em>[</em><em>Quantity</em><em>, </em><a class="reference external" href="https://beartype.readthedocs.io/en/latest/api_vale/#beartype.vale.IsAttr" title="(in beartype v0.22.10)"><em>IsAttr</em></a><em>[</em><em>'dimensionality'</em><em>, </em><a class="reference external" href="https://beartype.readthedocs.io/en/latest/api_vale/#beartype.vale.IsAttr" title="(in beartype v0.22.10)"><em>IsAttr</em></a><em>[</em><em>'unicode'</em><em>, </em><a class="reference external" href="https://beartype.readthedocs.io/en/latest/api_vale/#beartype.vale.IsEqual" title="(in beartype v0.22.10)"><em>IsEqual</em></a><em>[</em><em>'m/s'</em><em>]</em><em>]</em><em>]</em><em>]</em>)</p></li>
+<li><p><strong>mean_fiber_length__mm</strong> (<a class="hxr-hoverxref hxr-tooltip reference external" href="https://docs.python.org/3/library/typing.html#typing.Annotated" title="(in Python v3.14)"><em>Annotated</em></a><em>[</em><em>Quantity</em><em>, </em><a class="reference external" href="https://beartype.readthedocs.io/en/latest/api_vale/#beartype.vale.IsAttr" title="(in beartype v0.22.10)"><em>IsAttr</em></a><em>[</em><em>'dimensionality'</em><em>, </em><a class="reference external" href="https://beartype.readthedocs.io/en/latest/api_vale/#beartype.vale.IsAttr" title="(in beartype v0.22.10)"><em>IsAttr</em></a><em>[</em><em>'unicode'</em><em>, </em><a class="reference external" href="https://beartype.readthedocs.io/en/latest/api_vale/#beartype.vale.IsEqual" title="(in beartype v0.22.10)"><em>IsEqual</em></a><em>[</em><em>'mm'</em><em>]</em><em>]</em><em>]</em><em>]</em>)</p></li>
+<li><p><strong>var_fiber_length__mm</strong> (<a class="hxr-hoverxref hxr-tooltip reference external" href="https://docs.python.org/3/library/typing.html#typing.Annotated" title="(in Python v3.14)"><em>Annotated</em></a><em>[</em><em>Quantity</em><em>, </em><a class="reference external" href="https://beartype.readthedocs.io/en/latest/api_vale/#beartype.vale.IsAttr" title="(in beartype v0.22.10)"><em>IsAttr</em></a><em>[</em><em>'dimensionality'</em><em>, </em><a class="reference external" href="https://beartype.readthedocs.io/en/latest/api_vale/#beartype.vale.IsAttr" title="(in beartype v0.22.10)"><em>IsAttr</em></a><em>[</em><em>'unicode'</em><em>, </em><a class="reference external" href="https://beartype.readthedocs.io/en/latest/api_vale/#beartype.vale.IsEqual" title="(in beartype v0.22.10)"><em>IsEqual</em></a><em>[</em><em>'mm'</em><em>]</em><em>]</em><em>]</em><em>]</em>)</p></li>
+<li><p><strong>radius_bone__mm</strong> (<a class="hxr-hoverxref hxr-tooltip reference external" href="https://docs.python.org/3/library/typing.html#typing.Annotated" title="(in Python v3.14)"><em>Annotated</em></a><em>[</em><em>Quantity</em><em>, </em><a class="reference external" href="https://beartype.readthedocs.io/en/latest/api_vale/#beartype.vale.IsAttr" title="(in beartype v0.22.10)"><em>IsAttr</em></a><em>[</em><em>'dimensionality'</em><em>, </em><a class="reference external" href="https://beartype.readthedocs.io/en/latest/api_vale/#beartype.vale.IsAttr" title="(in beartype v0.22.10)"><em>IsAttr</em></a><em>[</em><em>'unicode'</em><em>, </em><a class="reference external" href="https://beartype.readthedocs.io/en/latest/api_vale/#beartype.vale.IsEqual" title="(in beartype v0.22.10)"><em>IsEqual</em></a><em>[</em><em>'mm'</em><em>]</em><em>]</em><em>]</em><em>]</em>)</p></li>
+<li><p><strong>fat_thickness__mm</strong> (<a class="hxr-hoverxref hxr-tooltip reference external" href="https://docs.python.org/3/library/typing.html#typing.Annotated" title="(in Python v3.14)"><em>Annotated</em></a><em>[</em><em>Quantity</em><em>, </em><a class="reference external" href="https://beartype.readthedocs.io/en/latest/api_vale/#beartype.vale.IsAttr" title="(in beartype v0.22.10)"><em>IsAttr</em></a><em>[</em><em>'dimensionality'</em><em>, </em><a class="reference external" href="https://beartype.readthedocs.io/en/latest/api_vale/#beartype.vale.IsAttr" title="(in beartype v0.22.10)"><em>IsAttr</em></a><em>[</em><em>'unicode'</em><em>, </em><a class="reference external" href="https://beartype.readthedocs.io/en/latest/api_vale/#beartype.vale.IsEqual" title="(in beartype v0.22.10)"><em>IsEqual</em></a><em>[</em><em>'mm'</em><em>]</em><em>]</em><em>]</em><em>]</em>)</p></li>
+<li><p><strong>skin_thickness__mm</strong> (<a class="hxr-hoverxref hxr-tooltip reference external" href="https://docs.python.org/3/library/typing.html#typing.Annotated" title="(in Python v3.14)"><em>Annotated</em></a><em>[</em><em>Quantity</em><em>, </em><a class="reference external" href="https://beartype.readthedocs.io/en/latest/api_vale/#beartype.vale.IsAttr" title="(in beartype v0.22.10)"><em>IsAttr</em></a><em>[</em><em>'dimensionality'</em><em>, </em><a class="reference external" href="https://beartype.readthedocs.io/en/latest/api_vale/#beartype.vale.IsAttr" title="(in beartype v0.22.10)"><em>IsAttr</em></a><em>[</em><em>'unicode'</em><em>, </em><a class="reference external" href="https://beartype.readthedocs.io/en/latest/api_vale/#beartype.vale.IsEqual" title="(in beartype v0.22.10)"><em>IsEqual</em></a><em>[</em><em>'mm'</em><em>]</em><em>]</em><em>]</em><em>]</em>)</p></li>
+<li><p><strong>muscle_conductivity_radial__S_per_m</strong> (<a class="hxr-hoverxref hxr-tooltip reference external" href="https://docs.python.org/3/library/typing.html#typing.Annotated" title="(in Python v3.14)"><em>Annotated</em></a><em>[</em><em>Quantity</em><em>, </em><a class="reference external" href="https://beartype.readthedocs.io/en/latest/api_vale/#beartype.vale.IsAttr" title="(in beartype v0.22.10)"><em>IsAttr</em></a><em>[</em><em>'dimensionality'</em><em>, </em><a class="reference external" href="https://beartype.readthedocs.io/en/latest/api_vale/#beartype.vale.IsAttr" title="(in beartype v0.22.10)"><em>IsAttr</em></a><em>[</em><em>'unicode'</em><em>, </em><a class="reference external" href="https://beartype.readthedocs.io/en/latest/api_vale/#beartype.vale.IsEqual" title="(in beartype v0.22.10)"><em>IsEqual</em></a><em>[</em><em>'S/m'</em><em>]</em><em>]</em><em>]</em><em>]</em>)</p></li>
+<li><p><strong>muscle_conductivity_longitudinal__S_per_m</strong> (<a class="hxr-hoverxref hxr-tooltip reference external" href="https://docs.python.org/3/library/typing.html#typing.Annotated" title="(in Python v3.14)"><em>Annotated</em></a><em>[</em><em>Quantity</em><em>, </em><a class="reference external" href="https://beartype.readthedocs.io/en/latest/api_vale/#beartype.vale.IsAttr" title="(in beartype v0.22.10)"><em>IsAttr</em></a><em>[</em><em>'dimensionality'</em><em>, </em><a class="reference external" href="https://beartype.readthedocs.io/en/latest/api_vale/#beartype.vale.IsAttr" title="(in beartype v0.22.10)"><em>IsAttr</em></a><em>[</em><em>'unicode'</em><em>, </em><a class="reference external" href="https://beartype.readthedocs.io/en/latest/api_vale/#beartype.vale.IsEqual" title="(in beartype v0.22.10)"><em>IsEqual</em></a><em>[</em><em>'S/m'</em><em>]</em><em>]</em><em>]</em><em>]</em>)</p></li>
+<li><p><strong>fat_conductivity__S_per_m</strong> (<a class="hxr-hoverxref hxr-tooltip reference external" href="https://docs.python.org/3/library/typing.html#typing.Annotated" title="(in Python v3.14)"><em>Annotated</em></a><em>[</em><em>Quantity</em><em>, </em><a class="reference external" href="https://beartype.readthedocs.io/en/latest/api_vale/#beartype.vale.IsAttr" title="(in beartype v0.22.10)"><em>IsAttr</em></a><em>[</em><em>'dimensionality'</em><em>, </em><a class="reference external" href="https://beartype.readthedocs.io/en/latest/api_vale/#beartype.vale.IsAttr" title="(in beartype v0.22.10)"><em>IsAttr</em></a><em>[</em><em>'unicode'</em><em>, </em><a class="reference external" href="https://beartype.readthedocs.io/en/latest/api_vale/#beartype.vale.IsEqual" title="(in beartype v0.22.10)"><em>IsEqual</em></a><em>[</em><em>'S/m'</em><em>]</em><em>]</em><em>]</em><em>]</em>)</p></li>
+<li><p><strong>skin_conductivity__S_per_m</strong> (<a class="hxr-hoverxref hxr-tooltip reference external" href="https://docs.python.org/3/library/typing.html#typing.Annotated" title="(in Python v3.14)"><em>Annotated</em></a><em>[</em><em>Quantity</em><em>, </em><a class="reference external" href="https://beartype.readthedocs.io/en/latest/api_vale/#beartype.vale.IsAttr" title="(in beartype v0.22.10)"><em>IsAttr</em></a><em>[</em><em>'dimensionality'</em><em>, </em><a class="reference external" href="https://beartype.readthedocs.io/en/latest/api_vale/#beartype.vale.IsAttr" title="(in beartype v0.22.10)"><em>IsAttr</em></a><em>[</em><em>'unicode'</em><em>, </em><a class="reference external" href="https://beartype.readthedocs.io/en/latest/api_vale/#beartype.vale.IsEqual" title="(in beartype v0.22.10)"><em>IsEqual</em></a><em>[</em><em>'S/m'</em><em>]</em><em>]</em><em>]</em><em>]</em>)</p></li>
+<li><p><strong>grid_resolution</strong> (<a class="hxr-hoverxref hxr-tooltip reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a>)</p></li>
+<li><p><strong>autorun</strong> (<a class="hxr-hoverxref hxr-tooltip reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a>)</p></li>
 </ul>
 </dd>
 </dl>
 <p class="rubric">References</p>
 <aside class="footnote-list brackets">
-<aside class="footnote brackets" id="id14" role="doc-footnote">
+<aside class="footnote brackets" id="id15" role="doc-footnote">
 <span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id1">1</a><span class="fn-bracket">]</span></span>
 <p>Farina, D., Mesin, L., Martina, S., Merletti, R., 2004. A surface EMG generation model with multilayer cylindrical description of the volume conductor. IEEE Transactions on Biomedical Engineering 51, 415–426. <a class="reference external" href="https://doi.org/10.1109/TBME.2003.820998">https://doi.org/10.1109/TBME.2003.820998</a></p>
 </aside>
-<aside class="footnote brackets" id="id15" role="doc-footnote">
+<aside class="footnote brackets" id="id16" role="doc-footnote">
 <span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id2">2</a><span class="fn-bracket">]</span></span>
 <p>Konstantin, A., Yu, T., Le Carpentier, E., Aoustin, Y., Farina, D., 2020. Simulation of Motor Unit Action Potential Recordings From Intramuscular Multichannel Scanning Electrodes. IEEE Transactions on Biomedical Engineering 67, 2005–2014. <a class="reference external" href="https://doi.org/10.1109/TBME.2019.2953680">https://doi.org/10.1109/TBME.2019.2953680</a></p>
 </aside>
-<aside class="footnote brackets" id="id16" role="doc-footnote">
+<aside class="footnote brackets" id="id17" role="doc-footnote">
 <span class="label"><span class="fn-bracket">[</span>3<span class="fn-bracket">]</span></span>
-<span class="backrefs">(<a role="doc-backlink" href="#id3">1</a>,<a role="doc-backlink" href="#id6">2</a>,<a role="doc-backlink" href="#id7">3</a>)</span>
+<span class="backrefs">(<a role="doc-backlink" href="#id3">1</a>,<a role="doc-backlink" href="#id7">2</a>,<a role="doc-backlink" href="#id8">3</a>)</span>
 <p>Jacobson, M.D., Raab, R., Fazeli, B.M., Abrams, R.A., Botte, M.J., Lieber, R.L., 1992. Architectural design of the human intrinsic hand muscles. The Journal of Hand Surgery 17, 804–809. <a class="reference external" href="https://doi.org/10.1016/0363-5023(92)90446-V">https://doi.org/10.1016/0363-5023(92)90446-V</a></p>
 </aside>
-<aside class="footnote brackets" id="id17" role="doc-footnote">
+<aside class="footnote brackets" id="id18" role="doc-footnote">
 <span class="label"><span class="fn-bracket">[</span>4<span class="fn-bracket">]</span></span>
-<span class="backrefs">(<a role="doc-backlink" href="#id4">1</a>,<a role="doc-backlink" href="#id5">2</a>)</span>
+<span class="backrefs">(<a role="doc-backlink" href="#id5">1</a>,<a role="doc-backlink" href="#id6">2</a>)</span>
 <p>Nishizono, H., Fujimoto, T., Ohtake, H., Miyashita, M., 1990. Muscle fiber conduction velocity and contractile properties estimated from surface electrode arrays. Electroencephalography and Clinical Neurophysiology 75, 75–81. <a class="reference external" href="https://doi.org/10.1016/0013-4694(90)90154-C">https://doi.org/10.1016/0013-4694(90)90154-C</a></p>
 </aside>
-<aside class="footnote brackets" id="id18" role="doc-footnote">
-<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id8">5</a><span class="fn-bracket">]</span></span>
+<aside class="footnote brackets" id="id19" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id9">5</a><span class="fn-bracket">]</span></span>
 <p>Störchle, P., Müller, W., Sengeis, M., Lackner, S., Holasek, S., Fürhapter-Rieger, A., 2018. Measurement of mean subcutaneous fat thickness: eight standardised ultrasound sites compared to 216 randomly selected sites. Sci Rep 8, 16268. <a class="reference external" href="https://doi.org/10.1038/s41598-018-34213-0">https://doi.org/10.1038/s41598-018-34213-0</a></p>
 </aside>
-<aside class="footnote brackets" id="id19" role="doc-footnote">
-<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id9">6</a><span class="fn-bracket">]</span></span>
+<aside class="footnote brackets" id="id20" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id10">6</a><span class="fn-bracket">]</span></span>
 <p>Brodar, V., 1960. Observations on skin thickness and subcutaneous tissue in man. Zeitschrift für Morphologie und Anthropologie 50, 386–395.</p>
 </aside>
-<aside class="footnote brackets" id="id20" role="doc-footnote">
+<aside class="footnote brackets" id="id21" role="doc-footnote">
 <span class="label"><span class="fn-bracket">[</span>7<span class="fn-bracket">]</span></span>
-<span class="backrefs">(<a role="doc-backlink" href="#id10">1</a>,<a role="doc-backlink" href="#id11">2</a>,<a role="doc-backlink" href="#id12">3</a>,<a role="doc-backlink" href="#id13">4</a>)</span>
+<span class="backrefs">(<a role="doc-backlink" href="#id4">1</a>,<a role="doc-backlink" href="#id11">2</a>,<a role="doc-backlink" href="#id12">3</a>,<a role="doc-backlink" href="#id13">4</a>,<a role="doc-backlink" href="#id14">5</a>)</span>
 <p>Botelho, D.P., Curran, K., Lowery, M.M., 2019. Anatomically accurate model of EMG during index finger flexion and abduction derived from diffusion tensor imaging. PLOS Computational Biology 15, e1007267. <a class="reference external" href="https://doi.org/10.1371/journal.pcbi.1007267">https://doi.org/10.1371/journal.pcbi.1007267</a></p>
 </aside>
 </aside>
 <p class="rubric">Methods</p>
 <div class="pst-scrollable-table-container"><table class="autosummary longtable table">
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="myogen.simulator.Muscle.__init__.html#myogen.simulator.Muscle.__init__" title="myogen.simulator.Muscle.__init__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__init__</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="hxr-hoverxref hxr-tooltip reference internal" href="myogen.simulator.Muscle.__init__.html#myogen.simulator.Muscle.__init__" title="myogen.simulator.Muscle.__init__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__init__</span></code></a></p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="myogen.simulator.Muscle.assign_mfs2mns.html#myogen.simulator.Muscle.assign_mfs2mns" title="myogen.simulator.Muscle.assign_mfs2mns"><code class="xref py py-obj docutils literal notranslate"><span class="pre">assign_mfs2mns</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="hxr-hoverxref hxr-tooltip reference internal" href="myogen.simulator.Muscle.assign_mfs2mns.html#myogen.simulator.Muscle.assign_mfs2mns" title="myogen.simulator.Muscle.assign_mfs2mns"><code class="xref py py-obj docutils literal notranslate"><span class="pre">assign_mfs2mns</span></code></a></p></td>
 <td><p>Assign muscle fibers to motor neurons using biologically realistic principles.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="myogen.simulator.Muscle.distribute_innervation_centers.html#myogen.simulator.Muscle.distribute_innervation_centers" title="myogen.simulator.Muscle.distribute_innervation_centers"><code class="xref py py-obj docutils literal notranslate"><span class="pre">distribute_innervation_centers</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="hxr-hoverxref hxr-tooltip reference internal" href="myogen.simulator.Muscle.distribute_innervation_centers.html#myogen.simulator.Muscle.distribute_innervation_centers" title="myogen.simulator.Muscle.distribute_innervation_centers"><code class="xref py py-obj docutils literal notranslate"><span class="pre">distribute_innervation_centers</span></code></a></p></td>
 <td><p>Distribute innervation center positions using the fast marching method.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="myogen.simulator.Muscle.generate_muscle_fiber_centers.html#myogen.simulator.Muscle.generate_muscle_fiber_centers" title="myogen.simulator.Muscle.generate_muscle_fiber_centers"><code class="xref py py-obj docutils literal notranslate"><span class="pre">generate_muscle_fiber_centers</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="hxr-hoverxref hxr-tooltip reference internal" href="myogen.simulator.Muscle.generate_muscle_fiber_centers.html#myogen.simulator.Muscle.generate_muscle_fiber_centers" title="myogen.simulator.Muscle.generate_muscle_fiber_centers"><code class="xref py py-obj docutils literal notranslate"><span class="pre">generate_muscle_fiber_centers</span></code></a></p></td>
 <td><p>Generate muscle fiber center positions using a pre-computed Voronoi distribution.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="myogen.simulator.Muscle.resulting_fiber_assignment.html#myogen.simulator.Muscle.resulting_fiber_assignment" title="myogen.simulator.Muscle.resulting_fiber_assignment"><code class="xref py py-obj docutils literal notranslate"><span class="pre">resulting_fiber_assignment</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="hxr-hoverxref hxr-tooltip reference internal" href="myogen.simulator.Muscle.resulting_fiber_assignment.html#myogen.simulator.Muscle.resulting_fiber_assignment" title="myogen.simulator.Muscle.resulting_fiber_assignment"><code class="xref py py-obj docutils literal notranslate"><span class="pre">resulting_fiber_assignment</span></code></a></p></td>
 <td><p>Get the muscle fiber positions assigned to a specific motor unit.</p></td>
 </tr>
 </tbody>
@@ -745,34 +827,34 @@ If False, these steps must be called manually.</p></li>
 <p class="rubric">Attributes</p>
 <div class="pst-scrollable-table-container"><table class="autosummary longtable table">
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="myogen.simulator.Muscle.assignment.html#myogen.simulator.Muscle.assignment" title="myogen.simulator.Muscle.assignment"><code class="xref py py-obj docutils literal notranslate"><span class="pre">assignment</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="hxr-hoverxref hxr-tooltip reference internal" href="myogen.simulator.Muscle.assignment.html#myogen.simulator.Muscle.assignment" title="myogen.simulator.Muscle.assignment"><code class="xref py py-obj docutils literal notranslate"><span class="pre">assignment</span></code></a></p></td>
 <td><p>Motor unit assignment for each muscle fiber.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="myogen.simulator.Muscle.innervation_center_positions__mm.html#myogen.simulator.Muscle.innervation_center_positions__mm" title="myogen.simulator.Muscle.innervation_center_positions__mm"><code class="xref py py-obj docutils literal notranslate"><span class="pre">innervation_center_positions__mm</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="hxr-hoverxref hxr-tooltip reference internal" href="myogen.simulator.Muscle.innervation_center_positions__mm.html#myogen.simulator.Muscle.innervation_center_positions__mm" title="myogen.simulator.Muscle.innervation_center_positions__mm"><code class="xref py py-obj docutils literal notranslate"><span class="pre">innervation_center_positions__mm</span></code></a></p></td>
 <td><p>Motor unit innervation center positions [x, y] in mm.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="myogen.simulator.Muscle.muscle_border__mm.html#myogen.simulator.Muscle.muscle_border__mm" title="myogen.simulator.Muscle.muscle_border__mm"><code class="xref py py-obj docutils literal notranslate"><span class="pre">muscle_border__mm</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="hxr-hoverxref hxr-tooltip reference internal" href="myogen.simulator.Muscle.muscle_border__mm.html#myogen.simulator.Muscle.muscle_border__mm" title="myogen.simulator.Muscle.muscle_border__mm"><code class="xref py py-obj docutils literal notranslate"><span class="pre">muscle_border__mm</span></code></a></p></td>
 <td><p>Muscle boundary points for visualization.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="myogen.simulator.Muscle.muscle_fiber_centers__mm.html#myogen.simulator.Muscle.muscle_fiber_centers__mm" title="myogen.simulator.Muscle.muscle_fiber_centers__mm"><code class="xref py py-obj docutils literal notranslate"><span class="pre">muscle_fiber_centers__mm</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="hxr-hoverxref hxr-tooltip reference internal" href="myogen.simulator.Muscle.muscle_fiber_centers__mm.html#myogen.simulator.Muscle.muscle_fiber_centers__mm" title="myogen.simulator.Muscle.muscle_fiber_centers__mm"><code class="xref py py-obj docutils literal notranslate"><span class="pre">muscle_fiber_centers__mm</span></code></a></p></td>
 <td><p>Muscle fiber center positions [x, y] in mm.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="myogen.simulator.Muscle.muscle_fiber_conduction_velocities__mm_per_s.html#myogen.simulator.Muscle.muscle_fiber_conduction_velocities__mm_per_s" title="myogen.simulator.Muscle.muscle_fiber_conduction_velocities__mm_per_s"><code class="xref py py-obj docutils literal notranslate"><span class="pre">muscle_fiber_conduction_velocities__mm_per_s</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="hxr-hoverxref hxr-tooltip reference internal" href="myogen.simulator.Muscle.muscle_fiber_conduction_velocities__mm_per_s.html#myogen.simulator.Muscle.muscle_fiber_conduction_velocities__mm_per_s" title="myogen.simulator.Muscle.muscle_fiber_conduction_velocities__mm_per_s"><code class="xref py py-obj docutils literal notranslate"><span class="pre">muscle_fiber_conduction_velocities__mm_per_s</span></code></a></p></td>
 <td><p>Muscle fiber conduction velocities in mm/s.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="myogen.simulator.Muscle.muscle_fiber_diameters__mm.html#myogen.simulator.Muscle.muscle_fiber_diameters__mm" title="myogen.simulator.Muscle.muscle_fiber_diameters__mm"><code class="xref py py-obj docutils literal notranslate"><span class="pre">muscle_fiber_diameters__mm</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="hxr-hoverxref hxr-tooltip reference internal" href="myogen.simulator.Muscle.muscle_fiber_diameters__mm.html#myogen.simulator.Muscle.muscle_fiber_diameters__mm" title="myogen.simulator.Muscle.muscle_fiber_diameters__mm"><code class="xref py py-obj docutils literal notranslate"><span class="pre">muscle_fiber_diameters__mm</span></code></a></p></td>
 <td><p>Muscle fiber diameters in mm.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="myogen.simulator.Muscle.number_of_muscle_fibers.html#myogen.simulator.Muscle.number_of_muscle_fibers" title="myogen.simulator.Muscle.number_of_muscle_fibers"><code class="xref py py-obj docutils literal notranslate"><span class="pre">number_of_muscle_fibers</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="hxr-hoverxref hxr-tooltip reference internal" href="myogen.simulator.Muscle.number_of_muscle_fibers.html#myogen.simulator.Muscle.number_of_muscle_fibers" title="myogen.simulator.Muscle.number_of_muscle_fibers"><code class="xref py py-obj docutils literal notranslate"><span class="pre">number_of_muscle_fibers</span></code></a></p></td>
 <td><p>Total number of muscle fibers.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="myogen.simulator.Muscle.recruitment_thresholds.html#myogen.simulator.Muscle.recruitment_thresholds" title="myogen.simulator.Muscle.recruitment_thresholds"><code class="xref py py-obj docutils literal notranslate"><span class="pre">recruitment_thresholds</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="hxr-hoverxref hxr-tooltip reference internal" href="myogen.simulator.Muscle.recruitment_thresholds.html#myogen.simulator.Muscle.recruitment_thresholds" title="myogen.simulator.Muscle.recruitment_thresholds"><code class="xref py py-obj docutils literal notranslate"><span class="pre">recruitment_thresholds</span></code></a></p></td>
 <td><p>Motor unit recruitment thresholds.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="myogen.simulator.Muscle.resulting_innervation_areas__mm2.html#myogen.simulator.Muscle.resulting_innervation_areas__mm2" title="myogen.simulator.Muscle.resulting_innervation_areas__mm2"><code class="xref py py-obj docutils literal notranslate"><span class="pre">resulting_innervation_areas__mm2</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="hxr-hoverxref hxr-tooltip reference internal" href="myogen.simulator.Muscle.resulting_innervation_areas__mm2.html#myogen.simulator.Muscle.resulting_innervation_areas__mm2" title="myogen.simulator.Muscle.resulting_innervation_areas__mm2"><code class="xref py py-obj docutils literal notranslate"><span class="pre">resulting_innervation_areas__mm2</span></code></a></p></td>
 <td><p>Calculate the actual innervation areas for each motor unit based on assigned fibers.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="myogen.simulator.Muscle.resulting_number_of_innervated_fibers.html#myogen.simulator.Muscle.resulting_number_of_innervated_fibers" title="myogen.simulator.Muscle.resulting_number_of_innervated_fibers"><code class="xref py py-obj docutils literal notranslate"><span class="pre">resulting_number_of_innervated_fibers</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="hxr-hoverxref hxr-tooltip reference internal" href="myogen.simulator.Muscle.resulting_number_of_innervated_fibers.html#myogen.simulator.Muscle.resulting_number_of_innervated_fibers" title="myogen.simulator.Muscle.resulting_number_of_innervated_fibers"><code class="xref py py-obj docutils literal notranslate"><span class="pre">resulting_number_of_innervated_fibers</span></code></a></p></td>
 <td><p>Calculate the actual number of muscle fibers assigned to each motor unit.</p></td>
 </tr>
 </tbody>
@@ -780,7 +862,7 @@ If False, these steps must be called manually.</p></li>
 </div>
 <dl class="py method">
 <dt class="sig sig-object py" id="myogen.simulator.Muscle.distribute_innervation_centers">
-<span class="sig-name descname"><span class="pre">distribute_innervation_centers</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/myogen/simulator/core/muscle/muscle.html#Muscle.distribute_innervation_centers"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#myogen.simulator.Muscle.distribute_innervation_centers" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">distribute_innervation_centers</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="hxr-hoverxref hxr-tooltip reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../_modules/myogen/simulator/core/muscle/muscle.html#Muscle.distribute_innervation_centers"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#myogen.simulator.Muscle.distribute_innervation_centers" title="Link to this definition">#</a></dt>
 <dd><p>Distribute innervation center positions using the fast marching method.</p>
 <p>This method implements an optimal packing algorithm to distribute motor unit
 innervation centers within the circular muscle cross-section. The algorithm
@@ -788,34 +870,34 @@ uses the Fast Marching Method to ensure that each new innervation center is
 placed at the location that maximizes the minimum distance to all previously
 placed centers.</p>
 <p>Results are stored in the <cite>innervation_center_positions</cite> property after execution.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="hxr-hoverxref hxr-tooltip reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span></p>
+</dd>
+</dl>
 <p class="rubric">Notes</p>
 <p>This method must be called before generate_muscle_fiber_centers() and
 assign_mfs2mns(). The resulting distribution approximates the optimal
 packing problem for circles, leading to realistic motor unit territory
 arrangements.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><em>None</em></p>
-</dd>
-</dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="myogen.simulator.Muscle.generate_muscle_fiber_centers">
-<span class="sig-name descname"><span class="pre">generate_muscle_fiber_centers</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/myogen/simulator/core/muscle/muscle.html#Muscle.generate_muscle_fiber_centers"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#myogen.simulator.Muscle.generate_muscle_fiber_centers" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">generate_muscle_fiber_centers</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="hxr-hoverxref hxr-tooltip reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../_modules/myogen/simulator/core/muscle/muscle.html#Muscle.generate_muscle_fiber_centers"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#myogen.simulator.Muscle.generate_muscle_fiber_centers" title="Link to this definition">#</a></dt>
 <dd><p>Generate muscle fiber center positions using a pre-computed Voronoi distribution.</p>
 <p>This method creates the spatial distribution of muscle fiber centers
 within the circular muscle cross-section. The distribution is based on a
 Voronoi tessellation pattern that mimics the natural packing of muscle fibers
 observed in histological studies.</p>
-<dl class="simple">
-<dt>Results are stored in the following properties after execution:</dt><dd><ul class="simple">
+<p>Results are stored in the following properties after execution:</p>
+<blockquote>
+<div><ul class="simple">
 <li><p><cite>mf_centers</cite>: Array of shape (n_fibers, 2) with fiber positions [x, y] in mm</p></li>
 <li><p><cite>number_of_muscle_fibers</cite>: Total number of muscle fibers</p></li>
 <li><p><cite>muscle_border</cite>: Array of border points for visualization</p></li>
 </ul>
-</dd>
-</dl>
+</div></blockquote>
 <p class="rubric">Notes</p>
 <p>This method should be called after distribute_innervation_centers() and
 before assign_mfs2mns(). The Voronoi-based distribution provides more
@@ -825,42 +907,57 @@ Voronoi cell centers optimized for circular domains, ensuring efficient
 and consistent fiber distributions across simulations.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><em>None</em></p>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="hxr-hoverxref hxr-tooltip reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span></p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="myogen.simulator.Muscle.assign_mfs2mns">
-<span class="sig-name descname"><span class="pre">assign_mfs2mns</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n_neighbours</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">conf</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.999</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/myogen/simulator/core/muscle/muscle.html#Muscle.assign_mfs2mns"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#myogen.simulator.Muscle.assign_mfs2mns" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">assign_mfs2mns</span></span><span class="sig-paren">(</span>
+
+<dl>
+<dd><em class="sig-param"><span class="n"><span class="pre">n_neighbours</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="hxr-hoverxref hxr-tooltip reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">3</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">conf</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="hxr-hoverxref hxr-tooltip reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.999</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">n_jobs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="hxr-hoverxref hxr-tooltip reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">-2</span></span></em>,</dd>
+</dl>
+
+<span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="hxr-hoverxref hxr-tooltip reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../_modules/myogen/simulator/core/muscle/muscle.html#Muscle.assign_mfs2mns"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#myogen.simulator.Muscle.assign_mfs2mns" title="Link to this definition">#</a></dt>
 <dd><p>Assign muscle fibers to motor neurons using biologically realistic principles.</p>
 <p>This method implements an assignment algorithm that balances
 multiple biological constraints:</p>
-<blockquote>
-<div><ol class="arabic simple">
+<ol class="arabic simple">
 <li><p>Proximity: Fibers closer to innervation centers are more likely to be assigned</p></li>
 <li><p>Territory size: Each motor unit has a target number of fibers based on its size</p></li>
 <li><p>Self-avoidance: Neighboring fibers avoid belonging to the same motor unit</p></li>
 <li><p>Gaussian territories: Fiber territories follow roughly Gaussian distributions</p></li>
 </ol>
-</div></blockquote>
 <p>The assignment uses a probabilistic approach where each fiber is assigned
 based on the posterior probability computed from prior probabilities (target
 fiber numbers) and likelihoods (spatial clustering with Gaussian territories).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>n_neighbours</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>, <em>default</em> <code class="docutils literal notranslate"><span class="pre">3</span></code>) – Number of neighboring fibers to consider for self-avoiding phenomena.
+<li><p><strong>n_neighbours</strong> (<a class="hxr-hoverxref hxr-tooltip reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a><em>, </em><em>default 3</em>) – Number of neighboring fibers to consider for self-avoiding phenomena.
 Higher values increase intermingling between motor units but may slow
 computation. Typical range: 2-5.</p></li>
-<li><p><strong>conf</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a>, <em>default</em> <code class="docutils literal notranslate"><span class="pre">0.999</span></code>) – Confidence interval that defines the relationship between innervation
+<li><p><strong>conf</strong> (<a class="hxr-hoverxref hxr-tooltip reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a><em>, </em><em>default 0.999</em>) – Confidence interval that defines the relationship between innervation
 area and Gaussian distribution variance. Higher values create tighter,
 more compact territories. Should be between 0.9 and 0.999.</p></li>
+<li><p><strong>n_jobs</strong> (<a class="hxr-hoverxref hxr-tooltip reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a><em>, </em><em>default -2</em>) – <p>Number of parallel workers for out-of-circle coefficient computation.</p>
+<ul>
+<li><p>n_jobs=-1: Use all CPU cores</p></li>
+<li><p>n_jobs=-2: Use all cores except one (recommended, keeps system responsive)</p></li>
+<li><p>n_jobs=-3: Use all cores except two</p></li>
+<li><p>n_jobs=1: No parallelization</p></li>
+<li><p>n_jobs=N: Use exactly N cores</p></li>
+</ul>
+</p></li>
 <li><p><strong>execution.</strong> (<em>Results are stored in the assignment property after</em>)</p></li>
 </ul>
 </dd>
 <dt class="field-even">Raises<span class="colon">:</span></dt>
-<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.13)"><strong>ValueError</strong></a> – If innervation_center_positions is None. Call distribute_innervation_centers()
+<dd class="field-even"><p><a class="hxr-hoverxref hxr-tooltip reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.14)"><strong>ValueError</strong></a> – If innervation_center_positions is None. Call distribute_innervation_centers()
     first, or if muscle fiber centers are not available.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
@@ -868,6 +965,18 @@ more compact territories. Should be between 0.9 and 0.999.</p></li>
 </dd>
 </dl>
 <p class="rubric">Notes</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="hxr-hoverxref hxr-tooltip reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span></p>
+</dd>
+<dt class="field-even">Parameters<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>n_neighbours</strong> (<a class="hxr-hoverxref hxr-tooltip reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a>)</p></li>
+<li><p><strong>conf</strong> (<a class="hxr-hoverxref hxr-tooltip reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>)</p></li>
+<li><p><strong>n_jobs</strong> (<a class="hxr-hoverxref hxr-tooltip reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a>)</p></li>
+</ul>
+</dd>
+</dl>
 <p>The algorithm compensates for out-of-muscle effects by calculating how much
 of each motor unit’s Gaussian distribution falls outside the circular muscle
 boundary and adjusting the in-muscle probabilities accordingly.</p>
@@ -878,11 +987,17 @@ already assigned to that unit.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="myogen.simulator.Muscle.resulting_fiber_assignment">
-<span class="sig-name descname"><span class="pre">resulting_fiber_assignment</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mu</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/myogen/simulator/core/muscle/muscle.html#Muscle.resulting_fiber_assignment"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#myogen.simulator.Muscle.resulting_fiber_assignment" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">resulting_fiber_assignment</span></span><span class="sig-paren">(</span>
+
+<dl>
+<dd><em class="sig-param"><span class="n"><span class="pre">mu</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="hxr-hoverxref hxr-tooltip reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a></span></em>,</dd>
+</dl>
+
+<span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="myogen.utils.types.Quantity__mm.html#myogen.utils.types.Quantity__mm" title="myogen.utils.types.Quantity__mm"><span class="pre">Quantity__mm</span></a></span></span><a class="reference internal" href="../_modules/myogen/simulator/core/muscle/muscle.html#Muscle.resulting_fiber_assignment"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#myogen.simulator.Muscle.resulting_fiber_assignment" title="Link to this definition">#</a></dt>
 <dd><p>Get the muscle fiber positions assigned to a specific motor unit.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>mu</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>) – Motor unit index (0-based). Must be less than the total number of motor units.</p>
+<dd class="field-odd"><p><strong>mu</strong> (<a class="hxr-hoverxref hxr-tooltip reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a>) – Motor unit index (0-based). Must be less than the total number of motor units.</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>Array of shape (n_assigned_fibers, 2) containing the [x, y] coordinates
@@ -890,12 +1005,12 @@ already assigned to that unit.</p>
 If no fibers are assigned to the motor unit, returns an empty array.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.3)"><code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></a></p>
+<dd class="field-odd"><p>Quantity__mm</p>
 </dd>
 <dt class="field-even">Raises<span class="colon">:</span></dt>
 <dd class="field-even"><ul class="simple">
-<li><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#IndexError" title="(in Python v3.13)"><strong>IndexError</strong></a> – If mu is outside the valid range [0, n_motor_units-1].</p></li>
-<li><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.13)"><strong>ValueError</strong></a> – If the muscle fiber assignment has not been completed yet.</p></li>
+<li><p><a class="hxr-hoverxref hxr-tooltip reference external" href="https://docs.python.org/3/library/exceptions.html#IndexError" title="(in Python v3.14)"><strong>IndexError</strong></a> – If mu is outside the valid range [0, n_motor_units-1].</p></li>
+<li><p><a class="hxr-hoverxref hxr-tooltip reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.14)"><strong>ValueError</strong></a> – If the muscle fiber assignment has not been completed yet.</p></li>
 </ul>
 </dd>
 </dl>
@@ -913,7 +1028,7 @@ origin at the muscle center.</p>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="id0">
-<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">resulting_number_of_innervated_fibers</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.3)"><span class="pre">ndarray</span></a></em><a class="headerlink" href="#id0" title="Link to this definition">#</a></dt>
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">resulting_number_of_innervated_fibers</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="hxr-hoverxref hxr-tooltip reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.3)"><span class="pre">ndarray</span></a></em><a class="headerlink" href="#id0" title="Link to this definition">#</a></dt>
 <dd><p>Calculate the actual number of muscle fibers assigned to each motor unit.</p>
 <p>This property returns the final fiber counts after the assignment process,
 which may differ slightly from the desired counts due to the stochastic
@@ -925,10 +1040,10 @@ number of muscle fibers assigned to the corresponding motor unit.
 The sum of all elements equals the total number of muscle fibers.</p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.3)"><code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></a></p>
+<dd class="field-even"><p>np.ndarray</p>
 </dd>
 <dt class="field-odd">Raises<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.13)"><strong>ValueError</strong></a> – If muscle fiber assignment has not been completed yet.</p>
+<dd class="field-odd"><p><a class="hxr-hoverxref hxr-tooltip reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.14)"><strong>ValueError</strong></a> – If muscle fiber assignment has not been completed yet.</p>
 </dd>
 </dl>
 <p class="rubric">Examples</p>
@@ -944,8 +1059,8 @@ the need to adjust assignment parameters or increase grid resolution.</p>
 </dd></dl>
 
 <dl class="py property">
-<dt class="sig sig-object py" id="id21">
-<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">resulting_innervation_areas__mm2</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.3)"><span class="pre">ndarray</span></a></em><a class="headerlink" href="#id21" title="Link to this definition">#</a></dt>
+<dt class="sig sig-object py" id="id22">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">resulting_innervation_areas__mm2</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="hxr-hoverxref hxr-tooltip reference external" href="https://docs.python.org/3/library/typing.html#typing.Annotated" title="(in Python v3.14)"><span class="pre">Annotated</span></a><span class="p"><span class="pre">[</span></span><span class="pre">Quantity</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://beartype.readthedocs.io/en/latest/api_vale/#beartype.vale.IsAttr" title="(in beartype v0.22.10)"><span class="pre">IsAttr</span></a><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'dimensionality'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://beartype.readthedocs.io/en/latest/api_vale/#beartype.vale.IsAttr" title="(in beartype v0.22.10)"><span class="pre">IsAttr</span></a><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'unicode'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://beartype.readthedocs.io/en/latest/api_vale/#beartype.vale.IsEqual" title="(in beartype v0.22.10)"><span class="pre">IsEqual</span></a><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'mm²'</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#id22" title="Link to this definition">#</a></dt>
 <dd><p>Calculate the actual innervation areas for each motor unit based on assigned fibers.</p>
 <p>The innervation area is computed as the area of a circle that encompasses
 all muscle fibers assigned to a motor unit, centered on the motor unit’s
@@ -958,10 +1073,10 @@ for each motor unit. Areas are calculated as π × r², where r is the
 maximum distance from the innervation center to any assigned fiber.</p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.3)"><code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></a></p>
+<dd class="field-even"><p>Quantity__mm2</p>
 </dd>
 <dt class="field-odd">Raises<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.13)"><strong>ValueError</strong></a> – If innervation_center_positions is None or assignment has not been completed.</p>
+<dd class="field-odd"><p><a class="hxr-hoverxref hxr-tooltip reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.14)"><strong>ValueError</strong></a> – If innervation_center_positions is None or assignment has not been completed.</p>
 </dd>
 </dl>
 <p class="rubric">Examples</p>
@@ -979,76 +1094,76 @@ desired due to boundary effects.</p>
 </dd></dl>
 
 <dl class="py property">
-<dt class="sig sig-object py" id="id22">
-<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">innervation_center_positions__mm</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.3)"><span class="pre">ndarray</span></a></em><a class="headerlink" href="#id22" title="Link to this definition">#</a></dt>
+<dt class="sig sig-object py" id="id23">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">innervation_center_positions__mm</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="myogen.utils.types.Quantity__mm.html#myogen.utils.types.Quantity__mm" title="myogen.utils.types.Quantity__mm"><span class="pre">Quantity__mm</span></a></em><a class="headerlink" href="#id23" title="Link to this definition">#</a></dt>
 <dd><p>Motor unit innervation center positions [x, y] in mm.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p>Array of shape (n_motor_units, 2) containing [x, y] coordinates in mm.</p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.3)"><code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></a></p>
+<dd class="field-even"><p>Quantity__mm</p>
 </dd>
 <dt class="field-odd">Raises<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.13)"><strong>ValueError</strong></a> – If innervation centers have not been computed yet.</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py property">
-<dt class="sig sig-object py" id="id23">
-<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">muscle_fiber_centers__mm</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.3)"><span class="pre">ndarray</span></a></em><a class="headerlink" href="#id23" title="Link to this definition">#</a></dt>
-<dd><p>Muscle fiber center positions [x, y] in mm.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p>Array of shape (n_fibers, 2) containing [x, y] coordinates in mm.</p>
-</dd>
-<dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.3)"><code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></a></p>
-</dd>
-<dt class="field-odd">Raises<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.13)"><strong>ValueError</strong></a> – If muscle fiber centers have not been computed yet.</p>
+<dd class="field-odd"><p><a class="hxr-hoverxref hxr-tooltip reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.14)"><strong>ValueError</strong></a> – If innervation centers have not been computed yet.</p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="id24">
-<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">muscle_fiber_diameters__mm</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.3)"><span class="pre">ndarray</span></a></em><a class="headerlink" href="#id24" title="Link to this definition">#</a></dt>
-<dd><p>Muscle fiber diameters in mm.</p>
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">muscle_fiber_centers__mm</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="myogen.utils.types.Quantity__mm.html#myogen.utils.types.Quantity__mm" title="myogen.utils.types.Quantity__mm"><span class="pre">Quantity__mm</span></a></em><a class="headerlink" href="#id24" title="Link to this definition">#</a></dt>
+<dd><p>Muscle fiber center positions [x, y] in mm.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p>Array of muscle fiber diameters in mm.</p>
+<dd class="field-odd"><p>Array of shape (n_fibers, 2) containing [x, y] coordinates in mm.</p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.3)"><code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></a></p>
+<dd class="field-even"><p>Quantity__mm</p>
 </dd>
 <dt class="field-odd">Raises<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.13)"><strong>ValueError</strong></a> – If fiber properties have not been computed yet.</p>
+<dd class="field-odd"><p><a class="hxr-hoverxref hxr-tooltip reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.14)"><strong>ValueError</strong></a> – If muscle fiber centers have not been computed yet.</p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="id25">
-<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">muscle_fiber_conduction_velocities__mm_per_s</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.3)"><span class="pre">ndarray</span></a></em><a class="headerlink" href="#id25" title="Link to this definition">#</a></dt>
-<dd><p>Muscle fiber conduction velocities in mm/s.</p>
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">muscle_fiber_diameters__mm</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="myogen.utils.types.Quantity__mm.html#myogen.utils.types.Quantity__mm" title="myogen.utils.types.Quantity__mm"><span class="pre">Quantity__mm</span></a></em><a class="headerlink" href="#id25" title="Link to this definition">#</a></dt>
+<dd><p>Muscle fiber diameters in mm.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p>Array of muscle fiber conduction velocities in mm/s.</p>
+<dd class="field-odd"><p>Array of muscle fiber diameters in mm.</p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.3)"><code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></a></p>
+<dd class="field-even"><p>Quantity__mm</p>
 </dd>
 <dt class="field-odd">Raises<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.13)"><strong>ValueError</strong></a> – If fiber properties have not been computed yet.</p>
+<dd class="field-odd"><p><a class="hxr-hoverxref hxr-tooltip reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.14)"><strong>ValueError</strong></a> – If fiber properties have not been computed yet.</p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="id26">
-<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">assignment</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.3)"><span class="pre">ndarray</span></a></em><a class="headerlink" href="#id26" title="Link to this definition">#</a></dt>
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">muscle_fiber_conduction_velocities__mm_per_s</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="myogen.utils.types.Quantity__mm_per_s.html#myogen.utils.types.Quantity__mm_per_s" title="myogen.utils.types.Quantity__mm_per_s"><span class="pre">Quantity__mm_per_s</span></a></em><a class="headerlink" href="#id26" title="Link to this definition">#</a></dt>
+<dd><p>Muscle fiber conduction velocities in mm/s.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Array of muscle fiber conduction velocities in mm/s.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>Quantity__mm_per_s</p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="hxr-hoverxref hxr-tooltip reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.14)"><strong>ValueError</strong></a> – If fiber properties have not been computed yet.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="id27">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">assignment</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="hxr-hoverxref hxr-tooltip reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.3)"><span class="pre">ndarray</span></a></em><a class="headerlink" href="#id27" title="Link to this definition">#</a></dt>
 <dd><p>Motor unit assignment for each muscle fiber.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
@@ -1056,58 +1171,58 @@ desired due to boundary effects.</p>
 assigned to that fiber.</p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.3)"><code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></a></p>
+<dd class="field-even"><p>np.ndarray</p>
 </dd>
 <dt class="field-odd">Raises<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.13)"><strong>ValueError</strong></a> – If muscle fiber assignment has not been completed yet.</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py property">
-<dt class="sig sig-object py" id="id27">
-<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">number_of_muscle_fibers</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><span class="pre">int</span></a></em><a class="headerlink" href="#id27" title="Link to this definition">#</a></dt>
-<dd><p>Total number of muscle fibers.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p>Total number of muscle fibers.</p>
-</dd>
-<dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a></p>
-</dd>
-<dt class="field-odd">Raises<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.13)"><strong>ValueError</strong></a> – If muscle fiber centers have not been computed yet.</p>
+<dd class="field-odd"><p><a class="hxr-hoverxref hxr-tooltip reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.14)"><strong>ValueError</strong></a> – If muscle fiber assignment has not been completed yet.</p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="id28">
-<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">muscle_border__mm</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.3)"><span class="pre">ndarray</span></a></em><a class="headerlink" href="#id28" title="Link to this definition">#</a></dt>
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">number_of_muscle_fibers</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="hxr-hoverxref hxr-tooltip reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a></em><a class="headerlink" href="#id28" title="Link to this definition">#</a></dt>
+<dd><p>Total number of muscle fibers.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Total number of muscle fibers.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="hxr-hoverxref hxr-tooltip reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a></p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="hxr-hoverxref hxr-tooltip reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.14)"><strong>ValueError</strong></a> – If muscle fiber centers have not been computed yet.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="id29">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">muscle_border__mm</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="myogen.utils.types.Quantity__mm.html#myogen.utils.types.Quantity__mm" title="myogen.utils.types.Quantity__mm"><span class="pre">Quantity__mm</span></a></em><a class="headerlink" href="#id29" title="Link to this definition">#</a></dt>
 <dd><p>Muscle boundary points for visualization.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p>Array of boundary points for the circular muscle cross-section.</p>
+<dd class="field-odd"><p>Array of boundary points for the circular muscle cross-section in mm.</p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.3)"><code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></a></p>
+<dd class="field-even"><p>Quantity__mm</p>
 </dd>
 <dt class="field-odd">Raises<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.13)"><strong>ValueError</strong></a> – If muscle fiber centers have not been computed yet.</p>
+<dd class="field-odd"><p><a class="hxr-hoverxref hxr-tooltip reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.14)"><strong>ValueError</strong></a> – If muscle fiber centers have not been computed yet.</p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="myogen.simulator.Muscle.recruitment_thresholds">
-<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">recruitment_thresholds</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.3)"><span class="pre">ndarray</span></a></em><a class="headerlink" href="#myogen.simulator.Muscle.recruitment_thresholds" title="Link to this definition">#</a></dt>
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">recruitment_thresholds</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ndim</span> <span class="pre">==</span> <span class="pre">1]]</span></em><a class="headerlink" href="#myogen.simulator.Muscle.recruitment_thresholds" title="Link to this definition">#</a></dt>
 <dd><p>Motor unit recruitment thresholds.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p>Array of recruitment thresholds for each motor unit.</p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.3)"><code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></a></p>
+<dd class="field-even"><p>np.ndarray</p>
 </dd>
 </dl>
 </dd></dl>
@@ -1154,44 +1269,19 @@ assigned to that fiber.</p>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#myogen.simulator.Muscle.assign_mfs2mns"><code class="docutils literal notranslate"><span class="pre">Muscle.assign_mfs2mns()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#myogen.simulator.Muscle.resulting_fiber_assignment"><code class="docutils literal notranslate"><span class="pre">Muscle.resulting_fiber_assignment()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id0"><code class="docutils literal notranslate"><span class="pre">Muscle.resulting_number_of_innervated_fibers</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id21"><code class="docutils literal notranslate"><span class="pre">Muscle.resulting_innervation_areas__mm2</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id22"><code class="docutils literal notranslate"><span class="pre">Muscle.innervation_center_positions__mm</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id23"><code class="docutils literal notranslate"><span class="pre">Muscle.muscle_fiber_centers__mm</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id24"><code class="docutils literal notranslate"><span class="pre">Muscle.muscle_fiber_diameters__mm</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id25"><code class="docutils literal notranslate"><span class="pre">Muscle.muscle_fiber_conduction_velocities__mm_per_s</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id26"><code class="docutils literal notranslate"><span class="pre">Muscle.assignment</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id27"><code class="docutils literal notranslate"><span class="pre">Muscle.number_of_muscle_fibers</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id28"><code class="docutils literal notranslate"><span class="pre">Muscle.muscle_border__mm</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id22"><code class="docutils literal notranslate"><span class="pre">Muscle.resulting_innervation_areas__mm2</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id23"><code class="docutils literal notranslate"><span class="pre">Muscle.innervation_center_positions__mm</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id24"><code class="docutils literal notranslate"><span class="pre">Muscle.muscle_fiber_centers__mm</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id25"><code class="docutils literal notranslate"><span class="pre">Muscle.muscle_fiber_diameters__mm</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id26"><code class="docutils literal notranslate"><span class="pre">Muscle.muscle_fiber_conduction_velocities__mm_per_s</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id27"><code class="docutils literal notranslate"><span class="pre">Muscle.assignment</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id28"><code class="docutils literal notranslate"><span class="pre">Muscle.number_of_muscle_fibers</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id29"><code class="docutils literal notranslate"><span class="pre">Muscle.muscle_border__mm</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#myogen.simulator.Muscle.recruitment_thresholds"><code class="docutils literal notranslate"><span class="pre">Muscle.recruitment_thresholds</span></code></a></li>
 </ul>
 </li>
 </ul>
   </nav></div>
-
-  <div class="sidebar-secondary-item">
-
-  
-  <div class="tocsection editthispage">
-    <a href="https://github.com/NSquaredLab/MyoGen/edit/main/docs/generated/myogen.simulator.Muscle.rst">
-      <i class="fa-solid fa-pencil"></i>
-      
-      
-        
-          Edit on GitHub
-        
-      
-    </a>
-  </div>
-</div>
-
-  <div class="sidebar-secondary-item">
-  <div role="note" aria-label="source link">
-    <h3>This Page</h3>
-    <ul class="this-page-menu">
-      <li><a href="../_sources/generated/myogen.simulator.Muscle.rst.txt"
-            rel="nofollow">Show Source</a></li>
-    </ul>
-   </div></div>
 
 </div></div>
               

@@ -30,14 +30,22 @@
   <link href="../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
 <link href="../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
 
-    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=8f2a1f02" />
-    <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=34f00721" />
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=5349f25f" />
+    <link rel="stylesheet" type="text/css" href="../_static/css/tooltipster.custom.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/css/tooltipster.bundle.min.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/css/tooltipster-sideTip-shadow.min.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/css/tooltipster-sideTip-punk.min.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/css/tooltipster-sideTip-noir.min.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/css/tooltipster-sideTip-light.min.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/css/tooltipster-sideTip-borderless.min.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/css/micromodal.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=9b95bd4c" />
     <link rel="stylesheet" type="text/css" href="../_static/sg_gallery.css?v=d2d258e8" />
     <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-binder.css?v=f4aeca0c" />
     <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-dataframe.css?v=2082cf3c" />
     <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
     <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
-    <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=34f00721" />
+    <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=9b95bd4c" />
   
   <!-- So that users can add custom icons -->
   <script src="../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
@@ -45,11 +53,18 @@
   <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
+    <script src="../_static/jquery.js?v=5d32c60e"></script>
+    <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
     <script src="../_static/documentation_options.js?v=1437fa6d"></script>
     <script src="../_static/doctools.js?v=9bcbadda"></script>
     <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
-    <script src="../_static/custom.js?v=a236ca48"></script>
+    <script src="../_static/js/hoverxref.js"></script>
+    <script src="../_static/js/tooltipster.bundle.min.js"></script>
+    <script src="../_static/js/micromodal.min.js"></script>
+    <script src="../_static/custom.js?v=e0e269b1"></script>
     <script src="../_static/design-tabs.js?v=f930bc37"></script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'generated/myogen.utils.currents.create_sawtooth_current';</script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
@@ -96,7 +111,7 @@
   <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
 </div>
 <aside class="bd-header-announcement" aria-label="Announcement">
-  <div class="bd-header-announcement__content">⚠️ MyoGen is under active development. API may change.</div>
+  <div class="bd-header-announcement__content">MyoGen is under active development. API may change.</div>
 </aside>
 
   
@@ -168,7 +183,14 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../auto_examples/index.html">
+  <a class="nav-link nav-internal" href="../neo_blocks_guide.html">
+    Working with Neo Block Data Structures
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../examples.html">
     Examples
   </a>
 </li>
@@ -266,7 +288,14 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../auto_examples/index.html">
+  <a class="nav-link nav-internal" href="../neo_blocks_guide.html">
+    Working with Neo Block Data Structures
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../examples.html">
     Examples
   </a>
 </li>
@@ -316,16 +345,54 @@
   <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
   <div class="bd-toc-item navbar-nav"><p aria-level="2" class="caption" role="heading"><span class="caption-text">API Modules</span></p>
 <ul class="current nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../api/myogen_api.html">MyoGen Core</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="myogen.set_random_seed.html">set_random_seed</a></li>
+<li class="toctree-l2"><a class="reference internal" href="myogen.load_nmodl_mechanisms.html">load_nmodl_mechanisms</a></li>
+</ul>
+</details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../api/simulator_api.html">Simulator Module</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l2"><a class="reference internal" href="myogen.simulator.generate_mu_recruitment_thresholds.html">generate_mu_recruitment_thresholds</a></li>
-<li class="toctree-l2 has-children"><a class="reference internal" href="myogen.simulator.MotorNeuronPool.html">MotorNeuronPool</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l3"><a class="reference internal" href="myogen.simulator.MotorNeuronPool.__init__.html">myogen.simulator.MotorNeuronPool.__init__</a></li>
-<li class="toctree-l3"><a class="reference internal" href="myogen.simulator.MotorNeuronPool.compute_mvc_current_threshold.html">myogen.simulator.MotorNeuronPool.compute_mvc_current_threshold</a></li>
-<li class="toctree-l3"><a class="reference internal" href="myogen.simulator.MotorNeuronPool.generate_spike_trains.html">myogen.simulator.MotorNeuronPool.generate_spike_trains</a></li>
-<li class="toctree-l3"><a class="reference internal" href="myogen.simulator.MotorNeuronPool.active_neuron_indices.html">myogen.simulator.MotorNeuronPool.active_neuron_indices</a></li>
-<li class="toctree-l3"><a class="reference internal" href="myogen.simulator.MotorNeuronPool.data.html">myogen.simulator.MotorNeuronPool.data</a></li>
-<li class="toctree-l3"><a class="reference internal" href="myogen.simulator.MotorNeuronPool.mvc_current_threshold.html">myogen.simulator.MotorNeuronPool.mvc_current_threshold</a></li>
-<li class="toctree-l3"><a class="reference internal" href="myogen.simulator.MotorNeuronPool.spike_trains.html">myogen.simulator.MotorNeuronPool.spike_trains</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="myogen.simulator.neuron.populations._Pool.html">_Pool</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="myogen.simulator.neuron.populations._Pool.__init__.html">myogen.simulator.neuron.populations._Pool.__init__</a></li>
+<li class="toctree-l3"><a class="reference internal" href="myogen.simulator.neuron.populations._Pool.get_initialization_data.html">myogen.simulator.neuron.populations._Pool.get_initialization_data</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="myogen.simulator.neuron.populations.AlphaMN__Pool.html">AlphaMN__Pool</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="myogen.simulator.neuron.populations.AlphaMN__Pool.__init__.html">myogen.simulator.neuron.populations.AlphaMN__Pool.__init__</a></li>
+<li class="toctree-l3"><a class="reference internal" href="myogen.simulator.neuron.populations.AlphaMN__Pool.get_initialization_data.html">myogen.simulator.neuron.populations.AlphaMN__Pool.get_initialization_data</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="myogen.simulator.neuron.populations.DescendingDrive__Pool.html">DescendingDrive__Pool</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="myogen.simulator.neuron.populations.DescendingDrive__Pool.__init__.html">myogen.simulator.neuron.populations.DescendingDrive__Pool.__init__</a></li>
+<li class="toctree-l3"><a class="reference internal" href="myogen.simulator.neuron.populations.DescendingDrive__Pool.get_initialization_data.html">myogen.simulator.neuron.populations.DescendingDrive__Pool.get_initialization_data</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="myogen.simulator.neuron.populations.AffIa__Pool.html">AffIa__Pool</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="myogen.simulator.neuron.populations.AffIa__Pool.__init__.html">myogen.simulator.neuron.populations.AffIa__Pool.__init__</a></li>
+<li class="toctree-l3"><a class="reference internal" href="myogen.simulator.neuron.populations.AffIa__Pool.get_initialization_data.html">myogen.simulator.neuron.populations.AffIa__Pool.get_initialization_data</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="myogen.simulator.neuron.populations.AffII__Pool.html">AffII__Pool</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="myogen.simulator.neuron.populations.AffII__Pool.__init__.html">myogen.simulator.neuron.populations.AffII__Pool.__init__</a></li>
+<li class="toctree-l3"><a class="reference internal" href="myogen.simulator.neuron.populations.AffII__Pool.get_initialization_data.html">myogen.simulator.neuron.populations.AffII__Pool.get_initialization_data</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="myogen.simulator.neuron.populations.AffIb__Pool.html">AffIb__Pool</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="myogen.simulator.neuron.populations.AffIb__Pool.__init__.html">myogen.simulator.neuron.populations.AffIb__Pool.__init__</a></li>
+<li class="toctree-l3"><a class="reference internal" href="myogen.simulator.neuron.populations.AffIb__Pool.get_initialization_data.html">myogen.simulator.neuron.populations.AffIb__Pool.get_initialization_data</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="myogen.simulator.neuron.populations.GII__Pool.html">GII__Pool</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="myogen.simulator.neuron.populations.GII__Pool.__init__.html">myogen.simulator.neuron.populations.GII__Pool.__init__</a></li>
+<li class="toctree-l3"><a class="reference internal" href="myogen.simulator.neuron.populations.GII__Pool.get_initialization_data.html">myogen.simulator.neuron.populations.GII__Pool.get_initialization_data</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="myogen.simulator.neuron.populations.GIb__Pool.html">GIb__Pool</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="myogen.simulator.neuron.populations.GIb__Pool.__init__.html">myogen.simulator.neuron.populations.GIb__Pool.__init__</a></li>
+<li class="toctree-l3"><a class="reference internal" href="myogen.simulator.neuron.populations.GIb__Pool.get_initialization_data.html">myogen.simulator.neuron.populations.GIb__Pool.get_initialization_data</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="myogen.simulator.RecruitmentThresholds.html">RecruitmentThresholds</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="myogen.simulator.RecruitmentThresholds.__init__.html">myogen.simulator.RecruitmentThresholds.__init__</a></li>
 </ul>
 </details></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="myogen.simulator.Muscle.html">Muscle</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -360,10 +427,10 @@
 <li class="toctree-l3"><a class="reference internal" href="myogen.simulator.SurfaceEMG.add_noise.html">myogen.simulator.SurfaceEMG.add_noise</a></li>
 <li class="toctree-l3"><a class="reference internal" href="myogen.simulator.SurfaceEMG.simulate_muaps.html">myogen.simulator.SurfaceEMG.simulate_muaps</a></li>
 <li class="toctree-l3"><a class="reference internal" href="myogen.simulator.SurfaceEMG.simulate_surface_emg.html">myogen.simulator.SurfaceEMG.simulate_surface_emg</a></li>
-<li class="toctree-l3"><a class="reference internal" href="myogen.simulator.SurfaceEMG.motor_neuron_pool.html">myogen.simulator.SurfaceEMG.motor_neuron_pool</a></li>
-<li class="toctree-l3"><a class="reference internal" href="myogen.simulator.SurfaceEMG.muaps.html">myogen.simulator.SurfaceEMG.muaps</a></li>
-<li class="toctree-l3"><a class="reference internal" href="myogen.simulator.SurfaceEMG.noisy_surface_emg__tensors.html">myogen.simulator.SurfaceEMG.noisy_surface_emg__tensors</a></li>
-<li class="toctree-l3"><a class="reference internal" href="myogen.simulator.SurfaceEMG.surface_emg__tensors.html">myogen.simulator.SurfaceEMG.surface_emg__tensors</a></li>
+<li class="toctree-l3"><a class="reference internal" href="myogen.simulator.SurfaceEMG.muaps__Block.html">myogen.simulator.SurfaceEMG.muaps__Block</a></li>
+<li class="toctree-l3"><a class="reference internal" href="myogen.simulator.SurfaceEMG.noisy_surface_emg__Block.html">myogen.simulator.SurfaceEMG.noisy_surface_emg__Block</a></li>
+<li class="toctree-l3"><a class="reference internal" href="myogen.simulator.SurfaceEMG.spike_train__Block.html">myogen.simulator.SurfaceEMG.spike_train__Block</a></li>
+<li class="toctree-l3"><a class="reference internal" href="myogen.simulator.SurfaceEMG.surface_emg__Block.html">myogen.simulator.SurfaceEMG.surface_emg__Block</a></li>
 </ul>
 </details></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="myogen.simulator.IntramuscularEMG.html">IntramuscularEMG</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -371,10 +438,10 @@
 <li class="toctree-l3"><a class="reference internal" href="myogen.simulator.IntramuscularEMG.add_noise.html">myogen.simulator.IntramuscularEMG.add_noise</a></li>
 <li class="toctree-l3"><a class="reference internal" href="myogen.simulator.IntramuscularEMG.simulate_intramuscular_emg.html">myogen.simulator.IntramuscularEMG.simulate_intramuscular_emg</a></li>
 <li class="toctree-l3"><a class="reference internal" href="myogen.simulator.IntramuscularEMG.simulate_muaps.html">myogen.simulator.IntramuscularEMG.simulate_muaps</a></li>
-<li class="toctree-l3"><a class="reference internal" href="myogen.simulator.IntramuscularEMG.intramuscular_emg__tensor.html">myogen.simulator.IntramuscularEMG.intramuscular_emg__tensor</a></li>
-<li class="toctree-l3"><a class="reference internal" href="myogen.simulator.IntramuscularEMG.motor_neuron_pool.html">myogen.simulator.IntramuscularEMG.motor_neuron_pool</a></li>
-<li class="toctree-l3"><a class="reference internal" href="myogen.simulator.IntramuscularEMG.muaps.html">myogen.simulator.IntramuscularEMG.muaps</a></li>
-<li class="toctree-l3"><a class="reference internal" href="myogen.simulator.IntramuscularEMG.noisy_intramuscular_emg__tensor.html">myogen.simulator.IntramuscularEMG.noisy_intramuscular_emg__tensor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="myogen.simulator.IntramuscularEMG.intramuscular_emg__Block.html">myogen.simulator.IntramuscularEMG.intramuscular_emg__Block</a></li>
+<li class="toctree-l3"><a class="reference internal" href="myogen.simulator.IntramuscularEMG.muaps__Block.html">myogen.simulator.IntramuscularEMG.muaps__Block</a></li>
+<li class="toctree-l3"><a class="reference internal" href="myogen.simulator.IntramuscularEMG.noisy_intramuscular_emg__Block.html">myogen.simulator.IntramuscularEMG.noisy_intramuscular_emg__Block</a></li>
+<li class="toctree-l3"><a class="reference internal" href="myogen.simulator.IntramuscularEMG.spike_train__Block.html">myogen.simulator.IntramuscularEMG.spike_train__Block</a></li>
 </ul>
 </details></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="myogen.simulator.SurfaceElectrodeArray.html">SurfaceElectrodeArray</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -404,34 +471,47 @@
 </ul>
 </details></li>
 <li class="toctree-l1 current active has-children"><a class="reference internal" href="../api/utils_api.html">Utils Module</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
-<li class="toctree-l2"><a class="reference internal" href="myogen.utils.setup_myogen.html">setup_myogen</a></li>
-<li class="toctree-l2"><a class="reference internal" href="myogen.utils.load_nmodl_files.html">load_nmodl_files</a></li>
-<li class="toctree-l2 current active has-children"><a class="reference internal" href="../api/currents_api.html">Current Generation</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
-<li class="toctree-l3"><a class="reference internal" href="myogen.utils.currents.create_ramp_current.html">create_ramp_current</a></li>
-<li class="toctree-l3"><a class="reference internal" href="myogen.utils.currents.create_step_current.html">create_step_current</a></li>
-<li class="toctree-l3"><a class="reference internal" href="myogen.utils.currents.create_sinusoidal_current.html">create_sinusoidal_current</a></li>
-<li class="toctree-l3 current active"><a class="current reference internal" href="#">create_sawtooth_current</a></li>
-<li class="toctree-l3"><a class="reference internal" href="myogen.utils.currents.create_trapezoid_current.html">create_trapezoid_current</a></li>
-</ul>
-</details></li>
-<li class="toctree-l2 has-children"><a class="reference internal" href="../api/plotting_api.html">Plotting &amp; Visualization</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l3"><a class="reference internal" href="myogen.utils.plotting.plot_recruitment_thresholds.html">plot_recruitment_thresholds</a></li>
-<li class="toctree-l3"><a class="reference internal" href="myogen.utils.plotting.plot_spike_trains.html">plot_spike_trains</a></li>
-<li class="toctree-l3"><a class="reference internal" href="myogen.utils.plotting.plot_surface_emg.html">plot_surface_emg</a></li>
-<li class="toctree-l3"><a class="reference internal" href="myogen.utils.plotting.plot_muap_grid.html">plot_muap_grid</a></li>
-<li class="toctree-l3"><a class="reference internal" href="myogen.utils.plotting.plot_input_current__matrix.html">plot_input_current__matrix</a></li>
-</ul>
-</details></li>
-<li class="toctree-l2 has-children"><a class="reference internal" href="../api/types_api.html">Type Definitions</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l3"><a class="reference internal" href="myogen.utils.types.INPUT_CURRENT__MATRIX.html">INPUT_CURRENT__MATRIX</a></li>
-<li class="toctree-l3"><a class="reference internal" href="myogen.utils.types.CORTICAL_INPUT__MATRIX.html">CORTICAL_INPUT__MATRIX</a></li>
-<li class="toctree-l3"><a class="reference internal" href="myogen.utils.types.SPIKE_TRAIN__MATRIX.html">SPIKE_TRAIN__MATRIX</a></li>
-<li class="toctree-l3"><a class="reference internal" href="myogen.utils.types.SURFACE_MUAP_SHAPE__TENSOR.html">SURFACE_MUAP_SHAPE__TENSOR</a></li>
-<li class="toctree-l3"><a class="reference internal" href="myogen.utils.types.INTRAMUSCULAR_MUAP_SHAPE__TENSOR.html">INTRAMUSCULAR_MUAP_SHAPE__TENSOR</a></li>
-<li class="toctree-l3"><a class="reference internal" href="myogen.utils.types.SURFACE_EMG__TENSOR.html">SURFACE_EMG__TENSOR</a></li>
-<li class="toctree-l3"><a class="reference internal" href="myogen.utils.types.INTRAMUSCULAR_EMG__TENSOR.html">INTRAMUSCULAR_EMG__TENSOR</a></li>
-</ul>
-</details></li>
+<li class="toctree-l2"><a class="reference internal" href="myogen.utils.currents.create_ramp_current.html">create_ramp_current</a></li>
+<li class="toctree-l2"><a class="reference internal" href="myogen.utils.currents.create_step_current.html">create_step_current</a></li>
+<li class="toctree-l2"><a class="reference internal" href="myogen.utils.currents.create_sinusoidal_current.html">create_sinusoidal_current</a></li>
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">create_sawtooth_current</a></li>
+<li class="toctree-l2"><a class="reference internal" href="myogen.utils.currents.create_trapezoid_current.html">create_trapezoid_current</a></li>
+<li class="toctree-l2"><a class="reference internal" href="myogen.utils.neuron.inject_currents_into_populations.inject_currents_into_populations.html">inject_currents_into_populations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="myogen.utils.neuron.inject_currents_into_populations.inject_currents_and_simulate_spike_trains.html">inject_currents_and_simulate_spike_trains</a></li>
+<li class="toctree-l2"><a class="reference internal" href="myogen.utils.plotting.plot_raster_spikes.html">plot_raster_spikes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="myogen.utils.plotting.plot_membrane_potentials.html">plot_membrane_potentials</a></li>
+<li class="toctree-l2"><a class="reference internal" href="myogen.utils.plotting.plot_muscle_dynamics.html">plot_muscle_dynamics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="myogen.utils.plotting.plot_antagonist_muscle_comparison.html">plot_antagonist_muscle_comparison</a></li>
+<li class="toctree-l2"><a class="reference internal" href="myogen.utils.plotting.plot_spindle_dynamics.html">plot_spindle_dynamics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="myogen.utils.plotting.plot_gto_dynamics.html">plot_gto_dynamics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="myogen.utils.types.Quantity__s.html">Quantity__s</a></li>
+<li class="toctree-l2"><a class="reference internal" href="myogen.utils.types.Quantity__ms.html">Quantity__ms</a></li>
+<li class="toctree-l2"><a class="reference internal" href="myogen.utils.types.Quantity__rad.html">Quantity__rad</a></li>
+<li class="toctree-l2"><a class="reference internal" href="myogen.utils.types.Quantity__deg.html">Quantity__deg</a></li>
+<li class="toctree-l2"><a class="reference internal" href="myogen.utils.types.Quantity__mV.html">Quantity__mV</a></li>
+<li class="toctree-l2"><a class="reference internal" href="myogen.utils.types.Quantity__uV.html">Quantity__uV</a></li>
+<li class="toctree-l2"><a class="reference internal" href="myogen.utils.types.Quantity__nA.html">Quantity__nA</a></li>
+<li class="toctree-l2"><a class="reference internal" href="myogen.utils.types.Quantity__uS.html">Quantity__uS</a></li>
+<li class="toctree-l2"><a class="reference internal" href="myogen.utils.types.Quantity__S_per_m.html">Quantity__S_per_m</a></li>
+<li class="toctree-l2"><a class="reference internal" href="myogen.utils.types.Quantity__Hz.html">Quantity__Hz</a></li>
+<li class="toctree-l2"><a class="reference internal" href="myogen.utils.types.Quantity__pps.html">Quantity__pps</a></li>
+<li class="toctree-l2"><a class="reference internal" href="myogen.utils.types.Quantity__mm.html">Quantity__mm</a></li>
+<li class="toctree-l2"><a class="reference internal" href="myogen.utils.types.Quantity__m.html">Quantity__m</a></li>
+<li class="toctree-l2"><a class="reference internal" href="myogen.utils.types.Quantity__mm2.html">Quantity__mm2</a></li>
+<li class="toctree-l2"><a class="reference internal" href="myogen.utils.types.Quantity__per_mm2.html">Quantity__per_mm2</a></li>
+<li class="toctree-l2"><a class="reference internal" href="myogen.utils.types.Quantity__m_per_s.html">Quantity__m_per_s</a></li>
+<li class="toctree-l2"><a class="reference internal" href="myogen.utils.types.Quantity__mm_per_s.html">Quantity__mm_per_s</a></li>
+<li class="toctree-l2"><a class="reference internal" href="myogen.utils.types.CURRENT__AnalogSignal.html">CURRENT__AnalogSignal</a></li>
+<li class="toctree-l2"><a class="reference internal" href="myogen.utils.types.FORCE__AnalogSignal.html">FORCE__AnalogSignal</a></li>
+<li class="toctree-l2"><a class="reference internal" href="myogen.utils.types.SPIKE_TRAIN__Block.html">SPIKE_TRAIN__Block</a></li>
+<li class="toctree-l2"><a class="reference internal" href="myogen.utils.types.SURFACE_MUAP__Block.html">SURFACE_MUAP__Block</a></li>
+<li class="toctree-l2"><a class="reference internal" href="myogen.utils.types.SURFACE_EMG__Block.html">SURFACE_EMG__Block</a></li>
+<li class="toctree-l2"><a class="reference internal" href="myogen.utils.types.INTRAMUSCULAR_MUAP__Block.html">INTRAMUSCULAR_MUAP__Block</a></li>
+<li class="toctree-l2"><a class="reference internal" href="myogen.utils.types.INTRAMUSCULAR_EMG__Block.html">INTRAMUSCULAR_EMG__Block</a></li>
+<li class="toctree-l2"><a class="reference internal" href="myogen.utils.types.CORTICAL_INPUT__MATRIX.html">CORTICAL_INPUT__MATRIX</a></li>
+<li class="toctree-l2"><a class="reference internal" href="myogen.utils.types.RECRUITMENT_THRESHOLDS__ARRAY.html">RECRUITMENT_THRESHOLDS__ARRAY</a></li>
+<li class="toctree-l2"><a class="reference internal" href="myogen.utils.types.JOINT_ANGLE__ARRAY.html">JOINT_ANGLE__ARRAY</a></li>
+<li class="toctree-l2"><a class="reference internal" href="myogen.utils.types.MOMENT_ARM__MATRIX.html">MOMENT_ARM__MATRIX</a></li>
 </ul>
 </details></li>
 </ul>
@@ -480,9 +560,6 @@
     
     <li class="breadcrumb-item"><a href="../api/utils_api.html" class="nav-link">Utils Module</a></li>
     
-    
-    <li class="breadcrumb-item"><a href="../api/currents_api.html" class="nav-link">Current Generation</a></li>
-    
     <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">create_sawtooth_current</span></li>
   </ul>
 </nav>
@@ -507,25 +584,52 @@
 <span class="sig-name descname"><span class="pre">create_sawtooth_current</span></span><span class="sig-paren">(</span>
 
 <dl>
-<dd><em class="sig-param"><span class="n"><span class="pre">n_pools</span></span></em>,</dd>
-<dd><em class="sig-param"><span class="n"><span class="pre">t_points</span></span></em>,</dd>
-<dd><em class="sig-param"><span class="n"><span class="pre">timestep__ms</span></span></em>,</dd>
-<dd><em class="sig-param"><span class="n"><span class="pre">amplitudes__muV</span></span></em>,</dd>
-<dd><em class="sig-param"><span class="n"><span class="pre">frequencies__Hz</span></span></em>,</dd>
-<dd><em class="sig-param"><span class="n"><span class="pre">offsets__muV</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em>,</dd>
-<dd><em class="sig-param"><span class="n"><span class="pre">widths__ratio</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.5</span></span></em>,</dd>
-<dd><em class="sig-param"><span class="n"><span class="pre">phases__rad</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">n_pools</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="hxr-hoverxref hxr-tooltip reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">t_points</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="hxr-hoverxref hxr-tooltip reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">timestep__ms</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="myogen.utils.types.Quantity__ms.html#myogen.utils.types.Quantity__ms" title="myogen.utils.types.Quantity__ms"><span class="pre">Quantity__ms</span></a></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">amplitudes__nA</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="myogen.utils.types.Quantity__nA.html#myogen.utils.types.Quantity__nA" title="myogen.utils.types.Quantity__nA"><span class="pre">Quantity__nA</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="hxr-hoverxref hxr-tooltip reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="myogen.utils.types.Quantity__nA.html#myogen.utils.types.Quantity__nA" title="myogen.utils.types.Quantity__nA"><span class="pre">Quantity__nA</span></a><span class="p"><span class="pre">]</span></span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">frequencies__Hz</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="myogen.utils.types.Quantity__Hz.html#myogen.utils.types.Quantity__Hz" title="myogen.utils.types.Quantity__Hz"><span class="pre">Quantity__Hz</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="hxr-hoverxref hxr-tooltip reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="myogen.utils.types.Quantity__Hz.html#myogen.utils.types.Quantity__Hz" title="myogen.utils.types.Quantity__Hz"><span class="pre">Quantity__Hz</span></a><span class="p"><span class="pre">]</span></span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">offsets__nA</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="myogen.utils.types.Quantity__nA.html#myogen.utils.types.Quantity__nA" title="myogen.utils.types.Quantity__nA"><span class="pre">Quantity__nA</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="hxr-hoverxref hxr-tooltip reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="myogen.utils.types.Quantity__nA.html#myogen.utils.types.Quantity__nA" title="myogen.utils.types.Quantity__nA"><span class="pre">Quantity__nA</span></a><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.0</span> <span class="pre">*</span> <span class="pre">pq.nA</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">widths__ratio</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="hxr-hoverxref hxr-tooltip reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="hxr-hoverxref hxr-tooltip reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="hxr-hoverxref hxr-tooltip reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.5</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">phases__rad</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="myogen.utils.types.Quantity__rad.html#myogen.utils.types.Quantity__rad" title="myogen.utils.types.Quantity__rad"><span class="pre">Quantity__rad</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="hxr-hoverxref hxr-tooltip reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="myogen.utils.types.Quantity__rad.html#myogen.utils.types.Quantity__rad" title="myogen.utils.types.Quantity__rad"><span class="pre">Quantity__rad</span></a><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.0</span> <span class="pre">*</span> <span class="pre">pq.rad</span></span></em>,</dd>
 </dl>
 
-<span class="sig-paren">)</span><a class="reference internal" href="../_modules/myogen/utils/currents.html#create_sawtooth_current"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#myogen.utils.currents.create_sawtooth_current" title="Link to this definition">#</a></dt>
+<span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">s]]</span></span></span><a class="reference internal" href="../_modules/myogen/utils/currents.html#create_sawtooth_current"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#myogen.utils.currents.create_sawtooth_current" title="Link to this definition">#</a></dt>
 <dd><p>Create a matrix of sawtooth currents for multiple pools.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>n_pools</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>) – Number of current pools to generate</p></li>
-<li><p><strong>t_points</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>) – Number of time points</p></li>
-<li><p><strong>timestep__ms</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a>) – Time step in milliseconds</p></li>
-<li><p><strong>amplitudes__muV</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a> | <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a>]) – <p>Amplitude(s) of the sawtooth current(s) in microvolts.</p>
+<li><p><strong>n_pools</strong> (<a class="hxr-hoverxref hxr-tooltip reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a>) – Number of current pools to generate</p></li>
+<li><p><strong>t_points</strong> (<a class="hxr-hoverxref hxr-tooltip reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a>) – Number of time points</p></li>
+<li><p><strong>timestep__ms</strong> (<em>Quantity__ms</em>) – Time step in milliseconds as a Quantity</p></li>
+<li><p><strong>amplitudes__nA</strong> (<em>Quantity__nA</em><em> | </em><a class="hxr-hoverxref hxr-tooltip reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><em>list</em></a><em>[</em><em>Quantity__nA</em><em>]</em>) – <p>Amplitude(s) of the sawtooth current(s) in nanoamperes.</p>
+<dl class="simple">
+<dt>Must be:</dt><dd><ul>
+<li><p>Single Quantity: used for all pools</p></li>
+<li><p>List of Quantities: must match n_pools</p></li>
+</ul>
+</dd>
+</dl>
+</p></li>
+<li><p><strong>frequencies__Hz</strong> (<em>Quantity__Hz</em><em> | </em><a class="hxr-hoverxref hxr-tooltip reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><em>list</em></a><em>[</em><em>Quantity__Hz</em><em>]</em>) – <p>Frequency(s) of the sawtooth current(s) in Hertz.</p>
+<dl class="simple">
+<dt>Must be:</dt><dd><ul>
+<li><p>Single Quantity: used for all pools</p></li>
+<li><p>List of Quantities: must match n_pools</p></li>
+</ul>
+</dd>
+</dl>
+</p></li>
+<li><p><strong>offsets__nA</strong> (<em>Quantity__nA</em><em> | </em><a class="hxr-hoverxref hxr-tooltip reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><em>list</em></a><em>[</em><em>Quantity__nA</em><em>]</em>) – <p>DC offset(s) to add to the sawtooth current(s) in nanoamperes.</p>
+<dl class="simple">
+<dt>Must be:</dt><dd><ul>
+<li><p>Single Quantity: used for all pools</p></li>
+<li><p>List of Quantities: must match n_pools</p></li>
+</ul>
+</dd>
+</dl>
+</p></li>
+<li><p><strong>widths__ratio</strong> (<a class="hxr-hoverxref hxr-tooltip reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a><em> | </em><a class="hxr-hoverxref hxr-tooltip reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><em>list</em></a><em>[</em><a class="hxr-hoverxref hxr-tooltip reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a><em>]</em>) – <p>Width(s) of the rising edge as proportion of period (0 to 1).</p>
 <dl class="simple">
 <dt>Must be:</dt><dd><ul>
 <li><p>Single float: used for all pools</p></li>
@@ -534,38 +638,11 @@
 </dd>
 </dl>
 </p></li>
-<li><p><strong>frequencies__Hz</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a> | <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a>]) – <p>Frequency(s) of the sawtooth current(s) in Hertz.</p>
+<li><p><strong>phases__rad</strong> (<em>Quantity__rad</em><em> | </em><a class="hxr-hoverxref hxr-tooltip reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><em>list</em></a><em>[</em><em>Quantity__rad</em><em>]</em>) – <p>Phase(s) of the sawtooth current(s) in radians.</p>
 <dl class="simple">
 <dt>Must be:</dt><dd><ul>
-<li><p>Single float: used for all pools</p></li>
-<li><p>List of floats: must match n_pools</p></li>
-</ul>
-</dd>
-</dl>
-</p></li>
-<li><p><strong>offsets__muV</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a> | <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a>]) – <p>DC offset(s) to add to the sawtooth current(s) in microvolts.</p>
-<dl class="simple">
-<dt>Must be:</dt><dd><ul>
-<li><p>Single float: used for all pools</p></li>
-<li><p>List of floats: must match n_pools</p></li>
-</ul>
-</dd>
-</dl>
-</p></li>
-<li><p><strong>widths__ratio</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a> | <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a>]) – <p>Width(s) of the rising edge as proportion of period (0 to 1).</p>
-<dl class="simple">
-<dt>Must be:</dt><dd><ul>
-<li><p>Single float: used for all pools</p></li>
-<li><p>List of floats: must match n_pools</p></li>
-</ul>
-</dd>
-</dl>
-</p></li>
-<li><p><strong>phases__rad</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a> | <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a>]) – <p>Phase(s) of the sawtooth current(s) in radians.</p>
-<dl class="simple">
-<dt>Must be:</dt><dd><ul>
-<li><p>Single float: used for all pools</p></li>
-<li><p>List of floats: must match n_pools</p></li>
+<li><p>Single Quantity: used for all pools</p></li>
+<li><p>List of Quantities: must match n_pools</p></li>
 </ul>
 </dd>
 </dl>
@@ -573,13 +650,13 @@
 </ul>
 </dd>
 <dt class="field-even">Raises<span class="colon">:</span></dt>
-<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.13)"><strong>ValueError</strong></a> – If the parameters are lists and the length of the parameters does not match n_pools</p>
+<dd class="field-even"><p><a class="hxr-hoverxref hxr-tooltip reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.14)"><strong>ValueError</strong></a> – If the parameters are lists and the length of the parameters does not match n_pools</p>
 </dd>
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p>Matrix of shape (n_pools, t_points) containing sawtooth currents</p>
+<dd class="field-odd"><p>Analog signal of shape (t_points, n_pools) * pq.nA containing sawtooth currents</p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p><a class="reference internal" href="myogen.utils.types.INPUT_CURRENT__MATRIX.html#myogen.utils.types.INPUT_CURRENT__MATRIX" title="myogen.utils.types.INPUT_CURRENT__MATRIX"><code class="xref py py-data docutils literal notranslate"><span class="pre">INPUT_CURRENT__MATRIX</span></code></a></p>
+<dd class="field-even"><p>INPUT_CURRENT__AnalogSignal</p>
 </dd>
 </dl>
 </dd></dl>
@@ -612,31 +689,6 @@
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#myogen.utils.currents.create_sawtooth_current"><code class="docutils literal notranslate"><span class="pre">create_sawtooth_current()</span></code></a></li>
 </ul>
   </nav></div>
-
-  <div class="sidebar-secondary-item">
-
-  
-  <div class="tocsection editthispage">
-    <a href="https://github.com/NSquaredLab/MyoGen/edit/main/docs/generated/myogen.utils.currents.create_sawtooth_current.rst">
-      <i class="fa-solid fa-pencil"></i>
-      
-      
-        
-          Edit on GitHub
-        
-      
-    </a>
-  </div>
-</div>
-
-  <div class="sidebar-secondary-item">
-  <div role="note" aria-label="source link">
-    <h3>This Page</h3>
-    <ul class="this-page-menu">
-      <li><a href="../_sources/generated/myogen.utils.currents.create_sawtooth_current.rst.txt"
-            rel="nofollow">Show Source</a></li>
-    </ul>
-   </div></div>
 
 </div></div>
               

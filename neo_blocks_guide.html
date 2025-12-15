@@ -1,0 +1,934 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="./" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Working with Neo Block Data Structures &#8212; MyoGen 0.4.0 Documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=5349f25f" />
+    <link rel="stylesheet" type="text/css" href="_static/css/tooltipster.custom.css" />
+    <link rel="stylesheet" type="text/css" href="_static/css/tooltipster.bundle.min.css" />
+    <link rel="stylesheet" type="text/css" href="_static/css/tooltipster-sideTip-shadow.min.css" />
+    <link rel="stylesheet" type="text/css" href="_static/css/tooltipster-sideTip-punk.min.css" />
+    <link rel="stylesheet" type="text/css" href="_static/css/tooltipster-sideTip-noir.min.css" />
+    <link rel="stylesheet" type="text/css" href="_static/css/tooltipster-sideTip-light.min.css" />
+    <link rel="stylesheet" type="text/css" href="_static/css/tooltipster-sideTip-borderless.min.css" />
+    <link rel="stylesheet" type="text/css" href="_static/css/micromodal.css" />
+    <link rel="stylesheet" type="text/css" href="_static/custom.css?v=9b95bd4c" />
+    <link rel="stylesheet" type="text/css" href="_static/sg_gallery.css?v=d2d258e8" />
+    <link rel="stylesheet" type="text/css" href="_static/sg_gallery-binder.css?v=f4aeca0c" />
+    <link rel="stylesheet" type="text/css" href="_static/sg_gallery-dataframe.css?v=2082cf3c" />
+    <link rel="stylesheet" type="text/css" href="_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+    <link rel="stylesheet" type="text/css" href="_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="_static/custom.css?v=9b95bd4c" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="_static/jquery.js?v=5d32c60e"></script>
+    <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+    <script src="_static/documentation_options.js?v=1437fa6d"></script>
+    <script src="_static/doctools.js?v=9bcbadda"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/hoverxref.js"></script>
+    <script src="_static/js/tooltipster.bundle.min.js"></script>
+    <script src="_static/js/micromodal.min.js"></script>
+    <script src="_static/custom.js?v=e0e269b1"></script>
+    <script src="_static/design-tabs.js?v=f930bc37"></script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'neo_blocks_guide';</script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Examples" href="examples.html" />
+    <link rel="prev" title="MOMENT_ARM__MATRIX" href="generated/myogen.utils.types.MOMENT_ARM__MATRIX.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="0.4.0" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search MyoGen docs..."
+         aria-label="Search MyoGen docs..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+<aside class="bd-header-announcement" aria-label="Announcement">
+  <div class="bd-header-announcement__content">MyoGen is under active development. API may change.</div>
+</aside>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class=" navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="_static/myogen_logo.png" class="logo__image only-light" alt="MyoGen 0.4.0 Documentation - Home"/>
+    <img src="_static/myogen_logo.png" class="logo__image only-dark pst-js-only" alt="MyoGen 0.4.0 Documentation - Home"/>
+  
+  
+</a></div>
+    
+      <div class="navbar-item">
+<div class="nav-item">
+  <div class="version-switcher__container dropdown">
+      <button id="version-switcher-button" type="button" class="version-switcher__button btn btn-sm navbar-btn" aria-haspopup="true" aria-expanded="false">
+          Version 0.4.0
+      </button>
+      
+      
+      
+  </div>
+</div> </div>
+    
+      <div class="navbar-item"><div class="nav-item">
+   <span>
+      made at the <a href="https://www.nsquared.tf.fau.de/" target="_blank">N² Lab</a>
+   </span>
+</div> </div>
+    
+  </div>
+  
+  <div class=" navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="api/index.html">
+    API Documentation
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="#">
+    Working with Neo Block Data Structures
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="examples.html">
+    Examples
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/NSquaredLab/MyoGen" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+    </div>
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="api/index.html">
+    API Documentation
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="#">
+    Working with Neo Block Data Structures
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="examples.html">
+    Examples
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/NSquaredLab/MyoGen" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+<nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"></div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Working with Neo Block Data Structures</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="working-with-neo-block-data-structures">
+<h1>Working with Neo Block Data Structures<a class="headerlink" href="#working-with-neo-block-data-structures" title="Link to this heading">#</a></h1>
+<p>MyoGen uses <strong>Neo Block</strong> objects as the primary data containers for storing simulation results. This guide explains how to extract and work with data from the different Block types.</p>
+<nav class="contents local" id="table-of-contents">
+<p class="topic-title">Table of Contents</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="#overview" id="id1">Overview</a></p></li>
+<li><p><a class="reference internal" href="#quick-start" id="id2">Quick Start</a></p>
+<ul>
+<li><p><a class="reference internal" href="#basic-access-patterns" id="id3">Basic Access Patterns</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#block-structure-details" id="id4">Block Structure Details</a></p>
+<ul>
+<li><p><a class="reference internal" href="#spike-train-block" id="id5">SPIKE_TRAIN__Block</a></p></li>
+<li><p><a class="reference internal" href="#surface-muap-block" id="id6">SURFACE_MUAP__Block</a></p></li>
+<li><p><a class="reference internal" href="#surface-emg-block" id="id7">SURFACE_EMG__Block</a></p></li>
+<li><p><a class="reference internal" href="#intramuscular-muap-block" id="id8">INTRAMUSCULAR_MUAP__Block</a></p></li>
+<li><p><a class="reference internal" href="#intramuscular-emg-block" id="id9">INTRAMUSCULAR_EMG__Block</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#common-operations" id="id10">Common Operations</a></p>
+<ul>
+<li><p><a class="reference internal" href="#accessing-metadata" id="id11">Accessing Metadata</a></p></li>
+<li><p><a class="reference internal" href="#extracting-time-windows" id="id12">Extracting Time Windows</a></p></li>
+<li><p><a class="reference internal" href="#converting-units" id="id13">Converting Units</a></p></li>
+<li><p><a class="reference internal" href="#saving-and-loading" id="id14">Saving and Loading</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#shape-reference" id="id15">Shape Reference</a></p></li>
+<li><p><a class="reference internal" href="#data-flow-pipeline" id="id16">Data Flow Pipeline</a></p></li>
+<li><p><a class="reference internal" href="#complete-example" id="id17">Complete Example</a></p></li>
+<li><p><a class="reference internal" href="#troubleshooting" id="id18">Troubleshooting</a></p>
+<ul>
+<li><p><a class="reference internal" href="#missing-groups-attribute" id="id19">Missing ‘groups’ attribute</a></p></li>
+<li><p><a class="reference internal" href="#indexerror-when-accessing-electrodes" id="id20">IndexError when accessing electrodes</a></p></li>
+<li><p><a class="reference internal" href="#wrong-units" id="id21">Wrong units</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#additional-resources" id="id22">Additional Resources</a></p></li>
+</ul>
+</nav>
+<section id="overview">
+<h2><a class="toc-backref" href="#id1" role="doc-backlink">Overview</a><a class="headerlink" href="#overview" title="Link to this heading">#</a></h2>
+<p>MyoGen uses five different Neo Block types to store simulation data:</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<colgroup>
+<col style="width: 30.0%" />
+<col style="width: 40.0%" />
+<col style="width: 30.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Block Type</p></th>
+<th class="head"><p>Purpose</p></th>
+<th class="head"><p>Dimensions</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">SPIKE_TRAIN__Block</span></code></p></td>
+<td><p>Neural firing times</p></td>
+<td><p>1D spike times</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">SURFACE_MUAP__Block</span></code></p></td>
+<td><p>Surface MUAP templates</p></td>
+<td><p>3D electrode grid</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">SURFACE_EMG__Block</span></code></p></td>
+<td><p>Surface EMG signals</p></td>
+<td><p>3D electrode grid</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">INTRAMUSCULAR_MUAP__Block</span></code></p></td>
+<td><p>Intramuscular MUAP templates</p></td>
+<td><p>2D electrode array</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">INTRAMUSCULAR_EMG__Block</span></code></p></td>
+<td><p>Intramuscular EMG signals</p></td>
+<td><p>2D electrode array</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>Neo Blocks provide standardized containers with:</p>
+<ul class="simple">
+<li><p>Automatic unit tracking (mV, µV, seconds, etc.)</p></li>
+<li><p>Metadata storage (sampling rate, duration, etc.)</p></li>
+<li><p>Compatibility with analysis tools like Elephant</p></li>
+<li><p>Integration with neuroscience workflows</p></li>
+</ul>
+</section>
+<section id="quick-start">
+<h2><a class="toc-backref" href="#id2" role="doc-backlink">Quick Start</a><a class="headerlink" href="#quick-start" title="Link to this heading">#</a></h2>
+<section id="basic-access-patterns">
+<h3><a class="toc-backref" href="#id3" role="doc-backlink">Basic Access Patterns</a><a class="headerlink" href="#basic-access-patterns" title="Link to this heading">#</a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">joblib</span>
+
+<span class="c1"># Load spike trains</span>
+<span class="n">spike_trains</span> <span class="o">=</span> <span class="n">joblib</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s2">&quot;spike_trains.pkl&quot;</span><span class="p">)</span>
+<span class="n">spiketrain</span> <span class="o">=</span> <span class="n">spike_trains</span><span class="o">.</span><span class="n">segments</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">spiketrains</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<span class="n">spike_times</span> <span class="o">=</span> <span class="n">spiketrain</span><span class="o">.</span><span class="n">magnitude</span>  <span class="c1"># NumPy array</span>
+
+<span class="c1"># Load surface EMG</span>
+<span class="n">surface_emg</span> <span class="o">=</span> <span class="n">joblib</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s2">&quot;surface_emg.pkl&quot;</span><span class="p">)</span>
+<span class="n">emg_signal</span> <span class="o">=</span> <span class="n">surface_emg</span><span class="o">.</span><span class="n">groups</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">segments</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">analogsignals</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<span class="n">electrode_data</span> <span class="o">=</span> <span class="n">emg_signal</span><span class="p">[:,</span> <span class="n">row</span><span class="p">,</span> <span class="n">col</span><span class="p">]</span>  <span class="c1"># Time series at electrode</span>
+
+<span class="c1"># Load intramuscular EMG</span>
+<span class="n">im_emg</span> <span class="o">=</span> <span class="n">joblib</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s2">&quot;intramuscular_emg.pkl&quot;</span><span class="p">)</span>
+<span class="n">emg_signal</span> <span class="o">=</span> <span class="n">im_emg</span><span class="o">.</span><span class="n">segments</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">analogsignals</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<span class="n">electrode_data</span> <span class="o">=</span> <span class="n">emg_signal</span><span class="p">[:,</span> <span class="n">electrode_idx</span><span class="p">]</span>  <span class="c1"># Time series</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="block-structure-details">
+<h2><a class="toc-backref" href="#id4" role="doc-backlink">Block Structure Details</a><a class="headerlink" href="#block-structure-details" title="Link to this heading">#</a></h2>
+<section id="spike-train-block">
+<h3><a class="toc-backref" href="#id5" role="doc-backlink">SPIKE_TRAIN__Block</a><a class="headerlink" href="#spike-train-block" title="Link to this heading">#</a></h3>
+<p><strong>Structure</strong>: Block → Segments (motor pools) → SpikeTrain objects</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">SPIKE_TRAIN__Block</span></code> stores neural firing patterns from motor neuron pools. Each segment represents a motor pool, and each spiketrain contains the firing times of an individual neuron.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Access spike trains</span>
+<span class="n">motor_pool</span> <span class="o">=</span> <span class="n">spike_train__Block</span><span class="o">.</span><span class="n">segments</span><span class="p">[</span><span class="n">pool_idx</span><span class="p">]</span>
+<span class="n">spiketrain</span> <span class="o">=</span> <span class="n">motor_pool</span><span class="o">.</span><span class="n">spiketrains</span><span class="p">[</span><span class="n">neuron_idx</span><span class="p">]</span>
+
+<span class="c1"># Extract data</span>
+<span class="n">spike_times__s</span> <span class="o">=</span> <span class="n">spiketrain</span><span class="o">.</span><span class="n">magnitude</span>  <span class="c1"># NumPy array</span>
+<span class="n">n_spikes</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">spiketrain</span><span class="p">)</span>
+<span class="n">duration</span> <span class="o">=</span> <span class="n">spiketrain</span><span class="o">.</span><span class="n">t_stop</span>
+<span class="n">sampling_rate</span> <span class="o">=</span> <span class="n">spiketrain</span><span class="o">.</span><span class="n">sampling_rate</span>
+</pre></div>
+</div>
+<p><strong>Example: Calculate firing rate</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">elephant.statistics</span>
+
+<span class="n">motor_pool</span> <span class="o">=</span> <span class="n">spike_train__Block</span><span class="o">.</span><span class="n">segments</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<span class="n">firing_rates</span> <span class="o">=</span> <span class="p">[]</span>
+
+<span class="k">for</span> <span class="n">spiketrain</span> <span class="ow">in</span> <span class="n">motor_pool</span><span class="o">.</span><span class="n">spiketrains</span><span class="p">:</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">spiketrain</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">rate</span> <span class="o">=</span> <span class="n">elephant</span><span class="o">.</span><span class="n">statistics</span><span class="o">.</span><span class="n">mean_firing_rate</span><span class="p">(</span><span class="n">spiketrain</span><span class="p">)</span>
+        <span class="n">firing_rates</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">rate</span><span class="o">.</span><span class="n">magnitude</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Mean firing rate: </span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">firing_rates</span><span class="p">)</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2"> Hz&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="surface-muap-block">
+<h3><a class="toc-backref" href="#id6" role="doc-backlink">SURFACE_MUAP__Block</a><a class="headerlink" href="#surface-muap-block" title="Link to this heading">#</a></h3>
+<p><strong>Structure</strong>: Block → Groups (electrode arrays) → Segments (MUAP indices) → AnalogSignals (3D)</p>
+<p>Stores Motor Unit Action Potential (MUAP) templates for surface electrode arrays. Each group represents an electrode array, each segment represents a MUAP, and signals are 3D arrays (time × rows × columns).</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Access MUAPs</span>
+<span class="n">electrode_array</span> <span class="o">=</span> <span class="n">muaps__Block</span><span class="o">.</span><span class="n">groups</span><span class="p">[</span><span class="n">array_idx</span><span class="p">]</span>
+<span class="n">muap_segment</span> <span class="o">=</span> <span class="n">electrode_array</span><span class="o">.</span><span class="n">segments</span><span class="p">[</span><span class="n">muap_idx</span><span class="p">]</span>
+<span class="n">muap_signal</span> <span class="o">=</span> <span class="n">muap_segment</span><span class="o">.</span><span class="n">analogsignals</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+<span class="c1"># Extract data</span>
+<span class="n">muap_array</span> <span class="o">=</span> <span class="n">muap_signal</span><span class="o">.</span><span class="n">magnitude</span>  <span class="c1"># Shape: (time, rows, cols)</span>
+<span class="n">time__s</span> <span class="o">=</span> <span class="n">muap_signal</span><span class="o">.</span><span class="n">times</span><span class="o">.</span><span class="n">magnitude</span>
+<span class="n">electrode_muap</span> <span class="o">=</span> <span class="n">muap_signal</span><span class="p">[:,</span> <span class="n">row</span><span class="p">,</span> <span class="n">col</span><span class="p">]</span>  <span class="c1"># Specific electrode</span>
+</pre></div>
+</div>
+<p><strong>Example: Analyze MUAP amplitude</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Get MUAP from motor unit 5, electrode at row 2, column 3</span>
+<span class="n">muap_signal</span> <span class="o">=</span> <span class="n">muaps__Block</span><span class="o">.</span><span class="n">groups</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">segments</span><span class="p">[</span><span class="mi">5</span><span class="p">]</span><span class="o">.</span><span class="n">analogsignals</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+<span class="n">row</span><span class="p">,</span> <span class="n">col</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span>
+<span class="n">electrode_muap</span> <span class="o">=</span> <span class="n">muap_signal</span><span class="p">[:,</span> <span class="n">row</span><span class="p">,</span> <span class="n">col</span><span class="p">]</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Peak-to-peak: </span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">ptp</span><span class="p">(</span><span class="n">electrode_muap</span><span class="o">.</span><span class="n">magnitude</span><span class="p">)</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">electrode_muap</span><span class="o">.</span><span class="n">units</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Max amplitude: </span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">electrode_muap</span><span class="o">.</span><span class="n">magnitude</span><span class="p">))</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">electrode_muap</span><span class="o">.</span><span class="n">units</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="surface-emg-block">
+<h3><a class="toc-backref" href="#id7" role="doc-backlink">SURFACE_EMG__Block</a><a class="headerlink" href="#surface-emg-block" title="Link to this heading">#</a></h3>
+<p><strong>Structure</strong>: Block → Groups (electrode arrays) → Segments (motor pools) → AnalogSignals (3D)</p>
+<p>Stores synthesized surface EMG signals. Similar structure to SURFACE_MUAP__Block, but contains the full EMG signal (longer duration) rather than templates.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Access surface EMG</span>
+<span class="n">electrode_array</span> <span class="o">=</span> <span class="n">surface_emg__Block</span><span class="o">.</span><span class="n">groups</span><span class="p">[</span><span class="n">array_idx</span><span class="p">]</span>
+<span class="n">motor_pool</span> <span class="o">=</span> <span class="n">electrode_array</span><span class="o">.</span><span class="n">segments</span><span class="p">[</span><span class="n">pool_idx</span><span class="p">]</span>
+<span class="n">emg_signal</span> <span class="o">=</span> <span class="n">motor_pool</span><span class="o">.</span><span class="n">analogsignals</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+<span class="c1"># Extract data</span>
+<span class="n">emg_array</span> <span class="o">=</span> <span class="n">emg_signal</span><span class="o">.</span><span class="n">magnitude</span>  <span class="c1"># Shape: (time, rows, cols)</span>
+<span class="n">electrode_emg</span> <span class="o">=</span> <span class="n">emg_signal</span><span class="p">[:,</span> <span class="n">row</span><span class="p">,</span> <span class="n">col</span><span class="p">]</span>  <span class="c1"># Specific electrode</span>
+</pre></div>
+</div>
+<p><strong>Example: Calculate RMS amplitude</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">emg_signal</span> <span class="o">=</span> <span class="n">surface_emg__Block</span><span class="o">.</span><span class="n">groups</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">segments</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">analogsignals</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<span class="n">electrode_emg</span> <span class="o">=</span> <span class="n">emg_signal</span><span class="p">[:,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">magnitude</span>
+
+<span class="n">rms</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">electrode_emg</span> <span class="o">**</span> <span class="mi">2</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;RMS amplitude: </span><span class="si">{</span><span class="n">rms</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">emg_signal</span><span class="o">.</span><span class="n">units</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="intramuscular-muap-block">
+<h3><a class="toc-backref" href="#id8" role="doc-backlink">INTRAMUSCULAR_MUAP__Block</a><a class="headerlink" href="#intramuscular-muap-block" title="Link to this heading">#</a></h3>
+<p><strong>Structure</strong>: Block → Segments (MUAP indices) → AnalogSignals (2D)</p>
+<p>Stores MUAP templates for intramuscular electrodes. Each segment represents a MUAP, and signals are 2D arrays (time × electrodes).</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Access intramuscular MUAPs</span>
+<span class="n">muap_segment</span> <span class="o">=</span> <span class="n">im_muaps__Block</span><span class="o">.</span><span class="n">segments</span><span class="p">[</span><span class="n">muap_idx</span><span class="p">]</span>
+<span class="n">muap_signal</span> <span class="o">=</span> <span class="n">muap_segment</span><span class="o">.</span><span class="n">analogsignals</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+<span class="c1"># Extract data</span>
+<span class="n">muap_array</span> <span class="o">=</span> <span class="n">muap_signal</span><span class="o">.</span><span class="n">magnitude</span>  <span class="c1"># Shape: (time, electrodes)</span>
+<span class="n">electrode_muap</span> <span class="o">=</span> <span class="n">muap_signal</span><span class="p">[:,</span> <span class="n">electrode_idx</span><span class="p">]</span>
+</pre></div>
+</div>
+</section>
+<section id="intramuscular-emg-block">
+<h3><a class="toc-backref" href="#id9" role="doc-backlink">INTRAMUSCULAR_EMG__Block</a><a class="headerlink" href="#intramuscular-emg-block" title="Link to this heading">#</a></h3>
+<p><strong>Structure</strong>: Block → Segments (motor pools) → AnalogSignals (2D)</p>
+<p>Stores synthesized intramuscular EMG signals. Each segment represents a motor pool, and signals are 2D arrays (time × electrodes).</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Access intramuscular EMG</span>
+<span class="n">motor_pool</span> <span class="o">=</span> <span class="n">im_emg__Block</span><span class="o">.</span><span class="n">segments</span><span class="p">[</span><span class="n">pool_idx</span><span class="p">]</span>
+<span class="n">emg_signal</span> <span class="o">=</span> <span class="n">motor_pool</span><span class="o">.</span><span class="n">analogsignals</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+<span class="c1"># Extract data</span>
+<span class="n">emg_array</span> <span class="o">=</span> <span class="n">emg_signal</span><span class="o">.</span><span class="n">magnitude</span>  <span class="c1"># Shape: (time, electrodes)</span>
+<span class="n">electrode_emg</span> <span class="o">=</span> <span class="n">emg_signal</span><span class="p">[:,</span> <span class="n">electrode_idx</span><span class="p">]</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="common-operations">
+<h2><a class="toc-backref" href="#id10" role="doc-backlink">Common Operations</a><a class="headerlink" href="#common-operations" title="Link to this heading">#</a></h2>
+<section id="accessing-metadata">
+<h3><a class="toc-backref" href="#id11" role="doc-backlink">Accessing Metadata</a><a class="headerlink" href="#accessing-metadata" title="Link to this heading">#</a></h3>
+<p>All Neo signals have metadata properties:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">signal</span><span class="o">.</span><span class="n">magnitude</span>          <span class="c1"># NumPy array of values</span>
+<span class="n">signal</span><span class="o">.</span><span class="n">times</span><span class="o">.</span><span class="n">magnitude</span>    <span class="c1"># Time axis (in seconds)</span>
+<span class="n">signal</span><span class="o">.</span><span class="n">sampling_rate</span>      <span class="c1"># Sampling frequency</span>
+<span class="n">signal</span><span class="o">.</span><span class="n">sampling_period</span>    <span class="c1"># Time between samples</span>
+<span class="n">signal</span><span class="o">.</span><span class="n">t_start</span>           <span class="c1"># Start time</span>
+<span class="n">signal</span><span class="o">.</span><span class="n">t_stop</span>            <span class="c1"># Stop time</span>
+<span class="n">signal</span><span class="o">.</span><span class="n">duration</span>          <span class="c1"># Total duration</span>
+<span class="n">signal</span><span class="o">.</span><span class="n">units</span>             <span class="c1"># Physical units (mV, uV, etc.)</span>
+<span class="n">signal</span><span class="o">.</span><span class="n">shape</span>             <span class="c1"># Array dimensions</span>
+</pre></div>
+</div>
+</section>
+<section id="extracting-time-windows">
+<h3><a class="toc-backref" href="#id12" role="doc-backlink">Extracting Time Windows</a><a class="headerlink" href="#extracting-time-windows" title="Link to this heading">#</a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># For spike trains</span>
+<span class="n">windowed_train</span> <span class="o">=</span> <span class="n">spiketrain</span><span class="o">.</span><span class="n">time_slice</span><span class="p">(</span><span class="n">t_start</span><span class="p">,</span> <span class="n">t_stop</span><span class="p">)</span>
+
+<span class="c1"># For analog signals</span>
+<span class="n">start_idx</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">t_start</span> <span class="o">*</span> <span class="n">emg_signal</span><span class="o">.</span><span class="n">sampling_rate</span><span class="o">.</span><span class="n">magnitude</span><span class="p">)</span>
+<span class="n">end_idx</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">t_stop</span> <span class="o">*</span> <span class="n">emg_signal</span><span class="o">.</span><span class="n">sampling_rate</span><span class="o">.</span><span class="n">magnitude</span><span class="p">)</span>
+<span class="n">windowed_signal</span> <span class="o">=</span> <span class="n">emg_signal</span><span class="p">[</span><span class="n">start_idx</span><span class="p">:</span><span class="n">end_idx</span><span class="p">]</span>
+</pre></div>
+</div>
+</section>
+<section id="converting-units">
+<h3><a class="toc-backref" href="#id13" role="doc-backlink">Converting Units</a><a class="headerlink" href="#converting-units" title="Link to this heading">#</a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">quantities</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pq</span>
+
+<span class="c1"># Check current units</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">signal</span><span class="o">.</span><span class="n">units</span><span class="p">)</span>  <span class="c1"># e.g., mV</span>
+
+<span class="c1"># Convert to different units</span>
+<span class="n">signal_uV</span> <span class="o">=</span> <span class="n">signal</span><span class="o">.</span><span class="n">rescale</span><span class="p">(</span><span class="n">pq</span><span class="o">.</span><span class="n">uV</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="saving-and-loading">
+<h3><a class="toc-backref" href="#id14" role="doc-backlink">Saving and Loading</a><a class="headerlink" href="#saving-and-loading" title="Link to this heading">#</a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">joblib</span>
+
+<span class="c1"># Save blocks</span>
+<span class="n">joblib</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">spike_train__Block</span><span class="p">,</span> <span class="s2">&quot;spike_trains.pkl&quot;</span><span class="p">)</span>
+<span class="n">joblib</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">surface_emg__Block</span><span class="p">,</span> <span class="s2">&quot;surface_emg.pkl&quot;</span><span class="p">)</span>
+
+<span class="c1"># Load blocks</span>
+<span class="n">spike_trains</span> <span class="o">=</span> <span class="n">joblib</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s2">&quot;spike_trains.pkl&quot;</span><span class="p">)</span>
+<span class="n">surface_emg</span> <span class="o">=</span> <span class="n">joblib</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s2">&quot;surface_emg.pkl&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="shape-reference">
+<h2><a class="toc-backref" href="#id15" role="doc-backlink">Shape Reference</a><a class="headerlink" href="#shape-reference" title="Link to this heading">#</a></h2>
+<div class="pst-scrollable-table-container"><table class="table">
+<colgroup>
+<col style="width: 40.0%" />
+<col style="width: 20.0%" />
+<col style="width: 40.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Block Type</p></th>
+<th class="head"><p>Dimensionality</p></th>
+<th class="head"><p>Shape Format</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>SPIKE_TRAIN</p></td>
+<td><p>1D</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">(n_spikes,)</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>SURFACE_MUAP</p></td>
+<td><p>3D</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">(time,</span> <span class="pre">rows,</span> <span class="pre">cols)</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>SURFACE_EMG</p></td>
+<td><p>3D</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">(time,</span> <span class="pre">rows,</span> <span class="pre">cols)</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>INTRAMUSCULAR_MUAP</p></td>
+<td><p>2D</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">(time,</span> <span class="pre">electrodes)</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>INTRAMUSCULAR_EMG</p></td>
+<td><p>2D</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">(time,</span> <span class="pre">electrodes)</span></code></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="data-flow-pipeline">
+<h2><a class="toc-backref" href="#id16" role="doc-backlink">Data Flow Pipeline</a><a class="headerlink" href="#data-flow-pipeline" title="Link to this heading">#</a></h2>
+<p>The simulation pipeline follows this flow:</p>
+<ol class="arabic simple">
+<li><p><strong>Generate Spike Trains</strong> → <code class="docutils literal notranslate"><span class="pre">SPIKE_TRAIN__Block</span></code></p>
+<ul class="simple">
+<li><p>When neurons fire</p></li>
+</ul>
+</li>
+<li><p><strong>Generate MUAPs</strong> → <code class="docutils literal notranslate"><span class="pre">SURFACE_MUAP__Block</span></code> or <code class="docutils literal notranslate"><span class="pre">INTRAMUSCULAR_MUAP__Block</span></code></p>
+<ul class="simple">
+<li><p>What individual motor units look like</p></li>
+</ul>
+</li>
+<li><p><strong>Convolve MUAPs with Spike Trains</strong> → <code class="docutils literal notranslate"><span class="pre">SURFACE_EMG__Block</span></code> or <code class="docutils literal notranslate"><span class="pre">INTRAMUSCULAR_EMG__Block</span></code></p>
+<ul class="simple">
+<li><p>Final synthesized EMG signals</p></li>
+</ul>
+</li>
+</ol>
+</section>
+<section id="complete-example">
+<h2><a class="toc-backref" href="#id17" role="doc-backlink">Complete Example</a><a class="headerlink" href="#complete-example" title="Link to this heading">#</a></h2>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">joblib</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">myogen.utils.types</span><span class="w"> </span><span class="kn">import</span> <span class="n">SPIKE_TRAIN__Block</span><span class="p">,</span> <span class="n">SURFACE_EMG__Block</span>
+
+<span class="c1"># 1. Load data</span>
+<span class="n">spike_trains</span> <span class="o">=</span> <span class="n">joblib</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s2">&quot;spike_trains.pkl&quot;</span><span class="p">)</span>
+<span class="n">surface_emg</span> <span class="o">=</span> <span class="n">joblib</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s2">&quot;surface_emg.pkl&quot;</span><span class="p">)</span>
+
+<span class="c1"># 2. Extract spike times</span>
+<span class="n">motor_pool</span> <span class="o">=</span> <span class="n">spike_trains</span><span class="o">.</span><span class="n">segments</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<span class="n">neuron_5</span> <span class="o">=</span> <span class="n">motor_pool</span><span class="o">.</span><span class="n">spiketrains</span><span class="p">[</span><span class="mi">5</span><span class="p">]</span>
+<span class="n">spike_times</span> <span class="o">=</span> <span class="n">neuron_5</span><span class="o">.</span><span class="n">magnitude</span>
+
+<span class="c1"># 3. Extract EMG from center electrode</span>
+<span class="n">emg_signal</span> <span class="o">=</span> <span class="n">surface_emg</span><span class="o">.</span><span class="n">groups</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">segments</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">analogsignals</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<span class="n">center_row</span> <span class="o">=</span> <span class="n">emg_signal</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">//</span> <span class="mi">2</span>
+<span class="n">center_col</span> <span class="o">=</span> <span class="n">emg_signal</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">//</span> <span class="mi">2</span>
+<span class="n">electrode_emg</span> <span class="o">=</span> <span class="n">emg_signal</span><span class="p">[:,</span> <span class="n">center_row</span><span class="p">,</span> <span class="n">center_col</span><span class="p">]</span>
+
+<span class="c1"># 4. Plot</span>
+<span class="n">fig</span><span class="p">,</span> <span class="p">(</span><span class="n">ax1</span><span class="p">,</span> <span class="n">ax2</span><span class="p">)</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">sharex</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="c1"># Spike raster</span>
+<span class="n">ax1</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">spike_times</span><span class="p">,</span> <span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="nb">len</span><span class="p">(</span><span class="n">spike_times</span><span class="p">),</span> <span class="n">s</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="s1">&#39;black&#39;</span><span class="p">)</span>
+<span class="n">ax1</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;Neuron 5&#39;</span><span class="p">)</span>
+<span class="n">ax1</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">(</span><span class="o">-</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">)</span>
+
+<span class="c1"># EMG signal</span>
+<span class="n">time</span> <span class="o">=</span> <span class="n">emg_signal</span><span class="o">.</span><span class="n">times</span><span class="o">.</span><span class="n">magnitude</span>
+<span class="n">ax2</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">time</span><span class="p">,</span> <span class="n">electrode_emg</span><span class="o">.</span><span class="n">magnitude</span><span class="p">)</span>
+<span class="n">ax2</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;Time (s)&#39;</span><span class="p">)</span>
+<span class="n">ax2</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;EMG (</span><span class="si">{</span><span class="n">electrode_emg</span><span class="o">.</span><span class="n">units</span><span class="si">}</span><span class="s1">)&#39;</span><span class="p">)</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</section>
+<section id="troubleshooting">
+<h2><a class="toc-backref" href="#id18" role="doc-backlink">Troubleshooting</a><a class="headerlink" href="#troubleshooting" title="Link to this heading">#</a></h2>
+<section id="missing-groups-attribute">
+<h3><a class="toc-backref" href="#id19" role="doc-backlink">Missing ‘groups’ attribute</a><a class="headerlink" href="#missing-groups-attribute" title="Link to this heading">#</a></h3>
+<p><strong>Issue</strong>: <code class="docutils literal notranslate"><span class="pre">AttributeError:</span> <span class="pre">'Block'</span> <span class="pre">object</span> <span class="pre">has</span> <span class="pre">no</span> <span class="pre">attribute</span> <span class="pre">'groups'</span></code></p>
+<p><strong>Solution</strong>: This is likely a spike train or intramuscular block. Those use <code class="docutils literal notranslate"><span class="pre">segments</span></code> not <code class="docutils literal notranslate"><span class="pre">groups</span></code>.</p>
+</section>
+<section id="indexerror-when-accessing-electrodes">
+<h3><a class="toc-backref" href="#id20" role="doc-backlink">IndexError when accessing electrodes</a><a class="headerlink" href="#indexerror-when-accessing-electrodes" title="Link to this heading">#</a></h3>
+<p><strong>Issue</strong>: <code class="docutils literal notranslate"><span class="pre">IndexError</span></code> when accessing electrodes</p>
+<p><strong>Solution</strong>: Check the shape first:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">signal</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>  <span class="c1"># e.g., (150000, 13, 5)</span>
+<span class="c1"># Then access within bounds: signal[:, 0:13, 0:5]</span>
+</pre></div>
+</div>
+</section>
+<section id="wrong-units">
+<h3><a class="toc-backref" href="#id21" role="doc-backlink">Wrong units</a><a class="headerlink" href="#wrong-units" title="Link to this heading">#</a></h3>
+<p><strong>Issue</strong>: Values seem wrong (very large or very small)</p>
+<p><strong>Solution</strong>: Check the units:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">signal</span><span class="o">.</span><span class="n">units</span><span class="p">)</span>  <span class="c1"># e.g., mV or µV</span>
+<span class="n">signal</span><span class="o">.</span><span class="n">rescale</span><span class="p">(</span><span class="n">pq</span><span class="o">.</span><span class="n">mV</span><span class="p">)</span>  <span class="c1"># Convert to desired unit</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="additional-resources">
+<h2><a class="toc-backref" href="#id22" role="doc-backlink">Additional Resources</a><a class="headerlink" href="#additional-resources" title="Link to this heading">#</a></h2>
+<p>For more detailed information, see:</p>
+<ul class="simple">
+<li><p><a class="reference download internal" download="" href="_downloads/e8e9cec93b0c264ec5ad9c56f17c3aa3/neo_block_structures.md"><code class="xref download docutils literal notranslate"><span class="pre">Comprehensive</span> <span class="pre">Guide</span></code></a></p></li>
+<li><p><a class="reference download internal" download="" href="_downloads/955ab1ff31d24235a1f0297e652b5a43/neo_block_quick_reference.md"><code class="xref download docutils literal notranslate"><span class="pre">Quick</span> <span class="pre">Reference</span></code></a></p></li>
+<li><p><a class="reference download internal" download="" href="_downloads/8a7a0681d3e043246fab4bfd9284e1dd/neo_block_structure_diagrams.txt"><code class="xref download docutils literal notranslate"><span class="pre">Visual</span> <span class="pre">Diagrams</span></code></a></p></li>
+<li><p>Example: <code class="docutils literal notranslate"><span class="pre">examples/basic/10_extract_data_from_neo_blocks.py</span></code></p></li>
+</ul>
+<p>External Links:</p>
+<ul class="simple">
+<li><p><a class="reference external" href="https://neo.readthedocs.io/">Neo Documentation</a></p></li>
+<li><p><a class="reference external" href="https://elephant.readthedocs.io/">Elephant (Electrophysiology Analysis)</a></p></li>
+<li><p><a class="reference external" href="https://python-quantities.readthedocs.io/">Quantities (Unit Handling)</a></p></li>
+</ul>
+</section>
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#overview">Overview</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#quick-start">Quick Start</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#basic-access-patterns">Basic Access Patterns</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#block-structure-details">Block Structure Details</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#spike-train-block">SPIKE_TRAIN__Block</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#surface-muap-block">SURFACE_MUAP__Block</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#surface-emg-block">SURFACE_EMG__Block</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#intramuscular-muap-block">INTRAMUSCULAR_MUAP__Block</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#intramuscular-emg-block">INTRAMUSCULAR_EMG__Block</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#common-operations">Common Operations</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#accessing-metadata">Accessing Metadata</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#extracting-time-windows">Extracting Time Windows</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#converting-units">Converting Units</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#saving-and-loading">Saving and Loading</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#shape-reference">Shape Reference</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#data-flow-pipeline">Data Flow Pipeline</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#complete-example">Complete Example</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#troubleshooting">Troubleshooting</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#missing-groups-attribute">Missing ‘groups’ attribute</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#indexerror-when-accessing-electrodes">IndexError when accessing electrodes</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#wrong-units">Wrong units</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#additional-resources">Additional Resources</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2025 - 2025, n-squared lab, FAU Erlangen-Nürnberg, Germany.
+      <br/>
+    
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.2.3.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>
