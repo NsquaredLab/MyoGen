@@ -510,10 +510,11 @@ class Muscle:
 
         This method implements an assignment algorithm that balances
         multiple biological constraints:
-            1. Proximity: Fibers closer to innervation centers are more likely to be assigned
-            2. Territory size: Each motor unit has a target number of fibers based on its size
-            3. Self-avoidance: Neighboring fibers avoid belonging to the same motor unit
-            4. Gaussian territories: Fiber territories follow roughly Gaussian distributions
+
+        1. Proximity: Fibers closer to innervation centers are more likely to be assigned
+        2. Territory size: Each motor unit has a target number of fibers based on its size
+        3. Self-avoidance: Neighboring fibers avoid belonging to the same motor unit
+        4. Gaussian territories: Fiber territories follow roughly Gaussian distributions
 
         The assignment uses a probabilistic approach where each fiber is assigned
         based on the posterior probability computed from prior probabilities (target
@@ -531,6 +532,7 @@ class Muscle:
             more compact territories. Should be between 0.9 and 0.999.
         n_jobs : int, default -2
             Number of parallel workers for out-of-circle coefficient computation.
+
             - n_jobs=-1: Use all CPU cores
             - n_jobs=-2: Use all cores except one (recommended, keeps system responsive)
             - n_jobs=-3: Use all cores except two

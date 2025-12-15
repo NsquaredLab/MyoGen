@@ -1,29 +1,26 @@
-<div align="center">
-  <h1 style="display: flex; align-items: center; justify-content: center; gap: 10px;">
-    <span>Welcome to</span>
-    <img src="./docs/source/_static/myogen_logo.png" height="100" alt="MyoGen Logo">
-  </h1>
+<div>
+  <img src="_static/myogen_logo.png" height="200">
 
-  <h2>The modular and extandable simulation toolkit for neurophysiology</h2>
+  <br/>
 
   [![Documentation](https://img.shields.io/badge/docs-latest-blue.svg)](https://nsquaredlab.github.io/MyoGen/)
   [![Python 3.12+](https://img.shields.io/badge/python-3.12+-blue.svg)](https://www.python.org/downloads/)
   [![Version](https://img.shields.io/badge/version-0.4.0-orange.svg)](https://github.com/NsquaredLab/MyoGen)
 
-  [Installation](https://nsquaredlab.github.io/MyoGen/#installation) •
+  [Installation](#installation) •
   [Documentation](https://nsquaredlab.github.io/MyoGen/) •
   [Examples](https://nsquaredlab.github.io/MyoGen/examples/) •
-  [How to Cite](https://nsquaredlab.github.io/MyoGen/#how-to-cite)
+  [Paper](#citation)
 </div>
 
-# Overview
+# MyoGen - The modular and extandable simulation toolkit for neurophysiology
 
 MyoGen is a **modular and extensible neuromuscular simulation framework** for generating physiologically grounded motor-unit activity, muscle force, and surface EMG signals.  
 
 It supports end-to-end modeling of the neuromuscular pathway, from descending neural drive and spinal motor neuron dynamics to muscle activation and bioelectric signal formation at the electrode level.
 MyoGen is designed for algorithm validation, hypothesis-driven research, and education, providing configurable building blocks that can be independently combined and extended.
 
-# Highlights
+## Highlights
 
 🧬 **Biophysically inspired neuron models** — NEURON-based motor neurons with validated calcium dynamics and membrane properties
 
@@ -37,7 +34,7 @@ MyoGen is designed for algorithm validation, hypothesis-driven research, and edu
 
 🧰 **Comprehensive toolkit** — Surface EMG, intramuscular EMG, force generation, and spinal network modeling
 
-# Installation
+## Installation
 
 **Prerequisites**: Python ≥3.12, Linux/Windows/macOS
 
@@ -62,12 +59,11 @@ uv run poe setup_myogen
 > Install [uv](https://docs.astral.sh/uv/) first
 
 **GPU acceleration of convoutions** (optional):
-
 ```bash
 uv pip install cupy-cuda12x  # 5-10× speedup
 ```
 
-# Quick Start
+## Quick Start
 
 Generate motor unit action potentials (MUAPs):
 
@@ -129,7 +125,7 @@ print(f"Peak amplitude: {peak_amplitude:.3f} {electrode_muap.units}")
 
 **For full EMG simulation** with spike trains, see [examples](https://nsquaredlab.github.io/MyoGen/examples/)
 
-# Documentation
+## Documentation
 
 📖 **[Read the full documentation](https://nsquaredlab.github.io/MyoGen/)**
 
@@ -137,16 +133,17 @@ print(f"Peak amplitude: {peak_amplitude:.3f} {electrode_muap.units}")
 - [API Reference](https://nsquaredlab.github.io/MyoGen/api/) — Complete class documentation
 - [Examples](examples/) — 9 step-by-step tutorials from recruitment to EMG
 
-# How to Cite
+## Citation
 
 If you use MyoGen in your research, please cite:
 
 TBD
 
-# Contributing
+## Contributing
 
 Contributions welcome! See [issues](https://github.com/NsquaredLab/MyoGen/issues) if you want to add a feature or fix a bug.
 
-# License
+## License
 
 MyoGen is AGPL licensed. See [LICENSE](https://github.com/NsquaredLab/MyoGen/LICENSE.md) for details.
+

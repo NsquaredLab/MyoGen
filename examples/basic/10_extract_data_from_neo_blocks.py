@@ -89,7 +89,7 @@ if "spike_trains" in available_files:
     neuron_idx = 0
     spiketrain = motor_pool.spiketrains[neuron_idx]
     print(f"\nNeuron {neuron_idx}:")
-    print(f"  Name: {spiketrain.name}")
+    print(f"\tName: {spiketrain.name}")
     print(f"  Number of spikes: {len(spiketrain)}")
     print(f"  Sampling rate: {spiketrain.sampling_rate}")
     print(f"  Duration: {spiketrain.t_stop}")
@@ -198,7 +198,7 @@ if "surface_muaps" in available_files:
     im = ax2.imshow(spatial_map, cmap="seismic", aspect="auto")
     ax2.set_xlabel("Electrode Column")
     ax2.set_ylabel("Electrode Row")
-    ax2.set_title(f"Spatial Distribution at t={time__s[peak_time_idx]*1000:.1f}ms")
+    ax2.set_title(f"Spatial Distribution at t={time__s[peak_time_idx] * 1000:.1f}ms")
     plt.colorbar(im, ax=ax2, label=f"Amplitude ({muap_signal.units})")
 
     plt.tight_layout()
@@ -242,15 +242,19 @@ if "surface_emg" in available_files:
     time__s = emg_signal.times.magnitude
 
     print(f"\nEMG at electrode ({row}, {col}):")
-    print(f"  RMS amplitude: {np.sqrt(np.mean(electrode_emg.magnitude**2)):.3f} {electrode_emg.units}")
+    print(
+        f"  RMS amplitude: {np.sqrt(np.mean(electrode_emg.magnitude**2)):.3f} {electrode_emg.units}"
+    )
     print(f"  Peak-to-peak: {np.ptp(electrode_emg.magnitude):.3f} {electrode_emg.units}")
 
     # Calculate RMS envelope with moving window
     window_size = int(0.1 * emg_signal.sampling_rate.magnitude)  # 100ms window
-    emg_magnitude = electrode_emg.magnitude
+    emg_magnitude = np.squeeze(electrode_emg.magnitude)  # Ensure 1D array
     rms_envelope = np.array(
         [
-            np.sqrt(np.mean(emg_magnitude[max(0, i - window_size // 2) : i + window_size // 2] ** 2))
+            np.sqrt(
+                np.mean(emg_magnitude[max(0, i - window_size // 2) : i + window_size // 2] ** 2)
+            )
             for i in range(len(emg_magnitude))
         ]
     )
@@ -296,9 +300,7 @@ if "intramuscular_muaps" in available_files:
     print("=" * 70)
 
     # Load intramuscular MUAP block
-    im_muaps__Block: INTRAMUSCULAR_MUAP__Block = joblib.load(
-        available_files["intramuscular_muaps"]
-    )
+    im_muaps__Block: INTRAMUSCULAR_MUAP__Block = joblib.load(available_files["intramuscular_muaps"])
 
     print(f"\nNumber of MUAPs: {len(im_muaps__Block.segments)}")
 
@@ -375,7 +377,9 @@ if "intramuscular_emg" in available_files:
     electrode_emg = emg_signal[:, electrode_idx]
 
     print(f"\nEMG at electrode {electrode_idx}:")
-    print(f"  RMS amplitude: {np.sqrt(np.mean(electrode_emg.magnitude**2)):.3f} {electrode_emg.units}")
+    print(
+        f"  RMS amplitude: {np.sqrt(np.mean(electrode_emg.magnitude**2)):.3f} {electrode_emg.units}"
+    )
     print(f"  Peak-to-peak: {np.ptp(electrode_emg.magnitude):.3f} {electrode_emg.units}")
 
     # Calculate single differential EMG between adjacent contacts
@@ -386,9 +390,9 @@ if "intramuscular_emg" in available_files:
         for i in range(n_electrodes - 1):
             differential_emg[:, i] = (emg_signal[:, i + 1] - emg_signal[:, i]).magnitude
 
-        print(f"\nDifferential EMG calculated ({n_electrodes-1} channels)")
+        print(f"\nDifferential EMG calculated ({n_electrodes - 1} channels)")
         print(
-            f"  Differential channel 0 RMS: {np.sqrt(np.mean(differential_emg[:, 0]**2)):.3f} {emg_signal.units}"
+            f"  Differential channel 0 RMS: {np.sqrt(np.mean(differential_emg[:, 0] ** 2)):.3f} {emg_signal.units}"
         )
 
         # Plot monopolar and differential EMG
@@ -406,36 +410,9 @@ if "intramuscular_emg" in available_files:
         ax2.plot(time__s, differential_emg[:, 0], linewidth=0.5, color="orange")
         ax2.set_ylabel(f"Amplitude ({emg_signal.units})")
         ax2.set_xlabel("Time (s)")
-        ax2.set_title(f"Differential EMG - Electrodes {electrode_idx} to {electrode_idx+1}")
+        ax2.set_title(f"Differential EMG - Electrodes {electrode_idx} to {electrode_idx + 1}")
         ax2.grid(True, alpha=0.3)
 
         plt.tight_layout()
         plt.savefig(save_path / "intramuscular_emg_analysis.png", dpi=150)
         print(f"\nSaved EMG analysis to: {save_path / 'intramuscular_emg_analysis.png'}")
-
-
-##############################################################################
-# Summary
-# -------
-
-print("\n" + "=" * 70)
-print("SUMMARY")
-print("=" * 70)
-print("\nData extraction complete! Key patterns:")
-print("\n1. SPIKE_TRAIN__Block:")
-print("   - Access: block.segments[pool_idx].spiketrains[neuron_idx]")
-print("   - Data: 1D array of spike times")
-print("\n2. SURFACE_MUAP__Block:")
-print("   - Access: block.groups[array_idx].segments[muap_idx].analogsignals[0]")
-print("   - Data: 3D array (time × rows × columns)")
-print("\n3. SURFACE_EMG__Block:")
-print("   - Access: block.groups[array_idx].segments[pool_idx].analogsignals[0]")
-print("   - Data: 3D array (time × rows × columns)")
-print("\n4. INTRAMUSCULAR_MUAP__Block:")
-print("   - Access: block.segments[muap_idx].analogsignals[0]")
-print("   - Data: 2D array (time × electrodes)")
-print("\n5. INTRAMUSCULAR_EMG__Block:")
-print("   - Access: block.segments[pool_idx].analogsignals[0]")
-print("   - Data: 2D array (time × electrodes)")
-print("\nAll generated plots saved to:", save_path)
-print("=" * 70)

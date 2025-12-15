@@ -85,9 +85,14 @@ TIMEOUT_SECONDS = 3600
 TARGET_FORCE_PCT = 30.0  # 30% of baseline force (adjustable)
 MVC_PERCENT = 30.0  # MVC percentage for gamma shape calculation
 
-# Directories
-BASELINE_DIR = Path("./results/force_validation")
-RESULTS_DIR = Path("./results/force_optimization")
+# Directories - use project root to share across examples
+# Handle both manual execution and Sphinx Gallery (where __file__ is not defined)
+try:
+    _script_dir = Path(__file__).parent
+except NameError:
+    _script_dir = Path.cwd()
+BASELINE_DIR = _script_dir.parent.parent / "results" / "force_validation"
+RESULTS_DIR = _script_dir.parent.parent / "results" / "force_optimization"
 RESULTS_DIR.mkdir(exist_ok=True, parents=True)
 
 ##############################################################################

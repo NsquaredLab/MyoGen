@@ -97,8 +97,13 @@ RAMP_DOWN_DURATION__ms = 1000  # 1 second ramp-down
 REST_BEFORE__ms = 1000  # 1 second rest before
 REST_AFTER__ms = 1000  # 1 second rest after
 
-# Directories
-RESULTS_DIR = Path("./results")
+# Directories - use project root to share across examples
+# Handle both manual execution and Sphinx Gallery (where __file__ is not defined)
+try:
+    _script_dir = Path(__file__).parent
+except NameError:
+    _script_dir = Path.cwd()
+RESULTS_DIR = _script_dir.parent.parent / "results"
 RESULTS_DIR.mkdir(exist_ok=True, parents=True)
 
 ##############################################################################
@@ -113,15 +118,26 @@ print(f"{'=' * 80}\n")
 
 if USE_BASELINE_OPTIMIZATION:
     # Load from baseline firing rate optimization
-    OPTIMIZATION_RESULTS_DIR = Path("./results/dd_optimization")
-    PARAMS_FILE = OPTIMIZATION_RESULTS_DIR / f"{STUDY_PREFIX}dd_optimized_params.json"
+    OPTIMIZATION_RESULTS_DIR = _script_dir.parent.parent / "results" / "dd_optimization"
+    PARAMS_FILE = OPTIMIZATION_RESULTS_DIR / "dd_optimized_params.json"  # No prefix for baseline
 
     print("Loading from BASELINE firing rate optimization...")
 
-    if not PARAMS_FILE.exists():
+    # Fallback to static example data if dynamic results don't exist
+    STATIC_DATA_DIR = _script_dir.parent / "data" / "dd_optimization"
+    STATIC_PARAMS_FILE = STATIC_DATA_DIR / "dd_optimized_params.json"
+
+    if PARAMS_FILE.exists():
+        print(f"  ✓ Using dynamic results from: {PARAMS_FILE.relative_to(_script_dir.parent.parent)}")
+    elif STATIC_PARAMS_FILE.exists():
+        print(f"  ✓ Using static example data from: {STATIC_PARAMS_FILE.relative_to(_script_dir.parent.parent)}")
+        PARAMS_FILE = STATIC_PARAMS_FILE
+    else:
         raise FileNotFoundError(
-            f"Baseline optimization results not found at {PARAMS_FILE}.\n"
-            "Please run optimize_dd_for_target_firing_rate.py first."
+            f"Baseline optimization results not found.\n"
+            f"  Tried: {PARAMS_FILE}\n"
+            f"  Tried: {STATIC_PARAMS_FILE}\n"
+            "Please run optimize_dd_for_target_firing_rate.py first or check examples/data/"
         )
 
     with open(PARAMS_FILE, "r") as f:
@@ -133,7 +149,7 @@ if USE_BASELINE_OPTIMIZATION:
 
 else:
     # Load from force-specific optimization
-    OPTIMIZATION_RESULTS_DIR = Path("./results/force_optimization")
+    OPTIMIZATION_RESULTS_DIR = _script_dir.parent.parent / "results" / "force_optimization"
 
     # List available force optimization files
     if OPTIMIZATION_RESULTS_DIR.exists():

@@ -80,9 +80,14 @@ SIMULATION_TIME_MS = 10000.0  # 10 seconds for steady-state force
 TIMESTEP_MS = 0.1  # Integration timestep (ms)
 N_MOTOR_UNITS = 100  # Motor neuron pool size
 
-# File paths
-RESULTS_DIR = Path("./results/dd_optimization")
-OUTPUT_DIR = Path("./results/force_validation")
+# File paths - use project root to share across examples
+# Handle both manual execution and Sphinx Gallery (where __file__ is not defined)
+try:
+    _script_dir = Path(__file__).parent
+except NameError:
+    _script_dir = Path.cwd()
+RESULTS_DIR = _script_dir.parent.parent / "results" / "dd_optimization"
+OUTPUT_DIR = _script_dir.parent.parent / "results" / "force_validation"
 OUTPUT_DIR.mkdir(exist_ok=True, parents=True)
 
 # Fixed parameters (matching optimization)

@@ -97,8 +97,13 @@ ENABLE_GFLUCTDV = False  # Enable membrane noise in motor neurons
 GFLUCTDV_NOISE_MIN = 5e-6  # Minimum noise amplitude (S/cm²)
 GFLUCTDV_NOISE_MAX = 3e-5  # Maximum noise amplitude (S/cm²)
 
-# Results directory
-RESULTS_DIR = Path("./results/dd_optimization")
+# Results directory - use project root to share across examples
+# Handle both manual execution and Sphinx Gallery (where __file__ is not defined)
+try:
+    _script_dir = Path(__file__).parent
+except NameError:
+    _script_dir = Path.cwd()
+RESULTS_DIR = _script_dir.parent.parent / "results" / "dd_optimization"
 RESULTS_DIR.mkdir(exist_ok=True, parents=True)
 
 ##############################################################################

@@ -1,7 +1,7 @@
 <div align="center">
   <h1 style="display: flex; align-items: center; justify-content: center; gap: 10px;">
     <span>Welcome to</span>
-    <img src="./docs/source/_static/myogen_logo.png" height="100" alt="MyoGen Logo">
+    <img src="_static/myogen_logo.png" height="100" alt="MyoGen Logo">
   </h1>
 
   <h2>The modular and extandable simulation toolkit for neurophysiology</h2>
@@ -41,8 +41,9 @@ MyoGen is designed for algorithm validation, hypothesis-driven research, and edu
 
 **Prerequisites**: Python ≥3.12, Linux/Windows/macOS
 
-> [!IMPORTANT]
-> **Windows users**: Install [NEURON 8.2.6](https://github.com/neuronsimulator/nrn/releases/download/8.2.6/nrn-8.2.6.w64-mingw-py-38-39-310-311-312-setup.exe) before running `uv sync`
+:::{important}
+**Windows users**: Install [NEURON 8.2.6](https://github.com/neuronsimulator/nrn/releases/download/8.2.6/nrn-8.2.6.w64-mingw-py-38-39-310-311-312-setup.exe) before running `uv sync`
+:::
 
 ```bash
 # Clone and install
@@ -58,8 +59,9 @@ source .venv/bin/activate  # Linux/macOS
 uv run poe setup_myogen
 ```
 
-> [!TIP]
-> Install [uv](https://docs.astral.sh/uv/) first
+:::{tip}
+Install [uv](https://docs.astral.sh/uv/) first
+:::
 
 **GPU acceleration of convoutions** (optional):
 
@@ -150,3 +152,54 @@ Contributions welcome! See [issues](https://github.com/NsquaredLab/MyoGen/issues
 # License
 
 MyoGen is AGPL licensed. See [LICENSE](https://github.com/NsquaredLab/MyoGen/LICENSE.md) for details.
+
+
+```{eval-rst}
+----
+
+Package Structure
+-----------------
+
+.. code-block:: text
+
+   MyoGen/
+   ├── myogen/              # Main package source code
+   │   ├── simulator/       # Core simulation functionality
+   │   │   ├── core/        # Core simulation components
+   │   │   │   ├── emg/     # EMG signal generation
+   │   │   │   ├── muscle/  # Muscle modeling
+   │   │   │   └── spike_train/ # Motor neuron simulation
+   │   │   └── ...
+   │   ├── utils/           # Utility functions and tools
+   │   │   ├── plotting/    # Visualization utilities
+   │   │   ├── currents.py  # Current generation
+   │   │   └── nmodl.py     # NMODL file handling
+   │   └── ...
+   ├── examples/            # Example scripts and tutorials
+   ├── docs/                # Documentation source
+   ├── pyproject.toml       # Project metadata and dependencies
+   └── uv.lock              # Pinned versions of dependencies
+
+
+
+.. toctree::
+   :maxdepth: 2
+   :hidden:
+   :caption: API Documentation
+
+   api/index
+
+.. toctree::
+   :maxdepth: 2
+   :caption: User Guide
+   :hidden:
+
+   neo_blocks_guide
+
+.. toctree::
+   :maxdepth: 2
+   :caption: Examples & Tutorials
+   :hidden:
+
+   examples
+```

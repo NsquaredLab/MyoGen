@@ -122,7 +122,15 @@ plt.rcParams["figure.subplot.bottom"] = 0.12
 # Set analysis parameters and visualization options.
 
 # Data paths
-RESULTS_PATH = Path("./results")
+# Handle both manual execution and Sphinx Gallery (where __file__ is not defined)
+try:
+    _script_dir = Path(__file__).parent
+except NameError:
+    _script_dir = Path.cwd()
+
+# Try dynamic results first, then fall back to static example data
+RESULTS_PATH = _script_dir.parent.parent / "results"
+STATIC_DATA_PATH = _script_dir.parent / "data" / "isi_cv"
 
 # Muscle types to analyze
 MUSCLES = ["TEST"]  # Can extend to multiple: ["THIRTY", "TWENTYFIVE", "TWENTY"]
@@ -534,9 +542,18 @@ print(f"\tOutput Format: {OUTPUT_FORMAT.upper()}")
 print("\nLoading simulation data (auto-detecting force levels)...")
 all_muscle_data = load_multi_muscle_data(RESULTS_PATH, MUSCLES)
 
+if not all_muscle_data and STATIC_DATA_PATH.exists():
+    print(f"  No data in {RESULTS_PATH.relative_to(_script_dir.parent.parent)}, trying static example data...")
+    all_muscle_data = load_multi_muscle_data(STATIC_DATA_PATH, MUSCLES)
+    if all_muscle_data:
+        print(f"  ✓ Loaded static example data from: {STATIC_DATA_PATH.relative_to(_script_dir.parent.parent)}")
+
 if not all_muscle_data:
-    print("\nNo simulation data found. Please run 03_extract_isi_and_cv_per_ramps.py first.")
-    raise FileNotFoundError("No ISI/CV data files found in results directory")
+    print(f"\nNo simulation data found in:")
+    print(f"  - {RESULTS_PATH}")
+    print(f"  - {STATIC_DATA_PATH}")
+    print("\nPlease run 03_extract_isi_and_cv_per_ramps.py first.")
+    raise FileNotFoundError("No ISI/CV data files found in results or static data directories")
 
 ##############################################################################
 # Load Experimental Data

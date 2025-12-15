@@ -74,6 +74,8 @@ docs/_build/
 docs/source/auto_examples/
 docs/source/generated/
 docs/source/sg_execution_times.rst
+docs/source/index.md  # Auto-generated from root README.md
+docs/source/index.rst.backup  # Backup of original index.rst
 
 # PyBuilder
 .pybuilder/
@@ -179,6 +181,6 @@ myogen/simulator/nmodl_files/*.o
 myogen/simulator/nmodl_files/*.dll
 
 data/
-examples/data/
+# Note: examples/data/ is NOT ignored - it contains pre-generated static data for docs
 examples/finetune/experimental_results/
 sandbox/
