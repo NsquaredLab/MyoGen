@@ -21,6 +21,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - OIDC-based PyPI publishing (no API tokens needed)
   - Automated MPI/OpenMPI installation in CI for both Linux and macOS
   - Source distribution (sdist) building alongside wheels
+  - Auto-trigger PyPI publishing on GitHub releases and version tags
+  - Automatic upload of wheels and sdist to GitHub release assets
 - **Windows Installation Support**: Clear error handling for Windows users
   - Installation fails with helpful error message if NEURON not pre-installed on Windows
   - Directs users to download NEURON installer from official source

@@ -9,6 +9,8 @@ on:
   pull_request:
     branches:
       - main
+  release:
+    types: [published]
   workflow_dispatch:
 
 jobs:
@@ -155,10 +157,10 @@ jobs:
     name: Publish to PyPI
     needs: [build_wheels, build_sdist, test_wheels]
     runs-on: ubuntu-latest
-    if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')
+    if: github.event_name == 'release' || (github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v'))
     permissions:
       id-token: write  # Required for OIDC publishing
-      contents: read
+      contents: write  # Required for uploading release assets
 
     steps:
       - name: Download all artifacts
@@ -166,6 +168,12 @@ jobs:
         with:
           path: dist/
           merge-multiple: true
+
+      - name: Upload artifacts to GitHub Release
+        if: github.event_name == 'release'
+        uses: softprops/action-gh-release@v1
+        with:
+          files: dist/*
 
       - name: Publish to PyPI
         uses: pypa/gh-action-pypi-publish@release/v1
