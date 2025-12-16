@@ -95,6 +95,9 @@ setup_myogen = "python -c 'from myogen import _setup_myogen; _setup_myogen()'"
 requires = ["setuptools>=61.0", "Cython>=3.0.0", "numpy>=1.26", "scipy>=1.15.3"]
 build-backend = "setuptools.build_meta"
 
+[tool.setuptools]
+include-package-data = true
+
 [tool.setuptools.packages.find]
 where = ["."]
 include = ["myogen*"]
@@ -104,15 +107,17 @@ myogen = [
     "**/*.pyx",
     "**/*.pxd",
     "**/*.c",
+    "**/*.h",
+    "**/*.cpp",
     "**/*.mod",
     "**/*.dll",
     "**/*.so",
-    "**/nrnmech.dll",
-    "**/libnrnmech.so",
     "**/*.o",
     "**/*.yaml",
-    "**/mod_func.c",
-    "**/x86_64/**",
-    "**/aarch64/**",
-    "**/arm64/**",
+    "**/x86_64/*",
+    "**/x86_64/.libs/*",
+    "**/aarch64/*",
+    "**/aarch64/.libs/*",
+    "**/arm64/*",
+    "**/arm64/.libs/*",
 ]
