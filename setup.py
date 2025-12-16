@@ -5,6 +5,8 @@ from Cython.Build import cythonize
 from setuptools.extension import Extension
 import numpy as np
 import os
+import platform
+import subprocess
 from pathlib import Path
 
 
@@ -21,17 +23,14 @@ class BuildWithNMODL(build_py):
     def compile_nmodl(self):
         """Compile NMODL files if NEURON is available."""
         try:
-            # Import the compilation function from myogen
-            import platform
-            import subprocess
+            # Compile in the build directory so files are included in the wheel
+            build_nmodl_path = Path(self.build_lib) / "myogen" / "simulator" / "nmodl_files"
 
-            nmodl_path = Path("myogen") / "simulator" / "nmodl_files"
-
-            if not nmodl_path.exists():
-                print("Warning: NMODL files directory not found, skipping NMODL compilation")
+            if not build_nmodl_path.exists():
+                print("Warning: NMODL files directory not found in build, skipping NMODL compilation")
                 return
 
-            mod_files = list(nmodl_path.glob("*.mod"))
+            mod_files = list(build_nmodl_path.glob("*.mod"))
             if not mod_files:
                 print("Warning: No .mod files found, skipping NMODL compilation")
                 return
@@ -40,9 +39,9 @@ class BuildWithNMODL(build_py):
 
             # Try to compile based on platform
             if platform.system() == "Windows":
-                self._compile_nmodl_windows(nmodl_path)
+                self._compile_nmodl_windows(build_nmodl_path)
             else:
-                self._compile_nmodl_unix(nmodl_path)
+                self._compile_nmodl_unix(build_nmodl_path)
 
             print("NMODL compilation complete!")
 
@@ -100,7 +99,6 @@ class BuildWithNMODL(build_py):
 
     def _compile_nmodl_unix(self, nmodl_path):
         """Compile NMODL on Unix-like systems."""
-        import subprocess
         subprocess.run(
             ["nrnivmodl", "."],
             cwd=nmodl_path,
