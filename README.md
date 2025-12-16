@@ -39,12 +39,25 @@ MyoGen is designed for algorithm validation, hypothesis-driven research, and edu
 
 # Installation
 
+> [!WARNING]
+> **Windows users**: Install [NEURON 8.2.6](https://github.com/neuronsimulator/nrn/releases/download/8.2.6/nrn-8.2.6.w64-mingw-py-38-39-310-311-312-setup.exe) before installing MyoGen
+
+```bash
+uv add MyoGen
+# or
+pip install MyoGen
+```
+
+NEURON mechanisms compile automatically during installation.
+
+---
+
 **Prerequisites**: Python ≥3.12, Linux/Windows/macOS
 
 > [!IMPORTANT]
 > **System Requirements**:
 > - **Linux/macOS**: OpenMPI or MPICH (install via package manager)
-> - **Windows**: [NEURON 8.2.6](https://github.com/neuronsimulator/nrn/releases/download/8.2.6/nrn-8.2.6.w64-mingw-py-38-39-310-311-312-setup.exe) required before installing MyoGen
+> - **Windows**: NEURON 8.2.6 required (see warning above)
 
 ```bash
 # Install MPI (Linux)
@@ -56,13 +69,7 @@ sudo yum install openmpi-devel       # RHEL/CentOS
 brew install open-mpi
 ```
 
-## From PyPI (recommended)
-
-```bash
-pip install myogen
-```
-
-NEURON mechanisms compile automatically during installation.
+---
 
 ## From Source (for development)
 
@@ -160,7 +167,7 @@ print(f"Peak amplitude: {peak_amplitude:.3f} {electrode_muap.units}")
 
 - [User Guide](https://nsquaredlab.github.io/MyoGen/neo_blocks_guide.html) — Working with simulation outputs
 - [API Reference](https://nsquaredlab.github.io/MyoGen/api/) — Complete class documentation
-- [Examples](examples/) — 9 step-by-step tutorials from recruitment to EMG
+- [Examples](examples/) — Step-by-step tutorials from recruitment to EMG
 
 # How to Cite
 
