@@ -51,10 +51,20 @@ jobs:
           # Use manylinux2014 (manylinux_2_17)
           CIBW_MANYLINUX_X86_64_IMAGE: manylinux2014
 
-          # Skip repair tools - NEURON mechanisms must be preserved
-          # auditwheel (Linux) and delocate (macOS) strip the compiled mechanisms
-          # Users must have system MPI and NEURON installed
-          CIBW_REPAIR_WHEEL_COMMAND_LINUX: "cp {wheel} {dest_dir}/"
+          # Custom repair to preserve NEURON mechanisms while adding proper platform tags
+          # Standard tools (auditwheel/delocate) strip the architecture directories
+          CIBW_REPAIR_WHEEL_COMMAND_LINUX: |
+            python -c "
+            import shutil, sys
+            from pathlib import Path
+            wheel = Path(sys.argv[1])
+            dest = Path(sys.argv[2])
+            # Rename to manylinux without modifying contents
+            new_name = wheel.name.replace('linux_', 'manylinux_2_17_').replace('manylinux2014_', 'manylinux_2_17_')
+            shutil.copy2(wheel, dest / new_name)
+            " {wheel} {dest_dir}
+
+          # macOS: Just copy wheel as-is (already has correct platform tag)
           CIBW_REPAIR_WHEEL_COMMAND_MACOS: "cp {wheel} {dest_dir}/"
 
       - name: Show built wheel names
