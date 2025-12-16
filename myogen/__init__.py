@@ -140,10 +140,37 @@ def _setup_myogen(quiet: bool = False, force_rebuild: bool = False) -> bool:
 
     # Compile NMODL files for NEURON
     try:
-        from myogen.utils.nmodl import compile_nmodl_files
+        from pathlib import Path
+        import platform
 
-        # Note: load_nmodl_files now includes PyNN integration by default
-        return compile_nmodl_files(quiet=quiet)
+        # Check if NMODL files are already compiled
+        myogen_root = Path(__file__).parent
+        nmodl_path = myogen_root / "simulator" / "nmodl_files"
+
+        # Check for compiled NMODL libraries
+        nmodl_compiled = False
+        if platform.system() == "Windows":
+            # On Windows, look for nrnmech.dll
+            nmodl_compiled = any(nmodl_path.glob("*nrnmech.dll"))
+        else:
+            # On Unix, look for libnrnmech.so or x86_64 directory
+            nmodl_compiled = (nmodl_path / "x86_64").exists() or any(nmodl_path.glob("*nrnmech.so"))
+
+        if nmodl_compiled and not force_rebuild:
+            if not quiet:
+                print("NMODL mechanisms already compiled.")
+            return True
+        else:
+            if not quiet:
+                print("Compiling NMODL mechanisms...")
+
+            from myogen.utils.nmodl import compile_nmodl_files
+            result = compile_nmodl_files(quiet=quiet)
+
+            if result and not quiet:
+                print("NMODL mechanisms compiled successfully.")
+            return result
+
     except ImportError as e:
         if not quiet:
             print(f"Warning: NEURON not available, skipping mechanism setup: {e}")

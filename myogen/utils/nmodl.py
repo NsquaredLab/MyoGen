@@ -198,6 +198,34 @@ def load_nmodl_mechanisms(quiet: bool = True) -> bool:
     def log(msg):
         return print(msg) if not quiet else None
 
+    # On Windows, add NEURON paths to PATH before importing
+    if platform.system() == "Windows":
+        neuron_homes = [
+            Path(os.environ.get("NEURONHOME", "")),
+            Path("C:/nrn"),
+            Path("C:/Program Files/NEURON"),
+        ]
+
+        for neuron_home in neuron_homes:
+            if neuron_home.exists():
+                # Add both bin and lib/python directories
+                neuron_bin = neuron_home / "bin"
+                neuron_lib_path = neuron_home / "lib" / "python"
+
+                paths_to_add = []
+                if neuron_bin.exists():
+                    paths_to_add.append(str(neuron_bin))
+                if neuron_lib_path.exists():
+                    paths_to_add.append(str(neuron_lib_path))
+
+                if paths_to_add:
+                    current_path = os.environ.get("PATH", "")
+                    for path in paths_to_add:
+                        if path not in current_path:
+                            os.environ["PATH"] = f"{path};{os.environ['PATH']}"
+                    log(f"Added NEURON paths to PATH: {', '.join(paths_to_add)}")
+                break
+
     try:
         import neuron
         from neuron import h

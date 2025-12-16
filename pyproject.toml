@@ -70,4 +70,15 @@ where = ["."]
 include = ["myogen*"]
 
 [tool.setuptools.package-data]
-myogen = ["**/*.pyx", "**/*.pxd", "**/*.c"]
+myogen = [
+    "**/*.pyx",
+    "**/*.pxd",
+    "**/*.c",
+    "**/*.mod",
+    "**/*.dll",
+    "**/*.so",
+    "**/nrnmech.dll",
+    "**/libnrnmech.so",
+    "**/*.o",
+    "**/mod_func.c",
+]
