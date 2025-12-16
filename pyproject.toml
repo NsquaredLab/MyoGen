@@ -11,7 +11,7 @@ dependencies = [
     "impi-rt>=2021.15.0 ; sys_platform == 'win32'",
     "matplotlib>=3.10.1",
     "mpi4py>=4.0.3",
-    "neuron==8.2.7 ; sys_platform == 'linux'",
+    "neuron==8.2.7 ; sys_platform == 'linux' or sys_platform == 'darwin'",
     #"neuron-gpu-nightly>=9.0a0",
     #"neuron-nightly>=9.0a1.dev1492",
     "noise>=1.2.2",

@@ -46,8 +46,25 @@ class BuildWithNMODL(build_py):
             print("NMODL compilation complete!")
 
         except Exception as e:
-            print(f"Warning: NMODL compilation failed (this is optional): {e}")
-            print("You can compile NMODL files later by running: from myogen import _setup_myogen; _setup_myogen()")
+            if platform.system() == "Windows":
+                # On Windows, NEURON is required - fail the build with clear instructions
+                error_msg = (
+                    "\n" + "="*70 + "\n"
+                    "ERROR: NEURON installation required for MyoGen on Windows\n"
+                    "="*70 + "\n\n"
+                    "MyoGen requires NEURON to be installed before building.\n\n"
+                    "Please install NEURON by following these steps:\n"
+                    "1. Download NEURON from: https://neuron.yale.edu/neuron/download\n"
+                    "2. Run the Windows installer (nrn-X.X.X.w64-mingw-py-XX-setup.exe)\n"
+                    "3. After installation, retry: pip install myogen\n\n"
+                    f"Original error: {e}\n"
+                    "="*70 + "\n"
+                )
+                raise RuntimeError(error_msg) from e
+            else:
+                # On Linux/macOS, allow optional NMODL compilation
+                print(f"Warning: NMODL compilation failed (this is optional): {e}")
+                print("You can compile NMODL files later by running: from myogen import _setup_myogen; _setup_myogen()")
 
     def _compile_nmodl_windows(self, nmodl_path):
         """Compile NMODL on Windows."""
