@@ -23,8 +23,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - No more manual `uv run poe setup_myogen` required for end users installing via pip
 - **CI/CD Workflow**: GitHub Actions workflow for automated wheel building and publishing
   - Uses `cibuildwheel` for PyPI-compatible manylinux wheels (Linux) and universal wheels (macOS)
-  - Automatic wheel building for Linux (x86_64), macOS Intel (x86_64), and macOS ARM (arm64) with pre-compiled NMODL mechanisms
-  - Updated to use macos-15-large (Intel) and macos-latest (ARM) runners (macos-13 deprecated)
+  - Automatic wheel building for Linux (x86_64) and macOS ARM (arm64) with pre-compiled NMODL mechanisms
+  - Updated to use macos-latest (ARM) runner (macos-13 deprecated)
   - Wheels built on manylinux2014 with proper `manylinux_2_17_x86_64` platform tags
   - MPI libraries marked as external dependencies (users install system MPI separately)
   - Multi-platform testing of built wheels before publishing
