@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.6.8] - 2025-12-16
+
+### Fixed
+- **Build System**: Compile NEURON mechanisms before wheel build in CI
+  - Added nrnivmodl compilation step in CIBW_BEFORE_BUILD
+  - Mechanisms now properly included in wheels published to PyPI
+  - Verified locally that wheels contain x86_64/libnrnmech.so
+
 ## [0.6.7] - 2025-12-16
 
 ### Fixed
