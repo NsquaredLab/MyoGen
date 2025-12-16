@@ -47,7 +47,7 @@ Literature Reproductions
         :link-type: ref
         :text-align: center
 
-        Watanabe et al. (2013, J. Neurophysiol.)
+        Watanabe et al. (2015, J. Neurosci.)
 
 
 .. toctree::
