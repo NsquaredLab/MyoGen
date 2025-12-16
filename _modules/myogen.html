@@ -778,83 +778,158 @@ window.addEventListener("load", load);
 
 
 
-<span class="k">def</span><span class="w"> </span><span class="nf">_setup_myogen</span><span class="p">(</span><span class="n">quiet</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_setup_myogen</span><span class="p">(</span><span class="n">quiet</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">force_rebuild</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Set up MyoGen with NEURON mechanism compilation and loading.</span>
 
 <span class="sd">    This function handles the compilation and loading of NMODL files required for</span>
-<span class="sd">    neural simulations. It supports both basic MyoGen mechanisms and extended</span>
-<span class="sd">    spinal circuit mechanisms from spindle_network integration.</span>
-
-<span class="sd">    The function now prioritizes PyNN&#39;s built-in load_mechanisms() functionality</span>
-<span class="sd">    for better integration with PyNN simulations, falling back to manual compilation</span>
-<span class="sd">    when PyNN is not available or fails.</span>
+<span class="sd">    neural simulations. It also compiles Cython extensions if they are not already</span>
+<span class="sd">    available (typically only needed in development mode).</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">    enable_spinal_circuits : bool, optional</span>
-<span class="sd">        If True, include spinal mechanism files (ion channels, synaptic mechanisms,</span>
-<span class="sd">        stimulation tools) for proprioceptive modeling and closed-loop control.</span>
-<span class="sd">        Requires spindle_network-3 integration, by default False</span>
-<span class="sd">    force_reload : bool, optional</span>
-<span class="sd">        If True, force recompilation even if mechanisms appear loaded, by default False</span>
 <span class="sd">    quiet : bool, optional</span>
 <span class="sd">        If True, suppress most output messages, by default False</span>
+<span class="sd">    force_rebuild : bool, optional</span>
+<span class="sd">        If True, force recompilation of Cython extensions even if they appear</span>
+<span class="sd">        to be already compiled, by default False</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
 <span class="sd">    bool</span>
 <span class="sd">        True if setup completed successfully, False otherwise</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="kn">from</span><span class="w"> </span><span class="nn">Cython.Build</span><span class="w"> </span><span class="kn">import</span> <span class="n">cythonize</span>
-    <span class="kn">from</span><span class="w"> </span><span class="nn">setuptools</span><span class="w"> </span><span class="kn">import</span> <span class="n">Extension</span><span class="p">,</span> <span class="n">setup</span>
+    <span class="c1"># Check if Cython extensions are already compiled (from installed package)</span>
+    <span class="n">cython_modules</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="s2">&quot;myogen.simulator.neuron._cython._spindle&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;myogen.simulator.neuron._cython._hill&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;myogen.simulator.neuron._cython._gto&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;myogen.simulator.neuron._cython._poisson_process_generator&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;myogen.simulator.neuron._cython._gamma_process_generator&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;myogen.simulator.neuron._cython._simulate_fiber&quot;</span><span class="p">,</span>
+    <span class="p">]</span>
 
-    <span class="n">setup</span><span class="p">(</span>
-        <span class="n">ext_modules</span><span class="o">=</span><span class="n">cythonize</span><span class="p">(</span>
-            <span class="p">[</span>
-                <span class="n">Extension</span><span class="p">(</span>
-                    <span class="s2">&quot;myogen.simulator.neuron._cython._spindle&quot;</span><span class="p">,</span>
-                    <span class="p">[</span><span class="s2">&quot;myogen/simulator/neuron/_cython/_spindle.pyx&quot;</span><span class="p">],</span>
-                    <span class="n">extra_compile_args</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;-O3&quot;</span><span class="p">,</span> <span class="s2">&quot;-march=native&quot;</span><span class="p">,</span> <span class="s2">&quot;-ffast-math&quot;</span><span class="p">],</span>
-                <span class="p">),</span>
-                <span class="n">Extension</span><span class="p">(</span>
-                    <span class="s2">&quot;myogen.simulator.neuron._cython._hill&quot;</span><span class="p">,</span>
-                    <span class="p">[</span><span class="s2">&quot;myogen/simulator/neuron/_cython/_hill.pyx&quot;</span><span class="p">],</span>
-                    <span class="n">extra_compile_args</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;-O3&quot;</span><span class="p">,</span> <span class="s2">&quot;-march=native&quot;</span><span class="p">],</span>
-                <span class="p">),</span>
-                <span class="n">Extension</span><span class="p">(</span>
-                    <span class="s2">&quot;myogen.simulator.neuron._cython._gto&quot;</span><span class="p">,</span>
-                    <span class="p">[</span><span class="s2">&quot;myogen/simulator/neuron/_cython/_gto.pyx&quot;</span><span class="p">],</span>
-                    <span class="n">extra_compile_args</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;-O3&quot;</span><span class="p">,</span> <span class="s2">&quot;-march=native&quot;</span><span class="p">,</span> <span class="s2">&quot;-ffast-math&quot;</span><span class="p">],</span>
-                <span class="p">),</span>
-                <span class="n">Extension</span><span class="p">(</span>
-                    <span class="s2">&quot;myogen.simulator.neuron._cython._poisson_process_generator&quot;</span><span class="p">,</span>
-                    <span class="p">[</span><span class="s2">&quot;myogen/simulator/neuron/_cython/_poisson_process_generator.pyx&quot;</span><span class="p">],</span>
-                    <span class="n">extra_compile_args</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;-O3&quot;</span><span class="p">,</span> <span class="s2">&quot;-march=native&quot;</span><span class="p">,</span> <span class="s2">&quot;-ffast-math&quot;</span><span class="p">],</span>
-                <span class="p">),</span>
-                <span class="n">Extension</span><span class="p">(</span>
-                    <span class="s2">&quot;myogen.simulator.neuron._cython._gamma_process_generator&quot;</span><span class="p">,</span>
-                    <span class="p">[</span><span class="s2">&quot;myogen/simulator/neuron/_cython/_gamma_process_generator.pyx&quot;</span><span class="p">],</span>
-                    <span class="n">extra_compile_args</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;-O3&quot;</span><span class="p">,</span> <span class="s2">&quot;-march=native&quot;</span><span class="p">,</span> <span class="s2">&quot;-ffast-math&quot;</span><span class="p">],</span>
-                <span class="p">),</span>
-                <span class="n">Extension</span><span class="p">(</span>
-                    <span class="s2">&quot;myogen.simulator.neuron._cython._simulate_fiber&quot;</span><span class="p">,</span>
-                    <span class="p">[</span><span class="s2">&quot;myogen/simulator/neuron/_cython/_simulate_fiber.pyx&quot;</span><span class="p">],</span>
-                    <span class="n">extra_compile_args</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;-O3&quot;</span><span class="p">,</span> <span class="s2">&quot;-march=native&quot;</span><span class="p">,</span> <span class="s2">&quot;-ffast-math&quot;</span><span class="p">],</span>
-                <span class="p">),</span>
-            <span class="p">],</span>
-            <span class="n">compiler_directives</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;embedsignature&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">},</span>
-            <span class="n">nthreads</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span>
-        <span class="p">),</span>
-        <span class="n">script_args</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;build_ext&quot;</span><span class="p">,</span> <span class="s2">&quot;--inplace&quot;</span><span class="p">],</span>
-        <span class="n">include_dirs</span><span class="o">=</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">get_include</span><span class="p">()],</span>
-    <span class="p">)</span>
+    <span class="n">all_compiled</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">force_rebuild</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">module_name</span> <span class="ow">in</span> <span class="n">cython_modules</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="nb">__import__</span><span class="p">(</span><span class="n">module_name</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+                <span class="n">all_compiled</span> <span class="o">=</span> <span class="kc">False</span>
+                <span class="k">break</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">all_compiled</span> <span class="o">=</span> <span class="kc">False</span>
 
+    <span class="c1"># Only compile Cython extensions if not already available</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">all_compiled</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">quiet</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Compiling Cython extensions (development mode)...&quot;</span><span class="p">)</span>
+
+        <span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+
+        <span class="c1"># Check if .pyx files exist (development install)</span>
+        <span class="n">myogen_root</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)</span><span class="o">.</span><span class="n">parent</span>
+        <span class="n">pyx_files_exist</span> <span class="o">=</span> <span class="p">(</span><span class="n">myogen_root</span> <span class="o">/</span> <span class="s2">&quot;simulator&quot;</span> <span class="o">/</span> <span class="s2">&quot;neuron&quot;</span> <span class="o">/</span> <span class="s2">&quot;_cython&quot;</span> <span class="o">/</span> <span class="s2">&quot;_spindle.pyx&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">exists</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">pyx_files_exist</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">quiet</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Cython source files not found. This is expected for installed packages.&quot;</span><span class="p">)</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Cython extensions should have been compiled during installation.&quot;</span><span class="p">)</span>
+            <span class="c1"># Try importing again to give a clearer error if truly missing</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="kn">from</span><span class="w"> </span><span class="nn">myogen.simulator.neuron._cython</span><span class="w"> </span><span class="kn">import</span> <span class="n">_spindle</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">quiet</span><span class="p">:</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Cython extensions are available.&quot;</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">ImportError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">quiet</span><span class="p">:</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Error: Cython extensions are not available: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Please reinstall MyoGen or run setup from a development clone.&quot;</span><span class="p">)</span>
+                <span class="k">return</span> <span class="kc">False</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># Development mode: compile in-place</span>
+            <span class="kn">from</span><span class="w"> </span><span class="nn">Cython.Build</span><span class="w"> </span><span class="kn">import</span> <span class="n">cythonize</span>
+            <span class="kn">from</span><span class="w"> </span><span class="nn">setuptools</span><span class="w"> </span><span class="kn">import</span> <span class="n">Extension</span><span class="p">,</span> <span class="n">setup</span>
+
+            <span class="n">setup</span><span class="p">(</span>
+                <span class="n">ext_modules</span><span class="o">=</span><span class="n">cythonize</span><span class="p">(</span>
+                    <span class="p">[</span>
+                        <span class="n">Extension</span><span class="p">(</span>
+                            <span class="s2">&quot;myogen.simulator.neuron._cython._spindle&quot;</span><span class="p">,</span>
+                            <span class="p">[</span><span class="s2">&quot;myogen/simulator/neuron/_cython/_spindle.pyx&quot;</span><span class="p">],</span>
+                            <span class="n">extra_compile_args</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;-O3&quot;</span><span class="p">,</span> <span class="s2">&quot;-march=native&quot;</span><span class="p">,</span> <span class="s2">&quot;-ffast-math&quot;</span><span class="p">],</span>
+                        <span class="p">),</span>
+                        <span class="n">Extension</span><span class="p">(</span>
+                            <span class="s2">&quot;myogen.simulator.neuron._cython._hill&quot;</span><span class="p">,</span>
+                            <span class="p">[</span><span class="s2">&quot;myogen/simulator/neuron/_cython/_hill.pyx&quot;</span><span class="p">],</span>
+                            <span class="n">extra_compile_args</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;-O3&quot;</span><span class="p">,</span> <span class="s2">&quot;-march=native&quot;</span><span class="p">],</span>
+                        <span class="p">),</span>
+                        <span class="n">Extension</span><span class="p">(</span>
+                            <span class="s2">&quot;myogen.simulator.neuron._cython._gto&quot;</span><span class="p">,</span>
+                            <span class="p">[</span><span class="s2">&quot;myogen/simulator/neuron/_cython/_gto.pyx&quot;</span><span class="p">],</span>
+                            <span class="n">extra_compile_args</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;-O3&quot;</span><span class="p">,</span> <span class="s2">&quot;-march=native&quot;</span><span class="p">,</span> <span class="s2">&quot;-ffast-math&quot;</span><span class="p">],</span>
+                        <span class="p">),</span>
+                        <span class="n">Extension</span><span class="p">(</span>
+                            <span class="s2">&quot;myogen.simulator.neuron._cython._poisson_process_generator&quot;</span><span class="p">,</span>
+                            <span class="p">[</span><span class="s2">&quot;myogen/simulator/neuron/_cython/_poisson_process_generator.pyx&quot;</span><span class="p">],</span>
+                            <span class="n">extra_compile_args</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;-O3&quot;</span><span class="p">,</span> <span class="s2">&quot;-march=native&quot;</span><span class="p">,</span> <span class="s2">&quot;-ffast-math&quot;</span><span class="p">],</span>
+                        <span class="p">),</span>
+                        <span class="n">Extension</span><span class="p">(</span>
+                            <span class="s2">&quot;myogen.simulator.neuron._cython._gamma_process_generator&quot;</span><span class="p">,</span>
+                            <span class="p">[</span><span class="s2">&quot;myogen/simulator/neuron/_cython/_gamma_process_generator.pyx&quot;</span><span class="p">],</span>
+                            <span class="n">extra_compile_args</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;-O3&quot;</span><span class="p">,</span> <span class="s2">&quot;-march=native&quot;</span><span class="p">,</span> <span class="s2">&quot;-ffast-math&quot;</span><span class="p">],</span>
+                        <span class="p">),</span>
+                        <span class="n">Extension</span><span class="p">(</span>
+                            <span class="s2">&quot;myogen.simulator.neuron._cython._simulate_fiber&quot;</span><span class="p">,</span>
+                            <span class="p">[</span><span class="s2">&quot;myogen/simulator/neuron/_cython/_simulate_fiber.pyx&quot;</span><span class="p">],</span>
+                            <span class="n">extra_compile_args</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;-O3&quot;</span><span class="p">,</span> <span class="s2">&quot;-march=native&quot;</span><span class="p">,</span> <span class="s2">&quot;-ffast-math&quot;</span><span class="p">],</span>
+                        <span class="p">),</span>
+                    <span class="p">],</span>
+                    <span class="n">compiler_directives</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;embedsignature&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">},</span>
+                    <span class="n">nthreads</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span>
+                <span class="p">),</span>
+                <span class="n">script_args</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;build_ext&quot;</span><span class="p">,</span> <span class="s2">&quot;--inplace&quot;</span><span class="p">],</span>
+                <span class="n">include_dirs</span><span class="o">=</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">get_include</span><span class="p">()],</span>
+            <span class="p">)</span>
+
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">quiet</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Cython extensions compiled successfully.&quot;</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="ow">not</span> <span class="n">quiet</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Cython extensions already available.&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Compile NMODL files for NEURON</span>
     <span class="k">try</span><span class="p">:</span>
-        <span class="kn">from</span><span class="w"> </span><span class="nn">myogen.utils.nmodl</span><span class="w"> </span><span class="kn">import</span> <span class="n">compile_nmodl_files</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+        <span class="kn">import</span><span class="w"> </span><span class="nn">platform</span>
 
-        <span class="c1"># Note: load_nmodl_files now includes PyNN integration by default</span>
-        <span class="k">return</span> <span class="n">compile_nmodl_files</span><span class="p">(</span><span class="n">quiet</span><span class="o">=</span><span class="n">quiet</span><span class="p">)</span>
+        <span class="c1"># Check if NMODL files are already compiled</span>
+        <span class="n">myogen_root</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)</span><span class="o">.</span><span class="n">parent</span>
+        <span class="n">nmodl_path</span> <span class="o">=</span> <span class="n">myogen_root</span> <span class="o">/</span> <span class="s2">&quot;simulator&quot;</span> <span class="o">/</span> <span class="s2">&quot;nmodl_files&quot;</span>
+
+        <span class="c1"># Check for compiled NMODL libraries</span>
+        <span class="n">nmodl_compiled</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="k">if</span> <span class="n">platform</span><span class="o">.</span><span class="n">system</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;Windows&quot;</span><span class="p">:</span>
+            <span class="c1"># On Windows, look for nrnmech.dll</span>
+            <span class="n">nmodl_compiled</span> <span class="o">=</span> <span class="nb">any</span><span class="p">(</span><span class="n">nmodl_path</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="s2">&quot;*nrnmech.dll&quot;</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># On Unix, look for libnrnmech.so or x86_64 directory</span>
+            <span class="n">nmodl_compiled</span> <span class="o">=</span> <span class="p">(</span><span class="n">nmodl_path</span> <span class="o">/</span> <span class="s2">&quot;x86_64&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">exists</span><span class="p">()</span> <span class="ow">or</span> <span class="nb">any</span><span class="p">(</span><span class="n">nmodl_path</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="s2">&quot;*nrnmech.so&quot;</span><span class="p">))</span>
+
+        <span class="k">if</span> <span class="n">nmodl_compiled</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">force_rebuild</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">quiet</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;NMODL mechanisms already compiled.&quot;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="kc">True</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">quiet</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Compiling NMODL mechanisms...&quot;</span><span class="p">)</span>
+
+            <span class="kn">from</span><span class="w"> </span><span class="nn">myogen.utils.nmodl</span><span class="w"> </span><span class="kn">import</span> <span class="n">compile_nmodl_files</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="n">compile_nmodl_files</span><span class="p">(</span><span class="n">quiet</span><span class="o">=</span><span class="n">quiet</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">result</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">quiet</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;NMODL mechanisms compiled successfully.&quot;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">result</span>
+
     <span class="k">except</span> <span class="ne">ImportError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">quiet</span><span class="p">:</span>
             <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Warning: NEURON not available, skipping mechanism setup: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>

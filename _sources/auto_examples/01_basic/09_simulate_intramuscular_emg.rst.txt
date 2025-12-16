@@ -227,9 +227,9 @@ Using parallel processing for faster computation.
  .. code-block:: none
 
     Computing motor unit action potentials...
-    Creating motor unit simulators:   0%|          | 0/100 [00:00<?, ?Simulator/s]    Creating motor unit simulators: 100%|██████████| 100/100 [00:00<00:00, 3473.72Simulator/s]
-    Setting up NMJ distributions:   0%|          | 0/100 [00:00<?, ?Simulator/s]    Setting up NMJ distributions:   3%|▎         | 3/100 [00:00<00:03, 29.96Simulator/s]    Setting up NMJ distributions:  26%|██▌       | 26/100 [00:00<00:00, 146.61Simulator/s]    Setting up NMJ distributions:  42%|████▏     | 42/100 [00:00<00:00, 146.86Simulator/s]    Setting up NMJ distributions:  57%|█████▋    | 57/100 [00:00<00:00, 102.72Simulator/s]    Setting up NMJ distributions:  69%|██████▉   | 69/100 [00:00<00:00, 71.34Simulator/s]     Setting up NMJ distributions:  78%|███████▊  | 78/100 [00:01<00:00, 50.51Simulator/s]    Setting up NMJ distributions:  85%|████████▌ | 85/100 [00:01<00:00, 37.79Simulator/s]    Setting up NMJ distributions:  91%|█████████ | 91/100 [00:01<00:00, 28.94Simulator/s]    Setting up NMJ distributions:  96%|█████████▌| 96/100 [00:02<00:00, 21.99Simulator/s]    Setting up NMJ distributions: 100%|██████████| 100/100 [00:02<00:00, 18.01Simulator/s]    Setting up NMJ distributions: 100%|██████████| 100/100 [00:02<00:00, 36.56Simulator/s]
-    Computing MUAPs:   0%|          | 0/4 [00:00<?, ?MU/s]    Computing MUAPs:  25%|██▌       | 1/4 [00:02<00:08,  2.81s/MU]    Computing MUAPs:  50%|█████     | 2/4 [00:05<00:05,  2.70s/MU]    Computing MUAPs:  75%|███████▌  | 3/4 [00:19<00:07,  7.79s/MU]    Computing MUAPs: 100%|██████████| 4/4 [01:26<00:00, 31.43s/MU]    Computing MUAPs: 100%|██████████| 4/4 [01:26<00:00, 21.74s/MU]
+    Creating motor unit simulators:   0%|          | 0/100 [00:00<?, ?Simulator/s]    Creating motor unit simulators: 100%|██████████| 100/100 [00:00<00:00, 4727.89Simulator/s]
+    Setting up NMJ distributions:   0%|          | 0/100 [00:00<?, ?Simulator/s]    Setting up NMJ distributions:   3%|▎         | 3/100 [00:00<00:03, 28.89Simulator/s]    Setting up NMJ distributions:  21%|██        | 21/100 [00:00<00:00, 116.23Simulator/s]    Setting up NMJ distributions:  38%|███▊      | 38/100 [00:00<00:00, 135.98Simulator/s]    Setting up NMJ distributions:  52%|█████▏    | 52/100 [00:00<00:00, 104.81Simulator/s]    Setting up NMJ distributions:  64%|██████▍   | 64/100 [00:00<00:00, 73.35Simulator/s]     Setting up NMJ distributions:  73%|███████▎  | 73/100 [00:01<00:00, 54.11Simulator/s]    Setting up NMJ distributions:  80%|████████  | 80/100 [00:01<00:00, 39.73Simulator/s]    Setting up NMJ distributions:  86%|████████▌ | 86/100 [00:01<00:00, 30.69Simulator/s]    Setting up NMJ distributions:  91%|█████████ | 91/100 [00:02<00:00, 23.65Simulator/s]    Setting up NMJ distributions:  95%|█████████▌| 95/100 [00:02<00:00, 18.98Simulator/s]    Setting up NMJ distributions:  98%|█████████▊| 98/100 [00:02<00:00, 15.78Simulator/s]    Setting up NMJ distributions: 100%|██████████| 100/100 [00:03<00:00, 32.22Simulator/s]
+    Computing MUAPs:   0%|          | 0/4 [00:00<?, ?MU/s]    Computing MUAPs:  25%|██▌       | 1/4 [00:02<00:08,  2.76s/MU]    Computing MUAPs:  50%|█████     | 2/4 [00:05<00:05,  2.74s/MU]    Computing MUAPs:  75%|███████▌  | 3/4 [00:20<00:08,  8.17s/MU]    Computing MUAPs: 100%|██████████| 4/4 [01:13<00:00, 26.09s/MU]    Computing MUAPs: 100%|██████████| 4/4 [01:13<00:00, 18.42s/MU]
 
     === MUAP Amplitudes ===
     MU  0): Max PtP =   10.2 uV
@@ -347,7 +347,7 @@ Generate the final **intramuscular EMG signals** by convolving spike trains with
  .. code-block:: none
 
     Simulating intramuscular EMG signals...
-    Intramuscular EMG (CPU):   0%|          | 0/1 [00:00<?, ?pool/s]    Intramuscular EMG (CPU): 100%|██████████| 1/1 [00:00<00:00, 11.19pool/s]
+    Intramuscular EMG (CPU):   0%|          | 0/1 [00:00<?, ?pool/s]    Intramuscular EMG (CPU): 100%|██████████| 1/1 [00:00<00:00, 12.00pool/s]
     Intramuscular EMG simulation completed!
     Generated EMG shape: (153600, 4)
             153600 time samples
@@ -417,7 +417,7 @@ Compare the **intramuscular EMG** signal with the input current.
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (1 minutes 30.581 seconds)
+   **Total running time of the script:** (1 minutes 17.746 seconds)
 
 
 .. _sphx_glr_download_auto_examples_01_basic_09_simulate_intramuscular_emg.py:

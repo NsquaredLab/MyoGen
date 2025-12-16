@@ -959,6 +959,34 @@ window.addEventListener("load", load);
     <span class="k">def</span><span class="w"> </span><span class="nf">log</span><span class="p">(</span><span class="n">msg</span><span class="p">):</span>
         <span class="k">return</span> <span class="nb">print</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">quiet</span> <span class="k">else</span> <span class="kc">None</span>
 
+    <span class="c1"># On Windows, add NEURON paths to PATH before importing</span>
+    <span class="k">if</span> <span class="n">platform</span><span class="o">.</span><span class="n">system</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;Windows&quot;</span><span class="p">:</span>
+        <span class="n">neuron_homes</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">Path</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;NEURONHOME&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)),</span>
+            <span class="n">Path</span><span class="p">(</span><span class="s2">&quot;C:/nrn&quot;</span><span class="p">),</span>
+            <span class="n">Path</span><span class="p">(</span><span class="s2">&quot;C:/Program Files/NEURON&quot;</span><span class="p">),</span>
+        <span class="p">]</span>
+
+        <span class="k">for</span> <span class="n">neuron_home</span> <span class="ow">in</span> <span class="n">neuron_homes</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">neuron_home</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+                <span class="c1"># Add both bin and lib/python directories</span>
+                <span class="n">neuron_bin</span> <span class="o">=</span> <span class="n">neuron_home</span> <span class="o">/</span> <span class="s2">&quot;bin&quot;</span>
+                <span class="n">neuron_lib_path</span> <span class="o">=</span> <span class="n">neuron_home</span> <span class="o">/</span> <span class="s2">&quot;lib&quot;</span> <span class="o">/</span> <span class="s2">&quot;python&quot;</span>
+
+                <span class="n">paths_to_add</span> <span class="o">=</span> <span class="p">[]</span>
+                <span class="k">if</span> <span class="n">neuron_bin</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+                    <span class="n">paths_to_add</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">neuron_bin</span><span class="p">))</span>
+                <span class="k">if</span> <span class="n">neuron_lib_path</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+                    <span class="n">paths_to_add</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">neuron_lib_path</span><span class="p">))</span>
+
+                <span class="k">if</span> <span class="n">paths_to_add</span><span class="p">:</span>
+                    <span class="n">current_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;PATH&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+                    <span class="k">for</span> <span class="n">path</span> <span class="ow">in</span> <span class="n">paths_to_add</span><span class="p">:</span>
+                        <span class="k">if</span> <span class="n">path</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">current_path</span><span class="p">:</span>
+                            <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s2">&quot;PATH&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">path</span><span class="si">}</span><span class="s2">;</span><span class="si">{</span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s1">&#39;PATH&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span>
+                    <span class="n">log</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Added NEURON paths to PATH: </span><span class="si">{</span><span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">paths_to_add</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="k">break</span>
+
     <span class="k">try</span><span class="p">:</span>
         <span class="kn">import</span><span class="w"> </span><span class="nn">neuron</span>
         <span class="kn">from</span><span class="w"> </span><span class="nn">neuron</span><span class="w"> </span><span class="kn">import</span> <span class="n">h</span>
