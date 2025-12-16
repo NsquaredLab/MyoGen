@@ -42,8 +42,22 @@ MyoGen is designed for algorithm validation, hypothesis-driven research, and edu
 **Prerequisites**: Python ≥3.12, Linux/Windows/macOS
 
 :::{important}
-**Windows users**: Install [NEURON 8.2.6](https://github.com/neuronsimulator/nrn/releases/download/8.2.6/nrn-8.2.6.w64-mingw-py-38-39-310-311-312-setup.exe) before running `uv sync`
+**Windows users**: Install [NEURON 8.2.6](https://github.com/neuronsimulator/nrn/releases/download/8.2.6/nrn-8.2.6.w64-mingw-py-38-39-310-311-312-setup.exe) before installing MyoGen
 :::
+
+## From PyPI (recommended)
+
+```bash
+# Basic installation
+pip install myogen
+
+# With intramuscular EMG support (includes elephant)
+pip install myogen[elephant]
+```
+
+NEURON mechanisms compile automatically during installation!
+
+## From Source (for development)
 
 ```bash
 # Clone and install
@@ -55,7 +69,7 @@ uv sync
 source .venv/bin/activate  # Linux/macOS
 .venv\Scripts\activate     # Windows
 
-# Compile NEURON mechanisms (required)
+# Compile NEURON mechanisms (required for editable installs)
 uv run poe setup_myogen
 ```
 
@@ -63,11 +77,25 @@ uv run poe setup_myogen
 Install [uv](https://docs.astral.sh/uv/) first
 :::
 
-**GPU acceleration of convoutions** (optional):
+## Optional Dependencies
+
+**GPU acceleration** (5-10× speedup for convolutions):
 
 ```bash
-uv pip install cupy-cuda12x  # 5-10× speedup
+pip install cupy-cuda12x
 ```
+
+**Spike train analysis** (required for most simulations):
+
+```bash
+pip install myogen[elephant]
+# or
+pip install git+https://github.com/INM-6/elephant@389f53830d37290611af34e363d1d382a05e4d1e
+```
+
+Elephant provides:
+- `BinnedSpikeTrain` conversion for EMG and force simulations
+- `isi` (inter-spike interval) statistics for firing rate and CV analysis
 
 # Quick Start
 

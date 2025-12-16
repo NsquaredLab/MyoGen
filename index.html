@@ -401,8 +401,21 @@ MyoGen is designed for algorithm validation, hypothesis-driven research, and edu
 <p><strong>Prerequisites</strong>: Python ≥3.12, Linux/Windows/macOS</p>
 <div class="admonition important">
 <p class="admonition-title">Important</p>
-<p><strong>Windows users</strong>: Install <a class="reference external" href="https://github.com/neuronsimulator/nrn/releases/download/8.2.6/nrn-8.2.6.w64-mingw-py-38-39-310-311-312-setup.exe">NEURON 8.2.6</a> before running <code class="docutils literal notranslate"><span class="pre">uv</span> <span class="pre">sync</span></code></p>
+<p><strong>Windows users</strong>: Install <a class="reference external" href="https://github.com/neuronsimulator/nrn/releases/download/8.2.6/nrn-8.2.6.w64-mingw-py-38-39-310-311-312-setup.exe">NEURON 8.2.6</a> before installing MyoGen</p>
 </div>
+<section id="from-pypi-recommended">
+<h2>From PyPI (recommended)<a class="headerlink" href="#from-pypi-recommended" title="Link to this heading">#</a></h2>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Basic installation</span>
+pip<span class="w"> </span>install<span class="w"> </span>myogen
+
+<span class="c1"># With intramuscular EMG support (includes elephant)</span>
+pip<span class="w"> </span>install<span class="w"> </span>myogen<span class="o">[</span>elephant<span class="o">]</span>
+</pre></div>
+</div>
+<p>NEURON mechanisms compile automatically during installation!</p>
+</section>
+<section id="from-source-for-development">
+<h2>From Source (for development)<a class="headerlink" href="#from-source-for-development" title="Link to this heading">#</a></h2>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Clone and install</span>
 git<span class="w"> </span>clone<span class="w"> </span>https://github.com/NsquaredLab/MyoGen.git
 <span class="nb">cd</span><span class="w"> </span>MyoGen
@@ -412,7 +425,7 @@ uv<span class="w"> </span>sync
 <span class="nb">source</span><span class="w"> </span>.venv/bin/activate<span class="w">  </span><span class="c1"># Linux/macOS</span>
 .venv<span class="se">\S</span>cripts<span class="se">\a</span>ctivate<span class="w">     </span><span class="c1"># Windows</span>
 
-<span class="c1"># Compile NEURON mechanisms (required)</span>
+<span class="c1"># Compile NEURON mechanisms (required for editable installs)</span>
 uv<span class="w"> </span>run<span class="w"> </span>poe<span class="w"> </span>setup_myogen
 </pre></div>
 </div>
@@ -420,10 +433,25 @@ uv<span class="w"> </span>run<span class="w"> </span>poe<span class="w"> </span>
 <p class="admonition-title">Tip</p>
 <p>Install <a class="reference external" href="https://docs.astral.sh/uv/">uv</a> first</p>
 </div>
-<p><strong>GPU acceleration of convoutions</strong> (optional):</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>uv<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>cupy-cuda12x<span class="w">  </span><span class="c1"># 5-10× speedup</span>
+</section>
+<section id="optional-dependencies">
+<h2>Optional Dependencies<a class="headerlink" href="#optional-dependencies" title="Link to this heading">#</a></h2>
+<p><strong>GPU acceleration</strong> (5-10× speedup for convolutions):</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>cupy-cuda12x
 </pre></div>
 </div>
+<p><strong>Spike train analysis</strong> (required for most simulations):</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>myogen<span class="o">[</span>elephant<span class="o">]</span>
+<span class="c1"># or</span>
+pip<span class="w"> </span>install<span class="w"> </span>git+https://github.com/INM-6/elephant@389f53830d37290611af34e363d1d382a05e4d1e
+</pre></div>
+</div>
+<p>Elephant provides:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">BinnedSpikeTrain</span></code> conversion for EMG and force simulations</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">isi</span></code> (inter-spike interval) statistics for firing rate and CV analysis</p></li>
+</ul>
+</section>
 </section>
 <section class="tex2jax_ignore mathjax_ignore" id="quick-start">
 <h1>Quick Start<a class="headerlink" href="#quick-start" title="Link to this heading">#</a></h1>
@@ -560,7 +588,12 @@ uv<span class="w"> </span>run<span class="w"> </span>poe<span class="w"> </span>
     <ul class="visible nav section-nav flex-column">
 <li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#">Overview</a></li>
 <li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#highlights">Highlights</a></li>
-<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#installation">Installation</a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#installation">Installation</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#from-pypi-recommended">From PyPI (recommended)</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#from-source-for-development">From Source (for development)</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#optional-dependencies">Optional Dependencies</a></li>
+</ul>
+</li>
 <li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#quick-start">Quick Start</a></li>
 <li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#documentation">Documentation</a></li>
 <li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#how-to-cite">How to Cite</a></li>
