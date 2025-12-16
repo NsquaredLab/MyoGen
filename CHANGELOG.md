@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.6.5] - 2025-12-16
+
+### Fixed
+- **NEURON Mechanisms Not Loading**: Critical fix for "argument not a density mechanism name" error
+  - Added automatic loading of NMODL mechanisms on MyoGen import
+  - Added architecture-specific directories (x86_64, aarch64, arm64) to package-data
+  - Mechanisms now load automatically from installed wheels
+  - Resolves `ValueError: argument not a density mechanism name` for napp, kdrRL, etc.
+
 ## [0.6.4] - 2025-12-16
 
 ### Fixed

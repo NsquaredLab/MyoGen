@@ -183,6 +183,9 @@ def _setup_myogen(quiet: bool = False, force_rebuild: bool = False) -> bool:
 
 from myogen.utils.nmodl import load_nmodl_mechanisms
 
+# Auto-load NMODL mechanisms when MyoGen is imported
+load_nmodl_mechanisms(quiet=True)
+
 __all__ = [
     "RANDOM_GENERATOR",
     "SEED",
