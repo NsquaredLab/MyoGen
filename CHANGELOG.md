@@ -7,6 +7,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.6.2] - 2025-12-16
+
+### Changed
+- **Package Description**: Updated pyproject.toml description to match README overview
+  - Now matches the language used in README for consistency
+  - Emphasizes: modular framework, physiologically grounded, motor-unit activity, muscle force, surface EMG
+- **README Installation Section**: Improved layout for better user experience
+  - Quick install commands (`uv add MyoGen` / `pip install MyoGen`) now at top
+  - Windows NEURON warning prominently displayed before install commands
+  - Detailed system requirements and prerequisites moved below quick start
+  - Better visual organization with horizontal rules
+
 ## [0.6.1] - 2025-12-16
 
 ### Fixed
