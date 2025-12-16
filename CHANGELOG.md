@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.6.1] - 2025-12-16
+
+### Fixed
+- **README Display on PyPI**: Fixed logo not showing on PyPI package page
+  - Replaced relative logo path with absolute GitHub URL
+  - Logo now displays correctly on https://pypi.org/project/MyoGen/
+- **Version Badge**: Updated from 0.5.0 to 0.6.1
+
 ## [0.6.0] - 2025-12-16
 
 ### Added

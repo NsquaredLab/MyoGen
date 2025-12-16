@@ -1,14 +1,14 @@
 <div align="center">
   <h1 style="display: flex; align-items: center; justify-content: center; gap: 10px;">
     <span>Welcome to</span>
-    <img src="./docs/source/_static/myogen_logo.png" height="100" alt="MyoGen Logo">
+    <img src="https://raw.githubusercontent.com/NsquaredLab/MyoGen/main/docs/source/_static/myogen_logo.png" height="100" alt="MyoGen Logo">
   </h1>
 
   <h2>The modular and extandable simulation toolkit for neurophysiology</h2>
 
   [![Documentation](https://img.shields.io/badge/docs-latest-blue.svg)](https://nsquaredlab.github.io/MyoGen/)
   [![Python 3.12+](https://img.shields.io/badge/python-3.12+-blue.svg)](https://www.python.org/downloads/)
-  [![Version](https://img.shields.io/badge/version-0.5.0-orange.svg)](https://github.com/NsquaredLab/MyoGen)
+  [![Version](https://img.shields.io/badge/version-0.6.1-orange.svg)](https://github.com/NsquaredLab/MyoGen)
 
   [Installation](https://nsquaredlab.github.io/MyoGen/#installation) •
   [Documentation](https://nsquaredlab.github.io/MyoGen/) •
