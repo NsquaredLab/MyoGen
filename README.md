@@ -42,7 +42,19 @@ MyoGen is designed for algorithm validation, hypothesis-driven research, and edu
 **Prerequisites**: Python ≥3.12, Linux/Windows/macOS
 
 > [!IMPORTANT]
-> **Windows users**: Install [NEURON 8.2.6](https://github.com/neuronsimulator/nrn/releases/download/8.2.6/nrn-8.2.6.w64-mingw-py-38-39-310-311-312-setup.exe) before installing MyoGen
+> **System Requirements**:
+> - **Linux/macOS**: OpenMPI or MPICH (install via package manager)
+> - **Windows**: [NEURON 8.2.6](https://github.com/neuronsimulator/nrn/releases/download/8.2.6/nrn-8.2.6.w64-mingw-py-38-39-310-311-312-setup.exe) required before installing MyoGen
+
+```bash
+# Install MPI (Linux)
+sudo apt-get install libopenmpi-dev  # Ubuntu/Debian
+# or
+sudo yum install openmpi-devel       # RHEL/CentOS
+
+# Install MPI (macOS)
+brew install open-mpi
+```
 
 ## From PyPI (recommended)
 

@@ -10,6 +10,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [0.6.0] - 2025-12-16
 
 ### Added
+- **Package Metadata**: Complete PyPI metadata following Python packaging best practices
+  - Added authors and maintainers information
+  - Added license field (AGPL-3.0-or-later)
+  - Added comprehensive classifiers for PyPI categorization
+  - Added project URLs (homepage, documentation, repository, issues, changelog)
+  - Added keywords for better package discoverability
 - **Automatic Build System**: Comprehensive automatic NMODL compilation during package build
   - New `setup.py` with custom `BuildWithNMODL` class that compiles NMODL files during wheel building
   - Automatic Cython extension compilation integrated into build process
@@ -18,6 +24,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **CI/CD Workflow**: GitHub Actions workflow for automated wheel building and publishing
   - Uses `cibuildwheel` for PyPI-compatible manylinux wheels (Linux) and universal wheels (macOS)
   - Automatic wheel building for Linux (x86_64) and macOS (Intel) with pre-compiled NMODL mechanisms
+  - Wheels built on manylinux2014 with proper `manylinux_2_17_x86_64` platform tags
+  - MPI libraries marked as external dependencies (users install system MPI separately)
   - Multi-platform testing of built wheels before publishing
   - OIDC-based PyPI publishing (no API tokens needed)
   - Automated MPI/OpenMPI installation in CI for both Linux and macOS

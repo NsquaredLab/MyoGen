@@ -35,7 +35,7 @@ jobs:
 
           # Install system dependencies before building (Linux)
           CIBW_BEFORE_ALL_LINUX: |
-            yum install -y openmpi-devel || apt-get update && apt-get install -y libopenmpi-dev
+            yum install -y openmpi-devel
 
           # Install system dependencies before building (macOS)
           CIBW_BEFORE_ALL_MACOS: |
@@ -48,11 +48,21 @@ jobs:
           CIBW_BEFORE_BUILD_MACOS: |
             pip install neuron setuptools Cython numpy scipy
 
-          # Set manylinux image
+          # Use manylinux2014 (manylinux_2_17)
           CIBW_MANYLINUX_X86_64_IMAGE: manylinux2014
 
-          # Repair wheel to embed shared libraries (Linux only)
-          CIBW_REPAIR_WHEEL_COMMAND_LINUX: "auditwheel repair -w {dest_dir} {wheel}"
+          # Exclude MPI libraries from bundling (users must install system MPI)
+          # This allows auditwheel to create valid manylinux wheels
+          CIBW_REPAIR_WHEEL_COMMAND_LINUX: >
+            auditwheel repair -w {dest_dir} {wheel}
+            --exclude libmpi.so.40
+            --exclude libmpi.so.12
+            --exclude libopen-pal.so.40
+            --exclude libopen-rte.so.40
+            --plat manylinux_2_17_x86_64
+
+      - name: Show built wheel names
+        run: ls -lh wheelhouse/
 
       - name: Upload wheels
         uses: actions/upload-artifact@v4
