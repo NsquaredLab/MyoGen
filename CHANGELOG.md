@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.6.4] - 2025-12-16
+
+### Fixed
+- **Missing Config Files**: Added YAML configuration files to package distribution
+  - Fixed `FileNotFoundError: Configuration file not found: alpha_mn_default.yaml`
+  - Added `**/*.yaml` to `tool.setuptools.package-data` in pyproject.toml
+  - Config files now properly included in wheels and source distributions
+
 ## [0.6.2] - 2025-12-16
 
 ### Changed
