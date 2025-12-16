@@ -31,12 +31,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - `neuron==8.2.7` now only installed automatically on Linux and macOS
   - Windows users must manually install NEURON before pip installing MyoGen
   - Combined dependency declaration for both Linux and macOS using `sys_platform` conditions
-- **Elephant Dependency**: Made elephant an optional dependency (PyPI compatibility)
-  - Removed elephant from core dependencies (PyPI doesn't allow git dependencies)
-  - Available as optional extra: `pip install myogen[elephant]`
-  - Provides spike train conversion (`BinnedSpikeTrain`) and statistics (`isi`) for simulations
-  - Used in EMG simulations, force modeling, and firing rate/CV analysis
-  - Automatically included in docs and dev environments
+- **Elephant Dependency**: Added elephant from PyPI as required dependency
+  - Elephant 1.1.1 included for spike train conversion and statistics
+  - Provides `BinnedSpikeTrain` conversion and `isi` for EMG/force simulations
+  - Graceful error handling if elephant import fails (development safety)
+- **NumPy Version**: Pinned to numpy <2.0 for elephant compatibility
+  - Elephant 1.1.1 requires numpy <2.0
+  - Ensures stable, tested dependency versions
 - **Sphinx Workflow**: Kept `setup_myogen` call in documentation build workflow
   - Required for editable installs used in CI/CD environments
   - Ensures NMODL mechanisms are compiled for documentation examples

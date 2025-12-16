@@ -47,14 +47,10 @@ MyoGen is designed for algorithm validation, hypothesis-driven research, and edu
 ## From PyPI (recommended)
 
 ```bash
-# Basic installation
 pip install myogen
-
-# With intramuscular EMG support (includes elephant)
-pip install myogen[elephant]
 ```
 
-NEURON mechanisms compile automatically during installation!
+NEURON mechanisms compile automatically during installation.
 
 ## From Source (for development)
 
@@ -83,17 +79,6 @@ uv run poe setup_myogen
 pip install cupy-cuda12x
 ```
 
-**Spike train analysis** (required for most simulations):
-
-```bash
-pip install myogen[elephant]
-# or
-pip install git+https://github.com/INM-6/elephant@389f53830d37290611af34e363d1d382a05e4d1e
-```
-
-Elephant provides:
-- `BinnedSpikeTrain` conversion for EMG and force simulations
-- `isi` (inter-spike interval) statistics for firing rate and CV analysis
 
 # Quick Start
 
