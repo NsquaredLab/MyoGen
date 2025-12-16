@@ -16,7 +16,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Platform-specific NMODL compilation for Linux (nrnivmodl) and Windows (mknrndll.bat)
   - No more manual `uv run poe setup_myogen` required for end users installing via pip
 - **CI/CD Workflow**: GitHub Actions workflow for automated wheel building and publishing
-  - Automatic wheel building for Linux and macOS with pre-compiled NMODL mechanisms
+  - Uses `cibuildwheel` for PyPI-compatible manylinux wheels (Linux) and universal wheels (macOS)
+  - Automatic wheel building for Linux (x86_64) and macOS (Intel) with pre-compiled NMODL mechanisms
   - Multi-platform testing of built wheels before publishing
   - OIDC-based PyPI publishing (no API tokens needed)
   - Automated MPI/OpenMPI installation in CI for both Linux and macOS

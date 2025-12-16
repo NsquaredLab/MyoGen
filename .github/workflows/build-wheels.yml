@@ -19,61 +19,46 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        # Only Linux has full NEURON support via pip
-        # Windows requires manual NEURON installer
-        os: [ubuntu-latest, macos-latest]
-        python-version: ["3.12"]
+        os: [ubuntu-latest, macos-13]  # macos-13 for Intel, macos-latest for ARM
 
     steps:
       - uses: actions/checkout@v4
 
-      - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v5
-        with:
-          python-version: ${{ matrix.python-version }}
+      - name: Build wheels
+        uses: pypa/cibuildwheel@v2.21
+        env:
+          # Only build for Python 3.12+
+          CIBW_BUILD: "cp312-*"
 
-      - name: Install system dependencies (Ubuntu)
-        if: runner.os == 'Linux'
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y \
-            openmpi-bin openmpi-common libopenmpi-dev \
-            librdmacm-dev libpsm2-dev \
-            infiniband-diags ibverbs-utils libibverbs-dev \
-            libfabric1 libfabric-dev \
-            build-essential
+          # Skip 32-bit builds and musl (Alpine) on Linux
+          CIBW_SKIP: "*-win32 *-manylinux_i686 *-musllinux_*"
 
-      - name: Install system dependencies (macOS)
-        if: runner.os == 'macOS'
-        run: |
-          brew install open-mpi
+          # Install system dependencies before building (Linux)
+          CIBW_BEFORE_ALL_LINUX: |
+            yum install -y openmpi-devel || apt-get update && apt-get install -y libopenmpi-dev
 
-      - name: Install NEURON (Linux)
-        if: runner.os == 'Linux'
-        run: |
-          python -m pip install --upgrade pip
-          pip install neuron==8.2.7
+          # Install system dependencies before building (macOS)
+          CIBW_BEFORE_ALL_MACOS: |
+            brew install open-mpi
 
-      - name: Install NEURON (macOS)
-        if: runner.os == 'macOS'
-        run: |
-          python -m pip install --upgrade pip
-          pip install neuron
+          # Install Python build dependencies including NEURON
+          CIBW_BEFORE_BUILD_LINUX: |
+            pip install neuron==8.2.7 setuptools Cython numpy scipy
 
+          CIBW_BEFORE_BUILD_MACOS: |
+            pip install neuron setuptools Cython numpy scipy
 
-      - name: Install build dependencies
-        run: |
-          python -m pip install build wheel setuptools Cython numpy scipy
+          # Set manylinux image
+          CIBW_MANYLINUX_X86_64_IMAGE: manylinux2014
 
-      - name: Build wheel
-        run: |
-          python -m build --wheel --outdir dist/
+          # Repair wheel to embed shared libraries (Linux only)
+          CIBW_REPAIR_WHEEL_COMMAND_LINUX: "auditwheel repair -w {dest_dir} {wheel}"
 
       - name: Upload wheels
         uses: actions/upload-artifact@v4
         with:
-          name: wheels-${{ matrix.os }}-py${{ matrix.python-version }}
-          path: dist/*.whl
+          name: wheels-${{ matrix.os }}
+          path: wheelhouse/*.whl
           retention-days: 7
 
   build_sdist:
@@ -108,7 +93,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ubuntu-latest, macos-latest]
+        os: [ubuntu-latest, macos-13]
         python-version: ["3.12"]
 
     steps:
@@ -120,7 +105,7 @@ jobs:
       - name: Download wheels
         uses: actions/download-artifact@v4
         with:
-          name: wheels-${{ matrix.os }}-py${{ matrix.python-version }}
+          name: wheels-${{ matrix.os }}
           path: dist/
 
       - name: Install system dependencies (Ubuntu)
