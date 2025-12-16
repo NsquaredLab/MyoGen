@@ -41,6 +41,11 @@ jobs:
             libfabric1 libfabric-dev \
             build-essential
 
+      - name: Install system dependencies (macOS)
+        if: runner.os == 'macOS'
+        run: |
+          brew install open-mpi
+
       - name: Install NEURON (Linux)
         if: runner.os == 'Linux'
         run: |
@@ -123,6 +128,11 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y openmpi-bin libopenmpi-dev
+
+      - name: Install system dependencies (macOS)
+        if: runner.os == 'macOS'
+        run: |
+          brew install open-mpi
 
       - name: Install NEURON
         run: |
