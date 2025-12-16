@@ -7,6 +7,49 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.6.0] - 2025-12-16
+
+### Added
+- **Automatic Build System**: Comprehensive automatic NMODL compilation during package build
+  - New `setup.py` with custom `BuildWithNMODL` class that compiles NMODL files during wheel building
+  - Automatic Cython extension compilation integrated into build process
+  - Platform-specific NMODL compilation for Linux (nrnivmodl) and Windows (mknrndll.bat)
+  - No more manual `uv run poe setup_myogen` required for end users installing via pip
+- **CI/CD Workflow**: GitHub Actions workflow for automated wheel building and publishing
+  - Automatic wheel building for Linux and macOS with pre-compiled NMODL mechanisms
+  - Multi-platform testing of built wheels before publishing
+  - OIDC-based PyPI publishing (no API tokens needed)
+  - Automated MPI/OpenMPI installation in CI for both Linux and macOS
+  - Source distribution (sdist) building alongside wheels
+- **Windows Installation Support**: Clear error handling for Windows users
+  - Installation fails with helpful error message if NEURON not pre-installed on Windows
+  - Directs users to download NEURON installer from official source
+  - Automatic build from source when NEURON is available
+
+### Changed
+- **Platform Dependencies**: Updated NEURON dependency to be platform-specific
+  - `neuron==8.2.7` now only installed automatically on Linux and macOS
+  - Windows users must manually install NEURON before pip installing MyoGen
+  - Combined dependency declaration for both Linux and macOS using `sys_platform` conditions
+- **Sphinx Workflow**: Kept `setup_myogen` call in documentation build workflow
+  - Required for editable installs used in CI/CD environments
+  - Ensures NMODL mechanisms are compiled for documentation examples
+- **Wheel Distribution**: Changed wheel building strategy
+  - Pre-built wheels only for Linux and macOS (platforms with pip-installable NEURON)
+  - Windows users install from source distribution with automatic build
+  - Improved test isolation by removing source checkout from wheel testing job
+
+### Fixed
+- **CI Testing**: Fixed wheel testing to use installed packages instead of source
+  - Removed source checkout from test_wheels job to prevent import conflicts
+  - Tests now properly validate compiled Cython extensions in wheels
+  - Ensures wheels contain all necessary compiled components
+
+### Removed
+- **Windows Wheels**: No longer building Windows wheels in CI
+  - Windows users install from source distribution instead
+  - Simplifies build process and avoids NEURON installation complications on Windows
+
 ## [0.5.0] - 2025-12-15
 
 ### Changed
