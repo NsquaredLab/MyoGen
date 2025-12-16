@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.6.6] - 2025-12-16
+
+### Changed
+- **Package Data Inclusion**: Enhanced MANIFEST.in and pyproject.toml to include additional file types
+  - Improved package data inclusion for better distribution completeness
+  - Ensures all necessary files are included in source distributions and wheels
+
 ## [0.6.5] - 2025-12-16
 
 ### Fixed
