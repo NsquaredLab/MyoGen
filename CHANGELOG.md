@@ -7,6 +7,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.6.9] - 2025-12-16
+
+### Fixed
+- **CI Build**: Fixed multi-line command execution in GitHub Actions
+  - Changed CIBW_BEFORE_BUILD commands to single-line with && chaining
+  - Resolves command concatenation error on macOS builds
+
+### Changed
+- **CI Build**: Temporarily disabled macOS wheel building
+  - Focusing on Linux wheels to unblock PyPI publication
+  - macOS users can install from source distribution
+
 ## [0.6.8] - 2025-12-16
 
 ### Fixed

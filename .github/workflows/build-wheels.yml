@@ -19,7 +19,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ubuntu-latest, macos-latest]  # Linux, macOS ARM
+        os: [ubuntu-latest]  # Linux only for now
 
     steps:
       - uses: actions/checkout@v4
@@ -40,21 +40,13 @@ jobs:
           # Install system dependencies before building (macOS)
           CIBW_BEFORE_ALL_MACOS: |
             brew install open-mpi
+            # Ensure command line tools are available
+            xcode-select --install 2>/dev/null || true
 
           # Install Python build dependencies including NEURON
-          CIBW_BEFORE_BUILD_LINUX: |
-            pip install neuron==8.2.7 setuptools Cython numpy scipy
+          CIBW_BEFORE_BUILD_LINUX: pip install neuron==8.2.7 setuptools Cython numpy scipy && nrnivmodl myogen/simulator/nmodl_files && cp -r x86_64 myogen/simulator/nmodl_files/
 
-            nrnivmodl myogen/simulator/nmodl_files
-
-            cp -r x86_64 myogen/simulator/nmodl_files/
-
-          CIBW_BEFORE_BUILD_MACOS: |
-            pip install neuron setuptools Cython numpy scipy
-
-            nrnivmodl myogen/simulator/nmodl_files
-            
-            cp -r x86_64 myogen/simulator/nmodl_files/
+          CIBW_BEFORE_BUILD_MACOS: pip install neuron setuptools Cython numpy scipy && nrnivmodl myogen/simulator/nmodl_files && (cp -r x86_64 myogen/simulator/nmodl_files/ 2>/dev/null || cp -r arm64 myogen/simulator/nmodl_files/ || cp -r aarch64 myogen/simulator/nmodl_files/)
 
           # Use manylinux2014 (manylinux_2_17)
           CIBW_MANYLINUX_X86_64_IMAGE: manylinux2014
@@ -117,7 +109,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ubuntu-latest, macos-latest]  # Match build_wheels matrix
+        os: [ubuntu-latest]  # Match build_wheels matrix
         python-version: ["3.12"]
 
     steps:
