@@ -1,8 +1,14 @@
 import logging
 from typing import Optional
 
-import elephant
-import elephant.utils
+try:
+    import elephant
+    import elephant.utils
+
+    HAS_ELEPHANT = True
+except ImportError:
+    HAS_ELEPHANT = False
+    elephant = None  # type: ignore
 import numpy as np
 import quantities as pq
 from neo import AnalogSignal
@@ -194,6 +200,12 @@ class ForceModelVectorized:
             raise ValueError(
                 "Twitch parameters not available. "
                 "This should not occur if the model was properly initialized."
+            )
+
+        if not HAS_ELEPHANT:
+            raise ImportError(
+                "Elephant is required for force simulation. "
+                "Install with: pip install myogen[elephant]"
             )
 
         # Extract timing information

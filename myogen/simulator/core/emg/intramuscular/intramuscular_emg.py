@@ -11,8 +11,15 @@ import warnings
 from copy import deepcopy
 from typing import Optional
 
-import elephant
-import elephant.utils
+try:
+    import elephant
+    import elephant.utils
+
+    HAS_ELEPHANT = True
+except ImportError:
+    HAS_ELEPHANT = False
+    elephant = None  # type: ignore
+
 import numpy as np
 import quantities as pq
 from joblib import Parallel, delayed
@@ -524,6 +531,12 @@ class IntramuscularEMG:
         """
         if self._muaps__Block is None:
             raise ValueError("MUAP templates have not been generated. Call simulate_muaps() first.")
+
+        if not HAS_ELEPHANT:
+            raise ImportError(
+                "Elephant is required for intramuscular EMG simulation. "
+                "Install with: pip install myogen[elephant]"
+            )
 
         # Store spike train data privately
         self._spike_train__Block = spike_train__Block

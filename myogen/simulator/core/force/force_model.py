@@ -1,8 +1,14 @@
 import logging
 from typing import Optional
 
-import elephant
-import elephant.utils
+try:
+    import elephant
+    import elephant.utils
+
+    HAS_ELEPHANT = True
+except ImportError:
+    HAS_ELEPHANT = False
+    elephant = None  # type: ignore
 import numpy as np
 import quantities as pq
 import scipy.sparse as sp
@@ -268,6 +274,12 @@ class ForceModel:
                 "Twitch parameters not available. "
                 "This should not occur if the model was properly initialized. "
                 "Please reinitialize the ForceModel."
+            )
+
+        if not HAS_ELEPHANT:
+            raise ImportError(
+                "Elephant is required for force simulation. "
+                "Install with: pip install myogen[elephant]"
             )
 
         # Extract timing information from spike trains

@@ -1,7 +1,14 @@
 import numpy as np
 import pandas as pd
 import quantities as pq
-from elephant.statistics import isi
+
+try:
+    from elephant.statistics import isi
+
+    HAS_ELEPHANT = True
+except ImportError:
+    HAS_ELEPHANT = False
+    isi = None  # type: ignore
 
 
 def get_gamma_shape_for_mvc(
@@ -98,6 +105,12 @@ def calculate_firing_rate_statistics(
         If return_per_neuron=True:
             DataFrame with columns: MU_ID, mean_firing_rate_Hz, CV_ISI
     """
+    if not HAS_ELEPHANT:
+        raise ImportError(
+            "Elephant is required for firing rate statistics (ISI calculation). "
+            "Install with: pip install myogen[elephant]"
+        )
+
     # Set default min_firing_rate based on mode
     if min_firing_rate is None:
         min_firing_rate = 0.5 if not return_per_neuron else 0.0

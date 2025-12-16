@@ -9,11 +9,18 @@ try:
 except ImportError:
     HAS_CUPY = False
 
+try:
+    import elephant
+    import elephant.utils
+
+    HAS_ELEPHANT = True
+except ImportError:
+    HAS_ELEPHANT = False
+    elephant = None  # type: ignore
+
 import logging
 from copy import deepcopy
 
-import elephant
-import elephant.utils
 import numpy as np
 import quantities as pq
 from joblib import Parallel, delayed
@@ -523,6 +530,12 @@ class SurfaceEMG:
         """
         if self._muaps__Block is None:
             raise ValueError("MUAP templates have not been generated. Call simulate_muaps() first.")
+
+        if not HAS_ELEPHANT:
+            raise ImportError(
+                "Elephant is required for surface EMG simulation. "
+                "Install with: pip install myogen[elephant]"
+            )
 
         # Store spike train data privately
         self._spike_train__Block = spike_train__Block
