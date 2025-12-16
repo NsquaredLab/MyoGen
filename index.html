@@ -401,18 +401,27 @@ MyoGen is designed for algorithm validation, hypothesis-driven research, and edu
 <p><strong>Prerequisites</strong>: Python ≥3.12, Linux/Windows/macOS</p>
 <div class="admonition important">
 <p class="admonition-title">Important</p>
-<p><strong>Windows users</strong>: Install <a class="reference external" href="https://github.com/neuronsimulator/nrn/releases/download/8.2.6/nrn-8.2.6.w64-mingw-py-38-39-310-311-312-setup.exe">NEURON 8.2.6</a> before installing MyoGen</p>
+<p><strong>System Requirements</strong>:</p>
+<ul class="simple">
+<li><p><strong>Linux/macOS</strong>: OpenMPI or MPICH (install via package manager)</p></li>
+<li><p><strong>Windows</strong>: <a class="reference external" href="https://github.com/neuronsimulator/nrn/releases/download/8.2.6/nrn-8.2.6.w64-mingw-py-38-39-310-311-312-setup.exe">NEURON 8.2.6</a> required before installing MyoGen</p></li>
+</ul>
+</div>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Install MPI (Linux)</span>
+sudo<span class="w"> </span>apt-get<span class="w"> </span>install<span class="w"> </span>libopenmpi-dev<span class="w">  </span><span class="c1"># Ubuntu/Debian</span>
+<span class="c1"># or</span>
+sudo<span class="w"> </span>yum<span class="w"> </span>install<span class="w"> </span>openmpi-devel<span class="w">       </span><span class="c1"># RHEL/CentOS</span>
+
+<span class="c1"># Install MPI (macOS)</span>
+brew<span class="w"> </span>install<span class="w"> </span>open-mpi
+</pre></div>
 </div>
 <section id="from-pypi-recommended">
 <h2>From PyPI (recommended)<a class="headerlink" href="#from-pypi-recommended" title="Link to this heading">#</a></h2>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Basic installation</span>
-pip<span class="w"> </span>install<span class="w"> </span>myogen
-
-<span class="c1"># With intramuscular EMG support (includes elephant)</span>
-pip<span class="w"> </span>install<span class="w"> </span>myogen<span class="o">[</span>elephant<span class="o">]</span>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>myogen
 </pre></div>
 </div>
-<p>NEURON mechanisms compile automatically during installation!</p>
+<p>NEURON mechanisms compile automatically during installation.</p>
 </section>
 <section id="from-source-for-development">
 <h2>From Source (for development)<a class="headerlink" href="#from-source-for-development" title="Link to this heading">#</a></h2>
@@ -440,17 +449,6 @@ uv<span class="w"> </span>run<span class="w"> </span>poe<span class="w"> </span>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>cupy-cuda12x
 </pre></div>
 </div>
-<p><strong>Spike train analysis</strong> (required for most simulations):</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>myogen<span class="o">[</span>elephant<span class="o">]</span>
-<span class="c1"># or</span>
-pip<span class="w"> </span>install<span class="w"> </span>git+https://github.com/INM-6/elephant@389f53830d37290611af34e363d1d382a05e4d1e
-</pre></div>
-</div>
-<p>Elephant provides:</p>
-<ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">BinnedSpikeTrain</span></code> conversion for EMG and force simulations</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">isi</span></code> (inter-spike interval) statistics for firing rate and CV analysis</p></li>
-</ul>
 </section>
 </section>
 <section class="tex2jax_ignore mathjax_ignore" id="quick-start">
