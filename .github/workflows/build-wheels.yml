@@ -45,8 +45,16 @@ jobs:
           CIBW_BEFORE_BUILD_LINUX: |
             pip install neuron==8.2.7 setuptools Cython numpy scipy
 
+            nrnivmodl myogen/simulator/nmodl_files
+
+            cp -r x86_64 myogen/simulator/nmodl_files/
+
           CIBW_BEFORE_BUILD_MACOS: |
             pip install neuron setuptools Cython numpy scipy
+
+            nrnivmodl myogen/simulator/nmodl_files
+            
+            cp -r x86_64 myogen/simulator/nmodl_files/
 
           # Use manylinux2014 (manylinux_2_17)
           CIBW_MANYLINUX_X86_64_IMAGE: manylinux2014
