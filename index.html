@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Overview &#8212; MyoGen 0.6.0 Documentation</title>
+    <title>Overview &#8212; MyoGen 0.6.2 Documentation</title>
   
   
   
@@ -55,7 +55,7 @@
 
     <script src="_static/jquery.js?v=5d32c60e"></script>
     <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-    <script src="_static/documentation_options.js?v=dda85ae5"></script>
+    <script src="_static/documentation_options.js?v=5459b468"></script>
     <script src="_static/doctools.js?v=9bcbadda"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/js/hoverxref.js"></script>
@@ -71,7 +71,7 @@
     <link rel="next" title="API Documentation" href="api/index.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="0.6.0" />
+  <meta name="docsearch:version" content="0.6.2" />
   </head>
   
   
@@ -140,8 +140,8 @@
       
     
     
-    <img src="_static/myogen_logo.png" class="logo__image only-light" alt="MyoGen 0.6.0 Documentation - Home"/>
-    <img src="_static/myogen_logo.png" class="logo__image only-dark pst-js-only" alt="MyoGen 0.6.0 Documentation - Home"/>
+    <img src="_static/myogen_logo.png" class="logo__image only-light" alt="MyoGen 0.6.2 Documentation - Home"/>
+    <img src="_static/myogen_logo.png" class="logo__image only-dark pst-js-only" alt="MyoGen 0.6.2 Documentation - Home"/>
   
   
 </a></div>
@@ -150,7 +150,7 @@
 <div class="nav-item">
   <div class="version-switcher__container dropdown">
       <button id="version-switcher-button" type="button" class="version-switcher__button btn btn-sm navbar-btn" aria-haspopup="true" aria-expanded="false">
-          Version 0.6.0
+          Version 0.6.2
       </button>
       
       
@@ -370,12 +370,12 @@
   <div align="center">
   <h1 style="display: flex; align-items: center; justify-content: center; gap: 10px;">
     <span>Welcome to</span>
-    <img src="_static/myogen_logo.png" height="100" alt="MyoGen Logo">
+    <img src="https://raw.githubusercontent.com/NsquaredLab/MyoGen/main/docs/source/_static/myogen_logo.png" height="100" alt="MyoGen Logo">
   </h1>
   <h2>The modular and extandable simulation toolkit for neurophysiology</h2>
 <p><a class="reference external" href="https://nsquaredlab.github.io/MyoGen/"><img alt="Documentation" src="https://img.shields.io/badge/docs-latest-blue.svg" /></a>
 <a class="reference external" href="https://www.python.org/downloads/"><img alt="Python 3.12+" src="https://img.shields.io/badge/python-3.12+-blue.svg" /></a>
-<a class="reference external" href="https://github.com/NsquaredLab/MyoGen"><img alt="Version" src="https://img.shields.io/badge/version-0.5.0-orange.svg" /></a></p>
+<a class="reference external" href="https://github.com/NsquaredLab/MyoGen"><img alt="Version" src="https://img.shields.io/badge/version-0.6.1-orange.svg" /></a></p>
 <p><a class="reference external" href="https://nsquaredlab.github.io/MyoGen/#installation">Installation</a> •
 <a class="reference external" href="https://nsquaredlab.github.io/MyoGen/">Documentation</a> •
 <a class="reference external" href="https://nsquaredlab.github.io/MyoGen/examples.html">Examples</a> •
@@ -398,13 +398,24 @@ MyoGen is designed for algorithm validation, hypothesis-driven research, and edu
 </section>
 <section class="tex2jax_ignore mathjax_ignore" id="installation">
 <h1>Installation<a class="headerlink" href="#installation" title="Link to this heading">#</a></h1>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p><strong>Windows users</strong>: Install <a class="reference external" href="https://github.com/neuronsimulator/nrn/releases/download/8.2.6/nrn-8.2.6.w64-mingw-py-38-39-310-311-312-setup.exe">NEURON 8.2.6</a> before installing MyoGen</p>
+</div>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>uv<span class="w"> </span>add<span class="w"> </span>MyoGen
+<span class="c1"># or</span>
+pip<span class="w"> </span>install<span class="w"> </span>MyoGen
+</pre></div>
+</div>
+<p>NEURON mechanisms compile automatically during installation.</p>
+<hr class="docutils" />
 <p><strong>Prerequisites</strong>: Python ≥3.12, Linux/Windows/macOS</p>
 <div class="admonition important">
 <p class="admonition-title">Important</p>
 <p><strong>System Requirements</strong>:</p>
 <ul class="simple">
 <li><p><strong>Linux/macOS</strong>: OpenMPI or MPICH (install via package manager)</p></li>
-<li><p><strong>Windows</strong>: <a class="reference external" href="https://github.com/neuronsimulator/nrn/releases/download/8.2.6/nrn-8.2.6.w64-mingw-py-38-39-310-311-312-setup.exe">NEURON 8.2.6</a> required before installing MyoGen</p></li>
+<li><p><strong>Windows</strong>: NEURON 8.2.6 required (see warning above)</p></li>
 </ul>
 </div>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Install MPI (Linux)</span>
@@ -416,13 +427,7 @@ sudo<span class="w"> </span>yum<span class="w"> </span>install<span class="w"> <
 brew<span class="w"> </span>install<span class="w"> </span>open-mpi
 </pre></div>
 </div>
-<section id="from-pypi-recommended">
-<h2>From PyPI (recommended)<a class="headerlink" href="#from-pypi-recommended" title="Link to this heading">#</a></h2>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>myogen
-</pre></div>
-</div>
-<p>NEURON mechanisms compile automatically during installation.</p>
-</section>
+<hr class="docutils" />
 <section id="from-source-for-development">
 <h2>From Source (for development)<a class="headerlink" href="#from-source-for-development" title="Link to this heading">#</a></h2>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Clone and install</span>
@@ -515,7 +520,7 @@ uv<span class="w"> </span>run<span class="w"> </span>poe<span class="w"> </span>
 <ul class="simple">
 <li><p><a class="reference external" href="https://nsquaredlab.github.io/MyoGen/neo_blocks_guide.html">User Guide</a> — Working with simulation outputs</p></li>
 <li><p><a class="reference external" href="https://nsquaredlab.github.io/MyoGen/api/">API Reference</a> — Complete class documentation</p></li>
-<li><p><a class="reference internal" href="examples.html"><span class="doc std std-doc">Examples</span></a> — 9 step-by-step tutorials from recruitment to EMG</p></li>
+<li><p><a class="reference internal" href="examples.html"><span class="doc std std-doc">Examples</span></a> — Step-by-step tutorials from recruitment to EMG</p></li>
 </ul>
 </section>
 <section class="tex2jax_ignore mathjax_ignore" id="how-to-cite">
@@ -587,7 +592,6 @@ uv<span class="w"> </span>run<span class="w"> </span>poe<span class="w"> </span>
 <li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#">Overview</a></li>
 <li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#highlights">Highlights</a></li>
 <li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#installation">Installation</a><ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#from-pypi-recommended">From PyPI (recommended)</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#from-source-for-development">From Source (for development)</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#optional-dependencies">Optional Dependencies</a></li>
 </ul>
