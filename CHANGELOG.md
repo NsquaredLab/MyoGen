@@ -7,6 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.6.10] - 2025-12-16
+
+### Fixed
+- **Windows Installation**: Added NEURON DLL detection in setup.py
+  - Verifies NEURON can be imported before compilation
+  - Provides clear PATH configuration instructions if DLLs not found
+  - Resolves "DLL load failed while importing hoc" error
+- **Package Data**: Added CSV files to package distribution
+  - Includes voronoi_pi1e5.csv and other data files
+  - Added to both MANIFEST.in and pyproject.toml package-data
+
 ## [0.6.9] - 2025-12-16
 
 ### Fixed

@@ -68,6 +68,26 @@ class BuildWithNMODL(build_py):
 
     def _compile_nmodl_windows(self, nmodl_path):
         """Compile NMODL on Windows."""
+        # First, verify NEURON can be imported (checks DLLs are accessible)
+        try:
+            import neuron
+            from neuron import h
+        except ImportError as e:
+            raise ImportError(
+                "\n" + "="*70 + "\n"
+                "NEURON import failed - DLL not found\n"
+                "="*70 + "\n\n"
+                "NEURON is installed but cannot load DLLs.\n\n"
+                "Please add NEURON's bin directory to your PATH:\n"
+                "1. Search for 'Environment Variables' in Windows\n"
+                "2. Edit 'Path' in System Variables\n"
+                "3. Add: C:\\nrn\\bin (or your NEURON install location)\n"
+                "4. Restart your terminal/IDE\n"
+                "5. Retry: pip install myogen\n\n"
+                f"Original error: {e}\n"
+                "="*70 + "\n"
+            ) from e
+
         # Try to find NEURON installation
         neuron_homes = [
             Path(os.environ.get("NEURONHOME", "")),
