@@ -68,27 +68,7 @@ class BuildWithNMODL(build_py):
 
     def _compile_nmodl_windows(self, nmodl_path):
         """Compile NMODL on Windows."""
-        # First, verify NEURON can be imported (checks DLLs are accessible)
-        try:
-            import neuron
-            from neuron import h
-        except ImportError as e:
-            raise ImportError(
-                "\n" + "="*70 + "\n"
-                "NEURON import failed - DLL not found\n"
-                "="*70 + "\n\n"
-                "NEURON is installed but cannot load DLLs.\n\n"
-                "Please add NEURON's bin directory to your PATH:\n"
-                "1. Search for 'Environment Variables' in Windows\n"
-                "2. Edit 'Path' in System Variables\n"
-                "3. Add: C:\\nrn\\bin (or your NEURON install location)\n"
-                "4. Restart your terminal/IDE\n"
-                "5. Retry: pip install myogen\n\n"
-                f"Original error: {e}\n"
-                "="*70 + "\n"
-            ) from e
-
-        # Try to find NEURON installation
+        # Try to find NEURON installation first
         neuron_homes = [
             Path(os.environ.get("NEURONHOME", "")),
             Path("C:/nrn"),
@@ -97,14 +77,49 @@ class BuildWithNMODL(build_py):
 
         neuron_home = None
         for home in neuron_homes:
-            if home.exists() and (home / "bin" / "mknrndll.bat").exists():
+            if home.exists():
                 neuron_home = home
                 break
 
         if not neuron_home:
-            raise FileNotFoundError("mknrndll.bat not found - NEURON may not be installed")
+            print("\nWARNING: NEURON installation directory not found")
+            print("Installation will continue without compiling NEURON mechanisms")
+            return
 
+        # Add NEURON's bin directory to DLL search path (Python 3.8+)
+        neuron_bin = neuron_home / "bin"
+        if neuron_bin.exists():
+            try:
+                # This is the proper way to add DLL directories on Windows
+                os.add_dll_directory(str(neuron_bin))
+                print(f"Added NEURON DLL directory: {neuron_bin}")
+            except (AttributeError, OSError) as e:
+                print(f"Could not add DLL directory: {e}")
+
+        # Now try to import NEURON
+        try:
+            import neuron
+            from neuron import h
+            print("NEURON imported successfully")
+        except ImportError as e:
+            print("\n" + "="*70)
+            print("WARNING: NEURON import failed")
+            print("="*70)
+            print(f"\nError: {e}")
+            print(f"NEURON home: {neuron_home}")
+            print(f"NEURON bin: {neuron_bin}")
+            print("\nInstallation will continue without compiling NEURON mechanisms")
+            print("You can compile them later by running:")
+            print("  python -c \"from myogen import _setup_myogen; _setup_myogen()\"")
+            print("="*70 + "\n")
+            return
+
+        # Verify mknrndll.bat exists
         mknrndll_path = neuron_home / "bin" / "mknrndll.bat"
+        if not mknrndll_path.exists():
+            print(f"\nWARNING: mknrndll.bat not found at {mknrndll_path}")
+            print("Installation will continue without compiling NEURON mechanisms")
+            return
 
         # Set up environment with NEURON paths
         env = os.environ.copy()

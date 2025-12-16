@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.6.11] - 2025-12-16
+
+### Fixed
+- **Windows Installation**: Improved NEURON DLL loading during installation
+  - Uses `os.add_dll_directory()` to properly add NEURON bin to DLL search path
+  - Installation proceeds even if NEURON DLLs can't be loaded
+  - CSV files and package data get installed successfully regardless
+  - NEURON mechanisms can be compiled later after fixing NEURON setup
+  - Better error messages showing NEURON paths for debugging
+
 ## [0.6.10] - 2025-12-16
 
 ### Fixed
