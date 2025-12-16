@@ -51,15 +51,11 @@ jobs:
           # Use manylinux2014 (manylinux_2_17)
           CIBW_MANYLINUX_X86_64_IMAGE: manylinux2014
 
-          # Exclude MPI libraries from bundling (users must install system MPI)
-          # This allows auditwheel to create valid manylinux wheels
-          CIBW_REPAIR_WHEEL_COMMAND_LINUX: >
-            auditwheel repair -w {dest_dir} {wheel}
-            --exclude libmpi.so.40
-            --exclude libmpi.so.12
-            --exclude libopen-pal.so.40
-            --exclude libopen-rte.so.40
-            --plat manylinux_2_17_x86_64
+          # Skip repair tools - NEURON mechanisms must be preserved
+          # auditwheel (Linux) and delocate (macOS) strip the compiled mechanisms
+          # Users must have system MPI and NEURON installed
+          CIBW_REPAIR_WHEEL_COMMAND_LINUX: "cp {wheel} {dest_dir}/"
+          CIBW_REPAIR_WHEEL_COMMAND_MACOS: "cp {wheel} {dest_dir}/"
 
       - name: Show built wheel names
         run: ls -lh wheelhouse/

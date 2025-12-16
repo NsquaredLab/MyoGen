@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.6.7] - 2025-12-16
+
+### Fixed
+- **CRITICAL: Compiled NEURON Mechanisms Missing from PyPI Wheels**: Fixed CI workflow to preserve compiled mechanisms in published wheels
+  - Disabled `auditwheel repair` (Linux) and `delocate` (macOS) which were stripping out x86_64/ and arm64/ directories
+  - Wheels now correctly include libnrnmech.so and all compiled NEURON mechanisms
+  - Resolves "NEURON mechanisms not found" errors when installing from PyPI
+  - Users can now successfully `pip install myogen` or `uv add MyoGen` without compilation errors
+
 ## [0.6.6] - 2025-12-16
 
 ### Changed
