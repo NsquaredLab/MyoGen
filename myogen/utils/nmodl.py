@@ -13,6 +13,7 @@ The module is automatically executed when the package is imported.
 import os
 import platform
 import subprocess
+import sys
 from pathlib import Path
 from typing import List, Optional
 
@@ -219,11 +220,30 @@ def load_nmodl_mechanisms(quiet: bool = True) -> bool:
                     paths_to_add.append(str(neuron_lib_path))
 
                 if paths_to_add:
+                    # Add to PATH for DLL loading
                     current_path = os.environ.get("PATH", "")
                     for path in paths_to_add:
                         if path not in current_path:
                             os.environ["PATH"] = f"{path};{os.environ['PATH']}"
-                    log(f"Added NEURON paths to PATH: {', '.join(paths_to_add)}")
+
+                    # Add neuron_lib_path to sys.path and PYTHONPATH for module import
+                    # (needed in virtual environments where .pth files don't work)
+                    if neuron_lib_path.exists():
+                        neuron_lib_str = str(neuron_lib_path)
+
+                        # Add to sys.path for current process
+                        if neuron_lib_str not in sys.path:
+                            sys.path.insert(0, neuron_lib_str)
+
+                        # Add to PYTHONPATH for child processes and consistency
+                        current_pythonpath = os.environ.get("PYTHONPATH", "")
+                        if neuron_lib_str not in current_pythonpath:
+                            if current_pythonpath:
+                                os.environ["PYTHONPATH"] = f"{neuron_lib_str};{current_pythonpath}"
+                            else:
+                                os.environ["PYTHONPATH"] = neuron_lib_str
+
+                    log(f"Added NEURON paths to PATH and PYTHONPATH: {', '.join(paths_to_add)}")
                 break
 
     try:

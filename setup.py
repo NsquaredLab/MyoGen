@@ -7,6 +7,7 @@ import numpy as np
 import os
 import platform
 import subprocess
+import sys
 from pathlib import Path
 
 
@@ -68,7 +69,7 @@ class BuildWithNMODL(build_py):
 
     def _compile_nmodl_windows(self, nmodl_path):
         """Compile NMODL on Windows."""
-        # Try to find NEURON installation first
+        # Try to find NEURON installation
         neuron_homes = [
             Path(os.environ.get("NEURONHOME", "")),
             Path("C:/nrn"),
@@ -77,59 +78,29 @@ class BuildWithNMODL(build_py):
 
         neuron_home = None
         for home in neuron_homes:
-            if home.exists():
+            if home.exists() and (home / "bin" / "mknrndll.bat").exists():
                 neuron_home = home
                 break
 
         if not neuron_home:
-            print("\nWARNING: NEURON installation directory not found")
-            print("Installation will continue without compiling NEURON mechanisms")
-            return
+            raise FileNotFoundError(
+                "mknrndll.bat not found - NEURON may not be installed. "
+                "Searched: " + ", ".join(str(h) for h in neuron_homes)
+            )
 
-        # Add NEURON's bin directory to DLL search path (Python 3.8+)
-        neuron_bin = neuron_home / "bin"
-        if neuron_bin.exists():
-            try:
-                # This is the proper way to add DLL directories on Windows
-                os.add_dll_directory(str(neuron_bin))
-                print(f"Added NEURON DLL directory: {neuron_bin}")
-            except (AttributeError, OSError) as e:
-                print(f"Could not add DLL directory: {e}")
-
-        # Now try to import NEURON
-        try:
-            import neuron
-            from neuron import h
-            print("NEURON imported successfully")
-        except ImportError as e:
-            print("\n" + "="*70)
-            print("WARNING: NEURON import failed")
-            print("="*70)
-            print(f"\nError: {e}")
-            print(f"NEURON home: {neuron_home}")
-            print(f"NEURON bin: {neuron_bin}")
-            print("\nInstallation will continue without compiling NEURON mechanisms")
-            print("You can compile them later by running:")
-            print("  python -c \"from myogen import _setup_myogen; _setup_myogen()\"")
-            print("="*70 + "\n")
-            return
-
-        # Verify mknrndll.bat exists
         mknrndll_path = neuron_home / "bin" / "mknrndll.bat"
-        if not mknrndll_path.exists():
-            print(f"\nWARNING: mknrndll.bat not found at {mknrndll_path}")
-            print("Installation will continue without compiling NEURON mechanisms")
-            return
 
-        # Set up environment with NEURON paths
+        # Set up environment with NEURON paths for subprocess
         env = os.environ.copy()
+        neuron_bin = str(neuron_home / "bin")
         neuron_lib_path = str(neuron_home / "lib" / "python")
 
-        # Add NEURON lib/python to PATH for DLL loading
+        # Add both bin and lib/python to PATH for DLL loading and tool access
+        paths_to_add = f"{neuron_bin};{neuron_lib_path}"
         if "PATH" in env:
-            env["PATH"] = f"{neuron_lib_path};{env['PATH']}"
+            env["PATH"] = f"{paths_to_add};{env['PATH']}"
         else:
-            env["PATH"] = neuron_lib_path
+            env["PATH"] = paths_to_add
 
         # Change to nmodl directory and compile
         original_dir = os.getcwd()
@@ -139,13 +110,28 @@ class BuildWithNMODL(build_py):
             for dll_file in nmodl_path.glob("*nrnmech.dll"):
                 dll_file.unlink()
 
-            subprocess.run(
+            result = subprocess.run(
                 ["cmd", "/c", str(mknrndll_path)],
                 capture_output=True,
                 text=True,
-                check=True,
+                check=False,  # Don't raise yet, we want to print output first
                 env=env  # Use modified environment
             )
+
+            # Print output for debugging
+            if result.stdout:
+                print(result.stdout)
+            if result.stderr:
+                print(result.stderr, file=sys.stderr)
+
+            # Now check the return code
+            if result.returncode != 0:
+                raise subprocess.CalledProcessError(
+                    result.returncode,
+                    ["cmd", "/c", str(mknrndll_path)],
+                    output=result.stdout,
+                    stderr=result.stderr
+                )
         finally:
             os.chdir(original_dir)
 
