@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>myogen.utils.nmodl &#8212; MyoGen 0.6.12 Documentation</title>
+    <title>myogen.utils.nmodl &#8212; MyoGen 0.7.0 Documentation</title>
   
   
   
@@ -54,7 +54,7 @@
 
     <script src="../../../_static/jquery.js?v=5d32c60e"></script>
     <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-    <script src="../../../_static/documentation_options.js?v=3dc7668e"></script>
+    <script src="../../../_static/documentation_options.js?v=b9678aa1"></script>
     <script src="../../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/js/hoverxref.js"></script>
@@ -434,7 +434,7 @@ window.addEventListener("load", load);
     <link rel="search" title="Search" href="../../../search.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="0.6.12" />
+  <meta name="docsearch:version" content="0.7.0" />
   </head>
   
   
@@ -503,8 +503,8 @@ window.addEventListener("load", load);
       
     
     
-    <img src="../../../_static/myogen_logo.png" class="logo__image only-light" alt="MyoGen 0.6.12 Documentation - Home"/>
-    <img src="../../../_static/myogen_logo.png" class="logo__image only-dark pst-js-only" alt="MyoGen 0.6.12 Documentation - Home"/>
+    <img src="../../../_static/myogen_logo.png" class="logo__image only-light" alt="MyoGen 0.7.0 Documentation - Home"/>
+    <img src="../../../_static/myogen_logo.png" class="logo__image only-dark pst-js-only" alt="MyoGen 0.7.0 Documentation - Home"/>
   
   
 </a></div>
@@ -513,7 +513,7 @@ window.addEventListener("load", load);
 <div class="nav-item">
   <div class="version-switcher__container dropdown">
       <button id="version-switcher-button" type="button" class="version-switcher__button btn btn-sm navbar-btn" aria-haspopup="true" aria-expanded="false">
-          Version 0.6.12
+          Version 0.7.0
       </button>
       
       
@@ -772,7 +772,6 @@ window.addEventListener("load", load);
 <span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">platform</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">subprocess</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span>
 
@@ -788,16 +787,148 @@ window.addEventListener("load", load);
     <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="n">nmodl_path</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="s2">&quot;*.mod&quot;</span><span class="p">))</span>
 
 
+<span class="k">def</span><span class="w"> </span><span class="nf">_find_neuron_home_from_registry</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Path</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Find NEURON installation path from Windows Registry.&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">platform</span><span class="o">.</span><span class="n">system</span><span class="p">()</span> <span class="o">!=</span> <span class="s2">&quot;Windows&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">None</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="kn">import</span><span class="w"> </span><span class="nn">winreg</span>
+    <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Warning: winreg module not available&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="kc">None</span>
+
+    <span class="c1"># Registry keys to check (in order of preference)</span>
+    <span class="c1"># Try common NEURON registry key patterns</span>
+    <span class="n">direct_neuron_keys</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="p">(</span><span class="n">winreg</span><span class="o">.</span><span class="n">HKEY_LOCAL_MACHINE</span><span class="p">,</span> <span class="sa">r</span><span class="s2">&quot;SOFTWARE\NEURON&quot;</span><span class="p">,</span> <span class="n">winreg</span><span class="o">.</span><span class="n">KEY_READ</span> <span class="o">|</span> <span class="n">winreg</span><span class="o">.</span><span class="n">KEY_WOW64_64KEY</span><span class="p">),</span>
+        <span class="p">(</span><span class="n">winreg</span><span class="o">.</span><span class="n">HKEY_LOCAL_MACHINE</span><span class="p">,</span> <span class="sa">r</span><span class="s2">&quot;SOFTWARE\NEURON_Simulator&quot;</span><span class="p">,</span> <span class="n">winreg</span><span class="o">.</span><span class="n">KEY_READ</span> <span class="o">|</span> <span class="n">winreg</span><span class="o">.</span><span class="n">KEY_WOW64_64KEY</span><span class="p">),</span>
+        <span class="p">(</span><span class="n">winreg</span><span class="o">.</span><span class="n">HKEY_LOCAL_MACHINE</span><span class="p">,</span> <span class="sa">r</span><span class="s2">&quot;SOFTWARE\NEURON&quot;</span><span class="p">,</span> <span class="n">winreg</span><span class="o">.</span><span class="n">KEY_READ</span> <span class="o">|</span> <span class="n">winreg</span><span class="o">.</span><span class="n">KEY_WOW64_32KEY</span><span class="p">),</span>
+        <span class="p">(</span><span class="n">winreg</span><span class="o">.</span><span class="n">HKEY_LOCAL_MACHINE</span><span class="p">,</span> <span class="sa">r</span><span class="s2">&quot;SOFTWARE\NEURON_Simulator&quot;</span><span class="p">,</span> <span class="n">winreg</span><span class="o">.</span><span class="n">KEY_READ</span> <span class="o">|</span> <span class="n">winreg</span><span class="o">.</span><span class="n">KEY_WOW64_32KEY</span><span class="p">),</span>
+        <span class="p">(</span><span class="n">winreg</span><span class="o">.</span><span class="n">HKEY_CURRENT_USER</span><span class="p">,</span> <span class="sa">r</span><span class="s2">&quot;SOFTWARE\NEURON&quot;</span><span class="p">,</span> <span class="n">winreg</span><span class="o">.</span><span class="n">KEY_READ</span><span class="p">),</span>
+        <span class="p">(</span><span class="n">winreg</span><span class="o">.</span><span class="n">HKEY_CURRENT_USER</span><span class="p">,</span> <span class="sa">r</span><span class="s2">&quot;SOFTWARE\NEURON_Simulator&quot;</span><span class="p">,</span> <span class="n">winreg</span><span class="o">.</span><span class="n">KEY_READ</span><span class="p">),</span>
+    <span class="p">]</span>
+
+    <span class="c1"># Check uninstall registry keys</span>
+    <span class="n">uninstall_keys</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="p">(</span><span class="n">winreg</span><span class="o">.</span><span class="n">HKEY_LOCAL_MACHINE</span><span class="p">,</span> <span class="sa">r</span><span class="s2">&quot;SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall&quot;</span><span class="p">,</span> <span class="n">winreg</span><span class="o">.</span><span class="n">KEY_READ</span> <span class="o">|</span> <span class="n">winreg</span><span class="o">.</span><span class="n">KEY_WOW64_64KEY</span><span class="p">),</span>
+        <span class="p">(</span><span class="n">winreg</span><span class="o">.</span><span class="n">HKEY_LOCAL_MACHINE</span><span class="p">,</span> <span class="sa">r</span><span class="s2">&quot;SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall&quot;</span><span class="p">,</span> <span class="n">winreg</span><span class="o">.</span><span class="n">KEY_READ</span> <span class="o">|</span> <span class="n">winreg</span><span class="o">.</span><span class="n">KEY_WOW64_32KEY</span><span class="p">),</span>
+        <span class="p">(</span><span class="n">winreg</span><span class="o">.</span><span class="n">HKEY_CURRENT_USER</span><span class="p">,</span> <span class="sa">r</span><span class="s2">&quot;SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall&quot;</span><span class="p">,</span> <span class="n">winreg</span><span class="o">.</span><span class="n">KEY_READ</span><span class="p">),</span>
+    <span class="p">]</span>
+
+    <span class="n">registry_paths</span> <span class="o">=</span> <span class="n">direct_neuron_keys</span> <span class="o">+</span> <span class="n">uninstall_keys</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Searching for NEURON in Windows Registry...&quot;</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">hkey</span><span class="p">,</span> <span class="n">subkey_path</span><span class="p">,</span> <span class="n">access_flag</span> <span class="ow">in</span> <span class="n">registry_paths</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">with</span> <span class="n">winreg</span><span class="o">.</span><span class="n">OpenKey</span><span class="p">(</span><span class="n">hkey</span><span class="p">,</span> <span class="n">subkey_path</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">access_flag</span><span class="p">)</span> <span class="k">as</span> <span class="n">key</span><span class="p">:</span>
+                <span class="c1"># For direct NEURON keys, look for InstallPath or similar</span>
+                <span class="k">if</span> <span class="s2">&quot;NEURON&quot;</span> <span class="ow">in</span> <span class="n">subkey_path</span> <span class="ow">and</span> <span class="s2">&quot;Uninstall&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">subkey_path</span><span class="p">:</span>
+                    <span class="c1"># Special handling for NEURON_Simulator - check nrn subkey</span>
+                    <span class="k">if</span> <span class="s2">&quot;NEURON_Simulator&quot;</span> <span class="ow">in</span> <span class="n">subkey_path</span><span class="p">:</span>
+                        <span class="k">try</span><span class="p">:</span>
+                            <span class="k">with</span> <span class="n">winreg</span><span class="o">.</span><span class="n">OpenKey</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="s2">&quot;nrn&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">winreg</span><span class="o">.</span><span class="n">KEY_READ</span><span class="p">)</span> <span class="k">as</span> <span class="n">nrn_key</span><span class="p">:</span>
+                                <span class="n">install_path</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">winreg</span><span class="o">.</span><span class="n">QueryValueEx</span><span class="p">(</span><span class="n">nrn_key</span><span class="p">,</span> <span class="s2">&quot;Install_Dir&quot;</span><span class="p">)</span>
+                                <span class="k">if</span> <span class="n">install_path</span><span class="p">:</span>
+                                    <span class="n">neuron_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">install_path</span><span class="p">)</span>
+                                    <span class="k">if</span> <span class="n">neuron_path</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+                                        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  (OK) Found NEURON in registry: </span><span class="si">{</span><span class="n">neuron_path</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                                        <span class="k">return</span> <span class="n">neuron_path</span>
+                        <span class="k">except</span> <span class="ne">FileNotFoundError</span><span class="p">:</span>
+                            <span class="k">pass</span>
+
+                    <span class="c1"># Try standard value names</span>
+                    <span class="k">try</span><span class="p">:</span>
+                        <span class="n">install_path</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">winreg</span><span class="o">.</span><span class="n">QueryValueEx</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="s2">&quot;InstallPath&quot;</span><span class="p">)</span>
+                        <span class="k">if</span> <span class="n">install_path</span><span class="p">:</span>
+                            <span class="n">neuron_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">install_path</span><span class="p">)</span>
+                            <span class="k">if</span> <span class="n">neuron_path</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+                                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  (OK) Found NEURON in registry: </span><span class="si">{</span><span class="n">neuron_path</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                                <span class="k">return</span> <span class="n">neuron_path</span>
+                    <span class="k">except</span> <span class="ne">FileNotFoundError</span><span class="p">:</span>
+                        <span class="c1"># Try alternative value names</span>
+                        <span class="k">for</span> <span class="n">value_name</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;Path&quot;</span><span class="p">,</span> <span class="s2">&quot;InstallLocation&quot;</span><span class="p">,</span> <span class="s2">&quot;Install_Dir&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">]:</span>
+                            <span class="k">try</span><span class="p">:</span>
+                                <span class="n">install_path</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">winreg</span><span class="o">.</span><span class="n">QueryValueEx</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">value_name</span><span class="p">)</span>
+                                <span class="k">if</span> <span class="n">install_path</span><span class="p">:</span>
+                                    <span class="n">neuron_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">install_path</span><span class="p">)</span>
+                                    <span class="k">if</span> <span class="n">neuron_path</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+                                        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  (OK) Found NEURON in registry: </span><span class="si">{</span><span class="n">neuron_path</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                                        <span class="k">return</span> <span class="n">neuron_path</span>
+                            <span class="k">except</span> <span class="ne">FileNotFoundError</span><span class="p">:</span>
+                                <span class="k">continue</span>
+
+                <span class="c1"># For Uninstall keys, enumerate subkeys to find NEURON</span>
+                <span class="k">elif</span> <span class="s2">&quot;Uninstall&quot;</span> <span class="ow">in</span> <span class="n">subkey_path</span><span class="p">:</span>
+                    <span class="n">num_subkeys</span> <span class="o">=</span> <span class="n">winreg</span><span class="o">.</span><span class="n">QueryInfoKey</span><span class="p">(</span><span class="n">key</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+                    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_subkeys</span><span class="p">):</span>
+                        <span class="k">try</span><span class="p">:</span>
+                            <span class="n">subkey_name</span> <span class="o">=</span> <span class="n">winreg</span><span class="o">.</span><span class="n">EnumKey</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">i</span><span class="p">)</span>
+                            <span class="k">if</span> <span class="s2">&quot;NEURON&quot;</span> <span class="ow">in</span> <span class="n">subkey_name</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span> <span class="ow">or</span> <span class="s2">&quot;NRN&quot;</span> <span class="ow">in</span> <span class="n">subkey_name</span><span class="o">.</span><span class="n">upper</span><span class="p">():</span>
+                                <span class="k">with</span> <span class="n">winreg</span><span class="o">.</span><span class="n">OpenKey</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">subkey_name</span><span class="p">)</span> <span class="k">as</span> <span class="n">app_key</span><span class="p">:</span>
+                                    <span class="c1"># Try InstallLocation first</span>
+                                    <span class="k">try</span><span class="p">:</span>
+                                        <span class="n">install_location</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">winreg</span><span class="o">.</span><span class="n">QueryValueEx</span><span class="p">(</span><span class="n">app_key</span><span class="p">,</span> <span class="s2">&quot;InstallLocation&quot;</span><span class="p">)</span>
+                                        <span class="k">if</span> <span class="n">install_location</span><span class="p">:</span>
+                                            <span class="n">neuron_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">install_location</span><span class="p">)</span>
+                                            <span class="k">if</span> <span class="n">neuron_path</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+                                                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  (OK) Found NEURON in registry (Uninstall): </span><span class="si">{</span><span class="n">neuron_path</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                                                <span class="k">return</span> <span class="n">neuron_path</span>
+                                    <span class="k">except</span> <span class="ne">FileNotFoundError</span><span class="p">:</span>
+                                        <span class="k">pass</span>
+
+                                    <span class="c1"># Try to parse UninstallString as fallback</span>
+                                    <span class="k">try</span><span class="p">:</span>
+                                        <span class="n">uninstall_string</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">winreg</span><span class="o">.</span><span class="n">QueryValueEx</span><span class="p">(</span><span class="n">app_key</span><span class="p">,</span> <span class="s2">&quot;UninstallString&quot;</span><span class="p">)</span>
+                                        <span class="k">if</span> <span class="n">uninstall_string</span><span class="p">:</span>
+                                            <span class="c1"># Extract path from uninstall string (e.g., &quot;c:\nrn\uninstall.exe&quot;)</span>
+                                            <span class="n">uninstall_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">uninstall_string</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s1">&#39;&quot;&#39;</span><span class="p">))</span>
+                                            <span class="n">neuron_path</span> <span class="o">=</span> <span class="n">uninstall_path</span><span class="o">.</span><span class="n">parent</span>
+                                            <span class="k">if</span> <span class="n">neuron_path</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+                                                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  (OK) Found NEURON in registry (UninstallString): </span><span class="si">{</span><span class="n">neuron_path</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                                                <span class="k">return</span> <span class="n">neuron_path</span>
+                                    <span class="k">except</span> <span class="ne">FileNotFoundError</span><span class="p">:</span>
+                                        <span class="k">pass</span>
+                        <span class="k">except</span> <span class="ne">OSError</span><span class="p">:</span>
+                            <span class="k">continue</span>
+        <span class="k">except</span> <span class="ne">FileNotFoundError</span><span class="p">:</span>
+            <span class="k">continue</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  (X) Error checking registry path </span><span class="si">{</span><span class="n">subkey_path</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">continue</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;  (X) NEURON not found in registry&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="kc">None</span>
+
+
 <span class="k">def</span><span class="w"> </span><span class="nf">_find_mknrndll</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Path</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Find the mknrndll executable on Windows systems.&quot;&quot;&quot;</span>
-    <span class="c1"># Common locations for mknrndll</span>
-    <span class="n">possible_locations</span> <span class="o">=</span> <span class="p">[</span>
-        <span class="n">Path</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;NEURONHOME&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">))</span> <span class="o">/</span> <span class="s2">&quot;bin&quot;</span><span class="p">,</span>
-        <span class="n">Path</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;NEURONHOME&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">))</span> <span class="o">/</span> <span class="s2">&quot;mingw&quot;</span><span class="p">,</span>
+    <span class="c1"># First, try to find NEURON from Windows Registry</span>
+    <span class="n">neuron_home_from_registry</span> <span class="o">=</span> <span class="n">_find_neuron_home_from_registry</span><span class="p">()</span>
+
+    <span class="c1"># Build list of possible locations, prioritizing registry-found path</span>
+    <span class="n">possible_locations</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="k">if</span> <span class="n">neuron_home_from_registry</span><span class="p">:</span>
+        <span class="n">possible_locations</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span>
+            <span class="n">neuron_home_from_registry</span> <span class="o">/</span> <span class="s2">&quot;bin&quot;</span><span class="p">,</span>
+            <span class="n">neuron_home_from_registry</span> <span class="o">/</span> <span class="s2">&quot;mingw&quot;</span><span class="p">,</span>
+        <span class="p">])</span>
+
+    <span class="c1"># Add environment variable locations</span>
+    <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;NEURONHOME&quot;</span><span class="p">):</span>
+        <span class="n">possible_locations</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span>
+            <span class="n">Path</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;NEURONHOME&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">))</span> <span class="o">/</span> <span class="s2">&quot;bin&quot;</span><span class="p">,</span>
+            <span class="n">Path</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;NEURONHOME&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">))</span> <span class="o">/</span> <span class="s2">&quot;mingw&quot;</span><span class="p">,</span>
+        <span class="p">])</span>
+
+    <span class="c1"># Add common hardcoded locations as fallback</span>
+    <span class="n">possible_locations</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span>
         <span class="n">Path</span><span class="p">(</span><span class="s2">&quot;C:/nrn/bin&quot;</span><span class="p">),</span>
         <span class="n">Path</span><span class="p">(</span><span class="s2">&quot;C:/Program Files/NEURON/bin&quot;</span><span class="p">),</span>
         <span class="n">Path</span><span class="p">(</span><span class="s2">&quot;C:/Program Files (x86)/NEURON/bin&quot;</span><span class="p">),</span>
-    <span class="p">]</span>
+    <span class="p">])</span>
 
     <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Searching for mknrndll.bat in common locations...&quot;</span><span class="p">)</span>
     <span class="k">for</span> <span class="n">location</span> <span class="ow">in</span> <span class="n">possible_locations</span><span class="p">:</span>
@@ -962,50 +1093,42 @@ window.addEventListener("load", load);
 
     <span class="c1"># On Windows, add NEURON paths to PATH before importing</span>
     <span class="k">if</span> <span class="n">platform</span><span class="o">.</span><span class="n">system</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;Windows&quot;</span><span class="p">:</span>
-        <span class="n">neuron_homes</span> <span class="o">=</span> <span class="p">[</span>
-            <span class="n">Path</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;NEURONHOME&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)),</span>
-            <span class="n">Path</span><span class="p">(</span><span class="s2">&quot;C:/nrn&quot;</span><span class="p">),</span>
-            <span class="n">Path</span><span class="p">(</span><span class="s2">&quot;C:/Program Files/NEURON&quot;</span><span class="p">),</span>
-        <span class="p">]</span>
+        <span class="c1"># Priority: Registry &gt; NEURONHOME env var &gt; hardcoded C: paths</span>
+        <span class="n">neuron_home</span> <span class="o">=</span> <span class="n">_find_neuron_home_from_registry</span><span class="p">()</span>
 
-        <span class="k">for</span> <span class="n">neuron_home</span> <span class="ow">in</span> <span class="n">neuron_homes</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">neuron_home</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
-                <span class="c1"># Add both bin and lib/python directories</span>
-                <span class="n">neuron_bin</span> <span class="o">=</span> <span class="n">neuron_home</span> <span class="o">/</span> <span class="s2">&quot;bin&quot;</span>
-                <span class="n">neuron_lib_path</span> <span class="o">=</span> <span class="n">neuron_home</span> <span class="o">/</span> <span class="s2">&quot;lib&quot;</span> <span class="o">/</span> <span class="s2">&quot;python&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">neuron_home</span> <span class="ow">and</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;NEURONHOME&quot;</span><span class="p">):</span>
+            <span class="n">neuron_home</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;NEURONHOME&quot;</span><span class="p">))</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">neuron_home</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+                <span class="n">neuron_home</span> <span class="o">=</span> <span class="kc">None</span>
 
-                <span class="n">paths_to_add</span> <span class="o">=</span> <span class="p">[]</span>
-                <span class="k">if</span> <span class="n">neuron_bin</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
-                    <span class="n">paths_to_add</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">neuron_bin</span><span class="p">))</span>
-                <span class="k">if</span> <span class="n">neuron_lib_path</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
-                    <span class="n">paths_to_add</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">neuron_lib_path</span><span class="p">))</span>
+        <span class="c1"># Fallback to hardcoded C: drive paths</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">neuron_home</span><span class="p">:</span>
+            <span class="n">neuron_homes_fallback</span> <span class="o">=</span> <span class="p">[</span>
+                <span class="n">Path</span><span class="p">(</span><span class="s2">&quot;C:/nrn&quot;</span><span class="p">),</span>
+                <span class="n">Path</span><span class="p">(</span><span class="s2">&quot;C:/Program Files/NEURON&quot;</span><span class="p">),</span>
+            <span class="p">]</span>
+            <span class="k">for</span> <span class="n">home</span> <span class="ow">in</span> <span class="n">neuron_homes_fallback</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">home</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+                    <span class="n">neuron_home</span> <span class="o">=</span> <span class="n">home</span>
+                    <span class="k">break</span>
 
-                <span class="k">if</span> <span class="n">paths_to_add</span><span class="p">:</span>
-                    <span class="c1"># Add to PATH for DLL loading</span>
-                    <span class="n">current_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;PATH&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
-                    <span class="k">for</span> <span class="n">path</span> <span class="ow">in</span> <span class="n">paths_to_add</span><span class="p">:</span>
-                        <span class="k">if</span> <span class="n">path</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">current_path</span><span class="p">:</span>
-                            <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s2">&quot;PATH&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">path</span><span class="si">}</span><span class="s2">;</span><span class="si">{</span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s1">&#39;PATH&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="k">if</span> <span class="n">neuron_home</span><span class="p">:</span>
+            <span class="c1"># Add both bin and lib/python directories</span>
+            <span class="n">neuron_bin</span> <span class="o">=</span> <span class="n">neuron_home</span> <span class="o">/</span> <span class="s2">&quot;bin&quot;</span>
+            <span class="n">neuron_lib_path</span> <span class="o">=</span> <span class="n">neuron_home</span> <span class="o">/</span> <span class="s2">&quot;lib&quot;</span> <span class="o">/</span> <span class="s2">&quot;python&quot;</span>
 
-                    <span class="c1"># Add neuron_lib_path to sys.path and PYTHONPATH for module import</span>
-                    <span class="c1"># (needed in virtual environments where .pth files don&#39;t work)</span>
-                    <span class="k">if</span> <span class="n">neuron_lib_path</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
-                        <span class="n">neuron_lib_str</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">neuron_lib_path</span><span class="p">)</span>
+            <span class="n">paths_to_add</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">if</span> <span class="n">neuron_bin</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+                <span class="n">paths_to_add</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">neuron_bin</span><span class="p">))</span>
+            <span class="k">if</span> <span class="n">neuron_lib_path</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+                <span class="n">paths_to_add</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">neuron_lib_path</span><span class="p">))</span>
 
-                        <span class="c1"># Add to sys.path for current process</span>
-                        <span class="k">if</span> <span class="n">neuron_lib_str</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="p">:</span>
-                            <span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">neuron_lib_str</span><span class="p">)</span>
-
-                        <span class="c1"># Add to PYTHONPATH for child processes and consistency</span>
-                        <span class="n">current_pythonpath</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;PYTHONPATH&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
-                        <span class="k">if</span> <span class="n">neuron_lib_str</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">current_pythonpath</span><span class="p">:</span>
-                            <span class="k">if</span> <span class="n">current_pythonpath</span><span class="p">:</span>
-                                <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s2">&quot;PYTHONPATH&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">neuron_lib_str</span><span class="si">}</span><span class="s2">;</span><span class="si">{</span><span class="n">current_pythonpath</span><span class="si">}</span><span class="s2">&quot;</span>
-                            <span class="k">else</span><span class="p">:</span>
-                                <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s2">&quot;PYTHONPATH&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">neuron_lib_str</span>
-
-                    <span class="n">log</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Added NEURON paths to PATH and PYTHONPATH: </span><span class="si">{</span><span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">paths_to_add</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-                <span class="k">break</span>
+            <span class="k">if</span> <span class="n">paths_to_add</span><span class="p">:</span>
+                <span class="n">current_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;PATH&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+                <span class="k">for</span> <span class="n">path</span> <span class="ow">in</span> <span class="n">paths_to_add</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">path</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">current_path</span><span class="p">:</span>
+                        <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s2">&quot;PATH&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">path</span><span class="si">}</span><span class="s2">;</span><span class="si">{</span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s1">&#39;PATH&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="n">log</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Added NEURON paths to PATH: </span><span class="si">{</span><span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">paths_to_add</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
     <span class="k">try</span><span class="p">:</span>
         <span class="kn">import</span><span class="w"> </span><span class="nn">neuron</span>

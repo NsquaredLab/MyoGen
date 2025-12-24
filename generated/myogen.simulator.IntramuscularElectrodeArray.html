@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>IntramuscularElectrodeArray &#8212; MyoGen 0.6.12 Documentation</title>
+    <title>IntramuscularElectrodeArray &#8212; MyoGen 0.7.0 Documentation</title>
   
   
   
@@ -55,7 +55,7 @@
 
     <script src="../_static/jquery.js?v=5d32c60e"></script>
     <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-    <script src="../_static/documentation_options.js?v=3dc7668e"></script>
+    <script src="../_static/documentation_options.js?v=b9678aa1"></script>
     <script src="../_static/doctools.js?v=9bcbadda"></script>
     <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../_static/js/hoverxref.js"></script>
@@ -72,7 +72,7 @@
     <link rel="prev" title="myogen.simulator.SurfaceElectrodeArray.pos_z" href="myogen.simulator.SurfaceElectrodeArray.pos_z.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="0.6.12" />
+  <meta name="docsearch:version" content="0.7.0" />
   </head>
   
   
@@ -141,8 +141,8 @@
       
     
     
-    <img src="../_static/myogen_logo.png" class="logo__image only-light" alt="MyoGen 0.6.12 Documentation - Home"/>
-    <img src="../_static/myogen_logo.png" class="logo__image only-dark pst-js-only" alt="MyoGen 0.6.12 Documentation - Home"/>
+    <img src="../_static/myogen_logo.png" class="logo__image only-light" alt="MyoGen 0.7.0 Documentation - Home"/>
+    <img src="../_static/myogen_logo.png" class="logo__image only-dark pst-js-only" alt="MyoGen 0.7.0 Documentation - Home"/>
   
   
 </a></div>
@@ -151,7 +151,7 @@
 <div class="nav-item">
   <div class="version-switcher__container dropdown">
       <button id="version-switcher-button" type="button" class="version-switcher__button btn btn-sm navbar-btn" aria-haspopup="true" aria-expanded="false">
-          Version 0.6.12
+          Version 0.7.0
       </button>
       
       
@@ -936,7 +936,7 @@ Returns 0 for distant nodes, max weight 1 for closest node.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="myogen.simulator.IntramuscularElectrodeArray.traj_mixing_mat">
-<span class="sig-name descname"><span class="pre">traj_mixing_mat</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">t</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_nodes</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_channels</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="hxr-hoverxref hxr-tooltip reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.3)"><span class="pre">ndarray</span></a></span></span><a class="reference internal" href="../_modules/myogen/simulator/core/emg/electrodes.html#IntramuscularElectrodeArray.traj_mixing_mat"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#myogen.simulator.IntramuscularElectrodeArray.traj_mixing_mat" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">traj_mixing_mat</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">t</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_nodes</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_channels</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="hxr-hoverxref hxr-tooltip reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.4)"><span class="pre">ndarray</span></a></span></span><a class="reference internal" href="../_modules/myogen/simulator/core/emg/electrodes.html#IntramuscularElectrodeArray.traj_mixing_mat"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#myogen.simulator.IntramuscularElectrodeArray.traj_mixing_mat" title="Link to this definition">#</a></dt>
 <dd><p>Generate mixing matrix for trajectory interpolation during EMG simulation.</p>
 <p>This method creates a diagonal mixing matrix that weights the contribution of
 different trajectory nodes during temporal interpolation. The matrix enables
@@ -1007,7 +1007,7 @@ of each electrode position for all trajectory nodes, in mm.</p>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="id1">
-<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">differential_matrix</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="hxr-hoverxref hxr-tooltip reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.3)"><span class="pre">ndarray</span></a></em><a class="headerlink" href="#id1" title="Link to this definition">#</a></dt>
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">differential_matrix</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="hxr-hoverxref hxr-tooltip reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.4)"><span class="pre">ndarray</span></a></em><a class="headerlink" href="#id1" title="Link to this definition">#</a></dt>
 <dd><p>Differential matrix for signal processing based on differentiation mode.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
@@ -1025,7 +1025,7 @@ Shape depends on differentiation mode and number of trajectory nodes.</p>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="id2">
-<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">trajectory_transforms</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="hxr-hoverxref hxr-tooltip reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.3)"><span class="pre">ndarray</span></a></em><a class="headerlink" href="#id2" title="Link to this definition">#</a></dt>
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">trajectory_transforms</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="hxr-hoverxref hxr-tooltip reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.4)"><span class="pre">ndarray</span></a></em><a class="headerlink" href="#id2" title="Link to this definition">#</a></dt>
 <dd><p>Transformation matrices for trajectory movement.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
