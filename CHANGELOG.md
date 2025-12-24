@@ -7,6 +7,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.7.0] - 2025-12-24
+
+### Added
+- **Windows Registry Detection**: Automatic detection of NEURON installations on any drive
+  - Implements Windows Registry-based NEURON discovery for multi-drive support
+  - Checks `HKCU\SOFTWARE\NEURON_Simulator\nrn\Install_Dir` and `HKLM` equivalents
+  - Parses uninstall registry entries to locate NEURON installation path
+  - Supports NEURON installations on D:, E:, or any drive (not just C:)
+  - Registry detection takes priority over hardcoded paths for more reliable discovery
+
+### Changed
+- **NEURON Detection Priority**: Updated detection order for Windows installations
+  1. Windows Registry (new - works for any drive)
+  2. NEURONHOME environment variable
+  3. Hardcoded C: drive paths (backwards compatibility)
+  4. PATH search for mknrndll.bat
+- Applied registry detection to both build-time (`setup.py`) and runtime (`nmodl.py`) functions
+
 ## [0.6.11] - 2025-12-16
 
 ### Fixed
