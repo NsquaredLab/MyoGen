@@ -19,8 +19,8 @@ force output using the Fuglevand force model with batched processing for memory 
 .. important::
     **Prerequisites**: This example requires outputs from:
 
-    - ``00_watanabe_spinal_network_simulation.py``: Simulation parameters
-    - ``01_load_and_analyze_results.py``: NEO-formatted spike train data (``watanabe_results_neo.pkl``)
+    - ``03_10pct_mvc_simulation.py``: Simulation parameters
+    - ``04_load_and_analyze_results.py``: NEO-formatted spike train data (``watanabe_results_neo.pkl``)
 
 **Key Features**:
 
@@ -31,9 +31,40 @@ force output using the Fuglevand force model with batched processing for memory 
 - **NEO format output**: Complete metadata preservation for reproducible analysis
 - **Memory efficient**: Batch processing with explicit garbage collection
 
+**MyoGen Components Used**:
+
+- :class:`~myogen.simulator.core.force.force_model.ForceModel`:
+  The Fuglevand force model converts spike trains to muscle force. Key parameters:
+
+  - ``recruitment_thresholds``: Determines each motor unit's twitch amplitude
+    (larger threshold → larger force, following the "size principle")
+  - ``recording_frequency__Hz``: Output sampling rate (2048 Hz here)
+  - ``longest_duration_rise_time__ms``: Slowest motor unit's twitch rise time
+  - ``contraction_time_range_factor``: Ratio of slowest/fastest contraction times
+
+  The model generates a normalized twitch waveform for each motor unit, then
+  convolves it with the spike train to produce force contributions.
+
+- :class:`~myogen.simulator.RecruitmentThresholds`:
+  Same thresholds used during simulation - ensures force model matches network.
+
+**How Force Generation Works**:
+
+1. Each motor unit has a characteristic twitch: ``F(t) = P * (t/T) * exp(1 - t/T)``
+   where P = peak force (from recruitment threshold) and T = contraction time.
+
+2. Smaller motor units (low threshold): small P, short T → small, fast twitches
+   Larger motor units (high threshold): large P, long T → large, slow twitches
+
+3. Total muscle force = sum of all motor unit forces (unfused tetanus at ~10-30 Hz)
+
 **Use Case**: Generate realistic muscle force output from motor neuron spike trains
 for biomechanical analysis, force-EMG relationship studies, and validation against
-experimental force recordings from Watanabe et al. (2013).
+experimental force recordings from Watanabe et al. (2015).
+
+**Workflow Position**: Step 5 of 6
+
+**Next Step**: Run ``06_visualize.py`` to generate publication-quality figures.
 """
 
 # %%
@@ -56,18 +87,23 @@ from myogen.simulator.core.force.force_model import ForceModel
 # Setup Paths and Load Parameters
 # -------------------------------
 
-save_path = Path("./results")
+try:
+    _script_dir = Path(__file__).parent
+except NameError:
+    _script_dir = Path.cwd()
+
+save_path = _script_dir / "results"
 save_path.mkdir(exist_ok=True)
 
 spinal_results_path = save_path / "watanabe_results_neo.pkl"
 
 # Load simulation parameters
-params_file = save_path / "watanabe__simulation_params.pkl"
+params_file = save_path / "watanabe_simulation_params.pkl"
 
 if not params_file.exists():
     raise FileNotFoundError(
         f"Simulation parameters file not found: {params_file}\n"
-        "Please run 00_watanabe_spinal_network_simulation.py first to generate the simulation data."
+        "Please run 03_10pct_mvc_simulation.py first to generate the simulation data."
     )
 
 sim_params = joblib.load(params_file)

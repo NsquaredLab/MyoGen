@@ -2,7 +2,7 @@
 Generate Publication-Quality Figures and Analysis Plots
 ========================================================
 
-This example generates **publication-quality figures** for the Watanabe et al. (2013)
+This example generates **publication-quality figures** for the Watanabe et al. (2015)
 spinal network model reproduction. It creates comprehensive visualizations including
 coherence analysis, force timeseries, and detailed raster plots.
 
@@ -18,9 +18,9 @@ coherence analysis, force timeseries, and detailed raster plots.
 .. important::
     **Prerequisites**: This example requires outputs from:
 
-    - ``00_watanabe_spinal_network_simulation.py``: Simulation parameters and results
-    - ``01_load_and_analyze_results.py``: NEO-formatted data blocks
-    - ``02_compute_force_from_spinal_network.py``: Force model output (``watanabe__force_results.pkl``)
+    - ``03_10pct_mvc_simulation.py``: Simulation parameters and results
+    - ``04_load_and_analyze_results.py``: NEO-formatted data blocks
+    - ``05_compute_force_from_spinal_network.py``: Force model output (``watanabe__force_results.pkl``)
 
 **Key Features**:
 
@@ -29,8 +29,42 @@ coherence analysis, force timeseries, and detailed raster plots.
 - **Adaptive raster plots**: Automatic zoom window selection for maximum neuron recruitment
 - **Publication quality**: Vector PDF outputs with optimized DPI and rasterization
 
+**External Libraries Used**:
+
+- **Elephant** (``elephant.conversion.BinnedSpikeTrain``):
+  Converts NEO spike trains to binned format for coherence analysis.
+  Part of the Electrophysiology Analysis Toolkit, designed to work with NEO.
+
+- **SciPy** (``scipy.signal.coherence``):
+  Computes magnitude-squared coherence between signals using Welch's method.
+  Key parameters: ``nperseg`` (frequency resolution), ``noverlap`` (smoothing).
+
+- **Seaborn** (``sns.despine``):
+  Publication-quality plot styling with clean axis formatting.
+
+**Analysis Methods Explained**:
+
+1. **Corticomuscular Coherence**: Measures correlation between cortical oscillations
+   (simulated as average membrane potential) and motor output (composite spike trains).
+   A peak at 20 Hz indicates successful transmission of cortical beta oscillations.
+
+2. **Composite Spike Trains (CST)**: Multiple motor units combined to simulate
+   surface EMG. Created by OR-ing spike trains from random motor unit subsets,
+   then convolving with a square pulse (motor unit action potential approximation).
+
+3. **Raster Plot Sorting**: Motor units sorted by firing rate to show recruitment
+   pattern - low-threshold units (high rate) at bottom, high-threshold at top.
+
 **Use Case**: Generate figures for scientific publications, validate model predictions
 against experimental data, analyze motor unit synchronization patterns.
+
+**Workflow Position**: Step 6 of 6 (Final)
+
+**Output Files**:
+
+- ``results/watanabe/coherence_spectra_all_windows.pdf``: Coherence for 3 phases
+- ``results/watanabe/watanabe_force_timeseries.pdf``: Force trace with phase colors
+- ``results/watanabe/watanabe_raster_full_duration.pdf``: Spike raster with zoom insets
 """
 
 # %%
@@ -59,20 +93,25 @@ plt.style.use("fivethirtyeight")
 # Setup Paths and Load Data
 # -------------------------
 
-save_path = Path(r"./results")
+try:
+    _script_dir = Path(__file__).parent
+except NameError:
+    _script_dir = Path.cwd()
+
+save_path = _script_dir / "results"
 save_path.mkdir(exist_ok=True)
 
 # Create watanabe subdirectory for plots
 watanabe_plots_dir = save_path / "watanabe"
 watanabe_plots_dir.mkdir(exist_ok=True)
 
-# Load simulation parameters from 10a
-params_file = save_path / "watanabe__simulation_params.pkl"
+# Load simulation parameters
+params_file = save_path / "watanabe_simulation_params.pkl"
 
 if not params_file.exists():
     raise FileNotFoundError(
         f"Simulation parameters file not found: {params_file}\n"
-        "Please run 00_watanabe_spinal_network_simulation.py first to generate the simulation data."
+        "Please run 03_10pct_mvc_simulation.py first to generate the simulation data."
     )
 
 sim_params = joblib.load(params_file)

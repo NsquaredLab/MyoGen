@@ -2,7 +2,7 @@
 Load and Analyze Membrane Potentials and Spike Trains
 ======================================================
 
-This example demonstrates **post-simulation analysis** of the Watanabe et al. (2013)
+This example demonstrates **post-simulation analysis** of the Watanabe et al. (2015)
 spinal network model. It shows how to load chunked simulation data, convert it to
 NEO format, and analyze membrane potentials, spike trains, and population dynamics.
 
@@ -19,9 +19,9 @@ NEO format, and analyze membrane potentials, spike trains, and population dynami
 .. important::
     **Prerequisites**: This example requires simulation output from:
 
-    - Run ``00_watanabe_spinal_network_simulation.py`` first
+    - Run ``03_10pct_mvc_simulation.py`` first
     - Generates chunked data in ``results/watanabe_chunks/``
-    - Creates simulation parameters in ``results/watanabe__simulation_params.pkl``
+    - Creates simulation parameters in ``results/watanabe_simulation_params.pkl``
 
 **Key Features**:
 
@@ -30,8 +30,33 @@ NEO format, and analyze membrane potentials, spike trains, and population dynami
 - **Three-phase analysis**: Separate visualization of constant and modulated drive phases
 - **Publication-quality plots**: Membrane potentials, spike rasters, population rates
 
+**MyoGen Components Used**:
+
+- :func:`~myogen.utils.continuous_saver.convert_chunks_to_neo`:
+  Converts chunked simulation data back into a standard NEO Block.
+  This is the recommended way to load large simulation results.
+
+**External Libraries Used**:
+
+- **NEO** (``neo.Block``, ``neo.Segment``, ``neo.SpikeTrain``, ``neo.AnalogSignal``):
+  Standardized format for electrophysiology data. MyoGen uses NEO throughout
+  for interoperability with analysis tools like Elephant, SpyKING CIRCUS, etc.
+
+- **joblib**: Fast serialization for saving/loading large Python objects.
+
+**Data Structures Explained**:
+
+- ``neo.Block``: Top-level container holding multiple segments (experimental trials)
+- ``neo.Segment``: One recording session containing spike trains and analog signals
+- ``neo.SpikeTrain``: Spike times for one neuron with metadata (units, t_stop, etc.)
+- ``neo.AnalogSignal``: Continuous data (e.g., membrane potential) with sampling rate
+
 **Use Case**: Analyze motor unit recruitment, synchronization, and firing patterns
-to validate model predictions against experimental data from Watanabe et al. (2013).
+to validate model predictions against experimental data from Watanabe et al. (2015).
+
+**Workflow Position**: Step 4 of 6
+
+**Next Step**: Run ``05_compute_force_from_spinal_network.py`` to generate force output.
 """
 
 # %%
@@ -59,13 +84,18 @@ phase_colors = plt.rcParams["axes.prop_cycle"].by_key()["color"][1:4]
 #
 # Load the parameters from the simulation to ensure analysis matches the actual run
 
-results_path = Path("./results")
-params_file = results_path / "watanabe__simulation_params.pkl"
+try:
+    _script_dir = Path(__file__).parent
+except NameError:
+    _script_dir = Path.cwd()
+
+results_path = _script_dir / "results"
+params_file = results_path / "watanabe_simulation_params.pkl"
 
 if not params_file.exists():
     raise FileNotFoundError(
         f"Simulation parameters file not found: {params_file}\n"
-        "Please run 00_watanabe_spinal_network_simulation.py first to generate the simulation data."
+        "Please run 03_10pct_mvc_simulation.py first to generate the simulation data."
     )
 
 sim_params = joblib.load(params_file)

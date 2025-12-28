@@ -38,10 +38,20 @@ Available Reproductions
 
 Currently available paper reproductions:
 
-- **Watanabe & Kohn (2015)** - *Fast Oscillatory Commands from the Motor Cortex Can Be Decoded by the Spinal Cord for Force Control*
+.. card:: Watanabe & Kohn (2015)
+   :link: watanabe-reproduction
+   :link-type: ref
 
-  J. Neurosci. 35(40):13687-13697. `DOI: 10.1523/JNEUROSCI.1950-15.2015 <https://doi.org/10.1523/JNEUROSCI.1950-15.2015>`_
+   **Fast Oscillatory Commands from the Motor Cortex Can Be Decoded by the Spinal Cord for Force Control**
 
-  Demonstrates how spinal motor neuron pools decode frequency oscillations from descending cortical drive for force modulation.
+   J. Neurosci. 35(40):13687-13697. `DOI: 10.1523/JNEUROSCI.1950-15.2015 <https://doi.org/10.1523/JNEUROSCI.1950-15.2015>`_
+
+   Demonstrates how spinal motor neuron pools decode frequency oscillations from descending cortical drive for force modulation.
+
+   **MyoGen Components**: ``AlphaMN__Pool``, ``DescendingDrive__Pool``, ``Network``, ``ForceModel``, ``SimulationRunner``, ``ContinuousSaver``
+
+   **Workflow**: 6-step pipeline from baseline force → optimization → simulation → analysis → force computation → visualization
+
+   See :ref:`watanabe-reproduction` for complete documentation.
 
 More reproductions will be added over time as MyoGen capabilities expand.
