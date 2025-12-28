@@ -21,7 +21,7 @@
 Load and Analyze Membrane Potentials and Spike Trains
 ======================================================
 
-This example demonstrates **post-simulation analysis** of the Watanabe et al. (2015)
+This example demonstrates **post-simulation analysis** of the Watanabe and Kohn (2015)
 spinal network model. It shows how to load chunked simulation data, convert it to
 NEO format, and analyze membrane potentials, spike trains, and population dynamics.
 
@@ -71,7 +71,7 @@ NEO format, and analyze membrane potentials, spike trains, and population dynami
 - ``neo.AnalogSignal``: Continuous data (e.g., membrane potential) with sampling rate
 
 **Use Case**: Analyze motor unit recruitment, synchronization, and firing patterns
-to validate model predictions against experimental data from Watanabe et al. (2015).
+to validate model predictions against experimental data from Watanabe and Kohn (2015).
 
 **Workflow Position**: Step 4 of 6
 
@@ -223,14 +223,14 @@ identical in structure to what SimulationRunner.run() returns
             Timestep: 0.025 ms
             Total chunks: 3
             Adding spike trains...
-            Creating DD spike trains:   0%|          | 0/400 [00:00<?, ?it/s]            Creating DD spike trains:  20%|█▉        | 78/400 [00:00<00:00, 776.94it/s]            Creating DD spike trains:  39%|███▉      | 156/400 [00:00<00:00, 776.22it/s]            Creating DD spike trains:  58%|█████▊    | 234/400 [00:00<00:00, 775.86it/s]            Creating DD spike trains:  78%|███████▊  | 312/400 [00:00<00:00, 770.30it/s]            Creating DD spike trains:  98%|█████████▊| 390/400 [00:00<00:00, 768.32it/s]                                                                                         DD: 400 spike trains
-            Creating IN spike trains:   0%|          | 0/800 [00:00<?, ?it/s]            Creating IN spike trains:   7%|▋         | 53/800 [00:00<00:01, 523.03it/s]            Creating IN spike trains:  13%|█▎        | 107/800 [00:00<00:01, 527.66it/s]            Creating IN spike trains:  20%|██        | 160/800 [00:00<00:01, 524.37it/s]            Creating IN spike trains:  27%|██▋       | 213/800 [00:00<00:01, 525.95it/s]            Creating IN spike trains:  33%|███▎      | 266/800 [00:00<00:01, 523.57it/s]            Creating IN spike trains:  40%|███▉      | 319/800 [00:00<00:00, 525.41it/s]            Creating IN spike trains:  46%|████▋     | 372/800 [00:00<00:00, 526.60it/s]            Creating IN spike trains:  53%|█████▎    | 425/800 [00:00<00:00, 526.34it/s]            Creating IN spike trains:  60%|█████▉    | 478/800 [00:00<00:00, 525.84it/s]            Creating IN spike trains:  66%|██████▋   | 531/800 [00:01<00:00, 523.98it/s]            Creating IN spike trains:  73%|███████▎  | 584/800 [00:01<00:00, 523.89it/s]            Creating IN spike trains:  80%|███████▉  | 637/800 [00:01<00:00, 523.68it/s]            Creating IN spike trains:  86%|████████▋ | 690/800 [00:01<00:00, 521.81it/s]            Creating IN spike trains:  93%|█████████▎| 743/800 [00:01<00:00, 520.93it/s]            Creating IN spike trains: 100%|█████████▉| 796/800 [00:01<00:00, 519.84it/s]                                                                                         IN: 800 spike trains
-            Creating aMN spike trains:   0%|          | 0/671 [00:00<?, ?it/s]            Creating aMN spike trains:  12%|█▏        | 81/671 [00:00<00:00, 803.83it/s]            Creating aMN spike trains:  24%|██▍       | 162/671 [00:00<00:00, 802.26it/s]            Creating aMN spike trains:  36%|███▌      | 243/671 [00:00<00:00, 795.72it/s]            Creating aMN spike trains:  48%|████▊     | 323/671 [00:00<00:00, 794.54it/s]            Creating aMN spike trains:  60%|██████    | 403/671 [00:00<00:00, 793.07it/s]            Creating aMN spike trains:  72%|███████▏  | 483/671 [00:00<00:00, 789.37it/s]            Creating aMN spike trains:  84%|████████▍ | 562/671 [00:00<00:00, 787.27it/s]            Creating aMN spike trains:  96%|█████████▌| 641/671 [00:00<00:00, 783.91it/s]                                                                                          aMN: 671 spike trains
+            Creating DD spike trains:   0%|          | 0/400 [00:00<?, ?it/s]            Creating DD spike trains:  20%|█▉        | 78/400 [00:00<00:00, 774.80it/s]            Creating DD spike trains:  39%|███▉      | 156/400 [00:00<00:00, 772.67it/s]            Creating DD spike trains:  58%|█████▊    | 234/400 [00:00<00:00, 766.23it/s]            Creating DD spike trains:  78%|███████▊  | 311/400 [00:00<00:00, 762.35it/s]            Creating DD spike trains:  97%|█████████▋| 388/400 [00:00<00:00, 763.57it/s]                                                                                         DD: 400 spike trains
+            Creating IN spike trains:   0%|          | 0/800 [00:00<?, ?it/s]            Creating IN spike trains:   6%|▌         | 48/800 [00:00<00:01, 477.10it/s]            Creating IN spike trains:  12%|█▏        | 96/800 [00:00<00:01, 474.96it/s]            Creating IN spike trains:  18%|█▊        | 144/800 [00:00<00:01, 475.65it/s]            Creating IN spike trains:  24%|██▍       | 192/800 [00:00<00:01, 474.98it/s]            Creating IN spike trains:  30%|███       | 242/800 [00:00<00:01, 480.37it/s]            Creating IN spike trains:  36%|███▋      | 291/800 [00:00<00:01, 477.49it/s]            Creating IN spike trains:  42%|████▏     | 339/800 [00:00<00:00, 476.06it/s]            Creating IN spike trains:  48%|████▊     | 387/800 [00:00<00:00, 474.87it/s]            Creating IN spike trains:  54%|█████▍    | 435/800 [00:00<00:00, 475.00it/s]            Creating IN spike trains:  60%|██████    | 483/800 [00:01<00:00, 474.01it/s]            Creating IN spike trains:  66%|██████▋   | 531/800 [00:01<00:00, 473.33it/s]            Creating IN spike trains:  72%|███████▏  | 579/800 [00:01<00:00, 472.52it/s]            Creating IN spike trains:  78%|███████▊  | 627/800 [00:01<00:00, 471.28it/s]            Creating IN spike trains:  84%|████████▍ | 675/800 [00:01<00:00, 472.52it/s]            Creating IN spike trains:  90%|█████████ | 724/800 [00:01<00:00, 477.45it/s]            Creating IN spike trains:  97%|█████████▋| 774/800 [00:01<00:00, 481.44it/s]                                                                                         IN: 800 spike trains
+            Creating aMN spike trains:   0%|          | 0/671 [00:00<?, ?it/s]            Creating aMN spike trains:  12%|█▏        | 80/671 [00:00<00:00, 798.12it/s]            Creating aMN spike trains:  24%|██▍       | 160/671 [00:00<00:00, 795.76it/s]            Creating aMN spike trains:  36%|███▌      | 240/671 [00:00<00:00, 789.96it/s]            Creating aMN spike trains:  48%|████▊     | 320/671 [00:00<00:00, 790.27it/s]            Creating aMN spike trains:  60%|█████▉    | 400/671 [00:00<00:00, 790.04it/s]            Creating aMN spike trains:  72%|███████▏  | 480/671 [00:00<00:00, 788.86it/s]            Creating aMN spike trains:  83%|████████▎ | 559/671 [00:00<00:00, 787.61it/s]            Creating aMN spike trains:  95%|█████████▌| 638/671 [00:00<00:00, 781.49it/s]                                                                                          aMN: 671 spike trains
             Loading and combining membrane data from 3 chunks...
             aMN: Combining 160 neurons from 3 chunks...
-            Loading aMN chunks:   0%|          | 0/3 [00:00<?, ?chunk/s]            Loading aMN chunks:  33%|███▎      | 1/3 [00:01<00:02,  1.46s/chunk]            Loading aMN chunks:  67%|██████▋   | 2/3 [00:02<00:01,  1.47s/chunk]            Loading aMN chunks: 100%|██████████| 3/3 [00:04<00:00,  1.47s/chunk]            Loading aMN chunks: 100%|██████████| 3/3 [00:04<00:00,  1.47s/chunk]
+            Loading aMN chunks:   0%|          | 0/3 [00:00<?, ?chunk/s]            Loading aMN chunks:  33%|███▎      | 1/3 [00:01<00:02,  1.48s/chunk]            Loading aMN chunks:  67%|██████▋   | 2/3 [00:02<00:01,  1.50s/chunk]            Loading aMN chunks: 100%|██████████| 3/3 [00:04<00:00,  1.51s/chunk]            Loading aMN chunks: 100%|██████████| 3/3 [00:04<00:00,  1.50s/chunk]
             aMN: Creating analog signals...
-            Creating aMN signals:   0%|          | 0/160 [00:00<?, ?signal/s]            Creating aMN signals:  32%|███▏      | 51/160 [00:00<00:00, 506.03signal/s]            Creating aMN signals:  65%|██████▌   | 104/160 [00:00<00:00, 517.27signal/s]            Creating aMN signals:  98%|█████████▊| 157/160 [00:00<00:00, 518.85signal/s]                                                                                         aMN: 160 analog signals created
+            Creating aMN signals:   0%|          | 0/160 [00:00<?, ?signal/s]            Creating aMN signals:  31%|███▏      | 50/160 [00:00<00:00, 498.60signal/s]            Creating aMN signals:  64%|██████▍   | 102/160 [00:00<00:00, 504.79signal/s]            Creating aMN signals:  96%|█████████▌| 153/160 [00:00<00:00, 505.48signal/s]                                                                                         aMN: 160 analog signals created
 
     NEO Block created successfully
             Total segments: 3
@@ -252,7 +252,7 @@ Analyze Membrane Potentials
 
 Access membrane potentials from NEO AnalogSignals
 
-.. GENERATED FROM PYTHON SOURCE LINES 152-214
+.. GENERATED FROM PYTHON SOURCE LINES 152-226
 
 .. code-block:: Python
 
@@ -304,8 +304,20 @@ Access membrane potentials from NEO AnalogSignals
 
             # Highlight the three experimental phases
             ax.axvspan(0, phase1_end, alpha=0.2, color=phase_colors[0], label="Phase 1: Constant")
-            ax.axvspan(phase1_end, phase2_end, alpha=0.2, color=phase_colors[1], label="Phase 2: Sinusoid DC=65")
-            ax.axvspan(phase2_end, phase3_end, alpha=0.2, color=phase_colors[2], label="Phase 3: Sinusoid DC=58")
+            ax.axvspan(
+                phase1_end,
+                phase2_end,
+                alpha=0.2,
+                color=phase_colors[1],
+                label="Phase 2: Sinusoid DC=65",
+            )
+            ax.axvspan(
+                phase2_end,
+                phase3_end,
+                alpha=0.2,
+                color=phase_colors[2],
+                label="Phase 3: Sinusoid DC=58",
+            )
 
             if ax == axes[0]:
                 ax.legend(loc="upper right", framealpha=1.0, edgecolor="none")
@@ -349,14 +361,14 @@ Access membrane potentials from NEO AnalogSignals
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 215-219
+.. GENERATED FROM PYTHON SOURCE LINES 227-231
 
 Analyze Spike Data Summary
 ---------------------------
 
 Print summary statistics for all neural populations
 
-.. GENERATED FROM PYTHON SOURCE LINES 219-237
+.. GENERATED FROM PYTHON SOURCE LINES 231-249
 
 .. code-block:: Python
 
@@ -409,14 +421,14 @@ Print summary statistics for all neural populations
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 238-242
+.. GENERATED FROM PYTHON SOURCE LINES 250-254
 
 Generate Spike Raster Plot
 ---------------------------
 
 Visualize spike timing across all motor neurons with phase highlighting
 
-.. GENERATED FROM PYTHON SOURCE LINES 242-279
+.. GENERATED FROM PYTHON SOURCE LINES 254-295
 
 .. code-block:: Python
 
@@ -448,8 +460,12 @@ Visualize spike timing across all motor neurons with phase highlighting
 
         # Highlight the three experimental phases
         ax.axvspan(0, phase1_end, alpha=0.2, color=phase_colors[0], label="Phase 1: Constant")
-        ax.axvspan(phase1_end, phase2_end, alpha=0.2, color=phase_colors[1], label="Phase 2: Sinusoid DC=65")
-        ax.axvspan(phase2_end, phase3_end, alpha=0.2, color=phase_colors[2], label="Phase 3: Sinusoid DC=58")
+        ax.axvspan(
+            phase1_end, phase2_end, alpha=0.2, color=phase_colors[1], label="Phase 2: Sinusoid DC=65"
+        )
+        ax.axvspan(
+            phase2_end, phase3_end, alpha=0.2, color=phase_colors[2], label="Phase 3: Sinusoid DC=58"
+        )
         ax.legend(loc="upper right", framealpha=1.0, edgecolor="none")
 
         plt.tight_layout()
@@ -479,14 +495,14 @@ Visualize spike timing across all motor neurons with phase highlighting
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 280-284
+.. GENERATED FROM PYTHON SOURCE LINES 296-300
 
 Analyze Population Firing Rate
 -------------------------------
 
 Compute and visualize population-level firing rate dynamics over time
 
-.. GENERATED FROM PYTHON SOURCE LINES 284-326
+.. GENERATED FROM PYTHON SOURCE LINES 300-342
 
 .. code-block:: Python
 
@@ -554,12 +570,12 @@ Compute and visualize population-level firing rate dynamics over time
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 327-329
+.. GENERATED FROM PYTHON SOURCE LINES 343-345
 
 Save NEO Block for Future Use (OPTIONAL)
 ----------------------------------------
 
-.. GENERATED FROM PYTHON SOURCE LINES 329-340
+.. GENERATED FROM PYTHON SOURCE LINES 345-356
 
 .. code-block:: Python
 
@@ -592,7 +608,7 @@ Save NEO Block for Future Use (OPTIONAL)
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 22.968 seconds)
+   **Total running time of the script:** (0 minutes 23.918 seconds)
 
 
 .. _sphx_glr_download_auto_examples_03_papers_watanabe_04_load_and_analyze_results.py:

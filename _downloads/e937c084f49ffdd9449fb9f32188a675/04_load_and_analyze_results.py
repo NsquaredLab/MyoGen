@@ -2,7 +2,7 @@
 Load and Analyze Membrane Potentials and Spike Trains
 ======================================================
 
-This example demonstrates **post-simulation analysis** of the Watanabe et al. (2015)
+This example demonstrates **post-simulation analysis** of the Watanabe and Kohn (2015)
 spinal network model. It shows how to load chunked simulation data, convert it to
 NEO format, and analyze membrane potentials, spike trains, and population dynamics.
 
@@ -52,7 +52,7 @@ NEO format, and analyze membrane potentials, spike trains, and population dynami
 - ``neo.AnalogSignal``: Continuous data (e.g., membrane potential) with sampling rate
 
 **Use Case**: Analyze motor unit recruitment, synchronization, and firing patterns
-to validate model predictions against experimental data from Watanabe et al. (2015).
+to validate model predictions against experimental data from Watanabe and Kohn (2015).
 
 **Workflow Position**: Step 4 of 6
 
@@ -197,8 +197,20 @@ if aMN_segment and len(aMN_segment.analogsignals) > 0:
 
         # Highlight the three experimental phases
         ax.axvspan(0, phase1_end, alpha=0.2, color=phase_colors[0], label="Phase 1: Constant")
-        ax.axvspan(phase1_end, phase2_end, alpha=0.2, color=phase_colors[1], label="Phase 2: Sinusoid DC=65")
-        ax.axvspan(phase2_end, phase3_end, alpha=0.2, color=phase_colors[2], label="Phase 3: Sinusoid DC=58")
+        ax.axvspan(
+            phase1_end,
+            phase2_end,
+            alpha=0.2,
+            color=phase_colors[1],
+            label="Phase 2: Sinusoid DC=65",
+        )
+        ax.axvspan(
+            phase2_end,
+            phase3_end,
+            alpha=0.2,
+            color=phase_colors[2],
+            label="Phase 3: Sinusoid DC=58",
+        )
 
         if ax == axes[0]:
             ax.legend(loc="upper right", framealpha=1.0, edgecolor="none")
@@ -267,8 +279,12 @@ if aMN_segment and len(aMN_segment.spiketrains) > 0:
 
     # Highlight the three experimental phases
     ax.axvspan(0, phase1_end, alpha=0.2, color=phase_colors[0], label="Phase 1: Constant")
-    ax.axvspan(phase1_end, phase2_end, alpha=0.2, color=phase_colors[1], label="Phase 2: Sinusoid DC=65")
-    ax.axvspan(phase2_end, phase3_end, alpha=0.2, color=phase_colors[2], label="Phase 3: Sinusoid DC=58")
+    ax.axvspan(
+        phase1_end, phase2_end, alpha=0.2, color=phase_colors[1], label="Phase 2: Sinusoid DC=65"
+    )
+    ax.axvspan(
+        phase2_end, phase3_end, alpha=0.2, color=phase_colors[2], label="Phase 3: Sinusoid DC=58"
+    )
     ax.legend(loc="upper right", framealpha=1.0, edgecolor="none")
 
     plt.tight_layout()

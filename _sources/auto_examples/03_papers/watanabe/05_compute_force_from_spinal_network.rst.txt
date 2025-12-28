@@ -79,7 +79,7 @@ force output using the Fuglevand force model with batched processing for memory 
 
 **Use Case**: Generate realistic muscle force output from motor neuron spike trains
 for biomechanical analysis, force-EMG relationship studies, and validation against
-experimental force recordings from Watanabe et al. (2015).
+experimental force recordings from Watanabe and Kohn (2015).
 
 **Workflow Position**: Step 5 of 6
 
@@ -376,31 +376,31 @@ Process motor units in batches for memory efficiency with large populations
 
     Processing batch 1/5:
       Motor units: 1-150 (150 units)
-    Pool 1 Twitch trains (Numba):   0%|          | 0/150 [00:00<?, ?MU/s]    Pool 1 Twitch trains (Numba):   1%|          | 1/150 [00:00<00:19,  7.57MU/s]    Pool 1 Twitch trains (Numba):  59%|█████▊    | 88/150 [00:00<00:00, 454.11MU/s]    Pool 1 Twitch trains (Numba): 100%|██████████| 150/150 [00:00<00:00, 516.07MU/s]
+    Pool 1 Twitch trains (Numba):   0%|          | 0/150 [00:00<?, ?MU/s]    Pool 1 Twitch trains (Numba):   1%|          | 1/150 [00:00<00:20,  7.22MU/s]    Pool 1 Twitch trains (Numba):  58%|█████▊    | 87/150 [00:00<00:00, 438.36MU/s]    Pool 1 Twitch trains (Numba): 100%|██████████| 150/150 [00:00<00:00, 499.87MU/s]
       Batch force shape: (30720,)
       Batch force range: [0.000, 28.265]
 
     Processing batch 2/5:
       Motor units: 151-300 (150 units)
-    Pool 1 Twitch trains (Numba):   0%|          | 0/150 [00:00<?, ?MU/s]    Pool 1 Twitch trains (Numba):   1%|          | 1/150 [00:00<00:19,  7.68MU/s]    Pool 1 Twitch trains (Numba):  59%|█████▊    | 88/150 [00:00<00:00, 456.17MU/s]    Pool 1 Twitch trains (Numba): 100%|██████████| 150/150 [00:00<00:00, 518.63MU/s]
+    Pool 1 Twitch trains (Numba):   0%|          | 0/150 [00:00<?, ?MU/s]    Pool 1 Twitch trains (Numba):   1%|          | 1/150 [00:00<00:20,  7.35MU/s]    Pool 1 Twitch trains (Numba):  57%|█████▋    | 86/150 [00:00<00:00, 437.04MU/s]    Pool 1 Twitch trains (Numba): 100%|██████████| 150/150 [00:00<00:00, 504.03MU/s]
       Batch force shape: (30720,)
       Batch force range: [0.000, 21.931]
 
     Processing batch 3/5:
       Motor units: 301-450 (150 units)
-    Pool 1 Twitch trains (Numba):   0%|          | 0/150 [00:00<?, ?MU/s]    Pool 1 Twitch trains (Numba):   1%|          | 1/150 [00:00<00:19,  7.76MU/s]    Pool 1 Twitch trains (Numba):  60%|██████    | 90/150 [00:00<00:00, 470.40MU/s]    Pool 1 Twitch trains (Numba): 100%|██████████| 150/150 [00:00<00:00, 529.93MU/s]
+    Pool 1 Twitch trains (Numba):   0%|          | 0/150 [00:00<?, ?MU/s]    Pool 1 Twitch trains (Numba):   1%|          | 1/150 [00:00<00:20,  7.43MU/s]    Pool 1 Twitch trains (Numba):  59%|█████▊    | 88/150 [00:00<00:00, 451.11MU/s]    Pool 1 Twitch trains (Numba): 100%|██████████| 150/150 [00:00<00:00, 514.72MU/s]
       Batch force shape: (30720,)
       Batch force range: [0.000, 20.042]
 
     Processing batch 4/5:
       Motor units: 451-600 (150 units)
-    Pool 1 Twitch trains (Numba):   0%|          | 0/150 [00:00<?, ?MU/s]    Pool 1 Twitch trains (Numba):   1%|          | 1/150 [00:00<00:19,  7.73MU/s]    Pool 1 Twitch trains (Numba):  69%|██████▊   | 103/150 [00:00<00:00, 538.73MU/s]    Pool 1 Twitch trains (Numba): 100%|██████████| 150/150 [00:00<00:00, 579.07MU/s]
+    Pool 1 Twitch trains (Numba):   0%|          | 0/150 [00:00<?, ?MU/s]    Pool 1 Twitch trains (Numba):   1%|          | 1/150 [00:00<00:20,  7.32MU/s]    Pool 1 Twitch trains (Numba):  67%|██████▋   | 101/150 [00:00<00:00, 512.89MU/s]    Pool 1 Twitch trains (Numba): 100%|██████████| 150/150 [00:00<00:00, 557.69MU/s]
       Batch force shape: (30720,)
       Batch force range: [0.000, 17.431]
 
     Processing batch 5/5:
       Motor units: 601-671 (71 units)
-    Pool 1 Twitch trains (Numba):   0%|          | 0/71 [00:00<?, ?MU/s]    Pool 1 Twitch trains (Numba):   1%|▏         | 1/71 [00:00<00:09,  7.73MU/s]    Pool 1 Twitch trains (Numba): 100%|██████████| 71/71 [00:00<00:00, 439.62MU/s]
+    Pool 1 Twitch trains (Numba):   0%|          | 0/71 [00:00<?, ?MU/s]    Pool 1 Twitch trains (Numba):   1%|▏         | 1/71 [00:00<00:09,  7.38MU/s]    Pool 1 Twitch trains (Numba): 100%|██████████| 71/71 [00:00<00:00, 421.93MU/s]
       Batch force shape: (30720,)
       Batch force range: [0.000, 2.262]
 
@@ -501,7 +501,7 @@ Store force output with comprehensive metadata for reproducible analysis
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 14.102 seconds)
+   **Total running time of the script:** (0 minutes 14.394 seconds)
 
 
 .. _sphx_glr_download_auto_examples_03_papers_watanabe_05_compute_force_from_spinal_network.py:

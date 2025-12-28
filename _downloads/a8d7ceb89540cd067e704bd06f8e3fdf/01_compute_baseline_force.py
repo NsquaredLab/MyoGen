@@ -1,5 +1,5 @@
 """
-Compute Reference Force with Constant Drive (Watanabe Network)
+Compute Reference Force with Constant Drive
 ===============================================================
 
 This example computes the reference muscle force using constant descending drive.
@@ -10,7 +10,7 @@ This force is used as the target for optimizing the oscillating drive DC offset 
 
     - 800 motor neurons
     - 400 descending drive neurons
-    - 30% connectivity (Watanabe specification)
+    - 30% connectivity
     - Constant drive frequency (configurable, default 40 Hz)
     - Poisson process (order 1)
 
@@ -29,7 +29,7 @@ This force is used as the target for optimizing the oscillating drive DC offset 
   These represent cortical/brainstem input to motor neurons.
   ``poisson_batch_size=1`` creates order-1 (renewal) Poisson processes.
 
-- :class:`~myogen.simulator.neuron.Network`:
+- :class:`~myogen.simulator.Network`:
   Container that manages populations and synaptic connections between them.
   Supports probabilistic connectivity (``connect()``) and external input (``connect_from_external()``).
 
@@ -71,7 +71,7 @@ from neuron import h
 from myogen import RANDOM_GENERATOR
 from myogen.simulator import RecruitmentThresholds
 from myogen.simulator.core.force.force_model import ForceModel
-from myogen.simulator.neuron import Network
+from myogen.simulator import Network
 from myogen.simulator.neuron.populations import AlphaMN__Pool, DescendingDrive__Pool
 from myogen.utils.helper import calculate_firing_rate_statistics
 from myogen.utils.nmodl import load_nmodl_mechanisms
@@ -121,7 +121,7 @@ print(f"Motor neurons: {N_MOTOR_UNITS}")
 print(f"DD neurons: {N_DD_NEURONS}")
 print(f"Connection probability: {DD_CONNECTIVITY:.1%}")
 print(f"Drive frequency: {DD_DRIVE_HZ:.1f} Hz (constant)")
-print(f"Process type: Poisson (batch size: 1)")
+print("Process type: Poisson (batch size: 1)")
 print("=" * 60 + "\n")
 
 ##############################################################################
@@ -293,7 +293,7 @@ fr_std = float(stats["FR_std"])
 n_active = int(stats["n_active"])
 
 print("Firing Rate Statistics:")
-print(f"  Active units: {n_active}/{N_MOTOR_UNITS} ({n_active/N_MOTOR_UNITS*100:.1f}%)")
+print(f"  Active units: {n_active}/{N_MOTOR_UNITS} ({n_active / N_MOTOR_UNITS * 100:.1f}%)")
 print(f"  Mean firing rate: {fr_mean:.2f} Hz")
 print(f"  Std deviation: {fr_std:.2f} Hz")
 print(f"  Coefficient of variation: {fr_std / fr_mean:.3f}\n")
@@ -313,9 +313,9 @@ print(f"  Coefficient of variation: {fr_std / fr_mean:.3f}\n")
 
 force_model = ForceModel(
     recruitment_thresholds=recruitment_thresholds,
-    recording_frequency__Hz=2048 * pq.Hz,        # Output sampling rate
-    longest_duration_rise_time__ms=90.0 * pq.ms, # Slowest unit's rise time
-    contraction_time_range_factor=3,              # Ratio of slowest/fastest T
+    recording_frequency__Hz=2048 * pq.Hz,  # Output sampling rate
+    longest_duration_rise_time__ms=90.0 * pq.ms,  # Slowest unit's rise time
+    contraction_time_range_factor=3,  # Ratio of slowest/fastest T
 )
 
 # Generate force from spike trains

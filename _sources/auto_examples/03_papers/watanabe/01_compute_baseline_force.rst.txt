@@ -18,7 +18,7 @@
 .. _sphx_glr_auto_examples_03_papers_watanabe_01_compute_baseline_force.py:
 
 
-Compute Reference Force with Constant Drive (Watanabe Network)
+Compute Reference Force with Constant Drive
 ===============================================================
 
 This example computes the reference muscle force using constant descending drive.
@@ -29,7 +29,7 @@ This force is used as the target for optimizing the oscillating drive DC offset 
 
     - 800 motor neurons
     - 400 descending drive neurons
-    - 30% connectivity (Watanabe specification)
+    - 30% connectivity
     - Constant drive frequency (configurable, default 40 Hz)
     - Poisson process (order 1)
 
@@ -48,7 +48,7 @@ This force is used as the target for optimizing the oscillating drive DC offset 
   These represent cortical/brainstem input to motor neurons.
   ``poisson_batch_size=1`` creates order-1 (renewal) Poisson processes.
 
-- :class:`~myogen.simulator.neuron.Network`:
+- :class:`~myogen.simulator.Network`:
   Container that manages populations and synaptic connections between them.
   Supports probabilistic connectivity (``connect()``) and external input (``connect_from_external()``).
 
@@ -93,7 +93,7 @@ Import Libraries
     from myogen import RANDOM_GENERATOR
     from myogen.simulator import RecruitmentThresholds
     from myogen.simulator.core.force.force_model import ForceModel
-    from myogen.simulator.neuron import Network
+    from myogen.simulator import Network
     from myogen.simulator.neuron.populations import AlphaMN__Pool, DescendingDrive__Pool
     from myogen.utils.helper import calculate_firing_rate_statistics
     from myogen.utils.nmodl import load_nmodl_mechanisms
@@ -169,7 +169,7 @@ Define Simulation Parameters
     print(f"DD neurons: {N_DD_NEURONS}")
     print(f"Connection probability: {DD_CONNECTIVITY:.1%}")
     print(f"Drive frequency: {DD_DRIVE_HZ:.1f} Hz (constant)")
-    print(f"Process type: Poisson (batch size: 1)")
+    print("Process type: Poisson (batch size: 1)")
     print("=" * 60 + "\n")
 
 
@@ -455,7 +455,7 @@ Calculate Firing Rate Statistics
     n_active = int(stats["n_active"])
 
     print("Firing Rate Statistics:")
-    print(f"  Active units: {n_active}/{N_MOTOR_UNITS} ({n_active/N_MOTOR_UNITS*100:.1f}%)")
+    print(f"  Active units: {n_active}/{N_MOTOR_UNITS} ({n_active / N_MOTOR_UNITS * 100:.1f}%)")
     print(f"  Mean firing rate: {fr_mean:.2f} Hz")
     print(f"  Std deviation: {fr_std:.2f} Hz")
     print(f"  Coefficient of variation: {fr_std / fr_mean:.3f}\n")
@@ -499,9 +499,9 @@ then sums across all units to get total muscle force.
 
     force_model = ForceModel(
         recruitment_thresholds=recruitment_thresholds,
-        recording_frequency__Hz=2048 * pq.Hz,        # Output sampling rate
-        longest_duration_rise_time__ms=90.0 * pq.ms, # Slowest unit's rise time
-        contraction_time_range_factor=3,              # Ratio of slowest/fastest T
+        recording_frequency__Hz=2048 * pq.Hz,  # Output sampling rate
+        longest_duration_rise_time__ms=90.0 * pq.ms,  # Slowest unit's rise time
+        contraction_time_range_factor=3,  # Ratio of slowest/fastest T
     )
 
     # Generate force from spike trains
@@ -523,7 +523,7 @@ then sums across all units to get total muscle force.
 
  .. code-block:: none
 
-    Pool 1 Twitch trains (Numba):   0%|          | 0/800 [00:00<?, ?MU/s]    Pool 1 Twitch trains (Numba):   0%|          | 1/800 [00:00<01:43,  7.74MU/s]    Pool 1 Twitch trains (Numba): 100%|██████████| 800/800 [00:00<00:00, 4068.63MU/s]
+    Pool 1 Twitch trains (Numba):   0%|          | 0/800 [00:00<?, ?MU/s]    Pool 1 Twitch trains (Numba):   0%|          | 1/800 [00:00<01:47,  7.42MU/s]    Pool 1 Twitch trains (Numba): 100%|██████████| 800/800 [00:00<00:00, 3930.04MU/s]
 
 
 
@@ -708,7 +708,7 @@ Visualize Results
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 55.113 seconds)
+   **Total running time of the script:** (0 minutes 57.260 seconds)
 
 
 .. _sphx_glr_download_auto_examples_03_papers_watanabe_01_compute_baseline_force.py:

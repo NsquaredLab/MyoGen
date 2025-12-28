@@ -1,12 +1,12 @@
 """
-Optimize Oscillating DC Offset to Match Reference Force (Watanabe Network)
+Optimize Oscillating DC Offset to Match Reference Force
 ===========================================================================
 
 This example optimizes the DC offset component of an oscillating descending drive to
 match the reference force produced by constant drive (from script 01).
 The drive pattern is: `DC_offset + 20*sin(2π*20*t)`.
 
-This finds the equivalent of Watanabe's 58 pps value (Phase 3) that produces the same
+This finds the equivalent of the original 58 pps value (Phase 3) that produces the same
 force as constant drive (Phase 1) when combined with 20 Hz oscillation.
 
 .. note::
@@ -31,7 +31,7 @@ force as constant drive (Phase 1) when combined with 20 Hz oscillation.
   Poisson spike generators driven by time-varying rate: ``DC_offset + amplitude*sin(2πft)``.
   The ``integrate()`` method advances the internal Poisson process by one timestep.
 
-- :class:`~myogen.simulator.neuron.Network`:
+- :class:`~myogen.simulator.Network`:
   Rebuilds the network for each trial with same connectivity parameters (30%).
 
 - :class:`~myogen.simulator.core.force.force_model.ForceModel`:
@@ -41,7 +41,7 @@ force as constant drive (Phase 1) when combined with 20 Hz oscillation.
 
 **Key Concept**: The oscillation itself contributes to motor neuron activation, so
 the DC offset in Phase 3 must be *lower* than the constant drive in Phase 1 to
-produce the same mean force. Watanabe found 58 Hz offset vs 65 Hz constant.
+produce the same mean force. The original paper found 58 Hz offset vs 65 Hz constant.
 
 **Workflow Position**: Step 2 of 6
 
@@ -130,8 +130,7 @@ reference_file = BASELINE_DIR / "force_reference.json"
 
 if not reference_file.exists():
     raise FileNotFoundError(
-        f"Reference force not found: {reference_file}\n"
-        f"Run 01_compute_baseline_force.py first!"
+        f"Reference force not found: {reference_file}\nRun 01_compute_baseline_force.py first!"
     )
 
 with open(reference_file, "r") as f:
@@ -530,5 +529,7 @@ plt.show()
 
 print("\n[DONE] DC offset optimization complete!")
 print(f"Best DC offset: {best_trial.user_attrs['dc_offset__Hz']:.2f} Hz")
-print(f"Original Watanabe: 65 Hz constant → 58 Hz + oscillation (ratio: {58/65:.3f})")
-print(f"This implementation: {REFERENCE_DRIVE__HZ:.1f} Hz constant → {best_trial.user_attrs['dc_offset__Hz']:.1f} Hz + oscillation (ratio: {best_trial.user_attrs['dc_offset__Hz']/REFERENCE_DRIVE__HZ:.3f})")
+print(f"Original Watanabe: 65 Hz constant → 58 Hz + oscillation (ratio: {58 / 65:.3f})")
+print(
+    f"This implementation: {REFERENCE_DRIVE__HZ:.1f} Hz constant → {best_trial.user_attrs['dc_offset__Hz']:.1f} Hz + oscillation (ratio: {best_trial.user_attrs['dc_offset__Hz'] / REFERENCE_DRIVE__HZ:.3f})"
+)
