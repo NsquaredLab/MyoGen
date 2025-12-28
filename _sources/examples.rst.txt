@@ -47,13 +47,13 @@ Literature Reproductions
         :link-type: ref
         :text-align: center
 
-        Watanabe et al. (2015, J. Neurosci.)
+        Watanabe and Kohn (2015, J. Neurosci.)
 
 
 .. toctree::
    :hidden:
    :maxdepth: 2
 
-   auto_examples/basic/index
-   auto_examples/finetune/index
-   auto_examples/papers/watanabe/index
+   auto_examples/01_basic/index
+   auto_examples/02_finetune/index
+   auto_examples/03_papers/watanabe/index

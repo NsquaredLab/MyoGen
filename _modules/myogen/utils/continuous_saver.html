@@ -1,0 +1,1329 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>myogen.utils.continuous_saver &#8212; MyoGen 0.8.0 Documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=5349f25f" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/css/tooltipster.custom.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/css/tooltipster.bundle.min.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/css/tooltipster-sideTip-shadow.min.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/css/tooltipster-sideTip-punk.min.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/css/tooltipster-sideTip-noir.min.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/css/tooltipster-sideTip-light.min.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/css/tooltipster-sideTip-borderless.min.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/css/micromodal.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/custom.css?v=9b95bd4c" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery.css?v=d2d258e8" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-binder.css?v=f4aeca0c" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/custom.css?v=9b95bd4c" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../../../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+    <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+    <script src="../../../_static/documentation_options.js?v=cce5339e"></script>
+    <script src="../../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../_static/js/hoverxref.js"></script>
+    <script src="../../../_static/js/tooltipster.bundle.min.js"></script>
+    <script src="../../../_static/js/micromodal.min.js"></script>
+    <script src="../../../_static/custom.js?v=e0e269b1"></script>
+    <script src="../../../_static/design-tabs.js?v=f930bc37"></script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script type="module" src="https://cdn.jsdelivr.net/npm/mermaid@11.9.0/dist/mermaid.esm.min.mjs"></script>
+    <script type="module" src="https://cdn.jsdelivr.net/npm/@mermaid-js/layout-elk@0.2.0/dist/mermaid-layout-elk.esm.min.mjs"></script>
+    <script type="module">import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@11.9.0/dist/mermaid.esm.min.mjs";import elkLayouts from "https://cdn.jsdelivr.net/npm/@mermaid-js/layout-elk@0.2.0/dist/mermaid-layout-elk.esm.min.mjs";mermaid.registerLayoutLoaders(elkLayouts);mermaid.initialize({startOnLoad:false});</script>
+    <script src="https://cdn.jsdelivr.net/npm/d3@7.9.0/dist/d3.min.js"></script>
+    <script type="module">import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@11.9.0/dist/mermaid.esm.min.mjs";
+
+const defaultStyle = document.createElement('style');
+defaultStyle.textContent = `pre.mermaid {
+    /* Same as .mermaid-container > pre */
+    display: block;
+    width: 100%;
+}
+
+pre.mermaid > svg {
+    /* Same as .mermaid-container > pre > svg */
+    height: 500px;
+    width: 100%;
+    max-width: 100% !important;
+}
+`;
+document.head.appendChild(defaultStyle);
+
+const fullscreenStyle = document.createElement('style');
+fullscreenStyle.textContent = `.mermaid-container {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+}
+
+.mermaid-container > pre {
+    display: block;
+    width: 100%;
+}
+
+.mermaid-container > pre > svg {
+    height: 500px;
+    width: 100%;
+    max-width: 100% !important;
+}
+
+.mermaid-fullscreen-btn {
+    width: 28px;
+    height: 28px;
+    background: rgba(255, 255, 255, 0.95);
+    border: 1px solid rgba(0, 0, 0, 0.3);
+    border-radius: 4px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+    font-size: 14px;
+    line-height: 1;
+    padding: 0;
+    color: #333;
+}
+
+.mermaid-fullscreen-btn:hover {
+    opacity: 100% !important;
+    background: rgba(255, 255, 255, 1);
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3);
+    transform: scale(1.1);
+}
+
+.mermaid-fullscreen-btn.dark-theme {
+    background: rgba(50, 50, 50, 0.95);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    color: #e0e0e0;
+}
+
+.mermaid-fullscreen-btn.dark-theme:hover {
+    background: rgba(60, 60, 60, 1);
+    box-shadow: 0 3px 10px rgba(255, 255, 255, 0.2);
+}
+
+.mermaid-fullscreen-modal {
+    display: none;
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 95vw;
+    height: 100vh;
+    background: rgba(255, 255, 255, 0.98);
+    z-index: 9999;
+    padding: 20px;
+    overflow: auto;
+}
+
+.mermaid-fullscreen-modal.dark-theme {
+    background: rgba(0, 0, 0, 0.98);
+}
+
+.mermaid-fullscreen-modal.active {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.mermaid-container-fullscreen {
+    position: relative;
+    width: 95vw;
+    height: 90vh;
+    max-width: 95vw;
+    max-height: 90vh;
+    background: white;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+    overflow: auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.mermaid-container-fullscreen.dark-theme {
+    background: #1a1a1a;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8);
+}
+
+.mermaid-container-fullscreen pre.mermaid {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.mermaid-container-fullscreen .mermaid svg {
+    height: 100% !important;
+    width: 100% !important;
+    cursor: grab;
+}
+
+.mermaid-fullscreen-close {
+    position: fixed !important;
+    top: 20px !important;
+    right: 20px !important;
+    width: 40px;
+    height: 40px;
+    background: rgba(255, 255, 255, 0.95);
+    border: 1px solid rgba(0, 0, 0, 0.2);
+    border-radius: 50%;
+    cursor: pointer;
+    z-index: 10000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    transition: all 0.2s;
+    font-size: 24px;
+    line-height: 1;
+    color: #333;
+}
+
+.mermaid-fullscreen-close:hover {
+    background: white;
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
+    transform: scale(1.1);
+}
+
+.mermaid-fullscreen-close.dark-theme {
+    background: rgba(50, 50, 50, 0.95);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: #e0e0e0;
+}
+
+.mermaid-fullscreen-close.dark-theme:hover {
+    background: rgba(60, 60, 60, 1);
+    box-shadow: 0 6px 16px rgba(255, 255, 255, 0.2);
+}
+
+.mermaid-fullscreen-modal .mermaid-fullscreen-btn {
+    display: none !important;
+}`;
+document.head.appendChild(fullscreenStyle);
+
+// Detect if page has dark background
+const isDarkTheme = () => {
+    const bgColor = window.getComputedStyle(document.body).backgroundColor;
+    const match = bgColor.match(/rgb\((\d+),\s*(\d+),\s*(\d+)/);
+    if (match) {
+        const r = parseInt(match[1]);
+        const g = parseInt(match[2]);
+        const b = parseInt(match[3]);
+        const brightness = (r * 299 + g * 587 + b * 114) / 1000;
+        return brightness < 128;
+    }
+    return false;
+};
+
+const load = async () => {
+    await mermaid.run();
+
+    const all_mermaids = document.querySelectorAll(".mermaid");
+    const mermaids_processed = document.querySelectorAll(".mermaid[data-processed='true']");
+
+    if ("False" === "True") {
+        const mermaids_to_add_zoom = -1 === -1 ? all_mermaids.length : -1;
+        if(mermaids_to_add_zoom > 0) {
+            var svgs = d3.selectAll("");
+            if(all_mermaids.length !== mermaids_processed.length) {
+                setTimeout(load, 200);
+                return;
+            } else if(svgs.size() !== mermaids_to_add_zoom) {
+                setTimeout(load, 200);
+                return;
+            } else {
+                svgs.each(function() {
+                    var svg = d3.select(this);
+                    svg.html("<g class='wrapper'>" + svg.html() + "</g>");
+                    var inner = svg.select("g");
+                    var zoom = d3.zoom().on("zoom", function(event) {
+                        inner.attr("transform", event.transform);
+                    });
+                    svg.call(zoom);
+                });
+            }
+        }
+    } else if(all_mermaids.length !== mermaids_processed.length) {
+        // Wait for mermaid to process all diagrams
+        setTimeout(load, 200);
+        return;
+    }
+
+    const darkTheme = isDarkTheme();
+
+    // Stop here if not adding fullscreen capability
+    if ("True" !== "True") return;
+
+    const modal = document.createElement('div');
+    modal.className = 'mermaid-fullscreen-modal' + (darkTheme ? ' dark-theme' : '');
+    modal.setAttribute('role', 'dialog');
+    modal.setAttribute('aria-modal', 'true');
+    modal.setAttribute('aria-label', 'Fullscreen diagram viewer');
+    modal.innerHTML = `
+        <button class="mermaid-fullscreen-close${darkTheme ? ' dark-theme' : ''}" aria-label="Close fullscreen">✕</button>
+        <div class="mermaid-container-fullscreen${darkTheme ? ' dark-theme' : ''}"></div>
+    `;
+    document.body.appendChild(modal);
+
+    const modalContent = modal.querySelector('.mermaid-container-fullscreen');
+    const closeBtn = modal.querySelector('.mermaid-fullscreen-close');
+
+    let previousScrollOffset = [window.scrollX, window.scrollY];
+
+    const closeModal = () => {
+        modal.classList.remove('active');
+        modalContent.innerHTML = '';
+        document.body.style.overflow = ''
+        window.scrollTo({left: previousScrollOffset[0], top: previousScrollOffset[1], behavior: 'instant'});
+    };
+
+    closeBtn.addEventListener('click', closeModal);
+    modal.addEventListener('click', (e) => {
+        if (e.target === modal) closeModal();
+    });
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && modal.classList.contains('active')) {
+            closeModal();
+        }
+    });
+
+    const allButtons = [];
+
+    document.querySelectorAll('.mermaid').forEach((mermaidDiv) => {
+        if (mermaidDiv.parentNode.classList.contains('mermaid-container') ||
+            mermaidDiv.closest('.mermaid-fullscreen-modal')) {
+            return;
+        }
+
+        const container = document.createElement('div');
+        container.className = 'mermaid-container';
+        mermaidDiv.parentNode.insertBefore(container, mermaidDiv);
+        container.appendChild(mermaidDiv);
+
+        const fullscreenBtn = document.createElement('button');
+        fullscreenBtn.className = 'mermaid-fullscreen-btn' + (darkTheme ? ' dark-theme' : '');
+        fullscreenBtn.setAttribute('aria-label', 'View diagram in fullscreen');
+        fullscreenBtn.textContent = '⛶';
+        fullscreenBtn.style.opacity = '50%';
+
+        // Calculate dynamic position based on diagram's margin and padding
+        const diagramStyle = window.getComputedStyle(mermaidDiv);
+        const marginTop = parseFloat(diagramStyle.marginTop) || 0;
+        const marginRight = parseFloat(diagramStyle.marginRight) || 0;
+        const paddingTop = parseFloat(diagramStyle.paddingTop) || 0;
+        const paddingRight = parseFloat(diagramStyle.paddingRight) || 0;
+        fullscreenBtn.style.top = `${marginTop + paddingTop + 4}px`;
+        fullscreenBtn.style.right = `${marginRight + paddingRight + 4}px`;
+
+        fullscreenBtn.addEventListener('click', () => {
+            previousScrollOffset = [window.scroll, window.scrollY];
+            const clone = mermaidDiv.cloneNode(true);
+            modalContent.innerHTML = '';
+            modalContent.appendChild(clone);
+
+            const svg = clone.querySelector('svg');
+            if (svg) {
+                svg.removeAttribute('width');
+                svg.removeAttribute('height');
+                svg.style.width = '100%';
+                svg.style.height = 'auto';
+                svg.style.maxWidth = '100%';
+                svg.style.sdisplay = 'block';
+
+                if ("False" === "True") {
+                    setTimeout(() => {
+                        const g = svg.querySelector('g');
+                        if (g) {
+                            var svgD3 = d3.select(svg);
+                            svgD3.html("<g class='wrapper'>" + svgD3.html() + "</g>");
+                            var inner = svgD3.select("g");
+                            var zoom = d3.zoom().on("zoom", function(event) {
+                                inner.attr("transform", event.transform);
+                            });
+                            svgD3.call(zoom);
+                        }
+                    }, 100);
+                }
+            }
+
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        });
+
+        container.appendChild(fullscreenBtn);
+        allButtons.push(fullscreenBtn);
+    });
+
+    // Update theme classes when theme changes
+    const updateTheme = () => {
+        const dark = isDarkTheme();
+        allButtons.forEach(btn => {
+            if (dark) {
+                btn.classList.add('dark-theme');
+            } else {
+                btn.classList.remove('dark-theme');
+            }
+        });
+        if (dark) {
+            modal.classList.add('dark-theme');
+            modalContent.classList.add('dark-theme');
+            closeBtn.classList.add('dark-theme');
+        } else {
+            modal.classList.remove('dark-theme');
+            modalContent.classList.remove('dark-theme');
+            closeBtn.classList.remove('dark-theme');
+        }
+    };
+
+    // Watch for theme changes
+    const observer = new MutationObserver(updateTheme);
+    observer.observe(document.documentElement, {
+        attributes: true,
+        attributeFilter: ['class', 'style', 'data-theme']
+    });
+    observer.observe(document.body, {
+        attributes: true,
+        attributeFilter: ['class', 'style']
+    });
+};
+
+window.addEventListener("load", load);
+</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/myogen/utils/continuous_saver';</script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="0.8.0" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search MyoGen docs..."
+         aria-label="Search MyoGen docs..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+<aside class="bd-header-announcement" aria-label="Announcement">
+  <div class="bd-header-announcement__content">MyoGen is under active development. API may change.</div>
+</aside>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class=" navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../../_static/myogen_logo.png" class="logo__image only-light" alt="MyoGen 0.8.0 Documentation - Home"/>
+    <img src="../../../_static/myogen_logo.png" class="logo__image only-dark pst-js-only" alt="MyoGen 0.8.0 Documentation - Home"/>
+  
+  
+</a></div>
+    
+      <div class="navbar-item">
+<div class="nav-item">
+  <div class="version-switcher__container dropdown">
+      <button id="version-switcher-button" type="button" class="version-switcher__button btn btn-sm navbar-btn" aria-haspopup="true" aria-expanded="false">
+          Version 0.8.0
+      </button>
+      
+      
+      
+  </div>
+</div> </div>
+    
+      <div class="navbar-item"><div class="nav-item">
+   <span>
+      made at the <a href="https://www.nsquared.tf.fau.de/" target="_blank">N² Lab</a>
+   </span>
+</div> </div>
+    
+  </div>
+  
+  <div class=" navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../api/index.html">
+    API Documentation
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../neo_blocks_guide.html">
+    Working with Neo Block Data Structures
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../examples.html">
+    Examples
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/NSquaredLab/MyoGen" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+    </div>
+  
+
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar hide-on-wide">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../api/index.html">
+    API Documentation
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../neo_blocks_guide.html">
+    Working with Neo Block Data Structures
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../examples.html">
+    Examples
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/NSquaredLab/MyoGen" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../../index.html" class="nav-link">Module code</a></li>
+    
+    
+    <li class="breadcrumb-item"><a href="../../myogen.html" class="nav-link">myogen</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">myogen.utils.continuous_saver</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <h1>Source code for myogen.utils.continuous_saver</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Continuous Saving Utilities for Long Simulations</span>
+<span class="sd">=================================================</span>
+
+<span class="sd">Provides memory-efficient continuous data saving for very long NEURON simulations</span>
+<span class="sd">by periodically flushing data chunks to disk instead of keeping everything in RAM.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">collections</span><span class="w"> </span><span class="kn">import</span> <span class="n">defaultdict</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Optional</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">joblib</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+
+<span class="c1"># NEO imports for standard output format</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">quantities</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pq</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">neo</span><span class="w"> </span><span class="kn">import</span> <span class="n">AnalogSignal</span><span class="p">,</span> <span class="n">Block</span><span class="p">,</span> <span class="n">Segment</span><span class="p">,</span> <span class="n">SpikeTrain</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">neuron</span><span class="w"> </span><span class="kn">import</span> <span class="n">h</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">tqdm</span><span class="w"> </span><span class="kn">import</span> <span class="n">tqdm</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">myogen.utils.types</span><span class="w"> </span><span class="kn">import</span> <span class="n">Quantity__ms</span>
+
+
+<div class="viewcode-block" id="ContinuousSaver">
+<a class="viewcode-back" href="../../../generated/myogen.utils.continuous_saver.ContinuousSaver.html#myogen.utils.continuous_saver.ContinuousSaver">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">ContinuousSaver</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Manages continuous saving of simulation data in chunks to prevent memory overflow.</span>
+
+<span class="sd">    Instead of accumulating all data in RAM, this class periodically saves chunks</span>
+<span class="sd">    to disk and clears memory. Data can be loaded and combined afterward.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    save_path : Path</span>
+<span class="sd">        Directory where chunks will be saved</span>
+<span class="sd">    chunk_duration__ms : float</span>
+<span class="sd">        Duration of each chunk in milliseconds (default: 10000 ms = 10 seconds)</span>
+<span class="sd">    populations : dict</span>
+<span class="sd">        Dictionary of populations to record from</span>
+<span class="sd">    recording_config : dict</span>
+<span class="sd">        Configuration like {&quot;aMN&quot;: [0, 10, 20, ...]} for which cells to record</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="ContinuousSaver.__init__">
+<a class="viewcode-back" href="../../../generated/myogen.utils.continuous_saver.ContinuousSaver.__init__.html#myogen.utils.continuous_saver.ContinuousSaver.__init__">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">save_path</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span>
+        <span class="n">chunk_duration__ms</span><span class="p">:</span> <span class="n">Quantity__ms</span> <span class="o">=</span> <span class="mf">10000.0</span> <span class="o">*</span> <span class="n">pq</span><span class="o">.</span><span class="n">ms</span><span class="p">,</span>
+        <span class="n">populations</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">recording_config</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">save_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">save_path</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">save_path</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">chunk_duration__ms</span> <span class="o">=</span> <span class="n">chunk_duration__ms</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">populations</span> <span class="o">=</span> <span class="n">populations</span> <span class="ow">or</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">recording_config</span> <span class="o">=</span> <span class="n">recording_config</span> <span class="ow">or</span> <span class="p">{}</span>
+
+        <span class="c1"># Tracking state</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">chunk_id</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">last_save_time</span> <span class="o">=</span> <span class="mf">0.0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">current_chunk_data</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="k">lambda</span><span class="p">:</span> <span class="n">defaultdict</span><span class="p">(</span><span class="nb">list</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">current_chunk_times</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="c1"># Spike recording</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">spike_data</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="k">lambda</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;times&quot;</span><span class="p">:</span> <span class="p">[],</span> <span class="s2">&quot;ids&quot;</span><span class="p">:</span> <span class="p">[]})</span>
+
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;ContinuousSaver initialized:&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">Save path: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">save_path</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">Chunk duration: </span><span class="si">{</span><span class="n">chunk_duration__ms</span><span class="si">}</span><span class="s2"> ms&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">Recording config: </span><span class="si">{</span><span class="n">recording_config</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="ContinuousSaver.record_step">
+<a class="viewcode-back" href="../../../generated/myogen.utils.continuous_saver.ContinuousSaver.record_step.html#myogen.utils.continuous_saver.ContinuousSaver.record_step">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">record_step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">timestep__ms</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Record data for current simulation timestep.</span>
+
+<span class="sd">        Call this from your step callback at each timestep.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        timestep__ms : float</span>
+<span class="sd">            Integration timestep in milliseconds</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">current_time</span> <span class="o">=</span> <span class="n">h</span><span class="o">.</span><span class="n">t</span>
+
+        <span class="c1"># Record current time</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">current_chunk_times</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">current_time</span><span class="p">)</span>
+
+        <span class="c1"># Record membrane potentials for specified cells</span>
+        <span class="k">for</span> <span class="n">pop_name</span><span class="p">,</span> <span class="n">cell_indices</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">recording_config</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">pop_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">populations</span><span class="p">:</span>
+                <span class="k">continue</span>
+
+            <span class="n">population</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">populations</span><span class="p">[</span><span class="n">pop_name</span><span class="p">]</span>
+
+            <span class="k">for</span> <span class="n">cell_idx</span> <span class="ow">in</span> <span class="n">cell_indices</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">cell_idx</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">population</span><span class="p">):</span>
+                    <span class="c1"># Read voltage from soma</span>
+                    <span class="n">voltage</span> <span class="o">=</span> <span class="n">population</span><span class="p">[</span><span class="n">cell_idx</span><span class="p">]</span><span class="o">.</span><span class="n">soma</span><span class="p">(</span><span class="mf">0.5</span><span class="p">)</span><span class="o">.</span><span class="n">v</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">current_chunk_data</span><span class="p">[</span><span class="n">pop_name</span><span class="p">][</span><span class="n">cell_idx</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">voltage</span><span class="p">)</span>
+
+        <span class="c1"># Check if it&#39;s time to save this chunk</span>
+        <span class="k">if</span> <span class="n">current_time</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">last_save_time</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">chunk_duration__ms</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_save_current_chunk</span><span class="p">(</span><span class="n">timestep__ms</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="ContinuousSaver.record_spike">
+<a class="viewcode-back" href="../../../generated/myogen.utils.continuous_saver.ContinuousSaver.record_spike.html#myogen.utils.continuous_saver.ContinuousSaver.record_spike">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">record_spike</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pop_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">cell_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">spike_time</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Record a spike event.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        pop_name : str</span>
+<span class="sd">            Population name</span>
+<span class="sd">        cell_id : int</span>
+<span class="sd">            Cell ID within population</span>
+<span class="sd">        spike_time : float</span>
+<span class="sd">            Time of spike in milliseconds</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">spike_data</span><span class="p">[</span><span class="n">pop_name</span><span class="p">][</span><span class="s2">&quot;times&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">spike_time</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">spike_data</span><span class="p">[</span><span class="n">pop_name</span><span class="p">][</span><span class="s2">&quot;ids&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">cell_id</span><span class="p">)</span></div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_save_current_chunk</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">timestep__ms</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Save current chunk to disk and clear memory.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">current_chunk_times</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span>  <span class="c1"># Nothing to save</span>
+
+        <span class="n">chunk_data</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;chunk_id&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">chunk_id</span><span class="p">,</span>
+            <span class="s2">&quot;time_start&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">current_chunk_times</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+            <span class="s2">&quot;time_end&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">current_chunk_times</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span>
+            <span class="s2">&quot;times&quot;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">current_chunk_times</span><span class="p">),</span>
+            <span class="s2">&quot;timestep__ms&quot;</span><span class="p">:</span> <span class="n">timestep__ms</span><span class="p">,</span>
+            <span class="s2">&quot;membrane_data&quot;</span><span class="p">:</span> <span class="p">{},</span>
+        <span class="p">}</span>
+
+        <span class="c1"># Convert lists to numpy arrays for efficient storage</span>
+        <span class="k">for</span> <span class="n">pop_name</span><span class="p">,</span> <span class="n">cells_dict</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">current_chunk_data</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">chunk_data</span><span class="p">[</span><span class="s2">&quot;membrane_data&quot;</span><span class="p">][</span><span class="n">pop_name</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+            <span class="k">for</span> <span class="n">cell_idx</span><span class="p">,</span> <span class="n">voltages</span> <span class="ow">in</span> <span class="n">cells_dict</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="n">chunk_data</span><span class="p">[</span><span class="s2">&quot;membrane_data&quot;</span><span class="p">][</span><span class="n">pop_name</span><span class="p">][</span><span class="n">cell_idx</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">voltages</span><span class="p">)</span>
+
+        <span class="c1"># Save to disk</span>
+        <span class="n">chunk_filename</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">save_path</span> <span class="o">/</span> <span class="sa">f</span><span class="s2">&quot;chunk_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">chunk_id</span><span class="si">:</span><span class="s2">04d</span><span class="si">}</span><span class="s2">.pkl&quot;</span>
+        <span class="n">joblib</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">chunk_data</span><span class="p">,</span> <span class="n">chunk_filename</span><span class="p">,</span> <span class="n">compress</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+
+        <span class="c1"># Calculate chunk size for logging</span>
+        <span class="n">n_timepoints</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">current_chunk_times</span><span class="p">)</span>
+        <span class="n">n_neurons</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">cells</span><span class="p">)</span> <span class="k">for</span> <span class="n">cells</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">current_chunk_data</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
+        <span class="n">chunk_size_mb</span> <span class="o">=</span> <span class="p">(</span><span class="n">n_timepoints</span> <span class="o">*</span> <span class="n">n_neurons</span> <span class="o">*</span> <span class="mi">8</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1024</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>  <span class="c1"># 8 bytes per float</span>
+
+        <span class="nb">print</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Saved chunk </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">chunk_id</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">current_chunk_times</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2">-</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">current_chunk_times</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2"> ms &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;(</span><span class="si">{</span><span class="n">n_timepoints</span><span class="si">}</span><span class="s2"> steps, </span><span class="si">{</span><span class="n">n_neurons</span><span class="si">}</span><span class="s2"> neurons, ~</span><span class="si">{</span><span class="n">chunk_size_mb</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2"> MB)&quot;</span>
+        <span class="p">)</span>
+
+        <span class="c1"># Clear memory</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">current_chunk_data</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">current_chunk_times</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">chunk_id</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">last_save_time</span> <span class="o">=</span> <span class="n">h</span><span class="o">.</span><span class="n">t</span>
+
+<div class="viewcode-block" id="ContinuousSaver.finalize">
+<a class="viewcode-back" href="../../../generated/myogen.utils.continuous_saver.ContinuousSaver.finalize.html#myogen.utils.continuous_saver.ContinuousSaver.finalize">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">finalize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">timestep__ms</span><span class="p">:</span> <span class="n">Quantity__ms</span><span class="p">,</span> <span class="n">spike_results</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Save final chunk and spike data.</span>
+
+<span class="sd">        Call this after simulation completes.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        timestep__ms : Quantity__ms</span>
+<span class="sd">            Integration timestep in milliseconds</span>
+<span class="sd">        spike_results : NEO Block, optional</span>
+<span class="sd">            NEO Block containing spike trains from SimulationRunner.</span>
+<span class="sd">            If provided, spike data will be extracted and saved to chunks.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Save any remaining data</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">current_chunk_times</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_save_current_chunk</span><span class="p">(</span><span class="n">timestep__ms</span><span class="p">)</span>
+
+        <span class="c1"># Save spike data</span>
+        <span class="n">spike_filename</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">save_path</span> <span class="o">/</span> <span class="s2">&quot;spikes.pkl&quot;</span>
+        <span class="n">spike_data_arrays</span> <span class="o">=</span> <span class="p">{}</span>
+
+        <span class="k">if</span> <span class="n">spike_results</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="c1"># Extract spike data from NEO Block (from SimulationRunner)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Extracting spike data from SimulationRunner results...&quot;</span><span class="p">)</span>
+            <span class="kn">from</span><span class="w"> </span><span class="nn">neo</span><span class="w"> </span><span class="kn">import</span> <span class="n">Block</span>
+
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">spike_results</span><span class="p">,</span> <span class="n">Block</span><span class="p">):</span>
+                <span class="k">for</span> <span class="n">seg</span> <span class="ow">in</span> <span class="n">spike_results</span><span class="o">.</span><span class="n">segments</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">seg</span><span class="o">.</span><span class="n">spiketrains</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                        <span class="n">pop_name</span> <span class="o">=</span> <span class="n">seg</span><span class="o">.</span><span class="n">name</span>
+                        <span class="n">times_list</span> <span class="o">=</span> <span class="p">[]</span>
+                        <span class="n">ids_list</span> <span class="o">=</span> <span class="p">[]</span>
+
+                        <span class="k">for</span> <span class="n">st</span> <span class="ow">in</span> <span class="n">seg</span><span class="o">.</span><span class="n">spiketrains</span><span class="p">:</span>
+                            <span class="n">neuron_id</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">st</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+                            <span class="n">spike_times</span> <span class="o">=</span> <span class="n">st</span><span class="o">.</span><span class="n">times</span><span class="o">.</span><span class="n">rescale</span><span class="p">(</span><span class="s2">&quot;ms&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">magnitude</span>
+                            <span class="n">times_list</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">spike_times</span><span class="p">)</span>
+                            <span class="n">ids_list</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="n">neuron_id</span><span class="p">]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">spike_times</span><span class="p">))</span>
+
+                        <span class="n">spike_data_arrays</span><span class="p">[</span><span class="n">pop_name</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+                            <span class="s2">&quot;times&quot;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">times_list</span><span class="p">),</span>
+                            <span class="s2">&quot;ids&quot;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">ids_list</span><span class="p">),</span>
+                        <span class="p">}</span>
+
+                        <span class="nb">print</span><span class="p">(</span>
+                            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">pop_name</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">times_list</span><span class="p">)</span><span class="si">}</span><span class="s2"> spikes from </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">seg</span><span class="o">.</span><span class="n">spiketrains</span><span class="p">)</span><span class="si">}</span><span class="s2"> neurons&quot;</span>
+                        <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># Use manually recorded spike data (legacy)</span>
+            <span class="k">for</span> <span class="n">pop_name</span><span class="p">,</span> <span class="n">data</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">spike_data</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="n">spike_data_arrays</span><span class="p">[</span><span class="n">pop_name</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+                    <span class="s2">&quot;times&quot;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;times&quot;</span><span class="p">]),</span>
+                    <span class="s2">&quot;ids&quot;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;ids&quot;</span><span class="p">]),</span>
+                <span class="p">}</span>
+
+        <span class="n">joblib</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">spike_data_arrays</span><span class="p">,</span> <span class="n">spike_filename</span><span class="p">,</span> <span class="n">compress</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+
+        <span class="c1"># Save metadata</span>
+        <span class="n">metadata</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;total_chunks&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">chunk_id</span><span class="p">,</span>
+            <span class="s2">&quot;chunk_duration__ms&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">chunk_duration__ms</span><span class="p">,</span>
+            <span class="s2">&quot;recording_config&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">recording_config</span><span class="p">,</span>
+        <span class="p">}</span>
+        <span class="n">joblib</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">metadata</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">save_path</span> <span class="o">/</span> <span class="s2">&quot;metadata.pkl&quot;</span><span class="p">)</span>
+
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Continuous saving complete:&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">Total chunks saved: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">chunk_id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">Spike data saved: </span><span class="si">{</span><span class="n">spike_filename</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">Populations with spikes: </span><span class="si">{</span><span class="nb">list</span><span class="p">(</span><span class="n">spike_data_arrays</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">All data in: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">save_path</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
+</div>
+
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">load_and_combine_chunks</span><span class="p">(</span><span class="n">save_path</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span> <span class="n">output_filename</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Load all chunks from disk and combine into a single dataset.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    save_path : Path</span>
+<span class="sd">        Directory where chunks were saved</span>
+<span class="sd">    output_filename : str, optional</span>
+<span class="sd">        If provided, save combined data to this file</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    dict</span>
+<span class="sd">        Combined dataset with all chunks merged</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">save_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">save_path</span><span class="p">)</span>
+
+    <span class="c1"># Load metadata</span>
+    <span class="n">metadata</span> <span class="o">=</span> <span class="n">joblib</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">save_path</span> <span class="o">/</span> <span class="s2">&quot;metadata.pkl&quot;</span><span class="p">)</span>
+    <span class="n">total_chunks</span> <span class="o">=</span> <span class="n">metadata</span><span class="p">[</span><span class="s2">&quot;total_chunks&quot;</span><span class="p">]</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Loading </span><span class="si">{</span><span class="n">total_chunks</span><span class="si">}</span><span class="s2"> chunks from </span><span class="si">{</span><span class="n">save_path</span><span class="si">}</span><span class="s2">...&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Load all chunks</span>
+    <span class="n">chunks</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">chunk_id</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">total_chunks</span><span class="p">):</span>
+        <span class="n">chunk_filename</span> <span class="o">=</span> <span class="n">save_path</span> <span class="o">/</span> <span class="sa">f</span><span class="s2">&quot;chunk_</span><span class="si">{</span><span class="n">chunk_id</span><span class="si">:</span><span class="s2">04d</span><span class="si">}</span><span class="s2">.pkl&quot;</span>
+        <span class="k">if</span> <span class="n">chunk_filename</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+            <span class="n">chunks</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">joblib</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">chunk_filename</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Warning: Missing chunk </span><span class="si">{</span><span class="n">chunk_id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Combine chunks</span>
+    <span class="n">combined</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;times&quot;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">([</span><span class="n">c</span><span class="p">[</span><span class="s2">&quot;times&quot;</span><span class="p">]</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">chunks</span><span class="p">]),</span>
+        <span class="s2">&quot;timestep__ms&quot;</span><span class="p">:</span> <span class="n">chunks</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;timestep__ms&quot;</span><span class="p">],</span>
+        <span class="s2">&quot;membrane_data&quot;</span><span class="p">:</span> <span class="n">defaultdict</span><span class="p">(</span><span class="nb">dict</span><span class="p">),</span>
+    <span class="p">}</span>
+
+    <span class="c1"># Combine membrane data for each population and cell</span>
+    <span class="k">for</span> <span class="n">chunk</span> <span class="ow">in</span> <span class="n">chunks</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">pop_name</span><span class="p">,</span> <span class="n">cells_dict</span> <span class="ow">in</span> <span class="n">chunk</span><span class="p">[</span><span class="s2">&quot;membrane_data&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">for</span> <span class="n">cell_idx</span><span class="p">,</span> <span class="n">voltages</span> <span class="ow">in</span> <span class="n">cells_dict</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="k">if</span> <span class="n">cell_idx</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">combined</span><span class="p">[</span><span class="s2">&quot;membrane_data&quot;</span><span class="p">][</span><span class="n">pop_name</span><span class="p">]:</span>
+                    <span class="n">combined</span><span class="p">[</span><span class="s2">&quot;membrane_data&quot;</span><span class="p">][</span><span class="n">pop_name</span><span class="p">][</span><span class="n">cell_idx</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+                <span class="n">combined</span><span class="p">[</span><span class="s2">&quot;membrane_data&quot;</span><span class="p">][</span><span class="n">pop_name</span><span class="p">][</span><span class="n">cell_idx</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">voltages</span><span class="p">)</span>
+
+    <span class="c1"># Convert concatenated lists to arrays</span>
+    <span class="k">for</span> <span class="n">pop_name</span> <span class="ow">in</span> <span class="n">combined</span><span class="p">[</span><span class="s2">&quot;membrane_data&quot;</span><span class="p">]:</span>
+        <span class="k">for</span> <span class="n">cell_idx</span> <span class="ow">in</span> <span class="n">combined</span><span class="p">[</span><span class="s2">&quot;membrane_data&quot;</span><span class="p">][</span><span class="n">pop_name</span><span class="p">]:</span>
+            <span class="n">combined</span><span class="p">[</span><span class="s2">&quot;membrane_data&quot;</span><span class="p">][</span><span class="n">pop_name</span><span class="p">][</span><span class="n">cell_idx</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">(</span>
+                <span class="n">combined</span><span class="p">[</span><span class="s2">&quot;membrane_data&quot;</span><span class="p">][</span><span class="n">pop_name</span><span class="p">][</span><span class="n">cell_idx</span><span class="p">]</span>
+            <span class="p">)</span>
+
+    <span class="c1"># Load spike data</span>
+    <span class="n">spike_filename</span> <span class="o">=</span> <span class="n">save_path</span> <span class="o">/</span> <span class="s2">&quot;spikes.pkl&quot;</span>
+    <span class="k">if</span> <span class="n">spike_filename</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+        <span class="n">combined</span><span class="p">[</span><span class="s2">&quot;spikes&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">joblib</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">spike_filename</span><span class="p">)</span>
+
+    <span class="n">combined</span><span class="p">[</span><span class="s2">&quot;metadata&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">metadata</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Combined </span><span class="si">{</span><span class="n">total_chunks</span><span class="si">}</span><span class="s2"> chunks:&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">Total time points: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">combined</span><span class="p">[</span><span class="s1">&#39;times&#39;</span><span class="p">])</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">Time range: </span><span class="si">{</span><span class="n">combined</span><span class="p">[</span><span class="s1">&#39;times&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2"> - </span><span class="si">{</span><span class="n">combined</span><span class="p">[</span><span class="s1">&#39;times&#39;</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2"> ms&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">Duration: </span><span class="si">{</span><span class="p">(</span><span class="n">combined</span><span class="p">[</span><span class="s1">&#39;times&#39;</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">combined</span><span class="p">[</span><span class="s1">&#39;times&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="mi">1000</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2"> seconds&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Optionally save combined data</span>
+    <span class="k">if</span> <span class="n">output_filename</span><span class="p">:</span>
+        <span class="n">output_path</span> <span class="o">=</span> <span class="n">save_path</span> <span class="o">/</span> <span class="n">output_filename</span>
+        <span class="n">joblib</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">combined</span><span class="p">,</span> <span class="n">output_path</span><span class="p">,</span> <span class="n">compress</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">Saved combined data to: </span><span class="si">{</span><span class="n">output_path</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">combined</span>
+
+
+<div class="viewcode-block" id="convert_chunks_to_neo">
+<a class="viewcode-back" href="../../../generated/myogen.utils.continuous_saver.convert_chunks_to_neo.html#myogen.utils.continuous_saver.convert_chunks_to_neo">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">convert_chunks_to_neo</span><span class="p">(</span>
+    <span class="n">save_path</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span> <span class="n">duration__ms</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">spike_data_file</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Path</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Block</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Load chunks and convert to NEO Block format (compatible with SimulationRunner output).</span>
+
+<span class="sd">    This function creates a NEO Block that&#39;s identical in structure to what</span>
+<span class="sd">    SimulationRunner.run() would return, making it compatible with existing</span>
+<span class="sd">    analysis code.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    save_path : Path</span>
+<span class="sd">        Directory where chunks were saved</span>
+<span class="sd">    duration__ms : float, optional</span>
+<span class="sd">        Total simulation duration in ms (if None, inferred from data)</span>
+<span class="sd">    spike_data_file : Path, optional</span>
+<span class="sd">        Path to SimulationRunner spike results file (e.g., &#39;watanabe__spikes_only.pkl&#39;)</span>
+<span class="sd">        If provided, spike data will be loaded from this NEO Block instead of chunks</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    Block</span>
+<span class="sd">        NEO Block containing spike trains and analog signals</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">save_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">save_path</span><span class="p">)</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Converting chunks to NEO Block format...&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Load metadata</span>
+    <span class="n">metadata</span> <span class="o">=</span> <span class="n">joblib</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">save_path</span> <span class="o">/</span> <span class="s2">&quot;metadata.pkl&quot;</span><span class="p">)</span>
+    <span class="n">total_chunks</span> <span class="o">=</span> <span class="n">metadata</span><span class="p">[</span><span class="s2">&quot;total_chunks&quot;</span><span class="p">]</span>
+    <span class="n">timestep__ms</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="c1"># Load spike data - either from external file or from chunks</span>
+    <span class="k">if</span> <span class="n">spike_data_file</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="c1"># Load spike data from SimulationRunner results (NEO Block)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">Loading spike data from: </span><span class="si">{spike_data_file}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">spike_results</span> <span class="o">=</span> <span class="n">joblib</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">spike_data_file</span><span class="p">)</span>
+        <span class="n">use_neo_spikes</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c1"># Load spike data from chunks (legacy format)</span>
+        <span class="n">spike_filename</span> <span class="o">=</span> <span class="n">save_path</span> <span class="o">/</span> <span class="s2">&quot;spikes.pkl&quot;</span>
+        <span class="k">if</span> <span class="n">spike_filename</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Loading spike data from: </span><span class="si">{</span><span class="n">spike_filename</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="n">spike_data</span> <span class="o">=</span> <span class="n">joblib</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">spike_filename</span><span class="p">)</span>
+            <span class="n">use_neo_spikes</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">Warning: No spike data found&quot;</span><span class="p">)</span>
+            <span class="n">spike_data</span> <span class="o">=</span> <span class="p">{}</span>
+            <span class="n">use_neo_spikes</span> <span class="o">=</span> <span class="kc">False</span>
+
+    <span class="c1"># Load first chunk to get timestep info</span>
+    <span class="n">first_chunk</span> <span class="o">=</span> <span class="n">joblib</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">save_path</span> <span class="o">/</span> <span class="s2">&quot;chunk_0000.pkl&quot;</span><span class="p">)</span>
+    <span class="n">timestep__ms</span> <span class="o">=</span> <span class="n">first_chunk</span><span class="p">[</span><span class="s2">&quot;timestep__ms&quot;</span><span class="p">]</span>
+
+    <span class="c1"># Infer duration if not provided</span>
+    <span class="k">if</span> <span class="n">duration__ms</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">last_chunk</span> <span class="o">=</span> <span class="n">joblib</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">save_path</span> <span class="o">/</span> <span class="sa">f</span><span class="s2">&quot;chunk_</span><span class="si">{</span><span class="n">total_chunks</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="si">:</span><span class="s2">04d</span><span class="si">}</span><span class="s2">.pkl&quot;</span><span class="p">)</span>
+        <span class="n">duration__ms</span> <span class="o">=</span> <span class="n">last_chunk</span><span class="p">[</span><span class="s2">&quot;time_end&quot;</span><span class="p">]</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">Duration: </span><span class="si">{</span><span class="n">duration__ms</span><span class="si">}</span><span class="s2"> ms&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">Timestep: </span><span class="si">{</span><span class="n">timestep__ms</span><span class="si">}</span><span class="s2"> ms&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">Total chunks: </span><span class="si">{</span><span class="n">total_chunks</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Create NEO Block</span>
+    <span class="n">block</span> <span class="o">=</span> <span class="n">Block</span><span class="p">()</span>
+
+    <span class="c1"># Add spike data for each population</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">Adding spike trains...&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">use_neo_spikes</span><span class="p">:</span>
+        <span class="c1"># Use spike data from SimulationRunner NEO Block</span>
+        <span class="k">for</span> <span class="n">seg</span> <span class="ow">in</span> <span class="n">spike_results</span><span class="o">.</span><span class="n">segments</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">seg</span><span class="o">.</span><span class="n">spiketrains</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="c1"># Create new segment with spike trains</span>
+                <span class="n">new_segment</span> <span class="o">=</span> <span class="n">Segment</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">seg</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+                <span class="k">for</span> <span class="n">st</span> <span class="ow">in</span> <span class="n">seg</span><span class="o">.</span><span class="n">spiketrains</span><span class="p">:</span>
+                    <span class="n">new_segment</span><span class="o">.</span><span class="n">spiketrains</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">st</span><span class="p">)</span>
+                <span class="n">block</span><span class="o">.</span><span class="n">segments</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">new_segment</span><span class="p">)</span>
+                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\t</span><span class="si">{</span><span class="n">seg</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">new_segment</span><span class="o">.</span><span class="n">spiketrains</span><span class="p">)</span><span class="si">}</span><span class="s2"> spike trains&quot;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c1"># Use spike data from chunks (legacy format)</span>
+        <span class="k">for</span> <span class="n">pop_name</span><span class="p">,</span> <span class="n">spikes</span> <span class="ow">in</span> <span class="n">spike_data</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">segment</span> <span class="o">=</span> <span class="n">Segment</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">pop_name</span><span class="p">)</span>
+
+            <span class="n">spike_times</span> <span class="o">=</span> <span class="n">spikes</span><span class="p">[</span><span class="s2">&quot;times&quot;</span><span class="p">]</span>
+            <span class="n">spike_ids</span> <span class="o">=</span> <span class="n">spikes</span><span class="p">[</span><span class="s2">&quot;ids&quot;</span><span class="p">]</span>
+
+            <span class="c1"># Create spike trains for each neuron</span>
+            <span class="n">unique_ids</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">spike_ids</span><span class="p">))</span>
+            <span class="k">for</span> <span class="n">spike_id</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span>
+                <span class="n">unique_ids</span><span class="p">,</span> <span class="n">desc</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">Creating </span><span class="si">{</span><span class="n">pop_name</span><span class="si">}</span><span class="s2"> spike trains&quot;</span><span class="p">,</span> <span class="n">leave</span><span class="o">=</span><span class="kc">False</span>
+            <span class="p">):</span>
+                <span class="n">times_for_id</span> <span class="o">=</span> <span class="n">spike_times</span><span class="p">[</span><span class="n">spike_ids</span> <span class="o">==</span> <span class="n">spike_id</span><span class="p">]</span>
+
+                <span class="c1"># Filter out spike times that exceed duration due to floating-point precision</span>
+                <span class="c1"># Keep only spikes strictly less than t_stop</span>
+                <span class="n">times_for_id</span> <span class="o">=</span> <span class="n">times_for_id</span><span class="p">[</span><span class="n">times_for_id</span> <span class="o">&lt;</span> <span class="n">duration__ms</span><span class="p">]</span>
+
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">times_for_id</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="n">segment</span><span class="o">.</span><span class="n">spiketrains</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                        <span class="n">SpikeTrain</span><span class="p">(</span>
+                            <span class="n">name</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">spike_id</span><span class="p">)),</span>
+                            <span class="n">times</span><span class="o">=</span><span class="p">(</span><span class="n">times_for_id</span> <span class="o">*</span> <span class="n">pq</span><span class="o">.</span><span class="n">ms</span><span class="p">)</span><span class="o">.</span><span class="n">rescale</span><span class="p">(</span><span class="n">pq</span><span class="o">.</span><span class="n">s</span><span class="p">),</span>
+                            <span class="n">t_start</span><span class="o">=</span><span class="mf">0.0</span> <span class="o">*</span> <span class="n">pq</span><span class="o">.</span><span class="n">s</span><span class="p">,</span>
+                            <span class="n">t_stop</span><span class="o">=</span><span class="p">(</span><span class="n">duration__ms</span> <span class="o">*</span> <span class="n">pq</span><span class="o">.</span><span class="n">ms</span><span class="p">)</span><span class="o">.</span><span class="n">rescale</span><span class="p">(</span><span class="n">pq</span><span class="o">.</span><span class="n">s</span><span class="p">),</span>
+                            <span class="n">sampling_rate</span><span class="o">=</span><span class="p">(</span><span class="mf">1.0</span> <span class="o">/</span> <span class="p">(</span><span class="n">timestep__ms</span> <span class="o">*</span> <span class="n">pq</span><span class="o">.</span><span class="n">ms</span><span class="p">))</span><span class="o">.</span><span class="n">rescale</span><span class="p">(</span><span class="n">pq</span><span class="o">.</span><span class="n">Hz</span><span class="p">),</span>
+                        <span class="p">)</span>
+                    <span class="p">)</span>
+
+            <span class="n">block</span><span class="o">.</span><span class="n">segments</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">segment</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\t</span><span class="si">{</span><span class="n">pop_name</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">segment</span><span class="o">.</span><span class="n">spiketrains</span><span class="p">)</span><span class="si">}</span><span class="s2"> spike trains&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Add membrane potential data by loading and combining chunks</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">Loading and combining membrane data from </span><span class="si">{</span><span class="n">total_chunks</span><span class="si">}</span><span class="s2"> chunks...&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Determine which populations have membrane recordings</span>
+    <span class="n">first_chunk_membrane</span> <span class="o">=</span> <span class="n">first_chunk</span><span class="p">[</span><span class="s2">&quot;membrane_data&quot;</span><span class="p">]</span>
+
+    <span class="k">for</span> <span class="n">pop_name</span> <span class="ow">in</span> <span class="n">first_chunk_membrane</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+        <span class="c1"># Find or create segment for this population</span>
+        <span class="n">segment</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">for</span> <span class="n">seg</span> <span class="ow">in</span> <span class="n">block</span><span class="o">.</span><span class="n">segments</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">seg</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="n">pop_name</span><span class="p">:</span>
+                <span class="n">segment</span> <span class="o">=</span> <span class="n">seg</span>
+                <span class="k">break</span>
+
+        <span class="k">if</span> <span class="n">segment</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">segment</span> <span class="o">=</span> <span class="n">Segment</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">pop_name</span><span class="p">)</span>
+            <span class="n">block</span><span class="o">.</span><span class="n">segments</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">segment</span><span class="p">)</span>
+
+        <span class="c1"># Get all cell indices for this population</span>
+        <span class="n">cell_indices</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">first_chunk_membrane</span><span class="p">[</span><span class="n">pop_name</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\t</span><span class="si">{</span><span class="n">pop_name</span><span class="si">}</span><span class="s2">: Combining </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">cell_indices</span><span class="p">)</span><span class="si">}</span><span class="s2"> neurons from </span><span class="si">{</span><span class="n">total_chunks</span><span class="si">}</span><span class="s2"> chunks...&quot;</span><span class="p">)</span>
+
+        <span class="c1"># OPTIMIZED: Load each chunk once and extract all neurons</span>
+        <span class="c1"># This reduces file reads from (neurons × chunks) to just (chunks)</span>
+        <span class="c1"># For 400 neurons × 36 chunks: 14,400 reads → 36 reads (400x faster!)</span>
+
+        <span class="c1"># Initialize storage for each neuron</span>
+        <span class="n">neuron_data</span> <span class="o">=</span> <span class="p">{</span><span class="n">cell_idx</span><span class="p">:</span> <span class="p">[]</span> <span class="k">for</span> <span class="n">cell_idx</span> <span class="ow">in</span> <span class="n">cell_indices</span><span class="p">}</span>
+
+        <span class="c1"># Load chunks once and distribute data to neurons</span>
+        <span class="k">for</span> <span class="n">chunk_id</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span>
+            <span class="nb">range</span><span class="p">(</span><span class="n">total_chunks</span><span class="p">),</span> <span class="n">desc</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">Loading </span><span class="si">{</span><span class="n">pop_name</span><span class="si">}</span><span class="s2"> chunks&quot;</span><span class="p">,</span> <span class="n">unit</span><span class="o">=</span><span class="s2">&quot;chunk&quot;</span>
+        <span class="p">):</span>
+            <span class="n">chunk</span> <span class="o">=</span> <span class="n">joblib</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">save_path</span> <span class="o">/</span> <span class="sa">f</span><span class="s2">&quot;chunk_</span><span class="si">{</span><span class="n">chunk_id</span><span class="si">:</span><span class="s2">04d</span><span class="si">}</span><span class="s2">.pkl&quot;</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">pop_name</span> <span class="ow">in</span> <span class="n">chunk</span><span class="p">[</span><span class="s2">&quot;membrane_data&quot;</span><span class="p">]:</span>
+                <span class="k">for</span> <span class="n">cell_idx</span> <span class="ow">in</span> <span class="n">cell_indices</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">cell_idx</span> <span class="ow">in</span> <span class="n">chunk</span><span class="p">[</span><span class="s2">&quot;membrane_data&quot;</span><span class="p">][</span><span class="n">pop_name</span><span class="p">]:</span>
+                        <span class="n">neuron_data</span><span class="p">[</span><span class="n">cell_idx</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">chunk</span><span class="p">[</span><span class="s2">&quot;membrane_data&quot;</span><span class="p">][</span><span class="n">pop_name</span><span class="p">][</span><span class="n">cell_idx</span><span class="p">])</span>
+
+        <span class="c1"># Concatenate data for each neuron and create AnalogSignals</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\t</span><span class="si">{</span><span class="n">pop_name</span><span class="si">}</span><span class="s2">: Creating analog signals...&quot;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">cell_idx</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span>
+            <span class="n">cell_indices</span><span class="p">,</span> <span class="n">desc</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">Creating </span><span class="si">{</span><span class="n">pop_name</span><span class="si">}</span><span class="s2"> signals&quot;</span><span class="p">,</span> <span class="n">leave</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">unit</span><span class="o">=</span><span class="s2">&quot;signal&quot;</span>
+        <span class="p">):</span>
+            <span class="k">if</span> <span class="n">neuron_data</span><span class="p">[</span><span class="n">cell_idx</span><span class="p">]:</span>
+                <span class="n">combined_voltage</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">(</span><span class="n">neuron_data</span><span class="p">[</span><span class="n">cell_idx</span><span class="p">])</span>
+
+                <span class="n">segment</span><span class="o">.</span><span class="n">analogsignals</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                    <span class="n">AnalogSignal</span><span class="p">(</span>
+                        <span class="n">name</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">cell_idx</span><span class="p">),</span>
+                        <span class="n">sampling_period</span><span class="o">=</span><span class="p">(</span><span class="n">timestep__ms</span> <span class="o">*</span> <span class="n">pq</span><span class="o">.</span><span class="n">ms</span><span class="p">)</span><span class="o">.</span><span class="n">rescale</span><span class="p">(</span><span class="n">pq</span><span class="o">.</span><span class="n">s</span><span class="p">),</span>
+                        <span class="n">signal</span><span class="o">=</span><span class="n">combined_voltage</span> <span class="o">*</span> <span class="n">pq</span><span class="o">.</span><span class="n">mV</span><span class="p">,</span>
+                    <span class="p">)</span>
+                <span class="p">)</span>
+
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\t</span><span class="si">{</span><span class="n">pop_name</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">segment</span><span class="o">.</span><span class="n">analogsignals</span><span class="p">)</span><span class="si">}</span><span class="s2"> analog signals created&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Add metadata annotations</span>
+    <span class="n">block</span><span class="o">.</span><span class="n">annotations</span><span class="p">[</span><span class="s2">&quot;time__ms&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">duration__ms</span>
+    <span class="n">block</span><span class="o">.</span><span class="n">annotations</span><span class="p">[</span><span class="s2">&quot;timestep__ms&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">timestep__ms</span>
+    <span class="n">block</span><span class="o">.</span><span class="n">annotations</span><span class="p">[</span><span class="s2">&quot;temperature__celsius&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">36.0</span>  <span class="c1"># Default from SimulationRunner</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">NEO Block created successfully&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">Total segments: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">block</span><span class="o">.</span><span class="n">segments</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">block</span></div>
+
+</pre></div>
+
+                </article>
+              
+              
+              
+              
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2025 - 2025, n-squared lab, FAU Erlangen-Nürnberg, Germany.
+      <br/>
+    
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.2.3.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>myogen.utils.nmodl &#8212; MyoGen 0.7.0 Documentation</title>
+    <title>myogen.utils.nmodl &#8212; MyoGen 0.8.0 Documentation</title>
   
   
   
@@ -54,7 +54,7 @@
 
     <script src="../../../_static/jquery.js?v=5d32c60e"></script>
     <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-    <script src="../../../_static/documentation_options.js?v=b9678aa1"></script>
+    <script src="../../../_static/documentation_options.js?v=cce5339e"></script>
     <script src="../../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/js/hoverxref.js"></script>
@@ -434,7 +434,7 @@ window.addEventListener("load", load);
     <link rel="search" title="Search" href="../../../search.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="0.7.0" />
+  <meta name="docsearch:version" content="0.8.0" />
   </head>
   
   
@@ -503,8 +503,8 @@ window.addEventListener("load", load);
       
     
     
-    <img src="../../../_static/myogen_logo.png" class="logo__image only-light" alt="MyoGen 0.7.0 Documentation - Home"/>
-    <img src="../../../_static/myogen_logo.png" class="logo__image only-dark pst-js-only" alt="MyoGen 0.7.0 Documentation - Home"/>
+    <img src="../../../_static/myogen_logo.png" class="logo__image only-light" alt="MyoGen 0.8.0 Documentation - Home"/>
+    <img src="../../../_static/myogen_logo.png" class="logo__image only-dark pst-js-only" alt="MyoGen 0.8.0 Documentation - Home"/>
   
   
 </a></div>
@@ -513,7 +513,7 @@ window.addEventListener("load", load);
 <div class="nav-item">
   <div class="version-switcher__container dropdown">
       <button id="version-switcher-button" type="button" class="version-switcher__button btn btn-sm navbar-btn" aria-haspopup="true" aria-expanded="false">
-          Version 0.7.0
+          Version 0.8.0
       </button>
       
       
@@ -787,15 +787,29 @@ window.addEventListener("load", load);
     <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="n">nmodl_path</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="s2">&quot;*.mod&quot;</span><span class="p">))</span>
 
 
-<span class="k">def</span><span class="w"> </span><span class="nf">_find_neuron_home_from_registry</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Path</span><span class="p">]:</span>
+<span class="c1"># Cache for registry lookup (module-level to persist across calls)</span>
+<span class="n">_neuron_home_cache</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Path</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="n">_neuron_home_cache_checked</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_find_neuron_home_from_registry</span><span class="p">(</span><span class="n">quiet</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Path</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Find NEURON installation path from Windows Registry.&quot;&quot;&quot;</span>
+    <span class="k">global</span> <span class="n">_neuron_home_cache</span><span class="p">,</span> <span class="n">_neuron_home_cache_checked</span>
+
+    <span class="c1"># Return cached result if already searched</span>
+    <span class="k">if</span> <span class="n">_neuron_home_cache_checked</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">_neuron_home_cache</span>
+
     <span class="k">if</span> <span class="n">platform</span><span class="o">.</span><span class="n">system</span><span class="p">()</span> <span class="o">!=</span> <span class="s2">&quot;Windows&quot;</span><span class="p">:</span>
+        <span class="n">_neuron_home_cache_checked</span> <span class="o">=</span> <span class="kc">True</span>
         <span class="k">return</span> <span class="kc">None</span>
 
     <span class="k">try</span><span class="p">:</span>
         <span class="kn">import</span><span class="w"> </span><span class="nn">winreg</span>
     <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Warning: winreg module not available&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">quiet</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Warning: winreg module not available&quot;</span><span class="p">)</span>
+        <span class="n">_neuron_home_cache_checked</span> <span class="o">=</span> <span class="kc">True</span>
         <span class="k">return</span> <span class="kc">None</span>
 
     <span class="c1"># Registry keys to check (in order of preference)</span>
@@ -818,7 +832,8 @@ window.addEventListener("load", load);
 
     <span class="n">registry_paths</span> <span class="o">=</span> <span class="n">direct_neuron_keys</span> <span class="o">+</span> <span class="n">uninstall_keys</span>
 
-    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Searching for NEURON in Windows Registry...&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">quiet</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Searching for NEURON in Windows Registry...&quot;</span><span class="p">)</span>
 
     <span class="k">for</span> <span class="n">hkey</span><span class="p">,</span> <span class="n">subkey_path</span><span class="p">,</span> <span class="n">access_flag</span> <span class="ow">in</span> <span class="n">registry_paths</span><span class="p">:</span>
         <span class="k">try</span><span class="p">:</span>
@@ -833,7 +848,10 @@ window.addEventListener("load", load);
                                 <span class="k">if</span> <span class="n">install_path</span><span class="p">:</span>
                                     <span class="n">neuron_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">install_path</span><span class="p">)</span>
                                     <span class="k">if</span> <span class="n">neuron_path</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
-                                        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  (OK) Found NEURON in registry: </span><span class="si">{</span><span class="n">neuron_path</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                                        <span class="k">if</span> <span class="ow">not</span> <span class="n">quiet</span><span class="p">:</span>
+                                            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  (OK) Found NEURON in registry: </span><span class="si">{</span><span class="n">neuron_path</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                                        <span class="n">_neuron_home_cache</span> <span class="o">=</span> <span class="n">neuron_path</span>
+                                        <span class="n">_neuron_home_cache_checked</span> <span class="o">=</span> <span class="kc">True</span>
                                         <span class="k">return</span> <span class="n">neuron_path</span>
                         <span class="k">except</span> <span class="ne">FileNotFoundError</span><span class="p">:</span>
                             <span class="k">pass</span>
@@ -844,7 +862,10 @@ window.addEventListener("load", load);
                         <span class="k">if</span> <span class="n">install_path</span><span class="p">:</span>
                             <span class="n">neuron_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">install_path</span><span class="p">)</span>
                             <span class="k">if</span> <span class="n">neuron_path</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
-                                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  (OK) Found NEURON in registry: </span><span class="si">{</span><span class="n">neuron_path</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                                <span class="k">if</span> <span class="ow">not</span> <span class="n">quiet</span><span class="p">:</span>
+                                    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  (OK) Found NEURON in registry: </span><span class="si">{</span><span class="n">neuron_path</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                                <span class="n">_neuron_home_cache</span> <span class="o">=</span> <span class="n">neuron_path</span>
+                                <span class="n">_neuron_home_cache_checked</span> <span class="o">=</span> <span class="kc">True</span>
                                 <span class="k">return</span> <span class="n">neuron_path</span>
                     <span class="k">except</span> <span class="ne">FileNotFoundError</span><span class="p">:</span>
                         <span class="c1"># Try alternative value names</span>
@@ -854,7 +875,10 @@ window.addEventListener("load", load);
                                 <span class="k">if</span> <span class="n">install_path</span><span class="p">:</span>
                                     <span class="n">neuron_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">install_path</span><span class="p">)</span>
                                     <span class="k">if</span> <span class="n">neuron_path</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
-                                        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  (OK) Found NEURON in registry: </span><span class="si">{</span><span class="n">neuron_path</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                                        <span class="k">if</span> <span class="ow">not</span> <span class="n">quiet</span><span class="p">:</span>
+                                            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  (OK) Found NEURON in registry: </span><span class="si">{</span><span class="n">neuron_path</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                                        <span class="n">_neuron_home_cache</span> <span class="o">=</span> <span class="n">neuron_path</span>
+                                        <span class="n">_neuron_home_cache_checked</span> <span class="o">=</span> <span class="kc">True</span>
                                         <span class="k">return</span> <span class="n">neuron_path</span>
                             <span class="k">except</span> <span class="ne">FileNotFoundError</span><span class="p">:</span>
                                 <span class="k">continue</span>
@@ -873,7 +897,10 @@ window.addEventListener("load", load);
                                         <span class="k">if</span> <span class="n">install_location</span><span class="p">:</span>
                                             <span class="n">neuron_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">install_location</span><span class="p">)</span>
                                             <span class="k">if</span> <span class="n">neuron_path</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
-                                                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  (OK) Found NEURON in registry (Uninstall): </span><span class="si">{</span><span class="n">neuron_path</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                                                <span class="k">if</span> <span class="ow">not</span> <span class="n">quiet</span><span class="p">:</span>
+                                                    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  (OK) Found NEURON in registry (Uninstall): </span><span class="si">{</span><span class="n">neuron_path</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                                                <span class="n">_neuron_home_cache</span> <span class="o">=</span> <span class="n">neuron_path</span>
+                                                <span class="n">_neuron_home_cache_checked</span> <span class="o">=</span> <span class="kc">True</span>
                                                 <span class="k">return</span> <span class="n">neuron_path</span>
                                     <span class="k">except</span> <span class="ne">FileNotFoundError</span><span class="p">:</span>
                                         <span class="k">pass</span>
@@ -886,7 +913,10 @@ window.addEventListener("load", load);
                                             <span class="n">uninstall_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">uninstall_string</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s1">&#39;&quot;&#39;</span><span class="p">))</span>
                                             <span class="n">neuron_path</span> <span class="o">=</span> <span class="n">uninstall_path</span><span class="o">.</span><span class="n">parent</span>
                                             <span class="k">if</span> <span class="n">neuron_path</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
-                                                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  (OK) Found NEURON in registry (UninstallString): </span><span class="si">{</span><span class="n">neuron_path</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                                                <span class="k">if</span> <span class="ow">not</span> <span class="n">quiet</span><span class="p">:</span>
+                                                    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  (OK) Found NEURON in registry (UninstallString): </span><span class="si">{</span><span class="n">neuron_path</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                                                <span class="n">_neuron_home_cache</span> <span class="o">=</span> <span class="n">neuron_path</span>
+                                                <span class="n">_neuron_home_cache_checked</span> <span class="o">=</span> <span class="kc">True</span>
                                                 <span class="k">return</span> <span class="n">neuron_path</span>
                                     <span class="k">except</span> <span class="ne">FileNotFoundError</span><span class="p">:</span>
                                         <span class="k">pass</span>
@@ -895,17 +925,21 @@ window.addEventListener("load", load);
         <span class="k">except</span> <span class="ne">FileNotFoundError</span><span class="p">:</span>
             <span class="k">continue</span>
         <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  (X) Error checking registry path </span><span class="si">{</span><span class="n">subkey_path</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">quiet</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  (X) Error checking registry path </span><span class="si">{</span><span class="n">subkey_path</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
             <span class="k">continue</span>
 
-    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;  (X) NEURON not found in registry&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">quiet</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;  (X) NEURON not found in registry&quot;</span><span class="p">)</span>
+    <span class="n">_neuron_home_cache_checked</span> <span class="o">=</span> <span class="kc">True</span>
     <span class="k">return</span> <span class="kc">None</span>
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">_find_mknrndll</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Path</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Find the mknrndll executable on Windows systems.&quot;&quot;&quot;</span>
     <span class="c1"># First, try to find NEURON from Windows Registry</span>
-    <span class="n">neuron_home_from_registry</span> <span class="o">=</span> <span class="n">_find_neuron_home_from_registry</span><span class="p">()</span>
+    <span class="c1"># Show output during build process</span>
+    <span class="n">neuron_home_from_registry</span> <span class="o">=</span> <span class="n">_find_neuron_home_from_registry</span><span class="p">(</span><span class="n">quiet</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 
     <span class="c1"># Build list of possible locations, prioritizing registry-found path</span>
     <span class="n">possible_locations</span> <span class="o">=</span> <span class="p">[]</span>
@@ -1072,9 +1106,15 @@ window.addEventListener("load", load);
         <span class="k">return</span> <span class="kc">False</span>
 
 
+<span class="k">class</span><span class="w"> </span><span class="nc">NMODLLoadError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Exception raised when NMODL mechanisms fail to load.&quot;&quot;&quot;</span>
+
+    <span class="k">pass</span>
+
+
 <div class="viewcode-block" id="load_nmodl_mechanisms">
 <a class="viewcode-back" href="../../../generated/myogen.load_nmodl_mechanisms.html#myogen.load_nmodl_mechanisms">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">load_nmodl_mechanisms</span><span class="p">(</span><span class="n">quiet</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">load_nmodl_mechanisms</span><span class="p">(</span><span class="n">quiet</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">strict</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Load pre-compiled NMODL mechanisms into current NEURON session.</span>
 
@@ -1083,18 +1123,31 @@ window.addEventListener("load", load);
 
 <span class="sd">    Args:</span>
 <span class="sd">        quiet: If True, suppress output messages</span>
+<span class="sd">        strict: If True, raise exceptions on errors instead of returning False.</span>
+<span class="sd">                Recommended for production code to catch configuration issues early.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        bool: True if mechanisms loaded successfully, False otherwise</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        NMODLLoadError: If strict=True and mechanisms fail to load</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">log</span><span class="p">(</span><span class="n">msg</span><span class="p">):</span>
         <span class="k">return</span> <span class="nb">print</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">quiet</span> <span class="k">else</span> <span class="kc">None</span>
 
+    <span class="k">def</span><span class="w"> </span><span class="nf">error</span><span class="p">(</span><span class="n">msg</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Handle errors based on strict mode.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">strict</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">NMODLLoadError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;WARNING: </span><span class="si">{</span><span class="n">msg</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="kc">False</span>
+
     <span class="c1"># On Windows, add NEURON paths to PATH before importing</span>
     <span class="k">if</span> <span class="n">platform</span><span class="o">.</span><span class="n">system</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;Windows&quot;</span><span class="p">:</span>
         <span class="c1"># Priority: Registry &gt; NEURONHOME env var &gt; hardcoded C: paths</span>
-        <span class="n">neuron_home</span> <span class="o">=</span> <span class="n">_find_neuron_home_from_registry</span><span class="p">()</span>
+        <span class="n">neuron_home</span> <span class="o">=</span> <span class="n">_find_neuron_home_from_registry</span><span class="p">(</span><span class="n">quiet</span><span class="o">=</span><span class="n">quiet</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="n">neuron_home</span> <span class="ow">and</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;NEURONHOME&quot;</span><span class="p">):</span>
             <span class="n">neuron_home</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;NEURONHOME&quot;</span><span class="p">))</span>
@@ -1153,12 +1206,149 @@ window.addEventListener("load", load);
         <span class="k">return</span> <span class="kc">True</span>
 
     <span class="k">except</span> <span class="ne">ImportError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Warning: NEURON not available, skipping mechanism loading: </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-        <span class="k">return</span> <span class="kc">False</span>
+        <span class="k">return</span> <span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;NEURON not available, cannot load mechanisms: </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
     <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Error loading NMODL mechanisms: </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-        <span class="k">return</span> <span class="kc">False</span></div>
+        <span class="k">return</span> <span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Failed to load NMODL mechanisms: </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
 
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">get_mechanism_parameters</span><span class="p">(</span><span class="n">mechanism_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Get list of valid parameters for a NEURON mechanism.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        mechanism_name: Name of the mechanism (e.g., &quot;mAHP&quot;, &quot;na3rp&quot;)</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        List of parameter names available for this mechanism</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        ValueError: If mechanism is not loaded or doesn&#39;t exist</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">neuron</span><span class="w"> </span><span class="kn">import</span> <span class="n">h</span>
+
+    <span class="c1"># Create a temporary section to inspect the mechanism</span>
+    <span class="n">temp_section</span> <span class="o">=</span> <span class="n">h</span><span class="o">.</span><span class="n">Section</span><span class="p">()</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">temp_section</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="n">mechanism_name</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Mechanism &#39;</span><span class="si">{</span><span class="n">mechanism_name</span><span class="si">}</span><span class="s2">&#39; not found. Is it loaded? Error: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="n">seg</span> <span class="o">=</span> <span class="n">temp_section</span><span class="p">(</span><span class="mf">0.5</span><span class="p">)</span>
+    <span class="n">mech</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">seg</span><span class="p">,</span> <span class="n">mechanism_name</span><span class="p">)</span>
+
+    <span class="c1"># Get all non-private, non-callable attributes</span>
+    <span class="n">params</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">attr</span> <span class="ow">in</span> <span class="nb">dir</span><span class="p">(</span><span class="n">mech</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">attr</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">):</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">val</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">mech</span><span class="p">,</span> <span class="n">attr</span><span class="p">)</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="nb">callable</span><span class="p">(</span><span class="n">val</span><span class="p">):</span>
+                    <span class="n">params</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">attr</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+                <span class="k">pass</span>
+
+    <span class="c1"># Clean up</span>
+    <span class="n">temp_section</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="k">return</span> <span class="n">params</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">validate_mechanism_parameter</span><span class="p">(</span><span class="n">section</span><span class="p">,</span> <span class="n">param_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">mechanism_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Validate that a parameter exists on a section before setting it.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        section: NEURON Section object</span>
+<span class="sd">        param_name: Parameter name (e.g., &quot;gcamax_mAHP&quot; or just &quot;gcamax&quot; with mechanism_name)</span>
+<span class="sd">        mechanism_name: Optional mechanism name if param_name doesn&#39;t include suffix</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        AttributeError: If the parameter doesn&#39;t exist on the section</span>
+
+<span class="sd">    Example:</span>
+<span class="sd">        &gt;&gt;&gt; validate_mechanism_parameter(soma, &quot;gcamax_mAHP&quot;)  # Validates before setting</span>
+<span class="sd">        &gt;&gt;&gt; soma.gcamax_mAHP = 1e-5  # Now safe to set</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># If mechanism name provided, construct full parameter name</span>
+    <span class="k">if</span> <span class="n">mechanism_name</span><span class="p">:</span>
+        <span class="n">full_param</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">param_name</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">mechanism_name</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">full_param</span> <span class="o">=</span> <span class="n">param_name</span>
+
+    <span class="c1"># Try to access the parameter - will raise AttributeError if invalid</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">_</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">section</span><span class="p">,</span> <span class="n">full_param</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
+        <span class="c1"># Extract mechanism name from param if not provided (e.g., &quot;gcamax_mAHP&quot; -&gt; &quot;mAHP&quot;)</span>
+        <span class="n">inferred_mech</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="s2">&quot;_&quot;</span> <span class="ow">in</span> <span class="n">full_param</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">mechanism_name</span><span class="p">:</span>
+            <span class="n">parts</span> <span class="o">=</span> <span class="n">full_param</span><span class="o">.</span><span class="n">rsplit</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">parts</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+                <span class="n">inferred_mech</span> <span class="o">=</span> <span class="n">parts</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+
+        <span class="c1"># Get available parameters for the mechanism</span>
+        <span class="n">available</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">mech_to_check</span> <span class="o">=</span> <span class="n">mechanism_name</span> <span class="ow">or</span> <span class="n">inferred_mech</span>
+        <span class="n">mech_found</span> <span class="o">=</span> <span class="kc">False</span>
+
+        <span class="k">if</span> <span class="n">mech_to_check</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">available</span> <span class="o">=</span> <span class="n">get_mechanism_parameters</span><span class="p">(</span><span class="n">mech_to_check</span><span class="p">)</span>
+                <span class="n">available</span> <span class="o">=</span> <span class="p">[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">p</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">mech_to_check</span><span class="si">}</span><span class="s2">&quot;</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">available</span><span class="p">]</span>
+                <span class="n">mech_found</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+                <span class="c1"># Mechanism doesn&#39;t exist - will suggest alternatives below</span>
+                <span class="k">pass</span>
+
+        <span class="c1"># Fallback: show all section params</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">available</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">attr</span> <span class="ow">in</span> <span class="nb">dir</span><span class="p">(</span><span class="n">section</span><span class="p">):</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">attr</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">callable</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="n">section</span><span class="p">,</span> <span class="n">attr</span><span class="p">,</span> <span class="kc">None</span><span class="p">)):</span>
+                    <span class="n">available</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">attr</span><span class="p">)</span>
+
+        <span class="c1"># Build helpful error message</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Parameter &#39;</span><span class="si">{</span><span class="n">full_param</span><span class="si">}</span><span class="s2">&#39; does not exist on section.</span><span class="se">\n</span><span class="s2">&quot;</span>
+
+        <span class="c1"># If mechanism wasn&#39;t found, suggest similar ones</span>
+        <span class="k">if</span> <span class="n">mech_to_check</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">mech_found</span><span class="p">:</span>
+            <span class="c1"># Get list of inserted mechanisms</span>
+            <span class="n">inserted</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="n">seg</span> <span class="o">=</span> <span class="n">section</span><span class="p">(</span><span class="mf">0.5</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">mech</span> <span class="ow">in</span> <span class="n">seg</span><span class="p">:</span>
+                <span class="n">inserted</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">mech</span><span class="o">.</span><span class="n">name</span><span class="p">())</span>
+            <span class="k">if</span> <span class="n">inserted</span><span class="p">:</span>
+                <span class="n">msg</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;Inserted mechanisms: </span><span class="si">{</span><span class="n">inserted</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+                <span class="c1"># Check for similar mechanism names (simple prefix match)</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">mech_to_check</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">3</span><span class="p">:</span>
+                    <span class="n">similar</span> <span class="o">=</span> <span class="p">[</span><span class="n">m</span> <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="n">inserted</span> <span class="k">if</span> <span class="n">m</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="n">mech_to_check</span><span class="p">[:</span><span class="mi">3</span><span class="p">]</span><span class="o">.</span><span class="n">lower</span><span class="p">())]</span>
+                    <span class="k">if</span> <span class="n">similar</span><span class="p">:</span>
+                        <span class="n">msg</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;Did you mean: </span><span class="si">{</span><span class="n">similar</span><span class="si">}</span><span class="s2">?</span><span class="se">\n</span><span class="s2">&quot;</span>
+
+        <span class="n">msg</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;Available parameters</span><span class="si">{</span><span class="s1">&#39; for &#39;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">mech_to_check</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="n">mech_found</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="s1">&#39;&#39;</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">available</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">set_mechanism_param</span><span class="p">(</span><span class="n">section</span><span class="p">,</span> <span class="n">param_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">validate</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Set a mechanism parameter with optional validation.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        section: NEURON Section object</span>
+<span class="sd">        param_name: Parameter name (e.g., &quot;gcamax_mAHP&quot;)</span>
+<span class="sd">        value: Value to set</span>
+<span class="sd">        validate: If True, validate parameter exists first (default: True)</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        AttributeError: If validate=True and parameter doesn&#39;t exist</span>
+
+<span class="sd">    Example:</span>
+<span class="sd">        &gt;&gt;&gt; set_mechanism_param(soma, &quot;gcamax_mAHP&quot;, 1e-5)  # Safe setting</span>
+<span class="sd">        &gt;&gt;&gt; set_mechanism_param(soma, &quot;gcamax_mAHPr&quot;, 1e-5)  # Raises AttributeError (typo)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">validate</span><span class="p">:</span>
+        <span class="n">validate_mechanism_parameter</span><span class="p">(</span><span class="n">section</span><span class="p">,</span> <span class="n">param_name</span><span class="p">)</span>
+    <span class="nb">setattr</span><span class="p">(</span><span class="n">section</span><span class="p">,</span> <span class="n">param_name</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
 </pre></div>
 
                 </article>

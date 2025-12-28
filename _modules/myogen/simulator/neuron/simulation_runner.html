@@ -1,0 +1,1303 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>myogen.simulator.neuron.simulation_runner &#8212; MyoGen 0.8.0 Documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../../../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=5349f25f" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/css/tooltipster.custom.css" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/css/tooltipster.bundle.min.css" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/css/tooltipster-sideTip-shadow.min.css" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/css/tooltipster-sideTip-punk.min.css" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/css/tooltipster-sideTip-noir.min.css" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/css/tooltipster-sideTip-light.min.css" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/css/tooltipster-sideTip-borderless.min.css" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/css/micromodal.css" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/custom.css?v=9b95bd4c" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery.css?v=d2d258e8" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery-binder.css?v=f4aeca0c" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/custom.css?v=9b95bd4c" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../../../../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+    <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+    <script src="../../../../_static/documentation_options.js?v=cce5339e"></script>
+    <script src="../../../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../../_static/js/hoverxref.js"></script>
+    <script src="../../../../_static/js/tooltipster.bundle.min.js"></script>
+    <script src="../../../../_static/js/micromodal.min.js"></script>
+    <script src="../../../../_static/custom.js?v=e0e269b1"></script>
+    <script src="../../../../_static/design-tabs.js?v=f930bc37"></script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script type="module" src="https://cdn.jsdelivr.net/npm/mermaid@11.9.0/dist/mermaid.esm.min.mjs"></script>
+    <script type="module" src="https://cdn.jsdelivr.net/npm/@mermaid-js/layout-elk@0.2.0/dist/mermaid-layout-elk.esm.min.mjs"></script>
+    <script type="module">import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@11.9.0/dist/mermaid.esm.min.mjs";import elkLayouts from "https://cdn.jsdelivr.net/npm/@mermaid-js/layout-elk@0.2.0/dist/mermaid-layout-elk.esm.min.mjs";mermaid.registerLayoutLoaders(elkLayouts);mermaid.initialize({startOnLoad:false});</script>
+    <script src="https://cdn.jsdelivr.net/npm/d3@7.9.0/dist/d3.min.js"></script>
+    <script type="module">import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@11.9.0/dist/mermaid.esm.min.mjs";
+
+const defaultStyle = document.createElement('style');
+defaultStyle.textContent = `pre.mermaid {
+    /* Same as .mermaid-container > pre */
+    display: block;
+    width: 100%;
+}
+
+pre.mermaid > svg {
+    /* Same as .mermaid-container > pre > svg */
+    height: 500px;
+    width: 100%;
+    max-width: 100% !important;
+}
+`;
+document.head.appendChild(defaultStyle);
+
+const fullscreenStyle = document.createElement('style');
+fullscreenStyle.textContent = `.mermaid-container {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+}
+
+.mermaid-container > pre {
+    display: block;
+    width: 100%;
+}
+
+.mermaid-container > pre > svg {
+    height: 500px;
+    width: 100%;
+    max-width: 100% !important;
+}
+
+.mermaid-fullscreen-btn {
+    width: 28px;
+    height: 28px;
+    background: rgba(255, 255, 255, 0.95);
+    border: 1px solid rgba(0, 0, 0, 0.3);
+    border-radius: 4px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+    font-size: 14px;
+    line-height: 1;
+    padding: 0;
+    color: #333;
+}
+
+.mermaid-fullscreen-btn:hover {
+    opacity: 100% !important;
+    background: rgba(255, 255, 255, 1);
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3);
+    transform: scale(1.1);
+}
+
+.mermaid-fullscreen-btn.dark-theme {
+    background: rgba(50, 50, 50, 0.95);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    color: #e0e0e0;
+}
+
+.mermaid-fullscreen-btn.dark-theme:hover {
+    background: rgba(60, 60, 60, 1);
+    box-shadow: 0 3px 10px rgba(255, 255, 255, 0.2);
+}
+
+.mermaid-fullscreen-modal {
+    display: none;
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 95vw;
+    height: 100vh;
+    background: rgba(255, 255, 255, 0.98);
+    z-index: 9999;
+    padding: 20px;
+    overflow: auto;
+}
+
+.mermaid-fullscreen-modal.dark-theme {
+    background: rgba(0, 0, 0, 0.98);
+}
+
+.mermaid-fullscreen-modal.active {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.mermaid-container-fullscreen {
+    position: relative;
+    width: 95vw;
+    height: 90vh;
+    max-width: 95vw;
+    max-height: 90vh;
+    background: white;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+    overflow: auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.mermaid-container-fullscreen.dark-theme {
+    background: #1a1a1a;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8);
+}
+
+.mermaid-container-fullscreen pre.mermaid {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.mermaid-container-fullscreen .mermaid svg {
+    height: 100% !important;
+    width: 100% !important;
+    cursor: grab;
+}
+
+.mermaid-fullscreen-close {
+    position: fixed !important;
+    top: 20px !important;
+    right: 20px !important;
+    width: 40px;
+    height: 40px;
+    background: rgba(255, 255, 255, 0.95);
+    border: 1px solid rgba(0, 0, 0, 0.2);
+    border-radius: 50%;
+    cursor: pointer;
+    z-index: 10000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    transition: all 0.2s;
+    font-size: 24px;
+    line-height: 1;
+    color: #333;
+}
+
+.mermaid-fullscreen-close:hover {
+    background: white;
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
+    transform: scale(1.1);
+}
+
+.mermaid-fullscreen-close.dark-theme {
+    background: rgba(50, 50, 50, 0.95);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: #e0e0e0;
+}
+
+.mermaid-fullscreen-close.dark-theme:hover {
+    background: rgba(60, 60, 60, 1);
+    box-shadow: 0 6px 16px rgba(255, 255, 255, 0.2);
+}
+
+.mermaid-fullscreen-modal .mermaid-fullscreen-btn {
+    display: none !important;
+}`;
+document.head.appendChild(fullscreenStyle);
+
+// Detect if page has dark background
+const isDarkTheme = () => {
+    const bgColor = window.getComputedStyle(document.body).backgroundColor;
+    const match = bgColor.match(/rgb\((\d+),\s*(\d+),\s*(\d+)/);
+    if (match) {
+        const r = parseInt(match[1]);
+        const g = parseInt(match[2]);
+        const b = parseInt(match[3]);
+        const brightness = (r * 299 + g * 587 + b * 114) / 1000;
+        return brightness < 128;
+    }
+    return false;
+};
+
+const load = async () => {
+    await mermaid.run();
+
+    const all_mermaids = document.querySelectorAll(".mermaid");
+    const mermaids_processed = document.querySelectorAll(".mermaid[data-processed='true']");
+
+    if ("False" === "True") {
+        const mermaids_to_add_zoom = -1 === -1 ? all_mermaids.length : -1;
+        if(mermaids_to_add_zoom > 0) {
+            var svgs = d3.selectAll("");
+            if(all_mermaids.length !== mermaids_processed.length) {
+                setTimeout(load, 200);
+                return;
+            } else if(svgs.size() !== mermaids_to_add_zoom) {
+                setTimeout(load, 200);
+                return;
+            } else {
+                svgs.each(function() {
+                    var svg = d3.select(this);
+                    svg.html("<g class='wrapper'>" + svg.html() + "</g>");
+                    var inner = svg.select("g");
+                    var zoom = d3.zoom().on("zoom", function(event) {
+                        inner.attr("transform", event.transform);
+                    });
+                    svg.call(zoom);
+                });
+            }
+        }
+    } else if(all_mermaids.length !== mermaids_processed.length) {
+        // Wait for mermaid to process all diagrams
+        setTimeout(load, 200);
+        return;
+    }
+
+    const darkTheme = isDarkTheme();
+
+    // Stop here if not adding fullscreen capability
+    if ("True" !== "True") return;
+
+    const modal = document.createElement('div');
+    modal.className = 'mermaid-fullscreen-modal' + (darkTheme ? ' dark-theme' : '');
+    modal.setAttribute('role', 'dialog');
+    modal.setAttribute('aria-modal', 'true');
+    modal.setAttribute('aria-label', 'Fullscreen diagram viewer');
+    modal.innerHTML = `
+        <button class="mermaid-fullscreen-close${darkTheme ? ' dark-theme' : ''}" aria-label="Close fullscreen">✕</button>
+        <div class="mermaid-container-fullscreen${darkTheme ? ' dark-theme' : ''}"></div>
+    `;
+    document.body.appendChild(modal);
+
+    const modalContent = modal.querySelector('.mermaid-container-fullscreen');
+    const closeBtn = modal.querySelector('.mermaid-fullscreen-close');
+
+    let previousScrollOffset = [window.scrollX, window.scrollY];
+
+    const closeModal = () => {
+        modal.classList.remove('active');
+        modalContent.innerHTML = '';
+        document.body.style.overflow = ''
+        window.scrollTo({left: previousScrollOffset[0], top: previousScrollOffset[1], behavior: 'instant'});
+    };
+
+    closeBtn.addEventListener('click', closeModal);
+    modal.addEventListener('click', (e) => {
+        if (e.target === modal) closeModal();
+    });
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && modal.classList.contains('active')) {
+            closeModal();
+        }
+    });
+
+    const allButtons = [];
+
+    document.querySelectorAll('.mermaid').forEach((mermaidDiv) => {
+        if (mermaidDiv.parentNode.classList.contains('mermaid-container') ||
+            mermaidDiv.closest('.mermaid-fullscreen-modal')) {
+            return;
+        }
+
+        const container = document.createElement('div');
+        container.className = 'mermaid-container';
+        mermaidDiv.parentNode.insertBefore(container, mermaidDiv);
+        container.appendChild(mermaidDiv);
+
+        const fullscreenBtn = document.createElement('button');
+        fullscreenBtn.className = 'mermaid-fullscreen-btn' + (darkTheme ? ' dark-theme' : '');
+        fullscreenBtn.setAttribute('aria-label', 'View diagram in fullscreen');
+        fullscreenBtn.textContent = '⛶';
+        fullscreenBtn.style.opacity = '50%';
+
+        // Calculate dynamic position based on diagram's margin and padding
+        const diagramStyle = window.getComputedStyle(mermaidDiv);
+        const marginTop = parseFloat(diagramStyle.marginTop) || 0;
+        const marginRight = parseFloat(diagramStyle.marginRight) || 0;
+        const paddingTop = parseFloat(diagramStyle.paddingTop) || 0;
+        const paddingRight = parseFloat(diagramStyle.paddingRight) || 0;
+        fullscreenBtn.style.top = `${marginTop + paddingTop + 4}px`;
+        fullscreenBtn.style.right = `${marginRight + paddingRight + 4}px`;
+
+        fullscreenBtn.addEventListener('click', () => {
+            previousScrollOffset = [window.scroll, window.scrollY];
+            const clone = mermaidDiv.cloneNode(true);
+            modalContent.innerHTML = '';
+            modalContent.appendChild(clone);
+
+            const svg = clone.querySelector('svg');
+            if (svg) {
+                svg.removeAttribute('width');
+                svg.removeAttribute('height');
+                svg.style.width = '100%';
+                svg.style.height = 'auto';
+                svg.style.maxWidth = '100%';
+                svg.style.sdisplay = 'block';
+
+                if ("False" === "True") {
+                    setTimeout(() => {
+                        const g = svg.querySelector('g');
+                        if (g) {
+                            var svgD3 = d3.select(svg);
+                            svgD3.html("<g class='wrapper'>" + svgD3.html() + "</g>");
+                            var inner = svgD3.select("g");
+                            var zoom = d3.zoom().on("zoom", function(event) {
+                                inner.attr("transform", event.transform);
+                            });
+                            svgD3.call(zoom);
+                        }
+                    }, 100);
+                }
+            }
+
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        });
+
+        container.appendChild(fullscreenBtn);
+        allButtons.push(fullscreenBtn);
+    });
+
+    // Update theme classes when theme changes
+    const updateTheme = () => {
+        const dark = isDarkTheme();
+        allButtons.forEach(btn => {
+            if (dark) {
+                btn.classList.add('dark-theme');
+            } else {
+                btn.classList.remove('dark-theme');
+            }
+        });
+        if (dark) {
+            modal.classList.add('dark-theme');
+            modalContent.classList.add('dark-theme');
+            closeBtn.classList.add('dark-theme');
+        } else {
+            modal.classList.remove('dark-theme');
+            modalContent.classList.remove('dark-theme');
+            closeBtn.classList.remove('dark-theme');
+        }
+    };
+
+    // Watch for theme changes
+    const observer = new MutationObserver(updateTheme);
+    observer.observe(document.documentElement, {
+        attributes: true,
+        attributeFilter: ['class', 'style', 'data-theme']
+    });
+    observer.observe(document.body, {
+        attributes: true,
+        attributeFilter: ['class', 'style']
+    });
+};
+
+window.addEventListener("load", load);
+</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/myogen/simulator/neuron/simulation_runner';</script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="0.8.0" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search MyoGen docs..."
+         aria-label="Search MyoGen docs..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+<aside class="bd-header-announcement" aria-label="Announcement">
+  <div class="bd-header-announcement__content">MyoGen is under active development. API may change.</div>
+</aside>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class=" navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../../../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../../../_static/myogen_logo.png" class="logo__image only-light" alt="MyoGen 0.8.0 Documentation - Home"/>
+    <img src="../../../../_static/myogen_logo.png" class="logo__image only-dark pst-js-only" alt="MyoGen 0.8.0 Documentation - Home"/>
+  
+  
+</a></div>
+    
+      <div class="navbar-item">
+<div class="nav-item">
+  <div class="version-switcher__container dropdown">
+      <button id="version-switcher-button" type="button" class="version-switcher__button btn btn-sm navbar-btn" aria-haspopup="true" aria-expanded="false">
+          Version 0.8.0
+      </button>
+      
+      
+      
+  </div>
+</div> </div>
+    
+      <div class="navbar-item"><div class="nav-item">
+   <span>
+      made at the <a href="https://www.nsquared.tf.fau.de/" target="_blank">N² Lab</a>
+   </span>
+</div> </div>
+    
+  </div>
+  
+  <div class=" navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../api/index.html">
+    API Documentation
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../neo_blocks_guide.html">
+    Working with Neo Block Data Structures
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../examples.html">
+    Examples
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/NSquaredLab/MyoGen" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+    </div>
+  
+
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar hide-on-wide">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../api/index.html">
+    API Documentation
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../neo_blocks_guide.html">
+    Working with Neo Block Data Structures
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../examples.html">
+    Examples
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/NSquaredLab/MyoGen" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../../../index.html" class="nav-link">Module code</a></li>
+    
+    
+    <li class="breadcrumb-item"><a href="../../../myogen.html" class="nav-link">myogen</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">myogen.simulator.neuron.simulation_runner</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <h1>Source code for myogen.simulator.neuron.simulation_runner</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span><span class="w"> </span><span class="nn">itertools</span><span class="w"> </span><span class="kn">import</span> <span class="n">count</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">quantities</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pq</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">neo</span><span class="w"> </span><span class="kn">import</span> <span class="n">AnalogSignal</span><span class="p">,</span> <span class="n">Block</span><span class="p">,</span> <span class="n">Segment</span><span class="p">,</span> <span class="n">SpikeTrain</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">tqdm</span><span class="w"> </span><span class="kn">import</span> <span class="n">tqdm</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">myogen.simulator.neuron.network</span><span class="w"> </span><span class="kn">import</span> <span class="n">Network</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">neuron</span><span class="w"> </span><span class="kn">import</span> <span class="n">h</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">myogen.utils.decorators</span><span class="w"> </span><span class="kn">import</span> <span class="n">beartowertype</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">myogen.utils.types</span><span class="w"> </span><span class="kn">import</span> <span class="n">Quantity__m_per_s</span><span class="p">,</span> <span class="n">Quantity__ms</span>
+
+
+<div class="viewcode-block" id="SimulationRunner">
+<a class="viewcode-back" href="../../../../generated/myogen.simulator.neuron.simulation_runner.SimulationRunner.html#myogen.simulator.neuron.simulation_runner.SimulationRunner">[docs]</a>
+<span class="nd">@beartowertype</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">SimulationRunner</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Manages NEURON simulation execution with automated setup, initialization,</span>
+<span class="sd">    and result collection for neuromuscular simulations.</span>
+
+<span class="sd">    Provides a clean interface for running complex neuromuscular simulations</span>
+<span class="sd">    while maintaining full user control over populations, connections, and</span>
+<span class="sd">    step-by-step simulation logic. Automatically handles NEURON environment</span>
+<span class="sd">    setup, voltage initialization, and structured result collection.</span>
+
+<span class="sd">    Separates simulation control from plotting and analysis concerns.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># Smart defaults for common MyoGen model output attributes</span>
+    <span class="n">_DEFAULT_MODEL_OUTPUTS</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;HillModel&quot;</span><span class="p">:</span> <span class="p">[</span>
+            <span class="s2">&quot;muscle_length&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;muscle_force&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;muscle_torque&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;type1_activation&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;type2_activation&quot;</span><span class="p">,</span>
+        <span class="p">],</span>
+        <span class="s2">&quot;SpindleModel&quot;</span><span class="p">:</span> <span class="p">[</span>
+            <span class="s2">&quot;primary_afferent_firing__Hz&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;secondary_afferent_firing__Hz&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;bag1_activation&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;bag2_activation&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;chain_activation&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;intrafusal_tensions&quot;</span><span class="p">,</span>
+        <span class="p">],</span>
+        <span class="s2">&quot;GolgiTendonOrganModel&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;ib_afferent_firing__Hz&quot;</span><span class="p">],</span>
+    <span class="p">}</span>
+
+<div class="viewcode-block" id="SimulationRunner.__init__">
+<a class="viewcode-back" href="../../../../generated/myogen.simulator.neuron.simulation_runner.SimulationRunner.__init__.html#myogen.simulator.neuron.simulation_runner.SimulationRunner.__init__">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">network</span><span class="p">:</span> <span class="n">Network</span><span class="p">,</span>
+        <span class="n">models</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span>
+        <span class="n">step_callback</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">Any</span><span class="p">],</span> <span class="n">Any</span><span class="p">],</span>
+        <span class="n">model_outputs</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Union</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="kc">None</span><span class="p">]]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">temperature__celsius</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">36.0</span><span class="p">,</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Initialize SimulationRunner with network, models, and step callback.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        network : Network</span>
+<span class="sd">            Configured Network instance with populations and connections.</span>
+<span class="sd">        models : Dict[str, Any]</span>
+<span class="sd">            Physiological models (e.g., {&quot;hill&quot;: hill_model, &quot;spin&quot;: spindle_model}).</span>
+<span class="sd">        step_callback : Callable</span>
+<span class="sd">            User-defined function called at each simulation timestep.</span>
+<span class="sd">        model_outputs : Optional[Dict[str, Union[List[str], None]]], optional</span>
+<span class="sd">            Explicit model output attributes to collect. None uses smart defaults.</span>
+<span class="sd">            Format: {&quot;model_name&quot;: [&quot;attr1&quot;, &quot;attr2&quot;]} or {&quot;model_name&quot;: None}</span>
+<span class="sd">            for defaults, by default None.</span>
+<span class="sd">        temperature__celsius : float, optional</span>
+<span class="sd">            NEURON simulation temperature, by default 36.0.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Store immutable parameters following project pattern</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">network</span> <span class="o">=</span> <span class="n">network</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">populations</span> <span class="o">=</span> <span class="n">network</span><span class="o">.</span><span class="n">populations</span>  <span class="c1"># Expose populations from network</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">models</span> <span class="o">=</span> <span class="n">models</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">step_callback</span> <span class="o">=</span> <span class="n">step_callback</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model_outputs</span> <span class="o">=</span> <span class="n">model_outputs</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">temperature__celsius</span> <span class="o">=</span> <span class="n">temperature__celsius</span>
+
+        <span class="c1"># Private working copies</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_network</span> <span class="o">=</span> <span class="n">network</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_populations</span> <span class="o">=</span> <span class="n">network</span><span class="o">.</span><span class="n">populations</span>  <span class="c1"># Get populations from network</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_models</span> <span class="o">=</span> <span class="n">models</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_step_callback</span> <span class="o">=</span> <span class="n">step_callback</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_model_outputs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_resolve_model_outputs</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_temperature__celsius</span> <span class="o">=</span> <span class="n">temperature__celsius</span>
+
+        <span class="c1"># Runtime state</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_trace_vectors</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_step_counter</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_progress_bar</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_total_steps</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="c1"># Setup internal spike recording vectors</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_spike_recording</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_setup_spike_recording</span><span class="p">()</span></div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_resolve_model_outputs</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Resolve model output attributes using smart defaults and user overrides.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        Dict[str, List[str]]</span>
+<span class="sd">            Final mapping of model names to output attribute lists.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">resolved</span> <span class="o">=</span> <span class="p">{}</span>
+
+        <span class="k">for</span> <span class="n">model_name</span><span class="p">,</span> <span class="n">model_instance</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_models</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">model_class_name</span> <span class="o">=</span> <span class="n">model_instance</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span>
+
+            <span class="c1"># Check for user override</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_outputs</span> <span class="ow">and</span> <span class="n">model_name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_outputs</span><span class="p">:</span>
+                <span class="n">user_specified</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_outputs</span><span class="p">[</span><span class="n">model_name</span><span class="p">]</span>
+                <span class="k">if</span> <span class="n">user_specified</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="c1"># Use defaults for this model</span>
+                    <span class="n">resolved</span><span class="p">[</span><span class="n">model_name</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_DEFAULT_MODEL_OUTPUTS</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">model_class_name</span><span class="p">,</span> <span class="p">[])</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="c1"># Use explicit user specification</span>
+                    <span class="n">resolved</span><span class="p">[</span><span class="n">model_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">user_specified</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="c1"># Use smart defaults based on model class</span>
+                <span class="n">resolved</span><span class="p">[</span><span class="n">model_name</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_DEFAULT_MODEL_OUTPUTS</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">model_class_name</span><span class="p">,</span> <span class="p">[])</span>
+
+        <span class="k">return</span> <span class="n">resolved</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_setup_spike_recording</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Create NEURON spike recording vectors for all populations.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        dict[str, Any]</span>
+<span class="sd">            Dictionary containing &#39;idvec&#39; and &#39;spkvec&#39; with NEURON Vectors for each population.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">neuron</span><span class="w"> </span><span class="kn">import</span> <span class="n">h</span>
+
+        <span class="n">idvec</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">spkvec</span> <span class="o">=</span> <span class="p">{}</span>
+
+        <span class="k">for</span> <span class="n">pop_name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_populations</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="n">idvec</span><span class="p">[</span><span class="n">pop_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">h</span><span class="o">.</span><span class="n">Vector</span><span class="p">()</span>
+            <span class="n">spkvec</span><span class="p">[</span><span class="n">pop_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">h</span><span class="o">.</span><span class="n">Vector</span><span class="p">()</span>
+
+        <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;idvec&quot;</span><span class="p">:</span> <span class="n">idvec</span><span class="p">,</span> <span class="s2">&quot;spkvec&quot;</span><span class="p">:</span> <span class="n">spkvec</span><span class="p">}</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_setup_network_spike_recording</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Configure the network with spike recording vectors and activate recording.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Set spike recording on network</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_network</span><span class="o">.</span><span class="n">spike_recording</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_spike_recording</span>
+
+        <span class="c1"># Setup spike recording (calls NEURON setup)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_network</span><span class="o">.</span><span class="n">setup_spike_recording</span><span class="p">()</span>
+
+<div class="viewcode-block" id="SimulationRunner.run">
+<a class="viewcode-back" href="../../../../generated/myogen.simulator.neuron.simulation_runner.SimulationRunner.run.html#myogen.simulator.neuron.simulation_runner.SimulationRunner.run">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">run</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">duration__ms</span><span class="p">:</span> <span class="n">Quantity__ms</span><span class="p">,</span>
+        <span class="n">timestep__ms</span><span class="p">:</span> <span class="n">Quantity__ms</span><span class="p">,</span>
+        <span class="n">membrane_recording</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">]]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Block</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Execute NEURON simulation with automated setup and result collection.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        duration__ms : Quantity__ms</span>
+<span class="sd">            Total simulation duration in milliseconds.</span>
+<span class="sd">        timestep__ms : Quantity__ms</span>
+<span class="sd">            Integration timestep in milliseconds.</span>
+<span class="sd">        membrane_recording : Optional[Dict[str, List[int]]], optional</span>
+<span class="sd">            Populations and cell indices for membrane potential recording.</span>
+<span class="sd">            Format: {&quot;population_name&quot;: [cell_id1, cell_id2, ...]}, by default None.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        Block</span>
+<span class="sd">            Structured simulation results containing:</span>
+<span class="sd">            - spikes: Spike timing and ID data for all populations</span>
+<span class="sd">            - membrane: Membrane potential traces (if requested)</span>
+<span class="sd">            - models: Output data from all physiological models</span>
+<span class="sd">            - simulation: Time vector and simulation metadata</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        ValueError</span>
+<span class="sd">            If model output attributes don&#39;t exist on model instances.</span>
+<span class="sd">        RuntimeError</span>
+<span class="sd">            If NEURON simulation fails to complete.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="c1"># Setup NEURON environment</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_setup_neuron_environment</span><span class="p">(</span><span class="n">duration__ms</span><span class="p">,</span> <span class="n">timestep__ms</span><span class="p">)</span>
+
+            <span class="c1"># Setup optional membrane recording</span>
+            <span class="k">if</span> <span class="n">membrane_recording</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_setup_membrane_recording</span><span class="p">(</span><span class="n">membrane_recording</span><span class="p">)</span>
+
+            <span class="c1"># Initialize population voltages</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_initialize_voltages</span><span class="p">()</span>
+
+            <span class="c1"># Register step callback for closed-loop dynamics</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_register_step_callback</span><span class="p">()</span>
+
+            <span class="c1"># Validate model outputs before simulation</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_validate_model_outputs</span><span class="p">()</span>
+
+            <span class="c1"># Setup spike recording on network</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_setup_network_spike_recording</span><span class="p">()</span>
+
+            <span class="n">h</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+
+            <span class="c1"># Close progress bar (with error handling)</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_progress_bar</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_progress_bar</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+                <span class="k">except</span> <span class="p">(</span><span class="ne">TypeError</span><span class="p">,</span> <span class="ne">AttributeError</span><span class="p">):</span>
+                    <span class="c1"># Ignore progress bar closing errors</span>
+                    <span class="k">pass</span>
+
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Simulation completed&quot;</span><span class="p">)</span>
+
+            <span class="c1"># Collect and structure results</span>
+            <span class="n">results</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_collect_results</span><span class="p">(</span><span class="n">duration__ms</span><span class="p">,</span> <span class="n">timestep__ms</span><span class="p">)</span>
+
+            <span class="k">return</span> <span class="n">results</span>
+
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="c1"># Close progress bar in case of error (with error handling)</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_progress_bar</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_progress_bar</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+                <span class="k">except</span> <span class="p">(</span><span class="ne">TypeError</span><span class="p">,</span> <span class="ne">AttributeError</span><span class="p">):</span>
+                    <span class="c1"># Ignore progress bar closing errors</span>
+                    <span class="k">pass</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Simulation failed: </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">e</span></div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_setup_neuron_environment</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">duration__ms</span><span class="p">:</span> <span class="n">Quantity__ms</span><span class="p">,</span> <span class="n">timestep__ms</span><span class="p">:</span> <span class="n">Quantity__ms</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Configure NEURON global simulation parameters.&quot;&quot;&quot;</span>
+        <span class="n">h</span><span class="o">.</span><span class="n">load_file</span><span class="p">(</span><span class="s2">&quot;stdrun.hoc&quot;</span><span class="p">)</span>
+        <span class="n">h</span><span class="o">.</span><span class="n">celsius</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_temperature__celsius</span>
+        <span class="n">h</span><span class="o">.</span><span class="n">tstop</span> <span class="o">=</span> <span class="n">duration__ms</span>
+        <span class="n">h</span><span class="o">.</span><span class="n">dt</span> <span class="o">=</span> <span class="n">timestep__ms</span>
+        <span class="n">h</span><span class="o">.</span><span class="n">secondorder</span> <span class="o">=</span> <span class="mi">2</span>  <span class="c1"># Use Crank-Nicolson for better accuracy and speed</span>
+
+        <span class="c1"># Calculate total steps for progress bar</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_total_steps</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">duration__ms</span> <span class="o">/</span> <span class="n">timestep__ms</span><span class="p">)</span>
+
+        <span class="c1"># Store timestep for progress bar updates</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_timestep__ms</span> <span class="o">=</span> <span class="n">timestep__ms</span>
+
+        <span class="c1"># Initialize progress bar</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_progress_bar</span> <span class="o">=</span> <span class="n">tqdm</span><span class="p">(</span>
+            <span class="n">total</span><span class="o">=</span><span class="n">duration__ms</span><span class="o">.</span><span class="n">magnitude</span><span class="p">,</span>
+            <span class="n">desc</span><span class="o">=</span><span class="s2">&quot;Simulation Progress&quot;</span><span class="p">,</span>
+            <span class="n">unit</span><span class="o">=</span><span class="s2">&quot;ms&quot;</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="c1"># Reset step counter for step callback</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_step_counter</span> <span class="o">=</span> <span class="n">count</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_setup_membrane_recording</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">membrane_recording</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Setup membrane potential recording vectors for specified populations.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_trace_vectors</span> <span class="o">=</span> <span class="p">{}</span>
+
+        <span class="k">for</span> <span class="n">pop_name</span><span class="p">,</span> <span class="n">cell_indices</span> <span class="ow">in</span> <span class="n">membrane_recording</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">pop_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_populations</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Population &#39;</span><span class="si">{</span><span class="n">pop_name</span><span class="si">}</span><span class="s2">&#39; not found in populations&quot;</span><span class="p">)</span>
+
+            <span class="n">pop_traces</span> <span class="o">=</span> <span class="p">{}</span>
+            <span class="n">population</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_populations</span><span class="p">[</span><span class="n">pop_name</span><span class="p">]</span>
+
+            <span class="k">for</span> <span class="n">cell_idx</span> <span class="ow">in</span> <span class="n">cell_indices</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">cell_idx</span> <span class="o">&gt;=</span> <span class="nb">len</span><span class="p">(</span><span class="n">population</span><span class="p">):</span>
+                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                        <span class="sa">f</span><span class="s2">&quot;Cell index </span><span class="si">{</span><span class="n">cell_idx</span><span class="si">}</span><span class="s2"> out of range for population &quot;</span>
+                        <span class="sa">f</span><span class="s2">&quot;&#39;</span><span class="si">{</span><span class="n">pop_name</span><span class="si">}</span><span class="s2">&#39; (size: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">population</span><span class="p">)</span><span class="si">}</span><span class="s2">)&quot;</span>
+                    <span class="p">)</span>
+
+                <span class="n">vector</span> <span class="o">=</span> <span class="n">h</span><span class="o">.</span><span class="n">Vector</span><span class="p">()</span>
+                <span class="n">vector</span><span class="o">.</span><span class="n">record</span><span class="p">(</span><span class="n">population</span><span class="p">[</span><span class="n">cell_idx</span><span class="p">]</span><span class="o">.</span><span class="n">soma</span><span class="p">(</span><span class="mf">0.5</span><span class="p">)</span><span class="o">.</span><span class="n">_ref_v</span><span class="p">)</span>
+                <span class="n">pop_traces</span><span class="p">[</span><span class="n">cell_idx</span><span class="p">]</span> <span class="o">=</span> <span class="n">vector</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">_trace_vectors</span><span class="p">[</span><span class="n">pop_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">pop_traces</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_initialize_voltages</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Automatically collect and set initial voltages for all populations.&quot;&quot;&quot;</span>
+        <span class="n">sections</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">voltages</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">for</span> <span class="n">population</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_populations</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">sec_list</span><span class="p">,</span> <span class="n">v_hold</span> <span class="o">=</span> <span class="n">population</span><span class="o">.</span><span class="n">get_initialization_data</span><span class="p">()</span>
+                <span class="n">sections</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">sec_list</span><span class="p">)</span>
+                <span class="n">voltages</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">v_hold</span><span class="p">)</span>
+            <span class="k">except</span> <span class="p">(</span><span class="ne">AttributeError</span><span class="p">,</span> <span class="ne">TypeError</span><span class="p">):</span>
+                <span class="c1"># Skip populations without initialization data</span>
+                <span class="k">continue</span>
+
+        <span class="k">if</span> <span class="n">sections</span><span class="p">:</span>
+
+            <span class="k">def</span><span class="w"> </span><span class="nf">set_initial_voltages</span><span class="p">():</span>
+                <span class="k">for</span> <span class="n">sec</span><span class="p">,</span> <span class="n">voltage</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">sections</span><span class="p">,</span> <span class="n">voltages</span><span class="p">):</span>
+                    <span class="n">sec</span><span class="o">.</span><span class="n">v</span> <span class="o">=</span> <span class="n">voltage</span>
+
+            <span class="n">h</span><span class="o">.</span><span class="n">FInitializeHandler</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">set_initial_voltages</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_register_step_callback</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Register user&#39;s step callback with NEURON&#39;s integration system.&quot;&quot;&quot;</span>
+
+        <span class="n">duration__ms</span> <span class="o">=</span> <span class="n">h</span><span class="o">.</span><span class="n">tstop</span>  <span class="c1"># Use NEURON&#39;s tstop as simulation duration</span>
+
+        <span class="c1"># Track last progress bar update time to avoid multiple updates per timestep</span>
+        <span class="n">last_progress_time</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+
+        <span class="c1"># Create wrapper that provides step counter access to callback and updates progress</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">step_wrapper</span><span class="p">():</span>
+            <span class="k">nonlocal</span> <span class="n">last_progress_time</span>
+
+            <span class="c1"># Check if we&#39;ve exceeded simulation time - don&#39;t process if so</span>
+            <span class="k">if</span> <span class="n">h</span><span class="o">.</span><span class="n">t</span> <span class="o">&gt;=</span> <span class="n">h</span><span class="o">.</span><span class="n">tstop</span><span class="p">:</span>
+                <span class="k">return</span>
+
+            <span class="c1"># Update progress bar based on actual simulation time progression (not callback count)</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_progress_bar</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="c1"># Only update progress bar when simulation time has actually advanced</span>
+                <span class="k">if</span> <span class="n">h</span><span class="o">.</span><span class="n">t</span> <span class="o">&gt;</span> <span class="n">last_progress_time</span><span class="p">:</span>
+                    <span class="n">time_advance</span> <span class="o">=</span> <span class="n">h</span><span class="o">.</span><span class="n">t</span> <span class="o">-</span> <span class="nb">max</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">last_progress_time</span><span class="p">)</span>
+                    <span class="k">try</span><span class="p">:</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">_progress_bar</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">time_advance</span><span class="p">)</span>
+                        <span class="n">last_progress_time</span> <span class="o">=</span> <span class="n">h</span><span class="o">.</span><span class="n">t</span>
+                    <span class="k">except</span> <span class="p">(</span><span class="ne">TypeError</span><span class="p">,</span> <span class="ne">AttributeError</span><span class="p">)</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                        <span class="c1"># Disable progress bar when it fails</span>
+                        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Progress bar error (disabling): </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">_progress_bar</span> <span class="o">=</span> <span class="kc">None</span>
+                        <span class="k">return</span>
+
+            <span class="c1"># Call user&#39;s step callback only if we haven&#39;t exceeded time limit</span>
+            <span class="k">if</span> <span class="n">h</span><span class="o">.</span><span class="n">t</span> <span class="o">&lt;</span> <span class="n">h</span><span class="o">.</span><span class="n">tstop</span><span class="p">:</span>
+                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_step_callback</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_step_counter</span><span class="p">)</span>
+
+        <span class="n">h</span><span class="o">.</span><span class="n">CVode</span><span class="p">()</span><span class="o">.</span><span class="n">extra_scatter_gather</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">step_wrapper</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_validate_model_outputs</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Validate that all specified model output attributes exist.&quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">model_name</span><span class="p">,</span> <span class="n">output_attrs</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_model_outputs</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">model_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_models</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Model &#39;</span><span class="si">{</span><span class="n">model_name</span><span class="si">}</span><span class="s2">&#39; not found in models&quot;</span><span class="p">)</span>
+
+            <span class="n">model_instance</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_models</span><span class="p">[</span><span class="n">model_name</span><span class="p">]</span>
+
+            <span class="k">for</span> <span class="n">attr_name</span> <span class="ow">in</span> <span class="n">output_attrs</span><span class="p">:</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">model_instance</span><span class="p">,</span> <span class="n">attr_name</span><span class="p">):</span>
+                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                        <span class="sa">f</span><span class="s2">&quot;Model &#39;</span><span class="si">{</span><span class="n">model_name</span><span class="si">}</span><span class="s2">&#39; (</span><span class="si">{</span><span class="n">model_instance</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">) &quot;</span>
+                        <span class="sa">f</span><span class="s2">&quot;does not have attribute &#39;</span><span class="si">{</span><span class="n">attr_name</span><span class="si">}</span><span class="s2">&#39;&quot;</span>
+                    <span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_collect_results</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">duration__ms</span><span class="p">:</span> <span class="n">Quantity__ms</span><span class="p">,</span> <span class="n">timestep__ms</span><span class="p">:</span> <span class="n">Quantity__ms</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Block</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Collect simulation results from network, models, and recordings.</span>
+
+<span class="sd">        Returns structured results compatible with existing analysis code.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">block</span> <span class="o">=</span> <span class="n">Block</span><span class="p">()</span>
+
+        <span class="k">for</span> <span class="n">pop_name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_populations</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="n">segment</span> <span class="o">=</span> <span class="n">Segment</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">pop_name</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_spike_recording</span> <span class="ow">and</span> <span class="n">pop_name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_spike_recording</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;spkvec&quot;</span><span class="p">,</span> <span class="p">{}):</span>
+                <span class="n">spike_times</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_spike_recording</span><span class="p">[</span><span class="s2">&quot;spkvec&quot;</span><span class="p">][</span><span class="n">pop_name</span><span class="p">]</span><span class="o">.</span><span class="n">as_numpy</span><span class="p">()</span>
+                <span class="n">spike_ids</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_spike_recording</span><span class="p">[</span><span class="s2">&quot;idvec&quot;</span><span class="p">][</span><span class="n">pop_name</span><span class="p">]</span><span class="o">.</span><span class="n">as_numpy</span><span class="p">()</span>
+
+                <span class="k">for</span> <span class="n">spike_id</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">spike_ids</span><span class="p">)):</span>
+                    <span class="n">times_for_id</span> <span class="o">=</span> <span class="n">spike_times</span><span class="p">[</span><span class="n">spike_ids</span> <span class="o">==</span> <span class="n">spike_id</span><span class="p">]</span>
+                    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">times_for_id</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                        <span class="n">segment</span><span class="o">.</span><span class="n">spiketrains</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                            <span class="n">SpikeTrain</span><span class="p">(</span>
+                                <span class="n">name</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">spike_id</span><span class="p">)),</span>
+                                <span class="n">times</span><span class="o">=</span><span class="p">(</span><span class="n">times_for_id</span> <span class="o">*</span> <span class="n">pq</span><span class="o">.</span><span class="n">ms</span><span class="p">)</span><span class="o">.</span><span class="n">rescale</span><span class="p">(</span><span class="n">pq</span><span class="o">.</span><span class="n">s</span><span class="p">),</span>
+                                <span class="n">t_start</span><span class="o">=</span><span class="mf">0.0</span> <span class="o">*</span> <span class="n">pq</span><span class="o">.</span><span class="n">s</span><span class="p">,</span>
+                                <span class="n">t_stop</span><span class="o">=</span><span class="n">duration__ms</span><span class="o">.</span><span class="n">rescale</span><span class="p">(</span><span class="n">pq</span><span class="o">.</span><span class="n">s</span><span class="p">),</span>
+                                <span class="n">sampling_rate</span><span class="o">=</span><span class="p">(</span><span class="mf">1.0</span> <span class="o">/</span> <span class="n">timestep__ms</span><span class="o">.</span><span class="n">rescale</span><span class="p">(</span><span class="n">pq</span><span class="o">.</span><span class="n">s</span><span class="p">))</span><span class="o">.</span><span class="n">rescale</span><span class="p">(</span><span class="n">pq</span><span class="o">.</span><span class="n">Hz</span><span class="p">),</span>
+                            <span class="p">)</span>
+                        <span class="p">)</span>
+
+            <span class="k">for</span> <span class="n">cell_idx</span><span class="p">,</span> <span class="n">vector</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_trace_vectors</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">pop_name</span><span class="p">,</span> <span class="p">{})</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="n">segment</span><span class="o">.</span><span class="n">analogsignals</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                    <span class="n">AnalogSignal</span><span class="p">(</span>
+                        <span class="n">name</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">cell_idx</span><span class="p">),</span>
+                        <span class="n">sampling_period</span><span class="o">=</span><span class="n">timestep__ms</span><span class="o">.</span><span class="n">rescale</span><span class="p">(</span><span class="n">pq</span><span class="o">.</span><span class="n">s</span><span class="p">),</span>
+                        <span class="n">signal</span><span class="o">=</span><span class="n">vector</span> <span class="o">*</span> <span class="n">pq</span><span class="o">.</span><span class="n">mV</span><span class="p">,</span>
+                    <span class="p">)</span>
+                <span class="p">)</span>
+
+            <span class="n">block</span><span class="o">.</span><span class="n">segments</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">segment</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">model_name</span><span class="p">,</span> <span class="n">output_attrs</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_model_outputs</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">segment</span> <span class="o">=</span> <span class="n">Segment</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">model_name</span><span class="p">)</span>
+
+            <span class="n">model_instance</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_models</span><span class="p">[</span><span class="n">model_name</span><span class="p">]</span>
+            <span class="k">for</span> <span class="n">attr_name</span> <span class="ow">in</span> <span class="n">output_attrs</span><span class="p">:</span>
+                <span class="n">attr_value</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">model_instance</span><span class="p">,</span> <span class="n">attr_name</span><span class="p">)</span>
+
+                <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">attr_value</span><span class="p">,</span> <span class="s2">&quot;__iter__&quot;</span><span class="p">):</span>
+                    <span class="n">segment</span><span class="o">.</span><span class="n">analogsignals</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                        <span class="n">AnalogSignal</span><span class="p">(</span>
+                            <span class="n">name</span><span class="o">=</span><span class="n">attr_name</span><span class="p">,</span>
+                            <span class="n">sampling_period</span><span class="o">=</span><span class="n">timestep__ms</span><span class="o">.</span><span class="n">rescale</span><span class="p">(</span><span class="n">pq</span><span class="o">.</span><span class="n">s</span><span class="p">),</span>
+                            <span class="n">signal</span><span class="o">=</span><span class="n">attr_value</span> <span class="o">*</span> <span class="n">pq</span><span class="o">.</span><span class="n">dimensionless</span><span class="p">,</span>
+                        <span class="p">)</span>
+                    <span class="p">)</span>
+                <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">attr_value</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">str</span><span class="p">)):</span>
+                    <span class="n">segment</span><span class="o">.</span><span class="n">annotations</span><span class="p">[</span><span class="n">attr_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">attr_value</span>
+
+            <span class="n">block</span><span class="o">.</span><span class="n">segments</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">segment</span><span class="p">)</span>
+
+        <span class="n">block</span><span class="o">.</span><span class="n">annotations</span><span class="p">[</span><span class="s2">&quot;time__ms&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">duration__ms</span>
+        <span class="n">block</span><span class="o">.</span><span class="n">annotations</span><span class="p">[</span><span class="s2">&quot;timestep__ms&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">timestep__ms</span>
+        <span class="n">block</span><span class="o">.</span><span class="n">annotations</span><span class="p">[</span><span class="s2">&quot;temperature__celsius&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_temperature__celsius</span>
+        <span class="n">block</span><span class="o">.</span><span class="n">annotations</span><span class="p">[</span><span class="s2">&quot;active_MNs&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">spike_ids</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">block</span>
+
+<div class="viewcode-block" id="SimulationRunner.get_model_outputs">
+<a class="viewcode-back" href="../../../../generated/myogen.simulator.neuron.simulation_runner.SimulationRunner.get_model_outputs.html#myogen.simulator.neuron.simulation_runner.SimulationRunner.get_model_outputs">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_model_outputs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the list of output attributes that will be collected for a model.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        model_name : str</span>
+<span class="sd">            Name of the model as specified in the models dictionary.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        List[str]</span>
+<span class="sd">            List of attribute names that will be collected from this model.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_model_outputs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">model_name</span><span class="p">,</span> <span class="p">[])</span></div>
+
+
+<div class="viewcode-block" id="SimulationRunner.set_model_outputs">
+<a class="viewcode-back" href="../../../../generated/myogen.simulator.neuron.simulation_runner.SimulationRunner.set_model_outputs.html#myogen.simulator.neuron.simulation_runner.SimulationRunner.set_model_outputs">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_model_outputs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">output_attrs</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Override the output attributes for a specific model.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        model_name : str</span>
+<span class="sd">            Name of the model as specified in the models dictionary.</span>
+<span class="sd">        output_attrs : List[str]</span>
+<span class="sd">            List of attribute names to collect from this model.</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        ValueError</span>
+<span class="sd">            If model_name is not found in the models dictionary.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">model_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_models</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Model &#39;</span><span class="si">{</span><span class="n">model_name</span><span class="si">}</span><span class="s2">&#39; not found in models&quot;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_model_outputs</span><span class="p">[</span><span class="n">model_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">output_attrs</span></div>
+</div>
+
+</pre></div>
+
+                </article>
+              
+              
+              
+              
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2025 - 2025, n-squared lab, FAU Erlangen-Nürnberg, Germany.
+      <br/>
+    
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.2.3.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

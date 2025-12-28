@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Intramuscular EMG Signals &#8212; MyoGen 0.7.0 Documentation</title>
+    <title>Intramuscular EMG Signals &#8212; MyoGen 0.8.0 Documentation</title>
   
   
   
@@ -55,7 +55,7 @@
 
     <script src="../../_static/jquery.js?v=5d32c60e"></script>
     <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-    <script src="../../_static/documentation_options.js?v=b9678aa1"></script>
+    <script src="../../_static/documentation_options.js?v=cce5339e"></script>
     <script src="../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/js/hoverxref.js"></script>
@@ -68,9 +68,11 @@
     <script>DOCUMENTATION_OPTIONS.pagename = 'auto_examples/01_basic/09_simulate_intramuscular_emg';</script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Extract Neuron Parameters" href="10_extract_neuron_parameters.html" />
+    <link rel="prev" title="Force Generation" href="08_simulate_force.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="0.7.0" />
+  <meta name="docsearch:version" content="0.8.0" />
   </head>
   
   
@@ -139,8 +141,8 @@
       
     
     
-    <img src="../../_static/myogen_logo.png" class="logo__image only-light" alt="MyoGen 0.7.0 Documentation - Home"/>
-    <img src="../../_static/myogen_logo.png" class="logo__image only-dark pst-js-only" alt="MyoGen 0.7.0 Documentation - Home"/>
+    <img src="../../_static/myogen_logo.png" class="logo__image only-light" alt="MyoGen 0.8.0 Documentation - Home"/>
+    <img src="../../_static/myogen_logo.png" class="logo__image only-dark pst-js-only" alt="MyoGen 0.8.0 Documentation - Home"/>
   
   
 </a></div>
@@ -149,7 +151,7 @@
 <div class="nav-item">
   <div class="version-switcher__container dropdown">
       <button id="version-switcher-button" type="button" class="version-switcher__button btn btn-sm navbar-btn" aria-haspopup="true" aria-expanded="false">
-          Version 0.7.0
+          Version 0.8.0
       </button>
       
       
@@ -187,7 +189,7 @@
 </li>
 
 
-<li class="nav-item ">
+<li class="nav-item current active">
   <a class="nav-link nav-internal" href="../../examples.html">
     Examples
   </a>
@@ -292,7 +294,7 @@
 </li>
 
 
-<li class="nav-item ">
+<li class="nav-item current active">
   <a class="nav-link nav-internal" href="../../examples.html">
     Examples
   </a>
@@ -341,7 +343,42 @@
 <nav class="bd-docs-nav bd-links"
      aria-label="Section Navigation">
   <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
-  <div class="bd-toc-item navbar-nav"></div>
+  <div class="bd-toc-item navbar-nav"><ul class="current nav bd-sidenav">
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="index.html">Basics</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="01_simulate_recruitment_thresholds.html">Recruitment Thresholds</a></li>
+<li class="toctree-l2"><a class="reference internal" href="02_simulate_spike_trains_current_injection.html">Spike Train Generation with Current Injection</a></li>
+<li class="toctree-l2"><a class="reference internal" href="03_simulate_spike_trains_descending_drive.html">Spike Train Generation with Descending Drive</a></li>
+<li class="toctree-l2"><a class="reference internal" href="04_simulate_muscle.html">Muscle Model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="05_simulate_surface_muaps.html">Surface Motor Unit Action Potentials</a></li>
+<li class="toctree-l2"><a class="reference internal" href="06_simulate_surface_emg.html">Surface EMG Signals</a></li>
+<li class="toctree-l2"><a class="reference internal" href="07_simulate_currents.html">Current Generation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="08_simulate_force.html">Force Generation</a></li>
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">Intramuscular EMG Signals</a></li>
+<li class="toctree-l2"><a class="reference internal" href="10_extract_neuron_parameters.html">Extract Neuron Parameters</a></li>
+<li class="toctree-l2"><a class="reference internal" href="11_simulate_spinal_network.html">Spinal Network Simulation with Systematic Tendon Tap Protocol</a></li>
+<li class="toctree-l2"><a class="reference internal" href="12_extract_data_from_neo_blocks.html">Extracting Data from Neo Blocks</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../02_finetune/index.html">Step-by-step reproduction</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../02_finetune/01_optimize_dd_for_target_firing_rate.html">Optimizing Descending Drive Parameters for Target Firing Rates</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../02_finetune/02_compute_force_from_optimized_dd.html">Force Generation with Optimized Descending Drive Parameters</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../02_finetune/03_optimize_dd_for_target_force.html">Optimizing Descending Drive for Target Force Levels</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../02_finetune/04_extract_isi_and_cv_per_ramps.html">ISI and CV Analysis with Optimized Descending Drive</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../02_finetune/05_plot_isi_cv_multi_muscle_comparison.html">Multi-Muscle ISI and CV Statistics Comparison</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../03_papers/watanabe/index.html">Watanabe and Kohn (2015)</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../03_papers/watanabe/01_compute_baseline_force.html">Compute Reference Force with Constant Drive (Watanabe Network)</a></li>
+
+<li class="toctree-l2"><a class="reference internal" href="../03_papers/watanabe/02_optimize_oscillating_dc.html">Optimize Oscillating DC Offset to Match Reference Force (Watanabe Network)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../03_papers/watanabe/03_10pct_mvc_simulation.html">Watanabe Spinal Network Simulation with Optimized DC Offset</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../03_papers/watanabe/04_load_and_analyze_results.html">Load and Analyze Membrane Potentials and Spike Trains</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../03_papers/watanabe/05_compute_force_from_spinal_network.html">Compute Muscle Force from Spinal Network Spike Trains</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../03_papers/watanabe/06_visualize.html">Generate Publication-Quality Figures and Analysis Plots</a></li>
+</ul>
+</details></li>
+</ul>
+</div>
 </nav></div>
     </div>
   
@@ -380,6 +417,12 @@
         <i class="fa-solid fa-home"></i>
       </a>
     </li>
+    
+    <li class="breadcrumb-item"><a href="../../examples.html" class="nav-link">Examples</a></li>
+    
+    
+    <li class="breadcrumb-item"><a href="index.html" class="nav-link">Basics</a></li>
+    
     <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Intramuscular EMG Signals</span></li>
   </ul>
 </nav>
@@ -516,28 +559,28 @@ Using parallel processing for faster computation.</p>
 <div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Computing motor unit action potentials...
 
 Creating motor unit simulators:   0%|          | 0/100 [00:00&lt;?, ?Simulator/s]
-Creating motor unit simulators: 100%|██████████| 100/100 [00:00&lt;00:00, 4881.81Simulator/s]
+Creating motor unit simulators: 100%|██████████| 100/100 [00:00&lt;00:00, 4904.24Simulator/s]
 
 Setting up NMJ distributions:   0%|          | 0/100 [00:00&lt;?, ?Simulator/s]
-Setting up NMJ distributions:  15%|█▌        | 15/100 [00:00&lt;00:00, 149.78Simulator/s]
-Setting up NMJ distributions:  31%|███       | 31/100 [00:00&lt;00:00, 151.04Simulator/s]
-Setting up NMJ distributions:  47%|████▋     | 47/100 [00:00&lt;00:00, 122.14Simulator/s]
-Setting up NMJ distributions:  60%|██████    | 60/100 [00:00&lt;00:00, 81.58Simulator/s]
-Setting up NMJ distributions:  70%|███████   | 70/100 [00:00&lt;00:00, 58.28Simulator/s]
-Setting up NMJ distributions:  78%|███████▊  | 78/100 [00:01&lt;00:00, 41.44Simulator/s]
-Setting up NMJ distributions:  84%|████████▍ | 84/100 [00:01&lt;00:00, 32.34Simulator/s]
-Setting up NMJ distributions:  89%|████████▉ | 89/100 [00:01&lt;00:00, 26.47Simulator/s]
-Setting up NMJ distributions:  93%|█████████▎| 93/100 [00:02&lt;00:00, 20.81Simulator/s]
-Setting up NMJ distributions:  96%|█████████▌| 96/100 [00:02&lt;00:00, 17.27Simulator/s]
-Setting up NMJ distributions:  99%|█████████▉| 99/100 [00:03&lt;00:00, 14.32Simulator/s]
-Setting up NMJ distributions: 100%|██████████| 100/100 [00:03&lt;00:00, 32.03Simulator/s]
+Setting up NMJ distributions:  15%|█▌        | 15/100 [00:00&lt;00:00, 147.72Simulator/s]
+Setting up NMJ distributions:  31%|███       | 31/100 [00:00&lt;00:00, 151.85Simulator/s]
+Setting up NMJ distributions:  47%|████▋     | 47/100 [00:00&lt;00:00, 123.86Simulator/s]
+Setting up NMJ distributions:  60%|██████    | 60/100 [00:00&lt;00:00, 83.11Simulator/s]
+Setting up NMJ distributions:  70%|███████   | 70/100 [00:00&lt;00:00, 59.43Simulator/s]
+Setting up NMJ distributions:  78%|███████▊  | 78/100 [00:01&lt;00:00, 42.80Simulator/s]
+Setting up NMJ distributions:  84%|████████▍ | 84/100 [00:01&lt;00:00, 33.13Simulator/s]
+Setting up NMJ distributions:  89%|████████▉ | 89/100 [00:01&lt;00:00, 27.15Simulator/s]
+Setting up NMJ distributions:  93%|█████████▎| 93/100 [00:02&lt;00:00, 21.15Simulator/s]
+Setting up NMJ distributions:  96%|█████████▌| 96/100 [00:02&lt;00:00, 17.38Simulator/s]
+Setting up NMJ distributions:  99%|█████████▉| 99/100 [00:02&lt;00:00, 14.33Simulator/s]
+Setting up NMJ distributions: 100%|██████████| 100/100 [00:03&lt;00:00, 32.40Simulator/s]
 
 Computing MUAPs:   0%|          | 0/4 [00:00&lt;?, ?MU/s]
-Computing MUAPs:  25%|██▌       | 1/4 [00:02&lt;00:08,  2.84s/MU]
-Computing MUAPs:  50%|█████     | 2/4 [00:05&lt;00:05,  2.91s/MU]
-Computing MUAPs:  75%|███████▌  | 3/4 [00:19&lt;00:07,  7.95s/MU]
-Computing MUAPs: 100%|██████████| 4/4 [01:15&lt;00:00, 26.93s/MU]
-Computing MUAPs: 100%|██████████| 4/4 [01:15&lt;00:00, 18.95s/MU]
+Computing MUAPs:  25%|██▌       | 1/4 [00:02&lt;00:08,  2.97s/MU]
+Computing MUAPs:  50%|█████     | 2/4 [00:05&lt;00:05,  2.99s/MU]
+Computing MUAPs:  75%|███████▌  | 3/4 [00:19&lt;00:08,  8.01s/MU]
+Computing MUAPs: 100%|██████████| 4/4 [01:17&lt;00:00, 27.43s/MU]
+Computing MUAPs: 100%|██████████| 4/4 [01:17&lt;00:00, 19.29s/MU]
 
 === MUAP Amplitudes ===
 MU  0): Max PtP =   10.2 uV
@@ -608,7 +651,7 @@ demonstrate how motor unit size affects MUAP amplitude and shape.</p>
 <div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Simulating intramuscular EMG signals...
 
 Intramuscular EMG (CPU):   0%|          | 0/1 [00:00&lt;?, ?pool/s]
-Intramuscular EMG (CPU): 100%|██████████| 1/1 [00:00&lt;00:00, 11.91pool/s]
+Intramuscular EMG (CPU): 100%|██████████| 1/1 [00:00&lt;00:00, 11.97pool/s]
 Intramuscular EMG simulation completed!
 Generated EMG shape: (153600, 4)
         153600 time samples
@@ -656,7 +699,7 @@ composite EMG signal, and how different motor unit sizes affect signal amplitude
 <a href="https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.show.html#matplotlib.pyplot.show" title="matplotlib.pyplot.show" class="sphx-glr-backref-module-matplotlib-pyplot sphx-glr-backref-type-py-function"><span class="n">plt</span><span class="o">.</span><span class="n">show</span></a><span class="p">()</span>
 </pre></div>
 </div>
-<img src="../../_images/sphx_glr_09_simulate_intramuscular_emg_002.png" srcset="../../_images/sphx_glr_09_simulate_intramuscular_emg_002.png" alt="09 simulate intramuscular emg" class = "sphx-glr-single-img"/><p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (1 minutes 19.992 seconds)</p>
+<img src="../../_images/sphx_glr_09_simulate_intramuscular_emg_002.png" srcset="../../_images/sphx_glr_09_simulate_intramuscular_emg_002.png" alt="09 simulate intramuscular emg" class = "sphx-glr-single-img"/><p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (1 minutes 21.224 seconds)</p>
 <div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-auto-examples-01-basic-09-simulate-intramuscular-emg-py">
 <div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
 <p><a class="reference download internal" download="" href="../../_downloads/3d5507db57558ecb2e29ccf762adbfba/09_simulate_intramuscular_emg.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">09_simulate_intramuscular_emg.ipynb</span></code></a></p>

@@ -1,0 +1,1032 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Compute Reference Force with Constant Drive (Watanabe Network) &#8212; MyoGen 0.8.0 Documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=5349f25f" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/css/tooltipster.custom.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/css/tooltipster.bundle.min.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/css/tooltipster-sideTip-shadow.min.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/css/tooltipster-sideTip-punk.min.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/css/tooltipster-sideTip-noir.min.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/css/tooltipster-sideTip-light.min.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/css/tooltipster-sideTip-borderless.min.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/css/micromodal.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/custom.css?v=9b95bd4c" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery.css?v=d2d258e8" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-binder.css?v=f4aeca0c" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/custom.css?v=9b95bd4c" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../../../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+    <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+    <script src="../../../_static/documentation_options.js?v=cce5339e"></script>
+    <script src="../../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../_static/js/hoverxref.js"></script>
+    <script src="../../../_static/js/tooltipster.bundle.min.js"></script>
+    <script src="../../../_static/js/micromodal.min.js"></script>
+    <script src="../../../_static/custom.js?v=e0e269b1"></script>
+    <script src="../../../_static/design-tabs.js?v=f930bc37"></script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'auto_examples/03_papers/watanabe/01_compute_baseline_force';</script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="next" title="Optimize Oscillating DC Offset to Match Reference Force (Watanabe Network)" href="02_optimize_oscillating_dc.html" />
+    <link rel="prev" title="Watanabe and Kohn (2015)" href="index.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="0.8.0" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search MyoGen docs..."
+         aria-label="Search MyoGen docs..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+<aside class="bd-header-announcement" aria-label="Announcement">
+  <div class="bd-header-announcement__content">MyoGen is under active development. API may change.</div>
+</aside>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class=" navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../../_static/myogen_logo.png" class="logo__image only-light" alt="MyoGen 0.8.0 Documentation - Home"/>
+    <img src="../../../_static/myogen_logo.png" class="logo__image only-dark pst-js-only" alt="MyoGen 0.8.0 Documentation - Home"/>
+  
+  
+</a></div>
+    
+      <div class="navbar-item">
+<div class="nav-item">
+  <div class="version-switcher__container dropdown">
+      <button id="version-switcher-button" type="button" class="version-switcher__button btn btn-sm navbar-btn" aria-haspopup="true" aria-expanded="false">
+          Version 0.8.0
+      </button>
+      
+      
+      
+  </div>
+</div> </div>
+    
+      <div class="navbar-item"><div class="nav-item">
+   <span>
+      made at the <a href="https://www.nsquared.tf.fau.de/" target="_blank">N² Lab</a>
+   </span>
+</div> </div>
+    
+  </div>
+  
+  <div class=" navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../api/index.html">
+    API Documentation
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../neo_blocks_guide.html">
+    Working with Neo Block Data Structures
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../../../examples.html">
+    Examples
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/NSquaredLab/MyoGen" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+    </div>
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../api/index.html">
+    API Documentation
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../neo_blocks_guide.html">
+    Working with Neo Block Data Structures
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../../../examples.html">
+    Examples
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/NSquaredLab/MyoGen" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+<nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"><ul class="current nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../01_basic/index.html">Basics</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../01_basic/01_simulate_recruitment_thresholds.html">Recruitment Thresholds</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../01_basic/02_simulate_spike_trains_current_injection.html">Spike Train Generation with Current Injection</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../01_basic/03_simulate_spike_trains_descending_drive.html">Spike Train Generation with Descending Drive</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../01_basic/04_simulate_muscle.html">Muscle Model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../01_basic/05_simulate_surface_muaps.html">Surface Motor Unit Action Potentials</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../01_basic/06_simulate_surface_emg.html">Surface EMG Signals</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../01_basic/07_simulate_currents.html">Current Generation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../01_basic/08_simulate_force.html">Force Generation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../01_basic/09_simulate_intramuscular_emg.html">Intramuscular EMG Signals</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../01_basic/10_extract_neuron_parameters.html">Extract Neuron Parameters</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../01_basic/11_simulate_spinal_network.html">Spinal Network Simulation with Systematic Tendon Tap Protocol</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../01_basic/12_extract_data_from_neo_blocks.html">Extracting Data from Neo Blocks</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../02_finetune/index.html">Step-by-step reproduction</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../02_finetune/01_optimize_dd_for_target_firing_rate.html">Optimizing Descending Drive Parameters for Target Firing Rates</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../02_finetune/02_compute_force_from_optimized_dd.html">Force Generation with Optimized Descending Drive Parameters</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../02_finetune/03_optimize_dd_for_target_force.html">Optimizing Descending Drive for Target Force Levels</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../02_finetune/04_extract_isi_and_cv_per_ramps.html">ISI and CV Analysis with Optimized Descending Drive</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../02_finetune/05_plot_isi_cv_multi_muscle_comparison.html">Multi-Muscle ISI and CV Statistics Comparison</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="index.html">Watanabe and Kohn (2015)</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">Compute Reference Force with Constant Drive (Watanabe Network)</a></li>
+
+<li class="toctree-l2"><a class="reference internal" href="02_optimize_oscillating_dc.html">Optimize Oscillating DC Offset to Match Reference Force (Watanabe Network)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="03_10pct_mvc_simulation.html">Watanabe Spinal Network Simulation with Optimized DC Offset</a></li>
+<li class="toctree-l2"><a class="reference internal" href="04_load_and_analyze_results.html">Load and Analyze Membrane Potentials and Spike Trains</a></li>
+<li class="toctree-l2"><a class="reference internal" href="05_compute_force_from_spinal_network.html">Compute Muscle Force from Spinal Network Spike Trains</a></li>
+<li class="toctree-l2"><a class="reference internal" href="06_visualize.html">Generate Publication-Quality Figures and Analysis Plots</a></li>
+</ul>
+</details></li>
+</ul>
+</div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../../../examples.html" class="nav-link">Examples</a></li>
+    
+    
+    <li class="breadcrumb-item"><a href="index.html" class="nav-link">Watanabe and Kohn (2015)</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Compute Reference Force with Constant Drive (Watanabe Network)</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <div class="sphx-glr-download-link-note admonition note">
+<p class="admonition-title">Note</p>
+<p><a class="hxr-hoverxref hxr-tooltip reference internal" href="#sphx-glr-download-auto-examples-03-papers-watanabe-01-compute-baseline-force-py"><span class="std std-ref">Go to the end</span></a>
+to download the full example code.</p>
+</div>
+<section class="sphx-glr-example-title" id="compute-reference-force-with-constant-drive-watanabe-network">
+<span id="sphx-glr-auto-examples-03-papers-watanabe-01-compute-baseline-force-py"></span><h1>Compute Reference Force with Constant Drive (Watanabe Network)<a class="headerlink" href="#compute-reference-force-with-constant-drive-watanabe-network" title="Link to this heading">#</a></h1>
+<p>This example computes the reference muscle force using constant descending drive.
+This force is used as the target for optimizing the oscillating drive DC offset in Phase 3.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><strong>Purpose</strong>: Establish force baseline using Watanabe network parameters</p>
+<ul class="simple">
+<li><p>800 motor neurons</p></li>
+<li><p>400 descending drive neurons</p></li>
+<li><p>30% connectivity (Watanabe specification)</p></li>
+<li><p>Constant drive frequency (configurable, default 40 Hz)</p></li>
+<li><p>Poisson process (order 1)</p></li>
+</ul>
+</div>
+<p><strong>Configuration</strong>: Adjust <cite>DD_DRIVE_HZ</cite> at the top of the script (default: 40 Hz)</p>
+<p><strong>Output</strong>: Reference force saved to <cite>results/watanabe_optimization/force_reference.json</cite></p>
+<p><strong>MyoGen Components Used</strong>:</p>
+<ul class="simple">
+<li><p><a class="hxr-hoverxref hxr-tooltip reference internal" href="../../../generated/myogen.simulator.neuron.populations.AlphaMN__Pool.html#myogen.simulator.neuron.populations.AlphaMN__Pool" title="myogen.simulator.neuron.populations.AlphaMN__Pool"><code class="xref py py-class docutils literal notranslate"><span class="pre">AlphaMN__Pool</span></code></a>:
+Pool of 800 alpha motor neurons with exponentially distributed recruitment thresholds.
+Each neuron is a biophysically detailed NEURON model with soma, dendrites, and ion channels.</p></li>
+<li><p><a class="hxr-hoverxref hxr-tooltip reference internal" href="../../../generated/myogen.simulator.neuron.populations.DescendingDrive__Pool.html#myogen.simulator.neuron.populations.DescendingDrive__Pool" title="myogen.simulator.neuron.populations.DescendingDrive__Pool"><code class="xref py py-class docutils literal notranslate"><span class="pre">DescendingDrive__Pool</span></code></a>:
+Pool of 400 “descending drive” neurons that generate Poisson spike trains.
+These represent cortical/brainstem input to motor neurons.
+<code class="docutils literal notranslate"><span class="pre">poisson_batch_size=1</span></code> creates order-1 (renewal) Poisson processes.</p></li>
+<li><p><code class="xref py py-class docutils literal notranslate"><span class="pre">Network</span></code>:
+Container that manages populations and synaptic connections between them.
+Supports probabilistic connectivity (<code class="docutils literal notranslate"><span class="pre">connect()</span></code>) and external input (<code class="docutils literal notranslate"><span class="pre">connect_from_external()</span></code>).</p></li>
+<li><p><a class="hxr-hoverxref hxr-tooltip reference internal" href="../../../generated/myogen.simulator.RecruitmentThresholds.html#myogen.simulator.RecruitmentThresholds" title="myogen.simulator.RecruitmentThresholds"><code class="xref py py-class docutils literal notranslate"><span class="pre">RecruitmentThresholds</span></code></a>:
+Generates recruitment threshold distribution following Fuglevand/DeLuca models.
+The <code class="docutils literal notranslate"><span class="pre">mode=&quot;combined&quot;</span></code> blends exponential and linear distributions.</p></li>
+<li><p><a class="hxr-hoverxref hxr-tooltip reference internal" href="../../../generated/myogen.simulator.ForceModel.html#myogen.simulator.ForceModel" title="myogen.simulator.core.force.force_model.ForceModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">ForceModel</span></code></a>:
+Converts motor neuron spike trains to muscle force using Fuglevand’s twitch model.
+Each motor unit has amplitude and contraction time determined by recruitment threshold.</p></li>
+</ul>
+<p><strong>Workflow Position</strong>: Step 1 of 6 - Run this first to establish baseline force.</p>
+<p><strong>Next Step</strong>: Run <code class="docutils literal notranslate"><span class="pre">02_optimize_oscillating_dc.py</span></code> to find DC offset for Phase 3.</p>
+<section id="import-libraries">
+<h2>Import Libraries<a class="headerlink" href="#import-libraries" title="Link to this heading">#</a></h2>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+
+<a href="https://docs.python.org/3/library/os.html#os.environ" title="os.environ" class="sphx-glr-backref-module-os sphx-glr-backref-type-py-data"><span class="n">os</span><span class="o">.</span><span class="n">environ</span></a><span class="p">[</span><span class="s2">&quot;MPLBACKEND&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;Agg&quot;</span>
+<span class="k">if</span> <span class="s2">&quot;DISPLAY&quot;</span> <span class="ow">in</span> <a href="https://docs.python.org/3/library/os.html#os.environ" title="os.environ" class="sphx-glr-backref-module-os sphx-glr-backref-type-py-data"><span class="n">os</span><span class="o">.</span><span class="n">environ</span></a><span class="p">:</span>
+    <span class="k">del</span> <a href="https://docs.python.org/3/library/os.html#os.environ" title="os.environ" class="sphx-glr-backref-module-os sphx-glr-backref-type-py-data"><span class="n">os</span><span class="o">.</span><span class="n">environ</span></a><span class="p">[</span><span class="s2">&quot;DISPLAY&quot;</span><span class="p">]</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">warnings</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <a href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="pathlib.Path" class="sphx-glr-backref-module-pathlib sphx-glr-backref-type-py-class"><span class="n">Path</span></a>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">quantities</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pq</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">neo</span><span class="w"> </span><span class="kn">import</span> <a href="https://neo.readthedocs.io/en/latest/api_reference.html#neo.core.Block" title="neo.core.block.Block" class="sphx-glr-backref-module-neo-core-block sphx-glr-backref-type-py-class"><span class="n">Block</span></a><span class="p">,</span> <a href="https://neo.readthedocs.io/en/latest/api_reference.html#neo.core.Segment" title="neo.core.segment.Segment" class="sphx-glr-backref-module-neo-core-segment sphx-glr-backref-type-py-class"><span class="n">Segment</span></a><span class="p">,</span> <a href="https://neo.readthedocs.io/en/latest/api_reference.html#neo.core.SpikeTrain" title="neo.core.spiketrain.SpikeTrain" class="sphx-glr-backref-module-neo-core-spiketrain sphx-glr-backref-type-py-class"><span class="n">SpikeTrain</span></a>
+<span class="kn">from</span><span class="w"> </span><span class="nn">neuron</span><span class="w"> </span><span class="kn">import</span> <span class="n">h</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">myogen</span><span class="w"> </span><span class="kn">import</span> <span class="n">RANDOM_GENERATOR</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">myogen.simulator</span><span class="w"> </span><span class="kn">import</span> <span class="n">RecruitmentThresholds</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">myogen.simulator.core.force.force_model</span><span class="w"> </span><span class="kn">import</span> <span class="n">ForceModel</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">myogen.simulator.neuron</span><span class="w"> </span><span class="kn">import</span> <span class="n">Network</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">myogen.simulator.neuron.populations</span><span class="w"> </span><span class="kn">import</span> <span class="n">AlphaMN__Pool</span><span class="p">,</span> <span class="n">DescendingDrive__Pool</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">myogen.utils.helper</span><span class="w"> </span><span class="kn">import</span> <span class="n">calculate_firing_rate_statistics</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">myogen.utils.nmodl</span><span class="w"> </span><span class="kn">import</span> <span class="n">load_nmodl_mechanisms</span>
+
+<a href="https://docs.python.org/3/library/warnings.html#warnings.filterwarnings" title="warnings.filterwarnings" class="sphx-glr-backref-module-warnings sphx-glr-backref-type-py-function"><span class="n">warnings</span><span class="o">.</span><span class="n">filterwarnings</span></a><span class="p">(</span><span class="s2">&quot;ignore&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">style</span><span class="o">.</span><span class="n">use</span><span class="p">(</span><span class="s2">&quot;fivethirtyeight&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="user-configuration-adjust-these-parameters-as-needed">
+<h1>USER CONFIGURATION - Adjust these parameters as needed<a class="headerlink" href="#user-configuration-adjust-these-parameters-as-needed" title="Link to this heading">#</a></h1>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Constant descending drive frequency (Hz)</span>
+<span class="c1"># This is the baseline drive for Phase 1 (constant stimulation)</span>
+<span class="c1"># - Watanabe original: 65 Hz</span>
+<span class="c1"># - Lower values (e.g., 40 Hz): lower force output, fewer recruited units</span>
+<span class="c1"># - Higher values (e.g., 80 Hz): higher force output, more recruited units</span>
+<a href="https://docs.python.org/3/library/functions.html#float" title="builtins.float" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">DD_DRIVE_HZ</span></a> <span class="o">=</span> <span class="mf">40.0</span>
+</pre></div>
+</div>
+<section id="define-simulation-parameters">
+<h2>Define Simulation Parameters<a class="headerlink" href="#define-simulation-parameters" title="Link to this heading">#</a></h2>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Watanabe network parameters (original specification)</span>
+<a href="https://docs.python.org/3/library/functions.html#int" title="builtins.int" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">N_MOTOR_UNITS</span></a> <span class="o">=</span> <span class="mi">800</span>  <span class="c1"># Watanabe specification</span>
+<a href="https://docs.python.org/3/library/functions.html#int" title="builtins.int" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">N_DD_NEURONS</span></a> <span class="o">=</span> <span class="mi">400</span>  <span class="c1"># Watanabe specification</span>
+<a href="https://docs.python.org/3/library/functions.html#float" title="builtins.float" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">DD_CONNECTIVITY</span></a> <span class="o">=</span> <span class="mf">0.3</span>  <span class="c1"># Watanabe specification (30%)</span>
+<a href="https://docs.python.org/3/library/functions.html#float" title="builtins.float" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">SYNAPTIC_WEIGHT</span></a> <span class="o">=</span> <span class="mf">0.05</span>  <span class="c1"># DD→MN synaptic weight (µS)</span>
+
+<span class="c1"># Simulation parameters</span>
+<a href="https://docs.python.org/3/library/functions.html#float" title="builtins.float" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">SIMULATION_TIME_MS</span></a> <span class="o">=</span> <span class="mf">10000.0</span>  <span class="c1"># 10 seconds for steady-state force</span>
+<a href="https://docs.python.org/3/library/functions.html#float" title="builtins.float" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">TIMESTEP_MS</span></a> <span class="o">=</span> <span class="mf">0.1</span>  <span class="c1"># Integration timestep (ms)</span>
+
+<span class="c1"># Force scaling (convert normalized force to Newtons)</span>
+<a href="https://docs.python.org/3/library/functions.html#float" title="builtins.float" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">MAX_FORCE_N</span></a> <span class="o">=</span> <span class="mf">100.0</span>  <span class="c1"># Maximum voluntary contraction force (N) - typical for finger flexors</span>
+
+<span class="c1"># File paths - Watanabe-specific directory</span>
+<span class="k">try</span><span class="p">:</span>
+    <a href="https://docs.python.org/3/library/pathlib.html#pathlib.PosixPath" title="pathlib.PosixPath" class="sphx-glr-backref-module-pathlib sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">_script_dir</span></a> <span class="o">=</span> <a href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="pathlib.Path" class="sphx-glr-backref-module-pathlib sphx-glr-backref-type-py-class"><span class="n">Path</span></a><span class="p">(</span><span class="vm">__file__</span><span class="p">)</span><span class="o">.</span><span class="n">parent</span>
+<span class="k">except</span> <span class="ne">NameError</span><span class="p">:</span>
+    <a href="https://docs.python.org/3/library/pathlib.html#pathlib.PosixPath" title="pathlib.PosixPath" class="sphx-glr-backref-module-pathlib sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">_script_dir</span></a> <span class="o">=</span> <a href="https://docs.python.org/3/library/pathlib.html#pathlib.Path.cwd" title="pathlib.Path.cwd" class="sphx-glr-backref-module-pathlib sphx-glr-backref-type-py-method"><span class="n">Path</span><span class="o">.</span><span class="n">cwd</span></a><span class="p">()</span>
+<a href="https://docs.python.org/3/library/pathlib.html#pathlib.PosixPath" title="pathlib.PosixPath" class="sphx-glr-backref-module-pathlib sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">RESULTS_DIR</span></a> <span class="o">=</span> <a href="https://docs.python.org/3/library/pathlib.html#pathlib.PosixPath" title="pathlib.PosixPath" class="sphx-glr-backref-module-pathlib sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">_script_dir</span></a> <span class="o">/</span> <span class="s2">&quot;results&quot;</span> <span class="o">/</span> <span class="s2">&quot;watanabe_optimization&quot;</span>
+<a href="https://docs.python.org/3/library/pathlib.html#pathlib.Path.mkdir" title="pathlib.Path.mkdir" class="sphx-glr-backref-module-pathlib sphx-glr-backref-type-py-method"><span class="n">RESULTS_DIR</span><span class="o">.</span><span class="n">mkdir</span></a><span class="p">(</span><span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Computing Reference Force with </span><span class="si">{</span><a href="https://docs.python.org/3/library/functions.html#float" title="builtins.float" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">DD_DRIVE_HZ</span></a><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2"> Hz Constant Drive (Watanabe Network)&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;=&quot;</span> <span class="o">*</span> <span class="mi">60</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Motor neurons: </span><span class="si">{</span><a href="https://docs.python.org/3/library/functions.html#int" title="builtins.int" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">N_MOTOR_UNITS</span></a><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;DD neurons: </span><span class="si">{</span><a href="https://docs.python.org/3/library/functions.html#int" title="builtins.int" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">N_DD_NEURONS</span></a><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Connection probability: </span><span class="si">{</span><a href="https://docs.python.org/3/library/functions.html#float" title="builtins.float" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">DD_CONNECTIVITY</span></a><span class="si">:</span><span class="s2">.1%</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Drive frequency: </span><span class="si">{</span><a href="https://docs.python.org/3/library/functions.html#float" title="builtins.float" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">DD_DRIVE_HZ</span></a><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2"> Hz (constant)&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Process type: Poisson (batch size: 1)&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;=&quot;</span> <span class="o">*</span> <span class="mi">60</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Computing Reference Force with 40.0 Hz Constant Drive (Watanabe Network)
+============================================================
+Motor neurons: 800
+DD neurons: 400
+Connection probability: 30.0%
+Drive frequency: 40.0 Hz (constant)
+Process type: Poisson (batch size: 1)
+============================================================
+</pre></div>
+</div>
+</section>
+<section id="load-neuron-mechanisms-and-setup-network">
+<h2>Load NEURON Mechanisms and Setup Network<a class="headerlink" href="#load-neuron-mechanisms-and-setup-network" title="Link to this heading">#</a></h2>
+<p>MyoGen uses NEURON as its simulation engine. Before creating any neurons,
+we must load the compiled NMODL mechanisms (ion channels, synapses, etc.).</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">load_nmodl_mechanisms</span><span class="p">()</span>
+<a href="https://docs.python.org/3/library/functions.html#int" title="builtins.int" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">h</span><span class="o">.</span><span class="n">secondorder</span></a> <span class="o">=</span> <span class="mi">2</span>  <span class="c1"># Crank-Nicolson integration (2nd order accurate, stable)</span>
+
+<span class="c1"># Create recruitment thresholds for 800 neurons</span>
+<span class="c1"># ---------------------------------------------</span>
+<span class="c1"># Recruitment thresholds determine:</span>
+<span class="c1">#   1. Which motor units activate first (low threshold = low force, recruited early)</span>
+<span class="c1">#   2. Motor unit properties (twitch amplitude, contraction time)</span>
+<span class="c1">#</span>
+<span class="c1"># Parameters:</span>
+<span class="c1">#   - recruitment_range__ratio=100: Largest MU has 100x threshold of smallest</span>
+<span class="c1">#   - mode=&quot;combined&quot;: Blends Fuglevand exponential + DeLuca linear distributions</span>
+<span class="c1">#   - deluca__slope: Controls steepness of threshold curve</span>
+<a href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">recruitment_thresholds</span></a><span class="p">,</span> <a href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">_</span></a> <span class="o">=</span> <span class="n">RecruitmentThresholds</span><span class="p">(</span>
+    <span class="n">N</span><span class="o">=</span><a href="https://docs.python.org/3/library/functions.html#int" title="builtins.int" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">N_MOTOR_UNITS</span></a><span class="p">,</span>
+    <span class="n">recruitment_range__ratio</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
+    <span class="n">deluca__slope</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span>
+    <span class="n">konstantin__max_threshold__ratio</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span>
+    <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;combined&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="c1"># Create motor neuron pool</span>
+<span class="c1"># ------------------------</span>
+<span class="c1"># AlphaMN__Pool creates N biophysically detailed motor neurons.</span>
+<span class="c1"># Each neuron has:</span>
+<span class="c1">#   - Soma with Hodgkin-Huxley-style channels</span>
+<span class="c1">#   - Dendrites for synaptic input</span>
+<span class="c1">#   - Properties scaled by recruitment threshold (input resistance, rheobase)</span>
+<span class="c1">#</span>
+<span class="c1"># The config_file specifies morphology and channel parameters.</span>
+<span class="n">motor_neuron_pool</span> <span class="o">=</span> <span class="n">AlphaMN__Pool</span><span class="p">(</span>
+    <span class="n">recruitment_thresholds__array</span><span class="o">=</span><a href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">recruitment_thresholds</span></a><span class="p">,</span>
+    <span class="n">config_file</span><span class="o">=</span><span class="s2">&quot;alpha_mn_default.yaml&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="c1"># Create descending drive pool with Poisson process (Watanabe)</span>
+<span class="c1"># ------------------------------------------------------------</span>
+<span class="c1"># DescendingDrive__Pool creates &quot;virtual&quot; neurons that generate spike trains</span>
+<span class="c1"># at a specified rate. They don&#39;t have membrane dynamics - just Poisson processes.</span>
+<span class="c1">#</span>
+<span class="c1"># Parameters:</span>
+<span class="c1">#   - process_type=&quot;poisson&quot;: Renewal Poisson process</span>
+<span class="c1">#   - poisson_batch_size=1: Order-1 (memoryless) - Watanabe specification</span>
+<span class="c1">#     Higher values create more regular spike trains (order-k gamma process)</span>
+<span class="n">descending_drive_pool</span> <span class="o">=</span> <span class="n">DescendingDrive__Pool</span><span class="p">(</span>
+    <span class="n">n</span><span class="o">=</span><a href="https://docs.python.org/3/library/functions.html#int" title="builtins.int" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">N_DD_NEURONS</span></a><span class="p">,</span>
+    <span class="n">timestep__ms</span><span class="o">=</span><a href="https://docs.python.org/3/library/functions.html#float" title="builtins.float" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">TIMESTEP_MS</span></a> <span class="o">*</span> <span class="n">pq</span><span class="o">.</span><span class="n">ms</span><span class="p">,</span>
+    <span class="n">process_type</span><span class="o">=</span><span class="s2">&quot;poisson&quot;</span><span class="p">,</span>
+    <span class="n">poisson_batch_size</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>  <span class="c1"># Order 1 Poisson (Watanabe specification)</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="build-network">
+<h2>Build Network<a class="headerlink" href="#build-network" title="Link to this heading">#</a></h2>
+<p>The Network class manages populations and connections between them.
+It handles the complexity of creating synapses in NEURON.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">network</span> <span class="o">=</span> <span class="n">Network</span><span class="p">({</span><span class="s2">&quot;DD&quot;</span><span class="p">:</span> <span class="n">descending_drive_pool</span><span class="p">,</span> <span class="s2">&quot;aMN&quot;</span><span class="p">:</span> <span class="n">motor_neuron_pool</span><span class="p">})</span>
+
+<span class="c1"># Connect DD → aMN with 30% probability (Watanabe specification)</span>
+<span class="c1"># --------------------------------------------------------------</span>
+<span class="c1"># This creates SHARED input: multiple motor neurons receive spikes from</span>
+<span class="c1"># the same DD neurons, creating correlated activity across the pool.</span>
+<span class="c1">#</span>
+<span class="c1"># With probability=0.3, each motor neuron connects to ~30% of DD neurons</span>
+<span class="c1"># (~120 connections), while each DD neuron projects to ~30% of motor neurons.</span>
+<span class="n">network</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span>
+    <span class="n">source</span><span class="o">=</span><span class="s2">&quot;DD&quot;</span><span class="p">,</span>
+    <span class="n">target</span><span class="o">=</span><span class="s2">&quot;aMN&quot;</span><span class="p">,</span>
+    <span class="n">probability</span><span class="o">=</span><a href="https://docs.python.org/3/library/functions.html#float" title="builtins.float" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">DD_CONNECTIVITY</span></a><span class="p">,</span>
+    <span class="n">weight__uS</span><span class="o">=</span><a href="https://docs.python.org/3/library/functions.html#float" title="builtins.float" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">SYNAPTIC_WEIGHT</span></a> <span class="o">*</span> <span class="n">pq</span><span class="o">.</span><span class="n">uS</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="c1"># External input to DD population</span>
+<span class="c1"># --------------------------------</span>
+<span class="c1"># Creates NetCon objects that allow us to deliver events to DD neurons.</span>
+<span class="c1"># In the simulation loop, we&#39;ll use these to trigger spikes based on</span>
+<span class="c1"># the drive signal.</span>
+<span class="n">network</span><span class="o">.</span><span class="n">connect_from_external</span><span class="p">(</span><span class="n">source</span><span class="o">=</span><span class="s2">&quot;cortical_input&quot;</span><span class="p">,</span> <span class="n">target</span><span class="o">=</span><span class="s2">&quot;DD&quot;</span><span class="p">,</span> <span class="n">weight__uS</span><span class="o">=</span><span class="mf">1.0</span> <span class="o">*</span> <span class="n">pq</span><span class="o">.</span><span class="n">uS</span><span class="p">)</span>
+<a href="https://docs.python.org/3/library/stdtypes.html#list" title="builtins.list" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">dd_netcons</span></a> <span class="o">=</span> <span class="n">network</span><span class="o">.</span><span class="n">get_netcons</span><span class="p">(</span><span class="s2">&quot;cortical_input&quot;</span><span class="p">,</span> <span class="s2">&quot;DD&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="setup-spike-recording">
+<h2>Setup Spike Recording<a class="headerlink" href="#setup-spike-recording" title="Link to this heading">#</a></h2>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><a href="https://docs.python.org/3/library/stdtypes.html#list" title="builtins.list" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">mn_spike_recorders</span></a> <span class="o">=</span> <span class="p">[]</span>
+<span class="k">for</span> <span class="n">cell</span> <span class="ow">in</span> <span class="n">motor_neuron_pool</span><span class="p">:</span>
+    <span class="n">spike_recorder</span> <span class="o">=</span> <span class="n">h</span><span class="o">.</span><span class="n">Vector</span><span class="p">()</span>
+    <span class="n">nc</span> <span class="o">=</span> <span class="n">h</span><span class="o">.</span><span class="n">NetCon</span><span class="p">(</span><span class="n">cell</span><span class="o">.</span><span class="n">soma</span><span class="p">(</span><span class="mf">0.5</span><span class="p">)</span><span class="o">.</span><span class="n">_ref_v</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="n">sec</span><span class="o">=</span><span class="n">cell</span><span class="o">.</span><span class="n">soma</span><span class="p">)</span>
+    <a href="https://docs.python.org/3/library/functions.html#float" title="builtins.float" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">nc</span><span class="o">.</span><span class="n">threshold</span></a> <span class="o">=</span> <span class="mi">50</span>
+    <span class="n">nc</span><span class="o">.</span><span class="n">record</span><span class="p">(</span><span class="n">spike_recorder</span><span class="p">)</span>
+    <a href="https://docs.python.org/3/library/stdtypes.html#list" title="builtins.list" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">mn_spike_recorders</span></a><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">spike_recorder</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="generate-drive-signal-65-hz-constant">
+<h2>Generate Drive Signal (65 Hz constant)<a class="headerlink" href="#generate-drive-signal-65-hz-constant" title="Link to this heading">#</a></h2>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><a href="https://docs.python.org/3/library/functions.html#int" title="builtins.int" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">time_points</span></a> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><a href="https://docs.python.org/3/library/functions.html#float" title="builtins.float" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">SIMULATION_TIME_MS</span></a> <span class="o">/</span> <a href="https://docs.python.org/3/library/functions.html#float" title="builtins.float" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">TIMESTEP_MS</span></a><span class="p">)</span>
+<a href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">drive_signal</span></a> <span class="o">=</span> <a href="https://numpy.org/doc/stable/reference/generated/numpy.ones.html#numpy.ones" title="numpy.ones" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-function"><span class="n">np</span><span class="o">.</span><span class="n">ones</span></a><span class="p">(</span><a href="https://docs.python.org/3/library/functions.html#int" title="builtins.int" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">time_points</span></a><span class="p">)</span> <span class="o">*</span> <a href="https://docs.python.org/3/library/functions.html#float" title="builtins.float" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">DD_DRIVE_HZ</span></a> <span class="o">+</span> <a href="https://numpy.org/doc/stable/reference/generated/numpy.clip.html#numpy.clip" title="numpy.clip" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-function"><span class="n">np</span><span class="o">.</span><span class="n">clip</span></a><span class="p">(</span>
+    <span class="n">RANDOM_GENERATOR</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><a href="https://docs.python.org/3/library/functions.html#int" title="builtins.int" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">time_points</span></a><span class="p">),</span> <span class="mi">0</span><span class="p">,</span> <span class="kc">None</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="run-simulation">
+<h2>Run Simulation<a class="headerlink" href="#run-simulation" title="Link to this heading">#</a></h2>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">h</span><span class="o">.</span><span class="n">load_file</span><span class="p">(</span><span class="s2">&quot;stdrun.hoc&quot;</span><span class="p">)</span>
+<a href="https://docs.python.org/3/library/functions.html#float" title="builtins.float" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">h</span><span class="o">.</span><span class="n">dt</span></a> <span class="o">=</span> <a href="https://docs.python.org/3/library/functions.html#float" title="builtins.float" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">TIMESTEP_MS</span></a>
+<a href="https://docs.python.org/3/library/functions.html#float" title="builtins.float" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">h</span><span class="o">.</span><span class="n">tstop</span></a> <span class="o">=</span> <a href="https://docs.python.org/3/library/functions.html#float" title="builtins.float" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">SIMULATION_TIME_MS</span></a>
+
+<span class="c1"># Initialize voltages</span>
+<span class="k">for</span> <span class="n">section</span><span class="p">,</span> <a href="https://docs.python.org/3/library/functions.html#int" title="builtins.int" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">voltage</span></a> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="n">motor_neuron_pool</span><span class="o">.</span><span class="n">get_initialization_data</span><span class="p">()):</span>
+    <a href="https://docs.python.org/3/library/functions.html#float" title="builtins.float" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">section</span><span class="o">.</span><span class="n">v</span></a> <span class="o">=</span> <a href="https://docs.python.org/3/library/functions.html#int" title="builtins.int" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">voltage</span></a>
+<span class="k">for</span> <span class="n">section</span><span class="p">,</span> <a href="https://docs.python.org/3/library/functions.html#int" title="builtins.int" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">voltage</span></a> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="n">descending_drive_pool</span><span class="o">.</span><span class="n">get_initialization_data</span><span class="p">()):</span>
+    <a href="https://docs.python.org/3/library/functions.html#float" title="builtins.float" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">section</span><span class="o">.</span><span class="n">v</span></a> <span class="o">=</span> <a href="https://docs.python.org/3/library/functions.html#int" title="builtins.int" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">voltage</span></a>
+
+<span class="n">h</span><span class="o">.</span><span class="n">finitialize</span><span class="p">()</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Running simulation...&quot;</span><span class="p">)</span>
+<a href="https://docs.python.org/3/library/functions.html#int" title="builtins.int" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">step_counter</span></a> <span class="o">=</span> <span class="mi">0</span>
+<span class="k">while</span> <a href="https://docs.python.org/3/library/functions.html#float" title="builtins.float" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">h</span><span class="o">.</span><span class="n">t</span></a> <span class="o">&lt;</span> <a href="https://docs.python.org/3/library/functions.html#float" title="builtins.float" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">h</span><span class="o">.</span><span class="n">tstop</span></a><span class="p">:</span>
+    <a href="https://numpy.org/doc/stable/reference/arrays.scalars.html#numpy.float64" title="numpy.float64" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-attribute"><span class="n">current_drive</span></a> <span class="o">=</span> <a href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">drive_signal</span></a><span class="p">[</span><span class="nb">min</span><span class="p">(</span><a href="https://docs.python.org/3/library/functions.html#int" title="builtins.int" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">step_counter</span></a><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><a href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">drive_signal</span></a><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)]</span>
+    <span class="k">for</span> <span class="n">dd_cell</span> <span class="ow">in</span> <span class="n">descending_drive_pool</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">dd_cell</span><span class="o">.</span><span class="n">integrate</span><span class="p">(</span><a href="https://numpy.org/doc/stable/reference/arrays.scalars.html#numpy.float64" title="numpy.float64" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-attribute"><span class="n">current_drive</span></a><span class="p">):</span>
+            <span class="k">if</span> <a href="https://docs.python.org/3/library/functions.html#float" title="builtins.float" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">h</span><span class="o">.</span><span class="n">t</span></a> <span class="o">&lt;</span> <a href="https://docs.python.org/3/library/functions.html#float" title="builtins.float" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">h</span><span class="o">.</span><span class="n">tstop</span></a><span class="p">:</span>
+                <a href="https://docs.python.org/3/library/stdtypes.html#list" title="builtins.list" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">dd_netcons</span></a><span class="p">[</span><a href="https://docs.python.org/3/library/functions.html#int" title="builtins.int" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">dd_cell</span><span class="o">.</span><span class="n">pool__ID</span></a><span class="p">]</span><span class="o">.</span><span class="n">event</span><span class="p">(</span><a href="https://docs.python.org/3/library/functions.html#float" title="builtins.float" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">h</span><span class="o">.</span><span class="n">t</span></a> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">h</span><span class="o">.</span><span class="n">fadvance</span><span class="p">()</span>
+    <a href="https://docs.python.org/3/library/functions.html#int" title="builtins.int" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">step_counter</span></a> <span class="o">+=</span> <span class="mi">1</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Simulation complete!</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Running simulation...
+Simulation complete!
+</pre></div>
+</div>
+</section>
+<section id="process-spike-trains">
+<h2>Process Spike Trains<a class="headerlink" href="#process-spike-trains" title="Link to this heading">#</a></h2>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><a href="https://docs.python.org/3/library/functions.html#float" title="builtins.float" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">dt_s</span></a> <span class="o">=</span> <a href="https://docs.python.org/3/library/functions.html#float" title="builtins.float" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">h</span><span class="o">.</span><span class="n">dt</span></a> <span class="o">/</span> <span class="mf">1000.0</span>
+<a href="https://neo.readthedocs.io/en/latest/api_reference.html#neo.core.Segment" title="neo.core.segment.Segment" class="sphx-glr-backref-module-neo-core-segment sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">mn_segment</span></a> <span class="o">=</span> <a href="https://neo.readthedocs.io/en/latest/api_reference.html#neo.core.Segment" title="neo.core.segment.Segment" class="sphx-glr-backref-module-neo-core-segment sphx-glr-backref-type-py-class"><span class="n">Segment</span></a><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;Motor Neurons&quot;</span><span class="p">)</span>
+<a href="https://neo.readthedocs.io/en/latest/api_reference.html#neo.core.Segment" title="neo.core.segment.Segment" class="sphx-glr-backref-module-neo-core-segment sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">mn_segment</span></a><span class="o">.</span><span class="n">spiketrains</span> <span class="o">=</span> <span class="p">[</span>
+    <a href="https://neo.readthedocs.io/en/latest/api_reference.html#neo.core.SpikeTrain" title="neo.core.spiketrain.SpikeTrain" class="sphx-glr-backref-module-neo-core-spiketrain sphx-glr-backref-type-py-class"><span class="n">SpikeTrain</span></a><span class="p">(</span>
+        <span class="n">recorder</span><span class="o">.</span><span class="n">as_numpy</span><span class="p">()</span> <span class="o">/</span> <span class="mi">1000</span> <span class="o">*</span> <span class="n">pq</span><span class="o">.</span><span class="n">s</span><span class="p">,</span>
+        <span class="n">t_stop</span><span class="o">=</span><a href="https://docs.python.org/3/library/functions.html#float" title="builtins.float" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">SIMULATION_TIME_MS</span></a> <span class="o">/</span> <span class="mi">1000</span> <span class="o">*</span> <span class="n">pq</span><span class="o">.</span><span class="n">s</span><span class="p">,</span>
+        <span class="n">sampling_rate</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span> <span class="o">/</span> <a href="https://docs.python.org/3/library/functions.html#float" title="builtins.float" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">dt_s</span></a> <span class="o">*</span> <span class="p">(</span><span class="n">pq</span><span class="o">.</span><span class="n">Hz</span><span class="p">)),</span>
+        <span class="n">sampling_period</span><span class="o">=</span><a href="https://docs.python.org/3/library/functions.html#float" title="builtins.float" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">dt_s</span></a> <span class="o">*</span> <span class="n">pq</span><span class="o">.</span><span class="n">s</span><span class="p">,</span>
+        <span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;MN_</span><span class="si">{</span><a href="https://docs.python.org/3/library/functions.html#int" title="builtins.int" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">i</span></a><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="k">for</span> <a href="https://docs.python.org/3/library/functions.html#int" title="builtins.int" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">i</span></a><span class="p">,</span> <span class="n">recorder</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><a href="https://docs.python.org/3/library/stdtypes.html#list" title="builtins.list" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">mn_spike_recorders</span></a><span class="p">)</span>
+<span class="p">]</span>
+
+<a href="https://neo.readthedocs.io/en/latest/api_reference.html#neo.core.Block" title="neo.core.block.Block" class="sphx-glr-backref-module-neo-core-block sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">spike_train__Block</span></a> <span class="o">=</span> <a href="https://neo.readthedocs.io/en/latest/api_reference.html#neo.core.Block" title="neo.core.block.Block" class="sphx-glr-backref-module-neo-core-block sphx-glr-backref-type-py-class"><span class="n">Block</span></a><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;Motor Unit Pool&quot;</span><span class="p">)</span>
+<a href="https://neo.readthedocs.io/en/latest/api_reference.html#neo.core.Block" title="neo.core.block.Block" class="sphx-glr-backref-module-neo-core-block sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">spike_train__Block</span></a><span class="o">.</span><span class="n">segments</span> <span class="o">=</span> <span class="p">[</span><a href="https://neo.readthedocs.io/en/latest/api_reference.html#neo.core.Segment" title="neo.core.segment.Segment" class="sphx-glr-backref-module-neo-core-segment sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">mn_segment</span></a><span class="p">]</span>
+</pre></div>
+</div>
+</section>
+<section id="calculate-firing-rate-statistics">
+<h2>Calculate Firing Rate Statistics<a class="headerlink" href="#calculate-firing-rate-statistics" title="Link to this heading">#</a></h2>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><a href="https://docs.python.org/3/library/stdtypes.html#dict" title="builtins.dict" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">stats</span></a> <span class="o">=</span> <span class="n">calculate_firing_rate_statistics</span><span class="p">(</span><a href="https://neo.readthedocs.io/en/latest/api_reference.html#neo.core.Segment" title="neo.core.segment.Segment" class="sphx-glr-backref-module-neo-core-segment sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">mn_segment</span></a><span class="o">.</span><span class="n">spiketrains</span><span class="p">)</span>
+<a href="https://docs.python.org/3/library/functions.html#float" title="builtins.float" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">fr_mean</span></a> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><a href="https://docs.python.org/3/library/stdtypes.html#dict" title="builtins.dict" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">stats</span></a><span class="p">[</span><span class="s2">&quot;FR_mean&quot;</span><span class="p">])</span>
+<a href="https://docs.python.org/3/library/functions.html#float" title="builtins.float" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">fr_std</span></a> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><a href="https://docs.python.org/3/library/stdtypes.html#dict" title="builtins.dict" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">stats</span></a><span class="p">[</span><span class="s2">&quot;FR_std&quot;</span><span class="p">])</span>
+<a href="https://docs.python.org/3/library/functions.html#int" title="builtins.int" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">n_active</span></a> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><a href="https://docs.python.org/3/library/stdtypes.html#dict" title="builtins.dict" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">stats</span></a><span class="p">[</span><span class="s2">&quot;n_active&quot;</span><span class="p">])</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Firing Rate Statistics:&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Active units: </span><span class="si">{</span><a href="https://docs.python.org/3/library/functions.html#int" title="builtins.int" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">n_active</span></a><span class="si">}</span><span class="s2">/</span><span class="si">{</span><a href="https://docs.python.org/3/library/functions.html#int" title="builtins.int" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">N_MOTOR_UNITS</span></a><span class="si">}</span><span class="s2"> (</span><span class="si">{</span><a href="https://docs.python.org/3/library/functions.html#int" title="builtins.int" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">n_active</span></a><span class="o">/</span><a href="https://docs.python.org/3/library/functions.html#int" title="builtins.int" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">N_MOTOR_UNITS</span></a><span class="o">*</span><span class="mi">100</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2">%)&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Mean firing rate: </span><span class="si">{</span><a href="https://docs.python.org/3/library/functions.html#float" title="builtins.float" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">fr_mean</span></a><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2"> Hz&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Std deviation: </span><span class="si">{</span><a href="https://docs.python.org/3/library/functions.html#float" title="builtins.float" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">fr_std</span></a><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2"> Hz&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Coefficient of variation: </span><span class="si">{</span><a href="https://docs.python.org/3/library/functions.html#float" title="builtins.float" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">fr_std</span></a><span class="w"> </span><span class="o">/</span><span class="w"> </span><a href="https://docs.python.org/3/library/functions.html#float" title="builtins.float" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">fr_mean</span></a><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Firing Rate Statistics:
+  Active units: 377/800 (47.1%)
+  Mean firing rate: 5.80 Hz
+  Std deviation: 2.69 Hz
+  Coefficient of variation: 0.464
+</pre></div>
+</div>
+</section>
+<section id="generate-force-output">
+<h2>Generate Force Output<a class="headerlink" href="#generate-force-output" title="Link to this heading">#</a></h2>
+<dl class="simple">
+<dt>The ForceModel implements Fuglevand’s motor unit twitch model:</dt><dd><ul class="simple">
+<li><p>Each motor unit produces a twitch waveform: F(t) = P * (t/T) * exp(1 - t/T)</p></li>
+<li><p>P (peak force) and T (contraction time) depend on recruitment threshold</p></li>
+<li><p>Low-threshold units: small P, short T → small, fast twitches</p></li>
+<li><p>High-threshold units: large P, long T → large, slow twitches</p></li>
+</ul>
+</dd>
+</dl>
+<p>The force model convolves each unit’s twitch with its spike train,
+then sums across all units to get total muscle force.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">force_model</span> <span class="o">=</span> <span class="n">ForceModel</span><span class="p">(</span>
+    <a href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">recruitment_thresholds</span></a><span class="o">=</span><a href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">recruitment_thresholds</span></a><span class="p">,</span>
+    <span class="n">recording_frequency__Hz</span><span class="o">=</span><span class="mi">2048</span> <span class="o">*</span> <span class="n">pq</span><span class="o">.</span><span class="n">Hz</span><span class="p">,</span>        <span class="c1"># Output sampling rate</span>
+    <span class="n">longest_duration_rise_time__ms</span><span class="o">=</span><span class="mf">90.0</span> <span class="o">*</span> <span class="n">pq</span><span class="o">.</span><span class="n">ms</span><span class="p">,</span> <span class="c1"># Slowest unit&#39;s rise time</span>
+    <span class="n">contraction_time_range_factor</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>              <span class="c1"># Ratio of slowest/fastest T</span>
+<span class="p">)</span>
+
+<span class="c1"># Generate force from spike trains</span>
+<span class="c1"># Returns a NEO AnalogSignal with units of &quot;arbitrary&quot; (sum of normalized twitches)</span>
+<a href="https://neo.readthedocs.io/en/latest/api_reference.html#neo.core.AnalogSignal" title="neo.core.analogsignal.AnalogSignal" class="sphx-glr-backref-module-neo-core-analogsignal sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">force_output</span></a> <span class="o">=</span> <span class="n">force_model</span><span class="o">.</span><span class="n">generate_force</span><span class="p">(</span><a href="https://neo.readthedocs.io/en/latest/api_reference.html#neo.core.Block" title="neo.core.block.Block" class="sphx-glr-backref-module-neo-core-block sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">spike_train__Block</span></a><span class="o">=</span><a href="https://neo.readthedocs.io/en/latest/api_reference.html#neo.core.Block" title="neo.core.block.Block" class="sphx-glr-backref-module-neo-core-block sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">spike_train__Block</span></a><span class="p">)</span>
+<a href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">force_raw</span></a> <span class="o">=</span> <a href="https://neo.readthedocs.io/en/latest/api_reference.html#neo.core.AnalogSignal" title="neo.core.analogsignal.AnalogSignal" class="sphx-glr-backref-module-neo-core-analogsignal sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">force_output</span></a><span class="o">.</span><span class="n">magnitude</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span>  <span class="c1"># Arbitrary units (sum of MU twitches)</span>
+<a href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">force_time</span></a> <span class="o">=</span> <a href="https://neo.readthedocs.io/en/latest/api_reference.html#neo.core.AnalogSignal" title="neo.core.analogsignal.AnalogSignal" class="sphx-glr-backref-module-neo-core-analogsignal sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">force_output</span></a><span class="o">.</span><span class="n">times</span><span class="o">.</span><span class="n">rescale</span><span class="p">(</span><span class="n">pq</span><span class="o">.</span><span class="n">s</span><span class="p">)</span><span class="o">.</span><span class="n">magnitude</span>
+
+<span class="c1"># Normalize force to 0-1 range, then scale to Newtons</span>
+<span class="c1"># (ForceModel outputs sum of MU twitch forces, not normalized values)</span>
+<a href="https://numpy.org/doc/stable/reference/arrays.scalars.html#numpy.float64" title="numpy.float64" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-attribute"><span class="n">force_max_raw</span></a> <span class="o">=</span> <a href="https://numpy.org/doc/stable/reference/generated/numpy.max.html#numpy.max" title="numpy.max" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-function"><span class="n">np</span><span class="o">.</span><span class="n">max</span></a><span class="p">(</span><a href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">force_raw</span></a><span class="p">)</span>
+<a href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">force_signal</span></a> <span class="o">=</span> <span class="p">(</span><a href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">force_raw</span></a> <span class="o">/</span> <a href="https://numpy.org/doc/stable/reference/arrays.scalars.html#numpy.float64" title="numpy.float64" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-attribute"><span class="n">force_max_raw</span></a><span class="p">)</span> <span class="o">*</span> <a href="https://docs.python.org/3/library/functions.html#float" title="builtins.float" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">MAX_FORCE_N</span></a>  <span class="c1"># Scale to Newtons</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Pool 1 Twitch trains (Numba):   0%|          | 0/800 [00:00&lt;?, ?MU/s]
+Pool 1 Twitch trains (Numba):   0%|          | 1/800 [00:00&lt;01:43,  7.74MU/s]
+Pool 1 Twitch trains (Numba): 100%|██████████| 800/800 [00:00&lt;00:00, 4068.63MU/s]
+</pre></div>
+</div>
+</section>
+<section id="analyze-force-characteristics">
+<h2>Analyze Force Characteristics<a class="headerlink" href="#analyze-force-characteristics" title="Link to this heading">#</a></h2>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Use last 50% to avoid transients</span>
+<a href="https://docs.python.org/3/library/functions.html#int" title="builtins.int" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">steady_idx</span></a> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><a href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">force_signal</span></a><span class="p">)</span> <span class="o">//</span> <span class="mi">2</span>
+<a href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">force_steady</span></a> <span class="o">=</span> <a href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">force_signal</span></a><span class="p">[</span><a href="https://docs.python.org/3/library/functions.html#int" title="builtins.int" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">steady_idx</span></a><span class="p">:]</span>
+
+<a href="https://numpy.org/doc/stable/reference/arrays.scalars.html#numpy.float64" title="numpy.float64" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-attribute"><span class="n">force_mean</span></a> <span class="o">=</span> <a href="https://numpy.org/doc/stable/reference/generated/numpy.mean.html#numpy.mean" title="numpy.mean" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-function"><span class="n">np</span><span class="o">.</span><span class="n">mean</span></a><span class="p">(</span><a href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">force_steady</span></a><span class="p">)</span>
+<a href="https://numpy.org/doc/stable/reference/arrays.scalars.html#numpy.float64" title="numpy.float64" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-attribute"><span class="n">force_std</span></a> <span class="o">=</span> <a href="https://numpy.org/doc/stable/reference/generated/numpy.std.html#numpy.std" title="numpy.std" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-function"><span class="n">np</span><span class="o">.</span><span class="n">std</span></a><span class="p">(</span><a href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">force_steady</span></a><span class="p">)</span>
+<a href="https://numpy.org/doc/stable/reference/arrays.scalars.html#numpy.float64" title="numpy.float64" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-attribute"><span class="n">force_cov</span></a> <span class="o">=</span> <a href="https://numpy.org/doc/stable/reference/arrays.scalars.html#numpy.float64" title="numpy.float64" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-attribute"><span class="n">force_std</span></a> <span class="o">/</span> <a href="https://numpy.org/doc/stable/reference/arrays.scalars.html#numpy.float64" title="numpy.float64" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-attribute"><span class="n">force_mean</span></a>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Reference Force Statistics (</span><span class="si">{</span><a href="https://docs.python.org/3/library/functions.html#float" title="builtins.float" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">DD_DRIVE_HZ</span></a><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2"> Hz constant drive):&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Mean force: </span><span class="si">{</span><a href="https://numpy.org/doc/stable/reference/arrays.scalars.html#numpy.float64" title="numpy.float64" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-attribute"><span class="n">force_mean</span></a><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2"> N&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Std deviation: </span><span class="si">{</span><a href="https://numpy.org/doc/stable/reference/arrays.scalars.html#numpy.float64" title="numpy.float64" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-attribute"><span class="n">force_std</span></a><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2"> N&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Coefficient of variation: </span><span class="si">{</span><a href="https://numpy.org/doc/stable/reference/arrays.scalars.html#numpy.float64" title="numpy.float64" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-attribute"><span class="n">force_cov</span></a><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Ripple amplitude: </span><span class="si">{</span><span class="p">(</span><a href="https://numpy.org/doc/stable/reference/arrays.scalars.html#numpy.float64" title="numpy.float64" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-attribute"><span class="n">force_std</span></a><span class="w"> </span><span class="o">/</span><span class="w"> </span><a href="https://numpy.org/doc/stable/reference/arrays.scalars.html#numpy.float64" title="numpy.float64" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-attribute"><span class="n">force_mean</span></a><span class="p">)</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">100</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">%&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Peak normalized force: </span><span class="si">{</span><a href="https://numpy.org/doc/stable/reference/generated/numpy.max.html#numpy.max" title="numpy.max" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-function"><span class="n">np</span><span class="o">.</span><span class="n">max</span></a><span class="p">(</span><a href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">force_signal</span></a><span class="p">)</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2"> N (= MAX_FORCE_N)</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Reference Force Statistics (40.0 Hz constant drive):
+  Mean force: 67.33 N
+  Std deviation: 10.14 N
+  Coefficient of variation: 0.151
+  Ripple amplitude: 15.06%
+  Peak normalized force: 100.00 N (= MAX_FORCE_N)
+</pre></div>
+</div>
+</section>
+<section id="save-results">
+<h2>Save Results<a class="headerlink" href="#save-results" title="Link to this heading">#</a></h2>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><a href="https://docs.python.org/3/library/stdtypes.html#dict" title="builtins.dict" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">force_results</span></a> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;network_parameters&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">&quot;n_motor_units&quot;</span><span class="p">:</span> <a href="https://docs.python.org/3/library/functions.html#int" title="builtins.int" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">N_MOTOR_UNITS</span></a><span class="p">,</span>
+        <span class="s2">&quot;dd_neurons&quot;</span><span class="p">:</span> <a href="https://docs.python.org/3/library/functions.html#int" title="builtins.int" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">N_DD_NEURONS</span></a><span class="p">,</span>
+        <span class="s2">&quot;dd_connectivity&quot;</span><span class="p">:</span> <a href="https://docs.python.org/3/library/functions.html#float" title="builtins.float" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">DD_CONNECTIVITY</span></a><span class="p">,</span>
+        <span class="s2">&quot;dd_drive__Hz&quot;</span><span class="p">:</span> <a href="https://docs.python.org/3/library/functions.html#float" title="builtins.float" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">DD_DRIVE_HZ</span></a><span class="p">,</span>
+        <span class="s2">&quot;synaptic_weight__uS&quot;</span><span class="p">:</span> <a href="https://docs.python.org/3/library/functions.html#float" title="builtins.float" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">SYNAPTIC_WEIGHT</span></a><span class="p">,</span>
+        <span class="s2">&quot;process_type&quot;</span><span class="p">:</span> <span class="s2">&quot;poisson&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;poisson_batch_size&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+    <span class="p">},</span>
+    <span class="s2">&quot;force_scaling&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">&quot;max_force__N&quot;</span><span class="p">:</span> <a href="https://docs.python.org/3/library/functions.html#float" title="builtins.float" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">MAX_FORCE_N</span></a><span class="p">,</span>
+    <span class="p">},</span>
+    <span class="s2">&quot;firing_rate&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">&quot;mean__Hz&quot;</span><span class="p">:</span> <a href="https://docs.python.org/3/library/functions.html#float" title="builtins.float" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">fr_mean</span></a><span class="p">,</span>
+        <span class="s2">&quot;std__Hz&quot;</span><span class="p">:</span> <a href="https://docs.python.org/3/library/functions.html#float" title="builtins.float" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">fr_std</span></a><span class="p">,</span>
+        <span class="s2">&quot;n_active&quot;</span><span class="p">:</span> <a href="https://docs.python.org/3/library/functions.html#int" title="builtins.int" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">n_active</span></a><span class="p">,</span>
+        <span class="s2">&quot;cov&quot;</span><span class="p">:</span> <a href="https://docs.python.org/3/library/functions.html#float" title="builtins.float" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">fr_std</span></a> <span class="o">/</span> <a href="https://docs.python.org/3/library/functions.html#float" title="builtins.float" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">fr_mean</span></a><span class="p">,</span>
+    <span class="p">},</span>
+    <span class="s2">&quot;force&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">&quot;mean__N&quot;</span><span class="p">:</span> <a href="https://numpy.org/doc/stable/reference/arrays.scalars.html#numpy.float64" title="numpy.float64" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-attribute"><span class="n">force_mean</span></a><span class="p">,</span>
+        <span class="s2">&quot;std__N&quot;</span><span class="p">:</span> <a href="https://numpy.org/doc/stable/reference/arrays.scalars.html#numpy.float64" title="numpy.float64" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-attribute"><span class="n">force_std</span></a><span class="p">,</span>
+        <span class="s2">&quot;cov&quot;</span><span class="p">:</span> <a href="https://numpy.org/doc/stable/reference/arrays.scalars.html#numpy.float64" title="numpy.float64" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-attribute"><span class="n">force_cov</span></a><span class="p">,</span>
+        <span class="s2">&quot;ripple_percent&quot;</span><span class="p">:</span> <span class="p">(</span><a href="https://numpy.org/doc/stable/reference/arrays.scalars.html#numpy.float64" title="numpy.float64" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-attribute"><span class="n">force_std</span></a> <span class="o">/</span> <a href="https://numpy.org/doc/stable/reference/arrays.scalars.html#numpy.float64" title="numpy.float64" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-attribute"><span class="n">force_mean</span></a><span class="p">)</span> <span class="o">*</span> <span class="mi">100</span><span class="p">,</span>
+    <span class="p">},</span>
+<span class="p">}</span>
+
+<a href="https://docs.python.org/3/library/pathlib.html#pathlib.PosixPath" title="pathlib.PosixPath" class="sphx-glr-backref-module-pathlib sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">results_file</span></a> <span class="o">=</span> <a href="https://docs.python.org/3/library/pathlib.html#pathlib.PosixPath" title="pathlib.PosixPath" class="sphx-glr-backref-module-pathlib sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">RESULTS_DIR</span></a> <span class="o">/</span> <span class="s2">&quot;force_reference.json&quot;</span>
+<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><a href="https://docs.python.org/3/library/pathlib.html#pathlib.PosixPath" title="pathlib.PosixPath" class="sphx-glr-backref-module-pathlib sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">results_file</span></a><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+    <a href="https://docs.python.org/3/library/json.html#json.dump" title="json.dump" class="sphx-glr-backref-module-json sphx-glr-backref-type-py-function"><span class="n">json</span><span class="o">.</span><span class="n">dump</span></a><span class="p">(</span><a href="https://docs.python.org/3/library/stdtypes.html#dict" title="builtins.dict" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">force_results</span></a><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Saved reference force results: </span><span class="si">{</span><a href="https://docs.python.org/3/library/pathlib.html#pathlib.PosixPath" title="pathlib.PosixPath" class="sphx-glr-backref-module-pathlib sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">results_file</span></a><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Reference drive: </span><span class="si">{</span><a href="https://docs.python.org/3/library/functions.html#float" title="builtins.float" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">DD_DRIVE_HZ</span></a><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2"> Hz constant&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Next step: Run 02_optimize_oscillating_dc.py to find DC offset for Phase 3&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Saved reference force results: /home/runner/work/MyoGen/MyoGen/examples/03_papers/watanabe/results/watanabe_optimization/force_reference.json
+Reference drive: 40.0 Hz constant
+
+Next step: Run 02_optimize_oscillating_dc.py to find DC offset for Phase 3
+</pre></div>
+</div>
+</section>
+<section id="visualize-results">
+<h2>Visualize Results<a class="headerlink" href="#visualize-results" title="Link to this heading">#</a></h2>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><a href="https://matplotlib.org/stable/api/_as_gen/matplotlib.figure.Figure.html#matplotlib.figure.Figure" title="matplotlib.figure.Figure" class="sphx-glr-backref-module-matplotlib-figure sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">fig</span></a><span class="p">,</span> <a href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">axes</span></a> <span class="o">=</span> <a href="https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.subplots.html#matplotlib.pyplot.subplots" title="matplotlib.pyplot.subplots" class="sphx-glr-backref-module-matplotlib-pyplot sphx-glr-backref-type-py-function"><span class="n">plt</span><span class="o">.</span><span class="n">subplots</span></a><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">14</span><span class="p">,</span> <span class="mi">10</span><span class="p">),</span> <span class="n">sharex</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="c1"># 1. Motor neuron raster plot (sample every 5th neuron for visibility)</span>
+<a href="https://docs.python.org/3/library/functions.html#int" title="builtins.int" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">sample_interval</span></a> <span class="o">=</span> <span class="mi">5</span>
+<span class="k">for</span> <a href="https://docs.python.org/3/library/functions.html#int" title="builtins.int" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">i</span></a><span class="p">,</span> <a href="https://neo.readthedocs.io/en/latest/api_reference.html#neo.core.SpikeTrain" title="neo.core.spiketrain.SpikeTrain" class="sphx-glr-backref-module-neo-core-spiketrain sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">spiketrain</span></a> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><a href="https://neo.readthedocs.io/en/latest/api_reference.html#neo.core.Segment" title="neo.core.segment.Segment" class="sphx-glr-backref-module-neo-core-segment sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">mn_segment</span></a><span class="o">.</span><span class="n">spiketrains</span><span class="p">):</span>
+    <span class="k">if</span> <a href="https://docs.python.org/3/library/functions.html#int" title="builtins.int" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">i</span></a> <span class="o">%</span> <a href="https://docs.python.org/3/library/functions.html#int" title="builtins.int" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">sample_interval</span></a> <span class="o">==</span> <span class="mi">0</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><a href="https://neo.readthedocs.io/en/latest/api_reference.html#neo.core.SpikeTrain" title="neo.core.spiketrain.SpikeTrain" class="sphx-glr-backref-module-neo-core-spiketrain sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">spiketrain</span></a><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <a href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">spike_times</span></a> <span class="o">=</span> <a href="https://neo.readthedocs.io/en/latest/api_reference.html#neo.core.SpikeTrain" title="neo.core.spiketrain.SpikeTrain" class="sphx-glr-backref-module-neo-core-spiketrain sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">spiketrain</span></a><span class="o">.</span><span class="n">rescale</span><span class="p">(</span><span class="n">pq</span><span class="o">.</span><span class="n">s</span><span class="p">)</span><span class="o">.</span><span class="n">magnitude</span>
+        <a href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">axes</span></a><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><a href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">spike_times</span></a><span class="p">,</span> <span class="p">[</span><a href="https://docs.python.org/3/library/functions.html#int" title="builtins.int" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">i</span></a><span class="p">]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><a href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">spike_times</span></a><span class="p">),</span> <span class="n">s</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.6</span><span class="p">)</span>
+
+<a href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">axes</span></a><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;Motor Unit ID (sampled)&quot;</span><span class="p">)</span>
+<a href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">axes</span></a><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Motor Neuron Spike Trains (</span><span class="si">{</span><a href="https://docs.python.org/3/library/functions.html#int" title="builtins.int" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">n_active</span></a><span class="si">}</span><span class="s2">/</span><span class="si">{</span><a href="https://docs.python.org/3/library/functions.html#int" title="builtins.int" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">N_MOTOR_UNITS</span></a><span class="si">}</span><span class="s2"> active)&quot;</span><span class="p">)</span>
+<a href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">axes</span></a><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <a href="https://docs.python.org/3/library/functions.html#int" title="builtins.int" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">N_MOTOR_UNITS</span></a><span class="p">)</span>
+
+<span class="c1"># 2. Force trace</span>
+<a href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">axes</span></a><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><a href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">force_time</span></a><span class="p">,</span> <a href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">force_signal</span></a><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Force&quot;</span><span class="p">)</span>
+<a href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">axes</span></a><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">axhline</span><span class="p">(</span><a href="https://numpy.org/doc/stable/reference/arrays.scalars.html#numpy.float64" title="numpy.float64" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-attribute"><span class="n">force_mean</span></a><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s2">&quot;--&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Mean = </span><span class="si">{</span><a href="https://numpy.org/doc/stable/reference/arrays.scalars.html#numpy.float64" title="numpy.float64" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-attribute"><span class="n">force_mean</span></a><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2"> N&quot;</span><span class="p">)</span>
+<a href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">axes</span></a><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">fill_between</span><span class="p">(</span>
+    <a href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">force_time</span></a><span class="p">,</span>
+    <a href="https://numpy.org/doc/stable/reference/arrays.scalars.html#numpy.float64" title="numpy.float64" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-attribute"><span class="n">force_mean</span></a> <span class="o">-</span> <a href="https://numpy.org/doc/stable/reference/arrays.scalars.html#numpy.float64" title="numpy.float64" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-attribute"><span class="n">force_std</span></a><span class="p">,</span>
+    <a href="https://numpy.org/doc/stable/reference/arrays.scalars.html#numpy.float64" title="numpy.float64" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-attribute"><span class="n">force_mean</span></a> <span class="o">+</span> <a href="https://numpy.org/doc/stable/reference/arrays.scalars.html#numpy.float64" title="numpy.float64" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-attribute"><span class="n">force_std</span></a><span class="p">,</span>
+    <span class="n">alpha</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span>
+    <span class="n">label</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;SD = </span><span class="si">{</span><a href="https://numpy.org/doc/stable/reference/arrays.scalars.html#numpy.float64" title="numpy.float64" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-attribute"><span class="n">force_std</span></a><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2"> N&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+<a href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">axes</span></a><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;Force (N)&quot;</span><span class="p">)</span>
+<a href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">axes</span></a><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Reference Muscle Force (Ripple = </span><span class="si">{</span><a href="https://numpy.org/doc/stable/reference/arrays.scalars.html#numpy.float64" title="numpy.float64" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-attribute"><span class="n">force_cov</span></a><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">100</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2">%)&quot;</span><span class="p">)</span>
+<a href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">axes</span></a><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">framealpha</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">edgecolor</span><span class="o">=</span><span class="s2">&quot;none&quot;</span><span class="p">)</span>
+
+<span class="c1"># 3. Firing rate distribution</span>
+<a href="https://docs.python.org/3/library/stdtypes.html#list" title="builtins.list" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">firing_rates</span></a> <span class="o">=</span> <span class="p">[]</span>
+<a href="https://docs.python.org/3/library/stdtypes.html#list" title="builtins.list" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">mu_ids</span></a> <span class="o">=</span> <span class="p">[]</span>
+<span class="k">for</span> <a href="https://docs.python.org/3/library/functions.html#int" title="builtins.int" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">i</span></a><span class="p">,</span> <a href="https://neo.readthedocs.io/en/latest/api_reference.html#neo.core.SpikeTrain" title="neo.core.spiketrain.SpikeTrain" class="sphx-glr-backref-module-neo-core-spiketrain sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">st</span></a> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><a href="https://neo.readthedocs.io/en/latest/api_reference.html#neo.core.Segment" title="neo.core.segment.Segment" class="sphx-glr-backref-module-neo-core-segment sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">mn_segment</span></a><span class="o">.</span><span class="n">spiketrains</span><span class="p">):</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><a href="https://neo.readthedocs.io/en/latest/api_reference.html#neo.core.SpikeTrain" title="neo.core.spiketrain.SpikeTrain" class="sphx-glr-backref-module-neo-core-spiketrain sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">st</span></a><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">2</span><span class="p">:</span>
+        <a href="https://docs.python.org/3/library/functions.html#float" title="builtins.float" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">rate</span></a> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><a href="https://neo.readthedocs.io/en/latest/api_reference.html#neo.core.SpikeTrain" title="neo.core.spiketrain.SpikeTrain" class="sphx-glr-backref-module-neo-core-spiketrain sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">st</span></a><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><a href="https://docs.python.org/3/library/functions.html#float" title="builtins.float" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">SIMULATION_TIME_MS</span></a> <span class="o">/</span> <span class="mf">1000.0</span><span class="p">)</span>
+        <a href="https://docs.python.org/3/library/stdtypes.html#list" title="builtins.list" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">firing_rates</span></a><span class="o">.</span><span class="n">append</span><span class="p">(</span><a href="https://docs.python.org/3/library/functions.html#float" title="builtins.float" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">rate</span></a><span class="p">)</span>
+        <a href="https://docs.python.org/3/library/stdtypes.html#list" title="builtins.list" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">mu_ids</span></a><span class="o">.</span><span class="n">append</span><span class="p">(</span><a href="https://docs.python.org/3/library/functions.html#int" title="builtins.int" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">i</span></a><span class="p">)</span>
+
+<span class="k">if</span> <a href="https://docs.python.org/3/library/stdtypes.html#list" title="builtins.list" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">firing_rates</span></a><span class="p">:</span>
+    <a href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">axes</span></a><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">bar</span><span class="p">(</span><a href="https://docs.python.org/3/library/stdtypes.html#list" title="builtins.list" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">mu_ids</span></a><span class="p">,</span> <a href="https://docs.python.org/3/library/stdtypes.html#list" title="builtins.list" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">firing_rates</span></a><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.7</span><span class="p">)</span>
+    <a href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">axes</span></a><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">axhline</span><span class="p">(</span><a href="https://docs.python.org/3/library/functions.html#float" title="builtins.float" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">fr_mean</span></a><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s2">&quot;--&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Mean = </span><span class="si">{</span><a href="https://docs.python.org/3/library/functions.html#float" title="builtins.float" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">fr_mean</span></a><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2"> Hz&quot;</span><span class="p">)</span>
+    <a href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">axes</span></a><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;Motor Unit ID&quot;</span><span class="p">)</span>
+    <a href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">axes</span></a><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;Firing Rate (Hz)&quot;</span><span class="p">)</span>
+    <a href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">axes</span></a><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;Firing Rate Distribution&quot;</span><span class="p">)</span>
+    <a href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">axes</span></a><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">framealpha</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">edgecolor</span><span class="o">=</span><span class="s2">&quot;none&quot;</span><span class="p">)</span>
+
+<span class="k">for</span> <a href="https://matplotlib.org/stable/api/_as_gen/matplotlib.axes.Axes.html#matplotlib.axes.Axes" title="matplotlib.axes.Axes" class="sphx-glr-backref-module-matplotlib-axes sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">ax</span></a> <span class="ow">in</span> <a href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">axes</span></a><span class="p">:</span>
+    <a href="https://matplotlib.org/stable/api/_as_gen/matplotlib.axes.Axes.set_xlim.html#matplotlib.axes.Axes.set_xlim" title="matplotlib.axes.Axes.set_xlim" class="sphx-glr-backref-module-matplotlib-axes sphx-glr-backref-type-py-method"><span class="n">ax</span><span class="o">.</span><span class="n">set_xlim</span></a><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <a href="https://docs.python.org/3/library/functions.html#float" title="builtins.float" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">SIMULATION_TIME_MS</span></a> <span class="o">/</span> <span class="mi">1000</span><span class="p">)</span>
+
+<a href="https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.tight_layout.html#matplotlib.pyplot.tight_layout" title="matplotlib.pyplot.tight_layout" class="sphx-glr-backref-module-matplotlib-pyplot sphx-glr-backref-type-py-function"><span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span></a><span class="p">()</span>
+<a href="https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.savefig.html#matplotlib.pyplot.savefig" title="matplotlib.pyplot.savefig" class="sphx-glr-backref-module-matplotlib-pyplot sphx-glr-backref-type-py-function"><span class="n">plt</span><span class="o">.</span><span class="n">savefig</span></a><span class="p">(</span><a href="https://docs.python.org/3/library/pathlib.html#pathlib.PosixPath" title="pathlib.PosixPath" class="sphx-glr-backref-module-pathlib sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">RESULTS_DIR</span></a> <span class="o">/</span> <span class="s2">&quot;force_reference.png&quot;</span><span class="p">,</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">150</span><span class="p">,</span> <span class="n">bbox_inches</span><span class="o">=</span><span class="s2">&quot;tight&quot;</span><span class="p">)</span>
+<a href="https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.show.html#matplotlib.pyplot.show" title="matplotlib.pyplot.show" class="sphx-glr-backref-module-matplotlib-pyplot sphx-glr-backref-type-py-function"><span class="n">plt</span><span class="o">.</span><span class="n">show</span></a><span class="p">()</span>
+</pre></div>
+</div>
+<img src="../../../_images/sphx_glr_01_compute_baseline_force_001.png" srcset="../../../_images/sphx_glr_01_compute_baseline_force_001.png" alt="Motor Neuron Spike Trains (377/800 active), Reference Muscle Force (Ripple = 15.1%), Firing Rate Distribution" class = "sphx-glr-single-img"/><p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 55.113 seconds)</p>
+<div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-auto-examples-03-papers-watanabe-01-compute-baseline-force-py">
+<div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
+<p><a class="reference download internal" download="" href="../../../_downloads/6ba7052e0d0e317098e135cde7ccc679/01_compute_baseline_force.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">01_compute_baseline_force.ipynb</span></code></a></p>
+</div>
+<div class="sphx-glr-download sphx-glr-download-python docutils container">
+<p><a class="reference download internal" download="" href="../../../_downloads/a8d7ceb89540cd067e704bd06f8e3fdf/01_compute_baseline_force.py"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">01_compute_baseline_force.py</span></code></a></p>
+</div>
+<div class="sphx-glr-download sphx-glr-download-zip docutils container">
+<p><a class="reference download internal" download="" href="../../../_downloads/20e0e8d06fcfee20830fd77a91ccbc94/01_compute_baseline_force.zip"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">zipped:</span> <span class="pre">01_compute_baseline_force.zip</span></code></a></p>
+</div>
+</div>
+<p class="sphx-glr-signature"><a class="reference external" href="https://sphinx-gallery.github.io">Gallery generated by Sphinx-Gallery</a></p>
+</section>
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#">Compute Reference Force with Constant Drive (Watanabe Network)</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#import-libraries">Import Libraries</a></li>
+</ul>
+</li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#user-configuration-adjust-these-parameters-as-needed">USER CONFIGURATION - Adjust these parameters as needed</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#define-simulation-parameters">Define Simulation Parameters</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#load-neuron-mechanisms-and-setup-network">Load NEURON Mechanisms and Setup Network</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#build-network">Build Network</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#setup-spike-recording">Setup Spike Recording</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#generate-drive-signal-65-hz-constant">Generate Drive Signal (65 Hz constant)</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#run-simulation">Run Simulation</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#process-spike-trains">Process Spike Trains</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#calculate-firing-rate-statistics">Calculate Firing Rate Statistics</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#generate-force-output">Generate Force Output</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#analyze-force-characteristics">Analyze Force Characteristics</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#save-results">Save Results</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#visualize-results">Visualize Results</a></li>
+</ul>
+</li>
+</ul>
+
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2025 - 2025, n-squared lab, FAU Erlangen-Nürnberg, Germany.
+      <br/>
+    
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.2.3.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

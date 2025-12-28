@@ -6,10 +6,38 @@ This example demonstrates **complete spinal reflex network modeling** with a **c
 protocol** that systematically varies mechanical perturbations, fusimotor drive, and cortical activity.
 This sophisticated experimental design reveals how the nervous system modulates stretch reflex gain.
 
+Learning Objectives
+------------------
+
+This example teaches the following key concepts in neuromuscular control:
+
+1. **Reflex Gain Modulation**: How fusimotor (gamma) drive amplifies stretch reflex sensitivity
+   - Compare motor neuron responses across different gamma levels (0→100 pps)
+   - Observe how higher gamma drive increases spindle sensitivity and reflex output
+
+2. **Sensory Pathway Timing**: Why different feedback pathways activate at different times
+   - Spindle-driven pathways (Ia, II → gII) respond immediately to muscle stretch
+   - Force-driven pathways (Ib → gIb) respond later after muscle contraction builds force
+
+3. **Reflex-Voluntary Interaction**: How cortical commands interact with spinal reflexes
+   - Phase 1: Isolated reflex responses (no cortical drive)
+   - Phase 2: Reflex modulation during voluntary contraction (with cortical drive)
+   - Observe how background muscle activity affects reflex sensitivity
+
+4. **Closed-loop Biomechanics**: How muscle forces create movement that feeds back to sensors
+   - Joint dynamics convert muscle torque into motion
+   - Motion changes muscle length/velocity, affecting spindle feedback
+   - Creates realistic proprioceptive-motor coupling
+
 **Experimental Protocol (5-second, 2-phase design):**
 
 **Phase 1 (0-2.5s): Reflex Gain Modulation**
 - Triangular tendon taps every 0.5s with increasing amplitude (50%, 60%, 70%, 80%)
+
+  * Triangular waveform: Linear ramp up to peak (50ms) → linear ramp down (50ms)
+  * Total duration: 100ms per tap
+  * Mimics realistic tendon tap dynamics with stretch and release phases
+
 - Stepwise increasing gamma drive starting at 0.75s (0→25→50→75→100 pps)
 - No cortical drive (isolated reflex testing)
 
@@ -50,8 +78,15 @@ Group Ia (velocity-sensitive) and Group II (length-sensitive) afferent signals.
 **Golgi Tendon Organs**: Force-sensitive receptors that monitor muscle tension and provide Group Ib
 afferent feedback for protective reflexes.
 
-**Spinal Interneurons**: Group II interneurons process spindle feedback, while Group Ib interneurons
-handle force feedback, both contributing to reflex modulation.
+**Spinal Interneurons**: The model includes two key inhibitory interneuron populations:
+
+- **Group II interneurons (gII)**: Process Group II spindle afferents (length-sensitive). In this model,
+  they provide inhibitory feedback to motor neurons, representing one component of the complex Group II
+  pathway (which can be excitatory or inhibitory depending on context).
+
+- **Group Ib interneurons (gIb)**: Receive input from Golgi tendon organs and provide **autogenic
+  inhibition** - force-dependent negative feedback that protects against excessive muscle tension.
+  Classic Ib inhibitory pathway.
 
 **Joint Dynamics**: Realistic biomechanical modeling of joint inertia, damping, and muscle-generated torques
 creates the closed-loop system where neural activity affects movement, which in turn affects sensory feedback.
@@ -69,6 +104,7 @@ from pathlib import Path
 import joblib
 import matplotlib.pyplot as plt
 import numpy as np
+import quantities as pq
 from neuron import h
 
 from myogen import load_nmodl_mechanisms
@@ -97,8 +133,6 @@ from myogen.utils.plotting import (
     plot_spindle_dynamics,
 )
 
-import quantities as pq
-
 ##############################################################################
 # Load NEURON Mechanisms and Dependencies
 # ---------------------------------------
@@ -126,7 +160,7 @@ print("(OK) Loaded recruitment thresholds from example 00")
 
 # Temporal parameters - high resolution for accurate neural integration
 dt = 0.005 * pq.ms  # Integration timestep with units
-tstop = 5e3  # ms - Total simulation duration (5s for comprehensive protocol)
+tstop = 5e3  # 5e3  # ms - Total simulation duration (5s for comprehensive protocol)
 time = np.arange(0, tstop, dt.magnitude)  # Time vector (use magnitude for numpy)
 
 print("Simulation parameters:")
@@ -142,13 +176,16 @@ print(f"\tTime samples: {len(time)}")
 # These numbers represent typical motor pool compositions for a single muscle.
 
 # Afferent populations (sensory input)
-nIa = 100  # Group Ia afferents from muscle spindles (velocity-sensitive)
-nII = 25  # Group II afferents from muscle spindles (length-sensitive)
-nIb = 25  # Group Ib afferents from Golgi tendon organs (force-sensitive)
+# Based on Banks et al. (2006, 2015) for distal upper-limb muscles
+nIa = 73  # Group Ia afferents from muscle spindles (velocity-sensitive)
+nII = 80  # Group II afferents from muscle spindles (length-sensitive) - 110% of Ia
+nIb = 58  # Group Ib afferents from Golgi tendon organs (force-sensitive) - 80% of Ia
 
 # Interneuron populations (spinal processing)
-ngII = 25  # Group II interneurons (process spindle feedback)
-ngIb = 25  # Group Ib interneurons (process force feedback)
+# Note: Interneuron:MN ratio is ~10:1 in spinal cord. Group II/Ib INs are a subset.
+# Using ~50% of afferent count as a reasonable estimate for convergent interneurons.
+ngII = 120  # Group II interneurons (process spindle feedback from 80 II afferents)
+ngIb = 145  # Group Ib interneurons (process force feedback from 58 Ib afferents)
 
 # Motor neurons (output to muscles)
 nType1 = 102  # Type I motor neurons (slow, fatigue-resistant)
@@ -156,16 +193,18 @@ nType2 = 18  # Type II motor neurons (fast, fatigue-prone)
 naMN = nType1 + nType2  # Total α-motoneurons per muscle
 
 # Descending drive (cortical input)
-nDD = 400  # Total descending drive neurons
-DDorder = 1  # Poisson process order for realistic spike patterns
+nDD = 400  # Total descending drive neurons (increased for more drive)
+DDorder = (
+    5  # Poisson process order for realistic spike patterns (higher order = more regular spiking)
+)
 
 print("Neural population sizes:")
-print(f"  - α-Motoneurons: {naMN} ({nType1} Type I, {nType2} Type II)")
-print(f"  - Ia afferents: {nIa}")
-print(f"  - II afferents: {nII}")
-print(f"  - Ib afferents: {nIb}")
-print(f"  - Interneurons: {ngII + ngIb}")
-print(f"  - Descending drive: {nDD}")
+print(f"\t- α-Motoneurons: {naMN} ({nType1} Type I, {nType2} Type II)")
+print(f"\t- Ia afferents: {nIa}")
+print(f"\t- II afferents: {nII}")
+print(f"\t- Ib afferents: {nIb}")
+print(f"\t- Interneurons: {ngII + ngIb}")
+print(f"\t- Descending drive: {nDD}")
 
 ##############################################################################
 # Define Descending Drive Pattern
@@ -181,8 +220,8 @@ DDdrive = np.zeros_like(time)
 cortical_start_time = 2500  # ms
 
 # Parameters for sinusoidal drive
-bias_hz = 38  # Bias to recruit ~75% of 120 motor neurons
-amplitude_hz = 1  # Oscillation amplitude (±1 Hz around bias)
+bias_hz = 40  # Bias for robust motor neuron recruitment (increased from 75 for ~20 pps firing)
+amplitude_hz = 1  # Oscillation amplitude (±5 Hz around bias)
 frequency_hz = 1.0  # 1 Hz oscillation
 
 # Apply sinusoidal drive from 2.5s onwards
@@ -192,8 +231,9 @@ DDdrive[mask] = bias_hz + amplitude_hz * np.sin(
 )
 
 print("Descending drive pattern:")
-print("  - Phase 1 (0-2.5s): No cortical drive")
-print(f"  - Phase 2 (2.5-5s): Sinusoidal drive ({bias_hz}±{amplitude_hz} Hz at {frequency_hz} Hz)")
+print("\t- Phase 1 (0-2.5s): No cortical drive")
+print(f"\t- Phase 2 (2.5-5s): Sinusoidal drive ({bias_hz}±{amplitude_hz} Hz at {frequency_hz} Hz)")
+print(f"\t  (Drive range: {bias_hz - amplitude_hz}-{bias_hz + amplitude_hz} Hz)")
 
 ##############################################################################
 # Define Fusimotor Drive
@@ -247,9 +287,9 @@ gMN = {
 }
 
 print("Fusimotor drive parameters:")
-print("  - Stepwise increases: 0 → 25 → 50 → 75 → 100 pps")
-print("  - Starting at 0.75s, stepping every 0.5s")
-print("  - Resets at 2.5s and repeats pattern")
+print("\t- Stepwise increases: 0 → 25 → 50 → 75 → 100 pps")
+print("\t- Starting at 0.75s, stepping every 0.5s")
+print("\t- Resets at 2.5s and repeats pattern")
 
 ##############################################################################
 # Initialize Joint Dynamics
@@ -269,9 +309,9 @@ artAng = np.zeros_like(time)
 artAng[0] = 0.0  # Initial joint angle
 
 print("Joint dynamics parameters:")
-print(f"  - Inertia: {joint_dynamics.inertia__kg_m2} kg⋅m²")
-print(f"  - Damping: {joint_dynamics.damping__Nm_s_per_rad} N⋅m⋅s/rad")
-print(f"  - Initial angle: {artAng[0]}°")
+print(f"\t- Inertia: {joint_dynamics.inertia__kg_m2} kg⋅m²")
+print(f"\t- Damping: {joint_dynamics.damping__Nm_s_per_rad} N⋅m⋅s/rad")
+print(f"\t- Initial angle: {artAng[0]}°")
 
 ##############################################################################
 # Create Neural Populations
@@ -341,8 +381,8 @@ hill_muscle = HillModel(
 )
 
 print("(OK) Created muscle model")
-print(f"  - Motor units: {nType1 + nType2}")
-print(f"  - Force capacity: ~{hill_muscle.F0:.1f} N")
+print(f"\t- Motor units: {nType1 + nType2}")
+print(f"\t- Force capacity: ~{hill_muscle.F0:.1f} N")
 
 ##############################################################################
 # Create Arrays for Real-Unit Forces
@@ -453,11 +493,11 @@ def eachStep(
             if abs(current_time - tap_time) < dt.magnitude:
                 A_perturbed = A + (max_perturbation / ((tendon_tap_duration / 2000.0) ** 2))
                 print(
-                    f"  >> TENDON TAP (triangular) at t={current_time:.1f} ms: "
+                    f"\t>> TENDON TAP (triangular) at t={current_time:.1f} ms: "
                     f"{tap_magnitude}% peak stretch ({max_perturbation:.4f} L0), "
                     f"duration={tendon_tap_duration} ms"
                 )
-                print(f"     Baseline length: {L:.4f} L0 → Peak: {L + max_perturbation:.4f} L0")
+                print(f"\t   Baseline length: {L:.4f} L0 → Peak: {L + max_perturbation:.4f} L0")
             elif abs(current_time - tap_midpoint) < dt.magnitude:
                 A_perturbed = A - 2 * (max_perturbation / ((tendon_tap_duration / 2000.0) ** 2))
             else:
@@ -547,23 +587,73 @@ print(f"(OK) Created network with {len(network.populations)} populations")
 #
 # Establish synaptic connections that implement physiologically realistic
 # spinal reflex pathways, including both excitatory and inhibitory connections.
+#
+# Neural Circuit Diagram:
+# ----------------------
+#
+#   Spindle (length/velocity)          GTO (force)           Cortex
+#        |          |                       |                  |
+#        v          v                       v                  v
+#       Ia         II                      Ib                 DD
+#        |          |                       |                  |
+#        |          v                       v                  |
+#        |        gII (-)                 gIb (-)              |
+#        |          |                       |                  |
+#        +----------+--------(+)------------+----------(+)-----+
+#                              |
+#                              v
+#                            α-MN -----> Muscle
+#                                          |
+#                                          v
+#                                    Joint Motion
+#                                          |
+#         +--------------------------------+
+#         |                                |
+#         v                                v
+#      Spindle                           GTO
+#    (feedback)                      (feedback)
+#
+# Legend: (+) = excitatory, (-) = inhibitory
+#
+# Key pathways:
+# 1. Ia → MN: Monosynaptic stretch reflex (EXCITATORY, fast)
+# 2. II → gII → MN: Polysynaptic length pathway (INHIBITORY, moderate speed)
+# 3. Ib → gIb → MN: Autogenic inhibition (INHIBITORY, slower - force-dependent)
+# 4. DD → MN: Descending cortical drive (EXCITATORY, voluntary control)
 
-# DESCENDING CONTROL: Direct cortical drive to motor neurons
+# DESCENDING CONTROL: Direct cortical drive to motor neurons (EXCITATORY)
 network.connect("DD", "aMN", probability=0.3, weight__uS=0.05 * pq.uS)
 
-# MONOSYNAPTIC STRETCH REFLEX: Ia afferents excite motor neurons
-network.connect("Ia", "aMN", probability=0.3, weight__uS=0.05 * pq.uS)
+# MONOSYNAPTIC STRETCH REFLEX: Ia afferents excite motor neurons (EXCITATORY)
+# High connection probability (80%) reflects homogeneous excitatory distribution
+network.connect("Ia", "aMN", probability=0.8, weight__uS=0.05 * pq.uS)
 
-# POLYSYNAPTIC PATHWAYS: Secondary afferents through interneurons
-network.connect("II", "gII", probability=0.6, weight__uS=0.0073 * pq.uS)
-network.connect("gII", "aMN", probability=0.2, weight__uS=0.05 * pq.uS)
-# INHIBITORY REFLEXES: Force feedback through Ib interneurons
-network.connect("Ib", "gIb", probability=0.5, weight__uS=0.0073 * pq.uS)
-network.connect("gIb", "aMN", probability=0.1, weight__uS=-0.05 * pq.uS)  # Inhibitory
+# POLYSYNAPTIC PATHWAYS: Group II pathway (afferents → interneurons → motor neurons)
+# Lower connection probability (30%) captures predominantly indirect, disynaptic influence
+network.connect(
+    "II", "gII", probability=0.3, weight__uS=0.025 * pq.uS
+)  # Afferent → Interneuron (EXCITATORY)
+network.connect(
+    "gII", "aMN", probability=0.3, weight__uS=0.05 * pq.uS, inhibitory=True
+)  # Interneuron → MN (INHIBITORY, weak modulatory effect)
+
+# INHIBITORY REFLEXES: Force feedback through Ib interneurons (autogenic inhibition)
+# Lower connection probability (30%) captures predominantly indirect, disynaptic influence
+network.connect(
+    "Ib", "gIb", probability=0.3, weight__uS=0.025 * pq.uS
+)  # Afferent → Interneuron (EXCITATORY)
+network.connect(
+    "gIb", "aMN", probability=0.3, weight__uS=0.05 * pq.uS, inhibitory=True
+)  # Interneuron → MN (INHIBITORY, weak modulatory effect)
 
 print("(OK) Configured synaptic connections")
-print("  - Excitatory: DD→MN, Ia→MN, II→gII, gII→MN")
-print("  - Inhibitory: gIb→MN (autogenic inhibition)")
+print("\t- Excitatory pathways:")
+print("\t\t• DD→MN (descending drive)")
+print("\t\t• Ia→MN (monosynaptic stretch reflex)")
+print("\t\t• Afferents→Interneurons: II→gII, Ib→gIb")
+print("\t- Inhibitory pathways:")
+print("\t\t• gII→MN (Group II interneuron inhibition)")
+print("\t\t• gIb→MN (autogenic inhibition from force feedback)")
 
 ##############################################################################
 # Connect Motors to Muscle
@@ -622,22 +712,22 @@ models = {
 TENDON_TAP_DURATION = 100  # ms - duration of each stretch
 TENDON_TAP_SCHEDULE = [
     # Phase 1: Ascending amplitudes without cortical drive
-    (500, 50.0),     # 0.5s: 50%
-    (1000, 60.0),    # 1.0s: 60%
-    (1500, 70.0),    # 1.5s: 70%
-    (2000, 80.0),    # 2.0s: 80%
+    (500, 50.0),  # 0.5s: 50%
+    (1000, 60.0),  # 1.0s: 60%
+    (1500, 70.0),  # 1.5s: 70%
+    (2000, 80.0),  # 2.0s: 80%
     # Phase 2: Repeat pattern with cortical drive
-    (3000, 50.0),    # 3.0s: 50%
-    (3500, 60.0),    # 3.5s: 60%
-    (4000, 70.0),    # 4.0s: 70%
-    (4500, 80.0),    # 4.5s: 80%
+    (3000, 50.0),  # 3.0s: 50%
+    (3500, 60.0),  # 3.5s: 60%
+    (4000, 70.0),  # 4.0s: 70%
+    (4500, 80.0),  # 4.5s: 80%
 ]
 
 print("\nTendon tap schedule:")
-print(f"  - Duration per tap: {TENDON_TAP_DURATION} ms")
-print(f"  - Phase 1 (0-2.5s): {len([t for t, m in TENDON_TAP_SCHEDULE if t < 2500])} taps")
-print(f"  - Phase 2 (2.5-5s): {len([t for t, m in TENDON_TAP_SCHEDULE if t >= 2500])} taps")
-print(f"  - Amplitudes: {sorted(set([m for t, m in TENDON_TAP_SCHEDULE]))}%")
+print(f"\t- Duration per tap: {TENDON_TAP_DURATION} ms")
+print(f"\t- Phase 1 (0-2.5s): {len([t for t, m in TENDON_TAP_SCHEDULE if t < 2500])} taps")
+print(f"\t- Phase 2 (2.5-5s): {len([t for t, m in TENDON_TAP_SCHEDULE if t >= 2500])} taps")
+print(f"\t- Amplitudes: {sorted(set([m for t, m in TENDON_TAP_SCHEDULE]))}%")
 
 
 # Create step callback function with access to step counter
@@ -703,40 +793,43 @@ joblib.dump(drive_signals, save_path / "drive_signals.pkl")
 
 # Save event timeline for plot annotations
 events = {
-    # Tendon tap events: (time_ms, amplitude_%, duration_ms)
-    "tendon_taps": [(t, m, TENDON_TAP_DURATION) for t, m in TENDON_TAP_SCHEDULE],
-
+    # Tendon tap events: (peak_time_ms, amplitude_%, duration_ms)
+    # Note: peak_time is at the midpoint of the triangular pulse
+    "tendon_taps": [
+        (t + TENDON_TAP_DURATION / 2.0, m, TENDON_TAP_DURATION) for t, m in TENDON_TAP_SCHEDULE
+    ],
     # Gamma drive transitions: (time_ms, level_pps)
     "gamma_transitions": list(zip(gamma_times, gamma_values)),
-
     # Gamma drive periods: (start_time_ms, end_time_ms, level_pps)
     "gamma_periods": [
-        (gamma_times[i], gamma_times[i + 1], gamma_values[i])
-        for i in range(len(gamma_times) - 1)
+        (gamma_times[i], gamma_times[i + 1], gamma_values[i]) for i in range(len(gamma_times) - 1)
     ],
-
     # Phase markers
     "phase_boundary": 2500,  # ms - transition from phase 1 to phase 2
     "cortical_drive_onset": cortical_start_time,  # ms - when sinusoidal drive starts
-
     # Experimental phases with descriptions
     "phases": [
         {"start": 0, "end": 2500, "name": "Phase 1", "description": "Reflex gain modulation"},
-        {"start": 2500, "end": 5000, "name": "Phase 2", "description": "Reflex-voluntary interaction"},
+        {
+            "start": 2500,
+            "end": 5000,
+            "name": "Phase 2",
+            "description": "Reflex-voluntary interaction",
+        },
     ],
 }
 joblib.dump(events, save_path / "event_timeline.pkl")
 
 print(f"Results saved to {save_path}")
-print("  - spinal_network_results.pkl (neural activity, muscle, spindle, GTO)")
-print("  - joint_angles.pkl (joint kinematics)")
-print("  - musculotendon_force__N.pkl (real-unit musculotendon force [N])")
-print("  - drive_signals.pkl (cortical drive, gamma drive, tap schedule)")
-print("  - event_timeline.pkl (event markers for plot annotations)")
+print("\t- spinal_network_results.pkl (neural activity, muscle, spindle, GTO)")
+print("\t- joint_angles.pkl (joint kinematics)")
+print("\t- musculotendon_force__N.pkl (real-unit musculotendon force [N])")
+print("\t- drive_signals.pkl (cortical drive, gamma drive, tap schedule)")
+print("\t- event_timeline.pkl (event markers for plot annotations)")
 print("\nNote: Intrafusal fiber tensions [FU] are in spinal_network_results.pkl")
-print(f"      Access via: results.segments[0].analogsignals (look for 'intrafusal_tensions')")
-print(f"      Convert to real units: T[N] ≈ T[FU] × scaling_factor (no standard conversion)")
-print(f"      Musculotendon force capacity: {hill_muscle.F0:.1f} N")
+print("\tAccess via: results.segments[0].analogsignals (look for 'intrafusal_tensions')")
+print("\tConvert to real units: T[N] ≈ T[FU] * scaling_factor (no standard conversion)")
+print(f"\tMusculotendon force capacity: {hill_muscle.F0:.1f} N")
 
 ##############################################################################
 # Comprehensive Results Visualization

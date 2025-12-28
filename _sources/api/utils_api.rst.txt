@@ -33,6 +33,24 @@ NEURON Utilities
    inject_currents_and_simulate_spike_trains
 
 
+Continuous Saver
+^^^^^^^^^^^^^^^^
+
+.. currentmodule:: myogen.utils.continuous_saver
+
+.. autosummary::
+   :toctree: ../generated/
+   :template: autosummary/class.rst
+
+   ContinuousSaver
+
+.. autosummary::
+   :toctree: ../generated/
+   :template: autosummary/function.rst
+
+   convert_chunks_to_neo
+
+
 Plotting & Visualization
 ^^^^^^^^^^^^^^^^^^^^^^^^^
 

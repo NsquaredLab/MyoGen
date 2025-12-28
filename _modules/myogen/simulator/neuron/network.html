@@ -1,0 +1,2321 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>myogen.simulator.neuron.network &#8212; MyoGen 0.8.0 Documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../../../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=5349f25f" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/css/tooltipster.custom.css" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/css/tooltipster.bundle.min.css" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/css/tooltipster-sideTip-shadow.min.css" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/css/tooltipster-sideTip-punk.min.css" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/css/tooltipster-sideTip-noir.min.css" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/css/tooltipster-sideTip-light.min.css" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/css/tooltipster-sideTip-borderless.min.css" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/css/micromodal.css" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/custom.css?v=9b95bd4c" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery.css?v=d2d258e8" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery-binder.css?v=f4aeca0c" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/custom.css?v=9b95bd4c" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../../../../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+    <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+    <script src="../../../../_static/documentation_options.js?v=cce5339e"></script>
+    <script src="../../../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../../_static/js/hoverxref.js"></script>
+    <script src="../../../../_static/js/tooltipster.bundle.min.js"></script>
+    <script src="../../../../_static/js/micromodal.min.js"></script>
+    <script src="../../../../_static/custom.js?v=e0e269b1"></script>
+    <script src="../../../../_static/design-tabs.js?v=f930bc37"></script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script type="module" src="https://cdn.jsdelivr.net/npm/mermaid@11.9.0/dist/mermaid.esm.min.mjs"></script>
+    <script type="module" src="https://cdn.jsdelivr.net/npm/@mermaid-js/layout-elk@0.2.0/dist/mermaid-layout-elk.esm.min.mjs"></script>
+    <script type="module">import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@11.9.0/dist/mermaid.esm.min.mjs";import elkLayouts from "https://cdn.jsdelivr.net/npm/@mermaid-js/layout-elk@0.2.0/dist/mermaid-layout-elk.esm.min.mjs";mermaid.registerLayoutLoaders(elkLayouts);mermaid.initialize({startOnLoad:false});</script>
+    <script src="https://cdn.jsdelivr.net/npm/d3@7.9.0/dist/d3.min.js"></script>
+    <script type="module">import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@11.9.0/dist/mermaid.esm.min.mjs";
+
+const defaultStyle = document.createElement('style');
+defaultStyle.textContent = `pre.mermaid {
+    /* Same as .mermaid-container > pre */
+    display: block;
+    width: 100%;
+}
+
+pre.mermaid > svg {
+    /* Same as .mermaid-container > pre > svg */
+    height: 500px;
+    width: 100%;
+    max-width: 100% !important;
+}
+`;
+document.head.appendChild(defaultStyle);
+
+const fullscreenStyle = document.createElement('style');
+fullscreenStyle.textContent = `.mermaid-container {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+}
+
+.mermaid-container > pre {
+    display: block;
+    width: 100%;
+}
+
+.mermaid-container > pre > svg {
+    height: 500px;
+    width: 100%;
+    max-width: 100% !important;
+}
+
+.mermaid-fullscreen-btn {
+    width: 28px;
+    height: 28px;
+    background: rgba(255, 255, 255, 0.95);
+    border: 1px solid rgba(0, 0, 0, 0.3);
+    border-radius: 4px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+    font-size: 14px;
+    line-height: 1;
+    padding: 0;
+    color: #333;
+}
+
+.mermaid-fullscreen-btn:hover {
+    opacity: 100% !important;
+    background: rgba(255, 255, 255, 1);
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3);
+    transform: scale(1.1);
+}
+
+.mermaid-fullscreen-btn.dark-theme {
+    background: rgba(50, 50, 50, 0.95);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    color: #e0e0e0;
+}
+
+.mermaid-fullscreen-btn.dark-theme:hover {
+    background: rgba(60, 60, 60, 1);
+    box-shadow: 0 3px 10px rgba(255, 255, 255, 0.2);
+}
+
+.mermaid-fullscreen-modal {
+    display: none;
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 95vw;
+    height: 100vh;
+    background: rgba(255, 255, 255, 0.98);
+    z-index: 9999;
+    padding: 20px;
+    overflow: auto;
+}
+
+.mermaid-fullscreen-modal.dark-theme {
+    background: rgba(0, 0, 0, 0.98);
+}
+
+.mermaid-fullscreen-modal.active {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.mermaid-container-fullscreen {
+    position: relative;
+    width: 95vw;
+    height: 90vh;
+    max-width: 95vw;
+    max-height: 90vh;
+    background: white;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+    overflow: auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.mermaid-container-fullscreen.dark-theme {
+    background: #1a1a1a;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8);
+}
+
+.mermaid-container-fullscreen pre.mermaid {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.mermaid-container-fullscreen .mermaid svg {
+    height: 100% !important;
+    width: 100% !important;
+    cursor: grab;
+}
+
+.mermaid-fullscreen-close {
+    position: fixed !important;
+    top: 20px !important;
+    right: 20px !important;
+    width: 40px;
+    height: 40px;
+    background: rgba(255, 255, 255, 0.95);
+    border: 1px solid rgba(0, 0, 0, 0.2);
+    border-radius: 50%;
+    cursor: pointer;
+    z-index: 10000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    transition: all 0.2s;
+    font-size: 24px;
+    line-height: 1;
+    color: #333;
+}
+
+.mermaid-fullscreen-close:hover {
+    background: white;
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
+    transform: scale(1.1);
+}
+
+.mermaid-fullscreen-close.dark-theme {
+    background: rgba(50, 50, 50, 0.95);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: #e0e0e0;
+}
+
+.mermaid-fullscreen-close.dark-theme:hover {
+    background: rgba(60, 60, 60, 1);
+    box-shadow: 0 6px 16px rgba(255, 255, 255, 0.2);
+}
+
+.mermaid-fullscreen-modal .mermaid-fullscreen-btn {
+    display: none !important;
+}`;
+document.head.appendChild(fullscreenStyle);
+
+// Detect if page has dark background
+const isDarkTheme = () => {
+    const bgColor = window.getComputedStyle(document.body).backgroundColor;
+    const match = bgColor.match(/rgb\((\d+),\s*(\d+),\s*(\d+)/);
+    if (match) {
+        const r = parseInt(match[1]);
+        const g = parseInt(match[2]);
+        const b = parseInt(match[3]);
+        const brightness = (r * 299 + g * 587 + b * 114) / 1000;
+        return brightness < 128;
+    }
+    return false;
+};
+
+const load = async () => {
+    await mermaid.run();
+
+    const all_mermaids = document.querySelectorAll(".mermaid");
+    const mermaids_processed = document.querySelectorAll(".mermaid[data-processed='true']");
+
+    if ("False" === "True") {
+        const mermaids_to_add_zoom = -1 === -1 ? all_mermaids.length : -1;
+        if(mermaids_to_add_zoom > 0) {
+            var svgs = d3.selectAll("");
+            if(all_mermaids.length !== mermaids_processed.length) {
+                setTimeout(load, 200);
+                return;
+            } else if(svgs.size() !== mermaids_to_add_zoom) {
+                setTimeout(load, 200);
+                return;
+            } else {
+                svgs.each(function() {
+                    var svg = d3.select(this);
+                    svg.html("<g class='wrapper'>" + svg.html() + "</g>");
+                    var inner = svg.select("g");
+                    var zoom = d3.zoom().on("zoom", function(event) {
+                        inner.attr("transform", event.transform);
+                    });
+                    svg.call(zoom);
+                });
+            }
+        }
+    } else if(all_mermaids.length !== mermaids_processed.length) {
+        // Wait for mermaid to process all diagrams
+        setTimeout(load, 200);
+        return;
+    }
+
+    const darkTheme = isDarkTheme();
+
+    // Stop here if not adding fullscreen capability
+    if ("True" !== "True") return;
+
+    const modal = document.createElement('div');
+    modal.className = 'mermaid-fullscreen-modal' + (darkTheme ? ' dark-theme' : '');
+    modal.setAttribute('role', 'dialog');
+    modal.setAttribute('aria-modal', 'true');
+    modal.setAttribute('aria-label', 'Fullscreen diagram viewer');
+    modal.innerHTML = `
+        <button class="mermaid-fullscreen-close${darkTheme ? ' dark-theme' : ''}" aria-label="Close fullscreen">✕</button>
+        <div class="mermaid-container-fullscreen${darkTheme ? ' dark-theme' : ''}"></div>
+    `;
+    document.body.appendChild(modal);
+
+    const modalContent = modal.querySelector('.mermaid-container-fullscreen');
+    const closeBtn = modal.querySelector('.mermaid-fullscreen-close');
+
+    let previousScrollOffset = [window.scrollX, window.scrollY];
+
+    const closeModal = () => {
+        modal.classList.remove('active');
+        modalContent.innerHTML = '';
+        document.body.style.overflow = ''
+        window.scrollTo({left: previousScrollOffset[0], top: previousScrollOffset[1], behavior: 'instant'});
+    };
+
+    closeBtn.addEventListener('click', closeModal);
+    modal.addEventListener('click', (e) => {
+        if (e.target === modal) closeModal();
+    });
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && modal.classList.contains('active')) {
+            closeModal();
+        }
+    });
+
+    const allButtons = [];
+
+    document.querySelectorAll('.mermaid').forEach((mermaidDiv) => {
+        if (mermaidDiv.parentNode.classList.contains('mermaid-container') ||
+            mermaidDiv.closest('.mermaid-fullscreen-modal')) {
+            return;
+        }
+
+        const container = document.createElement('div');
+        container.className = 'mermaid-container';
+        mermaidDiv.parentNode.insertBefore(container, mermaidDiv);
+        container.appendChild(mermaidDiv);
+
+        const fullscreenBtn = document.createElement('button');
+        fullscreenBtn.className = 'mermaid-fullscreen-btn' + (darkTheme ? ' dark-theme' : '');
+        fullscreenBtn.setAttribute('aria-label', 'View diagram in fullscreen');
+        fullscreenBtn.textContent = '⛶';
+        fullscreenBtn.style.opacity = '50%';
+
+        // Calculate dynamic position based on diagram's margin and padding
+        const diagramStyle = window.getComputedStyle(mermaidDiv);
+        const marginTop = parseFloat(diagramStyle.marginTop) || 0;
+        const marginRight = parseFloat(diagramStyle.marginRight) || 0;
+        const paddingTop = parseFloat(diagramStyle.paddingTop) || 0;
+        const paddingRight = parseFloat(diagramStyle.paddingRight) || 0;
+        fullscreenBtn.style.top = `${marginTop + paddingTop + 4}px`;
+        fullscreenBtn.style.right = `${marginRight + paddingRight + 4}px`;
+
+        fullscreenBtn.addEventListener('click', () => {
+            previousScrollOffset = [window.scroll, window.scrollY];
+            const clone = mermaidDiv.cloneNode(true);
+            modalContent.innerHTML = '';
+            modalContent.appendChild(clone);
+
+            const svg = clone.querySelector('svg');
+            if (svg) {
+                svg.removeAttribute('width');
+                svg.removeAttribute('height');
+                svg.style.width = '100%';
+                svg.style.height = 'auto';
+                svg.style.maxWidth = '100%';
+                svg.style.sdisplay = 'block';
+
+                if ("False" === "True") {
+                    setTimeout(() => {
+                        const g = svg.querySelector('g');
+                        if (g) {
+                            var svgD3 = d3.select(svg);
+                            svgD3.html("<g class='wrapper'>" + svgD3.html() + "</g>");
+                            var inner = svgD3.select("g");
+                            var zoom = d3.zoom().on("zoom", function(event) {
+                                inner.attr("transform", event.transform);
+                            });
+                            svgD3.call(zoom);
+                        }
+                    }, 100);
+                }
+            }
+
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        });
+
+        container.appendChild(fullscreenBtn);
+        allButtons.push(fullscreenBtn);
+    });
+
+    // Update theme classes when theme changes
+    const updateTheme = () => {
+        const dark = isDarkTheme();
+        allButtons.forEach(btn => {
+            if (dark) {
+                btn.classList.add('dark-theme');
+            } else {
+                btn.classList.remove('dark-theme');
+            }
+        });
+        if (dark) {
+            modal.classList.add('dark-theme');
+            modalContent.classList.add('dark-theme');
+            closeBtn.classList.add('dark-theme');
+        } else {
+            modal.classList.remove('dark-theme');
+            modalContent.classList.remove('dark-theme');
+            closeBtn.classList.remove('dark-theme');
+        }
+    };
+
+    // Watch for theme changes
+    const observer = new MutationObserver(updateTheme);
+    observer.observe(document.documentElement, {
+        attributes: true,
+        attributeFilter: ['class', 'style', 'data-theme']
+    });
+    observer.observe(document.body, {
+        attributes: true,
+        attributeFilter: ['class', 'style']
+    });
+};
+
+window.addEventListener("load", load);
+</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/myogen/simulator/neuron/network';</script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="0.8.0" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search MyoGen docs..."
+         aria-label="Search MyoGen docs..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+<aside class="bd-header-announcement" aria-label="Announcement">
+  <div class="bd-header-announcement__content">MyoGen is under active development. API may change.</div>
+</aside>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class=" navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../../../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../../../_static/myogen_logo.png" class="logo__image only-light" alt="MyoGen 0.8.0 Documentation - Home"/>
+    <img src="../../../../_static/myogen_logo.png" class="logo__image only-dark pst-js-only" alt="MyoGen 0.8.0 Documentation - Home"/>
+  
+  
+</a></div>
+    
+      <div class="navbar-item">
+<div class="nav-item">
+  <div class="version-switcher__container dropdown">
+      <button id="version-switcher-button" type="button" class="version-switcher__button btn btn-sm navbar-btn" aria-haspopup="true" aria-expanded="false">
+          Version 0.8.0
+      </button>
+      
+      
+      
+  </div>
+</div> </div>
+    
+      <div class="navbar-item"><div class="nav-item">
+   <span>
+      made at the <a href="https://www.nsquared.tf.fau.de/" target="_blank">N² Lab</a>
+   </span>
+</div> </div>
+    
+  </div>
+  
+  <div class=" navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../api/index.html">
+    API Documentation
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../neo_blocks_guide.html">
+    Working with Neo Block Data Structures
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../examples.html">
+    Examples
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/NSquaredLab/MyoGen" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+    </div>
+  
+
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar hide-on-wide">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../api/index.html">
+    API Documentation
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../neo_blocks_guide.html">
+    Working with Neo Block Data Structures
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../examples.html">
+    Examples
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/NSquaredLab/MyoGen" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../../../index.html" class="nav-link">Module code</a></li>
+    
+    
+    <li class="breadcrumb-item"><a href="../../../myogen.html" class="nav-link">myogen</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">myogen.simulator.neuron.network</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <h1>Source code for myogen.simulator.neuron.network</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Neural Network Connectivity Module</span>
+
+<span class="sd">This module provides network connectivity functionality for MyoGen&#39;s neuron models,</span>
+<span class="sd">integrating with both the legacy NEURON-based populations and the modern MyoGen API.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Optional</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">quantities</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pq</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">neuron</span><span class="w"> </span><span class="kn">import</span> <span class="n">h</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">myogen</span><span class="w"> </span><span class="kn">import</span> <span class="n">RANDOM_GENERATOR</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">myogen.simulator.neuron.populations</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">AffIa__Pool</span><span class="p">,</span>
+    <span class="n">AffII__Pool</span><span class="p">,</span>
+    <span class="n">AlphaMN__Pool</span><span class="p">,</span>
+    <span class="n">DescendingDrive__Pool</span><span class="p">,</span>
+    <span class="n">GII__Pool</span><span class="p">,</span>
+    <span class="n">_Pool</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">myogen.utils.decorators</span><span class="w"> </span><span class="kn">import</span> <span class="n">beartowertype</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">myogen.utils.types</span><span class="w"> </span><span class="kn">import</span> <span class="n">Quantity__mV</span><span class="p">,</span> <span class="n">Quantity__ms</span><span class="p">,</span> <span class="n">Quantity__uS</span>
+
+<span class="c1"># Reversal potential threshold to distinguish excitatory vs inhibitory synapses</span>
+<span class="c1"># Synapses with reversal potential below this value are considered inhibitory</span>
+<span class="n">INHIBITORY_REVERSAL_THRESHOLD</span> <span class="o">=</span> <span class="o">-</span><span class="mf">40.0</span>  <span class="c1"># mV</span>
+
+<span class="c1"># Network Constants</span>
+<span class="n">MOTOR_NEURON_CONNECTION</span> <span class="o">=</span> <span class="s2">&quot;aMN-&gt;Muscle&quot;</span>
+
+<span class="n">DEFAULT_SYNAPTIC_WEIGHT</span> <span class="o">=</span> <span class="mf">0.6</span> <span class="o">*</span> <span class="n">pq</span><span class="o">.</span><span class="n">uS</span>  <span class="c1"># uS</span>
+<span class="n">DEFAULT_SPIKE_THRESHOLD</span> <span class="o">=</span> <span class="o">-</span><span class="mf">10.0</span> <span class="o">*</span> <span class="n">pq</span><span class="o">.</span><span class="n">mV</span>  <span class="c1"># mV</span>
+<span class="n">DEFAULT_SYNAPTIC_DELAY</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">*</span> <span class="n">pq</span><span class="o">.</span><span class="n">ms</span>  <span class="c1"># ms</span>
+<span class="n">EXTERNAL_INPUT_LABEL</span> <span class="o">=</span> <span class="s2">&quot;Spindle&quot;</span>
+<span class="n">EXTERNAL_TARGET_LABEL</span> <span class="o">=</span> <span class="s2">&quot;Muscle&quot;</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_select_synapse</span><span class="p">(</span><span class="n">target_neuron</span><span class="p">,</span> <span class="n">inhibitory</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Select appropriate synapse from target neuron based on connection type.</span>
+
+<span class="sd">    For neurons with multiple synapse types (e.g., motor neurons with both</span>
+<span class="sd">    excitatory and inhibitory synapses), this function selects the appropriate</span>
+<span class="sd">    synapse based on the desired connection type.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    target_neuron : neuron object</span>
+<span class="sd">        Target neuron with synapse__list attribute</span>
+<span class="sd">    inhibitory : bool, optional</span>
+<span class="sd">        If True, select an inhibitory synapse (reversal &lt; -40 mV).</span>
+<span class="sd">        If False, select an excitatory synapse (reversal &gt;= -40 mV).</span>
+<span class="sd">        Default is False (excitatory).</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    synapse object</span>
+<span class="sd">        Selected synapse from target neuron&#39;s synapse list</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">synapse_list</span> <span class="o">=</span> <span class="n">target_neuron</span><span class="o">.</span><span class="n">synapse__list</span>
+
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">synapse_list</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="c1"># Only one synapse, use it regardless of type</span>
+        <span class="k">return</span> <span class="n">synapse_list</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="c1"># Filter synapses by type based on reversal potential</span>
+    <span class="k">if</span> <span class="n">inhibitory</span><span class="p">:</span>
+        <span class="c1"># Select synapses with reversal potential below threshold (inhibitory)</span>
+        <span class="n">matching_synapses</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">syn</span> <span class="k">for</span> <span class="n">syn</span> <span class="ow">in</span> <span class="n">synapse_list</span>
+            <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">syn</span><span class="p">,</span> <span class="s1">&#39;e&#39;</span><span class="p">)</span> <span class="ow">and</span> <span class="n">syn</span><span class="o">.</span><span class="n">e</span> <span class="o">&lt;</span> <span class="n">INHIBITORY_REVERSAL_THRESHOLD</span>
+        <span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c1"># Select synapses with reversal potential at or above threshold (excitatory)</span>
+        <span class="n">matching_synapses</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">syn</span> <span class="k">for</span> <span class="n">syn</span> <span class="ow">in</span> <span class="n">synapse_list</span>
+            <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">syn</span><span class="p">,</span> <span class="s1">&#39;e&#39;</span><span class="p">)</span> <span class="ow">and</span> <span class="n">syn</span><span class="o">.</span><span class="n">e</span> <span class="o">&gt;=</span> <span class="n">INHIBITORY_REVERSAL_THRESHOLD</span>
+        <span class="p">]</span>
+
+    <span class="k">if</span> <span class="n">matching_synapses</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">RANDOM_GENERATOR</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">matching_synapses</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c1"># Fallback to random selection if no matching synapses found</span>
+        <span class="k">return</span> <span class="n">RANDOM_GENERATOR</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">synapse_list</span><span class="p">)</span>
+
+
+<span class="c1"># Helper functions for create_netcon</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_create_basic_netcon</span><span class="p">(</span><span class="n">source_neuron</span><span class="p">,</span> <span class="n">target_neuron</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">h</span><span class="o">.</span><span class="n">NetCon</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Create the basic NEURON NetCon object based on neuron types.</span>
+
+<span class="sd">    Handles the three main connection patterns:</span>
+<span class="sd">    1. Compartmental neuron (has soma)</span>
+<span class="sd">    2. External input (source_neuron is None)</span>
+<span class="sd">    3. Point process neuron (has ns attribute)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">source_neuron</span><span class="p">,</span> <span class="s2">&quot;soma&quot;</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">h</span><span class="o">.</span><span class="n">NetCon</span><span class="p">(</span><span class="n">source_neuron</span><span class="o">.</span><span class="n">soma</span><span class="p">(</span><span class="mf">0.5</span><span class="p">)</span><span class="o">.</span><span class="n">_ref_v</span><span class="p">,</span> <span class="n">target_neuron</span><span class="p">,</span> <span class="n">sec</span><span class="o">=</span><span class="n">source_neuron</span><span class="o">.</span><span class="n">soma</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">source_neuron</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">h</span><span class="o">.</span><span class="n">NetCon</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="n">target_neuron</span><span class="o">.</span><span class="n">ns</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">h</span><span class="o">.</span><span class="n">NetCon</span><span class="p">(</span><span class="n">source_neuron</span><span class="o">.</span><span class="n">ns</span><span class="p">,</span> <span class="n">target_neuron</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_setup_muscle_activation</span><span class="p">(</span>
+    <span class="n">netcon</span><span class="p">:</span> <span class="n">h</span><span class="o">.</span><span class="n">NetCon</span><span class="p">,</span> <span class="n">muscle_callback</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Callable</span><span class="p">],</span> <span class="n">muscle</span><span class="p">,</span> <span class="n">source_neuron</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Setup muscle activation callback for motor neuron connections.</span>
+
+<span class="sd">    Creates a wrapper function that calls the muscle_callback with the appropriate</span>
+<span class="sd">    parameters when the source neuron fires.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">callable</span><span class="p">(</span><span class="n">muscle_callback</span><span class="p">)</span> <span class="ow">and</span> <span class="n">muscle</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+
+        <span class="k">def</span><span class="w"> </span><span class="nf">muscle_activation_wrapper</span><span class="p">():</span>
+            <span class="k">return</span> <span class="n">muscle_callback</span><span class="p">(</span>
+                <span class="n">source_neuron</span><span class="o">.</span><span class="n">pool__ID</span><span class="p">,</span> <span class="n">muscle</span><span class="p">,</span> <span class="mi">1</span> <span class="o">+</span> <span class="nb">float</span><span class="p">(</span><span class="n">source_neuron</span><span class="o">.</span><span class="n">axon_delay__ms</span><span class="p">)</span>
+            <span class="p">)</span>
+
+        <span class="n">netcon</span><span class="o">.</span><span class="n">record</span><span class="p">(</span><span class="n">muscle_activation_wrapper</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_setup_spike_recording</span><span class="p">(</span><span class="n">netcon</span><span class="p">:</span> <span class="n">h</span><span class="o">.</span><span class="n">NetCon</span><span class="p">,</span> <span class="n">id_vector</span><span class="p">,</span> <span class="n">spike_vector</span><span class="p">,</span> <span class="n">neuron_id</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Setup spike recording for post-simulation analysis.</span>
+
+<span class="sd">    Records spike times and neuron IDs when all required parameters are provided.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">neuron_id</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">id_vector</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">spike_vector</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">netcon</span><span class="o">.</span><span class="n">record</span><span class="p">(</span><span class="n">spike_vector</span><span class="p">,</span> <span class="n">id_vector</span><span class="p">,</span> <span class="n">neuron_id</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_apply_default_synaptic_params</span><span class="p">(</span><span class="n">netcon</span><span class="p">:</span> <span class="n">h</span><span class="o">.</span><span class="n">NetCon</span><span class="p">,</span> <span class="n">source_neuron</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Apply default synaptic parameters to the NetCon.</span>
+
+<span class="sd">    Sets default weight, threshold, and delay, with optional axonal delay addition.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">netcon</span><span class="o">.</span><span class="n">weight</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">DEFAULT_SYNAPTIC_WEIGHT</span>
+    <span class="n">netcon</span><span class="o">.</span><span class="n">threshold</span> <span class="o">=</span> <span class="n">DEFAULT_SPIKE_THRESHOLD</span>
+    <span class="n">netcon</span><span class="o">.</span><span class="n">delay</span> <span class="o">=</span> <span class="n">DEFAULT_SYNAPTIC_DELAY</span>  <span class="c1"># 1ms synaptic + axon delay</span>
+
+    <span class="c1"># Add axonal delay if source neuron has it</span>
+    <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">source_neuron</span><span class="p">,</span> <span class="s2">&quot;axon_delay__ms&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="n">source_neuron</span><span class="o">.</span><span class="n">axon_delay__ms</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">netcon</span><span class="o">.</span><span class="n">delay</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">DEFAULT_SYNAPTIC_DELAY</span> <span class="o">+</span> <span class="n">source_neuron</span><span class="o">.</span><span class="n">axon_delay__ms</span>
+        <span class="p">)</span>  <span class="c1"># 1ms synaptic + axon delay</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_create_netcon</span><span class="p">(</span>
+    <span class="n">source_neuron</span><span class="p">,</span>
+    <span class="n">target_neuron</span><span class="p">,</span>
+    <span class="n">muscle_callback</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">neuron_id</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">id_vector</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">spike_vector</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">muscle</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Create a single NEURON NetCon (network connection) between two neurons.</span>
+
+<span class="sd">    This function handles the complexity of NEURON&#39;s heterogeneous neuron types by detecting</span>
+<span class="sd">    the source neuron architecture and creating the appropriate NetCon object. It also</span>
+<span class="sd">    sets up optional muscle activation callbacks and spike recording for EMG simulation.</span>
+
+<span class="sd">    REFACTORING NOTES:</span>
+<span class="sd">    - Function does too many things: connection creation, muscle activation, spike recording</span>
+<span class="sd">    - Complex conditional logic for neuron types could be simplified with polymorphism</span>
+<span class="sd">    - Muscle activation logic tightly couples neural and muscle systems</span>
+<span class="sd">    - Parameter validation missing (e.g., muscle_callback callable check happens after NetCon creation)</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    source_neuron : neuron object or None</span>
+<span class="sd">        Source neuron. Can be:</span>
+<span class="sd">        - Compartmental neuron (has &#39;soma&#39; attribute)</span>
+<span class="sd">        - Point process neuron (has &#39;ns&#39; NetStim attribute)</span>
+<span class="sd">        - None (for external stimulation)</span>
+<span class="sd">    target_neuron : neuron object</span>
+<span class="sd">        Target neuron or synapse object</span>
+<span class="sd">    muscle_callback : callable, optional</span>
+<span class="sd">        Muscle activation callback function. Called when source fires.</span>
+<span class="sd">        Expected signature: muscle_callback(recruitment_id, muscle, delay_time)</span>
+<span class="sd">    neuron_id : int, optional</span>
+<span class="sd">        Source neuron ID for spike recording. Required if id_vector/spike_vector provided.</span>
+<span class="sd">    id_vector : h.Vector, optional</span>
+<span class="sd">        NEURON Vector to record neuron IDs that spike. Used with spike_vector.</span>
+<span class="sd">    spike_vector : h.Vector, optional</span>
+<span class="sd">        NEURON Vector to record spike times. Used with id_vector.</span>
+<span class="sd">    muscle : object, optional</span>
+<span class="sd">        Muscle object for motor neuron connections. Required if muscle_callback provided.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    h.NetCon</span>
+<span class="sd">        NEURON NetCon object with default synaptic properties:</span>
+<span class="sd">        - weight[0] = 0.6 uS</span>
+<span class="sd">        - threshold = -10 mV</span>
+<span class="sd">        - delay = 1 ms + axonal delay (if available)</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    Connection types created based on source neuron:</span>
+<span class="sd">    1. Compartmental (has soma): NetCon(soma.v, target, sec=soma)</span>
+<span class="sd">    2. External input (src=None): NetCon(None, target.ns)</span>
+<span class="sd">    3. Point process: NetCon(src.ns, target)</span>
+
+<span class="sd">    Muscle activation: When foo and muscle are provided, creates callback</span>
+<span class="sd">    that activates muscle fibers using source recruitment ID and axonal delay.</span>
+
+<span class="sd">    Spike recording: When i, idvec, spkvec all provided, records spike times</span>
+<span class="sd">    and neuron IDs for post-simulation analysis.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Create the basic NEURON NetCon based on neuron types</span>
+    <span class="n">netcon</span> <span class="o">=</span> <span class="n">_create_basic_netcon</span><span class="p">(</span><span class="n">source_neuron</span><span class="p">,</span> <span class="n">target_neuron</span><span class="p">)</span>
+
+    <span class="c1"># Setup optional muscle activation callback</span>
+    <span class="n">_setup_muscle_activation</span><span class="p">(</span><span class="n">netcon</span><span class="p">,</span> <span class="n">muscle_callback</span><span class="p">,</span> <span class="n">muscle</span><span class="p">,</span> <span class="n">source_neuron</span><span class="p">)</span>
+
+    <span class="c1"># Setup optional spike recording</span>
+    <span class="n">_setup_spike_recording</span><span class="p">(</span><span class="n">netcon</span><span class="p">,</span> <span class="n">id_vector</span><span class="p">,</span> <span class="n">spike_vector</span><span class="p">,</span> <span class="n">neuron_id</span><span class="p">)</span>
+
+    <span class="c1"># Apply default synaptic parameters</span>
+    <span class="n">_apply_default_synaptic_params</span><span class="p">(</span><span class="n">netcon</span><span class="p">,</span> <span class="n">source_neuron</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">netcon</span>
+
+
+<span class="c1"># Helper functions for connect_populations</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_connect_population_to_population</span><span class="p">(</span>
+    <span class="n">source_pop</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">target_pop</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">populations</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span>
+    <span class="n">connection_probability</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+    <span class="n">deterministic</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="n">inhibitory</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Create connections between two neural populations with probabilistic or deterministic connectivity.</span>
+
+<span class="sd">    Implements sparse connectivity using either:</span>
+<span class="sd">    - Probabilistic: Each source-target pair connects with specified probability (default)</span>
+<span class="sd">    - Deterministic: Each source connects to exactly N targets where N = probability × n_targets</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    deterministic : bool, optional</span>
+<span class="sd">        If True, each source neuron connects to exactly int(connection_probability × n_targets)</span>
+<span class="sd">        randomly selected target neurons. If False, uses probabilistic sampling. Default False.</span>
+<span class="sd">    inhibitory : bool, optional</span>
+<span class="sd">        If True, connect to inhibitory synapses on target neurons (reversal &lt; -40 mV).</span>
+<span class="sd">        If False, connect to excitatory synapses (reversal &gt;= -40 mV). Default False.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">connections</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">target_neurons</span> <span class="o">=</span> <span class="n">populations</span><span class="p">[</span><span class="n">target_pop</span><span class="p">]</span>
+
+    <span class="k">if</span> <span class="n">deterministic</span> <span class="ow">and</span> <span class="n">connection_probability</span> <span class="o">&lt;</span> <span class="mf">1.0</span><span class="p">:</span>
+        <span class="c1"># Deterministic connectivity: each source connects to exact number of targets</span>
+        <span class="n">n_connections</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">connection_probability</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">target_neurons</span><span class="p">))</span>
+
+        <span class="k">for</span> <span class="n">source_neuron</span> <span class="ow">in</span> <span class="n">populations</span><span class="p">[</span><span class="n">source_pop</span><span class="p">]:</span>
+            <span class="c1"># Randomly select exactly n_connections target neurons</span>
+            <span class="n">selected_targets</span> <span class="o">=</span> <span class="n">RANDOM_GENERATOR</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span>
+                <span class="n">target_neurons</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="n">n_connections</span><span class="p">,</span> <span class="n">replace</span><span class="o">=</span><span class="kc">False</span>
+            <span class="p">)</span>
+
+            <span class="k">for</span> <span class="n">target_neuron</span> <span class="ow">in</span> <span class="n">selected_targets</span><span class="p">:</span>
+                <span class="n">target_synapse</span> <span class="o">=</span> <span class="n">_select_synapse</span><span class="p">(</span><span class="n">target_neuron</span><span class="p">,</span> <span class="n">inhibitory</span><span class="o">=</span><span class="n">inhibitory</span><span class="p">)</span>
+                <span class="n">netcon</span> <span class="o">=</span> <span class="n">_create_netcon</span><span class="p">(</span>
+                    <span class="n">source_neuron</span><span class="p">,</span>
+                    <span class="n">target_synapse</span><span class="p">,</span>
+                    <span class="n">muscle_callback</span><span class="o">=</span><span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;muscle_callback&quot;</span><span class="p">),</span>
+                    <span class="n">id_vector</span><span class="o">=</span><span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;id_vector&quot;</span><span class="p">),</span>
+                    <span class="n">spike_vector</span><span class="o">=</span><span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;spike_vector&quot;</span><span class="p">),</span>
+                    <span class="n">neuron_id</span><span class="o">=</span><span class="n">source_neuron</span><span class="o">.</span><span class="n">global__ID</span><span class="p">,</span>
+                <span class="p">)</span>
+
+                <span class="c1"># Apply custom synaptic parameters if provided</span>
+                <span class="k">if</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;synaptic_weight&quot;</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">netcon</span><span class="o">.</span><span class="n">weight</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;synaptic_weight&quot;</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;spike_threshold&quot;</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">netcon</span><span class="o">.</span><span class="n">threshold</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;spike_threshold&quot;</span><span class="p">)</span>
+
+                <span class="n">connections</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">netcon</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c1"># Probabilistic connectivity: each pair has probability of connecting</span>
+        <span class="k">for</span> <span class="n">source_neuron</span> <span class="ow">in</span> <span class="n">populations</span><span class="p">[</span><span class="n">source_pop</span><span class="p">]:</span>
+            <span class="k">for</span> <span class="n">target_neuron</span> <span class="ow">in</span> <span class="n">target_neurons</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">RANDOM_GENERATOR</span><span class="o">.</span><span class="n">uniform</span><span class="p">()</span> <span class="o">&lt;</span> <span class="n">connection_probability</span><span class="p">:</span>
+                    <span class="n">target_synapse</span> <span class="o">=</span> <span class="n">_select_synapse</span><span class="p">(</span><span class="n">target_neuron</span><span class="p">,</span> <span class="n">inhibitory</span><span class="o">=</span><span class="n">inhibitory</span><span class="p">)</span>
+                    <span class="n">netcon</span> <span class="o">=</span> <span class="n">_create_netcon</span><span class="p">(</span>
+                        <span class="n">source_neuron</span><span class="p">,</span>
+                        <span class="n">target_synapse</span><span class="p">,</span>
+                        <span class="n">muscle_callback</span><span class="o">=</span><span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;muscle_callback&quot;</span><span class="p">),</span>
+                        <span class="n">id_vector</span><span class="o">=</span><span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;id_vector&quot;</span><span class="p">),</span>
+                        <span class="n">spike_vector</span><span class="o">=</span><span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;spike_vector&quot;</span><span class="p">),</span>
+                        <span class="n">neuron_id</span><span class="o">=</span><span class="n">source_neuron</span><span class="o">.</span><span class="n">global__ID</span><span class="p">,</span>
+                    <span class="p">)</span>
+
+                    <span class="c1"># Apply custom synaptic parameters if provided</span>
+                    <span class="k">if</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;synaptic_weight&quot;</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                        <span class="n">netcon</span><span class="o">.</span><span class="n">weight</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;synaptic_weight&quot;</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;spike_threshold&quot;</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                        <span class="n">netcon</span><span class="o">.</span><span class="n">threshold</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;spike_threshold&quot;</span><span class="p">)</span>
+
+                    <span class="n">connections</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">netcon</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">connections</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_connect_population_to_external</span><span class="p">(</span><span class="n">source_pop</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">populations</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Create connections from a neural population to an external target (e.g., muscle).</span>
+
+<span class="sd">    All neurons in the source population connect to the external target.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">connections</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">source_neuron</span> <span class="ow">in</span> <span class="n">populations</span><span class="p">[</span><span class="n">source_pop</span><span class="p">]:</span>
+        <span class="n">external_target</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">netcon</span> <span class="o">=</span> <span class="n">_create_netcon</span><span class="p">(</span>
+            <span class="n">source_neuron</span><span class="p">,</span>
+            <span class="n">external_target</span><span class="p">,</span>
+            <span class="n">muscle_callback</span><span class="o">=</span><span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;muscle_callback&quot;</span><span class="p">),</span>
+            <span class="n">id_vector</span><span class="o">=</span><span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;id_vector&quot;</span><span class="p">),</span>
+            <span class="n">muscle</span><span class="o">=</span><span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;muscle&quot;</span><span class="p">),</span>
+            <span class="n">spike_vector</span><span class="o">=</span><span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;spike_vector&quot;</span><span class="p">),</span>
+            <span class="n">neuron_id</span><span class="o">=</span><span class="n">source_neuron</span><span class="o">.</span><span class="n">global__ID</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="c1"># Apply custom spike threshold if provided</span>
+        <span class="k">if</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;spike_threshold&quot;</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">netcon</span><span class="o">.</span><span class="n">threshold</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;spike_threshold&quot;</span><span class="p">)</span>
+
+        <span class="n">connections</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">netcon</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">connections</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_connect_external_to_population</span><span class="p">(</span><span class="n">target_pop</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">populations</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Create connections from an external source (e.g., spindle) to a neural population.</span>
+
+<span class="sd">    External input connects to all neurons in the target population.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">connections</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">external_source</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">for</span> <span class="n">target_neuron</span> <span class="ow">in</span> <span class="n">populations</span><span class="p">[</span><span class="n">target_pop</span><span class="p">]:</span>
+        <span class="c1"># Note: For external connections, we don&#39;t record the external source spikes,</span>
+        <span class="c1"># but we can still record target neuron spikes if they&#39;re the source in other connections</span>
+        <span class="n">netcon</span> <span class="o">=</span> <span class="n">_create_netcon</span><span class="p">(</span>
+            <span class="n">external_source</span><span class="p">,</span>
+            <span class="n">target_neuron</span><span class="p">,</span>
+            <span class="n">id_vector</span><span class="o">=</span><span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;id_vector&quot;</span><span class="p">),</span>
+            <span class="n">spike_vector</span><span class="o">=</span><span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;spike_vector&quot;</span><span class="p">),</span>
+            <span class="n">neuron_id</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>  <span class="c1"># External source has no ID to record</span>
+        <span class="p">)</span>
+        <span class="n">connections</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">netcon</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">connections</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_connect_one_to_one</span><span class="p">(</span>
+    <span class="n">source_pop</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">target_pop</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">populations</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span>
+    <span class="n">connection_probability</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">,</span>
+    <span class="n">inhibitory</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Create one-to-one connections between two neural populations.</span>
+
+<span class="sd">    Connects source[i] to target[i] for all matching indices with specified probability.</span>
+<span class="sd">    This is useful for creating independent noise inputs where each target neuron receives</span>
+<span class="sd">    input from exactly one source neuron (e.g., independent Poisson processes to motor neurons).</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    source_pop : str</span>
+<span class="sd">        Name of source population in populations dict.</span>
+<span class="sd">    target_pop : str</span>
+<span class="sd">        Name of target population in populations dict.</span>
+<span class="sd">    populations : dict</span>
+<span class="sd">        Dictionary of neural populations.</span>
+<span class="sd">    connection_probability : float, optional</span>
+<span class="sd">        Probability that each source[i] -&gt; target[i] connection is made, by default 1.0.</span>
+<span class="sd">        Must be between 0.0 and 1.0.</span>
+<span class="sd">    inhibitory : bool, optional</span>
+<span class="sd">        If True, connect to inhibitory synapses on target neurons (reversal &lt; -40 mV).</span>
+<span class="sd">        If False, connect to excitatory synapses (reversal &gt;= -40 mV). Default False.</span>
+<span class="sd">    **kwargs</span>
+<span class="sd">        Additional keyword arguments passed to _create_netcon:</span>
+<span class="sd">        - muscle_callback: Muscle activation callback</span>
+<span class="sd">        - id_vector: Spike recording ID vector</span>
+<span class="sd">        - spike_vector: Spike recording time vector</span>
+<span class="sd">        - synaptic_weight: Synaptic weight override</span>
+<span class="sd">        - spike_threshold: Spike threshold override</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    list of h.NetCon</span>
+<span class="sd">        List of NEURON NetCon objects for connections that were created.</span>
+
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">    ValueError</span>
+<span class="sd">        If source and target populations have different sizes, or if</span>
+<span class="sd">        connection_probability is not in [0.0, 1.0].</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    Requires source and target populations to have equal size. Each source neuron</span>
+<span class="sd">    may connect to the target neuron at the same index position, depending on</span>
+<span class="sd">    connection_probability.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">source_neurons</span> <span class="o">=</span> <span class="n">populations</span><span class="p">[</span><span class="n">source_pop</span><span class="p">]</span>
+    <span class="n">target_neurons</span> <span class="o">=</span> <span class="n">populations</span><span class="p">[</span><span class="n">target_pop</span><span class="p">]</span>
+
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">source_neurons</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">target_neurons</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;One-to-one connection requires equal population sizes. &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;Source &#39;</span><span class="si">{</span><span class="n">source_pop</span><span class="si">}</span><span class="s2">&#39; has </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">source_neurons</span><span class="p">)</span><span class="si">}</span><span class="s2"> neurons, &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;target &#39;</span><span class="si">{</span><span class="n">target_pop</span><span class="si">}</span><span class="s2">&#39; has </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">target_neurons</span><span class="p">)</span><span class="si">}</span><span class="s2"> neurons.&quot;</span>
+        <span class="p">)</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="mf">0.0</span> <span class="o">&lt;=</span> <span class="n">connection_probability</span> <span class="o">&lt;=</span> <span class="mf">1.0</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Connection probability must be between 0.0 and 1.0, got </span><span class="si">{</span><span class="n">connection_probability</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="p">)</span>
+
+    <span class="n">connections</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">source_neuron</span><span class="p">,</span> <span class="n">target_neuron</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">source_neurons</span><span class="p">,</span> <span class="n">target_neurons</span><span class="p">):</span>
+        <span class="c1"># Check if this pair should be connected</span>
+        <span class="k">if</span> <span class="n">RANDOM_GENERATOR</span><span class="o">.</span><span class="n">uniform</span><span class="p">()</span> <span class="o">&lt;</span> <span class="n">connection_probability</span><span class="p">:</span>
+            <span class="n">target_synapse</span> <span class="o">=</span> <span class="n">_select_synapse</span><span class="p">(</span><span class="n">target_neuron</span><span class="p">,</span> <span class="n">inhibitory</span><span class="o">=</span><span class="n">inhibitory</span><span class="p">)</span>
+            <span class="n">netcon</span> <span class="o">=</span> <span class="n">_create_netcon</span><span class="p">(</span>
+                <span class="n">source_neuron</span><span class="p">,</span>
+                <span class="n">target_synapse</span><span class="p">,</span>
+                <span class="n">muscle_callback</span><span class="o">=</span><span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;muscle_callback&quot;</span><span class="p">),</span>
+                <span class="n">id_vector</span><span class="o">=</span><span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;id_vector&quot;</span><span class="p">),</span>
+                <span class="n">spike_vector</span><span class="o">=</span><span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;spike_vector&quot;</span><span class="p">),</span>
+                <span class="n">neuron_id</span><span class="o">=</span><span class="n">source_neuron</span><span class="o">.</span><span class="n">global__ID</span><span class="p">,</span>
+            <span class="p">)</span>
+
+            <span class="c1"># Apply custom synaptic parameters if provided</span>
+            <span class="k">if</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;synaptic_weight&quot;</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">netcon</span><span class="o">.</span><span class="n">weight</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;synaptic_weight&quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;spike_threshold&quot;</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">netcon</span><span class="o">.</span><span class="n">threshold</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;spike_threshold&quot;</span><span class="p">)</span>
+
+            <span class="n">connections</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">netcon</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">connections</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_connect_populations</span><span class="p">(</span>
+    <span class="n">populations</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span>
+    <span class="n">source_pop</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+    <span class="n">target_pop</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+    <span class="n">connection_probability</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+    <span class="n">muscle_callback</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Callable</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">id_vector</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">spike_vector</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">muscle</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">synaptic_weight</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">spike_threshold</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">deterministic</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="n">inhibitory</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Create probabilistic network connections between neural populations.</span>
+
+<span class="sd">    Implements sparse connectivity patterns between source and target populations,</span>
+<span class="sd">    mimicking biological neural networks where connections are probabilistic rather</span>
+<span class="sd">    than all-to-all. Handles three connection scenarios: population-to-population,</span>
+<span class="sd">    population-to-external (e.g., muscle), and external-to-population.</span>
+
+<span class="sd">    REFACTORING NOTES:</span>
+<span class="sd">    - Complex nested conditional logic makes function hard to understand and test</span>
+<span class="sd">    - Three different connection patterns should be separate functions:</span>
+<span class="sd">      * connect_populations(source_pop, target_pop, connection_probability, ...)</span>
+<span class="sd">      * connect_to_external(source_pop, external_target, ...)</span>
+<span class="sd">      * connect_from_external(external_source, target_pop, ...)</span>
+<span class="sd">    - Random number generation not seeded/controlled for reproducibility</span>
+<span class="sd">    - Side effects: modifies global random state, creates NetCons with recording</span>
+<span class="sd">    - Inconsistent parameter passing to create_netcon (sometimes neuron_id=sc.global__ID, sometimes not)</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    populations : dict</span>
+<span class="sd">        Dictionary of neural populations. Keys are population names (str),</span>
+<span class="sd">        values are lists of neuron objects.</span>
+<span class="sd">    source_pop : str or None</span>
+<span class="sd">        Name of source population in populations. None for external input.</span>
+<span class="sd">    target_pop : str or None</span>
+<span class="sd">        Name of target population in populations. None for external target (e.g., muscle).</span>
+<span class="sd">    connection_probability : float</span>
+<span class="sd">        Connection probability (0.0 to 1.0). Fraction of possible connections made.</span>
+<span class="sd">        Only applies to source→target population connections.</span>
+<span class="sd">    muscle_callback : callable, optional</span>
+<span class="sd">        Muscle activation callback function for motor neuron connections.</span>
+<span class="sd">        Passed to create_netcon for muscle activation recording.</span>
+<span class="sd">    id_vector : h.Vector, optional</span>
+<span class="sd">        NEURON Vector for recording neuron IDs that spike.</span>
+<span class="sd">    spike_vector : h.Vector, optional</span>
+<span class="sd">        NEURON Vector for recording spike times.</span>
+<span class="sd">    muscle : object, optional</span>
+<span class="sd">        Muscle object for motor neuron→muscle connections.</span>
+<span class="sd">    synaptic_weight : float, optional</span>
+<span class="sd">        Synaptic weight override. If None, uses create_netcon default (0.6).</span>
+<span class="sd">    spike_threshold : float, optional</span>
+<span class="sd">        Spike threshold override. If None, uses create_netcon default (-10).</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    list of h.NetCon</span>
+<span class="sd">        List of NEURON NetCon objects representing all created connections.</span>
+<span class="sd">        Empty list if no connections made.</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    Connection patterns:</span>
+<span class="sd">    1. Population→Population (source and target not None):</span>
+<span class="sd">       - Nested loops over all neuron pairs</span>
+<span class="sd">       - Each pair connects with probability &#39;prob&#39;</span>
+<span class="sd">       - Random synapse selection on target neuron</span>
+
+<span class="sd">    2. Population→External (target is None):</span>
+<span class="sd">       - All source neurons connect to external target</span>
+<span class="sd">       - No probability filtering (100% connection rate)</span>
+<span class="sd">       - Used for motor neuron→muscle connections</span>
+
+<span class="sd">    3. External→Population (source is None):</span>
+<span class="sd">       - External input connects to all target neurons</span>
+<span class="sd">       - No probability, weights, or thresholds applied</span>
+<span class="sd">       - Simple stimulus input connections</span>
+
+<span class="sd">    Random synapse selection uses np.random.choice(tg.synapse__list) which assumes</span>
+<span class="sd">    target neurons have a &#39;synapse__list&#39; attribute containing available synapses.</span>
+
+<span class="sd">    Global ID usage: Uses sc.global__ID for spike recording, assuming source</span>
+<span class="sd">    neurons have this attribute for unique identification.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Parameter validation</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="mf">0.0</span> <span class="o">&lt;=</span> <span class="n">connection_probability</span> <span class="o">&lt;=</span> <span class="mf">1.0</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Connection probability must be between 0.0 and 1.0, got </span><span class="si">{</span><span class="n">connection_probability</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">source_pop</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">source_pop</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">populations</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Source population &#39;</span><span class="si">{</span><span class="n">source_pop</span><span class="si">}</span><span class="s2">&#39; not found in population dictionary&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">target_pop</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">target_pop</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">populations</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Target population &#39;</span><span class="si">{</span><span class="n">target_pop</span><span class="si">}</span><span class="s2">&#39; not found in population dictionary&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Prepare keyword arguments for helper functions</span>
+    <span class="n">connection_kwargs</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;muscle_callback&quot;</span><span class="p">:</span> <span class="n">muscle_callback</span><span class="p">,</span>
+        <span class="s2">&quot;id_vector&quot;</span><span class="p">:</span> <span class="n">id_vector</span><span class="p">,</span>
+        <span class="s2">&quot;spike_vector&quot;</span><span class="p">:</span> <span class="n">spike_vector</span><span class="p">,</span>
+        <span class="s2">&quot;muscle&quot;</span><span class="p">:</span> <span class="n">muscle</span><span class="p">,</span>
+        <span class="s2">&quot;synaptic_weight&quot;</span><span class="p">:</span> <span class="n">synaptic_weight</span><span class="p">,</span>
+        <span class="s2">&quot;spike_threshold&quot;</span><span class="p">:</span> <span class="n">spike_threshold</span><span class="p">,</span>
+        <span class="s2">&quot;deterministic&quot;</span><span class="p">:</span> <span class="n">deterministic</span><span class="p">,</span>
+        <span class="s2">&quot;inhibitory&quot;</span><span class="p">:</span> <span class="n">inhibitory</span><span class="p">,</span>
+    <span class="p">}</span>
+
+    <span class="c1"># Route to appropriate connection type function</span>
+    <span class="k">if</span> <span class="n">source_pop</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">target_pop</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="c1"># Population to population connection</span>
+        <span class="k">return</span> <span class="n">_connect_population_to_population</span><span class="p">(</span>
+            <span class="n">source_pop</span><span class="p">,</span>
+            <span class="n">target_pop</span><span class="p">,</span>
+            <span class="n">populations</span><span class="p">,</span>
+            <span class="n">connection_probability</span><span class="p">,</span>
+            <span class="o">**</span><span class="n">connection_kwargs</span><span class="p">,</span>
+        <span class="p">)</span>
+    <span class="k">elif</span> <span class="n">source_pop</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">target_pop</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="c1"># Population to external target (e.g., muscle)</span>
+        <span class="k">return</span> <span class="n">_connect_population_to_external</span><span class="p">(</span><span class="n">source_pop</span><span class="p">,</span> <span class="n">populations</span><span class="p">,</span> <span class="o">**</span><span class="n">connection_kwargs</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c1"># External source to population (e.g., spindle input)</span>
+        <span class="k">return</span> <span class="n">_connect_external_to_population</span><span class="p">(</span><span class="n">target_pop</span><span class="p">,</span> <span class="n">populations</span><span class="p">,</span> <span class="o">**</span><span class="n">connection_kwargs</span><span class="p">)</span>
+
+
+<span class="c1"># Helper functions for print_network_connections</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_get_connection_source_name</span><span class="p">(</span><span class="n">netcon</span><span class="p">:</span> <span class="n">h</span><span class="o">.</span><span class="n">NetCon</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Get a descriptive name for the connection source.</span>
+
+<span class="sd">    Handles different source types:</span>
+<span class="sd">    - Regular neurons with presynaptic cell</span>
+<span class="sd">    - External inputs (preloc != -1)</span>
+<span class="sd">    - Unknown external inputs (default to EXTERNAL_INPUT_LABEL)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">source_cell</span> <span class="o">=</span> <span class="n">netcon</span><span class="o">.</span><span class="n">pre</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="n">source_cell</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">presynaptic_location</span> <span class="o">=</span> <span class="n">netcon</span><span class="o">.</span><span class="n">preloc</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">presynaptic_location</span> <span class="o">!=</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+            <span class="c1"># NEURON introspection - this affects global state</span>
+            <span class="n">source_cell</span> <span class="o">=</span> <span class="n">h</span><span class="o">.</span><span class="n">cas</span><span class="p">()</span>
+            <span class="n">h</span><span class="o">.</span><span class="n">pop_section</span><span class="p">()</span>
+            <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="n">source_cell</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">EXTERNAL_INPUT_LABEL</span>
+
+    <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="n">source_cell</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_get_connection_target_name</span><span class="p">(</span><span class="n">netcon</span><span class="p">:</span> <span class="n">h</span><span class="o">.</span><span class="n">NetCon</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Get a descriptive name for the connection target.</span>
+
+<span class="sd">    Handles different target types:</span>
+<span class="sd">    - Postsynaptic cells</span>
+<span class="sd">    - Synapses</span>
+<span class="sd">    - External targets (default to EXTERNAL_TARGET_LABEL)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">target_cell</span> <span class="o">=</span> <span class="n">netcon</span><span class="o">.</span><span class="n">postcell</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="n">target_cell</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">target_cell</span> <span class="o">=</span> <span class="n">netcon</span><span class="o">.</span><span class="n">syn</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="n">target_cell</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">EXTERNAL_TARGET_LABEL</span>
+
+    <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="n">target_cell</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_format_connection_info</span><span class="p">(</span><span class="n">netcon</span><span class="p">:</span> <span class="n">h</span><span class="o">.</span><span class="n">NetCon</span><span class="p">,</span> <span class="n">connection_index</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Format connection information as a string for display.</span>
+
+<span class="sd">    Returns a formatted string: &quot;NC[index]: source -&gt; target&quot;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">source_name</span> <span class="o">=</span> <span class="n">_get_connection_source_name</span><span class="p">(</span><span class="n">netcon</span><span class="p">)</span>
+    <span class="n">target_name</span> <span class="o">=</span> <span class="n">_get_connection_target_name</span><span class="p">(</span><span class="n">netcon</span><span class="p">)</span>
+    <span class="k">return</span> <span class="s2">&quot;NC[</span><span class="si">{}</span><span class="s2">]: </span><span class="si">{}</span><span class="s2"> -&gt; </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">connection_index</span><span class="p">,</span> <span class="n">source_name</span><span class="p">,</span> <span class="n">target_name</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_print_network_connections</span><span class="p">(</span><span class="n">network_connections</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Print a human-readable summary of all network connections.</span>
+
+<span class="sd">    Iterates through a dictionary of NetCon lists and displays each connection</span>
+<span class="sd">    with source and target information. Handles various NEURON object types</span>
+<span class="sd">    and provides fallback labels for special connection types (Muscle, Spindle).</span>
+
+<span class="sd">    REFACTORING NOTES:</span>
+<span class="sd">    - Function name violates Python naming convention (should be print_nc_list)</span>
+<span class="sd">    - Hardcoded string labels (&quot;Muscle&quot;, &quot;Spindle&quot;) should be configurable</span>
+<span class="sd">    - Complex conditional logic for determining source/target names</span>
+<span class="sd">    - Side effect function (prints) should return formatted strings instead</span>
+<span class="sd">    - No error handling for malformed NetCon objects</span>
+<span class="sd">    - Uses global NEURON state (h.cas(), h.pop_section()) unsafely</span>
+<span class="sd">    - Should use logging instead of print statements</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    network_connections : dict</span>
+<span class="sd">        Dictionary where keys are connection names (str) and values are</span>
+<span class="sd">        lists of h.NetCon objects created by connect_populations().</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    None</span>
+<span class="sd">        Prints connection information to stdout. No return value.</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    Connection display format: &quot;NC[index]: source -&gt; target&quot;</span>
+
+<span class="sd">    Source identification logic:</span>
+<span class="sd">    1. If nc.pre() exists: Use the presynaptic object</span>
+<span class="sd">    2. If nc.preloc() != -1: Use current access section (h.cas())</span>
+<span class="sd">    3. Otherwise: Label as &quot;Spindle&quot; (external input)</span>
+
+<span class="sd">    Target identification logic:</span>
+<span class="sd">    1. If nc.postcell() exists: Use the postsynaptic cell</span>
+<span class="sd">    2. If nc.syn() exists: Use the synapse object</span>
+<span class="sd">    3. Otherwise: Label as &quot;Muscle&quot; (external target)</span>
+
+<span class="sd">    The h.cas() and h.pop_section() calls are NEURON-specific functions</span>
+<span class="sd">    for accessing the current section stack, which may have side effects</span>
+<span class="sd">    on global NEURON state.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; ncD = {&quot;aMN-&gt;Muscle&quot;: [nc1, nc2], &quot;Input-&gt;aMN&quot;: [nc3]}</span>
+<span class="sd">    &gt;&gt;&gt; printNClist(ncD)</span>
+<span class="sd">    NC[0]: &lt;neuron_obj&gt; -&gt; Muscle</span>
+<span class="sd">    NC[1]: &lt;neuron_obj&gt; -&gt; Muscle</span>
+<span class="sd">    NC[2]: Spindle -&gt; &lt;target_neuron&gt;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">connection_index</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">for</span> <span class="n">connection_group</span> <span class="ow">in</span> <span class="n">network_connections</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+        <span class="k">for</span> <span class="n">netcon</span> <span class="ow">in</span> <span class="n">connection_group</span><span class="p">:</span>
+            <span class="c1"># Format and print connection information</span>
+            <span class="n">connection_info</span> <span class="o">=</span> <span class="n">_format_connection_info</span><span class="p">(</span><span class="n">netcon</span><span class="p">,</span> <span class="n">connection_index</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">connection_info</span><span class="p">)</span>
+            <span class="n">connection_index</span> <span class="o">+=</span> <span class="mi">1</span>
+
+
+<span class="c1"># Helper functions for create_network</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_extract_connection_parameters</span><span class="p">(</span>
+    <span class="n">connection_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">connection_config</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span>
+    <span class="n">muscle_callback</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Callable</span><span class="p">],</span>
+    <span class="n">muscle</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Extract connection parameters from configuration and determine callback/muscle settings.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        tuple: (callback_function, muscle_object, custom_threshold)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Determine if this is a motor neuron connection requiring muscle activation</span>
+    <span class="k">if</span> <span class="n">connection_name</span> <span class="o">==</span> <span class="n">MOTOR_NEURON_CONNECTION</span><span class="p">:</span>
+        <span class="n">callback_function</span> <span class="o">=</span> <span class="n">muscle_callback</span>
+        <span class="n">muscle_object</span> <span class="o">=</span> <span class="n">muscle</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">callback_function</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">muscle_object</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="c1"># Extract custom threshold if specified</span>
+    <span class="n">custom_threshold</span> <span class="o">=</span> <span class="n">connection_config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;threshold&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">custom_threshold</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Definiu o Threshold para&quot;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">callback_function</span><span class="p">,</span> <span class="n">muscle_object</span><span class="p">,</span> <span class="n">custom_threshold</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_setup_spike_vectors</span><span class="p">(</span><span class="n">connection_config</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">id_vector</span><span class="p">,</span> <span class="n">spike_vector</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Setup spike recording vectors for the connection&#39;s source population.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        tuple: (source_id_vector, source_spike_vector)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">source_population</span> <span class="o">=</span> <span class="n">connection_config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;source&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">id_vector</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">source_population</span> <span class="ow">in</span> <span class="n">id_vector</span><span class="p">:</span>
+        <span class="n">source_id_vector</span> <span class="o">=</span> <span class="n">id_vector</span><span class="p">[</span><span class="n">source_population</span><span class="p">]</span>
+        <span class="n">source_spike_vector</span> <span class="o">=</span> <span class="n">spike_vector</span><span class="p">[</span><span class="n">source_population</span><span class="p">]</span> <span class="k">if</span> <span class="n">spike_vector</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="kc">None</span>
+
+        <span class="k">return</span> <span class="n">source_id_vector</span><span class="p">,</span> <span class="n">source_spike_vector</span>
+
+    <span class="k">return</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_create_network</span><span class="p">(</span>
+    <span class="n">populations</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">list</span><span class="p">],</span>
+    <span class="n">connections_config</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span>
+    <span class="n">id_vector</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">spike_vector</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">muscle_callback</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Callable</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">spike_save</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">muscle</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Create a complete neural network from population and connection specifications.</span>
+
+<span class="sd">    High-level network builder that orchestrates the creation of all neural connections</span>
+<span class="sd">    based on structured parameter dictionaries. Handles special cases like motor neuron</span>
+<span class="sd">    to muscle connections and spike recording setup for different population types.</span>
+
+<span class="sd">    REFACTORING NOTES:</span>
+<span class="sd">    - Side effects: print statements should use logging</span>
+<span class="sd">    - Complex parameter extraction logic should be extracted to helper functions</span>
+<span class="sd">    - Missing parameter validation (connections_config structure, population existence)</span>
+<span class="sd">    - Reference to external thesis (pg 104 [Elias PhD]) should be in module docstring</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    populations : dict</span>
+<span class="sd">        Dictionary of neural populations. Keys are population names (str),</span>
+<span class="sd">        values are lists of neuron objects. Same as populations in connect_populations.</span>
+<span class="sd">    connections_config : dict</span>
+<span class="sd">        Network connectivity specification. Each key is a connection name (str),</span>
+<span class="sd">        each value is a dict containing:</span>
+<span class="sd">        - &quot;source&quot;: source population name (str) or None</span>
+<span class="sd">        - &quot;target&quot;: target population name (str) or None</span>
+<span class="sd">        - &quot;connP&quot;: connection probability (float, 0-1)</span>
+<span class="sd">        - &quot;w&quot;: synaptic weight (float, optional)</span>
+<span class="sd">        - &quot;threshold&quot;: spike threshold (float, optional)</span>
+<span class="sd">    id_vector : h.Vector or dict, optional</span>
+<span class="sd">        Spike recording ID vectors. Can be:</span>
+<span class="sd">        - Single h.Vector for all populations</span>
+<span class="sd">        - Dict mapping population names to h.Vector objects</span>
+<span class="sd">        - None to disable spike ID recording</span>
+<span class="sd">    spike_vector : h.Vector or dict, optional</span>
+<span class="sd">        Spike recording time vectors. Structure must match id_vector.</span>
+<span class="sd">    muscle_callback : callable, optional</span>
+<span class="sd">        Muscle activation callback for motor neuron connections.</span>
+<span class="sd">        Applied only to connections named MOTOR_NEURON_CONNECTION.</span>
+<span class="sd">    spike_save : list, optional</span>
+<span class="sd">        Legacy parameter for compatibility. Not actively used.</span>
+<span class="sd">    muscle : object, optional</span>
+<span class="sd">        Muscle object for motor neuron to muscle connections.</span>
+<span class="sd">        Required if muscle_callback is provided and motor neuron connections exist.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    dict</span>
+<span class="sd">        Dictionary mapping connection names (str) to lists of h.NetCon objects.</span>
+<span class="sd">        Keys match connection_params keys, values are NetCon lists from genPopNC.</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    Special connection handling:</span>
+<span class="sd">    - &quot;aMN-&gt;Muscle&quot; connections get muscle activation (foo) and muscle object</span>
+<span class="sd">    - All other connections use standard neural-to-neural parameters</span>
+
+<span class="sd">    Spike recording logic:</span>
+<span class="sd">    - If idvec/spkvec contain source population name, extracts vectors for that population</span>
+<span class="sd">    - Otherwise, uses None (no spike recording for that connection)</span>
+
+<span class="sd">    Connection creation delegates to genPopNC for actual NetCon generation,</span>
+<span class="sd">    this function primarily handles parameter routing and special cases.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; pop_params = {&quot;aMN&quot;: [neuron1, neuron2], &quot;Ia&quot;: [sensory1]}</span>
+<span class="sd">    &gt;&gt;&gt; conn_params = {</span>
+<span class="sd">    ...     &quot;Ia-&gt;aMN&quot;: {&quot;source&quot;: &quot;Ia&quot;, &quot;target&quot;: &quot;aMN&quot;, &quot;connP&quot;: 0.3, &quot;w&quot;: 0.8},</span>
+<span class="sd">    ...     &quot;aMN-&gt;Muscle&quot;: {&quot;source&quot;: &quot;aMN&quot;, &quot;target&quot;: None, &quot;connP&quot;: 1.0}</span>
+<span class="sd">    ... }</span>
+<span class="sd">    &gt;&gt;&gt; network = genNetwork__Adapted(pop_params, conn_params, muscle=my_muscle)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Parameter validation</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">populations</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;populations must be a dictionary&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">connections_config</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;connections_config must be a dictionary&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Handle mutable default parameter</span>
+    <span class="k">if</span> <span class="n">spike_save</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">spike_save</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="c1"># weights and connections at table 7, pg 104 [Elias PhD tesis]</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Generating network&quot;</span><span class="p">)</span>
+    <span class="n">network_connections_dict</span> <span class="o">=</span> <span class="p">{}</span>
+
+    <span class="k">for</span> <span class="n">connection_name</span><span class="p">,</span> <span class="n">connection_config</span> <span class="ow">in</span> <span class="n">connections_config</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="c1"># Extract connection parameters and muscle settings</span>
+        <span class="n">callback_function</span><span class="p">,</span> <span class="n">muscle_object</span><span class="p">,</span> <span class="n">custom_threshold</span> <span class="o">=</span> <span class="n">_extract_connection_parameters</span><span class="p">(</span>
+            <span class="n">connection_name</span><span class="p">,</span> <span class="n">connection_config</span><span class="p">,</span> <span class="n">muscle_callback</span><span class="p">,</span> <span class="n">muscle</span>
+        <span class="p">)</span>
+
+        <span class="c1"># Setup spike recording vectors for this connection&#39;s source population</span>
+        <span class="n">source_id_vector</span><span class="p">,</span> <span class="n">source_spike_vector</span> <span class="o">=</span> <span class="n">_setup_spike_vectors</span><span class="p">(</span>
+            <span class="n">connection_config</span><span class="p">,</span> <span class="n">id_vector</span><span class="p">,</span> <span class="n">spike_vector</span>
+        <span class="p">)</span>
+
+        <span class="c1"># Create connections for this connection group</span>
+        <span class="n">network_connections_dict</span><span class="p">[</span><span class="n">connection_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">_connect_populations</span><span class="p">(</span>
+            <span class="n">populations</span><span class="o">=</span><span class="n">populations</span><span class="p">,</span>
+            <span class="n">source_pop</span><span class="o">=</span><span class="n">connection_config</span><span class="p">[</span><span class="s2">&quot;source&quot;</span><span class="p">],</span>
+            <span class="n">target_pop</span><span class="o">=</span><span class="n">connection_config</span><span class="p">[</span><span class="s2">&quot;target&quot;</span><span class="p">],</span>
+            <span class="n">connection_probability</span><span class="o">=</span><span class="n">connection_config</span><span class="p">[</span><span class="s2">&quot;connP&quot;</span><span class="p">],</span>
+            <span class="n">synaptic_weight</span><span class="o">=</span><span class="n">connection_config</span><span class="p">[</span><span class="s2">&quot;w&quot;</span><span class="p">],</span>
+            <span class="n">spike_threshold</span><span class="o">=</span><span class="n">custom_threshold</span><span class="p">,</span>
+            <span class="n">id_vector</span><span class="o">=</span><span class="n">source_id_vector</span><span class="p">,</span>
+            <span class="n">spike_vector</span><span class="o">=</span><span class="n">source_spike_vector</span><span class="p">,</span>
+            <span class="n">muscle_callback</span><span class="o">=</span><span class="n">callback_function</span><span class="p">,</span>
+            <span class="n">muscle</span><span class="o">=</span><span class="n">muscle_object</span><span class="p">,</span>
+        <span class="p">)</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;network created&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">network_connections_dict</span>
+
+
+<div class="viewcode-block" id="Network">
+<a class="viewcode-back" href="../../../../generated/myogen.simulator.neuron.network.Network.html#myogen.simulator.neuron.network.Network">[docs]</a>
+<span class="nd">@beartowertype</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Network</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Modern neural network builder with intuitive connection API.</span>
+
+<span class="sd">    Provides a clean, discoverable interface for creating neural network connections</span>
+<span class="sd">    while maintaining compatibility with existing NEURON-based infrastructure.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="Network.__init__">
+<a class="viewcode-back" href="../../../../generated/myogen.simulator.neuron.network.Network.__init__.html#myogen.simulator.neuron.network.Network.__init__">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">populations</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">_Pool</span><span class="p">],</span> <span class="n">spike_recording</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Initialize network with neural populations.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        populations : dict[str, Union[list, Any]]</span>
+<span class="sd">            Dictionary mapping population names to Pool objects or lists of neuron objects.</span>
+<span class="sd">            Pool objects will have .neurons extracted, lists used directly.</span>
+<span class="sd">            Example: {&quot;alpha_mn&quot;: alphaMN_pool, &quot;ia&quot;: ia_pool}</span>
+<span class="sd">        spike_recording : dict, optional</span>
+<span class="sd">            Dictionary containing &#39;idvec&#39; and &#39;spkvec&#39; for spike recording.</span>
+<span class="sd">            Example: {&quot;idvec&quot;: {&quot;aMN&quot;: h.Vector()}, &quot;spkvec&quot;: {&quot;aMN&quot;: h.Vector()}}</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">populations</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">_Pool</span><span class="p">]</span> <span class="o">=</span> <span class="n">populations</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">connections</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_netcons_by_connection</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">],</span> <span class="nb">list</span><span class="p">[</span><span class="n">h</span><span class="o">.</span><span class="n">NetCon</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">spike_recording</span> <span class="o">=</span> <span class="n">spike_recording</span></div>
+
+
+<div class="viewcode-block" id="Network.setup_spike_recording">
+<a class="viewcode-back" href="../../../../generated/myogen.simulator.neuron.network.Network.setup_spike_recording.html#myogen.simulator.neuron.network.Network.setup_spike_recording">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">setup_spike_recording</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Set up spike recording NetCons for all neurons in all populations.</span>
+
+<span class="sd">        This creates additional NetCons specifically for recording spikes from neurons</span>
+<span class="sd">        that might not have outgoing connections but still need spike recording for analysis.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">spike_recording</span><span class="p">:</span>
+            <span class="k">return</span>
+
+        <span class="k">for</span> <span class="n">pop_name</span><span class="p">,</span> <span class="n">population</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">populations</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="c1"># Skip non-neuron populations (like gMN which is a config dict)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">population</span><span class="p">,</span> <span class="s2">&quot;__iter__&quot;</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">population</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+                <span class="k">continue</span>
+
+            <span class="c1"># Get spike recording vectors for this population</span>
+            <span class="n">id_vector</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">spike_recording</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;idvec&quot;</span><span class="p">,</span> <span class="p">{})</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">pop_name</span><span class="p">)</span>
+            <span class="n">spike_vector</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">spike_recording</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;spkvec&quot;</span><span class="p">,</span> <span class="p">{})</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">pop_name</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">id_vector</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">spike_vector</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="c1"># Create NetCons for spike recording (no target, just recording)</span>
+                <span class="n">recording_netcons</span> <span class="o">=</span> <span class="p">[]</span>
+                <span class="k">for</span> <span class="n">neuron</span> <span class="ow">in</span> <span class="n">population</span><span class="p">:</span>
+                    <span class="c1"># Skip if this is not actually a neuron object</span>
+                    <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">neuron</span><span class="p">,</span> <span class="s2">&quot;soma&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">neuron</span><span class="p">,</span> <span class="s2">&quot;ns&quot;</span><span class="p">):</span>
+                        <span class="k">continue</span>
+
+                    <span class="c1"># Create a NetCon from the neuron to None (just for recording)</span>
+                    <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">neuron</span><span class="p">,</span> <span class="s2">&quot;soma&quot;</span><span class="p">):</span>
+                        <span class="c1"># Compartmental neuron</span>
+                        <span class="n">nc</span> <span class="o">=</span> <span class="n">h</span><span class="o">.</span><span class="n">NetCon</span><span class="p">(</span><span class="n">neuron</span><span class="o">.</span><span class="n">soma</span><span class="p">(</span><span class="mf">0.5</span><span class="p">)</span><span class="o">.</span><span class="n">_ref_v</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="n">sec</span><span class="o">=</span><span class="n">neuron</span><span class="o">.</span><span class="n">soma</span><span class="p">)</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="c1"># Point process neuron</span>
+                        <span class="n">nc</span> <span class="o">=</span> <span class="n">h</span><span class="o">.</span><span class="n">NetCon</span><span class="p">(</span><span class="n">neuron</span><span class="o">.</span><span class="n">ns</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+
+                    <span class="c1"># Set up spike recording with population-specific threshold</span>
+                    <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">population</span><span class="p">,</span> <span class="s2">&quot;spike_threshold__mV&quot;</span><span class="p">):</span>
+                        <span class="n">nc</span><span class="o">.</span><span class="n">threshold</span> <span class="o">=</span> <span class="n">population</span><span class="o">.</span><span class="n">spike_threshold__mV</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">nc</span><span class="o">.</span><span class="n">threshold</span> <span class="o">=</span> <span class="n">DEFAULT_SPIKE_THRESHOLD</span>  <span class="c1"># Fallback for populations without explicit threshold</span>
+                    <span class="n">nc</span><span class="o">.</span><span class="n">record</span><span class="p">(</span><span class="n">spike_vector</span><span class="p">,</span> <span class="n">id_vector</span><span class="p">,</span> <span class="n">neuron</span><span class="o">.</span><span class="n">global__ID</span><span class="p">)</span>
+                    <span class="n">recording_netcons</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">nc</span><span class="p">)</span>
+
+                <span class="c1"># Store these recording NetCons separately</span>
+                <span class="n">connection_key</span> <span class="o">=</span> <span class="p">(</span><span class="n">pop_name</span><span class="p">,</span> <span class="s2">&quot;spike_recording&quot;</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_netcons_by_connection</span><span class="p">[</span><span class="n">connection_key</span><span class="p">]</span> <span class="o">=</span> <span class="n">recording_netcons</span></div>
+
+
+<div class="viewcode-block" id="Network.connect">
+<a class="viewcode-back" href="../../../../generated/myogen.simulator.neuron.network.Network.connect.html#myogen.simulator.neuron.network.Network.connect">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">connect</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">source</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">target</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">probability</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">,</span>
+        <span class="n">weight__uS</span><span class="p">:</span> <span class="n">Quantity__uS</span> <span class="o">=</span> <span class="n">DEFAULT_SYNAPTIC_WEIGHT</span><span class="p">,</span>
+        <span class="n">delay__ms</span><span class="p">:</span> <span class="n">Quantity__ms</span> <span class="o">=</span> <span class="n">DEFAULT_SYNAPTIC_DELAY</span><span class="p">,</span>
+        <span class="n">threshold__mV</span><span class="p">:</span> <span class="n">Quantity__mV</span> <span class="o">=</span> <span class="n">DEFAULT_SPIKE_THRESHOLD</span><span class="p">,</span>
+        <span class="n">deterministic</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">inhibitory</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Connect two neural populations with specified parameters.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        source : str</span>
+<span class="sd">            Name of source population (must exist in populations dict).</span>
+<span class="sd">        target : str</span>
+<span class="sd">            Name of target population (must exist in populations dict).</span>
+<span class="sd">        probability : float, optional</span>
+<span class="sd">            Connection probability between 0.0 and 1.0, by default 1.0.</span>
+<span class="sd">            Each source-target neuron pair connects with this probability (if deterministic=False).</span>
+<span class="sd">            If deterministic=True, each source connects to exactly int(probability × n_targets) targets.</span>
+<span class="sd">        weight__uS : float, optional</span>
+<span class="sd">            Synaptic weight in microsiemens, by default 0.6.</span>
+<span class="sd">        delay__ms : float, optional</span>
+<span class="sd">            Synaptic delay in milliseconds, by default 1.0.</span>
+<span class="sd">        threshold__mV : float, optional</span>
+<span class="sd">            Spike threshold in millivolts, by default -10.0.</span>
+<span class="sd">        deterministic : bool, optional</span>
+<span class="sd">            If True, each source neuron connects to exactly int(probability × n_targets) randomly</span>
+<span class="sd">            selected target neurons. If False, uses probabilistic sampling. Default False.</span>
+<span class="sd">        inhibitory : bool, optional</span>
+<span class="sd">            If True, connect to inhibitory synapses on target neurons (reversal &lt; -40 mV).</span>
+<span class="sd">            If False, connect to excitatory synapses (reversal &gt;= -40 mV). Default False.</span>
+<span class="sd">            Use inhibitory=True for connections from inhibitory interneurons (e.g., gII→aMN, gIb→aMN).</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        list[h.NetCon]</span>
+<span class="sd">            List of created NEURON NetCon objects for this connection group.</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        ValueError</span>
+<span class="sd">            If source or target populations don&#39;t exist, or probability out of range.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Validation</span>
+        <span class="k">if</span> <span class="n">source</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">populations</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Source population &#39;</span><span class="si">{</span><span class="n">source</span><span class="si">}</span><span class="s2">&#39; not found&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">target</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">populations</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Target population &#39;</span><span class="si">{</span><span class="n">target</span><span class="si">}</span><span class="s2">&#39; not found&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="mf">0.0</span> <span class="o">&lt;=</span> <span class="n">probability</span> <span class="o">&lt;=</span> <span class="mf">1.0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Probability must be 0.0-1.0, got </span><span class="si">{</span><span class="n">probability</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Extract numeric values (handle both Quantity objects and plain floats)</span>
+        <span class="n">weight_value</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">weight__uS</span><span class="p">,</span> <span class="s1">&#39;magnitude&#39;</span><span class="p">,</span> <span class="n">weight__uS</span><span class="p">)</span>
+        <span class="n">threshold_value</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">threshold__mV</span><span class="p">,</span> <span class="s1">&#39;magnitude&#39;</span><span class="p">,</span> <span class="n">threshold__mV</span><span class="p">)</span>
+        <span class="n">delay_value</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">delay__ms</span><span class="p">,</span> <span class="s1">&#39;magnitude&#39;</span><span class="p">,</span> <span class="n">delay__ms</span><span class="p">)</span>
+
+        <span class="c1"># Extract spike recording vectors for source population</span>
+        <span class="n">id_vector</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">spike_vector</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">spike_recording</span><span class="p">:</span>
+            <span class="n">id_vector</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">spike_recording</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;idvec&quot;</span><span class="p">,</span> <span class="p">{})</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">source</span><span class="p">)</span>
+            <span class="n">spike_vector</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">spike_recording</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;spkvec&quot;</span><span class="p">,</span> <span class="p">{})</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">source</span><span class="p">)</span>
+
+        <span class="c1"># Create connections using existing infrastructure</span>
+        <span class="n">netcons</span> <span class="o">=</span> <span class="n">_connect_populations</span><span class="p">(</span>
+            <span class="n">populations</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">populations</span><span class="p">,</span>
+            <span class="n">source_pop</span><span class="o">=</span><span class="n">source</span><span class="p">,</span>
+            <span class="n">target_pop</span><span class="o">=</span><span class="n">target</span><span class="p">,</span>
+            <span class="n">connection_probability</span><span class="o">=</span><span class="n">probability</span><span class="p">,</span>
+            <span class="n">synaptic_weight</span><span class="o">=</span><span class="n">weight_value</span><span class="p">,</span>
+            <span class="n">spike_threshold</span><span class="o">=</span><span class="n">threshold_value</span><span class="p">,</span>
+            <span class="n">id_vector</span><span class="o">=</span><span class="n">id_vector</span><span class="p">,</span>
+            <span class="n">spike_vector</span><span class="o">=</span><span class="n">spike_vector</span><span class="p">,</span>
+            <span class="n">deterministic</span><span class="o">=</span><span class="n">deterministic</span><span class="p">,</span>
+            <span class="n">inhibitory</span><span class="o">=</span><span class="n">inhibitory</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">connections</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+            <span class="p">{</span>
+                <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;neural&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;source&quot;</span><span class="p">:</span> <span class="n">source</span><span class="p">,</span>
+                <span class="s2">&quot;target&quot;</span><span class="p">:</span> <span class="n">target</span><span class="p">,</span>
+                <span class="s2">&quot;probability&quot;</span><span class="p">:</span> <span class="n">probability</span><span class="p">,</span>
+                <span class="s2">&quot;weight__uS&quot;</span><span class="p">:</span> <span class="n">weight_value</span><span class="p">,</span>
+                <span class="s2">&quot;delay__ms&quot;</span><span class="p">:</span> <span class="n">delay_value</span><span class="p">,</span>
+                <span class="s2">&quot;threshold__mV&quot;</span><span class="p">:</span> <span class="n">threshold_value</span><span class="p">,</span>
+                <span class="s2">&quot;inhibitory&quot;</span><span class="p">:</span> <span class="n">inhibitory</span><span class="p">,</span>
+            <span class="p">}</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_netcons_by_connection</span><span class="p">[(</span><span class="n">source</span><span class="p">,</span> <span class="n">target</span><span class="p">)]</span> <span class="o">=</span> <span class="n">netcons</span>
+
+        <span class="k">return</span> <span class="n">netcons</span></div>
+
+
+<div class="viewcode-block" id="Network.connect_to_muscle">
+<a class="viewcode-back" href="../../../../generated/myogen.simulator.neuron.network.Network.connect_to_muscle.html#myogen.simulator.neuron.network.Network.connect_to_muscle">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">connect_to_muscle</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">source</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">muscle</span><span class="p">,</span>
+        <span class="n">activation_callback</span><span class="p">:</span> <span class="n">Callable</span><span class="p">,</span>
+        <span class="n">weight__uS</span><span class="p">:</span> <span class="n">Quantity__uS</span> <span class="o">=</span> <span class="n">DEFAULT_SYNAPTIC_WEIGHT</span><span class="p">,</span>
+        <span class="n">threshold__mV</span><span class="p">:</span> <span class="n">Quantity__mV</span> <span class="o">=</span> <span class="n">DEFAULT_SPIKE_THRESHOLD</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Connect a neural population to a muscle with activation callback.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        source : str</span>
+<span class="sd">            Name of motor neuron population.</span>
+<span class="sd">        muscle : object</span>
+<span class="sd">            Muscle object for force generation.</span>
+<span class="sd">        activation_callback : Callable</span>
+<span class="sd">            Function called when motor neurons fire.</span>
+<span class="sd">            Expected signature: callback(neuron_id, muscle, delay_time)</span>
+<span class="sd">        weight__uS : float, optional</span>
+<span class="sd">            Synaptic weight in microsiemens, by default 1.0.</span>
+<span class="sd">        threshold__mV : float, optional</span>
+<span class="sd">            Spike threshold in millivolts, by default -10.0.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        list[h.NetCon]</span>
+<span class="sd">            List of motor neuron to muscle NetCon objects.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">source</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">populations</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Source population &#39;</span><span class="si">{</span><span class="n">source</span><span class="si">}</span><span class="s2">&#39; not found&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Extract numeric values (handle both Quantity objects and plain floats)</span>
+        <span class="n">weight_value</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">weight__uS</span><span class="p">,</span> <span class="s1">&#39;magnitude&#39;</span><span class="p">,</span> <span class="n">weight__uS</span><span class="p">)</span>
+        <span class="n">threshold_value</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">threshold__mV</span><span class="p">,</span> <span class="s1">&#39;magnitude&#39;</span><span class="p">,</span> <span class="n">threshold__mV</span><span class="p">)</span>
+
+        <span class="c1"># Extract spike recording vectors for source population</span>
+        <span class="n">id_vector</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">spike_vector</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">spike_recording</span><span class="p">:</span>
+            <span class="n">id_vector</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">spike_recording</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;idvec&quot;</span><span class="p">,</span> <span class="p">{})</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">source</span><span class="p">)</span>
+            <span class="n">spike_vector</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">spike_recording</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;spkvec&quot;</span><span class="p">,</span> <span class="p">{})</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">source</span><span class="p">)</span>
+
+        <span class="c1"># Create muscle connections using existing infrastructure</span>
+        <span class="n">netcons</span> <span class="o">=</span> <span class="n">_connect_populations</span><span class="p">(</span>
+            <span class="n">populations</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">populations</span><span class="p">,</span>
+            <span class="n">source_pop</span><span class="o">=</span><span class="n">source</span><span class="p">,</span>
+            <span class="n">target_pop</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>  <span class="c1"># External target</span>
+            <span class="n">connection_probability</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span>  <span class="c1"># All motor neurons connect</span>
+            <span class="n">muscle_callback</span><span class="o">=</span><span class="n">activation_callback</span><span class="p">,</span>
+            <span class="n">muscle</span><span class="o">=</span><span class="n">muscle</span><span class="p">,</span>
+            <span class="n">synaptic_weight</span><span class="o">=</span><span class="n">weight_value</span><span class="p">,</span>
+            <span class="n">spike_threshold</span><span class="o">=</span><span class="n">threshold_value</span><span class="p">,</span>
+            <span class="n">id_vector</span><span class="o">=</span><span class="n">id_vector</span><span class="p">,</span>
+            <span class="n">spike_vector</span><span class="o">=</span><span class="n">spike_vector</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">connections</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+            <span class="p">{</span>
+                <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;muscle&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;source&quot;</span><span class="p">:</span> <span class="n">source</span><span class="p">,</span>
+                <span class="s2">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;muscle&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;muscle&quot;</span><span class="p">:</span> <span class="n">muscle</span><span class="p">,</span>
+                <span class="s2">&quot;callback&quot;</span><span class="p">:</span> <span class="n">activation_callback</span><span class="p">,</span>
+                <span class="s2">&quot;weight__uS&quot;</span><span class="p">:</span> <span class="n">weight_value</span><span class="p">,</span>
+                <span class="s2">&quot;threshold__mV&quot;</span><span class="p">:</span> <span class="n">threshold_value</span><span class="p">,</span>
+            <span class="p">}</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_netcons_by_connection</span><span class="p">[(</span><span class="n">source</span><span class="p">,</span> <span class="s2">&quot;muscle&quot;</span><span class="p">)]</span> <span class="o">=</span> <span class="n">netcons</span>
+
+        <span class="k">return</span> <span class="n">netcons</span></div>
+
+
+<div class="viewcode-block" id="Network.connect_from_external">
+<a class="viewcode-back" href="../../../../generated/myogen.simulator.neuron.network.Network.connect_from_external.html#myogen.simulator.neuron.network.Network.connect_from_external">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">connect_from_external</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">source</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">target</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">weight__uS</span><span class="p">:</span> <span class="n">Quantity__uS</span> <span class="o">=</span> <span class="n">DEFAULT_SYNAPTIC_WEIGHT</span><span class="p">,</span>
+        <span class="n">delay__ms</span><span class="p">:</span> <span class="n">Quantity__ms</span> <span class="o">=</span> <span class="n">DEFAULT_SYNAPTIC_DELAY</span><span class="p">,</span>
+        <span class="n">threshold__mV</span><span class="p">:</span> <span class="n">Quantity__mV</span> <span class="o">=</span> <span class="n">DEFAULT_SPIKE_THRESHOLD</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Connect external input source to a neural population.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        source : str</span>
+<span class="sd">            Name/label for external input source (e.g., &quot;spindle&quot;, &quot;cortical_drive&quot;).</span>
+<span class="sd">        target : str</span>
+<span class="sd">            Name of target neural population.</span>
+<span class="sd">        weight__uS : Quantity__uS, optional</span>
+<span class="sd">            Synaptic weight in microsiemens, by default 0.8.</span>
+<span class="sd">        delay__ms : float, optional</span>
+<span class="sd">            Synaptic delay in milliseconds, by default 1.0.</span>
+<span class="sd">        threshold__mV : float, optional</span>
+<span class="sd">            Spike threshold in millivolts, by default -10.0.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        list[h.NetCon]</span>
+<span class="sd">            List of external to neural NetCon objects.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">target</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">populations</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Target population &#39;</span><span class="si">{</span><span class="n">target</span><span class="si">}</span><span class="s2">&#39; not found&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Extract numeric values (handle both Quantity objects and plain floats)</span>
+        <span class="n">weight_value</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">weight__uS</span><span class="p">,</span> <span class="s1">&#39;magnitude&#39;</span><span class="p">,</span> <span class="n">weight__uS</span><span class="p">)</span>
+        <span class="n">delay_value</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">delay__ms</span><span class="p">,</span> <span class="s1">&#39;magnitude&#39;</span><span class="p">,</span> <span class="n">delay__ms</span><span class="p">)</span>
+        <span class="n">threshold_value</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">threshold__mV</span><span class="p">,</span> <span class="s1">&#39;magnitude&#39;</span><span class="p">,</span> <span class="n">threshold__mV</span><span class="p">)</span>
+
+        <span class="c1"># Create external NetCons manually to maintain individual access</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">neuron</span><span class="w"> </span><span class="kn">import</span> <span class="n">h</span>
+
+        <span class="n">netcons</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">target_neurons</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">populations</span><span class="p">[</span><span class="n">target</span><span class="p">]</span>
+
+        <span class="k">for</span> <span class="n">target_neuron</span> <span class="ow">in</span> <span class="n">target_neurons</span><span class="p">:</span>
+            <span class="c1"># Create NetCon from None (external source) to target neuron</span>
+            <span class="n">nc</span> <span class="o">=</span> <span class="n">h</span><span class="o">.</span><span class="n">NetCon</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="n">target_neuron</span><span class="o">.</span><span class="n">ns</span><span class="p">)</span>
+            <span class="n">nc</span><span class="o">.</span><span class="n">weight</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">weight_value</span>
+            <span class="n">nc</span><span class="o">.</span><span class="n">delay</span> <span class="o">=</span> <span class="n">delay_value</span>
+            <span class="n">nc</span><span class="o">.</span><span class="n">threshold</span> <span class="o">=</span> <span class="n">threshold_value</span>
+            <span class="n">netcons</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">nc</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">connections</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+            <span class="p">{</span>
+                <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;external&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;source&quot;</span><span class="p">:</span> <span class="n">source</span><span class="p">,</span>
+                <span class="s2">&quot;target&quot;</span><span class="p">:</span> <span class="n">target</span><span class="p">,</span>
+                <span class="s2">&quot;weight__uS&quot;</span><span class="p">:</span> <span class="n">weight_value</span><span class="p">,</span>
+                <span class="s2">&quot;delay__ms&quot;</span><span class="p">:</span> <span class="n">delay_value</span><span class="p">,</span>
+                <span class="s2">&quot;threshold__mV&quot;</span><span class="p">:</span> <span class="n">threshold_value</span><span class="p">,</span>
+            <span class="p">}</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_netcons_by_connection</span><span class="p">[(</span><span class="n">source</span><span class="p">,</span> <span class="n">target</span><span class="p">)]</span> <span class="o">=</span> <span class="n">netcons</span>
+
+        <span class="k">return</span> <span class="n">netcons</span></div>
+
+
+<div class="viewcode-block" id="Network.connect_one_to_one">
+<a class="viewcode-back" href="../../../../generated/myogen.simulator.neuron.network.Network.connect_one_to_one.html#myogen.simulator.neuron.network.Network.connect_one_to_one">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">connect_one_to_one</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">source</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">target</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">probability</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">,</span>
+        <span class="n">weight__uS</span><span class="p">:</span> <span class="n">Quantity__uS</span> <span class="o">=</span> <span class="n">DEFAULT_SYNAPTIC_WEIGHT</span><span class="p">,</span>
+        <span class="n">delay__ms</span><span class="p">:</span> <span class="n">Quantity__ms</span> <span class="o">=</span> <span class="n">DEFAULT_SYNAPTIC_DELAY</span><span class="p">,</span>
+        <span class="n">threshold__mV</span><span class="p">:</span> <span class="n">Quantity__mV</span> <span class="o">=</span> <span class="n">DEFAULT_SPIKE_THRESHOLD</span><span class="p">,</span>
+        <span class="n">inhibitory</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Connect two neural populations with one-to-one mapping.</span>
+
+<span class="sd">        Creates individual connections between source[i] and target[i] for each neuron</span>
+<span class="sd">        pair at matching indices with specified probability. This is particularly useful</span>
+<span class="sd">        for modeling independent noise sources (e.g., independent Poisson drives) where</span>
+<span class="sd">        each target neuron should receive input from exactly one source neuron.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        source : str</span>
+<span class="sd">            Name of source population (must exist in populations dict).</span>
+<span class="sd">        target : str</span>
+<span class="sd">            Name of target population (must exist in populations dict).</span>
+<span class="sd">        probability : float, optional</span>
+<span class="sd">            Probability that each source[i] -&gt; target[i] connection is made, by default 1.0.</span>
+<span class="sd">            Must be between 0.0 and 1.0.</span>
+<span class="sd">        weight__uS : Quantity__uS, optional</span>
+<span class="sd">            Synaptic weight in microsiemens, by default 0.6.</span>
+<span class="sd">        delay__ms : Quantity__ms, optional</span>
+<span class="sd">            Synaptic delay in milliseconds, by default 1.0.</span>
+<span class="sd">        threshold__mV : Quantity__mV, optional</span>
+<span class="sd">            Spike threshold in millivolts, by default -10.0.</span>
+<span class="sd">        inhibitory : bool, optional</span>
+<span class="sd">            If True, connect to inhibitory synapses on target neurons (reversal &lt; -40 mV).</span>
+<span class="sd">            If False, connect to excitatory synapses (reversal &gt;= -40 mV). Default False.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        list[h.NetCon]</span>
+<span class="sd">            List of created NEURON NetCon objects for connections that were made.</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        ValueError</span>
+<span class="sd">            If source or target populations don&#39;t exist, have different sizes,</span>
+<span class="sd">            or probability is not in [0.0, 1.0].</span>
+
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+<span class="sd">        &gt;&gt;&gt; # Create independent noise for each motor neuron</span>
+<span class="sd">        &gt;&gt;&gt; noise_pool = DescendingDrive__Pool(n=10, poisson_batch_size=16, timestep__ms=0.05)</span>
+<span class="sd">        &gt;&gt;&gt; mn_pool = AlphaMN__Pool(n=10)</span>
+<span class="sd">        &gt;&gt;&gt; network = Network({&quot;noise&quot;: noise_pool, &quot;mn&quot;: mn_pool})</span>
+<span class="sd">        &gt;&gt;&gt; network.connect_one_to_one(&quot;noise&quot;, &quot;mn&quot;, weight__uS=0.5)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Validation</span>
+        <span class="k">if</span> <span class="n">source</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">populations</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Source population &#39;</span><span class="si">{</span><span class="n">source</span><span class="si">}</span><span class="s2">&#39; not found&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">target</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">populations</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Target population &#39;</span><span class="si">{</span><span class="n">target</span><span class="si">}</span><span class="s2">&#39; not found&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="mf">0.0</span> <span class="o">&lt;=</span> <span class="n">probability</span> <span class="o">&lt;=</span> <span class="mf">1.0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Probability must be 0.0-1.0, got </span><span class="si">{</span><span class="n">probability</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Extract numeric values (handle both Quantity objects and plain floats)</span>
+        <span class="n">weight_value</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">weight__uS</span><span class="p">,</span> <span class="s1">&#39;magnitude&#39;</span><span class="p">,</span> <span class="n">weight__uS</span><span class="p">)</span>
+        <span class="n">delay_value</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">delay__ms</span><span class="p">,</span> <span class="s1">&#39;magnitude&#39;</span><span class="p">,</span> <span class="n">delay__ms</span><span class="p">)</span>
+        <span class="n">threshold_value</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">threshold__mV</span><span class="p">,</span> <span class="s1">&#39;magnitude&#39;</span><span class="p">,</span> <span class="n">threshold__mV</span><span class="p">)</span>
+
+        <span class="c1"># Extract spike recording vectors for source population</span>
+        <span class="n">id_vector</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">spike_vector</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">spike_recording</span><span class="p">:</span>
+            <span class="n">id_vector</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">spike_recording</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;idvec&quot;</span><span class="p">,</span> <span class="p">{})</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">source</span><span class="p">)</span>
+            <span class="n">spike_vector</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">spike_recording</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;spkvec&quot;</span><span class="p">,</span> <span class="p">{})</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">source</span><span class="p">)</span>
+
+        <span class="c1"># Create one-to-one connections using new helper function</span>
+        <span class="n">netcons</span> <span class="o">=</span> <span class="n">_connect_one_to_one</span><span class="p">(</span>
+            <span class="n">source_pop</span><span class="o">=</span><span class="n">source</span><span class="p">,</span>
+            <span class="n">target_pop</span><span class="o">=</span><span class="n">target</span><span class="p">,</span>
+            <span class="n">populations</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">populations</span><span class="p">,</span>
+            <span class="n">connection_probability</span><span class="o">=</span><span class="n">probability</span><span class="p">,</span>
+            <span class="n">synaptic_weight</span><span class="o">=</span><span class="n">weight_value</span><span class="p">,</span>
+            <span class="n">spike_threshold</span><span class="o">=</span><span class="n">threshold_value</span><span class="p">,</span>
+            <span class="n">id_vector</span><span class="o">=</span><span class="n">id_vector</span><span class="p">,</span>
+            <span class="n">spike_vector</span><span class="o">=</span><span class="n">spike_vector</span><span class="p">,</span>
+            <span class="n">inhibitory</span><span class="o">=</span><span class="n">inhibitory</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">connections</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+            <span class="p">{</span>
+                <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;one_to_one&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;source&quot;</span><span class="p">:</span> <span class="n">source</span><span class="p">,</span>
+                <span class="s2">&quot;target&quot;</span><span class="p">:</span> <span class="n">target</span><span class="p">,</span>
+                <span class="s2">&quot;probability&quot;</span><span class="p">:</span> <span class="n">probability</span><span class="p">,</span>
+                <span class="s2">&quot;weight__uS&quot;</span><span class="p">:</span> <span class="n">weight_value</span><span class="p">,</span>
+                <span class="s2">&quot;delay__ms&quot;</span><span class="p">:</span> <span class="n">delay_value</span><span class="p">,</span>
+                <span class="s2">&quot;threshold__mV&quot;</span><span class="p">:</span> <span class="n">threshold_value</span><span class="p">,</span>
+                <span class="s2">&quot;inhibitory&quot;</span><span class="p">:</span> <span class="n">inhibitory</span><span class="p">,</span>
+            <span class="p">}</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_netcons_by_connection</span><span class="p">[(</span><span class="n">source</span><span class="p">,</span> <span class="n">target</span><span class="p">)]</span> <span class="o">=</span> <span class="n">netcons</span>
+
+        <span class="k">return</span> <span class="n">netcons</span></div>
+
+
+<div class="viewcode-block" id="Network.get_connections">
+<a class="viewcode-back" href="../../../../generated/myogen.simulator.neuron.network.Network.get_connections.html#myogen.simulator.neuron.network.Network.get_connections">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_connections</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get list of all connection specifications.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">connections</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="Network.get_netcons">
+<a class="viewcode-back" href="../../../../generated/myogen.simulator.neuron.network.Network.get_netcons.html#myogen.simulator.neuron.network.Network.get_netcons">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_netcons</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">source</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">target</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get NEURON NetCon objects with optional filtering by source and target.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        source : str, optional</span>
+<span class="sd">            Filter by source population/input name. If None, returns NetCons from all sources.</span>
+<span class="sd">        target : str, optional</span>
+<span class="sd">            Filter by target population name. If None, returns NetCons to all targets.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        list[h.NetCon]</span>
+<span class="sd">            List of matching NetCon objects.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">source</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">target</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">all_netcons</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">netcon_list</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_netcons_by_connection</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+                <span class="n">all_netcons</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">netcon_list</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">all_netcons</span>
+
+        <span class="n">matching_netcons</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">for</span> <span class="p">(</span>
+            <span class="n">conn_source</span><span class="p">,</span>
+            <span class="n">conn_target</span><span class="p">,</span>
+        <span class="p">),</span> <span class="n">netcon_list</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_netcons_by_connection</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">source_matches</span> <span class="o">=</span> <span class="n">source</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">conn_source</span> <span class="o">==</span> <span class="n">source</span>
+            <span class="n">target_matches</span> <span class="o">=</span> <span class="n">target</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">conn_target</span> <span class="o">==</span> <span class="n">target</span>
+
+            <span class="k">if</span> <span class="n">source_matches</span> <span class="ow">and</span> <span class="n">target_matches</span><span class="p">:</span>
+                <span class="n">matching_netcons</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">netcon_list</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">matching_netcons</span></div>
+
+
+<div class="viewcode-block" id="Network.print_network">
+<a class="viewcode-back" href="../../../../generated/myogen.simulator.neuron.network.Network.print_network.html#myogen.simulator.neuron.network.Network.print_network">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">print_network</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Print a summary of network structure.&quot;&quot;&quot;</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Network with </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">populations</span><span class="p">)</span><span class="si">}</span><span class="s2"> populations:&quot;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">neurons</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">populations</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  </span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">neurons</span><span class="p">)</span><span class="si">}</span><span class="s2"> neurons&quot;</span><span class="p">)</span>
+
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Connections (</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">connections</span><span class="p">)</span><span class="si">}</span><span class="s2">):&quot;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">conn</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">connections</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">conn</span><span class="p">[</span><span class="s2">&quot;type&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;neural&quot;</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;  </span><span class="si">{</span><span class="n">i</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="si">}</span><span class="s2">. </span><span class="si">{</span><span class="n">conn</span><span class="p">[</span><span class="s1">&#39;source&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2"> → </span><span class="si">{</span><span class="n">conn</span><span class="p">[</span><span class="s1">&#39;target&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2"> &quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;(p=</span><span class="si">{</span><span class="n">conn</span><span class="p">[</span><span class="s1">&#39;probability&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">, w=</span><span class="si">{</span><span class="n">conn</span><span class="p">[</span><span class="s1">&#39;weight__uS&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">uS)&quot;</span>
+                <span class="p">)</span>
+            <span class="k">elif</span> <span class="n">conn</span><span class="p">[</span><span class="s2">&quot;type&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;muscle&quot;</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  </span><span class="si">{</span><span class="n">i</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="si">}</span><span class="s2">. </span><span class="si">{</span><span class="n">conn</span><span class="p">[</span><span class="s1">&#39;source&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2"> → muscle (w=</span><span class="si">{</span><span class="n">conn</span><span class="p">[</span><span class="s1">&#39;weight__uS&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">uS)&quot;</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">conn</span><span class="p">[</span><span class="s2">&quot;type&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;external&quot;</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  </span><span class="si">{</span><span class="n">i</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="si">}</span><span class="s2">. </span><span class="si">{</span><span class="n">conn</span><span class="p">[</span><span class="s1">&#39;source&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2"> → </span><span class="si">{</span><span class="n">conn</span><span class="p">[</span><span class="s1">&#39;target&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2"> (w=</span><span class="si">{</span><span class="n">conn</span><span class="p">[</span><span class="s1">&#39;weight__uS&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">uS)&quot;</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">conn</span><span class="p">[</span><span class="s2">&quot;type&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;one_to_one&quot;</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;  </span><span class="si">{</span><span class="n">i</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="si">}</span><span class="s2">. </span><span class="si">{</span><span class="n">conn</span><span class="p">[</span><span class="s1">&#39;source&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2"> → </span><span class="si">{</span><span class="n">conn</span><span class="p">[</span><span class="s1">&#39;target&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2"> [1-to-1] &quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;(p=</span><span class="si">{</span><span class="n">conn</span><span class="p">[</span><span class="s1">&#39;probability&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">, w=</span><span class="si">{</span><span class="n">conn</span><span class="p">[</span><span class="s1">&#39;weight__uS&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">uS)&quot;</span>
+                <span class="p">)</span></div>
+</div>
+
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">myogen</span><span class="w"> </span><span class="kn">import</span> <span class="n">setup_myogen</span>
+
+    <span class="n">setup_myogen</span><span class="p">()</span>
+
+    <span class="n">timestep__ms</span> <span class="o">=</span> <span class="mf">0.05</span>
+
+    <span class="n">dd__pool</span> <span class="o">=</span> <span class="n">DescendingDrive__Pool</span><span class="p">(</span><span class="n">n</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">poisson_batch_size</span><span class="o">=</span><span class="mi">16</span><span class="p">,</span> <span class="n">timestep__ms</span><span class="o">=</span><span class="n">timestep__ms</span><span class="p">)</span>
+
+    <span class="n">n_type1</span> <span class="o">=</span> <span class="mi">2</span>
+    <span class="n">n_type2</span> <span class="o">=</span> <span class="mi">2</span>
+    <span class="n">n_alpha_mn</span> <span class="o">=</span> <span class="n">n_type1</span> <span class="o">+</span> <span class="n">n_type2</span>
+
+    <span class="n">alphaMN__pool</span> <span class="o">=</span> <span class="n">AlphaMN__Pool</span><span class="p">(</span><span class="n">n</span><span class="o">=</span><span class="n">n_alpha_mn</span><span class="p">)</span>
+
+    <span class="n">ia_pool</span> <span class="o">=</span> <span class="n">AffIa__Pool</span><span class="p">(</span><span class="n">n</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">timestep__ms</span><span class="o">=</span><span class="n">timestep__ms</span><span class="p">)</span>
+
+    <span class="n">ii_pool</span> <span class="o">=</span> <span class="n">AffII__Pool</span><span class="p">(</span><span class="n">n</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">timestep__ms</span><span class="o">=</span><span class="n">timestep__ms</span><span class="p">)</span>
+
+    <span class="n">gii_pool</span> <span class="o">=</span> <span class="n">GII__Pool</span><span class="p">(</span><span class="n">n</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+
+    <span class="c1"># Population parameter dictionary</span>
+    <span class="n">population_params</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;DD&quot;</span><span class="p">:</span> <span class="n">dd__pool</span><span class="p">,</span>  <span class="c1"># Descending drive</span>
+        <span class="s2">&quot;aMN&quot;</span><span class="p">:</span> <span class="n">alphaMN__pool</span><span class="p">,</span>  <span class="c1"># Alpha motoneurones</span>
+        <span class="s2">&quot;Ia&quot;</span><span class="p">:</span> <span class="n">ia_pool</span><span class="p">,</span>  <span class="c1"># Afferent Ia</span>
+        <span class="s2">&quot;II&quot;</span><span class="p">:</span> <span class="n">ii_pool</span><span class="p">,</span>  <span class="c1"># Afferent II</span>
+        <span class="s2">&quot;gII&quot;</span><span class="p">:</span> <span class="n">gii_pool</span><span class="p">,</span>  <span class="c1"># Group II interneurones</span>
+    <span class="p">}</span>
+
+    <span class="c1"># Connection Parameters</span>
+    <span class="n">connection_params</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;DD-&gt;aMN&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">&quot;connP&quot;</span><span class="p">:</span> <span class="mf">0.9</span><span class="p">,</span>  <span class="c1"># Connection probability</span>
+            <span class="s2">&quot;source&quot;</span><span class="p">:</span> <span class="s2">&quot;DD&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;aMN&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;w&quot;</span><span class="p">:</span> <span class="mf">0.6</span><span class="p">,</span>  <span class="c1"># Synaptic weight</span>
+        <span class="p">},</span>
+        <span class="s2">&quot;DD-&gt;gII&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">&quot;connP&quot;</span><span class="p">:</span> <span class="mf">0.9</span><span class="p">,</span>  <span class="c1"># Connection probability</span>
+            <span class="s2">&quot;source&quot;</span><span class="p">:</span> <span class="s2">&quot;DD&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;gII&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;w&quot;</span><span class="p">:</span> <span class="mf">0.6</span><span class="p">,</span>  <span class="c1"># Synaptic weight</span>
+        <span class="p">},</span>
+        <span class="s2">&quot;aMN-&gt;Muscle&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">&quot;connP&quot;</span><span class="p">:</span> <span class="mf">1.0</span><span class="p">,</span>  <span class="c1"># Connection probability</span>
+            <span class="s2">&quot;source&quot;</span><span class="p">:</span> <span class="s2">&quot;aMN&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;target&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>  <span class="c1"># Muscle target</span>
+            <span class="s2">&quot;w&quot;</span><span class="p">:</span> <span class="mf">1.0</span><span class="p">,</span>  <span class="c1"># Synaptic weight</span>
+        <span class="p">},</span>
+        <span class="s2">&quot;gII-&gt;aMN&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">&quot;connP&quot;</span><span class="p">:</span> <span class="mf">0.9</span><span class="p">,</span>  <span class="c1"># Connection probability</span>
+            <span class="s2">&quot;source&quot;</span><span class="p">:</span> <span class="s2">&quot;gII&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;aMN&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;w&quot;</span><span class="p">:</span> <span class="mf">0.3</span><span class="p">,</span>  <span class="c1"># [uS] Synaptic weight</span>
+        <span class="p">},</span>
+        <span class="s2">&quot;Spindle-&gt;Ia&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">&quot;connP&quot;</span><span class="p">:</span> <span class="mf">1.0</span><span class="p">,</span>  <span class="c1"># Connection probability</span>
+            <span class="s2">&quot;source&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>  <span class="c1"># External spindle input</span>
+            <span class="s2">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;Ia&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;w&quot;</span><span class="p">:</span> <span class="mf">0.8</span><span class="p">,</span>  <span class="c1"># [uS] Synaptic weight</span>
+        <span class="p">},</span>
+        <span class="s2">&quot;Ia-&gt;aMN&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">&quot;connP&quot;</span><span class="p">:</span> <span class="mf">0.9</span><span class="p">,</span>  <span class="c1"># Connection probability</span>
+            <span class="s2">&quot;source&quot;</span><span class="p">:</span> <span class="s2">&quot;Ia&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;aMN&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;w&quot;</span><span class="p">:</span> <span class="mf">0.6</span><span class="p">,</span>  <span class="c1"># [uS] Synaptic weight</span>
+        <span class="p">},</span>
+        <span class="s2">&quot;Spindle-&gt;II&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">&quot;connP&quot;</span><span class="p">:</span> <span class="mf">1.0</span><span class="p">,</span>  <span class="c1"># Connection probability</span>
+            <span class="s2">&quot;source&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>  <span class="c1"># External spindle input</span>
+            <span class="s2">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;II&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;w&quot;</span><span class="p">:</span> <span class="mf">0.5</span><span class="p">,</span>  <span class="c1"># [uS] Synaptic weight</span>
+        <span class="p">},</span>
+        <span class="s2">&quot;II-&gt;gII&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">&quot;connP&quot;</span><span class="p">:</span> <span class="mf">0.3</span><span class="p">,</span>  <span class="c1"># Connection probability</span>
+            <span class="s2">&quot;source&quot;</span><span class="p">:</span> <span class="s2">&quot;II&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;gII&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;w&quot;</span><span class="p">:</span> <span class="mf">0.4</span><span class="p">,</span>  <span class="c1"># [uS] Synaptic weight</span>
+        <span class="p">},</span>
+    <span class="p">}</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">foo</span><span class="p">():</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;oi&quot;</span><span class="p">)</span>
+
+    <span class="n">spike_id_vector</span> <span class="o">=</span> <span class="n">h</span><span class="o">.</span><span class="n">Vector</span><span class="p">()</span>
+    <span class="n">spike_time_vector</span> <span class="o">=</span> <span class="n">h</span><span class="o">.</span><span class="n">Vector</span><span class="p">()</span>
+
+    <span class="n">network_connections_dict</span> <span class="o">=</span> <span class="n">_create_network</span><span class="p">(</span>
+        <span class="n">populations</span><span class="o">=</span><span class="n">population_params</span><span class="p">,</span>
+        <span class="n">connections_config</span><span class="o">=</span><span class="n">connection_params</span><span class="p">,</span>
+        <span class="n">id_vector</span><span class="o">=</span><span class="n">spike_id_vector</span><span class="p">,</span>
+        <span class="n">spike_vector</span><span class="o">=</span><span class="n">spike_time_vector</span><span class="p">,</span>
+        <span class="n">muscle_callback</span><span class="o">=</span><span class="n">foo</span><span class="p">,</span>
+        <span class="n">spike_save</span><span class="o">=</span><span class="p">[],</span>
+        <span class="n">muscle</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="n">_print_network_connections</span><span class="p">(</span><span class="n">network_connections_dict</span><span class="p">)</span>
+
+    <span class="c1"># Example using new Network class</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="s2">&quot;=&quot;</span> <span class="o">*</span> <span class="mi">50</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Testing new Network class:&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;=&quot;</span> <span class="o">*</span> <span class="mi">50</span><span class="p">)</span>
+
+    <span class="c1"># Create network with same populations</span>
+    <span class="n">network</span> <span class="o">=</span> <span class="n">Network</span><span class="p">(</span><span class="n">population_params</span><span class="p">)</span>
+
+    <span class="c1"># Add connections with clean API using unit conventions</span>
+    <span class="n">network</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="s2">&quot;Ia&quot;</span><span class="p">,</span> <span class="s2">&quot;aMN&quot;</span><span class="p">,</span> <span class="n">probability</span><span class="o">=</span><span class="mf">0.9</span><span class="p">,</span> <span class="n">weight__uS</span><span class="o">=</span><span class="mf">0.6</span><span class="p">)</span>
+    <span class="n">network</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="s2">&quot;gII&quot;</span><span class="p">,</span> <span class="s2">&quot;aMN&quot;</span><span class="p">,</span> <span class="n">probability</span><span class="o">=</span><span class="mf">0.9</span><span class="p">,</span> <span class="n">weight__uS</span><span class="o">=</span><span class="mf">0.3</span><span class="p">,</span> <span class="n">inhibitory</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>  <span class="c1"># Inhibitory interneuron</span>
+    <span class="n">network</span><span class="o">.</span><span class="n">connect_to_muscle</span><span class="p">(</span><span class="s2">&quot;aMN&quot;</span><span class="p">,</span> <span class="n">muscle</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">activation_callback</span><span class="o">=</span><span class="n">foo</span><span class="p">,</span> <span class="n">weight__uS</span><span class="o">=</span><span class="mf">1.0</span><span class="p">)</span>
+    <span class="n">network</span><span class="o">.</span><span class="n">connect_from_external</span><span class="p">(</span><span class="s2">&quot;spindle&quot;</span><span class="p">,</span> <span class="s2">&quot;Ia&quot;</span><span class="p">,</span> <span class="n">weight__uS</span><span class="o">=</span><span class="mf">0.8</span><span class="p">)</span>
+
+    <span class="c1"># Print network summary</span>
+    <span class="n">network</span><span class="o">.</span><span class="n">print_network</span><span class="p">()</span>
+</pre></div>
+
+                </article>
+              
+              
+              
+              
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2025 - 2025, n-squared lab, FAU Erlangen-Nürnberg, Germany.
+      <br/>
+    
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.2.3.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

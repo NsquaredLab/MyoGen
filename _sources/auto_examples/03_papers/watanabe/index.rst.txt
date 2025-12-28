@@ -2,20 +2,13 @@
 
 .. _watanabe-reproduction:
 
-========================================
-Watanabe et al. (2015, J. Neurosci.)
-========================================
+Watanabe and Kohn (2015)
+======================
 
-.. admonition:: Reference
-   :class: note
+Reproduces findings from:
 
-   **Watanabe, R.N., Kohn, A.F. (2015)**  
-   *Fast Oscillatory Commands from the Motor Cortex Can Be Decoded by the Spinal Cord for Force Control.*  
-   **Journal of Neuroscience**, *35*, 13687–13697.  
-   `DOI: 10.1523/JNEUROSCI.1950-15.2015 <https://doi.org/10.1523/JNEUROSCI.1950-15.2015>`_
+   Watanabe, R.N., Kohn, A.F. (2015) *Fast Oscillatory Commands from the Motor Cortex Can Be Decoded by the Spinal Cord for Force Control.* J. Neurosci. 35:13687–13697. `DOI <https://doi.org/10.1523/JNEUROSCI.1950-15.2015>`_
 
-Step-by-step reproduction
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 
 .. raw:: html
@@ -26,31 +19,65 @@ Step-by-step reproduction
 
 .. raw:: html
 
-    <div class="sphx-glr-thumbcontainer" tooltip="This example reproduces the computational model from Watanabe et al. (2013), which investigates motor unit synchronization through shared synaptic input and independent noise in a biophysically realistic spinal network.">
+    <div class="sphx-glr-thumbcontainer" tooltip="This example computes the reference muscle force using constant descending drive. This force is used as the target for optimizing the oscillating drive DC offset in Phase 3.">
 
 .. only:: html
 
-  .. image:: /auto_examples/03_papers/watanabe/images/thumb/sphx_glr_01_watanabe_spinal_network_simulation_thumb.png
+  .. image:: /auto_examples/03_papers/watanabe/images/thumb/sphx_glr_01_compute_baseline_force_thumb.png
     :alt:
 
-  :doc:`/auto_examples/03_papers/watanabe/01_watanabe_spinal_network_simulation`
+  :doc:`/auto_examples/03_papers/watanabe/01_compute_baseline_force`
 
 .. raw:: html
 
-      <div class="sphx-glr-thumbnail-title">Run Spinal Network Simulation with Shared Descending Drive</div>
+      <div class="sphx-glr-thumbnail-title">Compute Reference Force with Constant Drive (Watanabe Network)</div>
     </div>
 
 
 .. raw:: html
 
-    <div class="sphx-glr-thumbcontainer" tooltip="This example demonstrates post-simulation analysis of the Watanabe et al. (2013) spinal network model. It shows how to load chunked simulation data, convert it to NEO format, and analyze membrane potentials, spike trains, and population dynamics.">
+    <div class="sphx-glr-thumbcontainer" tooltip="This example optimizes the DC offset component of an oscillating descending drive to match the reference force produced by constant drive (from script 01). The drive pattern is: DC_offset + 20sin(2π20*t).">
 
 .. only:: html
 
-  .. image:: /auto_examples/03_papers/watanabe/images/thumb/sphx_glr_02_load_and_analyze_results_thumb.png
+  .. image:: /auto_examples/03_papers/watanabe/images/thumb/sphx_glr_02_optimize_oscillating_dc_thumb.png
     :alt:
 
-  :doc:`/auto_examples/03_papers/watanabe/02_load_and_analyze_results`
+  :doc:`/auto_examples/03_papers/watanabe/02_optimize_oscillating_dc`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Optimize Oscillating DC Offset to Match Reference Force (Watanabe Network)</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="This example runs the Watanabe et al. (2015) spinal network simulation using: - Constant drive (Phase 1) - baseline from script 01 - Constant + oscillation (Phase 2) - oscillation added to baseline - Optimized DC + oscillation (Phase 3) - DC offset matches Phase 1 force">
+
+.. only:: html
+
+  .. image:: /auto_examples/03_papers/watanabe/images/thumb/sphx_glr_03_10pct_mvc_simulation_thumb.png
+    :alt:
+
+  :doc:`/auto_examples/03_papers/watanabe/03_10pct_mvc_simulation`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Watanabe Spinal Network Simulation with Optimized DC Offset</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="This example demonstrates post-simulation analysis of the Watanabe et al. (2015) spinal network model. It shows how to load chunked simulation data, convert it to NEO format, and analyze membrane potentials, spike trains, and population dynamics.">
+
+.. only:: html
+
+  .. image:: /auto_examples/03_papers/watanabe/images/thumb/sphx_glr_04_load_and_analyze_results_thumb.png
+    :alt:
+
+  :doc:`/auto_examples/03_papers/watanabe/04_load_and_analyze_results`
 
 .. raw:: html
 
@@ -64,10 +91,10 @@ Step-by-step reproduction
 
 .. only:: html
 
-  .. image:: /auto_examples/03_papers/watanabe/images/thumb/sphx_glr_03_compute_force_from_spinal_network_thumb.png
+  .. image:: /auto_examples/03_papers/watanabe/images/thumb/sphx_glr_05_compute_force_from_spinal_network_thumb.png
     :alt:
 
-  :doc:`/auto_examples/03_papers/watanabe/03_compute_force_from_spinal_network`
+  :doc:`/auto_examples/03_papers/watanabe/05_compute_force_from_spinal_network`
 
 .. raw:: html
 
@@ -77,14 +104,14 @@ Step-by-step reproduction
 
 .. raw:: html
 
-    <div class="sphx-glr-thumbcontainer" tooltip="This example generates publication-quality figures for the Watanabe et al. (2013) spinal network model reproduction. It creates comprehensive visualizations including coherence analysis, force timeseries, and detailed raster plots.">
+    <div class="sphx-glr-thumbcontainer" tooltip="This example generates publication-quality figures for the Watanabe et al. (2015) spinal network model reproduction. It creates comprehensive visualizations including coherence analysis, force timeseries, and detailed raster plots.">
 
 .. only:: html
 
-  .. image:: /auto_examples/03_papers/watanabe/images/thumb/sphx_glr_04_watanabe_visualize_thumb.png
+  .. image:: /auto_examples/03_papers/watanabe/images/thumb/sphx_glr_06_visualize_thumb.png
     :alt:
 
-  :doc:`/auto_examples/03_papers/watanabe/04_watanabe_visualize`
+  :doc:`/auto_examples/03_papers/watanabe/06_visualize`
 
 .. raw:: html
 
@@ -102,10 +129,12 @@ Step-by-step reproduction
 .. toctree::
    :hidden:
 
-   /auto_examples/03_papers/watanabe/01_watanabe_spinal_network_simulation
-   /auto_examples/03_papers/watanabe/02_load_and_analyze_results
-   /auto_examples/03_papers/watanabe/03_compute_force_from_spinal_network
-   /auto_examples/03_papers/watanabe/04_watanabe_visualize
+   /auto_examples/03_papers/watanabe/01_compute_baseline_force
+   /auto_examples/03_papers/watanabe/02_optimize_oscillating_dc
+   /auto_examples/03_papers/watanabe/03_10pct_mvc_simulation
+   /auto_examples/03_papers/watanabe/04_load_and_analyze_results
+   /auto_examples/03_papers/watanabe/05_compute_force_from_spinal_network
+   /auto_examples/03_papers/watanabe/06_visualize
 
 
 

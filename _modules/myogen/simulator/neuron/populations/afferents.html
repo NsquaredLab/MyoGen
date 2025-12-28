@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>myogen.simulator.neuron.populations.afferents &#8212; MyoGen 0.7.0 Documentation</title>
+    <title>myogen.simulator.neuron.populations.afferents &#8212; MyoGen 0.8.0 Documentation</title>
   
   
   
@@ -54,7 +54,7 @@
 
     <script src="../../../../../_static/jquery.js?v=5d32c60e"></script>
     <script src="../../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-    <script src="../../../../../_static/documentation_options.js?v=b9678aa1"></script>
+    <script src="../../../../../_static/documentation_options.js?v=cce5339e"></script>
     <script src="../../../../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../../../_static/js/hoverxref.js"></script>
@@ -434,7 +434,7 @@ window.addEventListener("load", load);
     <link rel="search" title="Search" href="../../../../../search.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="0.7.0" />
+  <meta name="docsearch:version" content="0.8.0" />
   </head>
   
   
@@ -503,8 +503,8 @@ window.addEventListener("load", load);
       
     
     
-    <img src="../../../../../_static/myogen_logo.png" class="logo__image only-light" alt="MyoGen 0.7.0 Documentation - Home"/>
-    <img src="../../../../../_static/myogen_logo.png" class="logo__image only-dark pst-js-only" alt="MyoGen 0.7.0 Documentation - Home"/>
+    <img src="../../../../../_static/myogen_logo.png" class="logo__image only-light" alt="MyoGen 0.8.0 Documentation - Home"/>
+    <img src="../../../../../_static/myogen_logo.png" class="logo__image only-dark pst-js-only" alt="MyoGen 0.8.0 Documentation - Home"/>
   
   
 </a></div>
@@ -513,7 +513,7 @@ window.addEventListener("load", load);
 <div class="nav-item">
   <div class="version-switcher__container dropdown">
       <button id="version-switcher-button" type="button" class="version-switcher__button btn btn-sm navbar-btn" aria-haspopup="true" aria-expanded="false">
-          Version 0.7.0
+          Version 0.8.0
       </button>
       
       
@@ -811,11 +811,11 @@ window.addEventListener("load", load);
         <span class="n">timestep__ms</span><span class="p">:</span> <span class="n">Quantity__ms</span><span class="p">,</span>
         <span class="n">recruitment_thresholds</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">40</span><span class="p">),</span>
         <span class="n">axon_velocities__m_per_s</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">Quantity__m_per_s</span><span class="p">,</span> <span class="n">Quantity__m_per_s</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="mi">58</span> <span class="o">*</span> <span class="n">pq</span><span class="o">.</span><span class="n">m</span> <span class="o">/</span> <span class="n">pq</span><span class="o">.</span><span class="n">s</span><span class="p">,</span>
-            <span class="mi">72</span> <span class="o">*</span> <span class="n">pq</span><span class="o">.</span><span class="n">m</span> <span class="o">/</span> <span class="n">pq</span><span class="o">.</span><span class="n">s</span><span class="p">,</span>
+            <span class="mi">61</span> <span class="o">*</span> <span class="n">pq</span><span class="o">.</span><span class="n">m</span> <span class="o">/</span> <span class="n">pq</span><span class="o">.</span><span class="n">s</span><span class="p">,</span>
+            <span class="mi">75</span> <span class="o">*</span> <span class="n">pq</span><span class="o">.</span><span class="n">m</span> <span class="o">/</span> <span class="n">pq</span><span class="o">.</span><span class="n">s</span><span class="p">,</span>
         <span class="p">),</span>
         <span class="n">axon_length__m</span><span class="p">:</span> <span class="n">Quantity__m</span> <span class="o">=</span> <span class="mf">0.6</span> <span class="o">*</span> <span class="n">pq</span><span class="o">.</span><span class="n">m</span><span class="p">,</span>
-        <span class="n">poisson_batch_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">145</span><span class="p">,</span>
+        <span class="n">poisson_batch_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">145</span><span class="p">,</span>  <span class="c1"># Shape param for Gamma process: CV = 1/sqrt(145) = 8.3%</span>
         <span class="n">init_order</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
     <span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">n</span> <span class="o">=</span> <span class="n">n</span>
@@ -862,13 +862,13 @@ window.addEventListener("load", load);
 <span class="sd">        Number of type II afferent neurons to create.</span>
 <span class="sd">    recruitment_thresholds : tuple[float, float]</span>
 <span class="sd">        Min and max recruitment thresholds (Hz).</span>
-<span class="sd">    axon_velocities : tuple[float, float]</span>
+<span class="sd">    axon_velocities__m_per_s : tuple[Quantity__m_per_s, Quantity__m_per_s]</span>
 <span class="sd">        Min and max axon conduction velocities (m/s).</span>
-<span class="sd">    axon_length__m : float</span>
+<span class="sd">    axon_length__m : Quantity__m</span>
 <span class="sd">        Length of the axon (m).</span>
 <span class="sd">    poisson_batch_size : int</span>
 <span class="sd">        Batch size for exponential threshold generation algorithm.</span>
-<span class="sd">    timestep__ms : float</span>
+<span class="sd">    timestep__ms : Quantity__ms</span>
 <span class="sd">        Time step for simulation (ms).</span>
 <span class="sd">    init_order : int</span>
 <span class="sd">        Initial order parameter for afferent initialization.</span>
@@ -880,22 +880,25 @@ window.addEventListener("load", load);
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">n</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
         <span class="n">timestep__ms</span><span class="p">:</span> <span class="n">Quantity__ms</span><span class="p">,</span>
-        <span class="n">recruitment_thresholds</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">50</span><span class="p">),</span>
-        <span class="n">axon_velocities</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mi">32</span><span class="p">,</span> <span class="mi">52</span><span class="p">),</span>
-        <span class="n">axon_length__m</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.6</span><span class="p">,</span>
-        <span class="n">poisson_batch_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">500</span><span class="p">,</span>
+        <span class="n">recruitment_thresholds</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">40</span><span class="p">),</span>
+        <span class="n">axon_velocities__m_per_s</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">Quantity__m_per_s</span><span class="p">,</span> <span class="n">Quantity__m_per_s</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="mi">30</span> <span class="o">*</span> <span class="n">pq</span><span class="o">.</span><span class="n">m</span> <span class="o">/</span> <span class="n">pq</span><span class="o">.</span><span class="n">s</span><span class="p">,</span>
+            <span class="mi">50</span> <span class="o">*</span> <span class="n">pq</span><span class="o">.</span><span class="n">m</span> <span class="o">/</span> <span class="n">pq</span><span class="o">.</span><span class="n">s</span><span class="p">,</span>
+        <span class="p">),</span>
+        <span class="n">axon_length__m</span><span class="p">:</span> <span class="n">Quantity__m</span> <span class="o">=</span> <span class="mf">0.6</span> <span class="o">*</span> <span class="n">pq</span><span class="o">.</span><span class="n">m</span><span class="p">,</span>
+        <span class="n">poisson_batch_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">772</span><span class="p">,</span>  <span class="c1"># Shape param for Gamma process: CV = 1/sqrt(772) = 3.6%</span>
         <span class="n">init_order</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
     <span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">n</span> <span class="o">=</span> <span class="n">n</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">recruitment_thresholds</span> <span class="o">=</span> <span class="n">recruitment_thresholds</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">axon_velocities</span> <span class="o">=</span> <span class="n">axon_velocities</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">axon_velocities</span> <span class="o">=</span> <span class="n">axon_velocities__m_per_s</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">axon_length</span> <span class="o">=</span> <span class="n">axon_length__m</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">poisson_batch_size</span> <span class="o">=</span> <span class="n">poisson_batch_size</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">timestep__ms</span> <span class="o">=</span> <span class="n">timestep__ms</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">init_order</span> <span class="o">=</span> <span class="n">init_order</span>
 
         <span class="n">rt</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="o">*</span><span class="n">recruitment_thresholds</span><span class="p">,</span> <span class="n">n</span><span class="p">)</span>
-        <span class="n">vcon</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="o">*</span><span class="n">axon_velocities</span><span class="p">,</span> <span class="n">n</span><span class="p">)</span>
+        <span class="n">vcon</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="o">*</span><span class="n">axon_velocities__m_per_s</span><span class="p">,</span> <span class="n">n</span><span class="p">)</span>
 
         <span class="n">_cells</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="p">(</span><span class="n">rt_i</span><span class="p">,</span> <span class="n">vcon_i</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">rt</span><span class="p">,</span> <span class="n">vcon</span><span class="p">)):</span>
@@ -906,7 +909,7 @@ window.addEventListener("load", load);
                 <span class="n">initN</span><span class="o">=</span><span class="n">init_order</span><span class="p">,</span>
                 <span class="n">pool__ID</span><span class="o">=</span><span class="n">i</span><span class="p">,</span>
             <span class="p">)</span>
-            <span class="n">ii</span><span class="o">.</span><span class="n">create_axon</span><span class="p">(</span><span class="n">length__m</span><span class="o">=</span><span class="n">axon_length__m</span> <span class="o">*</span> <span class="n">pq</span><span class="o">.</span><span class="n">m</span><span class="p">,</span> <span class="n">conduction_velocity__m_per_s</span><span class="o">=</span><span class="n">vcon_i</span> <span class="o">*</span> <span class="n">pq</span><span class="o">.</span><span class="n">m</span> <span class="o">/</span> <span class="n">pq</span><span class="o">.</span><span class="n">s</span><span class="p">)</span>
+            <span class="n">ii</span><span class="o">.</span><span class="n">create_axon</span><span class="p">(</span><span class="n">length__m</span><span class="o">=</span><span class="n">axon_length__m</span><span class="p">,</span> <span class="n">conduction_velocity__m_per_s</span><span class="o">=</span><span class="n">vcon_i</span><span class="p">)</span>
             <span class="n">_cells</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ii</span><span class="p">)</span>
 
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">cells</span><span class="o">=</span><span class="n">_cells</span><span class="p">)</span></div>
@@ -948,13 +951,13 @@ window.addEventListener("load", load);
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">n</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
         <span class="n">timestep__ms</span><span class="p">:</span> <span class="n">Quantity__ms</span><span class="p">,</span>
-        <span class="n">recruitment_thresholds</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">50</span><span class="p">),</span>
+        <span class="n">recruitment_thresholds</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">40</span><span class="p">),</span>
         <span class="n">axon_velocities__m_per_s</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">Quantity__m_per_s</span><span class="p">,</span> <span class="n">Quantity__m_per_s</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="mi">62</span> <span class="o">*</span> <span class="n">pq</span><span class="o">.</span><span class="n">m</span> <span class="o">/</span> <span class="n">pq</span><span class="o">.</span><span class="n">s</span><span class="p">,</span>
-            <span class="mi">66</span> <span class="o">*</span> <span class="n">pq</span><span class="o">.</span><span class="n">m</span> <span class="o">/</span> <span class="n">pq</span><span class="o">.</span><span class="n">s</span><span class="p">,</span>
+            <span class="mi">64</span> <span class="o">*</span> <span class="n">pq</span><span class="o">.</span><span class="n">m</span> <span class="o">/</span> <span class="n">pq</span><span class="o">.</span><span class="n">s</span><span class="p">,</span>
+            <span class="mi">72</span> <span class="o">*</span> <span class="n">pq</span><span class="o">.</span><span class="n">m</span> <span class="o">/</span> <span class="n">pq</span><span class="o">.</span><span class="n">s</span><span class="p">,</span>
         <span class="p">),</span>
         <span class="n">axon_length__mm</span><span class="p">:</span> <span class="n">Quantity__mm</span> <span class="o">=</span> <span class="mf">0.6</span> <span class="o">*</span> <span class="n">pq</span><span class="o">.</span><span class="n">mm</span><span class="p">,</span>
-        <span class="n">poisson_batch_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">30</span><span class="p">,</span>
+        <span class="n">poisson_batch_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">145</span><span class="p">,</span>  <span class="c1"># Shape param for Gamma process: CV = 1/sqrt(145) = 8.3%</span>
         <span class="n">init_order</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
     <span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">n</span> <span class="o">=</span> <span class="n">n</span>
