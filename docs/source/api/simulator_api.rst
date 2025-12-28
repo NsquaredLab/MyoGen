@@ -3,6 +3,16 @@ Simulator Module
 
 .. currentmodule:: myogen.simulator
 
+Motor Unit Recruitment Thresholds
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. autosummary::
+   :toctree: ../generated/
+   :template: autosummary/class.rst
+   :recursive:
+
+   RecruitmentThresholds
+
 Neuron Populations
 ^^^^^^^^^^^^^^^^^^
 
@@ -34,17 +44,31 @@ Population Classes
    GII__Pool
    GIb__Pool
 
-.. currentmodule:: myogen.simulator
+Network
+-------
 
-Motor Unit Recruitment Thresholds
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.. currentmodule:: myogen.simulator.neuron.network
 
 .. autosummary::
    :toctree: ../generated/
    :template: autosummary/class.rst
    :recursive:
 
-   RecruitmentThresholds
+   Network
+
+Simulation Runner
+-----------------
+
+.. currentmodule:: myogen.simulator.neuron.simulation_runner
+
+.. autosummary::
+   :toctree: ../generated/
+   :template: autosummary/class.rst
+   :recursive:
+
+   SimulationRunner
+
+.. currentmodule:: myogen.simulator
 
 Muscle Model
 ^^^^^^^^^^^^
@@ -56,6 +80,45 @@ Muscle Model
 
    Muscle
 
+Hill Muscle Model
+^^^^^^^^^^^^^^^^^
+
+.. currentmodule:: myogen.simulator.neuron.muscle
+
+.. autosummary::
+   :toctree: ../generated/
+   :template: autosummary/class.rst
+   :recursive:
+
+   HillModel
+
+Proprioception Models
+^^^^^^^^^^^^^^^^^^^^^
+
+.. currentmodule:: myogen.simulator.neuron.proprioception
+
+.. autosummary::
+   :toctree: ../generated/
+   :template: autosummary/class.rst
+   :recursive:
+
+   SpindleModel
+   GolgiTendonOrganModel
+
+Joint Dynamics
+^^^^^^^^^^^^^^
+
+.. currentmodule:: myogen.simulator.neuron.joint_dynamics
+
+.. autosummary::
+   :toctree: ../generated/
+   :template: autosummary/class.rst
+   :recursive:
+
+   JointDynamics
+
+.. currentmodule:: myogen.simulator
+
 Force Model
 ^^^^^^^^^^^
 
@@ -66,6 +129,17 @@ Force Model
 
    ForceModel
 
+Electrodes
+^^^^^^^^^^
+
+.. autosummary::
+   :toctree: ../generated/
+   :template: autosummary/class.rst
+   :recursive:
+
+   SurfaceElectrodeArray
+   IntramuscularElectrodeArray
+
 EMG Generation
 ^^^^^^^^^^^^^^
 
@@ -74,17 +148,5 @@ EMG Generation
    :template: autosummary/class.rst
    :recursive:
 
-   SurfaceEMG 
+   SurfaceEMG
    IntramuscularEMG
-
-Electrodes
-^^^^^^^^^^^^^^
-
-
-.. autosummary::
-   :toctree: ../generated/
-   :template: autosummary/class.rst
-   :recursive:
-
-   SurfaceElectrodeArray 
-   IntramuscularElectrodeArray
