@@ -382,15 +382,7 @@ Wrong units
 Additional Resources
 --------------------
 
-For more detailed information, see:
-
-- :download:`Comprehensive Guide <../neo_block_structures.md>`
-- :download:`Quick Reference <../neo_block_quick_reference.md>`
-- :download:`Visual Diagrams <../neo_block_structure_diagrams.txt>`
-- Example: ``examples/basic/10_extract_data_from_neo_blocks.py``
-
-External Links:
-
+- Example: ``examples/01_basic/12_extract_data_from_neo_blocks.py``
 - `Neo Documentation <https://neo.readthedocs.io/>`_
 - `Elephant (Electrophysiology Analysis) <https://elephant.readthedocs.io/>`_
 - `Quantities (Unit Handling) <https://python-quantities.readthedocs.io/>`_
