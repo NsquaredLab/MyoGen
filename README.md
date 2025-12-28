@@ -8,7 +8,7 @@
 
   [![Documentation](https://img.shields.io/badge/docs-latest-blue.svg)](https://nsquaredlab.github.io/MyoGen/)
   [![Python 3.12+](https://img.shields.io/badge/python-3.12+-blue.svg)](https://www.python.org/downloads/)
-  [![Version](https://img.shields.io/badge/version-0.6.5-orange.svg)](https://github.com/NsquaredLab/MyoGen)
+  [![Version](https://img.shields.io/badge/version-0.8.0-orange.svg)](https://github.com/NsquaredLab/MyoGen)
 
   [Installation](https://nsquaredlab.github.io/MyoGen/#installation) •
   [Documentation](https://nsquaredlab.github.io/MyoGen/) •
@@ -39,6 +39,8 @@ MyoGen is designed for algorithm validation, hypothesis-driven research, and edu
 
 # Installation
 
+> **Requires Python 3.12+** — Check your version with `python --version`
+
 ## System Requirements
 
 | Platform | Before Installing MyoGen |
@@ -46,8 +48,6 @@ MyoGen is designed for algorithm validation, hypothesis-driven research, and edu
 | **Windows** | [NEURON 8.2.6](https://github.com/neuronsimulator/nrn/releases/download/8.2.6/nrn-8.2.6.w64-mingw-py-38-39-310-311-312-setup.exe) - Download, run installer, select "Add to PATH" |
 | **Linux** | `sudo apt install libopenmpi-dev` (Ubuntu/Debian) or `sudo dnf install openmpi-devel` (Fedora) |
 | **macOS** | `brew install open-mpi` |
-
-**Python**: 3.12 or higher required
 
 > [!CAUTION]
 >

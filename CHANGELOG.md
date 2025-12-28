@@ -7,6 +7,41 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.8.0] - 2025-12-28
+
+### Added
+- **Spinal Network Simulator**: Enhanced connectivity and afferent population support
+  - Improved interneuron and motor neuron connectivity patterns
+  - Added Group II (GII) afferent pathway support
+  - Enhanced afferent population configuration options
+- **Strict Mode for NEURON**: New error handling mode for mechanism loading
+  - Added `strict` parameter to `load_nmodl_files()` function
+  - Warnings by default, exceptions opt-in with `strict=True`
+  - Clearer error messages when NEURON mechanisms fail to load
+- **API Documentation**: Added missing classes to API docs and module exports
+  - `HillModel` - Hill-type muscle model
+  - `Network` - Spinal network container
+  - `SimulationRunner` - Simulation orchestration
+  - `JointDynamics` - Joint dynamics model
+  - `SpindleModel` - Muscle spindle proprioceptor
+  - `GolgiTendonOrganModel` - Golgi tendon organ proprioceptor
+  - `ContinuousSaver` and `convert_chunks_to_neo` utility functions
+
+### Changed
+- **NEO Blocks Documentation**: Consolidated 4 documentation files into single `docs/neo_blocks.md`
+  - Reduced from ~47KB across multiple files to ~4.5KB single digestible document
+  - Clearer structure with block types, access patterns, and troubleshooting
+- **API Documentation Order**: Reorganized `simulator_api.rst` to follow simulation workflow
+  - RecruitmentThresholds → Populations → Network → SimulationRunner → Muscle → Proprioception → JointDynamics → Force → Electrodes → EMG
+- **Watanabe Examples**: Updated paper citations from 2013 to 2015 (J. Neurosci.)
+  - Corrected DOI references across all example scripts
+  - Simplified README to essential information only
+- **README**: Rewritten for beginners with uv as primary installation method
+
+### Fixed
+- **Documentation Links**: Fixed examples toctree paths (`01_basic`, `02_finetune`)
+- **Literature Reproductions Link**: Added `watanabe-reproduction` ref label for cross-references
+
 ## [0.7.0] - 2025-12-24
 
 ### Added
