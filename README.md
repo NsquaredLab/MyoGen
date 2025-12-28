@@ -39,65 +39,108 @@ MyoGen is designed for algorithm validation, hypothesis-driven research, and edu
 
 # Installation
 
-> [!WARNING]
-> **Windows users**: Install [NEURON 8.2.6](https://github.com/neuronsimulator/nrn/releases/download/8.2.6/nrn-8.2.6.w64-mingw-py-38-39-310-311-312-setup.exe) before installing MyoGen
+## System Requirements
 
-```bash
-uv add MyoGen
-# or
-pip install MyoGen
-```
+| Platform | Before Installing MyoGen |
+|----------|--------------------------|
+| **Windows** | [NEURON 8.2.6](https://github.com/neuronsimulator/nrn/releases/download/8.2.6/nrn-8.2.6.w64-mingw-py-38-39-310-311-312-setup.exe) - Download, run installer, select "Add to PATH" |
+| **Linux** | `sudo apt install libopenmpi-dev` (Ubuntu/Debian) or `sudo dnf install openmpi-devel` (Fedora) |
+| **macOS** | `brew install open-mpi` |
 
-NEURON mechanisms compile automatically during installation.
+**Python**: 3.12 or higher required
 
----
-
-**Prerequisites**: Python ≥3.12, Linux/Windows/macOS
-
-> [!IMPORTANT]
-> **System Requirements**:
-> - **Linux/macOS**: OpenMPI or MPICH (install via package manager)
-> - **Windows**: NEURON 8.2.6 required (see warning above)
-
-```bash
-# Install MPI (Linux)
-sudo apt-get install libopenmpi-dev  # Ubuntu/Debian
-# or
-sudo yum install openmpi-devel       # RHEL/CentOS
-
-# Install MPI (macOS)
-brew install open-mpi
-```
+> [!CAUTION]
+>
+> ## Windows Users: Install NEURON First
+>
+> **You MUST install NEURON before installing MyoGen on Windows.**
+>
+> 1. **Download**: [NEURON 8.2.6 Installer](https://github.com/neuronsimulator/nrn/releases/download/8.2.6/nrn-8.2.6.w64-mingw-py-38-39-310-311-312-setup.exe)
+> 2. **Run the installer** and select **"Add to PATH"** when prompted
+> 3. **Restart your terminal** (close and reopen)
+> 4. Then continue with the installation below
 
 ---
 
-## From Source (for development)
+## Step 1: Install uv (Package Manager)
+
+We use [uv](https://docs.astral.sh/uv/) - a fast Python package manager. Install it first:
+
+**Windows** (open PowerShell):
+
+```powershell
+powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"
+```
+
+**Linux/macOS**:
 
 ```bash
-# Clone and install
+curl -LsSf https://astral.sh/uv/install.sh | sh
+```
+
+After installing, **restart your terminal** (close and reopen it).
+
+---
+
+## Step 2: Create a New Project
+
+Open a terminal and navigate to where you want your project:
+
+```bash
+# Create a new folder for your project
+mkdir my_emg_project
+cd my_emg_project
+
+# Initialize a Python project
+uv init
+
+# Add MyoGen to your project
+uv add myogen
+```
+
+That's it! MyoGen is now installed and ready to use.
+
+---
+
+## Step 3: Verify Installation
+
+Create a test file to make sure everything works:
+
+```bash
+# Create a test script
+uv run python -c "from myogen import simulator; print('MyoGen installed successfully!')"
+```
+
+If you see `MyoGen installed successfully!` - you're all set!
+
+---
+
+## Alternative: pip install
+
+If you prefer pip over uv:
+
+```bash
+pip install myogen
+```
+
+---
+
+## For Developers (From Source)
+
+```bash
 git clone https://github.com/NsquaredLab/MyoGen.git
 cd MyoGen
 uv sync
-
-# Activate environment
-source .venv/bin/activate  # Linux/macOS
-.venv\Scripts\activate     # Windows
-
-# Compile NEURON mechanisms (required for editable installs)
 uv run poe setup_myogen
 ```
 
-> [!TIP]
-> Install [uv](https://docs.astral.sh/uv/) first
+## Optional: GPU Acceleration
 
-## Optional Dependencies
-
-**GPU acceleration** (5-10× speedup for convolutions):
+For 5-10× faster convolutions (requires NVIDIA GPU):
 
 ```bash
-pip install cupy-cuda12x
+uv add cupy-cuda12x
 ```
-
 
 # Quick Start
 
