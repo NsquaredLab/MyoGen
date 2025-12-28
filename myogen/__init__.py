@@ -19,7 +19,13 @@ def set_random_seed(seed: int = SEED) -> None:
     print(f"Random seed set to {seed}.")
 
 
-def _setup_myogen(quiet: bool = False, force_rebuild: bool = False) -> bool:
+class MyoGenSetupError(Exception):
+    """Exception raised when MyoGen setup fails."""
+
+    pass
+
+
+def _setup_myogen(quiet: bool = False, force_rebuild: bool = False, strict: bool = False) -> bool:
     """
     Set up MyoGen with NEURON mechanism compilation and loading.
 
@@ -34,12 +40,28 @@ def _setup_myogen(quiet: bool = False, force_rebuild: bool = False) -> bool:
     force_rebuild : bool, optional
         If True, force recompilation of Cython extensions even if they appear
         to be already compiled, by default False
+    strict : bool, optional
+        If True, raise exceptions on errors instead of returning False.
+        Recommended for CI/CD pipelines and production deployments.
 
     Returns
     -------
     bool
         True if setup completed successfully, False otherwise
+
+    Raises
+    ------
+    MyoGenSetupError
+        If strict=True and setup fails
     """
+
+    def error(msg):
+        """Handle errors based on strict mode."""
+        if strict:
+            raise MyoGenSetupError(msg)
+        else:
+            print(f"ERROR: {msg}")
+            return False
     # Check if Cython extensions are already compiled (from installed package)
     cython_modules = [
         "myogen.simulator.neuron._cython._spindle",
@@ -71,7 +93,9 @@ def _setup_myogen(quiet: bool = False, force_rebuild: bool = False) -> bool:
 
         # Check if .pyx files exist (development install)
         myogen_root = Path(__file__).parent
-        pyx_files_exist = (myogen_root / "simulator" / "neuron" / "_cython" / "_spindle.pyx").exists()
+        pyx_files_exist = (
+            myogen_root / "simulator" / "neuron" / "_cython" / "_spindle.pyx"
+        ).exists()
 
         if not pyx_files_exist:
             if not quiet:
@@ -80,13 +104,14 @@ def _setup_myogen(quiet: bool = False, force_rebuild: bool = False) -> bool:
             # Try importing again to give a clearer error if truly missing
             try:
                 from myogen.simulator.neuron._cython import _spindle
+
                 if not quiet:
                     print("Cython extensions are available.")
             except ImportError as e:
-                if not quiet:
-                    print(f"Error: Cython extensions are not available: {e}")
-                    print("Please reinstall MyoGen or run setup from a development clone.")
-                return False
+                return error(
+                    f"Cython extensions are not available: {e}\n"
+                    "Please reinstall MyoGen or run setup from a development clone."
+                )
         else:
             # Development mode: compile in-place
             from Cython.Build import cythonize
@@ -98,32 +123,32 @@ def _setup_myogen(quiet: bool = False, force_rebuild: bool = False) -> bool:
                         Extension(
                             "myogen.simulator.neuron._cython._spindle",
                             ["myogen/simulator/neuron/_cython/_spindle.pyx"],
-                            extra_compile_args=["-O3", "-march=native", "-ffast-math"],
+                            extra_compile_args=["-O2", "-march=native", "-ffast-math"],
                         ),
                         Extension(
                             "myogen.simulator.neuron._cython._hill",
                             ["myogen/simulator/neuron/_cython/_hill.pyx"],
-                            extra_compile_args=["-O3", "-march=native"],
+                            extra_compile_args=["-O2", "-march=native"],
                         ),
                         Extension(
                             "myogen.simulator.neuron._cython._gto",
                             ["myogen/simulator/neuron/_cython/_gto.pyx"],
-                            extra_compile_args=["-O3", "-march=native", "-ffast-math"],
+                            extra_compile_args=["-O2", "-march=native", "-ffast-math"],
                         ),
                         Extension(
                             "myogen.simulator.neuron._cython._poisson_process_generator",
                             ["myogen/simulator/neuron/_cython/_poisson_process_generator.pyx"],
-                            extra_compile_args=["-O3", "-march=native", "-ffast-math"],
+                            extra_compile_args=["-O2", "-march=native", "-ffast-math"],
                         ),
                         Extension(
                             "myogen.simulator.neuron._cython._gamma_process_generator",
                             ["myogen/simulator/neuron/_cython/_gamma_process_generator.pyx"],
-                            extra_compile_args=["-O3", "-march=native", "-ffast-math"],
+                            extra_compile_args=["-O2", "-march=native", "-ffast-math"],
                         ),
                         Extension(
                             "myogen.simulator.neuron._cython._simulate_fiber",
                             ["myogen/simulator/neuron/_cython/_simulate_fiber.pyx"],
-                            extra_compile_args=["-O3", "-march=native", "-ffast-math"],
+                            extra_compile_args=["-O2", "-march=native", "-ffast-math"],
                         ),
                     ],
                     compiler_directives={"embedsignature": True},
@@ -165,6 +190,7 @@ def _setup_myogen(quiet: bool = False, force_rebuild: bool = False) -> bool:
                 print("Compiling NMODL mechanisms...")
 
             from myogen.utils.nmodl import compile_nmodl_files
+
             result = compile_nmodl_files(quiet=quiet)
 
             if result and not quiet:
@@ -172,24 +198,33 @@ def _setup_myogen(quiet: bool = False, force_rebuild: bool = False) -> bool:
             return result
 
     except ImportError as e:
-        if not quiet:
-            print(f"Warning: NEURON not available, skipping mechanism setup: {e}")
-        return False
+        return error(f"NEURON not available, cannot compile mechanisms: {e}")
     except Exception as e:
-        if not quiet:
-            print(f"Error during MyoGen setup: {e}")
-        return False
+        return error(f"MyoGen setup failed: {e}")
 
 
-from myogen.utils.nmodl import load_nmodl_mechanisms
+from myogen.utils.nmodl import (
+    load_nmodl_mechanisms,
+    NMODLLoadError,
+    get_mechanism_parameters,
+    validate_mechanism_parameter,
+    set_mechanism_param,
+)
 
 # Auto-load NMODL mechanisms when MyoGen is imported
-load_nmodl_mechanisms(quiet=True)
+# quiet=True suppresses success messages, but warnings are still shown
+# Use strict=True in your code to raise exceptions on failure
+_nmodl_loaded = load_nmodl_mechanisms(quiet=True, strict=False)
 
 __all__ = [
     "RANDOM_GENERATOR",
     "SEED",
     "set_random_seed",
     "load_nmodl_mechanisms",
+    "NMODLLoadError",
+    "MyoGenSetupError",
+    "get_mechanism_parameters",
+    "validate_mechanism_parameter",
+    "set_mechanism_param",
     "_setup_myogen",
 ]

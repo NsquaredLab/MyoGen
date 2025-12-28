@@ -1,14 +1,16 @@
 """Build script for MyoGen with Cython extensions and NMODL compilation."""
-from setuptools import setup
-from setuptools.command.build_py import build_py
-from Cython.Build import cythonize
-from setuptools.extension import Extension
-import numpy as np
+
 import os
 import platform
 import subprocess
 from pathlib import Path
 from typing import Optional
+
+import numpy as np
+from Cython.Build import cythonize
+from setuptools import setup
+from setuptools.command.build_py import build_py
+from setuptools.extension import Extension
 
 
 def _find_neuron_home_from_registry() -> Optional[Path]:
@@ -26,18 +28,38 @@ def _find_neuron_home_from_registry() -> Optional[Path]:
     # Try common NEURON registry key patterns
     direct_neuron_keys = [
         (winreg.HKEY_LOCAL_MACHINE, r"SOFTWARE\NEURON", winreg.KEY_READ | winreg.KEY_WOW64_64KEY),
-        (winreg.HKEY_LOCAL_MACHINE, r"SOFTWARE\NEURON_Simulator", winreg.KEY_READ | winreg.KEY_WOW64_64KEY),
+        (
+            winreg.HKEY_LOCAL_MACHINE,
+            r"SOFTWARE\NEURON_Simulator",
+            winreg.KEY_READ | winreg.KEY_WOW64_64KEY,
+        ),
         (winreg.HKEY_LOCAL_MACHINE, r"SOFTWARE\NEURON", winreg.KEY_READ | winreg.KEY_WOW64_32KEY),
-        (winreg.HKEY_LOCAL_MACHINE, r"SOFTWARE\NEURON_Simulator", winreg.KEY_READ | winreg.KEY_WOW64_32KEY),
+        (
+            winreg.HKEY_LOCAL_MACHINE,
+            r"SOFTWARE\NEURON_Simulator",
+            winreg.KEY_READ | winreg.KEY_WOW64_32KEY,
+        ),
         (winreg.HKEY_CURRENT_USER, r"SOFTWARE\NEURON", winreg.KEY_READ),
         (winreg.HKEY_CURRENT_USER, r"SOFTWARE\NEURON_Simulator", winreg.KEY_READ),
     ]
 
     # Check uninstall registry keys
     uninstall_keys = [
-        (winreg.HKEY_LOCAL_MACHINE, r"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall", winreg.KEY_READ | winreg.KEY_WOW64_64KEY),
-        (winreg.HKEY_LOCAL_MACHINE, r"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall", winreg.KEY_READ | winreg.KEY_WOW64_32KEY),
-        (winreg.HKEY_CURRENT_USER, r"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall", winreg.KEY_READ),
+        (
+            winreg.HKEY_LOCAL_MACHINE,
+            r"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall",
+            winreg.KEY_READ | winreg.KEY_WOW64_64KEY,
+        ),
+        (
+            winreg.HKEY_LOCAL_MACHINE,
+            r"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall",
+            winreg.KEY_READ | winreg.KEY_WOW64_32KEY,
+        ),
+        (
+            winreg.HKEY_CURRENT_USER,
+            r"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall",
+            winreg.KEY_READ,
+        ),
     ]
 
     registry_paths = direct_neuron_keys + uninstall_keys
@@ -93,24 +115,32 @@ def _find_neuron_home_from_registry() -> Optional[Path]:
                                 with winreg.OpenKey(key, subkey_name) as app_key:
                                     # Try InstallLocation first
                                     try:
-                                        install_location, _ = winreg.QueryValueEx(app_key, "InstallLocation")
+                                        install_location, _ = winreg.QueryValueEx(
+                                            app_key, "InstallLocation"
+                                        )
                                         if install_location:
                                             neuron_path = Path(install_location)
                                             if neuron_path.exists():
-                                                print(f"  (OK) Found NEURON in registry (Uninstall): {neuron_path}")
+                                                print(
+                                                    f"  (OK) Found NEURON in registry (Uninstall): {neuron_path}"
+                                                )
                                                 return neuron_path
                                     except FileNotFoundError:
                                         pass
 
                                     # Try to parse UninstallString as fallback
                                     try:
-                                        uninstall_string, _ = winreg.QueryValueEx(app_key, "UninstallString")
+                                        uninstall_string, _ = winreg.QueryValueEx(
+                                            app_key, "UninstallString"
+                                        )
                                         if uninstall_string:
                                             # Extract path from uninstall string (e.g., "c:\nrn\uninstall.exe")
                                             uninstall_path = Path(uninstall_string.strip('"'))
                                             neuron_path = uninstall_path.parent
                                             if neuron_path.exists():
-                                                print(f"  (OK) Found NEURON in registry (UninstallString): {neuron_path}")
+                                                print(
+                                                    f"  (OK) Found NEURON in registry (UninstallString): {neuron_path}"
+                                                )
                                                 return neuron_path
                                     except FileNotFoundError:
                                         pass
@@ -143,7 +173,9 @@ class BuildWithNMODL(build_py):
             build_nmodl_path = Path(self.build_lib) / "myogen" / "simulator" / "nmodl_files"
 
             if not build_nmodl_path.exists():
-                print("Warning: NMODL files directory not found in build, skipping NMODL compilation")
+                print(
+                    "Warning: NMODL files directory not found in build, skipping NMODL compilation"
+                )
                 return
 
             mod_files = list(build_nmodl_path.glob("*.mod"))
@@ -163,24 +195,36 @@ class BuildWithNMODL(build_py):
 
         except Exception as e:
             if platform.system() == "Windows":
-                # On Windows, NEURON is required - fail the build with clear instructions
-                error_msg = (
-                    "\n" + "="*70 + "\n"
-                    "ERROR: NEURON installation required for MyoGen on Windows\n"
-                    "="*70 + "\n\n"
-                    "MyoGen requires NEURON to be installed before building.\n\n"
-                    "Please install NEURON by following these steps:\n"
-                    "1. Download NEURON from: https://neuron.yale.edu/neuron/download\n"
-                    "2. Run the Windows installer (nrn-X.X.X.w64-mingw-py-XX-setup.exe)\n"
-                    "3. After installation, retry: pip install myogen\n\n"
-                    f"Original error: {e}\n"
-                    "="*70 + "\n"
-                )
+                # Windows requires manual NEURON installation - fail with clear instructions
+                error_msg = f"""
+================================================================================
+  MyoGen Installation Failed - NEURON Required
+================================================================================
+
+MyoGen requires NEURON 8.2.6 to be installed BEFORE installing MyoGen.
+
+STEP 1: Download and install NEURON
+-----------------------------------
+  https://github.com/neuronsimulator/nrn/releases/download/8.2.6/nrn-8.2.6.w64-mingw-py-38-39-310-311-312-setup.exe
+
+  During installation, select "Add to PATH"
+
+STEP 2: Retry installation
+----------------------------------
+    Re-run the MyoGen installation command, e.g.:
+        pip install myogen or uv add myogen
+
+================================================================================
+Technical details: {e}
+================================================================================
+"""
                 raise RuntimeError(error_msg) from e
             else:
-                # On Linux/macOS, allow optional NMODL compilation
-                print(f"Warning: NMODL compilation failed (this is optional): {e}")
-                print("You can compile NMODL files later by running: from myogen import _setup_myogen; _setup_myogen()")
+                # Linux/macOS - just warn, NMODL can be compiled later
+                print(f"Note: NMODL compilation skipped: {e}")
+                print(
+                    "Run 'python -c \"from myogen import _setup_myogen; _setup_myogen()\"' after installation"
+                )
 
     def _compile_nmodl_windows(self, nmodl_path):
         """Compile NMODL on Windows."""
@@ -223,18 +267,19 @@ class BuildWithNMODL(build_py):
         try:
             import neuron
             from neuron import h
+
             print("NEURON imported successfully")
         except ImportError as e:
-            print("\n" + "="*70)
+            print("\n" + "=" * 70)
             print("WARNING: NEURON import failed")
-            print("="*70)
+            print("=" * 70)
             print(f"\nError: {e}")
             print(f"NEURON home: {neuron_home}")
             print(f"NEURON bin: {neuron_bin}")
             print("\nInstallation will continue without compiling NEURON mechanisms")
             print("You can compile them later by running:")
-            print("  python -c \"from myogen import _setup_myogen; _setup_myogen()\"")
-            print("="*70 + "\n")
+            print('  python -c "from myogen import _setup_myogen; _setup_myogen()"')
+            print("=" * 70 + "\n")
             return
 
         # Verify mknrndll.bat exists
@@ -267,7 +312,7 @@ class BuildWithNMODL(build_py):
                 capture_output=True,
                 text=True,
                 check=True,
-                env=env  # Use modified environment
+                env=env,  # Use modified environment
             )
         finally:
             os.chdir(original_dir)
@@ -275,11 +320,7 @@ class BuildWithNMODL(build_py):
     def _compile_nmodl_unix(self, nmodl_path):
         """Compile NMODL on Unix-like systems."""
         subprocess.run(
-            ["nrnivmodl", "."],
-            cwd=nmodl_path,
-            capture_output=True,
-            text=True,
-            check=True
+            ["nrnivmodl", "."], cwd=nmodl_path, capture_output=True, text=True, check=True
         )
 
 
@@ -288,37 +329,37 @@ extensions = [
     Extension(
         "myogen.simulator.neuron._cython._spindle",
         ["myogen/simulator/neuron/_cython/_spindle.pyx"],
-        extra_compile_args=["-O3"],
+        extra_compile_args=["-O2"],
         include_dirs=[np.get_include()],
     ),
     Extension(
         "myogen.simulator.neuron._cython._hill",
         ["myogen/simulator/neuron/_cython/_hill.pyx"],
-        extra_compile_args=["-O3"],
+        extra_compile_args=["-O2"],
         include_dirs=[np.get_include()],
     ),
     Extension(
         "myogen.simulator.neuron._cython._gto",
         ["myogen/simulator/neuron/_cython/_gto.pyx"],
-        extra_compile_args=["-O3"],
+        extra_compile_args=["-O2"],
         include_dirs=[np.get_include()],
     ),
     Extension(
         "myogen.simulator.neuron._cython._poisson_process_generator",
         ["myogen/simulator/neuron/_cython/_poisson_process_generator.pyx"],
-        extra_compile_args=["-O3"],
+        extra_compile_args=["-O2"],
         include_dirs=[np.get_include()],
     ),
     Extension(
         "myogen.simulator.neuron._cython._gamma_process_generator",
         ["myogen/simulator/neuron/_cython/_gamma_process_generator.pyx"],
-        extra_compile_args=["-O3"],
+        extra_compile_args=["-O2"],
         include_dirs=[np.get_include()],
     ),
     Extension(
         "myogen.simulator.neuron._cython._simulate_fiber",
         ["myogen/simulator/neuron/_cython/_simulate_fiber.pyx"],
-        extra_compile_args=["-O3"],
+        extra_compile_args=["-O2"],
         include_dirs=[np.get_include()],
     ),
 ]
@@ -326,10 +367,10 @@ extensions = [
 setup(
     ext_modules=cythonize(
         extensions,
-        compiler_directives={"embedsignature": True, "language_level": "3"},
+        compiler_directives={"embedsignature": True, "language_level": "2"},
         nthreads=4,
     ),
     cmdclass={
-        'build_py': BuildWithNMODL,
+        "build_py": BuildWithNMODL,
     },
 )
