@@ -248,6 +248,7 @@ class SimulationRunner:
         h.celsius = self._temperature__celsius
         h.tstop = duration__ms
         h.dt = timestep__ms
+        h.secondorder = 2  # Use Crank-Nicolson for better accuracy and speed
 
         # Calculate total steps for progress bar
         self._total_steps = int(duration__ms / timestep__ms)

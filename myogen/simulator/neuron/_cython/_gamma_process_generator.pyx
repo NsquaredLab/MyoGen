@@ -60,8 +60,9 @@ cdef class _GammaProcessGenerator__Cython:
         self.spk = 0
         self.state = seed if seed != 0 else <uint64_t>0xDEADBEEFCAFEBABE
 
-        # Generate first Gamma threshold
-        self.thres = self._rand_gamma()
+        # Generate first Gamma threshold (normalized so mean=1 regardless of shape)
+        # This ensures firing rate matches input Hz while shape controls CV
+        self.thres = self._rand_gamma() / self.shape
 
     cdef double _rand_uniform(self):
         """
@@ -195,6 +196,8 @@ cdef class _GammaProcessGenerator__Cython:
         if self.yi >= self.thres:
             self.spk = 1
             self.yi = 0.0
-            self.thres = self._rand_gamma()
+            # Normalize threshold so mean=1 regardless of shape
+            # Shape controls CV (1/sqrt(shape)) while mean firing rate matches input
+            self.thres = self._rand_gamma() / self.shape
 
         return self.spk

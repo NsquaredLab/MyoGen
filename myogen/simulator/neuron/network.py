@@ -22,6 +22,10 @@ from myogen.simulator.neuron.populations import (
 from myogen.utils.decorators import beartowertype
 from myogen.utils.types import Quantity__mV, Quantity__ms, Quantity__uS
 
+# Reversal potential threshold to distinguish excitatory vs inhibitory synapses
+# Synapses with reversal potential below this value are considered inhibitory
+INHIBITORY_REVERSAL_THRESHOLD = -40.0  # mV
+
 # Network Constants
 MOTOR_NEURON_CONNECTION = "aMN->Muscle"
 
@@ -30,6 +34,55 @@ DEFAULT_SPIKE_THRESHOLD = -10.0 * pq.mV  # mV
 DEFAULT_SYNAPTIC_DELAY = 1.0 * pq.ms  # ms
 EXTERNAL_INPUT_LABEL = "Spindle"
 EXTERNAL_TARGET_LABEL = "Muscle"
+
+
+def _select_synapse(target_neuron, inhibitory: bool = False):
+    """
+    Select appropriate synapse from target neuron based on connection type.
+
+    For neurons with multiple synapse types (e.g., motor neurons with both
+    excitatory and inhibitory synapses), this function selects the appropriate
+    synapse based on the desired connection type.
+
+    Parameters
+    ----------
+    target_neuron : neuron object
+        Target neuron with synapse__list attribute
+    inhibitory : bool, optional
+        If True, select an inhibitory synapse (reversal < -40 mV).
+        If False, select an excitatory synapse (reversal >= -40 mV).
+        Default is False (excitatory).
+
+    Returns
+    -------
+    synapse object
+        Selected synapse from target neuron's synapse list
+    """
+    synapse_list = target_neuron.synapse__list
+
+    if len(synapse_list) == 1:
+        # Only one synapse, use it regardless of type
+        return synapse_list[0]
+
+    # Filter synapses by type based on reversal potential
+    if inhibitory:
+        # Select synapses with reversal potential below threshold (inhibitory)
+        matching_synapses = [
+            syn for syn in synapse_list
+            if hasattr(syn, 'e') and syn.e < INHIBITORY_REVERSAL_THRESHOLD
+        ]
+    else:
+        # Select synapses with reversal potential at or above threshold (excitatory)
+        matching_synapses = [
+            syn for syn in synapse_list
+            if hasattr(syn, 'e') and syn.e >= INHIBITORY_REVERSAL_THRESHOLD
+        ]
+
+    if matching_synapses:
+        return RANDOM_GENERATOR.choice(matching_synapses)
+    else:
+        # Fallback to random selection if no matching synapses found
+        return RANDOM_GENERATOR.choice(synapse_list)
 
 
 # Helper functions for create_netcon
@@ -182,6 +235,7 @@ def _connect_population_to_population(
     populations: dict,
     connection_probability: float,
     deterministic: bool = False,
+    inhibitory: bool = False,
     **kwargs,
 ) -> list:
     """
@@ -196,6 +250,9 @@ def _connect_population_to_population(
     deterministic : bool, optional
         If True, each source neuron connects to exactly int(connection_probability × n_targets)
         randomly selected target neurons. If False, uses probabilistic sampling. Default False.
+    inhibitory : bool, optional
+        If True, connect to inhibitory synapses on target neurons (reversal < -40 mV).
+        If False, connect to excitatory synapses (reversal >= -40 mV). Default False.
     """
     connections = []
     target_neurons = populations[target_pop]
@@ -211,7 +268,7 @@ def _connect_population_to_population(
             )
 
             for target_neuron in selected_targets:
-                target_synapse = RANDOM_GENERATOR.choice(target_neuron.synapse__list)
+                target_synapse = _select_synapse(target_neuron, inhibitory=inhibitory)
                 netcon = _create_netcon(
                     source_neuron,
                     target_synapse,
@@ -233,7 +290,7 @@ def _connect_population_to_population(
         for source_neuron in populations[source_pop]:
             for target_neuron in target_neurons:
                 if RANDOM_GENERATOR.uniform() < connection_probability:
-                    target_synapse = RANDOM_GENERATOR.choice(target_neuron.synapse__list)
+                    target_synapse = _select_synapse(target_neuron, inhibitory=inhibitory)
                     netcon = _create_netcon(
                         source_neuron,
                         target_synapse,
@@ -307,6 +364,7 @@ def _connect_one_to_one(
     target_pop: str,
     populations: dict,
     connection_probability: float = 1.0,
+    inhibitory: bool = False,
     **kwargs,
 ) -> list:
     """
@@ -327,6 +385,9 @@ def _connect_one_to_one(
     connection_probability : float, optional
         Probability that each source[i] -> target[i] connection is made, by default 1.0.
         Must be between 0.0 and 1.0.
+    inhibitory : bool, optional
+        If True, connect to inhibitory synapses on target neurons (reversal < -40 mV).
+        If False, connect to excitatory synapses (reversal >= -40 mV). Default False.
     **kwargs
         Additional keyword arguments passed to _create_netcon:
         - muscle_callback: Muscle activation callback
@@ -371,7 +432,7 @@ def _connect_one_to_one(
     for source_neuron, target_neuron in zip(source_neurons, target_neurons):
         # Check if this pair should be connected
         if RANDOM_GENERATOR.uniform() < connection_probability:
-            target_synapse = RANDOM_GENERATOR.choice(target_neuron.synapse__list)
+            target_synapse = _select_synapse(target_neuron, inhibitory=inhibitory)
             netcon = _create_netcon(
                 source_neuron,
                 target_synapse,
@@ -404,6 +465,7 @@ def _connect_populations(
     synaptic_weight: Optional[float] = None,
     spike_threshold: Optional[float] = None,
     deterministic: bool = False,
+    inhibitory: bool = False,
 ):
     """
     Create probabilistic network connections between neural populations.
@@ -500,6 +562,7 @@ def _connect_populations(
         "synaptic_weight": synaptic_weight,
         "spike_threshold": spike_threshold,
         "deterministic": deterministic,
+        "inhibitory": inhibitory,
     }
 
     # Route to appropriate connection type function
@@ -893,6 +956,7 @@ class Network:
         delay__ms: Quantity__ms = DEFAULT_SYNAPTIC_DELAY,
         threshold__mV: Quantity__mV = DEFAULT_SPIKE_THRESHOLD,
         deterministic: bool = False,
+        inhibitory: bool = False,
     ) -> list:
         """
         Connect two neural populations with specified parameters.
@@ -916,6 +980,10 @@ class Network:
         deterministic : bool, optional
             If True, each source neuron connects to exactly int(probability × n_targets) randomly
             selected target neurons. If False, uses probabilistic sampling. Default False.
+        inhibitory : bool, optional
+            If True, connect to inhibitory synapses on target neurons (reversal < -40 mV).
+            If False, connect to excitatory synapses (reversal >= -40 mV). Default False.
+            Use inhibitory=True for connections from inhibitory interneurons (e.g., gII→aMN, gIb→aMN).
 
         Returns
         -------
@@ -958,6 +1026,7 @@ class Network:
             id_vector=id_vector,
             spike_vector=spike_vector,
             deterministic=deterministic,
+            inhibitory=inhibitory,
         )
 
         self.connections.append(
@@ -969,6 +1038,7 @@ class Network:
                 "weight__uS": weight_value,
                 "delay__ms": delay_value,
                 "threshold__mV": threshold_value,
+                "inhibitory": inhibitory,
             }
         )
         self._netcons_by_connection[(source, target)] = netcons
@@ -1121,6 +1191,7 @@ class Network:
         weight__uS: Quantity__uS = DEFAULT_SYNAPTIC_WEIGHT,
         delay__ms: Quantity__ms = DEFAULT_SYNAPTIC_DELAY,
         threshold__mV: Quantity__mV = DEFAULT_SPIKE_THRESHOLD,
+        inhibitory: bool = False,
     ) -> list:
         """
         Connect two neural populations with one-to-one mapping.
@@ -1145,6 +1216,9 @@ class Network:
             Synaptic delay in milliseconds, by default 1.0.
         threshold__mV : Quantity__mV, optional
             Spike threshold in millivolts, by default -10.0.
+        inhibitory : bool, optional
+            If True, connect to inhibitory synapses on target neurons (reversal < -40 mV).
+            If False, connect to excitatory synapses (reversal >= -40 mV). Default False.
 
         Returns
         -------
@@ -1195,6 +1269,7 @@ class Network:
             spike_threshold=threshold_value,
             id_vector=id_vector,
             spike_vector=spike_vector,
+            inhibitory=inhibitory,
         )
 
         self.connections.append(
@@ -1206,6 +1281,7 @@ class Network:
                 "weight__uS": weight_value,
                 "delay__ms": delay_value,
                 "threshold__mV": threshold_value,
+                "inhibitory": inhibitory,
             }
         )
         self._netcons_by_connection[(source, target)] = netcons
@@ -1386,7 +1462,7 @@ if __name__ == "__main__":
 
     # Add connections with clean API using unit conventions
     network.connect("Ia", "aMN", probability=0.9, weight__uS=0.6)
-    network.connect("gII", "aMN", probability=0.9, weight__uS=0.3)
+    network.connect("gII", "aMN", probability=0.9, weight__uS=0.3, inhibitory=True)  # Inhibitory interneuron
     network.connect_to_muscle("aMN", muscle=None, activation_callback=foo, weight__uS=1.0)
     network.connect_from_external("spindle", "Ia", weight__uS=0.8)
 

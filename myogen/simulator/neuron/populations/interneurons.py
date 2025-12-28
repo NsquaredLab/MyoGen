@@ -68,7 +68,7 @@ class GII__Pool(_Pool):
         kdrrl_conductance_range: tuple[float, float] = (0.015, 0.015),
         mahp_ca_conductance_range: tuple[float, float] = (3e-6, 3e-6),
         mahp_k_conductance_range: tuple[float, float] = (5e-4, 5e-4),
-        mahp_tau_range: tuple[float, float] = (60, 60),
+        mahp_tau_range: tuple[float, float] = (60, 70),
         gh_conductance_range: tuple[float, float] = (2.5e-5, 2.5e-5),
         axon_velocities: tuple[float, float] = (10, 10),
         axon_length: float = 0.05,

@@ -670,7 +670,7 @@ class AlphaMN__Pool(_Pool):
             cell.soma.gMax_kdrRL = sgMax_kdrRL[i]
             cell.soma.gcamax_mAHP = sgcamax_mAHP[i]
             cell.soma.gkcamax_mAHP = sgkcamax_mAHP[i]
-            cell.soma.taur_mAHP = staur_mAHP[i]
+            cell.soma.tau_mAHP = staur_mAHP[i]
             cell.soma.ghbar_gh = sghbar_gh[i]
 
             # Set dendrite parameters

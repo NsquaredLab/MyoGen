@@ -212,8 +212,9 @@ class _Cell:
         syn = h.Exp2Syn(synapse_location(0.5))
         syn.tau1 = rise_time_constant__ms
         syn.tau2 = decay_time_constant__ms
-        if hasattr(self, "model") and self.model == "NERLab":
-            syn.e = 70
+        # Set reversal potential: NERLab default only applies when reversal_potential is default (0 mV)
+        if hasattr(self, "model") and self.model == "NERLab" and reversal_potential__mV == 0 * pq.mV:
+            syn.e = 70  # NERLab excitatory default
         else:
             syn.e = reversal_potential__mV
         self.synapse__list.append(syn)  # synapse__list is defined in Cell
@@ -520,7 +521,7 @@ class DD_Gamma(_Cell, _GammaProcessGenerator__Cython):
 
 
 @beartowertype
-class AffIa(_Cell, _PoissonProcessGenerator__Cython):
+class AffIa(_Cell, _GammaProcessGenerator__Cython):
     """
     Primary muscle spindle afferent (Ia afferent) with recruitment threshold.
 
@@ -529,6 +530,7 @@ class AffIa(_Cell, _PoissonProcessGenerator__Cython):
     to homonymous motor neurons (stretch reflex) and disynaptic inhibition to
     antagonist motor neurons via Ia inhibitory interneurons.
 
+    Uses Gamma renewal point process with shape parameter controlling ISI regularity.
     The firing rate follows a recruitment threshold model where the afferent
     only fires when the input signal exceeds its recruitment threshold (RT).
     Individual variability in firing patterns is introduced through a random
@@ -585,12 +587,11 @@ class AffIa(_Cell, _PoissonProcessGenerator__Cython):
         self.IFR = RANDOM_GENERATOR.normal(5, 2.5)  # Individual variability
 
         _Cell.__init__(self, class__ID if class__ID is not None else next(self._ids2), pool__ID)
-        _PoissonProcessGenerator__Cython.__init__(
+        _GammaProcessGenerator__Cython.__init__(
             self,
             seed=SEED + (self.class__ID + 1) * (self.global__ID + 1),
-            N=N,
+            shape=N,  # Shape parameter controls ISI CV = 1/sqrt(N)
             dt=timestep__ms.magnitude,
-            Ninit=initN,
         )
 
     def integrate(self, y):
@@ -622,6 +623,8 @@ class AffII(AffIa):
     Ia afferents. These afferents contribute to postural reflexes and provide
     input to Group II interneurons in spinal reflex circuits.
 
+    Uses Gamma renewal point process (inherited from AffIa) with lower ISI CV
+    (3.6% vs 8.3%) reflecting more regular firing patterns.
     Inherits all functional properties from AffIa but with distinct class
     identification for network connectivity. Typically have higher recruitment
     thresholds and lower maximum firing rates compared to Ia afferents.
@@ -662,6 +665,8 @@ class AffIb(AffIa):
     inhibitory connections via Ib interneurons, contributing to force
     regulation and preventing excessive muscle tension.
 
+    Uses Gamma renewal point process (inherited from AffIa) with ISI CV of 8.3%,
+    matching Group I afferent regularity.
     Uses the same computational model as muscle spindle afferents but with
     distinct class identification. In physiological applications, the input
     signal represents muscle force rather than length.
@@ -765,8 +770,10 @@ class AlphaMN(_Cell):
         self.model = model
         super().__init__(class__ID=self._class__ID, pool__ID=pool__ID, *args, **kwargs)
 
+        # Create both excitatory and inhibitory synapses on dendrites
         for d in self.dend:
-            self.create_synapses(d)
+            self.create_synapses(d)  # Excitatory (reversal = 0 mV)
+            self.create_synapses(d, reversal_potential__mV=-75 * pq.mV)  # Inhibitory (GABA)
 
     def _create_sections(self):
         """
@@ -942,7 +949,7 @@ class AlphaMN(_Cell):
                 # Calcium-dependent potassium (mAHP)
                 self.soma.gcamax_mAHP = 6.4e-06
                 self.soma.gkcamax_mAHP = 0.00045
-                self.soma.taur_mAHP = 90.0
+                self.soma.tau_mAHP = 90.0  # Ca²⁺ removal time constant (ms)
                 self.soma.ek = -80.0
 
                 # H-current (gh)
