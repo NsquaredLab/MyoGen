@@ -2,7 +2,7 @@
 Generate Publication-Quality Figures and Analysis Plots
 ========================================================
 
-This example generates **publication-quality figures** for the Watanabe et al. (2015)
+This example generates **publication-quality figures** for the Watanabe and Kohn (2015)
 spinal network model reproduction. It creates comprehensive visualizations including
 coherence analysis, force timeseries, and detailed raster plots.
 

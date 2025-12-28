@@ -1,6 +1,6 @@
 .. _watanabe-reproduction:
 
-Watanabe and Kohn (2015)
+ Watanabe and Kohn (2015)
 ======================
 
 Reproduces findings from:

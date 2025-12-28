@@ -60,7 +60,7 @@ force output using the Fuglevand force model with batched processing for memory 
 
 **Use Case**: Generate realistic muscle force output from motor neuron spike trains
 for biomechanical analysis, force-EMG relationship studies, and validation against
-experimental force recordings from Watanabe et al. (2015).
+experimental force recordings from Watanabe and Kohn (2015).
 
 **Workflow Position**: Step 5 of 6
 

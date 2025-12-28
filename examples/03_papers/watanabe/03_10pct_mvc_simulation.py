@@ -1,8 +1,8 @@
 """
-Watanabe Spinal Network Simulation with Optimized DC Offset
+Spinal Network Simulation with Optimized DC Offset
 ============================================================
 
-This example runs the Watanabe et al. (2015) spinal network simulation using:
+This example runs the Watanabe and Kohn (2015) spinal network simulation using:
 - Constant drive (Phase 1) - baseline from script 01
 - Constant + oscillation (Phase 2) - oscillation added to baseline
 - Optimized DC + oscillation (Phase 3) - DC offset matches Phase 1 force
@@ -10,7 +10,7 @@ This example runs the Watanabe et al. (2015) spinal network simulation using:
 .. note::
     **Simulation Phases** (5 seconds each):
 
-    - **Phase 1**: Constant drive (Watanabe baseline, e.g., 40-65 Hz)
+    - **Phase 1**: Constant drive (baseline, e.g., 40-65 Hz)
     - **Phase 2**: Constant + 20*sin(20Hz) (oscillation added to baseline)
     - **Phase 3**: Optimized DC + 20*sin(20Hz) (DC offset matches Phase 1 force)
 
@@ -22,7 +22,7 @@ This example runs the Watanabe et al. (2015) spinal network simulation using:
 
 **Scientific Context**: Demonstrates how shared descending drive creates motor unit
 synchronization, while independent noise reduces it. Phase 3 uses lower DC offset than
-Phase 1 (like Watanabe's 58 < 65) because oscillation contributes additional activation.
+Phase 1 (e.g., 58 < 65) because oscillation contributes additional activation.
 
 **MyoGen Components Used**:
 
@@ -54,8 +54,8 @@ Phase 1 (like Watanabe's 58 < 65) because oscillation contributes additional act
   Essential for 15-second simulations with 800+ neurons.
 
 **Key Concept**: The ratio of shared vs independent input determines motor unit
-synchronization. Watanabe showed that 20 Hz cortical oscillations are transmitted
-through the spinal network and can be detected in EMG coherence spectra.
+synchronization.  Watanabe and Kohn (2015) showed that 20 Hz cortical oscillations are
+transmitted through the spinal network and can be detected in EMG coherence spectra.
 
 **Workflow Position**: Step 3 of 6
 
@@ -113,8 +113,7 @@ dc_offset_file = _script_dir / "results" / "watanabe_optimization" / "dc_offset_
 
 if not dc_offset_file.exists():
     raise FileNotFoundError(
-        f"Optimized DC offset not found: {dc_offset_file}\n"
-        f"Run 02_optimize_oscillating_dc.py first!"
+        f"Optimized DC offset not found: {dc_offset_file}\nRun 02_optimize_oscillating_dc.py first!"
     )
 
 with open(dc_offset_file) as f:
@@ -134,7 +133,9 @@ print("\nOriginal Watanabe values:")
 print("  Phase 1: 65 pps")
 print("  Phase 2: 65 + 20*sin(20Hz) pps")
 print("  Phase 3: 58 + 20*sin(20Hz) pps")
-print(f"\nOptimization ratio: {DC_OFFSET_OPTIMIZED/DD_DRIVE_CONSTANT:.3f} (Watanabe: {58/65:.3f})")
+print(
+    f"\nOptimization ratio: {DC_OFFSET_OPTIMIZED / DD_DRIVE_CONSTANT:.3f} (Watanabe: {58 / 65:.3f})"
+)
 print(f"Current setup uses {DD_DRIVE_CONSTANT:.1f} Hz baseline (configurable in script 11)")
 print("=" * 70 + "\n")
 
@@ -211,8 +212,8 @@ plt.plot(time_s, DDdrive)
 plt.xlabel("Time (s)")
 plt.ylabel("DD Drive (Hz)")
 plt.title("Descending Drive Pattern (Optimized)")
-plt.axvline(segment_duration__s, color='r', linestyle='--', alpha=0.5, label='Phase boundary')
-plt.axvline(2*segment_duration__s, color='r', linestyle='--', alpha=0.5)
+plt.axvline(segment_duration__s, color="r", linestyle="--", alpha=0.5, label="Phase boundary")
+plt.axvline(2 * segment_duration__s, color="r", linestyle="--", alpha=0.5)
 plt.legend()
 plt.grid()
 
@@ -352,9 +353,9 @@ network = Network({"DD": DD, "IN": IN, "aMN": aMN})
 #       Creates NetCon objects for external event delivery (e.g., commands).
 #
 # The ratio of shared (DD) to private (IN) input determines the degree of
-# motor unit synchronization - a key parameter in Watanabe's analysis.
+# motor unit synchronization - a key parameter in the original analysis.
 
-# DD connectivity: 30% probability (Watanabe specification)
+# DD connectivity: 30% probability (original specification)
 # This means each motor neuron receives input from ~30% of DD neurons
 DD_connectivity = 0.3
 expected_DD_per_MN = int(DD_connectivity * nDD)  # ~120 connections per MN
@@ -514,4 +515,4 @@ print(f"  Parameters: {save_path / 'watanabe_simulation_params.pkl'}")
 print(f"  Spikes: {save_path / 'watanabe_spikes.pkl'}")
 print(f"\nPhase 1 constant drive: {DD_DRIVE_CONSTANT:.2f} Hz")
 print(f"Phase 3 DC offset: {DC_OFFSET_OPTIMIZED:.2f} Hz (optimized to match Phase 1 force)")
-print(f"Ratio: {DC_OFFSET_OPTIMIZED/DD_DRIVE_CONSTANT:.3f} (Watanabe: {58/65:.3f})")
+print(f"Ratio: {DC_OFFSET_OPTIMIZED / DD_DRIVE_CONSTANT:.3f} (Watanabe: {58 / 65:.3f})")

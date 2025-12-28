@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.8.1] - 2025-12-28
+
+### Changed
+- **Dependencies**: Removed unused dependencies
+  - Removed `pyqt6` (not used in codebase)
+  - Moved `scipy-stubs` to dev dependencies only (was duplicated)
+
 ## [0.8.0] - 2025-12-28
 
 ### Added
