@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.8.2] - 2025-12-28
+
+### Added
+- **Windows Prerequisites Documentation**: Added Visual C++ Build Tools requirement to README
+  - Users must install [Visual C++ Build Tools](https://visualstudio.microsoft.com/visual-cpp-build-tools/)
+  - Required components: MSVC Build Tools for x64/x86 (Latest), MSVC v143 – VS 2022 C++ x64/x86 build tools, Windows 11 SDK (latest), C++ core desktop features
+
 ## [0.8.1] - 2025-12-28
 
 ### Changed

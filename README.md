@@ -8,7 +8,7 @@
 
   [![Documentation](https://img.shields.io/badge/docs-latest-blue.svg)](https://nsquaredlab.github.io/MyoGen/)
   [![Python 3.12+](https://img.shields.io/badge/python-3.12+-blue.svg)](https://www.python.org/downloads/)
-  [![Version](https://img.shields.io/badge/version-0.8.1-orange.svg)](https://github.com/NsquaredLab/MyoGen)
+  [![Version](https://img.shields.io/badge/version-0.8.2-orange.svg)](https://github.com/NsquaredLab/MyoGen)
 
   [Installation](https://nsquaredlab.github.io/MyoGen/#installation) •
   [Documentation](https://nsquaredlab.github.io/MyoGen/) •
@@ -51,9 +51,22 @@ MyoGen is designed for algorithm validation, hypothesis-driven research, and edu
 
 > [!CAUTION]
 >
-> ## Windows Users: Install NEURON First
+> ## Windows Users: Prerequisites
 >
-> **You MUST install NEURON before installing MyoGen on Windows.**
+> **You MUST install the following before installing MyoGen on Windows:**
+>
+> ### 1. Visual C++ Build Tools
+>
+> Download and install [Visual C++ Build Tools](https://visualstudio.microsoft.com/visual-cpp-build-tools/).
+>
+>During installation, select these components:
+>
+> - MSVC Build Tools for x64/x86 (Latest)
+> - MSVC v143 – VS 2022 C++ x64/x86 build tools
+> - Windows 11 SDK (latest)
+> - C++ core desktop features
+>
+> ### 2. NEURON Simulator
 >
 > 1. **Download**: [NEURON 8.2.6 Installer](https://github.com/neuronsimulator/nrn/releases/download/8.2.6/nrn-8.2.6.w64-mingw-py-38-39-310-311-312-setup.exe)
 > 2. **Run the installer** and select **"Add to PATH"** when prompted
