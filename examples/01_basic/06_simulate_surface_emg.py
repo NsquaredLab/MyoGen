@@ -24,6 +24,7 @@ import seaborn as sns
 from matplotlib import pyplot as plt
 
 from myogen import simulator
+from myogen.utils.neo import signal_to_grid
 from myogen.utils.types import CURRENT__AnalogSignal, SPIKE_TRAIN__Block
 
 plt.style.use("fivethirtyeight")
@@ -52,10 +53,11 @@ surface_emg_signals = surface_emg.simulate_surface_emg(spike_train__Block=spike_
 print("Surface EMG simulation completed!")
 # Access the first group (electrode array) and first segment (pool)
 first_emg_signal = surface_emg_signals.groups[0].segments[0].analogsignals[0]
-print(f"Generated EMG shape: {first_emg_signal.shape}")
+grid_shape = first_emg_signal.annotations["grid_shape"]
+print(f"Generated EMG shape: {first_emg_signal.shape} (stored as 2D for NWB compatibility)")
 print(f"  - {first_emg_signal.shape[0]} time samples")
-print(f"  - {first_emg_signal.shape[1]} electrode rows")
-print(f"  - {first_emg_signal.shape[2]} electrode columns")
+print(f"  - {grid_shape[0]} electrode rows")
+print(f"  - {grid_shape[1]} electrode columns")
 
 # Save the surface EMG results
 joblib.dump(surface_emg_signals, save_path / "surface_emg_signals.pkl")
@@ -80,7 +82,9 @@ plt.rcParams.update({"font.size": 24})
 fig, ax = plt.subplots(figsize=(12, 6))
 
 # Get EMG signal from noisy surface EMG (first pool, electrode at row 2, col 2)
-emg_signal = noisy_surface_emg__Block.groups[0].segments[0].analogsignals[0][:, 2, 2].magnitude
+noisy_signal = noisy_surface_emg__Block.groups[0].segments[0].analogsignals[0]
+emg_grid = signal_to_grid(noisy_signal)  # Convert to 3D (time, rows, cols)
+emg_signal = emg_grid[:, 2, 2]
 current_signal = input_current__AnalogSignal[:, 0].magnitude
 
 # Normalize current between 0 and 1

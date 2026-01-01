@@ -20,6 +20,7 @@ import numpy as np
 import quantities as pq
 
 from myogen import simulator
+from myogen.utils.neo import signal_to_grid
 
 plt.style.use("fivethirtyeight")
 
@@ -99,16 +100,13 @@ muaps = surface_emg.simulate_muaps()
 
 
 print("MUAP simulation completed!")
-print(f"Generated MUAPs shape: {muaps.groups[0].segments[0].analogsignals[0].shape}")
+first_signal = muaps.groups[0].segments[0].analogsignals[0]
+grid_shape = first_signal.annotations["grid_shape"]
+print(f"Generated MUAPs shape: {first_signal.shape} (stored as 2D for NWB compatibility)")
 print(f"  - {len(muaps.groups[0].segments)} total motor units in muscle")
 print(f"  - {len(muscle.resulting_number_of_innervated_fibers)} MUs in muscle model")
-print(
-    "  - {} rows × {} columns electrode grid".format(
-        muaps.groups[0].segments[0].analogsignals[0].shape[1],
-        muaps.groups[0].segments[0].analogsignals[0].shape[2],
-    )
-)
-print(f"  - {muaps.groups[0].segments[0].analogsignals[0].shape[0]} time samples")
+print(f"  - {grid_shape[0]} rows × {grid_shape[1]} columns electrode grid")
+print(f"  - {first_signal.shape[0]} time samples")
 
 # Check fiber counts for the MUs we're simulating
 print("\nFiber counts for simulated MUs:")
@@ -132,9 +130,9 @@ for muap_index in range(len(muaps.groups[0].segments)):
         continue
     # Extract MUAP data from the Block object
     muap_signal = muaps.groups[0].segments[muap_index].analogsignals[0]
-    muap_data_mV = muap_signal.magnitude  # Shape: (time, rows, cols)
-
-    muap_data_uV = muap_signal.rescale(pq.uV).magnitude  # Convert to uV for plotting
+    # Convert to 3D grid format (time, rows, cols)
+    muap_data_mV = signal_to_grid(muap_signal)
+    muap_data_uV = signal_to_grid(muap_signal.rescale(pq.uV))  # Convert to uV for plotting
 
     # Print amplitude diagnostics
     print(f"\nMUAP {muap_index} amplitude range:")
@@ -142,8 +140,8 @@ for muap_index in range(len(muaps.groups[0].segments)):
     print(f"\tMax: {np.max(muap_data_mV):.6f} mV ({np.max(muap_data_uV):.2f} uV)")
     print(f"\tPeak-to-peak: {np.ptp(muap_data_mV):.6f} mV ({np.ptp(muap_data_uV):.2f} uV)")
 
-    # Get grid dimensions
-    n_rows, n_cols = muap_data_uV.shape[1], muap_data_uV.shape[2]
+    # Get grid dimensions from annotations
+    n_rows, n_cols = muap_signal.annotations["grid_shape"]
 
     # Create subplot grid matching electrode layout
     fig, axs = plt.subplots(

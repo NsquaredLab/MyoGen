@@ -7,6 +7,32 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.8.3] - 2026-01-01
+
+### Added
+- **NWB Export Support**: New utilities for exporting simulation data to Neurodata Without Borders (NWB) format
+  - Added `myogen.utils.nwb` module with `export_to_nwb()`, `export_simulation_to_nwb()`, and `validate_nwb()` functions
+  - New optional dependency group `[nwb]` with `pynwb>=2.8.0` and `nwbinspector>=0.5.0`
+  - Example script `13_load_and_inspect_nwb_data.py` demonstrating NWB export and loading
+- **Grid Signal Utilities**: New `myogen.utils.neo` module for grid-annotated signals
+  - `create_grid_signal()`: Create NWB-compatible AnalogSignals with grid metadata in annotations
+  - `signal_to_grid()`: Convert 2D signals back to 3D grid format for analysis
+
+### Changed
+- **Grid Signal Storage**: Electrode array signals now stored as 2D (time, n_electrodes) for NWB compatibility
+  - Grid structure preserved in signal annotations (`grid_shape`, `electrode_positions`, `ied`)
+  - Use `signal_to_grid()` to convert back to 3D (time, rows, cols) for analysis
+- **Neo Signal Naming**: Improved signal naming conventions for NWB compatibility
+  - AnalogSignal names now follow NWB-compliant patterns
+
+### Fixed
+- **Sphinx Gallery NEURON State**: Added `reset_neuron()` function to reset NEURON state between examples
+  - Fixes "works on second run" issue caused by HOC state persistence
+- **Example Scripts**: Updated examples to use new grid signal API
+  - `05_simulate_surface_muaps.py`: Use `signal_to_grid()` for 3D grid access
+  - `06_simulate_surface_emg.py`: Access grid dimensions from annotations
+  - `12_extract_data_from_neo_blocks.py`: Use `signal_to_grid()` for grid analysis
+
 ## [0.8.2] - 2025-12-28
 
 ### Added
