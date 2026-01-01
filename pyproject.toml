@@ -4,7 +4,7 @@ version = "0.8.2"
 description = "Modular and extensible neuromuscular simulation framework for generating physiologically grounded motor-unit activity, muscle force, and EMG signals (surface and intramuscular)"
 readme = "README.md"
 requires-python = ">=3.12"
-license = {text = "AGPL-3.0-or-later"}
+license = "AGPL-3.0-or-later"
 authors = [
     {name = "Raul C. Sîmpetru", email = "raul.simpetru@fau.de"},
     {name = "Renato Naville Watanabe", email = "renato.navillewatanabe@gmail.com"},
@@ -16,7 +16,6 @@ keywords = ["EMG", "electromyography", "neuromuscular", "simulation", "motor-uni
 classifiers = [
     "Development Status :: 4 - Beta",
     "Intended Audience :: Science/Research",
-    "License :: OSI Approved :: GNU Affero General Public License v3 or later (AGPLv3+)",
     "Operating System :: POSIX :: Linux",
     "Operating System :: MacOS",
     "Operating System :: Microsoft :: Windows",
@@ -51,6 +50,12 @@ dependencies = [
     "viziphant>=0.4.0",
 ]
 
+[project.optional-dependencies]
+nwb = [
+    "pynwb>=2.8.0",
+    "nwbinspector>=0.5.0",
+]
+
 [project.urls]
 Homepage = "https://nsquaredlab.github.io/MyoGen/"
 Documentation = "https://nsquaredlab.github.io/MyoGen/"
@@ -83,6 +88,9 @@ docs = [
     "sphinx-hoverxref>=1.4.1",
     "sphinxcontrib-mermaid>=1.0.0",
     "toml>=0.10.2",
+    # NWB support for examples
+    "pynwb>=2.8.0",
+    "nwbinspector>=0.5.0",
 ]
 
 [tool.poe.tasks]
