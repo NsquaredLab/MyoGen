@@ -383,20 +383,22 @@ class SimulationRunner:
                     if len(times_for_id) > 0:
                         segment.spiketrains.append(
                             SpikeTrain(
-                                name=str(int(spike_id)),
+                                name=f"{pop_name}_cell{int(spike_id)}_spikes",
                                 times=(times_for_id * pq.ms).rescale(pq.s),
                                 t_start=0.0 * pq.s,
                                 t_stop=duration__ms.rescale(pq.s),
                                 sampling_rate=(1.0 / timestep__ms.rescale(pq.s)).rescale(pq.Hz),
+                                cell_idx=int(spike_id),  # Store in annotations
                             )
                         )
 
             for cell_idx, vector in self._trace_vectors.get(pop_name, {}).items():
                 segment.analogsignals.append(
                     AnalogSignal(
-                        name=str(cell_idx),
+                        name=f"{pop_name}_cell{cell_idx}_Vm",
                         sampling_period=timestep__ms.rescale(pq.s),
                         signal=vector * pq.mV,
+                        cell_idx=cell_idx,  # Store in annotations for easy access
                     )
                 )
 
@@ -412,9 +414,10 @@ class SimulationRunner:
                 if hasattr(attr_value, "__iter__"):
                     segment.analogsignals.append(
                         AnalogSignal(
-                            name=attr_name,
+                            name=f"{model_name}_{attr_name}",
                             sampling_period=timestep__ms.rescale(pq.s),
                             signal=attr_value * pq.dimensionless,
+                            attr_name=attr_name,  # Store original name in annotations
                         )
                     )
                 elif isinstance(attr_value, (int, float, str)):

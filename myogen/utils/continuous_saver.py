@@ -192,7 +192,16 @@ class ContinuousSaver:
                         ids_list = []
 
                         for st in seg.spiketrains:
-                            neuron_id = int(st.name)
+                            # Get cell_idx from annotations or parse from name
+                            neuron_id = st.annotations.get("cell_idx")
+                            if neuron_id is None:
+                                # Fallback: parse from "pop_name_cellN_spikes" format
+                                if "_cell" in st.name:
+                                    cell_part = st.name.split("_cell")[-1]
+                                    # Remove any suffix like "_spikes"
+                                    neuron_id = int(cell_part.split("_")[0])
+                                else:
+                                    neuron_id = int(st.name)
                             spike_times = st.times.rescale("ms").magnitude
                             times_list.extend(spike_times)
                             ids_list.extend([neuron_id] * len(spike_times))

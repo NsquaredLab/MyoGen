@@ -216,7 +216,17 @@ def plot_membrane_potentials(
 
         # Plot traces for requested cell indices
         for signal in segment.analogsignals:
-            cell_id = int(signal.name)
+            # Get cell_idx from annotations (preferred) or parse from name
+            cell_id = signal.annotations.get("cell_idx")
+            if cell_id is None:
+                # Fallback: parse from "pop_name_cellN_Vm" or "pop_name_cellN" format
+                if "_cell" in signal.name:
+                    # Extract the number after "_cell" and before any suffix
+                    cell_part = signal.name.split("_cell")[-1]
+                    # Remove any suffix like "_Vm"
+                    cell_id = int(cell_part.split("_")[0])
+                else:
+                    cell_id = int(signal.name)
             if cell_id in cell_indices:
                 times = signal.times.rescale("ms").magnitude
                 voltage = signal.magnitude.flatten()
@@ -326,7 +336,8 @@ def plot_muscle_dynamics(
 
     # Extract muscle signals from analog signals
     for signal in muscle_segment.analogsignals:
-        signal_name = signal.name
+        # Use attr_name annotation if available, otherwise fall back to signal name
+        signal_name = signal.annotations.get("attr_name", signal.name)
         signal_array = signal.magnitude.flatten()
 
         if signal_name == "muscle_length" and "L" in include_signals:
@@ -493,10 +504,14 @@ def plot_antagonist_muscle_comparison(
     extensor_data = {}
 
     for signal in flexor_segment.analogsignals:
-        flexor_data[signal.name] = signal.magnitude.flatten()
+        # Use attr_name annotation if available, otherwise fall back to signal name
+        attr_name = signal.annotations.get("attr_name", signal.name)
+        flexor_data[attr_name] = signal.magnitude.flatten()
 
     for signal in extensor_segment.analogsignals:
-        extensor_data[signal.name] = signal.magnitude.flatten()
+        # Use attr_name annotation if available, otherwise fall back to signal name
+        attr_name = signal.annotations.get("attr_name", signal.name)
+        extensor_data[attr_name] = signal.magnitude.flatten()
 
     # Apply time range filter
     plot_time = time
@@ -666,14 +681,16 @@ def plot_spindle_dynamics(
         for seg in results.segments:
             if seg.name == muscle_name:
                 for signal in seg.analogsignals:
-                    if signal.name == "muscle_length":
+                    attr_name = signal.annotations.get("attr_name", signal.name)
+                    if attr_name == "muscle_length":
                         spindle_data["L"] = (signal.magnitude.flatten(), "Length [L0]")
                         break
                 break
 
     # Extract spindle-specific signals
     for signal in spindle_segment.analogsignals:
-        signal_name = signal.name
+        # Use attr_name annotation if available, otherwise fall back to signal name
+        signal_name = signal.annotations.get("attr_name", signal.name)
         signal_array = signal.magnitude
 
         if signal_name == "bag1_activation":
@@ -884,14 +901,16 @@ def plot_gto_dynamics(
         for seg in results.segments:
             if seg.name == muscle_name:
                 for signal in seg.analogsignals:
-                    if signal.name == "muscle_force":
+                    attr_name = signal.annotations.get("attr_name", signal.name)
+                    if attr_name == "muscle_force":
                         gto_data["force"] = (signal.magnitude.flatten(), "Force [F0]")
                         break
                 break
 
     # Extract GTO-specific signals
     for signal in gto_segment.analogsignals:
-        if signal.name == "ib_afferent_firing__Hz" and "Ib" in include_signals:
+        attr_name = signal.annotations.get("attr_name", signal.name)
+        if attr_name == "ib_afferent_firing__Hz" and "Ib" in include_signals:
             gto_data["Ib"] = (signal.magnitude.flatten(), "Firing Rate [Hz]")
 
     # Get time vector from specified muscle segment
