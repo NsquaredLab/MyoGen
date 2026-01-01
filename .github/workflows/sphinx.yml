@@ -32,7 +32,7 @@ jobs:
         source .venv/bin/activate
         cd docs
         make clean
-        make html || make html  # Retry once if first build fails
+        make html
         cd ..
 
     - name: Deploy

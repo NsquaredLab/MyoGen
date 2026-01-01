@@ -5,6 +5,40 @@ from pathlib import Path
 import toml
 from sphinx_gallery.sorting import ExplicitOrder, FileNameSortKey
 
+
+def reset_neuron(gallery_conf, fname):
+    """
+    Reset NEURON state between Sphinx Gallery examples.
+
+    NEURON's HOC interpreter maintains global state that persists across
+    examples when they run in the same Python process. This causes examples
+    to fail on first run but succeed on subsequent runs.
+    """
+    try:
+        # Import myogen to ensure NEURON is properly initialized
+        # (myogen auto-loads mechanisms and sets up NEURON on import)
+        import myogen  # noqa: F401
+        from neuron import h
+
+        # Delete all sections to start fresh
+        for sec in list(h.allsec()):
+            h.delete_section(sec=sec)
+
+        # Load stdrun.hoc and reset time variables
+        h.load_file("stdrun.hoc")
+        h.t = 0
+        h.tstop = 0
+
+        # Clear event queues (important for NetCon/VecStim)
+        if hasattr(h, 'cvode'):
+            h.cvode.event_queue().clear()
+            # Reinitialize CVODE
+            h.cvode_active(0)
+            h.cvode_active(1)
+
+    except (ImportError, RuntimeError, LookupError, AttributeError):
+        pass  # NEURON not available or not initialized, skip reset
+
 # Setup paths
 base_dir = Path(__file__).parent.parent.parent
 sys.path.insert(0, str(base_dir))
@@ -449,7 +483,6 @@ intersphinx_mapping = {
     "matplotlib": ("https://matplotlib.org/stable/", None),
     "pandas": ("https://pandas.pydata.org/docs/", None),
     "sklearn": ("https://scikit-learn.org/stable/", None),
-    "neuroml": ("https://neuroml.readthedocs.io/en/stable/", None),
     "neo": ("https://neo.readthedocs.io/en/latest/", None),
     "beartype": ("https://beartype.readthedocs.io/en/latest/", None),
     "quantities": ("https://python-quantities.readthedocs.io/en/latest/", None),
@@ -515,6 +548,7 @@ sphinx_gallery_conf = {
     "plot_gallery": True,
     "download_all_examples": False,
     "first_notebook_cell": "%matplotlib inline",
+    "reset_modules": (reset_neuron,),  # Reset NEURON state between examples
 }
 
 # Warning suppressions
