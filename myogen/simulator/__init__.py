@@ -21,7 +21,14 @@ from myogen.simulator.neuron.joint_dynamics import JointDynamics
 from myogen.simulator.neuron.network import Network
 from myogen.simulator.neuron.proprioception import GolgiTendonOrganModel, SpindleModel
 from myogen.simulator.neuron.simulation_runner import SimulationRunner
-from myogen.utils.neo import GridAnalogSignal
+from myogen.utils.neo import (
+    create_grid_signal,
+    signal_to_grid,
+    get_electrode,
+    get_row,
+    get_column,
+    GridAnalogSignal,  # Deprecated, kept for backwards compatibility
+)
 
 __all__ = [
     "RecruitmentThresholds",
@@ -37,5 +44,11 @@ __all__ = [
     "SpindleModel",
     "GolgiTendonOrganModel",
     "JointDynamics",
-    "GridAnalogSignal",
+    # Grid signal utilities (NWB-compatible)
+    "create_grid_signal",
+    "signal_to_grid",
+    "get_electrode",
+    "get_row",
+    "get_column",
+    "GridAnalogSignal",  # Deprecated
 ]

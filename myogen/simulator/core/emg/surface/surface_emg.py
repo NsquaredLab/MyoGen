@@ -1,6 +1,6 @@
 from typing import Optional
 
-from myogen.utils.neo import GridAnalogSignal
+from myogen.utils.neo import create_grid_signal, signal_to_grid
 
 try:
     import cupy as cp
@@ -490,12 +490,13 @@ class SurfaceEMG:
                 group.segments.append(segment)
 
                 # Use actual physical duration based on fiber lengths
+                grid_shape = (output_result_shape[0], output_result_shape[1])
                 segment.analogsignals.append(
-                    GridAnalogSignal(
+                    create_grid_signal(
                         signal=np.transpose(array_result, (2, 0, 1)) * pq.mV,
-                        t_start=0 * pq.s,
-                        times=times__s * pq.s,
+                        grid_shape=grid_shape,
                         sampling_rate=effective_sampling_rate__Hz * pq.Hz,
+                        t_start=0 * pq.s,
                     )
                 )
 
@@ -582,7 +583,7 @@ class SurfaceEMG:
         block = Block()
 
         muap_data_list = [
-            np.array([seg.analogsignals[0].magnitude for seg in group.segments])
+            np.array([signal_to_grid(seg.analogsignals[0]) for seg in group.segments])
             for group in self._muaps__Block.groups
         ]
 
@@ -737,10 +738,11 @@ class SurfaceEMG:
                 segment = Segment(name=f"Pool_{pool_idx}")
                 emg_group.segments.append(segment)
 
-                # Create GridAnalogSignal for this pool's EMG data
+                # Create grid-annotated AnalogSignal for this pool's EMG data
                 segment.analogsignals.append(
-                    GridAnalogSignal(
+                    create_grid_signal(
                         signal=np.transpose(surface_emg_resampled[pool_idx], (2, 0, 1)) * pq.mV,
+                        grid_shape=(n_rows, n_cols),
                         sampling_rate=self._sampling_frequency__Hz * pq.Hz,
                     )
                 )
@@ -801,7 +803,8 @@ class SurfaceEMG:
 
                 # Get the EMG signal data
                 emg_signal = segment.analogsignals[0]
-                emg_array = emg_signal.magnitude  # Shape: (time, rows, cols)
+                grid_shape = emg_signal.annotations["grid_shape"]
+                emg_array = signal_to_grid(emg_signal)  # Shape: (time, rows, cols)
 
                 # Calculate signal power PER CHANNEL (per electrode)
                 # Mean along time axis (axis=0) gives power per spatial location
@@ -827,10 +830,11 @@ class SurfaceEMG:
                 # Add noise
                 noisy_emg = emg_array + noise
 
-                # Create new GridAnalogSignal with noise
+                # Create new grid-annotated AnalogSignal with noise
                 noisy_segment.analogsignals.append(
-                    GridAnalogSignal(
+                    create_grid_signal(
                         signal=noisy_emg * emg_signal.units,
+                        grid_shape=grid_shape,
                         t_start=emg_signal.t_start,
                         sampling_rate=emg_signal.sampling_rate,
                     )
