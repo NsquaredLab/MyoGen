@@ -125,6 +125,7 @@ from myogen.simulator.neuron.proprioception import (
     SpindleModel,
 )
 from myogen.simulator.neuron.simulation_runner import SimulationRunner
+from myogen.utils.nwb import export_to_nwb
 from myogen.utils.plotting import (
     plot_gto_dynamics,
     plot_membrane_potentials,
@@ -830,6 +831,50 @@ print("\nNote: Intrafusal fiber tensions [FU] are in spinal_network_results.pkl"
 print("\tAccess via: results.segments[0].analogsignals (look for 'intrafusal_tensions')")
 print("\tConvert to real units: T[N] ≈ T[FU] * scaling_factor (no standard conversion)")
 print(f"\tMusculotendon force capacity: {hill_muscle.F0:.1f} N")
+
+##############################################################################
+# Export to NWB Format (Neurodata Without Borders)
+# ------------------------------------------------
+#
+# NWB is a standardized data format for neurophysiology data that enables
+# data sharing and interoperability with other neuroscience tools.
+# MyoGen supports NWB export for integration with the broader neuroscience
+# ecosystem, including tools like the DANDI Archive.
+
+# Export the Neo Block results to NWB format
+nwb_filepath = export_to_nwb(
+    results,
+    save_path / "spinal_network_results.nwb",
+    session_description=(
+        "MyoGen spinal network simulation with systematic tendon tap protocol. "
+        "Two-phase design: (1) Reflex gain modulation with varying gamma drive, "
+        "(2) Reflex-voluntary interaction with sinusoidal cortical drive."
+    ),
+    experimenter="MyoGen Simulation",
+    institution="MyoGen Framework",
+    lab="Neuromuscular Simulation",
+    experiment_description=(
+        f"5-second simulation with {naMN} motor neurons, "
+        f"{nIa} Ia afferents, {nII} II afferents, {nIb} Ib afferents, "
+        f"and {ngII + ngIb} spinal interneurons. "
+        f"Includes Hill-type muscle model and closed-loop joint dynamics."
+    ),
+    keywords=[
+        "MyoGen",
+        "spinal network",
+        "motor neuron",
+        "stretch reflex",
+        "tendon tap",
+        "proprioception",
+        "EMG simulation",
+    ],
+    # Subject metadata for DANDI compliance
+    subject_id="simulated_subject_001",
+    species="Homo sapiens",
+    subject_description="Simulated human motor neuron pool and spinal reflex network",
+)
+print(f"\n(OK) Exported to NWB format: {nwb_filepath}")
+print("\tNWB files can be validated with: nwbinspector <filepath>")
 
 ##############################################################################
 # Comprehensive Results Visualization

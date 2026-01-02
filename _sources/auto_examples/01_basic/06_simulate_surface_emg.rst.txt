@@ -33,7 +33,7 @@ After having created the **MUAPs**, we can finally simulate the **surface EMG** 
 Import Libraries
 -----------------
 
-.. GENERATED FROM PYTHON SOURCE LINES 18-31
+.. GENERATED FROM PYTHON SOURCE LINES 18-32
 
 .. code-block:: Python
 
@@ -46,6 +46,7 @@ Import Libraries
     from matplotlib import pyplot as plt
 
     from myogen import simulator
+    from myogen.utils.neo import signal_to_grid
     from myogen.utils.types import CURRENT__AnalogSignal, SPIKE_TRAIN__Block
 
     plt.style.use("fivethirtyeight")
@@ -57,13 +58,13 @@ Import Libraries
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 32-35
+.. GENERATED FROM PYTHON SOURCE LINES 33-36
 
 Load Necessary Models
 ----------------------------
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 35-44
+.. GENERATED FROM PYTHON SOURCE LINES 36-45
 
 .. code-block:: Python
 
@@ -83,14 +84,14 @@ Load Necessary Models
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 45-49
+.. GENERATED FROM PYTHON SOURCE LINES 46-50
 
 Generate Surface EMG
 -----------------------------------------------
 
 To simulate the **surface EMG**, we need to run the ``simulate_surface_emg`` method of the **SurfaceEMG** object.
 
-.. GENERATED FROM PYTHON SOURCE LINES 49-63
+.. GENERATED FROM PYTHON SOURCE LINES 50-65
 
 .. code-block:: Python
 
@@ -100,10 +101,11 @@ To simulate the **surface EMG**, we need to run the ``simulate_surface_emg`` met
     print("Surface EMG simulation completed!")
     # Access the first group (electrode array) and first segment (pool)
     first_emg_signal = surface_emg_signals.groups[0].segments[0].analogsignals[0]
-    print(f"Generated EMG shape: {first_emg_signal.shape}")
+    grid_shape = first_emg_signal.annotations["grid_shape"]
+    print(f"Generated EMG shape: {first_emg_signal.shape} (stored as 2D for NWB compatibility)")
     print(f"  - {first_emg_signal.shape[0]} time samples")
-    print(f"  - {first_emg_signal.shape[1]} electrode rows")
-    print(f"  - {first_emg_signal.shape[2]} electrode columns")
+    print(f"  - {grid_shape[0]} electrode rows")
+    print(f"  - {grid_shape[1]} electrode columns")
 
     # Save the surface EMG results
     joblib.dump(surface_emg_signals, save_path / "surface_emg_signals.pkl")
@@ -116,9 +118,9 @@ To simulate the **surface EMG**, we need to run the ``simulate_surface_emg`` met
 
  .. code-block:: none
 
-    Electrode Array 1/1 Surface EMG (CPU):   0%|          | 0/1 [00:00<?, ?pools/s]    Electrode Array 1/1 Surface EMG (CPU): 100%|██████████| 1/1 [00:02<00:00,  2.46s/pools]    Electrode Array 1/1 Surface EMG (CPU): 100%|██████████| 1/1 [00:02<00:00,  2.46s/pools]
+    Electrode Array 1/1 Surface EMG (CPU):   0%|          | 0/1 [00:00<?, ?pools/s]    Electrode Array 1/1 Surface EMG (CPU): 100%|██████████| 1/1 [00:02<00:00,  2.40s/pools]    Electrode Array 1/1 Surface EMG (CPU): 100%|██████████| 1/1 [00:02<00:00,  2.40s/pools]
     Surface EMG simulation completed!
-    Generated EMG shape: (30720, 5, 5)
+    Generated EMG shape: (30720, 25) (stored as 2D for NWB compatibility)
       - 30720 time samples
       - 5 electrode rows
       - 5 electrode columns
@@ -127,7 +129,7 @@ To simulate the **surface EMG**, we need to run the ``simulate_surface_emg`` met
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 64-73
+.. GENERATED FROM PYTHON SOURCE LINES 66-75
 
 Visualize Surface EMG Results
 -----------------------------
@@ -139,7 +141,7 @@ Visualize Surface EMG Results
 
   For this the method ``add_noise`` is used.
 
-.. GENERATED FROM PYTHON SOURCE LINES 73-119
+.. GENERATED FROM PYTHON SOURCE LINES 75-123
 
 .. code-block:: Python
 
@@ -153,7 +155,9 @@ Visualize Surface EMG Results
     fig, ax = plt.subplots(figsize=(12, 6))
 
     # Get EMG signal from noisy surface EMG (first pool, electrode at row 2, col 2)
-    emg_signal = noisy_surface_emg__Block.groups[0].segments[0].analogsignals[0][:, 2, 2].magnitude
+    noisy_signal = noisy_surface_emg__Block.groups[0].segments[0].analogsignals[0]
+    emg_grid = signal_to_grid(noisy_signal)  # Convert to 3D (time, rows, cols)
+    emg_signal = emg_grid[:, 2, 2]
     current_signal = input_current__AnalogSignal[:, 0].magnitude
 
     # Normalize current between 0 and 1
@@ -204,7 +208,7 @@ Visualize Surface EMG Results
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 4.180 seconds)
+   **Total running time of the script:** (0 minutes 4.078 seconds)
 
 
 .. _sphx_glr_download_auto_examples_01_basic_06_simulate_surface_emg.py:

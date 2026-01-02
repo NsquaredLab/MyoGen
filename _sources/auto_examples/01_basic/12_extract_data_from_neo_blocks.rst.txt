@@ -37,7 +37,7 @@ Each section shows practical code for accessing and analyzing the data.
 Import Libraries
 ----------------
 
-.. GENERATED FROM PYTHON SOURCE LINES 22-42
+.. GENERATED FROM PYTHON SOURCE LINES 22-43
 
 .. code-block:: Python
 
@@ -50,6 +50,7 @@ Import Libraries
     import numpy as np
     import seaborn as sns
 
+    from myogen.utils.neo import signal_to_grid
     from myogen.utils.types import (
         INTRAMUSCULAR_EMG__Block,
         INTRAMUSCULAR_MUAP__Block,
@@ -68,12 +69,12 @@ Import Libraries
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 43-45
+.. GENERATED FROM PYTHON SOURCE LINES 44-46
 
 Setup Paths
 -----------
 
-.. GENERATED FROM PYTHON SOURCE LINES 45-68
+.. GENERATED FROM PYTHON SOURCE LINES 46-69
 
 .. code-block:: Python
 
@@ -120,12 +121,12 @@ Setup Paths
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 69-71
+.. GENERATED FROM PYTHON SOURCE LINES 70-72
 
 Example 1: Extracting Spike Train Data
 ---------------------------------------
 
-.. GENERATED FROM PYTHON SOURCE LINES 71-140
+.. GENERATED FROM PYTHON SOURCE LINES 72-141
 
 .. code-block:: Python
 
@@ -242,12 +243,12 @@ Example 1: Extracting Spike Train Data
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 141-143
+.. GENERATED FROM PYTHON SOURCE LINES 142-144
 
 Example 2: Extracting Surface MUAP Data
 ----------------------------------------
 
-.. GENERATED FROM PYTHON SOURCE LINES 143-209
+.. GENERATED FROM PYTHON SOURCE LINES 144-215
 
 .. code-block:: Python
 
@@ -272,27 +273,32 @@ Example 2: Extracting Surface MUAP Data
         muap_segment = electrode_array.segments[muap_idx]
         muap_signal = muap_segment.analogsignals[0]
 
+        # Get grid shape from annotations (signals stored as 2D for NWB compatibility)
+        grid_shape = muap_signal.annotations["grid_shape"]
         print(f"\nMUAP {muap_idx} ({muap_segment.name}):")
-        print(f"  Shape: {muap_signal.shape}")
+        print(f"  Shape: {muap_signal.shape} (stored as 2D for NWB compatibility)")
         print(f"  Time samples: {muap_signal.shape[0]}")
-        print(f"  Electrode grid: {muap_signal.shape[1]} rows × {muap_signal.shape[2]} columns")
+        print(f"  Electrode grid: {grid_shape[0]} rows × {grid_shape[1]} columns")
         print(f"  Sampling rate: {muap_signal.sampling_rate}")
         print(f"  Duration: {muap_signal.t_stop}")
         print(f"  Units: {muap_signal.units}")
 
+        # Convert to 3D grid format for analysis
+        muap_grid = signal_to_grid(muap_signal)  # shape: (time, rows, cols)
+
         # Extract MUAP from center electrode
-        center_row = muap_signal.shape[1] // 2
-        center_col = muap_signal.shape[2] // 2
-        center_muap = muap_signal[:, center_row, center_col]
+        center_row = grid_shape[0] // 2
+        center_col = grid_shape[1] // 2
+        center_muap = muap_grid[:, center_row, center_col]
 
         print(f"\nMUAP at center electrode ({center_row}, {center_col}):")
-        print(f"  Peak-to-peak: {np.ptp(center_muap.magnitude):.3f} {center_muap.units}")
-        print(f"  Max amplitude: {np.max(np.abs(center_muap.magnitude)):.3f} {center_muap.units}")
+        print(f"  Peak-to-peak: {np.ptp(center_muap):.3f} {muap_signal.units}")
+        print(f"  Max amplitude: {np.max(np.abs(center_muap)):.3f} {muap_signal.units}")
 
         # Find peak time and create spatial map
-        peak_time_idx = np.argmax(np.abs(muap_signal.magnitude))
-        peak_time_idx = np.unravel_index(peak_time_idx, muap_signal.shape)[0]
-        spatial_map = muap_signal[peak_time_idx, :, :].magnitude
+        peak_time_idx = np.argmax(np.abs(muap_grid))
+        peak_time_idx = np.unravel_index(peak_time_idx, muap_grid.shape)[0]
+        spatial_map = muap_grid[peak_time_idx, :, :]
 
         # Plot MUAP waveform and spatial distribution
         fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(14, 5))
@@ -324,12 +330,12 @@ Example 2: Extracting Surface MUAP Data
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 210-212
+.. GENERATED FROM PYTHON SOURCE LINES 216-218
 
 Example 3: Extracting Surface EMG Data
 ---------------------------------------
 
-.. GENERATED FROM PYTHON SOURCE LINES 212-293
+.. GENERATED FROM PYTHON SOURCE LINES 218-304
 
 .. code-block:: Python
 
@@ -353,27 +359,32 @@ Example 3: Extracting Surface EMG Data
         motor_pool = electrode_array.segments[0]
         emg_signal = motor_pool.analogsignals[0]
 
+        # Get grid shape from annotations (signals stored as 2D for NWB compatibility)
+        grid_shape = emg_signal.annotations["grid_shape"]
         print(f"\nMotor pool: {motor_pool.name}")
-        print(f"  EMG shape: {emg_signal.shape}")
+        print(f"  EMG shape: {emg_signal.shape} (stored as 2D for NWB compatibility)")
         print(f"  Time samples: {emg_signal.shape[0]}")
-        print(f"  Electrode grid: {emg_signal.shape[1]} rows × {emg_signal.shape[2]} columns")
+        print(f"  Electrode grid: {grid_shape[0]} rows × {grid_shape[1]} columns")
         print(f"  Sampling rate: {emg_signal.sampling_rate}")
         print(f"  Duration: {emg_signal.t_stop}")
 
+        # Convert to 3D grid format for analysis
+        emg_grid = signal_to_grid(emg_signal)  # shape: (time, rows, cols)
+
         # Extract EMG from specific electrode
         row, col = 2, 2
-        electrode_emg = emg_signal[:, row, col]
+        electrode_emg = emg_grid[:, row, col]
         time__s = emg_signal.times.magnitude
 
         print(f"\nEMG at electrode ({row}, {col}):")
         print(
-            f"  RMS amplitude: {np.sqrt(np.mean(electrode_emg.magnitude**2)):.3f} {electrode_emg.units}"
+            f"  RMS amplitude: {np.sqrt(np.mean(electrode_emg**2)):.3f} {emg_signal.units}"
         )
-        print(f"  Peak-to-peak: {np.ptp(electrode_emg.magnitude):.3f} {electrode_emg.units}")
+        print(f"  Peak-to-peak: {np.ptp(electrode_emg):.3f} {emg_signal.units}")
 
         # Calculate RMS envelope with moving window
         window_size = int(0.1 * emg_signal.sampling_rate.magnitude)  # 100ms window
-        emg_magnitude = np.squeeze(electrode_emg.magnitude)  # Ensure 1D array
+        emg_magnitude = np.squeeze(electrode_emg)  # Ensure 1D array
         rms_envelope = np.array(
             [
                 np.sqrt(
@@ -438,7 +449,7 @@ Example 3: Extracting Surface EMG Data
     Number of motor pool segments: 1
 
     Motor pool: Pool_0
-      EMG shape: (30720, 5, 5)
+      EMG shape: (30720, 25) (stored as 2D for NWB compatibility)
       Time samples: 30720
       Electrode grid: 5 rows × 5 columns
       Sampling rate: 2048.0 Hz
@@ -453,12 +464,12 @@ Example 3: Extracting Surface EMG Data
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 294-296
+.. GENERATED FROM PYTHON SOURCE LINES 305-307
 
 Example 4: Extracting Intramuscular MUAP Data
 ----------------------------------------------
 
-.. GENERATED FROM PYTHON SOURCE LINES 296-350
+.. GENERATED FROM PYTHON SOURCE LINES 307-361
 
 .. code-block:: Python
 
@@ -523,12 +534,12 @@ Example 4: Extracting Intramuscular MUAP Data
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 351-353
+.. GENERATED FROM PYTHON SOURCE LINES 362-364
 
 Example 5: Extracting Intramuscular EMG Data
 ---------------------------------------------
 
-.. GENERATED FROM PYTHON SOURCE LINES 353-419
+.. GENERATED FROM PYTHON SOURCE LINES 364-430
 
 .. code-block:: Python
 
@@ -608,7 +619,7 @@ Example 5: Extracting Intramuscular EMG Data
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 1.635 seconds)
+   **Total running time of the script:** (0 minutes 1.737 seconds)
 
 
 .. _sphx_glr_download_auto_examples_01_basic_12_extract_data_from_neo_blocks.py:

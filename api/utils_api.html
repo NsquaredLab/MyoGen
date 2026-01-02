@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Utils Module &#8212; MyoGen 0.8.2 Documentation</title>
+    <title>Utils Module &#8212; MyoGen 0.8.3 Documentation</title>
   
   
   
@@ -55,7 +55,7 @@
 
     <script src="../_static/jquery.js?v=5d32c60e"></script>
     <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-    <script src="../_static/documentation_options.js?v=4514dd13"></script>
+    <script src="../_static/documentation_options.js?v=ec54a975"></script>
     <script src="../_static/doctools.js?v=9bcbadda"></script>
     <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../_static/js/hoverxref.js"></script>
@@ -72,7 +72,7 @@
     <link rel="prev" title="myogen.simulator.IntramuscularEMG.spike_train__Block" href="../generated/myogen.simulator.IntramuscularEMG.spike_train__Block.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="0.8.2" />
+  <meta name="docsearch:version" content="0.8.3" />
   </head>
   
   
@@ -141,8 +141,8 @@
       
     
     
-    <img src="../_static/myogen_logo.png" class="logo__image only-light" alt="MyoGen 0.8.2 Documentation - Home"/>
-    <img src="../_static/myogen_logo.png" class="logo__image only-dark pst-js-only" alt="MyoGen 0.8.2 Documentation - Home"/>
+    <img src="../_static/myogen_logo.png" class="logo__image only-light" alt="MyoGen 0.8.3 Documentation - Home"/>
+    <img src="../_static/myogen_logo.png" class="logo__image only-dark pst-js-only" alt="MyoGen 0.8.3 Documentation - Home"/>
   
   
 </a></div>
@@ -151,7 +151,7 @@
 <div class="nav-item">
   <div class="version-switcher__container dropdown">
       <button id="version-switcher-button" type="button" class="version-switcher__button btn btn-sm navbar-btn" aria-haspopup="true" aria-expanded="false">
-          Version 0.8.2
+          Version 0.8.3
       </button>
       
       
@@ -553,6 +553,9 @@
 </ul>
 </details></li>
 <li class="toctree-l2"><a class="reference internal" href="../generated/myogen.utils.continuous_saver.convert_chunks_to_neo.html">convert_chunks_to_neo</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../generated/myogen.utils.nwb.export_to_nwb.html">export_to_nwb</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../generated/myogen.utils.nwb.export_simulation_to_nwb.html">export_simulation_to_nwb</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../generated/myogen.utils.nwb.validate_nwb.html">validate_nwb</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../generated/myogen.utils.plotting.plot_raster_spikes.html">plot_raster_spikes</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../generated/myogen.utils.plotting.plot_membrane_potentials.html">plot_membrane_potentials</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../generated/myogen.utils.plotting.plot_muscle_dynamics.html">plot_muscle_dynamics</a></li>
@@ -703,6 +706,29 @@
 <tbody>
 <tr class="row-odd"><td><p><a class="hxr-hoverxref hxr-tooltip reference internal" href="../generated/myogen.utils.continuous_saver.convert_chunks_to_neo.html#myogen.utils.continuous_saver.convert_chunks_to_neo" title="myogen.utils.continuous_saver.convert_chunks_to_neo"><code class="xref py py-obj docutils literal notranslate"><span class="pre">convert_chunks_to_neo</span></code></a>(save_path[, ...])</p></td>
 <td><p>Load chunks and convert to NEO Block format (compatible with SimulationRunner output).</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="nwb-export">
+<h2>NWB Export<a class="headerlink" href="#nwb-export" title="Link to this heading">#</a></h2>
+<p>Export simulation data to Neurodata Without Borders (NWB) format for sharing
+and interoperability with the broader neuroscience ecosystem.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>NWB export requires optional dependencies. Install with: <code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">myogen[nwb]</span></code></p>
+</div>
+<div class="pst-scrollable-table-container"><table class="autosummary longtable table">
+<tbody>
+<tr class="row-odd"><td><p><a class="hxr-hoverxref hxr-tooltip reference internal" href="../generated/myogen.utils.nwb.export_to_nwb.html#myogen.utils.nwb.export_to_nwb" title="myogen.utils.nwb.export_to_nwb"><code class="xref py py-obj docutils literal notranslate"><span class="pre">export_to_nwb</span></code></a>(block, filepath[, ...])</p></td>
+<td><p>Export a Neo Block to NWB format.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="hxr-hoverxref hxr-tooltip reference internal" href="../generated/myogen.utils.nwb.export_simulation_to_nwb.html#myogen.utils.nwb.export_simulation_to_nwb" title="myogen.utils.nwb.export_simulation_to_nwb"><code class="xref py py-obj docutils literal notranslate"><span class="pre">export_simulation_to_nwb</span></code></a>(filepath[, ...])</p></td>
+<td><p>Export all simulation data to a single NWB file.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="hxr-hoverxref hxr-tooltip reference internal" href="../generated/myogen.utils.nwb.validate_nwb.html#myogen.utils.nwb.validate_nwb" title="myogen.utils.nwb.validate_nwb"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_nwb</span></code></a>(filepath[, verbose])</p></td>
+<td><p>Validate an NWB file using NWBInspector.</p></td>
 </tr>
 </tbody>
 </table>
@@ -875,6 +901,7 @@
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#continuous-saver">Continuous Saver</a><ul class="visible nav section-nav flex-column">
 </ul>
 </li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#nwb-export">NWB Export</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#plotting-visualization">Plotting &amp; Visualization</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#type-definitions">Type Definitions</a><ul class="visible nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#quantity-types">Quantity Types</a></li>
@@ -910,7 +937,7 @@
 
   <p class="copyright">
     
-      © Copyright 2025 - 2025, n-squared lab, FAU Erlangen-Nürnberg, Germany.
+      © Copyright 2025 - 2026, n-squared lab, FAU Erlangen-Nürnberg, Germany.
       <br/>
     
   </p>

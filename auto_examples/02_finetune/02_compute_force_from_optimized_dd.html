@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Force Generation with Optimized Descending Drive Parameters &#8212; MyoGen 0.8.2 Documentation</title>
+    <title>Force Generation with Optimized Descending Drive Parameters &#8212; MyoGen 0.8.3 Documentation</title>
   
   
   
@@ -55,7 +55,7 @@
 
     <script src="../../_static/jquery.js?v=5d32c60e"></script>
     <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-    <script src="../../_static/documentation_options.js?v=4514dd13"></script>
+    <script src="../../_static/documentation_options.js?v=ec54a975"></script>
     <script src="../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/js/hoverxref.js"></script>
@@ -72,7 +72,7 @@
     <link rel="prev" title="Optimizing Descending Drive Parameters for Target Firing Rates" href="01_optimize_dd_for_target_firing_rate.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="0.8.2" />
+  <meta name="docsearch:version" content="0.8.3" />
   </head>
   
   
@@ -141,8 +141,8 @@
       
     
     
-    <img src="../../_static/myogen_logo.png" class="logo__image only-light" alt="MyoGen 0.8.2 Documentation - Home"/>
-    <img src="../../_static/myogen_logo.png" class="logo__image only-dark pst-js-only" alt="MyoGen 0.8.2 Documentation - Home"/>
+    <img src="../../_static/myogen_logo.png" class="logo__image only-light" alt="MyoGen 0.8.3 Documentation - Home"/>
+    <img src="../../_static/myogen_logo.png" class="logo__image only-dark pst-js-only" alt="MyoGen 0.8.3 Documentation - Home"/>
   
   
 </a></div>
@@ -151,7 +151,7 @@
 <div class="nav-item">
   <div class="version-switcher__container dropdown">
       <button id="version-switcher-button" type="button" class="version-switcher__button btn btn-sm navbar-btn" aria-haspopup="true" aria-expanded="false">
-          Version 0.8.2
+          Version 0.8.3
       </button>
       
       
@@ -357,6 +357,7 @@
 <li class="toctree-l2"><a class="reference internal" href="../01_basic/10_extract_neuron_parameters.html">Extract Neuron Parameters</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../01_basic/11_simulate_spinal_network.html">Spinal Network Simulation with Systematic Tendon Tap Protocol</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../01_basic/12_extract_data_from_neo_blocks.html">Extracting Data from Neo Blocks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01_basic/13_load_and_inspect_nwb_data.html">Loading and Inspecting NWB Data</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 current active has-children"><a class="reference internal" href="index.html">Step-by-step reproduction</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
@@ -576,9 +577,9 @@ settings, and generate realistic force output from motor neuron spike trains.</p
 </div>
 <div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Force Validation with Optimized Parameters
 ==================================================
-DD neurons: 379
-Connection probability: 0.841
-Drive frequency: 19.4 Hz
+DD neurons: 184
+Connection probability: 0.494
+Drive frequency: 69.6 Hz
 Gamma shape: 3.00
 Gfluctdv: DISABLED
 ==================================================
@@ -738,10 +739,10 @@ Simulation complete!
 </pre></div>
 </div>
 <div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Firing Rate Statistics:
-  Active units: 59/100
-  Mean firing rate: 10.84 Hz
-  Std deviation: 2.36 Hz
-  Coefficient of variation: 0.218
+  Active units: 57/100
+  Mean firing rate: 10.73 Hz
+  Std deviation: 3.12 Hz
+  Coefficient of variation: 0.291
 </pre></div>
 </div>
 </section>
@@ -771,8 +772,8 @@ Simulation complete!
 </pre></div>
 </div>
 <div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Pool 1 Twitch trains (Numba):   0%|          | 0/100 [00:00&lt;?, ?MU/s]
-Pool 1 Twitch trains (Numba):   1%|          | 1/100 [00:00&lt;00:23,  4.20MU/s]
-Pool 1 Twitch trains (Numba): 100%|██████████| 100/100 [00:00&lt;00:00, 399.67MU/s]
+Pool 1 Twitch trains (Numba):   1%|          | 1/100 [00:00&lt;00:24,  4.05MU/s]
+Pool 1 Twitch trains (Numba): 100%|██████████| 100/100 [00:00&lt;00:00, 385.79MU/s]
 </pre></div>
 </div>
 </section>
@@ -794,10 +795,10 @@ Pool 1 Twitch trains (Numba): 100%|██████████| 100/100 [00:0
 </pre></div>
 </div>
 <div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Force Statistics (steady-state):
-  Mean force: 11.9028 a.u.
-  Std deviation: 1.0056 a.u.
-  Coefficient of variation: 0.084
-  Ripple amplitude: 8.45%
+  Mean force: 10.8653 a.u.
+  Std deviation: 0.7097 a.u.
+  Coefficient of variation: 0.065
+  Ripple amplitude: 6.53%
 </pre></div>
 </div>
 </section>
@@ -889,7 +890,7 @@ Pool 1 Twitch trains (Numba): 100%|██████████| 100/100 [00:0
 <a href="https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.show.html#matplotlib.pyplot.show" title="matplotlib.pyplot.show" class="sphx-glr-backref-module-matplotlib-pyplot sphx-glr-backref-type-py-function"><span class="n">plt</span><span class="o">.</span><span class="n">show</span></a><span class="p">()</span>
 </pre></div>
 </div>
-<img src="../../_images/sphx_glr_02_compute_force_from_optimized_dd_001.png" srcset="../../_images/sphx_glr_02_compute_force_from_optimized_dd_001.png" alt="Motor Neuron Spike Trains (61/100 active), Muscle Force (Ripple = 8.4%), Firing Rate Distribution" class = "sphx-glr-single-img"/><p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 14.311 seconds)</p>
+<img src="../../_images/sphx_glr_02_compute_force_from_optimized_dd_001.png" srcset="../../_images/sphx_glr_02_compute_force_from_optimized_dd_001.png" alt="Motor Neuron Spike Trains (59/100 active), Muscle Force (Ripple = 6.5%), Firing Rate Distribution" class = "sphx-glr-single-img"/><p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 10.757 seconds)</p>
 <div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-auto-examples-02-finetune-02-compute-force-from-optimized-dd-py">
 <div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
 <p><a class="reference download internal" download="" href="../../_downloads/47118c097751c34cccda99c4f9048da1/02_compute_force_from_optimized_dd.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">02_compute_force_from_optimized_dd.ipynb</span></code></a></p>
@@ -970,7 +971,7 @@ Pool 1 Twitch trains (Numba): 100%|██████████| 100/100 [00:0
 
   <p class="copyright">
     
-      © Copyright 2025 - 2025, n-squared lab, FAU Erlangen-Nürnberg, Germany.
+      © Copyright 2025 - 2026, n-squared lab, FAU Erlangen-Nürnberg, Germany.
       <br/>
     
   </p>

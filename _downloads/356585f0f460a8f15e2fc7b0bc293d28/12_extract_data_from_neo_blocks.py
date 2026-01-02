@@ -28,6 +28,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import seaborn as sns
 
+from myogen.utils.neo import signal_to_grid
 from myogen.utils.types import (
     INTRAMUSCULAR_EMG__Block,
     INTRAMUSCULAR_MUAP__Block,
@@ -161,27 +162,32 @@ if "surface_muaps" in available_files:
     muap_segment = electrode_array.segments[muap_idx]
     muap_signal = muap_segment.analogsignals[0]
 
+    # Get grid shape from annotations (signals stored as 2D for NWB compatibility)
+    grid_shape = muap_signal.annotations["grid_shape"]
     print(f"\nMUAP {muap_idx} ({muap_segment.name}):")
-    print(f"  Shape: {muap_signal.shape}")
+    print(f"  Shape: {muap_signal.shape} (stored as 2D for NWB compatibility)")
     print(f"  Time samples: {muap_signal.shape[0]}")
-    print(f"  Electrode grid: {muap_signal.shape[1]} rows × {muap_signal.shape[2]} columns")
+    print(f"  Electrode grid: {grid_shape[0]} rows × {grid_shape[1]} columns")
     print(f"  Sampling rate: {muap_signal.sampling_rate}")
     print(f"  Duration: {muap_signal.t_stop}")
     print(f"  Units: {muap_signal.units}")
 
+    # Convert to 3D grid format for analysis
+    muap_grid = signal_to_grid(muap_signal)  # shape: (time, rows, cols)
+
     # Extract MUAP from center electrode
-    center_row = muap_signal.shape[1] // 2
-    center_col = muap_signal.shape[2] // 2
-    center_muap = muap_signal[:, center_row, center_col]
+    center_row = grid_shape[0] // 2
+    center_col = grid_shape[1] // 2
+    center_muap = muap_grid[:, center_row, center_col]
 
     print(f"\nMUAP at center electrode ({center_row}, {center_col}):")
-    print(f"  Peak-to-peak: {np.ptp(center_muap.magnitude):.3f} {center_muap.units}")
-    print(f"  Max amplitude: {np.max(np.abs(center_muap.magnitude)):.3f} {center_muap.units}")
+    print(f"  Peak-to-peak: {np.ptp(center_muap):.3f} {muap_signal.units}")
+    print(f"  Max amplitude: {np.max(np.abs(center_muap)):.3f} {muap_signal.units}")
 
     # Find peak time and create spatial map
-    peak_time_idx = np.argmax(np.abs(muap_signal.magnitude))
-    peak_time_idx = np.unravel_index(peak_time_idx, muap_signal.shape)[0]
-    spatial_map = muap_signal[peak_time_idx, :, :].magnitude
+    peak_time_idx = np.argmax(np.abs(muap_grid))
+    peak_time_idx = np.unravel_index(peak_time_idx, muap_grid.shape)[0]
+    spatial_map = muap_grid[peak_time_idx, :, :]
 
     # Plot MUAP waveform and spatial distribution
     fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(14, 5))
@@ -229,27 +235,32 @@ if "surface_emg" in available_files:
     motor_pool = electrode_array.segments[0]
     emg_signal = motor_pool.analogsignals[0]
 
+    # Get grid shape from annotations (signals stored as 2D for NWB compatibility)
+    grid_shape = emg_signal.annotations["grid_shape"]
     print(f"\nMotor pool: {motor_pool.name}")
-    print(f"  EMG shape: {emg_signal.shape}")
+    print(f"  EMG shape: {emg_signal.shape} (stored as 2D for NWB compatibility)")
     print(f"  Time samples: {emg_signal.shape[0]}")
-    print(f"  Electrode grid: {emg_signal.shape[1]} rows × {emg_signal.shape[2]} columns")
+    print(f"  Electrode grid: {grid_shape[0]} rows × {grid_shape[1]} columns")
     print(f"  Sampling rate: {emg_signal.sampling_rate}")
     print(f"  Duration: {emg_signal.t_stop}")
 
+    # Convert to 3D grid format for analysis
+    emg_grid = signal_to_grid(emg_signal)  # shape: (time, rows, cols)
+
     # Extract EMG from specific electrode
     row, col = 2, 2
-    electrode_emg = emg_signal[:, row, col]
+    electrode_emg = emg_grid[:, row, col]
     time__s = emg_signal.times.magnitude
 
     print(f"\nEMG at electrode ({row}, {col}):")
     print(
-        f"  RMS amplitude: {np.sqrt(np.mean(electrode_emg.magnitude**2)):.3f} {electrode_emg.units}"
+        f"  RMS amplitude: {np.sqrt(np.mean(electrode_emg**2)):.3f} {emg_signal.units}"
     )
-    print(f"  Peak-to-peak: {np.ptp(electrode_emg.magnitude):.3f} {electrode_emg.units}")
+    print(f"  Peak-to-peak: {np.ptp(electrode_emg):.3f} {emg_signal.units}")
 
     # Calculate RMS envelope with moving window
     window_size = int(0.1 * emg_signal.sampling_rate.magnitude)  # 100ms window
-    emg_magnitude = np.squeeze(electrode_emg.magnitude)  # Ensure 1D array
+    emg_magnitude = np.squeeze(electrode_emg)  # Ensure 1D array
     rms_envelope = np.array(
         [
             np.sqrt(

@@ -28,7 +28,7 @@ First step is to create **MUAPs** from the **muscle model**.
 .. note::
     The **MUAPs** are the **action potentials** of the **motor units** at the surface of the skin.
 
-.. GENERATED FROM PYTHON SOURCE LINES 14-26
+.. GENERATED FROM PYTHON SOURCE LINES 14-27
 
 .. code-block:: Python
 
@@ -41,6 +41,7 @@ First step is to create **MUAPs** from the **muscle model**.
     import quantities as pq
 
     from myogen import simulator
+    from myogen.utils.neo import signal_to_grid
 
     plt.style.use("fivethirtyeight")
 
@@ -51,7 +52,7 @@ First step is to create **MUAPs** from the **muscle model**.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 27-40
+.. GENERATED FROM PYTHON SOURCE LINES 28-41
 
 Define Parameters
 -----------------
@@ -67,7 +68,7 @@ The **SurfaceEMG** object takes the following parameters:
 - ``fat_thickness``: Fat thickness
 - ``skin_thickness``: Skin thickness
 
-.. GENERATED FROM PYTHON SOURCE LINES 40-44
+.. GENERATED FROM PYTHON SOURCE LINES 41-45
 
 .. code-block:: Python
 
@@ -82,14 +83,14 @@ The **SurfaceEMG** object takes the following parameters:
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 45-49
+.. GENERATED FROM PYTHON SOURCE LINES 46-50
 
 Load Muscle Model
 ----------------------------
 
 Load muscle model from previous example
 
-.. GENERATED FROM PYTHON SOURCE LINES 49-53
+.. GENERATED FROM PYTHON SOURCE LINES 50-54
 
 .. code-block:: Python
 
@@ -104,7 +105,7 @@ Load muscle model from previous example
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 54-65
+.. GENERATED FROM PYTHON SOURCE LINES 55-66
 
 Create Surface EMG Model
 -------------------------
@@ -118,7 +119,7 @@ The **SurfaceEMG** object is initialized with the **muscle model**, the **electr
   This is to simulate the **surface EMG** from two different directions.
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 65-90
+.. GENERATED FROM PYTHON SOURCE LINES 66-91
 
 .. code-block:: Python
 
@@ -154,14 +155,14 @@ The **SurfaceEMG** object is initialized with the **muscle model**, the **electr
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 91-95
+.. GENERATED FROM PYTHON SOURCE LINES 92-96
 
 Simulate MUAPs
 --------------
 
 To generate the **MUAPs**, we need to run the ``simulate_muaps`` method of the **SurfaceEMG** object.
 
-.. GENERATED FROM PYTHON SOURCE LINES 95-122
+.. GENERATED FROM PYTHON SOURCE LINES 96-120
 
 .. code-block:: Python
 
@@ -172,16 +173,13 @@ To generate the **MUAPs**, we need to run the ``simulate_muaps`` method of the *
 
 
     print("MUAP simulation completed!")
-    print(f"Generated MUAPs shape: {muaps.groups[0].segments[0].analogsignals[0].shape}")
+    first_signal = muaps.groups[0].segments[0].analogsignals[0]
+    grid_shape = first_signal.annotations["grid_shape"]
+    print(f"Generated MUAPs shape: {first_signal.shape} (stored as 2D for NWB compatibility)")
     print(f"  - {len(muaps.groups[0].segments)} total motor units in muscle")
     print(f"  - {len(muscle.resulting_number_of_innervated_fibers)} MUs in muscle model")
-    print(
-        "  - {} rows × {} columns electrode grid".format(
-            muaps.groups[0].segments[0].analogsignals[0].shape[1],
-            muaps.groups[0].segments[0].analogsignals[0].shape[2],
-        )
-    )
-    print(f"  - {muaps.groups[0].segments[0].analogsignals[0].shape[0]} time samples")
+    print(f"  - {grid_shape[0]} rows × {grid_shape[1]} columns electrode grid")
+    print(f"  - {first_signal.shape[0]} time samples")
 
     # Check fiber counts for the MUs we're simulating
     print("\nFiber counts for simulated MUs:")
@@ -200,9 +198,9 @@ To generate the **MUAPs**, we need to run the ``simulate_muaps`` method of the *
 
  .. code-block:: none
 
-    Electrode Array 1/1:   0%|          | 0/4 [00:00<?, ?it/s]    Electrode Array 1/1:  25%|██▌       | 1/4 [00:23<01:09, 23.32s/it]    Electrode Array 1/1:  50%|█████     | 2/4 [01:29<01:36, 48.47s/it]    Electrode Array 1/1: 100%|██████████| 4/4 [01:29<00:00, 22.35s/it]
+    Electrode Array 1/1:   0%|          | 0/4 [00:00<?, ?it/s]    Electrode Array 1/1:  25%|██▌       | 1/4 [00:23<01:10, 23.40s/it]    Electrode Array 1/1:  50%|█████     | 2/4 [01:29<01:36, 48.45s/it]    Electrode Array 1/1: 100%|██████████| 4/4 [01:29<00:00, 22.35s/it]
     MUAP simulation completed!
-    Generated MUAPs shape: (256, 5, 5)
+    Generated MUAPs shape: (256, 25) (stored as 2D for NWB compatibility)
       - 100 total motor units in muscle
       - 100 MUs in muscle model
       - 5 rows × 5 columns electrode grid
@@ -219,7 +217,7 @@ To generate the **MUAPs**, we need to run the ``simulate_muaps`` method of the *
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 123-128
+.. GENERATED FROM PYTHON SOURCE LINES 121-126
 
 Plot MUAPs
 ------------------------------------
@@ -227,7 +225,7 @@ Plot MUAPs
 Plot a single MUAP across the electrode grid.
 Each subplot shows the MUAP waveform at one electrode position.
 
-.. GENERATED FROM PYTHON SOURCE LINES 128-174
+.. GENERATED FROM PYTHON SOURCE LINES 126-172
 
 .. code-block:: Python
 
@@ -238,9 +236,9 @@ Each subplot shows the MUAP waveform at one electrode position.
             continue
         # Extract MUAP data from the Block object
         muap_signal = muaps.groups[0].segments[muap_index].analogsignals[0]
-        muap_data_mV = muap_signal.magnitude  # Shape: (time, rows, cols)
-
-        muap_data_uV = muap_signal.rescale(pq.uV).magnitude  # Convert to uV for plotting
+        # Convert to 3D grid format (time, rows, cols)
+        muap_data_mV = signal_to_grid(muap_signal)
+        muap_data_uV = signal_to_grid(muap_signal.rescale(pq.uV))  # Convert to uV for plotting
 
         # Print amplitude diagnostics
         print(f"\nMUAP {muap_index} amplitude range:")
@@ -248,8 +246,8 @@ Each subplot shows the MUAP waveform at one electrode position.
         print(f"\tMax: {np.max(muap_data_mV):.6f} mV ({np.max(muap_data_uV):.2f} uV)")
         print(f"\tPeak-to-peak: {np.ptp(muap_data_mV):.6f} mV ({np.ptp(muap_data_uV):.2f} uV)")
 
-        # Get grid dimensions
-        n_rows, n_cols = muap_data_uV.shape[1], muap_data_uV.shape[2]
+        # Get grid dimensions from annotations
+        n_rows, n_cols = muap_signal.annotations["grid_shape"]
 
         # Create subplot grid matching electrode layout
         fig, axs = plt.subplots(
@@ -343,7 +341,7 @@ Each subplot shows the MUAP waveform at one electrode position.
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (1 minutes 32.536 seconds)
+   **Total running time of the script:** (1 minutes 32.443 seconds)
 
 
 .. _sphx_glr_download_auto_examples_01_basic_05_simulate_surface_muaps.py:

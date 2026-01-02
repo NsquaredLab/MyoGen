@@ -191,9 +191,9 @@ Load the best network parameters from the optimization study.
 
     Force Validation with Optimized Parameters
     ==================================================
-    DD neurons: 379
-    Connection probability: 0.841
-    Drive frequency: 19.4 Hz
+    DD neurons: 184
+    Connection probability: 0.494
+    Drive frequency: 69.6 Hz
     Gamma shape: 3.00
     Gfluctdv: DISABLED
     ==================================================
@@ -459,10 +459,10 @@ Analyze spike train characteristics.
  .. code-block:: none
 
     Firing Rate Statistics:
-      Active units: 59/100
-      Mean firing rate: 10.84 Hz
-      Std deviation: 2.36 Hz
-      Coefficient of variation: 0.218
+      Active units: 57/100
+      Mean firing rate: 10.73 Hz
+      Std deviation: 3.12 Hz
+      Coefficient of variation: 0.291
 
 
 
@@ -507,7 +507,7 @@ Convert spike trains to muscle force using motor unit twitch dynamics.
 
  .. code-block:: none
 
-    Pool 1 Twitch trains (Numba):   0%|          | 0/100 [00:00<?, ?MU/s]    Pool 1 Twitch trains (Numba):   1%|          | 1/100 [00:00<00:23,  4.20MU/s]    Pool 1 Twitch trains (Numba): 100%|██████████| 100/100 [00:00<00:00, 399.67MU/s]
+    Pool 1 Twitch trains (Numba):   0%|          | 0/100 [00:00<?, ?MU/s]    Pool 1 Twitch trains (Numba):   1%|          | 1/100 [00:00<00:24,  4.05MU/s]    Pool 1 Twitch trains (Numba): 100%|██████████| 100/100 [00:00<00:00, 385.79MU/s]
 
 
 
@@ -546,10 +546,10 @@ Compute steady-state force statistics (using last 50% to avoid transients).
  .. code-block:: none
 
     Force Statistics (steady-state):
-      Mean force: 11.9028 a.u.
-      Std deviation: 1.0056 a.u.
-      Coefficient of variation: 0.084
-      Ripple amplitude: 8.45%
+      Mean force: 10.8653 a.u.
+      Std deviation: 0.7097 a.u.
+      Coefficient of variation: 0.065
+      Ripple amplitude: 6.53%
 
 
 
@@ -671,7 +671,7 @@ Create clean visualizations of spike trains and force output.
 
 
 .. image-sg:: /auto_examples/02_finetune/images/sphx_glr_02_compute_force_from_optimized_dd_001.png
-   :alt: Motor Neuron Spike Trains (61/100 active), Muscle Force (Ripple = 8.4%), Firing Rate Distribution
+   :alt: Motor Neuron Spike Trains (59/100 active), Muscle Force (Ripple = 6.5%), Firing Rate Distribution
    :srcset: /auto_examples/02_finetune/images/sphx_glr_02_compute_force_from_optimized_dd_001.png
    :class: sphx-glr-single-img
 
@@ -682,7 +682,7 @@ Create clean visualizations of spike trains and force output.
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 14.311 seconds)
+   **Total running time of the script:** (0 minutes 10.757 seconds)
 
 
 .. _sphx_glr_download_auto_examples_02_finetune_02_compute_force_from_optimized_dd.py:

@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Surface EMG Signals &#8212; MyoGen 0.8.2 Documentation</title>
+    <title>Surface EMG Signals &#8212; MyoGen 0.8.3 Documentation</title>
   
   
   
@@ -55,7 +55,7 @@
 
     <script src="../../_static/jquery.js?v=5d32c60e"></script>
     <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-    <script src="../../_static/documentation_options.js?v=4514dd13"></script>
+    <script src="../../_static/documentation_options.js?v=ec54a975"></script>
     <script src="../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/js/hoverxref.js"></script>
@@ -72,7 +72,7 @@
     <link rel="prev" title="Surface Motor Unit Action Potentials" href="05_simulate_surface_muaps.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="0.8.2" />
+  <meta name="docsearch:version" content="0.8.3" />
   </head>
   
   
@@ -141,8 +141,8 @@
       
     
     
-    <img src="../../_static/myogen_logo.png" class="logo__image only-light" alt="MyoGen 0.8.2 Documentation - Home"/>
-    <img src="../../_static/myogen_logo.png" class="logo__image only-dark pst-js-only" alt="MyoGen 0.8.2 Documentation - Home"/>
+    <img src="../../_static/myogen_logo.png" class="logo__image only-light" alt="MyoGen 0.8.3 Documentation - Home"/>
+    <img src="../../_static/myogen_logo.png" class="logo__image only-dark pst-js-only" alt="MyoGen 0.8.3 Documentation - Home"/>
   
   
 </a></div>
@@ -151,7 +151,7 @@
 <div class="nav-item">
   <div class="version-switcher__container dropdown">
       <button id="version-switcher-button" type="button" class="version-switcher__button btn btn-sm navbar-btn" aria-haspopup="true" aria-expanded="false">
-          Version 0.8.2
+          Version 0.8.3
       </button>
       
       
@@ -357,6 +357,7 @@
 <li class="toctree-l2"><a class="reference internal" href="10_extract_neuron_parameters.html">Extract Neuron Parameters</a></li>
 <li class="toctree-l2"><a class="reference internal" href="11_simulate_spinal_network.html">Spinal Network Simulation with Systematic Tendon Tap Protocol</a></li>
 <li class="toctree-l2"><a class="reference internal" href="12_extract_data_from_neo_blocks.html">Extracting Data from Neo Blocks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="13_load_and_inspect_nwb_data.html">Loading and Inspecting NWB Data</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../02_finetune/index.html">Step-by-step reproduction</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -464,6 +465,7 @@ to download the full example code.</p>
 <span class="kn">from</span><span class="w"> </span><span class="nn">matplotlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">pyplot</span> <span class="k">as</span> <span class="n">plt</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">myogen</span><span class="w"> </span><span class="kn">import</span> <span class="n">simulator</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">myogen.utils.neo</span><span class="w"> </span><span class="kn">import</span> <span class="n">signal_to_grid</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">myogen.utils.types</span><span class="w"> </span><span class="kn">import</span> <span class="n">CURRENT__AnalogSignal</span><span class="p">,</span> <span class="n">SPIKE_TRAIN__Block</span>
 
 <span class="n">plt</span><span class="o">.</span><span class="n">style</span><span class="o">.</span><span class="n">use</span><span class="p">(</span><span class="s2">&quot;fivethirtyeight&quot;</span><span class="p">)</span>
@@ -489,21 +491,22 @@ to download the full example code.</p>
 
 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Surface EMG simulation completed!&quot;</span><span class="p">)</span>
 <span class="c1"># Access the first group (electrode array) and first segment (pool)</span>
-<span class="n">first_emg_signal</span> <span class="o">=</span> <a href="https://neo.readthedocs.io/en/latest/api_reference.html#neo.core.Block" title="neo.core.block.Block" class="sphx-glr-backref-module-neo-core-block sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">surface_emg_signals</span></a><span class="o">.</span><span class="n">groups</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">segments</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">analogsignals</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Generated EMG shape: </span><span class="si">{</span><a href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.shape.html#numpy.ndarray.shape" title="numpy.ndarray.shape" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-attribute"><span class="n">first_emg_signal</span><span class="o">.</span><span class="n">shape</span></a><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  - </span><span class="si">{</span><a href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.shape.html#numpy.ndarray.shape" title="numpy.ndarray.shape" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-attribute"><span class="n">first_emg_signal</span><span class="o">.</span><span class="n">shape</span></a><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2"> time samples&quot;</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  - </span><span class="si">{</span><a href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.shape.html#numpy.ndarray.shape" title="numpy.ndarray.shape" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-attribute"><span class="n">first_emg_signal</span><span class="o">.</span><span class="n">shape</span></a><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s2"> electrode rows&quot;</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  - </span><span class="si">{</span><a href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.shape.html#numpy.ndarray.shape" title="numpy.ndarray.shape" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-attribute"><span class="n">first_emg_signal</span><span class="o">.</span><span class="n">shape</span></a><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="si">}</span><span class="s2"> electrode columns&quot;</span><span class="p">)</span>
+<a href="https://neo.readthedocs.io/en/latest/api_reference.html#neo.core.AnalogSignal" title="neo.core.analogsignal.AnalogSignal" class="sphx-glr-backref-module-neo-core-analogsignal sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">first_emg_signal</span></a> <span class="o">=</span> <a href="https://neo.readthedocs.io/en/latest/api_reference.html#neo.core.Block" title="neo.core.block.Block" class="sphx-glr-backref-module-neo-core-block sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">surface_emg_signals</span></a><span class="o">.</span><span class="n">groups</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">segments</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">analogsignals</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<a href="https://docs.python.org/3/library/stdtypes.html#tuple" title="builtins.tuple" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">grid_shape</span></a> <span class="o">=</span> <a href="https://docs.python.org/3/library/stdtypes.html#dict" title="builtins.dict" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">first_emg_signal</span><span class="o">.</span><span class="n">annotations</span></a><span class="p">[</span><span class="s2">&quot;grid_shape&quot;</span><span class="p">]</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Generated EMG shape: </span><span class="si">{</span><a href="https://docs.python.org/3/library/stdtypes.html#tuple" title="builtins.tuple" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">first_emg_signal</span><span class="o">.</span><span class="n">shape</span></a><span class="si">}</span><span class="s2"> (stored as 2D for NWB compatibility)&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  - </span><span class="si">{</span><a href="https://docs.python.org/3/library/stdtypes.html#tuple" title="builtins.tuple" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">first_emg_signal</span><span class="o">.</span><span class="n">shape</span></a><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2"> time samples&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  - </span><span class="si">{</span><a href="https://docs.python.org/3/library/stdtypes.html#tuple" title="builtins.tuple" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">grid_shape</span></a><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2"> electrode rows&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  - </span><span class="si">{</span><a href="https://docs.python.org/3/library/stdtypes.html#tuple" title="builtins.tuple" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">grid_shape</span></a><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s2"> electrode columns&quot;</span><span class="p">)</span>
 
 <span class="c1"># Save the surface EMG results</span>
 <span class="n">joblib</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><a href="https://neo.readthedocs.io/en/latest/api_reference.html#neo.core.Block" title="neo.core.block.Block" class="sphx-glr-backref-module-neo-core-block sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">surface_emg_signals</span></a><span class="p">,</span> <a href="https://docs.python.org/3/library/pathlib.html#pathlib.PosixPath" title="pathlib.PosixPath" class="sphx-glr-backref-module-pathlib sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">save_path</span></a> <span class="o">/</span> <span class="s2">&quot;surface_emg_signals.pkl&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 <div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Electrode Array 1/1 Surface EMG (CPU):   0%|          | 0/1 [00:00&lt;?, ?pools/s]
-Electrode Array 1/1 Surface EMG (CPU): 100%|██████████| 1/1 [00:02&lt;00:00,  2.46s/pools]
-Electrode Array 1/1 Surface EMG (CPU): 100%|██████████| 1/1 [00:02&lt;00:00,  2.46s/pools]
+Electrode Array 1/1 Surface EMG (CPU): 100%|██████████| 1/1 [00:02&lt;00:00,  2.40s/pools]
+Electrode Array 1/1 Surface EMG (CPU): 100%|██████████| 1/1 [00:02&lt;00:00,  2.40s/pools]
 Surface EMG simulation completed!
-Generated EMG shape: (30720, 5, 5)
+Generated EMG shape: (30720, 25) (stored as 2D for NWB compatibility)
   - 30720 time samples
   - 5 electrode rows
   - 5 electrode columns
@@ -529,7 +532,9 @@ Generated EMG shape: (30720, 5, 5)
 <a href="https://matplotlib.org/stable/api/_as_gen/matplotlib.figure.Figure.html#matplotlib.figure.Figure" title="matplotlib.figure.Figure" class="sphx-glr-backref-module-matplotlib-figure sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">fig</span></a><span class="p">,</span> <a href="https://matplotlib.org/stable/api/_as_gen/matplotlib.axes.Axes.html#matplotlib.axes.Axes" title="matplotlib.axes.Axes" class="sphx-glr-backref-module-matplotlib-axes sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">ax</span></a> <span class="o">=</span> <a href="https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.subplots.html#matplotlib.pyplot.subplots" title="matplotlib.pyplot.subplots" class="sphx-glr-backref-module-matplotlib-pyplot sphx-glr-backref-type-py-function"><span class="n">plt</span><span class="o">.</span><span class="n">subplots</span></a><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span> <span class="mi">6</span><span class="p">))</span>
 
 <span class="c1"># Get EMG signal from noisy surface EMG (first pool, electrode at row 2, col 2)</span>
-<a href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">emg_signal</span></a> <span class="o">=</span> <a href="https://neo.readthedocs.io/en/latest/api_reference.html#neo.core.Block" title="neo.core.block.Block" class="sphx-glr-backref-module-neo-core-block sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">noisy_surface_emg__Block</span></a><span class="o">.</span><span class="n">groups</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">segments</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">analogsignals</span><span class="p">[</span><span class="mi">0</span><span class="p">][:,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">magnitude</span>
+<a href="https://neo.readthedocs.io/en/latest/api_reference.html#neo.core.AnalogSignal" title="neo.core.analogsignal.AnalogSignal" class="sphx-glr-backref-module-neo-core-analogsignal sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">noisy_signal</span></a> <span class="o">=</span> <a href="https://neo.readthedocs.io/en/latest/api_reference.html#neo.core.Block" title="neo.core.block.Block" class="sphx-glr-backref-module-neo-core-block sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">noisy_surface_emg__Block</span></a><span class="o">.</span><span class="n">groups</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">segments</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">analogsignals</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<a href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">emg_grid</span></a> <span class="o">=</span> <span class="n">signal_to_grid</span><span class="p">(</span><a href="https://neo.readthedocs.io/en/latest/api_reference.html#neo.core.AnalogSignal" title="neo.core.analogsignal.AnalogSignal" class="sphx-glr-backref-module-neo-core-analogsignal sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">noisy_signal</span></a><span class="p">)</span>  <span class="c1"># Convert to 3D (time, rows, cols)</span>
+<a href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">emg_signal</span></a> <span class="o">=</span> <a href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">emg_grid</span></a><span class="p">[:,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">]</span>
 <a href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">current_signal</span></a> <span class="o">=</span> <a href="https://neo.readthedocs.io/en/latest/api_reference.html#neo.core.AnalogSignal" title="neo.core.analogsignal.AnalogSignal" class="sphx-glr-backref-module-neo-core-analogsignal sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">input_current__AnalogSignal</span></a><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">magnitude</span>
 
 <span class="c1"># Normalize current between 0 and 1</span>
@@ -567,7 +572,7 @@ Generated EMG shape: (30720, 5, 5)
 <a href="https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.show.html#matplotlib.pyplot.show" title="matplotlib.pyplot.show" class="sphx-glr-backref-module-matplotlib-pyplot sphx-glr-backref-type-py-function"><span class="n">plt</span><span class="o">.</span><span class="n">show</span></a><span class="p">()</span>
 </pre></div>
 </div>
-<img src="../../_images/sphx_glr_06_simulate_surface_emg_001.png" srcset="../../_images/sphx_glr_06_simulate_surface_emg_001.png" alt="Surface EMG and Input Current" class = "sphx-glr-single-img"/><p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 4.180 seconds)</p>
+<img src="../../_images/sphx_glr_06_simulate_surface_emg_001.png" srcset="../../_images/sphx_glr_06_simulate_surface_emg_001.png" alt="Surface EMG and Input Current" class = "sphx-glr-single-img"/><p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 4.078 seconds)</p>
 <div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-auto-examples-01-basic-06-simulate-surface-emg-py">
 <div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
 <p><a class="reference download internal" download="" href="../../_downloads/f1e43a774a9ebaf8124cdb5f9b3ce07f/06_simulate_surface_emg.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">06_simulate_surface_emg.ipynb</span></code></a></p>
@@ -638,7 +643,7 @@ Generated EMG shape: (30720, 5, 5)
 
   <p class="copyright">
     
-      © Copyright 2025 - 2025, n-squared lab, FAU Erlangen-Nürnberg, Germany.
+      © Copyright 2025 - 2026, n-squared lab, FAU Erlangen-Nürnberg, Germany.
       <br/>
     
   </p>

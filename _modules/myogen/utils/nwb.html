@@ -1,0 +1,1232 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>myogen.utils.nwb &#8212; MyoGen 0.8.3 Documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=5349f25f" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/css/tooltipster.custom.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/css/tooltipster.bundle.min.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/css/tooltipster-sideTip-shadow.min.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/css/tooltipster-sideTip-punk.min.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/css/tooltipster-sideTip-noir.min.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/css/tooltipster-sideTip-light.min.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/css/tooltipster-sideTip-borderless.min.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/css/micromodal.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/custom.css?v=9b95bd4c" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery.css?v=d2d258e8" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-binder.css?v=f4aeca0c" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/custom.css?v=9b95bd4c" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../../../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+    <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+    <script src="../../../_static/documentation_options.js?v=ec54a975"></script>
+    <script src="../../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../_static/js/hoverxref.js"></script>
+    <script src="../../../_static/js/tooltipster.bundle.min.js"></script>
+    <script src="../../../_static/js/micromodal.min.js"></script>
+    <script src="../../../_static/custom.js?v=e0e269b1"></script>
+    <script src="../../../_static/design-tabs.js?v=f930bc37"></script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script type="module" src="https://cdn.jsdelivr.net/npm/mermaid@11.9.0/dist/mermaid.esm.min.mjs"></script>
+    <script type="module" src="https://cdn.jsdelivr.net/npm/@mermaid-js/layout-elk@0.2.0/dist/mermaid-layout-elk.esm.min.mjs"></script>
+    <script type="module">import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@11.9.0/dist/mermaid.esm.min.mjs";import elkLayouts from "https://cdn.jsdelivr.net/npm/@mermaid-js/layout-elk@0.2.0/dist/mermaid-layout-elk.esm.min.mjs";mermaid.registerLayoutLoaders(elkLayouts);mermaid.initialize({startOnLoad:false});</script>
+    <script src="https://cdn.jsdelivr.net/npm/d3@7.9.0/dist/d3.min.js"></script>
+    <script type="module">import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@11.9.0/dist/mermaid.esm.min.mjs";
+
+const defaultStyle = document.createElement('style');
+defaultStyle.textContent = `pre.mermaid {
+    /* Same as .mermaid-container > pre */
+    display: block;
+    width: 100%;
+}
+
+pre.mermaid > svg {
+    /* Same as .mermaid-container > pre > svg */
+    height: 500px;
+    width: 100%;
+    max-width: 100% !important;
+}
+`;
+document.head.appendChild(defaultStyle);
+
+const fullscreenStyle = document.createElement('style');
+fullscreenStyle.textContent = `.mermaid-container {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+}
+
+.mermaid-container > pre {
+    display: block;
+    width: 100%;
+}
+
+.mermaid-container > pre > svg {
+    height: 500px;
+    width: 100%;
+    max-width: 100% !important;
+}
+
+.mermaid-fullscreen-btn {
+    width: 28px;
+    height: 28px;
+    background: rgba(255, 255, 255, 0.95);
+    border: 1px solid rgba(0, 0, 0, 0.3);
+    border-radius: 4px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+    font-size: 14px;
+    line-height: 1;
+    padding: 0;
+    color: #333;
+}
+
+.mermaid-fullscreen-btn:hover {
+    opacity: 100% !important;
+    background: rgba(255, 255, 255, 1);
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3);
+    transform: scale(1.1);
+}
+
+.mermaid-fullscreen-btn.dark-theme {
+    background: rgba(50, 50, 50, 0.95);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    color: #e0e0e0;
+}
+
+.mermaid-fullscreen-btn.dark-theme:hover {
+    background: rgba(60, 60, 60, 1);
+    box-shadow: 0 3px 10px rgba(255, 255, 255, 0.2);
+}
+
+.mermaid-fullscreen-modal {
+    display: none;
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 95vw;
+    height: 100vh;
+    background: rgba(255, 255, 255, 0.98);
+    z-index: 9999;
+    padding: 20px;
+    overflow: auto;
+}
+
+.mermaid-fullscreen-modal.dark-theme {
+    background: rgba(0, 0, 0, 0.98);
+}
+
+.mermaid-fullscreen-modal.active {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.mermaid-container-fullscreen {
+    position: relative;
+    width: 95vw;
+    height: 90vh;
+    max-width: 95vw;
+    max-height: 90vh;
+    background: white;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+    overflow: auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.mermaid-container-fullscreen.dark-theme {
+    background: #1a1a1a;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8);
+}
+
+.mermaid-container-fullscreen pre.mermaid {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.mermaid-container-fullscreen .mermaid svg {
+    height: 100% !important;
+    width: 100% !important;
+    cursor: grab;
+}
+
+.mermaid-fullscreen-close {
+    position: fixed !important;
+    top: 20px !important;
+    right: 20px !important;
+    width: 40px;
+    height: 40px;
+    background: rgba(255, 255, 255, 0.95);
+    border: 1px solid rgba(0, 0, 0, 0.2);
+    border-radius: 50%;
+    cursor: pointer;
+    z-index: 10000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    transition: all 0.2s;
+    font-size: 24px;
+    line-height: 1;
+    color: #333;
+}
+
+.mermaid-fullscreen-close:hover {
+    background: white;
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
+    transform: scale(1.1);
+}
+
+.mermaid-fullscreen-close.dark-theme {
+    background: rgba(50, 50, 50, 0.95);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: #e0e0e0;
+}
+
+.mermaid-fullscreen-close.dark-theme:hover {
+    background: rgba(60, 60, 60, 1);
+    box-shadow: 0 6px 16px rgba(255, 255, 255, 0.2);
+}
+
+.mermaid-fullscreen-modal .mermaid-fullscreen-btn {
+    display: none !important;
+}`;
+document.head.appendChild(fullscreenStyle);
+
+// Detect if page has dark background
+const isDarkTheme = () => {
+    const bgColor = window.getComputedStyle(document.body).backgroundColor;
+    const match = bgColor.match(/rgb\((\d+),\s*(\d+),\s*(\d+)/);
+    if (match) {
+        const r = parseInt(match[1]);
+        const g = parseInt(match[2]);
+        const b = parseInt(match[3]);
+        const brightness = (r * 299 + g * 587 + b * 114) / 1000;
+        return brightness < 128;
+    }
+    return false;
+};
+
+const load = async () => {
+    await mermaid.run();
+
+    const all_mermaids = document.querySelectorAll(".mermaid");
+    const mermaids_processed = document.querySelectorAll(".mermaid[data-processed='true']");
+
+    if ("False" === "True") {
+        const mermaids_to_add_zoom = -1 === -1 ? all_mermaids.length : -1;
+        if(mermaids_to_add_zoom > 0) {
+            var svgs = d3.selectAll("");
+            if(all_mermaids.length !== mermaids_processed.length) {
+                setTimeout(load, 200);
+                return;
+            } else if(svgs.size() !== mermaids_to_add_zoom) {
+                setTimeout(load, 200);
+                return;
+            } else {
+                svgs.each(function() {
+                    var svg = d3.select(this);
+                    svg.html("<g class='wrapper'>" + svg.html() + "</g>");
+                    var inner = svg.select("g");
+                    var zoom = d3.zoom().on("zoom", function(event) {
+                        inner.attr("transform", event.transform);
+                    });
+                    svg.call(zoom);
+                });
+            }
+        }
+    } else if(all_mermaids.length !== mermaids_processed.length) {
+        // Wait for mermaid to process all diagrams
+        setTimeout(load, 200);
+        return;
+    }
+
+    const darkTheme = isDarkTheme();
+
+    // Stop here if not adding fullscreen capability
+    if ("True" !== "True") return;
+
+    const modal = document.createElement('div');
+    modal.className = 'mermaid-fullscreen-modal' + (darkTheme ? ' dark-theme' : '');
+    modal.setAttribute('role', 'dialog');
+    modal.setAttribute('aria-modal', 'true');
+    modal.setAttribute('aria-label', 'Fullscreen diagram viewer');
+    modal.innerHTML = `
+        <button class="mermaid-fullscreen-close${darkTheme ? ' dark-theme' : ''}" aria-label="Close fullscreen">✕</button>
+        <div class="mermaid-container-fullscreen${darkTheme ? ' dark-theme' : ''}"></div>
+    `;
+    document.body.appendChild(modal);
+
+    const modalContent = modal.querySelector('.mermaid-container-fullscreen');
+    const closeBtn = modal.querySelector('.mermaid-fullscreen-close');
+
+    let previousScrollOffset = [window.scrollX, window.scrollY];
+
+    const closeModal = () => {
+        modal.classList.remove('active');
+        modalContent.innerHTML = '';
+        document.body.style.overflow = ''
+        window.scrollTo({left: previousScrollOffset[0], top: previousScrollOffset[1], behavior: 'instant'});
+    };
+
+    closeBtn.addEventListener('click', closeModal);
+    modal.addEventListener('click', (e) => {
+        if (e.target === modal) closeModal();
+    });
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && modal.classList.contains('active')) {
+            closeModal();
+        }
+    });
+
+    const allButtons = [];
+
+    document.querySelectorAll('.mermaid').forEach((mermaidDiv) => {
+        if (mermaidDiv.parentNode.classList.contains('mermaid-container') ||
+            mermaidDiv.closest('.mermaid-fullscreen-modal')) {
+            return;
+        }
+
+        const container = document.createElement('div');
+        container.className = 'mermaid-container';
+        mermaidDiv.parentNode.insertBefore(container, mermaidDiv);
+        container.appendChild(mermaidDiv);
+
+        const fullscreenBtn = document.createElement('button');
+        fullscreenBtn.className = 'mermaid-fullscreen-btn' + (darkTheme ? ' dark-theme' : '');
+        fullscreenBtn.setAttribute('aria-label', 'View diagram in fullscreen');
+        fullscreenBtn.textContent = '⛶';
+        fullscreenBtn.style.opacity = '50%';
+
+        // Calculate dynamic position based on diagram's margin and padding
+        const diagramStyle = window.getComputedStyle(mermaidDiv);
+        const marginTop = parseFloat(diagramStyle.marginTop) || 0;
+        const marginRight = parseFloat(diagramStyle.marginRight) || 0;
+        const paddingTop = parseFloat(diagramStyle.paddingTop) || 0;
+        const paddingRight = parseFloat(diagramStyle.paddingRight) || 0;
+        fullscreenBtn.style.top = `${marginTop + paddingTop + 4}px`;
+        fullscreenBtn.style.right = `${marginRight + paddingRight + 4}px`;
+
+        fullscreenBtn.addEventListener('click', () => {
+            previousScrollOffset = [window.scroll, window.scrollY];
+            const clone = mermaidDiv.cloneNode(true);
+            modalContent.innerHTML = '';
+            modalContent.appendChild(clone);
+
+            const svg = clone.querySelector('svg');
+            if (svg) {
+                svg.removeAttribute('width');
+                svg.removeAttribute('height');
+                svg.style.width = '100%';
+                svg.style.height = 'auto';
+                svg.style.maxWidth = '100%';
+                svg.style.sdisplay = 'block';
+
+                if ("False" === "True") {
+                    setTimeout(() => {
+                        const g = svg.querySelector('g');
+                        if (g) {
+                            var svgD3 = d3.select(svg);
+                            svgD3.html("<g class='wrapper'>" + svgD3.html() + "</g>");
+                            var inner = svgD3.select("g");
+                            var zoom = d3.zoom().on("zoom", function(event) {
+                                inner.attr("transform", event.transform);
+                            });
+                            svgD3.call(zoom);
+                        }
+                    }, 100);
+                }
+            }
+
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        });
+
+        container.appendChild(fullscreenBtn);
+        allButtons.push(fullscreenBtn);
+    });
+
+    // Update theme classes when theme changes
+    const updateTheme = () => {
+        const dark = isDarkTheme();
+        allButtons.forEach(btn => {
+            if (dark) {
+                btn.classList.add('dark-theme');
+            } else {
+                btn.classList.remove('dark-theme');
+            }
+        });
+        if (dark) {
+            modal.classList.add('dark-theme');
+            modalContent.classList.add('dark-theme');
+            closeBtn.classList.add('dark-theme');
+        } else {
+            modal.classList.remove('dark-theme');
+            modalContent.classList.remove('dark-theme');
+            closeBtn.classList.remove('dark-theme');
+        }
+    };
+
+    // Watch for theme changes
+    const observer = new MutationObserver(updateTheme);
+    observer.observe(document.documentElement, {
+        attributes: true,
+        attributeFilter: ['class', 'style', 'data-theme']
+    });
+    observer.observe(document.body, {
+        attributes: true,
+        attributeFilter: ['class', 'style']
+    });
+};
+
+window.addEventListener("load", load);
+</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/myogen/utils/nwb';</script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="0.8.3" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search MyoGen docs..."
+         aria-label="Search MyoGen docs..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+<aside class="bd-header-announcement" aria-label="Announcement">
+  <div class="bd-header-announcement__content">MyoGen is under active development. API may change.</div>
+</aside>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class=" navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../../_static/myogen_logo.png" class="logo__image only-light" alt="MyoGen 0.8.3 Documentation - Home"/>
+    <img src="../../../_static/myogen_logo.png" class="logo__image only-dark pst-js-only" alt="MyoGen 0.8.3 Documentation - Home"/>
+  
+  
+</a></div>
+    
+      <div class="navbar-item">
+<div class="nav-item">
+  <div class="version-switcher__container dropdown">
+      <button id="version-switcher-button" type="button" class="version-switcher__button btn btn-sm navbar-btn" aria-haspopup="true" aria-expanded="false">
+          Version 0.8.3
+      </button>
+      
+      
+      
+  </div>
+</div> </div>
+    
+      <div class="navbar-item"><div class="nav-item">
+   <span>
+      made at the <a href="https://www.nsquared.tf.fau.de/" target="_blank">N² Lab</a>
+   </span>
+</div> </div>
+    
+  </div>
+  
+  <div class=" navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../api/index.html">
+    API Documentation
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../neo_blocks_guide.html">
+    Working with Neo Block Data Structures
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../examples.html">
+    Examples
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/NSquaredLab/MyoGen" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+    </div>
+  
+
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar hide-on-wide">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../api/index.html">
+    API Documentation
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../neo_blocks_guide.html">
+    Working with Neo Block Data Structures
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../examples.html">
+    Examples
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/NSquaredLab/MyoGen" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../../index.html" class="nav-link">Module code</a></li>
+    
+    
+    <li class="breadcrumb-item"><a href="../../myogen.html" class="nav-link">myogen</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">myogen.utils.nwb</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <h1>Source code for myogen.utils.nwb</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">NWB (Neurodata Without Borders) export utilities.</span>
+
+<span class="sd">This module provides functions to export MyoGen simulation data to NWB format</span>
+<span class="sd">using Neo&#39;s NWBIO. NWB is a standardized data format for neurophysiology that</span>
+<span class="sd">enables data sharing and interoperability with other neuroscience tools.</span>
+
+<span class="sd">NWB enables:</span>
+<span class="sd">- Data sharing via the DANDI Archive (https://dandiarchive.org/)</span>
+<span class="sd">- Interoperability with the NWB ecosystem of tools</span>
+<span class="sd">- Schema validation for data integrity</span>
+<span class="sd">- Rich metadata for experimental context</span>
+
+<span class="sd">For more information:</span>
+<span class="sd">- NWB documentation: https://pynwb.readthedocs.io/</span>
+<span class="sd">- NWB Overview: https://nwb-overview.readthedocs.io/</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">uuid</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datetime</span><span class="w"> </span><span class="kn">import</span> <span class="n">datetime</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">neo</span><span class="w"> </span><span class="kn">import</span> <span class="n">Block</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">.decorators</span><span class="w"> </span><span class="kn">import</span> <span class="n">beartowertype</span>
+
+<span class="c1"># Check for optional NWB dependencies</span>
+<span class="k">try</span><span class="p">:</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">neo.io</span><span class="w"> </span><span class="kn">import</span> <span class="n">NWBIO</span> <span class="k">as</span> <span class="n">_BaseNWBIO</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">itertools</span><span class="w"> </span><span class="kn">import</span> <span class="n">chain</span>
+    <span class="n">HAS_NWB</span> <span class="o">=</span> <span class="kc">True</span>
+
+    <span class="k">class</span><span class="w"> </span><span class="nc">NWBIO</span><span class="p">(</span><span class="n">_BaseNWBIO</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Custom NWBIO that preserves signal names instead of renaming them.&quot;&quot;&quot;</span>
+
+        <span class="k">def</span><span class="w"> </span><span class="nf">_write_segment</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nwbfile</span><span class="p">,</span> <span class="n">segment</span><span class="p">,</span> <span class="n">electrodes</span><span class="p">):</span>
+<span class="w">            </span><span class="sd">&quot;&quot;&quot;Override to preserve original signal names.&quot;&quot;&quot;</span>
+            <span class="k">for</span> <span class="n">signal</span> <span class="ow">in</span> <span class="n">chain</span><span class="p">(</span><span class="n">segment</span><span class="o">.</span><span class="n">analogsignals</span><span class="p">,</span> <span class="n">segment</span><span class="o">.</span><span class="n">irregularlysampledsignals</span><span class="p">):</span>
+                <span class="k">if</span> <span class="n">signal</span><span class="o">.</span><span class="n">segment</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">segment</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;signal.segment must be segment and is </span><span class="si">{</span><span class="n">signal</span><span class="o">.</span><span class="n">segment</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="c1"># Preserve original name - don&#39;t rename like base class does</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">signal</span><span class="o">.</span><span class="n">name</span><span class="p">:</span>
+                    <span class="n">signal</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">segment</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">_signal&quot;</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_write_signal</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_nwbfile</span><span class="p">,</span> <span class="n">signal</span><span class="p">,</span> <span class="n">electrodes</span><span class="p">)</span>
+
+            <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">train</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">segment</span><span class="o">.</span><span class="n">spiketrains</span><span class="p">):</span>
+                <span class="k">if</span> <span class="n">train</span><span class="o">.</span><span class="n">segment</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">segment</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;train.segment must be segment and is </span><span class="si">{</span><span class="n">train</span><span class="o">.</span><span class="n">segment</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">train</span><span class="o">.</span><span class="n">name</span><span class="p">:</span>
+                    <span class="n">train</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">segment</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">_spiketrain</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_write_spiketrain</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_nwbfile</span><span class="p">,</span> <span class="n">train</span><span class="p">)</span>
+
+            <span class="k">for</span> <span class="n">event</span> <span class="ow">in</span> <span class="n">segment</span><span class="o">.</span><span class="n">events</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">event</span><span class="o">.</span><span class="n">segment</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">segment</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;event.segment must be segment and is </span><span class="si">{</span><span class="n">event</span><span class="o">.</span><span class="n">segment</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">event</span><span class="o">.</span><span class="n">name</span><span class="p">:</span>
+                    <span class="n">event</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">segment</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">_event&quot;</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_write_event</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_nwbfile</span><span class="p">,</span> <span class="n">event</span><span class="p">)</span>
+
+            <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">epoch</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">segment</span><span class="o">.</span><span class="n">epochs</span><span class="p">):</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">epoch</span><span class="o">.</span><span class="n">name</span><span class="p">:</span>
+                    <span class="n">epoch</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">segment</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">_epoch</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_write_epoch</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_nwbfile</span><span class="p">,</span> <span class="n">epoch</span><span class="p">)</span>
+
+<span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+    <span class="n">HAS_NWB</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="n">NWBIO</span> <span class="o">=</span> <span class="kc">None</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_check_nwb_available</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Check if NWB dependencies are available.&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">HAS_NWB</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ImportError</span><span class="p">(</span>
+            <span class="s2">&quot;NWB export requires optional dependencies. &quot;</span>
+            <span class="s2">&quot;Install with: pip install myogen[nwb]&quot;</span>
+        <span class="p">)</span>
+
+
+<div class="viewcode-block" id="export_to_nwb">
+<a class="viewcode-back" href="../../../generated/myogen.utils.nwb.export_to_nwb.html#myogen.utils.nwb.export_to_nwb">[docs]</a>
+<span class="nd">@beartowertype</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">export_to_nwb</span><span class="p">(</span>
+    <span class="n">block</span><span class="p">:</span> <span class="n">Block</span><span class="p">,</span>
+    <span class="n">filepath</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">Path</span><span class="p">,</span>
+    <span class="n">session_description</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;MyoGen simulation&quot;</span><span class="p">,</span>
+    <span class="n">identifier</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">session_start_time</span><span class="p">:</span> <span class="n">datetime</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">experimenter</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">institution</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">lab</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">experiment_description</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">keywords</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="c1"># Subject metadata (important for DANDI compliance)</span>
+    <span class="n">subject_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">species</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;Homo sapiens&quot;</span><span class="p">,</span>
+    <span class="n">age</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">sex</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">subject_description</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Path</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Export a Neo Block to NWB format.</span>
+
+<span class="sd">    This function uses Neo&#39;s NWBIO to write simulation data to an NWB file.</span>
+<span class="sd">    The Block should contain AnalogSignals with grid annotations (created</span>
+<span class="sd">    via create_grid_signal) for electrode array data.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    block : Block</span>
+<span class="sd">        Neo Block containing simulation data. Can be spike trains, EMG,</span>
+<span class="sd">        or MUAP data from MyoGen simulations.</span>
+<span class="sd">    filepath : str or Path</span>
+<span class="sd">        Output file path. Should end with &#39;.nwb&#39;.</span>
+<span class="sd">    session_description : str, default=&quot;MyoGen simulation&quot;</span>
+<span class="sd">        Description of the simulation session.</span>
+<span class="sd">    identifier : str, optional</span>
+<span class="sd">        Unique identifier for this NWB file. If None, a UUID is generated.</span>
+<span class="sd">    session_start_time : datetime, optional</span>
+<span class="sd">        Start time of the session. If None, current time is used.</span>
+<span class="sd">    experimenter : str or list[str], optional</span>
+<span class="sd">        Name(s) of experimenter(s).</span>
+<span class="sd">    institution : str, optional</span>
+<span class="sd">        Institution where the simulation was performed.</span>
+<span class="sd">    lab : str, optional</span>
+<span class="sd">        Lab where the simulation was performed.</span>
+<span class="sd">    experiment_description : str, optional</span>
+<span class="sd">        Description of the experiment/simulation.</span>
+<span class="sd">    keywords : list[str], optional</span>
+<span class="sd">        Keywords describing the data.</span>
+<span class="sd">    subject_id : str, optional</span>
+<span class="sd">        Subject identifier (recommended for DANDI).</span>
+<span class="sd">    species : str, default=&quot;Homo sapiens&quot;</span>
+<span class="sd">        Species of the subject. Use Latin binomial (e.g., &quot;Homo sapiens&quot;,</span>
+<span class="sd">        &quot;Mus musculus&quot;). For simulations, defaults to human.</span>
+<span class="sd">    age : str, optional</span>
+<span class="sd">        Age of subject in ISO 8601 duration format (e.g., &quot;P30Y&quot; for 30 years).</span>
+<span class="sd">    sex : str, optional</span>
+<span class="sd">        Sex of subject. One of: &quot;M&quot;, &quot;F&quot;, &quot;U&quot; (unknown), &quot;O&quot; (other).</span>
+<span class="sd">    subject_description : str, optional</span>
+<span class="sd">        Description of the subject.</span>
+<span class="sd">    **kwargs</span>
+<span class="sd">        Additional keyword arguments passed to NWBIO.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    Path</span>
+<span class="sd">        Path to the created NWB file.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; from myogen.utils.nwb import export_to_nwb</span>
+<span class="sd">    &gt;&gt;&gt;</span>
+<span class="sd">    &gt;&gt;&gt; # Export spike trains to NWB</span>
+<span class="sd">    &gt;&gt;&gt; export_to_nwb(</span>
+<span class="sd">    ...     spike_train__Block,</span>
+<span class="sd">    ...     &quot;simulation_spikes.nwb&quot;,</span>
+<span class="sd">    ...     session_description=&quot;Motor neuron pool simulation&quot;,</span>
+<span class="sd">    ...     institution=&quot;My University&quot;,</span>
+<span class="sd">    ... )</span>
+<span class="sd">    &gt;&gt;&gt;</span>
+<span class="sd">    &gt;&gt;&gt; # Export surface EMG to NWB</span>
+<span class="sd">    &gt;&gt;&gt; export_to_nwb(</span>
+<span class="sd">    ...     surface_emg__Block,</span>
+<span class="sd">    ...     &quot;simulation_emg.nwb&quot;,</span>
+<span class="sd">    ...     session_description=&quot;Surface EMG simulation&quot;,</span>
+<span class="sd">    ...     experimenter=&quot;John Doe&quot;,</span>
+<span class="sd">    ... )</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    For electrode array data (surface EMG, MUAPs), the grid structure is</span>
+<span class="sd">    preserved via electrode_positions in annotations, which map to NWB&#39;s</span>
+<span class="sd">    electrode table.</span>
+
+<span class="sd">    See Also</span>
+<span class="sd">    --------</span>
+<span class="sd">    create_grid_signal : Create grid-annotated AnalogSignals</span>
+<span class="sd">    validate_nwb : Validate NWB file with NWBInspector</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">_check_nwb_available</span><span class="p">()</span>
+
+    <span class="n">filepath</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">filepath</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">filepath</span><span class="o">.</span><span class="n">suffix</span> <span class="o">==</span> <span class="s2">&quot;.nwb&quot;</span><span class="p">:</span>
+        <span class="n">filepath</span> <span class="o">=</span> <span class="n">filepath</span><span class="o">.</span><span class="n">with_suffix</span><span class="p">(</span><span class="s2">&quot;.nwb&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Generate defaults</span>
+    <span class="k">if</span> <span class="n">identifier</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">identifier</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">uuid</span><span class="o">.</span><span class="n">uuid4</span><span class="p">())</span>
+    <span class="k">if</span> <span class="n">session_start_time</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">session_start_time</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">keywords</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">keywords</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;MyoGen&quot;</span><span class="p">,</span> <span class="s2">&quot;simulation&quot;</span><span class="p">,</span> <span class="s2">&quot;EMG&quot;</span><span class="p">,</span> <span class="s2">&quot;motor unit&quot;</span><span class="p">]</span>
+
+    <span class="c1"># Build metadata dict</span>
+    <span class="n">nwb_metadata</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;session_description&quot;</span><span class="p">:</span> <span class="n">session_description</span><span class="p">,</span>
+        <span class="s2">&quot;identifier&quot;</span><span class="p">:</span> <span class="n">identifier</span><span class="p">,</span>
+        <span class="s2">&quot;session_start_time&quot;</span><span class="p">:</span> <span class="n">session_start_time</span><span class="p">,</span>
+    <span class="p">}</span>
+    <span class="k">if</span> <span class="n">experimenter</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">nwb_metadata</span><span class="p">[</span><span class="s2">&quot;experimenter&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="p">[</span><span class="n">experimenter</span><span class="p">]</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">experimenter</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="k">else</span> <span class="n">experimenter</span>
+        <span class="p">)</span>
+    <span class="k">if</span> <span class="n">institution</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">nwb_metadata</span><span class="p">[</span><span class="s2">&quot;institution&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">institution</span>
+    <span class="k">if</span> <span class="n">lab</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">nwb_metadata</span><span class="p">[</span><span class="s2">&quot;lab&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">lab</span>
+    <span class="k">if</span> <span class="n">experiment_description</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">nwb_metadata</span><span class="p">[</span><span class="s2">&quot;experiment_description&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">experiment_description</span>
+    <span class="k">if</span> <span class="n">keywords</span><span class="p">:</span>
+        <span class="n">nwb_metadata</span><span class="p">[</span><span class="s2">&quot;keywords&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">keywords</span>
+
+    <span class="c1"># Merge with any additional kwargs</span>
+    <span class="n">nwb_metadata</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">kwargs</span><span class="p">)</span>
+
+    <span class="c1"># Write to NWB</span>
+    <span class="n">writer</span> <span class="o">=</span> <span class="n">NWBIO</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">filepath</span><span class="p">),</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;w&quot;</span><span class="p">,</span> <span class="o">**</span><span class="n">nwb_metadata</span><span class="p">)</span>
+    <span class="n">writer</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">block</span><span class="p">)</span>
+
+    <span class="c1"># Add subject metadata if provided (important for DANDI compliance)</span>
+    <span class="c1"># Neo&#39;s NWBIO doesn&#39;t support subject directly, so we add it post-hoc</span>
+    <span class="k">if</span> <span class="n">subject_id</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">subject_description</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">pynwb</span><span class="w"> </span><span class="kn">import</span> <span class="n">NWBHDF5IO</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">pynwb.file</span><span class="w"> </span><span class="kn">import</span> <span class="n">Subject</span>
+
+        <span class="k">with</span> <span class="n">NWBHDF5IO</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">filepath</span><span class="p">),</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;r+&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">io</span><span class="p">:</span>
+            <span class="n">nwbfile</span> <span class="o">=</span> <span class="n">io</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+            <span class="n">nwbfile</span><span class="o">.</span><span class="n">subject</span> <span class="o">=</span> <span class="n">Subject</span><span class="p">(</span>
+                <span class="n">subject_id</span><span class="o">=</span><span class="n">subject_id</span> <span class="ow">or</span> <span class="s2">&quot;simulation&quot;</span><span class="p">,</span>
+                <span class="n">species</span><span class="o">=</span><span class="n">species</span><span class="p">,</span>
+                <span class="n">age</span><span class="o">=</span><span class="n">age</span><span class="p">,</span>
+                <span class="n">sex</span><span class="o">=</span><span class="n">sex</span><span class="p">,</span>
+                <span class="n">description</span><span class="o">=</span><span class="n">subject_description</span> <span class="ow">or</span> <span class="s2">&quot;Simulated subject&quot;</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="n">io</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">nwbfile</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">filepath</span></div>
+
+
+
+<div class="viewcode-block" id="export_simulation_to_nwb">
+<a class="viewcode-back" href="../../../generated/myogen.utils.nwb.export_simulation_to_nwb.html#myogen.utils.nwb.export_simulation_to_nwb">[docs]</a>
+<span class="nd">@beartowertype</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">export_simulation_to_nwb</span><span class="p">(</span>
+    <span class="n">filepath</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">Path</span><span class="p">,</span>
+    <span class="n">spike_train__Block</span><span class="p">:</span> <span class="n">Block</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">surface_emg__Block</span><span class="p">:</span> <span class="n">Block</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">surface_muap__Block</span><span class="p">:</span> <span class="n">Block</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">intramuscular_emg__Block</span><span class="p">:</span> <span class="n">Block</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">intramuscular_muap__Block</span><span class="p">:</span> <span class="n">Block</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">session_description</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;MyoGen neuromuscular simulation&quot;</span><span class="p">,</span>
+    <span class="n">identifier</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">session_start_time</span><span class="p">:</span> <span class="n">datetime</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Path</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Export all simulation data to a single NWB file.</span>
+
+<span class="sd">    This is a convenience function that combines multiple Neo Blocks</span>
+<span class="sd">    (spike trains, EMG, MUAPs) into a single NWB file.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    filepath : str or Path</span>
+<span class="sd">        Output file path.</span>
+<span class="sd">    spike_train__Block : SPIKE_TRAIN__Block, optional</span>
+<span class="sd">        Block containing spike train data.</span>
+<span class="sd">    surface_emg__Block : SURFACE_EMG__Block, optional</span>
+<span class="sd">        Block containing surface EMG data.</span>
+<span class="sd">    surface_muap__Block : SURFACE_MUAP__Block, optional</span>
+<span class="sd">        Block containing surface MUAP templates.</span>
+<span class="sd">    intramuscular_emg__Block : INTRAMUSCULAR_EMG__Block, optional</span>
+<span class="sd">        Block containing intramuscular EMG data.</span>
+<span class="sd">    intramuscular_muap__Block : INTRAMUSCULAR_MUAP__Block, optional</span>
+<span class="sd">        Block containing intramuscular MUAP templates.</span>
+<span class="sd">    session_description : str, default=&quot;MyoGen neuromuscular simulation&quot;</span>
+<span class="sd">        Description of the simulation session.</span>
+<span class="sd">    identifier : str, optional</span>
+<span class="sd">        Unique identifier for this NWB file.</span>
+<span class="sd">    session_start_time : datetime, optional</span>
+<span class="sd">        Start time of the session.</span>
+<span class="sd">    **kwargs</span>
+<span class="sd">        Additional metadata passed to export_to_nwb.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    Path</span>
+<span class="sd">        Path to the created NWB file.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; from myogen.utils.nwb import export_simulation_to_nwb</span>
+<span class="sd">    &gt;&gt;&gt;</span>
+<span class="sd">    &gt;&gt;&gt; # Export complete simulation</span>
+<span class="sd">    &gt;&gt;&gt; export_simulation_to_nwb(</span>
+<span class="sd">    ...     &quot;full_simulation.nwb&quot;,</span>
+<span class="sd">    ...     spike_train__Block=simulation.get_spike_train__Block(),</span>
+<span class="sd">    ...     surface_emg__Block=surface_emg.surface_emg__Block,</span>
+<span class="sd">    ...     session_description=&quot;Biceps brachii simulation&quot;,</span>
+<span class="sd">    ...     institution=&quot;University&quot;,</span>
+<span class="sd">    ... )</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">_check_nwb_available</span><span class="p">()</span>
+
+    <span class="c1"># Combine all blocks into one</span>
+    <span class="n">combined_block</span> <span class="o">=</span> <span class="n">Block</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;MyoGen_Simulation&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Add annotations to identify data types</span>
+    <span class="k">if</span> <span class="n">spike_train__Block</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">segment</span> <span class="ow">in</span> <span class="n">spike_train__Block</span><span class="o">.</span><span class="n">segments</span><span class="p">:</span>
+            <span class="n">segment</span><span class="o">.</span><span class="n">annotate</span><span class="p">(</span><span class="n">myogen_data_type</span><span class="o">=</span><span class="s2">&quot;spike_train&quot;</span><span class="p">)</span>
+            <span class="n">combined_block</span><span class="o">.</span><span class="n">segments</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">segment</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">surface_emg__Block</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">group</span> <span class="ow">in</span> <span class="n">surface_emg__Block</span><span class="o">.</span><span class="n">groups</span><span class="p">:</span>
+            <span class="n">group</span><span class="o">.</span><span class="n">annotate</span><span class="p">(</span><span class="n">myogen_data_type</span><span class="o">=</span><span class="s2">&quot;surface_emg&quot;</span><span class="p">)</span>
+            <span class="n">combined_block</span><span class="o">.</span><span class="n">groups</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">group</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">surface_muap__Block</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">group</span> <span class="ow">in</span> <span class="n">surface_muap__Block</span><span class="o">.</span><span class="n">groups</span><span class="p">:</span>
+            <span class="n">group</span><span class="o">.</span><span class="n">annotate</span><span class="p">(</span><span class="n">myogen_data_type</span><span class="o">=</span><span class="s2">&quot;surface_muap&quot;</span><span class="p">)</span>
+            <span class="n">combined_block</span><span class="o">.</span><span class="n">groups</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">group</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">intramuscular_emg__Block</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">segment</span> <span class="ow">in</span> <span class="n">intramuscular_emg__Block</span><span class="o">.</span><span class="n">segments</span><span class="p">:</span>
+            <span class="n">segment</span><span class="o">.</span><span class="n">annotate</span><span class="p">(</span><span class="n">myogen_data_type</span><span class="o">=</span><span class="s2">&quot;intramuscular_emg&quot;</span><span class="p">)</span>
+            <span class="n">combined_block</span><span class="o">.</span><span class="n">segments</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">segment</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">intramuscular_muap__Block</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">segment</span> <span class="ow">in</span> <span class="n">intramuscular_muap__Block</span><span class="o">.</span><span class="n">segments</span><span class="p">:</span>
+            <span class="n">segment</span><span class="o">.</span><span class="n">annotate</span><span class="p">(</span><span class="n">myogen_data_type</span><span class="o">=</span><span class="s2">&quot;intramuscular_muap&quot;</span><span class="p">)</span>
+            <span class="n">combined_block</span><span class="o">.</span><span class="n">segments</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">segment</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">export_to_nwb</span><span class="p">(</span>
+        <span class="n">combined_block</span><span class="p">,</span>
+        <span class="n">filepath</span><span class="p">,</span>
+        <span class="n">session_description</span><span class="o">=</span><span class="n">session_description</span><span class="p">,</span>
+        <span class="n">identifier</span><span class="o">=</span><span class="n">identifier</span><span class="p">,</span>
+        <span class="n">session_start_time</span><span class="o">=</span><span class="n">session_start_time</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+    <span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="validate_nwb">
+<a class="viewcode-back" href="../../../generated/myogen.utils.nwb.validate_nwb.html#myogen.utils.nwb.validate_nwb">[docs]</a>
+<span class="nd">@beartowertype</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">validate_nwb</span><span class="p">(</span><span class="n">filepath</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">Path</span><span class="p">,</span> <span class="n">verbose</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Validate an NWB file using NWBInspector.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    filepath : str or Path</span>
+<span class="sd">        Path to the NWB file to validate.</span>
+<span class="sd">    verbose : bool, default=True</span>
+<span class="sd">        If True, print validation results.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    bool</span>
+<span class="sd">        True if validation passed with no errors, False otherwise.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; from myogen.utils.nwb import validate_nwb</span>
+<span class="sd">    &gt;&gt;&gt;</span>
+<span class="sd">    &gt;&gt;&gt; is_valid = validate_nwb(&quot;simulation.nwb&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; if is_valid:</span>
+<span class="sd">    ...     print(&quot;File is valid!&quot;)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">nwbinspector</span><span class="w"> </span><span class="kn">import</span> <span class="n">inspect_nwbfile</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">nwbinspector.inspector_tools</span><span class="w"> </span><span class="kn">import</span> <span class="n">format_messages</span>
+    <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span>
+                <span class="s2">&quot;NWBInspector not installed. Install with: pip install nwbinspector&quot;</span>
+            <span class="p">)</span>
+        <span class="k">return</span> <span class="kc">True</span>  <span class="c1"># Can&#39;t validate without inspector</span>
+
+    <span class="n">filepath</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">filepath</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">filepath</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+        <span class="k">raise</span> <span class="ne">FileNotFoundError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;NWB file not found: </span><span class="si">{</span><span class="n">filepath</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Run inspection</span>
+    <span class="n">messages</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">inspect_nwbfile</span><span class="p">(</span><span class="n">nwbfile_path</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">filepath</span><span class="p">)))</span>
+
+    <span class="c1"># Filter by severity</span>
+    <span class="n">errors</span> <span class="o">=</span> <span class="p">[</span><span class="n">m</span> <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="n">messages</span> <span class="k">if</span> <span class="n">m</span><span class="o">.</span><span class="n">importance</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="s2">&quot;CRITICAL&quot;</span><span class="p">]</span>
+    <span class="n">warnings</span> <span class="o">=</span> <span class="p">[</span><span class="n">m</span> <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="n">messages</span> <span class="k">if</span> <span class="n">m</span><span class="o">.</span><span class="n">importance</span><span class="o">.</span><span class="n">name</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;ERROR&quot;</span><span class="p">,</span> <span class="s2">&quot;WARNING&quot;</span><span class="p">)]</span>
+
+    <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">messages</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;✓ </span><span class="si">{</span><span class="n">filepath</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">: No issues found&quot;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="si">{</span><span class="n">filepath</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2"> validation results:&quot;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">format_messages</span><span class="p">(</span><span class="n">messages</span><span class="p">))</span>
+
+    <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="n">errors</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span></div>
+
+
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s2">&quot;export_to_nwb&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;export_simulation_to_nwb&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;validate_nwb&quot;</span><span class="p">,</span>
+<span class="p">]</span>
+</pre></div>
+
+                </article>
+              
+              
+              
+              
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2025 - 2026, n-squared lab, FAU Erlangen-Nürnberg, Germany.
+      <br/>
+    
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.2.3.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

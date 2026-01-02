@@ -51,6 +51,26 @@ Continuous Saver
    convert_chunks_to_neo
 
 
+NWB Export
+^^^^^^^^^^
+
+Export simulation data to Neurodata Without Borders (NWB) format for sharing
+and interoperability with the broader neuroscience ecosystem.
+
+.. note::
+   NWB export requires optional dependencies. Install with: ``pip install myogen[nwb]``
+
+.. currentmodule:: myogen.utils.nwb
+
+.. autosummary::
+   :toctree: ../generated/
+   :template: autosummary/function.rst
+
+   export_to_nwb
+   export_simulation_to_nwb
+   validate_nwb
+
+
 Plotting & Visualization
 ^^^^^^^^^^^^^^^^^^^^^^^^^
 
