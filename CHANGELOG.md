@@ -7,6 +7,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.8.4] - 2026-01-06
+
+### Added
+- **Verbose Parameter**: Added `verbose=True` parameter throughout the codebase to control tqdm progress bars and informational print statements
+  - `ForceModel.generate_force(verbose=True)` - controls progress bars during force generation
+  - `ForceModelVectorized.generate_force(verbose=True)` - controls print statements
+  - `SurfaceEMG.simulate_muaps(verbose=True)` and `simulate_surface_emg(verbose=True)` - controls progress bars
+  - `IntramuscularEMG.simulate_muaps(verbose=True)` and `simulate_intramuscular_emg(verbose=True)` - controls progress bars and print statements
+  - `Muscle.generate_muscle_fiber_centers(verbose=True)` and `assign_mfs2mns(verbose=True)` - controls progress bars and status messages
+  - `MotorUnitSim.calc_sfaps(verbose=True)` - controls progress bar during SFAP calculation
+  - `SimulationRunner.run(verbose=True)` - controls simulation progress bar and completion message
+  - `ContinuousSaver(verbose=True)`, `load_and_combine_chunks(verbose=True)`, `convert_chunks_to_neo(verbose=True)` - controls all logging output
+  - `plot_innervation_areas_2d(verbose=True)` - controls plotting progress bar
+  - All parameters default to `True` (original behavior). Set `verbose=False` to silence output.
+
 ## [0.8.3] - 2026-01-01
 
 ### Added

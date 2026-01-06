@@ -8,7 +8,7 @@
 
   [![Documentation](https://img.shields.io/badge/docs-latest-blue.svg)](https://nsquaredlab.github.io/MyoGen/)
   [![Python 3.12+](https://img.shields.io/badge/python-3.12+-blue.svg)](https://www.python.org/downloads/)
-  [![Version](https://img.shields.io/badge/version-0.8.3-orange.svg)](https://github.com/NsquaredLab/MyoGen)
+  [![Version](https://img.shields.io/badge/version-0.8.4-orange.svg)](https://github.com/NsquaredLab/MyoGen)
 
   [Installation](https://nsquaredlab.github.io/MyoGen/#installation) •
   [Documentation](https://nsquaredlab.github.io/MyoGen/) •

@@ -65,6 +65,7 @@ def plot_innervation_areas_2d(
     ax: Axes,
     indices_to_plot: Optional[np.ndarray] = None,
     apply_default_formatting: bool = True,
+    verbose: bool = True,
     **kwargs: Any,
 ) -> Axes:
     """Plot 2D innervation areas
@@ -79,6 +80,8 @@ def plot_innervation_areas_2d(
         Indices of motor neurons to plot. By default, all motor neurons are plotted.
     apply_default_formatting : bool, optional
         Whether to apply default formatting to the plot, by default True
+    verbose : bool, default=True
+        If True, display progress bars. Set to False to disable.
     **kwargs : Any
         Additional keyword arguments to pass to the plot function. Only used if apply_default_formatting is False.
 
@@ -103,6 +106,7 @@ def plot_innervation_areas_2d(
             list(zip(enumerate(reversed(indices_to_plot)), colors, alphas)),
             desc="Plotting innervation areas",
             unit="MU",
+            disable=not verbose,
         ):
             fiber_indices = np.where(muscle_model.assignment == m)[0]
             if len(fiber_indices) > 0:

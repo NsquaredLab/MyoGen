@@ -163,6 +163,7 @@ class SimulationRunner:
         duration__ms: Quantity__ms,
         timestep__ms: Quantity__ms,
         membrane_recording: Optional[dict[str, list[int]]] = None,
+        verbose: bool = True,
     ) -> Block:
         """
         Execute NEURON simulation with automated setup and result collection.
@@ -176,6 +177,8 @@ class SimulationRunner:
         membrane_recording : Optional[Dict[str, List[int]]], optional
             Populations and cell indices for membrane potential recording.
             Format: {"population_name": [cell_id1, cell_id2, ...]}, by default None.
+        verbose : bool, default=True
+            If True, display progress bar and status messages. Set to False to disable.
 
         Returns
         -------
@@ -195,7 +198,7 @@ class SimulationRunner:
         """
         try:
             # Setup NEURON environment
-            self._setup_neuron_environment(duration__ms, timestep__ms)
+            self._setup_neuron_environment(duration__ms, timestep__ms, verbose=verbose)
 
             # Setup optional membrane recording
             if membrane_recording:
@@ -223,7 +226,8 @@ class SimulationRunner:
                     # Ignore progress bar closing errors
                     pass
 
-            print("Simulation completed")
+            if verbose:
+                print("Simulation completed")
 
             # Collect and structure results
             results = self._collect_results(duration__ms, timestep__ms)
@@ -241,7 +245,7 @@ class SimulationRunner:
             raise RuntimeError(f"Simulation failed: {str(e)}") from e
 
     def _setup_neuron_environment(
-        self, duration__ms: Quantity__ms, timestep__ms: Quantity__ms
+        self, duration__ms: Quantity__ms, timestep__ms: Quantity__ms, verbose: bool = True
     ) -> None:
         """Configure NEURON global simulation parameters."""
         h.load_file("stdrun.hoc")
@@ -261,6 +265,7 @@ class SimulationRunner:
             total=duration__ms.magnitude,
             desc="Simulation Progress",
             unit="ms",
+            disable=not verbose,
         )
 
         # Reset step counter for step callback

@@ -179,7 +179,7 @@ class ForceModelVectorized:
         ]
 
     def generate_force(
-        self, spike_train__Block: SPIKE_TRAIN__Block
+        self, spike_train__Block: SPIKE_TRAIN__Block, verbose: bool = True
     ) -> FORCE__AnalogSignal:
         """
         Generate force output from motor unit spike trains using the Fuglevand model.
@@ -190,6 +190,8 @@ class ForceModelVectorized:
         ----------
         spike_train__Block : SPIKE_TRAIN__Block
             Spike train block containing spike train data.
+        verbose : bool, default=True
+            If True, display progress information. Set to False to disable.
 
         Returns
         -------
@@ -243,7 +245,7 @@ class ForceModelVectorized:
 
                 # Generate force with vectorized implementation
                 force_output = self._generate_force_vectorized(
-                    spike_array, spiketrain_timestep__ms, prefix=f"Pool {i + 1}"
+                    spike_array, spiketrain_timestep__ms, prefix=f"Pool {i + 1}", verbose=verbose
                 )
                 forces.append(force_output)
 
@@ -257,7 +259,7 @@ class ForceModelVectorized:
         )
 
     def _generate_force_vectorized(
-        self, spikes: np.ndarray, spiketrain_timestep__ms: float, prefix: str = ""
+        self, spikes: np.ndarray, spiketrain_timestep__ms: float, prefix: str = "", verbose: bool = True
     ) -> np.ndarray:
         """Generate force using vectorized operations for better performance."""
         L = spikes.shape[0]
@@ -296,7 +298,8 @@ class ForceModelVectorized:
             )
 
         # Use vectorized force generation
-        print(f"{prefix} Generating force with vectorized implementation...")
+        if verbose:
+            print(f"{prefix} Generating force with vectorized implementation...")
         force = generate_force_vectorized(spikes, gain, resampled_twitches)
 
         # Resample to recording frequency

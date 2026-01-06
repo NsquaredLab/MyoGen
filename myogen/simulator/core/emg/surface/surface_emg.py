@@ -207,7 +207,7 @@ class SurfaceEMG:
         self._noisy_surface_emg__Block: Optional[SURFACE_EMG__Block] = None
         self._spike_train__Block: Optional[SPIKE_TRAIN__Block] = None
 
-    def simulate_muaps(self, n_jobs: int = -2) -> SURFACE_MUAP__Block:
+    def simulate_muaps(self, n_jobs: int = -2, verbose: bool = True) -> SURFACE_MUAP__Block:
         """
         Simulate MUAPs for all electrode arrays using the provided muscle model.
 
@@ -225,6 +225,8 @@ class SurfaceEMG:
             - n_jobs=-3: Use all cores except two
             - n_jobs=1: No parallelization
             - n_jobs=N: Use exactly N cores
+        verbose : bool, default=True
+            If True, display progress bars. Set to False to disable.
 
         Returns
         -------
@@ -434,6 +436,7 @@ class SurfaceEMG:
             with tqdm(
                 total=n_mus_to_compute,
                 desc=f"Electrode Array {array_idx + 1}/{len(self._electrode_arrays)}",
+                disable=not verbose,
             ) as pbar:
                 for array_result, segment_name in Parallel(
                     n_jobs=n_jobs,
@@ -505,7 +508,7 @@ class SurfaceEMG:
 
         return block
 
-    def simulate_surface_emg(self, spike_train__Block: SPIKE_TRAIN__Block) -> SURFACE_EMG__Block:
+    def simulate_surface_emg(self, spike_train__Block: SPIKE_TRAIN__Block, verbose: bool = True) -> SURFACE_EMG__Block:
         """
         Generate surface EMG signals for all electrode arrays using the provided spike train block.
 
@@ -517,6 +520,8 @@ class SurfaceEMG:
         ----------
         spike_train__Block : SPIKE_TRAIN__Block
             Block containing spike trains organized as segments (pools) with spiketrains.
+        verbose : bool, default=True
+            If True, display progress bars. Set to False to disable.
 
         Returns
         -------
@@ -651,6 +656,7 @@ class SurfaceEMG:
                     range(n_pools),
                     desc=f"Electrode Array {array_idx + 1}/{len(self._muaps__Block.groups)} Surface EMG (GPU)",
                     unit="pools",
+                    disable=not verbose,
                 ):
                     pool_active_neurons = set(active_neuron_indices[pool_idx])
 
@@ -681,6 +687,7 @@ class SurfaceEMG:
                     range(n_pools),
                     desc=f"Electrode Array {array_idx + 1}/{len(self._muaps__Block.groups)} Surface EMG (CPU)",
                     unit="pools",
+                    disable=not verbose,
                 ):
                     pool_active_neurons = set(active_neuron_indices[pool_idx])
 

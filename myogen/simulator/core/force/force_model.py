@@ -232,7 +232,7 @@ class ForceModel:
             )
         ]
 
-    def generate_force(self, spike_train__Block: SPIKE_TRAIN__Block) -> FORCE__AnalogSignal:
+    def generate_force(self, spike_train__Block: SPIKE_TRAIN__Block, verbose: bool = True) -> FORCE__AnalogSignal:
         """
         Generate force output from motor unit spike trains using the Fuglevand model.
 
@@ -246,6 +246,8 @@ class ForceModel:
         ----------
         spike_train__Block : SPIKE_TRAIN__Block
             Spike train block containing spike train data for multiple motor neuron pools.
+        verbose : bool, default=True
+            If True, display progress bars during force generation. Set to False to disable.
 
         Returns
         -------
@@ -314,7 +316,7 @@ class ForceModel:
 
                 # Generate force with resampling handled internally
                 force_output = self._generate_force(
-                    spike_array, spiketrain_timestep__ms, prefix=f"Pool {i + 1}"
+                    spike_array, spiketrain_timestep__ms, prefix=f"Pool {i + 1}", verbose=verbose
                 )
                 forces.append(force_output)
 
@@ -328,7 +330,7 @@ class ForceModel:
         )
 
     def _generate_force(
-        self, spikes, spiketrain_timestep__ms: float, prefix: str = ""
+        self, spikes, spiketrain_timestep__ms: float, prefix: str = "", verbose: bool = True
     ) -> np.ndarray:
         """Generate force offline from spike trains with resampling to recording frequency."""
         # Convert sparse to dense once at the start
@@ -368,7 +370,7 @@ class ForceModel:
         # Try to use Numba if available for additional speedup
         try:
             force = self._generate_force_numba(
-                force, spikes_dense, gain, resampled_twitches, L, prefix
+                force, spikes_dense, gain, resampled_twitches, L, prefix, verbose
             )
         except (ImportError, AttributeError):
             # Fallback to optimized NumPy version
@@ -376,7 +378,7 @@ class ForceModel:
                 range(self._number_of_neurons),
                 desc=f"{prefix} Twitch trains are generated",
                 unit="MU",
-                disable=False,
+                disable=not verbose,
             ):
                 # Only iterate over spike times, not all time points
                 spike_indices = np.where(spikes_dense[:, n])[0]
@@ -400,6 +402,7 @@ class ForceModel:
         resampled_twitches: list,
         L: int,
         prefix: str,
+        verbose: bool = True,
     ) -> np.ndarray:
         """Generate force using Numba JIT compilation for maximum speed."""
         try:
@@ -422,6 +425,7 @@ class ForceModel:
             range(self._number_of_neurons),
             desc=f"{prefix} Twitch trains (Numba)",
             unit="MU",
+            disable=not verbose,
         ):
             force = add_twitches_jit(force, spikes, gain, n, resampled_twitches[n], L)
 

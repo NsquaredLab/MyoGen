@@ -413,7 +413,7 @@ class Muscle:
                     center_offset  # Keep original if max_dist is 0
                 )
 
-    def generate_muscle_fiber_centers(self) -> None:
+    def generate_muscle_fiber_centers(self, verbose: bool = True) -> None:
         """
         Generate muscle fiber center positions using a pre-computed Voronoi distribution.
 
@@ -421,6 +421,11 @@ class Muscle:
         within the circular muscle cross-section. The distribution is based on a
         Voronoi tessellation pattern that mimics the natural packing of muscle fibers
         observed in histological studies.
+
+        Parameters
+        ----------
+        verbose : bool, default=True
+            If True, display status messages. Set to False to disable.
 
         Results are stored in the following properties after execution:
 
@@ -486,10 +491,11 @@ class Muscle:
             if n_fibers_removed > 0:
                 self._muscle_fiber_centers__mm = self._muscle_fiber_centers__mm[valid_fiber_mask]
                 self._number_of_muscle_fibers = len(self._muscle_fiber_centers__mm)
-                print(
-                    f"Removed {n_fibers_removed} fibers inside bone radius "
-                    f"(r < {self._radius_bone__mm.magnitude:.3f} mm)"
-                )
+                if verbose:
+                    print(
+                        f"Removed {n_fibers_removed} fibers inside bone radius "
+                        f"(r < {self._radius_bone__mm.magnitude:.3f} mm)"
+                    )
 
         # Create muscle border for plotting
         phi_circle = np.linspace(0, 2 * np.pi, 1000)
@@ -504,7 +510,7 @@ class Muscle:
             * pq.mm
         )
 
-    def assign_mfs2mns(self, n_neighbours: int = 3, conf: float = 0.999, n_jobs: int = -2) -> None:
+    def assign_mfs2mns(self, n_neighbours: int = 3, conf: float = 0.999, n_jobs: int = -2, verbose: bool = True) -> None:
         """
         Assign muscle fibers to motor neurons using biologically realistic principles.
 
@@ -538,6 +544,8 @@ class Muscle:
             - n_jobs=-3: Use all cores except two
             - n_jobs=1: No parallelization
             - n_jobs=N: Use exactly N cores
+        verbose : bool, default=True
+            If True, display progress bars and status messages. Set to False to disable.
 
         Results are stored in the `assignment` property after execution.
 
@@ -653,6 +661,7 @@ class Muscle:
             total=self._number_of_neurons,
             desc="Calculating out-of-circle coefficients",
             unit="MU",
+            disable=not verbose,
         ) as pbar:
             for coeff in Parallel(
                 n_jobs=n_jobs,
@@ -710,7 +719,7 @@ class Muscle:
         self._assignment = np.full(self._number_of_muscle_fibers, np.nan)
         randomized_mf = RANDOM_GENERATOR.permutation(self._number_of_muscle_fibers)
 
-        for mf in tqdm(randomized_mf, desc="Assigning muscle fibers to motor neurons", unit="MF"):
+        for mf in tqdm(randomized_mf, desc="Assigning muscle fibers to motor neurons", unit="MF", disable=not verbose):
             # Vectorized computation of likelihoods for all motor units
             # Compute differences: (n_neurons, 2)
             diffs = self._muscle_fiber_centers__mm[mf, :].magnitude - mu_means
@@ -746,7 +755,8 @@ class Muscle:
             # Sample from the probability distribution (equivalent to MATLAB's randsample)
             self._assignment[mf] = RANDOM_GENERATOR.choice(self._number_of_neurons, p=probs)
 
-        print(f"Assignment completed. {self._number_of_muscle_fibers} muscle fibers assigned.")
+        if verbose:
+            print(f"Assignment completed. {self._number_of_muscle_fibers} muscle fibers assigned.")
 
     def resulting_fiber_assignment(self, mu: int) -> Quantity__mm:
         """

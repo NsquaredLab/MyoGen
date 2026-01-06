@@ -239,6 +239,7 @@ class MotorUnitSim:
         electrode_positions: np.ndarray,
         electrode_normals: Optional[np.ndarray] = None,
         min_radial_dist: Optional[float] = None,
+        verbose: bool = True,
     ):
         """
         Calculate single fiber action potentials (SFAPs) for all fibers.
@@ -255,6 +256,8 @@ class MotorUnitSim:
             Electrode normal vectors (not used for point electrodes)
         min_radial_dist : float, optional
             Minimum radial distance for stability (default: mean diameter * 1000)
+        verbose : bool, default=True
+            If True, display progress bars. Set to False to disable.
         """
         self.dt = dt
         self.dz = dz
@@ -296,6 +299,7 @@ class MotorUnitSim:
             range(self._number_of_muscle_fibers),
             desc=f"MU {index}: Calculating SFAPs",
             unit="fiber",
+            disable=not verbose,
         ):
             z_left = np.arange(
                 start=self._neuromuscular_z_coordinates__mm[fiber_idx],

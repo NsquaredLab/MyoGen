@@ -47,12 +47,14 @@ class ContinuousSaver:
         chunk_duration__ms: Quantity__ms = 10000.0 * pq.ms,
         populations: Optional[dict] = None,
         recording_config: Optional[dict] = None,
+        verbose: bool = True,
     ):
         self.save_path = Path(save_path)
         self.save_path.mkdir(exist_ok=True, parents=True)
         self.chunk_duration__ms = chunk_duration__ms
         self.populations = populations or {}
         self.recording_config = recording_config or {}
+        self.verbose = verbose
 
         # Tracking state
         self.chunk_id = 0
@@ -63,10 +65,11 @@ class ContinuousSaver:
         # Spike recording
         self.spike_data = defaultdict(lambda: {"times": [], "ids": []})
 
-        print("ContinuousSaver initialized:")
-        print(f"\tSave path: {self.save_path}")
-        print(f"\tChunk duration: {chunk_duration__ms} ms")
-        print(f"\tRecording config: {recording_config}")
+        if self.verbose:
+            print("ContinuousSaver initialized:")
+            print(f"\tSave path: {self.save_path}")
+            print(f"\tChunk duration: {chunk_duration__ms} ms")
+            print(f"\tRecording config: {recording_config}")
 
     def record_step(self, timestep__ms: float) -> None:
         """
@@ -146,10 +149,11 @@ class ContinuousSaver:
         n_neurons = sum(len(cells) for cells in self.current_chunk_data.values())
         chunk_size_mb = (n_timepoints * n_neurons * 8) / (1024**2)  # 8 bytes per float
 
-        print(
-            f"Saved chunk {self.chunk_id}: {self.current_chunk_times[0]:.1f}-{self.current_chunk_times[-1]:.1f} ms "
-            f"({n_timepoints} steps, {n_neurons} neurons, ~{chunk_size_mb:.1f} MB)"
-        )
+        if self.verbose:
+            print(
+                f"Saved chunk {self.chunk_id}: {self.current_chunk_times[0]:.1f}-{self.current_chunk_times[-1]:.1f} ms "
+                f"({n_timepoints} steps, {n_neurons} neurons, ~{chunk_size_mb:.1f} MB)"
+            )
 
         # Clear memory
         self.current_chunk_data.clear()
@@ -181,7 +185,8 @@ class ContinuousSaver:
 
         if spike_results is not None:
             # Extract spike data from NEO Block (from SimulationRunner)
-            print("\nExtracting spike data from SimulationRunner results...")
+            if self.verbose:
+                print("\nExtracting spike data from SimulationRunner results...")
             from neo import Block
 
             if isinstance(spike_results, Block):
@@ -211,9 +216,10 @@ class ContinuousSaver:
                             "ids": np.array(ids_list),
                         }
 
-                        print(
-                            f"{pop_name}: {len(times_list)} spikes from {len(seg.spiketrains)} neurons"
-                        )
+                        if self.verbose:
+                            print(
+                                f"{pop_name}: {len(times_list)} spikes from {len(seg.spiketrains)} neurons"
+                            )
         else:
             # Use manually recorded spike data (legacy)
             for pop_name, data in self.spike_data.items():
@@ -232,14 +238,15 @@ class ContinuousSaver:
         }
         joblib.dump(metadata, self.save_path / "metadata.pkl")
 
-        print("\nContinuous saving complete:")
-        print(f"\tTotal chunks saved: {self.chunk_id}")
-        print(f"\tSpike data saved: {spike_filename}")
-        print(f"\tPopulations with spikes: {list(spike_data_arrays.keys())}")
-        print(f"\tAll data in: {self.save_path}")
+        if self.verbose:
+            print("\nContinuous saving complete:")
+            print(f"\tTotal chunks saved: {self.chunk_id}")
+            print(f"\tSpike data saved: {spike_filename}")
+            print(f"\tPopulations with spikes: {list(spike_data_arrays.keys())}")
+            print(f"\tAll data in: {self.save_path}")
 
 
-def load_and_combine_chunks(save_path: Path, output_filename: Optional[str] = None):
+def load_and_combine_chunks(save_path: Path, output_filename: Optional[str] = None, verbose: bool = True):
     """
     Load all chunks from disk and combine into a single dataset.
 
@@ -249,6 +256,8 @@ def load_and_combine_chunks(save_path: Path, output_filename: Optional[str] = No
         Directory where chunks were saved
     output_filename : str, optional
         If provided, save combined data to this file
+    verbose : bool, default=True
+        If True, display status messages. Set to False to disable.
 
     Returns
     -------
@@ -261,7 +270,8 @@ def load_and_combine_chunks(save_path: Path, output_filename: Optional[str] = No
     metadata = joblib.load(save_path / "metadata.pkl")
     total_chunks = metadata["total_chunks"]
 
-    print(f"Loading {total_chunks} chunks from {save_path}...")
+    if verbose:
+        print(f"Loading {total_chunks} chunks from {save_path}...")
 
     # Load all chunks
     chunks = []
@@ -269,7 +279,7 @@ def load_and_combine_chunks(save_path: Path, output_filename: Optional[str] = No
         chunk_filename = save_path / f"chunk_{chunk_id:04d}.pkl"
         if chunk_filename.exists():
             chunks.append(joblib.load(chunk_filename))
-        else:
+        elif verbose:
             print(f"Warning: Missing chunk {chunk_id}")
 
     # Combine chunks
@@ -301,22 +311,24 @@ def load_and_combine_chunks(save_path: Path, output_filename: Optional[str] = No
 
     combined["metadata"] = metadata
 
-    print(f"Combined {total_chunks} chunks:")
-    print(f"\tTotal time points: {len(combined['times'])}")
-    print(f"\tTime range: {combined['times'][0]:.1f} - {combined['times'][-1]:.1f} ms")
-    print(f"\tDuration: {(combined['times'][-1] - combined['times'][0]) / 1000:.1f} seconds")
+    if verbose:
+        print(f"Combined {total_chunks} chunks:")
+        print(f"\tTotal time points: {len(combined['times'])}")
+        print(f"\tTime range: {combined['times'][0]:.1f} - {combined['times'][-1]:.1f} ms")
+        print(f"\tDuration: {(combined['times'][-1] - combined['times'][0]) / 1000:.1f} seconds")
 
     # Optionally save combined data
     if output_filename:
         output_path = save_path / output_filename
         joblib.dump(combined, output_path, compress=3)
-        print(f"\tSaved combined data to: {output_path}")
+        if verbose:
+            print(f"\tSaved combined data to: {output_path}")
 
     return combined
 
 
 def convert_chunks_to_neo(
-    save_path: Path, duration__ms: Optional[float] = None, spike_data_file: Optional[Path] = None
+    save_path: Path, duration__ms: Optional[float] = None, spike_data_file: Optional[Path] = None, verbose: bool = True
 ) -> Block:
     """
     Load chunks and convert to NEO Block format (compatible with SimulationRunner output).
@@ -334,6 +346,8 @@ def convert_chunks_to_neo(
     spike_data_file : Path, optional
         Path to SimulationRunner spike results file (e.g., 'watanabe__spikes_only.pkl')
         If provided, spike data will be loaded from this NEO Block instead of chunks
+    verbose : bool, default=True
+        If True, display progress bars and status messages. Set to False to disable.
 
     Returns
     -------
@@ -342,7 +356,8 @@ def convert_chunks_to_neo(
     """
     save_path = Path(save_path)
 
-    print("Converting chunks to NEO Block format...")
+    if verbose:
+        print("Converting chunks to NEO Block format...")
 
     # Load metadata
     metadata = joblib.load(save_path / "metadata.pkl")
@@ -352,18 +367,21 @@ def convert_chunks_to_neo(
     # Load spike data - either from external file or from chunks
     if spike_data_file is not None:
         # Load spike data from SimulationRunner results (NEO Block)
-        print("\tLoading spike data from: {spike_data_file}")
+        if verbose:
+            print("\tLoading spike data from: {spike_data_file}")
         spike_results = joblib.load(spike_data_file)
         use_neo_spikes = True
     else:
         # Load spike data from chunks (legacy format)
         spike_filename = save_path / "spikes.pkl"
         if spike_filename.exists():
-            print(f"  Loading spike data from: {spike_filename}")
+            if verbose:
+                print(f"  Loading spike data from: {spike_filename}")
             spike_data = joblib.load(spike_filename)
             use_neo_spikes = False
         else:
-            print("\tWarning: No spike data found")
+            if verbose:
+                print("\tWarning: No spike data found")
             spike_data = {}
             use_neo_spikes = False
 
@@ -376,15 +394,17 @@ def convert_chunks_to_neo(
         last_chunk = joblib.load(save_path / f"chunk_{total_chunks - 1:04d}.pkl")
         duration__ms = last_chunk["time_end"]
 
-    print(f"\tDuration: {duration__ms} ms")
-    print(f"\tTimestep: {timestep__ms} ms")
-    print(f"\tTotal chunks: {total_chunks}")
+    if verbose:
+        print(f"\tDuration: {duration__ms} ms")
+        print(f"\tTimestep: {timestep__ms} ms")
+        print(f"\tTotal chunks: {total_chunks}")
 
     # Create NEO Block
     block = Block()
 
     # Add spike data for each population
-    print("\tAdding spike trains...")
+    if verbose:
+        print("\tAdding spike trains...")
 
     if use_neo_spikes:
         # Use spike data from SimulationRunner NEO Block
@@ -395,7 +415,8 @@ def convert_chunks_to_neo(
                 for st in seg.spiketrains:
                     new_segment.spiketrains.append(st)
                 block.segments.append(new_segment)
-                print(f"\t{seg.name}: {len(new_segment.spiketrains)} spike trains")
+                if verbose:
+                    print(f"\t{seg.name}: {len(new_segment.spiketrains)} spike trains")
     else:
         # Use spike data from chunks (legacy format)
         for pop_name, spikes in spike_data.items():
@@ -407,7 +428,7 @@ def convert_chunks_to_neo(
             # Create spike trains for each neuron
             unique_ids = sorted(np.unique(spike_ids))
             for spike_id in tqdm(
-                unique_ids, desc=f"\tCreating {pop_name} spike trains", leave=False
+                unique_ids, desc=f"\tCreating {pop_name} spike trains", leave=False, disable=not verbose
             ):
                 times_for_id = spike_times[spike_ids == spike_id]
 
@@ -427,10 +448,12 @@ def convert_chunks_to_neo(
                     )
 
             block.segments.append(segment)
-            print(f"\t{pop_name}: {len(segment.spiketrains)} spike trains")
+            if verbose:
+                print(f"\t{pop_name}: {len(segment.spiketrains)} spike trains")
 
     # Add membrane potential data by loading and combining chunks
-    print(f"\tLoading and combining membrane data from {total_chunks} chunks...")
+    if verbose:
+        print(f"\tLoading and combining membrane data from {total_chunks} chunks...")
 
     # Determine which populations have membrane recordings
     first_chunk_membrane = first_chunk["membrane_data"]
@@ -450,7 +473,8 @@ def convert_chunks_to_neo(
         # Get all cell indices for this population
         cell_indices = sorted(first_chunk_membrane[pop_name].keys())
 
-        print(f"\t{pop_name}: Combining {len(cell_indices)} neurons from {total_chunks} chunks...")
+        if verbose:
+            print(f"\t{pop_name}: Combining {len(cell_indices)} neurons from {total_chunks} chunks...")
 
         # OPTIMIZED: Load each chunk once and extract all neurons
         # This reduces file reads from (neurons × chunks) to just (chunks)
@@ -461,7 +485,7 @@ def convert_chunks_to_neo(
 
         # Load chunks once and distribute data to neurons
         for chunk_id in tqdm(
-            range(total_chunks), desc=f"\tLoading {pop_name} chunks", unit="chunk"
+            range(total_chunks), desc=f"\tLoading {pop_name} chunks", unit="chunk", disable=not verbose
         ):
             chunk = joblib.load(save_path / f"chunk_{chunk_id:04d}.pkl")
 
@@ -471,9 +495,10 @@ def convert_chunks_to_neo(
                         neuron_data[cell_idx].append(chunk["membrane_data"][pop_name][cell_idx])
 
         # Concatenate data for each neuron and create AnalogSignals
-        print(f"\t{pop_name}: Creating analog signals...")
+        if verbose:
+            print(f"\t{pop_name}: Creating analog signals...")
         for cell_idx in tqdm(
-            cell_indices, desc=f"\tCreating {pop_name} signals", leave=False, unit="signal"
+            cell_indices, desc=f"\tCreating {pop_name} signals", leave=False, unit="signal", disable=not verbose
         ):
             if neuron_data[cell_idx]:
                 combined_voltage = np.concatenate(neuron_data[cell_idx])
@@ -486,14 +511,16 @@ def convert_chunks_to_neo(
                     )
                 )
 
-        print(f"\t{pop_name}: {len(segment.analogsignals)} analog signals created")
+        if verbose:
+            print(f"\t{pop_name}: {len(segment.analogsignals)} analog signals created")
 
     # Add metadata annotations
     block.annotations["time__ms"] = duration__ms
     block.annotations["timestep__ms"] = timestep__ms
     block.annotations["temperature__celsius"] = 36.0  # Default from SimulationRunner
 
-    print("\nNEO Block created successfully")
-    print(f"\tTotal segments: {len(block.segments)}")
+    if verbose:
+        print("\nNEO Block created successfully")
+        print(f"\tTotal segments: {len(block.segments)}")
 
     return block

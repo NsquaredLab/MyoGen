@@ -188,7 +188,7 @@ class IntramuscularEMG:
         self._noisy_intramuscular_emg__Block: Optional[INTRAMUSCULAR_EMG__Block] = None
         self._spike_train__Block: Optional[SPIKE_TRAIN__Block] = None
 
-    def simulate_muaps(self, n_jobs: int = -2) -> INTRAMUSCULAR_MUAP__Block:
+    def simulate_muaps(self, n_jobs: int = -2, verbose: bool = True) -> INTRAMUSCULAR_MUAP__Block:
         """
         Simulate MUAPs for all electrode arrays using the provided muscle model.
 
@@ -205,6 +205,8 @@ class IntramuscularEMG:
             - n_jobs=-3: Use all cores except two
             - n_jobs=1: No parallelization
             - n_jobs=N: Use exactly N cores
+        verbose : bool, default=True
+            If True, display progress bars. Set to False to disable.
 
         Returns
         -------
@@ -218,11 +220,11 @@ class IntramuscularEMG:
         includes: (1) motor unit initialization, (2) neuromuscular junction simulation,
         and (3) MUAP calculation with spatial filtering.
         """
-        self._initialize_motor_units()
-        self._simulate_neuromuscular_junctions()
-        return self._calculate_muaps(n_jobs=n_jobs)
+        self._initialize_motor_units(verbose=verbose)
+        self._simulate_neuromuscular_junctions(verbose=verbose)
+        return self._calculate_muaps(n_jobs=n_jobs, verbose=verbose)
 
-    def _initialize_motor_units(self) -> None:
+    def _initialize_motor_units(self, verbose: bool = True) -> None:
         """
         Initialize individual motor unit simulators.
 
@@ -241,6 +243,7 @@ class IntramuscularEMG:
             range(self._n_motor_units),
             desc="Creating motor unit simulators",
             unit="Simulator",
+            disable=not verbose,
         ):
             # Get fibers assigned to this motor unit
             fiber_mask = self._muscle_model.assignment == mu_idx
@@ -274,7 +277,7 @@ class IntramuscularEMG:
                 ),
             )
 
-    def _simulate_neuromuscular_junctions(self) -> None:
+    def _simulate_neuromuscular_junctions(self, verbose: bool = True) -> None:
         """
         Simulate neuromuscular junction distributions for all motor units.
 
@@ -292,7 +295,7 @@ class IntramuscularEMG:
         )
 
         for mu_idx, mu_sim in enumerate(
-            tqdm(self._motor_units, desc="Setting up NMJ distributions", unit="Simulator")
+            tqdm(self._motor_units, desc="Setting up NMJ distributions", unit="Simulator", disable=not verbose)
         ):
             spread_factor = np.sum(self._muscle_model.recruitment_thresholds[:mu_idx]) / np.sum(
                 self._muscle_model.recruitment_thresholds
@@ -307,7 +310,7 @@ class IntramuscularEMG:
                 arborization_z_std=0.5 + spread_factor * 1.5,
             )
 
-    def _calculate_muaps(self, n_jobs: int = -2) -> INTRAMUSCULAR_MUAP__Block:
+    def _calculate_muaps(self, n_jobs: int = -2, verbose: bool = True) -> INTRAMUSCULAR_MUAP__Block:
         """
         Pre-calculate motor unit action potentials (MUAPs) using parallel processing.
 
@@ -401,7 +404,7 @@ class IntramuscularEMG:
         results = {}  # Use dict to map MU_index -> result
         max_length = 0
 
-        with tqdm(total=n_mus_to_compute, desc="Computing MUAPs", unit="MU") as pbar:
+        with tqdm(total=n_mus_to_compute, desc="Computing MUAPs", unit="MU", disable=not verbose) as pbar:
             for muap, muap_length in Parallel(
                 n_jobs=n_jobs,
                 return_as="generator",
@@ -453,7 +456,7 @@ class IntramuscularEMG:
 
         return self._muaps__Block
 
-    def _analyze_detectable_motor_units(self) -> tuple[np.ndarray, list[int]]:
+    def _analyze_detectable_motor_units(self, verbose: bool = True) -> tuple[np.ndarray, list[int]]:
         """
         Analyze which motor units are detectable by the electrode.
 
@@ -468,7 +471,8 @@ class IntramuscularEMG:
         if self._muaps__Block is None:
             raise ValueError("Must call simulate_muaps() first")
 
-        print("Analyzing motor unit detectability...")
+        if verbose:
+            print("Analyzing motor unit detectability...")
 
         detectable = np.zeros(len(self._motor_units), dtype=bool)
 
@@ -498,13 +502,15 @@ class IntramuscularEMG:
 
         detectable_indices = [i for i, det in enumerate(detectable) if det]
 
-        print(f"Found {np.sum(detectable)} detectable motor units out of {len(self._motor_units)}")
+        if verbose:
+            print(f"Found {np.sum(detectable)} detectable motor units out of {len(self._motor_units)}")
 
         return detectable, detectable_indices
 
     def simulate_intramuscular_emg(
         self,
         spike_train__Block: SPIKE_TRAIN__Block,
+        verbose: bool = True,
     ) -> INTRAMUSCULAR_EMG__Block:
         """
         Generate intramuscular EMG signals using the provided spike train block.
@@ -517,6 +523,8 @@ class IntramuscularEMG:
         ----------
         spike_train__Block : SPIKE_TRAIN__Block
             Block containing spike trains organized as segments (pools) with spiketrains.
+        verbose : bool, default=True
+            If True, display progress bars. Set to False to disable.
 
         Returns
         -------
@@ -654,6 +662,7 @@ class IntramuscularEMG:
                 range(n_pools),
                 desc="Intramuscular EMG (GPU)",
                 unit="pool",
+                disable=not verbose,
             ):
                 pool_active_neurons = set(active_neuron_indices[pool_idx])
 
@@ -683,6 +692,7 @@ class IntramuscularEMG:
                 range(n_pools),
                 desc="Intramuscular EMG (CPU)",
                 unit="pool",
+                disable=not verbose,
             ):
                 pool_active_neurons = set(active_neuron_indices[pool_idx])
 
