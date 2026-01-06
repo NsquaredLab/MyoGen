@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>myogen.simulator.core.emg.intramuscular.intramuscular_emg &#8212; MyoGen 0.8.3 Documentation</title>
+    <title>myogen.simulator.core.emg.intramuscular.intramuscular_emg &#8212; MyoGen 0.8.4 Documentation</title>
   
   
   
@@ -54,7 +54,7 @@
 
     <script src="../../../../../../_static/jquery.js?v=5d32c60e"></script>
     <script src="../../../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-    <script src="../../../../../../_static/documentation_options.js?v=ec54a975"></script>
+    <script src="../../../../../../_static/documentation_options.js?v=0477e8c5"></script>
     <script src="../../../../../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../../../../_static/js/hoverxref.js"></script>
@@ -434,7 +434,7 @@ window.addEventListener("load", load);
     <link rel="search" title="Search" href="../../../../../../search.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="0.8.3" />
+  <meta name="docsearch:version" content="0.8.4" />
   </head>
   
   
@@ -503,8 +503,8 @@ window.addEventListener("load", load);
       
     
     
-    <img src="../../../../../../_static/myogen_logo.png" class="logo__image only-light" alt="MyoGen 0.8.3 Documentation - Home"/>
-    <img src="../../../../../../_static/myogen_logo.png" class="logo__image only-dark pst-js-only" alt="MyoGen 0.8.3 Documentation - Home"/>
+    <img src="../../../../../../_static/myogen_logo.png" class="logo__image only-light" alt="MyoGen 0.8.4 Documentation - Home"/>
+    <img src="../../../../../../_static/myogen_logo.png" class="logo__image only-dark pst-js-only" alt="MyoGen 0.8.4 Documentation - Home"/>
   
   
 </a></div>
@@ -513,7 +513,7 @@ window.addEventListener("load", load);
 <div class="nav-item">
   <div class="version-switcher__container dropdown">
       <button id="version-switcher-button" type="button" class="version-switcher__button btn btn-sm navbar-btn" aria-haspopup="true" aria-expanded="false">
-          Version 0.8.3
+          Version 0.8.4
       </button>
       
       
@@ -954,7 +954,7 @@ window.addEventListener("load", load);
 
 <div class="viewcode-block" id="IntramuscularEMG.simulate_muaps">
 <a class="viewcode-back" href="../../../../../../generated/myogen.simulator.IntramuscularEMG.simulate_muaps.html#myogen.simulator.IntramuscularEMG.simulate_muaps">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">simulate_muaps</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_jobs</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="o">-</span><span class="mi">2</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">INTRAMUSCULAR_MUAP__Block</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">simulate_muaps</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_jobs</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="o">-</span><span class="mi">2</span><span class="p">,</span> <span class="n">verbose</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">INTRAMUSCULAR_MUAP__Block</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Simulate MUAPs for all electrode arrays using the provided muscle model.</span>
 
@@ -971,6 +971,8 @@ window.addEventListener("load", load);
 <span class="sd">            - n_jobs=-3: Use all cores except two</span>
 <span class="sd">            - n_jobs=1: No parallelization</span>
 <span class="sd">            - n_jobs=N: Use exactly N cores</span>
+<span class="sd">        verbose : bool, default=True</span>
+<span class="sd">            If True, display progress bars. Set to False to disable.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
@@ -984,12 +986,12 @@ window.addEventListener("load", load);
 <span class="sd">        includes: (1) motor unit initialization, (2) neuromuscular junction simulation,</span>
 <span class="sd">        and (3) MUAP calculation with spatial filtering.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_initialize_motor_units</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_simulate_neuromuscular_junctions</span><span class="p">()</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_calculate_muaps</span><span class="p">(</span><span class="n">n_jobs</span><span class="o">=</span><span class="n">n_jobs</span><span class="p">)</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_initialize_motor_units</span><span class="p">(</span><span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_simulate_neuromuscular_junctions</span><span class="p">(</span><span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_calculate_muaps</span><span class="p">(</span><span class="n">n_jobs</span><span class="o">=</span><span class="n">n_jobs</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">)</span></div>
 
 
-    <span class="k">def</span><span class="w"> </span><span class="nf">_initialize_motor_units</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_initialize_motor_units</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">verbose</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Initialize individual motor unit simulators.</span>
 
@@ -1008,6 +1010,7 @@ window.addEventListener("load", load);
             <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_n_motor_units</span><span class="p">),</span>
             <span class="n">desc</span><span class="o">=</span><span class="s2">&quot;Creating motor unit simulators&quot;</span><span class="p">,</span>
             <span class="n">unit</span><span class="o">=</span><span class="s2">&quot;Simulator&quot;</span><span class="p">,</span>
+            <span class="n">disable</span><span class="o">=</span><span class="ow">not</span> <span class="n">verbose</span><span class="p">,</span>
         <span class="p">):</span>
             <span class="c1"># Get fibers assigned to this motor unit</span>
             <span class="n">fiber_mask</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_muscle_model</span><span class="o">.</span><span class="n">assignment</span> <span class="o">==</span> <span class="n">mu_idx</span>
@@ -1041,7 +1044,7 @@ window.addEventListener("load", load);
                 <span class="p">),</span>
             <span class="p">)</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="nf">_simulate_neuromuscular_junctions</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_simulate_neuromuscular_junctions</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">verbose</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Simulate neuromuscular junction distributions for all motor units.</span>
 
@@ -1059,7 +1062,7 @@ window.addEventListener("load", load);
         <span class="p">)</span>
 
         <span class="k">for</span> <span class="n">mu_idx</span><span class="p">,</span> <span class="n">mu_sim</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span>
-            <span class="n">tqdm</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_motor_units</span><span class="p">,</span> <span class="n">desc</span><span class="o">=</span><span class="s2">&quot;Setting up NMJ distributions&quot;</span><span class="p">,</span> <span class="n">unit</span><span class="o">=</span><span class="s2">&quot;Simulator&quot;</span><span class="p">)</span>
+            <span class="n">tqdm</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_motor_units</span><span class="p">,</span> <span class="n">desc</span><span class="o">=</span><span class="s2">&quot;Setting up NMJ distributions&quot;</span><span class="p">,</span> <span class="n">unit</span><span class="o">=</span><span class="s2">&quot;Simulator&quot;</span><span class="p">,</span> <span class="n">disable</span><span class="o">=</span><span class="ow">not</span> <span class="n">verbose</span><span class="p">)</span>
         <span class="p">):</span>
             <span class="n">spread_factor</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_muscle_model</span><span class="o">.</span><span class="n">recruitment_thresholds</span><span class="p">[:</span><span class="n">mu_idx</span><span class="p">])</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_muscle_model</span><span class="o">.</span><span class="n">recruitment_thresholds</span>
@@ -1074,7 +1077,7 @@ window.addEventListener("load", load);
                 <span class="n">arborization_z_std</span><span class="o">=</span><span class="mf">0.5</span> <span class="o">+</span> <span class="n">spread_factor</span> <span class="o">*</span> <span class="mf">1.5</span><span class="p">,</span>
             <span class="p">)</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="nf">_calculate_muaps</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_jobs</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="o">-</span><span class="mi">2</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">INTRAMUSCULAR_MUAP__Block</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_calculate_muaps</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_jobs</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="o">-</span><span class="mi">2</span><span class="p">,</span> <span class="n">verbose</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">INTRAMUSCULAR_MUAP__Block</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Pre-calculate motor unit action potentials (MUAPs) using parallel processing.</span>
 
@@ -1168,7 +1171,7 @@ window.addEventListener("load", load);
         <span class="n">results</span> <span class="o">=</span> <span class="p">{}</span>  <span class="c1"># Use dict to map MU_index -&gt; result</span>
         <span class="n">max_length</span> <span class="o">=</span> <span class="mi">0</span>
 
-        <span class="k">with</span> <span class="n">tqdm</span><span class="p">(</span><span class="n">total</span><span class="o">=</span><span class="n">n_mus_to_compute</span><span class="p">,</span> <span class="n">desc</span><span class="o">=</span><span class="s2">&quot;Computing MUAPs&quot;</span><span class="p">,</span> <span class="n">unit</span><span class="o">=</span><span class="s2">&quot;MU&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">pbar</span><span class="p">:</span>
+        <span class="k">with</span> <span class="n">tqdm</span><span class="p">(</span><span class="n">total</span><span class="o">=</span><span class="n">n_mus_to_compute</span><span class="p">,</span> <span class="n">desc</span><span class="o">=</span><span class="s2">&quot;Computing MUAPs&quot;</span><span class="p">,</span> <span class="n">unit</span><span class="o">=</span><span class="s2">&quot;MU&quot;</span><span class="p">,</span> <span class="n">disable</span><span class="o">=</span><span class="ow">not</span> <span class="n">verbose</span><span class="p">)</span> <span class="k">as</span> <span class="n">pbar</span><span class="p">:</span>
             <span class="k">for</span> <span class="n">muap</span><span class="p">,</span> <span class="n">muap_length</span> <span class="ow">in</span> <span class="n">Parallel</span><span class="p">(</span>
                 <span class="n">n_jobs</span><span class="o">=</span><span class="n">n_jobs</span><span class="p">,</span>
                 <span class="n">return_as</span><span class="o">=</span><span class="s2">&quot;generator&quot;</span><span class="p">,</span>
@@ -1220,7 +1223,7 @@ window.addEventListener("load", load);
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_muaps__Block</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="nf">_analyze_detectable_motor_units</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">]]:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_analyze_detectable_motor_units</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">verbose</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">]]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Analyze which motor units are detectable by the electrode.</span>
 
@@ -1235,7 +1238,8 @@ window.addEventListener("load", load);
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_muaps__Block</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Must call simulate_muaps() first&quot;</span><span class="p">)</span>
 
-        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Analyzing motor unit detectability...&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Analyzing motor unit detectability...&quot;</span><span class="p">)</span>
 
         <span class="n">detectable</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_motor_units</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">bool</span><span class="p">)</span>
 
@@ -1265,7 +1269,8 @@ window.addEventListener("load", load);
 
         <span class="n">detectable_indices</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">det</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">detectable</span><span class="p">)</span> <span class="k">if</span> <span class="n">det</span><span class="p">]</span>
 
-        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Found </span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">detectable</span><span class="p">)</span><span class="si">}</span><span class="s2"> detectable motor units out of </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_motor_units</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Found </span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">detectable</span><span class="p">)</span><span class="si">}</span><span class="s2"> detectable motor units out of </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_motor_units</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">detectable</span><span class="p">,</span> <span class="n">detectable_indices</span>
 
@@ -1274,6 +1279,7 @@ window.addEventListener("load", load);
     <span class="k">def</span><span class="w"> </span><span class="nf">simulate_intramuscular_emg</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">spike_train__Block</span><span class="p">:</span> <span class="n">SPIKE_TRAIN__Block</span><span class="p">,</span>
+        <span class="n">verbose</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">INTRAMUSCULAR_EMG__Block</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Generate intramuscular EMG signals using the provided spike train block.</span>
@@ -1286,6 +1292,8 @@ window.addEventListener("load", load);
 <span class="sd">        ----------</span>
 <span class="sd">        spike_train__Block : SPIKE_TRAIN__Block</span>
 <span class="sd">            Block containing spike trains organized as segments (pools) with spiketrains.</span>
+<span class="sd">        verbose : bool, default=True</span>
+<span class="sd">            If True, display progress bars. Set to False to disable.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
@@ -1423,6 +1431,7 @@ window.addEventListener("load", load);
                 <span class="nb">range</span><span class="p">(</span><span class="n">n_pools</span><span class="p">),</span>
                 <span class="n">desc</span><span class="o">=</span><span class="s2">&quot;Intramuscular EMG (GPU)&quot;</span><span class="p">,</span>
                 <span class="n">unit</span><span class="o">=</span><span class="s2">&quot;pool&quot;</span><span class="p">,</span>
+                <span class="n">disable</span><span class="o">=</span><span class="ow">not</span> <span class="n">verbose</span><span class="p">,</span>
             <span class="p">):</span>
                 <span class="n">pool_active_neurons</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">active_neuron_indices</span><span class="p">[</span><span class="n">pool_idx</span><span class="p">])</span>
 
@@ -1452,6 +1461,7 @@ window.addEventListener("load", load);
                 <span class="nb">range</span><span class="p">(</span><span class="n">n_pools</span><span class="p">),</span>
                 <span class="n">desc</span><span class="o">=</span><span class="s2">&quot;Intramuscular EMG (CPU)&quot;</span><span class="p">,</span>
                 <span class="n">unit</span><span class="o">=</span><span class="s2">&quot;pool&quot;</span><span class="p">,</span>
+                <span class="n">disable</span><span class="o">=</span><span class="ow">not</span> <span class="n">verbose</span><span class="p">,</span>
             <span class="p">):</span>
                 <span class="n">pool_active_neurons</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">active_neuron_indices</span><span class="p">[</span><span class="n">pool_idx</span><span class="p">])</span>
 

@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Optimizing Descending Drive for Target Force Levels &#8212; MyoGen 0.8.3 Documentation</title>
+    <title>Optimizing Descending Drive for Target Force Levels &#8212; MyoGen 0.8.4 Documentation</title>
   
   
   
@@ -55,7 +55,7 @@
 
     <script src="../../_static/jquery.js?v=5d32c60e"></script>
     <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-    <script src="../../_static/documentation_options.js?v=ec54a975"></script>
+    <script src="../../_static/documentation_options.js?v=0477e8c5"></script>
     <script src="../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/js/hoverxref.js"></script>
@@ -72,7 +72,7 @@
     <link rel="prev" title="Force Generation with Optimized Descending Drive Parameters" href="02_compute_force_from_optimized_dd.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="0.8.3" />
+  <meta name="docsearch:version" content="0.8.4" />
   </head>
   
   
@@ -141,8 +141,8 @@
       
     
     
-    <img src="../../_static/myogen_logo.png" class="logo__image only-light" alt="MyoGen 0.8.3 Documentation - Home"/>
-    <img src="../../_static/myogen_logo.png" class="logo__image only-dark pst-js-only" alt="MyoGen 0.8.3 Documentation - Home"/>
+    <img src="../../_static/myogen_logo.png" class="logo__image only-light" alt="MyoGen 0.8.4 Documentation - Home"/>
+    <img src="../../_static/myogen_logo.png" class="logo__image only-dark pst-js-only" alt="MyoGen 0.8.4 Documentation - Home"/>
   
   
 </a></div>
@@ -151,7 +151,7 @@
 <div class="nav-item">
   <div class="version-switcher__container dropdown">
       <button id="version-switcher-button" type="button" class="version-switcher__button btn btn-sm navbar-btn" aria-haspopup="true" aria-expanded="false">
-          Version 0.8.3
+          Version 0.8.4
       </button>
       
       
@@ -578,7 +578,7 @@ while maintaining the same motor unit pool and connectivity.</p>
 </div>
 <div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Loading Baseline Force Data
 ==================================================
-Baseline force: 10.8653 a.u.
+Baseline force: 10.8761 a.u.
 DD neurons: 184
 Connection probability: 0.494
 Synaptic weight: 0.0500 µS
@@ -827,7 +827,7 @@ Synaptic weight: 0.0500 µS
 </div>
 <div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Optimizing for 30.0% of Baseline Force
 ==================================================
-Target force: 3.2596 a.u.
+Target force: 3.2628 a.u.
 Trials: 25
 
 
@@ -835,332 +835,332 @@ Trials: 25
 
 Pool 1 Twitch trains (Numba):   0%|          | 0/100 [00:00&lt;?, ?MU/s]
 
-Pool 1 Twitch trains (Numba):   1%|          | 1/100 [00:00&lt;00:11,  8.44MU/s]
-Pool 1 Twitch trains (Numba): 100%|██████████| 100/100 [00:00&lt;00:00, 815.20MU/s]
-Trial 0: Force=0.0577 (target=3.2596), Error=98.2%, Drive=38.1Hz
+Pool 1 Twitch trains (Numba):   1%|          | 1/100 [00:00&lt;00:12,  7.80MU/s]
+Pool 1 Twitch trains (Numba): 100%|██████████| 100/100 [00:00&lt;00:00, 758.62MU/s]
+Trial 0: Force=0.0577 (target=3.2628), Error=98.2%, Drive=38.1Hz
 
 
-[I 2026-01-02 09:00:28,470] Trial 0 finished with value: 0.982292648628667 and parameters: {&#39;dd_drive&#39;: 38.07947176588889}. Best is trial 0 with value: 0.982292648628667.
+[I 2026-01-06 18:54:35,058] Trial 0 finished with value: 0.9823102630391121 and parameters: {&#39;dd_drive&#39;: 38.07947176588889}. Best is trial 0 with value: 0.9823102630391121.
 
-  0%|          | 0/25 [00:04&lt;?, ?it/s]
-Best trial: 0. Best value: 0.982293:   0%|          | 0/25 [00:04&lt;?, ?it/s]
-Best trial: 0. Best value: 0.982293:   4%|▍         | 1/25 [00:04&lt;01:43,  4.30s/it]
-Best trial: 0. Best value: 0.982293:   4%|▍         | 1/25 [00:04&lt;01:43,  4.30s/it, 4.30/3600 seconds]
-
-Pool 1 Twitch trains (Numba):   0%|          | 0/100 [00:00&lt;?, ?MU/s]
-
-Pool 1 Twitch trains (Numba):   1%|          | 1/100 [00:00&lt;00:11,  8.47MU/s]
-Pool 1 Twitch trains (Numba): 100%|██████████| 100/100 [00:00&lt;00:00, 795.03MU/s]
-
-
-[I 2026-01-02 09:00:33,281] Trial 1 finished with value: 8.494160979268397 and parameters: {&#39;dd_drive&#39;: 95.1207163345817}. Best is trial 0 with value: 0.982292648628667.
-
-Best trial: 0. Best value: 0.982293:   4%|▍         | 1/25 [00:09&lt;01:43,  4.30s/it, 4.30/3600 seconds]
-Best trial: 0. Best value: 0.982293:   4%|▍         | 1/25 [00:09&lt;01:43,  4.30s/it, 4.30/3600 seconds]
-Best trial: 0. Best value: 0.982293:   8%|▊         | 2/25 [00:09&lt;01:45,  4.60s/it, 4.30/3600 seconds]
-Best trial: 0. Best value: 0.982293:   8%|▊         | 2/25 [00:09&lt;01:45,  4.60s/it, 9.11/3600 seconds]
+  0%|          | 0/25 [00:05&lt;?, ?it/s]
+Best trial: 0. Best value: 0.98231:   0%|          | 0/25 [00:05&lt;?, ?it/s]
+Best trial: 0. Best value: 0.98231:   4%|▍         | 1/25 [00:05&lt;02:03,  5.13s/it]
+Best trial: 0. Best value: 0.98231:   4%|▍         | 1/25 [00:05&lt;02:03,  5.13s/it, 5.13/3600 seconds]
 
 Pool 1 Twitch trains (Numba):   0%|          | 0/100 [00:00&lt;?, ?MU/s]
 
-Pool 1 Twitch trains (Numba):   1%|          | 1/100 [00:00&lt;00:11,  8.35MU/s]
-Pool 1 Twitch trains (Numba): 100%|██████████| 100/100 [00:00&lt;00:00, 792.17MU/s]
+Pool 1 Twitch trains (Numba):   1%|          | 1/100 [00:00&lt;00:12,  7.80MU/s]
+Pool 1 Twitch trains (Numba): 100%|██████████| 100/100 [00:00&lt;00:00, 739.60MU/s]
 
 
-[I 2026-01-02 09:00:37,883] Trial 2 finished with value: 3.5430909581723378 and parameters: {&#39;dd_drive&#39;: 73.46740023932911}. Best is trial 0 with value: 0.982292648628667.
+[I 2026-01-06 18:54:40,819] Trial 1 finished with value: 8.484494203446149 and parameters: {&#39;dd_drive&#39;: 95.1207163345817}. Best is trial 0 with value: 0.9823102630391121.
 
-Best trial: 0. Best value: 0.982293:   8%|▊         | 2/25 [00:13&lt;01:45,  4.60s/it, 9.11/3600 seconds]
-Best trial: 0. Best value: 0.982293:   8%|▊         | 2/25 [00:13&lt;01:45,  4.60s/it, 9.11/3600 seconds]
-Best trial: 0. Best value: 0.982293:  12%|█▏        | 3/25 [00:13&lt;01:41,  4.60s/it, 9.11/3600 seconds]
-Best trial: 0. Best value: 0.982293:  12%|█▏        | 3/25 [00:13&lt;01:41,  4.60s/it, 13.71/3600 seconds]
-
-Pool 1 Twitch trains (Numba):   0%|          | 0/100 [00:00&lt;?, ?MU/s]
-
-Pool 1 Twitch trains (Numba):   1%|          | 1/100 [00:00&lt;00:11,  8.46MU/s]
-Pool 1 Twitch trains (Numba): 100%|██████████| 100/100 [00:00&lt;00:00, 806.33MU/s]
-
-
-[I 2026-01-02 09:00:42,400] Trial 3 finished with value: 1.0575820904298394 and parameters: {&#39;dd_drive&#39;: 60.26718993550662}. Best is trial 0 with value: 0.982292648628667.
-
-Best trial: 0. Best value: 0.982293:  12%|█▏        | 3/25 [00:18&lt;01:41,  4.60s/it, 13.71/3600 seconds]
-Best trial: 0. Best value: 0.982293:  12%|█▏        | 3/25 [00:18&lt;01:41,  4.60s/it, 13.71/3600 seconds]
-Best trial: 0. Best value: 0.982293:  16%|█▌        | 4/25 [00:18&lt;01:35,  4.57s/it, 13.71/3600 seconds]
-Best trial: 0. Best value: 0.982293:  16%|█▌        | 4/25 [00:18&lt;01:35,  4.57s/it, 18.23/3600 seconds]
+Best trial: 0. Best value: 0.98231:   4%|▍         | 1/25 [00:10&lt;02:03,  5.13s/it, 5.13/3600 seconds]
+Best trial: 0. Best value: 0.98231:   4%|▍         | 1/25 [00:10&lt;02:03,  5.13s/it, 5.13/3600 seconds]
+Best trial: 0. Best value: 0.98231:   8%|▊         | 2/25 [00:10&lt;02:06,  5.50s/it, 5.13/3600 seconds]
+Best trial: 0. Best value: 0.98231:   8%|▊         | 2/25 [00:10&lt;02:06,  5.50s/it, 10.89/3600 seconds]
 
 Pool 1 Twitch trains (Numba):   0%|          | 0/100 [00:00&lt;?, ?MU/s]
 
-Pool 1 Twitch trains (Numba):   1%|          | 1/100 [00:00&lt;00:11,  8.41MU/s]
-Pool 1 Twitch trains (Numba): 100%|██████████| 100/100 [00:00&lt;00:00, 813.10MU/s]
+Pool 1 Twitch trains (Numba):   1%|          | 1/100 [00:00&lt;00:12,  7.74MU/s]
+Pool 1 Twitch trains (Numba): 100%|██████████| 100/100 [00:00&lt;00:00, 740.91MU/s]
 
 
-[I 2026-01-02 09:00:46,446] Trial 4 finished with value: 1500.0 and parameters: {&#39;dd_drive&#39;: 16.445845403801215}. Best is trial 0 with value: 0.982292648628667.
+[I 2026-01-06 18:54:46,342] Trial 2 finished with value: 3.5390245203612505 and parameters: {&#39;dd_drive&#39;: 73.46740023932911}. Best is trial 0 with value: 0.9823102630391121.
 
-Best trial: 0. Best value: 0.982293:  16%|█▌        | 4/25 [00:22&lt;01:35,  4.57s/it, 18.23/3600 seconds]
-Best trial: 0. Best value: 0.982293:  16%|█▌        | 4/25 [00:22&lt;01:35,  4.57s/it, 18.23/3600 seconds]
-Best trial: 0. Best value: 0.982293:  20%|██        | 5/25 [00:22&lt;01:27,  4.38s/it, 18.23/3600 seconds]
-Best trial: 0. Best value: 0.982293:  20%|██        | 5/25 [00:22&lt;01:27,  4.38s/it, 22.27/3600 seconds]
-
-Pool 1 Twitch trains (Numba):   0%|          | 0/100 [00:00&lt;?, ?MU/s]
-
-Pool 1 Twitch trains (Numba):   1%|          | 1/100 [00:00&lt;00:11,  8.48MU/s]
-Pool 1 Twitch trains (Numba): 100%|██████████| 100/100 [00:00&lt;00:00, 819.66MU/s]
-
-
-[I 2026-01-02 09:00:50,500] Trial 5 finished with value: 1500.0 and parameters: {&#39;dd_drive&#39;: 16.443457513284063}. Best is trial 0 with value: 0.982292648628667.
-
-Best trial: 0. Best value: 0.982293:  20%|██        | 5/25 [00:26&lt;01:27,  4.38s/it, 22.27/3600 seconds]
-Best trial: 0. Best value: 0.982293:  20%|██        | 5/25 [00:26&lt;01:27,  4.38s/it, 22.27/3600 seconds]
-Best trial: 0. Best value: 0.982293:  24%|██▍       | 6/25 [00:26&lt;01:21,  4.27s/it, 22.27/3600 seconds]
-Best trial: 0. Best value: 0.982293:  24%|██▍       | 6/25 [00:26&lt;01:21,  4.27s/it, 26.33/3600 seconds]
+Best trial: 0. Best value: 0.98231:   8%|▊         | 2/25 [00:16&lt;02:06,  5.50s/it, 10.89/3600 seconds]
+Best trial: 0. Best value: 0.98231:   8%|▊         | 2/25 [00:16&lt;02:06,  5.50s/it, 10.89/3600 seconds]
+Best trial: 0. Best value: 0.98231:  12%|█▏        | 3/25 [00:16&lt;02:01,  5.51s/it, 10.89/3600 seconds]
+Best trial: 0. Best value: 0.98231:  12%|█▏        | 3/25 [00:16&lt;02:01,  5.51s/it, 16.41/3600 seconds]
 
 Pool 1 Twitch trains (Numba):   0%|          | 0/100 [00:00&lt;?, ?MU/s]
 
-Pool 1 Twitch trains (Numba):   1%|          | 1/100 [00:00&lt;00:11,  8.41MU/s]
-Pool 1 Twitch trains (Numba): 100%|██████████| 100/100 [00:00&lt;00:00, 813.39MU/s]
+Pool 1 Twitch trains (Numba):   1%|          | 1/100 [00:00&lt;00:12,  7.77MU/s]
+Pool 1 Twitch trains (Numba): 100%|██████████| 100/100 [00:00&lt;00:00, 747.27MU/s]
 
 
-[I 2026-01-02 09:00:54,479] Trial 6 finished with value: 1500.0 and parameters: {&#39;dd_drive&#39;: 6.750277604651747}. Best is trial 0 with value: 0.982292648628667.
+[I 2026-01-06 18:54:51,793] Trial 3 finished with value: 1.0556613942233675 and parameters: {&#39;dd_drive&#39;: 60.26718993550662}. Best is trial 0 with value: 0.9823102630391121.
 
-Best trial: 0. Best value: 0.982293:  24%|██▍       | 6/25 [00:30&lt;01:21,  4.27s/it, 26.33/3600 seconds]
-Best trial: 0. Best value: 0.982293:  24%|██▍       | 6/25 [00:30&lt;01:21,  4.27s/it, 26.33/3600 seconds]
-Best trial: 0. Best value: 0.982293:  28%|██▊       | 7/25 [00:30&lt;01:15,  4.17s/it, 26.33/3600 seconds]
-Best trial: 0. Best value: 0.982293:  28%|██▊       | 7/25 [00:30&lt;01:15,  4.17s/it, 30.31/3600 seconds]
-
-Pool 1 Twitch trains (Numba):   0%|          | 0/100 [00:00&lt;?, ?MU/s]
-
-Pool 1 Twitch trains (Numba):   1%|          | 1/100 [00:00&lt;00:11,  8.46MU/s]
-Pool 1 Twitch trains (Numba): 100%|██████████| 100/100 [00:00&lt;00:00, 796.90MU/s]
-
-
-[I 2026-01-02 09:00:59,298] Trial 7 finished with value: 6.932273776241918 and parameters: {&#39;dd_drive&#39;: 86.75143843171858}. Best is trial 0 with value: 0.982292648628667.
-
-Best trial: 0. Best value: 0.982293:  28%|██▊       | 7/25 [00:35&lt;01:15,  4.17s/it, 30.31/3600 seconds]
-Best trial: 0. Best value: 0.982293:  28%|██▊       | 7/25 [00:35&lt;01:15,  4.17s/it, 30.31/3600 seconds]
-Best trial: 0. Best value: 0.982293:  32%|███▏      | 8/25 [00:35&lt;01:14,  4.38s/it, 30.31/3600 seconds]
-Best trial: 0. Best value: 0.982293:  32%|███▏      | 8/25 [00:35&lt;01:14,  4.38s/it, 35.13/3600 seconds]
+Best trial: 0. Best value: 0.98231:  12%|█▏        | 3/25 [00:21&lt;02:01,  5.51s/it, 16.41/3600 seconds]
+Best trial: 0. Best value: 0.98231:  12%|█▏        | 3/25 [00:21&lt;02:01,  5.51s/it, 16.41/3600 seconds]
+Best trial: 0. Best value: 0.98231:  16%|█▌        | 4/25 [00:21&lt;01:55,  5.49s/it, 16.41/3600 seconds]
+Best trial: 0. Best value: 0.98231:  16%|█▌        | 4/25 [00:21&lt;01:55,  5.49s/it, 21.86/3600 seconds]
 
 Pool 1 Twitch trains (Numba):   0%|          | 0/100 [00:00&lt;?, ?MU/s]
 
-Pool 1 Twitch trains (Numba):   1%|          | 1/100 [00:00&lt;00:11,  8.49MU/s]
-Pool 1 Twitch trains (Numba): 100%|██████████| 100/100 [00:00&lt;00:00, 808.49MU/s]
+Pool 1 Twitch trains (Numba):   1%|          | 1/100 [00:00&lt;00:12,  7.81MU/s]
+Pool 1 Twitch trains (Numba): 100%|██████████| 100/100 [00:00&lt;00:00, 760.59MU/s]
 
 
-[I 2026-01-02 09:01:03,881] Trial 8 finished with value: 1.2425343401686484 and parameters: {&#39;dd_drive&#39;: 60.510386162577674}. Best is trial 0 with value: 0.982292648628667.
+[I 2026-01-06 18:54:56,729] Trial 4 finished with value: 1500.0 and parameters: {&#39;dd_drive&#39;: 16.445845403801215}. Best is trial 0 with value: 0.9823102630391121.
 
-Best trial: 0. Best value: 0.982293:  32%|███▏      | 8/25 [00:39&lt;01:14,  4.38s/it, 35.13/3600 seconds]
-Best trial: 0. Best value: 0.982293:  32%|███▏      | 8/25 [00:39&lt;01:14,  4.38s/it, 35.13/3600 seconds]
-Best trial: 0. Best value: 0.982293:  36%|███▌      | 9/25 [00:39&lt;01:11,  4.44s/it, 35.13/3600 seconds]
-Best trial: 0. Best value: 0.982293:  36%|███▌      | 9/25 [00:39&lt;01:11,  4.44s/it, 39.71/3600 seconds]
-
-Pool 1 Twitch trains (Numba):   0%|          | 0/100 [00:00&lt;?, ?MU/s]
-
-Pool 1 Twitch trains (Numba):   1%|          | 1/100 [00:00&lt;00:11,  8.59MU/s]
-Pool 1 Twitch trains (Numba): 100%|██████████| 100/100 [00:00&lt;00:00, 813.77MU/s]
-
-
-[I 2026-01-02 09:01:08,564] Trial 9 finished with value: 2.831924679626708 and parameters: {&#39;dd_drive&#39;: 71.09918520180851}. Best is trial 0 with value: 0.982292648628667.
-
-Best trial: 0. Best value: 0.982293:  36%|███▌      | 9/25 [00:44&lt;01:11,  4.44s/it, 39.71/3600 seconds]
-Best trial: 0. Best value: 0.982293:  36%|███▌      | 9/25 [00:44&lt;01:11,  4.44s/it, 39.71/3600 seconds]
-Best trial: 0. Best value: 0.982293:  40%|████      | 10/25 [00:44&lt;01:07,  4.52s/it, 39.71/3600 seconds]
-Best trial: 0. Best value: 0.982293:  40%|████      | 10/25 [00:44&lt;01:07,  4.52s/it, 44.39/3600 seconds]
+Best trial: 0. Best value: 0.98231:  16%|█▌        | 4/25 [00:26&lt;01:55,  5.49s/it, 21.86/3600 seconds]
+Best trial: 0. Best value: 0.98231:  16%|█▌        | 4/25 [00:26&lt;01:55,  5.49s/it, 21.86/3600 seconds]
+Best trial: 0. Best value: 0.98231:  20%|██        | 5/25 [00:26&lt;01:45,  5.29s/it, 21.86/3600 seconds]
+Best trial: 0. Best value: 0.98231:  20%|██        | 5/25 [00:26&lt;01:45,  5.29s/it, 26.80/3600 seconds]
 
 Pool 1 Twitch trains (Numba):   0%|          | 0/100 [00:00&lt;?, ?MU/s]
 
-Pool 1 Twitch trains (Numba):   1%|          | 1/100 [00:00&lt;00:11,  8.51MU/s]
-Pool 1 Twitch trains (Numba): 100%|██████████| 100/100 [00:00&lt;00:00, 821.19MU/s]
+Pool 1 Twitch trains (Numba):   1%|          | 1/100 [00:00&lt;00:12,  7.74MU/s]
+Pool 1 Twitch trains (Numba): 100%|██████████| 100/100 [00:00&lt;00:00, 753.18MU/s]
 
 
-[I 2026-01-02 09:01:12,913] Trial 10 finished with value: 1100.0 and parameters: {&#39;dd_drive&#39;: 38.07318637690311}. Best is trial 0 with value: 0.982292648628667.
+[I 2026-01-06 18:55:01,629] Trial 5 finished with value: 1500.0 and parameters: {&#39;dd_drive&#39;: 16.443457513284063}. Best is trial 0 with value: 0.9823102630391121.
 
-Best trial: 0. Best value: 0.982293:  40%|████      | 10/25 [00:48&lt;01:07,  4.52s/it, 44.39/3600 seconds]
-Best trial: 0. Best value: 0.982293:  40%|████      | 10/25 [00:48&lt;01:07,  4.52s/it, 44.39/3600 seconds]
-Best trial: 0. Best value: 0.982293:  44%|████▍     | 11/25 [00:48&lt;01:02,  4.47s/it, 44.39/3600 seconds]
-Best trial: 0. Best value: 0.982293:  44%|████▍     | 11/25 [00:48&lt;01:02,  4.47s/it, 48.74/3600 seconds]
-
-Pool 1 Twitch trains (Numba):   0%|          | 0/100 [00:00&lt;?, ?MU/s]
-
-Pool 1 Twitch trains (Numba):   1%|          | 1/100 [00:00&lt;00:30,  3.23MU/s]
-Pool 1 Twitch trains (Numba): 100%|██████████| 100/100 [00:00&lt;00:00, 318.93MU/s]
-
-
-[I 2026-01-02 09:01:17,467] Trial 11 finished with value: 0.9291996712111688 and parameters: {&#39;dd_drive&#39;: 39.61182493133877}. Best is trial 11 with value: 0.9291996712111688.
-
-Best trial: 0. Best value: 0.982293:  44%|████▍     | 11/25 [00:53&lt;01:02,  4.47s/it, 48.74/3600 seconds]
-Best trial: 11. Best value: 0.9292:  44%|████▍     | 11/25 [00:53&lt;01:02,  4.47s/it, 48.74/3600 seconds]
-Best trial: 11. Best value: 0.9292:  48%|████▊     | 12/25 [00:53&lt;00:58,  4.49s/it, 48.74/3600 seconds]
-Best trial: 11. Best value: 0.9292:  48%|████▊     | 12/25 [00:53&lt;00:58,  4.49s/it, 53.29/3600 seconds]
+Best trial: 0. Best value: 0.98231:  20%|██        | 5/25 [00:31&lt;01:45,  5.29s/it, 26.80/3600 seconds]
+Best trial: 0. Best value: 0.98231:  20%|██        | 5/25 [00:31&lt;01:45,  5.29s/it, 26.80/3600 seconds]
+Best trial: 0. Best value: 0.98231:  24%|██▍       | 6/25 [00:31&lt;01:37,  5.16s/it, 26.80/3600 seconds]
+Best trial: 0. Best value: 0.98231:  24%|██▍       | 6/25 [00:31&lt;01:37,  5.16s/it, 31.70/3600 seconds]
 
 Pool 1 Twitch trains (Numba):   0%|          | 0/100 [00:00&lt;?, ?MU/s]
 
-Pool 1 Twitch trains (Numba):   1%|          | 1/100 [00:00&lt;00:11,  8.52MU/s]
-Pool 1 Twitch trains (Numba): 100%|██████████| 100/100 [00:00&lt;00:00, 822.13MU/s]
+Pool 1 Twitch trains (Numba):   1%|          | 1/100 [00:00&lt;00:12,  7.79MU/s]
+Pool 1 Twitch trains (Numba): 100%|██████████| 100/100 [00:00&lt;00:00, 758.17MU/s]
 
 
-[I 2026-01-02 09:01:21,847] Trial 12 finished with value: 0.9848188034110456 and parameters: {&#39;dd_drive&#39;: 37.0003509460432}. Best is trial 11 with value: 0.9291996712111688.
+[I 2026-01-06 18:55:06,524] Trial 6 finished with value: 1500.0 and parameters: {&#39;dd_drive&#39;: 6.750277604651747}. Best is trial 0 with value: 0.9823102630391121.
 
-Best trial: 11. Best value: 0.9292:  48%|████▊     | 12/25 [00:57&lt;00:58,  4.49s/it, 53.29/3600 seconds]
-Best trial: 11. Best value: 0.9292:  48%|████▊     | 12/25 [00:57&lt;00:58,  4.49s/it, 53.29/3600 seconds]
-Best trial: 11. Best value: 0.9292:  52%|█████▏    | 13/25 [00:57&lt;00:53,  4.46s/it, 53.29/3600 seconds]
-Best trial: 11. Best value: 0.9292:  52%|█████▏    | 13/25 [00:57&lt;00:53,  4.46s/it, 57.67/3600 seconds]
-
-Pool 1 Twitch trains (Numba):   0%|          | 0/100 [00:00&lt;?, ?MU/s]
-
-Pool 1 Twitch trains (Numba):   1%|          | 1/100 [00:00&lt;00:11,  8.58MU/s]
-Pool 1 Twitch trains (Numba): 100%|██████████| 100/100 [00:00&lt;00:00, 827.62MU/s]
-
-
-[I 2026-01-02 09:01:26,271] Trial 13 finished with value: 0.9567099971813247 and parameters: {&#39;dd_drive&#39;: 40.66759286131373}. Best is trial 11 with value: 0.9291996712111688.
-
-Best trial: 11. Best value: 0.9292:  52%|█████▏    | 13/25 [01:02&lt;00:53,  4.46s/it, 57.67/3600 seconds]
-Best trial: 11. Best value: 0.9292:  52%|█████▏    | 13/25 [01:02&lt;00:53,  4.46s/it, 57.67/3600 seconds]
-Best trial: 11. Best value: 0.9292:  56%|█████▌    | 14/25 [01:02&lt;00:48,  4.45s/it, 57.67/3600 seconds]
-Best trial: 11. Best value: 0.9292:  56%|█████▌    | 14/25 [01:02&lt;00:48,  4.45s/it, 62.10/3600 seconds]
+Best trial: 0. Best value: 0.98231:  24%|██▍       | 6/25 [00:36&lt;01:37,  5.16s/it, 31.70/3600 seconds]
+Best trial: 0. Best value: 0.98231:  24%|██▍       | 6/25 [00:36&lt;01:37,  5.16s/it, 31.70/3600 seconds]
+Best trial: 0. Best value: 0.98231:  28%|██▊       | 7/25 [00:36&lt;01:31,  5.07s/it, 31.70/3600 seconds]
+Best trial: 0. Best value: 0.98231:  28%|██▊       | 7/25 [00:36&lt;01:31,  5.07s/it, 36.60/3600 seconds]
 
 Pool 1 Twitch trains (Numba):   0%|          | 0/100 [00:00&lt;?, ?MU/s]
 
-Pool 1 Twitch trains (Numba):   1%|          | 1/100 [00:00&lt;00:11,  8.55MU/s]
-Pool 1 Twitch trains (Numba): 100%|██████████| 100/100 [00:00&lt;00:00, 820.56MU/s]
+Pool 1 Twitch trains (Numba):   1%|          | 1/100 [00:00&lt;00:12,  7.80MU/s]
+Pool 1 Twitch trains (Numba): 100%|██████████| 100/100 [00:00&lt;00:00, 741.74MU/s]
 
 
-[I 2026-01-02 09:01:30,789] Trial 14 finished with value: 0.4482387246295675 and parameters: {&#39;dd_drive&#39;: 49.04185564812661}. Best is trial 14 with value: 0.4482387246295675.
+[I 2026-01-06 18:55:12,228] Trial 7 finished with value: 6.937986307659485 and parameters: {&#39;dd_drive&#39;: 86.75143843171858}. Best is trial 0 with value: 0.9823102630391121.
 
-Best trial: 11. Best value: 0.9292:  56%|█████▌    | 14/25 [01:06&lt;00:48,  4.45s/it, 62.10/3600 seconds]
-Best trial: 14. Best value: 0.448239:  56%|█████▌    | 14/25 [01:06&lt;00:48,  4.45s/it, 62.10/3600 seconds]
-Best trial: 14. Best value: 0.448239:  60%|██████    | 15/25 [01:06&lt;00:44,  4.47s/it, 62.10/3600 seconds]
-Best trial: 14. Best value: 0.448239:  60%|██████    | 15/25 [01:06&lt;00:44,  4.47s/it, 66.62/3600 seconds]
-
-Pool 1 Twitch trains (Numba):   0%|          | 0/100 [00:00&lt;?, ?MU/s]
-
-Pool 1 Twitch trains (Numba):   1%|          | 1/100 [00:00&lt;00:11,  8.57MU/s]
-Pool 1 Twitch trains (Numba): 100%|██████████| 100/100 [00:00&lt;00:00, 821.37MU/s]
-Trial 15: Force=2.9535 (target=3.2596), Error=9.4%, Drive=51.8Hz
-
-
-[I 2026-01-02 09:01:35,340] Trial 15 finished with value: 0.09389755410617429 and parameters: {&#39;dd_drive&#39;: 51.76931053009875}. Best is trial 15 with value: 0.09389755410617429.
-
-Best trial: 14. Best value: 0.448239:  60%|██████    | 15/25 [01:11&lt;00:44,  4.47s/it, 66.62/3600 seconds]
-Best trial: 15. Best value: 0.0938976:  60%|██████    | 15/25 [01:11&lt;00:44,  4.47s/it, 66.62/3600 seconds]
-Best trial: 15. Best value: 0.0938976:  64%|██████▍   | 16/25 [01:11&lt;00:40,  4.49s/it, 66.62/3600 seconds]
-Best trial: 15. Best value: 0.0938976:  64%|██████▍   | 16/25 [01:11&lt;00:40,  4.49s/it, 71.17/3600 seconds]
+Best trial: 0. Best value: 0.98231:  28%|██▊       | 7/25 [00:42&lt;01:31,  5.07s/it, 36.60/3600 seconds]
+Best trial: 0. Best value: 0.98231:  28%|██▊       | 7/25 [00:42&lt;01:31,  5.07s/it, 36.60/3600 seconds]
+Best trial: 0. Best value: 0.98231:  32%|███▏      | 8/25 [00:42&lt;01:29,  5.27s/it, 36.60/3600 seconds]
+Best trial: 0. Best value: 0.98231:  32%|███▏      | 8/25 [00:42&lt;01:29,  5.27s/it, 42.30/3600 seconds]
 
 Pool 1 Twitch trains (Numba):   0%|          | 0/100 [00:00&lt;?, ?MU/s]
 
-Pool 1 Twitch trains (Numba):   1%|          | 1/100 [00:00&lt;00:11,  8.35MU/s]
-Pool 1 Twitch trains (Numba): 100%|██████████| 100/100 [00:00&lt;00:00, 799.57MU/s]
+Pool 1 Twitch trains (Numba):   1%|          | 1/100 [00:00&lt;00:12,  7.75MU/s]
+Pool 1 Twitch trains (Numba): 100%|██████████| 100/100 [00:00&lt;00:00, 745.00MU/s]
 
 
-[I 2026-01-02 09:01:39,938] Trial 16 finished with value: 0.10125440874356027 and parameters: {&#39;dd_drive&#39;: 54.82271566310559}. Best is trial 15 with value: 0.09389755410617429.
+[I 2026-01-06 18:55:17,708] Trial 8 finished with value: 1.2402970166232183 and parameters: {&#39;dd_drive&#39;: 60.510386162577674}. Best is trial 0 with value: 0.9823102630391121.
 
-Best trial: 15. Best value: 0.0938976:  64%|██████▍   | 16/25 [01:15&lt;00:40,  4.49s/it, 71.17/3600 seconds]
-Best trial: 15. Best value: 0.0938976:  64%|██████▍   | 16/25 [01:15&lt;00:40,  4.49s/it, 71.17/3600 seconds]
-Best trial: 15. Best value: 0.0938976:  68%|██████▊   | 17/25 [01:15&lt;00:36,  4.52s/it, 71.17/3600 seconds]
-Best trial: 15. Best value: 0.0938976:  68%|██████▊   | 17/25 [01:15&lt;00:36,  4.52s/it, 75.76/3600 seconds]
-
-Pool 1 Twitch trains (Numba):   0%|          | 0/100 [00:00&lt;?, ?MU/s]
-
-Pool 1 Twitch trains (Numba):   1%|          | 1/100 [00:00&lt;00:11,  8.52MU/s]
-Pool 1 Twitch trains (Numba): 100%|██████████| 100/100 [00:00&lt;00:00, 815.10MU/s]
-
-
-[I 2026-01-02 09:01:44,521] Trial 17 finished with value: 0.25944387668662006 and parameters: {&#39;dd_drive&#39;: 54.30216790381792}. Best is trial 15 with value: 0.09389755410617429.
-
-Best trial: 15. Best value: 0.0938976:  68%|██████▊   | 17/25 [01:20&lt;00:36,  4.52s/it, 75.76/3600 seconds]
-Best trial: 15. Best value: 0.0938976:  68%|██████▊   | 17/25 [01:20&lt;00:36,  4.52s/it, 75.76/3600 seconds]
-Best trial: 15. Best value: 0.0938976:  72%|███████▏  | 18/25 [01:20&lt;00:31,  4.54s/it, 75.76/3600 seconds]
-Best trial: 15. Best value: 0.0938976:  72%|███████▏  | 18/25 [01:20&lt;00:31,  4.54s/it, 80.35/3600 seconds]
+Best trial: 0. Best value: 0.98231:  32%|███▏      | 8/25 [00:47&lt;01:29,  5.27s/it, 42.30/3600 seconds]
+Best trial: 0. Best value: 0.98231:  32%|███▏      | 8/25 [00:47&lt;01:29,  5.27s/it, 42.30/3600 seconds]
+Best trial: 0. Best value: 0.98231:  36%|███▌      | 9/25 [00:47&lt;01:25,  5.34s/it, 42.30/3600 seconds]
+Best trial: 0. Best value: 0.98231:  36%|███▌      | 9/25 [00:47&lt;01:25,  5.34s/it, 47.78/3600 seconds]
 
 Pool 1 Twitch trains (Numba):   0%|          | 0/100 [00:00&lt;?, ?MU/s]
 
-Pool 1 Twitch trains (Numba):   1%|          | 1/100 [00:00&lt;00:11,  8.54MU/s]
-Pool 1 Twitch trains (Numba): 100%|██████████| 100/100 [00:00&lt;00:00, 807.84MU/s]
+Pool 1 Twitch trains (Numba):   1%|          | 1/100 [00:00&lt;00:12,  7.80MU/s]
+Pool 1 Twitch trains (Numba): 100%|██████████| 100/100 [00:00&lt;00:00, 746.85MU/s]
 
 
-[I 2026-01-02 09:01:49,327] Trial 18 finished with value: 4.266871632490397 and parameters: {&#39;dd_drive&#39;: 74.72142904562283}. Best is trial 15 with value: 0.09389755410617429.
+[I 2026-01-06 18:55:23,280] Trial 9 finished with value: 2.8261894288982172 and parameters: {&#39;dd_drive&#39;: 71.09918520180851}. Best is trial 0 with value: 0.9823102630391121.
 
-Best trial: 15. Best value: 0.0938976:  72%|███████▏  | 18/25 [01:25&lt;00:31,  4.54s/it, 80.35/3600 seconds]
-Best trial: 15. Best value: 0.0938976:  72%|███████▏  | 18/25 [01:25&lt;00:31,  4.54s/it, 80.35/3600 seconds]
-Best trial: 15. Best value: 0.0938976:  76%|███████▌  | 19/25 [01:25&lt;00:27,  4.62s/it, 80.35/3600 seconds]
-Best trial: 15. Best value: 0.0938976:  76%|███████▌  | 19/25 [01:25&lt;00:27,  4.62s/it, 85.15/3600 seconds]
-
-Pool 1 Twitch trains (Numba):   0%|          | 0/100 [00:00&lt;?, ?MU/s]
-
-Pool 1 Twitch trains (Numba):   1%|          | 1/100 [00:00&lt;00:11,  8.41MU/s]
-Pool 1 Twitch trains (Numba): 100%|██████████| 100/100 [00:00&lt;00:00, 812.78MU/s]
-
-
-[I 2026-01-02 09:01:53,565] Trial 19 finished with value: 1500.0 and parameters: {&#39;dd_drive&#39;: 24.154543283398304}. Best is trial 15 with value: 0.09389755410617429.
-
-Best trial: 15. Best value: 0.0938976:  76%|███████▌  | 19/25 [01:29&lt;00:27,  4.62s/it, 85.15/3600 seconds]
-Best trial: 15. Best value: 0.0938976:  76%|███████▌  | 19/25 [01:29&lt;00:27,  4.62s/it, 85.15/3600 seconds]
-Best trial: 15. Best value: 0.0938976:  80%|████████  | 20/25 [01:29&lt;00:22,  4.51s/it, 85.15/3600 seconds]
-Best trial: 15. Best value: 0.0938976:  80%|████████  | 20/25 [01:29&lt;00:22,  4.51s/it, 89.39/3600 seconds]
+Best trial: 0. Best value: 0.98231:  36%|███▌      | 9/25 [00:53&lt;01:25,  5.34s/it, 47.78/3600 seconds]
+Best trial: 0. Best value: 0.98231:  36%|███▌      | 9/25 [00:53&lt;01:25,  5.34s/it, 47.78/3600 seconds]
+Best trial: 0. Best value: 0.98231:  40%|████      | 10/25 [00:53&lt;01:21,  5.41s/it, 47.78/3600 seconds]
+Best trial: 0. Best value: 0.98231:  40%|████      | 10/25 [00:53&lt;01:21,  5.41s/it, 53.35/3600 seconds]
 
 Pool 1 Twitch trains (Numba):   0%|          | 0/100 [00:00&lt;?, ?MU/s]
 
-Pool 1 Twitch trains (Numba):   1%|          | 1/100 [00:00&lt;00:11,  8.58MU/s]
-Pool 1 Twitch trains (Numba): 100%|██████████| 100/100 [00:00&lt;00:00, 815.15MU/s]
-Trial 20: Force=10.5637 (target=3.2596), Error=224.1%, Drive=65.4Hz
+Pool 1 Twitch trains (Numba):   1%|          | 1/100 [00:00&lt;00:12,  7.68MU/s]
+Pool 1 Twitch trains (Numba): 100%|██████████| 100/100 [00:00&lt;00:00, 747.87MU/s]
 
 
-[I 2026-01-02 09:01:58,281] Trial 20 finished with value: 2.2408105478997857 and parameters: {&#39;dd_drive&#39;: 65.44755250115355}. Best is trial 15 with value: 0.09389755410617429.
+[I 2026-01-06 18:55:28,492] Trial 10 finished with value: 1100.0 and parameters: {&#39;dd_drive&#39;: 38.07318637690311}. Best is trial 0 with value: 0.9823102630391121.
 
-Best trial: 15. Best value: 0.0938976:  80%|████████  | 20/25 [01:34&lt;00:22,  4.51s/it, 89.39/3600 seconds]
-Best trial: 15. Best value: 0.0938976:  80%|████████  | 20/25 [01:34&lt;00:22,  4.51s/it, 89.39/3600 seconds]
-Best trial: 15. Best value: 0.0938976:  84%|████████▍ | 21/25 [01:34&lt;00:18,  4.57s/it, 89.39/3600 seconds]
-Best trial: 15. Best value: 0.0938976:  84%|████████▍ | 21/25 [01:34&lt;00:18,  4.57s/it, 94.11/3600 seconds]
-
-Pool 1 Twitch trains (Numba):   0%|          | 0/100 [00:00&lt;?, ?MU/s]
-
-Pool 1 Twitch trains (Numba):   1%|          | 1/100 [00:00&lt;00:11,  8.43MU/s]
-Pool 1 Twitch trains (Numba): 100%|██████████| 100/100 [00:00&lt;00:00, 807.90MU/s]
-
-
-[I 2026-01-02 09:02:02,902] Trial 21 finished with value: 0.010728459276233006 and parameters: {&#39;dd_drive&#39;: 52.39901405111262}. Best is trial 21 with value: 0.010728459276233006.
-
-Best trial: 15. Best value: 0.0938976:  84%|████████▍ | 21/25 [01:38&lt;00:18,  4.57s/it, 94.11/3600 seconds]
-Best trial: 21. Best value: 0.0107285:  84%|████████▍ | 21/25 [01:38&lt;00:18,  4.57s/it, 94.11/3600 seconds]
-Best trial: 21. Best value: 0.0107285:  88%|████████▊ | 22/25 [01:38&lt;00:13,  4.59s/it, 94.11/3600 seconds]
-Best trial: 21. Best value: 0.0107285:  88%|████████▊ | 22/25 [01:38&lt;00:13,  4.59s/it, 98.73/3600 seconds]
+Best trial: 0. Best value: 0.98231:  40%|████      | 10/25 [00:58&lt;01:21,  5.41s/it, 53.35/3600 seconds]
+Best trial: 0. Best value: 0.98231:  40%|████      | 10/25 [00:58&lt;01:21,  5.41s/it, 53.35/3600 seconds]
+Best trial: 0. Best value: 0.98231:  44%|████▍     | 11/25 [00:58&lt;01:14,  5.35s/it, 53.35/3600 seconds]
+Best trial: 0. Best value: 0.98231:  44%|████▍     | 11/25 [00:58&lt;01:14,  5.35s/it, 58.56/3600 seconds]
 
 Pool 1 Twitch trains (Numba):   0%|          | 0/100 [00:00&lt;?, ?MU/s]
 
-Pool 1 Twitch trains (Numba):   1%|          | 1/100 [00:00&lt;00:11,  8.33MU/s]
-Pool 1 Twitch trains (Numba): 100%|██████████| 100/100 [00:00&lt;00:00, 798.97MU/s]
+Pool 1 Twitch trains (Numba):   1%|          | 1/100 [00:00&lt;00:31,  3.15MU/s]
+Pool 1 Twitch trains (Numba): 100%|██████████| 100/100 [00:00&lt;00:00, 311.39MU/s]
 
 
-[I 2026-01-02 09:02:07,523] Trial 22 finished with value: 0.1776028365140428 and parameters: {&#39;dd_drive&#39;: 50.95464542042011}. Best is trial 21 with value: 0.010728459276233006.
+[I 2026-01-06 18:55:34,003] Trial 11 finished with value: 0.9292700999288681 and parameters: {&#39;dd_drive&#39;: 39.61182493133876}. Best is trial 11 with value: 0.9292700999288681.
 
-Best trial: 21. Best value: 0.0107285:  88%|████████▊ | 22/25 [01:43&lt;00:13,  4.59s/it, 98.73/3600 seconds]
-Best trial: 21. Best value: 0.0107285:  88%|████████▊ | 22/25 [01:43&lt;00:13,  4.59s/it, 98.73/3600 seconds]
-Best trial: 21. Best value: 0.0107285:  92%|█████████▏| 23/25 [01:43&lt;00:09,  4.60s/it, 98.73/3600 seconds]
-Best trial: 21. Best value: 0.0107285:  92%|█████████▏| 23/25 [01:43&lt;00:09,  4.60s/it, 103.35/3600 seconds]
-
-Pool 1 Twitch trains (Numba):   0%|          | 0/100 [00:00&lt;?, ?MU/s]
-
-Pool 1 Twitch trains (Numba):   1%|          | 1/100 [00:00&lt;00:11,  8.32MU/s]
-Pool 1 Twitch trains (Numba): 100%|██████████| 100/100 [00:00&lt;00:00, 804.31MU/s]
-
-
-[I 2026-01-02 09:02:11,837] Trial 23 finished with value: 1500.0 and parameters: {&#39;dd_drive&#39;: 28.145662601538078}. Best is trial 21 with value: 0.010728459276233006.
-
-Best trial: 21. Best value: 0.0107285:  92%|█████████▏| 23/25 [01:47&lt;00:09,  4.60s/it, 103.35/3600 seconds]
-Best trial: 21. Best value: 0.0107285:  92%|█████████▏| 23/25 [01:47&lt;00:09,  4.60s/it, 103.35/3600 seconds]
-Best trial: 21. Best value: 0.0107285:  96%|█████████▌| 24/25 [01:47&lt;00:04,  4.51s/it, 103.35/3600 seconds]
-Best trial: 21. Best value: 0.0107285:  96%|█████████▌| 24/25 [01:47&lt;00:04,  4.51s/it, 107.66/3600 seconds]
+Best trial: 0. Best value: 0.98231:  44%|████▍     | 11/25 [01:04&lt;01:14,  5.35s/it, 58.56/3600 seconds]
+Best trial: 11. Best value: 0.92927:  44%|████▍     | 11/25 [01:04&lt;01:14,  5.35s/it, 58.56/3600 seconds]
+Best trial: 11. Best value: 0.92927:  48%|████▊     | 12/25 [01:04&lt;01:10,  5.40s/it, 58.56/3600 seconds]
+Best trial: 11. Best value: 0.92927:  48%|████▊     | 12/25 [01:04&lt;01:10,  5.40s/it, 64.07/3600 seconds]
 
 Pool 1 Twitch trains (Numba):   0%|          | 0/100 [00:00&lt;?, ?MU/s]
 
-Pool 1 Twitch trains (Numba):   1%|          | 1/100 [00:00&lt;00:11,  8.34MU/s]
-Pool 1 Twitch trains (Numba): 100%|██████████| 100/100 [00:00&lt;00:00, 787.33MU/s]
+Pool 1 Twitch trains (Numba):   1%|          | 1/100 [00:00&lt;00:12,  7.83MU/s]
+Pool 1 Twitch trains (Numba): 100%|██████████| 100/100 [00:00&lt;00:00, 761.50MU/s]
 
 
-[I 2026-01-02 09:02:16,974] Trial 24 finished with value: 5.905681764304654 and parameters: {&#39;dd_drive&#39;: 82.55012239124997}. Best is trial 21 with value: 0.010728459276233006.
+[I 2026-01-06 18:55:39,216] Trial 12 finished with value: 0.9848339049257869 and parameters: {&#39;dd_drive&#39;: 37.00035094604319}. Best is trial 11 with value: 0.9292700999288681.
 
-Best trial: 21. Best value: 0.0107285:  96%|█████████▌| 24/25 [01:52&lt;00:04,  4.51s/it, 107.66/3600 seconds]
-Best trial: 21. Best value: 0.0107285:  96%|█████████▌| 24/25 [01:52&lt;00:04,  4.51s/it, 107.66/3600 seconds]
-Best trial: 21. Best value: 0.0107285: 100%|██████████| 25/25 [01:52&lt;00:00,  4.70s/it, 107.66/3600 seconds]
-Best trial: 21. Best value: 0.0107285: 100%|██████████| 25/25 [01:52&lt;00:00,  4.70s/it, 112.80/3600 seconds]
-Best trial: 21. Best value: 0.0107285: 100%|██████████| 25/25 [01:52&lt;00:00,  4.51s/it, 112.80/3600 seconds]
+Best trial: 11. Best value: 0.92927:  48%|████▊     | 12/25 [01:09&lt;01:10,  5.40s/it, 64.07/3600 seconds]
+Best trial: 11. Best value: 0.92927:  48%|████▊     | 12/25 [01:09&lt;01:10,  5.40s/it, 64.07/3600 seconds]
+Best trial: 11. Best value: 0.92927:  52%|█████▏    | 13/25 [01:09&lt;01:04,  5.34s/it, 64.07/3600 seconds]
+Best trial: 11. Best value: 0.92927:  52%|█████▏    | 13/25 [01:09&lt;01:04,  5.34s/it, 69.29/3600 seconds]
+
+Pool 1 Twitch trains (Numba):   0%|          | 0/100 [00:00&lt;?, ?MU/s]
+
+Pool 1 Twitch trains (Numba):   1%|          | 1/100 [00:00&lt;00:12,  7.80MU/s]
+Pool 1 Twitch trains (Numba): 100%|██████████| 100/100 [00:00&lt;00:00, 757.64MU/s]
+
+
+[I 2026-01-06 18:55:44,590] Trial 13 finished with value: 0.9567530599670472 and parameters: {&#39;dd_drive&#39;: 40.66759286131373}. Best is trial 11 with value: 0.9292700999288681.
+
+Best trial: 11. Best value: 0.92927:  52%|█████▏    | 13/25 [01:14&lt;01:04,  5.34s/it, 69.29/3600 seconds]
+Best trial: 11. Best value: 0.92927:  52%|█████▏    | 13/25 [01:14&lt;01:04,  5.34s/it, 69.29/3600 seconds]
+Best trial: 11. Best value: 0.92927:  56%|█████▌    | 14/25 [01:14&lt;00:58,  5.35s/it, 69.29/3600 seconds]
+Best trial: 11. Best value: 0.92927:  56%|█████▌    | 14/25 [01:14&lt;00:58,  5.35s/it, 74.66/3600 seconds]
+
+Pool 1 Twitch trains (Numba):   0%|          | 0/100 [00:00&lt;?, ?MU/s]
+
+Pool 1 Twitch trains (Numba):   1%|          | 1/100 [00:00&lt;00:12,  7.80MU/s]
+Pool 1 Twitch trains (Numba): 100%|██████████| 100/100 [00:00&lt;00:00, 754.95MU/s]
+
+
+[I 2026-01-06 18:55:49,946] Trial 14 finished with value: 0.44878758986459116 and parameters: {&#39;dd_drive&#39;: 49.0418556481266}. Best is trial 14 with value: 0.44878758986459116.
+
+Best trial: 11. Best value: 0.92927:  56%|█████▌    | 14/25 [01:20&lt;00:58,  5.35s/it, 74.66/3600 seconds]
+Best trial: 14. Best value: 0.448788:  56%|█████▌    | 14/25 [01:20&lt;00:58,  5.35s/it, 74.66/3600 seconds]
+Best trial: 14. Best value: 0.448788:  60%|██████    | 15/25 [01:20&lt;00:53,  5.35s/it, 74.66/3600 seconds]
+Best trial: 14. Best value: 0.448788:  60%|██████    | 15/25 [01:20&lt;00:53,  5.35s/it, 80.02/3600 seconds]
+
+Pool 1 Twitch trains (Numba):   0%|          | 0/100 [00:00&lt;?, ?MU/s]
+
+Pool 1 Twitch trains (Numba):   1%|          | 1/100 [00:00&lt;00:12,  7.76MU/s]
+Pool 1 Twitch trains (Numba): 100%|██████████| 100/100 [00:00&lt;00:00, 750.78MU/s]
+Trial 15: Force=2.9535 (target=3.2628), Error=9.5%, Drive=51.8Hz
+
+
+[I 2026-01-06 18:55:55,309] Trial 15 finished with value: 0.09479941286473444 and parameters: {&#39;dd_drive&#39;: 51.76931053009874}. Best is trial 15 with value: 0.09479941286473444.
+
+Best trial: 14. Best value: 0.448788:  60%|██████    | 15/25 [01:25&lt;00:53,  5.35s/it, 80.02/3600 seconds]
+Best trial: 15. Best value: 0.0947994:  60%|██████    | 15/25 [01:25&lt;00:53,  5.35s/it, 80.02/3600 seconds]
+Best trial: 15. Best value: 0.0947994:  64%|██████▍   | 16/25 [01:25&lt;00:48,  5.36s/it, 80.02/3600 seconds]
+Best trial: 15. Best value: 0.0947994:  64%|██████▍   | 16/25 [01:25&lt;00:48,  5.36s/it, 85.38/3600 seconds]
+
+Pool 1 Twitch trains (Numba):   0%|          | 0/100 [00:00&lt;?, ?MU/s]
+
+Pool 1 Twitch trains (Numba):   1%|          | 1/100 [00:00&lt;00:12,  7.70MU/s]
+Pool 1 Twitch trains (Numba): 100%|██████████| 100/100 [00:00&lt;00:00, 743.70MU/s]
+
+
+[I 2026-01-06 18:56:00,744] Trial 16 finished with value: 0.10015893451066808 and parameters: {&#39;dd_drive&#39;: 54.82271566310558}. Best is trial 15 with value: 0.09479941286473444.
+
+Best trial: 15. Best value: 0.0947994:  64%|██████▍   | 16/25 [01:30&lt;00:48,  5.36s/it, 85.38/3600 seconds]
+Best trial: 15. Best value: 0.0947994:  64%|██████▍   | 16/25 [01:30&lt;00:48,  5.36s/it, 85.38/3600 seconds]
+Best trial: 15. Best value: 0.0947994:  68%|██████▊   | 17/25 [01:30&lt;00:43,  5.38s/it, 85.38/3600 seconds]
+Best trial: 15. Best value: 0.0947994:  68%|██████▊   | 17/25 [01:30&lt;00:43,  5.38s/it, 90.82/3600 seconds]
+
+Pool 1 Twitch trains (Numba):   0%|          | 0/100 [00:00&lt;?, ?MU/s]
+
+Pool 1 Twitch trains (Numba):   1%|          | 1/100 [00:00&lt;00:12,  7.75MU/s]
+Pool 1 Twitch trains (Numba): 100%|██████████| 100/100 [00:00&lt;00:00, 748.10MU/s]
+
+
+[I 2026-01-06 18:56:06,150] Trial 17 finished with value: 0.25819104327798154 and parameters: {&#39;dd_drive&#39;: 54.30216790381792}. Best is trial 15 with value: 0.09479941286473444.
+
+Best trial: 15. Best value: 0.0947994:  68%|██████▊   | 17/25 [01:36&lt;00:43,  5.38s/it, 90.82/3600 seconds]
+Best trial: 15. Best value: 0.0947994:  68%|██████▊   | 17/25 [01:36&lt;00:43,  5.38s/it, 90.82/3600 seconds]
+Best trial: 15. Best value: 0.0947994:  72%|███████▏  | 18/25 [01:36&lt;00:37,  5.39s/it, 90.82/3600 seconds]
+Best trial: 15. Best value: 0.0947994:  72%|███████▏  | 18/25 [01:36&lt;00:37,  5.39s/it, 96.22/3600 seconds]
+
+Pool 1 Twitch trains (Numba):   0%|          | 0/100 [00:00&lt;?, ?MU/s]
+
+Pool 1 Twitch trains (Numba):   1%|          | 1/100 [00:00&lt;00:12,  7.83MU/s]
+Pool 1 Twitch trains (Numba): 100%|██████████| 100/100 [00:00&lt;00:00, 748.64MU/s]
+
+
+[I 2026-01-06 18:56:11,877] Trial 18 finished with value: 4.259930147242612 and parameters: {&#39;dd_drive&#39;: 74.72142904562283}. Best is trial 15 with value: 0.09479941286473444.
+
+Best trial: 15. Best value: 0.0947994:  72%|███████▏  | 18/25 [01:41&lt;00:37,  5.39s/it, 96.22/3600 seconds]
+Best trial: 15. Best value: 0.0947994:  72%|███████▏  | 18/25 [01:41&lt;00:37,  5.39s/it, 96.22/3600 seconds]
+Best trial: 15. Best value: 0.0947994:  76%|███████▌  | 19/25 [01:41&lt;00:32,  5.49s/it, 96.22/3600 seconds]
+Best trial: 15. Best value: 0.0947994:  76%|███████▌  | 19/25 [01:41&lt;00:32,  5.49s/it, 101.95/3600 seconds]
+
+Pool 1 Twitch trains (Numba):   0%|          | 0/100 [00:00&lt;?, ?MU/s]
+
+Pool 1 Twitch trains (Numba):   1%|          | 1/100 [00:00&lt;00:12,  7.86MU/s]
+Pool 1 Twitch trains (Numba): 100%|██████████| 100/100 [00:00&lt;00:00, 765.15MU/s]
+
+
+[I 2026-01-06 18:56:16,918] Trial 19 finished with value: 1500.0 and parameters: {&#39;dd_drive&#39;: 24.154543283398297}. Best is trial 15 with value: 0.09479941286473444.
+
+Best trial: 15. Best value: 0.0947994:  76%|███████▌  | 19/25 [01:46&lt;00:32,  5.49s/it, 101.95/3600 seconds]
+Best trial: 15. Best value: 0.0947994:  76%|███████▌  | 19/25 [01:46&lt;00:32,  5.49s/it, 101.95/3600 seconds]
+Best trial: 15. Best value: 0.0947994:  80%|████████  | 20/25 [01:46&lt;00:26,  5.35s/it, 101.95/3600 seconds]
+Best trial: 15. Best value: 0.0947994:  80%|████████  | 20/25 [01:46&lt;00:26,  5.35s/it, 106.99/3600 seconds]
+
+Pool 1 Twitch trains (Numba):   0%|          | 0/100 [00:00&lt;?, ?MU/s]
+
+Pool 1 Twitch trains (Numba):   1%|          | 1/100 [00:00&lt;00:12,  7.81MU/s]
+Pool 1 Twitch trains (Numba): 100%|██████████| 100/100 [00:00&lt;00:00, 749.07MU/s]
+Trial 20: Force=10.5610 (target=3.2628), Error=223.7%, Drive=65.4Hz
+
+
+[I 2026-01-06 18:56:22,429] Trial 20 finished with value: 2.2367643580278536 and parameters: {&#39;dd_drive&#39;: 65.44755250115355}. Best is trial 15 with value: 0.09479941286473444.
+
+Best trial: 15. Best value: 0.0947994:  80%|████████  | 20/25 [01:52&lt;00:26,  5.35s/it, 106.99/3600 seconds]
+Best trial: 15. Best value: 0.0947994:  80%|████████  | 20/25 [01:52&lt;00:26,  5.35s/it, 106.99/3600 seconds]
+Best trial: 15. Best value: 0.0947994:  84%|████████▍ | 21/25 [01:52&lt;00:21,  5.40s/it, 106.99/3600 seconds]
+Best trial: 15. Best value: 0.0947994:  84%|████████▍ | 21/25 [01:52&lt;00:21,  5.40s/it, 112.50/3600 seconds]
+
+Pool 1 Twitch trains (Numba):   0%|          | 0/100 [00:00&lt;?, ?MU/s]
+
+Pool 1 Twitch trains (Numba):   1%|          | 1/100 [00:00&lt;00:12,  7.82MU/s]
+Pool 1 Twitch trains (Numba): 100%|██████████| 100/100 [00:00&lt;00:00, 754.96MU/s]
+
+
+[I 2026-01-06 18:56:27,869] Trial 21 finished with value: 0.009723035847462074 and parameters: {&#39;dd_drive&#39;: 52.399014051112616}. Best is trial 21 with value: 0.009723035847462074.
+
+Best trial: 15. Best value: 0.0947994:  84%|████████▍ | 21/25 [01:57&lt;00:21,  5.40s/it, 112.50/3600 seconds]
+Best trial: 21. Best value: 0.00972304:  84%|████████▍ | 21/25 [01:57&lt;00:21,  5.40s/it, 112.50/3600 seconds]
+Best trial: 21. Best value: 0.00972304:  88%|████████▊ | 22/25 [01:57&lt;00:16,  5.41s/it, 112.50/3600 seconds]
+Best trial: 21. Best value: 0.00972304:  88%|████████▊ | 22/25 [01:57&lt;00:16,  5.41s/it, 117.94/3600 seconds]
+
+Pool 1 Twitch trains (Numba):   0%|          | 0/100 [00:00&lt;?, ?MU/s]
+
+Pool 1 Twitch trains (Numba):   1%|          | 1/100 [00:00&lt;00:12,  7.82MU/s]
+Pool 1 Twitch trains (Numba): 100%|██████████| 100/100 [00:00&lt;00:00, 756.52MU/s]
+
+
+[I 2026-01-06 18:56:33,309] Trial 22 finished with value: 0.17842091714522995 and parameters: {&#39;dd_drive&#39;: 50.9546454204201}. Best is trial 21 with value: 0.009723035847462074.
+
+Best trial: 21. Best value: 0.00972304:  88%|████████▊ | 22/25 [02:03&lt;00:16,  5.41s/it, 117.94/3600 seconds]
+Best trial: 21. Best value: 0.00972304:  88%|████████▊ | 22/25 [02:03&lt;00:16,  5.41s/it, 117.94/3600 seconds]
+Best trial: 21. Best value: 0.00972304:  92%|█████████▏| 23/25 [02:03&lt;00:10,  5.42s/it, 117.94/3600 seconds]
+Best trial: 21. Best value: 0.00972304:  92%|█████████▏| 23/25 [02:03&lt;00:10,  5.42s/it, 123.38/3600 seconds]
+
+Pool 1 Twitch trains (Numba):   0%|          | 0/100 [00:00&lt;?, ?MU/s]
+
+Pool 1 Twitch trains (Numba):   1%|          | 1/100 [00:00&lt;00:12,  7.79MU/s]
+Pool 1 Twitch trains (Numba): 100%|██████████| 100/100 [00:00&lt;00:00, 757.71MU/s]
+
+
+[I 2026-01-06 18:56:38,410] Trial 23 finished with value: 1500.0 and parameters: {&#39;dd_drive&#39;: 28.14566260153807}. Best is trial 21 with value: 0.009723035847462074.
+
+Best trial: 21. Best value: 0.00972304:  92%|█████████▏| 23/25 [02:08&lt;00:10,  5.42s/it, 123.38/3600 seconds]
+Best trial: 21. Best value: 0.00972304:  92%|█████████▏| 23/25 [02:08&lt;00:10,  5.42s/it, 123.38/3600 seconds]
+Best trial: 21. Best value: 0.00972304:  96%|█████████▌| 24/25 [02:08&lt;00:05,  5.32s/it, 123.38/3600 seconds]
+Best trial: 21. Best value: 0.00972304:  96%|█████████▌| 24/25 [02:08&lt;00:05,  5.32s/it, 128.48/3600 seconds]
+
+Pool 1 Twitch trains (Numba):   0%|          | 0/100 [00:00&lt;?, ?MU/s]
+
+Pool 1 Twitch trains (Numba):   1%|          | 1/100 [00:00&lt;00:12,  7.74MU/s]
+Pool 1 Twitch trains (Numba): 100%|██████████| 100/100 [00:00&lt;00:00, 738.05MU/s]
+
+
+[I 2026-01-06 18:56:44,376] Trial 24 finished with value: 5.8989085682800875 and parameters: {&#39;dd_drive&#39;: 82.55012239124997}. Best is trial 21 with value: 0.009723035847462074.
+
+Best trial: 21. Best value: 0.00972304:  96%|█████████▌| 24/25 [02:14&lt;00:05,  5.32s/it, 128.48/3600 seconds]
+Best trial: 21. Best value: 0.00972304:  96%|█████████▌| 24/25 [02:14&lt;00:05,  5.32s/it, 128.48/3600 seconds]
+Best trial: 21. Best value: 0.00972304: 100%|██████████| 25/25 [02:14&lt;00:00,  5.52s/it, 128.48/3600 seconds]
+Best trial: 21. Best value: 0.00972304: 100%|██████████| 25/25 [02:14&lt;00:00,  5.52s/it, 134.45/3600 seconds]
+Best trial: 21. Best value: 0.00972304: 100%|██████████| 25/25 [02:14&lt;00:00,  5.38s/it, 134.45/3600 seconds]
 </pre></div>
 </div>
 </section>
@@ -1187,12 +1187,12 @@ Best trial: 21. Best value: 0.0107285: 100%|██████████| 25/2
 <div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Optimization Complete
 ==================================================
 Best trial: 21
-Force error: 1.1%
+Force error: 1.0%
 
 Force Results:
-  Target:   3.2596 a.u. (30.0% of baseline)
+  Target:   3.2628 a.u. (30.0% of baseline)
   Achieved: 3.2946 a.u.
-  Error:    1.1%
+  Error:    1.0%
 
 Optimized Parameters:
   DD drive: 52.40 Hz
@@ -1319,7 +1319,7 @@ Optimized Parameters:
 <a href="https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.show.html#matplotlib.pyplot.show" title="matplotlib.pyplot.show" class="sphx-glr-backref-module-matplotlib-pyplot sphx-glr-backref-type-py-function"><span class="n">plt</span><span class="o">.</span><span class="n">show</span></a><span class="p">()</span>
 </pre></div>
 </div>
-<img src="../../_images/sphx_glr_03_optimize_dd_for_target_force_001.png" srcset="../../_images/sphx_glr_03_optimize_dd_for_target_force_001.png" alt="Optimization Progress, Force Convergence, Drive Frequency Distribution, Force-Drive Relationship" class = "sphx-glr-single-img"/><p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (1 minutes 53.955 seconds)</p>
+<img src="../../_images/sphx_glr_03_optimize_dd_for_target_force_001.png" srcset="../../_images/sphx_glr_03_optimize_dd_for_target_force_001.png" alt="Optimization Progress, Force Convergence, Drive Frequency Distribution, Force-Drive Relationship" class = "sphx-glr-single-img"/><p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (2 minutes 15.720 seconds)</p>
 <div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-auto-examples-02-finetune-03-optimize-dd-for-target-force-py">
 <div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
 <p><a class="reference download internal" download="" href="../../_downloads/300aab552bf6088248666a7a87b6ee88/03_optimize_dd_for_target_force.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">03_optimize_dd_for_target_force.ipynb</span></code></a></p>

@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>myogen.simulator.core.force.force_model &#8212; MyoGen 0.8.3 Documentation</title>
+    <title>myogen.simulator.core.force.force_model &#8212; MyoGen 0.8.4 Documentation</title>
   
   
   
@@ -54,7 +54,7 @@
 
     <script src="../../../../../_static/jquery.js?v=5d32c60e"></script>
     <script src="../../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-    <script src="../../../../../_static/documentation_options.js?v=ec54a975"></script>
+    <script src="../../../../../_static/documentation_options.js?v=0477e8c5"></script>
     <script src="../../../../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../../../_static/js/hoverxref.js"></script>
@@ -434,7 +434,7 @@ window.addEventListener("load", load);
     <link rel="search" title="Search" href="../../../../../search.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="0.8.3" />
+  <meta name="docsearch:version" content="0.8.4" />
   </head>
   
   
@@ -503,8 +503,8 @@ window.addEventListener("load", load);
       
     
     
-    <img src="../../../../../_static/myogen_logo.png" class="logo__image only-light" alt="MyoGen 0.8.3 Documentation - Home"/>
-    <img src="../../../../../_static/myogen_logo.png" class="logo__image only-dark pst-js-only" alt="MyoGen 0.8.3 Documentation - Home"/>
+    <img src="../../../../../_static/myogen_logo.png" class="logo__image only-light" alt="MyoGen 0.8.4 Documentation - Home"/>
+    <img src="../../../../../_static/myogen_logo.png" class="logo__image only-dark pst-js-only" alt="MyoGen 0.8.4 Documentation - Home"/>
   
   
 </a></div>
@@ -513,7 +513,7 @@ window.addEventListener("load", load);
 <div class="nav-item">
   <div class="version-switcher__container dropdown">
       <button id="version-switcher-button" type="button" class="version-switcher__button btn btn-sm navbar-btn" aria-haspopup="true" aria-expanded="false">
-          Version 0.8.3
+          Version 0.8.4
       </button>
       
       
@@ -998,7 +998,7 @@ window.addEventListener("load", load);
 
 <div class="viewcode-block" id="ForceModel.generate_force">
 <a class="viewcode-back" href="../../../../../generated/myogen.simulator.ForceModel.generate_force.html#myogen.simulator.ForceModel.generate_force">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">generate_force</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">spike_train__Block</span><span class="p">:</span> <span class="n">SPIKE_TRAIN__Block</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">FORCE__AnalogSignal</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">generate_force</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">spike_train__Block</span><span class="p">:</span> <span class="n">SPIKE_TRAIN__Block</span><span class="p">,</span> <span class="n">verbose</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">FORCE__AnalogSignal</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Generate force output from motor unit spike trains using the Fuglevand model.</span>
 
@@ -1012,6 +1012,8 @@ window.addEventListener("load", load);
 <span class="sd">        ----------</span>
 <span class="sd">        spike_train__Block : SPIKE_TRAIN__Block</span>
 <span class="sd">            Spike train block containing spike train data for multiple motor neuron pools.</span>
+<span class="sd">        verbose : bool, default=True</span>
+<span class="sd">            If True, display progress bars during force generation. Set to False to disable.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
@@ -1080,7 +1082,7 @@ window.addEventListener("load", load);
 
                 <span class="c1"># Generate force with resampling handled internally</span>
                 <span class="n">force_output</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_generate_force</span><span class="p">(</span>
-                    <span class="n">spike_array</span><span class="p">,</span> <span class="n">spiketrain_timestep__ms</span><span class="p">,</span> <span class="n">prefix</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Pool </span><span class="si">{</span><span class="n">i</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="si">}</span><span class="s2">&quot;</span>
+                    <span class="n">spike_array</span><span class="p">,</span> <span class="n">spiketrain_timestep__ms</span><span class="p">,</span> <span class="n">prefix</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Pool </span><span class="si">{</span><span class="n">i</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span>
                 <span class="p">)</span>
                 <span class="n">forces</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">force_output</span><span class="p">)</span>
 
@@ -1095,7 +1097,7 @@ window.addEventListener("load", load);
 
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_generate_force</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="n">spikes</span><span class="p">,</span> <span class="n">spiketrain_timestep__ms</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">prefix</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">spikes</span><span class="p">,</span> <span class="n">spiketrain_timestep__ms</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">prefix</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">verbose</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Generate force offline from spike trains with resampling to recording frequency.&quot;&quot;&quot;</span>
         <span class="c1"># Convert sparse to dense once at the start</span>
@@ -1135,7 +1137,7 @@ window.addEventListener("load", load);
         <span class="c1"># Try to use Numba if available for additional speedup</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="n">force</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_generate_force_numba</span><span class="p">(</span>
-                <span class="n">force</span><span class="p">,</span> <span class="n">spikes_dense</span><span class="p">,</span> <span class="n">gain</span><span class="p">,</span> <span class="n">resampled_twitches</span><span class="p">,</span> <span class="n">L</span><span class="p">,</span> <span class="n">prefix</span>
+                <span class="n">force</span><span class="p">,</span> <span class="n">spikes_dense</span><span class="p">,</span> <span class="n">gain</span><span class="p">,</span> <span class="n">resampled_twitches</span><span class="p">,</span> <span class="n">L</span><span class="p">,</span> <span class="n">prefix</span><span class="p">,</span> <span class="n">verbose</span>
             <span class="p">)</span>
         <span class="k">except</span> <span class="p">(</span><span class="ne">ImportError</span><span class="p">,</span> <span class="ne">AttributeError</span><span class="p">):</span>
             <span class="c1"># Fallback to optimized NumPy version</span>
@@ -1143,7 +1145,7 @@ window.addEventListener("load", load);
                 <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_number_of_neurons</span><span class="p">),</span>
                 <span class="n">desc</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">prefix</span><span class="si">}</span><span class="s2"> Twitch trains are generated&quot;</span><span class="p">,</span>
                 <span class="n">unit</span><span class="o">=</span><span class="s2">&quot;MU&quot;</span><span class="p">,</span>
-                <span class="n">disable</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                <span class="n">disable</span><span class="o">=</span><span class="ow">not</span> <span class="n">verbose</span><span class="p">,</span>
             <span class="p">):</span>
                 <span class="c1"># Only iterate over spike times, not all time points</span>
                 <span class="n">spike_indices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">spikes_dense</span><span class="p">[:,</span> <span class="n">n</span><span class="p">])[</span><span class="mi">0</span><span class="p">]</span>
@@ -1167,6 +1169,7 @@ window.addEventListener("load", load);
         <span class="n">resampled_twitches</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span>
         <span class="n">L</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
         <span class="n">prefix</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">verbose</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Generate force using Numba JIT compilation for maximum speed.&quot;&quot;&quot;</span>
         <span class="k">try</span><span class="p">:</span>
@@ -1189,6 +1192,7 @@ window.addEventListener("load", load);
             <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_number_of_neurons</span><span class="p">),</span>
             <span class="n">desc</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">prefix</span><span class="si">}</span><span class="s2"> Twitch trains (Numba)&quot;</span><span class="p">,</span>
             <span class="n">unit</span><span class="o">=</span><span class="s2">&quot;MU&quot;</span><span class="p">,</span>
+            <span class="n">disable</span><span class="o">=</span><span class="ow">not</span> <span class="n">verbose</span><span class="p">,</span>
         <span class="p">):</span>
             <span class="n">force</span> <span class="o">=</span> <span class="n">add_twitches_jit</span><span class="p">(</span><span class="n">force</span><span class="p">,</span> <span class="n">spikes</span><span class="p">,</span> <span class="n">gain</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">resampled_twitches</span><span class="p">[</span><span class="n">n</span><span class="p">],</span> <span class="n">L</span><span class="p">)</span>
 

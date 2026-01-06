@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>myogen.simulator.core.emg.surface.surface_emg &#8212; MyoGen 0.8.3 Documentation</title>
+    <title>myogen.simulator.core.emg.surface.surface_emg &#8212; MyoGen 0.8.4 Documentation</title>
   
   
   
@@ -54,7 +54,7 @@
 
     <script src="../../../../../../_static/jquery.js?v=5d32c60e"></script>
     <script src="../../../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-    <script src="../../../../../../_static/documentation_options.js?v=ec54a975"></script>
+    <script src="../../../../../../_static/documentation_options.js?v=0477e8c5"></script>
     <script src="../../../../../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../../../../_static/js/hoverxref.js"></script>
@@ -434,7 +434,7 @@ window.addEventListener("load", load);
     <link rel="search" title="Search" href="../../../../../../search.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="0.8.3" />
+  <meta name="docsearch:version" content="0.8.4" />
   </head>
   
   
@@ -503,8 +503,8 @@ window.addEventListener("load", load);
       
     
     
-    <img src="../../../../../../_static/myogen_logo.png" class="logo__image only-light" alt="MyoGen 0.8.3 Documentation - Home"/>
-    <img src="../../../../../../_static/myogen_logo.png" class="logo__image only-dark pst-js-only" alt="MyoGen 0.8.3 Documentation - Home"/>
+    <img src="../../../../../../_static/myogen_logo.png" class="logo__image only-light" alt="MyoGen 0.8.4 Documentation - Home"/>
+    <img src="../../../../../../_static/myogen_logo.png" class="logo__image only-dark pst-js-only" alt="MyoGen 0.8.4 Documentation - Home"/>
   
   
 </a></div>
@@ -513,7 +513,7 @@ window.addEventListener("load", load);
 <div class="nav-item">
   <div class="version-switcher__container dropdown">
       <button id="version-switcher-button" type="button" class="version-switcher__button btn btn-sm navbar-btn" aria-haspopup="true" aria-expanded="false">
-          Version 0.8.3
+          Version 0.8.4
       </button>
       
       
@@ -973,7 +973,7 @@ window.addEventListener("load", load);
 
 <div class="viewcode-block" id="SurfaceEMG.simulate_muaps">
 <a class="viewcode-back" href="../../../../../../generated/myogen.simulator.SurfaceEMG.simulate_muaps.html#myogen.simulator.SurfaceEMG.simulate_muaps">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">simulate_muaps</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_jobs</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="o">-</span><span class="mi">2</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">SURFACE_MUAP__Block</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">simulate_muaps</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_jobs</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="o">-</span><span class="mi">2</span><span class="p">,</span> <span class="n">verbose</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">SURFACE_MUAP__Block</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Simulate MUAPs for all electrode arrays using the provided muscle model.</span>
 
@@ -991,6 +991,8 @@ window.addEventListener("load", load);
 <span class="sd">            - n_jobs=-3: Use all cores except two</span>
 <span class="sd">            - n_jobs=1: No parallelization</span>
 <span class="sd">            - n_jobs=N: Use exactly N cores</span>
+<span class="sd">        verbose : bool, default=True</span>
+<span class="sd">            If True, display progress bars. Set to False to disable.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
@@ -1200,6 +1202,7 @@ window.addEventListener("load", load);
             <span class="k">with</span> <span class="n">tqdm</span><span class="p">(</span>
                 <span class="n">total</span><span class="o">=</span><span class="n">n_mus_to_compute</span><span class="p">,</span>
                 <span class="n">desc</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Electrode Array </span><span class="si">{</span><span class="n">array_idx</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_electrode_arrays</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                <span class="n">disable</span><span class="o">=</span><span class="ow">not</span> <span class="n">verbose</span><span class="p">,</span>
             <span class="p">)</span> <span class="k">as</span> <span class="n">pbar</span><span class="p">:</span>
                 <span class="k">for</span> <span class="n">array_result</span><span class="p">,</span> <span class="n">segment_name</span> <span class="ow">in</span> <span class="n">Parallel</span><span class="p">(</span>
                     <span class="n">n_jobs</span><span class="o">=</span><span class="n">n_jobs</span><span class="p">,</span>
@@ -1274,7 +1277,7 @@ window.addEventListener("load", load);
 
 <div class="viewcode-block" id="SurfaceEMG.simulate_surface_emg">
 <a class="viewcode-back" href="../../../../../../generated/myogen.simulator.SurfaceEMG.simulate_surface_emg.html#myogen.simulator.SurfaceEMG.simulate_surface_emg">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">simulate_surface_emg</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">spike_train__Block</span><span class="p">:</span> <span class="n">SPIKE_TRAIN__Block</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">SURFACE_EMG__Block</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">simulate_surface_emg</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">spike_train__Block</span><span class="p">:</span> <span class="n">SPIKE_TRAIN__Block</span><span class="p">,</span> <span class="n">verbose</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">SURFACE_EMG__Block</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Generate surface EMG signals for all electrode arrays using the provided spike train block.</span>
 
@@ -1286,6 +1289,8 @@ window.addEventListener("load", load);
 <span class="sd">        ----------</span>
 <span class="sd">        spike_train__Block : SPIKE_TRAIN__Block</span>
 <span class="sd">            Block containing spike trains organized as segments (pools) with spiketrains.</span>
+<span class="sd">        verbose : bool, default=True</span>
+<span class="sd">            If True, display progress bars. Set to False to disable.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
@@ -1420,6 +1425,7 @@ window.addEventListener("load", load);
                     <span class="nb">range</span><span class="p">(</span><span class="n">n_pools</span><span class="p">),</span>
                     <span class="n">desc</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Electrode Array </span><span class="si">{</span><span class="n">array_idx</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_muaps__Block</span><span class="o">.</span><span class="n">groups</span><span class="p">)</span><span class="si">}</span><span class="s2"> Surface EMG (GPU)&quot;</span><span class="p">,</span>
                     <span class="n">unit</span><span class="o">=</span><span class="s2">&quot;pools&quot;</span><span class="p">,</span>
+                    <span class="n">disable</span><span class="o">=</span><span class="ow">not</span> <span class="n">verbose</span><span class="p">,</span>
                 <span class="p">):</span>
                     <span class="n">pool_active_neurons</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">active_neuron_indices</span><span class="p">[</span><span class="n">pool_idx</span><span class="p">])</span>
 
@@ -1450,6 +1456,7 @@ window.addEventListener("load", load);
                     <span class="nb">range</span><span class="p">(</span><span class="n">n_pools</span><span class="p">),</span>
                     <span class="n">desc</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Electrode Array </span><span class="si">{</span><span class="n">array_idx</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_muaps__Block</span><span class="o">.</span><span class="n">groups</span><span class="p">)</span><span class="si">}</span><span class="s2"> Surface EMG (CPU)&quot;</span><span class="p">,</span>
                     <span class="n">unit</span><span class="o">=</span><span class="s2">&quot;pools&quot;</span><span class="p">,</span>
+                    <span class="n">disable</span><span class="o">=</span><span class="ow">not</span> <span class="n">verbose</span><span class="p">,</span>
                 <span class="p">):</span>
                     <span class="n">pool_active_neurons</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">active_neuron_indices</span><span class="p">[</span><span class="n">pool_idx</span><span class="p">])</span>
 

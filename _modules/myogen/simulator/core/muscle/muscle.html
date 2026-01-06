@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>myogen.simulator.core.muscle.muscle &#8212; MyoGen 0.8.3 Documentation</title>
+    <title>myogen.simulator.core.muscle.muscle &#8212; MyoGen 0.8.4 Documentation</title>
   
   
   
@@ -54,7 +54,7 @@
 
     <script src="../../../../../_static/jquery.js?v=5d32c60e"></script>
     <script src="../../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-    <script src="../../../../../_static/documentation_options.js?v=ec54a975"></script>
+    <script src="../../../../../_static/documentation_options.js?v=0477e8c5"></script>
     <script src="../../../../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../../../_static/js/hoverxref.js"></script>
@@ -434,7 +434,7 @@ window.addEventListener("load", load);
     <link rel="search" title="Search" href="../../../../../search.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="0.8.3" />
+  <meta name="docsearch:version" content="0.8.4" />
   </head>
   
   
@@ -503,8 +503,8 @@ window.addEventListener("load", load);
       
     
     
-    <img src="../../../../../_static/myogen_logo.png" class="logo__image only-light" alt="MyoGen 0.8.3 Documentation - Home"/>
-    <img src="../../../../../_static/myogen_logo.png" class="logo__image only-dark pst-js-only" alt="MyoGen 0.8.3 Documentation - Home"/>
+    <img src="../../../../../_static/myogen_logo.png" class="logo__image only-light" alt="MyoGen 0.8.4 Documentation - Home"/>
+    <img src="../../../../../_static/myogen_logo.png" class="logo__image only-dark pst-js-only" alt="MyoGen 0.8.4 Documentation - Home"/>
   
   
 </a></div>
@@ -513,7 +513,7 @@ window.addEventListener("load", load);
 <div class="nav-item">
   <div class="version-switcher__container dropdown">
       <button id="version-switcher-button" type="button" class="version-switcher__button btn btn-sm navbar-btn" aria-haspopup="true" aria-expanded="false">
-          Version 0.8.3
+          Version 0.8.4
       </button>
       
       
@@ -1182,7 +1182,7 @@ window.addEventListener("load", load);
 
 <div class="viewcode-block" id="Muscle.generate_muscle_fiber_centers">
 <a class="viewcode-back" href="../../../../../generated/myogen.simulator.Muscle.generate_muscle_fiber_centers.html#myogen.simulator.Muscle.generate_muscle_fiber_centers">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">generate_muscle_fiber_centers</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">generate_muscle_fiber_centers</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">verbose</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Generate muscle fiber center positions using a pre-computed Voronoi distribution.</span>
 
@@ -1190,6 +1190,11 @@ window.addEventListener("load", load);
 <span class="sd">        within the circular muscle cross-section. The distribution is based on a</span>
 <span class="sd">        Voronoi tessellation pattern that mimics the natural packing of muscle fibers</span>
 <span class="sd">        observed in histological studies.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        verbose : bool, default=True</span>
+<span class="sd">            If True, display status messages. Set to False to disable.</span>
 
 <span class="sd">        Results are stored in the following properties after execution:</span>
 
@@ -1255,10 +1260,11 @@ window.addEventListener("load", load);
             <span class="k">if</span> <span class="n">n_fibers_removed</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_muscle_fiber_centers__mm</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_muscle_fiber_centers__mm</span><span class="p">[</span><span class="n">valid_fiber_mask</span><span class="p">]</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_number_of_muscle_fibers</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_muscle_fiber_centers__mm</span><span class="p">)</span>
-                <span class="nb">print</span><span class="p">(</span>
-                    <span class="sa">f</span><span class="s2">&quot;Removed </span><span class="si">{</span><span class="n">n_fibers_removed</span><span class="si">}</span><span class="s2"> fibers inside bone radius &quot;</span>
-                    <span class="sa">f</span><span class="s2">&quot;(r &lt; </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_radius_bone__mm</span><span class="o">.</span><span class="n">magnitude</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2"> mm)&quot;</span>
-                <span class="p">)</span>
+                <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+                    <span class="nb">print</span><span class="p">(</span>
+                        <span class="sa">f</span><span class="s2">&quot;Removed </span><span class="si">{</span><span class="n">n_fibers_removed</span><span class="si">}</span><span class="s2"> fibers inside bone radius &quot;</span>
+                        <span class="sa">f</span><span class="s2">&quot;(r &lt; </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_radius_bone__mm</span><span class="o">.</span><span class="n">magnitude</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2"> mm)&quot;</span>
+                    <span class="p">)</span>
 
         <span class="c1"># Create muscle border for plotting</span>
         <span class="n">phi_circle</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">,</span> <span class="mi">1000</span><span class="p">)</span>
@@ -1276,7 +1282,7 @@ window.addEventListener("load", load);
 
 <div class="viewcode-block" id="Muscle.assign_mfs2mns">
 <a class="viewcode-back" href="../../../../../generated/myogen.simulator.Muscle.assign_mfs2mns.html#myogen.simulator.Muscle.assign_mfs2mns">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">assign_mfs2mns</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_neighbours</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">3</span><span class="p">,</span> <span class="n">conf</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.999</span><span class="p">,</span> <span class="n">n_jobs</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="o">-</span><span class="mi">2</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">assign_mfs2mns</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_neighbours</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">3</span><span class="p">,</span> <span class="n">conf</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.999</span><span class="p">,</span> <span class="n">n_jobs</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="o">-</span><span class="mi">2</span><span class="p">,</span> <span class="n">verbose</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Assign muscle fibers to motor neurons using biologically realistic principles.</span>
 
@@ -1310,6 +1316,8 @@ window.addEventListener("load", load);
 <span class="sd">            - n_jobs=-3: Use all cores except two</span>
 <span class="sd">            - n_jobs=1: No parallelization</span>
 <span class="sd">            - n_jobs=N: Use exactly N cores</span>
+<span class="sd">        verbose : bool, default=True</span>
+<span class="sd">            If True, display progress bars and status messages. Set to False to disable.</span>
 
 <span class="sd">        Results are stored in the `assignment` property after execution.</span>
 
@@ -1425,6 +1433,7 @@ window.addEventListener("load", load);
             <span class="n">total</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_number_of_neurons</span><span class="p">,</span>
             <span class="n">desc</span><span class="o">=</span><span class="s2">&quot;Calculating out-of-circle coefficients&quot;</span><span class="p">,</span>
             <span class="n">unit</span><span class="o">=</span><span class="s2">&quot;MU&quot;</span><span class="p">,</span>
+            <span class="n">disable</span><span class="o">=</span><span class="ow">not</span> <span class="n">verbose</span><span class="p">,</span>
         <span class="p">)</span> <span class="k">as</span> <span class="n">pbar</span><span class="p">:</span>
             <span class="k">for</span> <span class="n">coeff</span> <span class="ow">in</span> <span class="n">Parallel</span><span class="p">(</span>
                 <span class="n">n_jobs</span><span class="o">=</span><span class="n">n_jobs</span><span class="p">,</span>
@@ -1482,7 +1491,7 @@ window.addEventListener("load", load);
         <span class="bp">self</span><span class="o">.</span><span class="n">_assignment</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_number_of_muscle_fibers</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span>
         <span class="n">randomized_mf</span> <span class="o">=</span> <span class="n">RANDOM_GENERATOR</span><span class="o">.</span><span class="n">permutation</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_number_of_muscle_fibers</span><span class="p">)</span>
 
-        <span class="k">for</span> <span class="n">mf</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span><span class="n">randomized_mf</span><span class="p">,</span> <span class="n">desc</span><span class="o">=</span><span class="s2">&quot;Assigning muscle fibers to motor neurons&quot;</span><span class="p">,</span> <span class="n">unit</span><span class="o">=</span><span class="s2">&quot;MF&quot;</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">mf</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span><span class="n">randomized_mf</span><span class="p">,</span> <span class="n">desc</span><span class="o">=</span><span class="s2">&quot;Assigning muscle fibers to motor neurons&quot;</span><span class="p">,</span> <span class="n">unit</span><span class="o">=</span><span class="s2">&quot;MF&quot;</span><span class="p">,</span> <span class="n">disable</span><span class="o">=</span><span class="ow">not</span> <span class="n">verbose</span><span class="p">):</span>
             <span class="c1"># Vectorized computation of likelihoods for all motor units</span>
             <span class="c1"># Compute differences: (n_neurons, 2)</span>
             <span class="n">diffs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_muscle_fiber_centers__mm</span><span class="p">[</span><span class="n">mf</span><span class="p">,</span> <span class="p">:]</span><span class="o">.</span><span class="n">magnitude</span> <span class="o">-</span> <span class="n">mu_means</span>
@@ -1518,7 +1527,8 @@ window.addEventListener("load", load);
             <span class="c1"># Sample from the probability distribution (equivalent to MATLAB&#39;s randsample)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_assignment</span><span class="p">[</span><span class="n">mf</span><span class="p">]</span> <span class="o">=</span> <span class="n">RANDOM_GENERATOR</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_number_of_neurons</span><span class="p">,</span> <span class="n">p</span><span class="o">=</span><span class="n">probs</span><span class="p">)</span>
 
-        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Assignment completed. </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_number_of_muscle_fibers</span><span class="si">}</span><span class="s2"> muscle fibers assigned.&quot;</span><span class="p">)</span></div>
+        <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Assignment completed. </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_number_of_muscle_fibers</span><span class="si">}</span><span class="s2"> muscle fibers assigned.&quot;</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="Muscle.resulting_fiber_assignment">

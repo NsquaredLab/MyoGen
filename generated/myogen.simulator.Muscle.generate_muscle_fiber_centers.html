@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>myogen.simulator.Muscle.generate_muscle_fiber_centers &#8212; MyoGen 0.8.3 Documentation</title>
+    <title>myogen.simulator.Muscle.generate_muscle_fiber_centers &#8212; MyoGen 0.8.4 Documentation</title>
   
   
   
@@ -55,7 +55,7 @@
 
     <script src="../_static/jquery.js?v=5d32c60e"></script>
     <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-    <script src="../_static/documentation_options.js?v=ec54a975"></script>
+    <script src="../_static/documentation_options.js?v=0477e8c5"></script>
     <script src="../_static/doctools.js?v=9bcbadda"></script>
     <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../_static/js/hoverxref.js"></script>
@@ -72,7 +72,7 @@
     <link rel="prev" title="myogen.simulator.Muscle.distribute_innervation_centers" href="myogen.simulator.Muscle.distribute_innervation_centers.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="0.8.3" />
+  <meta name="docsearch:version" content="0.8.4" />
   </head>
   
   
@@ -141,8 +141,8 @@
       
     
     
-    <img src="../_static/myogen_logo.png" class="logo__image only-light" alt="MyoGen 0.8.3 Documentation - Home"/>
-    <img src="../_static/myogen_logo.png" class="logo__image only-dark pst-js-only" alt="MyoGen 0.8.3 Documentation - Home"/>
+    <img src="../_static/myogen_logo.png" class="logo__image only-light" alt="MyoGen 0.8.4 Documentation - Home"/>
+    <img src="../_static/myogen_logo.png" class="logo__image only-dark pst-js-only" alt="MyoGen 0.8.4 Documentation - Home"/>
   
   
 </a></div>
@@ -151,7 +151,7 @@
 <div class="nav-item">
   <div class="version-switcher__container dropdown">
       <button id="version-switcher-button" type="button" class="version-switcher__button btn btn-sm navbar-btn" aria-haspopup="true" aria-expanded="false">
-          Version 0.8.3
+          Version 0.8.4
       </button>
       
       
@@ -662,20 +662,28 @@
 <h1>myogen.simulator.Muscle.generate_muscle_fiber_centers<a class="headerlink" href="#myogen-simulator-muscle-generate-muscle-fiber-centers" title="Link to this heading">#</a></h1>
 <dl class="py method">
 <dt class="sig sig-object py" id="myogen.simulator.Muscle.generate_muscle_fiber_centers">
-<span class="sig-prename descclassname"><span class="pre">Muscle.</span></span><span class="sig-name descname"><span class="pre">generate_muscle_fiber_centers</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="hxr-hoverxref hxr-tooltip reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../_modules/myogen/simulator/core/muscle/muscle.html#Muscle.generate_muscle_fiber_centers"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#myogen.simulator.Muscle.generate_muscle_fiber_centers" title="Link to this definition">#</a></dt>
+<span class="sig-prename descclassname"><span class="pre">Muscle.</span></span><span class="sig-name descname"><span class="pre">generate_muscle_fiber_centers</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="hxr-hoverxref hxr-tooltip reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="hxr-hoverxref hxr-tooltip reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../_modules/myogen/simulator/core/muscle/muscle.html#Muscle.generate_muscle_fiber_centers"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#myogen.simulator.Muscle.generate_muscle_fiber_centers" title="Link to this definition">#</a></dt>
 <dd><p>Generate muscle fiber center positions using a pre-computed Voronoi distribution.</p>
 <p>This method creates the spatial distribution of muscle fiber centers
 within the circular muscle cross-section. The distribution is based on a
 Voronoi tessellation pattern that mimics the natural packing of muscle fibers
 observed in histological studies.</p>
-<p>Results are stored in the following properties after execution:</p>
-<blockquote>
-<div><ul class="simple">
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>verbose</strong> (<a class="hxr-hoverxref hxr-tooltip reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a><em>, </em><em>default=True</em>) – If True, display status messages. Set to False to disable.</p></li>
+<li><p><strong>execution</strong> (<em>Results are stored in the following properties after</em>) – <ul>
 <li><p><cite>mf_centers</cite>: Array of shape (n_fibers, 2) with fiber positions [x, y] in mm</p></li>
 <li><p><cite>number_of_muscle_fibers</cite>: Total number of muscle fibers</p></li>
 <li><p><cite>muscle_border</cite>: Array of border points for visualization</p></li>
 </ul>
-</div></blockquote>
+</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="hxr-hoverxref hxr-tooltip reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span></p>
+</dd>
+</dl>
 <p class="rubric">Notes</p>
 <p>This method should be called after distribute_innervation_centers() and
 before assign_mfs2mns(). The Voronoi-based distribution provides more
@@ -683,11 +691,6 @@ realistic fiber spacing compared to regular grids or purely random distributions
 <p>The reference dataset (‘voronoi_pi1e5.csv’) contains 100,000 pre-computed
 Voronoi cell centers optimized for circular domains, ensuring efficient
 and consistent fiber distributions across simulations.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="hxr-hoverxref hxr-tooltip reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span></p>
-</dd>
-</dl>
 </dd></dl>
 
 </section>

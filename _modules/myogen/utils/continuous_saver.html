@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>myogen.utils.continuous_saver &#8212; MyoGen 0.8.3 Documentation</title>
+    <title>myogen.utils.continuous_saver &#8212; MyoGen 0.8.4 Documentation</title>
   
   
   
@@ -54,7 +54,7 @@
 
     <script src="../../../_static/jquery.js?v=5d32c60e"></script>
     <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-    <script src="../../../_static/documentation_options.js?v=ec54a975"></script>
+    <script src="../../../_static/documentation_options.js?v=0477e8c5"></script>
     <script src="../../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/js/hoverxref.js"></script>
@@ -434,7 +434,7 @@ window.addEventListener("load", load);
     <link rel="search" title="Search" href="../../../search.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="0.8.3" />
+  <meta name="docsearch:version" content="0.8.4" />
   </head>
   
   
@@ -503,8 +503,8 @@ window.addEventListener("load", load);
       
     
     
-    <img src="../../../_static/myogen_logo.png" class="logo__image only-light" alt="MyoGen 0.8.3 Documentation - Home"/>
-    <img src="../../../_static/myogen_logo.png" class="logo__image only-dark pst-js-only" alt="MyoGen 0.8.3 Documentation - Home"/>
+    <img src="../../../_static/myogen_logo.png" class="logo__image only-light" alt="MyoGen 0.8.4 Documentation - Home"/>
+    <img src="../../../_static/myogen_logo.png" class="logo__image only-dark pst-js-only" alt="MyoGen 0.8.4 Documentation - Home"/>
   
   
 </a></div>
@@ -513,7 +513,7 @@ window.addEventListener("load", load);
 <div class="nav-item">
   <div class="version-switcher__container dropdown">
       <button id="version-switcher-button" type="button" class="version-switcher__button btn btn-sm navbar-btn" aria-haspopup="true" aria-expanded="false">
-          Version 0.8.3
+          Version 0.8.4
       </button>
       
       
@@ -810,12 +810,14 @@ window.addEventListener("load", load);
         <span class="n">chunk_duration__ms</span><span class="p">:</span> <span class="n">Quantity__ms</span> <span class="o">=</span> <span class="mf">10000.0</span> <span class="o">*</span> <span class="n">pq</span><span class="o">.</span><span class="n">ms</span><span class="p">,</span>
         <span class="n">populations</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">recording_config</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">verbose</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
     <span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">save_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">save_path</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">save_path</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">chunk_duration__ms</span> <span class="o">=</span> <span class="n">chunk_duration__ms</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">populations</span> <span class="o">=</span> <span class="n">populations</span> <span class="ow">or</span> <span class="p">{}</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">recording_config</span> <span class="o">=</span> <span class="n">recording_config</span> <span class="ow">or</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span> <span class="o">=</span> <span class="n">verbose</span>
 
         <span class="c1"># Tracking state</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">chunk_id</span> <span class="o">=</span> <span class="mi">0</span>
@@ -826,10 +828,11 @@ window.addEventListener("load", load);
         <span class="c1"># Spike recording</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">spike_data</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="k">lambda</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;times&quot;</span><span class="p">:</span> <span class="p">[],</span> <span class="s2">&quot;ids&quot;</span><span class="p">:</span> <span class="p">[]})</span>
 
-        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;ContinuousSaver initialized:&quot;</span><span class="p">)</span>
-        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">Save path: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">save_path</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">Chunk duration: </span><span class="si">{</span><span class="n">chunk_duration__ms</span><span class="si">}</span><span class="s2"> ms&quot;</span><span class="p">)</span>
-        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">Recording config: </span><span class="si">{</span><span class="n">recording_config</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;ContinuousSaver initialized:&quot;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">Save path: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">save_path</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">Chunk duration: </span><span class="si">{</span><span class="n">chunk_duration__ms</span><span class="si">}</span><span class="s2"> ms&quot;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">Recording config: </span><span class="si">{</span><span class="n">recording_config</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="ContinuousSaver.record_step">
@@ -916,10 +919,11 @@ window.addEventListener("load", load);
         <span class="n">n_neurons</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">cells</span><span class="p">)</span> <span class="k">for</span> <span class="n">cells</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">current_chunk_data</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
         <span class="n">chunk_size_mb</span> <span class="o">=</span> <span class="p">(</span><span class="n">n_timepoints</span> <span class="o">*</span> <span class="n">n_neurons</span> <span class="o">*</span> <span class="mi">8</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1024</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>  <span class="c1"># 8 bytes per float</span>
 
-        <span class="nb">print</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;Saved chunk </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">chunk_id</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">current_chunk_times</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2">-</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">current_chunk_times</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2"> ms &quot;</span>
-            <span class="sa">f</span><span class="s2">&quot;(</span><span class="si">{</span><span class="n">n_timepoints</span><span class="si">}</span><span class="s2"> steps, </span><span class="si">{</span><span class="n">n_neurons</span><span class="si">}</span><span class="s2"> neurons, ~</span><span class="si">{</span><span class="n">chunk_size_mb</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2"> MB)&quot;</span>
-        <span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Saved chunk </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">chunk_id</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">current_chunk_times</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2">-</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">current_chunk_times</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2"> ms &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;(</span><span class="si">{</span><span class="n">n_timepoints</span><span class="si">}</span><span class="s2"> steps, </span><span class="si">{</span><span class="n">n_neurons</span><span class="si">}</span><span class="s2"> neurons, ~</span><span class="si">{</span><span class="n">chunk_size_mb</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2"> MB)&quot;</span>
+            <span class="p">)</span>
 
         <span class="c1"># Clear memory</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">current_chunk_data</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
@@ -953,7 +957,8 @@ window.addEventListener("load", load);
 
         <span class="k">if</span> <span class="n">spike_results</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="c1"># Extract spike data from NEO Block (from SimulationRunner)</span>
-            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Extracting spike data from SimulationRunner results...&quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Extracting spike data from SimulationRunner results...&quot;</span><span class="p">)</span>
             <span class="kn">from</span><span class="w"> </span><span class="nn">neo</span><span class="w"> </span><span class="kn">import</span> <span class="n">Block</span>
 
             <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">spike_results</span><span class="p">,</span> <span class="n">Block</span><span class="p">):</span>
@@ -983,9 +988,10 @@ window.addEventListener("load", load);
                             <span class="s2">&quot;ids&quot;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">ids_list</span><span class="p">),</span>
                         <span class="p">}</span>
 
-                        <span class="nb">print</span><span class="p">(</span>
-                            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">pop_name</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">times_list</span><span class="p">)</span><span class="si">}</span><span class="s2"> spikes from </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">seg</span><span class="o">.</span><span class="n">spiketrains</span><span class="p">)</span><span class="si">}</span><span class="s2"> neurons&quot;</span>
-                        <span class="p">)</span>
+                        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span><span class="p">:</span>
+                            <span class="nb">print</span><span class="p">(</span>
+                                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">pop_name</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">times_list</span><span class="p">)</span><span class="si">}</span><span class="s2"> spikes from </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">seg</span><span class="o">.</span><span class="n">spiketrains</span><span class="p">)</span><span class="si">}</span><span class="s2"> neurons&quot;</span>
+                            <span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="c1"># Use manually recorded spike data (legacy)</span>
             <span class="k">for</span> <span class="n">pop_name</span><span class="p">,</span> <span class="n">data</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">spike_data</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
@@ -1004,16 +1010,17 @@ window.addEventListener("load", load);
         <span class="p">}</span>
         <span class="n">joblib</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">metadata</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">save_path</span> <span class="o">/</span> <span class="s2">&quot;metadata.pkl&quot;</span><span class="p">)</span>
 
-        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Continuous saving complete:&quot;</span><span class="p">)</span>
-        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">Total chunks saved: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">chunk_id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">Spike data saved: </span><span class="si">{</span><span class="n">spike_filename</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">Populations with spikes: </span><span class="si">{</span><span class="nb">list</span><span class="p">(</span><span class="n">spike_data_arrays</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">All data in: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">save_path</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Continuous saving complete:&quot;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">Total chunks saved: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">chunk_id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">Spike data saved: </span><span class="si">{</span><span class="n">spike_filename</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">Populations with spikes: </span><span class="si">{</span><span class="nb">list</span><span class="p">(</span><span class="n">spike_data_arrays</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">All data in: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">save_path</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
 </div>
 
 
 
-<span class="k">def</span><span class="w"> </span><span class="nf">load_and_combine_chunks</span><span class="p">(</span><span class="n">save_path</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span> <span class="n">output_filename</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">load_and_combine_chunks</span><span class="p">(</span><span class="n">save_path</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span> <span class="n">output_filename</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">verbose</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Load all chunks from disk and combine into a single dataset.</span>
 
@@ -1023,6 +1030,8 @@ window.addEventListener("load", load);
 <span class="sd">        Directory where chunks were saved</span>
 <span class="sd">    output_filename : str, optional</span>
 <span class="sd">        If provided, save combined data to this file</span>
+<span class="sd">    verbose : bool, default=True</span>
+<span class="sd">        If True, display status messages. Set to False to disable.</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
@@ -1035,7 +1044,8 @@ window.addEventListener("load", load);
     <span class="n">metadata</span> <span class="o">=</span> <span class="n">joblib</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">save_path</span> <span class="o">/</span> <span class="s2">&quot;metadata.pkl&quot;</span><span class="p">)</span>
     <span class="n">total_chunks</span> <span class="o">=</span> <span class="n">metadata</span><span class="p">[</span><span class="s2">&quot;total_chunks&quot;</span><span class="p">]</span>
 
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Loading </span><span class="si">{</span><span class="n">total_chunks</span><span class="si">}</span><span class="s2"> chunks from </span><span class="si">{</span><span class="n">save_path</span><span class="si">}</span><span class="s2">...&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Loading </span><span class="si">{</span><span class="n">total_chunks</span><span class="si">}</span><span class="s2"> chunks from </span><span class="si">{</span><span class="n">save_path</span><span class="si">}</span><span class="s2">...&quot;</span><span class="p">)</span>
 
     <span class="c1"># Load all chunks</span>
     <span class="n">chunks</span> <span class="o">=</span> <span class="p">[]</span>
@@ -1043,7 +1053,7 @@ window.addEventListener("load", load);
         <span class="n">chunk_filename</span> <span class="o">=</span> <span class="n">save_path</span> <span class="o">/</span> <span class="sa">f</span><span class="s2">&quot;chunk_</span><span class="si">{</span><span class="n">chunk_id</span><span class="si">:</span><span class="s2">04d</span><span class="si">}</span><span class="s2">.pkl&quot;</span>
         <span class="k">if</span> <span class="n">chunk_filename</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
             <span class="n">chunks</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">joblib</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">chunk_filename</span><span class="p">))</span>
-        <span class="k">else</span><span class="p">:</span>
+        <span class="k">elif</span> <span class="n">verbose</span><span class="p">:</span>
             <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Warning: Missing chunk </span><span class="si">{</span><span class="n">chunk_id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
     <span class="c1"># Combine chunks</span>
@@ -1075,16 +1085,18 @@ window.addEventListener("load", load);
 
     <span class="n">combined</span><span class="p">[</span><span class="s2">&quot;metadata&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">metadata</span>
 
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Combined </span><span class="si">{</span><span class="n">total_chunks</span><span class="si">}</span><span class="s2"> chunks:&quot;</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">Total time points: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">combined</span><span class="p">[</span><span class="s1">&#39;times&#39;</span><span class="p">])</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">Time range: </span><span class="si">{</span><span class="n">combined</span><span class="p">[</span><span class="s1">&#39;times&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2"> - </span><span class="si">{</span><span class="n">combined</span><span class="p">[</span><span class="s1">&#39;times&#39;</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2"> ms&quot;</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">Duration: </span><span class="si">{</span><span class="p">(</span><span class="n">combined</span><span class="p">[</span><span class="s1">&#39;times&#39;</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">combined</span><span class="p">[</span><span class="s1">&#39;times&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="mi">1000</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2"> seconds&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Combined </span><span class="si">{</span><span class="n">total_chunks</span><span class="si">}</span><span class="s2"> chunks:&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">Total time points: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">combined</span><span class="p">[</span><span class="s1">&#39;times&#39;</span><span class="p">])</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">Time range: </span><span class="si">{</span><span class="n">combined</span><span class="p">[</span><span class="s1">&#39;times&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2"> - </span><span class="si">{</span><span class="n">combined</span><span class="p">[</span><span class="s1">&#39;times&#39;</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2"> ms&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">Duration: </span><span class="si">{</span><span class="p">(</span><span class="n">combined</span><span class="p">[</span><span class="s1">&#39;times&#39;</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">combined</span><span class="p">[</span><span class="s1">&#39;times&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="mi">1000</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2"> seconds&quot;</span><span class="p">)</span>
 
     <span class="c1"># Optionally save combined data</span>
     <span class="k">if</span> <span class="n">output_filename</span><span class="p">:</span>
         <span class="n">output_path</span> <span class="o">=</span> <span class="n">save_path</span> <span class="o">/</span> <span class="n">output_filename</span>
         <span class="n">joblib</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">combined</span><span class="p">,</span> <span class="n">output_path</span><span class="p">,</span> <span class="n">compress</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
-        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">Saved combined data to: </span><span class="si">{</span><span class="n">output_path</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">Saved combined data to: </span><span class="si">{</span><span class="n">output_path</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">combined</span>
 
@@ -1092,7 +1104,7 @@ window.addEventListener("load", load);
 <div class="viewcode-block" id="convert_chunks_to_neo">
 <a class="viewcode-back" href="../../../generated/myogen.utils.continuous_saver.convert_chunks_to_neo.html#myogen.utils.continuous_saver.convert_chunks_to_neo">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">convert_chunks_to_neo</span><span class="p">(</span>
-    <span class="n">save_path</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span> <span class="n">duration__ms</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">spike_data_file</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Path</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">save_path</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span> <span class="n">duration__ms</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">spike_data_file</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Path</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">verbose</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Block</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Load chunks and convert to NEO Block format (compatible with SimulationRunner output).</span>
@@ -1110,6 +1122,8 @@ window.addEventListener("load", load);
 <span class="sd">    spike_data_file : Path, optional</span>
 <span class="sd">        Path to SimulationRunner spike results file (e.g., &#39;watanabe__spikes_only.pkl&#39;)</span>
 <span class="sd">        If provided, spike data will be loaded from this NEO Block instead of chunks</span>
+<span class="sd">    verbose : bool, default=True</span>
+<span class="sd">        If True, display progress bars and status messages. Set to False to disable.</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
@@ -1118,7 +1132,8 @@ window.addEventListener("load", load);
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">save_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">save_path</span><span class="p">)</span>
 
-    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Converting chunks to NEO Block format...&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Converting chunks to NEO Block format...&quot;</span><span class="p">)</span>
 
     <span class="c1"># Load metadata</span>
     <span class="n">metadata</span> <span class="o">=</span> <span class="n">joblib</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">save_path</span> <span class="o">/</span> <span class="s2">&quot;metadata.pkl&quot;</span><span class="p">)</span>
@@ -1128,18 +1143,21 @@ window.addEventListener("load", load);
     <span class="c1"># Load spike data - either from external file or from chunks</span>
     <span class="k">if</span> <span class="n">spike_data_file</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
         <span class="c1"># Load spike data from SimulationRunner results (NEO Block)</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">Loading spike data from: </span><span class="si">{spike_data_file}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">Loading spike data from: </span><span class="si">{spike_data_file}</span><span class="s2">&quot;</span><span class="p">)</span>
         <span class="n">spike_results</span> <span class="o">=</span> <span class="n">joblib</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">spike_data_file</span><span class="p">)</span>
         <span class="n">use_neo_spikes</span> <span class="o">=</span> <span class="kc">True</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="c1"># Load spike data from chunks (legacy format)</span>
         <span class="n">spike_filename</span> <span class="o">=</span> <span class="n">save_path</span> <span class="o">/</span> <span class="s2">&quot;spikes.pkl&quot;</span>
         <span class="k">if</span> <span class="n">spike_filename</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
-            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Loading spike data from: </span><span class="si">{</span><span class="n">spike_filename</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Loading spike data from: </span><span class="si">{</span><span class="n">spike_filename</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
             <span class="n">spike_data</span> <span class="o">=</span> <span class="n">joblib</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">spike_filename</span><span class="p">)</span>
             <span class="n">use_neo_spikes</span> <span class="o">=</span> <span class="kc">False</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">Warning: No spike data found&quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">Warning: No spike data found&quot;</span><span class="p">)</span>
             <span class="n">spike_data</span> <span class="o">=</span> <span class="p">{}</span>
             <span class="n">use_neo_spikes</span> <span class="o">=</span> <span class="kc">False</span>
 
@@ -1152,15 +1170,17 @@ window.addEventListener("load", load);
         <span class="n">last_chunk</span> <span class="o">=</span> <span class="n">joblib</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">save_path</span> <span class="o">/</span> <span class="sa">f</span><span class="s2">&quot;chunk_</span><span class="si">{</span><span class="n">total_chunks</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="si">:</span><span class="s2">04d</span><span class="si">}</span><span class="s2">.pkl&quot;</span><span class="p">)</span>
         <span class="n">duration__ms</span> <span class="o">=</span> <span class="n">last_chunk</span><span class="p">[</span><span class="s2">&quot;time_end&quot;</span><span class="p">]</span>
 
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">Duration: </span><span class="si">{</span><span class="n">duration__ms</span><span class="si">}</span><span class="s2"> ms&quot;</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">Timestep: </span><span class="si">{</span><span class="n">timestep__ms</span><span class="si">}</span><span class="s2"> ms&quot;</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">Total chunks: </span><span class="si">{</span><span class="n">total_chunks</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">Duration: </span><span class="si">{</span><span class="n">duration__ms</span><span class="si">}</span><span class="s2"> ms&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">Timestep: </span><span class="si">{</span><span class="n">timestep__ms</span><span class="si">}</span><span class="s2"> ms&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">Total chunks: </span><span class="si">{</span><span class="n">total_chunks</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
     <span class="c1"># Create NEO Block</span>
     <span class="n">block</span> <span class="o">=</span> <span class="n">Block</span><span class="p">()</span>
 
     <span class="c1"># Add spike data for each population</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">Adding spike trains...&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">Adding spike trains...&quot;</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="n">use_neo_spikes</span><span class="p">:</span>
         <span class="c1"># Use spike data from SimulationRunner NEO Block</span>
@@ -1171,7 +1191,8 @@ window.addEventListener("load", load);
                 <span class="k">for</span> <span class="n">st</span> <span class="ow">in</span> <span class="n">seg</span><span class="o">.</span><span class="n">spiketrains</span><span class="p">:</span>
                     <span class="n">new_segment</span><span class="o">.</span><span class="n">spiketrains</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">st</span><span class="p">)</span>
                 <span class="n">block</span><span class="o">.</span><span class="n">segments</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">new_segment</span><span class="p">)</span>
-                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\t</span><span class="si">{</span><span class="n">seg</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">new_segment</span><span class="o">.</span><span class="n">spiketrains</span><span class="p">)</span><span class="si">}</span><span class="s2"> spike trains&quot;</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\t</span><span class="si">{</span><span class="n">seg</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">new_segment</span><span class="o">.</span><span class="n">spiketrains</span><span class="p">)</span><span class="si">}</span><span class="s2"> spike trains&quot;</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="c1"># Use spike data from chunks (legacy format)</span>
         <span class="k">for</span> <span class="n">pop_name</span><span class="p">,</span> <span class="n">spikes</span> <span class="ow">in</span> <span class="n">spike_data</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
@@ -1183,7 +1204,7 @@ window.addEventListener("load", load);
             <span class="c1"># Create spike trains for each neuron</span>
             <span class="n">unique_ids</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">spike_ids</span><span class="p">))</span>
             <span class="k">for</span> <span class="n">spike_id</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span>
-                <span class="n">unique_ids</span><span class="p">,</span> <span class="n">desc</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">Creating </span><span class="si">{</span><span class="n">pop_name</span><span class="si">}</span><span class="s2"> spike trains&quot;</span><span class="p">,</span> <span class="n">leave</span><span class="o">=</span><span class="kc">False</span>
+                <span class="n">unique_ids</span><span class="p">,</span> <span class="n">desc</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">Creating </span><span class="si">{</span><span class="n">pop_name</span><span class="si">}</span><span class="s2"> spike trains&quot;</span><span class="p">,</span> <span class="n">leave</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">disable</span><span class="o">=</span><span class="ow">not</span> <span class="n">verbose</span>
             <span class="p">):</span>
                 <span class="n">times_for_id</span> <span class="o">=</span> <span class="n">spike_times</span><span class="p">[</span><span class="n">spike_ids</span> <span class="o">==</span> <span class="n">spike_id</span><span class="p">]</span>
 
@@ -1203,10 +1224,12 @@ window.addEventListener("load", load);
                     <span class="p">)</span>
 
             <span class="n">block</span><span class="o">.</span><span class="n">segments</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">segment</span><span class="p">)</span>
-            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\t</span><span class="si">{</span><span class="n">pop_name</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">segment</span><span class="o">.</span><span class="n">spiketrains</span><span class="p">)</span><span class="si">}</span><span class="s2"> spike trains&quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\t</span><span class="si">{</span><span class="n">pop_name</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">segment</span><span class="o">.</span><span class="n">spiketrains</span><span class="p">)</span><span class="si">}</span><span class="s2"> spike trains&quot;</span><span class="p">)</span>
 
     <span class="c1"># Add membrane potential data by loading and combining chunks</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">Loading and combining membrane data from </span><span class="si">{</span><span class="n">total_chunks</span><span class="si">}</span><span class="s2"> chunks...&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">Loading and combining membrane data from </span><span class="si">{</span><span class="n">total_chunks</span><span class="si">}</span><span class="s2"> chunks...&quot;</span><span class="p">)</span>
 
     <span class="c1"># Determine which populations have membrane recordings</span>
     <span class="n">first_chunk_membrane</span> <span class="o">=</span> <span class="n">first_chunk</span><span class="p">[</span><span class="s2">&quot;membrane_data&quot;</span><span class="p">]</span>
@@ -1226,7 +1249,8 @@ window.addEventListener("load", load);
         <span class="c1"># Get all cell indices for this population</span>
         <span class="n">cell_indices</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">first_chunk_membrane</span><span class="p">[</span><span class="n">pop_name</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
 
-        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\t</span><span class="si">{</span><span class="n">pop_name</span><span class="si">}</span><span class="s2">: Combining </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">cell_indices</span><span class="p">)</span><span class="si">}</span><span class="s2"> neurons from </span><span class="si">{</span><span class="n">total_chunks</span><span class="si">}</span><span class="s2"> chunks...&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\t</span><span class="si">{</span><span class="n">pop_name</span><span class="si">}</span><span class="s2">: Combining </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">cell_indices</span><span class="p">)</span><span class="si">}</span><span class="s2"> neurons from </span><span class="si">{</span><span class="n">total_chunks</span><span class="si">}</span><span class="s2"> chunks...&quot;</span><span class="p">)</span>
 
         <span class="c1"># OPTIMIZED: Load each chunk once and extract all neurons</span>
         <span class="c1"># This reduces file reads from (neurons × chunks) to just (chunks)</span>
@@ -1237,7 +1261,7 @@ window.addEventListener("load", load);
 
         <span class="c1"># Load chunks once and distribute data to neurons</span>
         <span class="k">for</span> <span class="n">chunk_id</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span>
-            <span class="nb">range</span><span class="p">(</span><span class="n">total_chunks</span><span class="p">),</span> <span class="n">desc</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">Loading </span><span class="si">{</span><span class="n">pop_name</span><span class="si">}</span><span class="s2"> chunks&quot;</span><span class="p">,</span> <span class="n">unit</span><span class="o">=</span><span class="s2">&quot;chunk&quot;</span>
+            <span class="nb">range</span><span class="p">(</span><span class="n">total_chunks</span><span class="p">),</span> <span class="n">desc</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">Loading </span><span class="si">{</span><span class="n">pop_name</span><span class="si">}</span><span class="s2"> chunks&quot;</span><span class="p">,</span> <span class="n">unit</span><span class="o">=</span><span class="s2">&quot;chunk&quot;</span><span class="p">,</span> <span class="n">disable</span><span class="o">=</span><span class="ow">not</span> <span class="n">verbose</span>
         <span class="p">):</span>
             <span class="n">chunk</span> <span class="o">=</span> <span class="n">joblib</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">save_path</span> <span class="o">/</span> <span class="sa">f</span><span class="s2">&quot;chunk_</span><span class="si">{</span><span class="n">chunk_id</span><span class="si">:</span><span class="s2">04d</span><span class="si">}</span><span class="s2">.pkl&quot;</span><span class="p">)</span>
 
@@ -1247,9 +1271,10 @@ window.addEventListener("load", load);
                         <span class="n">neuron_data</span><span class="p">[</span><span class="n">cell_idx</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">chunk</span><span class="p">[</span><span class="s2">&quot;membrane_data&quot;</span><span class="p">][</span><span class="n">pop_name</span><span class="p">][</span><span class="n">cell_idx</span><span class="p">])</span>
 
         <span class="c1"># Concatenate data for each neuron and create AnalogSignals</span>
-        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\t</span><span class="si">{</span><span class="n">pop_name</span><span class="si">}</span><span class="s2">: Creating analog signals...&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\t</span><span class="si">{</span><span class="n">pop_name</span><span class="si">}</span><span class="s2">: Creating analog signals...&quot;</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">cell_idx</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span>
-            <span class="n">cell_indices</span><span class="p">,</span> <span class="n">desc</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">Creating </span><span class="si">{</span><span class="n">pop_name</span><span class="si">}</span><span class="s2"> signals&quot;</span><span class="p">,</span> <span class="n">leave</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">unit</span><span class="o">=</span><span class="s2">&quot;signal&quot;</span>
+            <span class="n">cell_indices</span><span class="p">,</span> <span class="n">desc</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">Creating </span><span class="si">{</span><span class="n">pop_name</span><span class="si">}</span><span class="s2"> signals&quot;</span><span class="p">,</span> <span class="n">leave</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">unit</span><span class="o">=</span><span class="s2">&quot;signal&quot;</span><span class="p">,</span> <span class="n">disable</span><span class="o">=</span><span class="ow">not</span> <span class="n">verbose</span>
         <span class="p">):</span>
             <span class="k">if</span> <span class="n">neuron_data</span><span class="p">[</span><span class="n">cell_idx</span><span class="p">]:</span>
                 <span class="n">combined_voltage</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">(</span><span class="n">neuron_data</span><span class="p">[</span><span class="n">cell_idx</span><span class="p">])</span>
@@ -1262,15 +1287,17 @@ window.addEventListener("load", load);
                     <span class="p">)</span>
                 <span class="p">)</span>
 
-        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\t</span><span class="si">{</span><span class="n">pop_name</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">segment</span><span class="o">.</span><span class="n">analogsignals</span><span class="p">)</span><span class="si">}</span><span class="s2"> analog signals created&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\t</span><span class="si">{</span><span class="n">pop_name</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">segment</span><span class="o">.</span><span class="n">analogsignals</span><span class="p">)</span><span class="si">}</span><span class="s2"> analog signals created&quot;</span><span class="p">)</span>
 
     <span class="c1"># Add metadata annotations</span>
     <span class="n">block</span><span class="o">.</span><span class="n">annotations</span><span class="p">[</span><span class="s2">&quot;time__ms&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">duration__ms</span>
     <span class="n">block</span><span class="o">.</span><span class="n">annotations</span><span class="p">[</span><span class="s2">&quot;timestep__ms&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">timestep__ms</span>
     <span class="n">block</span><span class="o">.</span><span class="n">annotations</span><span class="p">[</span><span class="s2">&quot;temperature__celsius&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">36.0</span>  <span class="c1"># Default from SimulationRunner</span>
 
-    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">NEO Block created successfully&quot;</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">Total segments: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">block</span><span class="o">.</span><span class="n">segments</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">NEO Block created successfully&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">Total segments: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">block</span><span class="o">.</span><span class="n">segments</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">block</span></div>
 

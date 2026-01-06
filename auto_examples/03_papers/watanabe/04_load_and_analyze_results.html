@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Load and Analyze Membrane Potentials and Spike Trains &#8212; MyoGen 0.8.3 Documentation</title>
+    <title>Load and Analyze Membrane Potentials and Spike Trains &#8212; MyoGen 0.8.4 Documentation</title>
   
   
   
@@ -55,7 +55,7 @@
 
     <script src="../../../_static/jquery.js?v=5d32c60e"></script>
     <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-    <script src="../../../_static/documentation_options.js?v=ec54a975"></script>
+    <script src="../../../_static/documentation_options.js?v=0477e8c5"></script>
     <script src="../../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/js/hoverxref.js"></script>
@@ -72,7 +72,7 @@
     <link rel="prev" title="Spinal Network Simulation with Optimized DC Offset" href="03_10pct_mvc_simulation.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="0.8.3" />
+  <meta name="docsearch:version" content="0.8.4" />
   </head>
   
   
@@ -141,8 +141,8 @@
       
     
     
-    <img src="../../../_static/myogen_logo.png" class="logo__image only-light" alt="MyoGen 0.8.3 Documentation - Home"/>
-    <img src="../../../_static/myogen_logo.png" class="logo__image only-dark pst-js-only" alt="MyoGen 0.8.3 Documentation - Home"/>
+    <img src="../../../_static/myogen_logo.png" class="logo__image only-light" alt="MyoGen 0.8.4 Documentation - Home"/>
+    <img src="../../../_static/myogen_logo.png" class="logo__image only-dark pst-js-only" alt="MyoGen 0.8.4 Documentation - Home"/>
   
   
 </a></div>
@@ -151,7 +151,7 @@
 <div class="nav-item">
   <div class="version-switcher__container dropdown">
       <button id="version-switcher-button" type="button" class="version-switcher__button btn btn-sm navbar-btn" aria-haspopup="true" aria-expanded="false">
-          Version 0.8.3
+          Version 0.8.4
       </button>
       
       
@@ -605,56 +605,58 @@ Converting chunks to NEO Block format...
         Adding spike trains...
 
         Creating DD spike trains:   0%|          | 0/400 [00:00&lt;?, ?it/s]
-        Creating DD spike trains:  24%|██▎       | 94/400 [00:00&lt;00:00, 934.03it/s]
-        Creating DD spike trains:  47%|████▋     | 188/400 [00:00&lt;00:00, 928.66it/s]
-        Creating DD spike trains:  70%|███████   | 281/400 [00:00&lt;00:00, 919.98it/s]
-        Creating DD spike trains:  94%|█████████▎| 374/400 [00:00&lt;00:00, 915.68it/s]
+        Creating DD spike trains:  20%|█▉        | 79/400 [00:00&lt;00:00, 785.99it/s]
+        Creating DD spike trains:  40%|███▉      | 159/400 [00:00&lt;00:00, 789.01it/s]
+        Creating DD spike trains:  60%|█████▉    | 238/400 [00:00&lt;00:00, 788.12it/s]
+        Creating DD spike trains:  79%|███████▉  | 317/400 [00:00&lt;00:00, 782.77it/s]
+        Creating DD spike trains:  99%|█████████▉| 396/400 [00:00&lt;00:00, 775.93it/s]
 
         DD: 400 spike trains
 
         Creating IN spike trains:   0%|          | 0/800 [00:00&lt;?, ?it/s]
-        Creating IN spike trains:   7%|▋         | 54/800 [00:00&lt;00:01, 530.84it/s]
-        Creating IN spike trains:  14%|█▎        | 108/800 [00:00&lt;00:01, 530.52it/s]
-        Creating IN spike trains:  20%|██        | 163/800 [00:00&lt;00:01, 535.90it/s]
-        Creating IN spike trains:  27%|██▋       | 217/800 [00:00&lt;00:01, 505.95it/s]
-        Creating IN spike trains:  34%|███▎      | 268/800 [00:00&lt;00:01, 490.02it/s]
-        Creating IN spike trains:  40%|███▉      | 318/800 [00:00&lt;00:01, 480.85it/s]
-        Creating IN spike trains:  46%|████▌     | 367/800 [00:00&lt;00:00, 479.18it/s]
-        Creating IN spike trains:  52%|█████▏    | 417/800 [00:00&lt;00:00, 483.18it/s]
-        Creating IN spike trains:  58%|█████▊    | 467/800 [00:00&lt;00:00, 486.23it/s]
-        Creating IN spike trains:  64%|██████▍   | 516/800 [00:01&lt;00:00, 485.21it/s]
-        Creating IN spike trains:  71%|███████   | 565/800 [00:01&lt;00:00, 471.87it/s]
-        Creating IN spike trains:  77%|███████▋  | 613/800 [00:01&lt;00:00, 459.26it/s]
-        Creating IN spike trains:  82%|████████▎ | 660/800 [00:01&lt;00:00, 406.58it/s]
-        Creating IN spike trains:  88%|████████▊ | 705/800 [00:01&lt;00:00, 417.82it/s]
-        Creating IN spike trains:  94%|█████████▍| 753/800 [00:01&lt;00:00, 433.53it/s]
+        Creating IN spike trains:   7%|▋         | 54/800 [00:00&lt;00:01, 533.75it/s]
+        Creating IN spike trains:  14%|█▎        | 108/800 [00:00&lt;00:01, 534.67it/s]
+        Creating IN spike trains:  20%|██        | 162/800 [00:00&lt;00:01, 535.87it/s]
+        Creating IN spike trains:  27%|██▋       | 216/800 [00:00&lt;00:01, 536.11it/s]
+        Creating IN spike trains:  34%|███▍      | 270/800 [00:00&lt;00:00, 532.29it/s]
+        Creating IN spike trains:  40%|████      | 324/800 [00:00&lt;00:00, 517.73it/s]
+        Creating IN spike trains:  47%|████▋     | 376/800 [00:00&lt;00:00, 514.95it/s]
+        Creating IN spike trains:  54%|█████▎    | 428/800 [00:00&lt;00:00, 513.42it/s]
+        Creating IN spike trains:  60%|██████    | 480/800 [00:00&lt;00:00, 513.18it/s]
+        Creating IN spike trains:  66%|██████▋   | 532/800 [00:01&lt;00:00, 511.12it/s]
+        Creating IN spike trains:  73%|███████▎  | 584/800 [00:01&lt;00:00, 503.80it/s]
+        Creating IN spike trains:  79%|███████▉  | 635/800 [00:01&lt;00:00, 494.84it/s]
+        Creating IN spike trains:  86%|████████▌ | 685/800 [00:01&lt;00:00, 484.77it/s]
+        Creating IN spike trains:  92%|█████████▏| 734/800 [00:01&lt;00:00, 485.75it/s]
+        Creating IN spike trains:  98%|█████████▊| 783/800 [00:01&lt;00:00, 482.24it/s]
 
         IN: 800 spike trains
 
         Creating aMN spike trains:   0%|          | 0/673 [00:00&lt;?, ?it/s]
-        Creating aMN spike trains:  15%|█▍        | 99/673 [00:00&lt;00:00, 983.27it/s]
-        Creating aMN spike trains:  29%|██▉       | 198/673 [00:00&lt;00:00, 980.02it/s]
-        Creating aMN spike trains:  44%|████▍     | 297/673 [00:00&lt;00:00, 973.23it/s]
-        Creating aMN spike trains:  59%|█████▊    | 395/673 [00:00&lt;00:00, 971.02it/s]
-        Creating aMN spike trains:  73%|███████▎  | 493/673 [00:00&lt;00:00, 964.69it/s]
-        Creating aMN spike trains:  88%|████████▊ | 590/673 [00:00&lt;00:00, 959.51it/s]
+        Creating aMN spike trains:  12%|█▏        | 81/673 [00:00&lt;00:00, 807.00it/s]
+        Creating aMN spike trains:  24%|██▍       | 162/673 [00:00&lt;00:00, 805.32it/s]
+        Creating aMN spike trains:  36%|███▌      | 243/673 [00:00&lt;00:00, 801.86it/s]
+        Creating aMN spike trains:  48%|████▊     | 324/673 [00:00&lt;00:00, 803.03it/s]
+        Creating aMN spike trains:  60%|██████    | 405/673 [00:00&lt;00:00, 802.75it/s]
+        Creating aMN spike trains:  72%|███████▏  | 486/673 [00:00&lt;00:00, 794.15it/s]
+        Creating aMN spike trains:  84%|████████▍ | 566/673 [00:00&lt;00:00, 793.24it/s]
+        Creating aMN spike trains:  96%|█████████▌| 646/673 [00:00&lt;00:00, 788.14it/s]
 
         aMN: 673 spike trains
         Loading and combining membrane data from 3 chunks...
         aMN: Combining 160 neurons from 3 chunks...
 
         Loading aMN chunks:   0%|          | 0/3 [00:00&lt;?, ?chunk/s]
-        Loading aMN chunks:  33%|███▎      | 1/3 [00:01&lt;00:02,  1.48s/chunk]
-        Loading aMN chunks:  67%|██████▋   | 2/3 [00:03&lt;00:01,  1.54s/chunk]
-        Loading aMN chunks: 100%|██████████| 3/3 [00:04&lt;00:00,  1.55s/chunk]
-        Loading aMN chunks: 100%|██████████| 3/3 [00:04&lt;00:00,  1.54s/chunk]
+        Loading aMN chunks:  33%|███▎      | 1/3 [00:01&lt;00:02,  1.37s/chunk]
+        Loading aMN chunks:  67%|██████▋   | 2/3 [00:02&lt;00:01,  1.44s/chunk]
+        Loading aMN chunks: 100%|██████████| 3/3 [00:04&lt;00:00,  1.45s/chunk]
+        Loading aMN chunks: 100%|██████████| 3/3 [00:04&lt;00:00,  1.44s/chunk]
         aMN: Creating analog signals...
 
         Creating aMN signals:   0%|          | 0/160 [00:00&lt;?, ?signal/s]
-        Creating aMN signals:  22%|██▎       | 36/160 [00:00&lt;00:00, 358.58signal/s]
-        Creating aMN signals:  45%|████▌     | 72/160 [00:00&lt;00:00, 359.32signal/s]
-        Creating aMN signals:  68%|██████▊   | 108/160 [00:00&lt;00:00, 357.89signal/s]
-        Creating aMN signals:  91%|█████████ | 145/160 [00:00&lt;00:00, 359.57signal/s]
+        Creating aMN signals:  31%|███▏      | 50/160 [00:00&lt;00:00, 493.38signal/s]
+        Creating aMN signals:  64%|██████▍   | 102/160 [00:00&lt;00:00, 508.63signal/s]
+        Creating aMN signals:  97%|█████████▋| 155/160 [00:00&lt;00:00, 514.00signal/s]
 
         aMN: 160 analog signals created
 
@@ -926,7 +928,7 @@ GENERATING POPULATION FIRING RATE PLOT
 (OK) NEO Block saved to: /home/runner/work/MyoGen/MyoGen/examples/03_papers/watanabe/results/watanabe_results_neo.pkl
 </pre></div>
 </div>
-<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 23.033 seconds)</p>
+<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 24.901 seconds)</p>
 <div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-auto-examples-03-papers-watanabe-04-load-and-analyze-results-py">
 <div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
 <p><a class="reference download internal" download="" href="../../../_downloads/d72aae0e46753ec6810cf025e1956c2d/04_load_and_analyze_results.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">04_load_and_analyze_results.ipynb</span></code></a></p>
