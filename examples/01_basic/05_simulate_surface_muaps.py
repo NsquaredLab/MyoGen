@@ -6,8 +6,6 @@ After having created the **muscle model**, we can simulate the **surface EMG** b
 
 First step is to create **MUAPs** from the **muscle model**.
 
-.. note::
-    The **MUAPs** are the **action potentials** of the **motor units** at the surface of the skin.
 """
 
 # %%
