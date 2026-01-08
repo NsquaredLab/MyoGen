@@ -450,10 +450,6 @@ to download the full example code.</p>
 <span id="sphx-glr-auto-examples-01-basic-05-simulate-surface-muaps-py"></span><h1>Surface Motor Unit Action Potentials<a class="headerlink" href="#surface-motor-unit-action-potentials" title="Link to this heading">#</a></h1>
 <p>After having created the <strong>muscle model</strong>, we can simulate the <strong>surface EMG</strong> by creating a <strong>surface EMG model</strong>.</p>
 <p>First step is to create <strong>MUAPs</strong> from the <strong>muscle model</strong>.</p>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>The <strong>MUAPs</strong> are the <strong>action potentials</strong> of the <strong>motor units</strong> at the surface of the skin.</p>
-</div>
 <div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <a href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="pathlib.Path" class="sphx-glr-backref-module-pathlib sphx-glr-backref-type-py-class"><span class="n">Path</span></a>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">joblib</span>
@@ -556,11 +552,9 @@ This can be changed by modifying the <code class="docutils literal notranslate">
 </pre></div>
 </div>
 <div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Electrode Array 1/1:   0%|          | 0/4 [00:00&lt;?, ?it/s]
-Electrode Array 1/1:  25%|██▌       | 1/4 [00:30&lt;01:30, 30.07s/it]
-Electrode Array 1/1:  50%|█████     | 2/4 [00:57&lt;00:57, 28.52s/it]
-Electrode Array 1/1:  75%|███████▌  | 3/4 [01:00&lt;00:16, 16.86s/it]
-Electrode Array 1/1: 100%|██████████| 4/4 [01:14&lt;00:00, 15.83s/it]
-Electrode Array 1/1: 100%|██████████| 4/4 [01:14&lt;00:00, 18.69s/it]
+Electrode Array 1/1:  25%|██▌       | 1/4 [00:19&lt;00:57, 19.16s/it]
+Electrode Array 1/1:  50%|█████     | 2/4 [01:09&lt;01:14, 37.49s/it]
+Electrode Array 1/1: 100%|██████████| 4/4 [01:09&lt;00:00, 17.37s/it]
 MUAP simulation completed!
 Generated MUAPs shape: (256, 25) (stored as 2D for NWB compatibility)
   - 100 total motor units in muscle
@@ -657,7 +651,7 @@ MUAP 3 amplitude range:
         Peak-to-peak: 0.139409 mV (139.41 uV)
 </pre></div>
 </div>
-<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (1 minutes 18.510 seconds)</p>
+<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (1 minutes 13.124 seconds)</p>
 <div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-auto-examples-01-basic-05-simulate-surface-muaps-py">
 <div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
 <p><a class="reference download internal" download="" href="../../_downloads/1076a20f765d515654612218e0c0e8d5/05_simulate_surface_muaps.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">05_simulate_surface_muaps.ipynb</span></code></a></p>
