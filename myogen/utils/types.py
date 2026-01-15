@@ -164,15 +164,16 @@ SURFACE_MUAP__Block = Annotated[
             and len(seg.analogsignals) > 0
             and all(hasattr(signal, "shape") for signal in seg.analogsignals)
             and all(
-                len(signal.shape) == 3 for signal in seg.analogsignals
-            )  # (samples, rows, columns)
+                len(signal.shape) == 2 for signal in seg.analogsignals
+            )  # (samples, n_electrodes) - flattened grid with shape in annotations
             for grp in x.groups
             for seg in grp.segments
         )
     ],
 ]
 """Neo Block containing surface motor unit action potentials (MUAPs).
-Structure: groups (electrode arrays) → segments (MUAP indices) → analogsignals (samples × rows × columns)"""
+Structure: groups (electrode arrays) → segments (MUAP indices) → analogsignals (samples × n_electrodes)
+Grid shape stored in signal annotations['grid_shape']."""
 
 SURFACE_EMG__Block = Annotated[
     Block,
@@ -186,15 +187,16 @@ SURFACE_EMG__Block = Annotated[
             and len(seg.analogsignals) > 0
             and all(hasattr(signal, "shape") for signal in seg.analogsignals)
             and all(
-                len(signal.shape) == 3 for signal in seg.analogsignals
-            )  # (samples, rows, columns)
+                len(signal.shape) == 2 for signal in seg.analogsignals
+            )  # (samples, n_electrodes) - flattened grid with shape in annotations
             for grp in x.groups
             for seg in grp.segments
         )
     ],
 ]
 """Neo Block containing surface EMG signals.
-Structure: groups (electrode arrays) → segments (motor pools) → analogsignals (time × rows × columns)"""
+Structure: groups (electrode arrays) → segments (motor pools) → analogsignals (time × n_electrodes)
+Grid shape stored in signal annotations['grid_shape']."""
 
 INTRAMUSCULAR_MUAP__Block = Annotated[
     Block,

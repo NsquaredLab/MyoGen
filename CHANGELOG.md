@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.8.5] - 2026-01-15
+
+### Fixed
+- **Beartype Type Validators**: Fixed `SURFACE_MUAP__Block` and `SURFACE_EMG__Block` type validators to expect 2D signal shapes `(samples, n_electrodes)` instead of 3D, matching the actual output from `create_grid_signal()` which was refactored for NWB compatibility in v0.8.3
+- **Firing Rate Calculation**: Fixed `inf` Hz firing rates in example `02_simulate_spike_trains_current_injection.py` by requiring at least 2 spikes to compute rate over spike range (single-spike neurons caused division by zero)
+
+### Changed
+- **Build System**: Pinned build dependencies in `pyproject.toml` to exact versions from `uv.lock` (`numpy==1.26.4`, `scipy==1.16.3`) to ensure reproducible wheel builds
+
 ## [0.8.4] - 2026-01-06
 
 ### Added
