@@ -361,7 +361,7 @@ or want to understand the underlying mechanisms.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 259-267
+.. GENERATED FROM PYTHON SOURCE LINES 259-266
 
 Calculate and Display Statistics
 ---------------------------------
@@ -370,9 +370,8 @@ It might be of interest to calculate the **firing rates** of the motor units.
 
 .. note::
    The **firing rates** are calculated as the number of spikes divided by the time in which each MU was active.
-   The simulation time is in milliseconds, so we need to convert it to seconds.
 
-.. GENERATED FROM PYTHON SOURCE LINES 267-294
+.. GENERATED FROM PYTHON SOURCE LINES 266-293
 
 .. code-block:: Python
 
@@ -382,7 +381,7 @@ It might be of interest to calculate the **firing rates** of the motor units.
             [
                 elephant.statistics.mean_firing_rate(st__s.time_slice(st__s.min(), st__s.max()))
                 for st__s in spike_train__segment.spiketrains
-                if len(st__s) > 0
+                if len(st__s) > 1  # Need at least 2 spikes to compute rate over spike range
             ]
         )
         for spike_train__segment in spike_train__Block.segments
@@ -412,19 +411,19 @@ It might be of interest to calculate the **firing rates** of the motor units.
  .. code-block:: none
 
     Firing rate statistics:
-      Pool 1: 94/100 active neurons, mean rate: inf Hz, max rate: inf Hz
-      Pool 2: 94/100 active neurons, mean rate: inf Hz, max rate: inf Hz
+      Pool 1: 93/100 active neurons, mean rate: 25.7 Hz, max rate: 27.3 Hz
+      Pool 2: 93/100 active neurons, mean rate: 25.0 Hz, max rate: 26.6 Hz
 
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 295-298
+.. GENERATED FROM PYTHON SOURCE LINES 294-297
 
 Visualize Spike Trains
 ----------------------
 )
 
-.. GENERATED FROM PYTHON SOURCE LINES 298-371
+.. GENERATED FROM PYTHON SOURCE LINES 297-370
 
 .. code-block:: Python
 
@@ -516,7 +515,7 @@ Visualize Spike Trains
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 38.581 seconds)
+   **Total running time of the script:** (0 minutes 37.719 seconds)
 
 
 .. _sphx_glr_download_auto_examples_01_basic_02_simulate_spike_trains_current_injection.py:

@@ -249,7 +249,7 @@ NWBInspector. This checks for schema compliance and best practices.
       ✗ Critical: 1
 
     Details:
-    ['**************************************************', 'NWBInspector Report Summary', '', 'Timestamp: 2026-01-15 12:13:19.125976+00:00', 'Platform: Linux-6.11.0-1018-azure-x86_64-with-glibc2.39', 'NWBInspector version: 0.6.5', '', 'Found 10 issues over 1 files:', '      10 - BEST_PRACTICE_SUGGESTION', '**************************************************', '', '', '0  results/spinal_network_results.nwb', '=====================================', '', "0.0  Importance.BEST_PRACTICE_SUGGESTION: check_description - 'TimeSeries' object at location '/acquisition/spin_secondary_afferent_firing__Hz'", "       Message: Description ('no description') is a placeholder.", '', "0.1  Importance.BEST_PRACTICE_SUGGESTION: check_description - 'TimeSeries' object at location '/acquisition/spin_primary_afferent_firing__Hz'", "       Message: Description ('no description') is a placeholder.", '', "0.2  Importance.BEST_PRACTICE_SUGGESTION: check_description - 'TimeSeries' object at location '/acquisition/spin_intrafusal_tensions'", "       Message: Description ('no description') is a placeholder.", '', "0.3  Importance.BEST_PRACTICE_SUGGESTION: check_description - 'TimeSeries' object at location '/acquisition/spin_chain_activation'", "       Message: Description ('no description') is a placeholder.", '', "0.4  Importance.BEST_PRACTICE_SUGGESTION: check_description - 'TimeSeries' object at location '/acquisition/spin_bag2_activation'", "       Message: Description ('no description') is a placeholder.", '', "0.5  Importance.BEST_PRACTICE_SUGGESTION: check_description - 'TimeSeries' object at location '/acquisition/spin_bag1_activation'", "       Message: Description ('no description') is a placeholder.", '', "0.6  Importance.BEST_PRACTICE_SUGGESTION: check_description - 'TimeSeries' object at location '/acquisition/hill_muscle_type2_activation'", "       Message: Description ('no description') is a placeholder.", '', "0.7  Importance.BEST_PRACTICE_SUGGESTION: check_description - 'TimeSeries' object at location '/acquisition/hill_muscle_type1_activation'", "       Message: Description ('no description') is a placeholder.", '', "0.8  Importance.BEST_PRACTICE_SUGGESTION: check_description - 'TimeSeries' object at location '/acquisition/hill_muscle_muscle_torque'", "       Message: Description ('no description') is a placeholder.", '', "0.9  Importance.BEST_PRACTICE_SUGGESTION: check_description - 'TimeSeries' object at location '/acquisition/hill_muscle_muscle_length'", "       Message: Description ('no description') is a placeholder.", '']
+    ['**************************************************', 'NWBInspector Report Summary', '', 'Timestamp: 2026-01-15 23:25:44.738578+00:00', 'Platform: Linux-6.11.0-1018-azure-x86_64-with-glibc2.39', 'NWBInspector version: 0.6.5', '', 'Found 10 issues over 1 files:', '      10 - BEST_PRACTICE_SUGGESTION', '**************************************************', '', '', '0  results/spinal_network_results.nwb', '=====================================', '', "0.0  Importance.BEST_PRACTICE_SUGGESTION: check_description - 'TimeSeries' object at location '/acquisition/spin_secondary_afferent_firing__Hz'", "       Message: Description ('no description') is a placeholder.", '', "0.1  Importance.BEST_PRACTICE_SUGGESTION: check_description - 'TimeSeries' object at location '/acquisition/spin_primary_afferent_firing__Hz'", "       Message: Description ('no description') is a placeholder.", '', "0.2  Importance.BEST_PRACTICE_SUGGESTION: check_description - 'TimeSeries' object at location '/acquisition/spin_intrafusal_tensions'", "       Message: Description ('no description') is a placeholder.", '', "0.3  Importance.BEST_PRACTICE_SUGGESTION: check_description - 'TimeSeries' object at location '/acquisition/spin_chain_activation'", "       Message: Description ('no description') is a placeholder.", '', "0.4  Importance.BEST_PRACTICE_SUGGESTION: check_description - 'TimeSeries' object at location '/acquisition/spin_bag2_activation'", "       Message: Description ('no description') is a placeholder.", '', "0.5  Importance.BEST_PRACTICE_SUGGESTION: check_description - 'TimeSeries' object at location '/acquisition/spin_bag1_activation'", "       Message: Description ('no description') is a placeholder.", '', "0.6  Importance.BEST_PRACTICE_SUGGESTION: check_description - 'TimeSeries' object at location '/acquisition/hill_muscle_type2_activation'", "       Message: Description ('no description') is a placeholder.", '', "0.7  Importance.BEST_PRACTICE_SUGGESTION: check_description - 'TimeSeries' object at location '/acquisition/hill_muscle_type1_activation'", "       Message: Description ('no description') is a placeholder.", '', "0.8  Importance.BEST_PRACTICE_SUGGESTION: check_description - 'TimeSeries' object at location '/acquisition/hill_muscle_muscle_torque'", "       Message: Description ('no description') is a placeholder.", '', "0.9  Importance.BEST_PRACTICE_SUGGESTION: check_description - 'TimeSeries' object at location '/acquisition/hill_muscle_muscle_length'", "       Message: Description ('no description') is a placeholder.", '']
       ... and 16 more messages
 
 
@@ -299,9 +299,9 @@ internally, which supports efficient storage of large datasets.
     STEP 2: LOADING NWB FILE
     ============================================================
 
-    NWB File: 2efbeb4e-142c-457c-9cb2-7cc5c2789a33
+    NWB File: 738ef90c-4b09-4fc3-b69e-c939dfd7e877
     Session: MyoGen spinal network simulation with systematic tendon tap protocol. Two-phase design: (1) Reflex gain modulation with varying gamma drive, (2) Reflex-voluntary interaction with sinusoidal cortical drive.
-    Created: 2026-01-15 12:12:31.419069+00:00
+    Created: 2026-01-15 23:24:57.496392+00:00
     Institution: MyoGen Framework
     Lab: Neuromuscular Simulation
     Keywords: MyoGen, spinal network, motor neuron, stretch reflex, tendon tap, proprioception, EMG simulation
@@ -575,12 +575,12 @@ If the NWB file contains spike data, let's extract and visualize it.
     Found 968 units
     Populations found: ['DD', 'aMN', 'Ia', 'II', 'Ib', 'gII', 'gIb']
       DD: 400 units, 39922 total spikes
-      aMN: 94 units, 2077 total spikes
-      Ia: 73 units, 11916 total spikes
-      II: 80 units, 8478 total spikes
+      aMN: 94 units, 2076 total spikes
+      Ia: 73 units, 11920 total spikes
+      II: 80 units, 8480 total spikes
       Ib: 58 units, 4808 total spikes
-      gII: 120 units, 1908 total spikes
-      gIb: 143 units, 1025 total spikes
+      gII: 120 units, 1909 total spikes
+      gIb: 143 units, 1017 total spikes
 
     (OK) Saved raster plot to: results/nwb_spike_raster.png
 
@@ -884,7 +884,7 @@ For more information:
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 6.070 seconds)
+   **Total running time of the script:** (0 minutes 5.873 seconds)
 
 
 .. _sphx_glr_download_auto_examples_01_basic_13_load_and_inspect_nwb_data.py:

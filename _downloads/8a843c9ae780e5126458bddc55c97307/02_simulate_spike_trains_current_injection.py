@@ -263,14 +263,13 @@ for i, (manual_seg, utility_seg) in enumerate(
 #
 # .. note::
 #    The **firing rates** are calculated as the number of spikes divided by the time in which each MU was active.
-#    The simulation time is in milliseconds, so we need to convert it to seconds.
 
 firing_rates = [
     np.array(
         [
             elephant.statistics.mean_firing_rate(st__s.time_slice(st__s.min(), st__s.max()))
             for st__s in spike_train__segment.spiketrains
-            if len(st__s) > 0
+            if len(st__s) > 1  # Need at least 2 spikes to compute rate over spike range
         ]
     )
     for spike_train__segment in spike_train__Block.segments

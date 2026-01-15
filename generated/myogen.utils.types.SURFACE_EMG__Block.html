@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>SURFACE_EMG__Block &#8212; MyoGen 0.8.4 Documentation</title>
+    <title>SURFACE_EMG__Block &#8212; MyoGen 0.8.5 Documentation</title>
   
   
   
@@ -55,7 +55,7 @@
 
     <script src="../_static/jquery.js?v=5d32c60e"></script>
     <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-    <script src="../_static/documentation_options.js?v=0477e8c5"></script>
+    <script src="../_static/documentation_options.js?v=ad379ca3"></script>
     <script src="../_static/doctools.js?v=9bcbadda"></script>
     <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../_static/js/hoverxref.js"></script>
@@ -72,7 +72,7 @@
     <link rel="prev" title="SURFACE_MUAP__Block" href="myogen.utils.types.SURFACE_MUAP__Block.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="0.8.4" />
+  <meta name="docsearch:version" content="0.8.5" />
   </head>
   
   
@@ -141,8 +141,8 @@
       
     
     
-    <img src="../_static/myogen_logo.png" class="logo__image only-light" alt="MyoGen 0.8.4 Documentation - Home"/>
-    <img src="../_static/myogen_logo.png" class="logo__image only-dark pst-js-only" alt="MyoGen 0.8.4 Documentation - Home"/>
+    <img src="../_static/myogen_logo.png" class="logo__image only-light" alt="MyoGen 0.8.5 Documentation - Home"/>
+    <img src="../_static/myogen_logo.png" class="logo__image only-dark pst-js-only" alt="MyoGen 0.8.5 Documentation - Home"/>
   
   
 </a></div>
@@ -151,7 +151,7 @@
 <div class="nav-item">
   <div class="version-switcher__container dropdown">
       <button id="version-switcher-button" type="button" class="version-switcher__button btn btn-sm navbar-btn" aria-haspopup="true" aria-expanded="false">
-          Version 0.8.4
+          Version 0.8.5
       </button>
       
       
@@ -661,8 +661,9 @@
 <dt class="sig sig-object py" id="myogen.utils.types.SURFACE_EMG__Block">
 <span class="sig-name descname"><span class="pre">SURFACE_EMG__Block</span></span><a class="headerlink" href="#myogen.utils.types.SURFACE_EMG__Block" title="Link to this definition">#</a></dt>
 <dd><p>Neo Block containing surface EMG signals.
-Structure: groups (electrode arrays) → segments (motor pools) → analogsignals (time × rows × columns)</p>
-<p>alias of <code class="xref py py-class docutils literal notranslate"><span class="pre">Annotated</span></code>[<a class="reference external" href="https://neo.readthedocs.io/en/latest/api_reference.html#neo.core.Block" title="(in Neo v0.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Block</span></code></a>, beartype.vale.Is[lambda x: isinstance(x, Block) and len(x.groups) &gt; 0 and all((hasattr(grp, ‘segments’) for grp in x.groups)) and all((len(grp.segments) &gt; 0 for grp in x.groups)) and all((hasattr(seg, ‘analogsignals’) and len(seg.analogsignals) &gt; 0 and all((hasattr(signal, ‘shape’) for signal in seg.analogsignals)) and all((len(signal.shape) == 3 for signal in seg.analogsignals)) for grp in x.groups for seg in grp.segments))]]</p>
+Structure: groups (electrode arrays) → segments (motor pools) → analogsignals (time × n_electrodes)
+Grid shape stored in signal annotations[‘grid_shape’].</p>
+<p>alias of <code class="xref py py-class docutils literal notranslate"><span class="pre">Annotated</span></code>[<a class="reference external" href="https://neo.readthedocs.io/en/latest/api_reference.html#neo.core.Block" title="(in Neo v0.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Block</span></code></a>, beartype.vale.Is[lambda x: isinstance(x, Block) and len(x.groups) &gt; 0 and all((hasattr(grp, ‘segments’) for grp in x.groups)) and all((len(grp.segments) &gt; 0 for grp in x.groups)) and all((hasattr(seg, ‘analogsignals’) and len(seg.analogsignals) &gt; 0 and all((hasattr(signal, ‘shape’) for signal in seg.analogsignals)) and all((len(signal.shape) == 2 for signal in seg.analogsignals)) for grp in x.groups for seg in grp.segments))]]</p>
 </dd></dl>
 
 </section>
