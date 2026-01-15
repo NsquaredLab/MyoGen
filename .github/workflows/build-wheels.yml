@@ -44,15 +44,14 @@ jobs:
             # Ensure command line tools are available
             xcode-select --install 2>/dev/null || true
 
-          # Install Python build dependencies with versions from uv.lock
-          # Set NMODL_PYLIB to skip find_libpython() which fails in manylinux (static Python)
+          # Install NEURON for nrnivmodl, set NMODL_PYLIB to skip find_libpython() which fails in manylinux
           # Run nrnivmodl from within nmodl_files directory so compiled output stays there
           CIBW_BEFORE_BUILD_LINUX: |
-            pip install neuron==8.2.7 setuptools Cython numpy==1.26.4 scipy==1.16.3
+            pip install neuron==8.2.7
             cd myogen/simulator/nmodl_files && NMODL_PYLIB="" nrnivmodl .
 
           CIBW_BEFORE_BUILD_MACOS: |
-            pip install neuron setuptools Cython numpy==1.26.4 scipy==1.16.3
+            pip install neuron==8.2.7
             cd myogen/simulator/nmodl_files && nrnivmodl .
 
           # Use manylinux2014 (manylinux_2_17)
