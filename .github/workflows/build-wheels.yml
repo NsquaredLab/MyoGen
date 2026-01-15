@@ -35,7 +35,7 @@ jobs:
 
           # Install system dependencies before building (Linux)
           CIBW_BEFORE_ALL_LINUX: |
-            yum install -y openmpi-devel
+            yum install -y openmpi-devel openblas-devel
 
           # Install system dependencies before building (macOS)
           CIBW_BEFORE_ALL_MACOS: |
@@ -44,9 +44,14 @@ jobs:
             xcode-select --install 2>/dev/null || true
 
           # Install Python build dependencies including NEURON
-          CIBW_BEFORE_BUILD_LINUX: pip install neuron==8.2.7 setuptools Cython numpy scipy && export NMODL_PYLIB=$(python -c "import sysconfig; print(sysconfig.get_config_var('LIBDIR'))")/libpython$(python -c "import sys; print(f'{sys.version_info.major}.{sys.version_info.minor}')").so && nrnivmodl myogen/simulator/nmodl_files && cp -r x86_64 myogen/simulator/nmodl_files/
+          # Run nrnivmodl from within nmodl_files directory so compiled output stays there
+          CIBW_BEFORE_BUILD_LINUX: |
+            pip install neuron==8.2.7 setuptools Cython numpy scipy
+            cd myogen/simulator/nmodl_files && nrnivmodl .
 
-          CIBW_BEFORE_BUILD_MACOS: pip install neuron setuptools Cython numpy scipy && nrnivmodl myogen/simulator/nmodl_files && (cp -r x86_64 myogen/simulator/nmodl_files/ 2>/dev/null || cp -r arm64 myogen/simulator/nmodl_files/ || cp -r aarch64 myogen/simulator/nmodl_files/)
+          CIBW_BEFORE_BUILD_MACOS: |
+            pip install neuron setuptools Cython numpy scipy
+            cd myogen/simulator/nmodl_files && nrnivmodl .
 
           # Use manylinux2014 (manylinux_2_17)
           CIBW_MANYLINUX_X86_64_IMAGE: manylinux2014
