@@ -156,7 +156,7 @@ combined_results = {
 
 for s, rt in combined_results.items():
     plt.plot(rt * 100, "-o", label=f"Slope={s}")
-plt.title("Sîmpetru Recruitment Thresholds")
+plt.title("Combined Recruitment Thresholds")
 plt.xlabel("Motor Unit (#)")
 plt.ylabel("Recruitment Threshold (%)")
 plt.legend(framealpha=1.0, edgecolor="none")
