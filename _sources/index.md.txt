@@ -157,68 +157,6 @@ For 5-10× faster convolutions (requires NVIDIA GPU):
 uv add cupy-cuda12x
 ```
 
-# Quick Start
-
-Generate motor unit action potentials (MUAPs):
-
-```python
-from myogen import simulator
-import quantities as pq
-
-# 1. Generate recruitment thresholds (100 motor units)
-thresholds, _ = simulator.RecruitmentThresholds(
-    N=100,
-    recruitment_range__ratio=50,
-    mode="fuglevand"
-)
-
-# 2. Create muscle model with fiber distribution
-muscle = simulator.Muscle(
-    recruitment_thresholds=thresholds,
-    radius_bone__mm=1.0 * pq.mm,
-    fiber_density__fibers_per_mm2=400 * pq.mm**-2,
-    fat_thickness__mm=10 * pq.mm,
-    autorun=True
-)
-
-# 3. Set up surface electrode array
-electrode_array = simulator.SurfaceElectrodeArray(
-    num_rows=5,
-    num_cols=5,
-    inter_electrode_distances__mm=5 * pq.mm,
-    electrode_radius__mm=5 * pq.mm,
-    bending_radius__mm=muscle.radius__mm + muscle.skin_thickness__mm + muscle.fat_thickness__mm,
-)
-
-# 4. Create surface EMG simulator
-surface_emg = simulator.SurfaceEMG(
-    muscle_model=muscle,
-    electrode_arrays=[electrode_array],
-    sampling_frequency__Hz=2048.0,
-    MUs_to_simulate=[0, 1, 2, 3, 4]  # First 5 motor units
-)
-
-# 5. Simulate MUAPs (parallel processing)
-muaps = surface_emg.simulate_muaps(n_jobs=-2)
-```
-
-**Access MUAP data**:
-
-```python
-import numpy as np
-
-# Get MUAP from motor unit 0
-muap_signal = muaps.groups[0].segments[0].analogsignals[0]
-print(f"MUAP shape: {muap_signal.shape}")  # (time, rows, cols)
-
-# Extract from specific electrode (row 2, col 2)
-electrode_muap = muap_signal[:, 2, 2]
-peak_amplitude = np.max(np.abs(electrode_muap.magnitude))
-print(f"Peak amplitude: {peak_amplitude:.3f} {electrode_muap.units}")
-```
-
-**For full EMG simulation** with spike trains, see [examples](https://nsquaredlab.github.io/MyoGen/examples.html)
-
 # Documentation
 
 📖 **[Read the full documentation](https://nsquaredlab.github.io/MyoGen/)**
@@ -231,7 +169,19 @@ print(f"Peak amplitude: {peak_amplitude:.3f} {electrode_muap.units}")
 
 If you use MyoGen in your research, please cite:
 
-TBD
+```bibtex
+@article{simpetru_molinari_2026_myogen,
+  title   = {MyoGen: Unified Biophysical Modeling of Human Neuromotor Activity and Resulting Signals},
+  author  = {S{\^i}mpetru, Raul C. and Molinari, Ricardo G. and Rohlf, Devon R. and
+             Batichotti, Rebeka L. and Watanabe, Renato N. and
+             Elias, Leonardo A. and Del Vecchio, Alessandro},
+  journal = {bioRxiv},
+  note    = {preprint},
+  year    = {2026},
+  doi     = {10.64898/2026.01.01.697284},
+  url     = {https://www.biorxiv.org/content/10.64898/2026.01.01.697284}
+}
+```
 
 # Contributing
 

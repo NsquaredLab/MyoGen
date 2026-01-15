@@ -512,64 +512,6 @@ uv<span class="w"> </span>run<span class="w"> </span>poe<span class="w"> </span>
 </div>
 </section>
 </section>
-<section class="tex2jax_ignore mathjax_ignore" id="quick-start">
-<h1>Quick Start<a class="headerlink" href="#quick-start" title="Link to this heading">#</a></h1>
-<p>Generate motor unit action potentials (MUAPs):</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">myogen</span><span class="w"> </span><span class="kn">import</span> <span class="n">simulator</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">quantities</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pq</span>
-
-<span class="c1"># 1. Generate recruitment thresholds (100 motor units)</span>
-<span class="n">thresholds</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">simulator</span><span class="o">.</span><span class="n">RecruitmentThresholds</span><span class="p">(</span>
-    <span class="n">N</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
-    <span class="n">recruitment_range__ratio</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span>
-    <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;fuglevand&quot;</span>
-<span class="p">)</span>
-
-<span class="c1"># 2. Create muscle model with fiber distribution</span>
-<span class="n">muscle</span> <span class="o">=</span> <span class="n">simulator</span><span class="o">.</span><span class="n">Muscle</span><span class="p">(</span>
-    <span class="n">recruitment_thresholds</span><span class="o">=</span><span class="n">thresholds</span><span class="p">,</span>
-    <span class="n">radius_bone__mm</span><span class="o">=</span><span class="mf">1.0</span> <span class="o">*</span> <span class="n">pq</span><span class="o">.</span><span class="n">mm</span><span class="p">,</span>
-    <span class="n">fiber_density__fibers_per_mm2</span><span class="o">=</span><span class="mi">400</span> <span class="o">*</span> <span class="n">pq</span><span class="o">.</span><span class="n">mm</span><span class="o">**-</span><span class="mi">2</span><span class="p">,</span>
-    <span class="n">fat_thickness__mm</span><span class="o">=</span><span class="mi">10</span> <span class="o">*</span> <span class="n">pq</span><span class="o">.</span><span class="n">mm</span><span class="p">,</span>
-    <span class="n">autorun</span><span class="o">=</span><span class="kc">True</span>
-<span class="p">)</span>
-
-<span class="c1"># 3. Set up surface electrode array</span>
-<span class="n">electrode_array</span> <span class="o">=</span> <span class="n">simulator</span><span class="o">.</span><span class="n">SurfaceElectrodeArray</span><span class="p">(</span>
-    <span class="n">num_rows</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span>
-    <span class="n">num_cols</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span>
-    <span class="n">inter_electrode_distances__mm</span><span class="o">=</span><span class="mi">5</span> <span class="o">*</span> <span class="n">pq</span><span class="o">.</span><span class="n">mm</span><span class="p">,</span>
-    <span class="n">electrode_radius__mm</span><span class="o">=</span><span class="mi">5</span> <span class="o">*</span> <span class="n">pq</span><span class="o">.</span><span class="n">mm</span><span class="p">,</span>
-    <span class="n">bending_radius__mm</span><span class="o">=</span><span class="n">muscle</span><span class="o">.</span><span class="n">radius__mm</span> <span class="o">+</span> <span class="n">muscle</span><span class="o">.</span><span class="n">skin_thickness__mm</span> <span class="o">+</span> <span class="n">muscle</span><span class="o">.</span><span class="n">fat_thickness__mm</span><span class="p">,</span>
-<span class="p">)</span>
-
-<span class="c1"># 4. Create surface EMG simulator</span>
-<span class="n">surface_emg</span> <span class="o">=</span> <span class="n">simulator</span><span class="o">.</span><span class="n">SurfaceEMG</span><span class="p">(</span>
-    <span class="n">muscle_model</span><span class="o">=</span><span class="n">muscle</span><span class="p">,</span>
-    <span class="n">electrode_arrays</span><span class="o">=</span><span class="p">[</span><span class="n">electrode_array</span><span class="p">],</span>
-    <span class="n">sampling_frequency__Hz</span><span class="o">=</span><span class="mf">2048.0</span><span class="p">,</span>
-    <span class="n">MUs_to_simulate</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">]</span>  <span class="c1"># First 5 motor units</span>
-<span class="p">)</span>
-
-<span class="c1"># 5. Simulate MUAPs (parallel processing)</span>
-<span class="n">muaps</span> <span class="o">=</span> <span class="n">surface_emg</span><span class="o">.</span><span class="n">simulate_muaps</span><span class="p">(</span><span class="n">n_jobs</span><span class="o">=-</span><span class="mi">2</span><span class="p">)</span>
-</pre></div>
-</div>
-<p><strong>Access MUAP data</strong>:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
-
-<span class="c1"># Get MUAP from motor unit 0</span>
-<span class="n">muap_signal</span> <span class="o">=</span> <span class="n">muaps</span><span class="o">.</span><span class="n">groups</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">segments</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">analogsignals</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;MUAP shape: </span><span class="si">{</span><span class="n">muap_signal</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>  <span class="c1"># (time, rows, cols)</span>
-
-<span class="c1"># Extract from specific electrode (row 2, col 2)</span>
-<span class="n">electrode_muap</span> <span class="o">=</span> <span class="n">muap_signal</span><span class="p">[:,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">]</span>
-<span class="n">peak_amplitude</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">electrode_muap</span><span class="o">.</span><span class="n">magnitude</span><span class="p">))</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Peak amplitude: </span><span class="si">{</span><span class="n">peak_amplitude</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">electrode_muap</span><span class="o">.</span><span class="n">units</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-</pre></div>
-</div>
-<p><strong>For full EMG simulation</strong> with spike trains, see <a class="reference external" href="https://nsquaredlab.github.io/MyoGen/examples.html">examples</a></p>
-</section>
 <section class="tex2jax_ignore mathjax_ignore" id="documentation">
 <h1>Documentation<a class="headerlink" href="#documentation" title="Link to this heading">#</a></h1>
 <p>📖 <strong><a class="reference external" href="https://nsquaredlab.github.io/MyoGen/">Read the full documentation</a></strong></p>
@@ -582,7 +524,19 @@ uv<span class="w"> </span>run<span class="w"> </span>poe<span class="w"> </span>
 <section class="tex2jax_ignore mathjax_ignore" id="how-to-cite">
 <h1>How to Cite<a class="headerlink" href="#how-to-cite" title="Link to this heading">#</a></h1>
 <p>If you use MyoGen in your research, please cite:</p>
-<p>TBD</p>
+<div class="highlight-bibtex notranslate"><div class="highlight"><pre><span></span><span class="nc">@article</span><span class="p">{</span><span class="nl">simpetru_molinari_2026_myogen</span><span class="p">,</span>
+<span class="w">  </span><span class="na">title</span><span class="w">   </span><span class="p">=</span><span class="w"> </span><span class="s">{MyoGen: Unified Biophysical Modeling of Human Neuromotor Activity and Resulting Signals}</span><span class="p">,</span>
+<span class="w">  </span><span class="na">author</span><span class="w">  </span><span class="p">=</span><span class="w"> </span><span class="s">{S{\^i}mpetru, Raul C. and Molinari, Ricardo G. and Rohlf, Devon R. and</span>
+<span class="s">             Batichotti, Rebeka L. and Watanabe, Renato N. and</span>
+<span class="s">             Elias, Leonardo A. and Del Vecchio, Alessandro}</span><span class="p">,</span>
+<span class="w">  </span><span class="na">journal</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s">{bioRxiv}</span><span class="p">,</span>
+<span class="w">  </span><span class="na">note</span><span class="w">    </span><span class="p">=</span><span class="w"> </span><span class="s">{preprint}</span><span class="p">,</span>
+<span class="w">  </span><span class="na">year</span><span class="w">    </span><span class="p">=</span><span class="w"> </span><span class="s">{2026}</span><span class="p">,</span>
+<span class="w">  </span><span class="na">doi</span><span class="w">     </span><span class="p">=</span><span class="w"> </span><span class="s">{10.64898/2026.01.01.697284}</span><span class="p">,</span>
+<span class="w">  </span><span class="na">url</span><span class="w">     </span><span class="p">=</span><span class="w"> </span><span class="s">{https://www.biorxiv.org/content/10.64898/2026.01.01.697284}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
 </section>
 <section class="tex2jax_ignore mathjax_ignore" id="contributing">
 <h1>Contributing<a class="headerlink" href="#contributing" title="Link to this heading">#</a></h1>
@@ -657,7 +611,6 @@ uv<span class="w"> </span>run<span class="w"> </span>poe<span class="w"> </span>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#optional-gpu-acceleration">Optional: GPU Acceleration</a></li>
 </ul>
 </li>
-<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#quick-start">Quick Start</a></li>
 <li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#documentation">Documentation</a></li>
 <li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#how-to-cite">How to Cite</a></li>
 <li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#contributing">Contributing</a></li>
