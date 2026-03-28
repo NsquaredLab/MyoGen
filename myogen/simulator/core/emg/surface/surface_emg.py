@@ -30,7 +30,7 @@ from tqdm import tqdm
 
 from myogen import RANDOM_GENERATOR
 from myogen.simulator.core.emg.electrodes import SurfaceElectrodeArray
-from myogen.simulator.core.emg.surface.simulate_fiber import simulate_fiber_v2
+from myogen.simulator.core.emg.surface.simulate_fiber import simulate_fiber_v2, _simulate_fiber_v2_python
 from myogen.simulator.core.muscle import Muscle
 from myogen.utils.decorators import beartowertype
 from myogen.utils.types import (
@@ -310,8 +310,12 @@ class SurfaceEMG:
                 MUAP signal for this MU and segment_name is the name for the segment.
             """
             try:
-                # Deep copy electrode array to avoid threading issues
-                electrode_array = deepcopy(electrode_array_original)
+                # Deep copy electrode array only when running in parallel (thread safety)
+                # For n_jobs=1 sequential mode, skip the expensive deepcopy
+                if n_jobs != 1:
+                    electrode_array = deepcopy(electrode_array_original)
+                else:
+                    electrode_array = electrode_array_original
 
                 # Pre-allocated result array at INTERNAL resolution (optimization: use pre-computed shape)
                 array_result_internal = np.zeros(internal_result_shape, dtype=np.float64)
@@ -349,54 +353,78 @@ class SurfaceEMG:
                 A_matrix = None
                 B_incomplete = None
 
+                # Pre-compute base electrode positions ONCE (avoid per-fiber grid recomputation)
+                import quantities as pq
+                base_pos_z = electrode_array.pos_z.rescale(pq.mm).magnitude.copy()
+                base_pos_theta = electrode_array.pos_theta.rescale(pq.rad).magnitude.copy()
+                base_rele = float(electrode_array.electrode_radius__mm.rescale(pq.mm).magnitude)
+
+                # Pre-extract scalar values from self (avoid repeated quantities access in fiber loop)
+                Fs_internal = float(self._internal_sampling_frequency__Hz * 1e-3)
+                v_conduction = float(self._mean_conduction_velocity__m_s)
+                N_internal = int(self._internal_sampling_points)
+                M_theta = int(self._sampling_points_in_theta_domain)
+                r_total = float(self._radius_total)
+                r_bone = float(self._radius_bone__mm)
+                th_fat = float(self._fat_thickness__mm)
+                th_skin = float(self._skin_thickness__mm)
+                sig_rho = float(self._muscle_conductivity_radial__S_m)
+                sig_z = float(self._muscle_conductivity_longitudinal__S_m)
+                sig_skin_val = float(self._skin_conductivity__S_m)
+                sig_fat_val = float(self._fat_conductivity__S_m)
+
+                # Determine IAP kernel length once (same for all fibers)
+                if self._iap_kernel_length__mm is not None:
+                    kernel_length = self._iap_kernel_length__mm
+                else:
+                    IAP_SCALE_FACTOR = 2.5
+                    kernel_length = self._mean_fiber_length__mm * IAP_SCALE_FACTOR
+
                 # Process each fiber (inner loop - must remain sequential)
-                for fiber_number in range(number_of_fibers):
+                fiber_iter = tqdm(
+                    range(number_of_fibers),
+                    desc=f"  MU {MU_index} fibers",
+                    leave=False,
+                    disable=not verbose,
+                )
+                for fiber_number in fiber_iter:
                     # Use pre-computed values (optimization: vectorized calculations)
                     R = R_values[fiber_number]
                     theta = theta_values[fiber_number]
                     fiber_length__mm = fiber_lengths[fiber_number]
 
-                    electrode_array._center_point__mm_deg = (
-                        electrode_array._center_point__mm_deg[0],
-                        electrode_array._center_point__mm_deg[1] - np.rad2deg(theta),
-                    )
-                    electrode_array._create_electrode_grid()
-
                     # Calculate fiber end positions
                     L1 = abs(innervation_zone + fiber_length__mm / 2)
                     L2 = abs(innervation_zone - fiber_length__mm / 2)
 
-                    # Determine IAP kernel length: use fixed value or scaled mean fiber length
-                    # IMPORTANT: Use scaled mean, not individual fiber_length__mm, to avoid boundary artifacts
-                    if self._iap_kernel_length__mm is not None:
-                        kernel_length = self._iap_kernel_length__mm
-                    else:
-                        # Use scaled mean fiber length (2.5×) for all fibers to prevent boundary truncation
-                        IAP_SCALE_FACTOR = 2.5
-                        kernel_length = self._mean_fiber_length__mm * IAP_SCALE_FACTOR
-
                     # Use the new simulate_fiber_v2 function with INTERNAL sampling frequency
-                    phi_temp, A_matrix, B_incomplete = simulate_fiber_v2(
-                        Fs=self._internal_sampling_frequency__Hz * 1e-3,
-                        v=self._mean_conduction_velocity__m_s,
-                        N=self._internal_sampling_points,
-                        M=self._sampling_points_in_theta_domain,
-                        r=self._radius_total,
-                        r_bone=self._radius_bone__mm,
-                        th_fat=self._fat_thickness__mm,
-                        th_skin=self._skin_thickness__mm,
+                    # Call Python implementation directly (skip dispatcher overhead)
+                    phi_temp, A_matrix, B_incomplete = _simulate_fiber_v2_python(
+                        Fs=Fs_internal,
+                        v=v_conduction,
+                        N=N_internal,
+                        M=M_theta,
+                        r=r_total,
+                        r_bone=r_bone,
+                        th_fat=th_fat,
+                        th_skin=th_skin,
                         R=R,
                         L1=L1,
                         L2=L2,
                         zi=innervation_zone,
                         electrode_array=electrode_array,
-                        sig_muscle_rho=self._muscle_conductivity_radial__S_m,
-                        sig_muscle_z=self._muscle_conductivity_longitudinal__S_m,
-                        sig_skin=self._skin_conductivity__S_m,
-                        sig_fat=self._fat_conductivity__S_m,
+                        sig_muscle_rho=sig_rho,
+                        sig_muscle_z=sig_z,
+                        sig_fat=sig_fat_val,
+                        sig_skin=sig_skin_val,
+                        fiber_length__mm=kernel_length,
                         A_matrix=None if fiber_number == 0 else A_matrix,
                         B_incomplete=None if fiber_number == 0 else B_incomplete,
-                        fiber_length__mm=kernel_length,  # NEW: Use fiber-specific or fixed IAP kernel length
+                        use_gpu=False,
+                        theta_offset=-theta,
+                        pos_z_precomputed=base_pos_z,
+                        pos_theta_precomputed=base_pos_theta,
+                        rele_precomputed=base_rele,
                     )
 
                     array_result_internal += phi_temp
@@ -429,28 +457,37 @@ class SurfaceEMG:
                 f"Processing {n_mus_to_compute}/{n_motor_units} motor units for electrode array {array_idx + 1}/{len(self._electrode_arrays)} using parallel processing..."
             )
 
-            # Parallel execution of motor units with tqdm progress bar
-            # batch_size="auto" optimizes task distribution across workers
-            # Only compute MUs in the subset
-            results = {}  # Use dict to map MU_index -> result
-            with tqdm(
-                total=n_mus_to_compute,
-                desc=f"Electrode Array {array_idx + 1}/{len(self._electrode_arrays)}",
-                disable=not verbose,
-            ) as pbar:
-                for array_result, segment_name in Parallel(
-                    n_jobs=n_jobs,
-                    return_as="generator",
-                    verbose=0,
-                    batch_size="auto",
-                )(
-                    delayed(_process_single_mu)(MU_index, electrode_array)
-                    for MU_index in self._MUs_to_simulate
+            # Process motor units with progress bar
+            results = {}
+            if n_jobs == 1:
+                # Sequential: call directly, no joblib overhead
+                for MU_index in tqdm(
+                    self._MUs_to_simulate,
+                    desc=f"Electrode Array {array_idx + 1}/{len(self._electrode_arrays)}",
+                    disable=not verbose,
                 ):
-                    # Extract MU index from segment name "MUAP_{MU_index}"
+                    array_result, segment_name = _process_single_mu(MU_index, electrode_array)
                     mu_idx = int(segment_name.split("_")[1].split("_")[0])
                     results[mu_idx] = (array_result, segment_name)
-                    pbar.update(1)
+            else:
+                # Parallel: use joblib for multi-core
+                with tqdm(
+                    total=n_mus_to_compute,
+                    desc=f"Electrode Array {array_idx + 1}/{len(self._electrode_arrays)}",
+                    disable=not verbose,
+                ) as pbar:
+                    for array_result, segment_name in Parallel(
+                        n_jobs=n_jobs,
+                        return_as="generator",
+                        verbose=0,
+                        batch_size="auto",
+                    )(
+                        delayed(_process_single_mu)(MU_index, electrode_array)
+                        for MU_index in self._MUs_to_simulate
+                    ):
+                        mu_idx = int(segment_name.split("_")[1].split("_")[0])
+                        results[mu_idx] = (array_result, segment_name)
+                        pbar.update(1)
 
             # Calculate actual MUAP duration based on fiber lengths
             # Use iap_kernel_length__mm if specified, otherwise use scaled fiber length from muscle model
@@ -546,8 +583,9 @@ class SurfaceEMG:
         # Store spike train data privately
         self._spike_train__Block = spike_train__Block
 
-        # Extract timestep from the first spike train
-        muap_timestep__ms = float((1 / self._sampling_frequency__Hz) * 1000) * pq.ms
+        # Extract timestep from the MUAP native sampling rate (not output rate)
+        muap_native_rate = float(self._muaps__Block.groups[0].segments[0].analogsignals[0].sampling_rate)
+        muap_timestep__ms = float((1 / muap_native_rate) * 1000) * pq.ms
 
         # Convert spike train block to numpy arrays
         n_pools = len(spike_train__Block.segments)
@@ -598,13 +636,13 @@ class SurfaceEMG:
 
             muap_array = np.transpose(muap_array, (0, 2, 3, 1))
 
-            # Temporal resampling
+            # Temporal resampling: MUAP samples are at native rate, resample to spike train rate
+            muap_duration__s = muap_array.shape[3] * muap_timestep__ms.rescale(pq.s).magnitude
             new_muap_time_length = max(
                 1,
                 np.round(
-                    muap_array.shape[3]
-                    / self._sampling_frequency__Hz
-                    * (1 / spiketrain_timestep__ms.rescale("s"))
+                    muap_duration__s
+                    / spiketrain_timestep__ms.rescale("s").magnitude
                 ).astype(int),
             )
 
@@ -617,20 +655,16 @@ class SurfaceEMG:
                 )
             )
 
+            # Time axes for interpolation
+            xp_native = np.arange(muap_array.shape[3]) * muap_timestep__ms.rescale(pq.s).magnitude
+            x_target = np.arange(new_muap_time_length) * spiketrain_timestep__ms.rescale(pq.s).magnitude
+
             for muap_nr in range(muap_shapes.shape[0]):
                 for row in range(muap_shapes.shape[1]):
                     for col in range(muap_shapes.shape[2]):
                         muap_shapes[muap_nr, row, col] = np.interp(
-                            x=np.arange(
-                                start=0,
-                                stop=muap_array.shape[-1] / self._sampling_frequency__Hz,
-                                step=spiketrain_timestep__ms.rescale(pq.s).magnitude,
-                            ),
-                            xp=np.arange(
-                                start=0,
-                                stop=muap_array.shape[-1] / self._sampling_frequency__Hz,
-                                step=muap_timestep__ms.rescale(pq.s).magnitude,
-                            ),
+                            x=x_target,
+                            xp=xp_native,
                             fp=muap_array[muap_nr, row, col],
                         )
 

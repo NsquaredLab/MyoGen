@@ -216,7 +216,8 @@ def _get_numba_functions():
 _numba_B_kz_func, _numba_phi_func = _get_numba_functions()
 
 
-@beartowertype
+# NOTE: beartype disabled for performance — this is called 100s-1000s of times per MU
+# Type validation happens at the simulate_fiber_v2 dispatcher level instead
 def _simulate_fiber_v2_python(
     Fs: float,
     v: float,
@@ -240,6 +241,10 @@ def _simulate_fiber_v2_python(
     B_incomplete: np.ndarray | None = None,
     use_gpu: bool = True,
     fiber_length__mm: float | None = None,
+    theta_offset: float = 0.0,
+    pos_z_precomputed: np.ndarray | None = None,
+    pos_theta_precomputed: np.ndarray | None = None,
+    rele_precomputed: float | None = None,
 ):
     """
     Simulate a single fiber (Python implementation).
@@ -316,14 +321,16 @@ def _simulate_fiber_v2_python(
     # Get electrode configuration from the array
     channels = [electrode_array.num_rows, electrode_array.num_cols]
 
-    # Extract magnitudes from Quantity objects for numerical operations
+    # Use pre-computed electrode positions if available (avoids per-fiber grid recomputation)
     import quantities as pq
-
-    rele = float(electrode_array.electrode_radius__mm.rescale(pq.mm).magnitude)
-    pos_z_mm = electrode_array.pos_z.rescale(pq.mm).magnitude  # Extract as plain array in mm
-    pos_theta_rad = electrode_array.pos_theta.rescale(
-        pq.rad
-    ).magnitude  # Extract as plain array in rad
+    if pos_z_precomputed is not None and pos_theta_precomputed is not None:
+        rele = rele_precomputed if rele_precomputed is not None else float(electrode_array.electrode_radius__mm.rescale(pq.mm).magnitude)
+        pos_z_mm = pos_z_precomputed
+        pos_theta_rad = pos_theta_precomputed + theta_offset  # Apply angular offset as simple addition
+    else:
+        rele = float(electrode_array.electrode_radius__mm.rescale(pq.mm).magnitude)
+        pos_z_mm = electrode_array.pos_z.rescale(pq.mm).magnitude
+        pos_theta_rad = electrode_array.pos_theta.rescale(pq.rad).magnitude + theta_offset
 
     ###################################################################################################
     ## 1. Constants
@@ -813,44 +820,75 @@ def _simulate_fiber_v2_python(
 
     # Use the electrode array's pre-computed positions
     H_glo = np.multiply(H_vc, H_ele)
-    # print(f"DEBUG: H_glo range = [{np.min(np.abs(H_glo)):.6e}, {np.max(np.abs(H_glo)):.6e}]")
-    B_kz = np.zeros((channels[0], channels[1], len(k_z)))
 
-    for channel_z in range(channels[0]):
-        for channel_theta in range(channels[1]):
-            arg = np.multiply(
-                H_glo,
-                np.exp(1j * pos_theta_rad[channel_z, channel_theta] * ktheta_mesh_kzktheta)
-                * (k_theta[1] - k_theta[0]),
-            )
-            B_kz[channel_z, channel_theta, :] = sum(np.transpose(arg)) / 2 / math.pi
+    k_theta_diff = k_theta[1] - k_theta[0]
+    k_z_diff = k_z[1] - k_z[0]
 
-    # print(f"DEBUG: B_kz range = [{np.min(np.abs(B_kz)):.6e}, {np.max(np.abs(B_kz)):.6e}]")
+    if _numba_B_kz_func is not None:
+        # Use Numba-optimized parallel computation
+        H_glo_f64 = np.ascontiguousarray(H_glo.real, dtype=np.float64)
+        H_glo_i64 = np.ascontiguousarray(H_glo.imag, dtype=np.float64)
+        pt_f64 = np.ascontiguousarray(pos_theta_rad, dtype=np.float64)
+        km_f64 = np.ascontiguousarray(ktheta_mesh_kzktheta, dtype=np.float64)
+        B_kz = _numba_B_kz_func(
+            H_glo_f64, H_glo_i64, pt_f64,
+            float(k_theta_diff), km_f64,
+            channels[0], channels[1], len(k_z), len(k_theta),
+        )
+    else:
+        B_kz = np.zeros((channels[0], channels[1], len(k_z)))
+        for channel_z in range(channels[0]):
+            for channel_theta in range(channels[1]):
+                arg = np.multiply(
+                    H_glo,
+                    np.exp(1j * pos_theta_rad[channel_z, channel_theta] * ktheta_mesh_kzktheta)
+                    * k_theta_diff,
+                )
+                B_kz[channel_z, channel_theta, :] = sum(np.transpose(arg)) / 2 / math.pi
 
     ###################################################################################################
     ## 6. phi(t) for each channel
 
-    phi = np.zeros((channels[0], channels[1], len(t)))
-    for channel_z in range(channels[0]):
-        for channel_theta in range(channels[1]):
-            auxiliar = np.dot(
-                np.ones((len(I_kzkt[1, :]), 1)),
-                B_kz[channel_z, channel_theta, :].reshape(1, -1),
-            )
-            auxiliar = np.transpose(auxiliar)
-            arg = np.multiply(I_kzkt, auxiliar)
-            arg2 = np.multiply(
-                arg,
-                np.exp(1j * pos_z_mm[channel_z, channel_theta] * kz_mesh_kzkt) * (k_z[1] - k_z[0]),
-            )
-            PHI = sum(arg2)
-            phi[channel_z, channel_theta, :] = np.real(
-                (
+    if _numba_phi_func is not None:
+        # Use Numba-optimized parallel computation
+        PHI_complex = _numba_phi_func(
+            np.ascontiguousarray(I_kzkt.real, dtype=np.float64),
+            np.ascontiguousarray(I_kzkt.imag, dtype=np.float64),
+            np.ascontiguousarray(B_kz, dtype=np.float64),
+            np.ascontiguousarray(pos_z_mm, dtype=np.float64),
+            np.ascontiguousarray(kz_mesh_kzkt, dtype=np.float64),
+            channels[0], channels[1], len(k_z), len(k_t),
+            float(k_z_diff),
+        )
+        # Apply IFFT to get time-domain signal
+        phi = np.zeros((channels[0], channels[1], len(t)))
+        for channel_z in range(channels[0]):
+            for channel_theta in range(channels[1]):
+                phi[channel_z, channel_theta, :] = np.real(
+                    np.fft.ifft(
+                        np.fft.fftshift(PHI_complex[channel_z, channel_theta, :] * len(psi))
+                    )
+                )
+    else:
+        phi = np.zeros((channels[0], channels[1], len(t)))
+        for channel_z in range(channels[0]):
+            for channel_theta in range(channels[1]):
+                auxiliar = np.dot(
+                    np.ones((len(I_kzkt[1, :]), 1)),
+                    B_kz[channel_z, channel_theta, :].reshape(1, -1),
+                )
+                auxiliar = np.transpose(auxiliar)
+                arg = np.multiply(I_kzkt, auxiliar)
+                arg2 = np.multiply(
+                    arg,
+                    np.exp(1j * pos_z_mm[channel_z, channel_theta] * kz_mesh_kzkt) * k_z_diff,
+                )
+                PHI = sum(arg2)
+                phi[channel_z, channel_theta, :] = np.real(
                     np.fft.ifft(
                         np.fft.fftshift(PHI / 2 / math.pi * len(psi))
-                    )  # Matches original line 239
+                    )
                 )
-            )
 
     # Center the MUAP signal in the time window by finding the peak and shifting
     # For each electrode channel, find the peak and center it
@@ -877,7 +915,7 @@ def _simulate_fiber_v2_python(
     return phi, A_matrix, B_incomplete
 
 
-@beartowertype
+# NOTE: beartype disabled — called 100s-1000s of times per MU in the inner fiber loop
 def simulate_fiber_v2(
     Fs: float,
     v: float,
@@ -902,6 +940,10 @@ def simulate_fiber_v2(
     use_cython: bool = True,
     use_gpu: bool = True,
     fiber_length__mm: float | None = None,
+    theta_offset: float = 0.0,
+    pos_z_precomputed: np.ndarray | None = None,
+    pos_theta_precomputed: np.ndarray | None = None,
+    rele_precomputed: float | None = None,
 ):
     """
     Simulate a single fiber (dispatcher to Cython or Python implementation).
@@ -1066,4 +1108,8 @@ def simulate_fiber_v2(
         B_incomplete,
         use_gpu,
         fiber_length__mm,
+        theta_offset,
+        pos_z_precomputed,
+        pos_theta_precomputed,
+        rele_precomputed,
     )
