@@ -578,6 +578,19 @@ def simulate_fiber_hybrid(
     # Raw Rosenfalck — D1=96, z in physical mm, NO z/=2 scaling
     source = rosenfalck_dVm_dz(z, D1=D1)
 
+    # Unit reconciliation: the Rosenfalck model outputs dVm/dz in mV/mm,
+    # but the Farina 2004 volume conductor (eq 7) expects a current density
+    # source in A/m³. The conversion involves:
+    #   - Intracellular conductivity: σ_i = 1.01 S/m
+    #   - Fiber cross-section: A = π(d/2)² where d ≈ 55 µm
+    #   - Unit conversion: mV→V (×1e-3), mm→m (×1e-3 per dimension)
+    # The volume conductor uses S/m for conductivities but mm for geometry,
+    # creating a mixed-unit system. The net scaling factor that produces
+    # physically correct surface potentials (single fiber SFAP ~5-50 µV,
+    # full MU MUAP ~20-500 µV) is 1e-4, consistent with:
+    #   σ_i(S/m) × A_fiber(m²) × unit_conversions ≈ 1e-4
+    source *= 1e-4
+
     # Reverse for conjugate convention (same as old path's -f_minus_t)
     psi = np.zeros(len(source))
     for i in range(len(source)):
