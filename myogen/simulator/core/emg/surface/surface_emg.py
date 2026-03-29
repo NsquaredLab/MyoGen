@@ -436,7 +436,8 @@ class SurfaceEMG:
                         elec_z = base_pos_z.flatten()
                         n_rows_e = electrode_array.num_rows
                         n_cols_e = electrode_array.num_cols
-                        duration = kernel_length / v_conduction  # ms
+                        # Match duration to produce exactly N_internal time points
+                        duration = (N_internal - 1) / Fs_internal  # ms
 
                         phi_temp = simulate_fiber_unified(
                             v=v_conduction, L1=L1, L2=L2, zi=innervation_zone,
@@ -445,7 +446,14 @@ class SurfaceEMG:
                             Fs=Fs_internal, duration_ms=duration,
                         )
                         # Reshape to (n_rows, n_cols, n_t) to match old path output
-                        phi_temp = phi_temp.reshape(n_rows_e, n_cols_e, -1)
+                        n_t = phi_temp.shape[1]
+                        phi_temp = phi_temp.reshape(n_rows_e, n_cols_e, n_t)
+                        # Pad or truncate to match N_internal
+                        if n_t < N_internal:
+                            pad = np.zeros((n_rows_e, n_cols_e, N_internal - n_t))
+                            phi_temp = np.concatenate([phi_temp, pad], axis=2)
+                        elif n_t > N_internal:
+                            phi_temp = phi_temp[:, :, :N_internal]
                     else:
                         # Existing frequency-domain path (unchanged)
                         phi_temp, A_matrix, B_incomplete = _simulate_fiber_v2_python(

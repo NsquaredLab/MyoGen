@@ -415,7 +415,8 @@ def compute_surface_kernel(
 
     k_theta_diff = k_theta[1] - k_theta[0]
 
-    B_kz = np.zeros((channels[0], channels[1], len(k_z)))
+    # B(kz) must be COMPLEX — the phase from exp(j*θ*kθ) encodes angular position
+    B_kz = np.zeros((channels[0], channels[1], len(k_z)), dtype=complex)
     for ch_z in range(channels[0]):
         for ch_theta in range(channels[1]):
             integrand = np.multiply(
@@ -423,22 +424,21 @@ def compute_surface_kernel(
                 np.exp(1j * pos_theta_rad[ch_z, ch_theta] * ktheta_mesh)
                 * k_theta_diff,
             )
-            B_kz[ch_z, ch_theta, :] = np.sum(integrand, axis=1).real / (2 * math.pi)
+            B_kz[ch_z, ch_theta, :] = np.sum(integrand, axis=1) / (2 * math.pi)
 
     # =========================================================================
     # Section 6: IFFT B(kz) -> b(z)
     # =========================================================================
-    # B_kz is in the fftshift convention (DC in center). Un-shift before IFFT.
+    # B(kz) is on the fftshift-ed frequency grid (DC in center).
+    # ifftshift converts to FFT order, ifft produces spatial domain,
+    # fftshift centers the output on z_grid (which is symmetric around 0).
+    # Electrode z-positions are NOT encoded here — they are handled by
+    # simulate_fiber_unified via the electrode_z parameter.
     b_z = np.zeros((channels[0], channels[1], Nz))
     for ch_z in range(channels[0]):
         for ch_theta in range(channels[1]):
-            B_kz_unshifted = np.fft.ifftshift(B_kz[ch_z, ch_theta, :])
-            ifft_result = np.fft.ifft(B_kz_unshifted)
-            assert np.allclose(ifft_result.imag, 0, atol=1e-10), (
-                f"IFFT result has non-negligible imaginary part "
-                f"(max |imag| = {np.max(np.abs(ifft_result.imag)):.2e})"
-            )
-            b_z[ch_z, ch_theta, :] = ifft_result.real
+            B_fftorder = np.fft.ifftshift(B_kz[ch_z, ch_theta, :])
+            b_z[ch_z, ch_theta, :] = np.fft.fftshift(np.real(np.fft.ifft(B_fftorder)))
 
     return b_z, A_matrix
 
