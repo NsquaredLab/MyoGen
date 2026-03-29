@@ -60,6 +60,91 @@ class TestRosenfalckDVmDz:
 from myogen.simulator.core.emg.fiber_simulation import compute_intramuscular_kernel
 
 
+import quantities as pq
+from myogen.simulator.core.emg.electrodes import SurfaceElectrodeArray
+from myogen.simulator.core.emg.fiber_simulation import compute_surface_kernel
+
+
+class TestComputeSurfaceKernel:
+
+    @pytest.fixture
+    def electrode_array(self):
+        return SurfaceElectrodeArray(
+            num_rows=8, num_cols=1,
+            inter_electrode_distances__mm=5.0 * pq.mm,
+            electrode_radius__mm=5.0 * pq.mm,
+            center_point__mm_deg=(0.0 * pq.mm, 0.0 * pq.deg),
+            bending_radius__mm=8.5 * pq.mm,
+            rotation_angle__deg=0.0 * pq.deg,
+            differentiation_mode="monopolar",
+        )
+
+    def test_returns_correct_shape(self, electrode_array):
+        Nz = 256
+        M = 21
+        z_grid = np.linspace(-60, 60, Nz)
+        k_theta = np.arange(-(M - 1) / 2, (M - 1) / 2 + 1)
+        b_z, _ = compute_surface_kernel(
+            z_grid=z_grid, k_theta=k_theta, R=5.0,
+            electrode_array=electrode_array,
+            r=8.5, r_bone=0.0, th_fat=0.3, th_skin=1.29,
+            sig_muscle_rho=0.09, sig_muscle_z=0.4,
+            sig_fat=0.0407, sig_skin=4.88e-4,
+        )
+        assert b_z.shape == (8, 1, Nz)
+
+    def test_kernel_is_real(self, electrode_array):
+        """Verify the IFFT result has negligible imaginary part.
+
+        The implementation asserts this internally before taking np.real().
+        This test verifies the assertion does not fire (i.e., the function
+        completes without AssertionError) and that the output is real-valued.
+        """
+        Nz = 256
+        M = 21
+        z_grid = np.linspace(-60, 60, Nz)
+        k_theta = np.arange(-(M - 1) / 2, (M - 1) / 2 + 1)
+        # If the IFFT result had a non-negligible imaginary part, the
+        # internal assertion in compute_surface_kernel would fire here.
+        b_z, _ = compute_surface_kernel(
+            z_grid=z_grid, k_theta=k_theta, R=5.0,
+            electrode_array=electrode_array,
+            r=8.5, r_bone=0.0, th_fat=0.3, th_skin=1.29,
+            sig_muscle_rho=0.09, sig_muscle_z=0.4,
+            sig_fat=0.0407, sig_skin=4.88e-4,
+        )
+        assert b_z.dtype == np.float64
+
+    def test_kernel_is_nonzero(self, electrode_array):
+        Nz = 256
+        M = 21
+        z_grid = np.linspace(-60, 60, Nz)
+        k_theta = np.arange(-(M - 1) / 2, (M - 1) / 2 + 1)
+        b_z, _ = compute_surface_kernel(
+            z_grid=z_grid, k_theta=k_theta, R=5.0,
+            electrode_array=electrode_array,
+            r=8.5, r_bone=0.0, th_fat=0.3, th_skin=1.29,
+            sig_muscle_rho=0.09, sig_muscle_z=0.4,
+            sig_fat=0.0407, sig_skin=4.88e-4,
+        )
+        assert np.max(np.abs(b_z)) > 0
+
+    def test_caching_returns_same_result(self, electrode_array):
+        Nz = 256
+        M = 21
+        z_grid = np.linspace(-60, 60, Nz)
+        k_theta = np.arange(-(M - 1) / 2, (M - 1) / 2 + 1)
+        params = dict(
+            z_grid=z_grid, k_theta=k_theta, R=5.0,
+            electrode_array=electrode_array, r=8.5, r_bone=0.0,
+            th_fat=0.3, th_skin=1.29, sig_muscle_rho=0.09,
+            sig_muscle_z=0.4, sig_fat=0.0407, sig_skin=4.88e-4,
+        )
+        b_z1, A_mat = compute_surface_kernel(**params)
+        b_z2, _ = compute_surface_kernel(**params, A_matrix=A_mat)
+        np.testing.assert_allclose(b_z1, b_z2, rtol=1e-10)
+
+
 class TestComputeIntramuscularKernel:
     """Tests for the simple Green's function kernel."""
 

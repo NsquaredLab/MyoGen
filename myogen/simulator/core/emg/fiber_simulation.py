@@ -13,7 +13,15 @@ References
        cylindrical description of the volume conductor. IEEE TBME 51(3), 415-426.
 """
 
+from __future__ import annotations
+
+import math
+
 import numpy as np
+from scipy.special import jv as Jn
+
+from myogen.simulator.core.emg.electrodes import SurfaceElectrodeArray
+from myogen.simulator.core.emg.surface.simulate_fiber import log_In, log_Kn
 
 
 def rosenfalck_dVm_dz(z: np.ndarray, D1: float = 96.0) -> np.ndarray:
@@ -82,3 +90,351 @@ def compute_intramuscular_kernel(
             sigma_z_mm / sigma_r_mm * r**2 + (z_grid - z_e) ** 2
         )
     return b_z
+
+
+def compute_surface_kernel(
+    z_grid: np.ndarray,
+    k_theta: np.ndarray,
+    R: float,
+    electrode_array: SurfaceElectrodeArray,
+    r: float,
+    r_bone: float,
+    th_fat: float,
+    th_skin: float,
+    sig_muscle_rho: float,
+    sig_muscle_z: float,
+    sig_fat: float,
+    sig_skin: float,
+    sig_bone: float = 0.0,
+    A_matrix: np.ndarray | None = None,
+) -> tuple[np.ndarray, np.ndarray]:
+    """
+    Compute the surface volume conductor spatial kernel b(z).
+
+    Extracts the Bessel volume conductor computation (Farina 2004) from the
+    existing sEMG pipeline and adds an IFFT step to produce the spatial kernel.
+
+    Steps:
+      1. Derive kz from the z_grid via FFT frequencies.
+      2. Compute H_vc(kz, k_theta) using the Bessel log-space A-matrix solver.
+      3. Compute H_ele(kz, k_theta) from the electrode array (spatial filter + size).
+      4. Compute H_glo = H_vc * H_ele.
+      5. Integrate over k_theta: B(kz) = (1/2pi) * sum_ktheta H_glo * exp(j*theta_elec*ktheta) * dk_theta.
+      6. IFFT B(kz) to obtain the spatial kernel b(z).
+
+    Parameters
+    ----------
+    z_grid : np.ndarray
+        Spatial grid along the fiber axis in mm, length Nz.
+    k_theta : np.ndarray
+        Angular frequency indices, e.g. arange(-(M-1)/2, (M-1)/2+1).
+    R : float
+        Source radial position in mm (fiber depth).
+    electrode_array : SurfaceElectrodeArray
+        Electrode array configuration.
+    r : float
+        Total model radius in mm.
+    r_bone : float
+        Bone radius in mm.
+    th_fat : float
+        Fat layer thickness in mm.
+    th_skin : float
+        Skin layer thickness in mm.
+    sig_muscle_rho : float
+        Muscle conductivity in radial direction (S/m).
+    sig_muscle_z : float
+        Muscle conductivity in longitudinal direction (S/m).
+    sig_fat : float
+        Fat conductivity (S/m).
+    sig_skin : float
+        Skin conductivity (S/m).
+    sig_bone : float, optional
+        Bone conductivity (S/m), default 0.0.
+    A_matrix : np.ndarray or None, optional
+        Cached A matrix from a previous call with identical geometry.
+        Only the A matrix is cacheable because the B vector depends on R
+        (fiber depth) which changes per fiber.
+
+    Returns
+    -------
+    b_z : np.ndarray
+        Spatial kernel, shape (n_rows, n_cols, len(z_grid)). Real-valued.
+    A_matrix : np.ndarray
+        A matrix for caching.
+    """
+    import quantities as pq
+
+    Nz = len(z_grid)
+
+    # --- Derive kz from z_grid via FFT frequencies ---
+    dz = z_grid[1] - z_grid[0]
+    k_z = 2.0 * np.pi * np.fft.fftfreq(Nz, d=dz)
+    # Shift to match the convention used by the existing code (centered)
+    k_z = np.fft.fftshift(k_z)
+
+    # --- Tissue geometry (Farina 2004 Fig 1b) ---
+    th_muscle = r - th_fat - th_skin - r_bone
+    a = r_bone                              # bone outer radius
+    b = r_bone + th_muscle                  # muscle outer radius
+    c = r_bone + th_muscle + th_fat         # fat outer radius
+    d = r_bone + th_muscle + th_fat + th_skin  # skin outer radius
+
+    am = a * math.sqrt(sig_muscle_z / sig_muscle_rho)
+    bm = b * math.sqrt(sig_muscle_z / sig_muscle_rho)
+    Rm = R * math.sqrt(sig_muscle_z / sig_muscle_rho)
+
+    # --- Electrode properties ---
+    rele = float(electrode_array.electrode_radius__mm.rescale(pq.mm).magnitude)
+    pos_z_mm = electrode_array.pos_z.rescale(pq.mm).magnitude
+    pos_theta_rad = electrode_array.pos_theta.rescale(pq.rad).magnitude
+    channels = [electrode_array.num_rows, electrode_array.num_cols]
+
+    # =========================================================================
+    # Section 3: H_vc(kz, k_theta)  — Bessel volume conductor transfer function
+    # =========================================================================
+    # H_vc is even in both kz and k_theta, so we compute it for unique
+    # non-negative |kz| and |k_theta| values, then map back to the full grid.
+    kz_abs = np.abs(k_z)
+    kt_abs = np.abs(k_theta)
+
+    # Unique non-negative values (sorted) for computation
+    kz_unique = np.unique(kz_abs)
+    kt_unique = np.unique(kt_abs)
+
+    # Exclude kz=0 from computation (singular Bessel system; H_vc=0 at DC)
+    kz_unique_nz = kz_unique[kz_unique > 0]
+
+    K_THETA_u, K_Z_u = np.meshgrid(kt_unique, kz_unique_nz, indexing="ij")
+    n_theta_u, n_z_u = K_THETA_u.shape
+
+    A_mat = np.zeros((n_theta_u, n_z_u, 7, 7))
+    B = np.zeros((n_theta_u, n_z_u, 7, 1))
+
+    if A_matrix is not None:
+        A_mat = A_matrix
+    else:
+        # Log-space Bessel functions for all radii
+        log_In_a = log_In(K_THETA_u, a * K_Z_u)
+        log_In_am = log_In(K_THETA_u, am * K_Z_u)
+        log_In_b = log_In(K_THETA_u, b * K_Z_u)
+        log_In_bm = log_In(K_THETA_u, bm * K_Z_u)
+        log_In_c = log_In(K_THETA_u, c * K_Z_u)
+        log_In_d = log_In(K_THETA_u, d * K_Z_u)
+
+        log_Kn_am = log_Kn(K_THETA_u, am * K_Z_u)
+        log_Kn_b = log_Kn(K_THETA_u, b * K_Z_u)
+        log_Kn_bm = log_Kn(K_THETA_u, bm * K_Z_u)
+        log_Kn_c = log_Kn(K_THETA_u, c * K_Z_u)
+        log_Kn_d = log_Kn(K_THETA_u, d * K_Z_u)
+
+        # Tilde functions: In_tilde = (In(n+1) + In(n-1)) / 2
+        log_In_tilde_a = np.logaddexp(
+            log_In(K_THETA_u + 1, a * K_Z_u), log_In(K_THETA_u - 1, a * K_Z_u)
+        ) - np.log(2)
+        log_In_tilde_am = np.logaddexp(
+            log_In(K_THETA_u + 1, am * K_Z_u), log_In(K_THETA_u - 1, am * K_Z_u)
+        ) - np.log(2)
+        log_In_tilde_b = np.logaddexp(
+            log_In(K_THETA_u + 1, b * K_Z_u), log_In(K_THETA_u - 1, b * K_Z_u)
+        ) - np.log(2)
+        log_In_tilde_bm = np.logaddexp(
+            log_In(K_THETA_u + 1, bm * K_Z_u), log_In(K_THETA_u - 1, bm * K_Z_u)
+        ) - np.log(2)
+        log_In_tilde_c = np.logaddexp(
+            log_In(K_THETA_u + 1, c * K_Z_u), log_In(K_THETA_u - 1, c * K_Z_u)
+        ) - np.log(2)
+        log_In_tilde_d = np.logaddexp(
+            log_In(K_THETA_u + 1, d * K_Z_u), log_In(K_THETA_u - 1, d * K_Z_u)
+        ) - np.log(2)
+
+        log_Kn_tilde_am = np.logaddexp(
+            log_Kn(K_THETA_u + 1, am * K_Z_u), log_Kn(K_THETA_u - 1, am * K_Z_u)
+        ) - np.log(2)
+        log_Kn_tilde_bm = np.logaddexp(
+            log_Kn(K_THETA_u + 1, bm * K_Z_u), log_Kn(K_THETA_u - 1, bm * K_Z_u)
+        ) - np.log(2)
+        log_Kn_tilde_c = np.logaddexp(
+            log_Kn(K_THETA_u + 1, c * K_Z_u), log_Kn(K_THETA_u - 1, c * K_Z_u)
+        ) - np.log(2)
+        log_Kn_tilde_d = np.logaddexp(
+            log_Kn(K_THETA_u + 1, d * K_Z_u), log_Kn(K_THETA_u - 1, d * K_Z_u)
+        ) - np.log(2)
+        log_Kn_tilde_b = np.logaddexp(
+            log_Kn(K_THETA_u + 1, b * K_Z_u), log_Kn(K_THETA_u - 1, b * K_Z_u)
+        ) - np.log(2)
+
+        # Build A matrix (7x7 linear system per (kz, ktheta) pair)
+        # Row 0
+        A_mat[..., 0, 0] = 1
+        A_mat[..., 0, 1] = -np.exp(log_In_am - log_In_bm)
+        A_mat[..., 0, 2] = -np.exp(log_Kn_am - log_Kn_bm)
+
+        # Row 1
+        A_mat[..., 1, 0] = sig_bone * np.exp(log_In_tilde_a - log_In_a)
+        A_mat[..., 1, 1] = -math.sqrt(sig_muscle_rho * sig_muscle_z) * np.exp(
+            log_In_tilde_am - log_In_bm
+        )
+        A_mat[..., 1, 2] = math.sqrt(sig_muscle_rho * sig_muscle_z) * np.exp(
+            log_Kn_tilde_am - log_Kn_bm
+        )
+
+        # Row 2
+        A_mat[..., 2, 1] = 1
+        A_mat[..., 2, 2] = 1
+        A_mat[..., 2, 3] = -np.exp(log_In_b - log_In_c)
+        A_mat[..., 2, 4] = -np.exp(log_Kn_b - log_Kn_c)
+
+        # Row 3
+        A_mat[..., 3, 1] = math.sqrt(sig_muscle_rho * sig_muscle_z) * np.exp(
+            log_In_tilde_bm - log_In_bm
+        )
+        A_mat[..., 3, 2] = -math.sqrt(sig_muscle_rho * sig_muscle_z) * np.exp(
+            log_Kn_tilde_bm - log_Kn_bm
+        )
+        A_mat[..., 3, 3] = -sig_fat * np.exp(log_In_tilde_b - log_In_c)
+        A_mat[..., 3, 4] = sig_fat * np.exp(log_Kn_tilde_b - log_Kn_c)
+
+        # Row 4
+        A_mat[..., 4, 3] = 1
+        A_mat[..., 4, 4] = 1
+        A_mat[..., 4, 5] = -np.exp(log_In_c - log_In_d)
+        A_mat[..., 4, 6] = -np.exp(log_Kn_c - log_Kn_d)
+
+        # Row 5
+        A_mat[..., 5, 3] = sig_fat * np.exp(log_In_tilde_c - log_In_c)
+        A_mat[..., 5, 4] = -sig_fat * np.exp(log_Kn_tilde_c - log_Kn_c)
+        A_mat[..., 5, 5] = -sig_skin * np.exp(log_In_tilde_c - log_In_d)
+        A_mat[..., 5, 6] = sig_skin * np.exp(log_Kn_tilde_c - log_Kn_d)
+
+        # Row 6
+        log_diff_In_d = log_In_tilde_d - log_In_d
+        log_diff_Kn_d = log_Kn_tilde_d - log_Kn_d
+        A_mat[..., 6, 5] = sig_skin * np.exp(log_diff_In_d)
+        A_mat[..., 6, 6] = -sig_skin * np.exp(log_diff_Kn_d)
+
+        # Clean up numerical issues
+        A_mat[np.isinf(A_mat)] = 0
+        A_mat[np.isnan(A_mat)] = 0
+
+        A_matrix = A_mat.copy()
+
+    # --- Update B vector (depends on R, so not fully cacheable) ---
+    log_In_am_b = log_In(K_THETA_u, am * K_Z_u)
+    log_Kn_Rm = log_Kn(K_THETA_u, Rm * K_Z_u)
+    log_Kn_bm_b = log_Kn(K_THETA_u, bm * K_Z_u)
+    log_In_Rm = log_In(K_THETA_u, Rm * K_Z_u)
+
+    log_In_tilde_am_b = np.logaddexp(
+        log_In(K_THETA_u + 1, am * K_Z_u), log_In(K_THETA_u - 1, am * K_Z_u)
+    ) - np.log(2)
+    log_Kn_tilde_bm_b = np.logaddexp(
+        log_Kn(K_THETA_u + 1, bm * K_Z_u), log_Kn(K_THETA_u - 1, bm * K_Z_u)
+    ) - np.log(2)
+
+    MAX_LOG_SAFE = 700.0
+
+    # B[0,0] = In_am * Kn_Rm / sig_muscle_rho
+    log_val_00 = log_In_am_b + log_Kn_Rm
+    B[..., 0, 0] = np.where(
+        log_val_00 < MAX_LOG_SAFE, np.exp(log_val_00), 0
+    ) / sig_muscle_rho
+
+    # B[1,0] = sqrt(sig_z/sig_rho) * In_tilde_am * Kn_Rm
+    log_val_10 = log_In_tilde_am_b + log_Kn_Rm
+    B[..., 1, 0] = math.sqrt(sig_muscle_z / sig_muscle_rho) * np.where(
+        log_val_10 < MAX_LOG_SAFE, np.exp(log_val_10), 0
+    )
+
+    # B[2,0] = -Kn_bm * In_Rm / sig_muscle_rho
+    log_val_20 = log_Kn_bm_b + log_In_Rm
+    B[..., 2, 0] = -np.where(
+        log_val_20 < MAX_LOG_SAFE, np.exp(log_val_20), 0
+    ) / sig_muscle_rho
+
+    # B[3,0] = sqrt(sig_z/sig_rho) * Kn_tilde_bm * In_Rm
+    log_val_30 = log_Kn_tilde_bm_b + log_In_Rm
+    B[..., 3, 0] = math.sqrt(sig_muscle_z / sig_muscle_rho) * np.where(
+        log_val_30 < MAX_LOG_SAFE, np.exp(log_val_30), 0
+    )
+
+    B[np.isinf(B)] = 0
+    B[np.isnan(B)] = 0
+
+    # --- Solve the linear system ---
+    A_flat = A_mat.reshape(-1, 7, 7)
+    B_flat = B.reshape(-1, 7, 1)
+
+    if r_bone == 0:
+        A_flat = A_flat[..., 2:, 2:]
+        B_flat = B_flat[..., 2:, :]
+        X = np.linalg.solve(A_flat, B_flat)
+        X = X.reshape(n_theta_u, n_z_u, 5, 1)
+        H_vc_unique = X[..., 3, 0] + X[..., 4, 0]  # shape: (n_kt_unique, n_kz_nz)
+    else:
+        X = np.linalg.solve(A_flat, B_flat)
+        X = X.reshape(n_theta_u, n_z_u, 7, 1)
+        H_vc_unique = X[..., 5, 0] + X[..., 6, 0]
+
+    # Map unique H_vc back to the full (kz, ktheta) grid.
+    # H_vc is even in both kz and ktheta, so H_vc(kz, ktheta) = H_vc(|kz|, |ktheta|).
+    # Build lookup: for each (i_kz, j_kt) in the full grid, find the index into
+    # the unique arrays.
+    kz_unique_all = np.concatenate(([0.0], kz_unique_nz))  # prepend DC
+    # H_vc at DC is 0
+    H_vc_with_dc = np.zeros((len(kt_unique), len(kz_unique_all)))
+    H_vc_with_dc[:, 1:] = H_vc_unique  # DC column stays 0
+
+    # Index maps: for each entry in k_z, find position in kz_unique_all
+    kz_idx = np.searchsorted(kz_unique_all, kz_abs)
+    kt_idx = np.searchsorted(kt_unique, kt_abs)
+
+    # Build full H_vc array: shape (len(k_z), len(k_theta))
+    H_vc = H_vc_with_dc[kt_idx, :][:, kz_idx].T  # transpose to (n_kz, n_kt)
+
+    # =========================================================================
+    # Section 4: H_ele(kz, k_theta)  — Electrode transfer function
+    # =========================================================================
+    ktheta_mesh, kz_mesh = np.meshgrid(k_theta, k_z)
+
+    H_sf = electrode_array.get_H_sf(ktheta_mesh, kz_mesh)
+
+    # Electrode size effect (circular electrode)
+    arg = np.sqrt((rele * ktheta_mesh / r) ** 2 + (rele * kz_mesh) ** 2)
+    H_size = 2 * np.divide(Jn(1, arg), arg)
+    H_size[np.isnan(H_size)] = 1.0  # Jn(1,0)/0 -> 0.5, so 2*0.5 = 1
+
+    H_ele = np.multiply(H_sf, H_size)
+
+    # =========================================================================
+    # Section 5: B(kz) — Angular integration
+    # =========================================================================
+    H_glo = np.multiply(H_vc, H_ele)
+
+    k_theta_diff = k_theta[1] - k_theta[0]
+
+    B_kz = np.zeros((channels[0], channels[1], len(k_z)))
+    for ch_z in range(channels[0]):
+        for ch_theta in range(channels[1]):
+            integrand = np.multiply(
+                H_glo,
+                np.exp(1j * pos_theta_rad[ch_z, ch_theta] * ktheta_mesh)
+                * k_theta_diff,
+            )
+            B_kz[ch_z, ch_theta, :] = np.sum(integrand, axis=1).real / (2 * math.pi)
+
+    # =========================================================================
+    # Section 6: IFFT B(kz) -> b(z)
+    # =========================================================================
+    # B_kz is in the fftshift convention (DC in center). Un-shift before IFFT.
+    b_z = np.zeros((channels[0], channels[1], Nz))
+    for ch_z in range(channels[0]):
+        for ch_theta in range(channels[1]):
+            B_kz_unshifted = np.fft.ifftshift(B_kz[ch_z, ch_theta, :])
+            ifft_result = np.fft.ifft(B_kz_unshifted)
+            assert np.allclose(ifft_result.imag, 0, atol=1e-10), (
+                f"IFFT result has non-negligible imaginary part "
+                f"(max |imag| = {np.max(np.abs(ifft_result.imag)):.2e})"
+            )
+            b_z[ch_z, ch_theta, :] = ifft_result.real
+
+    return b_z, A_matrix
