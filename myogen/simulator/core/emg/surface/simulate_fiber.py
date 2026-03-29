@@ -729,7 +729,12 @@ def _simulate_fiber_v2_python(
 
     # Solve the linear system
     if r_bone == 0:
-        A_flat = A_flat[..., 2:, 2:]
+        # When no bone, muscle is the innermost layer. Kn diverges at rho=0,
+        # so B2 (Kn_muscle coefficient, column 2) must be zero.
+        # Keep columns [1,3,4,5,6] = [In_muscle, In_fat, Kn_fat, In_skin, Kn_skin]
+        # Remove rows 0,1 (bone boundary conditions) and column 0 (bone) and 2 (Kn_muscle)
+        keep_cols = [1, 3, 4, 5, 6]
+        A_flat = A_flat[..., 2:, keep_cols]
         B_flat = B_flat[..., 2:, :]
 
         # Check condition number of a few matrices

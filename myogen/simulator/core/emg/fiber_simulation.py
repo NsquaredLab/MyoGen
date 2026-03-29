@@ -365,7 +365,10 @@ def compute_surface_kernel(
     B_flat = B.reshape(-1, 7, 1)
 
     if r_bone == 0:
-        A_flat = A_flat[..., 2:, 2:]
+        # When no bone, muscle is innermost layer. Kn diverges at rho=0,
+        # so B2 (col 2) must be zero. Keep cols [1,3,4,5,6].
+        keep_cols = [1, 3, 4, 5, 6]
+        A_flat = A_flat[..., 2:, keep_cols]
         B_flat = B_flat[..., 2:, :]
         X = np.linalg.solve(A_flat, B_flat)
         X = X.reshape(n_theta_u, n_z_u, 5, 1)
