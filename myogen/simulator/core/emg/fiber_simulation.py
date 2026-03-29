@@ -17,5 +17,26 @@ import numpy as np
 
 
 def rosenfalck_dVm_dz(z: np.ndarray, D1: float = 96.0) -> np.ndarray:
-    """Placeholder."""
-    raise NotImplementedError
+    """
+    First spatial derivative of the Rosenfalck transmembrane potential.
+
+    Computes dVm/dz = D1 * (3z^2 - z^3) * exp(-z) for z > 0, else 0.
+    z is in physical millimeters with no artificial scaling.
+
+    Parameters
+    ----------
+    z : np.ndarray
+        Spatial coordinates along fiber in mm.
+    D1 : float, default=96.0
+        Amplitude parameter in mV/mm^3 (Rosenfalck 1969).
+
+    Returns
+    -------
+    np.ndarray
+        First derivative of transmembrane potential (mV/mm).
+    """
+    result = np.zeros_like(z, dtype=np.float64)
+    pos = z > 0
+    zp = z[pos]
+    result[pos] = D1 * (3.0 * zp**2 - zp**3) * np.exp(-zp)
+    return result
