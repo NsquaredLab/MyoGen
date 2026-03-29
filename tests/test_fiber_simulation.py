@@ -55,3 +55,44 @@ class TestRosenfalckDVmDz:
         unified = rosenfalck_dVm_dz(z, D1=96.0)
         existing = get_tm_current_dz(z, D1=96.0)
         np.testing.assert_allclose(unified, existing, rtol=1e-12)
+
+
+from myogen.simulator.core.emg.fiber_simulation import compute_intramuscular_kernel
+
+
+class TestComputeIntramuscularKernel:
+    """Tests for the simple Green's function kernel."""
+
+    def test_returns_correct_shape(self):
+        z_grid = np.linspace(-30, 30, 200)
+        electrode_z = np.array([0.0, 5.0, 10.0])
+        b_z = compute_intramuscular_kernel(z_grid, electrode_z, r=1.0)
+        assert b_z.shape == (3, 200)
+
+    def test_peaks_at_electrode_position(self):
+        z_grid = np.linspace(-30, 30, 1000)
+        electrode_z = np.array([5.0])
+        b_z = compute_intramuscular_kernel(z_grid, electrode_z, r=1.0)
+        peak_z = z_grid[np.argmax(b_z[0])]
+        assert abs(peak_z - 5.0) < 0.1
+
+    def test_decays_with_distance(self):
+        z_grid = np.linspace(-30, 30, 1000)
+        electrode_z = np.array([0.0])
+        b_z = compute_intramuscular_kernel(z_grid, electrode_z, r=1.0)
+        center = len(z_grid) // 2
+        assert b_z[0, center] > b_z[0, 0]
+        assert b_z[0, center] > b_z[0, -1]
+
+    def test_matches_existing_function(self):
+        """Must match bioelectric.get_elementary_current_response."""
+        from myogen.simulator.core.emg.intramuscular.bioelectric import (
+            get_elementary_current_response,
+        )
+        z_grid = np.linspace(-30, 30, 200)
+        z_elec = 5.0
+        r = 2.0
+        r_arr = np.full_like(z_grid, r)
+        unified = compute_intramuscular_kernel(z_grid, np.array([z_elec]), r=r)
+        existing = get_elementary_current_response(z_grid, z_elec, r_arr)
+        np.testing.assert_allclose(unified[0], existing, rtol=1e-10)
