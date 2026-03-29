@@ -119,6 +119,7 @@ class SurfaceEMG:
         MUs_to_simulate: list[int] | None = None,
         internal_sampling_frequency__Hz: Quantity__Hz | None = None,
         iap_kernel_length__mm: float | None = None,
+        use_unified: bool = False,
     ):
         # Immutable public arguments - never modify these
         self.muscle_model = muscle_model
@@ -128,6 +129,7 @@ class SurfaceEMG:
         self.sampling_points_in_theta_domain = sampling_points_in_theta_domain
         self.MUs_to_simulate = MUs_to_simulate
         self.iap_kernel_length__mm = iap_kernel_length__mm
+        self._use_unified = use_unified
 
         # Internal sampling frequency for higher resolution MUAP computation
         # If not specified, defaults to 10 kHz for better MUAP resolution
@@ -353,6 +355,10 @@ class SurfaceEMG:
                 A_matrix = None
                 B_incomplete = None
 
+                # Unified path cache variables
+                A_matrix_unified = None
+                b_z_cached = None
+
                 # Pre-compute base electrode positions ONCE (avoid per-fiber grid recomputation)
                 import quantities as pq
                 base_pos_z = electrode_array.pos_z.rescale(pq.mm).magnitude.copy()
@@ -397,35 +403,78 @@ class SurfaceEMG:
                     L1 = abs(innervation_zone + fiber_length__mm / 2)
                     L2 = abs(innervation_zone - fiber_length__mm / 2)
 
-                    # Use the new simulate_fiber_v2 function with INTERNAL sampling frequency
-                    # Call Python implementation directly (skip dispatcher overhead)
-                    phi_temp, A_matrix, B_incomplete = _simulate_fiber_v2_python(
-                        Fs=Fs_internal,
-                        v=v_conduction,
-                        N=N_internal,
-                        M=M_theta,
-                        r=r_total,
-                        r_bone=r_bone,
-                        th_fat=th_fat,
-                        th_skin=th_skin,
-                        R=R,
-                        L1=L1,
-                        L2=L2,
-                        zi=innervation_zone,
-                        electrode_array=electrode_array,
-                        sig_muscle_rho=sig_rho,
-                        sig_muscle_z=sig_z,
-                        sig_fat=sig_fat_val,
-                        sig_skin=sig_skin_val,
-                        fiber_length__mm=kernel_length,
-                        A_matrix=None if fiber_number == 0 else A_matrix,
-                        B_incomplete=None if fiber_number == 0 else B_incomplete,
-                        use_gpu=False,
-                        theta_offset=-theta,
-                        pos_z_precomputed=base_pos_z,
-                        pos_theta_precomputed=base_pos_theta,
-                        rele_precomputed=base_rele,
-                    )
+                    if self._use_unified:
+                        from myogen.simulator.core.emg.fiber_simulation import (
+                            compute_surface_kernel,
+                            simulate_fiber_unified,
+                        )
+
+                        # Compute spatial kernel (z_grid independent of N/Fs)
+                        z_kernel = np.linspace(-60, 60, N_internal)
+                        k_theta_unified = np.arange(-(M_theta - 1) / 2, (M_theta - 1) / 2 + 1)
+
+                        # compute_surface_kernel returns (b_z, A_matrix) — 2-tuple
+                        if fiber_number == 0:
+                            b_z_cached, A_matrix_unified = compute_surface_kernel(
+                                z_grid=z_kernel, k_theta=k_theta_unified, R=R,
+                                electrode_array=electrode_array,
+                                r=r_total, r_bone=r_bone, th_fat=th_fat, th_skin=th_skin,
+                                sig_muscle_rho=sig_rho, sig_muscle_z=sig_z,
+                                sig_fat=sig_fat_val, sig_skin=sig_skin_val,
+                            )
+                        else:
+                            b_z_cached, A_matrix_unified = compute_surface_kernel(
+                                z_grid=z_kernel, k_theta=k_theta_unified, R=R,
+                                electrode_array=electrode_array,
+                                r=r_total, r_bone=r_bone, th_fat=th_fat, th_skin=th_skin,
+                                sig_muscle_rho=sig_rho, sig_muscle_z=sig_z,
+                                sig_fat=sig_fat_val, sig_skin=sig_skin_val,
+                                A_matrix=A_matrix_unified,
+                            )
+
+                        # Flatten electrode positions for unified API
+                        elec_z = base_pos_z.flatten()
+                        n_rows_e = electrode_array.num_rows
+                        n_cols_e = electrode_array.num_cols
+                        duration = kernel_length / v_conduction  # ms
+
+                        phi_temp = simulate_fiber_unified(
+                            v=v_conduction, L1=L1, L2=L2, zi=innervation_zone,
+                            b_z=b_z_cached.reshape(-1, len(z_kernel)),
+                            z_kernel=z_kernel, electrode_z=elec_z,
+                            Fs=Fs_internal, duration_ms=duration,
+                        )
+                        # Reshape to (n_rows, n_cols, n_t) to match old path output
+                        phi_temp = phi_temp.reshape(n_rows_e, n_cols_e, -1)
+                    else:
+                        # Existing frequency-domain path (unchanged)
+                        phi_temp, A_matrix, B_incomplete = _simulate_fiber_v2_python(
+                            Fs=Fs_internal,
+                            v=v_conduction,
+                            N=N_internal,
+                            M=M_theta,
+                            r=r_total,
+                            r_bone=r_bone,
+                            th_fat=th_fat,
+                            th_skin=th_skin,
+                            R=R,
+                            L1=L1,
+                            L2=L2,
+                            zi=innervation_zone,
+                            electrode_array=electrode_array,
+                            sig_muscle_rho=sig_rho,
+                            sig_muscle_z=sig_z,
+                            sig_fat=sig_fat_val,
+                            sig_skin=sig_skin_val,
+                            fiber_length__mm=kernel_length,
+                            A_matrix=None if fiber_number == 0 else A_matrix,
+                            B_incomplete=None if fiber_number == 0 else B_incomplete,
+                            use_gpu=False,
+                            theta_offset=-theta,
+                            pos_z_precomputed=base_pos_z,
+                            pos_theta_precomputed=base_pos_theta,
+                            rele_precomputed=base_rele,
+                        )
 
                     array_result_internal += phi_temp
 

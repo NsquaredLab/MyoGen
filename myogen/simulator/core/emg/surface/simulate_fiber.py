@@ -366,7 +366,7 @@ def _simulate_fiber_v2_python(
     # Rosenfalck (1969) intracellular action potential spatial distribution
     # As used in Farina & Merletti (2001), equation 16
     # IMPORTANT: This matches the original Farina implementation exactly (no normalization)
-    A = 96 // 10  # mV/mm^3 (amplitude parameter from Farina 2001, eq 16)
+    A = 96 / 10  # mV/mm^3 (amplitude parameter from Farina 2001, eq 16)
 
     # Define spatial grid for IAP kernel evaluation
     if fiber_length__mm is None:

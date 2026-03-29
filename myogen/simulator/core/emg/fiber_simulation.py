@@ -438,3 +438,175 @@ def compute_surface_kernel(
             b_z[ch_z, ch_theta, :] = ifft_result.real
 
     return b_z, A_matrix
+
+
+def simulate_fiber_unified(
+    v: float,
+    L1: float,
+    L2: float,
+    zi: float,
+    b_z: np.ndarray,
+    z_kernel: np.ndarray,
+    electrode_z: np.ndarray,
+    Fs: float,
+    duration_ms: float,
+    D1: float = 96.0,
+) -> np.ndarray:
+    """
+    Simulate electrode potentials from a single fiber using traveling-wave convolution.
+
+    The IAP is modeled as a traveling wave dVm/dz(z - vt) propagating in both
+    directions from the endplate.  The electrode potential is computed via
+    cross-correlation of the source current with the volume conductor kernel.
+
+    Parameters
+    ----------
+    v : float
+        Conduction velocity in mm/ms.
+    L1 : float
+        Semi-length from endplate to the right tendon in mm.
+    L2 : float
+        Semi-length from endplate to the left tendon in mm.
+    zi : float
+        Endplate offset from electrode center in mm.
+    b_z : np.ndarray
+        Volume conductor kernel, shape (n_channels, Nz).
+    z_kernel : np.ndarray
+        Spatial grid for the kernel in mm, shape (Nz,).
+    electrode_z : np.ndarray
+        Electrode z-positions in mm, shape (n_channels,).
+    Fs : float
+        Output sampling frequency in kHz.
+    duration_ms : float
+        Signal duration in ms.
+    D1 : float, optional
+        Rosenfalck amplitude parameter, default 96.0.
+
+    Returns
+    -------
+    np.ndarray
+        Electrode potentials, shape (n_channels, n_timepoints).
+    """
+    from scipy.interpolate import interp1d
+
+    n_channels = b_z.shape[0]
+    Nz = len(z_kernel)
+    dz = z_kernel[1] - z_kernel[0]
+    n_samples = int(duration_ms * Fs)
+    t = np.arange(n_samples) / Fs  # time in ms
+
+    # Rosenfalck spatial extent (effectively zero beyond ~10 mm)
+    W = 10.0
+
+    # Compute the source: dVm/dz on the kernel grid
+    source = rosenfalck_dVm_dz(z_kernel, D1)
+
+    # Output array
+    phi = np.zeros((n_channels, n_samples))
+
+    for ch in range(n_channels):
+        kernel_ch = b_z[ch]
+
+        # Cross-correlate source with kernel: h(s) = sum_u source(u) * kernel(u + s)
+        # np.correlate(source, kernel, 'full') gives cross-correlation
+        # Result length: 2*Nz - 1
+        h = np.correlate(source, kernel_ch, mode='full') * dz
+        # The s-axis for the correlate result spans [-(Nz-1)*dz, (Nz-1)*dz]
+        n_h = len(h)
+        s_axis = np.linspace(-(Nz - 1) * dz, (Nz - 1) * dz, n_h)
+
+        # Build interpolator for h(s), zero outside range
+        h_interp = interp1d(s_axis, h, kind='linear', bounds_error=False, fill_value=0.0)
+
+        z0 = electrode_z[ch]
+
+        # ---- Rightward wave (propagates toward right tendon) ----
+        # s_right(t) = zi + v*t - z0
+        # Propagating phase: 0 < v*t < L1 - W  (source fully inside fiber)
+        # Extinction phase:  L1 - W < v*t < L1 + W  (source partially outside)
+        # Post-extinction:   v*t > L1 + W  (source fully exited)
+        phi_right = np.zeros(n_samples)
+
+        vt = v * t
+        s_right = zi + vt - z0
+
+        # Phase boundaries for rightward wave
+        prop_end_right = max(L1 - W, 0.0)
+        ext_end_right = L1 + W
+
+        # Masks for each phase
+        mask_prop_right = vt <= prop_end_right
+        mask_ext_right = (vt > prop_end_right) & (vt <= ext_end_right)
+        # post-extinction: phi = 0, already initialized
+
+        # Propagating phase: just sample h(s)
+        if np.any(mask_prop_right):
+            phi_right[mask_prop_right] = h_interp(s_right[mask_prop_right])
+
+        # Extinction phase: truncated spatial integral
+        # The source extends from position (vt) to (vt + W) relative to endplate,
+        # but the fiber ends at L1. So we integrate from 0 to (L1 - vt) in source coords.
+        if np.any(mask_ext_right):
+            ext_indices = np.where(mask_ext_right)[0]
+            for idx in ext_indices:
+                # Truncation: fiber ends at L1, source starts at vt from endplate
+                # In source coordinate u, the valid range is [0, L1 - vt[idx]]
+                # but source is nonzero only for u in [0, W]
+                trunc_len = L1 - vt[idx]
+                if trunc_len <= 0:
+                    continue
+                # Integration grid in source coordinate u
+                u_max = min(trunc_len, W)
+                n_int = max(int(u_max / dz), 2)
+                u_int = np.linspace(0, u_max, n_int)
+                du = u_int[1] - u_int[0]
+                src_vals = rosenfalck_dVm_dz(u_int, D1)
+                # kernel evaluated at (u + zi + vt[idx] - z0) relative to z_kernel
+                kernel_pos = u_int + zi + vt[idx] - z0
+                # Interpolate kernel from z_kernel
+                kernel_interp = interp1d(z_kernel, kernel_ch, kind='linear',
+                                         bounds_error=False, fill_value=0.0)
+                kernel_vals = kernel_interp(kernel_pos)
+                phi_right[idx] = np.trapz(src_vals * kernel_vals, dx=du)
+
+        # ---- Leftward wave (propagates toward left tendon) ----
+        # s_left(t) = -zi - v*t + z0  (flipped direction)
+        phi_left = np.zeros(n_samples)
+
+        s_left = -zi - vt + z0
+
+        # Phase boundaries for leftward wave
+        prop_end_left = max(L2 - W, 0.0)
+        ext_end_left = L2 + W
+
+        mask_prop_left = vt <= prop_end_left
+        mask_ext_left = (vt > prop_end_left) & (vt <= ext_end_left)
+
+        # Propagating phase
+        if np.any(mask_prop_left):
+            phi_left[mask_prop_left] = h_interp(s_left[mask_prop_left])
+
+        # Extinction phase for leftward wave
+        if np.any(mask_ext_left):
+            ext_indices = np.where(mask_ext_left)[0]
+            for idx in ext_indices:
+                trunc_len = L2 - vt[idx]
+                if trunc_len <= 0:
+                    continue
+                u_max = min(trunc_len, W)
+                n_int = max(int(u_max / dz), 2)
+                u_int = np.linspace(0, u_max, n_int)
+                du = u_int[1] - u_int[0]
+                src_vals = rosenfalck_dVm_dz(u_int, D1)
+                # For leftward wave, kernel position is flipped:
+                # kernel at (-u - zi - vt[idx] + z0) = -(u + zi + vt[idx]) + z0
+                kernel_pos = -u_int - zi - vt[idx] + z0
+                kernel_interp = interp1d(z_kernel, kernel_ch, kind='linear',
+                                         bounds_error=False, fill_value=0.0)
+                kernel_vals = kernel_interp(kernel_pos)
+                phi_left[idx] = np.trapz(src_vals * kernel_vals, dx=du)
+
+        # Total: rightward minus leftward
+        phi[ch] = phi_right - phi_left
+
+    return phi
