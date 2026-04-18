@@ -71,8 +71,12 @@ possibly-unbound-import = "ignore"
 dev = [
     "pandas-stubs>=2.3.0.250703",
     "poethepoet>=0.37.0",
+    "pytest>=8.0",
     "scipy-stubs>=1.16.1.0",
 ]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
 docs = [
     "enum-tools[sphinx]>=0.12.0",
     "linkify-it-py>=2.0.3",

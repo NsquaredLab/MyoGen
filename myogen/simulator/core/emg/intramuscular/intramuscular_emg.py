@@ -26,7 +26,7 @@ from joblib import Parallel, delayed
 from neo import AnalogSignal, Block, Segment
 from tqdm import tqdm
 
-from myogen import RANDOM_GENERATOR
+from myogen import get_random_generator
 from myogen.simulator.core.emg.electrodes import IntramuscularElectrodeArray
 from myogen.simulator.core.muscle import Muscle
 from myogen.utils.decorators import beartowertype
@@ -825,7 +825,7 @@ class IntramuscularEMG:
             # Generate noise
             if noise_type.lower() == "gaussian":
                 # Generate standard normal noise, then scale per channel
-                noise = RANDOM_GENERATOR.normal(loc=0.0, scale=1.0, size=emg_array.shape)
+                noise = get_random_generator().normal(loc=0.0, scale=1.0, size=emg_array.shape)
                 # Broadcast noise_std_per_channel along time axis
                 # noise shape: (time, n_electrodes)
                 # noise_std_per_channel shape: (n_electrodes,)

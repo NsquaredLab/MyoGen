@@ -12,7 +12,7 @@ from sklearn.neighbors import NearestNeighbors
 from tqdm import tqdm
 import quantities as pq
 
-from myogen import RANDOM_GENERATOR
+from myogen import get_random_generator
 from myogen.utils.types import (
     RECRUITMENT_THRESHOLDS__ARRAY,
     Quantity__S_per_m,
@@ -317,7 +317,7 @@ class Muscle:
         std_diameter__mm = 15e-3  # mm (15 um)
 
         self._muscle_fiber_diameters__mm = (
-            RANDOM_GENERATOR.lognormal(mean=np.log(mean_diameter__mm), sigma=0.3, size=n_fibers)
+            get_random_generator().lognormal(mean=np.log(mean_diameter__mm), sigma=0.3, size=n_fibers)
             * pq.mm
         )
 
@@ -334,7 +334,7 @@ class Muscle:
 
         # Add some biological variability
         cv_base = k * self._muscle_fiber_diameters__mm + c
-        cv_noise = RANDOM_GENERATOR.normal(0, 0.2, n_fibers) * pq.m / pq.s  # 20% CV variation
+        cv_noise = get_random_generator().normal(0, 0.2, n_fibers) * pq.m / pq.s  # 20% CV variation
 
         self._muscle_fiber_conduction_velocities__mm_per_s = cv_base + cv_noise
 
@@ -717,7 +717,7 @@ class Muscle:
 
         # Assignment procedure
         self._assignment = np.full(self._number_of_muscle_fibers, np.nan)
-        randomized_mf = RANDOM_GENERATOR.permutation(self._number_of_muscle_fibers)
+        randomized_mf = get_random_generator().permutation(self._number_of_muscle_fibers)
 
         for mf in tqdm(randomized_mf, desc="Assigning muscle fibers to motor neurons", unit="MF", disable=not verbose):
             # Vectorized computation of likelihoods for all motor units
@@ -753,7 +753,7 @@ class Muscle:
                 probs = np.ones(self._number_of_neurons) / self._number_of_neurons
 
             # Sample from the probability distribution (equivalent to MATLAB's randsample)
-            self._assignment[mf] = RANDOM_GENERATOR.choice(self._number_of_neurons, p=probs)
+            self._assignment[mf] = get_random_generator().choice(self._number_of_neurons, p=probs)
 
         if verbose:
             print(f"Assignment completed. {self._number_of_muscle_fibers} muscle fibers assigned.")

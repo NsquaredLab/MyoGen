@@ -15,7 +15,7 @@ from scipy.spatial.distance import cdist
 from sklearn.cluster import KMeans
 from tqdm import tqdm
 
-from myogen import RANDOM_GENERATOR, SEED
+from myogen import get_random_generator, get_random_seed
 from myogen.utils.decorators import beartowertype
 from .bioelectric import (
     get_current_density,
@@ -131,14 +131,14 @@ class MotorUnitSim:
         arborization_z_std : float
             Standard deviation of secondary arborization in mm
         """
-        rng = RANDOM_GENERATOR
+        rng = get_random_generator()
 
         self.nerve_paths = np.zeros(
             (self._number_of_muscle_fibers, 2)
         )  # Point coordinates
 
         kmeans = KMeans(
-            n_clusters=n_branches, init="k-means++", max_iter=100, random_state=SEED
+            n_clusters=n_branches, init="k-means++", max_iter=100, random_state=get_random_seed()
         )
         idx = kmeans.fit_predict(self.muscle_fiber_centers__mm)
         c = kmeans.cluster_centers_
@@ -197,7 +197,7 @@ class MotorUnitSim:
         branches_z_std : float
             Standard deviation of NMJ distribution in mm
         """
-        rng = RANDOM_GENERATOR
+        rng = get_random_generator()
         self.nmj_z = rng.normal(endplate_center, branches_z_std, self.Nmf)
 
         # Simplified nerve paths (single segment)
@@ -408,7 +408,7 @@ class MotorUnitSim:
             raise ValueError("_dt not set - call calc_sfaps() first")
 
         if jitter_std != 0:
-            delays = jitter_std * RANDOM_GENERATOR.standard_normal(
+            delays = jitter_std * get_random_generator().standard_normal(
                 size=(self._number_of_muscle_fibers, 1)
             )
             jittered_sfaps = np.zeros_like(self.sfaps)
