@@ -76,9 +76,6 @@ dev = [
     "pytest>=8.0",
     "scipy-stubs>=1.16.1.0",
 ]
-
-[tool.pytest.ini_options]
-testpaths = ["tests"]
 docs = [
     "enum-tools[sphinx]>=0.12.0",
     "linkify-it-py>=2.0.3",
@@ -98,6 +95,9 @@ docs = [
     "pynwb>=2.8.0",
     "nwbinspector>=0.5.0",
 ]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
 
 [tool.poe.tasks]
 setup_myogen = "python -c 'from myogen import _setup_myogen; _setup_myogen()'"
