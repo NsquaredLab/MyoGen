@@ -428,9 +428,26 @@ for i, st in enumerate(mn_segment.spiketrains):
         mu_ids.append(i)
 
 if firing_rates:
-    axes[2].bar(mu_ids, firing_rates, alpha=0.7)
-    axes[2].axhline(fr_mean, linestyle="--", label=f"Mean = {fr_mean:.1f} Hz")
-    axes[2].set_xlabel("Motor Unit ID")
+    # Distribution plot with all data points (Editor 8): violin shell for
+    # the density, box-and-whisker for the quartiles, jittered points for
+    # every active motor unit.
+    fr_array = np.asarray(firing_rates)
+    fr_sd = float(np.std(fr_array, ddof=1)) if fr_array.size > 1 else 0.0
+    if fr_array.size >= 10:
+        axes[2].violinplot(
+            fr_array, positions=[0], widths=0.7, showmeans=False, showmedians=False
+        )
+        axes[2].boxplot(
+            fr_array, positions=[0], widths=0.3, showfliers=False
+        )
+    jitter = np.random.default_rng(0).uniform(-0.15, 0.15, size=fr_array.size)
+    axes[2].scatter(jitter, fr_array, alpha=0.6, s=18, zorder=3)
+    axes[2].axhline(
+        fr_mean, linestyle="--", label=f"Mean = {fr_mean:.1f} Hz (SD = {fr_sd:.1f} Hz)"
+    )
+    axes[2].set_xticks([0])
+    axes[2].set_xticklabels([f"n = {fr_array.size}"])
+    axes[2].set_xlabel("Motor Units")
     axes[2].set_ylabel("Firing Rate (Hz)")
     axes[2].set_title("Firing Rate Distribution")
     axes[2].legend(framealpha=1.0, edgecolor="none")
