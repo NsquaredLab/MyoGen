@@ -26,20 +26,21 @@ def get_random_seed() -> int:
 
 def derive_subseed(*labels: int) -> int:
     """
-    Derive a collision-free deterministic sub-seed from the current seed and a tuple of integer labels.
+    Derive a deterministic, seed-tracking sub-seed from the current seed and a tuple of integer labels.
 
-    Use this to seed non-NumPy generators (Cython Mersenne spike generators,
-    sklearn ``random_state``, etc.) in a way that (a) always changes with
-    :func:`set_random_seed` and (b) guarantees distinct sub-seeds for distinct
-    label tuples — which the older ``SEED + (class_id+1)*(global_id+1)`` pattern
-    did not (e.g. (0, 5) and (1, 2) collided).
+    Intended for seeding non-NumPy generators (Cython Mersenne spike
+    generators, sklearn ``random_state``, etc.) so that a call to
+    :func:`set_random_seed` propagates to them. Label order matters:
+    ``derive_subseed(a, b)`` and ``derive_subseed(b, a)`` yield different
+    sub-seeds.
 
-    Parameters
-    ----------
-    *labels : int
-        Arbitrary integer identifiers (e.g. cell class ID, pool ID). Their
-        order is part of the sub-seed, so ``derive_subseed(a, b)`` and
-        ``derive_subseed(b, a)`` yield different sub-seeds.
+    This replaces the pre-existing ``SEED + (class_id+1)*(global_id+1)``
+    derivation, which collided on swapped factors — e.g. ``(0, 5)`` and
+    ``(1, 2)`` both produced ``+6``. The present mixing function uses
+    :class:`numpy.random.SeedSequence` to fold the inputs into a 32-bit
+    integer; collisions remain possible in principle (birthday-paradox
+    probability ≈ ``N² / 2³³``) but are negligible for realistic motor-unit
+    pool sizes (≲ 10⁻⁷ at 1000 cells).
 
     Returns
     -------

@@ -98,16 +98,19 @@ def test_deprecated_SEED_emits_warning_and_returns_current_seed():
     assert seed_via_deprecated == 5150
 
 
-def test_derive_subseed_is_collision_free_for_distinct_labels():
-    """Regression for the earlier ``SEED + (a+1)*(b+1)`` collision — e.g. (0, 5) and (1, 2) both map to +6."""
+def test_derive_subseed_avoids_old_collision_pattern():
+    """Regression for the earlier ``SEED + (a+1)*(b+1)`` collision: (0, 5) and (1, 2) both produced +6. The new SeedSequence-based mixing is uint32 and therefore not literally collision-free, but it must not reproduce the swapped-factor collision, and a 16x16 grid must be collision-free in practice."""
     set_random_seed(42)
+    assert myogen.derive_subseed(0, 5) != myogen.derive_subseed(1, 2)
+    assert myogen.derive_subseed(1, 2) != myogen.derive_subseed(2, 1)
+
     subseeds = {
         (a, b): myogen.derive_subseed(a, b)
-        for a in range(8)
-        for b in range(8)
+        for a in range(16)
+        for b in range(16)
     }
     assert len(set(subseeds.values())) == len(subseeds), (
-        "derive_subseed must yield a unique value for every distinct label tuple"
+        "derive_subseed must yield a unique value across a 16x16 label grid"
     )
 
 
