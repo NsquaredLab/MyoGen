@@ -526,6 +526,128 @@ def plot_cv_vs_fr_multi_muscle(all_muscle_data, exp_data):
     return fig, ax
 
 
+def plot_cv_vs_fr_per_muscle(all_muscle_data, exp_data, muscles=("VL", "VM", "FDI")):
+    """
+    Per-muscle supplementary figure in response to R3 Major 4.
+
+    The main Figure 4B pools experimental data across VL, VM and FDI into
+    a single axis so the simulation overlay can be compared against the
+    envelope of all three muscles at once. The reviewer asked for a
+    companion view that separates the three muscles, enabling a fair
+    per-muscle comparison against the simulation. Each panel therefore
+    shows a single muscle's experimental envelope (convex hull + scatter)
+    and repeats the full simulation overlay so readers can judge how well
+    the simulation matches each individual muscle.
+
+    Parameters
+    ----------
+    all_muscle_data : dict
+        Nested ``{simulated_muscle_type: {force_level: DataFrame}}`` — the
+        same structure consumed by :func:`plot_cv_vs_fr_multi_muscle`.
+    exp_data : pd.DataFrame
+        Experimental ISI statistics with at least ``Muscle``, ``ISI CV``
+        and ``FR mean`` columns.
+    muscles : sequence of str, optional
+        Experimental muscles to plot, one per panel.
+
+    Returns
+    -------
+    tuple
+        ``(fig, axes)`` where ``axes`` is a 1-D array of Axes, one per muscle.
+    """
+    n_panels = len(muscles)
+    fig, axes = plt.subplots(
+        1, n_panels, figsize=(5.5 * n_panels, 6), sharex=True, sharey=True
+    )
+    if n_panels == 1:
+        axes = np.array([axes])
+
+    # Same force markers across all panels so they can be compared directly.
+    all_force_levels = set()
+    for muscle_data in all_muscle_data.values():
+        all_force_levels.update(muscle_data.keys())
+    force_markers = generate_force_markers(all_force_levels)
+
+    for ax, muscle in zip(axes, muscles):
+        # 1. Experimental envelope for this muscle only.
+        if exp_data is not None:
+            muscle_rows = exp_data[exp_data["Muscle"] == muscle]
+            cv_data = muscle_rows["ISI CV"].values
+            fr_data = muscle_rows["FR mean"].values
+
+            if len(cv_data) > 2:
+                points = np.column_stack([cv_data, fr_data])
+                try:
+                    hull = ConvexHull(points)
+                    polygon = Polygon(
+                        points[hull.vertices],
+                        facecolor=EXP_COLORS.get(muscle, "#808080"),
+                        alpha=0.25,
+                        edgecolor=EXP_COLORS.get(muscle, "#808080"),
+                        linewidth=1.5,
+                        linestyle="-",
+                        zorder=0,
+                    )
+                    ax.add_patch(polygon)
+                except Exception:
+                    pass
+
+            ax.scatter(
+                cv_data,
+                fr_data,
+                s=20,
+                alpha=1.0,
+                color=EXP_COLORS.get(muscle, "#808080"),
+                edgecolors="white",
+                linewidth=0.5,
+                marker="x",
+                zorder=1,
+                label=f"Experimental {muscle}",
+            )
+
+        # 2. Full simulation overlay repeated on every panel so the
+        # simulation-vs-muscle comparison is panel-local.
+        for muscle_type in sorted(all_muscle_data.keys()):
+            muscle_data = all_muscle_data[muscle_type]
+            short_muscle = muscle_type.split("_")[0]
+            colormap_name = MUSCLE_COLORMAPS.get(short_muscle, "Greys")
+
+            for force_level in sorted(muscle_data.keys()):
+                df = muscle_data[force_level]
+                recruitment_order = (
+                    df["MU_ID"].values if "MU_ID" in df.columns else np.arange(len(df))
+                )
+                colors = get_muscle_colors(recruitment_order, colormap_name)
+                marker = force_markers.get(force_level, "o")
+                ax.scatter(
+                    df["CV_ISI"],
+                    df["mean_firing_rate_Hz"],
+                    s=40,
+                    alpha=0.8,
+                    c=colors,
+                    edgecolors="black",
+                    linewidth=0.5,
+                    marker=marker,
+                    zorder=2,
+                )
+
+        ax.set_xlabel("Coefficient of Variation (CV)", fontsize=12)
+        ax.set_title(muscle, fontsize=14)
+        ax.set_xlim(0, 0.5)
+        ax.set_ylim(4, 25)
+        ax.tick_params(axis="both", labelsize=10)
+
+    axes[0].set_ylabel("Mean Firing Rate (pps)", fontsize=12)
+
+    fig.suptitle(
+        "ISI Statistics Comparison — per-muscle split (supplementary to Fig 4B)",
+        fontsize=14,
+    )
+    fig.tight_layout()
+
+    return fig, axes
+
+
 ##############################################################################
 # Load Simulation Data
 # ---------------------
@@ -595,6 +717,26 @@ else:
 
 plt.show()
 print(f"\nPlot saved to: {output_file}")
+
+##############################################################################
+# Per-Muscle Supplementary Figure (R3 Major 4)
+# --------------------------------------------
+#
+# Companion to the pooled Fig 4B above: splits the experimental envelope
+# into per-muscle panels (VL, VM, FDI) so the simulation overlay can be
+# compared against each muscle individually.
+
+print("\nCreating per-muscle supplementary figure...")
+supp_fig, _ = plot_cv_vs_fr_per_muscle(all_muscle_data, exp_data)
+supp_output_file = RESULTS_PATH / f"isi_cv_per_muscle_supplement.{OUTPUT_FORMAT}"
+if OUTPUT_FORMAT in ["jpg", "jpeg"]:
+    supp_fig.savefig(
+        supp_output_file, dpi=300, bbox_inches="tight", pil_kwargs={"quality": 95}
+    )
+else:
+    supp_fig.savefig(supp_output_file, dpi=300, bbox_inches="tight", transparent=True)
+plt.show()
+print(f"Supplementary plot saved to: {supp_output_file}")
 
 ##############################################################################
 # Summary Statistics
