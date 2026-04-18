@@ -20,17 +20,17 @@ Both workflows yield identical results; the manual version is provided purely fo
 # ----------------
 #
 # .. important::
-#    In **MyoGen** all **random number generation** is handled by the :data:`~myogen.RANDOM_GENERATOR` object.
+#    In **MyoGen** all **random number generation** is handled by the RNG returned from
+#    :func:`~myogen.get_random_generator`, a thin wrapper around :mod:`numpy.random`.
 #
-#    This object is a wrapper around the :mod:`numpy.random` module and is used to generate random numbers.
-#
-#    It is intended to be used with the following API:
+#    Always fetch the generator at the call site so the current seed is honored:
 #
 #    .. code-block:: python
 #
-#       from myogen import simulator, RANDOM_GENERATOR
+#       from myogen import simulator, get_random_generator
+#       get_random_generator().normal(0, 1)
 #
-#    To change the default seed, use :func:`~myogen.set_random_seed`:
+#    To change the seed, use :func:`~myogen.set_random_seed`:
 #
 #    .. code-block:: python
 #
@@ -50,7 +50,7 @@ from neo import Block, Segment, SpikeTrain
 from neuron import h
 from viziphant.rasterplot import rasterplot_rates
 
-from myogen import RANDOM_GENERATOR
+from myogen import get_random_generator
 from myogen.simulator.neuron.populations import AlphaMN__Pool
 from myogen.utils.currents import create_trapezoid_current
 from myogen.utils.neuron.inject_currents_into_populations import (
@@ -107,9 +107,9 @@ motor_neuron_pools = [
 timestep = 0.05 * pq.ms
 simulation_time = 4000 * pq.ms
 
-rise_time_ms = list(RANDOM_GENERATOR.uniform(100, 500, size=n_pools)) * pq.ms
-plateau_time_ms = list(RANDOM_GENERATOR.uniform(1000, 2000, size=n_pools)) * pq.ms
-fall_time_ms = list(RANDOM_GENERATOR.uniform(1000, 2000, size=n_pools)) * pq.ms
+rise_time_ms = list(get_random_generator().uniform(100, 500, size=n_pools)) * pq.ms
+plateau_time_ms = list(get_random_generator().uniform(1000, 2000, size=n_pools)) * pq.ms
+fall_time_ms = list(get_random_generator().uniform(1000, 2000, size=n_pools)) * pq.ms
 
 input_current__AnalogSignal = create_trapezoid_current(
     n_pools,

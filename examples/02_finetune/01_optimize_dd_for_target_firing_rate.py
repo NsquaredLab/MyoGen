@@ -56,7 +56,7 @@ import quantities as pq
 from neo import Segment, SpikeTrain
 from neuron import h
 
-from myogen import RANDOM_GENERATOR
+from myogen import get_random_generator
 from myogen.simulator import RecruitmentThresholds
 from myogen.simulator.neuron import Network
 from myogen.simulator.neuron.populations import AlphaMN__Pool, DescendingDrive__Pool
@@ -224,7 +224,7 @@ def objective(trial):
         # Generate constant drive signal with small noise
         time_points = int(SIMULATION_TIME_MS / TIMESTEP_MS)
         drive_signal = np.ones(time_points) * dd_drive__Hz + np.clip(
-            RANDOM_GENERATOR.normal(0, 1.0, size=time_points), 0, None
+            get_random_generator().normal(0, 1.0, size=time_points), 0, None
         )
 
         # Run NEURON simulation

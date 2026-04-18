@@ -24,6 +24,33 @@ def get_random_seed() -> int:
     return _current_seed
 
 
+def derive_subseed(*labels: int) -> int:
+    """
+    Derive a collision-free deterministic sub-seed from the current seed and a tuple of integer labels.
+
+    Use this to seed non-NumPy generators (Cython Mersenne spike generators,
+    sklearn ``random_state``, etc.) in a way that (a) always changes with
+    :func:`set_random_seed` and (b) guarantees distinct sub-seeds for distinct
+    label tuples — which the older ``SEED + (class_id+1)*(global_id+1)`` pattern
+    did not (e.g. (0, 5) and (1, 2) collided).
+
+    Parameters
+    ----------
+    *labels : int
+        Arbitrary integer identifiers (e.g. cell class ID, pool ID). Their
+        order is part of the sub-seed, so ``derive_subseed(a, b)`` and
+        ``derive_subseed(b, a)`` yield different sub-seeds.
+
+    Returns
+    -------
+    int
+        A non-negative 32-bit integer suitable for passing as a seed to
+        NumPy, sklearn, or the bundled Cython RNG wrappers.
+    """
+    seq = np.random.SeedSequence(entropy=(_current_seed, *labels))
+    return int(seq.generate_state(1, dtype=np.uint32)[0])
+
+
 def set_random_seed(seed: int = _DEFAULT_SEED) -> None:
     """
     Set the random seed for reproducibility.
@@ -268,6 +295,7 @@ _nmodl_loaded = load_nmodl_mechanisms(quiet=True, strict=False)
 __all__ = [
     "get_random_generator",
     "get_random_seed",
+    "derive_subseed",
     "set_random_seed",
     "load_nmodl_mechanisms",
     "NMODLLoadError",

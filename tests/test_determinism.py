@@ -98,6 +98,29 @@ def test_deprecated_SEED_emits_warning_and_returns_current_seed():
     assert seed_via_deprecated == 5150
 
 
+def test_derive_subseed_is_collision_free_for_distinct_labels():
+    """Regression for the earlier ``SEED + (a+1)*(b+1)`` collision — e.g. (0, 5) and (1, 2) both map to +6."""
+    set_random_seed(42)
+    subseeds = {
+        (a, b): myogen.derive_subseed(a, b)
+        for a in range(8)
+        for b in range(8)
+    }
+    assert len(set(subseeds.values())) == len(subseeds), (
+        "derive_subseed must yield a unique value for every distinct label tuple"
+    )
+
+
+def test_derive_subseed_tracks_set_random_seed():
+    set_random_seed(1)
+    sub_a = myogen.derive_subseed(3, 7)
+    set_random_seed(2)
+    sub_b = myogen.derive_subseed(3, 7)
+    assert sub_a != sub_b, (
+        "derive_subseed must change when the global seed changes"
+    )
+
+
 def test_modules_that_use_accessor_are_not_stale_after_seed_change():
     """End-to-end: reimport a module that calls ``get_random_generator()`` and confirm its RNG draws track the current seed."""
     from myogen.simulator.core.muscle import muscle as muscle_module

@@ -68,7 +68,7 @@ import quantities as pq
 from neo import Block, Segment, SpikeTrain
 from neuron import h
 
-from myogen import RANDOM_GENERATOR
+from myogen import get_random_generator
 from myogen.simulator import RecruitmentThresholds
 from myogen.simulator.core.force.force_model import ForceModel
 from myogen.simulator import Network
@@ -231,7 +231,7 @@ for cell in motor_neuron_pool:
 
 time_points = int(SIMULATION_TIME_MS / TIMESTEP_MS)
 drive_signal = np.ones(time_points) * DD_DRIVE_HZ + np.clip(
-    RANDOM_GENERATOR.normal(0, 1.0, size=time_points), 0, None
+    get_random_generator().normal(0, 1.0, size=time_points), 0, None
 )
 
 ##############################################################################

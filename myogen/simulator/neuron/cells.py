@@ -9,7 +9,7 @@ import numpy as np
 import quantities as pq
 from neuron import h
 
-from myogen import get_random_generator, get_random_seed
+from myogen import derive_subseed, get_random_generator
 from myogen.simulator.neuron._cython._gamma_process_generator import (
     _GammaProcessGenerator__Cython,
 )
@@ -409,7 +409,7 @@ class DD(_Cell, _PoissonProcessGenerator__Cython):
         self.ns = h.DUMMY()  # Dummy cell
         _Cell.__init__(self, next(self._ids2), pool__ID)
         _PoissonProcessGenerator__Cython.__init__(
-            self, get_random_seed() + (self.class__ID + 1) * (self.global__ID + 1), N, dt
+            self, derive_subseed(self.class__ID, self.global__ID), N, dt
         )
 
     def __repr__(self) -> str:
@@ -494,7 +494,7 @@ class DD_Gamma(_Cell, _GammaProcessGenerator__Cython):
         _Cell.__init__(self, next(self._ids2), pool__ID)
         _GammaProcessGenerator__Cython.__init__(
             self,
-            get_random_seed() + (self.class__ID + 1) * (self.global__ID + 1),
+            derive_subseed(self.class__ID, self.global__ID),
             shape,
             timestep__ms.magnitude,
         )
@@ -589,7 +589,7 @@ class AffIa(_Cell, _GammaProcessGenerator__Cython):
         _Cell.__init__(self, class__ID if class__ID is not None else next(self._ids2), pool__ID)
         _GammaProcessGenerator__Cython.__init__(
             self,
-            seed=get_random_seed() + (self.class__ID + 1) * (self.global__ID + 1),
+            seed=derive_subseed(self.class__ID, self.global__ID),
             shape=N,  # Shape parameter controls ISI CV = 1/sqrt(N)
             dt=timestep__ms.magnitude,
         )

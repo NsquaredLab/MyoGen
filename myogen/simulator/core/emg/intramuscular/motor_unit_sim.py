@@ -15,7 +15,7 @@ from scipy.spatial.distance import cdist
 from sklearn.cluster import KMeans
 from tqdm import tqdm
 
-from myogen import get_random_generator, get_random_seed
+from myogen import derive_subseed, get_random_generator
 from myogen.utils.decorators import beartowertype
 from .bioelectric import (
     get_current_density,
@@ -138,7 +138,7 @@ class MotorUnitSim:
         )  # Point coordinates
 
         kmeans = KMeans(
-            n_clusters=n_branches, init="k-means++", max_iter=100, random_state=get_random_seed()
+            n_clusters=n_branches, init="k-means++", max_iter=100, random_state=derive_subseed(n_branches)
         )
         idx = kmeans.fit_predict(self.muscle_fiber_centers__mm)
         c = kmeans.cluster_centers_
