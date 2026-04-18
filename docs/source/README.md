@@ -13,7 +13,7 @@
   [Paper](#citation)
 </div>
 
-# MyoGen - The modular and extandable simulation toolkit for neurophysiology
+# MyoGen - The modular and extensible simulation toolkit for neurophysiology
 
 MyoGen is a **modular and extensible neuromuscular simulation framework** for generating physiologically grounded motor-unit activity, muscle force, and surface EMG signals.  
 

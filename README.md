@@ -4,7 +4,7 @@
     <img src="https://raw.githubusercontent.com/NsquaredLab/MyoGen/main/docs/source/_static/myogen_logo.png" height="100" alt="MyoGen Logo">
   </h1>
 
-  <h2>The modular and extandable simulation toolkit for neurophysiology</h2>
+  <h2>The modular and extensible simulation toolkit for neurophysiology</h2>
 
   [![Documentation](https://img.shields.io/badge/docs-latest-blue.svg)](https://nsquaredlab.github.io/MyoGen/)
   [![Python 3.12+](https://img.shields.io/badge/python-3.12+-blue.svg)](https://www.python.org/downloads/)

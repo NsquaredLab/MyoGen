@@ -101,12 +101,12 @@ class Muscle:
     radius__mm : float, default=6.91
         Radius of the muscle cross-section in millimeters. Default is set to 6.91 mm as determined by Jacobson et al. 1992 [3]_.
     length__mm : float, default=30.0
-        Length of the muscle in millimeters. Default is set to 30.0 mm as determined by no one.
+        Length of the muscle in millimeters. Default is 30.0 mm, a nominal value chosen to match the order of magnitude of the FDI muscle; adjust to match the muscle under study.
     fiber_density__fibers_per_mm2 : float, default=350
         Density of muscle fibers per square millimeter. Default is set to 350 fibers/mm² as determined by Bettelho et al. 2019 [7]_.
     max_innervation_area_to_total_muscle_area__ratio : float, default=0.25
         Ratio defining the maximum territory size relative to total muscle area.
-        Default is set to 0.25 as determined by no one but it is a good starting point.
+        Default is 0.25 as a pragmatic upper bound for the FDI, with no single published source; revisit for larger muscles.
         A value of 0.25 means the largest motor unit can innervate up to 25%
         of the total muscle cross-sectional area.
         Must be in range (0, 1].
