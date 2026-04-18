@@ -429,8 +429,9 @@ if firing_rates:
     axes[2].set_title("Firing Rate Distribution")
     axes[2].legend(framealpha=1.0, edgecolor="none")
 
-# Format all axes
-for ax in axes:
+# Format time-series axes (subplot 2 is the MU firing-rate distribution,
+# whose x-axis is categorical, not time)
+for ax in axes[:2]:
     ax.set_xlim(0, SIMULATION_TIME_MS / 1000)
 
 plt.tight_layout()

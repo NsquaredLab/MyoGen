@@ -452,7 +452,7 @@ if firing_rates:
     axes[2].set_title("Firing Rate Distribution")
     axes[2].legend(framealpha=1.0, edgecolor="none")
 
-for ax in axes:
+for ax in axes[:2]:
     ax.set_xlim(0, SIMULATION_TIME_MS / 1000)
 
 plt.tight_layout()
