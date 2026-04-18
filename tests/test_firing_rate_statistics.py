@@ -45,6 +45,24 @@ def test_fr_std_is_zero_for_empty_population():
     assert stats["FR_std"] == 0.0
 
 
+def test_per_neuron_cv_is_finite_with_min_spikes_for_cv_2():
+    """When a caller lowers ``min_spikes_for_cv`` to 2, a neuron with exactly two spikes produces one ISI — ``np.std(..., ddof=1)`` would otherwise be NaN. The guard at the sample-std call site must return a finite CV."""
+    two_spikes = _build_spiketrain([200.0, 1000.0])
+    silent = _build_spiketrain([])
+
+    df = calculate_firing_rate_statistics(
+        [two_spikes, silent],
+        plateau_start_ms=100.0,
+        plateau_end_ms=1900.0,
+        return_per_neuron=True,
+        min_spikes_for_cv=2,
+    )
+
+    assert len(df) == 1
+    cv = df["CV_ISI"].iloc[0]
+    assert math.isfinite(cv), "CV_ISI must not be NaN for n=1 ISI"
+
+
 def test_fr_std_is_finite_and_positive_for_multiple_active_units():
     """Two active units with distinct rates must produce a positive, finite FR_std."""
     fast = _build_spiketrain(np.linspace(100.0, 1900.0, num=40))  # ~22 Hz
