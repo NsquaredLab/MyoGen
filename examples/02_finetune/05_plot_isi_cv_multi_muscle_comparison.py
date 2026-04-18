@@ -639,11 +639,44 @@ def plot_cv_vs_fr_per_muscle(all_muscle_data, exp_data, muscles=("VL", "VM", "FD
 
     axes[0].set_ylabel("Mean Firing Rate (pps)", fontsize=12)
 
+    # Shared legend at the figure level so the force-level markers are
+    # decoded for every panel without repeating a per-axis legend.
+    legend_handles = [
+        Patch(
+            facecolor=MUSCLE_LEGEND_COLORS.get(m.split("_")[0], "#000000"),
+            edgecolor="black",
+            label=m.split("_")[0],
+        )
+        for m in sorted(all_muscle_data.keys())
+    ]
+    for force in sorted(all_force_levels):
+        legend_handles.append(
+            Line2D(
+                [0],
+                [0],
+                marker=force_markers[force],
+                color="none",
+                markerfacecolor="gray",
+                markeredgecolor="black",
+                markersize=8,
+                label=f"{force}% MVC",
+                linewidth=0,
+            )
+        )
+    fig.legend(
+        handles=legend_handles,
+        loc="lower center",
+        ncol=min(len(legend_handles), 6),
+        frameon=False,
+        fontsize=10,
+        bbox_to_anchor=(0.5, -0.02),
+    )
+
     fig.suptitle(
         "ISI Statistics Comparison — per-muscle split (supplementary to Fig 4B)",
         fontsize=14,
     )
-    fig.tight_layout()
+    fig.tight_layout(rect=(0, 0.05, 1, 1))
 
     return fig, axes
 
