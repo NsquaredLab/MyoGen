@@ -32,7 +32,10 @@ def derive_subseed(*labels: int) -> int:
     generators, sklearn ``random_state``, etc.) so that a call to
     :func:`set_random_seed` propagates to them. Label order matters:
     ``derive_subseed(a, b)`` and ``derive_subseed(b, a)`` yield different
-    sub-seeds.
+    sub-seeds. Each label must be a **non-negative** integer; callers with
+    signed identifiers should offset them beforehand (NumPy's
+    :class:`~numpy.random.SeedSequence`, which backs this helper, rejects
+    negatives).
 
     This replaces the pre-existing ``SEED + (class_id+1)*(global_id+1)``
     derivation, which collided on swapped factors — e.g. ``(0, 5)`` and

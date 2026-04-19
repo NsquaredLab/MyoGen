@@ -35,6 +35,7 @@ dependencies = [
     "neuron==8.2.7 ; sys_platform == 'linux' or sys_platform == 'darwin'",
     #"neuron-gpu-nightly>=9.0a0",
     #"neuron-nightly>=9.0a1.dev1492",
+    "neo>=0.14.0",
     "numba>=0.61.2",
     "numpy>=1.26,<2.0",
     "optuna>=4.5.0",
@@ -46,12 +47,12 @@ dependencies = [
     "seaborn>=0.13.2",
     "setuptools>=80.9.0",
     "tqdm>=4.67.1",
-    "viziphant>=0.4.0",
 ]
 
 [project.optional-dependencies]
 elephant = [
     "elephant>=1.1.1",
+    "viziphant>=0.4.0",
 ]
 nwb = [
     "pynwb>=2.8.0",
@@ -94,6 +95,11 @@ docs = [
     # NWB support for examples
     "pynwb>=2.8.0",
     "nwbinspector>=0.5.0",
+    # Spike-train analysis + visualization needed by several examples
+    # (elephant is also declared as an optional extra; the docs build
+    # needs both for sphinx-gallery to render those examples).
+    "elephant>=1.1.1",
+    "viziphant>=0.4.0",
 ]
 
 [tool.pytest.ini_options]
