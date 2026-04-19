@@ -1,22 +1,102 @@
+import warnings
+
 import numpy as np
 from numpy.random import Generator
 
-SEED: int = 180319  # Seed for reproducibility
-RANDOM_GENERATOR: Generator = np.random.default_rng(SEED)
+_DEFAULT_SEED: int = 180319
+_current_seed: int = _DEFAULT_SEED
+_random_generator: Generator = np.random.default_rng(_DEFAULT_SEED)
 
 
-def set_random_seed(seed: int = SEED) -> None:
+def get_random_generator() -> Generator:
+    """
+    Return the current global RNG.
+
+    Always reflects the most recent ``set_random_seed`` call. Prefer this
+    accessor over importing ``RANDOM_GENERATOR`` directly — a direct import
+    captures a stale reference that will not update when the seed changes.
+    """
+    return _random_generator
+
+
+def get_random_seed() -> int:
+    """Return the seed currently in effect."""
+    return _current_seed
+
+
+def derive_subseed(*labels: int) -> int:
+    """
+    Derive a deterministic, seed-tracking sub-seed from the current seed and a tuple of integer labels.
+
+    Intended for seeding non-NumPy generators (Cython Mersenne spike
+    generators, sklearn ``random_state``, etc.) so that a call to
+    :func:`set_random_seed` propagates to them. Label order matters:
+    ``derive_subseed(a, b)`` and ``derive_subseed(b, a)`` yield different
+    sub-seeds. Each label must be a **non-negative** integer; callers with
+    signed identifiers should offset them beforehand (NumPy's
+    :class:`~numpy.random.SeedSequence`, which backs this helper, rejects
+    negatives).
+
+    This replaces the pre-existing ``SEED + (class_id+1)*(global_id+1)``
+    derivation, which collided on swapped factors — e.g. ``(0, 5)`` and
+    ``(1, 2)`` both produced ``+6``. The present mixing function uses
+    :class:`numpy.random.SeedSequence` to fold the inputs into a 32-bit
+    integer; collisions remain possible in principle (birthday-paradox
+    probability ≈ ``N² / 2³³``) but are negligible for realistic motor-unit
+    pool sizes (≲ 10⁻⁷ at 1000 cells).
+
+    Returns
+    -------
+    int
+        A non-negative 32-bit integer suitable for passing as a seed to
+        NumPy, sklearn, or the bundled Cython RNG wrappers.
+    """
+    seq = np.random.SeedSequence(entropy=(_current_seed, *labels))
+    return int(seq.generate_state(1, dtype=np.uint32)[0])
+
+
+def set_random_seed(seed: int = _DEFAULT_SEED) -> None:
     """
     Set the random seed for reproducibility.
+
+    Rebuilds the global NumPy ``Generator``. All modules that read the RNG
+    through :func:`get_random_generator` will observe the new state on their
+    next draw; this includes seeds derived for non-NumPy RNGs (e.g. sklearn
+    ``random_state`` arguments or Cython Mersenne generators), which are now
+    drawn from the global RNG rather than read from a frozen module constant.
 
     Parameters
     ----------
     seed : int, optional
-        Seed value to set, by default SEED
+        Seed value to set, by default 180319.
     """
-    global RANDOM_GENERATOR
-    RANDOM_GENERATOR = np.random.default_rng(seed)
+    global _random_generator, _current_seed
+    _current_seed = seed
+    _random_generator = np.random.default_rng(seed)
     print(f"Random seed set to {seed}.")
+
+
+def __getattr__(name: str):
+    """Backwards-compatible access for the deprecated ``RANDOM_GENERATOR`` and ``SEED`` module attributes."""
+    if name == "RANDOM_GENERATOR":
+        warnings.warn(
+            "myogen.RANDOM_GENERATOR is deprecated; use myogen.get_random_generator() "
+            "to always retrieve the current RNG. Module-level imports of "
+            "RANDOM_GENERATOR capture a stale reference that does not update when "
+            "set_random_seed() is called.",
+            DeprecationWarning,
+            stacklevel=2,
+        )
+        return _random_generator
+    if name == "SEED":
+        warnings.warn(
+            "myogen.SEED is deprecated; use myogen.get_random_seed() to retrieve "
+            "the seed currently in effect.",
+            DeprecationWarning,
+            stacklevel=2,
+        )
+        return _current_seed
+    raise AttributeError(f"module {__name__!r} has no attribute {name!r}")
 
 
 class MyoGenSetupError(Exception):
@@ -217,8 +297,9 @@ from myogen.utils.nmodl import (
 _nmodl_loaded = load_nmodl_mechanisms(quiet=True, strict=False)
 
 __all__ = [
-    "RANDOM_GENERATOR",
-    "SEED",
+    "get_random_generator",
+    "get_random_seed",
+    "derive_subseed",
     "set_random_seed",
     "load_nmodl_mechanisms",
     "NMODLLoadError",

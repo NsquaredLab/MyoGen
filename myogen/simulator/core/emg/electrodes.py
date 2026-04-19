@@ -187,16 +187,18 @@ class SurfaceElectrodeArray:
                 )
 
         ## Rotated detection system (Farina, 2004), eq (36)
+        # Must use original (z, θ) for both transformations — save before overwriting
         displacement = self._center_point__mm_deg[0] * np.ones(_pos_z.shape)
+        pos_z_orig = _pos_z.copy()
         _pos_z = (
             -self._bending_radius__mm * np.sin(self._rotation_angle__deg * np.pi / 180) * _pos_theta
-            + np.cos(self._rotation_angle__deg * np.pi / 180) * (_pos_z - displacement)
+            + np.cos(self._rotation_angle__deg * np.pi / 180) * (pos_z_orig - displacement)
             + displacement
         )
         _pos_theta = (
             np.cos(self._rotation_angle__deg * np.pi / 180) * _pos_theta
             + np.sin(self._rotation_angle__deg * np.pi / 180)
-            * (_pos_z - displacement)
+            * (pos_z_orig - displacement)
             / self._bending_radius__mm
         )
 
@@ -292,39 +294,45 @@ class SurfaceElectrodeArray:
 
         elif self.differentiation_mode == "bipolar_longitudinal":
             # Differential along muscle fiber direction (z-axis)
-            # Apply coordinate transformation for rotation
-            alpha_rad = self.rotation_angle__deg * np.pi / 180
-            kz_new = ktheta_mesh_kzktheta / self.bending_radius__mm * np.sin(
+            # Apply coordinate transformation for rotation (Farina 2004, eq 38)
+            alpha_rad = self._rotation_angle__deg * np.pi / 180
+            kz_new = ktheta_mesh_kzktheta / self._bending_radius__mm * np.sin(
                 alpha_rad
             ) + kz_mesh_kzktheta * np.cos(alpha_rad)
-            # Spatial filter for longitudinal differential
-            H_sf = np.exp(1j * kz_new) - np.exp(-1j * kz_new)
+            # Spatial filter for longitudinal differential (Farina 2004, eq 30)
+            # Two electrodes at ±d_z/2: H_sf = exp(j·k'_z·d_z/2) - exp(-j·k'_z·d_z/2)
+            half_ied = self._inter_electrode_distances__mm / 2
+            H_sf = np.exp(1j * kz_new * half_ied) - np.exp(-1j * kz_new * half_ied)
 
         elif self.differentiation_mode == "bipolar_transversal":
             # Differential around muscle circumference (theta-axis)
-            # Apply coordinate transformation for rotation
-            alpha_rad = self.rotation_angle__deg * np.pi / 180
+            # Apply coordinate transformation for rotation (Farina 2004, eq 38)
+            alpha_rad = self._rotation_angle__deg * np.pi / 180
             ktheta_new = ktheta_mesh_kzktheta * np.cos(
                 alpha_rad
-            ) - kz_mesh_kzktheta * self.bending_radius__mm * np.sin(alpha_rad)
-            # Spatial filter for transversal differential
-            H_sf = np.exp(1j * ktheta_new / self.bending_radius__mm) - np.exp(
-                -1j * ktheta_new / self.bending_radius__mm
+            ) - kz_mesh_kzktheta * self._bending_radius__mm * np.sin(alpha_rad)
+            # Spatial filter for transversal differential (Farina 2004, eq 30-31)
+            # d_theta = IED / R_ele in radians
+            half_d_theta = self._inter_electrode_distances__mm / (2 * self._bending_radius__mm)
+            H_sf = np.exp(1j * ktheta_new * half_d_theta) - np.exp(
+                -1j * ktheta_new * half_d_theta
             )
 
         elif self.differentiation_mode == "laplacian":
             # Laplacian (second-order spatial differential)
             # Combination of longitudinal and transversal second derivatives
-            alpha_rad = self.rotation_angle__deg * np.pi / 180
-            kz_new = ktheta_mesh_kzktheta / self.bending_radius__mm * np.sin(
+            alpha_rad = self._rotation_angle__deg * np.pi / 180
+            kz_new = ktheta_mesh_kzktheta / self._bending_radius__mm * np.sin(
                 alpha_rad
             ) + kz_mesh_kzktheta * np.cos(alpha_rad)
             ktheta_new = ktheta_mesh_kzktheta * np.cos(
                 alpha_rad
-            ) - kz_mesh_kzktheta * self.bending_radius__mm * np.sin(alpha_rad)
+            ) - kz_mesh_kzktheta * self._bending_radius__mm * np.sin(alpha_rad)
 
-            # Laplacian approximation: -k^2 in frequency domain
-            k_total_sq = kz_new**2 + (ktheta_new / self.bending_radius__mm) ** 2
+            # Laplacian approximation: second differences along both axes
+            half_ied = self._inter_electrode_distances__mm / 2
+            half_d_theta = self._inter_electrode_distances__mm / (2 * self._bending_radius__mm)
+            k_total_sq = (kz_new * half_ied) ** 2 + (ktheta_new * half_d_theta) ** 2
             H_sf = -k_total_sq
 
         return H_sf

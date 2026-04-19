@@ -175,10 +175,14 @@ test_*.png
 
 myogen/simulator/neuron/_cython/*.c
 myogen/simulator/nmodl_files/x86_64/
+myogen/simulator/nmodl_files/arm64/
 myogen/simulator/x86_64/
+myogen/simulator/arm64/
 myogen/simulator/nmodl_files/*.c
 myogen/simulator/nmodl_files/*.o
 myogen/simulator/nmodl_files/*.dll
+myogen/simulator/nmodl_files/*.dylib
+myogen/simulator/nmodl_files/*.so
 
 data/
 # Note: examples/data/ is NOT ignored - it contains pre-generated static data for docs
@@ -187,3 +191,6 @@ sandbox/
 # Local bash scripts
 bash_scripts/
 docs/serve_docs.sh
+
+# Git worktrees
+.worktrees/

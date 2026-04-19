@@ -13,7 +13,7 @@
   [Paper](#citation)
 </div>
 
-# MyoGen - The modular and extandable simulation toolkit for neurophysiology
+# MyoGen - The modular and extensible simulation toolkit for neurophysiology
 
 MyoGen is a **modular and extensible neuromuscular simulation framework** for generating physiologically grounded motor-unit activity, muscle force, and surface EMG signals.  
 
@@ -39,7 +39,7 @@ MyoGen is designed for algorithm validation, hypothesis-driven research, and edu
 **Prerequisites**: Python ≥3.12, Linux/Windows/macOS
 
 > [!IMPORTANT]
-> **Windows users**: Install [NEURON 8.2.6](https://github.com/neuronsimulator/nrn/releases/download/8.2.6/nrn-8.2.6.w64-mingw-py-38-39-310-311-312-setup.exe) before running `uv sync`
+> **Windows users**: Install [NEURON 8.2.7](https://github.com/neuronsimulator/nrn/releases/download/8.2.7/nrn-8.2.7.w64-mingw-py-39-310-311-312-313-setup.exe) before running `uv sync`
 
 ```bash
 # Clone and install

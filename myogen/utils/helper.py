@@ -144,8 +144,14 @@ def calculate_firing_rate_statistics(
                     firing_rates.append(neuron_fr)
 
                     if return_per_neuron:
-                        # Compute CV of inter-spike intervals
-                        cv = np.std(isis_array, ddof=1) / np.mean(isis_array)
+                        # Compute CV of inter-spike intervals. Guard against
+                        # the n=1 NaN case when a caller lowers
+                        # min_spikes_for_cv to 2 (only one ISI is observable).
+                        cv = (
+                            np.std(isis_array, ddof=1) / np.mean(isis_array)
+                            if len(isis_array) > 1
+                            else 0.0
+                        )
                         per_neuron_results.append(
                             {
                                 "MU_ID": mu_id,
@@ -169,10 +175,13 @@ def calculate_firing_rate_statistics(
                 "firing_rates": np.array([]),
             }
 
-        # Ensemble statistics: mean across neurons for both FR and SD_FR
+        # Ensemble statistics: mean across neurons for both FR and SD_FR.
+        # np.std with ddof=1 is undefined for n<2, so report 0.0 rather than
+        # NaN when only one unit is active.
+        fr_std = np.std(firing_rates, ddof=1) if len(firing_rates) > 1 else 0.0
         return {
             "FR_mean": np.mean(firing_rates),
-            "FR_std": np.std(firing_rates, ddof=1),
+            "FR_std": fr_std,
             "n_active": len(firing_rates),
             "firing_rates": np.array(firing_rates),
         }

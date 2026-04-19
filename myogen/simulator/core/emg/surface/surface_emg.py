@@ -28,7 +28,7 @@ from neo import Block, Group, Segment
 from scipy.signal import resample
 from tqdm import tqdm
 
-from myogen import RANDOM_GENERATOR
+from myogen import get_random_generator
 from myogen.simulator.core.emg.electrodes import SurfaceElectrodeArray
 from myogen.simulator.core.emg.surface.simulate_fiber import simulate_fiber_v2, _simulate_fiber_v2_python
 from myogen.simulator.core.muscle import Muscle
@@ -119,6 +119,7 @@ class SurfaceEMG:
         MUs_to_simulate: list[int] | None = None,
         internal_sampling_frequency__Hz: Quantity__Hz | None = None,
         iap_kernel_length__mm: float | None = None,
+        use_unified: bool = False,
     ):
         # Immutable public arguments - never modify these
         self.muscle_model = muscle_model
@@ -128,6 +129,7 @@ class SurfaceEMG:
         self.sampling_points_in_theta_domain = sampling_points_in_theta_domain
         self.MUs_to_simulate = MUs_to_simulate
         self.iap_kernel_length__mm = iap_kernel_length__mm
+        self._use_unified = use_unified
 
         # Internal sampling frequency for higher resolution MUAP computation
         # If not specified, defaults to 10 kHz for better MUAP resolution
@@ -267,7 +269,7 @@ class SurfaceEMG:
         n_motor_units = len(number_of_fibers_per_MUs)
 
         # Pre-calculate innervation zones for all MUs
-        innervation_zones = RANDOM_GENERATOR.uniform(
+        innervation_zones = get_random_generator().uniform(
             low=-innervation_zone_variance / 2,
             high=innervation_zone_variance / 2,
             size=n_motor_units,
@@ -338,7 +340,7 @@ class SurfaceEMG:
                 innervation_zone = innervation_zones[MU_index]
 
                 # Batch generate random fiber lengths (optimization: single RNG call)
-                fiber_length_variations = RANDOM_GENERATOR.uniform(
+                fiber_length_variations = get_random_generator().uniform(
                     low=-self._var_fiber_length__mm,
                     high=self._var_fiber_length__mm,
                     size=number_of_fibers,
@@ -352,6 +354,10 @@ class SurfaceEMG:
                 # Matrix optimization variables (local to this MU)
                 A_matrix = None
                 B_incomplete = None
+
+                # Unified path cache variables
+                A_matrix_unified = None
+                b_z_cached = None
 
                 # Pre-compute base electrode positions ONCE (avoid per-fiber grid recomputation)
                 import quantities as pq
@@ -397,35 +403,70 @@ class SurfaceEMG:
                     L1 = abs(innervation_zone + fiber_length__mm / 2)
                     L2 = abs(innervation_zone - fiber_length__mm / 2)
 
-                    # Use the new simulate_fiber_v2 function with INTERNAL sampling frequency
-                    # Call Python implementation directly (skip dispatcher overhead)
-                    phi_temp, A_matrix, B_incomplete = _simulate_fiber_v2_python(
-                        Fs=Fs_internal,
-                        v=v_conduction,
-                        N=N_internal,
-                        M=M_theta,
-                        r=r_total,
-                        r_bone=r_bone,
-                        th_fat=th_fat,
-                        th_skin=th_skin,
-                        R=R,
-                        L1=L1,
-                        L2=L2,
-                        zi=innervation_zone,
-                        electrode_array=electrode_array,
-                        sig_muscle_rho=sig_rho,
-                        sig_muscle_z=sig_z,
-                        sig_fat=sig_fat_val,
-                        sig_skin=sig_skin_val,
-                        fiber_length__mm=kernel_length,
-                        A_matrix=None if fiber_number == 0 else A_matrix,
-                        B_incomplete=None if fiber_number == 0 else B_incomplete,
-                        use_gpu=False,
-                        theta_offset=-theta,
-                        pos_z_precomputed=base_pos_z,
-                        pos_theta_precomputed=base_pos_theta,
-                        rele_precomputed=base_rele,
-                    )
+                    if self._use_unified:
+                        from myogen.simulator.core.emg.fiber_simulation import (
+                            simulate_fiber_hybrid,
+                        )
+
+                        # Hybrid: time-domain Rosenfalck + frequency-domain volume conductor
+                        # Same signature as _simulate_fiber_v2_python (drop-in replacement)
+                        phi_temp, A_matrix, B_incomplete = simulate_fiber_hybrid(
+                            Fs=Fs_internal,
+                            v=v_conduction,
+                            N=N_internal,
+                            M=M_theta,
+                            r=r_total,
+                            r_bone=r_bone,
+                            th_fat=th_fat,
+                            th_skin=th_skin,
+                            R=R,
+                            L1=L1,
+                            L2=L2,
+                            zi=innervation_zone,
+                            electrode_array=electrode_array,
+                            sig_muscle_rho=sig_rho,
+                            sig_muscle_z=sig_z,
+                            sig_fat=sig_fat_val,
+                            sig_skin=sig_skin_val,
+                            fiber_length__mm=kernel_length,
+                            A_matrix=None if fiber_number == 0 else A_matrix,
+                            B_incomplete=None if fiber_number == 0 else B_incomplete,
+                            use_gpu=False,
+                            theta_offset=-theta,
+                            pos_z_precomputed=base_pos_z,
+                            pos_theta_precomputed=base_pos_theta,
+                            rele_precomputed=base_rele,
+                            D1=96.0,
+                        )
+                    else:
+                        # Existing frequency-domain path (unchanged)
+                        phi_temp, A_matrix, B_incomplete = _simulate_fiber_v2_python(
+                            Fs=Fs_internal,
+                            v=v_conduction,
+                            N=N_internal,
+                            M=M_theta,
+                            r=r_total,
+                            r_bone=r_bone,
+                            th_fat=th_fat,
+                            th_skin=th_skin,
+                            R=R,
+                            L1=L1,
+                            L2=L2,
+                            zi=innervation_zone,
+                            electrode_array=electrode_array,
+                            sig_muscle_rho=sig_rho,
+                            sig_muscle_z=sig_z,
+                            sig_fat=sig_fat_val,
+                            sig_skin=sig_skin_val,
+                            fiber_length__mm=kernel_length,
+                            A_matrix=None if fiber_number == 0 else A_matrix,
+                            B_incomplete=None if fiber_number == 0 else B_incomplete,
+                            use_gpu=False,
+                            theta_offset=-theta,
+                            pos_z_precomputed=base_pos_z,
+                            pos_theta_precomputed=base_pos_theta,
+                            rele_precomputed=base_rele,
+                        )
 
                     array_result_internal += phi_temp
 
@@ -859,7 +900,7 @@ class SurfaceEMG:
                 # Generate noise
                 if noise_type.lower() == "gaussian":
                     # Generate standard normal noise, then scale per channel
-                    noise = RANDOM_GENERATOR.normal(loc=0.0, scale=1.0, size=emg_array.shape)
+                    noise = get_random_generator().normal(loc=0.0, scale=1.0, size=emg_array.shape)
                     # Broadcast noise_std_per_channel along time axis
                     # noise shape: (time, rows, cols)
                     # noise_std_per_channel shape: (rows, cols)

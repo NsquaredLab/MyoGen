@@ -366,7 +366,7 @@ def _simulate_fiber_v2_python(
     # Rosenfalck (1969) intracellular action potential spatial distribution
     # As used in Farina & Merletti (2001), equation 16
     # IMPORTANT: This matches the original Farina implementation exactly (no normalization)
-    A = 96 // 10  # mV/mm^3 (amplitude parameter from Farina 2001, eq 16)
+    A = 96 / 10  # mV/mm^3 (amplitude parameter from Farina 2001, eq 16)
 
     # Define spatial grid for IAP kernel evaluation
     if fiber_length__mm is None:
@@ -729,7 +729,12 @@ def _simulate_fiber_v2_python(
 
     # Solve the linear system
     if r_bone == 0:
-        A_flat = A_flat[..., 2:, 2:]
+        # When no bone, muscle is the innermost layer. Kn diverges at rho=0,
+        # so B2 (Kn_muscle coefficient, column 2) must be zero.
+        # Keep columns [1,3,4,5,6] = [In_muscle, In_fat, Kn_fat, In_skin, Kn_skin]
+        # Remove rows 0,1 (bone boundary conditions) and column 0 (bone) and 2 (Kn_muscle)
+        keep_cols = [1, 3, 4, 5, 6]
+        A_flat = A_flat[..., 2:, keep_cols]
         B_flat = B_flat[..., 2:, :]
 
         # Check condition number of a few matrices
