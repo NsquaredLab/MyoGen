@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.9.0] - 2026-04-19
+
 ### Added
 - **RNG accessors**: new public API for reproducible random draws
   - `myogen.get_random_generator()` — always returns the current global RNG (tracks the latest `set_random_seed` call)
@@ -21,7 +23,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 - **RNG architecture** (internal refactor): the six internal modules and eight example scripts that previously did `from myogen import RANDOM_GENERATOR, SEED` at module scope now call the accessor at each site, eliminating the stale-reference bug where `set_random_seed` didn't reach downstream modules or seed-derived generators
-- **Per-cell seed derivation**: the three sites in `myogen/simulator/neuron/cells.py` that built a per-cell seed as `SEED + (class_id+1)*(global_id+1)` — a formula that collided on swapped factors, e.g. `(0, 5)` and `(1, 2)` both resolved to `+6` — now use `derive_subseed(class_id, global_id)` (collision-free with respect to label order, built on `numpy.random.SeedSequence`). The `motor_unit_sim.py` `KMeans` `random_state` uses the same helper. **Consequence**: for a given global seed, RNG output differs from earlier releases; byte-identical reproduction of pre-`Unreleased` outputs is not possible without matching code
+- **Per-cell seed derivation**: the three sites in `myogen/simulator/neuron/cells.py` that built a per-cell seed as `SEED + (class_id+1)*(global_id+1)` — a formula that collided on swapped factors, e.g. `(0, 5)` and `(1, 2)` both resolved to `+6` — now use `derive_subseed(class_id, global_id)` (collision-free with respect to label order, built on `numpy.random.SeedSequence`). The `motor_unit_sim.py` `KMeans` `random_state` uses the same helper. **Consequence**: for a given global seed, RNG output differs from earlier releases; byte-identical reproduction of pre-0.9.0 outputs is not possible without matching code
 - **Example figures**: bar graphs in `02_finetune/01_optimize_dd_for_target_firing_rate.py`, `02_finetune/02_compute_force_from_optimized_dd.py` and `03_papers/watanabe/01_compute_baseline_force.py` replaced with dumbbell / violin + box + jittered-scatter plots that show the underlying distribution (all points when n<10, violin + box when n≥10)
 - **NEURON version alignment**: `README.md`, `docs/source/README.md`, `docs/source/index.md`, and `setup.py` Windows-install messaging now reference NEURON **8.2.7** (matching the Linux/macOS pip pin in `pyproject.toml` and the CI workflow) with the correct installer filename (`py-39-310-311-312-313`)
 - **Docs build**: pinned `sphinx<9` in the `docs` dependency-group to work around a `sphinx-hoverxref` regression on Sphinx 9, and moved `[tool.pytest.ini_options]` in `pyproject.toml` so it no longer re-parents the `docs` dependency-group
