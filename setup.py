@@ -201,11 +201,11 @@ class BuildWithNMODL(build_py):
   MyoGen Installation Failed - NEURON Required
 ================================================================================
 
-MyoGen requires NEURON 8.2.6 to be installed BEFORE installing MyoGen.
+MyoGen requires NEURON 8.2.7 to be installed BEFORE installing MyoGen.
 
 STEP 1: Download and install NEURON
 -----------------------------------
-  https://github.com/neuronsimulator/nrn/releases/download/8.2.6/nrn-8.2.6.w64-mingw-py-38-39-310-311-312-setup.exe
+  https://github.com/neuronsimulator/nrn/releases/download/8.2.7/nrn-8.2.7.w64-mingw-py-39-310-311-312-313-setup.exe
 
   During installation, select "Add to PATH"
 

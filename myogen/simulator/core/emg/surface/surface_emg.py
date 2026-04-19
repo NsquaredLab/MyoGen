@@ -28,7 +28,7 @@ from neo import Block, Group, Segment
 from scipy.signal import resample
 from tqdm import tqdm
 
-from myogen import RANDOM_GENERATOR
+from myogen import get_random_generator
 from myogen.simulator.core.emg.electrodes import SurfaceElectrodeArray
 from myogen.simulator.core.emg.surface.simulate_fiber import simulate_fiber_v2, _simulate_fiber_v2_python
 from myogen.simulator.core.muscle import Muscle
@@ -269,7 +269,7 @@ class SurfaceEMG:
         n_motor_units = len(number_of_fibers_per_MUs)
 
         # Pre-calculate innervation zones for all MUs
-        innervation_zones = RANDOM_GENERATOR.uniform(
+        innervation_zones = get_random_generator().uniform(
             low=-innervation_zone_variance / 2,
             high=innervation_zone_variance / 2,
             size=n_motor_units,
@@ -340,7 +340,7 @@ class SurfaceEMG:
                 innervation_zone = innervation_zones[MU_index]
 
                 # Batch generate random fiber lengths (optimization: single RNG call)
-                fiber_length_variations = RANDOM_GENERATOR.uniform(
+                fiber_length_variations = get_random_generator().uniform(
                     low=-self._var_fiber_length__mm,
                     high=self._var_fiber_length__mm,
                     size=number_of_fibers,
@@ -900,7 +900,7 @@ class SurfaceEMG:
                 # Generate noise
                 if noise_type.lower() == "gaussian":
                     # Generate standard normal noise, then scale per channel
-                    noise = RANDOM_GENERATOR.normal(loc=0.0, scale=1.0, size=emg_array.shape)
+                    noise = get_random_generator().normal(loc=0.0, scale=1.0, size=emg_array.shape)
                     # Broadcast noise_std_per_channel along time axis
                     # noise shape: (time, rows, cols)
                     # noise_std_per_channel shape: (rows, cols)

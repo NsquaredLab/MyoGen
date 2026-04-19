@@ -4,7 +4,7 @@
     <img src="https://raw.githubusercontent.com/NsquaredLab/MyoGen/main/docs/source/_static/myogen_logo.png" height="100" alt="MyoGen Logo">
   </h1>
 
-  <h2>The modular and extandable simulation toolkit for neurophysiology</h2>
+  <h2>The modular and extensible simulation toolkit for neurophysiology</h2>
 
   [![Documentation](https://img.shields.io/badge/docs-latest-blue.svg)](https://nsquaredlab.github.io/MyoGen/)
   [![Python 3.12+](https://img.shields.io/badge/python-3.12+-blue.svg)](https://www.python.org/downloads/)
@@ -47,7 +47,7 @@ MyoGen is designed for algorithm validation, hypothesis-driven research, and edu
 
 | Platform | Before Installing MyoGen |
 |----------|--------------------------|
-| **Windows** | [NEURON 8.2.6](https://github.com/neuronsimulator/nrn/releases/download/8.2.6/nrn-8.2.6.w64-mingw-py-38-39-310-311-312-setup.exe) - Download, run installer, select "Add to PATH" |
+| **Windows** | [NEURON 8.2.7](https://github.com/neuronsimulator/nrn/releases/download/8.2.7/nrn-8.2.7.w64-mingw-py-39-310-311-312-313-setup.exe) - Download, run installer, select "Add to PATH" |
 | **Linux** | `sudo apt install libopenmpi-dev` (Ubuntu/Debian) or `sudo dnf install openmpi-devel` (Fedora) |
 | **macOS** | `brew install open-mpi` |
 
@@ -70,7 +70,7 @@ MyoGen is designed for algorithm validation, hypothesis-driven research, and edu
 >
 > ### 2. NEURON Simulator
 >
-> 1. **Download**: [NEURON 8.2.6 Installer](https://github.com/neuronsimulator/nrn/releases/download/8.2.6/nrn-8.2.6.w64-mingw-py-38-39-310-311-312-setup.exe)
+> 1. **Download**: [NEURON 8.2.7 Installer](https://github.com/neuronsimulator/nrn/releases/download/8.2.7/nrn-8.2.7.w64-mingw-py-39-310-311-312-313-setup.exe)
 > 2. **Run the installer** and select **"Add to PATH"** when prompted
 > 3. **Restart your terminal** (close and reopen)
 > 4. Then continue with the installation below

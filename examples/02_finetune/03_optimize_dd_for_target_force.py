@@ -50,7 +50,7 @@ import quantities as pq
 from neo import Block, Segment, SpikeTrain
 from neuron import h
 
-from myogen import RANDOM_GENERATOR, set_random_seed
+from myogen import get_random_generator, set_random_seed
 from myogen.simulator import RecruitmentThresholds
 from myogen.simulator.core.force.force_model import ForceModel
 from myogen.simulator.neuron import Network
@@ -212,7 +212,7 @@ def run_simulation_and_compute_force(dd_drive__Hz, gamma_shape, recruitment_thre
     # Create constant drive signal
     time_points = int(SIMULATION_TIME_MS / TIMESTEP_MS)
     drive_signal = np.ones(time_points) * dd_drive__Hz + np.clip(
-        RANDOM_GENERATOR.normal(0, 1.0, size=time_points), 0, None
+        get_random_generator().normal(0, 1.0, size=time_points), 0, None
     )
 
     # Initialize simulation

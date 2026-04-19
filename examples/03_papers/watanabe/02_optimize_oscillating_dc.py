@@ -72,7 +72,7 @@ import quantities as pq
 from neo import Block, Segment, SpikeTrain
 from neuron import h
 
-from myogen import RANDOM_GENERATOR, set_random_seed
+from myogen import get_random_generator, set_random_seed
 from myogen.simulator import RecruitmentThresholds
 from myogen.simulator.core.force.force_model import ForceModel
 from myogen.simulator.neuron import Network
@@ -226,7 +226,7 @@ def run_simulation_with_oscillating_drive(dc_offset, recruitment_thresholds):
     drive_signal = np.clip(drive_signal, 0, None)
 
     # Add small noise
-    drive_signal += np.clip(RANDOM_GENERATOR.normal(0, 1.0, size=time_points), 0, None)
+    drive_signal += np.clip(get_random_generator().normal(0, 1.0, size=time_points), 0, None)
 
     # Initialize simulation
     h.load_file("stdrun.hoc")

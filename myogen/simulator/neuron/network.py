@@ -10,7 +10,7 @@ from typing import Callable, Optional
 import quantities as pq
 from neuron import h
 
-from myogen import RANDOM_GENERATOR
+from myogen import get_random_generator
 from myogen.simulator.neuron.populations import (
     AffIa__Pool,
     AffII__Pool,
@@ -79,10 +79,10 @@ def _select_synapse(target_neuron, inhibitory: bool = False):
         ]
 
     if matching_synapses:
-        return RANDOM_GENERATOR.choice(matching_synapses)
+        return get_random_generator().choice(matching_synapses)
     else:
         # Fallback to random selection if no matching synapses found
-        return RANDOM_GENERATOR.choice(synapse_list)
+        return get_random_generator().choice(synapse_list)
 
 
 # Helper functions for create_netcon
@@ -263,7 +263,7 @@ def _connect_population_to_population(
 
         for source_neuron in populations[source_pop]:
             # Randomly select exactly n_connections target neurons
-            selected_targets = RANDOM_GENERATOR.choice(
+            selected_targets = get_random_generator().choice(
                 target_neurons, size=n_connections, replace=False
             )
 
@@ -289,7 +289,7 @@ def _connect_population_to_population(
         # Probabilistic connectivity: each pair has probability of connecting
         for source_neuron in populations[source_pop]:
             for target_neuron in target_neurons:
-                if RANDOM_GENERATOR.uniform() < connection_probability:
+                if get_random_generator().uniform() < connection_probability:
                     target_synapse = _select_synapse(target_neuron, inhibitory=inhibitory)
                     netcon = _create_netcon(
                         source_neuron,
@@ -431,7 +431,7 @@ def _connect_one_to_one(
     connections = []
     for source_neuron, target_neuron in zip(source_neurons, target_neurons):
         # Check if this pair should be connected
-        if RANDOM_GENERATOR.uniform() < connection_probability:
+        if get_random_generator().uniform() < connection_probability:
             target_synapse = _select_synapse(target_neuron, inhibitory=inhibitory)
             netcon = _create_netcon(
                 source_neuron,

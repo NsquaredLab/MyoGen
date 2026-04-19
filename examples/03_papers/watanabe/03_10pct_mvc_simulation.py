@@ -77,7 +77,7 @@ import numpy as np
 import quantities as pq
 from neuron import h
 
-from myogen import RANDOM_GENERATOR, load_nmodl_mechanisms
+from myogen import get_random_generator, load_nmodl_mechanisms
 from myogen.simulator import RecruitmentThresholds
 from myogen.simulator.neuron.network import Network
 from myogen.simulator.neuron.populations import AlphaMN__Pool, DescendingDrive__Pool
@@ -204,7 +204,7 @@ phase3_mask = time_s >= 2 * segment_duration__s
 DDdrive[phase3_mask] = DC_OFFSET_OPTIMIZED + 20 * np.sin(2 * np.pi * 20 * time_s[phase3_mask])
 
 # Independent noise (IN) - 125 Hz constant (Watanabe specification)
-INdrive = 125.0 + RANDOM_GENERATOR.normal(0, 5.0, len(time))
+INdrive = 125.0 + get_random_generator().normal(0, 5.0, len(time))
 
 plt.figure(figsize=(12, 6))
 plt.subplot(2, 1, 1)

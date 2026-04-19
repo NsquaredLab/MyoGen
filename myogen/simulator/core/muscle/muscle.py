@@ -12,7 +12,7 @@ from sklearn.neighbors import NearestNeighbors
 from tqdm import tqdm
 import quantities as pq
 
-from myogen import RANDOM_GENERATOR
+from myogen import get_random_generator
 from myogen.utils.types import (
     RECRUITMENT_THRESHOLDS__ARRAY,
     Quantity__S_per_m,
@@ -101,12 +101,12 @@ class Muscle:
     radius__mm : float, default=6.91
         Radius of the muscle cross-section in millimeters. Default is set to 6.91 mm as determined by Jacobson et al. 1992 [3]_.
     length__mm : float, default=30.0
-        Length of the muscle in millimeters. Default is set to 30.0 mm as determined by no one.
+        Length of the muscle in millimeters. Default is 30.0 mm, a nominal value chosen to match the order of magnitude of the FDI muscle; adjust to match the muscle under study.
     fiber_density__fibers_per_mm2 : float, default=350
         Density of muscle fibers per square millimeter. Default is set to 350 fibers/mm² as determined by Bettelho et al. 2019 [7]_.
     max_innervation_area_to_total_muscle_area__ratio : float, default=0.25
         Ratio defining the maximum territory size relative to total muscle area.
-        Default is set to 0.25 as determined by no one but it is a good starting point.
+        Default is 0.25 as a pragmatic upper bound for the FDI, with no single published source; revisit for larger muscles.
         A value of 0.25 means the largest motor unit can innervate up to 25%
         of the total muscle cross-sectional area.
         Must be in range (0, 1].
@@ -317,7 +317,7 @@ class Muscle:
         std_diameter__mm = 15e-3  # mm (15 um)
 
         self._muscle_fiber_diameters__mm = (
-            RANDOM_GENERATOR.lognormal(mean=np.log(mean_diameter__mm), sigma=0.3, size=n_fibers)
+            get_random_generator().lognormal(mean=np.log(mean_diameter__mm), sigma=0.3, size=n_fibers)
             * pq.mm
         )
 
@@ -334,7 +334,7 @@ class Muscle:
 
         # Add some biological variability
         cv_base = k * self._muscle_fiber_diameters__mm + c
-        cv_noise = RANDOM_GENERATOR.normal(0, 0.2, n_fibers) * pq.m / pq.s  # 20% CV variation
+        cv_noise = get_random_generator().normal(0, 0.2, n_fibers) * pq.m / pq.s  # 20% CV variation
 
         self._muscle_fiber_conduction_velocities__mm_per_s = cv_base + cv_noise
 
@@ -717,7 +717,7 @@ class Muscle:
 
         # Assignment procedure
         self._assignment = np.full(self._number_of_muscle_fibers, np.nan)
-        randomized_mf = RANDOM_GENERATOR.permutation(self._number_of_muscle_fibers)
+        randomized_mf = get_random_generator().permutation(self._number_of_muscle_fibers)
 
         for mf in tqdm(randomized_mf, desc="Assigning muscle fibers to motor neurons", unit="MF", disable=not verbose):
             # Vectorized computation of likelihoods for all motor units
@@ -753,7 +753,7 @@ class Muscle:
                 probs = np.ones(self._number_of_neurons) / self._number_of_neurons
 
             # Sample from the probability distribution (equivalent to MATLAB's randsample)
-            self._assignment[mf] = RANDOM_GENERATOR.choice(self._number_of_neurons, p=probs)
+            self._assignment[mf] = get_random_generator().choice(self._number_of_neurons, p=probs)
 
         if verbose:
             print(f"Assignment completed. {self._number_of_muscle_fibers} muscle fibers assigned.")

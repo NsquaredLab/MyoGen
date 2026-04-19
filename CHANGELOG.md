@@ -7,6 +7,34 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- **RNG accessors**: new public API for reproducible random draws
+  - `myogen.get_random_generator()` — always returns the current global RNG (tracks the latest `set_random_seed` call)
+  - `myogen.get_random_seed()` — returns the seed currently in effect
+  - `myogen.derive_subseed(*labels)` — deterministic sub-seed helper for seeding non-NumPy generators (Cython spike generators, sklearn `random_state`, etc.) so they also track `set_random_seed`
+- **Optional `elephant` extra**: install via `pip install myogen[elephant]`. The extra bundles both `elephant>=1.1.1` and `viziphant>=0.4.0` (viziphant was moved out of core dependencies because its only transitive import chain in core came from `elephant`). Core install is now genuinely elephant-free — verified with `importlib.util.find_spec('elephant') is None` on a fresh `uv sync`. The five modules that import elephant (`utils/helper.py`, `surface_emg.py`, `intramuscular_emg.py`, `force_model.py`, `force_model_vectorized.py`) were already guarded with `try/except ImportError` and now emit an accurate install hint when the extra is missing. `neo>=0.14.0` is now an explicit core dependency — it was previously only reached transitively through `elephant`/`viziphant`, so removing those would otherwise break `import myogen`
+- **Test suite** under `tests/`
+  - `test_determinism.py` — 10 regressions covering seed propagation, sub-seed collision avoidance, and deprecation warnings for the legacy RNG names
+  - `test_firing_rate_statistics.py` — 4 regressions covering `FR_std` and `CV_ISI` NaN edge cases
+  - Added `pytest>=8.0` to the `dev` dependency-group and a `[tool.pytest.ini_options]` section
+- **Per-muscle ISI/CV figure**: new `plot_cv_vs_fr_per_muscle()` in `examples/02_finetune/05_plot_isi_cv_multi_muscle_comparison.py` emits a 3-panel VL / VM / FDI breakdown alongside the existing pooled plot
+
+### Changed
+- **RNG architecture** (internal refactor): the six internal modules and eight example scripts that previously did `from myogen import RANDOM_GENERATOR, SEED` at module scope now call the accessor at each site, eliminating the stale-reference bug where `set_random_seed` didn't reach downstream modules or seed-derived generators
+- **Per-cell seed derivation**: the three sites in `myogen/simulator/neuron/cells.py` that built a per-cell seed as `SEED + (class_id+1)*(global_id+1)` — a formula that collided on swapped factors, e.g. `(0, 5)` and `(1, 2)` both resolved to `+6` — now use `derive_subseed(class_id, global_id)` (collision-free with respect to label order, built on `numpy.random.SeedSequence`). The `motor_unit_sim.py` `KMeans` `random_state` uses the same helper. **Consequence**: for a given global seed, RNG output differs from earlier releases; byte-identical reproduction of pre-`Unreleased` outputs is not possible without matching code
+- **Example figures**: bar graphs in `02_finetune/01_optimize_dd_for_target_firing_rate.py`, `02_finetune/02_compute_force_from_optimized_dd.py` and `03_papers/watanabe/01_compute_baseline_force.py` replaced with dumbbell / violin + box + jittered-scatter plots that show the underlying distribution (all points when n<10, violin + box when n≥10)
+- **NEURON version alignment**: `README.md`, `docs/source/README.md`, `docs/source/index.md`, and `setup.py` Windows-install messaging now reference NEURON **8.2.7** (matching the Linux/macOS pip pin in `pyproject.toml` and the CI workflow) with the correct installer filename (`py-39-310-311-312-313`)
+- **Docs build**: pinned `sphinx<9` in the `docs` dependency-group to work around a `sphinx-hoverxref` regression on Sphinx 9, and moved `[tool.pytest.ini_options]` in `pyproject.toml` so it no longer re-parents the `docs` dependency-group
+
+### Deprecated
+- **`myogen.RANDOM_GENERATOR`** and **`myogen.SEED`** module attributes. They remain accessible via a module-level `__getattr__` that emits a `DeprecationWarning` and returns the current RNG / current seed. External code should migrate to `get_random_generator()` / `get_random_seed()`; module-level `from myogen import RANDOM_GENERATOR` captures a stale reference and does not reflect later `set_random_seed` calls
+
+### Fixed
+- **`FR_std = NaN` with a single active unit**: `myogen/utils/helper.py::calculate_firing_rate_statistics` now returns `FR_std = 0.0` when fewer than two units pass the firing-rate filter, instead of propagating the `np.std(..., ddof=1)` NaN into downstream ensemble statistics
+- **`CV_ISI = NaN` for n=1 ISI**: same function's per-neuron branch now returns `0.0` when `min_spikes_for_cv` is set to 2 and a neuron has exactly two spikes
+- **`set_random_seed` did not propagate**: module-level `from myogen import RANDOM_GENERATOR, SEED` imports in the internal modules captured a stale reference at import time; reseeding the package rebinding did not affect them. The accessor refactor above is the fix
+- **Typos / placeholder docstrings**: `extandable` → `extensible` in README and docs; `"as determined by no one"` docstring comments in `myogen/simulator/core/muscle/muscle.py` replaced with concrete physiological rationale
+
 ## [0.8.5] - 2026-01-15
 
 ### Fixed
