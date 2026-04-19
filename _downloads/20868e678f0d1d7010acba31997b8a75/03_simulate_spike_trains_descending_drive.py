@@ -28,17 +28,17 @@ patterns by modeling cortical input through descending drive populations.
 # ----------------
 #
 # .. important::
-#    In **MyoGen** all **random number generation** is handled by the ``RANDOM_GENERATOR`` object.
+#    In **MyoGen** all **random number generation** is handled by the RNG returned from
+#    ``get_random_generator()``, a thin wrapper around ``numpy.random``.
 #
-#    This object is a wrapper around the ``numpy.random`` module and is used to generate random numbers.
-#
-#    It is intended to be used with the following API:
+#    Always fetch the generator at the call site so the current seed is honored:
 #
 #    .. code-block:: python
 #
-#       from myogen import simulator, RANDOM_GENERATOR
+#       from myogen import simulator, get_random_generator
+#       get_random_generator().normal(0, 1)
 #
-#    To change the default seed, use ``set_random_seed``:
+#    To change the seed, use ``set_random_seed``:
 #
 #    .. code-block:: python
 #
@@ -59,7 +59,7 @@ from neo import AnalogSignal, Block, Segment, SpikeTrain
 from neuron import h
 from tqdm import tqdm
 
-from myogen import RANDOM_GENERATOR
+from myogen import get_random_generator
 from myogen.simulator.neuron import Network
 from myogen.simulator.neuron.populations import AlphaMN__Pool, DescendingDrive__Pool
 from myogen.utils.nmodl import load_nmodl_mechanisms
@@ -161,7 +161,7 @@ for i, t in enumerate(time_array):
 
 # Add small noise for realism
 trapezoid_drive = (
-    trapezoid_drive + np.clip(RANDOM_GENERATOR.normal(0, 1.0, size=time_points), 0, None) * pps
+    trapezoid_drive + np.clip(get_random_generator().normal(0, 1.0, size=time_points), 0, None) * pps
 )
 
 # Create AnalogSignal

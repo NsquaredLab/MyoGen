@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>myogen.simulator.core.emg.surface.surface_emg &#8212; MyoGen 0.8.5 Documentation</title>
+    <title>myogen.simulator.core.emg.surface.surface_emg &#8212; MyoGen 0.9.0 Documentation</title>
   
   
   
@@ -26,8 +26,8 @@
   </noscript>
   
   <!-- Loaded before other Sphinx assets -->
-  <link href="../../../../../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
-<link href="../../../../../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+  <link href="../../../../../../_static/styles/theme.css?digest=7f76b32a3354e82990f2" rel="stylesheet" />
+<link href="../../../../../../_static/styles/pydata-sphinx-theme.css?digest=7f76b32a3354e82990f2" rel="stylesheet" />
 
     <link rel="stylesheet" type="text/css" href="../../../../../../_static/pygments.css?v=5349f25f" />
     <link rel="stylesheet" type="text/css" href="../../../../../../_static/css/tooltipster.custom.css" />
@@ -47,14 +47,14 @@
     <link rel="stylesheet" type="text/css" href="../../../../../../_static/custom.css?v=9b95bd4c" />
   
   <!-- So that users can add custom icons -->
-  <script src="../../../../../../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <script defer src="../../../../../../_static/scripts/fontawesome.js?digest=7f76b32a3354e82990f2"></script>
   <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="../../../../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
-<link rel="preload" as="script" href="../../../../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+  <link rel="preload" as="script" href="../../../../../../_static/scripts/bootstrap.js?digest=7f76b32a3354e82990f2" />
+<link rel="preload" as="script" href="../../../../../../_static/scripts/pydata-sphinx-theme.js?digest=7f76b32a3354e82990f2" />
 
     <script src="../../../../../../_static/jquery.js?v=5d32c60e"></script>
     <script src="../../../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-    <script src="../../../../../../_static/documentation_options.js?v=ad379ca3"></script>
+    <script src="../../../../../../_static/documentation_options.js?v=a82ae3da"></script>
     <script src="../../../../../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../../../../_static/js/hoverxref.js"></script>
@@ -64,14 +64,16 @@
     <script src="../../../../../../_static/design-tabs.js?v=f930bc37"></script>
     <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
     <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
-    <script type="module" src="https://cdn.jsdelivr.net/npm/mermaid@11.9.0/dist/mermaid.esm.min.mjs"></script>
-    <script type="module" src="https://cdn.jsdelivr.net/npm/@mermaid-js/layout-elk@0.2.0/dist/mermaid-layout-elk.esm.min.mjs"></script>
-    <script type="module">import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@11.9.0/dist/mermaid.esm.min.mjs";import elkLayouts from "https://cdn.jsdelivr.net/npm/@mermaid-js/layout-elk@0.2.0/dist/mermaid-layout-elk.esm.min.mjs";mermaid.registerLayoutLoaders(elkLayouts);mermaid.initialize({startOnLoad:false});</script>
     <script src="https://cdn.jsdelivr.net/npm/d3@7.9.0/dist/d3.min.js"></script>
     <script type="module">import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@11.9.0/dist/mermaid.esm.min.mjs";
 
-const defaultStyle = document.createElement('style');
-defaultStyle.textContent = `pre.mermaid {
+
+
+
+
+const initStyles = () => {
+    const defaultStyle = document.createElement('style');
+    defaultStyle.textContent = `pre.mermaid {
     /* Same as .mermaid-container > pre */
     display: block;
     width: 100%;
@@ -82,12 +84,11 @@ pre.mermaid > svg {
     height: 500px;
     width: 100%;
     max-width: 100% !important;
-}
-`;
-document.head.appendChild(defaultStyle);
+}`;
+    document.head.appendChild(defaultStyle);
 
-const fullscreenStyle = document.createElement('style');
-fullscreenStyle.textContent = `.mermaid-container {
+    const fullscreenStyle = document.createElement('style');
+    fullscreenStyle.textContent = `.mermaid-container {
     display: flex;
     flex-direction: row;
     width: 100%;
@@ -239,10 +240,32 @@ fullscreenStyle.textContent = `.mermaid-container {
 .mermaid-fullscreen-modal .mermaid-fullscreen-btn {
     display: none !important;
 }`;
-document.head.appendChild(fullscreenStyle);
+    document.head.appendChild(fullscreenStyle);
+}
 
 // Detect if page has dark background
 const isDarkTheme = () => {
+    // We use a set of heuristics:
+    // 1. Check for common dark mode classes or attributes
+    // 2. Check computed background color brightness
+    if (document.documentElement.classList.contains('dark') ||
+        document.documentElement.getAttribute('data-theme') === 'dark' ||
+        document.body.classList.contains('dark') ||
+        document.body.getAttribute('data-theme') === 'dark') {
+        // console.log("Dark theme detected via class/attribute");
+        return true;
+    }
+    if (document.documentElement.classList.contains('light') ||
+        document.documentElement.getAttribute('data-theme') === 'light' ||
+        document.body.classList.contains('light') ||
+        document.body.getAttribute('data-theme') === 'light') {
+        // console.log("Light theme detected via class/attribute");
+        return false;
+    }
+    if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        // console.log("Dark theme detected via prefers-color-scheme");
+        return true;
+    }
     const bgColor = window.getComputedStyle(document.body).backgroundColor;
     const match = bgColor.match(/rgb\((\d+),\s*(\d+),\s*(\d+)/);
     if (match) {
@@ -250,15 +273,45 @@ const isDarkTheme = () => {
         const g = parseInt(match[2]);
         const b = parseInt(match[3]);
         const brightness = (r * 299 + g * 587 + b * 114) / 1000;
+        // console.log("Background color brightness:", brightness);
         return brightness < 128;
     }
+    // console.log("No dark or light theme detected, defaulting to light theme");
     return false;
 };
 
-const load = async () => {
-    await mermaid.run();
+let darkTheme = isDarkTheme();
+let modal = null;
+let modalContent = null;
+let previousScrollOffset = [window.scrollX, window.scrollY];
 
-    const all_mermaids = document.querySelectorAll(".mermaid");
+const runMermaid = async (rerun) => {
+    console.log("Running mermaid diagrams, rerun =", rerun);
+    // clear all existing mermaid charts
+    let all_mermaids = document.querySelectorAll(".mermaid");
+
+    if (rerun) {
+        all_mermaids.forEach((el) => {
+            if(!el.hasAttribute("data-original-code")) {
+                // store original code
+                // console.log(`Storing original code for first run: `, el.innerHTML);
+                el.setAttribute('data-original-code', el.innerHTML);
+            }
+            if(el.getAttribute("data-processed") === "true") {
+                // remove and restore original
+                el.removeAttribute("data-processed");
+                // console.log(`Restoring original code for re-run: `, el.getAttribute('data-original-code'));
+                el.innerHTML = el.getAttribute('data-original-code');
+            } else {
+                // store original code
+                // console.log(`Storing original code for re-run: `, el.innerHTML);
+                el.setAttribute('data-original-code', el.innerHTML);
+            }
+        });
+        await mermaid.run();
+    }
+
+    all_mermaids = document.querySelectorAll(".mermaid");
     const mermaids_processed = document.querySelectorAll(".mermaid[data-processed='true']");
 
     if ("False" === "True") {
@@ -266,10 +319,10 @@ const load = async () => {
         if(mermaids_to_add_zoom > 0) {
             var svgs = d3.selectAll("");
             if(all_mermaids.length !== mermaids_processed.length) {
-                setTimeout(load, 200);
+                setTimeout(() => runMermaid(false), 200);
                 return;
             } else if(svgs.size() !== mermaids_to_add_zoom) {
-                setTimeout(load, 200);
+                setTimeout(() => runMermaid(false), 200);
                 return;
             } else {
                 svgs.each(function() {
@@ -285,16 +338,21 @@ const load = async () => {
         }
     } else if(all_mermaids.length !== mermaids_processed.length) {
         // Wait for mermaid to process all diagrams
-        setTimeout(load, 200);
+        setTimeout(() => runMermaid(false), 200);
         return;
     }
-
-    const darkTheme = isDarkTheme();
 
     // Stop here if not adding fullscreen capability
     if ("True" !== "True") return;
 
-    const modal = document.createElement('div');
+    if (modal !== null ) {
+        // Destroy existing modal
+        modal.remove();
+        modal = null;
+        modalContent = null;
+    }
+
+    modal = document.createElement('div');
     modal.className = 'mermaid-fullscreen-modal' + (darkTheme ? ' dark-theme' : '');
     modal.setAttribute('role', 'dialog');
     modal.setAttribute('aria-modal', 'true');
@@ -305,10 +363,8 @@ const load = async () => {
     `;
     document.body.appendChild(modal);
 
-    const modalContent = modal.querySelector('.mermaid-container-fullscreen');
+    modalContent = modal.querySelector('.mermaid-container-fullscreen');
     const closeBtn = modal.querySelector('.mermaid-fullscreen-close');
-
-    let previousScrollOffset = [window.scrollX, window.scrollY];
 
     const closeModal = () => {
         modal.classList.remove('active');
@@ -327,11 +383,14 @@ const load = async () => {
         }
     });
 
-    const allButtons = [];
-
     document.querySelectorAll('.mermaid').forEach((mermaidDiv) => {
         if (mermaidDiv.parentNode.classList.contains('mermaid-container') ||
             mermaidDiv.closest('.mermaid-fullscreen-modal')) {
+            // Already processed, adjust button class if needed
+            const existingBtn = mermaidDiv.parentNode.querySelector('.mermaid-fullscreen-btn');
+            if (existingBtn) {
+                existingBtn.className = 'mermaid-fullscreen-btn' + (darkTheme ? ' dark-theme' : '');
+            }
             return;
         }
 
@@ -389,60 +448,77 @@ const load = async () => {
             modal.classList.add('active');
             document.body.style.overflow = 'hidden';
         });
-
         container.appendChild(fullscreenBtn);
-        allButtons.push(fullscreenBtn);
-    });
-
-    // Update theme classes when theme changes
-    const updateTheme = () => {
-        const dark = isDarkTheme();
-        allButtons.forEach(btn => {
-            if (dark) {
-                btn.classList.add('dark-theme');
-            } else {
-                btn.classList.remove('dark-theme');
-            }
-        });
-        if (dark) {
-            modal.classList.add('dark-theme');
-            modalContent.classList.add('dark-theme');
-            closeBtn.classList.add('dark-theme');
-        } else {
-            modal.classList.remove('dark-theme');
-            modalContent.classList.remove('dark-theme');
-            closeBtn.classList.remove('dark-theme');
-        }
-    };
-
-    // Watch for theme changes
-    const observer = new MutationObserver(updateTheme);
-    observer.observe(document.documentElement, {
-        attributes: true,
-        attributeFilter: ['class', 'style', 'data-theme']
-    });
-    observer.observe(document.body, {
-        attributes: true,
-        attributeFilter: ['class', 'style']
     });
 };
 
+const load = async () => {
+    initStyles();
+
+    await runMermaid(true);
+
+    const reRunIfThemeChanges = async () => {
+        const newDarkTheme = isDarkTheme();
+        if (newDarkTheme !== darkTheme) {
+            darkTheme = newDarkTheme;
+            console.log("Theme change detected, re-running mermaid with", darkTheme ? "dark" : "default", "theme");
+            await mermaid.initialize(
+                {...JSON.parse(
+                    `{"startOnLoad": false}`
+                ),
+                ...{ darkMode: darkTheme, theme: darkTheme ? 'dark' : 'default' },
+                }
+            );
+            await runMermaid(true);
+        }
+    };
+
+    // Update theme classes when theme changes
+    const themeObserver = new MutationObserver(reRunIfThemeChanges);
+    themeObserver.observe(document.documentElement, {
+        attributes: true,
+        attributeFilter: ['class', 'style', 'data-theme']
+    });
+    themeObserver.observe(document.body, {
+        attributes: true,
+        attributeFilter: ['class', 'style', 'data-theme']
+    });
+};
+
+
+
+
+
+console.log("Initializing mermaid with", darkTheme ? "dark" : "default", "theme");
+mermaid.initialize(
+    {...JSON.parse(
+        `{"startOnLoad": false}`
+    ),
+    ...{ darkMode: darkTheme, theme: darkTheme ? 'dark' : 'default' },
+    }
+);
+
 window.addEventListener("load", load);
-</script>
+window.runMermaid = runMermaid;</script>
     <script>DOCUMENTATION_OPTIONS.pagename = '_modules/myogen/simulator/core/emg/surface/surface_emg';</script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
     <link rel="index" title="Index" href="../../../../../../genindex.html" />
     <link rel="search" title="Search" href="../../../../../../search.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="0.8.5" />
+  <meta name="docsearch:version" content="0.9.0" />
+  
+    
+    <script src="../../../../../../_static/searchtools.js"></script>
+    <script src="../../../../../../_static/language_data.js"></script>
+    <script src="../../../../../../searchindex.js"></script>
+  
   </head>
-  
-  
-  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
-
+  <body data-default-mode="">
   
   
   <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+
   
   <div id="pst-scroll-pixel-helper"></div>
   
@@ -477,7 +553,7 @@ window.addEventListener("load", load);
 </aside>
 
   
-    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
 <div class="bd-header__inner bd-page-width">
   <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
     <span class="fa-solid fa-bars"></span>
@@ -503,8 +579,8 @@ window.addEventListener("load", load);
       
     
     
-    <img src="../../../../../../_static/myogen_logo.png" class="logo__image only-light" alt="MyoGen 0.8.5 Documentation - Home"/>
-    <img src="../../../../../../_static/myogen_logo.png" class="logo__image only-dark pst-js-only" alt="MyoGen 0.8.5 Documentation - Home"/>
+    <img src="../../../../../../_static/myogen_logo.png" class="logo__image only-light" alt="MyoGen 0.9.0 Documentation - Home"/>
+    <img src="../../../../../../_static/myogen_logo.png" class="logo__image only-dark pst-js-only" alt="MyoGen 0.9.0 Documentation - Home"/>
   
   
 </a></div>
@@ -513,7 +589,7 @@ window.addEventListener("load", load);
 <div class="nav-item">
   <div class="version-switcher__container dropdown">
       <button id="version-switcher-button" type="button" class="version-switcher__button btn btn-sm navbar-btn" aria-haspopup="true" aria-expanded="false">
-          Version 0.8.5
+          Version 0.9.0
       </button>
       
       
@@ -787,9 +863,9 @@ window.addEventListener("load", load);
 <span class="kn">from</span><span class="w"> </span><span class="nn">scipy.signal</span><span class="w"> </span><span class="kn">import</span> <span class="n">resample</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">tqdm</span><span class="w"> </span><span class="kn">import</span> <span class="n">tqdm</span>
 
-<span class="kn">from</span><span class="w"> </span><span class="nn">myogen</span><span class="w"> </span><span class="kn">import</span> <span class="n">RANDOM_GENERATOR</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">myogen</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_random_generator</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">myogen.simulator.core.emg.electrodes</span><span class="w"> </span><span class="kn">import</span> <span class="n">SurfaceElectrodeArray</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">myogen.simulator.core.emg.surface.simulate_fiber</span><span class="w"> </span><span class="kn">import</span> <span class="n">simulate_fiber_v2</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">myogen.simulator.core.emg.surface.simulate_fiber</span><span class="w"> </span><span class="kn">import</span> <span class="n">simulate_fiber_v2</span><span class="p">,</span> <span class="n">_simulate_fiber_v2_python</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">myogen.simulator.core.muscle</span><span class="w"> </span><span class="kn">import</span> <span class="n">Muscle</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">myogen.utils.decorators</span><span class="w"> </span><span class="kn">import</span> <span class="n">beartowertype</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">myogen.utils.types</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
@@ -882,6 +958,7 @@ window.addEventListener("load", load);
         <span class="n">MUs_to_simulate</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">internal_sampling_frequency__Hz</span><span class="p">:</span> <span class="n">Quantity__Hz</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">iap_kernel_length__mm</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">use_unified</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="p">):</span>
         <span class="c1"># Immutable public arguments - never modify these</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">muscle_model</span> <span class="o">=</span> <span class="n">muscle_model</span>
@@ -891,6 +968,7 @@ window.addEventListener("load", load);
         <span class="bp">self</span><span class="o">.</span><span class="n">sampling_points_in_theta_domain</span> <span class="o">=</span> <span class="n">sampling_points_in_theta_domain</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">MUs_to_simulate</span> <span class="o">=</span> <span class="n">MUs_to_simulate</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">iap_kernel_length__mm</span> <span class="o">=</span> <span class="n">iap_kernel_length__mm</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_use_unified</span> <span class="o">=</span> <span class="n">use_unified</span>
 
         <span class="c1"># Internal sampling frequency for higher resolution MUAP computation</span>
         <span class="c1"># If not specified, defaults to 10 kHz for better MUAP resolution</span>
@@ -1033,7 +1111,7 @@ window.addEventListener("load", load);
         <span class="n">n_motor_units</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">number_of_fibers_per_MUs</span><span class="p">)</span>
 
         <span class="c1"># Pre-calculate innervation zones for all MUs</span>
-        <span class="n">innervation_zones</span> <span class="o">=</span> <span class="n">RANDOM_GENERATOR</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span>
+        <span class="n">innervation_zones</span> <span class="o">=</span> <span class="n">get_random_generator</span><span class="p">()</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span>
             <span class="n">low</span><span class="o">=-</span><span class="n">innervation_zone_variance</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span>
             <span class="n">high</span><span class="o">=</span><span class="n">innervation_zone_variance</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span>
             <span class="n">size</span><span class="o">=</span><span class="n">n_motor_units</span><span class="p">,</span>
@@ -1076,8 +1154,12 @@ window.addEventListener("load", load);
 <span class="sd">                MUAP signal for this MU and segment_name is the name for the segment.</span>
 <span class="sd">            &quot;&quot;&quot;</span>
             <span class="k">try</span><span class="p">:</span>
-                <span class="c1"># Deep copy electrode array to avoid threading issues</span>
-                <span class="n">electrode_array</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">electrode_array_original</span><span class="p">)</span>
+                <span class="c1"># Deep copy electrode array only when running in parallel (thread safety)</span>
+                <span class="c1"># For n_jobs=1 sequential mode, skip the expensive deepcopy</span>
+                <span class="k">if</span> <span class="n">n_jobs</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
+                    <span class="n">electrode_array</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">electrode_array_original</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">electrode_array</span> <span class="o">=</span> <span class="n">electrode_array_original</span>
 
                 <span class="c1"># Pre-allocated result array at INTERNAL resolution (optimization: use pre-computed shape)</span>
                 <span class="n">array_result_internal</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">internal_result_shape</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
@@ -1100,7 +1182,7 @@ window.addEventListener("load", load);
                 <span class="n">innervation_zone</span> <span class="o">=</span> <span class="n">innervation_zones</span><span class="p">[</span><span class="n">MU_index</span><span class="p">]</span>
 
                 <span class="c1"># Batch generate random fiber lengths (optimization: single RNG call)</span>
-                <span class="n">fiber_length_variations</span> <span class="o">=</span> <span class="n">RANDOM_GENERATOR</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span>
+                <span class="n">fiber_length_variations</span> <span class="o">=</span> <span class="n">get_random_generator</span><span class="p">()</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span>
                     <span class="n">low</span><span class="o">=-</span><span class="bp">self</span><span class="o">.</span><span class="n">_var_fiber_length__mm</span><span class="p">,</span>
                     <span class="n">high</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_var_fiber_length__mm</span><span class="p">,</span>
                     <span class="n">size</span><span class="o">=</span><span class="n">number_of_fibers</span><span class="p">,</span>
@@ -1115,55 +1197,118 @@ window.addEventListener("load", load);
                 <span class="n">A_matrix</span> <span class="o">=</span> <span class="kc">None</span>
                 <span class="n">B_incomplete</span> <span class="o">=</span> <span class="kc">None</span>
 
+                <span class="c1"># Unified path cache variables</span>
+                <span class="n">A_matrix_unified</span> <span class="o">=</span> <span class="kc">None</span>
+                <span class="n">b_z_cached</span> <span class="o">=</span> <span class="kc">None</span>
+
+                <span class="c1"># Pre-compute base electrode positions ONCE (avoid per-fiber grid recomputation)</span>
+                <span class="kn">import</span><span class="w"> </span><span class="nn">quantities</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pq</span>
+                <span class="n">base_pos_z</span> <span class="o">=</span> <span class="n">electrode_array</span><span class="o">.</span><span class="n">pos_z</span><span class="o">.</span><span class="n">rescale</span><span class="p">(</span><span class="n">pq</span><span class="o">.</span><span class="n">mm</span><span class="p">)</span><span class="o">.</span><span class="n">magnitude</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+                <span class="n">base_pos_theta</span> <span class="o">=</span> <span class="n">electrode_array</span><span class="o">.</span><span class="n">pos_theta</span><span class="o">.</span><span class="n">rescale</span><span class="p">(</span><span class="n">pq</span><span class="o">.</span><span class="n">rad</span><span class="p">)</span><span class="o">.</span><span class="n">magnitude</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+                <span class="n">base_rele</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">electrode_array</span><span class="o">.</span><span class="n">electrode_radius__mm</span><span class="o">.</span><span class="n">rescale</span><span class="p">(</span><span class="n">pq</span><span class="o">.</span><span class="n">mm</span><span class="p">)</span><span class="o">.</span><span class="n">magnitude</span><span class="p">)</span>
+
+                <span class="c1"># Pre-extract scalar values from self (avoid repeated quantities access in fiber loop)</span>
+                <span class="n">Fs_internal</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_internal_sampling_frequency__Hz</span> <span class="o">*</span> <span class="mf">1e-3</span><span class="p">)</span>
+                <span class="n">v_conduction</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_mean_conduction_velocity__m_s</span><span class="p">)</span>
+                <span class="n">N_internal</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_internal_sampling_points</span><span class="p">)</span>
+                <span class="n">M_theta</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_sampling_points_in_theta_domain</span><span class="p">)</span>
+                <span class="n">r_total</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_radius_total</span><span class="p">)</span>
+                <span class="n">r_bone</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_radius_bone__mm</span><span class="p">)</span>
+                <span class="n">th_fat</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_fat_thickness__mm</span><span class="p">)</span>
+                <span class="n">th_skin</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_skin_thickness__mm</span><span class="p">)</span>
+                <span class="n">sig_rho</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_muscle_conductivity_radial__S_m</span><span class="p">)</span>
+                <span class="n">sig_z</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_muscle_conductivity_longitudinal__S_m</span><span class="p">)</span>
+                <span class="n">sig_skin_val</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_skin_conductivity__S_m</span><span class="p">)</span>
+                <span class="n">sig_fat_val</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_fat_conductivity__S_m</span><span class="p">)</span>
+
+                <span class="c1"># Determine IAP kernel length once (same for all fibers)</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_iap_kernel_length__mm</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">kernel_length</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_iap_kernel_length__mm</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">IAP_SCALE_FACTOR</span> <span class="o">=</span> <span class="mf">2.5</span>
+                    <span class="n">kernel_length</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_mean_fiber_length__mm</span> <span class="o">*</span> <span class="n">IAP_SCALE_FACTOR</span>
+
                 <span class="c1"># Process each fiber (inner loop - must remain sequential)</span>
-                <span class="k">for</span> <span class="n">fiber_number</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">number_of_fibers</span><span class="p">):</span>
+                <span class="n">fiber_iter</span> <span class="o">=</span> <span class="n">tqdm</span><span class="p">(</span>
+                    <span class="nb">range</span><span class="p">(</span><span class="n">number_of_fibers</span><span class="p">),</span>
+                    <span class="n">desc</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;  MU </span><span class="si">{</span><span class="n">MU_index</span><span class="si">}</span><span class="s2"> fibers&quot;</span><span class="p">,</span>
+                    <span class="n">leave</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                    <span class="n">disable</span><span class="o">=</span><span class="ow">not</span> <span class="n">verbose</span><span class="p">,</span>
+                <span class="p">)</span>
+                <span class="k">for</span> <span class="n">fiber_number</span> <span class="ow">in</span> <span class="n">fiber_iter</span><span class="p">:</span>
                     <span class="c1"># Use pre-computed values (optimization: vectorized calculations)</span>
                     <span class="n">R</span> <span class="o">=</span> <span class="n">R_values</span><span class="p">[</span><span class="n">fiber_number</span><span class="p">]</span>
                     <span class="n">theta</span> <span class="o">=</span> <span class="n">theta_values</span><span class="p">[</span><span class="n">fiber_number</span><span class="p">]</span>
                     <span class="n">fiber_length__mm</span> <span class="o">=</span> <span class="n">fiber_lengths</span><span class="p">[</span><span class="n">fiber_number</span><span class="p">]</span>
 
-                    <span class="n">electrode_array</span><span class="o">.</span><span class="n">_center_point__mm_deg</span> <span class="o">=</span> <span class="p">(</span>
-                        <span class="n">electrode_array</span><span class="o">.</span><span class="n">_center_point__mm_deg</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
-                        <span class="n">electrode_array</span><span class="o">.</span><span class="n">_center_point__mm_deg</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">rad2deg</span><span class="p">(</span><span class="n">theta</span><span class="p">),</span>
-                    <span class="p">)</span>
-                    <span class="n">electrode_array</span><span class="o">.</span><span class="n">_create_electrode_grid</span><span class="p">()</span>
-
                     <span class="c1"># Calculate fiber end positions</span>
                     <span class="n">L1</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">innervation_zone</span> <span class="o">+</span> <span class="n">fiber_length__mm</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span>
                     <span class="n">L2</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">innervation_zone</span> <span class="o">-</span> <span class="n">fiber_length__mm</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span>
 
-                    <span class="c1"># Determine IAP kernel length: use fixed value or scaled mean fiber length</span>
-                    <span class="c1"># IMPORTANT: Use scaled mean, not individual fiber_length__mm, to avoid boundary artifacts</span>
-                    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_iap_kernel_length__mm</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-                        <span class="n">kernel_length</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_iap_kernel_length__mm</span>
-                    <span class="k">else</span><span class="p">:</span>
-                        <span class="c1"># Use scaled mean fiber length (2.5×) for all fibers to prevent boundary truncation</span>
-                        <span class="n">IAP_SCALE_FACTOR</span> <span class="o">=</span> <span class="mf">2.5</span>
-                        <span class="n">kernel_length</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_mean_fiber_length__mm</span> <span class="o">*</span> <span class="n">IAP_SCALE_FACTOR</span>
+                    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_use_unified</span><span class="p">:</span>
+                        <span class="kn">from</span><span class="w"> </span><span class="nn">myogen.simulator.core.emg.fiber_simulation</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+                            <span class="n">simulate_fiber_hybrid</span><span class="p">,</span>
+                        <span class="p">)</span>
 
-                    <span class="c1"># Use the new simulate_fiber_v2 function with INTERNAL sampling frequency</span>
-                    <span class="n">phi_temp</span><span class="p">,</span> <span class="n">A_matrix</span><span class="p">,</span> <span class="n">B_incomplete</span> <span class="o">=</span> <span class="n">simulate_fiber_v2</span><span class="p">(</span>
-                        <span class="n">Fs</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_internal_sampling_frequency__Hz</span> <span class="o">*</span> <span class="mf">1e-3</span><span class="p">,</span>
-                        <span class="n">v</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_mean_conduction_velocity__m_s</span><span class="p">,</span>
-                        <span class="n">N</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_internal_sampling_points</span><span class="p">,</span>
-                        <span class="n">M</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_sampling_points_in_theta_domain</span><span class="p">,</span>
-                        <span class="n">r</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_radius_total</span><span class="p">,</span>
-                        <span class="n">r_bone</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_radius_bone__mm</span><span class="p">,</span>
-                        <span class="n">th_fat</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_fat_thickness__mm</span><span class="p">,</span>
-                        <span class="n">th_skin</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_skin_thickness__mm</span><span class="p">,</span>
-                        <span class="n">R</span><span class="o">=</span><span class="n">R</span><span class="p">,</span>
-                        <span class="n">L1</span><span class="o">=</span><span class="n">L1</span><span class="p">,</span>
-                        <span class="n">L2</span><span class="o">=</span><span class="n">L2</span><span class="p">,</span>
-                        <span class="n">zi</span><span class="o">=</span><span class="n">innervation_zone</span><span class="p">,</span>
-                        <span class="n">electrode_array</span><span class="o">=</span><span class="n">electrode_array</span><span class="p">,</span>
-                        <span class="n">sig_muscle_rho</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_muscle_conductivity_radial__S_m</span><span class="p">,</span>
-                        <span class="n">sig_muscle_z</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_muscle_conductivity_longitudinal__S_m</span><span class="p">,</span>
-                        <span class="n">sig_skin</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_skin_conductivity__S_m</span><span class="p">,</span>
-                        <span class="n">sig_fat</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_fat_conductivity__S_m</span><span class="p">,</span>
-                        <span class="n">A_matrix</span><span class="o">=</span><span class="kc">None</span> <span class="k">if</span> <span class="n">fiber_number</span> <span class="o">==</span> <span class="mi">0</span> <span class="k">else</span> <span class="n">A_matrix</span><span class="p">,</span>
-                        <span class="n">B_incomplete</span><span class="o">=</span><span class="kc">None</span> <span class="k">if</span> <span class="n">fiber_number</span> <span class="o">==</span> <span class="mi">0</span> <span class="k">else</span> <span class="n">B_incomplete</span><span class="p">,</span>
-                        <span class="n">fiber_length__mm</span><span class="o">=</span><span class="n">kernel_length</span><span class="p">,</span>  <span class="c1"># NEW: Use fiber-specific or fixed IAP kernel length</span>
-                    <span class="p">)</span>
+                        <span class="c1"># Hybrid: time-domain Rosenfalck + frequency-domain volume conductor</span>
+                        <span class="c1"># Same signature as _simulate_fiber_v2_python (drop-in replacement)</span>
+                        <span class="n">phi_temp</span><span class="p">,</span> <span class="n">A_matrix</span><span class="p">,</span> <span class="n">B_incomplete</span> <span class="o">=</span> <span class="n">simulate_fiber_hybrid</span><span class="p">(</span>
+                            <span class="n">Fs</span><span class="o">=</span><span class="n">Fs_internal</span><span class="p">,</span>
+                            <span class="n">v</span><span class="o">=</span><span class="n">v_conduction</span><span class="p">,</span>
+                            <span class="n">N</span><span class="o">=</span><span class="n">N_internal</span><span class="p">,</span>
+                            <span class="n">M</span><span class="o">=</span><span class="n">M_theta</span><span class="p">,</span>
+                            <span class="n">r</span><span class="o">=</span><span class="n">r_total</span><span class="p">,</span>
+                            <span class="n">r_bone</span><span class="o">=</span><span class="n">r_bone</span><span class="p">,</span>
+                            <span class="n">th_fat</span><span class="o">=</span><span class="n">th_fat</span><span class="p">,</span>
+                            <span class="n">th_skin</span><span class="o">=</span><span class="n">th_skin</span><span class="p">,</span>
+                            <span class="n">R</span><span class="o">=</span><span class="n">R</span><span class="p">,</span>
+                            <span class="n">L1</span><span class="o">=</span><span class="n">L1</span><span class="p">,</span>
+                            <span class="n">L2</span><span class="o">=</span><span class="n">L2</span><span class="p">,</span>
+                            <span class="n">zi</span><span class="o">=</span><span class="n">innervation_zone</span><span class="p">,</span>
+                            <span class="n">electrode_array</span><span class="o">=</span><span class="n">electrode_array</span><span class="p">,</span>
+                            <span class="n">sig_muscle_rho</span><span class="o">=</span><span class="n">sig_rho</span><span class="p">,</span>
+                            <span class="n">sig_muscle_z</span><span class="o">=</span><span class="n">sig_z</span><span class="p">,</span>
+                            <span class="n">sig_fat</span><span class="o">=</span><span class="n">sig_fat_val</span><span class="p">,</span>
+                            <span class="n">sig_skin</span><span class="o">=</span><span class="n">sig_skin_val</span><span class="p">,</span>
+                            <span class="n">fiber_length__mm</span><span class="o">=</span><span class="n">kernel_length</span><span class="p">,</span>
+                            <span class="n">A_matrix</span><span class="o">=</span><span class="kc">None</span> <span class="k">if</span> <span class="n">fiber_number</span> <span class="o">==</span> <span class="mi">0</span> <span class="k">else</span> <span class="n">A_matrix</span><span class="p">,</span>
+                            <span class="n">B_incomplete</span><span class="o">=</span><span class="kc">None</span> <span class="k">if</span> <span class="n">fiber_number</span> <span class="o">==</span> <span class="mi">0</span> <span class="k">else</span> <span class="n">B_incomplete</span><span class="p">,</span>
+                            <span class="n">use_gpu</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                            <span class="n">theta_offset</span><span class="o">=-</span><span class="n">theta</span><span class="p">,</span>
+                            <span class="n">pos_z_precomputed</span><span class="o">=</span><span class="n">base_pos_z</span><span class="p">,</span>
+                            <span class="n">pos_theta_precomputed</span><span class="o">=</span><span class="n">base_pos_theta</span><span class="p">,</span>
+                            <span class="n">rele_precomputed</span><span class="o">=</span><span class="n">base_rele</span><span class="p">,</span>
+                            <span class="n">D1</span><span class="o">=</span><span class="mf">96.0</span><span class="p">,</span>
+                        <span class="p">)</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="c1"># Existing frequency-domain path (unchanged)</span>
+                        <span class="n">phi_temp</span><span class="p">,</span> <span class="n">A_matrix</span><span class="p">,</span> <span class="n">B_incomplete</span> <span class="o">=</span> <span class="n">_simulate_fiber_v2_python</span><span class="p">(</span>
+                            <span class="n">Fs</span><span class="o">=</span><span class="n">Fs_internal</span><span class="p">,</span>
+                            <span class="n">v</span><span class="o">=</span><span class="n">v_conduction</span><span class="p">,</span>
+                            <span class="n">N</span><span class="o">=</span><span class="n">N_internal</span><span class="p">,</span>
+                            <span class="n">M</span><span class="o">=</span><span class="n">M_theta</span><span class="p">,</span>
+                            <span class="n">r</span><span class="o">=</span><span class="n">r_total</span><span class="p">,</span>
+                            <span class="n">r_bone</span><span class="o">=</span><span class="n">r_bone</span><span class="p">,</span>
+                            <span class="n">th_fat</span><span class="o">=</span><span class="n">th_fat</span><span class="p">,</span>
+                            <span class="n">th_skin</span><span class="o">=</span><span class="n">th_skin</span><span class="p">,</span>
+                            <span class="n">R</span><span class="o">=</span><span class="n">R</span><span class="p">,</span>
+                            <span class="n">L1</span><span class="o">=</span><span class="n">L1</span><span class="p">,</span>
+                            <span class="n">L2</span><span class="o">=</span><span class="n">L2</span><span class="p">,</span>
+                            <span class="n">zi</span><span class="o">=</span><span class="n">innervation_zone</span><span class="p">,</span>
+                            <span class="n">electrode_array</span><span class="o">=</span><span class="n">electrode_array</span><span class="p">,</span>
+                            <span class="n">sig_muscle_rho</span><span class="o">=</span><span class="n">sig_rho</span><span class="p">,</span>
+                            <span class="n">sig_muscle_z</span><span class="o">=</span><span class="n">sig_z</span><span class="p">,</span>
+                            <span class="n">sig_fat</span><span class="o">=</span><span class="n">sig_fat_val</span><span class="p">,</span>
+                            <span class="n">sig_skin</span><span class="o">=</span><span class="n">sig_skin_val</span><span class="p">,</span>
+                            <span class="n">fiber_length__mm</span><span class="o">=</span><span class="n">kernel_length</span><span class="p">,</span>
+                            <span class="n">A_matrix</span><span class="o">=</span><span class="kc">None</span> <span class="k">if</span> <span class="n">fiber_number</span> <span class="o">==</span> <span class="mi">0</span> <span class="k">else</span> <span class="n">A_matrix</span><span class="p">,</span>
+                            <span class="n">B_incomplete</span><span class="o">=</span><span class="kc">None</span> <span class="k">if</span> <span class="n">fiber_number</span> <span class="o">==</span> <span class="mi">0</span> <span class="k">else</span> <span class="n">B_incomplete</span><span class="p">,</span>
+                            <span class="n">use_gpu</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                            <span class="n">theta_offset</span><span class="o">=-</span><span class="n">theta</span><span class="p">,</span>
+                            <span class="n">pos_z_precomputed</span><span class="o">=</span><span class="n">base_pos_z</span><span class="p">,</span>
+                            <span class="n">pos_theta_precomputed</span><span class="o">=</span><span class="n">base_pos_theta</span><span class="p">,</span>
+                            <span class="n">rele_precomputed</span><span class="o">=</span><span class="n">base_rele</span><span class="p">,</span>
+                        <span class="p">)</span>
 
                     <span class="n">array_result_internal</span> <span class="o">+=</span> <span class="n">phi_temp</span>
 
@@ -1195,28 +1340,37 @@ window.addEventListener("load", load);
                 <span class="sa">f</span><span class="s2">&quot;Processing </span><span class="si">{</span><span class="n">n_mus_to_compute</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">n_motor_units</span><span class="si">}</span><span class="s2"> motor units for electrode array </span><span class="si">{</span><span class="n">array_idx</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_electrode_arrays</span><span class="p">)</span><span class="si">}</span><span class="s2"> using parallel processing...&quot;</span>
             <span class="p">)</span>
 
-            <span class="c1"># Parallel execution of motor units with tqdm progress bar</span>
-            <span class="c1"># batch_size=&quot;auto&quot; optimizes task distribution across workers</span>
-            <span class="c1"># Only compute MUs in the subset</span>
-            <span class="n">results</span> <span class="o">=</span> <span class="p">{}</span>  <span class="c1"># Use dict to map MU_index -&gt; result</span>
-            <span class="k">with</span> <span class="n">tqdm</span><span class="p">(</span>
-                <span class="n">total</span><span class="o">=</span><span class="n">n_mus_to_compute</span><span class="p">,</span>
-                <span class="n">desc</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Electrode Array </span><span class="si">{</span><span class="n">array_idx</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_electrode_arrays</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
-                <span class="n">disable</span><span class="o">=</span><span class="ow">not</span> <span class="n">verbose</span><span class="p">,</span>
-            <span class="p">)</span> <span class="k">as</span> <span class="n">pbar</span><span class="p">:</span>
-                <span class="k">for</span> <span class="n">array_result</span><span class="p">,</span> <span class="n">segment_name</span> <span class="ow">in</span> <span class="n">Parallel</span><span class="p">(</span>
-                    <span class="n">n_jobs</span><span class="o">=</span><span class="n">n_jobs</span><span class="p">,</span>
-                    <span class="n">return_as</span><span class="o">=</span><span class="s2">&quot;generator&quot;</span><span class="p">,</span>
-                    <span class="n">verbose</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
-                    <span class="n">batch_size</span><span class="o">=</span><span class="s2">&quot;auto&quot;</span><span class="p">,</span>
-                <span class="p">)(</span>
-                    <span class="n">delayed</span><span class="p">(</span><span class="n">_process_single_mu</span><span class="p">)(</span><span class="n">MU_index</span><span class="p">,</span> <span class="n">electrode_array</span><span class="p">)</span>
-                    <span class="k">for</span> <span class="n">MU_index</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_MUs_to_simulate</span>
+            <span class="c1"># Process motor units with progress bar</span>
+            <span class="n">results</span> <span class="o">=</span> <span class="p">{}</span>
+            <span class="k">if</span> <span class="n">n_jobs</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="c1"># Sequential: call directly, no joblib overhead</span>
+                <span class="k">for</span> <span class="n">MU_index</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_MUs_to_simulate</span><span class="p">,</span>
+                    <span class="n">desc</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Electrode Array </span><span class="si">{</span><span class="n">array_idx</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_electrode_arrays</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                    <span class="n">disable</span><span class="o">=</span><span class="ow">not</span> <span class="n">verbose</span><span class="p">,</span>
                 <span class="p">):</span>
-                    <span class="c1"># Extract MU index from segment name &quot;MUAP_{MU_index}&quot;</span>
+                    <span class="n">array_result</span><span class="p">,</span> <span class="n">segment_name</span> <span class="o">=</span> <span class="n">_process_single_mu</span><span class="p">(</span><span class="n">MU_index</span><span class="p">,</span> <span class="n">electrode_array</span><span class="p">)</span>
                     <span class="n">mu_idx</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">segment_name</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span>
                     <span class="n">results</span><span class="p">[</span><span class="n">mu_idx</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">array_result</span><span class="p">,</span> <span class="n">segment_name</span><span class="p">)</span>
-                    <span class="n">pbar</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="c1"># Parallel: use joblib for multi-core</span>
+                <span class="k">with</span> <span class="n">tqdm</span><span class="p">(</span>
+                    <span class="n">total</span><span class="o">=</span><span class="n">n_mus_to_compute</span><span class="p">,</span>
+                    <span class="n">desc</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Electrode Array </span><span class="si">{</span><span class="n">array_idx</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_electrode_arrays</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                    <span class="n">disable</span><span class="o">=</span><span class="ow">not</span> <span class="n">verbose</span><span class="p">,</span>
+                <span class="p">)</span> <span class="k">as</span> <span class="n">pbar</span><span class="p">:</span>
+                    <span class="k">for</span> <span class="n">array_result</span><span class="p">,</span> <span class="n">segment_name</span> <span class="ow">in</span> <span class="n">Parallel</span><span class="p">(</span>
+                        <span class="n">n_jobs</span><span class="o">=</span><span class="n">n_jobs</span><span class="p">,</span>
+                        <span class="n">return_as</span><span class="o">=</span><span class="s2">&quot;generator&quot;</span><span class="p">,</span>
+                        <span class="n">verbose</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+                        <span class="n">batch_size</span><span class="o">=</span><span class="s2">&quot;auto&quot;</span><span class="p">,</span>
+                    <span class="p">)(</span>
+                        <span class="n">delayed</span><span class="p">(</span><span class="n">_process_single_mu</span><span class="p">)(</span><span class="n">MU_index</span><span class="p">,</span> <span class="n">electrode_array</span><span class="p">)</span>
+                        <span class="k">for</span> <span class="n">MU_index</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_MUs_to_simulate</span>
+                    <span class="p">):</span>
+                        <span class="n">mu_idx</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">segment_name</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span>
+                        <span class="n">results</span><span class="p">[</span><span class="n">mu_idx</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">array_result</span><span class="p">,</span> <span class="n">segment_name</span><span class="p">)</span>
+                        <span class="n">pbar</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
 
             <span class="c1"># Calculate actual MUAP duration based on fiber lengths</span>
             <span class="c1"># Use iap_kernel_length__mm if specified, otherwise use scaled fiber length from muscle model</span>
@@ -1315,8 +1469,9 @@ window.addEventListener("load", load);
         <span class="c1"># Store spike train data privately</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_spike_train__Block</span> <span class="o">=</span> <span class="n">spike_train__Block</span>
 
-        <span class="c1"># Extract timestep from the first spike train</span>
-        <span class="n">muap_timestep__ms</span> <span class="o">=</span> <span class="nb">float</span><span class="p">((</span><span class="mi">1</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sampling_frequency__Hz</span><span class="p">)</span> <span class="o">*</span> <span class="mi">1000</span><span class="p">)</span> <span class="o">*</span> <span class="n">pq</span><span class="o">.</span><span class="n">ms</span>
+        <span class="c1"># Extract timestep from the MUAP native sampling rate (not output rate)</span>
+        <span class="n">muap_native_rate</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_muaps__Block</span><span class="o">.</span><span class="n">groups</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">segments</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">analogsignals</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">sampling_rate</span><span class="p">)</span>
+        <span class="n">muap_timestep__ms</span> <span class="o">=</span> <span class="nb">float</span><span class="p">((</span><span class="mi">1</span> <span class="o">/</span> <span class="n">muap_native_rate</span><span class="p">)</span> <span class="o">*</span> <span class="mi">1000</span><span class="p">)</span> <span class="o">*</span> <span class="n">pq</span><span class="o">.</span><span class="n">ms</span>
 
         <span class="c1"># Convert spike train block to numpy arrays</span>
         <span class="n">n_pools</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">spike_train__Block</span><span class="o">.</span><span class="n">segments</span><span class="p">)</span>
@@ -1367,13 +1522,13 @@ window.addEventListener("load", load);
 
             <span class="n">muap_array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="n">muap_array</span><span class="p">,</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
 
-            <span class="c1"># Temporal resampling</span>
+            <span class="c1"># Temporal resampling: MUAP samples are at native rate, resample to spike train rate</span>
+            <span class="n">muap_duration__s</span> <span class="o">=</span> <span class="n">muap_array</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="o">*</span> <span class="n">muap_timestep__ms</span><span class="o">.</span><span class="n">rescale</span><span class="p">(</span><span class="n">pq</span><span class="o">.</span><span class="n">s</span><span class="p">)</span><span class="o">.</span><span class="n">magnitude</span>
             <span class="n">new_muap_time_length</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span>
                 <span class="mi">1</span><span class="p">,</span>
                 <span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span>
-                    <span class="n">muap_array</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span>
-                    <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sampling_frequency__Hz</span>
-                    <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">/</span> <span class="n">spiketrain_timestep__ms</span><span class="o">.</span><span class="n">rescale</span><span class="p">(</span><span class="s2">&quot;s&quot;</span><span class="p">))</span>
+                    <span class="n">muap_duration__s</span>
+                    <span class="o">/</span> <span class="n">spiketrain_timestep__ms</span><span class="o">.</span><span class="n">rescale</span><span class="p">(</span><span class="s2">&quot;s&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">magnitude</span>
                 <span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">),</span>
             <span class="p">)</span>
 
@@ -1386,20 +1541,16 @@ window.addEventListener("load", load);
                 <span class="p">)</span>
             <span class="p">)</span>
 
+            <span class="c1"># Time axes for interpolation</span>
+            <span class="n">xp_native</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">muap_array</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">3</span><span class="p">])</span> <span class="o">*</span> <span class="n">muap_timestep__ms</span><span class="o">.</span><span class="n">rescale</span><span class="p">(</span><span class="n">pq</span><span class="o">.</span><span class="n">s</span><span class="p">)</span><span class="o">.</span><span class="n">magnitude</span>
+            <span class="n">x_target</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">new_muap_time_length</span><span class="p">)</span> <span class="o">*</span> <span class="n">spiketrain_timestep__ms</span><span class="o">.</span><span class="n">rescale</span><span class="p">(</span><span class="n">pq</span><span class="o">.</span><span class="n">s</span><span class="p">)</span><span class="o">.</span><span class="n">magnitude</span>
+
             <span class="k">for</span> <span class="n">muap_nr</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">muap_shapes</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
                 <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">muap_shapes</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]):</span>
                     <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">muap_shapes</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">2</span><span class="p">]):</span>
                         <span class="n">muap_shapes</span><span class="p">[</span><span class="n">muap_nr</span><span class="p">,</span> <span class="n">row</span><span class="p">,</span> <span class="n">col</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">interp</span><span class="p">(</span>
-                            <span class="n">x</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span>
-                                <span class="n">start</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
-                                <span class="n">stop</span><span class="o">=</span><span class="n">muap_array</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sampling_frequency__Hz</span><span class="p">,</span>
-                                <span class="n">step</span><span class="o">=</span><span class="n">spiketrain_timestep__ms</span><span class="o">.</span><span class="n">rescale</span><span class="p">(</span><span class="n">pq</span><span class="o">.</span><span class="n">s</span><span class="p">)</span><span class="o">.</span><span class="n">magnitude</span><span class="p">,</span>
-                            <span class="p">),</span>
-                            <span class="n">xp</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span>
-                                <span class="n">start</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
-                                <span class="n">stop</span><span class="o">=</span><span class="n">muap_array</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sampling_frequency__Hz</span><span class="p">,</span>
-                                <span class="n">step</span><span class="o">=</span><span class="n">muap_timestep__ms</span><span class="o">.</span><span class="n">rescale</span><span class="p">(</span><span class="n">pq</span><span class="o">.</span><span class="n">s</span><span class="p">)</span><span class="o">.</span><span class="n">magnitude</span><span class="p">,</span>
-                            <span class="p">),</span>
+                            <span class="n">x</span><span class="o">=</span><span class="n">x_target</span><span class="p">,</span>
+                            <span class="n">xp</span><span class="o">=</span><span class="n">xp_native</span><span class="p">,</span>
                             <span class="n">fp</span><span class="o">=</span><span class="n">muap_array</span><span class="p">[</span><span class="n">muap_nr</span><span class="p">,</span> <span class="n">row</span><span class="p">,</span> <span class="n">col</span><span class="p">],</span>
                         <span class="p">)</span>
 
@@ -1597,7 +1748,7 @@ window.addEventListener("load", load);
                 <span class="c1"># Generate noise</span>
                 <span class="k">if</span> <span class="n">noise_type</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;gaussian&quot;</span><span class="p">:</span>
                     <span class="c1"># Generate standard normal noise, then scale per channel</span>
-                    <span class="n">noise</span> <span class="o">=</span> <span class="n">RANDOM_GENERATOR</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="n">emg_array</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+                    <span class="n">noise</span> <span class="o">=</span> <span class="n">get_random_generator</span><span class="p">()</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="n">emg_array</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
                     <span class="c1"># Broadcast noise_std_per_channel along time axis</span>
                     <span class="c1"># noise shape: (time, rows, cols)</span>
                     <span class="c1"># noise_std_per_channel shape: (rows, cols)</span>
@@ -1724,8 +1875,8 @@ window.addEventListener("load", load);
   </div>
   
   <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script defer src="../../../../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
-<script defer src="../../../../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+  <script defer src="../../../../../../_static/scripts/bootstrap.js?digest=7f76b32a3354e82990f2"></script>
+<script defer src="../../../../../../_static/scripts/pydata-sphinx-theme.js?digest=7f76b32a3354e82990f2"></script>
 
   <footer class="bd-footer">
 <div class="bd-footer__inner bd-page-width">

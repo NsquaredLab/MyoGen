@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Overview &#8212; MyoGen 0.8.5 Documentation</title>
+    <title>Overview &#8212; MyoGen 0.9.0 Documentation</title>
   
   
   
@@ -27,8 +27,8 @@
   </noscript>
   
   <!-- Loaded before other Sphinx assets -->
-  <link href="_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
-<link href="_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+  <link href="_static/styles/theme.css?digest=7f76b32a3354e82990f2" rel="stylesheet" />
+<link href="_static/styles/pydata-sphinx-theme.css?digest=7f76b32a3354e82990f2" rel="stylesheet" />
 
     <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=5349f25f" />
     <link rel="stylesheet" type="text/css" href="_static/css/tooltipster.custom.css" />
@@ -48,14 +48,14 @@
     <link rel="stylesheet" type="text/css" href="_static/custom.css?v=9b95bd4c" />
   
   <!-- So that users can add custom icons -->
-  <script src="_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <script defer src="_static/scripts/fontawesome.js?digest=7f76b32a3354e82990f2"></script>
   <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
-<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=7f76b32a3354e82990f2" />
+<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=7f76b32a3354e82990f2" />
 
     <script src="_static/jquery.js?v=5d32c60e"></script>
     <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-    <script src="_static/documentation_options.js?v=ad379ca3"></script>
+    <script src="_static/documentation_options.js?v=a82ae3da"></script>
     <script src="_static/doctools.js?v=9bcbadda"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/js/hoverxref.js"></script>
@@ -66,20 +66,25 @@
     <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
     <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'index';</script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="API Documentation" href="api/index.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="0.8.5" />
+  <meta name="docsearch:version" content="0.9.0" />
+  
+    
+    <script src="_static/searchtools.js"></script>
+    <script src="_static/language_data.js"></script>
+    <script src="searchindex.js"></script>
+  
   </head>
-  
-  
-  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
-
+  <body data-default-mode="">
   
   
   <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+
   
   <div id="pst-scroll-pixel-helper"></div>
   
@@ -114,7 +119,7 @@
 </aside>
 
   
-    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
 <div class="bd-header__inner bd-page-width">
   <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
     <span class="fa-solid fa-bars"></span>
@@ -140,8 +145,8 @@
       
     
     
-    <img src="_static/myogen_logo.png" class="logo__image only-light" alt="MyoGen 0.8.5 Documentation - Home"/>
-    <img src="_static/myogen_logo.png" class="logo__image only-dark pst-js-only" alt="MyoGen 0.8.5 Documentation - Home"/>
+    <img src="_static/myogen_logo.png" class="logo__image only-light" alt="MyoGen 0.9.0 Documentation - Home"/>
+    <img src="_static/myogen_logo.png" class="logo__image only-dark pst-js-only" alt="MyoGen 0.9.0 Documentation - Home"/>
   
   
 </a></div>
@@ -150,7 +155,7 @@
 <div class="nav-item">
   <div class="version-switcher__container dropdown">
       <button id="version-switcher-button" type="button" class="version-switcher__button btn btn-sm navbar-btn" aria-haspopup="true" aria-expanded="false">
-          Version 0.8.5
+          Version 0.9.0
       </button>
       
       
@@ -372,10 +377,10 @@
     <span>Welcome to</span>
     <img src="https://raw.githubusercontent.com/NsquaredLab/MyoGen/main/docs/source/_static/myogen_logo.png" height="100" alt="MyoGen Logo">
   </h1>
-  <h2>The modular and extandable simulation toolkit for neurophysiology</h2>
+  <h2>The modular and extensible simulation toolkit for neurophysiology</h2>
 <p><a class="reference external" href="https://nsquaredlab.github.io/MyoGen/"><img alt="Documentation" src="https://img.shields.io/badge/docs-latest-blue.svg" /></a>
 <a class="reference external" href="https://www.python.org/downloads/"><img alt="Python 3.12+" src="https://img.shields.io/badge/python-3.12+-blue.svg" /></a>
-<a class="reference external" href="https://github.com/NsquaredLab/MyoGen"><img alt="Version" src="https://img.shields.io/badge/version-0.8.5-orange.svg" /></a></p>
+<a class="reference external" href="https://github.com/NsquaredLab/MyoGen"><img alt="Version" src="https://img.shields.io/badge/version-0.9.0-orange.svg" /></a></p>
 <p><a class="reference external" href="https://nsquaredlab.github.io/MyoGen/#installation">Installation</a> •
 <a class="reference external" href="https://nsquaredlab.github.io/MyoGen/">Documentation</a> •
 <a class="reference external" href="https://nsquaredlab.github.io/MyoGen/examples.html">Examples</a> •
@@ -412,7 +417,7 @@ MyoGen is designed for algorithm validation, hypothesis-driven research, and edu
 </thead>
 <tbody>
 <tr class="row-even"><td><p><strong>Windows</strong></p></td>
-<td><p><a class="reference external" href="https://github.com/neuronsimulator/nrn/releases/download/8.2.6/nrn-8.2.6.w64-mingw-py-38-39-310-311-312-setup.exe">NEURON 8.2.6</a> - Download, run installer, select “Add to PATH”</p></td>
+<td><p><a class="reference external" href="https://github.com/neuronsimulator/nrn/releases/download/8.2.7/nrn-8.2.7.w64-mingw-py-39-310-311-312-313-setup.exe">NEURON 8.2.7</a> - Download, run installer, select “Add to PATH”</p></td>
 </tr>
 <tr class="row-odd"><td><p><strong>Linux</strong></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">sudo</span> <span class="pre">apt</span> <span class="pre">install</span> <span class="pre">libopenmpi-dev</span></code> (Ubuntu/Debian) or <code class="docutils literal notranslate"><span class="pre">sudo</span> <span class="pre">dnf</span> <span class="pre">install</span> <span class="pre">openmpi-devel</span></code> (Fedora)</p></td>
@@ -438,7 +443,7 @@ MyoGen is designed for algorithm validation, hypothesis-driven research, and edu
 </ul>
 <p class="rubric" id="neuron-simulator">2. NEURON Simulator</p>
 <ol class="arabic simple">
-<li><p><strong>Download</strong>: <a class="reference external" href="https://github.com/neuronsimulator/nrn/releases/download/8.2.6/nrn-8.2.6.w64-mingw-py-38-39-310-311-312-setup.exe">NEURON 8.2.6 Installer</a></p></li>
+<li><p><strong>Download</strong>: <a class="reference external" href="https://github.com/neuronsimulator/nrn/releases/download/8.2.7/nrn-8.2.7.w64-mingw-py-39-310-311-312-313-setup.exe">NEURON 8.2.7 Installer</a></p></li>
 <li><p><strong>Run the installer</strong> and select <strong>“Add to PATH”</strong> when prompted</p></li>
 <li><p><strong>Restart your terminal</strong> (close and reopen)</p></li>
 <li><p>Then continue with the installation below</p></li>
@@ -597,11 +602,11 @@ uv<span class="w"> </span>run<span class="w"> </span>poe<span class="w"> </span>
     class="page-toc tocsection onthispage">
     <i class="fa-solid fa-list"></i> On this page
   </div>
-  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
-    <ul class="visible nav section-nav flex-column">
+  <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="pst-show_toc_level nav section-nav flex-column">
 <li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#">Overview</a></li>
 <li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#highlights">Highlights</a></li>
-<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#installation">Installation</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#installation">Installation</a><ul class="pst-show_toc_level nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#system-requirements">System Requirements</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#step-1-install-uv-package-manager">Step 1: Install uv (Package Manager)</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#step-2-create-a-new-project">Step 2: Create a New Project</a></li>
@@ -614,8 +619,8 @@ uv<span class="w"> </span>run<span class="w"> </span>poe<span class="w"> </span>
 <li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#documentation">Documentation</a></li>
 <li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#how-to-cite">How to Cite</a></li>
 <li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#contributing">Contributing</a></li>
-<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#license">License</a><ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#package-structure">Package Structure</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#license">License</a><ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#package-structure">Package Structure</a><ul class="pst-show_toc_level nav section-nav flex-column">
 </ul>
 </li>
 </ul>
@@ -637,8 +642,8 @@ uv<span class="w"> </span>run<span class="w"> </span>poe<span class="w"> </span>
   </div>
   
   <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script defer src="_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
-<script defer src="_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+  <script defer src="_static/scripts/bootstrap.js?digest=7f76b32a3354e82990f2"></script>
+<script defer src="_static/scripts/pydata-sphinx-theme.js?digest=7f76b32a3354e82990f2"></script>
 
   <footer class="bd-footer">
 <div class="bd-footer__inner bd-page-width">

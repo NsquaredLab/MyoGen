@@ -56,7 +56,7 @@ import quantities as pq
 from neo import Segment, SpikeTrain
 from neuron import h
 
-from myogen import RANDOM_GENERATOR
+from myogen import get_random_generator
 from myogen.simulator import RecruitmentThresholds
 from myogen.simulator.neuron import Network
 from myogen.simulator.neuron.populations import AlphaMN__Pool, DescendingDrive__Pool
@@ -224,7 +224,7 @@ def objective(trial):
         # Generate constant drive signal with small noise
         time_points = int(SIMULATION_TIME_MS / TIMESTEP_MS)
         drive_signal = np.ones(time_points) * dd_drive__Hz + np.clip(
-            RANDOM_GENERATOR.normal(0, 1.0, size=time_points), 0, None
+            get_random_generator().normal(0, 1.0, size=time_points), 0, None
         )
 
         # Run NEURON simulation
@@ -504,7 +504,9 @@ plt.show()
 
 fig, ax = plt.subplots(1, 1, figsize=(10, 6))
 
-# Bar plot comparing target vs achieved
+# Dumbbell plot comparing target vs achieved (two scalar endpoints per
+# category — not a distribution, so Editor 8's "show all data points"
+# rule is honoured by marking each value as an explicit point).
 categories = ["Mean FR (Hz)", "Std FR (Hz)"]
 targets = [TARGET_FR_MEAN__HZ, TARGET_FR_STD__HZ]
 achieved = [
@@ -513,22 +515,16 @@ achieved = [
 ]
 
 x = np.arange(len(categories))
-width = 0.35
 
-bars1 = ax.bar(x - width / 2, targets, width, label="Target")
-bars2 = ax.bar(x + width / 2, achieved, width, label="Achieved")
+for xi, t, a in zip(x, targets, achieved):
+    ax.plot([xi, xi], [t, a], color="gray", linestyle="--", alpha=0.6, zorder=1)
 
-# Add value labels on bars
-for bars in [bars1, bars2]:
-    for bar in bars:
-        height = bar.get_height()
-        ax.text(
-            bar.get_x() + bar.get_width() / 2.0,
-            height,
-            f"{height:.2f}",
-            ha="center",
-            va="bottom",
-        )
+ax.scatter(x, targets, s=120, marker="o", label="Target", zorder=3)
+ax.scatter(x, achieved, s=120, marker="D", label="Achieved", zorder=3)
+
+for xi, t, a in zip(x, targets, achieved):
+    ax.text(xi + 0.05, t, f"{t:.2f}", va="center", ha="left")
+    ax.text(xi + 0.05, a, f"{a:.2f}", va="center", ha="left")
 
 # Calculate percent errors
 mean_error = abs(achieved[0] - targets[0]) / targets[0] * 100

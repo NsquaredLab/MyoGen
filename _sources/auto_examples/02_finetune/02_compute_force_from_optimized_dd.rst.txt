@@ -80,7 +80,7 @@ For force generation, we need:
     from neo import Block, Segment, SpikeTrain
     from neuron import h
 
-    from myogen import RANDOM_GENERATOR
+    from myogen import get_random_generator
     from myogen.simulator import RecruitmentThresholds
     from myogen.simulator.core.force.force_model import ForceModel
     from myogen.simulator.neuron import Network
@@ -330,7 +330,7 @@ Create constant drive at the optimized frequency with small noise.
 
     time_points = int(SIMULATION_TIME_MS / TIMESTEP_MS)
     drive_signal = np.ones(time_points) * dd_drive__Hz + np.clip(
-        RANDOM_GENERATOR.normal(0, 1.0, size=time_points), 0, None
+        get_random_generator().normal(0, 1.0, size=time_points), 0, None
     )
 
 
@@ -459,10 +459,10 @@ Analyze spike train characteristics.
  .. code-block:: none
 
     Firing Rate Statistics:
-      Active units: 57/100
-      Mean firing rate: 10.73 Hz
-      Std deviation: 3.12 Hz
-      Coefficient of variation: 0.290
+      Active units: 56/100
+      Mean firing rate: 10.84 Hz
+      Std deviation: 2.87 Hz
+      Coefficient of variation: 0.265
 
 
 
@@ -507,7 +507,7 @@ Convert spike trains to muscle force using motor unit twitch dynamics.
 
  .. code-block:: none
 
-    Pool 1 Twitch trains (Numba):   0%|          | 0/100 [00:00<?, ?MU/s]    Pool 1 Twitch trains (Numba):   1%|          | 1/100 [00:00<00:26,  3.71MU/s]    Pool 1 Twitch trains (Numba): 100%|██████████| 100/100 [00:00<00:00, 356.56MU/s]
+    Pool 1 Twitch trains (Numba):   0%|          | 0/100 [00:00<?, ?MU/s]    Pool 1 Twitch trains (Numba):   1%|          | 1/100 [00:00<00:29,  3.34MU/s]    Pool 1 Twitch trains (Numba): 100%|██████████| 100/100 [00:00<00:00, 322.54MU/s]
 
 
 
@@ -546,10 +546,10 @@ Compute steady-state force statistics (using last 50% to avoid transients).
  .. code-block:: none
 
     Force Statistics (steady-state):
-      Mean force: 10.8761 a.u.
-      Std deviation: 0.7171 a.u.
-      Coefficient of variation: 0.066
-      Ripple amplitude: 6.59%
+      Mean force: 10.8169 a.u.
+      Std deviation: 0.7561 a.u.
+      Coefficient of variation: 0.070
+      Ripple amplitude: 6.99%
 
 
 
@@ -610,7 +610,7 @@ Visualize Results
 
 Create clean visualizations of spike trains and force output.
 
-.. GENERATED FROM PYTHON SOURCE LINES 369-422
+.. GENERATED FROM PYTHON SOURCE LINES 369-440
 
 .. code-block:: Python
 
@@ -653,15 +653,33 @@ Create clean visualizations of spike trains and force output.
             mu_ids.append(i)
 
     if firing_rates:
-        axes[2].bar(mu_ids, firing_rates, alpha=0.7)
-        axes[2].axhline(fr_mean, linestyle="--", label=f"Mean = {fr_mean:.1f} Hz")
-        axes[2].set_xlabel("Motor Unit ID")
+        # Distribution plot with all data points (Editor 8): violin shell for
+        # the density, box-and-whisker for the quartiles, jittered points for
+        # every active motor unit.
+        fr_array = np.asarray(firing_rates)
+        fr_sd = float(np.std(fr_array, ddof=1)) if fr_array.size > 1 else 0.0
+        if fr_array.size >= 10:
+            axes[2].violinplot(
+                fr_array, positions=[0], widths=0.7, showmeans=False, showmedians=False
+            )
+            axes[2].boxplot(
+                fr_array, positions=[0], widths=0.3, showfliers=False
+            )
+        jitter = np.random.default_rng(0).uniform(-0.15, 0.15, size=fr_array.size)
+        axes[2].scatter(jitter, fr_array, alpha=0.6, s=18, zorder=3)
+        axes[2].axhline(
+            fr_mean, linestyle="--", label=f"Mean = {fr_mean:.1f} Hz (SD = {fr_sd:.1f} Hz)"
+        )
+        axes[2].set_xticks([0])
+        axes[2].set_xticklabels([f"n = {fr_array.size}"])
+        axes[2].set_xlabel("Motor Units")
         axes[2].set_ylabel("Firing Rate (Hz)")
         axes[2].set_title("Firing Rate Distribution")
         axes[2].legend(framealpha=1.0, edgecolor="none")
 
-    # Format all axes
-    for ax in axes:
+    # Format time-series axes (subplot 2 is the MU firing-rate distribution,
+    # whose x-axis is categorical, not time)
+    for ax in axes[:2]:
         ax.set_xlim(0, SIMULATION_TIME_MS / 1000)
 
     plt.tight_layout()
@@ -671,7 +689,7 @@ Create clean visualizations of spike trains and force output.
 
 
 .. image-sg:: /auto_examples/02_finetune/images/sphx_glr_02_compute_force_from_optimized_dd_001.png
-   :alt: Motor Neuron Spike Trains (59/100 active), Muscle Force (Ripple = 6.6%), Firing Rate Distribution
+   :alt: Motor Neuron Spike Trains (58/100 active), Muscle Force (Ripple = 7.0%), Firing Rate Distribution
    :srcset: /auto_examples/02_finetune/images/sphx_glr_02_compute_force_from_optimized_dd_001.png
    :class: sphx-glr-single-img
 
@@ -682,7 +700,7 @@ Create clean visualizations of spike trains and force output.
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 12.435 seconds)
+   **Total running time of the script:** (0 minutes 12.469 seconds)
 
 
 .. _sphx_glr_download_auto_examples_02_finetune_02_compute_force_from_optimized_dd.py:

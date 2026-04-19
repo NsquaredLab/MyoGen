@@ -227,15 +227,15 @@ Using parallel processing for faster computation.
  .. code-block:: none
 
     Computing motor unit action potentials...
-    Creating motor unit simulators:   0%|          | 0/100 [00:00<?, ?Simulator/s]    Creating motor unit simulators: 100%|██████████| 100/100 [00:00<00:00, 4945.30Simulator/s]
-    Setting up NMJ distributions:   0%|          | 0/100 [00:00<?, ?Simulator/s]    Setting up NMJ distributions:  19%|█▉        | 19/100 [00:00<00:00, 175.51Simulator/s]    Setting up NMJ distributions:  42%|████▏     | 42/100 [00:00<00:00, 201.81Simulator/s]    Setting up NMJ distributions:  63%|██████▎   | 63/100 [00:00<00:00, 152.52Simulator/s]    Setting up NMJ distributions:  80%|████████  | 80/100 [00:00<00:00, 99.03Simulator/s]     Setting up NMJ distributions:  93%|█████████▎| 93/100 [00:01<00:00, 64.75Simulator/s]    Setting up NMJ distributions: 100%|██████████| 100/100 [00:01<00:00, 72.78Simulator/s]
-    Computing MUAPs:   0%|          | 0/4 [00:00<?, ?MU/s]    Computing MUAPs:  25%|██▌       | 1/4 [00:02<00:08,  2.84s/MU]    Computing MUAPs:  50%|█████     | 2/4 [00:05<00:05,  2.94s/MU]    Computing MUAPs:  75%|███████▌  | 3/4 [00:19<00:07,  7.89s/MU]    Computing MUAPs: 100%|██████████| 4/4 [01:15<00:00, 26.77s/MU]    Computing MUAPs: 100%|██████████| 4/4 [01:15<00:00, 18.83s/MU]
+    Creating motor unit simulators:   0%|          | 0/100 [00:00<?, ?Simulator/s]    Creating motor unit simulators: 100%|██████████| 100/100 [00:00<00:00, 4547.26Simulator/s]
+    Setting up NMJ distributions:   0%|          | 0/100 [00:00<?, ?Simulator/s]    Setting up NMJ distributions:   6%|▌         | 6/100 [00:00<00:01, 58.16Simulator/s]    Setting up NMJ distributions:  31%|███       | 31/100 [00:00<00:00, 168.73Simulator/s]    Setting up NMJ distributions:  51%|█████     | 51/100 [00:00<00:00, 177.40Simulator/s]    Setting up NMJ distributions:  69%|██████▉   | 69/100 [00:00<00:00, 130.20Simulator/s]    Setting up NMJ distributions:  84%|████████▍ | 84/100 [00:00<00:00, 85.03Simulator/s]     Setting up NMJ distributions:  95%|█████████▌| 95/100 [00:01<00:00, 57.64Simulator/s]    Setting up NMJ distributions: 100%|██████████| 100/100 [00:01<00:00, 70.27Simulator/s]
+    Computing MUAPs:   0%|          | 0/4 [00:00<?, ?MU/s]    Computing MUAPs:  25%|██▌       | 1/4 [00:03<00:09,  3.06s/MU]    Computing MUAPs:  50%|█████     | 2/4 [00:06<00:06,  3.13s/MU]    Computing MUAPs:  75%|███████▌  | 3/4 [00:20<00:08,  8.35s/MU]    Computing MUAPs: 100%|██████████| 4/4 [01:19<00:00, 28.22s/MU]    Computing MUAPs: 100%|██████████| 4/4 [01:19<00:00, 19.87s/MU]
 
     === MUAP Amplitudes ===
     MU  0): Max PtP =   10.2 uV
-    MU 25): Max PtP =   35.6 uV
-    MU 50): Max PtP =  130.1 uV
-    MU 90): Max PtP =  333.3 uV
+    MU 25): Max PtP =   69.4 uV
+    MU 50): Max PtP =  155.0 uV
+    MU 90): Max PtP =  390.3 uV
 
     ['./results/iemg_simulator.pkl']
 
@@ -277,7 +277,7 @@ demonstrate how motor unit size affects MUAP amplitude and shape.
 
 
 .. image-sg:: /auto_examples/01_basic/images/sphx_glr_09_simulate_intramuscular_emg_001.png
-   :alt: MU 0: PtP: 10.2 uV, MU 25: PtP: 35.6 uV, MU 50: PtP: 129.1 uV, MU 90: PtP: 333.3 uV
+   :alt: MU 0: PtP: 10.2 uV, MU 25: PtP: 69.4 uV, MU 50: PtP: 155.0 uV, MU 90: PtP: 390.3 uV
    :srcset: /auto_examples/01_basic/images/sphx_glr_09_simulate_intramuscular_emg_001.png
    :class: sphx-glr-single-img
 
@@ -347,14 +347,14 @@ Generate the final **intramuscular EMG signals** by convolving spike trains with
  .. code-block:: none
 
     Simulating intramuscular EMG signals...
-    Intramuscular EMG (CPU):   0%|          | 0/1 [00:00<?, ?pool/s]    Intramuscular EMG (CPU): 100%|██████████| 1/1 [00:00<00:00, 11.98pool/s]
+    Intramuscular EMG (CPU):   0%|          | 0/1 [00:00<?, ?pool/s]    Intramuscular EMG (CPU): 100%|██████████| 1/1 [00:00<00:00, 11.76pool/s]
     Intramuscular EMG simulation completed!
     Generated EMG shape: (153600, 4)
             153600 time samples
             4 electrode channels
-            Signal RMS (before noise): 0.049
+            Signal RMS (before noise): 0.046
     Adding realistic noise (SNR = 20 dB)...
-            Signal RMS (after noise): 0.049
+            Signal RMS (after noise): 0.046
 
 
 
@@ -417,7 +417,7 @@ Compare the **intramuscular EMG** signal with the input current.
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (1 minutes 17.807 seconds)
+   **Total running time of the script:** (1 minutes 22.010 seconds)
 
 
 .. _sphx_glr_download_auto_examples_01_basic_09_simulate_intramuscular_emg.py:

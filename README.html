@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>MyoGen - The modular and extandable simulation toolkit for neurophysiology &#8212; MyoGen 0.8.5 Documentation</title>
+    <title>MyoGen - The modular and extensible simulation toolkit for neurophysiology &#8212; MyoGen 0.9.0 Documentation</title>
   
   
   
@@ -27,8 +27,8 @@
   </noscript>
   
   <!-- Loaded before other Sphinx assets -->
-  <link href="_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
-<link href="_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+  <link href="_static/styles/theme.css?digest=7f76b32a3354e82990f2" rel="stylesheet" />
+<link href="_static/styles/pydata-sphinx-theme.css?digest=7f76b32a3354e82990f2" rel="stylesheet" />
 
     <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=5349f25f" />
     <link rel="stylesheet" type="text/css" href="_static/css/tooltipster.custom.css" />
@@ -48,14 +48,14 @@
     <link rel="stylesheet" type="text/css" href="_static/custom.css?v=9b95bd4c" />
   
   <!-- So that users can add custom icons -->
-  <script src="_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <script defer src="_static/scripts/fontawesome.js?digest=7f76b32a3354e82990f2"></script>
   <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
-<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=7f76b32a3354e82990f2" />
+<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=7f76b32a3354e82990f2" />
 
     <script src="_static/jquery.js?v=5d32c60e"></script>
     <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-    <script src="_static/documentation_options.js?v=ad379ca3"></script>
+    <script src="_static/documentation_options.js?v=a82ae3da"></script>
     <script src="_static/doctools.js?v=9bcbadda"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/js/hoverxref.js"></script>
@@ -66,19 +66,24 @@
     <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
     <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'README';</script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="0.8.5" />
+  <meta name="docsearch:version" content="0.9.0" />
+  
+    
+    <script src="_static/searchtools.js"></script>
+    <script src="_static/language_data.js"></script>
+    <script src="searchindex.js"></script>
+  
   </head>
-  
-  
-  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
-
+  <body data-default-mode="">
   
   
   <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+
   
   <div id="pst-scroll-pixel-helper"></div>
   
@@ -113,7 +118,7 @@
 </aside>
 
   
-    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
 <div class="bd-header__inner bd-page-width">
   <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
     <span class="fa-solid fa-bars"></span>
@@ -139,8 +144,8 @@
       
     
     
-    <img src="_static/myogen_logo.png" class="logo__image only-light" alt="MyoGen 0.8.5 Documentation - Home"/>
-    <img src="_static/myogen_logo.png" class="logo__image only-dark pst-js-only" alt="MyoGen 0.8.5 Documentation - Home"/>
+    <img src="_static/myogen_logo.png" class="logo__image only-light" alt="MyoGen 0.9.0 Documentation - Home"/>
+    <img src="_static/myogen_logo.png" class="logo__image only-dark pst-js-only" alt="MyoGen 0.9.0 Documentation - Home"/>
   
   
 </a></div>
@@ -149,7 +154,7 @@
 <div class="nav-item">
   <div class="version-switcher__container dropdown">
       <button id="version-switcher-button" type="button" class="version-switcher__button btn btn-sm navbar-btn" aria-haspopup="true" aria-expanded="false">
-          Version 0.8.5
+          Version 0.9.0
       </button>
       
       
@@ -373,7 +378,7 @@
         <i class="fa-solid fa-home"></i>
       </a>
     </li>
-    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">MyoGen - The modular and extandable simulation toolkit for neurophysiology</span></li>
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">MyoGen - The modular and extensible simulation toolkit for neurophysiology</span></li>
   </ul>
 </nav>
 </div>
@@ -401,8 +406,8 @@
 <a class="reference external" href="https://nsquaredlab.github.io/MyoGen/examples/">Examples</a> •
 <a class="reference internal" href="#citation">Paper</a></p>
 </div>
-<section class="tex2jax_ignore mathjax_ignore" id="myogen-the-modular-and-extandable-simulation-toolkit-for-neurophysiology">
-<h1>MyoGen - The modular and extandable simulation toolkit for neurophysiology<a class="headerlink" href="#myogen-the-modular-and-extandable-simulation-toolkit-for-neurophysiology" title="Link to this heading">#</a></h1>
+<section class="tex2jax_ignore mathjax_ignore" id="myogen-the-modular-and-extensible-simulation-toolkit-for-neurophysiology">
+<h1>MyoGen - The modular and extensible simulation toolkit for neurophysiology<a class="headerlink" href="#myogen-the-modular-and-extensible-simulation-toolkit-for-neurophysiology" title="Link to this heading">#</a></h1>
 <p>MyoGen is a <strong>modular and extensible neuromuscular simulation framework</strong> for generating physiologically grounded motor-unit activity, muscle force, and surface EMG signals.</p>
 <p>It supports end-to-end modeling of the neuromuscular pathway, from descending neural drive and spinal motor neuron dynamics to muscle activation and bioelectric signal formation at the electrode level.
 MyoGen is designed for algorithm validation, hypothesis-driven research, and education, providing configurable building blocks that can be independently combined and extended.</p>
@@ -420,7 +425,7 @@ MyoGen is designed for algorithm validation, hypothesis-driven research, and edu
 <p><strong>Prerequisites</strong>: Python ≥3.12, Linux/Windows/macOS</p>
 <blockquote>
 <div><p>[!IMPORTANT]
-<strong>Windows users</strong>: Install <a class="reference external" href="https://github.com/neuronsimulator/nrn/releases/download/8.2.6/nrn-8.2.6.w64-mingw-py-38-39-310-311-312-setup.exe">NEURON 8.2.6</a> before running <code class="docutils literal notranslate"><span class="pre">uv</span> <span class="pre">sync</span></code></p>
+<strong>Windows users</strong>: Install <a class="reference external" href="https://github.com/neuronsimulator/nrn/releases/download/8.2.7/nrn-8.2.7.w64-mingw-py-39-310-311-312-313-setup.exe">NEURON 8.2.7</a> before running <code class="docutils literal notranslate"><span class="pre">uv</span> <span class="pre">sync</span></code></p>
 </div></blockquote>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Clone and install</span>
 git<span class="w"> </span>clone<span class="w"> </span>https://github.com/NsquaredLab/MyoGen.git
@@ -547,8 +552,8 @@ Install <a class="reference external" href="https://docs.astral.sh/uv/">uv</a> f
     class="page-toc tocsection onthispage">
     <i class="fa-solid fa-list"></i> On this page
   </div>
-  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
-    <ul class="visible nav section-nav flex-column">
+  <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="pst-show_toc_level nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#highlights">Highlights</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#installation">Installation</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#quick-start">Quick Start</a></li>
@@ -572,8 +577,8 @@ Install <a class="reference external" href="https://docs.astral.sh/uv/">uv</a> f
   </div>
   
   <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script defer src="_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
-<script defer src="_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+  <script defer src="_static/scripts/bootstrap.js?digest=7f76b32a3354e82990f2"></script>
+<script defer src="_static/scripts/pydata-sphinx-theme.js?digest=7f76b32a3354e82990f2"></script>
 
   <footer class="bd-footer">
 <div class="bd-footer__inner bd-page-width">
