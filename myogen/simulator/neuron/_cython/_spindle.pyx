@@ -258,15 +258,21 @@ cdef class _Spindle__Cython():
         return act
 
     cdef double aff_ii(self, double L, double T, Py_ssize_t ifType) except -1:
-        cdef double sensory_region_contribution, sr_stretch_normalized, polar_region_contribution, pr_stretch_normalized, act, tG = 0.0
+        cdef double sensory_region_contribution, sr_stretch_normalized, polar_region_contribution, pr_stretch_normalized, sr_term, pr_term, act, tG = 0.0
         if ifType == 1: tG = self.gBag2A2
         elif ifType == 2: tG = self.gChainA2
         sensory_region_contribution = self.X * self.Lsec / self.L0_SR
         sr_stretch_normalized = (T / self.K_SR - (self.LN_SR - self.L0_SR))
         polar_region_contribution = (1 - self.X) * self.Lsec / self.L0_PR
         pr_stretch_normalized = (L - T / self.K_SR - self.L0_SR - self.LN_PR)
-        act = tG * (sensory_region_contribution * sr_stretch_normalized + polar_region_contribution * pr_stretch_normalized)
-        if act < 0: act = 0
+        # Per-region rectification: each intrafusal region contributes only when
+        # its local stretch is positive, consistent with non-negative
+        # mechanotransduction currents from stretch-gated channels.
+        sr_term = sensory_region_contribution * sr_stretch_normalized
+        if sr_term < 0: sr_term = 0
+        pr_term = polar_region_contribution * pr_stretch_normalized
+        if pr_term < 0: pr_term = 0
+        act = tG * (sr_term + pr_term)
         return act
 
     @cython.boundscheck(False)
