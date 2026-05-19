@@ -138,6 +138,10 @@ def get_elementary_current_response(
     sigma_r_S_per_mm = sigma_r / 1000.0  # CORRECTED: convert S/m → S/mm
     sigma_z_S_per_mm = sigma_z / 1000.0  # CORRECTED: convert S/m → S/mm
 
+    # Normalize inputs to computation backend (prevents numpy/cupy mixing)
+    z = xp.asarray(z)
+    z_electrode = float(z_electrode)
+
     return xp.divide(
         1 / 4 / xp.pi / sigma_r_S_per_mm,
         xp.sqrt(sigma_z_S_per_mm / sigma_r_S_per_mm * r**2 + (z - z_electrode) ** 2),
@@ -254,6 +258,16 @@ def get_current_density(
     xp : module, default=np
         Array backend (numpy or cupy). Pass cupy for GPU acceleration.
     """
+
+    # Normalize inputs to computation backend (prevents numpy/cupy mixing
+    # when callers pass numpy arrays with xp=cupy)
+    t = xp.asarray(t)
+    z = xp.asarray(z)
+    zi = float(zi)
+    L1 = float(L1)
+    L2 = float(L2)
+    v = float(v)
+    d = float(d)
 
     dz = xp.mean(xp.diff(z, axis=0))
     z = xp.concatenate([z, z[[-1]] + dz], axis=0)
