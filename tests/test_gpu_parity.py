@@ -1,20 +1,29 @@
 """
 GPU parity test: verify CuPy backend produces bit-identical SFAPs to NumPy.
 
-Skipped automatically when no CUDA GPU is available.
+Skipped automatically when CuPy is not installed or no CUDA GPU is available.
 """
 
 import numpy as np
 import pytest
 
-# Reuse the module-level flag from motor_unit_sim
-from myogen.simulator.core.emg.intramuscular.motor_unit_sim import HAS_CUPY
 from myogen.simulator.core.emg.intramuscular.bioelectric import (
     get_current_density,
     get_elementary_current_response,
+    shift_padding,
 )
 
-requires_gpu = pytest.mark.skipif(not HAS_CUPY, reason="CuPy / CUDA GPU not available")
+# Graceful skip: pytest.importorskip handles missing CuPy, then we
+# additionally check that a real CUDA device is present (e.g. Docker
+# images may have CuPy installed without a GPU).
+cupy = pytest.importorskip("cupy", reason="CuPy not installed")
+
+
+@pytest.fixture(autouse=True)
+def _require_cuda():
+    """Skip all tests in this module if no CUDA device is available."""
+    if not cupy.cuda.is_available():
+        pytest.skip("CUDA device not available")
 
 
 # ── Helpers ──────────────────────────────────────────────────────────────────
@@ -33,15 +42,14 @@ def _make_inputs():
     return t, z, zi, L1, L2, v, d, z_elec, r
 
 
-# ── Tests ────────────────────────────────────────────────────────────────────
+# ── GPU Parity Tests ─────────────────────────────────────────────────────────
 
-@requires_gpu
 class TestGPUParity:
     """Verify that CuPy-accelerated bioelectric kernels match CPU output."""
 
     def test_current_density_parity(self):
         """get_current_density: GPU vs CPU xcorr ≈ 1.0."""
-        import cupy as cp
+        cp = cupy
 
         t, z, zi, L1, L2, v, d, _, _ = _make_inputs()
 
@@ -59,7 +67,7 @@ class TestGPUParity:
 
     def test_elementary_response_parity(self):
         """get_elementary_current_response: GPU vs CPU."""
-        import cupy as cp
+        cp = cupy
 
         _, z, _, _, _, _, _, z_elec, r = _make_inputs()
 
@@ -75,7 +83,7 @@ class TestGPUParity:
 
     def test_full_sfap_pipeline_parity(self):
         """Full SFAP chain: current_density.T @ response → same on CPU and GPU."""
-        import cupy as cp
+        cp = cupy
 
         t, z, zi, L1, L2, v, d, z_elec, r = _make_inputs()
 
@@ -94,3 +102,44 @@ class TestGPUParity:
         rmse = float(np.sqrt(np.mean((sfap_cpu - sfap_gpu) ** 2)))
         assert xcorr > 0.999999, f"xcorr={xcorr}"
         assert rmse < 1e-12, f"RMSE={rmse}"
+
+
+# ── shift_padding contract tests ─────────────────────────────────────────────
+
+class TestShiftPadding:
+    """Verify shift_padding semantics for positive, negative, and zero shifts."""
+
+    def test_positive_shift(self):
+        """Positive shift: head and tail zeroed (original MATLAB semantics)."""
+        vec = np.arange(1, 11, dtype=float)  # [1..10]
+        result = shift_padding(vec.copy(), 3, axis=0)
+        # roll(3) wraps [8,9,10,1,2,3,4,5,6,7], then [:3]=0 and [-3:]=0
+        assert np.all(result[:3] == 0), f"head not zeroed: {result[:3]}"
+        assert np.all(result[-3:] == 0), f"tail not zeroed: {result[-3:]}"
+        # middle values preserved
+        np.testing.assert_array_equal(result[3:7], [1, 2, 3, 4])
+
+    def test_negative_shift(self):
+        """Negative shift: only tail zeroed."""
+        vec = np.arange(1, 11, dtype=float)
+        result = shift_padding(vec.copy(), -3, axis=0)
+        # roll(-3) wraps [4,5,6,7,8,9,10,1,2,3], then [7:]=0
+        assert np.all(result[-3:] == 0), f"tail not zeroed: {result[-3:]}"
+        np.testing.assert_array_equal(result[:7], [4, 5, 6, 7, 8, 9, 10])
+
+    def test_zero_shift(self):
+        """Zero shift: array unchanged."""
+        vec = np.arange(1, 11, dtype=float)
+        result = shift_padding(vec.copy(), 0, axis=0)
+        np.testing.assert_array_equal(result, vec)
+
+    def test_gpu_parity(self):
+        """shift_padding: GPU vs CPU produce identical output."""
+        cp = cupy
+        vec = np.random.default_rng(42).random(100)
+        for sh in [-5, 0, 5, 20]:
+            cpu_result = shift_padding(vec.copy(), sh, axis=0)
+            gpu_result = cp.asnumpy(
+                shift_padding(cp.asarray(vec.copy()), sh, axis=0, xp=cp)
+            )
+            np.testing.assert_array_equal(cpu_result, gpu_result, err_msg=f"sh={sh}")

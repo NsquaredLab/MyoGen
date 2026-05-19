@@ -8,6 +8,7 @@ motor unit action potential (MUAP) generation with realistic jitter.
 Based on the MU_Sim class from the MATLAB iemg_simulator.
 """
 
+import os
 from contextlib import nullcontext
 from typing import Optional, List
 
@@ -248,6 +249,7 @@ class MotorUnitSim:
         electrode_normals: Optional[np.ndarray] = None,
         min_radial_dist: Optional[float] = None,
         verbose: bool = True,
+        use_gpu: Optional[bool] = None,
     ):
         """
         Calculate single fiber action potentials (SFAPs) for all fibers.
@@ -266,6 +268,14 @@ class MotorUnitSim:
             Minimum radial distance for stability (default: mean diameter * 1000)
         verbose : bool, default=True
             If True, display progress bars. Set to False to disable.
+        use_gpu : bool or None, default=None
+            GPU acceleration control:
+            - None  → auto: use GPU if CuPy is available and MYOGEN_DISABLE_GPU
+                      is not set.
+            - True  → require GPU; raises RuntimeError if unavailable.
+            - False → force CPU execution.
+            Note: CuPy only supports NVIDIA GPUs (CUDA). AMD/ROCm is not
+            supported.
         """
         self.dt = dt
         self.dz = dz
@@ -306,8 +316,24 @@ class MotorUnitSim:
         # GPU acceleration: CUDA streams + direct xp dispatch for zero-overhead
         # kernel execution. Model-agnostic: original functions called as black
         # boxes with xp parameter, works with any upstream model change.
-        use_gpu = HAS_CUPY
-        if use_gpu:
+        #
+        # Tri-state use_gpu logic:
+        #   None  → auto (GPU if available and env var not set)
+        #   True  → require GPU (raise if unavailable)
+        #   False → force CPU
+        if use_gpu is True and not HAS_CUPY:
+            raise RuntimeError(
+                "use_gpu=True but CuPy is not available or no CUDA GPU detected. "
+                "Install with: pip install cupy-cuda12x"
+            )
+        if use_gpu is None:
+            _gpu_disabled_env = os.environ.get("MYOGEN_DISABLE_GPU", "").lower() in (
+                "1", "true", "yes",
+            )
+            _run_on_gpu = HAS_CUPY and not _gpu_disabled_env
+        else:
+            _run_on_gpu = use_gpu
+        if _run_on_gpu:
             t_dev = cp.asarray(t)
             _N_STREAMS = 4
             _streams = [cp.cuda.Stream(non_blocking=True) for _ in range(_N_STREAMS)]
