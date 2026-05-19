@@ -144,7 +144,7 @@ def get_elementary_current_response(
     )
 
 
-def shift_padding(vec, sh, axis):
+def shift_padding(vec, sh, axis, xp=np):
     """
     Circularly shifts 'vec' by 'sh' positions along the specified 'axis'
     and then pads the shifted region with zeros.
@@ -157,21 +157,25 @@ def shift_padding(vec, sh, axis):
         Shift amount (positive means downward/rightward like MATLAB).
     axis : int
         Axis along which to shift.
+    xp : module, default=np
+        Array backend (numpy or cupy).
 
     Returns
     -------
     ndarray
         Shifted and zero-padded array.
     """
-    vec = np.roll(vec, sh, axis=axis)
+    vec = xp.roll(vec, sh, axis=axis)
 
-    n = len(vec)
+    n = vec.shape[0]
 
     # Equivalent of vec(1:sh) = 0
     if sh > 0:
         vec[:sh] = 0
 
     # Equivalent of vec(end+sh+1:end) = 0
+    # Note: when sh > 0, both head AND tail are zeroed — this is the
+    # original MATLAB semantics (suppress wrap-around on both sides).
     if sh < 0:
         start = n + sh  # because end+sh+1 in MATLAB is 1-based
         if start < n:
@@ -254,6 +258,7 @@ def get_current_density(
     dz = xp.mean(xp.diff(z, axis=0))
     z = xp.concatenate([z, z[[-1]] + dz], axis=0)
 
+    # ravel() needed: t,z arrive as (N,1) column vectors; meshgrid expects 1-D
     T, Z = xp.meshgrid(xp.ravel(t), xp.ravel(z))
 
     # Tendon terminator function
@@ -265,27 +270,20 @@ def get_current_density(
         psi = -4 * get_tm_current_dz(-2 * (Z - zi - v * T), xp=xp)
         longest_wave = xp.diff(psi, axis=0) / dz
         longest_wave *= tendon_terminator(Z[:-1, :] - zi - L1 / 2, L1)
+        # Explicit bool→float64 cast required: CuPy does not support
+        # implicit multiplication of bool arrays with float arrays.
         longest_wave *= ((Z[:-1, :] - zi) / v > 0).astype(xp.float64)
     else:
         psi = 4 * get_tm_current_dz(-2 * (-Z + zi - v * T), xp=xp)
         longest_wave = xp.diff(psi, axis=0) / dz
         longest_wave *= tendon_terminator(Z[:-1, :] - zi + L2 / 2, L2)
-        longest_wave *= ((-Z[:-1, :] + zi) / v > 0).astype(xp.float64)
+        longest_wave *= ((-Z[:-1, :] + zi) / v > 0).astype(xp.float64)  # bool→float64
 
     # Shortest wave (reversed)
     shortest_wave = longest_wave[::-1].copy()
-    shift_amount = int(xp.round((L1 + L2 - float(z.max()) + L2 - L1) / dz))
-
-    # shift_padding inlined for xp compatibility
-    shortest_wave = xp.roll(shortest_wave, shift_amount, axis=0)
-    n = shortest_wave.shape[0]
-    if shift_amount > 0:
-        shortest_wave[:shift_amount] = 0
-        shortest_wave[-shift_amount:] = 0
-    elif shift_amount < 0:
-        start = n + shift_amount
-        if start < n:
-            shortest_wave[start:] = 0
+    # Use round(float(...)) to avoid device-to-host sync from int(xp.round(...))
+    shift_amount = round(float((L1 + L2 - float(z.max()) + L2 - L1) / dz))
+    shortest_wave = shift_padding(shortest_wave, shift_amount, axis=0, xp=xp)
 
     if L1 >= L2:
         shortest_wave *= tendon_terminator(Z[:-1, :] - zi + L2 / 2, L2)
