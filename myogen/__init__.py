@@ -1,5 +1,7 @@
 import warnings
 
+from myogen._cuda_env import setup as _setup_cuda; _setup_cuda(); del _setup_cuda
+
 import numpy as np
 from numpy.random import Generator
 
