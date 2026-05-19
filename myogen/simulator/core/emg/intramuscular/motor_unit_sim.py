@@ -255,7 +255,9 @@ class MotorUnitSim:
         electrode_normals : np.ndarray, optional
             Electrode normal vectors (not used for point electrodes)
         min_radial_dist : float, optional
-            Minimum radial distance for stability (default: mean diameter * 1000)
+            Minimum radial distance in mm to prevent singularity when a
+            fiber is extremely close to the electrode.  Defaults to the
+            mean fiber diameter (in mm).
         verbose : bool, default=True
             If True, display progress bars. Set to False to disable.
         """
@@ -265,8 +267,8 @@ class MotorUnitSim:
 
         if min_radial_dist is None:
             min_radial_dist = float(
-                np.mean(self.muscle_fiber_diameters__mm) * 1000
-            )  # Convert to micrometers
+                np.mean(self.muscle_fiber_diameters__mm)
+            )
 
         if self._neuromuscular_z_coordinates__mm is None:
             raise ValueError(
