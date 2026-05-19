@@ -47,7 +47,7 @@ def get_tm_current(z: np.ndarray, D1: float = 96.0, D2: float = -90.0) -> np.nda
     return Vm
 
 
-def get_tm_current_dz(z: np.ndarray, D1: float = 96.0) -> np.ndarray:
+def get_tm_current_dz(z: np.ndarray, D1: float = 96.0, xp=np) -> np.ndarray:
     """
     Calculate first derivative of transmembrane current (Rosenfalck model).
 
@@ -60,16 +60,18 @@ def get_tm_current_dz(z: np.ndarray, D1: float = 96.0) -> np.ndarray:
         Spatial coordinates along fiber in mm
     D1 : float, default=96.0
         Current amplitude parameter in mV/mm³
+    xp : module, default=np
+        Array backend (numpy or cupy)
 
     Returns
     -------
     np.ndarray
         First derivative of transmembrane current
     """
-    Vm = np.zeros_like(z, dtype=np.float64)
+    Vm = xp.zeros_like(z, dtype=xp.float64)
     pos_mask = z > 0
     z_pos = z[pos_mask]
-    Vm[pos_mask] = D1 * (3 * z_pos**2 - z_pos**3) * np.exp(-z_pos)
+    Vm[pos_mask] = D1 * (3 * z_pos**2 - z_pos**3) * xp.exp(-z_pos)
     return Vm
 
 
@@ -102,6 +104,7 @@ def get_elementary_current_response(
     r: np.ndarray,
     sigma_r: float = 63.0,  # S/m
     sigma_z: float = 330.0,  # S/m
+    xp=np,
 ) -> np.ndarray:
     """
     Calculate elementary current response for volume conductor.
@@ -122,6 +125,8 @@ def get_elementary_current_response(
         Radial conductivity in S/m (from Andreassen & Rosenfalck 1980)
     sigma_z : float, default=330.0
         Longitudinal conductivity in S/m (from Andreassen & Rosenfalck 1980)
+    xp : module, default=np
+        Array backend (numpy or cupy)
 
     Returns
     -------
@@ -133,9 +138,9 @@ def get_elementary_current_response(
     sigma_r_S_per_mm = sigma_r / 1000.0  # CORRECTED: convert S/m → S/mm
     sigma_z_S_per_mm = sigma_z / 1000.0  # CORRECTED: convert S/m → S/mm
 
-    return np.divide(
-        1 / 4 / np.pi / sigma_r_S_per_mm,
-        np.sqrt(sigma_z_S_per_mm / sigma_r_S_per_mm * r**2 + (z - z_electrode) ** 2),
+    return xp.divide(
+        1 / 4 / xp.pi / sigma_r_S_per_mm,
+        xp.sqrt(sigma_z_S_per_mm / sigma_r_S_per_mm * r**2 + (z - z_electrode) ** 2),
     )
 
 
@@ -215,7 +220,8 @@ def hr_shift_template(x, delay):
 
 
 def get_current_density(
-    t, z, zi, L1, L2, v, d=55e-3, suppress_endplate_density=True, endplate_width=0.5
+    t, z, zi, L1, L2, v, d=55e-3, suppress_endplate_density=True, endplate_width=0.5,
+    xp=np,
 ):
     """
     Model the individual action potential (IAP) or single fiber action potential (SFAP) in space and time.
@@ -241,12 +247,14 @@ def get_current_density(
         Whether to suppress density at endplate region (default: True)
     endplate_width : float, optional
         Width around endplate where density is suppressed (mm)
+    xp : module, default=np
+        Array backend (numpy or cupy). Pass cupy for GPU acceleration.
     """
 
-    dz = np.mean(np.diff(z, axis=0))
-    z = np.concatenate([z, z[[-1]] + dz], axis=0)
+    dz = xp.mean(xp.diff(z, axis=0))
+    z = xp.concatenate([z, z[[-1]] + dz], axis=0)
 
-    T, Z = np.meshgrid(t, z)
+    T, Z = xp.meshgrid(xp.ravel(t), xp.ravel(z))
 
     # Tendon terminator function
     def tendon_terminator(z_inline, L_inline):
@@ -254,20 +262,30 @@ def get_current_density(
 
     # Compute psi (transmembrane current derivative)
     if L1 >= L2:
-        psi = -4 * get_tm_current_dz(-2 * (Z - zi - v * T))
-        longest_wave = np.diff(psi, axis=0) / dz
+        psi = -4 * get_tm_current_dz(-2 * (Z - zi - v * T), xp=xp)
+        longest_wave = xp.diff(psi, axis=0) / dz
         longest_wave *= tendon_terminator(Z[:-1, :] - zi - L1 / 2, L1)
-        longest_wave *= (Z[:-1, :] - zi) / v > 0  # negative time suppression
+        longest_wave *= ((Z[:-1, :] - zi) / v > 0).astype(xp.float64)
     else:
-        psi = 4 * get_tm_current_dz(-2 * (-Z + zi - v * T))
-        longest_wave = np.diff(psi, axis=0) / dz
+        psi = 4 * get_tm_current_dz(-2 * (-Z + zi - v * T), xp=xp)
+        longest_wave = xp.diff(psi, axis=0) / dz
         longest_wave *= tendon_terminator(Z[:-1, :] - zi + L2 / 2, L2)
-        longest_wave *= (-Z[:-1, :] + zi) / v > 0
+        longest_wave *= ((-Z[:-1, :] + zi) / v > 0).astype(xp.float64)
 
     # Shortest wave (reversed)
     shortest_wave = longest_wave[::-1].copy()
-    shift_amount = int(np.round((L1 + L2 - max(z) + L2 - L1) / dz))
-    shortest_wave = shift_padding(shortest_wave, shift_amount, 0)
+    shift_amount = int(xp.round((L1 + L2 - float(z.max()) + L2 - L1) / dz))
+
+    # shift_padding inlined for xp compatibility
+    shortest_wave = xp.roll(shortest_wave, shift_amount, axis=0)
+    n = shortest_wave.shape[0]
+    if shift_amount > 0:
+        shortest_wave[:shift_amount] = 0
+        shortest_wave[-shift_amount:] = 0
+    elif shift_amount < 0:
+        start = n + shift_amount
+        if start < n:
+            shortest_wave[start:] = 0
 
     if L1 >= L2:
         shortest_wave *= tendon_terminator(Z[:-1, :] - zi + L2 / 2, L2)
@@ -278,11 +296,8 @@ def get_current_density(
 
     # Suppress endplate density if required
     if suppress_endplate_density:
-
-        def endplate_terminator(z_inline):
-            return (z_inline <= (zi - endplate_width)) | (z_inline >= (zi + endplate_width))
-
-        iap *= endplate_terminator(Z[:-1, :])
+        iap *= ((Z[:-1, :] <= (zi - endplate_width)) |
+                (Z[:-1, :] >= (zi + endplate_width))).astype(xp.float64)
 
     # ---- FIXED UNIT CONVERSIONS ----
     # Intracellular conductivity: 1.01 S/m → convert to S/mm
@@ -291,7 +306,7 @@ def get_current_density(
 
     # Fiber diameter is already in mm (default d=55e-3 mm = 55 um)
     # Compute cross-sectional area in mm²
-    area_mm2 = np.pi * (d / 2) ** 2  # CORRECTED: removed extra /4
+    area_mm2 = xp.pi * (d / 2) ** 2  # CORRECTED: removed extra /4
 
     # Scale current density by intracellular conductivity and fiber cross-section area
     iap *= sigma_i * area_mm2

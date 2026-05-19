@@ -8,12 +8,20 @@ motor unit action potential (MUAP) generation with realistic jitter.
 Based on the MU_Sim class from the MATLAB iemg_simulator.
 """
 
+from contextlib import nullcontext
 from typing import Optional, List
 
 import numpy as np
 from scipy.spatial.distance import cdist
 from sklearn.cluster import KMeans
 from tqdm import tqdm
+
+try:
+    import cupy as cp
+
+    HAS_CUPY = cp.cuda.runtime.getDeviceCount() > 0
+except Exception:
+    HAS_CUPY = False
 
 from myogen import derive_subseed, get_random_generator
 from myogen.utils.decorators import beartowertype
@@ -295,69 +303,145 @@ class MotorUnitSim:
         )[..., None]
         self.sfaps = np.zeros((len(t), self.Npt, self._number_of_muscle_fibers))
 
-        for fiber_idx in tqdm(
-            range(self._number_of_muscle_fibers),
-            desc=f"MU {index}: Calculating SFAPs",
-            unit="fiber",
-            disable=not verbose,
-        ):
-            z_left = np.arange(
-                start=self._neuromuscular_z_coordinates__mm[fiber_idx],
-                step=-dz,
-                stop=self._muscle_fiber_left_ends__mm[fiber_idx] - dz,
-            )
-            z_right = np.arange(
-                start=self._neuromuscular_z_coordinates__mm[fiber_idx],
-                step=dz,
-                stop=self._muscle_fiber_right_ends__mm[fiber_idx] + dz,
-            )
-            z = np.concatenate((z_left[::-1], z_right[1:]))[:, None]
-            mf_coord_3d = np.concatenate(
-                [
-                    np.matlib.repmat(
-                        a=self.muscle_fiber_centers__mm[fiber_idx], m=len(z), n=1
-                    ),
-                    z,
-                ],
-                axis=1,
+        # GPU acceleration: CUDA streams + direct xp dispatch for zero-overhead
+        # kernel execution. Model-agnostic: original functions called as black
+        # boxes with xp parameter, works with any upstream model change.
+        use_gpu = HAS_CUPY
+        if use_gpu:
+            t_dev = cp.asarray(t)
+            _N_STREAMS = 4
+            _streams = [cp.cuda.Stream(non_blocking=True) for _ in range(_N_STREAMS)]
+            sfaps_dev = cp.zeros(
+                (len(t), self.Npt, self._number_of_muscle_fibers), dtype=cp.float64
             )
 
-            current_density = get_current_density(
-                t,
-                z,
-                self._neuromuscular_z_coordinates__mm[fiber_idx],
-                self._muscle_fiber_right_ends__mm[fiber_idx]
-                - self._neuromuscular_z_coordinates__mm[fiber_idx],
-                self._neuromuscular_z_coordinates__mm[fiber_idx]
-                - self._muscle_fiber_left_ends__mm[fiber_idx],
-                self.muscle_fiber_conduction_velocity__mm_per_s[fiber_idx],
-                self.muscle_fiber_diameters__mm[fiber_idx],
-            )
-
-            for electrode_idx in range(self.Npt):
-                # Calculate radial distance from fiber to electrode
-                radial_distance = np.sqrt(
-                    np.sum(
-                        (
-                            electrode_positions[electrode_idx, :2]
-                            - self.muscle_fiber_centers__mm[fiber_idx]
-                        )
-                        ** 2,
-                        keepdims=True,
+            for fiber_idx in tqdm(
+                range(self._number_of_muscle_fibers),
+                desc=f"MU {index}: Calculating SFAPs (GPU)",
+                unit="fiber",
+                disable=not verbose,
+            ):
+                stream = _streams[fiber_idx % _N_STREAMS]
+                with stream:
+                    z_left = np.arange(
+                        start=self._neuromuscular_z_coordinates__mm[fiber_idx],
+                        step=-dz,
+                        stop=self._muscle_fiber_left_ends__mm[fiber_idx] - dz,
                     )
-                )
-                if radial_distance < min_radial_dist:
-                    radial_distance = min_radial_dist
+                    z_right = np.arange(
+                        start=self._neuromuscular_z_coordinates__mm[fiber_idx],
+                        step=dz,
+                        stop=self._muscle_fiber_right_ends__mm[fiber_idx] + dz,
+                    )
+                    z = np.concatenate((z_left[::-1], z_right[1:]))[:, None]
 
-                response_to_elem_current = get_elementary_current_response(
+                    z_dev = cp.asarray(z)
+
+                    current_density = get_current_density(
+                        t_dev,
+                        z_dev,
+                        self._neuromuscular_z_coordinates__mm[fiber_idx],
+                        self._muscle_fiber_right_ends__mm[fiber_idx]
+                        - self._neuromuscular_z_coordinates__mm[fiber_idx],
+                        self._neuromuscular_z_coordinates__mm[fiber_idx]
+                        - self._muscle_fiber_left_ends__mm[fiber_idx],
+                        self.muscle_fiber_conduction_velocity__mm_per_s[fiber_idx],
+                        self.muscle_fiber_diameters__mm[fiber_idx],
+                        xp=cp,
+                    )
+
+                    ecr_list = []
+                    for electrode_idx in range(self.Npt):
+                        radial_distance = np.sqrt(
+                            np.sum(
+                                (
+                                    electrode_positions[electrode_idx, :2]
+                                    - self.muscle_fiber_centers__mm[fiber_idx]
+                                )
+                                ** 2,
+                                keepdims=True,
+                            )
+                        )
+                        if radial_distance < min_radial_dist:
+                            radial_distance = min_radial_dist
+
+                        r_dev = cp.asarray(radial_distance)
+                        ecr_list.append(get_elementary_current_response(
+                            z_dev,
+                            electrode_positions[electrode_idx, 2],
+                            r_dev,
+                            xp=cp,
+                        ))
+
+                    ecr_all = cp.column_stack(ecr_list)
+                    sfaps_dev[:, :, fiber_idx] = current_density.T @ ecr_all
+
+            cp.cuda.Device(0).synchronize()
+            self.sfaps = cp.asnumpy(sfaps_dev)
+        else:
+            t_dev = t
+            for fiber_idx in tqdm(
+                range(self._number_of_muscle_fibers),
+                desc=f"MU {index}: Calculating SFAPs",
+                unit="fiber",
+                disable=not verbose,
+            ):
+                z_left = np.arange(
+                    start=self._neuromuscular_z_coordinates__mm[fiber_idx],
+                    step=-dz,
+                    stop=self._muscle_fiber_left_ends__mm[fiber_idx] - dz,
+                )
+                z_right = np.arange(
+                    start=self._neuromuscular_z_coordinates__mm[fiber_idx],
+                    step=dz,
+                    stop=self._muscle_fiber_right_ends__mm[fiber_idx] + dz,
+                )
+                z = np.concatenate((z_left[::-1], z_right[1:]))[:, None]
+                mf_coord_3d = np.concatenate(
+                    [
+                        np.matlib.repmat(
+                            a=self.muscle_fiber_centers__mm[fiber_idx], m=len(z), n=1
+                        ),
+                        z,
+                    ],
+                    axis=1,
+                )
+
+                current_density = get_current_density(
+                    t_dev,
                     z,
-                    electrode_positions[electrode_idx, 2],
-                    radial_distance,
+                    self._neuromuscular_z_coordinates__mm[fiber_idx],
+                    self._muscle_fiber_right_ends__mm[fiber_idx]
+                    - self._neuromuscular_z_coordinates__mm[fiber_idx],
+                    self._neuromuscular_z_coordinates__mm[fiber_idx]
+                    - self._muscle_fiber_left_ends__mm[fiber_idx],
+                    self.muscle_fiber_conduction_velocity__mm_per_s[fiber_idx],
+                    self.muscle_fiber_diameters__mm[fiber_idx],
                 )
 
-                self.sfaps[:, electrode_idx, fiber_idx] = (
-                    current_density.T @ response_to_elem_current
-                )[:, 0]
+                ecr_list = []
+                for electrode_idx in range(self.Npt):
+                    radial_distance = np.sqrt(
+                        np.sum(
+                            (
+                                electrode_positions[electrode_idx, :2]
+                                - self.muscle_fiber_centers__mm[fiber_idx]
+                            )
+                            ** 2,
+                            keepdims=True,
+                        )
+                    )
+                    if radial_distance < min_radial_dist:
+                        radial_distance = min_radial_dist
+
+                    ecr_list.append(get_elementary_current_response(
+                        z,
+                        electrode_positions[electrode_idx, 2],
+                        radial_distance,
+                    ))
+
+                ecr_all = np.column_stack(ecr_list)
+                self.sfaps[:, :, fiber_idx] = current_density.T @ ecr_all
 
         self.shift_sfaps(dt)
 

@@ -1479,7 +1479,7 @@ wheels = [
 
 [[package]]
 name = "myogen"
-version = "0.8.5"
+version = "0.9.0"
 source = { editable = "." }
 dependencies = [
     { name = "beartype" },
@@ -1514,10 +1514,12 @@ nwb = [
 
 [package.dev-dependencies]
 dev = [
+    { name = "elephant" },
     { name = "pandas-stubs" },
     { name = "poethepoet" },
     { name = "pytest" },
     { name = "scipy-stubs" },
+    { name = "viziphant" },
 ]
 docs = [
     { name = "elephant" },
@@ -1569,10 +1571,12 @@ provides-extras = ["elephant", "nwb"]
 
 [package.metadata.requires-dev]
 dev = [
+    { name = "elephant", specifier = ">=1.1.1" },
     { name = "pandas-stubs", specifier = ">=2.3.0.250703" },
     { name = "poethepoet", specifier = ">=0.37.0" },
     { name = "pytest", specifier = ">=8.0" },
     { name = "scipy-stubs", specifier = ">=1.16.1.0" },
+    { name = "viziphant", specifier = ">=0.4.0" },
 ]
 docs = [
     { name = "elephant", specifier = ">=1.1.1" },
