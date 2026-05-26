@@ -137,3 +137,149 @@ def test_modules_that_use_accessor_are_not_stale_after_seed_change():
     gen_after = muscle_module.get_random_generator()
     assert gen_before is not gen_after
     assert gen_after is get_random_generator()
+
+
+# ---------------------------------------------------------------------------
+# Regression tests for higher-level pipeline reproducibility
+# ---------------------------------------------------------------------------
+
+import quantities as pq  # noqa: E402  (placed after stdlib/third-party block above)
+from myogen import simulator  # noqa: E402
+
+
+def _small_recruitment_thresholds():
+    """4-MU pool with a physiological range, deterministic (no RNG used)."""
+    return simulator.RecruitmentThresholds(N=4, recruitment_range__ratio=30)[0]
+
+
+def _build_small_muscle(seed: int):
+    """Build a minimal Muscle (radius 2 mm, 50 fibers/mm², grid 32) under *seed*."""
+    set_random_seed(seed)
+    return simulator.Muscle(
+        recruitment_thresholds=_small_recruitment_thresholds(),
+        radius__mm=2.0 * pq.mm,
+        radius_bone__mm=0.5 * pq.mm,
+        fiber_density__fibers_per_mm2=50 * pq.mm**-2,
+        grid_resolution=32,
+        autorun=True,
+    )
+
+
+def _small_electrode():
+    return simulator.IntramuscularElectrodeArray(
+        num_electrodes=2,
+        inter_electrode_distance__mm=0.5 * pq.mm,
+        position__mm=(0.0 * pq.mm, 0.0 * pq.mm, 15.0 * pq.mm),
+    )
+
+
+def _build_iemg_with_muaps(seed: int):
+    """Build a muscle + iEMG simulator and compute MUAPs for MU 0 only."""
+    muscle = _build_small_muscle(seed)
+    iemg = simulator.IntramuscularEMG(
+        muscle_model=muscle,
+        electrode_array=_small_electrode(),
+        MUs_to_simulate=[0],
+        sampling_frequency__Hz=10240.0 * pq.Hz,
+    )
+    set_random_seed(seed)
+    iemg.simulate_muaps(n_jobs=1, verbose=False)
+    return iemg
+
+
+def _make_spike_block():
+    """Minimal neo Block with a single spike at 20 ms, compatible with 10240 Hz iEMG."""
+    from neo import Block, Segment, SpikeTrain
+
+    block = Block()
+    segment = Segment(name="Pool_0")
+    spiketrain = SpikeTrain(
+        [0.020] * pq.s,
+        t_start=0 * pq.s,
+        t_stop=0.05 * pq.s,
+    )
+    spiketrain.sampling_period = (1.0 / 10240.0) * pq.s
+    segment.spiketrains.append(spiketrain)
+    block.segments.append(segment)
+    return block
+
+
+def test_muscle_fiber_placement_is_reproducible_under_seed():
+    """Muscle fiber placement and MU assignment must be byte-identical under the same seed.
+
+    Regression for any un-seeded RNG path inside generate_muscle_fiber_centers
+    or assign_mfs2mns. Two builds under seed 7 must yield identical
+    muscle_fiber_centers__mm arrays and assignment arrays. A build
+    under seed 8 must differ (sanity check that the seed is actually observed).
+    """
+    muscle_a = _build_small_muscle(7)
+    muscle_b = _build_small_muscle(7)
+
+    assert np.array_equal(
+        muscle_a.muscle_fiber_centers__mm.magnitude,
+        muscle_b.muscle_fiber_centers__mm.magnitude,
+    ), "muscle_fiber_centers__mm must be identical under the same seed"
+
+    assert np.array_equal(
+        muscle_a.assignment,
+        muscle_b.assignment,
+    ), "MF-to-MU assignment must be identical under the same seed"
+
+    assert np.array_equal(
+        muscle_a.resulting_number_of_innervated_fibers,
+        muscle_b.resulting_number_of_innervated_fibers,
+    ), "resulting_number_of_innervated_fibers must be identical under the same seed"
+
+    # Sanity: a different seed must produce a different result.
+    muscle_c = _build_small_muscle(8)
+    assert not np.array_equal(
+        muscle_a.assignment,
+        muscle_c.assignment,
+    ), "assignment must differ under a different seed (sanity check)"
+
+
+def test_intramuscular_muap_block_is_reproducible_under_seed():
+    """MU 0 MUAP waveform from IntramuscularEMG.simulate_muaps must be
+    byte-identical between two independent runs under the same seed.
+
+    Guards against non-determinism in the bioelectric computation chain
+    (fiber conductance look-up, SFAP summation) when run with n_jobs=1.
+    """
+    iemg_a = _build_iemg_with_muaps(7)
+    iemg_b = _build_iemg_with_muaps(7)
+
+    mag_a = iemg_a.muaps__Block.segments[0].analogsignals[0].magnitude
+    mag_b = iemg_b.muaps__Block.segments[0].analogsignals[0].magnitude
+
+    assert np.array_equal(mag_a, mag_b), (
+        "MUAP waveform (MU 0) must be byte-identical across two seeded runs; "
+        "max abs diff = " + str(np.max(np.abs(mag_a - mag_b)))
+    )
+
+
+def test_intramuscular_emg_noise_is_reproducible_under_seed():
+    """Noise added by IntramuscularEMG.add_noise must be byte-identical
+    when the global seed is reset to the same value before each call.
+
+    Regression for any unseeded np.random or random call inside
+    add_noise / the noise-generation helpers.
+    """
+    spike_block = _make_spike_block()
+
+    iemg_a = _build_iemg_with_muaps(7)
+    iemg_a.simulate_intramuscular_emg(spike_train__Block=spike_block, verbose=False)
+    set_random_seed(7)
+    iemg_a.add_noise(snr__dB=20)
+    noisy_a = iemg_a.noisy_intramuscular_emg__Block.segments[0].analogsignals[0].magnitude
+
+    iemg_b = _build_iemg_with_muaps(7)
+    iemg_b.simulate_intramuscular_emg(spike_train__Block=spike_block, verbose=False)
+    set_random_seed(7)
+    iemg_b.add_noise(snr__dB=20)
+    noisy_b = iemg_b.noisy_intramuscular_emg__Block.segments[0].analogsignals[0].magnitude
+
+    assert np.array_equal(noisy_a, noisy_b), (
+        "noisy_intramuscular_emg__Block must be byte-identical when the seed is "
+        "reset to the same value before add_noise(); "
+        "max abs diff = " + str(np.max(np.abs(noisy_a - noisy_b)))
+    )
