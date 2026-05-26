@@ -16,6 +16,10 @@ import subprocess
 from pathlib import Path
 from typing import List, Optional
 
+# The Windows Registry probe is shared with ``setup.py`` via the standalone
+# helper module so the duplicated implementation cannot drift.
+from myogen._neuron_home import _find_neuron_home_from_registry
+
 
 def find_nmodl_directory() -> Path:
     """Create isolated NMODL directory for MyoGen mechanisms."""
@@ -26,154 +30,6 @@ def find_nmodl_directory() -> Path:
 def _get_mod_files(nmodl_path: Path) -> List[Path]:
     """Get .mod files from NMODL directory."""
     return list(nmodl_path.glob("*.mod"))
-
-
-# Cache for registry lookup (module-level to persist across calls)
-_neuron_home_cache: Optional[Path] = None
-_neuron_home_cache_checked: bool = False
-
-
-def _find_neuron_home_from_registry(quiet: bool = True) -> Optional[Path]:
-    """Find NEURON installation path from Windows Registry."""
-    global _neuron_home_cache, _neuron_home_cache_checked
-
-    # Return cached result if already searched
-    if _neuron_home_cache_checked:
-        return _neuron_home_cache
-
-    if platform.system() != "Windows":
-        _neuron_home_cache_checked = True
-        return None
-
-    try:
-        import winreg
-    except ImportError:
-        if not quiet:
-            print("Warning: winreg module not available")
-        _neuron_home_cache_checked = True
-        return None
-
-    # Registry keys to check (in order of preference)
-    # Try common NEURON registry key patterns
-    direct_neuron_keys = [
-        (winreg.HKEY_LOCAL_MACHINE, r"SOFTWARE\NEURON", winreg.KEY_READ | winreg.KEY_WOW64_64KEY),
-        (winreg.HKEY_LOCAL_MACHINE, r"SOFTWARE\NEURON_Simulator", winreg.KEY_READ | winreg.KEY_WOW64_64KEY),
-        (winreg.HKEY_LOCAL_MACHINE, r"SOFTWARE\NEURON", winreg.KEY_READ | winreg.KEY_WOW64_32KEY),
-        (winreg.HKEY_LOCAL_MACHINE, r"SOFTWARE\NEURON_Simulator", winreg.KEY_READ | winreg.KEY_WOW64_32KEY),
-        (winreg.HKEY_CURRENT_USER, r"SOFTWARE\NEURON", winreg.KEY_READ),
-        (winreg.HKEY_CURRENT_USER, r"SOFTWARE\NEURON_Simulator", winreg.KEY_READ),
-    ]
-
-    # Check uninstall registry keys
-    uninstall_keys = [
-        (winreg.HKEY_LOCAL_MACHINE, r"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall", winreg.KEY_READ | winreg.KEY_WOW64_64KEY),
-        (winreg.HKEY_LOCAL_MACHINE, r"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall", winreg.KEY_READ | winreg.KEY_WOW64_32KEY),
-        (winreg.HKEY_CURRENT_USER, r"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall", winreg.KEY_READ),
-    ]
-
-    registry_paths = direct_neuron_keys + uninstall_keys
-
-    if not quiet:
-        print("Searching for NEURON in Windows Registry...")
-
-    for hkey, subkey_path, access_flag in registry_paths:
-        try:
-            with winreg.OpenKey(hkey, subkey_path, 0, access_flag) as key:
-                # For direct NEURON keys, look for InstallPath or similar
-                if "NEURON" in subkey_path and "Uninstall" not in subkey_path:
-                    # Special handling for NEURON_Simulator - check nrn subkey
-                    if "NEURON_Simulator" in subkey_path:
-                        try:
-                            with winreg.OpenKey(key, "nrn", 0, winreg.KEY_READ) as nrn_key:
-                                install_path, _ = winreg.QueryValueEx(nrn_key, "Install_Dir")
-                                if install_path:
-                                    neuron_path = Path(install_path)
-                                    if neuron_path.exists():
-                                        if not quiet:
-                                            print(f"  (OK) Found NEURON in registry: {neuron_path}")
-                                        _neuron_home_cache = neuron_path
-                                        _neuron_home_cache_checked = True
-                                        return neuron_path
-                        except FileNotFoundError:
-                            pass
-
-                    # Try standard value names
-                    try:
-                        install_path, _ = winreg.QueryValueEx(key, "InstallPath")
-                        if install_path:
-                            neuron_path = Path(install_path)
-                            if neuron_path.exists():
-                                if not quiet:
-                                    print(f"  (OK) Found NEURON in registry: {neuron_path}")
-                                _neuron_home_cache = neuron_path
-                                _neuron_home_cache_checked = True
-                                return neuron_path
-                    except FileNotFoundError:
-                        # Try alternative value names
-                        for value_name in ["Path", "InstallLocation", "Install_Dir", ""]:
-                            try:
-                                install_path, _ = winreg.QueryValueEx(key, value_name)
-                                if install_path:
-                                    neuron_path = Path(install_path)
-                                    if neuron_path.exists():
-                                        if not quiet:
-                                            print(f"  (OK) Found NEURON in registry: {neuron_path}")
-                                        _neuron_home_cache = neuron_path
-                                        _neuron_home_cache_checked = True
-                                        return neuron_path
-                            except FileNotFoundError:
-                                continue
-
-                # For Uninstall keys, enumerate subkeys to find NEURON
-                elif "Uninstall" in subkey_path:
-                    num_subkeys = winreg.QueryInfoKey(key)[0]
-                    for i in range(num_subkeys):
-                        try:
-                            subkey_name = winreg.EnumKey(key, i)
-                            if "NEURON" in subkey_name.upper() or "NRN" in subkey_name.upper():
-                                with winreg.OpenKey(key, subkey_name) as app_key:
-                                    # Try InstallLocation first
-                                    try:
-                                        install_location, _ = winreg.QueryValueEx(app_key, "InstallLocation")
-                                        if install_location:
-                                            neuron_path = Path(install_location)
-                                            if neuron_path.exists():
-                                                if not quiet:
-                                                    print(f"  (OK) Found NEURON in registry (Uninstall): {neuron_path}")
-                                                _neuron_home_cache = neuron_path
-                                                _neuron_home_cache_checked = True
-                                                return neuron_path
-                                    except FileNotFoundError:
-                                        pass
-
-                                    # Try to parse UninstallString as fallback
-                                    try:
-                                        uninstall_string, _ = winreg.QueryValueEx(app_key, "UninstallString")
-                                        if uninstall_string:
-                                            # Extract path from uninstall string (e.g., "c:\nrn\uninstall.exe")
-                                            uninstall_path = Path(uninstall_string.strip('"'))
-                                            neuron_path = uninstall_path.parent
-                                            if neuron_path.exists():
-                                                if not quiet:
-                                                    print(f"  (OK) Found NEURON in registry (UninstallString): {neuron_path}")
-                                                _neuron_home_cache = neuron_path
-                                                _neuron_home_cache_checked = True
-                                                return neuron_path
-                                    except FileNotFoundError:
-                                        pass
-                        except OSError:
-                            continue
-        except FileNotFoundError:
-            continue
-        except Exception as e:
-            if not quiet:
-                print(f"  (X) Error checking registry path {subkey_path}: {e}")
-            continue
-
-    if not quiet:
-        print("  (X) NEURON not found in registry")
-    _neuron_home_cache_checked = True
-    return None
 
 
 def _find_mknrndll() -> Optional[Path]:

@@ -3,7 +3,7 @@ name = "MyoGen"
 version = "0.9.0"
 description = "Modular and extensible neuromuscular simulation framework for generating physiologically grounded motor-unit activity, muscle force, and EMG signals (surface and intramuscular)"
 readme = "README.md"
-requires-python = ">=3.12"
+requires-python = ">=3.12,<3.13"
 license = "AGPL-3.0-or-later"
 authors = [
     {name = "Raul C. Sîmpetru", email = "raul.simpetru@fau.de"},
@@ -28,10 +28,8 @@ classifiers = [
 ]
 dependencies = [
     "beartype>=0.21.0",
-    "cython>=3.1.3",
-    "impi-rt>=2021.15.0 ; sys_platform == 'win32'",
+    "joblib>=1.3",
     "matplotlib>=3.10.1",
-    "mpi4py>=4.0.3",
     "neuron==8.2.7 ; sys_platform == 'linux' or sys_platform == 'darwin'",
     #"neuron-gpu-nightly>=9.0a0",
     #"neuron-nightly>=9.0a1.dev1492",
@@ -39,6 +37,7 @@ dependencies = [
     "numba>=0.61.2",
     "numpy>=1.26,<2.0",
     "optuna>=4.5.0",
+    "pandas>=2.0",
     "quantities>=0.16.2",
     "scienceplots>=2.1.1",
     "scikit-fmm>=2025.1.29",
@@ -117,7 +116,7 @@ testpaths = ["tests"]
 setup_myogen = "python -c 'from myogen import _setup_myogen; _setup_myogen()'"
 
 [build-system]
-requires = ["setuptools>=61.0", "Cython>=3.0.0", "numpy==1.26.4", "scipy==1.16.3"]
+requires = ["setuptools>=61.0", "Cython>=3.0.0", "numpy>=1.26,<2.0", "scipy>=1.15.3"]
 build-backend = "setuptools.build_meta"
 
 [tool.setuptools]

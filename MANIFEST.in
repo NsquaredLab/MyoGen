@@ -3,16 +3,8 @@ include LICENSE.md
 include pyproject.toml
 include setup.py
 
-# Include all NMODL files and compiled mechanisms
+# Include NMODL sources only; mechanisms are compiled at build/install time
 recursive-include myogen/simulator/nmodl_files *.mod
-recursive-include myogen/simulator/nmodl_files *.c
-recursive-include myogen/simulator/nmodl_files *.h
-recursive-include myogen/simulator/nmodl_files *.o
-recursive-include myogen/simulator/nmodl_files *.so
-recursive-include myogen/simulator/nmodl_files *.dll
-recursive-include myogen/simulator/nmodl_files/x86_64 *
-recursive-include myogen/simulator/nmodl_files/aarch64 *
-recursive-include myogen/simulator/nmodl_files/arm64 *
 
 # Include Cython files
 recursive-include myogen *.pyx

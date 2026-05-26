@@ -9,7 +9,11 @@ on:
 
 jobs:
   pytest:
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest]
     steps:
       - uses: actions/checkout@v4
 
@@ -18,10 +22,20 @@ jobs:
         with:
           python-version: "3.12.8"
 
-      - name: System packages for NEURON / MPI
+      - name: System packages for NEURON / MPI (Linux)
+        if: runner.os == 'Linux'
         run: |
           sudo apt-get update
           sudo apt-get install -y libopenmpi-dev openmpi-bin libgtk2.0-dev
+
+      - name: Check NEURON 8.2.7 macOS wheel availability
+        if: runner.os == 'macOS'
+        run: |
+          python -m pip install --upgrade pip
+          if ! pip download --only-binary=:all: --no-deps neuron==8.2.7 -d /tmp/neuron_probe >/dev/null 2>&1; then
+            echo "::error::No prebuilt neuron==8.2.7 wheel available for macOS on PyPI. uv sync will fail."
+            exit 1
+          fi
 
       - name: Install uv
         run: |
