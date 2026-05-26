@@ -13,7 +13,6 @@ from contextlib import nullcontext
 from typing import Optional, List
 
 import numpy as np
-from scipy.spatial.distance import cdist
 from sklearn.cluster import KMeans
 from tqdm import tqdm
 
@@ -175,7 +174,7 @@ class MotorUnitSim:
             cluster_center = np.concatenate(
                 [
                     self.branch_points_xy[idx[i]],
-                    self._neuromuscular_z_coordinates__mm[idx[i]],
+                    self.branch_points_z[idx[i]],
                 ]
             )[None]
             nmj_coordinates = np.concatenate(
@@ -185,60 +184,18 @@ class MotorUnitSim:
                 ]
             )[None]
 
+            # Extract scalar from the (1,)-shape norm result via .item() so the
+            # assignment to a 0-D slot doesn't trigger the numpy 1.25 ndim>0
+            # deprecation (float() of a (1,)-shape array hits the same path).
             self.nerve_paths[i, 0] = np.linalg.norm(
                 self._actual_center - cluster_center, axis=-1
-            )
+            ).item()
             self.nerve_paths[i, 1] = np.linalg.norm(
                 nmj_coordinates - cluster_center, axis=-1
-            )
+            ).item()
 
         # Calculate delays
         # self._calculate_nmj_delays()
-
-    def sim_nmj_branches_gaussian(self, endplate_center: float, branches_z_std: float):
-        """
-        Simulate neuromuscular junctions with simple Gaussian distribution.
-
-        Parameters
-        ----------
-        endplate_center : float
-            Center of endplate zone in mm
-        branches_z_std : float
-            Standard deviation of NMJ distribution in mm
-        """
-        rng = get_random_generator()
-        self.nmj_z = rng.normal(endplate_center, branches_z_std, self.Nmf)
-
-        # Simplified nerve paths (single segment)
-        self.nerve_paths = np.zeros((self.Nmf, 1))
-        for i in range(self.Nmf):
-            distance = np.sqrt(
-                (self.muscle_fiber_centers__mm[i, 0] - self.actual_center[0]) ** 2
-                + (self.muscle_fiber_centers__mm[i, 1] - self.actual_center[1]) ** 2
-                + (self.nmj_z[i] - endplate_center) ** 2
-            )
-            self.nerve_paths[i, 0] = distance
-
-        self._calculate_nmj_delays()
-
-    def _calculate_nmj_delays(self):
-        """Calculate neuromuscular junction propagation delays."""
-        if self.nerve_paths is None:
-            return
-
-        self.nmj_delays = np.zeros(self.Nmf)
-
-        for i in range(self.Nmf):
-            total_delay = 0.0
-            for segment_idx in range(self.nerve_paths.shape[1]):
-                path_length = self.nerve_paths[i, segment_idx]
-                if segment_idx < len(self.nmj_cv):
-                    cv = self.nmj_cv[segment_idx]
-                else:
-                    cv = self.nmj_cv[-1]  # Use last velocity for additional segments
-                total_delay += path_length / cv
-
-            self.nmj_delays[i] = total_delay
 
     def calc_sfaps(
         self,
@@ -351,16 +308,18 @@ class MotorUnitSim:
             ):
                 stream = _streams[fiber_idx % _N_STREAMS]
                 with stream:
-                    z_left = np.arange(
-                        start=self._neuromuscular_z_coordinates__mm[fiber_idx],
-                        step=-dz,
-                        stop=self._muscle_fiber_left_ends__mm[fiber_idx] - dz,
-                    )
-                    z_right = np.arange(
-                        start=self._neuromuscular_z_coordinates__mm[fiber_idx],
-                        step=dz,
-                        stop=self._muscle_fiber_right_ends__mm[fiber_idx] + dz,
-                    )
+                    # Extract per-fiber scalars from the (N, 1)-shaped coordinate
+                    # arrays before passing to ``np.arange``; numpy 1.25+ deprecates
+                    # ndim>0 -> scalar coercion (errors in numpy 2.x).
+                    # ``.item()`` is the deprecation-safe scalar extraction for
+                    # the (N, 1)-shaped coordinate arrays: ``float()`` of a
+                    # (1,)-shape numpy array triggers the numpy 1.25 ndim>0
+                    # deprecation (errors in numpy 2.x).
+                    zi_mm = self._neuromuscular_z_coordinates__mm[fiber_idx].item()
+                    left_end_mm = self._muscle_fiber_left_ends__mm[fiber_idx].item()
+                    right_end_mm = self._muscle_fiber_right_ends__mm[fiber_idx].item()
+                    z_left = np.arange(start=zi_mm, step=-dz, stop=left_end_mm - dz)
+                    z_right = np.arange(start=zi_mm, step=dz, stop=right_end_mm + dz)
                     z = np.concatenate((z_left[::-1], z_right[1:]))[:, None]
 
                     z_dev = cp.asarray(z)
@@ -368,13 +327,11 @@ class MotorUnitSim:
                     current_density = get_current_density(
                         t_dev,
                         z_dev,
-                        self._neuromuscular_z_coordinates__mm[fiber_idx],
-                        self._muscle_fiber_right_ends__mm[fiber_idx]
-                        - self._neuromuscular_z_coordinates__mm[fiber_idx],
-                        self._neuromuscular_z_coordinates__mm[fiber_idx]
-                        - self._muscle_fiber_left_ends__mm[fiber_idx],
-                        self.muscle_fiber_conduction_velocity__mm_per_s[fiber_idx],
-                        self.muscle_fiber_diameters__mm[fiber_idx],
+                        zi_mm,
+                        right_end_mm - zi_mm,
+                        zi_mm - left_end_mm,
+                        self.muscle_fiber_conduction_velocity__mm_per_s[fiber_idx].item(),
+                        self.muscle_fiber_diameters__mm[fiber_idx].item(),
                         xp=cp,
                     )
 
@@ -414,37 +371,27 @@ class MotorUnitSim:
                 unit="fiber",
                 disable=not verbose,
             ):
-                z_left = np.arange(
-                    start=self._neuromuscular_z_coordinates__mm[fiber_idx],
-                    step=-dz,
-                    stop=self._muscle_fiber_left_ends__mm[fiber_idx] - dz,
-                )
-                z_right = np.arange(
-                    start=self._neuromuscular_z_coordinates__mm[fiber_idx],
-                    step=dz,
-                    stop=self._muscle_fiber_right_ends__mm[fiber_idx] + dz,
-                )
+                # Extract per-fiber scalars from the (N, 1)-shaped coordinate
+                # arrays before passing to ``np.arange``; numpy 1.25+ deprecates
+                # ndim>0 -> scalar coercion (errors in numpy 2.x).
+                # ``.item()`` is the deprecation-safe scalar extraction for
+                # the (N, 1)-shaped coordinate arrays: ``float()`` of a
+                # (1,)-shape numpy array triggers the numpy 1.25 ndim>0
+                # deprecation (errors in numpy 2.x).
+                zi_mm = self._neuromuscular_z_coordinates__mm[fiber_idx].item()
+                left_end_mm = self._muscle_fiber_left_ends__mm[fiber_idx].item()
+                right_end_mm = self._muscle_fiber_right_ends__mm[fiber_idx].item()
+                z_left = np.arange(start=zi_mm, step=-dz, stop=left_end_mm - dz)
+                z_right = np.arange(start=zi_mm, step=dz, stop=right_end_mm + dz)
                 z = np.concatenate((z_left[::-1], z_right[1:]))[:, None]
-                mf_coord_3d = np.concatenate(
-                    [
-                        np.matlib.repmat(
-                            a=self.muscle_fiber_centers__mm[fiber_idx], m=len(z), n=1
-                        ),
-                        z,
-                    ],
-                    axis=1,
-                )
-
                 current_density = get_current_density(
                     t_dev,
                     z,
-                    self._neuromuscular_z_coordinates__mm[fiber_idx],
-                    self._muscle_fiber_right_ends__mm[fiber_idx]
-                    - self._neuromuscular_z_coordinates__mm[fiber_idx],
-                    self._neuromuscular_z_coordinates__mm[fiber_idx]
-                    - self._muscle_fiber_left_ends__mm[fiber_idx],
-                    self.muscle_fiber_conduction_velocity__mm_per_s[fiber_idx],
-                    self.muscle_fiber_diameters__mm[fiber_idx],
+                    zi_mm,
+                    right_end_mm - zi_mm,
+                    zi_mm - left_end_mm,
+                    self.muscle_fiber_conduction_velocity__mm_per_s[fiber_idx].item(),
+                    self.muscle_fiber_diameters__mm[fiber_idx].item(),
                 )
 
                 ecr_list = []
@@ -474,29 +421,34 @@ class MotorUnitSim:
         self.shift_sfaps(dt)
 
     def calc_mnap_delays(self):
-        self.mnap_delays = np.divide(
-            self.nerve_paths,
-            np.matlib.repmat(
-                np.array(self.neuromuscular_junction_conduction_velocities__mm_per_s)[
-                    None
-                ],
-                self._number_of_muscle_fibers,
-                1,
-            ),
-        ).sum(axis=1, keepdims=True)
+        conduction_velocities = np.asarray(
+            self.neuromuscular_junction_conduction_velocities__mm_per_s
+        )[None, :]
+        self.mnap_delays = np.divide(self.nerve_paths, conduction_velocities).sum(
+            axis=1,
+            keepdims=True,
+        )
 
     def shift_sfaps(self, dt):
         self.calc_mnap_delays()
 
         for fb in range(self._number_of_muscle_fibers):
+            delay_samples = float(self.mnap_delays[fb, 0] / dt)
+            integer_delay = int(np.floor(delay_samples))
+            fractional_delay = delay_samples - integer_delay
             for pt in range(self.Npt):
                 self.sfaps[:, pt, fb] = shift_padding(
                     self.sfaps[:, pt, fb],
-                    int(np.floor(self.mnap_delays[fb] / dt)),
+                    integer_delay,
                     axis=0,
                 )
+                # NOTE: hr_shift_template uses opposite sign convention to
+                # shift_padding (DFT phase factor exp(+1j*2π*delay*k/N) shifts
+                # an impulse backward in time). Negate the fractional delay so
+                # the net shift matches the integer shift convention
+                # (forward in time = NMJ propagation delay).
                 self.sfaps[:, pt, fb] = hr_shift_template(
-                    self.sfaps[:, pt, fb], int(np.mod(self.mnap_delays[fb], dt))
+                    self.sfaps[:, pt, fb], -fractional_delay
                 )
 
     def calc_muap(self, jitter_std: float = 0.0) -> np.ndarray:
@@ -531,7 +483,7 @@ class MotorUnitSim:
                         delays[fiber_idx] / self.dt,
                     )
 
-                self.muap = np.sum(jittered_sfaps, axis=2)
+            self.muap = np.sum(jittered_sfaps, axis=2)
         else:
             self.muap = np.sum(self.sfaps, axis=2)
 
@@ -589,20 +541,3 @@ class MotorUnitSim:
         signal = self.muap[:, electrode_idx]
         return float(np.max(signal) - np.min(signal))
 
-    @property
-    def fiber_count(self) -> int:
-        """Number of muscle fibers in this motor unit."""
-        return self.Nmf
-
-    @property
-    def territory_center(self) -> np.ndarray:
-        """Center of motor unit territory."""
-        return self.actual_center
-
-    @property
-    def territory_radius(self) -> float:
-        """Approximate radius of motor unit territory."""
-        distances = cdist(
-            [self.actual_center[:2]], self.muscle_fiber_centers__mm[:, :2]
-        )
-        return float(np.mean(distances))

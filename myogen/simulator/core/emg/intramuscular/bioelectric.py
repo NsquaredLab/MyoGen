@@ -173,19 +173,18 @@ def shift_padding(vec, sh, axis, xp=np):
 
     n = vec.shape[0]
 
-    # Equivalent of vec(1:sh) = 0
+    # Equivalent of vec(1:sh) = 0 — zero only the vacated head when shifting
+    # forward (sh > 0). MATLAB's vec(end+sh+1:end) range collapses to empty
+    # for sh > 0, so the tail must NOT be touched.
     if sh > 0:
         vec[:sh] = 0
 
-    # Equivalent of vec(end+sh+1:end) = 0
-    # Note: when sh > 0, both head AND tail are zeroed — this is the
-    # original MATLAB semantics (suppress wrap-around on both sides).
+    # Equivalent of vec(end+sh+1:end) = 0 — for sh < 0 (left shift), zero
+    # only the vacated tail. The head is untouched.
     if sh < 0:
         start = n + sh  # because end+sh+1 in MATLAB is 1-based
         if start < n:
             vec[start:] = 0
-    elif sh > 0:
-        vec[-sh:] = 0
 
     return vec
 

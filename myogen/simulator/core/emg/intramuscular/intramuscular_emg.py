@@ -7,7 +7,6 @@ simulation, electrode modeling, and signal generation with realistic noise.
 """
 
 import logging
-import warnings
 from copy import deepcopy
 from typing import Optional
 
@@ -43,14 +42,11 @@ from myogen.utils.types import (
 try:
     import cupy as cp
 
-    HAS_CUPY = True
-except ImportError:
+    HAS_CUPY = cp.cuda.runtime.getDeviceCount() > 0
+except (ImportError, Exception):
     HAS_CUPY = False
 
 from .motor_unit_sim import MotorUnitSim
-
-# Suppress warnings for cleaner output
-warnings.filterwarnings("ignore")
 
 
 @beartowertype
@@ -85,7 +81,7 @@ class IntramuscularEMG:
 
         .. note::
             The two-layer model is a simplification of the actual arborization pattern, but it is a good approximation for the purposes of this simulation.
-            Follows the implementation of Kontos et al. 2020 [1]_.
+            Follows the implementation of Konstantin et al. 2020 [1]_.
     MUs_to_simulate : list[int], optional
         Indices of motor units to simulate. If None, all motor units are simulated.
         Default is None. For computational efficiency, consider
@@ -146,10 +142,6 @@ class IntramuscularEMG:
         self._MUs_to_simulate = MUs_to_simulate
 
         # Derived parameters - immutable public access
-        self.branch_cvs__mm_per_s = (
-            float(branch_cvs__m_per_s[0].rescale(pq.mm / pq.s).magnitude),
-            float(branch_cvs__m_per_s[1].rescale(pq.mm / pq.s).magnitude),
-        )
         self.endplate_center__mm = self._muscle_model.length__mm * (
             self._endplate_center__percent / 100.0
         )
@@ -210,9 +202,9 @@ class IntramuscularEMG:
 
         Returns
         -------
-        INTRAMUSCULAR_MUAP_SHAPE__TENSOR
-            Intramuscular MUAP shapes for all electrode arrays.
-            Results are stored in the `muaps` property after execution.
+        INTRAMUSCULAR_MUAP__Block
+            Intramuscular MUAP shapes for all motor units stored in a neo.Block.
+            Results are stored in the `muaps__Block` property after execution.
 
         Notes
         -----
@@ -326,8 +318,8 @@ class IntramuscularEMG:
 
         Returns
         -------
-        INTRAMUSCULAR_MUAP_SHAPE__TENSOR
-            Intramuscular MUAP shapes for all electrode arrays.
+        INTRAMUSCULAR_MUAP__Block
+            Intramuscular MUAP shapes for all motor units stored in a neo.Block.
         """
         if not self._motor_units:
             raise ValueError("Must call _initialize_motor_units() first")
@@ -387,9 +379,7 @@ class IntramuscularEMG:
                 return muap, muap.shape[0]
 
             except Exception as e:
-                # Log error and return None to avoid crashing entire parallel job
-                logging.error(f"Failed to process MU {mu_idx}: {e}")
-                return None, 0
+                raise RuntimeError(f"Failed to process MU {mu_idx}") from e
 
         # Process only specified motor units in parallel
         n_motor_units = len(self._motor_units)
@@ -436,7 +426,7 @@ class IntramuscularEMG:
 
             if muap is None:
                 # Create empty segment for MUs with no fibers or not selected
-                block.segments.append(segment := Segment(name="MUAP_None"))
+                block.segments.append(segment := Segment(name=f"MUAP_{mu_idx}"))
                 segment.analogsignals.append(
                     AnalogSignal(
                         np.zeros((1, len(self._electrode_array.pts))) * pq.dimensionless,
@@ -444,7 +434,7 @@ class IntramuscularEMG:
                     )
                 )
             else:
-                block.segments.append(segment := Segment(name=f"MUAP_{muap.shape[0]}"))
+                block.segments.append(segment := Segment(name=f"MUAP_{mu_idx}"))
                 segment.analogsignals.append(
                     AnalogSignal(
                         muap * pq.dimensionless,
@@ -649,7 +639,9 @@ class IntramuscularEMG:
         # calculations are in arbitrary units and must be normalized to prevent
         # numerical overflow during convolution. Final EMG amplitudes are determined
         # by the spike train convolution, not the raw MUAP amplitudes.
-        muap_shapes /= np.max(np.abs(muap_shapes))
+        max_muap_amplitude = np.max(np.abs(muap_shapes))
+        if max_muap_amplitude > 0:
+            muap_shapes /= max_muap_amplitude
 
         # Perform convolution for each pool using GPU acceleration if available
         if HAS_CUPY:
@@ -672,7 +664,7 @@ class IntramuscularEMG:
                     for mu_idx in MUs_to_simulate.intersection(pool_active_neurons):
                         # Use mu_idx directly since muap_shapes now contains all MUs
                         if mu_idx < muap_gpu.shape[0]:
-                            conv = cp.correlate(
+                            conv = cp.convolve(
                                 spike_gpu[pool_idx, mu_idx],
                                 muap_gpu[mu_idx, e_idx],
                                 mode="same",
@@ -702,7 +694,7 @@ class IntramuscularEMG:
                     for mu_idx in MUs_to_simulate.intersection(pool_active_neurons):
                         # Use mu_idx directly since muap_shapes now contains all MUs
                         if mu_idx < muap_shapes.shape[0]:
-                            conv = np.correlate(
+                            conv = np.convolve(
                                 spike_trains[pool_idx, mu_idx],
                                 muap_shapes[mu_idx, e_idx],
                                 mode="same",
