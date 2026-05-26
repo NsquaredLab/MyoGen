@@ -209,7 +209,12 @@ class SurfaceEMG:
         self._noisy_surface_emg__Block: Optional[SURFACE_EMG__Block] = None
         self._spike_train__Block: Optional[SPIKE_TRAIN__Block] = None
 
-    def simulate_muaps(self, n_jobs: int = -2, verbose: bool = True) -> SURFACE_MUAP__Block:
+    def simulate_muaps(
+        self,
+        n_jobs: int = -2,
+        verbose: bool = True,
+        use_gpu: Optional[bool] = None,
+    ) -> SURFACE_MUAP__Block:
         """
         Simulate MUAPs for all electrode arrays using the provided muscle model.
 
@@ -229,6 +234,18 @@ class SurfaceEMG:
             - n_jobs=N: Use exactly N cores
         verbose : bool, default=True
             If True, display progress bars. Set to False to disable.
+        use_gpu : bool or None, default=None
+            GPU acceleration control for the per-fiber volume-conductor solve
+            (mirrors :meth:`myogen.simulator.MotorUnitSim.calc_sfaps`):
+
+            - ``None``  → auto: use GPU if CuPy is available and
+              ``MYOGEN_DISABLE_GPU`` is not set in the environment; CPU otherwise.
+            - ``True``  → require GPU; raises ``RuntimeError`` if unavailable.
+            - ``False`` → force CPU execution.
+
+            Note: CuPy only supports NVIDIA GPUs (CUDA). AMD/ROCm is not
+            supported. For typical surface-EMG problem sizes, CPU is often
+            faster than GPU due to host↔device transfer overhead.
 
         Returns
         -------
@@ -274,6 +291,22 @@ class SurfaceEMG:
             high=innervation_zone_variance / 2,
             size=n_motor_units,
         )
+
+        # Pre-calculate per-MU fiber-length variations in the PARENT process.
+        # Drawing inside `_process_single_mu` (a joblib worker) is unsafe under
+        # the default loky backend: each worker inherits a copy of the parent's
+        # RNG state via fork/pickle and then advances independently, so two MUs
+        # processed in two different workers would draw from identical state.
+        # Mirroring the `innervation_zones` pre-compute pattern guarantees each
+        # MU gets a distinct, reproducible draw regardless of worker layout.
+        fiber_length_variations_per_MU = [
+            get_random_generator().uniform(
+                low=-self._var_fiber_length__mm,
+                high=self._var_fiber_length__mm,
+                size=int(number_of_fibers_per_MUs[mu_idx]),
+            )
+            for mu_idx in range(n_motor_units)
+        ]
 
         # Pre-allocate result shape at INTERNAL resolution (optimization: avoid repeated shape calculations)
         # Will be downsampled to output resolution after simulation
@@ -339,12 +372,10 @@ class SurfaceEMG:
 
                 innervation_zone = innervation_zones[MU_index]
 
-                # Batch generate random fiber lengths (optimization: single RNG call)
-                fiber_length_variations = get_random_generator().uniform(
-                    low=-self._var_fiber_length__mm,
-                    high=self._var_fiber_length__mm,
-                    size=number_of_fibers,
-                )
+                # Use the parent-precomputed fiber-length variations to keep
+                # per-MU RNG state independent of the joblib worker layout
+                # (see comment at the `fiber_length_variations_per_MU` site).
+                fiber_length_variations = fiber_length_variations_per_MU[MU_index]
 
                 # Pre-compute geometric values for all fibers (optimization: vectorized)
                 R_values = np.sqrt(position_of_fibers[:, 0] ** 2 + position_of_fibers[:, 1] ** 2)
@@ -431,7 +462,10 @@ class SurfaceEMG:
                             fiber_length__mm=kernel_length,
                             A_matrix=None if fiber_number == 0 else A_matrix,
                             B_incomplete=None if fiber_number == 0 else B_incomplete,
-                            use_gpu=False,
+                            # `simulate_fiber_hybrid` takes a plain bool; map
+                            # the tri-state surface flag (None → CPU here, since
+                            # hybrid is experimental) before forwarding.
+                            use_gpu=bool(use_gpu) if use_gpu is not None else False,
                             theta_offset=-theta,
                             pos_z_precomputed=base_pos_z,
                             pos_theta_precomputed=base_pos_theta,
@@ -461,7 +495,10 @@ class SurfaceEMG:
                             fiber_length__mm=kernel_length,
                             A_matrix=None if fiber_number == 0 else A_matrix,
                             B_incomplete=None if fiber_number == 0 else B_incomplete,
-                            use_gpu=False,
+                            # Tri-state forwarded directly: None → auto, True →
+                            # require GPU, False → force CPU (resolved inside
+                            # `_simulate_fiber_v2_python`).
+                            use_gpu=use_gpu,
                             theta_offset=-theta,
                             pos_z_precomputed=base_pos_z,
                             pos_theta_precomputed=base_pos_theta,
@@ -740,7 +777,7 @@ class SurfaceEMG:
                             # Process all active MUs on GPU
                             convolutions = cp.array(
                                 [
-                                    cp.correlate(
+                                    cp.convolve(
                                         spike_gpu[pool_idx, mu_idx],
                                         muap_gpu[mu_idx, row_idx, col_idx],
                                         mode="same",
@@ -771,7 +808,7 @@ class SurfaceEMG:
                             # Process all active MUs
                             convolutions = []
                             for mu_idx in MUs_to_simulate.intersection(pool_active_neurons):
-                                conv = np.correlate(
+                                conv = np.convolve(
                                     spike_trains[pool_idx, mu_idx],
                                     muap_shapes[mu_idx, row_idx, col_idx],
                                     mode="same",

@@ -336,7 +336,9 @@ def _simulate_fiber_v2_python(
     ## 1. Constants
 
     ## Model angular frequencies
-    k_theta = np.linspace(-(M - 1) / 2, (M - 1) / 2, M)
+    # FFT-consistent bin centers (matches np.fft.fft + fftshift): spacing = 1, bins at
+    # (-M/2, ..., M/2 - 1) for even M (and the analogous range for odd M).
+    k_theta = np.fft.fftshift(np.fft.fftfreq(M, d=1.0 / M))
 
     # Calculate effective Fs based on grid spacing
     # When fiber_length__mm is specified, we must use the corresponding Fs for FFT consistency
@@ -350,7 +352,20 @@ def _simulate_fiber_v2_python(
     else:
         Fs_effective = Fs
 
-    k_t = 2 * math.pi * np.linspace(-Fs_effective / 2, Fs_effective / 2, N)
+    # FFT-consistent angular-frequency grid (matches np.fft.fft + fftshift):
+    # bin spacing = Fs/N (not Fs/(N-1)). Using fftfreq guarantees the grid
+    # aligns with how the IFFT later interprets the spectrum, eliminating an
+    # off-by-half-bin error that affected the previous np.linspace-based grid.
+    k_t = 2 * math.pi * np.fft.fftshift(np.fft.fftfreq(N, d=1.0 / Fs_effective))
+    # The DC bin (k_t = 0 ⇒ k_z = 0) makes the Bessel-function arguments
+    # vanish and turns the 7×7 volume-conductor A-matrix singular. The
+    # previous np.linspace grid for even N happened to avoid k = 0 because
+    # of its (N-1) spacing; the FFT-correct grid lands exactly on it.
+    # Replace exact zeros with a tiny offset (half a bin) so the DC bin
+    # remains finite without measurably perturbing the rest of the spectrum.
+    if N > 1:
+        dk_t = 2 * math.pi * Fs_effective / N
+        k_t = np.where(k_t == 0.0, 0.5 * dk_t, k_t)
     k_z = k_t / v
     (kt_mesh_kzkt, kz_mesh_kzkt) = np.meshgrid(k_t, k_z)
 
@@ -869,9 +884,13 @@ def _simulate_fiber_v2_python(
         phi = np.zeros((channels[0], channels[1], len(t)))
         for channel_z in range(channels[0]):
             for channel_theta in range(channels[1]):
+                # Use ifftshift (not fftshift) as the inverse of the fftshift
+                # applied when building the centered spectrum. They are
+                # equivalent for even N but differ by a one-sample phase ramp
+                # for odd N — ifftshift is the correct inverse here.
                 phi[channel_z, channel_theta, :] = np.real(
                     np.fft.ifft(
-                        np.fft.fftshift(PHI_complex[channel_z, channel_theta, :] * len(psi))
+                        np.fft.ifftshift(PHI_complex[channel_z, channel_theta, :] * len(psi))
                     )
                 )
     else:
@@ -889,9 +908,13 @@ def _simulate_fiber_v2_python(
                     np.exp(1j * pos_z_mm[channel_z, channel_theta] * kz_mesh_kzkt) * k_z_diff,
                 )
                 PHI = sum(arg2)
+                # Use ifftshift (not fftshift) as the inverse of the fftshift
+                # applied when building the centered spectrum. They are
+                # equivalent for even N but differ by a one-sample phase ramp
+                # for odd N — ifftshift is the correct inverse here.
                 phi[channel_z, channel_theta, :] = np.real(
                     np.fft.ifft(
-                        np.fft.fftshift(PHI / 2 / math.pi * len(psi))
+                        np.fft.ifftshift(PHI / 2 / math.pi * len(psi))
                     )
                 )
 

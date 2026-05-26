@@ -203,7 +203,7 @@ def _make_electrode_array() -> "SurfaceElectrodeArray":
     return SurfaceElectrodeArray(
         num_rows=8,
         num_cols=1,
-        inter_electrode_distances__mm=5.0 * pq.mm,
+        inter_electrode_distance__mm=5.0 * pq.mm,
         electrode_radius__mm=5.0 * pq.mm,
         center_point__mm_deg=(0.0 * pq.mm, 0.0 * pq.deg),
         bending_radius__mm=8.5 * pq.mm,

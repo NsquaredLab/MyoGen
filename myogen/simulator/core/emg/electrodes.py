@@ -27,8 +27,8 @@ class SurfaceElectrodeArray:
         Number of rows in the electrode array
     num_cols : int
         Number of columns in the electrode array
-    inter_electrode_distances__mm : float
-        Inter-electrode distances in mm.
+    inter_electrode_distance__mm : float
+        Inter-electrode distance in mm.
     electrode_radius__mm : float, optional
         Radius of the electrodes in mm
     center_point__mm_deg : tuple[float, float]
@@ -61,7 +61,7 @@ class SurfaceElectrodeArray:
         self,
         num_rows: int,
         num_cols: int,
-        inter_electrode_distances__mm: Quantity__mm,
+        inter_electrode_distance__mm: Quantity__mm,
         electrode_radius__mm: Quantity__mm,
         center_point__mm_deg: tuple[Quantity__mm, Quantity__deg] = (0.0 * pq.mm, 0.0 * pq.deg),
         bending_radius__mm: Quantity__mm = 0.0 * pq.mm,
@@ -76,7 +76,7 @@ class SurfaceElectrodeArray:
         self.center_point__mm_deg = center_point__mm_deg
         self.bending_radius__mm = bending_radius__mm
         self.rotation_angle__deg = rotation_angle__deg
-        self.inter_electrode_distances__mm = inter_electrode_distances__mm
+        self.inter_electrode_distance__mm = inter_electrode_distance__mm
         self.electrode_radius__mm = electrode_radius__mm
         self.differentiation_mode = differentiation_mode
 
@@ -89,8 +89,8 @@ class SurfaceElectrodeArray:
         )
         self._bending_radius__mm = float(bending_radius__mm.rescale(pq.mm).magnitude)
         self._rotation_angle__deg = float(rotation_angle__deg.rescale(pq.deg).magnitude)
-        self._inter_electrode_distances__mm = float(
-            inter_electrode_distances__mm.rescale(pq.mm).magnitude
+        self._inter_electrode_distance__mm = float(
+            inter_electrode_distance__mm.rescale(pq.mm).magnitude
         )
         self._electrode_radius__mm = float(electrode_radius__mm.rescale(pq.mm).magnitude)
         self._differentiation_mode = differentiation_mode
@@ -103,18 +103,18 @@ class SurfaceElectrodeArray:
 
         # Set up channel configuration based on differentiation mode
         if differentiation_mode == "monopolar":
-            self.num_channels = self.num_electrodes
+            self._num_channels = self.num_electrodes
         elif differentiation_mode in ["bipolar_longitudinal", "bipolar_transversal"]:
             # For bipolar, we lose one channel per dimension
             if differentiation_mode == "bipolar_longitudinal":
-                self.num_channels = max(1, num_rows - 1) * num_cols
+                self._num_channels = max(1, num_rows - 1) * num_cols
             else:  # bipolar_transversal
-                self.num_channels = num_rows * max(1, num_cols - 1)
+                self._num_channels = num_rows * max(1, num_cols - 1)
         elif differentiation_mode == "laplacian":
             # For Laplacian, we lose border electrodes
-            self.num_channels = max(1, num_rows - 2) * max(1, num_cols - 2)
+            self._num_channels = max(1, num_rows - 2) * max(1, num_cols - 2)
         else:
-            self.num_channels = self.num_electrodes
+            self._num_channels = self.num_electrodes
 
         # Create electrode grid in local coordinate system
         self._create_electrode_grid()
@@ -130,26 +130,26 @@ class SurfaceElectrodeArray:
             _pos_z[index_center, :] = self._center_point__mm_deg[0]
             for i in range(1, index_center + 1):
                 _pos_z[index_center + i, :] = (
-                    _pos_z[index_center + i - 1, :] + self._inter_electrode_distances__mm
+                    _pos_z[index_center + i - 1, :] + self._inter_electrode_distance__mm
                 )
                 _pos_z[index_center - i, :] = (
-                    _pos_z[index_center - i + 1, :] - self._inter_electrode_distances__mm
+                    _pos_z[index_center - i + 1, :] - self._inter_electrode_distance__mm
                 )
         else:
             index_center1 = int(self._num_rows / 2)
             index_center2 = index_center1 - 1
             _pos_z[index_center1, :] = (
-                self._center_point__mm_deg[0] + self._inter_electrode_distances__mm / 2
+                self._center_point__mm_deg[0] + self._inter_electrode_distance__mm / 2
             )
             _pos_z[index_center2, :] = (
-                self._center_point__mm_deg[0] - self._inter_electrode_distances__mm / 2
+                self._center_point__mm_deg[0] - self._inter_electrode_distance__mm / 2
             )
             for i in range(1, index_center2 + 1):
                 _pos_z[index_center1 + i, :] = (
-                    _pos_z[index_center1 + i - 1, :] + self._inter_electrode_distances__mm
+                    _pos_z[index_center1 + i - 1, :] + self._inter_electrode_distance__mm
                 )
                 _pos_z[index_center2 - i, :] = (
-                    _pos_z[index_center2 - i + 1, :] - self._inter_electrode_distances__mm
+                    _pos_z[index_center2 - i + 1, :] - self._inter_electrode_distance__mm
                 )
 
         _pos_theta = np.zeros((self._num_rows, self._num_cols))
@@ -159,31 +159,31 @@ class SurfaceElectrodeArray:
             for i in range(1, index_center + 1):
                 _pos_theta[:, index_center + i] = (
                     _pos_theta[:, index_center + i - 1]
-                    + self._inter_electrode_distances__mm / self._bending_radius__mm
+                    + self._inter_electrode_distance__mm / self._bending_radius__mm
                 )
                 _pos_theta[:, index_center - i] = (
                     _pos_theta[:, index_center - i + 1]
-                    - self._inter_electrode_distances__mm / self._bending_radius__mm
+                    - self._inter_electrode_distance__mm / self._bending_radius__mm
                 )
         else:
             index_center1 = int(self._num_cols / 2)
             index_center2 = index_center1 - 1
             _pos_theta[:, index_center1] = (
                 self._center_point__mm_deg[1] * np.pi / 180
-                + self._inter_electrode_distances__mm / 2 / self._bending_radius__mm
+                + self._inter_electrode_distance__mm / 2 / self._bending_radius__mm
             )
             _pos_theta[:, index_center2] = (
                 self._center_point__mm_deg[1] * np.pi / 180
-                - self._inter_electrode_distances__mm / 2 / self._bending_radius__mm
+                - self._inter_electrode_distance__mm / 2 / self._bending_radius__mm
             )
             for i in range(1, index_center2 + 1):
                 _pos_theta[:, index_center1 + i] = (
                     _pos_theta[:, index_center1 + i - 1]
-                    + self._inter_electrode_distances__mm / self._bending_radius__mm
+                    + self._inter_electrode_distance__mm / self._bending_radius__mm
                 )
                 _pos_theta[:, index_center2 - i] = (
                     _pos_theta[:, index_center2 - i + 1]
-                    - self._inter_electrode_distances__mm / self._bending_radius__mm
+                    - self._inter_electrode_distance__mm / self._bending_radius__mm
                 )
 
         ## Rotated detection system (Farina, 2004), eq (36)
@@ -271,6 +271,32 @@ class SurfaceElectrodeArray:
         """
         return (self.pos_z, self.pos_theta)
 
+    @property
+    def num_channels(self) -> int:
+        """
+        Number of recording channels based on differentiation mode.
+
+        Returns
+        -------
+        int
+            Number of recording channels. Depends on ``differentiation_mode``:
+            - ``"monopolar"``: ``num_rows * num_cols``
+            - ``"bipolar_longitudinal"``: ``(num_rows - 1) * num_cols``
+            - ``"bipolar_transversal"``: ``num_rows * (num_cols - 1)``
+            - ``"laplacian"``: ``(num_rows - 2) * (num_cols - 2)``
+
+        Raises
+        ------
+        AttributeError
+            If channel count has not been calculated. Run constructor first.
+        """
+        if not hasattr(self, "_num_channels"):
+            raise AttributeError(
+                "Number of channels not computed. This should be automatically created "
+                "during class initialization. Please check constructor execution."
+            )
+        return self._num_channels
+
     def get_H_sf(
         self, ktheta_mesh_kzktheta: np.ndarray, kz_mesh_kzktheta: np.ndarray
     ) -> np.ndarray | float:
@@ -301,7 +327,7 @@ class SurfaceElectrodeArray:
             ) + kz_mesh_kzktheta * np.cos(alpha_rad)
             # Spatial filter for longitudinal differential (Farina 2004, eq 30)
             # Two electrodes at ±d_z/2: H_sf = exp(j·k'_z·d_z/2) - exp(-j·k'_z·d_z/2)
-            half_ied = self._inter_electrode_distances__mm / 2
+            half_ied = self._inter_electrode_distance__mm / 2
             H_sf = np.exp(1j * kz_new * half_ied) - np.exp(-1j * kz_new * half_ied)
 
         elif self.differentiation_mode == "bipolar_transversal":
@@ -313,7 +339,7 @@ class SurfaceElectrodeArray:
             ) - kz_mesh_kzktheta * self._bending_radius__mm * np.sin(alpha_rad)
             # Spatial filter for transversal differential (Farina 2004, eq 30-31)
             # d_theta = IED / R_ele in radians
-            half_d_theta = self._inter_electrode_distances__mm / (2 * self._bending_radius__mm)
+            half_d_theta = self._inter_electrode_distance__mm / (2 * self._bending_radius__mm)
             H_sf = np.exp(1j * ktheta_new * half_d_theta) - np.exp(
                 -1j * ktheta_new * half_d_theta
             )
@@ -330,8 +356,8 @@ class SurfaceElectrodeArray:
             ) - kz_mesh_kzktheta * self._bending_radius__mm * np.sin(alpha_rad)
 
             # Laplacian approximation: second differences along both axes
-            half_ied = self._inter_electrode_distances__mm / 2
-            half_d_theta = self._inter_electrode_distances__mm / (2 * self._bending_radius__mm)
+            half_ied = self._inter_electrode_distance__mm / 2
+            half_d_theta = self._inter_electrode_distance__mm / (2 * self._bending_radius__mm)
             k_total_sq = (kz_new * half_ied) ** 2 + (ktheta_new * half_d_theta) ** 2
             H_sf = -k_total_sq
 
