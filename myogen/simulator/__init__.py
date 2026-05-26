@@ -11,7 +11,13 @@ from myogen.simulator.core.emg import (
     SurfaceElectrodeArray,
     SurfaceEMG,
 )
-from myogen.simulator.core.force import ForceModel
+from myogen.simulator.core.force import (
+    ForceModel,
+    ForceModelVectorized,
+    JointBiomechanics,
+    JointGeometry,
+    MuscleGeometry,
+)
 from myogen.simulator.core.muscle import Muscle
 
 # Always import all public APIs (they will fail gracefully if NMODL not loaded)
@@ -40,6 +46,10 @@ __all__ = [
     "SurfaceElectrodeArray",
     "IntramuscularElectrodeArray",
     "ForceModel",
+    "ForceModelVectorized",
+    "JointBiomechanics",
+    "JointGeometry",
+    "MuscleGeometry",
     "HillModel",
     "SpindleModel",
     "GolgiTendonOrganModel",
