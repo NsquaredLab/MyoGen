@@ -40,6 +40,9 @@ from myogen.utils.types import CURRENT__AnalogSignal, SPIKE_TRAIN__Block
 
 plt.style.use("fivethirtyeight")
 
+save_path = Path("./results")
+save_path.mkdir(exist_ok=True, parents=True)
+
 ##############################################################################
 # Define Parameters
 # -----------------
@@ -61,7 +64,7 @@ electrode_position = (
 #
 # Load the **muscle model** with the generated recruitment thresholds.
 
-muscle: simulator.Muscle = joblib.load("results/muscle_model.pkl")
+muscle: simulator.Muscle = joblib.load(save_path / "muscle_model.pkl")
 
 #######################################
 # Create Intramuscular Electrode Array
@@ -143,8 +146,6 @@ plt.show()
 # Load Input Currents and Spike Trains
 # -----------------------
 #
-
-save_path = Path("./results")
 
 spike_train__Block: SPIKE_TRAIN__Block = joblib.load(save_path / "trapezoid_dd_spike_trains.pkl")
 input_current__AnalogSignal: CURRENT__AnalogSignal = joblib.load(

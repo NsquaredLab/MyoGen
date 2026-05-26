@@ -7,8 +7,8 @@ instead of direct current injection. This approach provides more physiologically
 patterns by modeling cortical input through descending drive populations.
 
 .. note::
-    This example bridges the gap between simple current injection (example 01) and full spinal network
-    simulation (network_config.py). It uses:
+    This example bridges the gap between simple current injection (example 02) and full spinal network
+    simulation (11_simulate_spinal_network.py). It uses:
 
     - **DescendingDrive__Pool**: Poisson process neurons modeling cortical input
     - **AlphaMN__Pool**: Biophysically detailed motor neurons (Powers2017 model)
@@ -114,10 +114,10 @@ time_points = int(simulation_time / timestep)
 dd_baseline__pps = 0.0 * pps  # Baseline drive during rest
 dd_peak__pps = 65 * pps  # Peak drive during plateau
 
-# Phase durations (ms) - Total trapezoid duration: 13000ms
-ramp_up_duration = 500 * pq.ms  # 2s ramp up
-plateau_duration = 10000 * pq.ms  # 9s hold
-ramp_down_duration = 500 * pq.ms  # 2s ramp down
+# Phase durations (ms) - Total trapezoid duration: 11000ms
+ramp_up_duration = 500 * pq.ms  # 500ms ramp up
+plateau_duration = 10000 * pq.ms  # 10s hold
+ramp_down_duration = 500 * pq.ms  # 500ms ramp down
 
 # Add rest periods before and after
 rest_before = 1000 * pq.ms  # 1s rest before trapezoid
@@ -126,9 +126,9 @@ rest_after = 1000 * pq.ms  # 1s rest after trapezoid
 # Center the trapezoid at 7.5s (middle of 15s simulation)
 # Calculate phase boundaries with rest period before
 trapezoid_start = rest_before  # Start at 1s
-ramp_up_end = trapezoid_start + ramp_up_duration  # 3s
-plateau_end = ramp_up_end + plateau_duration  # 12s
-ramp_down_end = plateau_end + ramp_down_duration  # 14s
+ramp_up_end = trapezoid_start + ramp_up_duration  # 1.5s
+plateau_end = ramp_up_end + plateau_duration  # 11.5s
+ramp_down_end = plateau_end + ramp_down_duration  # 12s
 
 # Create time array
 time_array = np.linspace(0, simulation_time.magnitude, time_points) * pq.ms

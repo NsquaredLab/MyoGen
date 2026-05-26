@@ -18,7 +18,7 @@ variation (CV) statistics during realistic trapezoidal contraction patterns.
 .. important::
     **Prerequisites**: This example requires results from previous optimizations:
 
-    - **Baseline mode**: Run ``00_optimize_dd_for_target_firing_rate.py`` first
+    - **Baseline mode**: Run ``01_optimize_dd_for_target_firing_rate.py`` first
     - **Force mode**: Run ``02_optimize_dd_for_target_force.py`` for specific MVC level
     - Loads network structure and drive parameters from saved results
 

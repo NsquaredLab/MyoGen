@@ -70,11 +70,11 @@ plt.style.use("fivethirtyeight")
 #
 # A population can easily be created by specifying the number of cells. Plausible default parameters are already set.
 #
-# For a motor neuron population (refferred to as **motor pool**), we can use the :class:`~myogen.simulator.neuron.populations.AlphaMN__Pool` class.
+# For a motor neuron population (referred to as **motor pool**), we can use the :class:`~myogen.simulator.neuron.populations.AlphaMN__Pool` class.
 # This class can also use the recruitment thresholds generated in the previous example to distribute the motor units properties in a physiologically plausible manner.
 #
 # .. important::
-#    These **Population** classes are custom build and use therefore custom NMODL mechanisms.
+#    These **Population** classes are custom-built and use therefore custom NMODL mechanisms.
 #    To use them, the NMODL mechanisms need to be loaded first using the :func:`~myogen.utils.nmodl.load_nmodl_mechanisms` function.
 #
 # To showcase MyoGen's capabilities, we will create two different motor neuron pools with identical properties but different input currents.
@@ -293,7 +293,6 @@ for pool_idx, firing_rates_per_pool in enumerate(firing_rates):
 ##############################################################################
 # Visualize Spike Trains
 # ----------------------
-# )
 spike_train_list = list(spike_train__Block.segments[0].spiketrains)
 active_spiketrains = [st for st in spike_train_list if len(st) > 0]
 
