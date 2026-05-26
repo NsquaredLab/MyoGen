@@ -6,7 +6,7 @@ allowing for intuitive parameter names while maintaining compatibility
 with the underlying GTO implementation.
 """
 
-from typing import Any, Dict
+from typing import Any
 
 import numpy as np
 
@@ -38,7 +38,7 @@ class GolgiTendonOrganModel:
         Total simulation time in milliseconds
     time_step__ms : Quantity__ms
         Integration time step in milliseconds
-    gto_parameters : Dict[str, Any]
+    gto_parameters : dict[str, Any]
         Dictionary containing GTO model parameters
     """
 
@@ -46,7 +46,7 @@ class GolgiTendonOrganModel:
         self,
         simulation_time__ms: Quantity__ms,
         time_step__ms: Quantity__ms,
-        gto_parameters: Dict[str, Any],
+        gto_parameters: dict[str, Any],
     ):
         # Store original parameters (immutable)
         self.simulation_time__ms = simulation_time__ms
@@ -116,7 +116,7 @@ class GolgiTendonOrganModel:
         )
 
     @staticmethod
-    def create_default_gto_parameters() -> Dict[str, Any]:
+    def create_default_gto_parameters() -> dict[str, Any]:
         """
         Create default Golgi Tendon Organ parameter dictionary.
 
@@ -128,7 +128,7 @@ class GolgiTendonOrganModel:
 
         Returns
         -------
-        Dict[str, Any]
+        dict[str, Any]
             Dictionary of GTO parameters with detailed explanations
 
         Notes
@@ -160,7 +160,7 @@ class GolgiTendonOrganModel:
         }
 
     @staticmethod
-    def create_gto_parameters_for_muscle(muscle_type: str = "FDI") -> Dict[str, Any]:
+    def create_gto_parameters_for_muscle(muscle_type: str = "FDI") -> dict[str, Any]:
         """
         Create GTO parameters optimized for specific muscle types.
 
@@ -171,7 +171,7 @@ class GolgiTendonOrganModel:
 
         Returns
         -------
-        Dict[str, Any]
+        dict[str, Any]
             Dictionary of muscle-specific GTO parameters
 
         Notes

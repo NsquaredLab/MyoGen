@@ -6,7 +6,7 @@ allowing for intuitive parameter names while maintaining compatibility
 with the underlying Hill implementation.
 """
 
-from typing import Any, Dict, Literal
+from typing import Any, Literal
 
 import numpy as np
 
@@ -30,7 +30,7 @@ class HillModel:
         Total simulation time in milliseconds
     time_step__ms : float
         Integration time step in milliseconds
-    muscle_parameters : Dict[str, Any]
+    muscle_parameters : dict[str, Any]
         Dictionary containing Hill muscle model parameters
     n_motor_units_type1 : int
         Number of type I motor units
@@ -51,7 +51,7 @@ class HillModel:
         self,
         simulation_time__ms: Quantity__ms,
         time_step__ms: Quantity__ms,
-        muscle_parameters: Dict[str, Any],
+        muscle_parameters: dict[str, Any],
         n_motor_units_type1: int,
         n_motor_units_type2: int,
         initial_joint_angle__deg: float,
@@ -234,7 +234,7 @@ class HillModel:
 
     # Convenience function for creating default muscle parameter dictionaries
     @staticmethod
-    def create_default_muscle_parameters(muscle_type: str = "FDI") -> Dict[str, Any]:
+    def create_default_muscle_parameters(muscle_type: str = "FDI") -> dict[str, Any]:
         """
         Create default muscle parameter dictionary.
 
@@ -245,7 +245,7 @@ class HillModel:
 
         Returns
         -------
-        Dict[str, Any]
+        dict[str, Any]
             Dictionary of muscle parameters
 
         Raises

@@ -8,7 +8,6 @@ realistic joint biomechanics.
 """
 
 import numpy as np
-from typing import Tuple
 from myogen.utils.decorators import beartowertype
 
 
@@ -45,6 +44,18 @@ class JointDynamics:
         Current angular velocity in rad/s.
     angle__deg : float
         Current joint angle in degrees (computed property).
+
+    Notes
+    -----
+    JointDynamics uses plain ``float`` parameters (not ``quantities.Quantity``) for the
+    inertial/damping coefficients because no canonical ``Quantity__kg_m2``,
+    ``Quantity__Nm_s_per_rad``, or ``Quantity__deg_per_s`` type aliases exist in
+    ``myogen.utils.types``.  Values are interpreted as:
+
+    - ``inertia__kg_m2`` — rotational inertia in kg·m²
+    - ``damping__Nm_s_per_rad`` — viscous damping in N·m·s/rad
+    - ``initial_angle__deg`` — starting joint angle in degrees
+    - ``initial_velocity__deg_per_s`` — starting angular velocity in degrees/second
     """
 
     def __init__(
@@ -95,7 +106,7 @@ class JointDynamics:
         """Current joint angle in degrees."""
         return np.degrees(self.angle__rad)
 
-    def integrate(self, torque__Nm: float, dt__s: float) -> Tuple[float, float]:
+    def integrate(self, torque__Nm: float, dt__s: float) -> tuple[float, float]:
         """
         Integrate joint dynamics for one time step.
 

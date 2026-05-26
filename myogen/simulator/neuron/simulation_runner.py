@@ -1,5 +1,6 @@
 from itertools import count
-from typing import Any, Callable, Optional, Union
+from collections.abc import Callable
+from typing import Any, Optional, Union
 
 import numpy as np
 import quantities as pq
@@ -376,12 +377,21 @@ class SimulationRunner:
         """
         block = Block()
 
+        # Collect active motor-neuron IDs across all populations so the final
+        # ``block.annotations["active_MNs"]`` doesn't depend on which (if any)
+        # population happened to be last in iteration order. The previous
+        # implementation used the loop variable ``spike_ids`` after the loop,
+        # which leaked the last iteration's value (or raised NameError if no
+        # population had spike recording).
+        active_mn_ids: set[int] = set()
+
         for pop_name in self._populations.keys():
             segment = Segment(name=pop_name)
 
             if self._spike_recording and pop_name in self._spike_recording.get("spkvec", {}):
                 spike_times = self._spike_recording["spkvec"][pop_name].as_numpy()
                 spike_ids = self._spike_recording["idvec"][pop_name].as_numpy()
+                active_mn_ids.update(int(i) for i in np.unique(spike_ids))
 
                 for spike_id in sorted(np.unique(spike_ids)):
                     times_for_id = spike_times[spike_ids == spike_id]
@@ -433,7 +443,7 @@ class SimulationRunner:
         block.annotations["time__ms"] = duration__ms
         block.annotations["timestep__ms"] = timestep__ms
         block.annotations["temperature__celsius"] = self._temperature__celsius
-        block.annotations["active_MNs"] = np.unique(spike_ids).astype(int)
+        block.annotations["active_MNs"] = np.array(sorted(active_mn_ids), dtype=int)
 
         return block
 

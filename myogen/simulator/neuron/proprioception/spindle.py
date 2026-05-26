@@ -6,7 +6,7 @@ allowing for intuitive parameter names while maintaining compatibility
 with the underlying Spindle implementation.
 """
 
-from typing import Any, Dict
+from typing import Any
 
 import numpy as np
 
@@ -33,7 +33,7 @@ class SpindleModel:
         Total simulation time in milliseconds
     time_step__ms : Quantity__ms
         Integration time step in milliseconds
-    spindle_parameters : Dict[str, Any]
+    spindle_parameters : dict[str, Any]
         Dictionary containing spindle model parameters
     """
 
@@ -41,7 +41,7 @@ class SpindleModel:
         self,
         simulation_time__ms: Quantity__ms,
         time_step__ms: Quantity__ms,
-        spindle_parameters: Dict[str, Any],
+        spindle_parameters: dict[str, Any],
     ):
         self.simulation_time__ms = simulation_time__ms
         self.time_step__ms = time_step__ms
@@ -161,7 +161,7 @@ class SpindleModel:
     @staticmethod
     def create_default_spindle_parameters(
         species: str = "human", deafferent_ia: bool = False, deafferent_ii: bool = False
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         """
         Create default spindle parameter dictionary.
 
@@ -176,7 +176,7 @@ class SpindleModel:
 
         Returns
         -------
-        Dict[str, Any]
+        dict[str, Any]
             Dictionary of spindle parameters with detailed explanations
 
         Raises
