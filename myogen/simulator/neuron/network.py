@@ -5,9 +5,10 @@ This module provides network connectivity functionality for MyoGen's neuron mode
 integrating with both the legacy NEURON-based populations and the modern MyoGen API.
 """
 
-from typing import Callable, Optional
+from typing import Optional
 
 import quantities as pq
+from beartype.typing import Callable
 from neuron import h
 
 from myogen import get_random_generator
@@ -34,6 +35,22 @@ DEFAULT_SPIKE_THRESHOLD = -10.0 * pq.mV  # mV
 DEFAULT_SYNAPTIC_DELAY = 1.0 * pq.ms  # ms
 EXTERNAL_INPUT_LABEL = "Spindle"
 EXTERNAL_TARGET_LABEL = "Muscle"
+
+
+def _to_float(value, unit: pq.Quantity) -> float:
+    """Rescale a Quantity to ``unit`` and return its native float magnitude.
+
+    NEURON's NetCon attributes (``delay``, ``weight[0]``, ``threshold``) accept
+    plain Python floats interpreted in NEURON's native units (ms, uS, mV).
+    Passing a :class:`pq.Quantity` directly invokes ``__float__``, which drops
+    the unit and returns the raw magnitude -- so a delay of ``1 * pq.s`` would
+    be silently stored as ``1.0`` ms instead of ``1000.0`` ms.
+
+    Plain numeric values pass through unchanged.
+    """
+    if isinstance(value, pq.Quantity):
+        return float(value.rescale(unit).magnitude)
+    return float(value)
 
 
 def _select_synapse(target_neuron, inhibitory: bool = False):
@@ -104,19 +121,31 @@ def _create_basic_netcon(source_neuron, target_neuron) -> h.NetCon:
 
 
 def _setup_muscle_activation(
-    netcon: h.NetCon, muscle_callback: Optional[Callable], muscle, source_neuron
+    netcon: h.NetCon,
+    muscle_callback: Optional[Callable],
+    muscle,
+    source_neuron,
+    synaptic_delay=None,
 ):
     """
     Setup muscle activation callback for motor neuron connections.
 
     Creates a wrapper function that calls the muscle_callback with the appropriate
-    parameters when the source neuron fires.
+    parameters when the source neuron fires. The callback delay is the
+    requested ``synaptic_delay`` (falling back to ``DEFAULT_SYNAPTIC_DELAY``)
+    plus the source neuron's ``axon_delay__ms`` -- in NEURON's native ms.
     """
     if callable(muscle_callback) and muscle is not None:
+        if synaptic_delay is None:
+            delay__ms = _to_float(DEFAULT_SYNAPTIC_DELAY, pq.ms)
+        else:
+            delay__ms = _to_float(synaptic_delay, pq.ms)
 
         def muscle_activation_wrapper():
             return muscle_callback(
-                source_neuron.pool__ID, muscle, 1 + float(source_neuron.axon_delay__ms)
+                source_neuron.pool__ID,
+                muscle,
+                delay__ms + float(source_neuron.axon_delay__ms),
             )
 
         netcon.record(muscle_activation_wrapper)
@@ -132,21 +161,38 @@ def _setup_spike_recording(netcon: h.NetCon, id_vector, spike_vector, neuron_id)
         netcon.record(spike_vector, id_vector, neuron_id)
 
 
-def _apply_default_synaptic_params(netcon: h.NetCon, source_neuron):
+def _apply_default_synaptic_params(netcon: h.NetCon, source_neuron, synaptic_delay=None):
     """
     Apply default synaptic parameters to the NetCon.
 
     Sets default weight, threshold, and delay, with optional axonal delay addition.
+    All values are rescaled to NEURON's native units (ms, uS, mV) so the
+    function is safe to call with :class:`pq.Quantity` inputs in any unit.
+
+    Parameters
+    ----------
+    netcon : h.NetCon
+        NEURON NetCon object whose ``weight``, ``threshold`` and ``delay``
+        attributes are set in place.
+    source_neuron : object
+        Optional source neuron. If it exposes a numeric ``axon_delay__ms``
+        attribute, that delay is added to the base synaptic delay.
+    synaptic_delay : float | pq.Quantity, optional
+        Override for the base synaptic delay. Defaults to
+        ``DEFAULT_SYNAPTIC_DELAY`` (1 ms).
     """
-    netcon.weight[0] = DEFAULT_SYNAPTIC_WEIGHT
-    netcon.threshold = DEFAULT_SPIKE_THRESHOLD
-    netcon.delay = DEFAULT_SYNAPTIC_DELAY  # 1ms synaptic + axon delay
+    netcon.weight[0] = _to_float(DEFAULT_SYNAPTIC_WEIGHT, pq.uS)
+    netcon.threshold = _to_float(DEFAULT_SPIKE_THRESHOLD, pq.mV)
+
+    if synaptic_delay is None:
+        base_delay__ms = _to_float(DEFAULT_SYNAPTIC_DELAY, pq.ms)
+    else:
+        base_delay__ms = _to_float(synaptic_delay, pq.ms)
+    netcon.delay = base_delay__ms  # base synaptic delay (axon delay added below)
 
     # Add axonal delay if source neuron has it
     if hasattr(source_neuron, "axon_delay__ms") and source_neuron.axon_delay__ms is not None:
-        netcon.delay = (
-            DEFAULT_SYNAPTIC_DELAY + source_neuron.axon_delay__ms
-        )  # 1ms synaptic + axon delay
+        netcon.delay = base_delay__ms + float(source_neuron.axon_delay__ms)
 
 
 def _create_netcon(
@@ -157,6 +203,7 @@ def _create_netcon(
     id_vector=None,
     spike_vector=None,
     muscle=None,
+    synaptic_delay=None,
 ):
     """
     Create a single NEURON NetCon (network connection) between two neurons.
@@ -217,13 +264,15 @@ def _create_netcon(
     netcon = _create_basic_netcon(source_neuron, target_neuron)
 
     # Setup optional muscle activation callback
-    _setup_muscle_activation(netcon, muscle_callback, muscle, source_neuron)
+    _setup_muscle_activation(
+        netcon, muscle_callback, muscle, source_neuron, synaptic_delay=synaptic_delay
+    )
 
     # Setup optional spike recording
     _setup_spike_recording(netcon, id_vector, spike_vector, neuron_id)
 
     # Apply default synaptic parameters
-    _apply_default_synaptic_params(netcon, source_neuron)
+    _apply_default_synaptic_params(netcon, source_neuron, synaptic_delay=synaptic_delay)
 
     return netcon
 
@@ -276,13 +325,14 @@ def _connect_population_to_population(
                     id_vector=kwargs.get("id_vector"),
                     spike_vector=kwargs.get("spike_vector"),
                     neuron_id=source_neuron.global__ID,
+                    synaptic_delay=kwargs.get("synaptic_delay"),
                 )
 
                 # Apply custom synaptic parameters if provided
                 if kwargs.get("synaptic_weight") is not None:
-                    netcon.weight[0] = kwargs.get("synaptic_weight")
+                    netcon.weight[0] = _to_float(kwargs.get("synaptic_weight"), pq.uS)
                 if kwargs.get("spike_threshold") is not None:
-                    netcon.threshold = kwargs.get("spike_threshold")
+                    netcon.threshold = _to_float(kwargs.get("spike_threshold"), pq.mV)
 
                 connections.append(netcon)
     else:
@@ -298,13 +348,14 @@ def _connect_population_to_population(
                         id_vector=kwargs.get("id_vector"),
                         spike_vector=kwargs.get("spike_vector"),
                         neuron_id=source_neuron.global__ID,
+                        synaptic_delay=kwargs.get("synaptic_delay"),
                     )
 
                     # Apply custom synaptic parameters if provided
                     if kwargs.get("synaptic_weight") is not None:
-                        netcon.weight[0] = kwargs.get("synaptic_weight")
+                        netcon.weight[0] = _to_float(kwargs.get("synaptic_weight"), pq.uS)
                     if kwargs.get("spike_threshold") is not None:
-                        netcon.threshold = kwargs.get("spike_threshold")
+                        netcon.threshold = _to_float(kwargs.get("spike_threshold"), pq.mV)
 
                     connections.append(netcon)
     return connections
@@ -327,11 +378,14 @@ def _connect_population_to_external(source_pop: str, populations: dict, **kwargs
             muscle=kwargs.get("muscle"),
             spike_vector=kwargs.get("spike_vector"),
             neuron_id=source_neuron.global__ID,
+            synaptic_delay=kwargs.get("synaptic_delay"),
         )
 
-        # Apply custom spike threshold if provided
+        # Apply custom synaptic parameters if provided
+        if kwargs.get("synaptic_weight") is not None:
+            netcon.weight[0] = _to_float(kwargs.get("synaptic_weight"), pq.uS)
         if kwargs.get("spike_threshold") is not None:
-            netcon.threshold = kwargs.get("spike_threshold")
+            netcon.threshold = _to_float(kwargs.get("spike_threshold"), pq.mV)
 
         connections.append(netcon)
     return connections
@@ -365,6 +419,8 @@ def _connect_one_to_one(
     populations: dict,
     connection_probability: float = 1.0,
     inhibitory: bool = False,
+    synaptic_delay: Optional[float] = None,
+    synaptic_weight: Optional[float] = None,
     **kwargs,
 ) -> list:
     """
@@ -440,13 +496,16 @@ def _connect_one_to_one(
                 id_vector=kwargs.get("id_vector"),
                 spike_vector=kwargs.get("spike_vector"),
                 neuron_id=source_neuron.global__ID,
+                synaptic_delay=synaptic_delay,
             )
 
             # Apply custom synaptic parameters if provided
-            if kwargs.get("synaptic_weight") is not None:
-                netcon.weight[0] = kwargs.get("synaptic_weight")
+            if synaptic_weight is not None:
+                netcon.weight[0] = _to_float(synaptic_weight, pq.uS)
+            elif kwargs.get("synaptic_weight") is not None:
+                netcon.weight[0] = _to_float(kwargs.get("synaptic_weight"), pq.uS)
             if kwargs.get("spike_threshold") is not None:
-                netcon.threshold = kwargs.get("spike_threshold")
+                netcon.threshold = _to_float(kwargs.get("spike_threshold"), pq.mV)
 
             connections.append(netcon)
 
@@ -462,6 +521,7 @@ def _connect_populations(
     id_vector=None,
     spike_vector=None,
     muscle=None,
+    synaptic_delay: Optional[float] = None,
     synaptic_weight: Optional[float] = None,
     spike_threshold: Optional[float] = None,
     deterministic: bool = False,
@@ -559,6 +619,7 @@ def _connect_populations(
         "id_vector": id_vector,
         "spike_vector": spike_vector,
         "muscle": muscle,
+        "synaptic_delay": synaptic_delay,
         "synaptic_weight": synaptic_weight,
         "spike_threshold": spike_threshold,
         "deterministic": deterministic,
@@ -937,9 +998,9 @@ class Network:
 
                     # Set up spike recording with population-specific threshold
                     if hasattr(population, "spike_threshold__mV"):
-                        nc.threshold = population.spike_threshold__mV
+                        nc.threshold = _to_float(population.spike_threshold__mV, pq.mV)
                     else:
-                        nc.threshold = DEFAULT_SPIKE_THRESHOLD  # Fallback for populations without explicit threshold
+                        nc.threshold = _to_float(DEFAULT_SPIKE_THRESHOLD, pq.mV)  # Fallback for populations without explicit threshold
                     nc.record(spike_vector, id_vector, neuron.global__ID)
                     recording_netcons.append(nc)
 
@@ -1003,10 +1064,10 @@ class Network:
         if not 0.0 <= probability <= 1.0:
             raise ValueError(f"Probability must be 0.0-1.0, got {probability}")
 
-        # Extract numeric values (handle both Quantity objects and plain floats)
-        weight_value = getattr(weight__uS, 'magnitude', weight__uS)
-        threshold_value = getattr(threshold__mV, 'magnitude', threshold__mV)
-        delay_value = getattr(delay__ms, 'magnitude', delay__ms)
+        # Rescale Quantities to NEURON's native units (or pass plain floats through)
+        weight_value = _to_float(weight__uS, pq.uS)
+        threshold_value = _to_float(threshold__mV, pq.mV)
+        delay_value = _to_float(delay__ms, pq.ms)
 
         # Extract spike recording vectors for source population
         id_vector = None
@@ -1021,6 +1082,7 @@ class Network:
             source_pop=source,
             target_pop=target,
             connection_probability=probability,
+            synaptic_delay=delay_value,
             synaptic_weight=weight_value,
             spike_threshold=threshold_value,
             id_vector=id_vector,
@@ -1051,6 +1113,7 @@ class Network:
         muscle,
         activation_callback: Callable,
         weight__uS: Quantity__uS = DEFAULT_SYNAPTIC_WEIGHT,
+        delay__ms: Quantity__ms = DEFAULT_SYNAPTIC_DELAY,
         threshold__mV: Quantity__mV = DEFAULT_SPIKE_THRESHOLD,
     ) -> list:
         """
@@ -1078,9 +1141,10 @@ class Network:
         if source not in self.populations:
             raise ValueError(f"Source population '{source}' not found")
 
-        # Extract numeric values (handle both Quantity objects and plain floats)
-        weight_value = getattr(weight__uS, 'magnitude', weight__uS)
-        threshold_value = getattr(threshold__mV, 'magnitude', threshold__mV)
+        # Rescale Quantities to NEURON's native units (or pass plain floats through)
+        weight_value = _to_float(weight__uS, pq.uS)
+        delay_value = _to_float(delay__ms, pq.ms)
+        threshold_value = _to_float(threshold__mV, pq.mV)
 
         # Extract spike recording vectors for source population
         id_vector = None
@@ -1097,6 +1161,7 @@ class Network:
             connection_probability=1.0,  # All motor neurons connect
             muscle_callback=activation_callback,
             muscle=muscle,
+            synaptic_delay=delay_value,
             synaptic_weight=weight_value,
             spike_threshold=threshold_value,
             id_vector=id_vector,
@@ -1111,6 +1176,7 @@ class Network:
                 "muscle": muscle,
                 "callback": activation_callback,
                 "weight__uS": weight_value,
+                "delay__ms": delay_value,
                 "threshold__mV": threshold_value,
             }
         )
@@ -1150,10 +1216,10 @@ class Network:
         if target not in self.populations:
             raise ValueError(f"Target population '{target}' not found")
 
-        # Extract numeric values (handle both Quantity objects and plain floats)
-        weight_value = getattr(weight__uS, 'magnitude', weight__uS)
-        delay_value = getattr(delay__ms, 'magnitude', delay__ms)
-        threshold_value = getattr(threshold__mV, 'magnitude', threshold__mV)
+        # Rescale Quantities to NEURON's native units (or pass plain floats through)
+        weight_value = _to_float(weight__uS, pq.uS)
+        delay_value = _to_float(delay__ms, pq.ms)
+        threshold_value = _to_float(threshold__mV, pq.mV)
 
         # Create external NetCons manually to maintain individual access
         from neuron import h
@@ -1247,10 +1313,10 @@ class Network:
         if not 0.0 <= probability <= 1.0:
             raise ValueError(f"Probability must be 0.0-1.0, got {probability}")
 
-        # Extract numeric values (handle both Quantity objects and plain floats)
-        weight_value = getattr(weight__uS, 'magnitude', weight__uS)
-        delay_value = getattr(delay__ms, 'magnitude', delay__ms)
-        threshold_value = getattr(threshold__mV, 'magnitude', threshold__mV)
+        # Rescale Quantities to NEURON's native units (or pass plain floats through)
+        weight_value = _to_float(weight__uS, pq.uS)
+        delay_value = _to_float(delay__ms, pq.ms)
+        threshold_value = _to_float(threshold__mV, pq.mV)
 
         # Extract spike recording vectors for source population
         id_vector = None
@@ -1265,6 +1331,7 @@ class Network:
             target_pop=target,
             populations=self.populations,
             connection_probability=probability,
+            synaptic_delay=delay_value,
             synaptic_weight=weight_value,
             spike_threshold=threshold_value,
             id_vector=id_vector,
