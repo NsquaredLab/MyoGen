@@ -368,7 +368,7 @@ def convert_chunks_to_neo(
     if spike_data_file is not None:
         # Load spike data from SimulationRunner results (NEO Block)
         if verbose:
-            print("\tLoading spike data from: {spike_data_file}")
+            print(f"\tLoading spike data from: {spike_data_file}")
         spike_results = joblib.load(spike_data_file)
         use_neo_spikes = True
     else:

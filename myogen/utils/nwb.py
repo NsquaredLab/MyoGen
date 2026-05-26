@@ -19,7 +19,8 @@ For more information:
 from __future__ import annotations
 
 import uuid
-from datetime import datetime
+import warnings as _warnings
+from datetime import datetime, timezone
 from pathlib import Path
 
 from neo import Block
@@ -186,9 +187,29 @@ def export_to_nwb(
 
     # Generate defaults
     if identifier is None:
-        identifier = str(uuid.uuid4())
+        # Derive a stable identifier from the current MyoGen seed so the same
+        # simulation produces the same NWB identifier (DANDI-friendly). Falls
+        # back to a fixed namespace UUID if the seed module is unavailable.
+        try:
+            from myogen import get_random_seed
+
+            identifier = str(
+                uuid.uuid5(uuid.NAMESPACE_OID, f"myogen-{get_random_seed()}")
+            )
+        except Exception:
+            identifier = str(uuid.uuid5(uuid.NAMESPACE_OID, "myogen"))
     if session_start_time is None:
-        session_start_time = datetime.now()
+        # Default to a fixed epoch so two runs produce byte-identical NWB
+        # files; warn so callers know to pass a real time for live recordings.
+        _warnings.warn(
+            "export_to_nwb called without an explicit session_start_time; "
+            "defaulting to 1970-01-01T00:00:00Z so the export is reproducible. "
+            "Pass session_start_time=datetime.now(tz=...) (or similar) for "
+            "real recordings.",
+            UserWarning,
+            stacklevel=2,
+        )
+        session_start_time = datetime(1970, 1, 1, tzinfo=timezone.utc)
     if keywords is None:
         keywords = ["MyoGen", "simulation", "EMG", "motor unit"]
 
