@@ -94,7 +94,11 @@ class ForceSatParams():
             for i in range(1, self.N + 1):
                 T[i - 1] = self.Tl * (1 / self.P[i - 1]) ** (1 / c)
         else:
-            T = np.random.uniform(self.Tl / self.RT, self.Tl, self.N)
+            # Use the seeded global RNG so durType != 1 contractions are
+            # reproducible under ``myogen.set_random_seed``. Lazy import to
+            # avoid an import cycle during package initialization.
+            from myogen import get_random_generator
+            T = get_random_generator().uniform(self.Tl / self.RT, self.Tl, self.N)
         return T
 
     # FUNCTION NAME: sat_interpol

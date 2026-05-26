@@ -77,6 +77,17 @@ def set_random_seed(seed: int = _DEFAULT_SEED) -> None:
     global _random_generator, _current_seed
     _current_seed = seed
     _random_generator = np.random.default_rng(seed)
+
+    # Reset per-class cell ID counters so deterministic seeds produce
+    # deterministic ``global__ID`` / ``pool__ID`` assignments across runs.
+    # Lazy import avoids a circular dependency during package initialization.
+    try:
+        from myogen.simulator.neuron.cells import reset_cell_id_counters
+
+        reset_cell_id_counters()
+    except Exception:
+        pass
+
     print(f"Random seed set to {seed}.")
 
 
@@ -207,32 +218,32 @@ def _setup_myogen(quiet: bool = False, force_rebuild: bool = False, strict: bool
                         Extension(
                             "myogen.simulator.neuron._cython._spindle",
                             ["myogen/simulator/neuron/_cython/_spindle.pyx"],
-                            extra_compile_args=["-O2", "-march=native", "-ffast-math"],
+                            extra_compile_args=["-O2"],
                         ),
                         Extension(
                             "myogen.simulator.neuron._cython._hill",
                             ["myogen/simulator/neuron/_cython/_hill.pyx"],
-                            extra_compile_args=["-O2", "-march=native"],
+                            extra_compile_args=["-O2"],
                         ),
                         Extension(
                             "myogen.simulator.neuron._cython._gto",
                             ["myogen/simulator/neuron/_cython/_gto.pyx"],
-                            extra_compile_args=["-O2", "-march=native", "-ffast-math"],
+                            extra_compile_args=["-O2"],
                         ),
                         Extension(
                             "myogen.simulator.neuron._cython._poisson_process_generator",
                             ["myogen/simulator/neuron/_cython/_poisson_process_generator.pyx"],
-                            extra_compile_args=["-O2", "-march=native", "-ffast-math"],
+                            extra_compile_args=["-O2"],
                         ),
                         Extension(
                             "myogen.simulator.neuron._cython._gamma_process_generator",
                             ["myogen/simulator/neuron/_cython/_gamma_process_generator.pyx"],
-                            extra_compile_args=["-O2", "-march=native", "-ffast-math"],
+                            extra_compile_args=["-O2"],
                         ),
                         Extension(
                             "myogen.simulator.neuron._cython._simulate_fiber",
                             ["myogen/simulator/neuron/_cython/_simulate_fiber.pyx"],
-                            extra_compile_args=["-O2", "-march=native", "-ffast-math"],
+                            extra_compile_args=["-O2"],
                         ),
                     ],
                     compiler_directives={"embedsignature": True},

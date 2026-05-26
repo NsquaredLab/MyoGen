@@ -997,3 +997,27 @@ class AlphaMN(_Cell):
                     d.half_gh = -77.0
                     d.theta_m_L_Ca_inact = -42.0
                     d.theta_h_L_Ca_inact = 10.0
+
+
+def reset_cell_id_counters() -> None:
+    """Reset every per-class ``itertools.count`` counter to zero.
+
+    Cell classes assign ``global__ID`` / ``class__ID`` from module-level
+    :class:`itertools.count` instances. Those counters live for the
+    interpreter's lifetime, so a second call to :func:`myogen.set_random_seed`
+    would deterministically reseed the RNG but still hand out
+    monotonically increasing IDs from where the previous run stopped --
+    breaking determinism across consecutive runs in the same process.
+
+    This helper rewires every counter back to ``itertools.count(0)`` so a
+    fresh seed produces fresh IDs.
+    """
+    _Cell._gid__iterator = itertools.count(0)
+    INgII._ids2 = itertools.count(0)
+    INgIb._ids2 = itertools.count(0)
+    DD._ids2 = itertools.count(0)
+    DD_Gamma._ids2 = itertools.count(0)
+    AffIa._ids2 = itertools.count(0)
+    AffII._ids2 = itertools.count(0)
+    AffIb._ids2 = itertools.count(0)
+    AlphaMN._ids2 = itertools.count(0)
