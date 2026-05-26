@@ -129,6 +129,22 @@ Force Model
 
    ForceModel
 
+Biomechanics
+^^^^^^^^^^^^
+
+.. currentmodule:: myogen.simulator.core.force
+
+.. autosummary::
+   :toctree: ../generated/
+   :template: autosummary/class.rst
+   :recursive:
+
+   MuscleGeometry
+   JointGeometry
+   JointBiomechanics
+
+.. currentmodule:: myogen.simulator
+
 Electrodes
 ^^^^^^^^^^
 

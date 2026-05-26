@@ -91,7 +91,7 @@ muscle = simulator.Muscle(
 electrode_array = simulator.SurfaceElectrodeArray(
     num_rows=5,
     num_cols=5,
-    inter_electrode_distances__mm=5 * pq.mm,
+    inter_electrode_distance__mm=5 * pq.mm,
     electrode_radius__mm=5 * pq.mm,
     bending_radius__mm=muscle.radius__mm + muscle.skin_thickness__mm + muscle.fat_thickness__mm,
 )
