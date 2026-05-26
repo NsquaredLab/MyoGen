@@ -74,7 +74,7 @@ class ForceModel:
         If recruitment_thresholds is empty or contains invalid values.
         If recording_frequency__Hz is not positive.
         If longest_duration_rise_time__ms is not positive.
-        If contraction_time_range__unitless is not greater than 1.
+        If contraction_time_range_factor is not greater than 1.
 
     References
     ----------
@@ -130,7 +130,7 @@ class ForceModel:
 
         if contraction_time_range_factor <= 1.0:
             raise ValueError(
-                f"contraction_time_range__unitless must be greater than 1.0, got {contraction_time_range_factor}. "
+                f"contraction_time_range_factor must be greater than 1.0, got {contraction_time_range_factor}. "
                 "This parameter determines the spread of contraction times. Typical values are 2.0-5.0."
             )
 
@@ -138,13 +138,13 @@ class ForceModel:
         self.recruitment_thresholds = recruitment_thresholds
         self.recording_frequency__Hz = recording_frequency__Hz
         self.longest_duration_rise_time__ms = longest_duration_rise_time__ms
-        self.contraction_time_range__unitless = contraction_time_range_factor
+        self.contraction_time_range_factor = contraction_time_range_factor
 
         # Private copies for internal modifications
         self._recruitment_thresholds = recruitment_thresholds.copy()
         self._recording_frequency__Hz = recording_frequency__Hz
         self._longest_duration_rise_time__ms = longest_duration_rise_time__ms
-        self._contraction_time_range__unitless = contraction_time_range_factor
+        self._contraction_time_range_factor = contraction_time_range_factor
 
         # Derived properties
         self._number_of_neurons = len(self._recruitment_thresholds)
@@ -184,7 +184,7 @@ class ForceModel:
 
         self._contraction_times__samples = self._longest_duration_rise_time__samples * np.power(
             1 / self._peak_twitch_forces__unitless,
-            1 / np.emath.logn(self._contraction_time_range__unitless, self._recruitment_ratio),
+            1 / np.emath.logn(self._contraction_time_range_factor, self._recruitment_ratio),
         )  # referred in [1] as T(i) (see eq. 14)
 
         self._initialize_twitches()

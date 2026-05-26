@@ -11,22 +11,21 @@ except ImportError:
     elephant = None  # type: ignore
 import numpy as np
 import quantities as pq
+import scipy.sparse as sp
 from neo import AnalogSignal
-from tqdm import tqdm
 
 from myogen.utils.decorators import beartowertype
 from myogen.utils.types import (
     RECRUITMENT_THRESHOLDS__ARRAY,
     FORCE__AnalogSignal,
+    Quantity__Hz,
+    Quantity__ms,
     SPIKE_TRAIN__Block,
 )
 
-from .force_utils_vectorized import (
-    get_gain,
-    sawtooth2ipi,
-    spikes2sawtooth,
-    generate_force_vectorized,
-)
+# Share helpers with ``ForceModel`` so the two implementations cannot drift.
+from .force_utils import get_gain_vectorized, sawtooth2ipi, spikes2sawtooth
+from .force_utils_vectorized import generate_force_vectorized
 
 
 @beartowertype
@@ -34,19 +33,24 @@ class ForceModelVectorized:
     """
     Vectorized force model based on Fuglevand et al. (1993) [1]_.
 
-    This is an optimized version of ForceModel that uses numpy vectorization
-    for significantly better performance, especially for long simulations.
+    This is an optimized version of :class:`ForceModel` that uses numpy
+    vectorization for significantly better performance, especially for long
+    simulations. It shares the IPI/gain/twitch pipeline with the reference
+    implementation via ``force_utils`` so the output is guaranteed to match
+    the reference model bit-for-bit (modulo per-spike accumulation order).
 
     Parameters
     ----------
     recruitment_thresholds : RECRUITMENT_THRESHOLDS__ARRAY
         Recruitment thresholds for each motor unit.
-    recording_frequency__Hz : float
-        Recording frequency in Hz.
-    longest_duration_rise_time__ms : float, default=90.0
+    recording_frequency__Hz : Quantity__Hz
+        Recording frequency in Hz. Determines temporal resolution of force
+        calculations. Typical values: 100-1000 Hz.
+    longest_duration_rise_time__ms : Quantity__ms, default=90.0 * pq.ms
         Longest duration of the rise time in milliseconds.
-    contraction_time_range__unitless : float, default=3.0
-        Contraction time range factor.
+    contraction_time_range_factor : float, default=3.0
+        Contraction time range factor. Determines the spread of contraction
+        times across motor units. Generally between 2 and 5.
 
     References
     ----------
@@ -58,9 +62,9 @@ class ForceModelVectorized:
     def __init__(
         self,
         recruitment_thresholds: RECRUITMENT_THRESHOLDS__ARRAY,
-        recording_frequency__Hz: float,
-        longest_duration_rise_time__ms: float = 90.0,
-        contraction_time_range__unitless: float = 3.0,
+        recording_frequency__Hz: Quantity__Hz,
+        longest_duration_rise_time__ms: Quantity__ms = 90.0 * pq.ms,
+        contraction_time_range_factor: float = 3.0,
     ) -> None:
         # Input validation
         if len(recruitment_thresholds) == 0:
@@ -90,9 +94,9 @@ class ForceModelVectorized:
                 "Typical values range from 50-150 ms for human motor units."
             )
 
-        if contraction_time_range__unitless <= 1.0:
+        if contraction_time_range_factor <= 1.0:
             raise ValueError(
-                f"contraction_time_range__unitless must be greater than 1.0, got {contraction_time_range__unitless}. "
+                f"contraction_time_range_factor must be greater than 1.0, got {contraction_time_range_factor}. "
                 "This parameter determines the spread of contraction times. Typical values are 2.0-5.0."
             )
 
@@ -100,13 +104,13 @@ class ForceModelVectorized:
         self.recruitment_thresholds = recruitment_thresholds
         self.recording_frequency__Hz = recording_frequency__Hz
         self.longest_duration_rise_time__ms = longest_duration_rise_time__ms
-        self.contraction_time_range__unitless = contraction_time_range__unitless
+        self.contraction_time_range_factor = contraction_time_range_factor
 
         # Private copies for internal modifications
         self._recruitment_thresholds = recruitment_thresholds.copy()
         self._recording_frequency__Hz = recording_frequency__Hz
         self._longest_duration_rise_time__ms = longest_duration_rise_time__ms
-        self._contraction_time_range__unitless = contraction_time_range__unitless
+        self._contraction_time_range_factor = contraction_time_range_factor
 
         # Derived properties
         self._number_of_neurons = len(self._recruitment_thresholds)
@@ -114,8 +118,12 @@ class ForceModelVectorized:
             self._recruitment_thresholds[-1] / self._recruitment_thresholds[0]
         )
 
-        self._longest_duration_rise_time__samples = (
-            self._longest_duration_rise_time__ms / 1000 * self._recording_frequency__Hz
+        # Match ForceModel's quantity-aware sample conversion exactly.
+        self._longest_duration_rise_time__samples = float(
+            (
+                self._longest_duration_rise_time__ms.rescale("s")
+                * self._recording_frequency__Hz
+            ).magnitude
         )
 
         # Simulation results
@@ -128,7 +136,7 @@ class ForceModelVectorized:
         self._compute_twitch_parameters()
 
     def _compute_twitch_parameters(self) -> None:
-        """Compute peak twitch forces and contraction times based on Fuglevand model."""
+        """Compute peak twitch forces and contraction times (Fuglevand)."""
         self._peak_twitch_forces__unitless = np.exp(
             (np.log(self._recruitment_ratio) / self._number_of_neurons)
             * np.arange(1, self._number_of_neurons + 1)
@@ -140,7 +148,7 @@ class ForceModelVectorized:
                 1 / self._peak_twitch_forces__unitless,
                 1
                 / np.emath.logn(
-                    self._contraction_time_range__unitless, self._recruitment_ratio
+                    self._contraction_time_range_factor, self._recruitment_ratio
                 ),
             )
         )
@@ -182,21 +190,11 @@ class ForceModelVectorized:
         self, spike_train__Block: SPIKE_TRAIN__Block, verbose: bool = True
     ) -> FORCE__AnalogSignal:
         """
-        Generate force output from motor unit spike trains using the Fuglevand model.
+        Generate force output from motor unit spike trains.
 
-        This vectorized version provides significantly better performance for long simulations.
-
-        Parameters
-        ----------
-        spike_train__Block : SPIKE_TRAIN__Block
-            Spike train block containing spike train data.
-        verbose : bool, default=True
-            If True, display progress information. Set to False to disable.
-
-        Returns
-        -------
-        FORCE__AnalogSignal
-            Force output as neo.AnalogSignal.
+        The body mirrors :meth:`ForceModel.generate_force` so that the two
+        implementations cannot drift apart silently. Only the per-spike
+        accumulation differs (vectorized vs. per-spike loop).
         """
         if self._twitch_list is None:
             raise ValueError(
@@ -238,14 +236,16 @@ class ForceModelVectorized:
                         t_start=segment.t_start,
                         t_stop=segment.t_stop,
                     )
-                    .to_array()
-                    .astype(bool)
+                    .to_sparse_bool_array()
                     .T
                 )
 
                 # Generate force with vectorized implementation
                 force_output = self._generate_force_vectorized(
-                    spike_array, spiketrain_timestep__ms, prefix=f"Pool {i + 1}", verbose=verbose
+                    spike_array,
+                    spiketrain_timestep__ms,
+                    prefix=f"Pool {i + 1}",
+                    verbose=verbose,
                 )
                 forces.append(force_output)
 
@@ -254,62 +254,69 @@ class ForceModelVectorized:
 
         return AnalogSignal(
             np.stack(forces, axis=-1) * pq.dimensionless,
-            t_start=spike_train__Block.segments[0].t_start,
-            sampling_rate=self._recording_frequency__Hz * pq.Hz,
+            t_start=spike_train__Block.segments[0].t_start.rescale("s"),
+            sampling_rate=self._recording_frequency__Hz,
         )
 
     def _generate_force_vectorized(
-        self, spikes: np.ndarray, spiketrain_timestep__ms: float, prefix: str = "", verbose: bool = True
+        self,
+        spikes,
+        spiketrain_timestep__ms: float,
+        prefix: str = "",
+        verbose: bool = True,
     ) -> np.ndarray:
-        """Generate force using vectorized operations for better performance."""
-        L = spikes.shape[0]
+        """Generate force using vectorized per-time-step accumulation.
 
-        # Calculate timing parameters
+        Mirrors :meth:`ForceModel._generate_force` byte-for-byte except for
+        the inner per-spike accumulation, which is delegated to
+        :func:`generate_force_vectorized`.
+        """
+        # Convert sparse to dense once at the start (mirrors ForceModel)
+        if sp.issparse(spikes):
+            spikes_dense = spikes.toarray()
+        else:
+            spikes_dense = spikes
+
+        L = spikes_dense.shape[0]
+
+        # Calculate timing parameters (mirrors ForceModel)
         spiketrain_timestep__s = spiketrain_timestep__ms / 1000.0
-        force_timestep__s = 1.0 / self._recording_frequency__Hz
-
-        # IPI signal generation
-        _, ipi = sawtooth2ipi(
-            spikes2sawtooth(
-                np.vstack([spikes[1:], np.zeros((1, self._number_of_neurons))])
-            )
+        force_timestep__s = float(
+            (1.0 / self._recording_frequency__Hz).rescale("s").magnitude
         )
 
-        # Calculate gain for all motor units
-        gain = np.full_like(spikes, np.nan, dtype=float)
-        for n in range(self._number_of_neurons):
-            gain[:, n] = get_gain(ipi[:, n], self._contraction_times__samples[n])
+        # IPI signal generation out of spikes signal (for gain nonlinearity)
+        _, ipi = sawtooth2ipi(
+            spikes2sawtooth(
+                np.vstack([spikes_dense[1:], np.zeros((1, self._number_of_neurons))])
+            ),
+            spikes_dense,
+        )
 
-        # Resample twitches to spike train sampling rate
+        gain = get_gain_vectorized(ipi, self._contraction_times__samples)
+
+        # Optimize twitch resampling - pre-compute interpolation grids
         resampled_twitches = []
         for force_twitch in self._twitch_list:
-            resampled_twitches.append(
-                np.interp(
-                    x=np.arange(
-                        0,
-                        force_twitch.shape[0] * force_timestep__s,
-                        spiketrain_timestep__s,
-                    ),
-                    xp=np.arange(
-                        0, force_twitch.shape[0] * force_timestep__s, force_timestep__s
-                    ),
-                    fp=force_twitch,
-                )
+            twitch_length = force_twitch.shape[0]
+            xp_orig = np.arange(twitch_length) * force_timestep__s
+            twitch_duration_s = (twitch_length - 1) * force_timestep__s
+            x_new = np.arange(
+                0, twitch_duration_s + spiketrain_timestep__s, spiketrain_timestep__s
             )
+
+            resampled_twitches.append(np.interp(x_new, xp_orig, force_twitch))
 
         # Use vectorized force generation
         if verbose:
             print(f"{prefix} Generating force with vectorized implementation...")
-        force = generate_force_vectorized(spikes, gain, resampled_twitches)
+        force = generate_force_vectorized(spikes_dense, gain, resampled_twitches)
 
-        # Resample to recording frequency
-        return np.interp(
-            x=np.arange(0, force.shape[0] * spiketrain_timestep__s, force_timestep__s),
-            xp=np.arange(
-                0, force.shape[0] * spiketrain_timestep__s, spiketrain_timestep__s
-            ),
-            fp=force,
-        )
+        # Final resampling to target frequency (mirrors ForceModel)
+        output_times = np.arange(0, L * spiketrain_timestep__s, force_timestep__s)
+        input_times = np.arange(0, L * spiketrain_timestep__s, spiketrain_timestep__s)
+
+        return np.interp(output_times, input_times, force)
 
     # Property accessors
     @property
