@@ -1,5 +1,6 @@
 from typing import Optional
 
+from myogen.utils.binning import bin_spike_trains
 from myogen.utils.neo import create_grid_signal, signal_to_grid
 
 try:
@@ -8,15 +9,6 @@ try:
     HAS_CUPY = True
 except ImportError:
     HAS_CUPY = False
-
-try:
-    import elephant
-    import elephant.utils
-
-    HAS_ELEPHANT = True
-except ImportError:
-    HAS_ELEPHANT = False
-    elephant = None  # type: ignore
 
 import logging
 from copy import deepcopy
@@ -652,12 +644,6 @@ class SurfaceEMG:
         if self._muaps__Block is None:
             raise ValueError("MUAP templates have not been generated. Call simulate_muaps() first.")
 
-        if not HAS_ELEPHANT:
-            raise ImportError(
-                "Elephant is required for surface EMG simulation. "
-                "Install with: pip install myogen[elephant]"
-            )
-
         # Store spike train data privately
         self._spike_train__Block = spike_train__Block
 
@@ -673,24 +659,13 @@ class SurfaceEMG:
         first_spiketrain = spike_train__Block.segments[0].spiketrains[0]
         spiketrain_timestep__ms = first_spiketrain.sampling_period.rescale("ms")
 
-        # Convert spike trains to binary arrays using Elephant, suppressing rounding error logging
-        elephant_utils_logger = logging.getLogger(elephant.utils.__file__)
-        original_level = elephant_utils_logger.level
-        elephant_utils_logger.setLevel(logging.ERROR)
-
-        try:
-            spike_trains = np.array(
-                [
-                    elephant.conversion.BinnedSpikeTrain(
-                        segment.spiketrains, bin_size=spiketrain_timestep__ms
-                    )
-                    .to_array()
-                    .astype(bool)
-                    for segment in spike_train__Block.segments
-                ]
-            )
-        finally:
-            elephant_utils_logger.setLevel(original_level)
+        # Bin each pool's spike trains into a boolean occupancy array.
+        spike_trains = np.array(
+            [
+                bin_spike_trains(segment.spiketrains, bin_size=spiketrain_timestep__ms)
+                for segment in spike_train__Block.segments
+            ]
+        )
 
         # Handle MUs to simulate
         if self._MUs_to_simulate is None:

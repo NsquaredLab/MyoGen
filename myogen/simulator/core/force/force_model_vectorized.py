@@ -1,19 +1,11 @@
-import logging
 from typing import Optional
 
-try:
-    import elephant
-    import elephant.utils
-
-    HAS_ELEPHANT = True
-except ImportError:
-    HAS_ELEPHANT = False
-    elephant = None  # type: ignore
 import numpy as np
 import quantities as pq
 import scipy.sparse as sp
 from neo import AnalogSignal
 
+from myogen.utils.binning import bin_spike_trains
 from myogen.utils.decorators import beartowertype
 from myogen.utils.types import (
     RECRUITMENT_THRESHOLDS__ARRAY,
@@ -202,12 +194,6 @@ class ForceModelVectorized:
                 "This should not occur if the model was properly initialized."
             )
 
-        if not HAS_ELEPHANT:
-            raise ImportError(
-                "Elephant is required for force simulation. "
-                "Install with: pip install myogen[elephant]"
-            )
-
         # Extract timing information
         spiketrain_timestep__ms = float(
             spike_train__Block.segments[0]
@@ -224,33 +210,22 @@ class ForceModelVectorized:
                     f"but force model was initialized with {self._number_of_neurons} motor units."
                 )
 
-            elephant_utils_logger = logging.getLogger(elephant.utils.__file__)
-            original_level = elephant_utils_logger.level
-            elephant_utils_logger.setLevel(logging.ERROR)
+            spike_array = bin_spike_trains(
+                segment.spiketrains,
+                bin_size=segment.spiketrains[0].sampling_period,
+                t_start=segment.t_start,
+                t_stop=segment.t_stop,
+                sparse=True,
+            ).T
 
-            try:
-                spike_array = (
-                    elephant.conversion.BinnedSpikeTrain(
-                        segment.spiketrains,
-                        bin_size=segment.spiketrains[0].sampling_period,
-                        t_start=segment.t_start,
-                        t_stop=segment.t_stop,
-                    )
-                    .to_sparse_bool_array()
-                    .T
-                )
-
-                # Generate force with vectorized implementation
-                force_output = self._generate_force_vectorized(
-                    spike_array,
-                    spiketrain_timestep__ms,
-                    prefix=f"Pool {i + 1}",
-                    verbose=verbose,
-                )
-                forces.append(force_output)
-
-            finally:
-                elephant_utils_logger.setLevel(original_level)
+            # Generate force with vectorized implementation
+            force_output = self._generate_force_vectorized(
+                spike_array,
+                spiketrain_timestep__ms,
+                prefix=f"Pool {i + 1}",
+                verbose=verbose,
+            )
+            forces.append(force_output)
 
         return AnalogSignal(
             np.stack(forces, axis=-1) * pq.dimensionless,
