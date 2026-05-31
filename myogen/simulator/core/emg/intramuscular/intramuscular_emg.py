@@ -755,47 +755,142 @@ class IntramuscularEMG:
         self._intramuscular_emg__Block = block
         return block
 
-    def add_noise(self, snr__dB: float, noise_type: str = "gaussian") -> INTRAMUSCULAR_EMG__Block:
+    def add_noise(
+        self,
+        snr__dB: float,
+        noise_type: str = "gaussian",
+        *,
+        spectral_slope: float = -0.5,
+        excess_kurtosis: float = 3.0,
+        powerline_hz: float = 50.0,
+        powerline_amplitude: float = 0.1,
+        powerline_harmonic_ratios: Optional[list[float]] = None,
+        powerline_frequency_drift_hz: float = 0.3,
+        powerline_amplitude_modulation_depth: float = 0.15,
+        peak_hz: float = 1000.0,
+        analog_hpf_hz: float = 10.0,
+        baseline_drift_rms_uv: float = 0.0,
+        baseline_drift_alpha: float = 1.75,
+        baseline_drift_low_hz: float | None = None,
+        baseline_drift_high_hz: float = 1.0,
+    ) -> INTRAMUSCULAR_EMG__Block:
         """
         Add noise to the electrode array.
 
-        This method adds realistic noise to the simulated intramuscular EMG signals
-        based on a specified signal-to-noise ratio. The noise is calculated
-        and applied independently for each electrode channel to ensure that
-        channels with different signal amplitudes maintain the specified SNR.
+        Two noise models are available:
+
+        * ``"gaussian"`` – white Gaussian noise (legacy default). Each
+          electrode channel gets independent normal noise scaled to hit
+          the requested per-channel SNR.
+        * ``"realistic"`` – spectrally colored noise calibrated against
+          real bipolar fine-wire iEMG recordings (TEP / Synergy studies).
+          1/f-like base, mid-band spectral emphasis from
+          electrode–amplifier bandwidth, heavy tails from cross-talk
+          artifacts, and additive 50/60 Hz powerline interference with
+          harmonics. See :mod:`myogen.utils.emg_noise` for the math.
+
+        Per-channel SNR is preserved across both modes: each electrode's
+        noise RMS is computed from that channel's own signal RMS so
+        electrodes with different amplitudes get appropriately scaled
+        noise.
 
         Parameters
         ----------
         snr__dB : float
-            Signal-to-noise ratio in dB. Higher values result in cleaner signals.
-            Typical intramuscular EMG has SNR ranging from 15-50 dB.
-            The SNR is applied independently to each electrode channel.
-        noise_type : str, default="gaussian"
-            Type of noise to add. Currently supports "gaussian" for white noise.
+            Signal-to-noise ratio in dB. Higher values result in cleaner
+            signals. Typical intramuscular EMG has SNR ranging from
+            15–50 dB. Applied independently to each electrode channel.
+        noise_type : {"gaussian", "realistic"}, default="gaussian"
+            Noise model to use. ``"realistic"`` activates the colored
+            noise pipeline; the remaining keyword-only parameters then
+            apply.
+        spectral_slope : float, default=-0.5
+            PSD slope in log–log space for the colored-noise base.
+            ``0`` = white, ``-1`` = pink. Real iEMG: -0.4 to -0.8.
+            Ignored when ``noise_type="gaussian"``.
+        excess_kurtosis : float, default=3.0
+            Target excess kurtosis (``0`` = Gaussian). Controlled
+            isometric iEMG: 1–6. Dynamic tasks: higher.
+            Ignored when ``noise_type="gaussian"``.
+        powerline_hz : float, default=50.0
+            Powerline interference frequency. Use ``60.0`` for North
+            America, ``0.0`` to disable.
+            Ignored when ``noise_type="gaussian"``.
+        powerline_amplitude : float, default=0.1
+            Powerline fundamental amplitude as a fraction of noise RMS.
+            Set to ``0`` (or ``powerline_hz=0``) to disable.
+            Ignored when ``noise_type="gaussian"``.
+        powerline_harmonic_ratios : list of float, optional
+            Per-harmonic amplitude ratios relative to the fundamental.
+            ``None`` uses the default ``[1.0, 0.5, 0.3, 0.15, 0.08]``
+            (fundamental + 4 harmonics).
+            Ignored when ``noise_type="gaussian"``.
+        powerline_frequency_drift_hz : float, default=0.3
+            Standard deviation (Hz) of the slow random walk of the
+            mains instantaneous frequency. Broadens each line peak
+            from a delta into a ~2-5 Hz FWHM bump (typical of real
+            recordings). Set to 0 for a pure-tone powerline.
+            Ignored when ``noise_type="gaussian"``.
+        powerline_amplitude_modulation_depth : float, default=0.15
+            Fractional AM depth (±15% by default) applied to each
+            powerline harmonic — adds narrow sidebands within ±2 Hz
+            of every line. Set to 0 to disable.
+            Ignored when ``noise_type="gaussian"``.
+        peak_hz : float, default=1000.0
+            Center frequency of the mid-band spectral emphasis from
+            electrode–amplifier bandwidth interaction.
+            Ignored when ``noise_type="gaussian"``.
+        baseline_drift_rms_uv : float, default=0.0
+            Target RMS (post-HPF) of a band-limited 1/f^α baseline
+            drift representing electrode/interface noise (Huigen 2002,
+            Gondran 1996). Same units as the EMG block. Set to 0 (the
+            default) to disable, preserving legacy behaviour.
+            The spectral form is paper-constrained; the amplitude
+            defaults are *not* validated for intramuscular EMG —
+            calibrate against real recordings via
+            :func:`myogen.utils.calibrate_baseline_drift_profile`.
+            Broadband movement artifacts (0–20 Hz, De Luca 2010) are
+            a separate phenomenon out of scope here.
+            Ignored when ``noise_type="gaussian"``.
+        baseline_drift_alpha : float, default=1.75
+            Drift PSD slope α (PSD ∝ 1/f^α). Midpoint of the [1.5, 2.0]
+            electrode-noise regime. Must be > 0.
+            Ignored when ``noise_type="gaussian"``.
+        baseline_drift_low_hz : float or None, default=None
+            Lower edge of the drift band, in Hz. ``None`` resolves
+            to the lowest nonzero FFT bin available for the
+            simulation length.
+            Ignored when ``noise_type="gaussian"``.
+        baseline_drift_high_hz : float, default=1.0
+            Upper edge of the drift band, in Hz. Default keeps the
+            knob scoped to sub-1 Hz baseline wander.
+            Ignored when ``noise_type="gaussian"``.
 
         Returns
         -------
         INTRAMUSCULAR_EMG__Block
-            Noisy intramuscular EMG signals for the electrode array as a neo.Block.
-            Results are stored in the `noisy_intramuscular_emg__Block` property after execution.
+            Noisy intramuscular EMG signals for the electrode array as a
+            ``neo.Block``. Results are also stored on
+            ``noisy_intramuscular_emg__Block``.
 
         Raises
         ------
         ValueError
-            If intramuscular EMG has not been simulated. Call simulate_intramuscular_emg() first.
-
-        Notes
-        -----
-        The noise is computed per-channel (per electrode) to maintain the specified
-        SNR independently across all channels. This ensures that electrodes with
-        different signal amplitudes receive appropriately scaled noise.
+            If intramuscular EMG has not been simulated (call
+            :meth:`simulate_intramuscular_emg` first) or ``noise_type``
+            is unrecognized.
         """
         if self._intramuscular_emg__Block is None:
             raise ValueError(
                 "Intramuscular EMG has not been simulated. Call simulate_intramuscular_emg() first."
             )
 
+        noise_kind = noise_type.lower()
+        if noise_kind not in ("gaussian", "realistic"):
+            raise ValueError(f"Unsupported noise type: {noise_type}")
+
         noisy_block = Block()
+        rng_global = get_random_generator()
 
         for pool_idx, segment in enumerate(self._intramuscular_emg__Block.segments):
             noisy_segment = Segment(name=f"Pool_{pool_idx}")
@@ -814,17 +909,40 @@ class IntramuscularEMG:
             noise_power_per_channel = signal_power_per_channel / snr_linear
             noise_std_per_channel = np.sqrt(noise_power_per_channel)  # Shape: (n_electrodes,)
 
-            # Generate noise
-            if noise_type.lower() == "gaussian":
+            if noise_kind == "gaussian":
                 # Generate standard normal noise, then scale per channel
-                noise = get_random_generator().normal(loc=0.0, scale=1.0, size=emg_array.shape)
-                # Broadcast noise_std_per_channel along time axis
-                # noise shape: (time, n_electrodes)
-                # noise_std_per_channel shape: (n_electrodes,)
-                # Broadcasting: (time, n_electrodes) * (1, n_electrodes)
+                noise = rng_global.normal(loc=0.0, scale=1.0, size=emg_array.shape)
                 noise = noise * noise_std_per_channel[np.newaxis, :]
             else:
-                raise ValueError(f"Unsupported noise type: {noise_type}")
+                # Colored noise (signal-shape preserving SNR semantics).
+                # Per-channel call so each electrode hits the requested SNR
+                # individually, matching the legacy gaussian path.
+                from myogen.utils.emg_noise import generate_realistic_noise
+
+                n_samples, n_channels = emg_array.shape
+                fs_hz = float(self._sampling_frequency__Hz)
+                noise = np.empty_like(emg_array)
+                for ch in range(n_channels):
+                    ch_rng = np.random.default_rng(rng_global.integers(0, 2**31 - 1))
+                    noise[:, ch] = generate_realistic_noise(
+                        n_samples,
+                        fs_hz,
+                        noise_rms=float(noise_std_per_channel[ch]),
+                        spectral_slope=spectral_slope,
+                        excess_kurtosis=excess_kurtosis,
+                        powerline_hz=powerline_hz,
+                        powerline_amplitude=powerline_amplitude,
+                        powerline_harmonic_ratios=powerline_harmonic_ratios,
+                        powerline_frequency_drift_hz=powerline_frequency_drift_hz,
+                        powerline_amplitude_modulation_depth=powerline_amplitude_modulation_depth,
+                        peak_hz=peak_hz,
+                        analog_hpf_hz=analog_hpf_hz,
+                        baseline_drift_rms_uv=baseline_drift_rms_uv,
+                        baseline_drift_alpha=baseline_drift_alpha,
+                        baseline_drift_low_hz=baseline_drift_low_hz,
+                        baseline_drift_high_hz=baseline_drift_high_hz,
+                        rng=ch_rng,
+                    )
 
             # Add noise
             noisy_emg = emg_array + noise

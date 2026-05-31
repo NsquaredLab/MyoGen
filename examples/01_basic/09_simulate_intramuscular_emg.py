@@ -87,7 +87,12 @@ electrode = simulator.IntramuscularElectrodeArray(
 # Create the **intramuscular EMG simulator** with the muscle model and electrode.
 # All simulation parameters now use quantities for type safety and unit validation.
 
-MUs_to_simulate = [0, 25, 50, 90]
+# Simulate ~30 MUs sampled across the full recruitment range so the
+# composite iEMG sums enough MUAPs to look like a real recording, while
+# still keeping the MUAP computation reasonable. A small ``MUs_to_plot``
+# subset drives the per-MU MUAP figure below.
+MUs_to_simulate = list(range(0, 100, 3))  # 0, 3, 6, ..., 99 -> 34 MUs
+MUs_to_plot = [0, 25, 50, 90]
 
 print("Initializing iEMG simulator...")
 iemg_sim = simulator.IntramuscularEMG(
@@ -104,9 +109,9 @@ iemg_sim = simulator.IntramuscularEMG(
 print("Computing motor unit action potentials...")
 muaps__Block = iemg_sim.simulate_muaps(n_jobs=2)  # Use 2 parallel jobs
 
-# Display MUAP amplitudes for the selected MUs
+# Display MUAP amplitudes for the plotted MUs
 print("\n=== MUAP Amplitudes ===")
-for mu_idx in MUs_to_simulate:
+for mu_idx in MUs_to_plot:
     segment = muaps__Block.segments[mu_idx]
     if segment.name != "MUAP_None":
         signal = segment.analogsignals[0].magnitude
@@ -123,9 +128,9 @@ joblib.dump(iemg_sim, "./results/iemg_simulator.pkl")
 # Display the **MUAP waveforms** for the three selected motor units to
 # demonstrate how motor unit size affects MUAP amplitude and shape.
 
-fig, axes = plt.subplots(len(MUs_to_simulate), 1, figsize=(12, 8), sharex=True)
+fig, axes = plt.subplots(len(MUs_to_plot), 1, figsize=(12, 8), sharex=True)
 
-for plot_idx, mu_idx in enumerate(MUs_to_simulate):
+for plot_idx, mu_idx in enumerate(MUs_to_plot):
     segment = muaps__Block.segments[mu_idx]
     if segment.name != "MUAP_None":
         muap_signal = segment.analogsignals[0][:, 0]  # First electrode channel
