@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Changed
+- **Python 3.13 support.** `requires-python` is widened to `>=3.12,<3.14`, a `Python :: 3.13` classifier is added, and the CI test and wheel matrices now cover 3.13 (`cp312-* cp313-*`). NEURON 8.2.7 ships cp313 wheels, and the Cython extensions build and import under Python 3.13 against NumPy 2.x (verified locally).
 - **NumPy 2.x support.** With `elephant` gone (the reason for the `numpy<2.0` pin), the runtime requirement is relaxed to `numpy>=1.26` and the build-system now compiles the Cython extensions against `numpy>=2.0`. Wheels built against NumPy 2.0 remain backward-compatible with NumPy 1.x at runtime (verified: the compiled extensions import under both NumPy 2.4 and 1.26). The `scipy<1.17` build cap is unrelated (manylinux2014 wheel availability) and is unchanged.
 
 ### Removed

@@ -30,8 +30,8 @@ jobs:
       - name: Build wheels
         uses: pypa/cibuildwheel@v2.21
         env:
-          # Only build for Python 3.12+
-          CIBW_BUILD: "cp312-*"
+          # Build for Python 3.12 and 3.13
+          CIBW_BUILD: "cp312-* cp313-*"
 
           # Skip 32-bit builds and musl (Alpine) on Linux
           CIBW_SKIP: "*-win32 *-manylinux_i686 *-musllinux_*"
@@ -119,7 +119,7 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest, macos-latest]  # Match build_wheels matrix
-        python-version: ["3.12"]
+        python-version: ["3.12", "3.13"]
 
     steps:
       - name: Set up Python ${{ matrix.python-version }}
