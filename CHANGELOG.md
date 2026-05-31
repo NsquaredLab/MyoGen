@@ -7,12 +7,35 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.10.0] - 2026-06-01
+
+### Added
+- **Calibratable colored iEMG noise model.** New `myogen.utils.emg_noise` module providing a physiologically-motivated colored-noise generator for intramuscular EMG whose spectral parameters can be **calibrated from a real recording**. Two new gallery examples demonstrate it: `examples/01_basic/15_calibrate_noise_from_real.py` (fit the model to measured noise) and `examples/01_basic/16_noise_parameter_sweep.py` (sweep the noise parameters).
+- **Optional GPU acceleration for SFAP computation (CuPy).** Single-fiber action-potential and surface-EMG bioelectric computations can now run on an NVIDIA GPU via the new `[gpu]` optional extra (`cupy-cuda12x`). A `use_gpu` tri-state (auto / on / off) selects the backend and transparently falls back to NumPy when CuPy or a CUDA device is unavailable; the xp-aware code paths keep NumPy and CuPy arrays from mixing.
+- **Top-level re-exports.** `ForceModelVectorized` and the biomechanics classes are now importable directly from `myogen.simulator` (previously only reachable through their submodules).
+- **Synaptic-delay control.** `connect_to_muscle(delay__ms=...)` and an end-to-end `synaptic_delay` parameter let you set conduction/synaptic delays through the spinal network.
+- **Expanded regression test suite** covering unit safety, `ForceModel`/`ForceModelVectorized` parity, EMG accuracy, determinism, and NWB round-trips.
+
 ### Changed
 - **Python 3.13 support.** `requires-python` is widened to `>=3.12,<3.14`, a `Python :: 3.13` classifier is added, and the CI test and wheel matrices now cover 3.13 (`cp312-* cp313-*`). NEURON 8.2.7 ships cp313 wheels, and the Cython extensions build and import under Python 3.13 against NumPy 2.x (verified locally).
 - **NumPy 2.x support.** With `elephant` gone (the reason for the `numpy<2.0` pin), the runtime requirement is relaxed to `numpy>=1.26` and the build-system now compiles the Cython extensions against `numpy>=2.0`. Wheels built against NumPy 2.0 remain backward-compatible with NumPy 1.x at runtime (verified: the compiled extensions import under both NumPy 2.4 and 1.26). The Linux wheel build base is bumped from manylinux2014 to **manylinux_2_28** (glibc ≥ 2.28, which drops EOL CentOS/RHEL 7) so the `scipy<1.17` build cap can be lifted (scipy ≥ 1.17 only ships manylinux_2_28 wheels).
+- **`ForceModelVectorized` API aligned with `ForceModel`.** Completed the `contraction_time_range_factor` rename and extracted shared helpers so the two force models expose a consistent interface.
+- **Modern typing.** `typing.Dict`/`List`/`Tuple`/`Callable` were migrated to the PEP-585 builtin generics, silencing beartype deprecation warnings; the biomechanics `__degrees` argument was renamed to `__deg`.
+- **Packaging trimmed.** The wheel now ships source files only, runtime dependencies are pinned, and the NEURON-home lookup helper was deduplicated.
+- **CI / wheels.** Wheels are built for CPython 3.12 and 3.13 on manylinux_2_28 (Linux) and arm64 (macOS); the macOS Intel (x86_64) build was dropped, and all GitHub Actions were bumped to Node 24 versions.
 
 ### Removed
 - **`elephant` (and `viziphant`) dependency dropped entirely.** Spike binning via `elephant.conversion.BinnedSpikeTrain` is replaced by a dependency-free `myogen.utils.bin_spike_trains` helper (an exact reimplementation, verified bit-identical across grid/edge/fractional/sparse cases), and `elephant.statistics.isi` in `utils/helper.py` is replaced by `numpy.diff` (identical for sorted spike trains). The example scripts now compute firing rates, PSTHs and rasters natively (the `viziphant` raster is replaced by a small matplotlib helper). The `[elephant]` optional extra and the `elephant`/`viziphant` dev/docs dependencies are removed. `import myogen`, the test suite, and the docs build no longer require `elephant`.
+
+### Fixed
+- **Surface EMG.** Exact Laplacian spatial filter, corrected FFT bin grid, robust handling of a singular electrode inter-electrode distance, RNG worker pre-generation for reproducible parallel draws, and an off-by-one in the `np.arange` temporal-resampling grid.
+- **Intramuscular EMG.** Corrected `shift_padding` tail handling and the `shift_sfaps` sign convention, plus NumPy-2.0-safe scalar extraction.
+- **RNG determinism.** `set_random_seed` now resets the per-cell ID counters and seeds the Hill `durType=2` path; NWB exports are deterministic by default.
+- **Group II afferent rectification** is now applied per-region instead of after summation (external contribution, thanks @veylantis).
+- **`min_radial_dist` unit mismatch** in `calc_sfaps`.
+- **`continuous_saver` f-string bug** that mangled a log message.
+- **NumPy 2.0 compatibility.** Replaced the removed `np.trapz` with `scipy.integrate.trapezoid`.
+- **Examples.** Corrected raster row offsets and PSTH right-edge binning.
 
 ## [0.9.0] - 2026-04-19
 

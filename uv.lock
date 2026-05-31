@@ -1039,7 +1039,7 @@ wheels = [
 
 [[package]]
 name = "myogen"
-version = "0.9.0"
+version = "0.10.0"
 source = { editable = "." }
 dependencies = [
     { name = "beartype" },
@@ -1192,10 +1192,10 @@ name = "neuron"
 version = "8.2.7"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "find-libpython" },
-    { name = "numpy" },
-    { name = "packaging" },
-    { name = "setuptools" },
+    { name = "find-libpython", marker = "sys_platform != 'emscripten' and sys_platform != 'win32'" },
+    { name = "numpy", marker = "sys_platform != 'emscripten' and sys_platform != 'win32'" },
+    { name = "packaging", marker = "sys_platform != 'emscripten' and sys_platform != 'win32'" },
+    { name = "setuptools", marker = "sys_platform != 'emscripten' and sys_platform != 'win32'" },
 ]
 wheels = [
     { url = "https://files.pythonhosted.org/packages/ab/45/26a87553e7a1dde05fb9aebe98715498b6273fd0ed08f5a82ad550ee5379/neuron-8.2.7-cp312-cp312-macosx_10_15_x86_64.whl", hash = "sha256:d2044fde04ea2c07884cd4d047e19bd3686abe4cf2fb1b4b6aebab5890763727", size = 14027049, upload-time = "2025-05-22T23:49:04.288Z" },
