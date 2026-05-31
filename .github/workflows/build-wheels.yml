@@ -36,10 +36,12 @@ jobs:
           # Skip 32-bit builds and musl (Alpine) on Linux
           CIBW_SKIP: "*-win32 *-manylinux_i686 *-musllinux_*"
 
-          # Install system dependencies before building (Linux)
-          # openblas-devel needed if scipy builds from source
+          # Install system dependencies before building (Linux).
+          # On manylinux_2_28 scipy installs from a prebuilt wheel, so the
+          # openblas-devel that the old source-build fallback needed (and which
+          # lives in the PowerTools repo on AlmaLinux 8) is no longer required.
           CIBW_BEFORE_ALL_LINUX: |
-            yum install -y openmpi-devel openblas-devel
+            yum install -y openmpi-devel
 
           # Install system dependencies before building (macOS)
           CIBW_BEFORE_ALL_MACOS: |
@@ -57,8 +59,9 @@ jobs:
             pip install neuron==8.2.7
             cd myogen/simulator/nmodl_files && nrnivmodl .
 
-          # Use manylinux2014 (manylinux_2_17)
-          CIBW_MANYLINUX_X86_64_IMAGE: manylinux2014
+          # manylinux_2_28 (glibc >= 2.28) so scipy >= 1.17 prebuilt wheels are
+          # available in the build container (scipy dropped manylinux2014).
+          CIBW_MANYLINUX_X86_64_IMAGE: manylinux_2_28
 
           # Custom repair to preserve NEURON mechanisms while adding proper platform tags
           # Standard tools (auditwheel/delocate) strip the architecture directories
@@ -69,7 +72,7 @@ jobs:
             wheel = Path(sys.argv[1])
             dest = Path(sys.argv[2])
             # Rename to manylinux without modifying contents
-            new_name = wheel.name.replace('linux_', 'manylinux_2_17_').replace('manylinux2014_', 'manylinux_2_17_')
+            new_name = wheel.name.replace('linux_', 'manylinux_2_28_').replace('manylinux2014_', 'manylinux_2_28_')
             shutil.copy2(wheel, dest / new_name)
             " {wheel} {dest_dir}
 
