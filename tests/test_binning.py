@@ -1,5 +1,14 @@
-"""Prove myogen.utils.binning.bin_spike_trains matches elephant's
-BinnedSpikeTrain across the cases MyoGen relies on (issue #16)."""
+"""Tests for myogen.utils.binning.bin_spike_trains (issue #16).
+
+Two layers:
+
+* **Golden tests** assert the binner against hand-verified expected occupancy.
+  They are self-contained and require no optional dependencies, so they give
+  CI coverage even when ``elephant`` is not installed.
+* **Equivalence tests** assert bit-identical output to
+  ``elephant.conversion.BinnedSpikeTrain`` (the implementation it replaces).
+  They run only where ``elephant`` is available.
+"""
 
 import numpy as np
 import pytest
@@ -8,8 +17,12 @@ from neo import SpikeTrain
 
 from myogen.utils.binning import bin_spike_trains
 
-elephant = pytest.importorskip("elephant")
-from elephant.conversion import BinnedSpikeTrain  # noqa: E402
+try:
+    from elephant.conversion import BinnedSpikeTrain
+
+    HAS_ELEPHANT = True
+except ImportError:
+    HAS_ELEPHANT = False
 
 
 def _make_trains(spike_lists, t_start, t_stop, sampling_period):
@@ -23,41 +36,103 @@ def _make_trains(spike_lists, t_start, t_stop, sampling_period):
     return trains
 
 
-# (spike_lists, t_start_ms, t_stop_ms, dt_ms)
-CASES = [
-    # Regular grid, the common MyoGen case.
-    ([[0, 1, 2, 5, 10]], 0, 11, 1.0),
-    # Multiple trains in one pool.
-    ([[5, 7], [0, 5, 10], []], 0, 11, 1.0),
-    # IEEE-754 awkward length (cf. issue #12): N=1001 bins at dt=1 ms.
-    ([list(range(0, 1001, 3))], 0, 1001, 1.0),
-    # Spike exactly on t_stop must be discarded (right edge).
-    ([[0, 5, 11]], 0, 11, 1.0),
-    # Sub-ms bins / fractional timestep.
-    ([[0.0, 0.1, 0.25, 0.9, 1.0]], 0, 2, 0.1),
-    # Non-zero t_start.
-    ([[3, 4, 7, 9]], 3, 10, 1.0),
-    # Dense, irregular spike times.
-    ([sorted(np.random.RandomState(0).uniform(0, 50, 40).tolist())], 0, 50, 0.5),
-    # Duplicate spikes in the same bin -> occupancy stays boolean (one True).
-    ([[0, 0, 1, 5, 5, 5]], 0, 11, 1.0),
+def _occupancy(n_trains, n_bins, true_indices):
+    """Build a boolean (n_trains, n_bins) matrix from per-train True-bin lists."""
+    out = np.zeros((n_trains, n_bins), dtype=bool)
+    for row, idxs in enumerate(true_indices):
+        for j in idxs:
+            out[row, j] = True
+    return out
+
+
+# --------------------------------------------------------------------------- #
+# Golden tests (no elephant required)
+# --------------------------------------------------------------------------- #
+
+# (spike_lists, t_start, t_stop, dt, n_bins, expected True bins per train)
+GOLDEN = [
+    ("grid", [[0, 1, 2, 5, 10]], 0, 11, 1.0, 11, [[0, 1, 2, 5, 10]]),
+    ("multi_train", [[5, 7], [0, 5, 10], []], 0, 11, 1.0, 11, [[5, 7], [0, 5, 10], []]),
+    # Spike on t_stop (11) is discarded (bins cover [t_start, t_stop)).
+    ("tstop_discard", [[0, 5, 11]], 0, 11, 1.0, 11, [[0, 5]]),
+    # Fractional bins: 0.25/0.1 -> bin 2, 1.0/0.1 -> bin 10.
+    ("fractional", [[0, 0.1, 0.25, 0.9, 1.0]], 0, 2, 0.1, 20, [[0, 1, 2, 9, 10]]),
+    # Duplicate spikes collapse to one occupied bin.
+    ("duplicates", [[0, 0, 1, 5, 5, 5]], 0, 11, 1.0, 11, [[0, 1, 5]]),
     # Every train empty.
-    ([[], []], 0, 11, 1.0),
+    ("empty", [[], []], 0, 11, 1.0, 11, [[], []]),
 ]
 
 
-@pytest.mark.parametrize("spike_lists,t0,t1,dt", CASES)
-def test_dense_matches_elephant_default_bounds(spike_lists, t0, t1, dt):
+@pytest.mark.parametrize(
+    "name,spike_lists,t0,t1,dt,n_bins,true_idx",
+    GOLDEN,
+    ids=[g[0] for g in GOLDEN],
+)
+def test_golden_dense(name, spike_lists, t0, t1, dt, n_bins, true_idx):
     trains = _make_trains(spike_lists, t0, t1, dt)
-    expected = BinnedSpikeTrain(trains, bin_size=dt * pq.ms).to_array().astype(bool)
+    expected = _occupancy(len(spike_lists), n_bins, true_idx)
     observed = bin_spike_trains(trains, bin_size=dt * pq.ms)
     assert observed.dtype == bool
     np.testing.assert_array_equal(observed, expected)
 
 
+def test_golden_sparse_matches_dense():
+    trains = _make_trains([[5, 7], [0, 5, 10]], 0, 11, 1.0)
+    dense = bin_spike_trains(trains, bin_size=1.0 * pq.ms)
+    sparse = bin_spike_trains(trains, bin_size=1.0 * pq.ms, sparse=True)
+    assert sparse.shape == dense.shape
+    np.testing.assert_array_equal(sparse.toarray().astype(bool), dense)
+
+
+def test_golden_tolerance_snaps_edge_spike_up():
+    # A spike a hair below bin 5's edge snaps up into bin 5, not 4.
+    trains = _make_trains([[5.0 - 1e-12]], 0, 11, 1.0)
+    observed = bin_spike_trains(trains, bin_size=1.0 * pq.ms)
+    expected = _occupancy(1, 11, [[5]])
+    np.testing.assert_array_equal(observed, expected)
+
+
+def test_golden_explicit_subrange_bounds():
+    # Bin over [2, 8) of a train spanning [0, 20]; spikes 3,5,7 land in bins
+    # 1,3,5 relative to t_start=2 (1 and 9 are outside the window).
+    st = SpikeTrain([1, 3, 5, 7, 9] * pq.ms, t_start=0 * pq.ms, t_stop=20 * pq.ms)
+    st.sampling_period = 1 * pq.ms
+    observed = bin_spike_trains(
+        [st], bin_size=1 * pq.ms, t_start=2 * pq.ms, t_stop=8 * pq.ms
+    )
+    expected = _occupancy(1, 6, [[1, 3, 5]])
+    np.testing.assert_array_equal(observed, expected)
+
+
+# --------------------------------------------------------------------------- #
+# Equivalence tests vs elephant (only where elephant is installed)
+# --------------------------------------------------------------------------- #
+
+CASES = [
+    ([[0, 1, 2, 5, 10]], 0, 11, 1.0),
+    ([[5, 7], [0, 5, 10], []], 0, 11, 1.0),
+    ([list(range(0, 1001, 3))], 0, 1001, 1.0),  # IEEE-754 awkward length (cf. #12)
+    ([[0, 5, 11]], 0, 11, 1.0),
+    ([[0.0, 0.1, 0.25, 0.9, 1.0]], 0, 2, 0.1),
+    ([[3, 4, 7, 9]], 3, 10, 1.0),
+    ([sorted(np.random.RandomState(0).uniform(0, 50, 40).tolist())], 0, 50, 0.5),
+    ([[0, 0, 1, 5, 5, 5]], 0, 11, 1.0),
+    ([[], []], 0, 11, 1.0),
+]
+
+
+@pytest.mark.skipif(not HAS_ELEPHANT, reason="elephant not installed")
+@pytest.mark.parametrize("spike_lists,t0,t1,dt", CASES)
+def test_dense_matches_elephant(spike_lists, t0, t1, dt):
+    trains = _make_trains(spike_lists, t0, t1, dt)
+    expected = BinnedSpikeTrain(trains, bin_size=dt * pq.ms).to_array().astype(bool)
+    np.testing.assert_array_equal(bin_spike_trains(trains, bin_size=dt * pq.ms), expected)
+
+
+@pytest.mark.skipif(not HAS_ELEPHANT, reason="elephant not installed")
 @pytest.mark.parametrize("spike_lists,t0,t1,dt", CASES)
 def test_sparse_matches_elephant_explicit_bounds(spike_lists, t0, t1, dt):
-    # Mirrors the force-model usage: explicit t_start/t_stop + sparse bool.
     trains = _make_trains(spike_lists, t0, t1, dt)
     expected = BinnedSpikeTrain(
         trains, bin_size=dt * pq.ms, t_start=t0 * pq.ms, t_stop=t1 * pq.ms
@@ -67,32 +142,3 @@ def test_sparse_matches_elephant_explicit_bounds(spike_lists, t0, t1, dt):
     )
     assert observed.shape == expected.shape
     assert (observed != expected).nnz == 0
-
-
-def test_explicit_subrange_bounds_match_elephant():
-    # Bin over a window strictly inside the train's [t_start, t_stop] (allowed
-    # by elephant), exercising the spike filtering against custom bounds.
-    st = SpikeTrain(
-        [1, 3, 5, 7, 9] * pq.ms, t_start=0 * pq.ms, t_stop=20 * pq.ms
-    )
-    st.sampling_period = 1 * pq.ms
-    expected = (
-        BinnedSpikeTrain([st], bin_size=1 * pq.ms, t_start=2 * pq.ms, t_stop=8 * pq.ms)
-        .to_array()
-        .astype(bool)
-    )
-    observed = bin_spike_trains(
-        [st], bin_size=1 * pq.ms, t_start=2 * pq.ms, t_stop=8 * pq.ms
-    )
-    np.testing.assert_array_equal(observed, expected)
-
-
-def test_tolerance_shifts_edge_spikes_like_elephant():
-    # A spike a hair below a bin edge should snap into the next bin (elephant's
-    # tolerance behaviour), not stay in the lower bin.
-    edge = 5.0 - 1e-12
-    trains = _make_trains([[edge]], 0, 11, 1.0)
-    expected = BinnedSpikeTrain(trains, bin_size=1.0 * pq.ms).to_array().astype(bool)
-    observed = bin_spike_trains(trains, bin_size=1.0 * pq.ms)
-    np.testing.assert_array_equal(observed, expected)
-    assert observed[0, 5]  # snapped up to bin 5, not 4
