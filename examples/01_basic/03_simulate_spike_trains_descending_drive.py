@@ -83,6 +83,7 @@ def population_psth(spiketrains, bin_size):
     n_bins = int((t_stop - t_start) / bs)
     edges = t_start + np.arange(n_bins + 1) * bs
     spikes = np.concatenate([st.rescale(pq.s).magnitude for st in spiketrains])
+    spikes = spikes[(spikes >= edges[0]) & (spikes < edges[-1])]  # drop right-edge spikes
     counts, _ = np.histogram(spikes, bins=edges)
     return counts, edges[:-1]
 

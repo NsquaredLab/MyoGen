@@ -85,6 +85,7 @@ def rasterplot_rates(spiketrains, filter_function=None):
 
     ax.eventplot(
         [st.rescale(pq.s).magnitude for st in spiketrains],
+        lineoffsets=np.arange(len(spiketrains)),
         colors="black",
         linelengths=0.8,
         linewidths=0.7,
@@ -355,6 +356,7 @@ if len(active_spiketrains) > 0:
     all_spikes = np.concatenate(
         [st.rescale(pq.s).magnitude for st in active_spiketrains]
     )
+    all_spikes = all_spikes[(all_spikes >= edges[0]) & (all_spikes < edges[-1])]
     counts, _ = np.histogram(all_spikes, bins=edges)
     rate_hz = counts / sampling_period_s / len(active_spiketrains)
     rate_hz = gaussian_filter1d(rate_hz, sigma=(15e-3) / sampling_period_s, mode="constant")
