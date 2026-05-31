@@ -71,9 +71,8 @@ windowed = spiketrain.time_slice(t_start, t_stop)
 # Calculate RMS
 rms = np.sqrt(np.mean(signal.magnitude ** 2))
 
-# Firing rate (requires elephant)
-import elephant.statistics
-rate = elephant.statistics.mean_firing_rate(spiketrain)
+# Mean firing rate (spikes over the active duration)
+rate = (len(spiketrain) / (spiketrain.t_stop - spiketrain.t_start)).rescale("Hz")
 ```
 
 ## Iteration Examples

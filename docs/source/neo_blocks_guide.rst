@@ -93,14 +93,12 @@ The ``SPIKE_TRAIN__Block`` stores neural firing patterns from motor neuron pools
 
 .. code-block:: python
 
-   import elephant.statistics
-
    motor_pool = spike_train__Block.segments[0]
    firing_rates = []
 
    for spiketrain in motor_pool.spiketrains:
        if len(spiketrain) > 0:
-           rate = elephant.statistics.mean_firing_rate(spiketrain)
+           rate = (len(spiketrain) / (spiketrain.t_stop - spiketrain.t_start)).rescale("Hz")
            firing_rates.append(rate.magnitude)
 
    print(f"Mean firing rate: {np.mean(firing_rates):.2f} Hz")

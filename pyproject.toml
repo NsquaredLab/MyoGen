@@ -49,10 +49,6 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
-elephant = [
-    "elephant>=1.1.1",
-    "viziphant>=0.4.0",
-]
 nwb = [
     "pynwb>=2.8.0",
     "nwbinspector>=0.5.0",
@@ -78,11 +74,6 @@ dev = [
     "poethepoet>=0.37.0",
     "pytest>=8.0",
     "scipy-stubs>=1.16.1.0",
-    # Optional runtime extras pulled into the dev env so the full
-    # pytest suite (including elephant-dependent firing-rate tests)
-    # runs out of the box.
-    "elephant>=1.1.1",
-    "viziphant>=0.4.0",
 ]
 docs = [
     "enum-tools[sphinx]>=0.12.0",
@@ -102,11 +93,6 @@ docs = [
     # NWB support for examples
     "pynwb>=2.8.0",
     "nwbinspector>=0.5.0",
-    # Spike-train analysis + visualization needed by several examples
-    # (elephant is also declared as an optional extra; the docs build
-    # needs both for sphinx-gallery to render those examples).
-    "elephant>=1.1.1",
-    "viziphant>=0.4.0",
 ]
 
 [tool.pytest.ini_options]
