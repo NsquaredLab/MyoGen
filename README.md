@@ -187,6 +187,48 @@ If you use MyoGen in your research, please cite:
 
 Contributions welcome! See [issues](https://github.com/NsquaredLab/MyoGen/issues) if you want to add a feature or fix a bug.
 
+# Contributors ✨
+
+MyoGen is authored by **Raul C. Sîmpetru** and **Ricardo G. Molinari** and developed at the [N-squared Lab](https://github.com/NsquaredLab).
+
+Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/docs/en/emoji-key)):
+
+<!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
+[![All Contributors](https://img.shields.io/badge/all_contributors-6-orange.svg?style=flat-square)](#contributors-)
+<!-- ALL-CONTRIBUTORS-BADGE:END -->
+
+<!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
+<!-- prettier-ignore-start -->
+<!-- markdownlint-disable -->
+<table>
+  <tbody>
+    <tr>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/RaulSimpetru"><img src="https://avatars.githubusercontent.com/u/26602941?v=4?s=100" width="100px;" alt="Raul C. Sîmpetru"/><br /><sub><b>Raul C. Sîmpetru</b></sub></a><br /><a href="https://github.com/NsquaredLab/MyoGen/commits?author=RaulSimpetru" title="Code">💻</a> <a href="#maintenance-RaulSimpetru" title="Maintenance">🚧</a> <a href="#research-RaulSimpetru" title="Research">🔬</a> <a href="#ideas-RaulSimpetru" title="Ideas, Planning, & Feedback">🤔</a> <a href="#projectManagement-RaulSimpetru" title="Project Management">📆</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/molinaris"><img src="https://avatars.githubusercontent.com/u/18554447?v=4?s=100" width="100px;" alt="Ricardo G. Molinari"/><br /><sub><b>Ricardo G. Molinari</b></sub></a><br /><a href="#research-molinaris" title="Research">🔬</a> <a href="#ideas-molinaris" title="Ideas, Planning, & Feedback">🤔</a> <a href="#maintenance-molinaris" title="Maintenance">🚧</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/DRohlf"><img src="https://avatars.githubusercontent.com/u/199583526?v=4?s=100" width="100px;" alt="Devon R. Rohlf"/><br /><sub><b>Devon R. Rohlf</b></sub></a><br /><a href="https://github.com/NsquaredLab/MyoGen/commits?author=DRohlf" title="Code">💻</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/rnwatanabe"><img src="https://avatars.githubusercontent.com/u/12960874?v=4?s=100" width="100px;" alt="Renato N. Watanabe"/><br /><sub><b>Renato N. Watanabe</b></sub></a><br /><a href="https://github.com/NsquaredLab/MyoGen/commits?author=rnwatanabe" title="Code">💻</a> <a href="#research-rnwatanabe" title="Research">🔬</a> <a href="#ideas-rnwatanabe" title="Ideas, Planning, & Feedback">🤔</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/joaohbbittar"><img src="https://avatars.githubusercontent.com/u/140083565?v=4?s=100" width="100px;" alt="João Bittar"/><br /><sub><b>João Bittar</b></sub></a><br /><a href="#ideas-joaohbbittar" title="Ideas, Planning, & Feedback">🤔</a> <a href="https://github.com/NsquaredLab/MyoGen/issues?q=author%3Ajoaohbbittar" title="Bug reports">🐛</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/veylantis"><img src="https://avatars.githubusercontent.com/u/93032025?v=4?s=100" width="100px;" alt="BraveUnicorn"/><br /><sub><b>BraveUnicorn</b></sub></a><br /><a href="https://github.com/NsquaredLab/MyoGen/commits?author=veylantis" title="Code">💻</a></td>
+    </tr>
+  </tbody>
+  <tfoot>
+    <tr>
+      <td align="center" size="13px" colspan="7">
+        <img src="https://raw.githubusercontent.com/all-contributors/all-contributors-cli/1b8533af435da9854653492b1327a23a4dbd0a10/assets/logo-small.svg">
+          <a href="https://all-contributors.js.org/docs/en/bot/usage">Add your contributions</a>
+        </img>
+      </td>
+    </tr>
+  </tfoot>
+</table>
+
+<!-- markdownlint-restore -->
+<!-- prettier-ignore-end -->
+
+<!-- ALL-CONTRIBUTORS-LIST:END -->
+
+This project follows the [all-contributors](https://github.com/all-contributors/all-contributors) specification. Contributions of any kind welcome!
+
 # License
 
 MyoGen is AGPL licensed. See [LICENSE](https://github.com/NsquaredLab/MyoGen/blob/main/LICENSE.md) for details.
