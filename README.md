@@ -189,7 +189,7 @@ Contributions welcome! See [issues](https://github.com/NsquaredLab/MyoGen/issues
 
 # Contributors ✨
 
-MyoGen is authored by **Raul C. Sîmpetru** and **Ricardo G. Molinari** and developed at the [Nsquared Lab](https://nsquared.tf.fau.de/) (Neuromuscular Physiology and Neural Interfacing Laboratory) at FAU Erlangen-Nürnberg.
+MyoGen is authored by **Raul C. Sîmpetru** and **Ricardo G. Molinari**. It is a joint project of the [Nsquared Lab](https://nsquared.tf.fau.de/) (Neuromuscular Physiology and Neural Interfacing Laboratory) at FAU Erlangen-Nürnberg, the [NER Lab](https://www.ceb.unicamp.br/pesquisa/laboratorios/laboratorio-de-pesquisa-em-neuroengenharia/) (Neural Engineering Research Laboratory) at the University of Campinas, and the [BMClab](https://bmclab.pesquisa.ufabc.edu.br/) (Biomechanics and Motor Control Laboratory) at the Federal University of ABC.
 
 Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/docs/en/emoji-key)):
 
