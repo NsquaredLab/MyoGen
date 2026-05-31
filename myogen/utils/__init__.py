@@ -1,6 +1,14 @@
 """MyoGen utility functions and helpers."""
 
 from myogen.utils.continuous_saver import ContinuousSaver, convert_chunks_to_neo
+from myogen.utils.emg_noise import (
+    add_realistic_noise,
+    calibrate_baseline_drift_profile,
+    calibrate_realistic_noise_profile,
+    generate_realistic_noise,
+    estimate_noise_rms_from_recording,
+    tune_noise_profile_with_optuna,
+)
 from myogen.utils.neo import (
     create_grid_signal,
     signal_to_grid,
@@ -39,4 +47,11 @@ __all__ = [
     "export_to_nwb",
     "export_simulation_to_nwb",
     "validate_nwb",
+    # Colored EMG noise model (iEMG-calibrated)
+    "add_realistic_noise",
+    "calibrate_baseline_drift_profile",
+    "calibrate_realistic_noise_profile",
+    "generate_realistic_noise",
+    "estimate_noise_rms_from_recording",
+    "tune_noise_profile_with_optuna",
 ]
