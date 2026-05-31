@@ -96,6 +96,53 @@ def test_surface_emg_uses_convolution_not_correlation(monkeypatch):
     np.testing.assert_allclose(observed, expected)
 
 
+def test_surface_emg_resampling_handles_fp_rounding_lengths(monkeypatch):
+    """Regression for issue #12.
+
+    The temporal resampling in ``simulate_surface_emg`` built its interpolation
+    grids with ``np.arange`` and a float step. When ``N * timestep`` is not
+    exactly representable in IEEE 754 the grid came out one element too long,
+    so ``np.interp`` raised ``ValueError: fp and xp are not of the same
+    length``. ``N = 1001`` bins at ``dt = 1 ms`` hits that case
+    (``1001 * 0.001 == 1.0010000000000001``).
+    """
+    from myogen.simulator.core.emg.surface import surface_emg as surface_module
+    from myogen.simulator.core.emg.surface.surface_emg import SurfaceEMG
+    from myogen.utils.neo import create_grid_signal
+
+    monkeypatch.setattr(surface_module, "HAS_CUPY", False)
+
+    simulator = object.__new__(SurfaceEMG)
+    simulator._MUs_to_simulate = [0]
+    simulator._sampling_frequency__Hz = 1000.0
+    simulator._surface_emg__Block = None
+    simulator._spike_train__Block = None
+
+    muap_block = Block()
+    group = Group(name="ElectrodeArray_0")
+    segment = Segment(name="MUAP_0")
+    muap = np.array([[[1.0]], [[2.0]], [[3.0]], [[4.0]]])
+    segment.analogsignals.append(
+        create_grid_signal(muap * pq.mV, grid_shape=(1, 1), sampling_rate=1000 * pq.Hz)
+    )
+    group.segments.append(segment)
+    muap_block.groups.append(group)
+    simulator._muaps__Block = muap_block
+
+    block = Block()
+    pool = Segment(name="Pool_0")
+    spiketrain = SpikeTrain([5] * pq.ms, t_start=0 * pq.ms, t_stop=1001 * pq.ms)
+    spiketrain.sampling_period = 1 * pq.ms
+    pool.spiketrains.append(spiketrain)
+    block.segments.append(pool)
+
+    # Must not raise, and the resampled output keeps the native length
+    # (output rate 1 kHz == spike-train rate, so N stays 1001).
+    result = SurfaceEMG.simulate_surface_emg(simulator, block, verbose=False)
+    observed = result.groups[0].segments[0].analogsignals[0].magnitude[:, 0]
+    assert observed.shape[0] == 1001
+
+
 def test_intramuscular_emg_uses_convolution_not_correlation(monkeypatch):
     from myogen.simulator.core.emg.intramuscular import (
         intramuscular_emg as intramuscular_module,
