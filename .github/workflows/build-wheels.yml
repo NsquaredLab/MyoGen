@@ -151,7 +151,10 @@ jobs:
 
       - name: Install wheel
         run: |
-          pip install dist/*.whl
+          # dist/ now holds both cp312 and cp313 wheels; install only the one
+          # matching this runner's Python so pip doesn't reject the other ABI.
+          tag="cp$(echo '${{ matrix.python-version }}' | tr -d .)"
+          pip install dist/*"${tag}-${tag}"*.whl
 
       - name: Test import
         run: |
