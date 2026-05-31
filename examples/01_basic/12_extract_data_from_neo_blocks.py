@@ -22,10 +22,10 @@ Each section shows practical code for accessing and analyzing the data.
 
 from pathlib import Path
 
-import elephant.statistics
 import joblib
 import matplotlib.pyplot as plt
 import numpy as np
+import quantities as pq
 import seaborn as sns
 
 from myogen.utils.neo import signal_to_grid
@@ -36,6 +36,12 @@ from myogen.utils.types import (
     SURFACE_EMG__Block,
     SURFACE_MUAP__Block,
 )
+
+
+def _mean_firing_rate(spiketrain):
+    """Mean firing rate of a neo.SpikeTrain (replaces elephant.statistics.mean_firing_rate)."""
+    return (len(spiketrain) / (spiketrain.t_stop - spiketrain.t_start)).rescale(pq.Hz)
+
 
 plt.style.use("fivethirtyeight")
 sns.set_palette("husl")
@@ -101,7 +107,7 @@ if "spike_trains" in available_files:
         print(f"  Last spike: {spike_times__s[-1]:.4f} s")
 
         # Calculate firing rate
-        firing_rate = elephant.statistics.mean_firing_rate(spiketrain)
+        firing_rate = _mean_firing_rate(spiketrain)
         print(f"  Mean firing rate: {firing_rate:.2f}")
 
     # Calculate statistics across all neurons
@@ -110,7 +116,7 @@ if "spike_trains" in available_files:
 
     for st in motor_pool.spiketrains:
         if len(st) > 0:
-            rate = elephant.statistics.mean_firing_rate(st)
+            rate = _mean_firing_rate(st)
             firing_rates.append(rate.magnitude)
             active_neurons += 1
 

@@ -39,7 +39,6 @@ Both workflows yield identical results; the manual version is provided purely fo
 
 from pathlib import Path
 
-import elephant
 import joblib
 import neuron
 import numpy as np
@@ -48,7 +47,7 @@ import seaborn as sns
 from matplotlib import pyplot as plt
 from neo import Block, Segment, SpikeTrain
 from neuron import h
-from viziphant.rasterplot import rasterplot_rates
+from scipy.ndimage import gaussian_filter1d
 
 from myogen import get_random_generator
 from myogen.simulator.neuron.populations import AlphaMN__Pool
@@ -60,6 +59,40 @@ from myogen.utils.neuron.inject_currents_into_populations import (
 from myogen.utils.nmodl import load_nmodl_mechanisms
 
 plt.style.use("fivethirtyeight")
+
+
+def mean_firing_rate(spiketrain):
+    """Mean firing rate of a neo.SpikeTrain (replaces elephant.statistics.mean_firing_rate)."""
+    return (len(spiketrain) / (spiketrain.t_stop - spiketrain.t_start)).rescale(pq.Hz)
+
+
+def rasterplot_rates(spiketrains, filter_function=None):
+    """Native spike raster with top/right marginal axes.
+
+    Lightweight stand-in for ``viziphant.rasterplot.rasterplot_rates``: draws a
+    spike raster (one row per train), a right marginal showing each train's mean
+    firing rate, and an (initially empty) top marginal that the caller fills with
+    the smoothed population rate. Returns ``(ax, axhistx, axhisty)`` as
+    absolutely-positioned axes so manual position tweaks downstream still work.
+    """
+    if filter_function is not None:
+        spiketrains = [st for st in spiketrains if filter_function(st)]
+
+    fig = plt.figure()
+    ax = fig.add_axes((0.10, 0.10, 0.62, 0.62))
+    axhistx = fig.add_axes((0.10, 0.74, 0.62, 0.16), sharex=ax)
+    axhisty = fig.add_axes((0.74, 0.10, 0.16, 0.62), sharey=ax)
+
+    ax.eventplot(
+        [st.rescale(pq.s).magnitude for st in spiketrains],
+        colors="black",
+        linelengths=0.8,
+        linewidths=0.7,
+    )
+    rates = [float(mean_firing_rate(st).magnitude) for st in spiketrains]
+    axhisty.barh(np.arange(len(spiketrains)), rates, height=0.85, color="C0")
+    ax.set_ylim(-1, max(len(spiketrains), 1))
+    return ax, axhistx, axhisty
 
 ##############################################################################
 # Create Motor Neuron Populations (Pools)
@@ -267,7 +300,7 @@ for i, (manual_seg, utility_seg) in enumerate(
 firing_rates = [
     np.array(
         [
-            elephant.statistics.mean_firing_rate(st__s.time_slice(st__s.min(), st__s.max()))
+            mean_firing_rate(st__s.time_slice(st__s.min(), st__s.max()))
             for st__s in spike_train__segment.spiketrains
             if len(st__s) > 1  # Need at least 2 spikes to compute rate over spike range
         ]
@@ -312,19 +345,21 @@ axhistx.clear()
 
 
 if len(active_spiketrains) > 0:
-    from elephant.kernels import GaussianKernel
-
-    rate = elephant.statistics.instantaneous_rate(
-        active_spiketrains,
-        sampling_period=(h.dt * pq.ms).rescale(pq.s),
-        kernel=GaussianKernel(sigma=15 * pq.ms),  # type: ignore
+    # Population firing rate over time, Gaussian-smoothed (sigma = 15 ms).
+    # Native replacement for elephant.statistics.instantaneous_rate.
+    sampling_period_s = (h.dt * pq.ms).rescale(pq.s).magnitude
+    t_start = min(st.t_start for st in active_spiketrains).rescale(pq.s).magnitude
+    t_stop = max(st.t_stop for st in active_spiketrains).rescale(pq.s).magnitude
+    n_bins = int(round((t_stop - t_start) / sampling_period_s))
+    edges = t_start + np.arange(n_bins + 1) * sampling_period_s
+    all_spikes = np.concatenate(
+        [st.rescale(pq.s).magnitude for st in active_spiketrains]
     )
+    counts, _ = np.histogram(all_spikes, bins=edges)
+    rate_hz = counts / sampling_period_s / len(active_spiketrains)
+    rate_hz = gaussian_filter1d(rate_hz, sigma=(15e-3) / sampling_period_s, mode="constant")
 
-    axhistx.plot(
-        rate.times.rescale(pq.s).magnitude,
-        rate.magnitude.mean(axis=1).flatten(),
-        linewidth=2,
-    )
+    axhistx.plot(edges[:-1] + sampling_period_s / 2, rate_hz, linewidth=2)
     axhistx.set_ylabel("FR (pps)")
     axhistx.set_xlim(ax.get_xlim())  # Match x-axis with raster plot
 

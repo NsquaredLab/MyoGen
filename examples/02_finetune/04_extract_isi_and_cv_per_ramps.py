@@ -49,7 +49,6 @@ import json
 import warnings
 from pathlib import Path
 
-import elephant
 import joblib
 import numpy as np
 import quantities as pq
@@ -64,6 +63,11 @@ from myogen.simulator.neuron import Network
 from myogen.simulator.neuron.populations import AlphaMN__Pool, DescendingDrive__Pool
 from myogen.utils.helper import calculate_firing_rate_statistics
 from myogen.utils.nmodl import load_nmodl_mechanisms
+
+
+def _mean_firing_rate(spiketrain):
+    """Mean firing rate of a neo.SpikeTrain (replaces elephant.statistics.mean_firing_rate)."""
+    return (len(spiketrain) / (spiketrain.t_stop - spiketrain.t_start)).rescale(pq.Hz)
 
 warnings.filterwarnings("ignore")
 plt.style.use("fivethirtyeight")
@@ -460,7 +464,7 @@ print("\nFiring rate analysis:")
 # Calculate DD firing rates
 dd_firing_rates = np.array(
     [
-        elephant.statistics.mean_firing_rate(st__s.time_slice(st__s.min(), st__s.max()))
+        _mean_firing_rate(st__s.time_slice(st__s.min(), st__s.max()))
         for st__s in dd_segment.spiketrains
         if len(st__s) > 0
     ]
@@ -469,7 +473,7 @@ dd_firing_rates = np.array(
 # Calculate MN firing rates
 mn_firing_rates = np.array(
     [
-        elephant.statistics.mean_firing_rate(st__s.time_slice(st__s.min(), st__s.max()))
+        _mean_firing_rate(st__s.time_slice(st__s.min(), st__s.max()))
         for st__s in mn_segment.spiketrains
         if len(st__s) > 0
     ]
