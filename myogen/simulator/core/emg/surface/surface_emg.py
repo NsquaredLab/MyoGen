@@ -833,22 +833,24 @@ class SurfaceEMG:
                     ),
                 )
             )
+            # Native (spike-train-rate) and target (output-rate) time axes,
+            # built from integer sample counts so each grid matches its data
+            # length exactly while preserving the original sampling periods
+            # (dt for the native axis, 1 / fs for the target axis). np.arange
+            # with a float step can land one element off when N * timestep is
+            # not exactly representable in IEEE 754, which makes np.interp
+            # raise on an xp/fp length mismatch (issue #12).
+            resample_timestep__s = spiketrain_timestep__ms.rescale(pq.s).magnitude
+            n_native = surface_emg.shape[-1]
+            n_resampled = surface_emg_resampled.shape[-1]
+            xp_time = np.arange(n_native) * resample_timestep__s
+            x_time = np.arange(n_resampled) / self._sampling_frequency__Hz
             for pool_idx in range(n_pools):
                 for row_idx in range(n_rows):
                     for col_idx in range(n_cols):
                         surface_emg_resampled[pool_idx, row_idx, col_idx] = np.interp(
-                            x=np.arange(
-                                start=0,
-                                stop=surface_emg.shape[-1]
-                                * spiketrain_timestep__ms.rescale(pq.s).magnitude,
-                                step=1 / self._sampling_frequency__Hz,
-                            ),
-                            xp=np.arange(
-                                start=0,
-                                stop=surface_emg.shape[-1]
-                                * spiketrain_timestep__ms.rescale(pq.s).magnitude,
-                                step=spiketrain_timestep__ms.rescale(pq.s).magnitude,
-                            ),
+                            x=x_time,
+                            xp=xp_time,
                             fp=surface_emg[pool_idx, row_idx, col_idx],
                         )
 
