@@ -25,21 +25,23 @@ jobs:
         os: [ubuntu-latest, macos-latest]
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: Build wheels
         uses: pypa/cibuildwheel@v2.21
         env:
-          # Only build for Python 3.12+
-          CIBW_BUILD: "cp312-*"
+          # Build for Python 3.12 and 3.13
+          CIBW_BUILD: "cp312-* cp313-*"
 
           # Skip 32-bit builds and musl (Alpine) on Linux
           CIBW_SKIP: "*-win32 *-manylinux_i686 *-musllinux_*"
 
-          # Install system dependencies before building (Linux)
-          # openblas-devel needed if scipy builds from source
+          # Install system dependencies before building (Linux).
+          # On manylinux_2_28 scipy installs from a prebuilt wheel, so the
+          # openblas-devel that the old source-build fallback needed (and which
+          # lives in the PowerTools repo on AlmaLinux 8) is no longer required.
           CIBW_BEFORE_ALL_LINUX: |
-            yum install -y openmpi-devel openblas-devel
+            yum install -y openmpi-devel
 
           # Install system dependencies before building (macOS)
           CIBW_BEFORE_ALL_MACOS: |
@@ -57,8 +59,9 @@ jobs:
             pip install neuron==8.2.7
             cd myogen/simulator/nmodl_files && nrnivmodl .
 
-          # Use manylinux2014 (manylinux_2_17)
-          CIBW_MANYLINUX_X86_64_IMAGE: manylinux2014
+          # manylinux_2_28 (glibc >= 2.28) so scipy >= 1.17 prebuilt wheels are
+          # available in the build container (scipy dropped manylinux2014).
+          CIBW_MANYLINUX_X86_64_IMAGE: manylinux_2_28
 
           # Custom repair to preserve NEURON mechanisms while adding proper platform tags
           # Standard tools (auditwheel/delocate) strip the architecture directories
@@ -69,7 +72,7 @@ jobs:
             wheel = Path(sys.argv[1])
             dest = Path(sys.argv[2])
             # Rename to manylinux without modifying contents
-            new_name = wheel.name.replace('linux_', 'manylinux_2_17_').replace('manylinux2014_', 'manylinux_2_17_')
+            new_name = wheel.name.replace('linux_', 'manylinux_2_28_').replace('manylinux2014_', 'manylinux_2_28_')
             shutil.copy2(wheel, dest / new_name)
             " {wheel} {dest_dir}
 
@@ -80,7 +83,7 @@ jobs:
         run: ls -lh wheelhouse/
 
       - name: Upload wheels
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: wheels-${{ matrix.os }}
           path: wheelhouse/*.whl
@@ -90,10 +93,10 @@ jobs:
     name: Build source distribution
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: Set up Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v6
         with:
           python-version: "3.12"
 
@@ -106,7 +109,7 @@ jobs:
         run: python -m build --sdist --outdir dist/
 
       - name: Upload sdist
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: sdist
           path: dist/*.tar.gz
@@ -119,16 +122,16 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest, macos-latest]  # Match build_wheels matrix
-        python-version: ["3.12"]
+        python-version: ["3.12", "3.13"]
 
     steps:
       - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v6
         with:
           python-version: ${{ matrix.python-version }}
 
       - name: Download wheels
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v7
         with:
           name: wheels-${{ matrix.os }}
           path: dist/
@@ -151,7 +154,10 @@ jobs:
 
       - name: Install wheel
         run: |
-          pip install dist/*.whl
+          # dist/ now holds both cp312 and cp313 wheels; install only the one
+          # matching this runner's Python so pip doesn't reject the other ABI.
+          tag="cp$(echo '${{ matrix.python-version }}' | tr -d .)"
+          pip install dist/*"${tag}-${tag}"*.whl
 
       - name: Test import
         run: |
@@ -174,14 +180,14 @@ jobs:
 
     steps:
       - name: Download all artifacts
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v7
         with:
           path: dist/
           merge-multiple: true
 
       - name: Upload artifacts to GitHub Release
         if: github.event_name == 'release'
-        uses: softprops/action-gh-release@v1
+        uses: softprops/action-gh-release@v3
         with:
           files: dist/*
 

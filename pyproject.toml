@@ -3,7 +3,7 @@ name = "MyoGen"
 version = "0.9.0"
 description = "Modular and extensible neuromuscular simulation framework for generating physiologically grounded motor-unit activity, muscle force, and EMG signals (surface and intramuscular)"
 readme = "README.md"
-requires-python = ">=3.12,<3.13"
+requires-python = ">=3.12,<3.14"
 license = "AGPL-3.0-or-later"
 authors = [
     {name = "Raul C. Sîmpetru", email = "raul.simpetru@fau.de"},
@@ -21,6 +21,7 @@ classifiers = [
     "Operating System :: Microsoft :: Windows",
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
     "Programming Language :: Python :: 3 :: Only",
     "Topic :: Scientific/Engineering",
     "Topic :: Scientific/Engineering :: Bio-Informatics",
@@ -35,7 +36,7 @@ dependencies = [
     #"neuron-nightly>=9.0a1.dev1492",
     "neo>=0.14.0",
     "numba>=0.61.2",
-    "numpy>=1.26,<2.0",
+    "numpy>=1.26",
     "optuna>=4.5.0",
     "pandas>=2.0",
     "quantities>=0.16.2",
@@ -49,10 +50,6 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
-elephant = [
-    "elephant>=1.1.1",
-    "viziphant>=0.4.0",
-]
 nwb = [
     "pynwb>=2.8.0",
     "nwbinspector>=0.5.0",
@@ -78,11 +75,6 @@ dev = [
     "poethepoet>=0.37.0",
     "pytest>=8.0",
     "scipy-stubs>=1.16.1.0",
-    # Optional runtime extras pulled into the dev env so the full
-    # pytest suite (including elephant-dependent firing-rate tests)
-    # runs out of the box.
-    "elephant>=1.1.1",
-    "viziphant>=0.4.0",
 ]
 docs = [
     "enum-tools[sphinx]>=0.12.0",
@@ -102,11 +94,6 @@ docs = [
     # NWB support for examples
     "pynwb>=2.8.0",
     "nwbinspector>=0.5.0",
-    # Spike-train analysis + visualization needed by several examples
-    # (elephant is also declared as an optional extra; the docs build
-    # needs both for sphinx-gallery to render those examples).
-    "elephant>=1.1.1",
-    "viziphant>=0.4.0",
 ]
 
 [tool.pytest.ini_options]
@@ -116,7 +103,7 @@ testpaths = ["tests"]
 setup_myogen = "python -c 'from myogen import _setup_myogen; _setup_myogen()'"
 
 [build-system]
-requires = ["setuptools>=61.0", "Cython>=3.0.0", "numpy>=1.26,<2.0", "scipy>=1.15.3,<1.17"]
+requires = ["setuptools>=61.0", "Cython>=3.0.0", "numpy>=2.0", "scipy>=1.15.3"]
 build-backend = "setuptools.build_meta"
 
 [tool.setuptools]

@@ -31,9 +31,9 @@ coherence analysis, force timeseries, and detailed raster plots.
 
 **External Libraries Used**:
 
-- **Elephant** (``elephant.conversion.BinnedSpikeTrain``):
+- **MyoGen** (``myogen.utils.bin_spike_trains``):
   Converts NEO spike trains to binned format for coherence analysis.
-  Part of the Electrophysiology Analysis Toolkit, designed to work with NEO.
+  Dependency-free binning of NEO spike trains into boolean occupancy matrices.
 
 - **SciPy** (``scipy.signal.coherence``):
   Computes magnitude-squared coherence between signals using Welch's method.
@@ -75,7 +75,6 @@ against experimental data, analyze motor unit synchronization patterns.
 
 from pathlib import Path
 
-import elephant
 import joblib
 import matplotlib.gridspec as gridspec
 import matplotlib.pyplot as plt
@@ -86,6 +85,8 @@ import seaborn as sns
 from joblib import Parallel, delayed
 from matplotlib.patches import Rectangle
 from scipy import signal as scipy_signal
+
+from myogen.utils import bin_spike_trains
 
 plt.style.use("fivethirtyeight")
 
@@ -190,15 +191,11 @@ for window_idx, (t_start, t_stop) in enumerate(time_windows):
     aMN_spikes_windowed = [st.time_slice(t_start * pq.s, t_stop * pq.s) for st in aMN_spikes]
 
     # Convert to binned spike trains
-    spike_trains_binned = elephant.conversion.BinnedSpikeTrain(
+    spike_trains_binned = bin_spike_trains(
         aMN_spikes_windowed,
-        n_bins=int(
-            (
-                aMN_spikes_windowed[0].sampling_rate.rescale("1/s")
-                * aMN_spikes_windowed[0].duration.rescale("s")
-            ).magnitude
-        ),
-    ).to_sparse_bool_array()
+        bin_size=(1.0 / aMN_spikes_windowed[0].sampling_rate.rescale("1/s")),
+        sparse=True,
+    )
 
     # Generate random pairs (composite spike trains)
     np.random.seed(42)

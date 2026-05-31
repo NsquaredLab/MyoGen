@@ -18,6 +18,7 @@ from __future__ import annotations
 import math
 
 import numpy as np
+from scipy.integrate import trapezoid
 from scipy.special import jv as Jn
 
 from myogen.simulator.core.emg.electrodes import SurfaceElectrodeArray
@@ -945,7 +946,7 @@ def simulate_fiber_unified(
                 kernel_interp = interp1d(z_kernel, kernel_ch, kind='linear',
                                          bounds_error=False, fill_value=0.0)
                 kernel_vals = kernel_interp(kernel_pos)
-                phi_right[idx] = np.trapz(src_vals * kernel_vals, dx=du)
+                phi_right[idx] = trapezoid(src_vals * kernel_vals, dx=du)
 
         # ---- Leftward wave (propagates toward left tendon) ----
         # s_left(t) = -zi - v*t + z0  (flipped direction)
@@ -982,7 +983,7 @@ def simulate_fiber_unified(
                 kernel_interp = interp1d(z_kernel, kernel_ch, kind='linear',
                                          bounds_error=False, fill_value=0.0)
                 kernel_vals = kernel_interp(kernel_pos)
-                phi_left[idx] = np.trapz(src_vals * kernel_vals, dx=du)
+                phi_left[idx] = trapezoid(src_vals * kernel_vals, dx=du)
 
         # Total: rightward minus leftward
         phi[ch] = phi_right - phi_left

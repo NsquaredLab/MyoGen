@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+- **Python 3.13 support.** `requires-python` is widened to `>=3.12,<3.14`, a `Python :: 3.13` classifier is added, and the CI test and wheel matrices now cover 3.13 (`cp312-* cp313-*`). NEURON 8.2.7 ships cp313 wheels, and the Cython extensions build and import under Python 3.13 against NumPy 2.x (verified locally).
+- **NumPy 2.x support.** With `elephant` gone (the reason for the `numpy<2.0` pin), the runtime requirement is relaxed to `numpy>=1.26` and the build-system now compiles the Cython extensions against `numpy>=2.0`. Wheels built against NumPy 2.0 remain backward-compatible with NumPy 1.x at runtime (verified: the compiled extensions import under both NumPy 2.4 and 1.26). The Linux wheel build base is bumped from manylinux2014 to **manylinux_2_28** (glibc ≥ 2.28, which drops EOL CentOS/RHEL 7) so the `scipy<1.17` build cap can be lifted (scipy ≥ 1.17 only ships manylinux_2_28 wheels).
+
+### Removed
+- **`elephant` (and `viziphant`) dependency dropped entirely.** Spike binning via `elephant.conversion.BinnedSpikeTrain` is replaced by a dependency-free `myogen.utils.bin_spike_trains` helper (an exact reimplementation, verified bit-identical across grid/edge/fractional/sparse cases), and `elephant.statistics.isi` in `utils/helper.py` is replaced by `numpy.diff` (identical for sorted spike trains). The example scripts now compute firing rates, PSTHs and rasters natively (the `viziphant` raster is replaced by a small matplotlib helper). The `[elephant]` optional extra and the `elephant`/`viziphant` dev/docs dependencies are removed. `import myogen`, the test suite, and the docs build no longer require `elephant`.
+
 ## [0.9.0] - 2026-04-19
 
 ### Added
