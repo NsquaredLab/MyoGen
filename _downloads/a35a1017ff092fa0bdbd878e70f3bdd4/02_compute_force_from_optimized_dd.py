@@ -18,7 +18,7 @@ settings, and generate realistic force output from motor neuron spike trains.
 .. important::
     **Prerequisites**: This example requires results from the optimization study:
 
-    - Run ``00_optimize_dd_for_target_firing_rate.py`` first
+    - Run ``01_optimize_dd_for_target_firing_rate.py`` first
     - Generates ``dd_optimized_params.json`` in ``results/dd_optimization/``
     - Contains best network parameters for target firing rate
 
@@ -103,7 +103,7 @@ params_file = RESULTS_DIR / "dd_optimized_params.json"
 if not params_file.exists():
     raise FileNotFoundError(
         f"Optimized parameters not found: {params_file}\n"
-        f"Run 00_optimize_dd_for_target_firing_rate.py first!"
+        f"Run 01_optimize_dd_for_target_firing_rate.py first!"
     )
 
 with open(params_file, "r") as f:

@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Loading and Inspecting NWB Data &#8212; MyoGen 0.9.0 Documentation</title>
+    <title>Loading and Inspecting NWB Data &#8212; MyoGen 0.10.0 Documentation</title>
   
   
   
@@ -27,8 +27,8 @@
   </noscript>
   
   <!-- Loaded before other Sphinx assets -->
-  <link href="../../_static/styles/theme.css?digest=7f76b32a3354e82990f2" rel="stylesheet" />
-<link href="../../_static/styles/pydata-sphinx-theme.css?digest=7f76b32a3354e82990f2" rel="stylesheet" />
+  <link href="../../_static/styles/theme.css?digest=0790524f97105ba85085" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=0790524f97105ba85085" rel="stylesheet" />
 
     <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=5349f25f" />
     <link rel="stylesheet" type="text/css" href="../../_static/css/tooltipster.custom.css" />
@@ -40,7 +40,7 @@
     <link rel="stylesheet" type="text/css" href="../../_static/css/tooltipster-sideTip-borderless.min.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/css/micromodal.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/custom.css?v=9b95bd4c" />
-    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery.css?v=d2d258e8" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery.css?v=fd6457a4" />
     <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-binder.css?v=f4aeca0c" />
     <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
     <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
@@ -48,16 +48,17 @@
     <link rel="stylesheet" type="text/css" href="../../_static/custom.css?v=9b95bd4c" />
   
   <!-- So that users can add custom icons -->
-  <script defer src="../../_static/scripts/fontawesome.js?digest=7f76b32a3354e82990f2"></script>
+  <script defer src="../../_static/scripts/fontawesome.js?digest=0790524f97105ba85085"></script>
   <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=7f76b32a3354e82990f2" />
-<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=7f76b32a3354e82990f2" />
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=0790524f97105ba85085" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=0790524f97105ba85085" />
 
     <script src="../../_static/jquery.js?v=5d32c60e"></script>
     <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-    <script src="../../_static/documentation_options.js?v=a82ae3da"></script>
+    <script src="../../_static/documentation_options.js?v=7e54ce6f"></script>
     <script src="../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/sg-tags.js?v=d80f6fa4"></script>
     <script src="../../_static/js/hoverxref.js"></script>
     <script src="../../_static/js/tooltipster.bundle.min.js"></script>
     <script src="../../_static/js/micromodal.min.js"></script>
@@ -69,11 +70,11 @@
     <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="Step-by-step reproduction" href="../02_finetune/index.html" />
+    <link rel="next" title="Noise Parameter Sweep — overview + dense colour-mapped tiles" href="15_noise_parameter_sweep.html" />
     <link rel="prev" title="Extracting Data from Neo Blocks" href="12_extract_data_from_neo_blocks.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="0.9.0" />
+  <meta name="docsearch:version" content="0.10.0" />
   
     
     <script src="../../_static/searchtools.js"></script>
@@ -91,7 +92,9 @@
   
   <button type="button" class="btn rounded-pill" id="pst-back-to-top">
     <i class="fa-solid fa-arrow-up"></i>Back to top</button>
-
+  
+  
+  
   
   <dialog id="pst-search-dialog">
     
@@ -146,8 +149,8 @@
       
     
     
-    <img src="../../_static/myogen_logo.png" class="logo__image only-light" alt="MyoGen 0.9.0 Documentation - Home"/>
-    <img src="../../_static/myogen_logo.png" class="logo__image only-dark pst-js-only" alt="MyoGen 0.9.0 Documentation - Home"/>
+    <img src="../../_static/myogen_logo.png" class="logo__image only-light" alt="MyoGen 0.10.0 Documentation - Home"/>
+    <img src="../../_static/myogen_logo.png" class="logo__image only-dark pst-js-only" alt="MyoGen 0.10.0 Documentation - Home"/>
   
   
 </a></div>
@@ -156,7 +159,7 @@
 <div class="nav-item">
   <div class="version-switcher__container dropdown">
       <button id="version-switcher-button" type="button" class="version-switcher__button btn btn-sm navbar-btn" aria-haspopup="true" aria-expanded="false">
-          Version 0.9.0
+          Version 0.10.0
       </button>
       
       
@@ -219,11 +222,18 @@
       
         <div class="navbar-item">
 
-<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
-  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
-  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
-  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
-</button></div>
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
       
         <div class="navbar-item"><ul class="navbar-icon-links"
     aria-label="Icon Links">
@@ -236,8 +246,7 @@
           
           
           
-          <a href="https://github.com/NSquaredLab/MyoGen" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i>
-            <span class="sr-only">GitHub</span></a>
+          <a href="https://github.com/NSquaredLab/MyoGen" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
         </li>
 </ul></div>
       
@@ -317,11 +326,18 @@
         
           <div class="navbar-item">
 
-<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
-  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
-  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
-  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
-</button></div>
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
         
           <div class="navbar-item"><ul class="navbar-icon-links"
     aria-label="Icon Links">
@@ -334,8 +350,7 @@
           
           
           
-          <a href="https://github.com/NSquaredLab/MyoGen" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i>
-            <span class="sr-only">GitHub</span></a>
+          <a href="https://github.com/NSquaredLab/MyoGen" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
         </li>
 </ul></div>
         
@@ -370,6 +385,7 @@
 <li class="toctree-l2"><a class="reference internal" href="11_simulate_spinal_network.html">Spinal Network Simulation with Systematic Tendon Tap Protocol</a></li>
 <li class="toctree-l2"><a class="reference internal" href="12_extract_data_from_neo_blocks.html">Extracting Data from Neo Blocks</a></li>
 <li class="toctree-l2 current active"><a class="current reference internal" href="#">Loading and Inspecting NWB Data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="15_noise_parameter_sweep.html">Noise Parameter Sweep — overview + dense colour-mapped tiles</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../02_finetune/index.html">Step-by-step reproduction</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -508,7 +524,9 @@ NWB file for demonstration purposes.</p>
 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;(OK) NWBInspector available&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
-<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>(OK) PyNWB version: 3.1.3
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>/home/runner/work/MyoGen/MyoGen/examples/01_basic/13_load_and_inspect_nwb_data.py:53: DeprecationWarning: The &#39;inspector_tools&#39; submodule has been deprecated. Please import the helper functions from the top-level package.
+  from nwbinspector.inspector_tools import format_messages
+(OK) PyNWB version: 3.1.3
 (OK) NWBInspector available
 </pre></div>
 </div>
@@ -525,11 +543,12 @@ a minimal example file for demonstration.</p>
     <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Creating a minimal demonstration NWB file...&quot;</span><span class="p">)</span>
 
     <span class="c1"># Create a minimal NWB file for demonstration</span>
-    <span class="kn">from</span><span class="w"> </span><span class="nn">datetime</span><span class="w"> </span><span class="kn">import</span> <span class="n">datetime</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">datetime</span><span class="w"> </span><span class="kn">import</span> <a href="https://docs.python.org/3/library/datetime.html#datetime.datetime" title="datetime.datetime" class="sphx-glr-backref-module-datetime sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">datetime</span></a><span class="p">,</span> <span class="n">timezone</span>
 
     <span class="kn">import</span><span class="w"> </span><span class="nn">quantities</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pq</span>
     <span class="kn">from</span><span class="w"> </span><span class="nn">neo</span><span class="w"> </span><span class="kn">import</span> <span class="n">AnalogSignal</span><span class="p">,</span> <span class="n">Block</span><span class="p">,</span> <span class="n">Segment</span><span class="p">,</span> <span class="n">SpikeTrain</span>
 
+    <span class="kn">from</span><span class="w"> </span><span class="nn">myogen</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_random_generator</span>
     <span class="kn">from</span><span class="w"> </span><span class="nn">myogen.utils.nwb</span><span class="w"> </span><span class="kn">import</span> <span class="n">export_to_nwb</span>
 
     <span class="c1"># Create sample data</span>
@@ -539,7 +558,7 @@ a minimal example file for demonstration.</p>
 
     <span class="c1"># Add sample spike trains</span>
     <span class="k">for</span> <a href="https://docs.python.org/3/library/functions.html#int" title="builtins.int" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">i</span></a> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">5</span><span class="p">):</span>
-        <a href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">spike_times</span></a> <span class="o">=</span> <a href="https://numpy.org/doc/stable/reference/generated/numpy.sort.html#numpy.sort" title="numpy.sort" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-function"><span class="n">np</span><span class="o">.</span><span class="n">sort</span></a><span class="p">(</span><a href="https://numpy.org/doc/stable/reference/random/generated/numpy.random.uniform.html#numpy.random.uniform" title="numpy.random.uniform" class="sphx-glr-backref-module-numpy-random sphx-glr-backref-type-py-function"><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">uniform</span></a><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1000</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">50</span><span class="p">))</span> <span class="o">*</span> <span class="n">pq</span><span class="o">.</span><span class="n">ms</span>
+        <a href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">spike_times</span></a> <span class="o">=</span> <a href="https://numpy.org/doc/stable/reference/generated/numpy.sort.html#numpy.sort" title="numpy.sort" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-function"><span class="n">np</span><span class="o">.</span><span class="n">sort</span></a><span class="p">(</span><span class="n">get_random_generator</span><span class="p">()</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1000</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">50</span><span class="p">))</span> <span class="o">*</span> <span class="n">pq</span><span class="o">.</span><span class="n">ms</span>
         <span class="n">st</span> <span class="o">=</span> <span class="n">SpikeTrain</span><span class="p">(</span><a href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">spike_times</span></a><span class="p">,</span> <span class="n">t_stop</span><span class="o">=</span><span class="mi">1000</span> <span class="o">*</span> <span class="n">pq</span><span class="o">.</span><span class="n">ms</span><span class="p">,</span> <a href="https://docs.python.org/3/library/stdtypes.html#list" title="builtins.list" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">units</span></a><span class="o">=</span><span class="s2">&quot;ms&quot;</span><span class="p">)</span>
         <span class="n">st</span><span class="o">.</span><span class="n">annotate</span><span class="p">(</span><span class="n">neuron_id</span><span class="o">=</span><a href="https://docs.python.org/3/library/functions.html#int" title="builtins.int" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">i</span></a><span class="p">,</span> <span class="n">population</span><span class="o">=</span><span class="s2">&quot;aMN&quot;</span><span class="p">)</span>
         <span class="n">segment</span><span class="o">.</span><span class="n">spiketrains</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">st</span><span class="p">)</span>
@@ -561,6 +580,9 @@ a minimal example file for demonstration.</p>
         <a href="https://docs.python.org/3/library/pathlib.html#pathlib.PosixPath" title="pathlib.PosixPath" class="sphx-glr-backref-module-pathlib sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">nwb_filepath</span></a><span class="p">,</span>
         <span class="n">session_description</span><span class="o">=</span><span class="s2">&quot;Demonstration NWB file for MyoGen tutorial&quot;</span><span class="p">,</span>
         <span class="n">institution</span><span class="o">=</span><span class="s2">&quot;MyoGen Tutorial&quot;</span><span class="p">,</span>
+        <span class="c1"># Pass an explicit session_start_time so the demo is fully reproducible</span>
+        <span class="c1"># and avoids the new &quot;no session_start_time&quot; UserWarning.</span>
+        <span class="n">session_start_time</span><span class="o">=</span><a href="https://docs.python.org/3/library/datetime.html#datetime.datetime" title="datetime.datetime" class="sphx-glr-backref-module-datetime sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">datetime</span></a><span class="p">(</span><span class="mi">1970</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">tzinfo</span><span class="o">=</span><a href="https://docs.python.org/3/library/datetime.html#datetime.timezone.utc" title="datetime.timezone.utc" class="sphx-glr-backref-module-datetime-timezone sphx-glr-backref-type-py-attribute"><span class="n">timezone</span><span class="o">.</span><span class="n">utc</span></a><span class="p">),</span>
     <span class="p">)</span>
     <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;(OK) Created demonstration NWB file: </span><span class="si">{</span><a href="https://docs.python.org/3/library/pathlib.html#pathlib.PosixPath" title="pathlib.PosixPath" class="sphx-glr-backref-module-pathlib sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">nwb_filepath</span></a><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 <span class="k">else</span><span class="p">:</span>
@@ -569,7 +591,7 @@ a minimal example file for demonstration.</p>
 </pre></div>
 </div>
 <div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>(OK) Found NWB file: results/spinal_network_results.nwb
-    Size: 188454.4 KB
+    Size: 188455.8 KB
 </pre></div>
 </div>
 </section>
@@ -619,12 +641,13 @@ STEP 1: NWB FILE VALIDATION
 
 Validating: spinal_network_results.nwb
 ----------------------------------------
-Found 26 message(s):
-  ✗ Critical: 1
+Found 28 message(s):
+  ✗ Critical: 3
+  ○ Best practice suggestions: 1
 
 Details:
-[&#39;**************************************************&#39;, &#39;NWBInspector Report Summary&#39;, &#39;&#39;, &#39;Timestamp: 2026-04-19 07:03:38.088406+00:00&#39;, &#39;Platform: Linux-6.17.0-1010-azure-x86_64-with-glibc2.39&#39;, &#39;NWBInspector version: 0.6.5&#39;, &#39;&#39;, &#39;Found 10 issues over 1 files:&#39;, &#39;      10 - BEST_PRACTICE_SUGGESTION&#39;, &#39;**************************************************&#39;, &#39;&#39;, &#39;&#39;, &#39;0  results/spinal_network_results.nwb&#39;, &#39;=====================================&#39;, &#39;&#39;, &quot;0.0  Importance.BEST_PRACTICE_SUGGESTION: check_description - &#39;TimeSeries&#39; object at location &#39;/acquisition/spin_secondary_afferent_firing__Hz&#39;&quot;, &quot;       Message: Description (&#39;no description&#39;) is a placeholder.&quot;, &#39;&#39;, &quot;0.1  Importance.BEST_PRACTICE_SUGGESTION: check_description - &#39;TimeSeries&#39; object at location &#39;/acquisition/spin_primary_afferent_firing__Hz&#39;&quot;, &quot;       Message: Description (&#39;no description&#39;) is a placeholder.&quot;, &#39;&#39;, &quot;0.2  Importance.BEST_PRACTICE_SUGGESTION: check_description - &#39;TimeSeries&#39; object at location &#39;/acquisition/spin_intrafusal_tensions&#39;&quot;, &quot;       Message: Description (&#39;no description&#39;) is a placeholder.&quot;, &#39;&#39;, &quot;0.3  Importance.BEST_PRACTICE_SUGGESTION: check_description - &#39;TimeSeries&#39; object at location &#39;/acquisition/spin_chain_activation&#39;&quot;, &quot;       Message: Description (&#39;no description&#39;) is a placeholder.&quot;, &#39;&#39;, &quot;0.4  Importance.BEST_PRACTICE_SUGGESTION: check_description - &#39;TimeSeries&#39; object at location &#39;/acquisition/spin_bag2_activation&#39;&quot;, &quot;       Message: Description (&#39;no description&#39;) is a placeholder.&quot;, &#39;&#39;, &quot;0.5  Importance.BEST_PRACTICE_SUGGESTION: check_description - &#39;TimeSeries&#39; object at location &#39;/acquisition/spin_bag1_activation&#39;&quot;, &quot;       Message: Description (&#39;no description&#39;) is a placeholder.&quot;, &#39;&#39;, &quot;0.6  Importance.BEST_PRACTICE_SUGGESTION: check_description - &#39;TimeSeries&#39; object at location &#39;/acquisition/hill_muscle_type2_activation&#39;&quot;, &quot;       Message: Description (&#39;no description&#39;) is a placeholder.&quot;, &#39;&#39;, &quot;0.7  Importance.BEST_PRACTICE_SUGGESTION: check_description - &#39;TimeSeries&#39; object at location &#39;/acquisition/hill_muscle_type1_activation&#39;&quot;, &quot;       Message: Description (&#39;no description&#39;) is a placeholder.&quot;, &#39;&#39;, &quot;0.8  Importance.BEST_PRACTICE_SUGGESTION: check_description - &#39;TimeSeries&#39; object at location &#39;/acquisition/hill_muscle_muscle_torque&#39;&quot;, &quot;       Message: Description (&#39;no description&#39;) is a placeholder.&quot;, &#39;&#39;, &quot;0.9  Importance.BEST_PRACTICE_SUGGESTION: check_description - &#39;TimeSeries&#39; object at location &#39;/acquisition/hill_muscle_muscle_length&#39;&quot;, &quot;       Message: Description (&#39;no description&#39;) is a placeholder.&quot;, &#39;&#39;]
-  ... and 16 more messages
+[&#39;**************************************************&#39;, &#39;NWBInspector Report Summary&#39;, &#39;&#39;, &#39;Timestamp: 2026-06-01 07:24:58.171090+00:00&#39;, &#39;Platform: Linux-6.17.0-1015-azure-x86_64-with-glibc2.39&#39;, &#39;NWBInspector version: 0.7.2&#39;, &#39;&#39;, &#39;Found 10 issues across 1 file(s):&#39;, &#39;       1 - BEST_PRACTICE_VIOLATION&#39;, &#39;       9 - BEST_PRACTICE_SUGGESTION&#39;, &#39;**************************************************&#39;, &#39;&#39;, &#39;&#39;, &#39;0  results/spinal_network_results.nwb&#39;, &#39;=====================================&#39;, &#39;&#39;, &quot;0.0  Importance.BEST_PRACTICE_VIOLATION: check_units_resolution_is_set - &#39;Units&#39; object with name &#39;units&#39;&quot;, &#39;       Message: Units table has spike_times but resolution is not set. Resolution indicates the smallest possible difference between two spike times and should be a positive float equal to 1/sampling_rate of the recording system (e.g., Units(resolution=1/30000) for a 30 kHz system). This information is needed to assess the precision of spike timing data.&#39;, &#39;&#39;, &quot;0.1  Importance.BEST_PRACTICE_SUGGESTION: check_description - &#39;TimeSeries&#39; object at location &#39;/acquisition/spin_secondary_afferent_firing__Hz&#39;&quot;, &quot;       Message: Description (&#39;no description&#39;) is a placeholder.&quot;, &#39;&#39;, &quot;0.2  Importance.BEST_PRACTICE_SUGGESTION: check_description - &#39;TimeSeries&#39; object at location &#39;/acquisition/spin_primary_afferent_firing__Hz&#39;&quot;, &quot;       Message: Description (&#39;no description&#39;) is a placeholder.&quot;, &#39;&#39;, &quot;0.3  Importance.BEST_PRACTICE_SUGGESTION: check_description - &#39;TimeSeries&#39; object at location &#39;/acquisition/spin_intrafusal_tensions&#39;&quot;, &quot;       Message: Description (&#39;no description&#39;) is a placeholder.&quot;, &#39;&#39;, &quot;0.4  Importance.BEST_PRACTICE_SUGGESTION: check_description - &#39;TimeSeries&#39; object at location &#39;/acquisition/spin_chain_activation&#39;&quot;, &quot;       Message: Description (&#39;no description&#39;) is a placeholder.&quot;, &#39;&#39;, &quot;0.5  Importance.BEST_PRACTICE_SUGGESTION: check_description - &#39;TimeSeries&#39; object at location &#39;/acquisition/spin_bag2_activation&#39;&quot;, &quot;       Message: Description (&#39;no description&#39;) is a placeholder.&quot;, &#39;&#39;, &quot;0.6  Importance.BEST_PRACTICE_SUGGESTION: check_description - &#39;TimeSeries&#39; object at location &#39;/acquisition/spin_bag1_activation&#39;&quot;, &quot;       Message: Description (&#39;no description&#39;) is a placeholder.&quot;, &#39;&#39;, &quot;0.7  Importance.BEST_PRACTICE_SUGGESTION: check_description - &#39;TimeSeries&#39; object at location &#39;/acquisition/hill_muscle_type2_activation&#39;&quot;, &quot;       Message: Description (&#39;no description&#39;) is a placeholder.&quot;, &#39;&#39;, &quot;0.8  Importance.BEST_PRACTICE_SUGGESTION: check_description - &#39;TimeSeries&#39; object at location &#39;/acquisition/hill_muscle_type1_activation&#39;&quot;, &quot;       Message: Description (&#39;no description&#39;) is a placeholder.&quot;, &#39;&#39;, &quot;0.9  Importance.BEST_PRACTICE_SUGGESTION: check_description - &#39;TimeSeries&#39; object at location &#39;/acquisition/hill_muscle_muscle_torque&#39;&quot;, &quot;       Message: Description (&#39;no description&#39;) is a placeholder.&quot;, &#39;&#39;]
+  ... and 18 more messages
 </pre></div>
 </div>
 </section>
@@ -655,9 +678,9 @@ internally, which supports efficient storage of large datasets.</p>
 STEP 2: LOADING NWB FILE
 ============================================================
 
-NWB File: d868c2ed-39bc-4cb9-af19-7029fd695db5
+NWB File: d99307bc-7a28-5b12-84b8-50abe1d59f93
 Session: MyoGen spinal network simulation with systematic tendon tap protocol. Two-phase design: (1) Reflex gain modulation with varying gamma drive, (2) Reflex-voluntary interaction with sinusoidal cortical drive.
-Created: 2026-04-19 07:02:49.568093+00:00
+Created: 1970-01-01 00:00:00+00:00
 Institution: MyoGen Framework
 Lab: Neuromuscular Simulation
 Keywords: MyoGen, spinal network, motor neuron, stretch reflex, tendon tap, proprioception, EMG simulation
@@ -889,13 +912,13 @@ STEP 4: EXTRACTING SPIKE DATA
 
 Found 964 units
 Populations found: [&#39;DD&#39;, &#39;aMN&#39;, &#39;Ia&#39;, &#39;II&#39;, &#39;Ib&#39;, &#39;gII&#39;, &#39;gIb&#39;]
-  DD: 400 units, 39907 total spikes
-  aMN: 93 units, 2081 total spikes
-  Ia: 73 units, 11858 total spikes
-  II: 80 units, 8338 total spikes
-  Ib: 58 units, 4633 total spikes
-  gII: 120 units, 1937 total spikes
-  gIb: 140 units, 886 total spikes
+  DD: 400 units, 39820 total spikes
+  aMN: 93 units, 2062 total spikes
+  Ia: 73 units, 11844 total spikes
+  II: 80 units, 8691 total spikes
+  Ib: 58 units, 4619 total spikes
+  gII: 120 units, 1929 total spikes
+  gIb: 140 units, 864 total spikes
 
 (OK) Saved raster plot to: results/nwb_spike_raster.png
 </pre></div>
@@ -1057,7 +1080,7 @@ Format Comparison:
 Feature                   NWB             Pickle
 --------------------------------------------------
 File exists               ✓               ✓
-File size                 188454.4 KB     188351.0 KB
+File size                 188455.8 KB     188359.2 KB
 Standardized format       Yes             No
 Schema validation         Yes             No
 Cross-language support    Yes (HDF5)      Python only
@@ -1119,7 +1142,7 @@ Next steps:
   3. Upload to DANDI Archive for sharing: https://dandiarchive.org/
 </pre></div>
 </div>
-<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 6.098 seconds)</p>
+<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 5.399 seconds)</p>
 <div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-auto-examples-01-basic-13-load-and-inspect-nwb-data-py">
 <div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
 <p><a class="reference download internal" download="" href="../../_downloads/a95e9f4c31800af71bcf2343f46971dc/13_load_and_inspect_nwb_data.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">13_load_and_inspect_nwb_data.ipynb</span></code></a></p>
@@ -1187,8 +1210,8 @@ Next steps:
   </div>
   
   <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script defer src="../../_static/scripts/bootstrap.js?digest=7f76b32a3354e82990f2"></script>
-<script defer src="../../_static/scripts/pydata-sphinx-theme.js?digest=7f76b32a3354e82990f2"></script>
+  <script defer src="../../_static/scripts/bootstrap.js?digest=0790524f97105ba85085"></script>
+<script defer src="../../_static/scripts/pydata-sphinx-theme.js?digest=0790524f97105ba85085"></script>
 
   <footer class="bd-footer">
 <div class="bd-footer__inner bd-page-width">

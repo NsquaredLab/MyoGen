@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>myogen.simulator.core.emg.intramuscular.intramuscular_emg &#8212; MyoGen 0.9.0 Documentation</title>
+    <title>myogen.simulator.core.emg.intramuscular.intramuscular_emg &#8212; MyoGen 0.10.0 Documentation</title>
   
   
   
@@ -26,8 +26,8 @@
   </noscript>
   
   <!-- Loaded before other Sphinx assets -->
-  <link href="../../../../../../_static/styles/theme.css?digest=7f76b32a3354e82990f2" rel="stylesheet" />
-<link href="../../../../../../_static/styles/pydata-sphinx-theme.css?digest=7f76b32a3354e82990f2" rel="stylesheet" />
+  <link href="../../../../../../_static/styles/theme.css?digest=0790524f97105ba85085" rel="stylesheet" />
+<link href="../../../../../../_static/styles/pydata-sphinx-theme.css?digest=0790524f97105ba85085" rel="stylesheet" />
 
     <link rel="stylesheet" type="text/css" href="../../../../../../_static/pygments.css?v=5349f25f" />
     <link rel="stylesheet" type="text/css" href="../../../../../../_static/css/tooltipster.custom.css" />
@@ -39,7 +39,7 @@
     <link rel="stylesheet" type="text/css" href="../../../../../../_static/css/tooltipster-sideTip-borderless.min.css" />
     <link rel="stylesheet" type="text/css" href="../../../../../../_static/css/micromodal.css" />
     <link rel="stylesheet" type="text/css" href="../../../../../../_static/custom.css?v=9b95bd4c" />
-    <link rel="stylesheet" type="text/css" href="../../../../../../_static/sg_gallery.css?v=d2d258e8" />
+    <link rel="stylesheet" type="text/css" href="../../../../../../_static/sg_gallery.css?v=fd6457a4" />
     <link rel="stylesheet" type="text/css" href="../../../../../../_static/sg_gallery-binder.css?v=f4aeca0c" />
     <link rel="stylesheet" type="text/css" href="../../../../../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
     <link rel="stylesheet" type="text/css" href="../../../../../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
@@ -47,16 +47,17 @@
     <link rel="stylesheet" type="text/css" href="../../../../../../_static/custom.css?v=9b95bd4c" />
   
   <!-- So that users can add custom icons -->
-  <script defer src="../../../../../../_static/scripts/fontawesome.js?digest=7f76b32a3354e82990f2"></script>
+  <script defer src="../../../../../../_static/scripts/fontawesome.js?digest=0790524f97105ba85085"></script>
   <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="../../../../../../_static/scripts/bootstrap.js?digest=7f76b32a3354e82990f2" />
-<link rel="preload" as="script" href="../../../../../../_static/scripts/pydata-sphinx-theme.js?digest=7f76b32a3354e82990f2" />
+  <link rel="preload" as="script" href="../../../../../../_static/scripts/bootstrap.js?digest=0790524f97105ba85085" />
+<link rel="preload" as="script" href="../../../../../../_static/scripts/pydata-sphinx-theme.js?digest=0790524f97105ba85085" />
 
     <script src="../../../../../../_static/jquery.js?v=5d32c60e"></script>
     <script src="../../../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-    <script src="../../../../../../_static/documentation_options.js?v=a82ae3da"></script>
+    <script src="../../../../../../_static/documentation_options.js?v=7e54ce6f"></script>
     <script src="../../../../../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../../../../_static/sg-tags.js?v=d80f6fa4"></script>
     <script src="../../../../../../_static/js/hoverxref.js"></script>
     <script src="../../../../../../_static/js/tooltipster.bundle.min.js"></script>
     <script src="../../../../../../_static/js/micromodal.min.js"></script>
@@ -506,7 +507,7 @@ window.runMermaid = runMermaid;</script>
     <link rel="search" title="Search" href="../../../../../../search.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="0.9.0" />
+  <meta name="docsearch:version" content="0.10.0" />
   
     
     <script src="../../../../../../_static/searchtools.js"></script>
@@ -524,7 +525,9 @@ window.runMermaid = runMermaid;</script>
   
   <button type="button" class="btn rounded-pill" id="pst-back-to-top">
     <i class="fa-solid fa-arrow-up"></i>Back to top</button>
-
+  
+  
+  
   
   <dialog id="pst-search-dialog">
     
@@ -579,8 +582,8 @@ window.runMermaid = runMermaid;</script>
       
     
     
-    <img src="../../../../../../_static/myogen_logo.png" class="logo__image only-light" alt="MyoGen 0.9.0 Documentation - Home"/>
-    <img src="../../../../../../_static/myogen_logo.png" class="logo__image only-dark pst-js-only" alt="MyoGen 0.9.0 Documentation - Home"/>
+    <img src="../../../../../../_static/myogen_logo.png" class="logo__image only-light" alt="MyoGen 0.10.0 Documentation - Home"/>
+    <img src="../../../../../../_static/myogen_logo.png" class="logo__image only-dark pst-js-only" alt="MyoGen 0.10.0 Documentation - Home"/>
   
   
 </a></div>
@@ -589,7 +592,7 @@ window.runMermaid = runMermaid;</script>
 <div class="nav-item">
   <div class="version-switcher__container dropdown">
       <button id="version-switcher-button" type="button" class="version-switcher__button btn btn-sm navbar-btn" aria-haspopup="true" aria-expanded="false">
-          Version 0.9.0
+          Version 0.10.0
       </button>
       
       
@@ -652,11 +655,18 @@ window.runMermaid = runMermaid;</script>
       
         <div class="navbar-item">
 
-<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
-  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
-  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
-  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
-</button></div>
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
       
         <div class="navbar-item"><ul class="navbar-icon-links"
     aria-label="Icon Links">
@@ -669,8 +679,7 @@ window.runMermaid = runMermaid;</script>
           
           
           
-          <a href="https://github.com/NSquaredLab/MyoGen" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i>
-            <span class="sr-only">GitHub</span></a>
+          <a href="https://github.com/NSquaredLab/MyoGen" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
         </li>
 </ul></div>
       
@@ -748,11 +757,18 @@ window.runMermaid = runMermaid;</script>
         
           <div class="navbar-item">
 
-<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
-  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
-  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
-  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
-</button></div>
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
         
           <div class="navbar-item"><ul class="navbar-icon-links"
     aria-label="Icon Links">
@@ -765,8 +781,7 @@ window.runMermaid = runMermaid;</script>
           
           
           
-          <a href="https://github.com/NSquaredLab/MyoGen" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i>
-            <span class="sr-only">GitHub</span></a>
+          <a href="https://github.com/NSquaredLab/MyoGen" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
         </li>
 </ul></div>
         
@@ -842,18 +857,8 @@ window.runMermaid = runMermaid;</script>
 <span class="sd">&quot;&quot;&quot;</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">warnings</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">copy</span><span class="w"> </span><span class="kn">import</span> <span class="n">deepcopy</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Optional</span>
-
-<span class="k">try</span><span class="p">:</span>
-    <span class="kn">import</span><span class="w"> </span><span class="nn">elephant</span>
-    <span class="kn">import</span><span class="w"> </span><span class="nn">elephant.utils</span>
-
-    <span class="n">HAS_ELEPHANT</span> <span class="o">=</span> <span class="kc">True</span>
-<span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
-    <span class="n">HAS_ELEPHANT</span> <span class="o">=</span> <span class="kc">False</span>
-    <span class="n">elephant</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># type: ignore</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">quantities</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pq</span>
@@ -864,6 +869,7 @@ window.runMermaid = runMermaid;</script>
 <span class="kn">from</span><span class="w"> </span><span class="nn">myogen</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_random_generator</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">myogen.simulator.core.emg.electrodes</span><span class="w"> </span><span class="kn">import</span> <span class="n">IntramuscularElectrodeArray</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">myogen.simulator.core.muscle</span><span class="w"> </span><span class="kn">import</span> <span class="n">Muscle</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">myogen.utils.binning</span><span class="w"> </span><span class="kn">import</span> <span class="n">bin_spike_trains</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">myogen.utils.decorators</span><span class="w"> </span><span class="kn">import</span> <span class="n">beartowertype</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">myogen.utils.types</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">INTRAMUSCULAR_EMG__Block</span><span class="p">,</span>
@@ -878,14 +884,11 @@ window.runMermaid = runMermaid;</script>
 <span class="k">try</span><span class="p">:</span>
     <span class="kn">import</span><span class="w"> </span><span class="nn">cupy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">cp</span>
 
-    <span class="n">HAS_CUPY</span> <span class="o">=</span> <span class="kc">True</span>
-<span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+    <span class="n">HAS_CUPY</span> <span class="o">=</span> <span class="n">cp</span><span class="o">.</span><span class="n">cuda</span><span class="o">.</span><span class="n">runtime</span><span class="o">.</span><span class="n">getDeviceCount</span><span class="p">()</span> <span class="o">&gt;</span> <span class="mi">0</span>
+<span class="k">except</span> <span class="p">(</span><span class="ne">ImportError</span><span class="p">,</span> <span class="ne">Exception</span><span class="p">):</span>
     <span class="n">HAS_CUPY</span> <span class="o">=</span> <span class="kc">False</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">.motor_unit_sim</span><span class="w"> </span><span class="kn">import</span> <span class="n">MotorUnitSim</span>
-
-<span class="c1"># Suppress warnings for cleaner output</span>
-<span class="n">warnings</span><span class="o">.</span><span class="n">filterwarnings</span><span class="p">(</span><span class="s2">&quot;ignore&quot;</span><span class="p">)</span>
 
 
 <div class="viewcode-block" id="IntramuscularEMG">
@@ -922,7 +925,7 @@ window.runMermaid = runMermaid;</script>
 
 <span class="sd">        .. note::</span>
 <span class="sd">            The two-layer model is a simplification of the actual arborization pattern, but it is a good approximation for the purposes of this simulation.</span>
-<span class="sd">            Follows the implementation of Kontos et al. 2020 [1]_.</span>
+<span class="sd">            Follows the implementation of Konstantin et al. 2020 [1]_.</span>
 <span class="sd">    MUs_to_simulate : list[int], optional</span>
 <span class="sd">        Indices of motor units to simulate. If None, all motor units are simulated.</span>
 <span class="sd">        Default is None. For computational efficiency, consider</span>
@@ -985,10 +988,6 @@ window.runMermaid = runMermaid;</script>
         <span class="bp">self</span><span class="o">.</span><span class="n">_MUs_to_simulate</span> <span class="o">=</span> <span class="n">MUs_to_simulate</span>
 
         <span class="c1"># Derived parameters - immutable public access</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">branch_cvs__mm_per_s</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="nb">float</span><span class="p">(</span><span class="n">branch_cvs__m_per_s</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">rescale</span><span class="p">(</span><span class="n">pq</span><span class="o">.</span><span class="n">mm</span> <span class="o">/</span> <span class="n">pq</span><span class="o">.</span><span class="n">s</span><span class="p">)</span><span class="o">.</span><span class="n">magnitude</span><span class="p">),</span>
-            <span class="nb">float</span><span class="p">(</span><span class="n">branch_cvs__m_per_s</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">rescale</span><span class="p">(</span><span class="n">pq</span><span class="o">.</span><span class="n">mm</span> <span class="o">/</span> <span class="n">pq</span><span class="o">.</span><span class="n">s</span><span class="p">)</span><span class="o">.</span><span class="n">magnitude</span><span class="p">),</span>
-        <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">endplate_center__mm</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_muscle_model</span><span class="o">.</span><span class="n">length__mm</span> <span class="o">*</span> <span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_endplate_center__percent</span> <span class="o">/</span> <span class="mf">100.0</span>
         <span class="p">)</span>
@@ -1052,9 +1051,9 @@ window.runMermaid = runMermaid;</script>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        INTRAMUSCULAR_MUAP_SHAPE__TENSOR</span>
-<span class="sd">            Intramuscular MUAP shapes for all electrode arrays.</span>
-<span class="sd">            Results are stored in the `muaps` property after execution.</span>
+<span class="sd">        INTRAMUSCULAR_MUAP__Block</span>
+<span class="sd">            Intramuscular MUAP shapes for all motor units stored in a neo.Block.</span>
+<span class="sd">            Results are stored in the `muaps__Block` property after execution.</span>
 
 <span class="sd">        Notes</span>
 <span class="sd">        -----</span>
@@ -1169,8 +1168,8 @@ window.runMermaid = runMermaid;</script>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        INTRAMUSCULAR_MUAP_SHAPE__TENSOR</span>
-<span class="sd">            Intramuscular MUAP shapes for all electrode arrays.</span>
+<span class="sd">        INTRAMUSCULAR_MUAP__Block</span>
+<span class="sd">            Intramuscular MUAP shapes for all motor units stored in a neo.Block.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_motor_units</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Must call _initialize_motor_units() first&quot;</span><span class="p">)</span>
@@ -1230,9 +1229,7 @@ window.runMermaid = runMermaid;</script>
                 <span class="k">return</span> <span class="n">muap</span><span class="p">,</span> <span class="n">muap</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
 
             <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-                <span class="c1"># Log error and return None to avoid crashing entire parallel job</span>
-                <span class="n">logging</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Failed to process MU </span><span class="si">{</span><span class="n">mu_idx</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-                <span class="k">return</span> <span class="kc">None</span><span class="p">,</span> <span class="mi">0</span>
+                <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Failed to process MU </span><span class="si">{</span><span class="n">mu_idx</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">e</span>
 
         <span class="c1"># Process only specified motor units in parallel</span>
         <span class="n">n_motor_units</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_motor_units</span><span class="p">)</span>
@@ -1279,7 +1276,7 @@ window.runMermaid = runMermaid;</script>
 
             <span class="k">if</span> <span class="n">muap</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="c1"># Create empty segment for MUs with no fibers or not selected</span>
-                <span class="n">block</span><span class="o">.</span><span class="n">segments</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">segment</span> <span class="o">:=</span> <span class="n">Segment</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;MUAP_None&quot;</span><span class="p">))</span>
+                <span class="n">block</span><span class="o">.</span><span class="n">segments</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">segment</span> <span class="o">:=</span> <span class="n">Segment</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;MUAP_</span><span class="si">{</span><span class="n">mu_idx</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">))</span>
                 <span class="n">segment</span><span class="o">.</span><span class="n">analogsignals</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
                     <span class="n">AnalogSignal</span><span class="p">(</span>
                         <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_electrode_array</span><span class="o">.</span><span class="n">pts</span><span class="p">)))</span> <span class="o">*</span> <span class="n">pq</span><span class="o">.</span><span class="n">dimensionless</span><span class="p">,</span>
@@ -1287,7 +1284,7 @@ window.runMermaid = runMermaid;</script>
                     <span class="p">)</span>
                 <span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="n">block</span><span class="o">.</span><span class="n">segments</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">segment</span> <span class="o">:=</span> <span class="n">Segment</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;MUAP_</span><span class="si">{</span><span class="n">muap</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">))</span>
+                <span class="n">block</span><span class="o">.</span><span class="n">segments</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">segment</span> <span class="o">:=</span> <span class="n">Segment</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;MUAP_</span><span class="si">{</span><span class="n">mu_idx</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">))</span>
                 <span class="n">segment</span><span class="o">.</span><span class="n">analogsignals</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
                     <span class="n">AnalogSignal</span><span class="p">(</span>
                         <span class="n">muap</span> <span class="o">*</span> <span class="n">pq</span><span class="o">.</span><span class="n">dimensionless</span><span class="p">,</span>
@@ -1385,12 +1382,6 @@ window.runMermaid = runMermaid;</script>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_muaps__Block</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;MUAP templates have not been generated. Call simulate_muaps() first.&quot;</span><span class="p">)</span>
 
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">HAS_ELEPHANT</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ImportError</span><span class="p">(</span>
-                <span class="s2">&quot;Elephant is required for intramuscular EMG simulation. &quot;</span>
-                <span class="s2">&quot;Install with: pip install myogen[elephant]&quot;</span>
-            <span class="p">)</span>
-
         <span class="c1"># Store spike train data privately</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_spike_train__Block</span> <span class="o">=</span> <span class="n">spike_train__Block</span>
 
@@ -1459,24 +1450,13 @@ window.runMermaid = runMermaid;</script>
         <span class="n">n_neurons</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">spike_train__Block</span><span class="o">.</span><span class="n">segments</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">spiketrains</span><span class="p">)</span>
         <span class="n">n_electrodes</span> <span class="o">=</span> <span class="n">muap_shapes</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
 
-        <span class="c1"># Convert spike trains to binary arrays using Elephant, suppressing rounding error logging</span>
-        <span class="n">elephant_utils_logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="n">elephant</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="vm">__file__</span><span class="p">)</span>
-        <span class="n">original_level</span> <span class="o">=</span> <span class="n">elephant_utils_logger</span><span class="o">.</span><span class="n">level</span>
-        <span class="n">elephant_utils_logger</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">ERROR</span><span class="p">)</span>
-
-        <span class="k">try</span><span class="p">:</span>
-            <span class="n">spike_trains</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
-                <span class="p">[</span>
-                    <span class="n">elephant</span><span class="o">.</span><span class="n">conversion</span><span class="o">.</span><span class="n">BinnedSpikeTrain</span><span class="p">(</span>
-                        <span class="n">segment</span><span class="o">.</span><span class="n">spiketrains</span><span class="p">,</span> <span class="n">bin_size</span><span class="o">=</span><span class="n">spiketrain_timestep__ms</span>
-                    <span class="p">)</span>
-                    <span class="o">.</span><span class="n">to_array</span><span class="p">()</span>
-                    <span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">bool</span><span class="p">)</span>
-                    <span class="k">for</span> <span class="n">segment</span> <span class="ow">in</span> <span class="n">spike_train__Block</span><span class="o">.</span><span class="n">segments</span>
-                <span class="p">]</span>
-            <span class="p">)</span>
-        <span class="k">finally</span><span class="p">:</span>
-            <span class="n">elephant_utils_logger</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">original_level</span><span class="p">)</span>
+        <span class="c1"># Bin each pool&#39;s spike trains into a boolean occupancy array.</span>
+        <span class="n">spike_trains</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
+            <span class="p">[</span>
+                <span class="n">bin_spike_trains</span><span class="p">(</span><span class="n">segment</span><span class="o">.</span><span class="n">spiketrains</span><span class="p">,</span> <span class="n">bin_size</span><span class="o">=</span><span class="n">spiketrain_timestep__ms</span><span class="p">)</span>
+                <span class="k">for</span> <span class="n">segment</span> <span class="ow">in</span> <span class="n">spike_train__Block</span><span class="o">.</span><span class="n">segments</span>
+            <span class="p">]</span>
+        <span class="p">)</span>
 
         <span class="c1"># Create active neuron indices (all neurons are active in each pool for spike train block)</span>
         <span class="n">active_neuron_indices</span> <span class="o">=</span> <span class="p">[</span><span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">n_neurons</span><span class="p">))</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_pools</span><span class="p">)]</span>
@@ -1494,7 +1474,9 @@ window.runMermaid = runMermaid;</script>
         <span class="c1"># calculations are in arbitrary units and must be normalized to prevent</span>
         <span class="c1"># numerical overflow during convolution. Final EMG amplitudes are determined</span>
         <span class="c1"># by the spike train convolution, not the raw MUAP amplitudes.</span>
-        <span class="n">muap_shapes</span> <span class="o">/=</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">muap_shapes</span><span class="p">))</span>
+        <span class="n">max_muap_amplitude</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">muap_shapes</span><span class="p">))</span>
+        <span class="k">if</span> <span class="n">max_muap_amplitude</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">muap_shapes</span> <span class="o">/=</span> <span class="n">max_muap_amplitude</span>
 
         <span class="c1"># Perform convolution for each pool using GPU acceleration if available</span>
         <span class="k">if</span> <span class="n">HAS_CUPY</span><span class="p">:</span>
@@ -1517,7 +1499,7 @@ window.runMermaid = runMermaid;</script>
                     <span class="k">for</span> <span class="n">mu_idx</span> <span class="ow">in</span> <span class="n">MUs_to_simulate</span><span class="o">.</span><span class="n">intersection</span><span class="p">(</span><span class="n">pool_active_neurons</span><span class="p">):</span>
                         <span class="c1"># Use mu_idx directly since muap_shapes now contains all MUs</span>
                         <span class="k">if</span> <span class="n">mu_idx</span> <span class="o">&lt;</span> <span class="n">muap_gpu</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
-                            <span class="n">conv</span> <span class="o">=</span> <span class="n">cp</span><span class="o">.</span><span class="n">correlate</span><span class="p">(</span>
+                            <span class="n">conv</span> <span class="o">=</span> <span class="n">cp</span><span class="o">.</span><span class="n">convolve</span><span class="p">(</span>
                                 <span class="n">spike_gpu</span><span class="p">[</span><span class="n">pool_idx</span><span class="p">,</span> <span class="n">mu_idx</span><span class="p">],</span>
                                 <span class="n">muap_gpu</span><span class="p">[</span><span class="n">mu_idx</span><span class="p">,</span> <span class="n">e_idx</span><span class="p">],</span>
                                 <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;same&quot;</span><span class="p">,</span>
@@ -1547,7 +1529,7 @@ window.runMermaid = runMermaid;</script>
                     <span class="k">for</span> <span class="n">mu_idx</span> <span class="ow">in</span> <span class="n">MUs_to_simulate</span><span class="o">.</span><span class="n">intersection</span><span class="p">(</span><span class="n">pool_active_neurons</span><span class="p">):</span>
                         <span class="c1"># Use mu_idx directly since muap_shapes now contains all MUs</span>
                         <span class="k">if</span> <span class="n">mu_idx</span> <span class="o">&lt;</span> <span class="n">muap_shapes</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
-                            <span class="n">conv</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">correlate</span><span class="p">(</span>
+                            <span class="n">conv</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">convolve</span><span class="p">(</span>
                                 <span class="n">spike_trains</span><span class="p">[</span><span class="n">pool_idx</span><span class="p">,</span> <span class="n">mu_idx</span><span class="p">],</span>
                                 <span class="n">muap_shapes</span><span class="p">[</span><span class="n">mu_idx</span><span class="p">,</span> <span class="n">e_idx</span><span class="p">],</span>
                                 <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;same&quot;</span><span class="p">,</span>
@@ -1611,47 +1593,142 @@ window.runMermaid = runMermaid;</script>
 
 <div class="viewcode-block" id="IntramuscularEMG.add_noise">
 <a class="viewcode-back" href="../../../../../../generated/myogen.simulator.IntramuscularEMG.add_noise.html#myogen.simulator.IntramuscularEMG.add_noise">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">add_noise</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">snr__dB</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">noise_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;gaussian&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">INTRAMUSCULAR_EMG__Block</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">add_noise</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">snr__dB</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+        <span class="n">noise_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;gaussian&quot;</span><span class="p">,</span>
+        <span class="o">*</span><span class="p">,</span>
+        <span class="n">spectral_slope</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="o">-</span><span class="mf">0.5</span><span class="p">,</span>
+        <span class="n">excess_kurtosis</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">3.0</span><span class="p">,</span>
+        <span class="n">powerline_hz</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">50.0</span><span class="p">,</span>
+        <span class="n">powerline_amplitude</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.1</span><span class="p">,</span>
+        <span class="n">powerline_harmonic_ratios</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">float</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">powerline_frequency_drift_hz</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.3</span><span class="p">,</span>
+        <span class="n">powerline_amplitude_modulation_depth</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.15</span><span class="p">,</span>
+        <span class="n">peak_hz</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1000.0</span><span class="p">,</span>
+        <span class="n">analog_hpf_hz</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">10.0</span><span class="p">,</span>
+        <span class="n">baseline_drift_rms_uv</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span>
+        <span class="n">baseline_drift_alpha</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.75</span><span class="p">,</span>
+        <span class="n">baseline_drift_low_hz</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">baseline_drift_high_hz</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">INTRAMUSCULAR_EMG__Block</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Add noise to the electrode array.</span>
 
-<span class="sd">        This method adds realistic noise to the simulated intramuscular EMG signals</span>
-<span class="sd">        based on a specified signal-to-noise ratio. The noise is calculated</span>
-<span class="sd">        and applied independently for each electrode channel to ensure that</span>
-<span class="sd">        channels with different signal amplitudes maintain the specified SNR.</span>
+<span class="sd">        Two noise models are available:</span>
+
+<span class="sd">        * ``&quot;gaussian&quot;`` – white Gaussian noise (legacy default). Each</span>
+<span class="sd">          electrode channel gets independent normal noise scaled to hit</span>
+<span class="sd">          the requested per-channel SNR.</span>
+<span class="sd">        * ``&quot;realistic&quot;`` – spectrally colored noise calibrated against</span>
+<span class="sd">          real bipolar fine-wire iEMG recordings (TEP / Synergy studies).</span>
+<span class="sd">          1/f-like base, mid-band spectral emphasis from</span>
+<span class="sd">          electrode–amplifier bandwidth, heavy tails from cross-talk</span>
+<span class="sd">          artifacts, and additive 50/60 Hz powerline interference with</span>
+<span class="sd">          harmonics. See :mod:`myogen.utils.emg_noise` for the math.</span>
+
+<span class="sd">        Per-channel SNR is preserved across both modes: each electrode&#39;s</span>
+<span class="sd">        noise RMS is computed from that channel&#39;s own signal RMS so</span>
+<span class="sd">        electrodes with different amplitudes get appropriately scaled</span>
+<span class="sd">        noise.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        snr__dB : float</span>
-<span class="sd">            Signal-to-noise ratio in dB. Higher values result in cleaner signals.</span>
-<span class="sd">            Typical intramuscular EMG has SNR ranging from 15-50 dB.</span>
-<span class="sd">            The SNR is applied independently to each electrode channel.</span>
-<span class="sd">        noise_type : str, default=&quot;gaussian&quot;</span>
-<span class="sd">            Type of noise to add. Currently supports &quot;gaussian&quot; for white noise.</span>
+<span class="sd">            Signal-to-noise ratio in dB. Higher values result in cleaner</span>
+<span class="sd">            signals. Typical intramuscular EMG has SNR ranging from</span>
+<span class="sd">            15–50 dB. Applied independently to each electrode channel.</span>
+<span class="sd">        noise_type : {&quot;gaussian&quot;, &quot;realistic&quot;}, default=&quot;gaussian&quot;</span>
+<span class="sd">            Noise model to use. ``&quot;realistic&quot;`` activates the colored</span>
+<span class="sd">            noise pipeline; the remaining keyword-only parameters then</span>
+<span class="sd">            apply.</span>
+<span class="sd">        spectral_slope : float, default=-0.5</span>
+<span class="sd">            PSD slope in log–log space for the colored-noise base.</span>
+<span class="sd">            ``0`` = white, ``-1`` = pink. Real iEMG: -0.4 to -0.8.</span>
+<span class="sd">            Ignored when ``noise_type=&quot;gaussian&quot;``.</span>
+<span class="sd">        excess_kurtosis : float, default=3.0</span>
+<span class="sd">            Target excess kurtosis (``0`` = Gaussian). Controlled</span>
+<span class="sd">            isometric iEMG: 1–6. Dynamic tasks: higher.</span>
+<span class="sd">            Ignored when ``noise_type=&quot;gaussian&quot;``.</span>
+<span class="sd">        powerline_hz : float, default=50.0</span>
+<span class="sd">            Powerline interference frequency. Use ``60.0`` for North</span>
+<span class="sd">            America, ``0.0`` to disable.</span>
+<span class="sd">            Ignored when ``noise_type=&quot;gaussian&quot;``.</span>
+<span class="sd">        powerline_amplitude : float, default=0.1</span>
+<span class="sd">            Powerline fundamental amplitude as a fraction of noise RMS.</span>
+<span class="sd">            Set to ``0`` (or ``powerline_hz=0``) to disable.</span>
+<span class="sd">            Ignored when ``noise_type=&quot;gaussian&quot;``.</span>
+<span class="sd">        powerline_harmonic_ratios : list of float, optional</span>
+<span class="sd">            Per-harmonic amplitude ratios relative to the fundamental.</span>
+<span class="sd">            ``None`` uses the default ``[1.0, 0.5, 0.3, 0.15, 0.08]``</span>
+<span class="sd">            (fundamental + 4 harmonics).</span>
+<span class="sd">            Ignored when ``noise_type=&quot;gaussian&quot;``.</span>
+<span class="sd">        powerline_frequency_drift_hz : float, default=0.3</span>
+<span class="sd">            Standard deviation (Hz) of the slow random walk of the</span>
+<span class="sd">            mains instantaneous frequency. Broadens each line peak</span>
+<span class="sd">            from a delta into a ~2-5 Hz FWHM bump (typical of real</span>
+<span class="sd">            recordings). Set to 0 for a pure-tone powerline.</span>
+<span class="sd">            Ignored when ``noise_type=&quot;gaussian&quot;``.</span>
+<span class="sd">        powerline_amplitude_modulation_depth : float, default=0.15</span>
+<span class="sd">            Fractional AM depth (±15% by default) applied to each</span>
+<span class="sd">            powerline harmonic — adds narrow sidebands within ±2 Hz</span>
+<span class="sd">            of every line. Set to 0 to disable.</span>
+<span class="sd">            Ignored when ``noise_type=&quot;gaussian&quot;``.</span>
+<span class="sd">        peak_hz : float, default=1000.0</span>
+<span class="sd">            Center frequency of the mid-band spectral emphasis from</span>
+<span class="sd">            electrode–amplifier bandwidth interaction.</span>
+<span class="sd">            Ignored when ``noise_type=&quot;gaussian&quot;``.</span>
+<span class="sd">        baseline_drift_rms_uv : float, default=0.0</span>
+<span class="sd">            Target RMS (post-HPF) of a band-limited 1/f^α baseline</span>
+<span class="sd">            drift representing electrode/interface noise (Huigen 2002,</span>
+<span class="sd">            Gondran 1996). Same units as the EMG block. Set to 0 (the</span>
+<span class="sd">            default) to disable, preserving legacy behaviour.</span>
+<span class="sd">            The spectral form is paper-constrained; the amplitude</span>
+<span class="sd">            defaults are *not* validated for intramuscular EMG —</span>
+<span class="sd">            calibrate against real recordings via</span>
+<span class="sd">            :func:`myogen.utils.calibrate_baseline_drift_profile`.</span>
+<span class="sd">            Broadband movement artifacts (0–20 Hz, De Luca 2010) are</span>
+<span class="sd">            a separate phenomenon out of scope here.</span>
+<span class="sd">            Ignored when ``noise_type=&quot;gaussian&quot;``.</span>
+<span class="sd">        baseline_drift_alpha : float, default=1.75</span>
+<span class="sd">            Drift PSD slope α (PSD ∝ 1/f^α). Midpoint of the [1.5, 2.0]</span>
+<span class="sd">            electrode-noise regime. Must be &gt; 0.</span>
+<span class="sd">            Ignored when ``noise_type=&quot;gaussian&quot;``.</span>
+<span class="sd">        baseline_drift_low_hz : float or None, default=None</span>
+<span class="sd">            Lower edge of the drift band, in Hz. ``None`` resolves</span>
+<span class="sd">            to the lowest nonzero FFT bin available for the</span>
+<span class="sd">            simulation length.</span>
+<span class="sd">            Ignored when ``noise_type=&quot;gaussian&quot;``.</span>
+<span class="sd">        baseline_drift_high_hz : float, default=1.0</span>
+<span class="sd">            Upper edge of the drift band, in Hz. Default keeps the</span>
+<span class="sd">            knob scoped to sub-1 Hz baseline wander.</span>
+<span class="sd">            Ignored when ``noise_type=&quot;gaussian&quot;``.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        INTRAMUSCULAR_EMG__Block</span>
-<span class="sd">            Noisy intramuscular EMG signals for the electrode array as a neo.Block.</span>
-<span class="sd">            Results are stored in the `noisy_intramuscular_emg__Block` property after execution.</span>
+<span class="sd">            Noisy intramuscular EMG signals for the electrode array as a</span>
+<span class="sd">            ``neo.Block``. Results are also stored on</span>
+<span class="sd">            ``noisy_intramuscular_emg__Block``.</span>
 
 <span class="sd">        Raises</span>
 <span class="sd">        ------</span>
 <span class="sd">        ValueError</span>
-<span class="sd">            If intramuscular EMG has not been simulated. Call simulate_intramuscular_emg() first.</span>
-
-<span class="sd">        Notes</span>
-<span class="sd">        -----</span>
-<span class="sd">        The noise is computed per-channel (per electrode) to maintain the specified</span>
-<span class="sd">        SNR independently across all channels. This ensures that electrodes with</span>
-<span class="sd">        different signal amplitudes receive appropriately scaled noise.</span>
+<span class="sd">            If intramuscular EMG has not been simulated (call</span>
+<span class="sd">            :meth:`simulate_intramuscular_emg` first) or ``noise_type``</span>
+<span class="sd">            is unrecognized.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_intramuscular_emg__Block</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
                 <span class="s2">&quot;Intramuscular EMG has not been simulated. Call simulate_intramuscular_emg() first.&quot;</span>
             <span class="p">)</span>
 
+        <span class="n">noise_kind</span> <span class="o">=</span> <span class="n">noise_type</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">noise_kind</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;gaussian&quot;</span><span class="p">,</span> <span class="s2">&quot;realistic&quot;</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unsupported noise type: </span><span class="si">{</span><span class="n">noise_type</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
         <span class="n">noisy_block</span> <span class="o">=</span> <span class="n">Block</span><span class="p">()</span>
+        <span class="n">rng_global</span> <span class="o">=</span> <span class="n">get_random_generator</span><span class="p">()</span>
 
         <span class="k">for</span> <span class="n">pool_idx</span><span class="p">,</span> <span class="n">segment</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_intramuscular_emg__Block</span><span class="o">.</span><span class="n">segments</span><span class="p">):</span>
             <span class="n">noisy_segment</span> <span class="o">=</span> <span class="n">Segment</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Pool_</span><span class="si">{</span><span class="n">pool_idx</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
@@ -1670,17 +1747,40 @@ window.runMermaid = runMermaid;</script>
             <span class="n">noise_power_per_channel</span> <span class="o">=</span> <span class="n">signal_power_per_channel</span> <span class="o">/</span> <span class="n">snr_linear</span>
             <span class="n">noise_std_per_channel</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">noise_power_per_channel</span><span class="p">)</span>  <span class="c1"># Shape: (n_electrodes,)</span>
 
-            <span class="c1"># Generate noise</span>
-            <span class="k">if</span> <span class="n">noise_type</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;gaussian&quot;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">noise_kind</span> <span class="o">==</span> <span class="s2">&quot;gaussian&quot;</span><span class="p">:</span>
                 <span class="c1"># Generate standard normal noise, then scale per channel</span>
-                <span class="n">noise</span> <span class="o">=</span> <span class="n">get_random_generator</span><span class="p">()</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="n">emg_array</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
-                <span class="c1"># Broadcast noise_std_per_channel along time axis</span>
-                <span class="c1"># noise shape: (time, n_electrodes)</span>
-                <span class="c1"># noise_std_per_channel shape: (n_electrodes,)</span>
-                <span class="c1"># Broadcasting: (time, n_electrodes) * (1, n_electrodes)</span>
+                <span class="n">noise</span> <span class="o">=</span> <span class="n">rng_global</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="n">emg_array</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
                 <span class="n">noise</span> <span class="o">=</span> <span class="n">noise</span> <span class="o">*</span> <span class="n">noise_std_per_channel</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">newaxis</span><span class="p">,</span> <span class="p">:]</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unsupported noise type: </span><span class="si">{</span><span class="n">noise_type</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="c1"># Colored noise (signal-shape preserving SNR semantics).</span>
+                <span class="c1"># Per-channel call so each electrode hits the requested SNR</span>
+                <span class="c1"># individually, matching the legacy gaussian path.</span>
+                <span class="kn">from</span><span class="w"> </span><span class="nn">myogen.utils.emg_noise</span><span class="w"> </span><span class="kn">import</span> <span class="n">generate_realistic_noise</span>
+
+                <span class="n">n_samples</span><span class="p">,</span> <span class="n">n_channels</span> <span class="o">=</span> <span class="n">emg_array</span><span class="o">.</span><span class="n">shape</span>
+                <span class="n">fs_hz</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_sampling_frequency__Hz</span><span class="p">)</span>
+                <span class="n">noise</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty_like</span><span class="p">(</span><span class="n">emg_array</span><span class="p">)</span>
+                <span class="k">for</span> <span class="n">ch</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_channels</span><span class="p">):</span>
+                    <span class="n">ch_rng</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">default_rng</span><span class="p">(</span><span class="n">rng_global</span><span class="o">.</span><span class="n">integers</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="o">**</span><span class="mi">31</span> <span class="o">-</span> <span class="mi">1</span><span class="p">))</span>
+                    <span class="n">noise</span><span class="p">[:,</span> <span class="n">ch</span><span class="p">]</span> <span class="o">=</span> <span class="n">generate_realistic_noise</span><span class="p">(</span>
+                        <span class="n">n_samples</span><span class="p">,</span>
+                        <span class="n">fs_hz</span><span class="p">,</span>
+                        <span class="n">noise_rms</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">noise_std_per_channel</span><span class="p">[</span><span class="n">ch</span><span class="p">]),</span>
+                        <span class="n">spectral_slope</span><span class="o">=</span><span class="n">spectral_slope</span><span class="p">,</span>
+                        <span class="n">excess_kurtosis</span><span class="o">=</span><span class="n">excess_kurtosis</span><span class="p">,</span>
+                        <span class="n">powerline_hz</span><span class="o">=</span><span class="n">powerline_hz</span><span class="p">,</span>
+                        <span class="n">powerline_amplitude</span><span class="o">=</span><span class="n">powerline_amplitude</span><span class="p">,</span>
+                        <span class="n">powerline_harmonic_ratios</span><span class="o">=</span><span class="n">powerline_harmonic_ratios</span><span class="p">,</span>
+                        <span class="n">powerline_frequency_drift_hz</span><span class="o">=</span><span class="n">powerline_frequency_drift_hz</span><span class="p">,</span>
+                        <span class="n">powerline_amplitude_modulation_depth</span><span class="o">=</span><span class="n">powerline_amplitude_modulation_depth</span><span class="p">,</span>
+                        <span class="n">peak_hz</span><span class="o">=</span><span class="n">peak_hz</span><span class="p">,</span>
+                        <span class="n">analog_hpf_hz</span><span class="o">=</span><span class="n">analog_hpf_hz</span><span class="p">,</span>
+                        <span class="n">baseline_drift_rms_uv</span><span class="o">=</span><span class="n">baseline_drift_rms_uv</span><span class="p">,</span>
+                        <span class="n">baseline_drift_alpha</span><span class="o">=</span><span class="n">baseline_drift_alpha</span><span class="p">,</span>
+                        <span class="n">baseline_drift_low_hz</span><span class="o">=</span><span class="n">baseline_drift_low_hz</span><span class="p">,</span>
+                        <span class="n">baseline_drift_high_hz</span><span class="o">=</span><span class="n">baseline_drift_high_hz</span><span class="p">,</span>
+                        <span class="n">rng</span><span class="o">=</span><span class="n">ch_rng</span><span class="p">,</span>
+                    <span class="p">)</span>
 
             <span class="c1"># Add noise</span>
             <span class="n">noisy_emg</span> <span class="o">=</span> <span class="n">emg_array</span> <span class="o">+</span> <span class="n">noise</span>
@@ -1803,8 +1903,8 @@ window.runMermaid = runMermaid;</script>
   </div>
   
   <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script defer src="../../../../../../_static/scripts/bootstrap.js?digest=7f76b32a3354e82990f2"></script>
-<script defer src="../../../../../../_static/scripts/pydata-sphinx-theme.js?digest=7f76b32a3354e82990f2"></script>
+  <script defer src="../../../../../../_static/scripts/bootstrap.js?digest=0790524f97105ba85085"></script>
+<script defer src="../../../../../../_static/scripts/pydata-sphinx-theme.js?digest=0790524f97105ba85085"></script>
 
   <footer class="bd-footer">
 <div class="bd-footer__inner bd-page-width">

@@ -7,8 +7,8 @@ instead of direct current injection. This approach provides more physiologically
 patterns by modeling cortical input through descending drive populations.
 
 .. note::
-    This example bridges the gap between simple current injection (example 01) and full spinal network
-    simulation (network_config.py). It uses:
+    This example bridges the gap between simple current injection (example 02) and full spinal network
+    simulation (11_simulate_spinal_network.py). It uses:
 
     - **DescendingDrive__Pool**: Poisson process neurons modeling cortical input
     - **AlphaMN__Pool**: Biophysically detailed motor neurons (Powers2017 model)
@@ -50,7 +50,6 @@ patterns by modeling cortical input through descending drive populations.
 import itertools
 from pathlib import Path
 
-import elephant
 import joblib
 import numpy as np
 import quantities as pq
@@ -66,6 +65,27 @@ from myogen.utils.nmodl import load_nmodl_mechanisms
 from myogen.utils.types import pps
 
 plt.style.use("fivethirtyeight")
+
+
+def mean_firing_rate(spiketrain):
+    """Mean firing rate of a neo.SpikeTrain (replaces elephant.statistics.mean_firing_rate)."""
+    return (len(spiketrain) / (spiketrain.t_stop - spiketrain.t_start)).rescale(pq.Hz)
+
+
+def population_psth(spiketrains, bin_size):
+    """Total spike counts per bin across spiketrains, plus bin left edges (s).
+
+    Native replacement for elephant.statistics.time_histogram (output="counts").
+    """
+    t_start = min(st.t_start for st in spiketrains).rescale(pq.s).magnitude
+    t_stop = max(st.t_stop for st in spiketrains).rescale(pq.s).magnitude
+    bs = (bin_size).rescale(pq.s).magnitude
+    n_bins = int((t_stop - t_start) / bs)
+    edges = t_start + np.arange(n_bins + 1) * bs
+    spikes = np.concatenate([st.rescale(pq.s).magnitude for st in spiketrains])
+    spikes = spikes[(spikes >= edges[0]) & (spikes < edges[-1])]  # drop right-edge spikes
+    counts, _ = np.histogram(spikes, bins=edges)
+    return counts, edges[:-1]
 
 ##############################################################################
 # Create Populations
@@ -114,10 +134,10 @@ time_points = int(simulation_time / timestep)
 dd_baseline__pps = 0.0 * pps  # Baseline drive during rest
 dd_peak__pps = 65 * pps  # Peak drive during plateau
 
-# Phase durations (ms) - Total trapezoid duration: 13000ms
-ramp_up_duration = 500 * pq.ms  # 2s ramp up
-plateau_duration = 10000 * pq.ms  # 9s hold
-ramp_down_duration = 500 * pq.ms  # 2s ramp down
+# Phase durations (ms) - Total trapezoid duration: 11000ms
+ramp_up_duration = 500 * pq.ms  # 500ms ramp up
+plateau_duration = 10000 * pq.ms  # 10s hold
+ramp_down_duration = 500 * pq.ms  # 500ms ramp down
 
 # Add rest periods before and after
 rest_before = 1000 * pq.ms  # 1s rest before trapezoid
@@ -126,9 +146,9 @@ rest_after = 1000 * pq.ms  # 1s rest after trapezoid
 # Center the trapezoid at 7.5s (middle of 15s simulation)
 # Calculate phase boundaries with rest period before
 trapezoid_start = rest_before  # Start at 1s
-ramp_up_end = trapezoid_start + ramp_up_duration  # 3s
-plateau_end = ramp_up_end + plateau_duration  # 12s
-ramp_down_end = plateau_end + ramp_down_duration  # 14s
+ramp_up_end = trapezoid_start + ramp_up_duration  # 1.5s
+plateau_end = ramp_up_end + plateau_duration  # 11.5s
+ramp_down_end = plateau_end + ramp_down_duration  # 12s
 
 # Create time array
 time_array = np.linspace(0, simulation_time.magnitude, time_points) * pq.ms
@@ -322,7 +342,7 @@ print("\nFiring rate analysis:")
 # Calculate DD firing rates
 dd_firing_rates = np.array(
     [
-        elephant.statistics.mean_firing_rate(st__s.time_slice(st__s.min(), st__s.max()))
+        mean_firing_rate(st__s.time_slice(st__s.min(), st__s.max()))
         for st__s in dd_segment.spiketrains
         if len(st__s) > 0
     ]
@@ -331,7 +351,7 @@ dd_firing_rates = np.array(
 # Calculate MN firing rates
 mn_firing_rates = np.array(
     [
-        elephant.statistics.mean_firing_rate(st__s.time_slice(st__s.min(), st__s.max()))
+        mean_firing_rate(st__s.time_slice(st__s.min(), st__s.max()))
         for st__s in mn_segment.spiketrains
         if len(st__s) > 0
     ]
@@ -401,15 +421,11 @@ axes[2].grid(True, alpha=0.3)
 # 4. Population firing rates over time (binned)
 bin_size_ms = 100
 
-dd_psth = elephant.statistics.time_histogram(dd_segment.spiketrains, bin_size_ms * pq.ms)
-dd_rates_binned = (
-    (dd_psth / (bin_size_ms * pq.ms) / descending_drive_pool.n).rescale(pq.Hz).magnitude
-)
+dd_counts, bin_centers_s = population_psth(dd_segment.spiketrains, bin_size_ms * pq.ms)
+dd_rates_binned = dd_counts / (bin_size_ms / 1000.0) / descending_drive_pool.n
 
-mn_psth = elephant.statistics.time_histogram(mn_segment.spiketrains, bin_size_ms * pq.ms)
-mn_rates_binned = (mn_psth / (bin_size_ms * pq.ms) / motor_neuron_pool.n).rescale(pq.Hz).magnitude
-
-bin_centers_s = dd_psth.times.rescale(pq.s).magnitude
+mn_counts, _ = population_psth(mn_segment.spiketrains, bin_size_ms * pq.ms)
+mn_rates_binned = mn_counts / (bin_size_ms / 1000.0) / motor_neuron_pool.n
 axes[3].plot(bin_centers_s, dd_rates_binned, "b-", linewidth=2, label="DD Population", alpha=0.8)
 axes[3].plot(bin_centers_s, mn_rates_binned, "r-", linewidth=2, label="MN Population", alpha=0.8)
 

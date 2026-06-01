@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Index &#8212; MyoGen 0.9.0 Documentation</title>
+    <title>Index &#8212; MyoGen 0.10.0 Documentation</title>
   
   
   
@@ -26,8 +26,8 @@
   </noscript>
   
   <!-- Loaded before other Sphinx assets -->
-  <link href="_static/styles/theme.css?digest=7f76b32a3354e82990f2" rel="stylesheet" />
-<link href="_static/styles/pydata-sphinx-theme.css?digest=7f76b32a3354e82990f2" rel="stylesheet" />
+  <link href="_static/styles/theme.css?digest=0790524f97105ba85085" rel="stylesheet" />
+<link href="_static/styles/pydata-sphinx-theme.css?digest=0790524f97105ba85085" rel="stylesheet" />
 
     <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=5349f25f" />
     <link rel="stylesheet" type="text/css" href="_static/css/tooltipster.custom.css" />
@@ -39,7 +39,7 @@
     <link rel="stylesheet" type="text/css" href="_static/css/tooltipster-sideTip-borderless.min.css" />
     <link rel="stylesheet" type="text/css" href="_static/css/micromodal.css" />
     <link rel="stylesheet" type="text/css" href="_static/custom.css?v=9b95bd4c" />
-    <link rel="stylesheet" type="text/css" href="_static/sg_gallery.css?v=d2d258e8" />
+    <link rel="stylesheet" type="text/css" href="_static/sg_gallery.css?v=fd6457a4" />
     <link rel="stylesheet" type="text/css" href="_static/sg_gallery-binder.css?v=f4aeca0c" />
     <link rel="stylesheet" type="text/css" href="_static/sg_gallery-dataframe.css?v=2082cf3c" />
     <link rel="stylesheet" type="text/css" href="_static/sg_gallery-rendered-html.css?v=1277b6f3" />
@@ -47,16 +47,17 @@
     <link rel="stylesheet" type="text/css" href="_static/custom.css?v=9b95bd4c" />
   
   <!-- So that users can add custom icons -->
-  <script defer src="_static/scripts/fontawesome.js?digest=7f76b32a3354e82990f2"></script>
+  <script defer src="_static/scripts/fontawesome.js?digest=0790524f97105ba85085"></script>
   <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=7f76b32a3354e82990f2" />
-<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=7f76b32a3354e82990f2" />
+  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=0790524f97105ba85085" />
+<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=0790524f97105ba85085" />
 
     <script src="_static/jquery.js?v=5d32c60e"></script>
     <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-    <script src="_static/documentation_options.js?v=a82ae3da"></script>
+    <script src="_static/documentation_options.js?v=7e54ce6f"></script>
     <script src="_static/doctools.js?v=9bcbadda"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/sg-tags.js?v=d80f6fa4"></script>
     <script src="_static/js/hoverxref.js"></script>
     <script src="_static/js/tooltipster.bundle.min.js"></script>
     <script src="_static/js/micromodal.min.js"></script>
@@ -506,7 +507,7 @@ window.runMermaid = runMermaid;</script>
     <link rel="search" title="Search" href="search.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="0.9.0" />
+  <meta name="docsearch:version" content="0.10.0" />
   
     
     <script src="_static/searchtools.js"></script>
@@ -524,7 +525,9 @@ window.runMermaid = runMermaid;</script>
   
   <button type="button" class="btn rounded-pill" id="pst-back-to-top">
     <i class="fa-solid fa-arrow-up"></i>Back to top</button>
-
+  
+  
+  
   
   <dialog id="pst-search-dialog">
     
@@ -579,8 +582,8 @@ window.runMermaid = runMermaid;</script>
       
     
     
-    <img src="_static/myogen_logo.png" class="logo__image only-light" alt="MyoGen 0.9.0 Documentation - Home"/>
-    <img src="_static/myogen_logo.png" class="logo__image only-dark pst-js-only" alt="MyoGen 0.9.0 Documentation - Home"/>
+    <img src="_static/myogen_logo.png" class="logo__image only-light" alt="MyoGen 0.10.0 Documentation - Home"/>
+    <img src="_static/myogen_logo.png" class="logo__image only-dark pst-js-only" alt="MyoGen 0.10.0 Documentation - Home"/>
   
   
 </a></div>
@@ -589,7 +592,7 @@ window.runMermaid = runMermaid;</script>
 <div class="nav-item">
   <div class="version-switcher__container dropdown">
       <button id="version-switcher-button" type="button" class="version-switcher__button btn btn-sm navbar-btn" aria-haspopup="true" aria-expanded="false">
-          Version 0.9.0
+          Version 0.10.0
       </button>
       
       
@@ -652,11 +655,18 @@ window.runMermaid = runMermaid;</script>
       
         <div class="navbar-item">
 
-<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
-  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
-  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
-  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
-</button></div>
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
       
         <div class="navbar-item"><ul class="navbar-icon-links"
     aria-label="Icon Links">
@@ -669,8 +679,7 @@ window.runMermaid = runMermaid;</script>
           
           
           
-          <a href="https://github.com/NSquaredLab/MyoGen" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i>
-            <span class="sr-only">GitHub</span></a>
+          <a href="https://github.com/NSquaredLab/MyoGen" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
         </li>
 </ul></div>
       
@@ -748,11 +757,18 @@ window.runMermaid = runMermaid;</script>
         
           <div class="navbar-item">
 
-<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
-  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
-  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
-  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
-</button></div>
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
         
           <div class="navbar-item"><ul class="navbar-icon-links"
     aria-label="Icon Links">
@@ -765,8 +781,7 @@ window.runMermaid = runMermaid;</script>
           
           
           
-          <a href="https://github.com/NSquaredLab/MyoGen" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i>
-            <span class="sr-only">GitHub</span></a>
+          <a href="https://github.com/NSquaredLab/MyoGen" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
         </li>
 </ul></div>
         
@@ -820,6 +835,7 @@ window.runMermaid = runMermaid;</script>
  | <a href="#L"><strong>L</strong></a>
  | <a href="#M"><strong>M</strong></a>
  | <a href="#N"><strong>N</strong></a>
+ | <a href="#O"><strong>O</strong></a>
  | <a href="#P"><strong>P</strong></a>
  | <a href="#Q"><strong>Q</strong></a>
  | <a href="#R"><strong>R</strong></a>
@@ -860,9 +876,15 @@ window.runMermaid = runMermaid;</script>
 </li>
         <li><a href="generated/myogen.simulator.IntramuscularEMG.__init__.html#myogen.simulator.IntramuscularEMG.__init__">(IntramuscularEMG method)</a>
 </li>
+        <li><a href="generated/myogen.simulator.core.force.JointBiomechanics.__init__.html#myogen.simulator.core.force.JointBiomechanics.__init__">(JointBiomechanics method)</a>
+</li>
         <li><a href="generated/myogen.simulator.neuron.joint_dynamics.JointDynamics.__init__.html#myogen.simulator.neuron.joint_dynamics.JointDynamics.__init__">(JointDynamics method)</a>
 </li>
+        <li><a href="generated/myogen.simulator.core.force.JointGeometry.__init__.html#myogen.simulator.core.force.JointGeometry.__init__">(JointGeometry method)</a>
+</li>
         <li><a href="generated/myogen.simulator.Muscle.__init__.html#myogen.simulator.Muscle.__init__">(Muscle method)</a>
+</li>
+        <li><a href="generated/myogen.simulator.core.force.MuscleGeometry.__init__.html#myogen.simulator.core.force.MuscleGeometry.__init__">(MuscleGeometry method)</a>
 </li>
         <li><a href="generated/myogen.simulator.neuron.network.Network.__init__.html#myogen.simulator.neuron.network.Network.__init__">(Network method)</a>
 </li>
@@ -941,7 +963,13 @@ window.runMermaid = runMermaid;</script>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="generated/myogen.simulator.IntramuscularElectrodeArray.calc_observation_points.html#myogen.simulator.IntramuscularElectrodeArray.calc_observation_points">calc_observation_points() (IntramuscularElectrodeArray method)</a>, <a href="generated/myogen.simulator.IntramuscularElectrodeArray.html#myogen.simulator.IntramuscularElectrodeArray.calc_observation_points">[1]</a>
 </li>
+      <li><a href="generated/myogen.simulator.core.force.JointGeometry.center_coords.html#myogen.simulator.core.force.JointGeometry.center_coords">center_coords (JointGeometry attribute)</a>, <a href="generated/myogen.simulator.core.force.JointGeometry.html#myogen.simulator.core.force.JointGeometry.center_coords">[1]</a>
+</li>
       <li><a href="generated/myogen.simulator.neuron.proprioception.SpindleModel.chain_activation.html#myogen.simulator.neuron.proprioception.SpindleModel.chain_activation">chain_activation (SpindleModel property)</a>, <a href="generated/myogen.simulator.neuron.proprioception.SpindleModel.html#myogen.simulator.neuron.proprioception.SpindleModel.chain_activation">[1]</a>
+</li>
+      <li><a href="generated/myogen.simulator.core.force.JointBiomechanics.compute_joint_torque.html#myogen.simulator.core.force.JointBiomechanics.compute_joint_torque">compute_joint_torque() (JointBiomechanics method)</a>, <a href="generated/myogen.simulator.core.force.JointBiomechanics.html#myogen.simulator.core.force.JointBiomechanics.compute_joint_torque">[1]</a>
+</li>
+      <li><a href="generated/myogen.simulator.core.force.JointBiomechanics.compute_muscle_length.html#myogen.simulator.core.force.JointBiomechanics.compute_muscle_length">compute_muscle_length() (JointBiomechanics method)</a>, <a href="generated/myogen.simulator.core.force.JointBiomechanics.html#myogen.simulator.core.force.JointBiomechanics.compute_muscle_length">[1]</a>
 </li>
       <li><a href="generated/myogen.simulator.neuron.network.Network.connect.html#myogen.simulator.neuron.network.Network.connect">connect() (Network method)</a>, <a href="generated/myogen.simulator.neuron.network.Network.html#myogen.simulator.neuron.network.Network.connect">[1]</a>
 </li>
@@ -959,10 +987,10 @@ window.runMermaid = runMermaid;</script>
         <li><a href="generated/myogen.simulator.ForceModel.contraction_times__samples.html#myogen.simulator.ForceModel.contraction_times__samples">(ForceModel property)</a>, <a href="generated/myogen.simulator.ForceModel.html#id3">[1]</a>
 </li>
       </ul></li>
-      <li><a href="generated/myogen.utils.continuous_saver.convert_chunks_to_neo.html#myogen.utils.continuous_saver.convert_chunks_to_neo">convert_chunks_to_neo() (in module myogen.utils.continuous_saver)</a>
-</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="generated/myogen.utils.continuous_saver.convert_chunks_to_neo.html#myogen.utils.continuous_saver.convert_chunks_to_neo">convert_chunks_to_neo() (in module myogen.utils.continuous_saver)</a>
+</li>
       <li><a href="generated/myogen.utils.types.CORTICAL_INPUT__MATRIX.html#myogen.utils.types.CORTICAL_INPUT__MATRIX">CORTICAL_INPUT__MATRIX (in module myogen.utils.types)</a>
 </li>
       <li><a href="generated/myogen.simulator.neuron.proprioception.GolgiTendonOrganModel.create_default_gto_parameters.html#myogen.simulator.neuron.proprioception.GolgiTendonOrganModel.create_default_gto_parameters">create_default_gto_parameters() (GolgiTendonOrganModel static method)</a>, <a href="generated/myogen.simulator.neuron.proprioception.GolgiTendonOrganModel.html#myogen.simulator.neuron.proprioception.GolgiTendonOrganModel.create_default_gto_parameters">[1]</a>
@@ -1051,6 +1079,8 @@ window.runMermaid = runMermaid;</script>
 </li>
       <li><a href="generated/myogen.simulator.Muscle.generate_muscle_fiber_centers.html#myogen.simulator.Muscle.generate_muscle_fiber_centers">generate_muscle_fiber_centers() (Muscle method)</a>, <a href="generated/myogen.simulator.Muscle.html#myogen.simulator.Muscle.generate_muscle_fiber_centers">[1]</a>
 </li>
+      <li><a href="generated/myogen.simulator.core.force.JointBiomechanics.get_biomechanical_summary.html#myogen.simulator.core.force.JointBiomechanics.get_biomechanical_summary">get_biomechanical_summary() (JointBiomechanics method)</a>, <a href="generated/myogen.simulator.core.force.JointBiomechanics.html#myogen.simulator.core.force.JointBiomechanics.get_biomechanical_summary">[1]</a>
+</li>
       <li><a href="generated/myogen.simulator.neuron.network.Network.get_connections.html#myogen.simulator.neuron.network.Network.get_connections">get_connections() (Network method)</a>, <a href="generated/myogen.simulator.neuron.network.Network.html#myogen.simulator.neuron.network.Network.get_connections">[1]</a>
 </li>
       <li><a href="generated/myogen.simulator.SurfaceElectrodeArray.get_H_sf.html#myogen.simulator.SurfaceElectrodeArray.get_H_sf">get_H_sf() (SurfaceElectrodeArray method)</a>, <a href="generated/myogen.simulator.SurfaceElectrodeArray.html#myogen.simulator.SurfaceElectrodeArray.get_H_sf">[1]</a>
@@ -1076,6 +1106,10 @@ window.runMermaid = runMermaid;</script>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="generated/myogen.simulator.neuron.simulation_runner.SimulationRunner.get_model_outputs.html#myogen.simulator.neuron.simulation_runner.SimulationRunner.get_model_outputs">get_model_outputs() (SimulationRunner method)</a>, <a href="generated/myogen.simulator.neuron.simulation_runner.SimulationRunner.html#myogen.simulator.neuron.simulation_runner.SimulationRunner.get_model_outputs">[1]</a>
+</li>
+      <li><a href="generated/myogen.simulator.core.force.JointBiomechanics.get_moment_arm.html#myogen.simulator.core.force.JointBiomechanics.get_moment_arm">get_moment_arm() (JointBiomechanics method)</a>, <a href="generated/myogen.simulator.core.force.JointBiomechanics.html#myogen.simulator.core.force.JointBiomechanics.get_moment_arm">[1]</a>
+</li>
+      <li><a href="generated/myogen.simulator.core.force.JointBiomechanics.get_muscle_length_trajectory.html#myogen.simulator.core.force.JointBiomechanics.get_muscle_length_trajectory">get_muscle_length_trajectory() (JointBiomechanics method)</a>, <a href="generated/myogen.simulator.core.force.JointBiomechanics.html#myogen.simulator.core.force.JointBiomechanics.get_muscle_length_trajectory">[1]</a>
 </li>
       <li><a href="generated/myogen.simulator.neuron.network.Network.get_netcons.html#myogen.simulator.neuron.network.Network.get_netcons">get_netcons() (Network method)</a>, <a href="generated/myogen.simulator.neuron.network.Network.html#myogen.simulator.neuron.network.Network.get_netcons">[1]</a>
 </li>
@@ -1119,6 +1153,8 @@ window.runMermaid = runMermaid;</script>
         <li><a href="generated/myogen.simulator.Muscle.html#id23">(Muscle property)</a>, <a href="generated/myogen.simulator.Muscle.innervation_center_positions__mm.html#myogen.simulator.Muscle.innervation_center_positions__mm">[1]</a>
 </li>
       </ul></li>
+      <li><a href="generated/myogen.simulator.core.force.MuscleGeometry.html#myogen.simulator.core.force.MuscleGeometry.insertion_coords">insertion_coords (MuscleGeometry attribute)</a>, <a href="generated/myogen.simulator.core.force.MuscleGeometry.insertion_coords.html#myogen.simulator.core.force.MuscleGeometry.insertion_coords">[1]</a>
+</li>
       <li><a href="generated/myogen.simulator.neuron.proprioception.GolgiTendonOrganModel.html#myogen.simulator.neuron.proprioception.GolgiTendonOrganModel.integrate">integrate() (GolgiTendonOrganModel method)</a>, <a href="generated/myogen.simulator.neuron.proprioception.GolgiTendonOrganModel.integrate.html#myogen.simulator.neuron.proprioception.GolgiTendonOrganModel.integrate">[1]</a>
 
       <ul>
@@ -1155,9 +1191,15 @@ window.runMermaid = runMermaid;</script>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="generated/myogen.utils.types.JOINT_ANGLE__ARRAY.html#myogen.utils.types.JOINT_ANGLE__ARRAY">JOINT_ANGLE__ARRAY (in module myogen.utils.types)</a>
 </li>
+      <li><a href="generated/myogen.simulator.core.force.JointBiomechanics.html#myogen.simulator.core.force.JointBiomechanics.joint_angles__deg">joint_angles__deg (JointBiomechanics attribute)</a>
+</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="generated/myogen.simulator.core.force.JointBiomechanics.html#myogen.simulator.core.force.JointBiomechanics">JointBiomechanics (class in myogen.simulator.core.force)</a>
+</li>
       <li><a href="generated/myogen.simulator.neuron.joint_dynamics.JointDynamics.html#myogen.simulator.neuron.joint_dynamics.JointDynamics">JointDynamics (class in myogen.simulator.neuron.joint_dynamics)</a>
+</li>
+      <li><a href="generated/myogen.simulator.core.force.JointGeometry.html#myogen.simulator.core.force.JointGeometry">JointGeometry (class in myogen.simulator.core.force)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -1177,7 +1219,11 @@ window.runMermaid = runMermaid;</script>
 <h2 id="M">M</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="generated/myogen.simulator.core.force.MuscleGeometry.html#myogen.simulator.core.force.MuscleGeometry.max_length_change__cm">max_length_change__cm (MuscleGeometry attribute)</a>, <a href="generated/myogen.simulator.core.force.MuscleGeometry.max_length_change__cm.html#myogen.simulator.core.force.MuscleGeometry.max_length_change__cm">[1]</a>
+</li>
       <li><a href="generated/myogen.utils.types.MOMENT_ARM__MATRIX.html#myogen.utils.types.MOMENT_ARM__MATRIX">MOMENT_ARM__MATRIX (in module myogen.utils.types)</a>
+</li>
+      <li><a href="generated/myogen.simulator.core.force.JointBiomechanics.html#myogen.simulator.core.force.JointBiomechanics.moment_arms__cm">moment_arms__cm (JointBiomechanics attribute)</a>
 </li>
       <li><a href="generated/myogen.simulator.neuron.muscle.HillModel.html#myogen.simulator.neuron.muscle.HillModel.motor_unit_forces">motor_unit_forces (HillModel property)</a>, <a href="generated/myogen.simulator.neuron.muscle.HillModel.motor_unit_forces.html#myogen.simulator.neuron.muscle.HillModel.motor_unit_forces">[1]</a>
 </li>
@@ -1229,12 +1275,16 @@ window.runMermaid = runMermaid;</script>
 </li>
       <li><a href="generated/myogen.simulator.neuron.muscle.HillModel.html#myogen.simulator.neuron.muscle.HillModel.muscle_velocity">muscle_velocity (HillModel property)</a>, <a href="generated/myogen.simulator.neuron.muscle.HillModel.muscle_velocity.html#myogen.simulator.neuron.muscle.HillModel.muscle_velocity">[1]</a>
 </li>
+      <li><a href="generated/myogen.simulator.core.force.MuscleGeometry.html#myogen.simulator.core.force.MuscleGeometry">MuscleGeometry (class in myogen.simulator.core.force)</a>
+</li>
   </ul></td>
 </tr></table>
 
 <h2 id="N">N</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="generated/myogen.simulator.core.force.JointBiomechanics.html#myogen.simulator.core.force.JointBiomechanics.n_muscles">n_muscles (JointBiomechanics attribute)</a>
+</li>
       <li><a href="generated/myogen.simulator.IntramuscularElectrodeArray.html#myogen.simulator.IntramuscularElectrodeArray.n_nodes">n_nodes (IntramuscularElectrodeArray attribute)</a>
 </li>
       <li><a href="generated/myogen.simulator.neuron.network.Network.html#myogen.simulator.neuron.network.Network">Network (class in myogen.simulator.neuron.network)</a>
@@ -1260,6 +1310,8 @@ window.runMermaid = runMermaid;</script>
 </li>
         <li><a href="generated/myogen.simulator.SurfaceElectrodeArray.html#myogen.simulator.SurfaceElectrodeArray.num_channels">(SurfaceElectrodeArray attribute)</a>
 </li>
+        <li><a href="generated/myogen.simulator.SurfaceElectrodeArray.html#id3">(SurfaceElectrodeArray property)</a>, <a href="generated/myogen.simulator.SurfaceElectrodeArray.num_channels.html#myogen.simulator.SurfaceElectrodeArray.num_channels">[1]</a>
+</li>
       </ul></li>
       <li><a href="generated/myogen.simulator.SurfaceElectrodeArray.html#myogen.simulator.SurfaceElectrodeArray.num_electrodes">num_electrodes (SurfaceElectrodeArray attribute)</a>
 </li>
@@ -1271,6 +1323,18 @@ window.runMermaid = runMermaid;</script>
         <li><a href="generated/myogen.simulator.Muscle.html#id28">(Muscle property)</a>, <a href="generated/myogen.simulator.Muscle.number_of_muscle_fibers.html#myogen.simulator.Muscle.number_of_muscle_fibers">[1]</a>
 </li>
       </ul></li>
+  </ul></td>
+</tr></table>
+
+<h2 id="O">O</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="generated/myogen.simulator.core.force.MuscleGeometry.html#myogen.simulator.core.force.MuscleGeometry.optimal_length__cm">optimal_length__cm (MuscleGeometry attribute)</a>, <a href="generated/myogen.simulator.core.force.MuscleGeometry.optimal_length__cm.html#myogen.simulator.core.force.MuscleGeometry.optimal_length__cm">[1]</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="generated/myogen.simulator.core.force.MuscleGeometry.html#myogen.simulator.core.force.MuscleGeometry.origin_coords">origin_coords (MuscleGeometry attribute)</a>, <a href="generated/myogen.simulator.core.force.MuscleGeometry.origin_coords.html#myogen.simulator.core.force.MuscleGeometry.origin_coords">[1]</a>
+</li>
   </ul></td>
 </tr></table>
 
@@ -1361,7 +1425,11 @@ window.runMermaid = runMermaid;</script>
 <h2 id="R">R</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="generated/myogen.simulator.core.force.JointGeometry.html#myogen.simulator.core.force.JointGeometry.radius__cm">radius__cm (JointGeometry attribute)</a>, <a href="generated/myogen.simulator.core.force.JointGeometry.radius__cm.html#myogen.simulator.core.force.JointGeometry.radius__cm">[1]</a>
+</li>
       <li><a href="api/myogen_api.html#myogen.RANDOM_GENERATOR">RANDOM_GENERATOR (in module myogen)</a>
+</li>
+      <li><a href="generated/myogen.simulator.core.force.JointGeometry.html#myogen.simulator.core.force.JointGeometry.range_of_motion__degrees">range_of_motion__degrees (JointGeometry attribute)</a>, <a href="generated/myogen.simulator.core.force.JointGeometry.range_of_motion__degrees.html#myogen.simulator.core.force.JointGeometry.range_of_motion__degrees">[1]</a>
 </li>
       <li><a href="generated/myogen.utils.continuous_saver.ContinuousSaver.html#myogen.utils.continuous_saver.ContinuousSaver.record_spike">record_spike() (ContinuousSaver method)</a>, <a href="generated/myogen.utils.continuous_saver.ContinuousSaver.record_spike.html#myogen.utils.continuous_saver.ContinuousSaver.record_spike">[1]</a>
 </li>
@@ -1377,14 +1445,14 @@ window.runMermaid = runMermaid;</script>
 </li>
       <li><a href="generated/myogen.simulator.Muscle.html#myogen.simulator.Muscle.resulting_fiber_assignment">resulting_fiber_assignment() (Muscle method)</a>, <a href="generated/myogen.simulator.Muscle.resulting_fiber_assignment.html#myogen.simulator.Muscle.resulting_fiber_assignment">[1]</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="generated/myogen.simulator.Muscle.html#myogen.simulator.Muscle.resulting_innervation_areas__mm2">resulting_innervation_areas__mm2 (Muscle attribute)</a>
 
       <ul>
         <li><a href="generated/myogen.simulator.Muscle.html#id22">(Muscle property)</a>, <a href="generated/myogen.simulator.Muscle.resulting_innervation_areas__mm2.html#myogen.simulator.Muscle.resulting_innervation_areas__mm2">[1]</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="generated/myogen.simulator.Muscle.html#myogen.simulator.Muscle.resulting_number_of_innervated_fibers">resulting_number_of_innervated_fibers (Muscle attribute)</a>
 
       <ul>
@@ -1547,8 +1615,8 @@ window.runMermaid = runMermaid;</script>
   </div>
   
   <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script defer src="_static/scripts/bootstrap.js?digest=7f76b32a3354e82990f2"></script>
-<script defer src="_static/scripts/pydata-sphinx-theme.js?digest=7f76b32a3354e82990f2"></script>
+  <script defer src="_static/scripts/bootstrap.js?digest=0790524f97105ba85085"></script>
+<script defer src="_static/scripts/pydata-sphinx-theme.js?digest=0790524f97105ba85085"></script>
 
   <footer class="bd-footer">
 <div class="bd-footer__inner bd-page-width">

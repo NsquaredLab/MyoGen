@@ -37,7 +37,7 @@ settings, and generate realistic force output from motor neuron spike trains.
 .. important::
     **Prerequisites**: This example requires results from the optimization study:
 
-    - Run ``00_optimize_dd_for_target_firing_rate.py`` first
+    - Run ``01_optimize_dd_for_target_firing_rate.py`` first
     - Generates ``dd_optimized_params.json`` in ``results/dd_optimization/``
     - Contains best network parameters for target firing rate
 
@@ -151,7 +151,7 @@ Load the best network parameters from the optimization study.
     if not params_file.exists():
         raise FileNotFoundError(
             f"Optimized parameters not found: {params_file}\n"
-            f"Run 00_optimize_dd_for_target_firing_rate.py first!"
+            f"Run 01_optimize_dd_for_target_firing_rate.py first!"
         )
 
     with open(params_file, "r") as f:
@@ -507,7 +507,7 @@ Convert spike trains to muscle force using motor unit twitch dynamics.
 
  .. code-block:: none
 
-    Pool 1 Twitch trains (Numba):   0%|          | 0/100 [00:00<?, ?MU/s]    Pool 1 Twitch trains (Numba):   1%|          | 1/100 [00:00<00:29,  3.34MU/s]    Pool 1 Twitch trains (Numba): 100%|██████████| 100/100 [00:00<00:00, 322.54MU/s]
+    Pool 1 Twitch trains (Numba):   0%|          | 0/100 [00:00<?, ?MU/s]    Pool 1 Twitch trains (Numba):   1%|          | 1/100 [00:00<00:26,  3.74MU/s]    Pool 1 Twitch trains (Numba): 100%|██████████| 100/100 [00:00<00:00, 357.64MU/s]
 
 
 
@@ -700,7 +700,7 @@ Create clean visualizations of spike trains and force output.
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 12.469 seconds)
+   **Total running time of the script:** (0 minutes 17.342 seconds)
 
 
 .. _sphx_glr_download_auto_examples_02_finetune_02_compute_force_from_optimized_dd.py:

@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Extracting Data from Neo Blocks &#8212; MyoGen 0.9.0 Documentation</title>
+    <title>Extracting Data from Neo Blocks &#8212; MyoGen 0.10.0 Documentation</title>
   
   
   
@@ -27,8 +27,8 @@
   </noscript>
   
   <!-- Loaded before other Sphinx assets -->
-  <link href="../../_static/styles/theme.css?digest=7f76b32a3354e82990f2" rel="stylesheet" />
-<link href="../../_static/styles/pydata-sphinx-theme.css?digest=7f76b32a3354e82990f2" rel="stylesheet" />
+  <link href="../../_static/styles/theme.css?digest=0790524f97105ba85085" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=0790524f97105ba85085" rel="stylesheet" />
 
     <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=5349f25f" />
     <link rel="stylesheet" type="text/css" href="../../_static/css/tooltipster.custom.css" />
@@ -40,7 +40,7 @@
     <link rel="stylesheet" type="text/css" href="../../_static/css/tooltipster-sideTip-borderless.min.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/css/micromodal.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/custom.css?v=9b95bd4c" />
-    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery.css?v=d2d258e8" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery.css?v=fd6457a4" />
     <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-binder.css?v=f4aeca0c" />
     <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
     <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
@@ -48,16 +48,17 @@
     <link rel="stylesheet" type="text/css" href="../../_static/custom.css?v=9b95bd4c" />
   
   <!-- So that users can add custom icons -->
-  <script defer src="../../_static/scripts/fontawesome.js?digest=7f76b32a3354e82990f2"></script>
+  <script defer src="../../_static/scripts/fontawesome.js?digest=0790524f97105ba85085"></script>
   <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=7f76b32a3354e82990f2" />
-<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=7f76b32a3354e82990f2" />
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=0790524f97105ba85085" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=0790524f97105ba85085" />
 
     <script src="../../_static/jquery.js?v=5d32c60e"></script>
     <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-    <script src="../../_static/documentation_options.js?v=a82ae3da"></script>
+    <script src="../../_static/documentation_options.js?v=7e54ce6f"></script>
     <script src="../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/sg-tags.js?v=d80f6fa4"></script>
     <script src="../../_static/js/hoverxref.js"></script>
     <script src="../../_static/js/tooltipster.bundle.min.js"></script>
     <script src="../../_static/js/micromodal.min.js"></script>
@@ -73,7 +74,7 @@
     <link rel="prev" title="Spinal Network Simulation with Systematic Tendon Tap Protocol" href="11_simulate_spinal_network.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="0.9.0" />
+  <meta name="docsearch:version" content="0.10.0" />
   
     
     <script src="../../_static/searchtools.js"></script>
@@ -91,7 +92,9 @@
   
   <button type="button" class="btn rounded-pill" id="pst-back-to-top">
     <i class="fa-solid fa-arrow-up"></i>Back to top</button>
-
+  
+  
+  
   
   <dialog id="pst-search-dialog">
     
@@ -146,8 +149,8 @@
       
     
     
-    <img src="../../_static/myogen_logo.png" class="logo__image only-light" alt="MyoGen 0.9.0 Documentation - Home"/>
-    <img src="../../_static/myogen_logo.png" class="logo__image only-dark pst-js-only" alt="MyoGen 0.9.0 Documentation - Home"/>
+    <img src="../../_static/myogen_logo.png" class="logo__image only-light" alt="MyoGen 0.10.0 Documentation - Home"/>
+    <img src="../../_static/myogen_logo.png" class="logo__image only-dark pst-js-only" alt="MyoGen 0.10.0 Documentation - Home"/>
   
   
 </a></div>
@@ -156,7 +159,7 @@
 <div class="nav-item">
   <div class="version-switcher__container dropdown">
       <button id="version-switcher-button" type="button" class="version-switcher__button btn btn-sm navbar-btn" aria-haspopup="true" aria-expanded="false">
-          Version 0.9.0
+          Version 0.10.0
       </button>
       
       
@@ -219,11 +222,18 @@
       
         <div class="navbar-item">
 
-<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
-  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
-  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
-  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
-</button></div>
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
       
         <div class="navbar-item"><ul class="navbar-icon-links"
     aria-label="Icon Links">
@@ -236,8 +246,7 @@
           
           
           
-          <a href="https://github.com/NSquaredLab/MyoGen" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i>
-            <span class="sr-only">GitHub</span></a>
+          <a href="https://github.com/NSquaredLab/MyoGen" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
         </li>
 </ul></div>
       
@@ -317,11 +326,18 @@
         
           <div class="navbar-item">
 
-<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
-  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
-  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
-  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
-</button></div>
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
         
           <div class="navbar-item"><ul class="navbar-icon-links"
     aria-label="Icon Links">
@@ -334,8 +350,7 @@
           
           
           
-          <a href="https://github.com/NSquaredLab/MyoGen" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i>
-            <span class="sr-only">GitHub</span></a>
+          <a href="https://github.com/NSquaredLab/MyoGen" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
         </li>
 </ul></div>
         
@@ -370,6 +385,7 @@
 <li class="toctree-l2"><a class="reference internal" href="11_simulate_spinal_network.html">Spinal Network Simulation with Systematic Tendon Tap Protocol</a></li>
 <li class="toctree-l2 current active"><a class="current reference internal" href="#">Extracting Data from Neo Blocks</a></li>
 <li class="toctree-l2"><a class="reference internal" href="13_load_and_inspect_nwb_data.html">Loading and Inspecting NWB Data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="15_noise_parameter_sweep.html">Noise Parameter Sweep — overview + dense colour-mapped tiles</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../02_finetune/index.html">Step-by-step reproduction</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -474,10 +490,10 @@ Neo Block types used in MyoGen:</p>
 <h2>Import Libraries<a class="headerlink" href="#import-libraries" title="Link to this heading">#</a></h2>
 <div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <a href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="pathlib.Path" class="sphx-glr-backref-module-pathlib sphx-glr-backref-type-py-class"><span class="n">Path</span></a>
 
-<span class="kn">import</span><span class="w"> </span><span class="nn">elephant.statistics</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">joblib</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">quantities</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pq</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">seaborn</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">sns</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">myogen.utils.neo</span><span class="w"> </span><span class="kn">import</span> <span class="n">signal_to_grid</span>
@@ -488,6 +504,12 @@ Neo Block types used in MyoGen:</p>
     <span class="n">SURFACE_EMG__Block</span><span class="p">,</span>
     <span class="n">SURFACE_MUAP__Block</span><span class="p">,</span>
 <span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_mean_firing_rate</span><span class="p">(</span><a href="https://neo.readthedocs.io/en/latest/api_reference.html#neo.core.SpikeTrain" title="neo.core.spiketrain.SpikeTrain" class="sphx-glr-backref-module-neo-core-spiketrain sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">spiketrain</span></a><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Mean firing rate of a neo.SpikeTrain (replaces elephant.statistics.mean_firing_rate).&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><a href="https://neo.readthedocs.io/en/latest/api_reference.html#neo.core.SpikeTrain" title="neo.core.spiketrain.SpikeTrain" class="sphx-glr-backref-module-neo-core-spiketrain sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">spiketrain</span></a><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><a href="https://neo.readthedocs.io/en/latest/api_reference.html#neo.core.SpikeTrain" title="neo.core.spiketrain.SpikeTrain" class="sphx-glr-backref-module-neo-core-spiketrain sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">spiketrain</span></a><span class="o">.</span><span class="n">t_stop</span> <span class="o">-</span> <a href="https://neo.readthedocs.io/en/latest/api_reference.html#neo.core.SpikeTrain" title="neo.core.spiketrain.SpikeTrain" class="sphx-glr-backref-module-neo-core-spiketrain sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">spiketrain</span></a><span class="o">.</span><span class="n">t_start</span><span class="p">))</span><span class="o">.</span><span class="n">rescale</span><span class="p">(</span><span class="n">pq</span><span class="o">.</span><span class="n">Hz</span><span class="p">)</span>
+
 
 <span class="n">plt</span><span class="o">.</span><span class="n">style</span><span class="o">.</span><span class="n">use</span><span class="p">(</span><span class="s2">&quot;fivethirtyeight&quot;</span><span class="p">)</span>
 <span class="n">sns</span><span class="o">.</span><span class="n">set_palette</span><span class="p">(</span><span class="s2">&quot;husl&quot;</span><span class="p">)</span>
@@ -563,7 +585,7 @@ Missing data files (run respective examples first):
         <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Last spike: </span><span class="si">{</span><a href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">spike_times__s</span></a><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2"> s&quot;</span><span class="p">)</span>
 
         <span class="c1"># Calculate firing rate</span>
-        <span class="n">firing_rate</span> <span class="o">=</span> <span class="n">elephant</span><span class="o">.</span><span class="n">statistics</span><span class="o">.</span><span class="n">mean_firing_rate</span><span class="p">(</span><a href="https://neo.readthedocs.io/en/latest/api_reference.html#neo.core.SpikeTrain" title="neo.core.spiketrain.SpikeTrain" class="sphx-glr-backref-module-neo-core-spiketrain sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">spiketrain</span></a><span class="p">)</span>
+        <span class="n">firing_rate</span> <span class="o">=</span> <span class="n">_mean_firing_rate</span><span class="p">(</span><a href="https://neo.readthedocs.io/en/latest/api_reference.html#neo.core.SpikeTrain" title="neo.core.spiketrain.SpikeTrain" class="sphx-glr-backref-module-neo-core-spiketrain sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">spiketrain</span></a><span class="p">)</span>
         <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Mean firing rate: </span><span class="si">{</span><span class="n">firing_rate</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
     <span class="c1"># Calculate statistics across all neurons</span>
@@ -572,7 +594,7 @@ Missing data files (run respective examples first):
 
     <span class="k">for</span> <a href="https://neo.readthedocs.io/en/latest/api_reference.html#neo.core.SpikeTrain" title="neo.core.spiketrain.SpikeTrain" class="sphx-glr-backref-module-neo-core-spiketrain sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">st</span></a> <span class="ow">in</span> <a href="https://neo.readthedocs.io/en/latest/api_reference.html#neo.core.Segment" title="neo.core.segment.Segment" class="sphx-glr-backref-module-neo-core-segment sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">motor_pool</span></a><span class="o">.</span><span class="n">spiketrains</span><span class="p">:</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><a href="https://neo.readthedocs.io/en/latest/api_reference.html#neo.core.SpikeTrain" title="neo.core.spiketrain.SpikeTrain" class="sphx-glr-backref-module-neo-core-spiketrain sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">st</span></a><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="n">rate</span> <span class="o">=</span> <span class="n">elephant</span><span class="o">.</span><span class="n">statistics</span><span class="o">.</span><span class="n">mean_firing_rate</span><span class="p">(</span><a href="https://neo.readthedocs.io/en/latest/api_reference.html#neo.core.SpikeTrain" title="neo.core.spiketrain.SpikeTrain" class="sphx-glr-backref-module-neo-core-spiketrain sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">st</span></a><span class="p">)</span>
+            <span class="n">rate</span> <span class="o">=</span> <span class="n">_mean_firing_rate</span><span class="p">(</span><a href="https://neo.readthedocs.io/en/latest/api_reference.html#neo.core.SpikeTrain" title="neo.core.spiketrain.SpikeTrain" class="sphx-glr-backref-module-neo-core-spiketrain sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">st</span></a><span class="p">)</span>
             <a href="https://docs.python.org/3/library/stdtypes.html#list" title="builtins.list" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">firing_rates</span></a><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">rate</span><span class="o">.</span><span class="n">magnitude</span><span class="p">)</span>
             <a href="https://docs.python.org/3/library/functions.html#int" title="builtins.int" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">active_neurons</span></a> <span class="o">+=</span> <span class="mi">1</span>
 
@@ -617,7 +639,7 @@ Neuron 0:
   Duration: 15.0 s
   First spike: 1.2547 s
   Last spike: 11.7232 s
-  Mean firing rate: 14.20 1/s
+  Mean firing rate: 14.20 Hz
 
 Motor pool statistics:
   Active neurons: 78/100
@@ -806,8 +828,10 @@ Motor pool: Pool_0
   Duration: 15.0 s
 
 EMG at electrode (2, 2):
-  RMS amplitude: 0.281 1.0 mV
-  Peak-to-peak: 5.531 1.0 mV
+  RMS amplitude: 1.405 1.0 mV
+  Peak-to-peak: 27.158 1.0 mV
+/home/runner/work/MyoGen/MyoGen/examples/01_basic/12_extract_data_from_neo_blocks.py:299: RuntimeWarning: divide by zero encountered in log10
+  ax2.pcolormesh(t, f, 10 * np.log10(Sxx), shading=&quot;gouraud&quot;, cmap=&quot;viridis&quot;)
 
 Saved EMG analysis to: results/surface_emg_analysis.png
 </pre></div>
@@ -938,7 +962,7 @@ Saved EMG analysis to: results/surface_emg_analysis.png
         <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Saved EMG analysis to: </span><span class="si">{</span><a href="https://docs.python.org/3/library/pathlib.html#pathlib.PosixPath" title="pathlib.PosixPath" class="sphx-glr-backref-module-pathlib sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">save_path</span></a><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="s1">&#39;intramuscular_emg_analysis.png&#39;</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
-<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 1.913 seconds)</p>
+<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 1.630 seconds)</p>
 <div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-auto-examples-01-basic-12-extract-data-from-neo-blocks-py">
 <div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
 <p><a class="reference download internal" download="" href="../../_downloads/54a06928aab27b4b04413ebb28044c24/12_extract_data_from_neo_blocks.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">12_extract_data_from_neo_blocks.ipynb</span></code></a></p>
@@ -1000,8 +1024,8 @@ Saved EMG analysis to: results/surface_emg_analysis.png
   </div>
   
   <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script defer src="../../_static/scripts/bootstrap.js?digest=7f76b32a3354e82990f2"></script>
-<script defer src="../../_static/scripts/pydata-sphinx-theme.js?digest=7f76b32a3354e82990f2"></script>
+  <script defer src="../../_static/scripts/bootstrap.js?digest=0790524f97105ba85085"></script>
+<script defer src="../../_static/scripts/pydata-sphinx-theme.js?digest=0790524f97105ba85085"></script>
 
   <footer class="bd-footer">
 <div class="bd-footer__inner bd-page-width">

@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Muscle Model &#8212; MyoGen 0.9.0 Documentation</title>
+    <title>Muscle Model &#8212; MyoGen 0.10.0 Documentation</title>
   
   
   
@@ -27,8 +27,8 @@
   </noscript>
   
   <!-- Loaded before other Sphinx assets -->
-  <link href="../../_static/styles/theme.css?digest=7f76b32a3354e82990f2" rel="stylesheet" />
-<link href="../../_static/styles/pydata-sphinx-theme.css?digest=7f76b32a3354e82990f2" rel="stylesheet" />
+  <link href="../../_static/styles/theme.css?digest=0790524f97105ba85085" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=0790524f97105ba85085" rel="stylesheet" />
 
     <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=5349f25f" />
     <link rel="stylesheet" type="text/css" href="../../_static/css/tooltipster.custom.css" />
@@ -40,7 +40,7 @@
     <link rel="stylesheet" type="text/css" href="../../_static/css/tooltipster-sideTip-borderless.min.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/css/micromodal.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/custom.css?v=9b95bd4c" />
-    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery.css?v=d2d258e8" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery.css?v=fd6457a4" />
     <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-binder.css?v=f4aeca0c" />
     <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
     <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
@@ -48,16 +48,17 @@
     <link rel="stylesheet" type="text/css" href="../../_static/custom.css?v=9b95bd4c" />
   
   <!-- So that users can add custom icons -->
-  <script defer src="../../_static/scripts/fontawesome.js?digest=7f76b32a3354e82990f2"></script>
+  <script defer src="../../_static/scripts/fontawesome.js?digest=0790524f97105ba85085"></script>
   <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=7f76b32a3354e82990f2" />
-<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=7f76b32a3354e82990f2" />
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=0790524f97105ba85085" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=0790524f97105ba85085" />
 
     <script src="../../_static/jquery.js?v=5d32c60e"></script>
     <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-    <script src="../../_static/documentation_options.js?v=a82ae3da"></script>
+    <script src="../../_static/documentation_options.js?v=7e54ce6f"></script>
     <script src="../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/sg-tags.js?v=d80f6fa4"></script>
     <script src="../../_static/js/hoverxref.js"></script>
     <script src="../../_static/js/tooltipster.bundle.min.js"></script>
     <script src="../../_static/js/micromodal.min.js"></script>
@@ -73,7 +74,7 @@
     <link rel="prev" title="Spike Train Generation with Descending Drive" href="03_simulate_spike_trains_descending_drive.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="0.9.0" />
+  <meta name="docsearch:version" content="0.10.0" />
   
     
     <script src="../../_static/searchtools.js"></script>
@@ -91,7 +92,9 @@
   
   <button type="button" class="btn rounded-pill" id="pst-back-to-top">
     <i class="fa-solid fa-arrow-up"></i>Back to top</button>
-
+  
+  
+  
   
   <dialog id="pst-search-dialog">
     
@@ -146,8 +149,8 @@
       
     
     
-    <img src="../../_static/myogen_logo.png" class="logo__image only-light" alt="MyoGen 0.9.0 Documentation - Home"/>
-    <img src="../../_static/myogen_logo.png" class="logo__image only-dark pst-js-only" alt="MyoGen 0.9.0 Documentation - Home"/>
+    <img src="../../_static/myogen_logo.png" class="logo__image only-light" alt="MyoGen 0.10.0 Documentation - Home"/>
+    <img src="../../_static/myogen_logo.png" class="logo__image only-dark pst-js-only" alt="MyoGen 0.10.0 Documentation - Home"/>
   
   
 </a></div>
@@ -156,7 +159,7 @@
 <div class="nav-item">
   <div class="version-switcher__container dropdown">
       <button id="version-switcher-button" type="button" class="version-switcher__button btn btn-sm navbar-btn" aria-haspopup="true" aria-expanded="false">
-          Version 0.9.0
+          Version 0.10.0
       </button>
       
       
@@ -219,11 +222,18 @@
       
         <div class="navbar-item">
 
-<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
-  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
-  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
-  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
-</button></div>
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
       
         <div class="navbar-item"><ul class="navbar-icon-links"
     aria-label="Icon Links">
@@ -236,8 +246,7 @@
           
           
           
-          <a href="https://github.com/NSquaredLab/MyoGen" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i>
-            <span class="sr-only">GitHub</span></a>
+          <a href="https://github.com/NSquaredLab/MyoGen" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
         </li>
 </ul></div>
       
@@ -317,11 +326,18 @@
         
           <div class="navbar-item">
 
-<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
-  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
-  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
-  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
-</button></div>
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
         
           <div class="navbar-item"><ul class="navbar-icon-links"
     aria-label="Icon Links">
@@ -334,8 +350,7 @@
           
           
           
-          <a href="https://github.com/NSquaredLab/MyoGen" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i>
-            <span class="sr-only">GitHub</span></a>
+          <a href="https://github.com/NSquaredLab/MyoGen" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
         </li>
 </ul></div>
         
@@ -370,6 +385,7 @@
 <li class="toctree-l2"><a class="reference internal" href="11_simulate_spinal_network.html">Spinal Network Simulation with Systematic Tendon Tap Protocol</a></li>
 <li class="toctree-l2"><a class="reference internal" href="12_extract_data_from_neo_blocks.html">Extracting Data from Neo Blocks</a></li>
 <li class="toctree-l2"><a class="reference internal" href="13_load_and_inspect_nwb_data.html">Loading and Inspecting NWB Data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="15_noise_parameter_sweep.html">Noise Parameter Sweep — overview + dense colour-mapped tiles</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../02_finetune/index.html">Step-by-step reproduction</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -538,396 +554,292 @@ to download the full example code.</p>
 <div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Removed 1247 fibers inside bone radius (r &lt; 1.000 mm)
 
 Calculating out-of-circle coefficients:   0%|          | 0/100 [00:00&lt;?, ?MU/s]
-Calculating out-of-circle coefficients:   1%|          | 1/100 [00:06&lt;10:22,  6.28s/MU]
-Calculating out-of-circle coefficients:   2%|▏         | 2/100 [00:09&lt;07:44,  4.74s/MU]
-Calculating out-of-circle coefficients:   4%|▍         | 4/100 [00:10&lt;03:18,  2.07s/MU]
-Calculating out-of-circle coefficients:   5%|▌         | 5/100 [00:18&lt;05:48,  3.67s/MU]
-Calculating out-of-circle coefficients:   6%|▌         | 6/100 [00:18&lt;04:01,  2.57s/MU]
-Calculating out-of-circle coefficients:   8%|▊         | 8/100 [00:20&lt;02:49,  1.84s/MU]
-Calculating out-of-circle coefficients:   9%|▉         | 9/100 [00:25&lt;03:54,  2.58s/MU]
-Calculating out-of-circle coefficients:  10%|█         | 10/100 [00:27&lt;03:48,  2.54s/MU]
-Calculating out-of-circle coefficients:  12%|█▏        | 12/100 [00:30&lt;03:10,  2.17s/MU]
-Calculating out-of-circle coefficients:  14%|█▍        | 14/100 [00:35&lt;03:09,  2.20s/MU]
-Calculating out-of-circle coefficients:  16%|█▌        | 16/100 [00:37&lt;02:34,  1.84s/MU]
-Calculating out-of-circle coefficients:  17%|█▋        | 17/100 [00:40&lt;02:52,  2.08s/MU]
-Calculating out-of-circle coefficients:  18%|█▊        | 18/100 [00:45&lt;03:38,  2.66s/MU]
-Calculating out-of-circle coefficients:  20%|██        | 20/100 [00:45&lt;02:12,  1.65s/MU]
-Calculating out-of-circle coefficients:  21%|██        | 21/100 [00:50&lt;03:02,  2.31s/MU]
-Calculating out-of-circle coefficients:  22%|██▏       | 22/100 [00:53&lt;03:12,  2.47s/MU]
-Calculating out-of-circle coefficients:  24%|██▍       | 24/100 [00:56&lt;02:47,  2.21s/MU]
-Calculating out-of-circle coefficients:  26%|██▌       | 26/100 [00:59&lt;02:22,  1.93s/MU]
-Calculating out-of-circle coefficients:  28%|██▊       | 28/100 [01:03&lt;02:12,  1.84s/MU]
-Calculating out-of-circle coefficients:  30%|███       | 30/100 [01:05&lt;01:58,  1.69s/MU]
-Calculating out-of-circle coefficients:  32%|███▏      | 32/100 [01:09&lt;01:59,  1.75s/MU]
-Calculating out-of-circle coefficients:  34%|███▍      | 34/100 [01:12&lt;01:54,  1.73s/MU]
-Calculating out-of-circle coefficients:  36%|███▌      | 36/100 [01:17&lt;02:06,  1.97s/MU]
-Calculating out-of-circle coefficients:  38%|███▊      | 38/100 [01:19&lt;01:36,  1.55s/MU]
-Calculating out-of-circle coefficients:  39%|███▉      | 39/100 [01:19&lt;01:24,  1.38s/MU]
-Calculating out-of-circle coefficients:  40%|████      | 40/100 [01:25&lt;02:12,  2.21s/MU]
-Calculating out-of-circle coefficients:  41%|████      | 41/100 [01:27&lt;02:06,  2.14s/MU]
-Calculating out-of-circle coefficients:  43%|████▎     | 43/100 [01:27&lt;01:20,  1.41s/MU]
-Calculating out-of-circle coefficients:  44%|████▍     | 44/100 [01:33&lt;02:08,  2.29s/MU]
-Calculating out-of-circle coefficients:  47%|████▋     | 47/100 [01:33&lt;01:09,  1.31s/MU]
-Calculating out-of-circle coefficients:  48%|████▊     | 48/100 [01:39&lt;01:52,  2.16s/MU]
-Calculating out-of-circle coefficients:  52%|█████▏    | 52/100 [01:42&lt;01:10,  1.46s/MU]
-Calculating out-of-circle coefficients:  54%|█████▍    | 54/100 [01:43&lt;00:52,  1.14s/MU]
-Calculating out-of-circle coefficients:  55%|█████▌    | 55/100 [01:44&lt;00:46,  1.04s/MU]
-Calculating out-of-circle coefficients:  56%|█████▌    | 56/100 [01:49&lt;01:20,  1.82s/MU]
-Calculating out-of-circle coefficients:  60%|██████    | 60/100 [01:53&lt;00:57,  1.44s/MU]
-Calculating out-of-circle coefficients:  62%|██████▏   | 62/100 [01:53&lt;00:40,  1.07s/MU]
-Calculating out-of-circle coefficients:  64%|██████▍   | 64/100 [01:55&lt;00:35,  1.02MU/s]
-Calculating out-of-circle coefficients:  65%|██████▌   | 65/100 [01:57&lt;00:42,  1.22s/MU]
-Calculating out-of-circle coefficients:  68%|██████▊   | 68/100 [02:01&lt;00:38,  1.21s/MU]
-Calculating out-of-circle coefficients:  71%|███████   | 71/100 [02:02&lt;00:24,  1.17MU/s]
-Calculating out-of-circle coefficients:  72%|███████▏  | 72/100 [02:05&lt;00:33,  1.18s/MU]
-Calculating out-of-circle coefficients:  75%|███████▌  | 75/100 [02:06&lt;00:21,  1.18MU/s]
-Calculating out-of-circle coefficients:  76%|███████▌  | 76/100 [02:07&lt;00:21,  1.13MU/s]
-Calculating out-of-circle coefficients:  77%|███████▋  | 77/100 [02:09&lt;00:27,  1.20s/MU]
-Calculating out-of-circle coefficients:  79%|███████▉  | 79/100 [02:11&lt;00:23,  1.12s/MU]
-Calculating out-of-circle coefficients:  82%|████████▏ | 82/100 [02:12&lt;00:14,  1.26MU/s]
-Calculating out-of-circle coefficients:  85%|████████▌ | 85/100 [02:14&lt;00:10,  1.47MU/s]
-Calculating out-of-circle coefficients:  87%|████████▋ | 87/100 [02:14&lt;00:07,  1.66MU/s]
-Calculating out-of-circle coefficients:  88%|████████▊ | 88/100 [02:15&lt;00:06,  1.80MU/s]
-Calculating out-of-circle coefficients:  89%|████████▉ | 89/100 [02:16&lt;00:08,  1.37MU/s]
-Calculating out-of-circle coefficients:  91%|█████████ | 91/100 [02:17&lt;00:04,  1.89MU/s]
-Calculating out-of-circle coefficients:  92%|█████████▏| 92/100 [02:18&lt;00:05,  1.35MU/s]
-Calculating out-of-circle coefficients:  93%|█████████▎| 93/100 [02:20&lt;00:06,  1.11MU/s]
-Calculating out-of-circle coefficients:  96%|█████████▌| 96/100 [02:20&lt;00:02,  1.78MU/s]
-Calculating out-of-circle coefficients:  97%|█████████▋| 97/100 [02:21&lt;00:01,  1.92MU/s]
-Calculating out-of-circle coefficients:  98%|█████████▊| 98/100 [02:22&lt;00:01,  1.26MU/s]
-Calculating out-of-circle coefficients: 100%|██████████| 100/100 [02:22&lt;00:00,  1.43s/MU]
+Calculating out-of-circle coefficients:   1%|          | 1/100 [00:04&lt;07:16,  4.41s/MU]
+Calculating out-of-circle coefficients:   2%|▏         | 2/100 [00:09&lt;07:55,  4.85s/MU]
+Calculating out-of-circle coefficients:   5%|▌         | 5/100 [00:10&lt;02:21,  1.49s/MU]
+Calculating out-of-circle coefficients:   6%|▌         | 6/100 [00:16&lt;04:08,  2.64s/MU]
+Calculating out-of-circle coefficients:  10%|█         | 10/100 [00:23&lt;03:11,  2.13s/MU]
+Calculating out-of-circle coefficients:  11%|█         | 11/100 [00:23&lt;02:48,  1.89s/MU]
+Calculating out-of-circle coefficients:  15%|█▌        | 15/100 [00:26&lt;01:48,  1.28s/MU]
+Calculating out-of-circle coefficients:  16%|█▌        | 16/100 [00:28&lt;02:00,  1.44s/MU]
+Calculating out-of-circle coefficients:  17%|█▋        | 17/100 [00:33&lt;02:42,  1.95s/MU]
+Calculating out-of-circle coefficients:  19%|█▉        | 19/100 [00:34&lt;02:02,  1.51s/MU]
+Calculating out-of-circle coefficients:  21%|██        | 21/100 [00:35&lt;01:27,  1.10s/MU]
+Calculating out-of-circle coefficients:  22%|██▏       | 22/100 [00:39&lt;02:19,  1.78s/MU]
+Calculating out-of-circle coefficients:  23%|██▎       | 23/100 [00:42&lt;02:31,  1.97s/MU]
+Calculating out-of-circle coefficients:  27%|██▋       | 27/100 [00:45&lt;01:35,  1.31s/MU]
+Calculating out-of-circle coefficients:  29%|██▉       | 29/100 [00:46&lt;01:21,  1.15s/MU]
+Calculating out-of-circle coefficients:  31%|███       | 31/100 [00:50&lt;01:33,  1.35s/MU]
+Calculating out-of-circle coefficients:  33%|███▎      | 33/100 [00:51&lt;01:13,  1.10s/MU]
+Calculating out-of-circle coefficients:  35%|███▌      | 35/100 [00:52&lt;01:03,  1.03MU/s]
+Calculating out-of-circle coefficients:  36%|███▌      | 36/100 [00:57&lt;01:43,  1.62s/MU]
+Calculating out-of-circle coefficients:  37%|███▋      | 37/100 [00:58&lt;01:32,  1.47s/MU]
+Calculating out-of-circle coefficients:  40%|████      | 40/100 [01:03&lt;01:35,  1.59s/MU]
+Calculating out-of-circle coefficients:  44%|████▍     | 44/100 [01:06&lt;01:03,  1.13s/MU]
+Calculating out-of-circle coefficients:  45%|████▌     | 45/100 [01:08&lt;01:14,  1.35s/MU]
+Calculating out-of-circle coefficients:  46%|████▌     | 46/100 [01:09&lt;01:07,  1.24s/MU]
+Calculating out-of-circle coefficients:  48%|████▊     | 48/100 [01:10&lt;00:47,  1.10MU/s]
+Calculating out-of-circle coefficients:  49%|████▉     | 49/100 [01:12&lt;01:05,  1.29s/MU]
+Calculating out-of-circle coefficients:  52%|█████▏    | 52/100 [01:15&lt;00:51,  1.06s/MU]
+Calculating out-of-circle coefficients:  54%|█████▍    | 54/100 [01:16&lt;00:39,  1.15MU/s]
+Calculating out-of-circle coefficients:  56%|█████▌    | 56/100 [01:20&lt;00:56,  1.27s/MU]
+Calculating out-of-circle coefficients:  60%|██████    | 60/100 [01:21&lt;00:29,  1.34MU/s]
+Calculating out-of-circle coefficients:  61%|██████    | 61/100 [01:23&lt;00:38,  1.01MU/s]
+Calculating out-of-circle coefficients:  62%|██████▏   | 62/100 [01:24&lt;00:35,  1.08MU/s]
+Calculating out-of-circle coefficients:  65%|██████▌   | 65/100 [01:25&lt;00:22,  1.53MU/s]
+Calculating out-of-circle coefficients:  66%|██████▌   | 66/100 [01:26&lt;00:25,  1.33MU/s]
+Calculating out-of-circle coefficients:  67%|██████▋   | 67/100 [01:27&lt;00:25,  1.31MU/s]
+Calculating out-of-circle coefficients:  69%|██████▉   | 69/100 [01:30&lt;00:33,  1.07s/MU]
+Calculating out-of-circle coefficients:  71%|███████   | 71/100 [01:30&lt;00:21,  1.33MU/s]
+Calculating out-of-circle coefficients:  74%|███████▍  | 74/100 [01:33&lt;00:22,  1.14MU/s]
+Calculating out-of-circle coefficients:  78%|███████▊  | 78/100 [01:35&lt;00:14,  1.52MU/s]
+Calculating out-of-circle coefficients:  80%|████████  | 80/100 [01:35&lt;00:10,  1.85MU/s]
+Calculating out-of-circle coefficients:  82%|████████▏ | 82/100 [01:37&lt;00:12,  1.48MU/s]
+Calculating out-of-circle coefficients:  86%|████████▌ | 86/100 [01:39&lt;00:07,  1.77MU/s]
+Calculating out-of-circle coefficients:  88%|████████▊ | 88/100 [01:39&lt;00:05,  2.06MU/s]
+Calculating out-of-circle coefficients:  91%|█████████ | 91/100 [01:42&lt;00:05,  1.71MU/s]
+Calculating out-of-circle coefficients:  93%|█████████▎| 93/100 [01:42&lt;00:03,  2.02MU/s]
+Calculating out-of-circle coefficients:  96%|█████████▌| 96/100 [01:43&lt;00:01,  2.12MU/s]
+Calculating out-of-circle coefficients:  98%|█████████▊| 98/100 [01:44&lt;00:00,  2.34MU/s]
+Calculating out-of-circle coefficients: 100%|██████████| 100/100 [01:44&lt;00:00,  1.04s/MU]
 
 Assigning muscle fibers to motor neurons:   0%|          | 0/58755 [00:00&lt;?, ?MF/s]
-Assigning muscle fibers to motor neurons:   0%|          | 178/58755 [00:00&lt;00:33, 1774.54MF/s]
-Assigning muscle fibers to motor neurons:   1%|          | 356/58755 [00:00&lt;00:32, 1773.18MF/s]
-Assigning muscle fibers to motor neurons:   1%|          | 535/58755 [00:00&lt;00:32, 1777.08MF/s]
-Assigning muscle fibers to motor neurons:   1%|          | 713/58755 [00:00&lt;00:32, 1776.28MF/s]
-Assigning muscle fibers to motor neurons:   2%|▏         | 892/58755 [00:00&lt;00:32, 1778.98MF/s]
-Assigning muscle fibers to motor neurons:   2%|▏         | 1071/58755 [00:00&lt;00:32, 1780.58MF/s]
-Assigning muscle fibers to motor neurons:   2%|▏         | 1250/58755 [00:00&lt;00:32, 1781.39MF/s]
-Assigning muscle fibers to motor neurons:   2%|▏         | 1429/58755 [00:00&lt;00:32, 1782.97MF/s]
-Assigning muscle fibers to motor neurons:   3%|▎         | 1608/58755 [00:00&lt;00:32, 1783.45MF/s]
-Assigning muscle fibers to motor neurons:   3%|▎         | 1787/58755 [00:01&lt;00:31, 1782.75MF/s]
-Assigning muscle fibers to motor neurons:   3%|▎         | 1966/58755 [00:01&lt;00:31, 1782.23MF/s]
-Assigning muscle fibers to motor neurons:   4%|▎         | 2145/58755 [00:01&lt;00:31, 1781.36MF/s]
-Assigning muscle fibers to motor neurons:   4%|▍         | 2324/58755 [00:01&lt;00:31, 1781.95MF/s]
-Assigning muscle fibers to motor neurons:   4%|▍         | 2503/58755 [00:01&lt;00:31, 1781.77MF/s]
-Assigning muscle fibers to motor neurons:   5%|▍         | 2682/58755 [00:01&lt;00:31, 1782.76MF/s]
-Assigning muscle fibers to motor neurons:   5%|▍         | 2861/58755 [00:01&lt;00:31, 1783.00MF/s]
-Assigning muscle fibers to motor neurons:   5%|▌         | 3040/58755 [00:01&lt;00:31, 1782.19MF/s]
-Assigning muscle fibers to motor neurons:   5%|▌         | 3219/58755 [00:01&lt;00:31, 1779.54MF/s]
-Assigning muscle fibers to motor neurons:   6%|▌         | 3398/58755 [00:01&lt;00:31, 1781.09MF/s]
-Assigning muscle fibers to motor neurons:   6%|▌         | 3577/58755 [00:02&lt;00:30, 1783.28MF/s]
-Assigning muscle fibers to motor neurons:   6%|▋         | 3756/58755 [00:02&lt;00:30, 1782.87MF/s]
-Assigning muscle fibers to motor neurons:   7%|▋         | 3935/58755 [00:02&lt;00:30, 1781.66MF/s]
-Assigning muscle fibers to motor neurons:   7%|▋         | 4114/58755 [00:02&lt;00:30, 1783.47MF/s]
-Assigning muscle fibers to motor neurons:   7%|▋         | 4293/58755 [00:02&lt;00:30, 1783.54MF/s]
-Assigning muscle fibers to motor neurons:   8%|▊         | 4472/58755 [00:02&lt;00:30, 1783.21MF/s]
-Assigning muscle fibers to motor neurons:   8%|▊         | 4651/58755 [00:02&lt;00:30, 1780.42MF/s]
-Assigning muscle fibers to motor neurons:   8%|▊         | 4830/58755 [00:02&lt;00:30, 1781.65MF/s]
-Assigning muscle fibers to motor neurons:   9%|▊         | 5009/58755 [00:02&lt;00:30, 1774.58MF/s]
-Assigning muscle fibers to motor neurons:   9%|▉         | 5188/58755 [00:02&lt;00:30, 1777.21MF/s]
-Assigning muscle fibers to motor neurons:   9%|▉         | 5368/58755 [00:03&lt;00:29, 1781.37MF/s]
-Assigning muscle fibers to motor neurons:   9%|▉         | 5547/58755 [00:03&lt;00:29, 1783.70MF/s]
-Assigning muscle fibers to motor neurons:  10%|▉         | 5726/58755 [00:03&lt;00:29, 1784.16MF/s]
-Assigning muscle fibers to motor neurons:  10%|█         | 5905/58755 [00:03&lt;00:29, 1784.90MF/s]
-Assigning muscle fibers to motor neurons:  10%|█         | 6084/58755 [00:03&lt;00:29, 1785.02MF/s]
-Assigning muscle fibers to motor neurons:  11%|█         | 6263/58755 [00:03&lt;00:29, 1784.22MF/s]
-Assigning muscle fibers to motor neurons:  11%|█         | 6442/58755 [00:03&lt;00:29, 1785.25MF/s]
-Assigning muscle fibers to motor neurons:  11%|█▏        | 6621/58755 [00:03&lt;00:29, 1784.43MF/s]
-Assigning muscle fibers to motor neurons:  12%|█▏        | 6800/58755 [00:03&lt;00:29, 1782.16MF/s]
-Assigning muscle fibers to motor neurons:  12%|█▏        | 6979/58755 [00:03&lt;00:29, 1781.78MF/s]
-Assigning muscle fibers to motor neurons:  12%|█▏        | 7158/58755 [00:04&lt;00:28, 1780.20MF/s]
-Assigning muscle fibers to motor neurons:  12%|█▏        | 7337/58755 [00:04&lt;00:28, 1779.89MF/s]
-Assigning muscle fibers to motor neurons:  13%|█▎        | 7515/58755 [00:04&lt;00:28, 1779.64MF/s]
-Assigning muscle fibers to motor neurons:  13%|█▎        | 7694/58755 [00:04&lt;00:28, 1781.14MF/s]
-Assigning muscle fibers to motor neurons:  13%|█▎        | 7873/58755 [00:04&lt;00:28, 1782.35MF/s]
-Assigning muscle fibers to motor neurons:  14%|█▎        | 8052/58755 [00:04&lt;00:28, 1780.64MF/s]
-Assigning muscle fibers to motor neurons:  14%|█▍        | 8231/58755 [00:04&lt;00:28, 1780.34MF/s]
-Assigning muscle fibers to motor neurons:  14%|█▍        | 8410/58755 [00:04&lt;00:28, 1772.46MF/s]
-Assigning muscle fibers to motor neurons:  15%|█▍        | 8588/58755 [00:04&lt;00:28, 1773.16MF/s]
-Assigning muscle fibers to motor neurons:  15%|█▍        | 8767/58755 [00:04&lt;00:28, 1775.60MF/s]
-Assigning muscle fibers to motor neurons:  15%|█▌        | 8946/58755 [00:05&lt;00:28, 1777.50MF/s]
-Assigning muscle fibers to motor neurons:  16%|█▌        | 9125/58755 [00:05&lt;00:27, 1779.26MF/s]
-Assigning muscle fibers to motor neurons:  16%|█▌        | 9303/58755 [00:05&lt;00:27, 1778.37MF/s]
-Assigning muscle fibers to motor neurons:  16%|█▌        | 9481/58755 [00:05&lt;00:27, 1778.37MF/s]
-Assigning muscle fibers to motor neurons:  16%|█▋        | 9659/58755 [00:05&lt;00:27, 1778.58MF/s]
-Assigning muscle fibers to motor neurons:  17%|█▋        | 9837/58755 [00:05&lt;00:27, 1777.48MF/s]
-Assigning muscle fibers to motor neurons:  17%|█▋        | 10015/58755 [00:05&lt;00:27, 1775.27MF/s]
-Assigning muscle fibers to motor neurons:  17%|█▋        | 10193/58755 [00:05&lt;00:27, 1771.42MF/s]
-Assigning muscle fibers to motor neurons:  18%|█▊        | 10371/58755 [00:05&lt;00:27, 1771.28MF/s]
-Assigning muscle fibers to motor neurons:  18%|█▊        | 10549/58755 [00:05&lt;00:27, 1772.74MF/s]
-Assigning muscle fibers to motor neurons:  18%|█▊        | 10728/58755 [00:06&lt;00:27, 1777.47MF/s]
-Assigning muscle fibers to motor neurons:  19%|█▊        | 10906/58755 [00:06&lt;00:27, 1746.92MF/s]
-Assigning muscle fibers to motor neurons:  19%|█▉        | 11081/58755 [00:06&lt;00:27, 1705.45MF/s]
-Assigning muscle fibers to motor neurons:  19%|█▉        | 11260/58755 [00:06&lt;00:27, 1728.65MF/s]
-Assigning muscle fibers to motor neurons:  19%|█▉        | 11439/58755 [00:06&lt;00:27, 1745.82MF/s]
-Assigning muscle fibers to motor neurons:  20%|█▉        | 11618/58755 [00:06&lt;00:26, 1757.54MF/s]
-Assigning muscle fibers to motor neurons:  20%|██        | 11797/58755 [00:06&lt;00:26, 1766.43MF/s]
-Assigning muscle fibers to motor neurons:  20%|██        | 11974/58755 [00:06&lt;00:26, 1767.22MF/s]
-Assigning muscle fibers to motor neurons:  21%|██        | 12152/58755 [00:06&lt;00:26, 1769.92MF/s]
-Assigning muscle fibers to motor neurons:  21%|██        | 12331/58755 [00:06&lt;00:26, 1774.66MF/s]
-Assigning muscle fibers to motor neurons:  21%|██▏       | 12510/58755 [00:07&lt;00:26, 1777.03MF/s]
-Assigning muscle fibers to motor neurons:  22%|██▏       | 12688/58755 [00:07&lt;00:25, 1775.06MF/s]
-Assigning muscle fibers to motor neurons:  22%|██▏       | 12867/58755 [00:07&lt;00:25, 1776.83MF/s]
-Assigning muscle fibers to motor neurons:  22%|██▏       | 13045/58755 [00:07&lt;00:25, 1776.45MF/s]
-Assigning muscle fibers to motor neurons:  23%|██▎       | 13224/58755 [00:07&lt;00:25, 1777.79MF/s]
-Assigning muscle fibers to motor neurons:  23%|██▎       | 13403/58755 [00:07&lt;00:25, 1780.04MF/s]
-Assigning muscle fibers to motor neurons:  23%|██▎       | 13582/58755 [00:07&lt;00:25, 1771.11MF/s]
-Assigning muscle fibers to motor neurons:  23%|██▎       | 13760/58755 [00:07&lt;00:25, 1769.41MF/s]
-Assigning muscle fibers to motor neurons:  24%|██▎       | 13939/58755 [00:07&lt;00:25, 1773.20MF/s]
-Assigning muscle fibers to motor neurons:  24%|██▍       | 14117/58755 [00:07&lt;00:25, 1773.92MF/s]
-Assigning muscle fibers to motor neurons:  24%|██▍       | 14295/58755 [00:08&lt;00:25, 1775.18MF/s]
-Assigning muscle fibers to motor neurons:  25%|██▍       | 14473/58755 [00:08&lt;00:24, 1775.40MF/s]
-Assigning muscle fibers to motor neurons:  25%|██▍       | 14652/58755 [00:08&lt;00:24, 1777.95MF/s]
-Assigning muscle fibers to motor neurons:  25%|██▌       | 14830/58755 [00:08&lt;00:24, 1772.43MF/s]
-Assigning muscle fibers to motor neurons:  26%|██▌       | 15008/58755 [00:08&lt;00:24, 1774.07MF/s]
-Assigning muscle fibers to motor neurons:  26%|██▌       | 15186/58755 [00:08&lt;00:24, 1749.11MF/s]
-Assigning muscle fibers to motor neurons:  26%|██▌       | 15361/58755 [00:08&lt;00:24, 1748.72MF/s]
-Assigning muscle fibers to motor neurons:  26%|██▋       | 15538/58755 [00:08&lt;00:24, 1753.28MF/s]
-Assigning muscle fibers to motor neurons:  27%|██▋       | 15715/58755 [00:08&lt;00:24, 1757.56MF/s]
-Assigning muscle fibers to motor neurons:  27%|██▋       | 15892/58755 [00:08&lt;00:24, 1759.01MF/s]
-Assigning muscle fibers to motor neurons:  27%|██▋       | 16069/58755 [00:09&lt;00:24, 1762.12MF/s]
-Assigning muscle fibers to motor neurons:  28%|██▊       | 16246/58755 [00:09&lt;00:24, 1713.74MF/s]
-Assigning muscle fibers to motor neurons:  28%|██▊       | 16418/58755 [00:09&lt;00:25, 1680.30MF/s]
-Assigning muscle fibers to motor neurons:  28%|██▊       | 16596/58755 [00:09&lt;00:24, 1707.04MF/s]
-Assigning muscle fibers to motor neurons:  29%|██▊       | 16774/58755 [00:09&lt;00:24, 1726.52MF/s]
-Assigning muscle fibers to motor neurons:  29%|██▉       | 16952/58755 [00:09&lt;00:24, 1740.34MF/s]
-Assigning muscle fibers to motor neurons:  29%|██▉       | 17130/58755 [00:09&lt;00:23, 1749.67MF/s]
-Assigning muscle fibers to motor neurons:  29%|██▉       | 17307/58755 [00:09&lt;00:23, 1754.46MF/s]
-Assigning muscle fibers to motor neurons:  30%|██▉       | 17483/58755 [00:09&lt;00:23, 1755.82MF/s]
-Assigning muscle fibers to motor neurons:  30%|███       | 17661/58755 [00:09&lt;00:23, 1762.14MF/s]
-Assigning muscle fibers to motor neurons:  30%|███       | 17839/58755 [00:10&lt;00:23, 1764.74MF/s]
-Assigning muscle fibers to motor neurons:  31%|███       | 18017/58755 [00:10&lt;00:23, 1767.56MF/s]
-Assigning muscle fibers to motor neurons:  31%|███       | 18195/58755 [00:10&lt;00:22, 1770.14MF/s]
-Assigning muscle fibers to motor neurons:  31%|███▏      | 18373/58755 [00:10&lt;00:22, 1771.63MF/s]
-Assigning muscle fibers to motor neurons:  32%|███▏      | 18551/58755 [00:10&lt;00:22, 1759.90MF/s]
-Assigning muscle fibers to motor neurons:  32%|███▏      | 18728/58755 [00:10&lt;00:22, 1762.48MF/s]
-Assigning muscle fibers to motor neurons:  32%|███▏      | 18906/58755 [00:10&lt;00:22, 1765.38MF/s]
-Assigning muscle fibers to motor neurons:  32%|███▏      | 19083/58755 [00:10&lt;00:22, 1763.88MF/s]
-Assigning muscle fibers to motor neurons:  33%|███▎      | 19260/58755 [00:10&lt;00:22, 1765.21MF/s]
-Assigning muscle fibers to motor neurons:  33%|███▎      | 19439/58755 [00:10&lt;00:22, 1770.75MF/s]
-Assigning muscle fibers to motor neurons:  33%|███▎      | 19617/58755 [00:11&lt;00:22, 1770.62MF/s]
-Assigning muscle fibers to motor neurons:  34%|███▎      | 19795/58755 [00:11&lt;00:21, 1773.31MF/s]
-Assigning muscle fibers to motor neurons:  34%|███▍      | 19974/58755 [00:11&lt;00:21, 1775.80MF/s]
-Assigning muscle fibers to motor neurons:  34%|███▍      | 20153/58755 [00:11&lt;00:21, 1777.66MF/s]
-Assigning muscle fibers to motor neurons:  35%|███▍      | 20331/58755 [00:11&lt;00:21, 1777.84MF/s]
-Assigning muscle fibers to motor neurons:  35%|███▍      | 20509/58755 [00:11&lt;00:21, 1775.21MF/s]
-Assigning muscle fibers to motor neurons:  35%|███▌      | 20688/58755 [00:11&lt;00:21, 1776.78MF/s]
-Assigning muscle fibers to motor neurons:  36%|███▌      | 20866/58755 [00:11&lt;00:21, 1772.60MF/s]
-Assigning muscle fibers to motor neurons:  36%|███▌      | 21044/58755 [00:11&lt;00:21, 1773.23MF/s]
-Assigning muscle fibers to motor neurons:  36%|███▌      | 21223/58755 [00:11&lt;00:21, 1775.55MF/s]
-Assigning muscle fibers to motor neurons:  36%|███▋      | 21401/58755 [00:12&lt;00:21, 1776.36MF/s]
-Assigning muscle fibers to motor neurons:  37%|███▋      | 21580/58755 [00:12&lt;00:20, 1778.19MF/s]
-Assigning muscle fibers to motor neurons:  37%|███▋      | 21758/58755 [00:12&lt;00:20, 1777.58MF/s]
-Assigning muscle fibers to motor neurons:  37%|███▋      | 21936/58755 [00:12&lt;00:20, 1777.26MF/s]
-Assigning muscle fibers to motor neurons:  38%|███▊      | 22114/58755 [00:12&lt;00:20, 1777.32MF/s]
-Assigning muscle fibers to motor neurons:  38%|███▊      | 22292/58755 [00:12&lt;00:20, 1773.77MF/s]
-Assigning muscle fibers to motor neurons:  38%|███▊      | 22470/58755 [00:12&lt;00:20, 1774.34MF/s]
-Assigning muscle fibers to motor neurons:  39%|███▊      | 22648/58755 [00:12&lt;00:20, 1771.27MF/s]
-Assigning muscle fibers to motor neurons:  39%|███▉      | 22826/58755 [00:12&lt;00:20, 1772.54MF/s]
-Assigning muscle fibers to motor neurons:  39%|███▉      | 23004/58755 [00:12&lt;00:20, 1757.53MF/s]
-Assigning muscle fibers to motor neurons:  39%|███▉      | 23182/58755 [00:13&lt;00:20, 1763.91MF/s]
-Assigning muscle fibers to motor neurons:  40%|███▉      | 23360/58755 [00:13&lt;00:20, 1767.59MF/s]
-Assigning muscle fibers to motor neurons:  40%|████      | 23538/58755 [00:13&lt;00:19, 1769.95MF/s]
-Assigning muscle fibers to motor neurons:  40%|████      | 23716/58755 [00:13&lt;00:19, 1770.94MF/s]
-Assigning muscle fibers to motor neurons:  41%|████      | 23894/58755 [00:13&lt;00:19, 1760.19MF/s]
-Assigning muscle fibers to motor neurons:  41%|████      | 24072/58755 [00:13&lt;00:19, 1765.21MF/s]
-Assigning muscle fibers to motor neurons:  41%|████▏     | 24250/58755 [00:13&lt;00:19, 1767.56MF/s]
-Assigning muscle fibers to motor neurons:  42%|████▏     | 24428/58755 [00:13&lt;00:19, 1769.32MF/s]
-Assigning muscle fibers to motor neurons:  42%|████▏     | 24606/58755 [00:13&lt;00:19, 1771.95MF/s]
-Assigning muscle fibers to motor neurons:  42%|████▏     | 24785/58755 [00:13&lt;00:19, 1774.78MF/s]
-Assigning muscle fibers to motor neurons:  42%|████▏     | 24963/58755 [00:14&lt;00:19, 1776.00MF/s]
-Assigning muscle fibers to motor neurons:  43%|████▎     | 25141/58755 [00:14&lt;00:18, 1776.54MF/s]
-Assigning muscle fibers to motor neurons:  43%|████▎     | 25320/58755 [00:14&lt;00:18, 1778.23MF/s]
-Assigning muscle fibers to motor neurons:  43%|████▎     | 25498/58755 [00:14&lt;00:18, 1777.04MF/s]
-Assigning muscle fibers to motor neurons:  44%|████▎     | 25677/58755 [00:14&lt;00:18, 1778.27MF/s]
-Assigning muscle fibers to motor neurons:  44%|████▍     | 25855/58755 [00:14&lt;00:18, 1775.64MF/s]
-Assigning muscle fibers to motor neurons:  44%|████▍     | 26033/58755 [00:14&lt;00:18, 1772.04MF/s]
-Assigning muscle fibers to motor neurons:  45%|████▍     | 26211/58755 [00:14&lt;00:18, 1768.09MF/s]
-Assigning muscle fibers to motor neurons:  45%|████▍     | 26389/58755 [00:14&lt;00:18, 1769.34MF/s]
-Assigning muscle fibers to motor neurons:  45%|████▌     | 26567/58755 [00:15&lt;00:18, 1771.90MF/s]
-Assigning muscle fibers to motor neurons:  46%|████▌     | 26745/58755 [00:15&lt;00:18, 1772.76MF/s]
-Assigning muscle fibers to motor neurons:  46%|████▌     | 26923/58755 [00:15&lt;00:17, 1773.16MF/s]
-Assigning muscle fibers to motor neurons:  46%|████▌     | 27101/58755 [00:15&lt;00:17, 1774.03MF/s]
-Assigning muscle fibers to motor neurons:  46%|████▋     | 27279/58755 [00:15&lt;00:17, 1775.39MF/s]
-Assigning muscle fibers to motor neurons:  47%|████▋     | 27458/58755 [00:15&lt;00:17, 1777.47MF/s]
-Assigning muscle fibers to motor neurons:  47%|████▋     | 27636/58755 [00:15&lt;00:17, 1776.82MF/s]
-Assigning muscle fibers to motor neurons:  47%|████▋     | 27815/58755 [00:15&lt;00:17, 1778.59MF/s]
-Assigning muscle fibers to motor neurons:  48%|████▊     | 27993/58755 [00:15&lt;00:17, 1773.87MF/s]
-Assigning muscle fibers to motor neurons:  48%|████▊     | 28172/58755 [00:15&lt;00:17, 1775.82MF/s]
-Assigning muscle fibers to motor neurons:  48%|████▊     | 28351/58755 [00:16&lt;00:17, 1778.43MF/s]
-Assigning muscle fibers to motor neurons:  49%|████▊     | 28529/58755 [00:16&lt;00:17, 1776.38MF/s]
-Assigning muscle fibers to motor neurons:  49%|████▉     | 28707/58755 [00:16&lt;00:16, 1777.04MF/s]
-Assigning muscle fibers to motor neurons:  49%|████▉     | 28886/58755 [00:16&lt;00:16, 1779.26MF/s]
-Assigning muscle fibers to motor neurons:  49%|████▉     | 29065/58755 [00:16&lt;00:16, 1779.94MF/s]
-Assigning muscle fibers to motor neurons:  50%|████▉     | 29243/58755 [00:16&lt;00:16, 1779.55MF/s]
-Assigning muscle fibers to motor neurons:  50%|█████     | 29421/58755 [00:16&lt;00:16, 1777.64MF/s]
-Assigning muscle fibers to motor neurons:  50%|█████     | 29599/58755 [00:16&lt;00:16, 1776.87MF/s]
-Assigning muscle fibers to motor neurons:  51%|█████     | 29777/58755 [00:16&lt;00:16, 1773.82MF/s]
-Assigning muscle fibers to motor neurons:  51%|█████     | 29955/58755 [00:16&lt;00:16, 1774.33MF/s]
-Assigning muscle fibers to motor neurons:  51%|█████▏    | 30133/58755 [00:17&lt;00:16, 1774.48MF/s]
-Assigning muscle fibers to motor neurons:  52%|█████▏    | 30311/58755 [00:17&lt;00:16, 1772.82MF/s]
-Assigning muscle fibers to motor neurons:  52%|█████▏    | 30489/58755 [00:17&lt;00:15, 1771.79MF/s]
-Assigning muscle fibers to motor neurons:  52%|█████▏    | 30667/58755 [00:17&lt;00:15, 1772.81MF/s]
-Assigning muscle fibers to motor neurons:  52%|█████▏    | 30845/58755 [00:17&lt;00:15, 1773.69MF/s]
-Assigning muscle fibers to motor neurons:  53%|█████▎    | 31023/58755 [00:17&lt;00:15, 1773.88MF/s]
-Assigning muscle fibers to motor neurons:  53%|█████▎    | 31201/58755 [00:17&lt;00:15, 1772.31MF/s]
-Assigning muscle fibers to motor neurons:  53%|█████▎    | 31379/58755 [00:17&lt;00:15, 1772.10MF/s]
-Assigning muscle fibers to motor neurons:  54%|█████▎    | 31557/58755 [00:17&lt;00:15, 1761.62MF/s]
-Assigning muscle fibers to motor neurons:  54%|█████▍    | 31735/58755 [00:17&lt;00:15, 1764.40MF/s]
-Assigning muscle fibers to motor neurons:  54%|█████▍    | 31912/58755 [00:18&lt;00:15, 1734.19MF/s]
-Assigning muscle fibers to motor neurons:  55%|█████▍    | 32088/58755 [00:18&lt;00:15, 1739.85MF/s]
-Assigning muscle fibers to motor neurons:  55%|█████▍    | 32265/58755 [00:18&lt;00:15, 1748.61MF/s]
-Assigning muscle fibers to motor neurons:  55%|█████▌    | 32443/58755 [00:18&lt;00:14, 1757.45MF/s]
-Assigning muscle fibers to motor neurons:  56%|█████▌    | 32621/58755 [00:18&lt;00:14, 1761.80MF/s]
-Assigning muscle fibers to motor neurons:  56%|█████▌    | 32799/58755 [00:18&lt;00:14, 1764.66MF/s]
-Assigning muscle fibers to motor neurons:  56%|█████▌    | 32977/58755 [00:18&lt;00:14, 1768.23MF/s]
-Assigning muscle fibers to motor neurons:  56%|█████▋    | 33155/58755 [00:18&lt;00:14, 1770.77MF/s]
-Assigning muscle fibers to motor neurons:  57%|█████▋    | 33333/58755 [00:18&lt;00:14, 1765.30MF/s]
-Assigning muscle fibers to motor neurons:  57%|█████▋    | 33510/58755 [00:18&lt;00:14, 1762.25MF/s]
-Assigning muscle fibers to motor neurons:  57%|█████▋    | 33687/58755 [00:19&lt;00:14, 1763.82MF/s]
-Assigning muscle fibers to motor neurons:  58%|█████▊    | 33865/58755 [00:19&lt;00:14, 1766.83MF/s]
-Assigning muscle fibers to motor neurons:  58%|█████▊    | 34042/58755 [00:19&lt;00:13, 1767.28MF/s]
-Assigning muscle fibers to motor neurons:  58%|█████▊    | 34219/58755 [00:19&lt;00:13, 1767.64MF/s]
-Assigning muscle fibers to motor neurons:  59%|█████▊    | 34396/58755 [00:19&lt;00:13, 1768.05MF/s]
-Assigning muscle fibers to motor neurons:  59%|█████▉    | 34574/58755 [00:19&lt;00:13, 1768.64MF/s]
-Assigning muscle fibers to motor neurons:  59%|█████▉    | 34752/58755 [00:19&lt;00:13, 1771.18MF/s]
-Assigning muscle fibers to motor neurons:  59%|█████▉    | 34930/58755 [00:19&lt;00:13, 1770.71MF/s]
-Assigning muscle fibers to motor neurons:  60%|█████▉    | 35108/58755 [00:19&lt;00:13, 1770.57MF/s]
-Assigning muscle fibers to motor neurons:  60%|██████    | 35286/58755 [00:19&lt;00:13, 1772.42MF/s]
-Assigning muscle fibers to motor neurons:  60%|██████    | 35464/58755 [00:20&lt;00:13, 1771.86MF/s]
-Assigning muscle fibers to motor neurons:  61%|██████    | 35642/58755 [00:20&lt;00:13, 1719.05MF/s]
-Assigning muscle fibers to motor neurons:  61%|██████    | 35820/58755 [00:20&lt;00:13, 1734.71MF/s]
-Assigning muscle fibers to motor neurons:  61%|██████▏   | 35999/58755 [00:20&lt;00:13, 1748.65MF/s]
-Assigning muscle fibers to motor neurons:  62%|██████▏   | 36177/58755 [00:20&lt;00:12, 1757.92MF/s]
-Assigning muscle fibers to motor neurons:  62%|██████▏   | 36355/58755 [00:20&lt;00:12, 1763.54MF/s]
-Assigning muscle fibers to motor neurons:  62%|██████▏   | 36533/58755 [00:20&lt;00:12, 1766.07MF/s]
-Assigning muscle fibers to motor neurons:  62%|██████▏   | 36711/58755 [00:20&lt;00:12, 1768.10MF/s]
-Assigning muscle fibers to motor neurons:  63%|██████▎   | 36889/58755 [00:20&lt;00:12, 1769.36MF/s]
-Assigning muscle fibers to motor neurons:  63%|██████▎   | 37067/58755 [00:20&lt;00:12, 1770.89MF/s]
-Assigning muscle fibers to motor neurons:  63%|██████▎   | 37245/58755 [00:21&lt;00:12, 1772.94MF/s]
-Assigning muscle fibers to motor neurons:  64%|██████▎   | 37424/58755 [00:21&lt;00:12, 1775.61MF/s]
-Assigning muscle fibers to motor neurons:  64%|██████▍   | 37602/58755 [00:21&lt;00:11, 1775.63MF/s]
-Assigning muscle fibers to motor neurons:  64%|██████▍   | 37780/58755 [00:21&lt;00:11, 1774.62MF/s]
-Assigning muscle fibers to motor neurons:  65%|██████▍   | 37958/58755 [00:21&lt;00:11, 1773.48MF/s]
-Assigning muscle fibers to motor neurons:  65%|██████▍   | 38136/58755 [00:21&lt;00:11, 1772.82MF/s]
-Assigning muscle fibers to motor neurons:  65%|██████▌   | 38314/58755 [00:21&lt;00:11, 1772.05MF/s]
-Assigning muscle fibers to motor neurons:  66%|██████▌   | 38492/58755 [00:21&lt;00:11, 1771.70MF/s]
-Assigning muscle fibers to motor neurons:  66%|██████▌   | 38670/58755 [00:21&lt;00:11, 1768.62MF/s]
-Assigning muscle fibers to motor neurons:  66%|██████▌   | 38849/58755 [00:21&lt;00:11, 1772.55MF/s]
-Assigning muscle fibers to motor neurons:  66%|██████▋   | 39027/58755 [00:22&lt;00:11, 1774.13MF/s]
-Assigning muscle fibers to motor neurons:  67%|██████▋   | 39206/58755 [00:22&lt;00:11, 1776.69MF/s]
-Assigning muscle fibers to motor neurons:  67%|██████▋   | 39384/58755 [00:22&lt;00:10, 1774.07MF/s]
-Assigning muscle fibers to motor neurons:  67%|██████▋   | 39562/58755 [00:22&lt;00:10, 1771.67MF/s]
-Assigning muscle fibers to motor neurons:  68%|██████▊   | 39740/58755 [00:22&lt;00:10, 1773.33MF/s]
-Assigning muscle fibers to motor neurons:  68%|██████▊   | 39918/58755 [00:22&lt;00:10, 1773.21MF/s]
-Assigning muscle fibers to motor neurons:  68%|██████▊   | 40096/58755 [00:22&lt;00:10, 1772.00MF/s]
-Assigning muscle fibers to motor neurons:  69%|██████▊   | 40274/58755 [00:22&lt;00:10, 1773.86MF/s]
-Assigning muscle fibers to motor neurons:  69%|██████▉   | 40452/58755 [00:22&lt;00:10, 1770.55MF/s]
-Assigning muscle fibers to motor neurons:  69%|██████▉   | 40630/58755 [00:22&lt;00:10, 1772.56MF/s]
-Assigning muscle fibers to motor neurons:  69%|██████▉   | 40808/58755 [00:23&lt;00:10, 1772.01MF/s]
-Assigning muscle fibers to motor neurons:  70%|██████▉   | 40986/58755 [00:23&lt;00:10, 1771.29MF/s]
-Assigning muscle fibers to motor neurons:  70%|███████   | 41164/58755 [00:23&lt;00:09, 1771.27MF/s]
-Assigning muscle fibers to motor neurons:  70%|███████   | 41342/58755 [00:23&lt;00:09, 1772.50MF/s]
-Assigning muscle fibers to motor neurons:  71%|███████   | 41520/58755 [00:23&lt;00:09, 1773.92MF/s]
-Assigning muscle fibers to motor neurons:  71%|███████   | 41698/58755 [00:23&lt;00:09, 1773.45MF/s]
-Assigning muscle fibers to motor neurons:  71%|███████▏  | 41876/58755 [00:23&lt;00:09, 1774.80MF/s]
-Assigning muscle fibers to motor neurons:  72%|███████▏  | 42055/58755 [00:23&lt;00:09, 1776.76MF/s]
-Assigning muscle fibers to motor neurons:  72%|███████▏  | 42233/58755 [00:23&lt;00:09, 1774.61MF/s]
-Assigning muscle fibers to motor neurons:  72%|███████▏  | 42411/58755 [00:23&lt;00:09, 1775.81MF/s]
-Assigning muscle fibers to motor neurons:  72%|███████▏  | 42589/58755 [00:24&lt;00:09, 1775.54MF/s]
-Assigning muscle fibers to motor neurons:  73%|███████▎  | 42767/58755 [00:24&lt;00:09, 1774.01MF/s]
-Assigning muscle fibers to motor neurons:  73%|███████▎  | 42945/58755 [00:24&lt;00:08, 1775.08MF/s]
-Assigning muscle fibers to motor neurons:  73%|███████▎  | 43123/58755 [00:24&lt;00:08, 1775.18MF/s]
-Assigning muscle fibers to motor neurons:  74%|███████▎  | 43301/58755 [00:24&lt;00:08, 1775.01MF/s]
-Assigning muscle fibers to motor neurons:  74%|███████▍  | 43479/58755 [00:24&lt;00:08, 1772.25MF/s]
-Assigning muscle fibers to motor neurons:  74%|███████▍  | 43657/58755 [00:24&lt;00:08, 1771.55MF/s]
-Assigning muscle fibers to motor neurons:  75%|███████▍  | 43835/58755 [00:24&lt;00:08, 1769.68MF/s]
-Assigning muscle fibers to motor neurons:  75%|███████▍  | 44013/58755 [00:24&lt;00:08, 1770.82MF/s]
-Assigning muscle fibers to motor neurons:  75%|███████▌  | 44192/58755 [00:24&lt;00:08, 1775.24MF/s]
-Assigning muscle fibers to motor neurons:  76%|███████▌  | 44370/58755 [00:25&lt;00:08, 1776.24MF/s]
-Assigning muscle fibers to motor neurons:  76%|███████▌  | 44548/58755 [00:25&lt;00:07, 1776.05MF/s]
-Assigning muscle fibers to motor neurons:  76%|███████▌  | 44726/58755 [00:25&lt;00:07, 1776.35MF/s]
-Assigning muscle fibers to motor neurons:  76%|███████▋  | 44904/58755 [00:25&lt;00:07, 1776.83MF/s]
-Assigning muscle fibers to motor neurons:  77%|███████▋  | 45082/58755 [00:25&lt;00:07, 1777.65MF/s]
-Assigning muscle fibers to motor neurons:  77%|███████▋  | 45260/58755 [00:25&lt;00:07, 1776.81MF/s]
-Assigning muscle fibers to motor neurons:  77%|███████▋  | 45438/58755 [00:25&lt;00:07, 1776.15MF/s]
-Assigning muscle fibers to motor neurons:  78%|███████▊  | 45617/58755 [00:25&lt;00:07, 1775.93MF/s]
-Assigning muscle fibers to motor neurons:  78%|███████▊  | 45795/58755 [00:25&lt;00:07, 1773.83MF/s]
-Assigning muscle fibers to motor neurons:  78%|███████▊  | 45974/58755 [00:25&lt;00:07, 1776.72MF/s]
-Assigning muscle fibers to motor neurons:  79%|███████▊  | 46152/58755 [00:26&lt;00:07, 1776.16MF/s]
-Assigning muscle fibers to motor neurons:  79%|███████▉  | 46330/58755 [00:26&lt;00:06, 1775.91MF/s]
-Assigning muscle fibers to motor neurons:  79%|███████▉  | 46508/58755 [00:26&lt;00:06, 1777.04MF/s]
-Assigning muscle fibers to motor neurons:  79%|███████▉  | 46686/58755 [00:26&lt;00:06, 1776.52MF/s]
-Assigning muscle fibers to motor neurons:  80%|███████▉  | 46864/58755 [00:26&lt;00:06, 1776.26MF/s]
-Assigning muscle fibers to motor neurons:  80%|████████  | 47042/58755 [00:26&lt;00:06, 1774.59MF/s]
-Assigning muscle fibers to motor neurons:  80%|████████  | 47220/58755 [00:26&lt;00:06, 1773.67MF/s]
-Assigning muscle fibers to motor neurons:  81%|████████  | 47398/58755 [00:26&lt;00:06, 1767.04MF/s]
-Assigning muscle fibers to motor neurons:  81%|████████  | 47576/58755 [00:26&lt;00:06, 1769.43MF/s]
-Assigning muscle fibers to motor neurons:  81%|████████▏ | 47755/58755 [00:26&lt;00:06, 1772.78MF/s]
-Assigning muscle fibers to motor neurons:  82%|████████▏ | 47933/58755 [00:27&lt;00:06, 1771.37MF/s]
-Assigning muscle fibers to motor neurons:  82%|████████▏ | 48111/58755 [00:27&lt;00:06, 1773.21MF/s]
-Assigning muscle fibers to motor neurons:  82%|████████▏ | 48289/58755 [00:27&lt;00:05, 1773.03MF/s]
-Assigning muscle fibers to motor neurons:  82%|████████▏ | 48467/58755 [00:27&lt;00:05, 1772.31MF/s]
-Assigning muscle fibers to motor neurons:  83%|████████▎ | 48645/58755 [00:27&lt;00:05, 1772.42MF/s]
-Assigning muscle fibers to motor neurons:  83%|████████▎ | 48823/58755 [00:27&lt;00:05, 1773.72MF/s]
-Assigning muscle fibers to motor neurons:  83%|████████▎ | 49002/58755 [00:27&lt;00:05, 1777.47MF/s]
-Assigning muscle fibers to motor neurons:  84%|████████▎ | 49180/58755 [00:27&lt;00:05, 1774.60MF/s]
-Assigning muscle fibers to motor neurons:  84%|████████▍ | 49358/58755 [00:27&lt;00:05, 1774.86MF/s]
-Assigning muscle fibers to motor neurons:  84%|████████▍ | 49536/58755 [00:27&lt;00:05, 1774.82MF/s]
-Assigning muscle fibers to motor neurons:  85%|████████▍ | 49714/58755 [00:28&lt;00:05, 1757.41MF/s]
-Assigning muscle fibers to motor neurons:  85%|████████▍ | 49890/58755 [00:28&lt;00:05, 1731.06MF/s]
-Assigning muscle fibers to motor neurons:  85%|████████▌ | 50064/58755 [00:28&lt;00:05, 1725.00MF/s]
-Assigning muscle fibers to motor neurons:  86%|████████▌ | 50242/58755 [00:28&lt;00:04, 1739.60MF/s]
-Assigning muscle fibers to motor neurons:  86%|████████▌ | 50421/58755 [00:28&lt;00:04, 1751.80MF/s]
-Assigning muscle fibers to motor neurons:  86%|████████▌ | 50600/58755 [00:28&lt;00:04, 1760.61MF/s]
-Assigning muscle fibers to motor neurons:  86%|████████▋ | 50779/58755 [00:28&lt;00:04, 1767.33MF/s]
-Assigning muscle fibers to motor neurons:  87%|████████▋ | 50956/58755 [00:28&lt;00:04, 1761.20MF/s]
-Assigning muscle fibers to motor neurons:  87%|████████▋ | 51135/58755 [00:28&lt;00:04, 1766.90MF/s]
-Assigning muscle fibers to motor neurons:  87%|████████▋ | 51313/58755 [00:28&lt;00:04, 1770.50MF/s]
-Assigning muscle fibers to motor neurons:  88%|████████▊ | 51492/58755 [00:29&lt;00:04, 1773.48MF/s]
-Assigning muscle fibers to motor neurons:  88%|████████▊ | 51670/58755 [00:29&lt;00:04, 1764.87MF/s]
-Assigning muscle fibers to motor neurons:  88%|████████▊ | 51847/58755 [00:29&lt;00:04, 1693.45MF/s]
-Assigning muscle fibers to motor neurons:  89%|████████▊ | 52026/58755 [00:29&lt;00:03, 1719.70MF/s]
-Assigning muscle fibers to motor neurons:  89%|████████▉ | 52205/58755 [00:29&lt;00:03, 1738.61MF/s]
-Assigning muscle fibers to motor neurons:  89%|████████▉ | 52383/58755 [00:29&lt;00:03, 1749.41MF/s]
-Assigning muscle fibers to motor neurons:  89%|████████▉ | 52561/58755 [00:29&lt;00:03, 1757.14MF/s]
-Assigning muscle fibers to motor neurons:  90%|████████▉ | 52737/58755 [00:29&lt;00:03, 1756.57MF/s]
-Assigning muscle fibers to motor neurons:  90%|█████████ | 52915/58755 [00:29&lt;00:03, 1762.15MF/s]
-Assigning muscle fibers to motor neurons:  90%|█████████ | 53093/58755 [00:30&lt;00:03, 1766.64MF/s]
-Assigning muscle fibers to motor neurons:  91%|█████████ | 53271/58755 [00:30&lt;00:03, 1768.83MF/s]
-Assigning muscle fibers to motor neurons:  91%|█████████ | 53449/58755 [00:30&lt;00:02, 1770.52MF/s]
-Assigning muscle fibers to motor neurons:  91%|█████████▏| 53627/58755 [00:30&lt;00:02, 1772.33MF/s]
-Assigning muscle fibers to motor neurons:  92%|█████████▏| 53805/58755 [00:30&lt;00:02, 1773.43MF/s]
-Assigning muscle fibers to motor neurons:  92%|█████████▏| 53983/58755 [00:30&lt;00:02, 1775.36MF/s]
-Assigning muscle fibers to motor neurons:  92%|█████████▏| 54161/58755 [00:30&lt;00:02, 1775.31MF/s]
-Assigning muscle fibers to motor neurons:  92%|█████████▏| 54339/58755 [00:30&lt;00:02, 1776.49MF/s]
-Assigning muscle fibers to motor neurons:  93%|█████████▎| 54517/58755 [00:30&lt;00:02, 1774.07MF/s]
-Assigning muscle fibers to motor neurons:  93%|█████████▎| 54695/58755 [00:30&lt;00:02, 1772.91MF/s]
-Assigning muscle fibers to motor neurons:  93%|█████████▎| 54873/58755 [00:31&lt;00:02, 1772.96MF/s]
-Assigning muscle fibers to motor neurons:  94%|█████████▎| 55051/58755 [00:31&lt;00:02, 1771.67MF/s]
-Assigning muscle fibers to motor neurons:  94%|█████████▍| 55229/58755 [00:31&lt;00:01, 1773.19MF/s]
-Assigning muscle fibers to motor neurons:  94%|█████████▍| 55407/58755 [00:31&lt;00:01, 1775.03MF/s]
-Assigning muscle fibers to motor neurons:  95%|█████████▍| 55585/58755 [00:31&lt;00:01, 1775.31MF/s]
-Assigning muscle fibers to motor neurons:  95%|█████████▍| 55763/58755 [00:31&lt;00:01, 1775.22MF/s]
-Assigning muscle fibers to motor neurons:  95%|█████████▌| 55941/58755 [00:31&lt;00:01, 1774.54MF/s]
-Assigning muscle fibers to motor neurons:  96%|█████████▌| 56119/58755 [00:31&lt;00:01, 1774.36MF/s]
-Assigning muscle fibers to motor neurons:  96%|█████████▌| 56297/58755 [00:31&lt;00:01, 1766.73MF/s]
-Assigning muscle fibers to motor neurons:  96%|█████████▌| 56475/58755 [00:31&lt;00:01, 1770.53MF/s]
-Assigning muscle fibers to motor neurons:  96%|█████████▋| 56654/58755 [00:32&lt;00:01, 1773.45MF/s]
-Assigning muscle fibers to motor neurons:  97%|█████████▋| 56832/58755 [00:32&lt;00:01, 1775.16MF/s]
-Assigning muscle fibers to motor neurons:  97%|█████████▋| 57011/58755 [00:32&lt;00:00, 1776.92MF/s]
-Assigning muscle fibers to motor neurons:  97%|█████████▋| 57190/58755 [00:32&lt;00:00, 1778.56MF/s]
-Assigning muscle fibers to motor neurons:  98%|█████████▊| 57368/58755 [00:32&lt;00:00, 1778.91MF/s]
-Assigning muscle fibers to motor neurons:  98%|█████████▊| 57547/58755 [00:32&lt;00:00, 1779.45MF/s]
-Assigning muscle fibers to motor neurons:  98%|█████████▊| 57725/58755 [00:32&lt;00:00, 1777.29MF/s]
-Assigning muscle fibers to motor neurons:  99%|█████████▊| 57903/58755 [00:32&lt;00:00, 1773.09MF/s]
-Assigning muscle fibers to motor neurons:  99%|█████████▉| 58081/58755 [00:32&lt;00:00, 1770.54MF/s]
-Assigning muscle fibers to motor neurons:  99%|█████████▉| 58259/58755 [00:32&lt;00:00, 1757.92MF/s]
-Assigning muscle fibers to motor neurons:  99%|█████████▉| 58438/58755 [00:33&lt;00:00, 1764.65MF/s]
-Assigning muscle fibers to motor neurons: 100%|█████████▉| 58615/58755 [00:33&lt;00:00, 1765.52MF/s]
-Assigning muscle fibers to motor neurons: 100%|██████████| 58755/58755 [00:33&lt;00:00, 1769.79MF/s]
+Assigning muscle fibers to motor neurons:   0%|          | 250/58755 [00:00&lt;00:23, 2497.71MF/s]
+Assigning muscle fibers to motor neurons:   1%|          | 501/58755 [00:00&lt;00:23, 2501.92MF/s]
+Assigning muscle fibers to motor neurons:   1%|▏         | 752/58755 [00:00&lt;00:23, 2496.77MF/s]
+Assigning muscle fibers to motor neurons:   2%|▏         | 1002/58755 [00:00&lt;00:23, 2497.50MF/s]
+Assigning muscle fibers to motor neurons:   2%|▏         | 1252/58755 [00:00&lt;00:23, 2496.64MF/s]
+Assigning muscle fibers to motor neurons:   3%|▎         | 1502/58755 [00:00&lt;00:22, 2497.61MF/s]
+Assigning muscle fibers to motor neurons:   3%|▎         | 1753/58755 [00:00&lt;00:22, 2498.84MF/s]
+Assigning muscle fibers to motor neurons:   3%|▎         | 2003/58755 [00:00&lt;00:22, 2497.17MF/s]
+Assigning muscle fibers to motor neurons:   4%|▍         | 2253/58755 [00:00&lt;00:22, 2495.08MF/s]
+Assigning muscle fibers to motor neurons:   4%|▍         | 2504/58755 [00:01&lt;00:22, 2499.32MF/s]
+Assigning muscle fibers to motor neurons:   5%|▍         | 2756/58755 [00:01&lt;00:22, 2502.97MF/s]
+Assigning muscle fibers to motor neurons:   5%|▌         | 3007/58755 [00:01&lt;00:22, 2501.22MF/s]
+Assigning muscle fibers to motor neurons:   6%|▌         | 3258/58755 [00:01&lt;00:22, 2498.79MF/s]
+Assigning muscle fibers to motor neurons:   6%|▌         | 3508/58755 [00:01&lt;00:22, 2485.93MF/s]
+Assigning muscle fibers to motor neurons:   6%|▋         | 3757/58755 [00:01&lt;00:22, 2473.92MF/s]
+Assigning muscle fibers to motor neurons:   7%|▋         | 4006/58755 [00:01&lt;00:22, 2478.54MF/s]
+Assigning muscle fibers to motor neurons:   7%|▋         | 4258/58755 [00:01&lt;00:21, 2488.03MF/s]
+Assigning muscle fibers to motor neurons:   8%|▊         | 4510/58755 [00:01&lt;00:21, 2495.42MF/s]
+Assigning muscle fibers to motor neurons:   8%|▊         | 4760/58755 [00:01&lt;00:21, 2492.32MF/s]
+Assigning muscle fibers to motor neurons:   9%|▊         | 5010/58755 [00:02&lt;00:21, 2493.89MF/s]
+Assigning muscle fibers to motor neurons:   9%|▉         | 5260/58755 [00:02&lt;00:21, 2491.88MF/s]
+Assigning muscle fibers to motor neurons:   9%|▉         | 5510/58755 [00:02&lt;00:21, 2490.87MF/s]
+Assigning muscle fibers to motor neurons:  10%|▉         | 5761/58755 [00:02&lt;00:21, 2495.08MF/s]
+Assigning muscle fibers to motor neurons:  10%|█         | 6011/58755 [00:02&lt;00:21, 2487.26MF/s]
+Assigning muscle fibers to motor neurons:  11%|█         | 6260/58755 [00:02&lt;00:21, 2487.15MF/s]
+Assigning muscle fibers to motor neurons:  11%|█         | 6509/58755 [00:02&lt;00:21, 2487.76MF/s]
+Assigning muscle fibers to motor neurons:  12%|█▏        | 6759/58755 [00:02&lt;00:20, 2488.41MF/s]
+Assigning muscle fibers to motor neurons:  12%|█▏        | 7009/58755 [00:02&lt;00:20, 2490.18MF/s]
+Assigning muscle fibers to motor neurons:  12%|█▏        | 7259/58755 [00:02&lt;00:20, 2489.58MF/s]
+Assigning muscle fibers to motor neurons:  13%|█▎        | 7509/58755 [00:03&lt;00:20, 2491.87MF/s]
+Assigning muscle fibers to motor neurons:  13%|█▎        | 7759/58755 [00:03&lt;00:20, 2489.80MF/s]
+Assigning muscle fibers to motor neurons:  14%|█▎        | 8008/58755 [00:03&lt;00:20, 2489.57MF/s]
+Assigning muscle fibers to motor neurons:  14%|█▍        | 8257/58755 [00:03&lt;00:20, 2489.21MF/s]
+Assigning muscle fibers to motor neurons:  14%|█▍        | 8506/58755 [00:03&lt;00:20, 2484.78MF/s]
+Assigning muscle fibers to motor neurons:  15%|█▍        | 8755/58755 [00:03&lt;00:20, 2483.93MF/s]
+Assigning muscle fibers to motor neurons:  15%|█▌        | 9005/58755 [00:03&lt;00:19, 2487.51MF/s]
+Assigning muscle fibers to motor neurons:  16%|█▌        | 9255/58755 [00:03&lt;00:19, 2490.55MF/s]
+Assigning muscle fibers to motor neurons:  16%|█▌        | 9505/58755 [00:03&lt;00:19, 2492.16MF/s]
+Assigning muscle fibers to motor neurons:  17%|█▋        | 9755/58755 [00:03&lt;00:19, 2493.08MF/s]
+Assigning muscle fibers to motor neurons:  17%|█▋        | 10007/58755 [00:04&lt;00:19, 2499.57MF/s]
+Assigning muscle fibers to motor neurons:  17%|█▋        | 10258/58755 [00:04&lt;00:19, 2502.01MF/s]
+Assigning muscle fibers to motor neurons:  18%|█▊        | 10509/58755 [00:04&lt;00:19, 2498.64MF/s]
+Assigning muscle fibers to motor neurons:  18%|█▊        | 10759/58755 [00:04&lt;00:19, 2493.70MF/s]
+Assigning muscle fibers to motor neurons:  19%|█▊        | 11009/58755 [00:04&lt;00:19, 2487.10MF/s]
+Assigning muscle fibers to motor neurons:  19%|█▉        | 11258/58755 [00:04&lt;00:19, 2486.00MF/s]
+Assigning muscle fibers to motor neurons:  20%|█▉        | 11507/58755 [00:04&lt;00:19, 2485.12MF/s]
+Assigning muscle fibers to motor neurons:  20%|██        | 11757/58755 [00:04&lt;00:18, 2486.77MF/s]
+Assigning muscle fibers to motor neurons:  20%|██        | 12006/58755 [00:04&lt;00:18, 2486.18MF/s]
+Assigning muscle fibers to motor neurons:  21%|██        | 12255/58755 [00:04&lt;00:18, 2483.61MF/s]
+Assigning muscle fibers to motor neurons:  21%|██▏       | 12504/58755 [00:05&lt;00:18, 2483.98MF/s]
+Assigning muscle fibers to motor neurons:  22%|██▏       | 12753/58755 [00:05&lt;00:18, 2482.64MF/s]
+Assigning muscle fibers to motor neurons:  22%|██▏       | 13002/58755 [00:05&lt;00:18, 2462.28MF/s]
+Assigning muscle fibers to motor neurons:  23%|██▎       | 13253/58755 [00:05&lt;00:18, 2474.63MF/s]
+Assigning muscle fibers to motor neurons:  23%|██▎       | 13501/58755 [00:05&lt;00:18, 2476.00MF/s]
+Assigning muscle fibers to motor neurons:  23%|██▎       | 13752/58755 [00:05&lt;00:18, 2485.76MF/s]
+Assigning muscle fibers to motor neurons:  24%|██▍       | 14003/58755 [00:05&lt;00:17, 2490.63MF/s]
+Assigning muscle fibers to motor neurons:  24%|██▍       | 14254/58755 [00:05&lt;00:17, 2496.32MF/s]
+Assigning muscle fibers to motor neurons:  25%|██▍       | 14504/58755 [00:05&lt;00:17, 2492.94MF/s]
+Assigning muscle fibers to motor neurons:  25%|██▌       | 14754/58755 [00:05&lt;00:17, 2488.70MF/s]
+Assigning muscle fibers to motor neurons:  26%|██▌       | 15003/58755 [00:06&lt;00:17, 2487.94MF/s]
+Assigning muscle fibers to motor neurons:  26%|██▌       | 15252/58755 [00:06&lt;00:17, 2484.51MF/s]
+Assigning muscle fibers to motor neurons:  26%|██▋       | 15501/58755 [00:06&lt;00:17, 2482.89MF/s]
+Assigning muscle fibers to motor neurons:  27%|██▋       | 15750/58755 [00:06&lt;00:17, 2482.00MF/s]
+Assigning muscle fibers to motor neurons:  27%|██▋       | 16000/58755 [00:06&lt;00:17, 2484.51MF/s]
+Assigning muscle fibers to motor neurons:  28%|██▊       | 16251/58755 [00:06&lt;00:17, 2490.93MF/s]
+Assigning muscle fibers to motor neurons:  28%|██▊       | 16501/58755 [00:06&lt;00:17, 2483.41MF/s]
+Assigning muscle fibers to motor neurons:  29%|██▊       | 16750/58755 [00:06&lt;00:16, 2483.22MF/s]
+Assigning muscle fibers to motor neurons:  29%|██▉       | 16999/58755 [00:06&lt;00:16, 2480.16MF/s]
+Assigning muscle fibers to motor neurons:  29%|██▉       | 17248/58755 [00:06&lt;00:17, 2421.56MF/s]
+Assigning muscle fibers to motor neurons:  30%|██▉       | 17491/58755 [00:07&lt;00:17, 2384.00MF/s]
+Assigning muscle fibers to motor neurons:  30%|███       | 17739/58755 [00:07&lt;00:17, 2411.01MF/s]
+Assigning muscle fibers to motor neurons:  31%|███       | 17987/58755 [00:07&lt;00:16, 2430.79MF/s]
+Assigning muscle fibers to motor neurons:  31%|███       | 18236/58755 [00:07&lt;00:16, 2445.46MF/s]
+Assigning muscle fibers to motor neurons:  31%|███▏      | 18485/58755 [00:07&lt;00:16, 2456.60MF/s]
+Assigning muscle fibers to motor neurons:  32%|███▏      | 18737/58755 [00:07&lt;00:16, 2474.76MF/s]
+Assigning muscle fibers to motor neurons:  32%|███▏      | 18988/58755 [00:07&lt;00:16, 2485.23MF/s]
+Assigning muscle fibers to motor neurons:  33%|███▎      | 19240/58755 [00:07&lt;00:15, 2494.10MF/s]
+Assigning muscle fibers to motor neurons:  33%|███▎      | 19491/58755 [00:07&lt;00:15, 2498.57MF/s]
+Assigning muscle fibers to motor neurons:  34%|███▎      | 19741/58755 [00:07&lt;00:15, 2495.46MF/s]
+Assigning muscle fibers to motor neurons:  34%|███▍      | 19992/58755 [00:08&lt;00:15, 2498.77MF/s]
+Assigning muscle fibers to motor neurons:  34%|███▍      | 20243/58755 [00:08&lt;00:15, 2501.25MF/s]
+Assigning muscle fibers to motor neurons:  35%|███▍      | 20494/58755 [00:08&lt;00:15, 2495.06MF/s]
+Assigning muscle fibers to motor neurons:  35%|███▌      | 20744/58755 [00:08&lt;00:15, 2490.56MF/s]
+Assigning muscle fibers to motor neurons:  36%|███▌      | 20994/58755 [00:08&lt;00:15, 2485.95MF/s]
+Assigning muscle fibers to motor neurons:  36%|███▌      | 21243/58755 [00:08&lt;00:15, 2486.93MF/s]
+Assigning muscle fibers to motor neurons:  37%|███▋      | 21493/58755 [00:08&lt;00:14, 2488.33MF/s]
+Assigning muscle fibers to motor neurons:  37%|███▋      | 21742/58755 [00:08&lt;00:14, 2487.10MF/s]
+Assigning muscle fibers to motor neurons:  37%|███▋      | 21991/58755 [00:08&lt;00:14, 2485.88MF/s]
+Assigning muscle fibers to motor neurons:  38%|███▊      | 22240/58755 [00:08&lt;00:14, 2486.77MF/s]
+Assigning muscle fibers to motor neurons:  38%|███▊      | 22489/58755 [00:09&lt;00:14, 2487.63MF/s]
+Assigning muscle fibers to motor neurons:  39%|███▊      | 22738/58755 [00:09&lt;00:14, 2486.74MF/s]
+Assigning muscle fibers to motor neurons:  39%|███▉      | 22987/58755 [00:09&lt;00:14, 2487.54MF/s]
+Assigning muscle fibers to motor neurons:  40%|███▉      | 23236/58755 [00:09&lt;00:14, 2487.52MF/s]
+Assigning muscle fibers to motor neurons:  40%|███▉      | 23485/58755 [00:09&lt;00:14, 2477.85MF/s]
+Assigning muscle fibers to motor neurons:  40%|████      | 23734/58755 [00:09&lt;00:14, 2480.96MF/s]
+Assigning muscle fibers to motor neurons:  41%|████      | 23983/58755 [00:09&lt;00:14, 2483.10MF/s]
+Assigning muscle fibers to motor neurons:  41%|████      | 24232/58755 [00:09&lt;00:13, 2483.75MF/s]
+Assigning muscle fibers to motor neurons:  42%|████▏     | 24481/58755 [00:09&lt;00:13, 2478.15MF/s]
+Assigning muscle fibers to motor neurons:  42%|████▏     | 24729/58755 [00:09&lt;00:13, 2477.74MF/s]
+Assigning muscle fibers to motor neurons:  43%|████▎     | 24978/58755 [00:10&lt;00:13, 2478.68MF/s]
+Assigning muscle fibers to motor neurons:  43%|████▎     | 25227/58755 [00:10&lt;00:13, 2479.02MF/s]
+Assigning muscle fibers to motor neurons:  43%|████▎     | 25475/58755 [00:10&lt;00:13, 2477.50MF/s]
+Assigning muscle fibers to motor neurons:  44%|████▍     | 25723/58755 [00:10&lt;00:13, 2477.99MF/s]
+Assigning muscle fibers to motor neurons:  44%|████▍     | 25971/58755 [00:10&lt;00:13, 2469.38MF/s]
+Assigning muscle fibers to motor neurons:  45%|████▍     | 26219/58755 [00:10&lt;00:13, 2471.56MF/s]
+Assigning muscle fibers to motor neurons:  45%|████▌     | 26469/58755 [00:10&lt;00:13, 2479.33MF/s]
+Assigning muscle fibers to motor neurons:  45%|████▌     | 26718/58755 [00:10&lt;00:12, 2479.52MF/s]
+Assigning muscle fibers to motor neurons:  46%|████▌     | 26966/58755 [00:10&lt;00:12, 2477.39MF/s]
+Assigning muscle fibers to motor neurons:  46%|████▋     | 27214/58755 [00:10&lt;00:12, 2449.88MF/s]
+Assigning muscle fibers to motor neurons:  47%|████▋     | 27464/58755 [00:11&lt;00:12, 2464.40MF/s]
+Assigning muscle fibers to motor neurons:  47%|████▋     | 27713/58755 [00:11&lt;00:12, 2471.92MF/s]
+Assigning muscle fibers to motor neurons:  48%|████▊     | 27961/58755 [00:11&lt;00:12, 2466.17MF/s]
+Assigning muscle fibers to motor neurons:  48%|████▊     | 28210/58755 [00:11&lt;00:12, 2472.39MF/s]
+Assigning muscle fibers to motor neurons:  48%|████▊     | 28458/58755 [00:11&lt;00:12, 2472.76MF/s]
+Assigning muscle fibers to motor neurons:  49%|████▉     | 28706/58755 [00:11&lt;00:12, 2463.76MF/s]
+Assigning muscle fibers to motor neurons:  49%|████▉     | 28953/58755 [00:11&lt;00:12, 2457.30MF/s]
+Assigning muscle fibers to motor neurons:  50%|████▉     | 29206/58755 [00:11&lt;00:11, 2477.21MF/s]
+Assigning muscle fibers to motor neurons:  50%|█████     | 29458/58755 [00:11&lt;00:11, 2487.29MF/s]
+Assigning muscle fibers to motor neurons:  51%|█████     | 29710/58755 [00:11&lt;00:11, 2494.71MF/s]
+Assigning muscle fibers to motor neurons:  51%|█████     | 29962/58755 [00:12&lt;00:11, 2499.54MF/s]
+Assigning muscle fibers to motor neurons:  51%|█████▏    | 30214/58755 [00:12&lt;00:11, 2503.13MF/s]
+Assigning muscle fibers to motor neurons:  52%|█████▏    | 30465/58755 [00:12&lt;00:11, 2503.80MF/s]
+Assigning muscle fibers to motor neurons:  52%|█████▏    | 30716/58755 [00:12&lt;00:11, 2504.91MF/s]
+Assigning muscle fibers to motor neurons:  53%|█████▎    | 30967/58755 [00:12&lt;00:11, 2497.60MF/s]
+Assigning muscle fibers to motor neurons:  53%|█████▎    | 31217/58755 [00:12&lt;00:11, 2497.31MF/s]
+Assigning muscle fibers to motor neurons:  54%|█████▎    | 31467/58755 [00:12&lt;00:10, 2493.73MF/s]
+Assigning muscle fibers to motor neurons:  54%|█████▍    | 31717/58755 [00:12&lt;00:10, 2489.24MF/s]
+Assigning muscle fibers to motor neurons:  54%|█████▍    | 31966/58755 [00:12&lt;00:10, 2486.53MF/s]
+Assigning muscle fibers to motor neurons:  55%|█████▍    | 32217/58755 [00:12&lt;00:10, 2492.37MF/s]
+Assigning muscle fibers to motor neurons:  55%|█████▌    | 32467/58755 [00:13&lt;00:10, 2491.98MF/s]
+Assigning muscle fibers to motor neurons:  56%|█████▌    | 32717/58755 [00:13&lt;00:10, 2493.81MF/s]
+Assigning muscle fibers to motor neurons:  56%|█████▌    | 32967/58755 [00:13&lt;00:10, 2494.86MF/s]
+Assigning muscle fibers to motor neurons:  57%|█████▋    | 33219/58755 [00:13&lt;00:10, 2501.22MF/s]
+Assigning muscle fibers to motor neurons:  57%|█████▋    | 33470/58755 [00:13&lt;00:10, 2494.83MF/s]
+Assigning muscle fibers to motor neurons:  57%|█████▋    | 33720/58755 [00:13&lt;00:10, 2496.12MF/s]
+Assigning muscle fibers to motor neurons:  58%|█████▊    | 33973/58755 [00:13&lt;00:09, 2504.06MF/s]
+Assigning muscle fibers to motor neurons:  58%|█████▊    | 34225/58755 [00:13&lt;00:09, 2505.93MF/s]
+Assigning muscle fibers to motor neurons:  59%|█████▊    | 34477/58755 [00:13&lt;00:09, 2508.06MF/s]
+Assigning muscle fibers to motor neurons:  59%|█████▉    | 34728/58755 [00:13&lt;00:09, 2505.02MF/s]
+Assigning muscle fibers to motor neurons:  60%|█████▉    | 34980/58755 [00:14&lt;00:09, 2507.60MF/s]
+Assigning muscle fibers to motor neurons:  60%|█████▉    | 35233/58755 [00:14&lt;00:09, 2511.39MF/s]
+Assigning muscle fibers to motor neurons:  60%|██████    | 35485/58755 [00:14&lt;00:09, 2507.86MF/s]
+Assigning muscle fibers to motor neurons:  61%|██████    | 35737/58755 [00:14&lt;00:09, 2509.51MF/s]
+Assigning muscle fibers to motor neurons:  61%|██████▏   | 35988/58755 [00:14&lt;00:09, 2501.69MF/s]
+Assigning muscle fibers to motor neurons:  62%|██████▏   | 36239/58755 [00:14&lt;00:09, 2500.43MF/s]
+Assigning muscle fibers to motor neurons:  62%|██████▏   | 36490/58755 [00:14&lt;00:08, 2498.85MF/s]
+Assigning muscle fibers to motor neurons:  63%|██████▎   | 36740/58755 [00:14&lt;00:08, 2493.83MF/s]
+Assigning muscle fibers to motor neurons:  63%|██████▎   | 36990/58755 [00:14&lt;00:08, 2492.68MF/s]
+Assigning muscle fibers to motor neurons:  63%|██████▎   | 37240/58755 [00:14&lt;00:08, 2493.56MF/s]
+Assigning muscle fibers to motor neurons:  64%|██████▍   | 37491/58755 [00:15&lt;00:08, 2496.15MF/s]
+Assigning muscle fibers to motor neurons:  64%|██████▍   | 37741/58755 [00:15&lt;00:08, 2495.89MF/s]
+Assigning muscle fibers to motor neurons:  65%|██████▍   | 37991/58755 [00:15&lt;00:08, 2495.48MF/s]
+Assigning muscle fibers to motor neurons:  65%|██████▌   | 38241/58755 [00:15&lt;00:08, 2490.77MF/s]
+Assigning muscle fibers to motor neurons:  66%|██████▌   | 38491/58755 [00:15&lt;00:08, 2483.33MF/s]
+Assigning muscle fibers to motor neurons:  66%|██████▌   | 38740/58755 [00:15&lt;00:08, 2479.25MF/s]
+Assigning muscle fibers to motor neurons:  66%|██████▋   | 38990/58755 [00:15&lt;00:07, 2482.90MF/s]
+Assigning muscle fibers to motor neurons:  67%|██████▋   | 39239/58755 [00:15&lt;00:07, 2484.78MF/s]
+Assigning muscle fibers to motor neurons:  67%|██████▋   | 39489/58755 [00:15&lt;00:07, 2488.50MF/s]
+Assigning muscle fibers to motor neurons:  68%|██████▊   | 39739/58755 [00:15&lt;00:07, 2489.41MF/s]
+Assigning muscle fibers to motor neurons:  68%|██████▊   | 39988/58755 [00:16&lt;00:07, 2489.27MF/s]
+Assigning muscle fibers to motor neurons:  68%|██████▊   | 40238/58755 [00:16&lt;00:07, 2489.81MF/s]
+Assigning muscle fibers to motor neurons:  69%|██████▉   | 40487/58755 [00:16&lt;00:07, 2489.31MF/s]
+Assigning muscle fibers to motor neurons:  69%|██████▉   | 40739/58755 [00:16&lt;00:07, 2497.29MF/s]
+Assigning muscle fibers to motor neurons:  70%|██████▉   | 40990/58755 [00:16&lt;00:07, 2498.88MF/s]
+Assigning muscle fibers to motor neurons:  70%|███████   | 41240/58755 [00:16&lt;00:07, 2497.18MF/s]
+Assigning muscle fibers to motor neurons:  71%|███████   | 41490/58755 [00:16&lt;00:06, 2497.68MF/s]
+Assigning muscle fibers to motor neurons:  71%|███████   | 41740/58755 [00:16&lt;00:06, 2494.33MF/s]
+Assigning muscle fibers to motor neurons:  71%|███████▏  | 41990/58755 [00:16&lt;00:06, 2492.44MF/s]
+Assigning muscle fibers to motor neurons:  72%|███████▏  | 42240/58755 [00:16&lt;00:06, 2493.96MF/s]
+Assigning muscle fibers to motor neurons:  72%|███████▏  | 42490/58755 [00:17&lt;00:06, 2491.47MF/s]
+Assigning muscle fibers to motor neurons:  73%|███████▎  | 42740/58755 [00:17&lt;00:06, 2492.70MF/s]
+Assigning muscle fibers to motor neurons:  73%|███████▎  | 42990/58755 [00:17&lt;00:06, 2491.28MF/s]
+Assigning muscle fibers to motor neurons:  74%|███████▎  | 43240/58755 [00:17&lt;00:06, 2488.64MF/s]
+Assigning muscle fibers to motor neurons:  74%|███████▍  | 43489/58755 [00:17&lt;00:06, 2484.29MF/s]
+Assigning muscle fibers to motor neurons:  74%|███████▍  | 43738/58755 [00:17&lt;00:06, 2484.42MF/s]
+Assigning muscle fibers to motor neurons:  75%|███████▍  | 43987/58755 [00:17&lt;00:05, 2474.49MF/s]
+Assigning muscle fibers to motor neurons:  75%|███████▌  | 44236/58755 [00:17&lt;00:05, 2478.04MF/s]
+Assigning muscle fibers to motor neurons:  76%|███████▌  | 44486/58755 [00:17&lt;00:05, 2481.91MF/s]
+Assigning muscle fibers to motor neurons:  76%|███████▌  | 44736/58755 [00:17&lt;00:05, 2484.80MF/s]
+Assigning muscle fibers to motor neurons:  77%|███████▋  | 44985/58755 [00:18&lt;00:05, 2486.07MF/s]
+Assigning muscle fibers to motor neurons:  77%|███████▋  | 45234/58755 [00:18&lt;00:05, 2475.04MF/s]
+Assigning muscle fibers to motor neurons:  77%|███████▋  | 45486/58755 [00:18&lt;00:05, 2485.91MF/s]
+Assigning muscle fibers to motor neurons:  78%|███████▊  | 45738/58755 [00:18&lt;00:05, 2494.56MF/s]
+Assigning muscle fibers to motor neurons:  78%|███████▊  | 45988/58755 [00:18&lt;00:05, 2488.75MF/s]
+Assigning muscle fibers to motor neurons:  79%|███████▊  | 46237/58755 [00:18&lt;00:05, 2488.28MF/s]
+Assigning muscle fibers to motor neurons:  79%|███████▉  | 46486/58755 [00:18&lt;00:04, 2488.41MF/s]
+Assigning muscle fibers to motor neurons:  80%|███████▉  | 46737/58755 [00:18&lt;00:04, 2491.86MF/s]
+Assigning muscle fibers to motor neurons:  80%|███████▉  | 46987/58755 [00:18&lt;00:04, 2490.83MF/s]
+Assigning muscle fibers to motor neurons:  80%|████████  | 47237/58755 [00:18&lt;00:04, 2489.71MF/s]
+Assigning muscle fibers to motor neurons:  81%|████████  | 47486/58755 [00:19&lt;00:04, 2487.27MF/s]
+Assigning muscle fibers to motor neurons:  81%|████████  | 47737/58755 [00:19&lt;00:04, 2492.20MF/s]
+Assigning muscle fibers to motor neurons:  82%|████████▏ | 47987/58755 [00:19&lt;00:04, 2491.50MF/s]
+Assigning muscle fibers to motor neurons:  82%|████████▏ | 48237/58755 [00:19&lt;00:04, 2489.29MF/s]
+Assigning muscle fibers to motor neurons:  83%|████████▎ | 48487/58755 [00:19&lt;00:04, 2491.26MF/s]
+Assigning muscle fibers to motor neurons:  83%|████████▎ | 48737/58755 [00:19&lt;00:04, 2489.14MF/s]
+Assigning muscle fibers to motor neurons:  83%|████████▎ | 48987/58755 [00:19&lt;00:03, 2490.57MF/s]
+Assigning muscle fibers to motor neurons:  84%|████████▍ | 49237/58755 [00:19&lt;00:03, 2490.25MF/s]
+Assigning muscle fibers to motor neurons:  84%|████████▍ | 49487/58755 [00:19&lt;00:03, 2488.85MF/s]
+Assigning muscle fibers to motor neurons:  85%|████████▍ | 49737/58755 [00:19&lt;00:03, 2490.31MF/s]
+Assigning muscle fibers to motor neurons:  85%|████████▌ | 49989/58755 [00:20&lt;00:03, 2496.43MF/s]
+Assigning muscle fibers to motor neurons:  86%|████████▌ | 50239/58755 [00:20&lt;00:03, 2493.74MF/s]
+Assigning muscle fibers to motor neurons:  86%|████████▌ | 50489/58755 [00:20&lt;00:03, 2490.84MF/s]
+Assigning muscle fibers to motor neurons:  86%|████████▋ | 50739/58755 [00:20&lt;00:03, 2485.97MF/s]
+Assigning muscle fibers to motor neurons:  87%|████████▋ | 50988/58755 [00:20&lt;00:03, 2482.22MF/s]
+Assigning muscle fibers to motor neurons:  87%|████████▋ | 51237/58755 [00:20&lt;00:03, 2484.40MF/s]
+Assigning muscle fibers to motor neurons:  88%|████████▊ | 51488/58755 [00:20&lt;00:02, 2491.29MF/s]
+Assigning muscle fibers to motor neurons:  88%|████████▊ | 51738/58755 [00:20&lt;00:02, 2491.45MF/s]
+Assigning muscle fibers to motor neurons:  88%|████████▊ | 51988/58755 [00:20&lt;00:02, 2487.69MF/s]
+Assigning muscle fibers to motor neurons:  89%|████████▉ | 52238/58755 [00:21&lt;00:02, 2488.35MF/s]
+Assigning muscle fibers to motor neurons:  89%|████████▉ | 52487/58755 [00:21&lt;00:02, 2487.84MF/s]
+Assigning muscle fibers to motor neurons:  90%|████████▉ | 52737/58755 [00:21&lt;00:02, 2489.24MF/s]
+Assigning muscle fibers to motor neurons:  90%|█████████ | 52986/58755 [00:21&lt;00:02, 2488.52MF/s]
+Assigning muscle fibers to motor neurons:  91%|█████████ | 53235/58755 [00:21&lt;00:02, 2486.72MF/s]
+Assigning muscle fibers to motor neurons:  91%|█████████ | 53484/58755 [00:21&lt;00:02, 2469.99MF/s]
+Assigning muscle fibers to motor neurons:  91%|█████████▏| 53732/58755 [00:21&lt;00:02, 2447.99MF/s]
+Assigning muscle fibers to motor neurons:  92%|█████████▏| 53982/58755 [00:21&lt;00:01, 2461.53MF/s]
+Assigning muscle fibers to motor neurons:  92%|█████████▏| 54233/58755 [00:21&lt;00:01, 2475.16MF/s]
+Assigning muscle fibers to motor neurons:  93%|█████████▎| 54485/58755 [00:21&lt;00:01, 2487.75MF/s]
+Assigning muscle fibers to motor neurons:  93%|█████████▎| 54737/58755 [00:22&lt;00:01, 2495.48MF/s]
+Assigning muscle fibers to motor neurons:  94%|█████████▎| 54989/58755 [00:22&lt;00:01, 2500.41MF/s]
+Assigning muscle fibers to motor neurons:  94%|█████████▍| 55240/58755 [00:22&lt;00:01, 2499.35MF/s]
+Assigning muscle fibers to motor neurons:  94%|█████████▍| 55490/58755 [00:22&lt;00:01, 2496.50MF/s]
+Assigning muscle fibers to motor neurons:  95%|█████████▍| 55741/58755 [00:22&lt;00:01, 2497.99MF/s]
+Assigning muscle fibers to motor neurons:  95%|█████████▌| 55991/58755 [00:22&lt;00:01, 2497.65MF/s]
+Assigning muscle fibers to motor neurons:  96%|█████████▌| 56241/58755 [00:22&lt;00:01, 2497.66MF/s]
+Assigning muscle fibers to motor neurons:  96%|█████████▌| 56491/58755 [00:22&lt;00:00, 2498.18MF/s]
+Assigning muscle fibers to motor neurons:  97%|█████████▋| 56741/58755 [00:22&lt;00:00, 2496.58MF/s]
+Assigning muscle fibers to motor neurons:  97%|█████████▋| 56991/58755 [00:22&lt;00:00, 2496.86MF/s]
+Assigning muscle fibers to motor neurons:  97%|█████████▋| 57242/58755 [00:23&lt;00:00, 2497.79MF/s]
+Assigning muscle fibers to motor neurons:  98%|█████████▊| 57492/58755 [00:23&lt;00:00, 2492.12MF/s]
+Assigning muscle fibers to motor neurons:  98%|█████████▊| 57743/58755 [00:23&lt;00:00, 2495.47MF/s]
+Assigning muscle fibers to motor neurons:  99%|█████████▊| 57995/58755 [00:23&lt;00:00, 2500.90MF/s]
+Assigning muscle fibers to motor neurons:  99%|█████████▉| 58246/58755 [00:23&lt;00:00, 2496.17MF/s]
+Assigning muscle fibers to motor neurons: 100%|█████████▉| 58496/58755 [00:23&lt;00:00, 2491.56MF/s]
+Assigning muscle fibers to motor neurons: 100%|█████████▉| 58746/58755 [00:23&lt;00:00, 2488.26MF/s]
+Assigning muscle fibers to motor neurons: 100%|██████████| 58755/58755 [00:23&lt;00:00, 2487.29MF/s]
 Assignment completed. 58755 muscle fibers assigned.
 Muscle model statistics:
         Total muscle fibers: 58755
@@ -978,12 +890,11 @@ They are calculated using the <strong>recruitment thresholds</strong> and the <s
 </pre></div>
 </div>
 <img src="../../_images/sphx_glr_04_simulate_muscle_002.png" srcset="../../_images/sphx_glr_04_simulate_muscle_002.png" alt="Motor neuron innervation areas" class = "sphx-glr-single-img"/><div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Plotting innervation areas:   0%|          | 0/100 [00:00&lt;?, ?MU/s]
-Plotting innervation areas:  43%|████▎     | 43/100 [00:00&lt;00:00, 425.54MU/s]
-Plotting innervation areas:  90%|█████████ | 90/100 [00:00&lt;00:00, 445.97MU/s]
-Plotting innervation areas: 100%|██████████| 100/100 [00:00&lt;00:00, 444.28MU/s]
+Plotting innervation areas:  48%|████▊     | 48/100 [00:00&lt;00:00, 474.00MU/s]
+Plotting innervation areas: 100%|██████████| 100/100 [00:00&lt;00:00, 504.17MU/s]
 </pre></div>
 </div>
-<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (2 minutes 59.290 seconds)</p>
+<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (2 minutes 11.015 seconds)</p>
 <div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-auto-examples-01-basic-04-simulate-muscle-py">
 <div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
 <p><a class="reference download internal" download="" href="../../_downloads/d88d750ce0bc9d40343486607b2fd657/04_simulate_muscle.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">04_simulate_muscle.ipynb</span></code></a></p>
@@ -1043,8 +954,8 @@ Plotting innervation areas: 100%|██████████| 100/100 [00:00&
   </div>
   
   <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script defer src="../../_static/scripts/bootstrap.js?digest=7f76b32a3354e82990f2"></script>
-<script defer src="../../_static/scripts/pydata-sphinx-theme.js?digest=7f76b32a3354e82990f2"></script>
+  <script defer src="../../_static/scripts/bootstrap.js?digest=0790524f97105ba85085"></script>
+<script defer src="../../_static/scripts/pydata-sphinx-theme.js?digest=0790524f97105ba85085"></script>
 
   <footer class="bd-footer">
 <div class="bd-footer__inner bd-page-width">

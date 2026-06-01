@@ -3,7 +3,7 @@ Optimizing Descending Drive for Target Force Levels
 ====================================================
 
 This example demonstrates **force-level optimization** by tuning descending drive parameters
-to achieve specific muscle force outputs. Unlike firing rate optimization (example 00), this
+to achieve specific muscle force outputs. Unlike firing rate optimization (example 01), this
 approach targets biomechanically relevant force production.
 
 .. note::
@@ -17,8 +17,8 @@ approach targets biomechanically relevant force production.
 .. important::
     **Prerequisites**: This example requires results from previous examples:
 
-    - Run ``00_optimize_dd_for_target_firing_rate.py`` first
-    - Run ``01_compute_force_from_optimized_dd.py`` second
+    - Run ``01_optimize_dd_for_target_firing_rate.py`` first
+    - Run ``02_compute_force_from_optimized_dd.py`` second
     - Generates baseline force measurements needed here
 
 **Optimization Strategy**: We optimize only the DD drive frequency while keeping the network
@@ -109,7 +109,7 @@ baseline_file = BASELINE_DIR / "force_results.json"
 if not baseline_file.exists():
     raise FileNotFoundError(
         f"Baseline force results not found: {baseline_file}\n"
-        f"Run 01_compute_force_from_optimized_dd.py first!"
+        f"Run 02_compute_force_from_optimized_dd.py first!"
     )
 
 with open(baseline_file, "r") as f:

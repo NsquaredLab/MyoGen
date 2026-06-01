@@ -98,6 +98,8 @@ Import NWB Libraries
 
  .. code-block:: none
 
+    /home/runner/work/MyoGen/MyoGen/examples/01_basic/13_load_and_inspect_nwb_data.py:53: DeprecationWarning: The 'inspector_tools' submodule has been deprecated. Please import the helper functions from the top-level package.
+      from nwbinspector.inspector_tools import format_messages
     (OK) PyNWB version: 3.1.3
     (OK) NWBInspector available
 
@@ -112,7 +114,7 @@ Locate NWB File
 Look for the NWB file created by example 11. If not found, we'll create
 a minimal example file for demonstration.
 
-.. GENERATED FROM PYTHON SOURCE LINES 64-115
+.. GENERATED FROM PYTHON SOURCE LINES 64-119
 
 .. code-block:: Python
 
@@ -125,11 +127,12 @@ a minimal example file for demonstration.
         print("Creating a minimal demonstration NWB file...")
 
         # Create a minimal NWB file for demonstration
-        from datetime import datetime
+        from datetime import datetime, timezone
 
         import quantities as pq
         from neo import AnalogSignal, Block, Segment, SpikeTrain
 
+        from myogen import get_random_generator
         from myogen.utils.nwb import export_to_nwb
 
         # Create sample data
@@ -139,7 +142,7 @@ a minimal example file for demonstration.
 
         # Add sample spike trains
         for i in range(5):
-            spike_times = np.sort(np.random.uniform(0, 1000, size=50)) * pq.ms
+            spike_times = np.sort(get_random_generator().uniform(0, 1000, size=50)) * pq.ms
             st = SpikeTrain(spike_times, t_stop=1000 * pq.ms, units="ms")
             st.annotate(neuron_id=i, population="aMN")
             segment.spiketrains.append(st)
@@ -161,6 +164,9 @@ a minimal example file for demonstration.
             nwb_filepath,
             session_description="Demonstration NWB file for MyoGen tutorial",
             institution="MyoGen Tutorial",
+            # Pass an explicit session_start_time so the demo is fully reproducible
+            # and avoids the new "no session_start_time" UserWarning.
+            session_start_time=datetime(1970, 1, 1, tzinfo=timezone.utc),
         )
         print(f"(OK) Created demonstration NWB file: {nwb_filepath}")
     else:
@@ -177,12 +183,12 @@ a minimal example file for demonstration.
 
 
     (OK) Found NWB file: results/spinal_network_results.nwb
-        Size: 188454.4 KB
+        Size: 188455.8 KB
 
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 116-121
+.. GENERATED FROM PYTHON SOURCE LINES 120-125
 
 Step 1: Validate NWB File
 -------------------------
@@ -190,7 +196,7 @@ Step 1: Validate NWB File
 Before loading, it's good practice to validate the NWB file using
 NWBInspector. This checks for schema compliance and best practices.
 
-.. GENERATED FROM PYTHON SOURCE LINES 121-157
+.. GENERATED FROM PYTHON SOURCE LINES 125-161
 
 .. code-block:: Python
 
@@ -245,17 +251,18 @@ NWBInspector. This checks for schema compliance and best practices.
 
     Validating: spinal_network_results.nwb
     ----------------------------------------
-    Found 26 message(s):
-      ✗ Critical: 1
+    Found 28 message(s):
+      ✗ Critical: 3
+      ○ Best practice suggestions: 1
 
     Details:
-    ['**************************************************', 'NWBInspector Report Summary', '', 'Timestamp: 2026-04-19 07:03:38.088406+00:00', 'Platform: Linux-6.17.0-1010-azure-x86_64-with-glibc2.39', 'NWBInspector version: 0.6.5', '', 'Found 10 issues over 1 files:', '      10 - BEST_PRACTICE_SUGGESTION', '**************************************************', '', '', '0  results/spinal_network_results.nwb', '=====================================', '', "0.0  Importance.BEST_PRACTICE_SUGGESTION: check_description - 'TimeSeries' object at location '/acquisition/spin_secondary_afferent_firing__Hz'", "       Message: Description ('no description') is a placeholder.", '', "0.1  Importance.BEST_PRACTICE_SUGGESTION: check_description - 'TimeSeries' object at location '/acquisition/spin_primary_afferent_firing__Hz'", "       Message: Description ('no description') is a placeholder.", '', "0.2  Importance.BEST_PRACTICE_SUGGESTION: check_description - 'TimeSeries' object at location '/acquisition/spin_intrafusal_tensions'", "       Message: Description ('no description') is a placeholder.", '', "0.3  Importance.BEST_PRACTICE_SUGGESTION: check_description - 'TimeSeries' object at location '/acquisition/spin_chain_activation'", "       Message: Description ('no description') is a placeholder.", '', "0.4  Importance.BEST_PRACTICE_SUGGESTION: check_description - 'TimeSeries' object at location '/acquisition/spin_bag2_activation'", "       Message: Description ('no description') is a placeholder.", '', "0.5  Importance.BEST_PRACTICE_SUGGESTION: check_description - 'TimeSeries' object at location '/acquisition/spin_bag1_activation'", "       Message: Description ('no description') is a placeholder.", '', "0.6  Importance.BEST_PRACTICE_SUGGESTION: check_description - 'TimeSeries' object at location '/acquisition/hill_muscle_type2_activation'", "       Message: Description ('no description') is a placeholder.", '', "0.7  Importance.BEST_PRACTICE_SUGGESTION: check_description - 'TimeSeries' object at location '/acquisition/hill_muscle_type1_activation'", "       Message: Description ('no description') is a placeholder.", '', "0.8  Importance.BEST_PRACTICE_SUGGESTION: check_description - 'TimeSeries' object at location '/acquisition/hill_muscle_muscle_torque'", "       Message: Description ('no description') is a placeholder.", '', "0.9  Importance.BEST_PRACTICE_SUGGESTION: check_description - 'TimeSeries' object at location '/acquisition/hill_muscle_muscle_length'", "       Message: Description ('no description') is a placeholder.", '']
-      ... and 16 more messages
+    ['**************************************************', 'NWBInspector Report Summary', '', 'Timestamp: 2026-06-01 07:24:58.171090+00:00', 'Platform: Linux-6.17.0-1015-azure-x86_64-with-glibc2.39', 'NWBInspector version: 0.7.2', '', 'Found 10 issues across 1 file(s):', '       1 - BEST_PRACTICE_VIOLATION', '       9 - BEST_PRACTICE_SUGGESTION', '**************************************************', '', '', '0  results/spinal_network_results.nwb', '=====================================', '', "0.0  Importance.BEST_PRACTICE_VIOLATION: check_units_resolution_is_set - 'Units' object with name 'units'", '       Message: Units table has spike_times but resolution is not set. Resolution indicates the smallest possible difference between two spike times and should be a positive float equal to 1/sampling_rate of the recording system (e.g., Units(resolution=1/30000) for a 30 kHz system). This information is needed to assess the precision of spike timing data.', '', "0.1  Importance.BEST_PRACTICE_SUGGESTION: check_description - 'TimeSeries' object at location '/acquisition/spin_secondary_afferent_firing__Hz'", "       Message: Description ('no description') is a placeholder.", '', "0.2  Importance.BEST_PRACTICE_SUGGESTION: check_description - 'TimeSeries' object at location '/acquisition/spin_primary_afferent_firing__Hz'", "       Message: Description ('no description') is a placeholder.", '', "0.3  Importance.BEST_PRACTICE_SUGGESTION: check_description - 'TimeSeries' object at location '/acquisition/spin_intrafusal_tensions'", "       Message: Description ('no description') is a placeholder.", '', "0.4  Importance.BEST_PRACTICE_SUGGESTION: check_description - 'TimeSeries' object at location '/acquisition/spin_chain_activation'", "       Message: Description ('no description') is a placeholder.", '', "0.5  Importance.BEST_PRACTICE_SUGGESTION: check_description - 'TimeSeries' object at location '/acquisition/spin_bag2_activation'", "       Message: Description ('no description') is a placeholder.", '', "0.6  Importance.BEST_PRACTICE_SUGGESTION: check_description - 'TimeSeries' object at location '/acquisition/spin_bag1_activation'", "       Message: Description ('no description') is a placeholder.", '', "0.7  Importance.BEST_PRACTICE_SUGGESTION: check_description - 'TimeSeries' object at location '/acquisition/hill_muscle_type2_activation'", "       Message: Description ('no description') is a placeholder.", '', "0.8  Importance.BEST_PRACTICE_SUGGESTION: check_description - 'TimeSeries' object at location '/acquisition/hill_muscle_type1_activation'", "       Message: Description ('no description') is a placeholder.", '', "0.9  Importance.BEST_PRACTICE_SUGGESTION: check_description - 'TimeSeries' object at location '/acquisition/hill_muscle_muscle_torque'", "       Message: Description ('no description') is a placeholder.", '']
+      ... and 18 more messages
 
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 158-163
+.. GENERATED FROM PYTHON SOURCE LINES 162-167
 
 Step 2: Load NWB File
 ---------------------
@@ -263,7 +270,7 @@ Step 2: Load NWB File
 Open the NWB file and explore its structure. NWB uses HDF5 format
 internally, which supports efficient storage of large datasets.
 
-.. GENERATED FROM PYTHON SOURCE LINES 163-182
+.. GENERATED FROM PYTHON SOURCE LINES 167-186
 
 .. code-block:: Python
 
@@ -299,9 +306,9 @@ internally, which supports efficient storage of large datasets.
     STEP 2: LOADING NWB FILE
     ============================================================
 
-    NWB File: d868c2ed-39bc-4cb9-af19-7029fd695db5
+    NWB File: d99307bc-7a28-5b12-84b8-50abe1d59f93
     Session: MyoGen spinal network simulation with systematic tendon tap protocol. Two-phase design: (1) Reflex gain modulation with varying gamma drive, (2) Reflex-voluntary interaction with sinusoidal cortical drive.
-    Created: 2026-04-19 07:02:49.568093+00:00
+    Created: 1970-01-01 00:00:00+00:00
     Institution: MyoGen Framework
     Lab: Neuromuscular Simulation
     Keywords: MyoGen, spinal network, motor neuron, stretch reflex, tendon tap, proprioception, EMG simulation
@@ -309,14 +316,14 @@ internally, which supports efficient storage of large datasets.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 183-187
+.. GENERATED FROM PYTHON SOURCE LINES 187-191
 
 Step 3: Explore Data Structure
 ------------------------------
 
 NWB organizes data hierarchically. Let's explore what's available.
 
-.. GENERATED FROM PYTHON SOURCE LINES 187-236
+.. GENERATED FROM PYTHON SOURCE LINES 191-240
 
 .. code-block:: Python
 
@@ -463,14 +470,14 @@ NWB organizes data hierarchically. Let's explore what's available.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 237-241
+.. GENERATED FROM PYTHON SOURCE LINES 241-245
 
 Step 4: Extract and Plot Spike Data
 ------------------------------------
 
 If the NWB file contains spike data, let's extract and visualize it.
 
-.. GENERATED FROM PYTHON SOURCE LINES 241-321
+.. GENERATED FROM PYTHON SOURCE LINES 245-325
 
 .. code-block:: Python
 
@@ -574,27 +581,27 @@ If the NWB file contains spike data, let's extract and visualize it.
 
     Found 964 units
     Populations found: ['DD', 'aMN', 'Ia', 'II', 'Ib', 'gII', 'gIb']
-      DD: 400 units, 39907 total spikes
-      aMN: 93 units, 2081 total spikes
-      Ia: 73 units, 11858 total spikes
-      II: 80 units, 8338 total spikes
-      Ib: 58 units, 4633 total spikes
-      gII: 120 units, 1937 total spikes
-      gIb: 140 units, 886 total spikes
+      DD: 400 units, 39820 total spikes
+      aMN: 93 units, 2062 total spikes
+      Ia: 73 units, 11844 total spikes
+      II: 80 units, 8691 total spikes
+      Ib: 58 units, 4619 total spikes
+      gII: 120 units, 1929 total spikes
+      gIb: 140 units, 864 total spikes
 
     (OK) Saved raster plot to: results/nwb_spike_raster.png
 
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 322-326
+.. GENERATED FROM PYTHON SOURCE LINES 326-330
 
 Step 5: Extract and Plot Analog Signals
 ----------------------------------------
 
 Let's look at any continuous time series data in the file.
 
-.. GENERATED FROM PYTHON SOURCE LINES 326-404
+.. GENERATED FROM PYTHON SOURCE LINES 330-408
 
 .. code-block:: Python
 
@@ -713,14 +720,14 @@ Let's look at any continuous time series data in the file.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 405-409
+.. GENERATED FROM PYTHON SOURCE LINES 409-413
 
 Step 6: Compare with Pickle Format
 ----------------------------------
 
 Let's compare loading from NWB vs the original pickle format.
 
-.. GENERATED FROM PYTHON SOURCE LINES 409-450
+.. GENERATED FROM PYTHON SOURCE LINES 413-454
 
 .. code-block:: Python
 
@@ -783,7 +790,7 @@ Let's compare loading from NWB vs the original pickle format.
     Feature                   NWB             Pickle         
     --------------------------------------------------
     File exists               ✓               ✓              
-    File size                 188454.4 KB     188351.0 KB    
+    File size                 188455.8 KB     188359.2 KB    
     Standardized format       Yes             No             
     Schema validation         Yes             No             
     Cross-language support    Yes (HDF5)      Python only    
@@ -799,14 +806,14 @@ Let's compare loading from NWB vs the original pickle format.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 451-455
+.. GENERATED FROM PYTHON SOURCE LINES 455-459
 
 Cleanup
 -------
 
 Close the NWB file handle.
 
-.. GENERATED FROM PYTHON SOURCE LINES 455-459
+.. GENERATED FROM PYTHON SOURCE LINES 459-463
 
 .. code-block:: Python
 
@@ -828,7 +835,7 @@ Close the NWB file handle.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 460-477
+.. GENERATED FROM PYTHON SOURCE LINES 464-481
 
 Summary
 -------
@@ -848,7 +855,7 @@ For more information:
 - DANDI Archive: https://dandiarchive.org/
 - NWB Overview: https://nwb-overview.readthedocs.io/
 
-.. GENERATED FROM PYTHON SOURCE LINES 477-485
+.. GENERATED FROM PYTHON SOURCE LINES 481-489
 
 .. code-block:: Python
 
@@ -884,7 +891,7 @@ For more information:
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 6.098 seconds)
+   **Total running time of the script:** (0 minutes 5.399 seconds)
 
 
 .. _sphx_glr_download_auto_examples_01_basic_13_load_and_inspect_nwb_data.py:

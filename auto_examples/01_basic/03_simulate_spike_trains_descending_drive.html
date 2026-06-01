@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Spike Train Generation with Descending Drive &#8212; MyoGen 0.9.0 Documentation</title>
+    <title>Spike Train Generation with Descending Drive &#8212; MyoGen 0.10.0 Documentation</title>
   
   
   
@@ -27,8 +27,8 @@
   </noscript>
   
   <!-- Loaded before other Sphinx assets -->
-  <link href="../../_static/styles/theme.css?digest=7f76b32a3354e82990f2" rel="stylesheet" />
-<link href="../../_static/styles/pydata-sphinx-theme.css?digest=7f76b32a3354e82990f2" rel="stylesheet" />
+  <link href="../../_static/styles/theme.css?digest=0790524f97105ba85085" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=0790524f97105ba85085" rel="stylesheet" />
 
     <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=5349f25f" />
     <link rel="stylesheet" type="text/css" href="../../_static/css/tooltipster.custom.css" />
@@ -40,7 +40,7 @@
     <link rel="stylesheet" type="text/css" href="../../_static/css/tooltipster-sideTip-borderless.min.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/css/micromodal.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/custom.css?v=9b95bd4c" />
-    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery.css?v=d2d258e8" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery.css?v=fd6457a4" />
     <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-binder.css?v=f4aeca0c" />
     <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
     <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
@@ -48,16 +48,17 @@
     <link rel="stylesheet" type="text/css" href="../../_static/custom.css?v=9b95bd4c" />
   
   <!-- So that users can add custom icons -->
-  <script defer src="../../_static/scripts/fontawesome.js?digest=7f76b32a3354e82990f2"></script>
+  <script defer src="../../_static/scripts/fontawesome.js?digest=0790524f97105ba85085"></script>
   <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=7f76b32a3354e82990f2" />
-<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=7f76b32a3354e82990f2" />
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=0790524f97105ba85085" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=0790524f97105ba85085" />
 
     <script src="../../_static/jquery.js?v=5d32c60e"></script>
     <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-    <script src="../../_static/documentation_options.js?v=a82ae3da"></script>
+    <script src="../../_static/documentation_options.js?v=7e54ce6f"></script>
     <script src="../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/sg-tags.js?v=d80f6fa4"></script>
     <script src="../../_static/js/hoverxref.js"></script>
     <script src="../../_static/js/tooltipster.bundle.min.js"></script>
     <script src="../../_static/js/micromodal.min.js"></script>
@@ -73,7 +74,7 @@
     <link rel="prev" title="Spike Train Generation with Current Injection" href="02_simulate_spike_trains_current_injection.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="0.9.0" />
+  <meta name="docsearch:version" content="0.10.0" />
   
     
     <script src="../../_static/searchtools.js"></script>
@@ -91,7 +92,9 @@
   
   <button type="button" class="btn rounded-pill" id="pst-back-to-top">
     <i class="fa-solid fa-arrow-up"></i>Back to top</button>
-
+  
+  
+  
   
   <dialog id="pst-search-dialog">
     
@@ -146,8 +149,8 @@
       
     
     
-    <img src="../../_static/myogen_logo.png" class="logo__image only-light" alt="MyoGen 0.9.0 Documentation - Home"/>
-    <img src="../../_static/myogen_logo.png" class="logo__image only-dark pst-js-only" alt="MyoGen 0.9.0 Documentation - Home"/>
+    <img src="../../_static/myogen_logo.png" class="logo__image only-light" alt="MyoGen 0.10.0 Documentation - Home"/>
+    <img src="../../_static/myogen_logo.png" class="logo__image only-dark pst-js-only" alt="MyoGen 0.10.0 Documentation - Home"/>
   
   
 </a></div>
@@ -156,7 +159,7 @@
 <div class="nav-item">
   <div class="version-switcher__container dropdown">
       <button id="version-switcher-button" type="button" class="version-switcher__button btn btn-sm navbar-btn" aria-haspopup="true" aria-expanded="false">
-          Version 0.9.0
+          Version 0.10.0
       </button>
       
       
@@ -219,11 +222,18 @@
       
         <div class="navbar-item">
 
-<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
-  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
-  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
-  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
-</button></div>
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
       
         <div class="navbar-item"><ul class="navbar-icon-links"
     aria-label="Icon Links">
@@ -236,8 +246,7 @@
           
           
           
-          <a href="https://github.com/NSquaredLab/MyoGen" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i>
-            <span class="sr-only">GitHub</span></a>
+          <a href="https://github.com/NSquaredLab/MyoGen" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
         </li>
 </ul></div>
       
@@ -317,11 +326,18 @@
         
           <div class="navbar-item">
 
-<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
-  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
-  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
-  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
-</button></div>
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
         
           <div class="navbar-item"><ul class="navbar-icon-links"
     aria-label="Icon Links">
@@ -334,8 +350,7 @@
           
           
           
-          <a href="https://github.com/NSquaredLab/MyoGen" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i>
-            <span class="sr-only">GitHub</span></a>
+          <a href="https://github.com/NSquaredLab/MyoGen" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
         </li>
 </ul></div>
         
@@ -370,6 +385,7 @@
 <li class="toctree-l2"><a class="reference internal" href="11_simulate_spinal_network.html">Spinal Network Simulation with Systematic Tendon Tap Protocol</a></li>
 <li class="toctree-l2"><a class="reference internal" href="12_extract_data_from_neo_blocks.html">Extracting Data from Neo Blocks</a></li>
 <li class="toctree-l2"><a class="reference internal" href="13_load_and_inspect_nwb_data.html">Loading and Inspecting NWB Data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="15_noise_parameter_sweep.html">Noise Parameter Sweep — overview + dense colour-mapped tiles</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../02_finetune/index.html">Step-by-step reproduction</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -465,8 +481,8 @@ instead of direct current injection. This approach provides more physiologically
 patterns by modeling cortical input through descending drive populations.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>This example bridges the gap between simple current injection (example 01) and full spinal network
-simulation (network_config.py). It uses:</p>
+<p>This example bridges the gap between simple current injection (example 02) and full spinal network
+simulation (11_simulate_spinal_network.py). It uses:</p>
 <ul class="simple">
 <li><p><strong>DescendingDrive__Pool</strong>: Poisson process neurons modeling cortical input</p></li>
 <li><p><strong>AlphaMN__Pool</strong>: Biophysically detailed motor neurons (Powers2017 model)</p></li>
@@ -500,7 +516,6 @@ injection because it models the actual synaptic input patterns from upper motor 
 <div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">itertools</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <a href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="pathlib.Path" class="sphx-glr-backref-module-pathlib sphx-glr-backref-type-py-class"><span class="n">Path</span></a>
 
-<span class="kn">import</span><span class="w"> </span><span class="nn">elephant</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">joblib</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">quantities</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pq</span>
@@ -516,6 +531,27 @@ injection because it models the actual synaptic input patterns from upper motor 
 <span class="kn">from</span><span class="w"> </span><span class="nn">myogen.utils.types</span><span class="w"> </span><span class="kn">import</span> <span class="n">pps</span>
 
 <span class="n">plt</span><span class="o">.</span><span class="n">style</span><span class="o">.</span><span class="n">use</span><span class="p">(</span><span class="s2">&quot;fivethirtyeight&quot;</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">mean_firing_rate</span><span class="p">(</span><a href="https://neo.readthedocs.io/en/latest/api_reference.html#neo.core.SpikeTrain" title="neo.core.spiketrain.SpikeTrain" class="sphx-glr-backref-module-neo-core-spiketrain sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">spiketrain</span></a><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Mean firing rate of a neo.SpikeTrain (replaces elephant.statistics.mean_firing_rate).&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><a href="https://neo.readthedocs.io/en/latest/api_reference.html#neo.core.SpikeTrain" title="neo.core.spiketrain.SpikeTrain" class="sphx-glr-backref-module-neo-core-spiketrain sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">spiketrain</span></a><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><a href="https://neo.readthedocs.io/en/latest/api_reference.html#neo.core.SpikeTrain" title="neo.core.spiketrain.SpikeTrain" class="sphx-glr-backref-module-neo-core-spiketrain sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">spiketrain</span></a><span class="o">.</span><span class="n">t_stop</span> <span class="o">-</span> <a href="https://neo.readthedocs.io/en/latest/api_reference.html#neo.core.SpikeTrain" title="neo.core.spiketrain.SpikeTrain" class="sphx-glr-backref-module-neo-core-spiketrain sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">spiketrain</span></a><span class="o">.</span><span class="n">t_start</span><span class="p">))</span><span class="o">.</span><span class="n">rescale</span><span class="p">(</span><span class="n">pq</span><span class="o">.</span><span class="n">Hz</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">population_psth</span><span class="p">(</span><span class="n">spiketrains</span><span class="p">,</span> <span class="n">bin_size</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Total spike counts per bin across spiketrains, plus bin left edges (s).</span>
+
+<span class="sd">    Native replacement for elephant.statistics.time_histogram (output=&quot;counts&quot;).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">t_start</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">st</span><span class="o">.</span><span class="n">t_start</span> <span class="k">for</span> <span class="n">st</span> <span class="ow">in</span> <span class="n">spiketrains</span><span class="p">)</span><span class="o">.</span><span class="n">rescale</span><span class="p">(</span><span class="n">pq</span><span class="o">.</span><span class="n">s</span><span class="p">)</span><span class="o">.</span><span class="n">magnitude</span>
+    <span class="n">t_stop</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">st</span><span class="o">.</span><span class="n">t_stop</span> <span class="k">for</span> <span class="n">st</span> <span class="ow">in</span> <span class="n">spiketrains</span><span class="p">)</span><span class="o">.</span><span class="n">rescale</span><span class="p">(</span><span class="n">pq</span><span class="o">.</span><span class="n">s</span><span class="p">)</span><span class="o">.</span><span class="n">magnitude</span>
+    <span class="n">bs</span> <span class="o">=</span> <span class="p">(</span><span class="n">bin_size</span><span class="p">)</span><span class="o">.</span><span class="n">rescale</span><span class="p">(</span><span class="n">pq</span><span class="o">.</span><span class="n">s</span><span class="p">)</span><span class="o">.</span><span class="n">magnitude</span>
+    <span class="n">n_bins</span> <span class="o">=</span> <span class="nb">int</span><span class="p">((</span><span class="n">t_stop</span> <span class="o">-</span> <span class="n">t_start</span><span class="p">)</span> <span class="o">/</span> <span class="n">bs</span><span class="p">)</span>
+    <span class="n">edges</span> <span class="o">=</span> <span class="n">t_start</span> <span class="o">+</span> <a href="https://numpy.org/doc/stable/reference/generated/numpy.arange.html#numpy.arange" title="numpy.arange" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-function"><span class="n">np</span><span class="o">.</span><span class="n">arange</span></a><span class="p">(</span><span class="n">n_bins</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">bs</span>
+    <a href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">spikes</span></a> <span class="o">=</span> <a href="https://numpy.org/doc/stable/reference/generated/numpy.concatenate.html#numpy.concatenate" title="numpy.concatenate" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-function"><span class="n">np</span><span class="o">.</span><span class="n">concatenate</span></a><span class="p">([</span><span class="n">st</span><span class="o">.</span><span class="n">rescale</span><span class="p">(</span><span class="n">pq</span><span class="o">.</span><span class="n">s</span><span class="p">)</span><span class="o">.</span><span class="n">magnitude</span> <span class="k">for</span> <span class="n">st</span> <span class="ow">in</span> <span class="n">spiketrains</span><span class="p">])</span>
+    <a href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">spikes</span></a> <span class="o">=</span> <a href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">spikes</span></a><span class="p">[(</span><a href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">spikes</span></a> <span class="o">&gt;=</span> <span class="n">edges</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">&amp;</span> <span class="p">(</span><a href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">spikes</span></a> <span class="o">&lt;</span> <span class="n">edges</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])]</span>  <span class="c1"># drop right-edge spikes</span>
+    <span class="n">counts</span><span class="p">,</span> <a href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">_</span></a> <span class="o">=</span> <a href="https://numpy.org/doc/stable/reference/generated/numpy.histogram.html#numpy.histogram" title="numpy.histogram" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-function"><span class="n">np</span><span class="o">.</span><span class="n">histogram</span></a><span class="p">(</span><a href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">spikes</span></a><span class="p">,</span> <span class="n">bins</span><span class="o">=</span><span class="n">edges</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">counts</span><span class="p">,</span> <span class="n">edges</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
 </pre></div>
 </div>
 </section>
@@ -562,10 +598,10 @@ voluntary isometric contractions. This pattern has 4 phases:
 <span class="n">dd_baseline__pps</span> <span class="o">=</span> <span class="mf">0.0</span> <span class="o">*</span> <span class="n">pps</span>  <span class="c1"># Baseline drive during rest</span>
 <span class="n">dd_peak__pps</span> <span class="o">=</span> <span class="mi">65</span> <span class="o">*</span> <span class="n">pps</span>  <span class="c1"># Peak drive during plateau</span>
 
-<span class="c1"># Phase durations (ms) - Total trapezoid duration: 13000ms</span>
-<span class="n">ramp_up_duration</span> <span class="o">=</span> <span class="mi">500</span> <span class="o">*</span> <span class="n">pq</span><span class="o">.</span><span class="n">ms</span>  <span class="c1"># 2s ramp up</span>
-<span class="n">plateau_duration</span> <span class="o">=</span> <span class="mi">10000</span> <span class="o">*</span> <span class="n">pq</span><span class="o">.</span><span class="n">ms</span>  <span class="c1"># 9s hold</span>
-<span class="n">ramp_down_duration</span> <span class="o">=</span> <span class="mi">500</span> <span class="o">*</span> <span class="n">pq</span><span class="o">.</span><span class="n">ms</span>  <span class="c1"># 2s ramp down</span>
+<span class="c1"># Phase durations (ms) - Total trapezoid duration: 11000ms</span>
+<span class="n">ramp_up_duration</span> <span class="o">=</span> <span class="mi">500</span> <span class="o">*</span> <span class="n">pq</span><span class="o">.</span><span class="n">ms</span>  <span class="c1"># 500ms ramp up</span>
+<span class="n">plateau_duration</span> <span class="o">=</span> <span class="mi">10000</span> <span class="o">*</span> <span class="n">pq</span><span class="o">.</span><span class="n">ms</span>  <span class="c1"># 10s hold</span>
+<span class="n">ramp_down_duration</span> <span class="o">=</span> <span class="mi">500</span> <span class="o">*</span> <span class="n">pq</span><span class="o">.</span><span class="n">ms</span>  <span class="c1"># 500ms ramp down</span>
 
 <span class="c1"># Add rest periods before and after</span>
 <span class="n">rest_before</span> <span class="o">=</span> <span class="mi">1000</span> <span class="o">*</span> <span class="n">pq</span><span class="o">.</span><span class="n">ms</span>  <span class="c1"># 1s rest before trapezoid</span>
@@ -574,9 +610,9 @@ voluntary isometric contractions. This pattern has 4 phases:
 <span class="c1"># Center the trapezoid at 7.5s (middle of 15s simulation)</span>
 <span class="c1"># Calculate phase boundaries with rest period before</span>
 <span class="n">trapezoid_start</span> <span class="o">=</span> <span class="n">rest_before</span>  <span class="c1"># Start at 1s</span>
-<span class="n">ramp_up_end</span> <span class="o">=</span> <span class="n">trapezoid_start</span> <span class="o">+</span> <span class="n">ramp_up_duration</span>  <span class="c1"># 3s</span>
-<span class="n">plateau_end</span> <span class="o">=</span> <span class="n">ramp_up_end</span> <span class="o">+</span> <span class="n">plateau_duration</span>  <span class="c1"># 12s</span>
-<span class="n">ramp_down_end</span> <span class="o">=</span> <span class="n">plateau_end</span> <span class="o">+</span> <span class="n">ramp_down_duration</span>  <span class="c1"># 14s</span>
+<span class="n">ramp_up_end</span> <span class="o">=</span> <span class="n">trapezoid_start</span> <span class="o">+</span> <span class="n">ramp_up_duration</span>  <span class="c1"># 1.5s</span>
+<span class="n">plateau_end</span> <span class="o">=</span> <span class="n">ramp_up_end</span> <span class="o">+</span> <span class="n">plateau_duration</span>  <span class="c1"># 11.5s</span>
+<span class="n">ramp_down_end</span> <span class="o">=</span> <span class="n">plateau_end</span> <span class="o">+</span> <span class="n">ramp_down_duration</span>  <span class="c1"># 12s</span>
 
 <span class="c1"># Create time array</span>
 <span class="n">time_array</span> <span class="o">=</span> <a href="https://numpy.org/doc/stable/reference/generated/numpy.linspace.html#numpy.linspace" title="numpy.linspace" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-function"><span class="n">np</span><span class="o">.</span><span class="n">linspace</span></a><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">simulation_time</span><span class="o">.</span><span class="n">magnitude</span><span class="p">,</span> <a href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">time_points</span></a><span class="p">)</span> <span class="o">*</span> <span class="n">pq</span><span class="o">.</span><span class="n">ms</span>
@@ -668,7 +704,7 @@ connections between neuron populations.</p>
 <p>To record spikes, we need to manually set up spike detection for the motor neurons
 and track spike times for the DD neurons.</p>
 <div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Manual spike tracking for DD neurons (they use Poisson processes)</span>
-<a href="https://docs.python.org/3/library/stdtypes.html#list" title="builtins.list" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">dd_spike_times</span></a> <span class="o">=</span> <span class="p">[[]</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">descending_drive_pool</span><span class="p">))]</span>
+<a href="https://docs.python.org/3/library/stdtypes.html#list" title="builtins.list" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">dd_spike_times</span></a> <span class="o">=</span> <span class="p">[[]</span> <span class="k">for</span> <a href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">_</span></a> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">descending_drive_pool</span><span class="p">))]</span>
 
 <span class="c1"># Record spikes from motor neurons</span>
 <a href="https://docs.python.org/3/library/stdtypes.html#list" title="builtins.list" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">mn_spike_recorders</span></a> <span class="o">=</span> <span class="p">[]</span>
@@ -728,634 +764,184 @@ The DD neurons receive time-varying input that drives their Poisson processes.</
 </pre></div>
 </div>
 <div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Running simulation:   0%|          | 0.00/15000.00 ms [00:00&lt;?, ?ms/s]
-Running simulation:   0%|          | 27.50/15000.00 ms [00:00&lt;00:54, 274.21ms/s]
-Running simulation:   0%|          | 55.10/15000.00 ms [00:00&lt;00:54, 274.84ms/s]
-Running simulation:   1%|          | 82.60/15000.00 ms [00:00&lt;00:54, 273.61ms/s]
-Running simulation:   1%|          | 110.30/15000.00 ms [00:00&lt;00:54, 274.60ms/s]
-Running simulation:   1%|          | 137.80/15000.00 ms [00:00&lt;00:54, 274.32ms/s]
-Running simulation:   1%|          | 165.30/15000.00 ms [00:00&lt;00:54, 273.33ms/s]
-Running simulation:   1%|▏         | 192.80/15000.00 ms [00:00&lt;00:54, 273.58ms/s]
-Running simulation:   1%|▏         | 220.20/15000.00 ms [00:00&lt;00:54, 272.96ms/s]
-Running simulation:   2%|▏         | 247.50/15000.00 ms [00:00&lt;00:54, 272.66ms/s]
-Running simulation:   2%|▏         | 274.80/15000.00 ms [00:01&lt;00:54, 270.32ms/s]
-Running simulation:   2%|▏         | 302.10/15000.00 ms [00:01&lt;00:54, 271.13ms/s]
-Running simulation:   2%|▏         | 329.40/15000.00 ms [00:01&lt;00:54, 271.60ms/s]
-Running simulation:   2%|▏         | 356.60/15000.00 ms [00:01&lt;00:53, 271.35ms/s]
-Running simulation:   3%|▎         | 383.80/15000.00 ms [00:01&lt;00:54, 270.02ms/s]
-Running simulation:   3%|▎         | 411.50/15000.00 ms [00:01&lt;00:53, 272.03ms/s]
-Running simulation:   3%|▎         | 438.80/15000.00 ms [00:01&lt;00:53, 271.37ms/s]
-Running simulation:   3%|▎         | 466.00/15000.00 ms [00:01&lt;00:53, 271.04ms/s]
-Running simulation:   3%|▎         | 493.50/15000.00 ms [00:01&lt;00:53, 272.10ms/s]
-Running simulation:   3%|▎         | 520.80/15000.00 ms [00:01&lt;00:53, 272.36ms/s]
-Running simulation:   4%|▎         | 548.60/15000.00 ms [00:02&lt;00:52, 273.95ms/s]
-Running simulation:   4%|▍         | 576.00/15000.00 ms [00:02&lt;00:52, 273.92ms/s]
-Running simulation:   4%|▍         | 603.80/15000.00 ms [00:02&lt;00:52, 274.98ms/s]
-Running simulation:   4%|▍         | 631.30/15000.00 ms [00:02&lt;00:52, 273.15ms/s]
-Running simulation:   4%|▍         | 658.70/15000.00 ms [00:02&lt;00:55, 259.06ms/s]
-Running simulation:   5%|▍         | 686.00/15000.00 ms [00:02&lt;00:54, 262.94ms/s]
-Running simulation:   5%|▍         | 713.50/15000.00 ms [00:02&lt;00:53, 266.33ms/s]
-Running simulation:   5%|▍         | 741.10/15000.00 ms [00:02&lt;00:53, 268.88ms/s]
-Running simulation:   5%|▌         | 768.20/15000.00 ms [00:02&lt;00:52, 269.44ms/s]
-Running simulation:   5%|▌         | 795.80/15000.00 ms [00:02&lt;00:52, 271.10ms/s]
-Running simulation:   5%|▌         | 823.10/15000.00 ms [00:03&lt;00:52, 271.46ms/s]
-Running simulation:   6%|▌         | 850.70/15000.00 ms [00:03&lt;00:51, 272.74ms/s]
-Running simulation:   6%|▌         | 878.00/15000.00 ms [00:03&lt;00:51, 272.65ms/s]
-Running simulation:   6%|▌         | 905.90/15000.00 ms [00:03&lt;00:51, 274.36ms/s]
-Running simulation:   6%|▌         | 933.60/15000.00 ms [00:03&lt;00:51, 275.09ms/s]
-Running simulation:   6%|▋         | 961.30/15000.00 ms [00:03&lt;00:50, 275.52ms/s]
-Running simulation:   7%|▋         | 989.40/15000.00 ms [00:03&lt;00:50, 276.80ms/s]
-Running simulation:   7%|▋         | 1017.10/15000.00 ms [00:03&lt;00:51, 269.06ms/s]
-Running simulation:   7%|▋         | 1044.10/15000.00 ms [00:03&lt;00:53, 258.77ms/s]
-Running simulation:   7%|▋         | 1070.10/15000.00 ms [00:03&lt;00:55, 251.08ms/s]
-Running simulation:   7%|▋         | 1095.40/15000.00 ms [00:04&lt;00:56, 245.96ms/s]
-Running simulation:   7%|▋         | 1120.10/15000.00 ms [00:04&lt;00:57, 242.25ms/s]
-Running simulation:   8%|▊         | 1144.40/15000.00 ms [00:04&lt;00:57, 239.50ms/s]
-Running simulation:   8%|▊         | 1168.40/15000.00 ms [00:04&lt;00:58, 237.35ms/s]
-Running simulation:   8%|▊         | 1192.20/15000.00 ms [00:04&lt;00:58, 235.81ms/s]
-Running simulation:   8%|▊         | 1215.80/15000.00 ms [00:04&lt;00:58, 234.86ms/s]
-Running simulation:   8%|▊         | 1239.30/15000.00 ms [00:04&lt;00:59, 232.18ms/s]
-Running simulation:   8%|▊         | 1262.60/15000.00 ms [00:04&lt;00:59, 232.35ms/s]
-Running simulation:   9%|▊         | 1285.90/15000.00 ms [00:04&lt;00:58, 232.49ms/s]
-Running simulation:   9%|▊         | 1309.20/15000.00 ms [00:05&lt;00:58, 232.21ms/s]
-Running simulation:   9%|▉         | 1332.50/15000.00 ms [00:05&lt;00:58, 231.72ms/s]
-Running simulation:   9%|▉         | 1355.70/15000.00 ms [00:05&lt;00:59, 231.20ms/s]
-Running simulation:   9%|▉         | 1378.90/15000.00 ms [00:05&lt;00:59, 230.28ms/s]
-Running simulation:   9%|▉         | 1402.00/15000.00 ms [00:05&lt;00:59, 227.14ms/s]
-Running simulation:   9%|▉         | 1424.90/15000.00 ms [00:05&lt;00:59, 227.59ms/s]
-Running simulation:  10%|▉         | 1447.70/15000.00 ms [00:05&lt;00:59, 227.68ms/s]
-Running simulation:  10%|▉         | 1470.50/15000.00 ms [00:05&lt;00:59, 227.44ms/s]
-Running simulation:  10%|▉         | 1493.30/15000.00 ms [00:05&lt;00:59, 227.57ms/s]
-Running simulation:  10%|█         | 1516.10/15000.00 ms [00:05&lt;00:59, 227.32ms/s]
-Running simulation:  10%|█         | 1538.90/15000.00 ms [00:06&lt;00:59, 227.39ms/s]
-Running simulation:  10%|█         | 1561.80/15000.00 ms [00:06&lt;00:59, 227.60ms/s]
-Running simulation:  11%|█         | 1584.70/15000.00 ms [00:06&lt;00:58, 227.88ms/s]
-Running simulation:  11%|█         | 1607.60/15000.00 ms [00:06&lt;00:58, 228.05ms/s]
-Running simulation:  11%|█         | 1630.50/15000.00 ms [00:06&lt;00:58, 228.13ms/s]
-Running simulation:  11%|█         | 1653.40/15000.00 ms [00:06&lt;00:58, 228.33ms/s]
-Running simulation:  11%|█         | 1676.30/15000.00 ms [00:06&lt;00:58, 228.18ms/s]
-Running simulation:  11%|█▏        | 1699.20/15000.00 ms [00:06&lt;00:58, 227.55ms/s]
-Running simulation:  11%|█▏        | 1722.00/15000.00 ms [00:06&lt;00:58, 227.45ms/s]
-Running simulation:  12%|█▏        | 1744.80/15000.00 ms [00:06&lt;00:58, 227.00ms/s]
-Running simulation:  12%|█▏        | 1767.60/15000.00 ms [00:07&lt;00:58, 226.91ms/s]
-Running simulation:  12%|█▏        | 1790.30/15000.00 ms [00:07&lt;00:58, 226.23ms/s]
-Running simulation:  12%|█▏        | 1813.00/15000.00 ms [00:07&lt;00:58, 226.28ms/s]
-Running simulation:  12%|█▏        | 1835.70/15000.00 ms [00:07&lt;00:58, 226.14ms/s]
-Running simulation:  12%|█▏        | 1858.40/15000.00 ms [00:07&lt;00:58, 225.64ms/s]
-Running simulation:  13%|█▎        | 1881.30/15000.00 ms [00:07&lt;00:57, 226.52ms/s]
-Running simulation:  13%|█▎        | 1904.30/15000.00 ms [00:07&lt;00:57, 227.31ms/s]
-Running simulation:  13%|█▎        | 1927.20/15000.00 ms [00:07&lt;00:57, 227.63ms/s]
-Running simulation:  13%|█▎        | 1950.00/15000.00 ms [00:07&lt;00:57, 227.59ms/s]
-Running simulation:  13%|█▎        | 1973.00/15000.00 ms [00:07&lt;00:57, 228.17ms/s]
-Running simulation:  13%|█▎        | 1996.00/15000.00 ms [00:08&lt;00:56, 228.46ms/s]
-Running simulation:  13%|█▎        | 2018.90/15000.00 ms [00:08&lt;00:56, 228.53ms/s]
-Running simulation:  14%|█▎        | 2041.90/15000.00 ms [00:08&lt;00:56, 228.68ms/s]
-Running simulation:  14%|█▍        | 2064.80/15000.00 ms [00:08&lt;00:56, 228.26ms/s]
-Running simulation:  14%|█▍        | 2087.70/15000.00 ms [00:08&lt;00:56, 227.64ms/s]
-Running simulation:  14%|█▍        | 2110.50/15000.00 ms [00:08&lt;00:56, 227.37ms/s]
-Running simulation:  14%|█▍        | 2133.30/15000.00 ms [00:08&lt;00:56, 227.18ms/s]
-Running simulation:  14%|█▍        | 2156.10/15000.00 ms [00:08&lt;00:56, 226.97ms/s]
-Running simulation:  15%|█▍        | 2178.90/15000.00 ms [00:08&lt;00:56, 227.09ms/s]
-Running simulation:  15%|█▍        | 2201.70/15000.00 ms [00:08&lt;00:56, 227.28ms/s]
-Running simulation:  15%|█▍        | 2224.60/15000.00 ms [00:09&lt;00:56, 227.76ms/s]
-Running simulation:  15%|█▍        | 2247.40/15000.00 ms [00:09&lt;00:56, 227.58ms/s]
-Running simulation:  15%|█▌        | 2270.20/15000.00 ms [00:09&lt;00:55, 227.54ms/s]
-Running simulation:  15%|█▌        | 2293.00/15000.00 ms [00:09&lt;00:56, 226.42ms/s]
-Running simulation:  15%|█▌        | 2315.70/15000.00 ms [00:09&lt;00:56, 225.54ms/s]
-Running simulation:  16%|█▌        | 2338.30/15000.00 ms [00:09&lt;00:56, 225.62ms/s]
-Running simulation:  16%|█▌        | 2360.90/15000.00 ms [00:09&lt;00:56, 225.69ms/s]
-Running simulation:  16%|█▌        | 2383.60/15000.00 ms [00:09&lt;00:55, 225.95ms/s]
-Running simulation:  16%|█▌        | 2406.20/15000.00 ms [00:09&lt;00:55, 225.81ms/s]
-Running simulation:  16%|█▌        | 2428.90/15000.00 ms [00:09&lt;00:55, 225.95ms/s]
-Running simulation:  16%|█▋        | 2451.50/15000.00 ms [00:10&lt;00:55, 225.78ms/s]
-Running simulation:  16%|█▋        | 2474.40/15000.00 ms [00:10&lt;00:55, 226.55ms/s]
-Running simulation:  17%|█▋        | 2497.30/15000.00 ms [00:10&lt;00:55, 227.08ms/s]
-Running simulation:  17%|█▋        | 2520.10/15000.00 ms [00:10&lt;00:54, 227.35ms/s]
-Running simulation:  17%|█▋        | 2543.00/15000.00 ms [00:10&lt;00:54, 227.79ms/s]
-Running simulation:  17%|█▋        | 2565.80/15000.00 ms [00:10&lt;00:54, 227.50ms/s]
-Running simulation:  17%|█▋        | 2588.70/15000.00 ms [00:10&lt;00:54, 227.71ms/s]
-Running simulation:  17%|█▋        | 2611.70/15000.00 ms [00:10&lt;00:54, 228.30ms/s]
-Running simulation:  18%|█▊        | 2634.70/15000.00 ms [00:10&lt;00:54, 228.58ms/s]
-Running simulation:  18%|█▊        | 2657.60/15000.00 ms [00:10&lt;00:54, 227.76ms/s]
-Running simulation:  18%|█▊        | 2680.40/15000.00 ms [00:11&lt;00:54, 227.41ms/s]
-Running simulation:  18%|█▊        | 2703.20/15000.00 ms [00:11&lt;00:54, 227.00ms/s]
-Running simulation:  18%|█▊        | 2726.00/15000.00 ms [00:11&lt;00:54, 226.94ms/s]
-Running simulation:  18%|█▊        | 2748.70/15000.00 ms [00:11&lt;00:54, 226.86ms/s]
-Running simulation:  18%|█▊        | 2771.40/15000.00 ms [00:11&lt;00:54, 226.35ms/s]
-Running simulation:  19%|█▊        | 2794.10/15000.00 ms [00:11&lt;00:53, 226.48ms/s]
-Running simulation:  19%|█▉        | 2816.90/15000.00 ms [00:11&lt;00:53, 226.92ms/s]
-Running simulation:  19%|█▉        | 2839.90/15000.00 ms [00:11&lt;00:53, 227.59ms/s]
-Running simulation:  19%|█▉        | 2862.90/15000.00 ms [00:11&lt;00:53, 228.11ms/s]
-Running simulation:  19%|█▉        | 2885.80/15000.00 ms [00:11&lt;00:53, 227.98ms/s]
-Running simulation:  19%|█▉        | 2908.70/15000.00 ms [00:12&lt;00:52, 228.15ms/s]
-Running simulation:  20%|█▉        | 2931.60/15000.00 ms [00:12&lt;00:52, 228.25ms/s]
-Running simulation:  20%|█▉        | 2954.50/15000.00 ms [00:12&lt;00:52, 228.15ms/s]
-Running simulation:  20%|█▉        | 2977.40/15000.00 ms [00:12&lt;00:52, 227.31ms/s]
-Running simulation:  20%|██        | 3000.20/15000.00 ms [00:12&lt;00:52, 226.69ms/s]
-Running simulation:  20%|██        | 3022.90/15000.00 ms [00:12&lt;00:52, 226.64ms/s]
-Running simulation:  20%|██        | 3045.70/15000.00 ms [00:12&lt;00:52, 226.93ms/s]
-Running simulation:  20%|██        | 3068.40/15000.00 ms [00:12&lt;00:52, 226.61ms/s]
-Running simulation:  21%|██        | 3091.30/15000.00 ms [00:12&lt;00:52, 227.12ms/s]
-Running simulation:  21%|██        | 3114.20/15000.00 ms [00:12&lt;00:52, 227.53ms/s]
-Running simulation:  21%|██        | 3137.20/15000.00 ms [00:13&lt;00:52, 227.98ms/s]
-Running simulation:  21%|██        | 3160.00/15000.00 ms [00:13&lt;00:51, 227.93ms/s]
-Running simulation:  21%|██        | 3182.80/15000.00 ms [00:13&lt;00:51, 227.81ms/s]
-Running simulation:  21%|██▏       | 3205.70/15000.00 ms [00:13&lt;00:51, 227.93ms/s]
-Running simulation:  22%|██▏       | 3228.50/15000.00 ms [00:13&lt;00:51, 227.51ms/s]
-Running simulation:  22%|██▏       | 3251.30/15000.00 ms [00:13&lt;00:51, 227.35ms/s]
-Running simulation:  22%|██▏       | 3274.10/15000.00 ms [00:13&lt;00:51, 227.40ms/s]
-Running simulation:  22%|██▏       | 3296.90/15000.00 ms [00:13&lt;00:51, 227.11ms/s]
-Running simulation:  22%|██▏       | 3319.70/15000.00 ms [00:13&lt;00:51, 227.06ms/s]
-Running simulation:  22%|██▏       | 3342.50/15000.00 ms [00:13&lt;00:51, 226.79ms/s]
-Running simulation:  22%|██▏       | 3365.30/15000.00 ms [00:14&lt;00:51, 227.13ms/s]
-Running simulation:  23%|██▎       | 3388.20/15000.00 ms [00:14&lt;00:51, 227.50ms/s]
-Running simulation:  23%|██▎       | 3411.00/15000.00 ms [00:14&lt;00:50, 227.46ms/s]
-Running simulation:  23%|██▎       | 3433.80/15000.00 ms [00:14&lt;00:50, 227.35ms/s]
-Running simulation:  23%|██▎       | 3456.70/15000.00 ms [00:14&lt;00:50, 227.57ms/s]
-Running simulation:  23%|██▎       | 3479.50/15000.00 ms [00:14&lt;00:50, 227.40ms/s]
-Running simulation:  23%|██▎       | 3502.30/15000.00 ms [00:14&lt;00:50, 227.13ms/s]
-Running simulation:  24%|██▎       | 3525.10/15000.00 ms [00:14&lt;00:50, 226.92ms/s]
-Running simulation:  24%|██▎       | 3547.80/15000.00 ms [00:14&lt;00:50, 226.91ms/s]
-Running simulation:  24%|██▍       | 3570.50/15000.00 ms [00:14&lt;00:50, 226.54ms/s]
-Running simulation:  24%|██▍       | 3593.20/15000.00 ms [00:15&lt;00:50, 226.66ms/s]
-Running simulation:  24%|██▍       | 3616.00/15000.00 ms [00:15&lt;00:50, 226.88ms/s]
-Running simulation:  24%|██▍       | 3638.80/15000.00 ms [00:15&lt;00:50, 227.02ms/s]
-Running simulation:  24%|██▍       | 3661.70/15000.00 ms [00:15&lt;00:49, 227.48ms/s]
-Running simulation:  25%|██▍       | 3684.50/15000.00 ms [00:15&lt;00:49, 227.32ms/s]
-Running simulation:  25%|██▍       | 3707.40/15000.00 ms [00:15&lt;00:49, 227.62ms/s]
-Running simulation:  25%|██▍       | 3730.20/15000.00 ms [00:15&lt;00:49, 227.25ms/s]
-Running simulation:  25%|██▌       | 3753.00/15000.00 ms [00:15&lt;00:49, 227.09ms/s]
-Running simulation:  25%|██▌       | 3775.80/15000.00 ms [00:15&lt;00:49, 226.59ms/s]
-Running simulation:  25%|██▌       | 3798.50/15000.00 ms [00:15&lt;00:49, 225.91ms/s]
-Running simulation:  25%|██▌       | 3821.20/15000.00 ms [00:16&lt;00:49, 226.01ms/s]
-Running simulation:  26%|██▌       | 3843.90/15000.00 ms [00:16&lt;00:49, 225.59ms/s]
-Running simulation:  26%|██▌       | 3866.50/15000.00 ms [00:16&lt;00:49, 225.55ms/s]
-Running simulation:  26%|██▌       | 3889.10/15000.00 ms [00:16&lt;00:49, 225.50ms/s]
-Running simulation:  26%|██▌       | 3911.70/15000.00 ms [00:16&lt;00:49, 224.86ms/s]
-Running simulation:  26%|██▌       | 3934.40/15000.00 ms [00:16&lt;00:49, 225.39ms/s]
-Running simulation:  26%|██▋       | 3957.00/15000.00 ms [00:16&lt;00:49, 225.36ms/s]
-Running simulation:  27%|██▋       | 3979.70/15000.00 ms [00:16&lt;00:48, 225.66ms/s]
-Running simulation:  27%|██▋       | 4002.40/15000.00 ms [00:16&lt;00:48, 226.06ms/s]
-Running simulation:  27%|██▋       | 4025.30/15000.00 ms [00:16&lt;00:48, 226.64ms/s]
-Running simulation:  27%|██▋       | 4048.10/15000.00 ms [00:17&lt;00:48, 226.98ms/s]
-Running simulation:  27%|██▋       | 4070.80/15000.00 ms [00:17&lt;00:48, 226.29ms/s]
-Running simulation:  27%|██▋       | 4093.50/15000.00 ms [00:17&lt;00:48, 225.94ms/s]
-Running simulation:  27%|██▋       | 4116.10/15000.00 ms [00:17&lt;00:48, 225.55ms/s]
-Running simulation:  28%|██▊       | 4138.70/15000.00 ms [00:17&lt;00:48, 225.32ms/s]
-Running simulation:  28%|██▊       | 4161.40/15000.00 ms [00:17&lt;00:48, 225.71ms/s]
-Running simulation:  28%|██▊       | 4184.00/15000.00 ms [00:17&lt;00:47, 225.57ms/s]
-Running simulation:  28%|██▊       | 4206.60/15000.00 ms [00:17&lt;00:47, 225.48ms/s]
-Running simulation:  28%|██▊       | 4229.30/15000.00 ms [00:17&lt;00:47, 225.75ms/s]
-Running simulation:  28%|██▊       | 4252.00/15000.00 ms [00:17&lt;00:47, 225.95ms/s]
-Running simulation:  28%|██▊       | 4274.60/15000.00 ms [00:18&lt;00:47, 225.40ms/s]
-Running simulation:  29%|██▊       | 4297.20/15000.00 ms [00:18&lt;00:47, 225.38ms/s]
-Running simulation:  29%|██▉       | 4319.80/15000.00 ms [00:18&lt;00:47, 225.30ms/s]
-Running simulation:  29%|██▉       | 4342.50/15000.00 ms [00:18&lt;00:47, 225.67ms/s]
-Running simulation:  29%|██▉       | 4365.10/15000.00 ms [00:18&lt;00:47, 225.60ms/s]
-Running simulation:  29%|██▉       | 4387.70/15000.00 ms [00:18&lt;00:47, 225.30ms/s]
-Running simulation:  29%|██▉       | 4410.30/15000.00 ms [00:18&lt;00:46, 225.35ms/s]
-Running simulation:  30%|██▉       | 4432.90/15000.00 ms [00:18&lt;00:46, 225.37ms/s]
-Running simulation:  30%|██▉       | 4455.60/15000.00 ms [00:18&lt;00:46, 225.53ms/s]
-Running simulation:  30%|██▉       | 4478.20/15000.00 ms [00:18&lt;00:46, 225.33ms/s]
-Running simulation:  30%|███       | 4500.90/15000.00 ms [00:19&lt;00:46, 225.60ms/s]
-Running simulation:  30%|███       | 4523.60/15000.00 ms [00:19&lt;00:46, 225.99ms/s]
-Running simulation:  30%|███       | 4546.20/15000.00 ms [00:19&lt;00:46, 225.89ms/s]
-Running simulation:  30%|███       | 4568.80/15000.00 ms [00:19&lt;00:46, 224.91ms/s]
-Running simulation:  31%|███       | 4591.30/15000.00 ms [00:19&lt;00:48, 214.02ms/s]
-Running simulation:  31%|███       | 4613.90/15000.00 ms [00:19&lt;00:47, 217.39ms/s]
-Running simulation:  31%|███       | 4636.40/15000.00 ms [00:19&lt;00:47, 219.50ms/s]
-Running simulation:  31%|███       | 4659.10/15000.00 ms [00:19&lt;00:46, 221.64ms/s]
-Running simulation:  31%|███       | 4681.70/15000.00 ms [00:19&lt;00:46, 222.73ms/s]
-Running simulation:  31%|███▏      | 4704.40/15000.00 ms [00:19&lt;00:45, 223.91ms/s]
-Running simulation:  32%|███▏      | 4726.90/15000.00 ms [00:20&lt;00:45, 223.96ms/s]
-Running simulation:  32%|███▏      | 4749.60/15000.00 ms [00:20&lt;00:45, 224.75ms/s]
-Running simulation:  32%|███▏      | 4772.10/15000.00 ms [00:20&lt;00:45, 224.58ms/s]
-Running simulation:  32%|███▏      | 4794.70/15000.00 ms [00:20&lt;00:45, 224.82ms/s]
-Running simulation:  32%|███▏      | 4817.50/15000.00 ms [00:20&lt;00:45, 225.57ms/s]
-Running simulation:  32%|███▏      | 4840.10/15000.00 ms [00:20&lt;00:45, 225.59ms/s]
-Running simulation:  32%|███▏      | 4862.80/15000.00 ms [00:20&lt;00:44, 225.87ms/s]
-Running simulation:  33%|███▎      | 4885.40/15000.00 ms [00:20&lt;00:45, 221.59ms/s]
-Running simulation:  33%|███▎      | 4907.60/15000.00 ms [00:20&lt;00:47, 214.70ms/s]
-Running simulation:  33%|███▎      | 4929.80/15000.00 ms [00:21&lt;00:46, 216.71ms/s]
-Running simulation:  33%|███▎      | 4952.40/15000.00 ms [00:21&lt;00:45, 219.37ms/s]
-Running simulation:  33%|███▎      | 4975.10/15000.00 ms [00:21&lt;00:45, 221.60ms/s]
-Running simulation:  33%|███▎      | 4997.80/15000.00 ms [00:21&lt;00:44, 223.20ms/s]
-Running simulation:  33%|███▎      | 5020.40/15000.00 ms [00:21&lt;00:44, 223.88ms/s]
-Running simulation:  34%|███▎      | 5043.40/15000.00 ms [00:21&lt;00:44, 225.49ms/s]
-Running simulation:  34%|███▍      | 5066.40/15000.00 ms [00:21&lt;00:43, 226.59ms/s]
-Running simulation:  34%|███▍      | 5089.30/15000.00 ms [00:21&lt;00:43, 227.16ms/s]
-Running simulation:  34%|███▍      | 5112.40/15000.00 ms [00:21&lt;00:43, 228.13ms/s]
-Running simulation:  34%|███▍      | 5135.40/15000.00 ms [00:21&lt;00:43, 228.64ms/s]
-Running simulation:  34%|███▍      | 5158.40/15000.00 ms [00:22&lt;00:42, 228.91ms/s]
-Running simulation:  35%|███▍      | 5181.30/15000.00 ms [00:22&lt;00:42, 228.78ms/s]
-Running simulation:  35%|███▍      | 5204.30/15000.00 ms [00:22&lt;00:42, 228.91ms/s]
-Running simulation:  35%|███▍      | 5227.20/15000.00 ms [00:22&lt;00:42, 228.71ms/s]
-Running simulation:  35%|███▌      | 5250.10/15000.00 ms [00:22&lt;00:42, 228.69ms/s]
-Running simulation:  35%|███▌      | 5273.00/15000.00 ms [00:22&lt;00:42, 228.78ms/s]
-Running simulation:  35%|███▌      | 5295.90/15000.00 ms [00:22&lt;00:42, 228.48ms/s]
-Running simulation:  35%|███▌      | 5318.80/15000.00 ms [00:22&lt;00:42, 228.45ms/s]
-Running simulation:  36%|███▌      | 5341.80/15000.00 ms [00:22&lt;00:42, 228.64ms/s]
-Running simulation:  36%|███▌      | 5364.70/15000.00 ms [00:22&lt;00:42, 226.27ms/s]
-Running simulation:  36%|███▌      | 5387.60/15000.00 ms [00:23&lt;00:42, 226.90ms/s]
-Running simulation:  36%|███▌      | 5410.30/15000.00 ms [00:23&lt;00:42, 226.65ms/s]
-Running simulation:  36%|███▌      | 5433.00/15000.00 ms [00:23&lt;00:42, 226.75ms/s]
-Running simulation:  36%|███▋      | 5455.70/15000.00 ms [00:23&lt;00:42, 226.26ms/s]
-Running simulation:  37%|███▋      | 5478.40/15000.00 ms [00:23&lt;00:42, 226.21ms/s]
-Running simulation:  37%|███▋      | 5501.10/15000.00 ms [00:23&lt;00:41, 226.41ms/s]
-Running simulation:  37%|███▋      | 5523.90/15000.00 ms [00:23&lt;00:41, 226.80ms/s]
-Running simulation:  37%|███▋      | 5546.80/15000.00 ms [00:23&lt;00:41, 227.32ms/s]
-Running simulation:  37%|███▋      | 5569.60/15000.00 ms [00:23&lt;00:41, 227.48ms/s]
-Running simulation:  37%|███▋      | 5592.50/15000.00 ms [00:23&lt;00:41, 227.77ms/s]
-Running simulation:  37%|███▋      | 5615.40/15000.00 ms [00:24&lt;00:41, 227.95ms/s]
-Running simulation:  38%|███▊      | 5638.20/15000.00 ms [00:24&lt;00:41, 227.59ms/s]
-Running simulation:  38%|███▊      | 5661.00/15000.00 ms [00:24&lt;00:41, 225.19ms/s]
-Running simulation:  38%|███▊      | 5683.60/15000.00 ms [00:24&lt;00:41, 225.38ms/s]
-Running simulation:  38%|███▊      | 5706.20/15000.00 ms [00:24&lt;00:41, 225.51ms/s]
-Running simulation:  38%|███▊      | 5728.80/15000.00 ms [00:24&lt;00:41, 225.35ms/s]
-Running simulation:  38%|███▊      | 5751.40/15000.00 ms [00:24&lt;00:41, 225.48ms/s]
-Running simulation:  38%|███▊      | 5774.10/15000.00 ms [00:24&lt;00:40, 225.64ms/s]
-Running simulation:  39%|███▊      | 5796.80/15000.00 ms [00:24&lt;00:40, 225.80ms/s]
-Running simulation:  39%|███▉      | 5819.70/15000.00 ms [00:24&lt;00:40, 226.66ms/s]
-Running simulation:  39%|███▉      | 5842.60/15000.00 ms [00:25&lt;00:40, 227.34ms/s]
-Running simulation:  39%|███▉      | 5865.50/15000.00 ms [00:25&lt;00:40, 227.66ms/s]
-Running simulation:  39%|███▉      | 5888.40/15000.00 ms [00:25&lt;00:39, 227.88ms/s]
-Running simulation:  39%|███▉      | 5911.20/15000.00 ms [00:25&lt;00:39, 227.82ms/s]
-Running simulation:  40%|███▉      | 5934.00/15000.00 ms [00:25&lt;00:39, 227.72ms/s]
-Running simulation:  40%|███▉      | 5956.90/15000.00 ms [00:25&lt;00:39, 227.82ms/s]
-Running simulation:  40%|███▉      | 5979.70/15000.00 ms [00:25&lt;00:39, 227.31ms/s]
-Running simulation:  40%|████      | 6002.50/15000.00 ms [00:25&lt;00:39, 226.77ms/s]
-Running simulation:  40%|████      | 6025.20/15000.00 ms [00:25&lt;00:39, 226.29ms/s]
-Running simulation:  40%|████      | 6047.90/15000.00 ms [00:25&lt;00:39, 225.97ms/s]
-Running simulation:  40%|████      | 6070.50/15000.00 ms [00:26&lt;00:39, 225.89ms/s]
-Running simulation:  41%|████      | 6093.10/15000.00 ms [00:26&lt;00:39, 225.75ms/s]
-Running simulation:  41%|████      | 6115.70/15000.00 ms [00:26&lt;00:39, 225.80ms/s]
-Running simulation:  41%|████      | 6138.50/15000.00 ms [00:26&lt;00:39, 226.36ms/s]
-Running simulation:  41%|████      | 6161.40/15000.00 ms [00:26&lt;00:38, 227.09ms/s]
-Running simulation:  41%|████      | 6184.40/15000.00 ms [00:26&lt;00:38, 227.79ms/s]
-Running simulation:  41%|████▏     | 6207.40/15000.00 ms [00:26&lt;00:38, 228.18ms/s]
-Running simulation:  42%|████▏     | 6230.30/15000.00 ms [00:26&lt;00:38, 228.06ms/s]
-Running simulation:  42%|████▏     | 6253.30/15000.00 ms [00:26&lt;00:38, 228.43ms/s]
-Running simulation:  42%|████▏     | 6276.20/15000.00 ms [00:26&lt;00:38, 228.17ms/s]
-Running simulation:  42%|████▏     | 6299.10/15000.00 ms [00:27&lt;00:38, 227.56ms/s]
-Running simulation:  42%|████▏     | 6321.90/15000.00 ms [00:27&lt;00:38, 226.97ms/s]
-Running simulation:  42%|████▏     | 6344.60/15000.00 ms [00:27&lt;00:38, 226.36ms/s]
-Running simulation:  42%|████▏     | 6367.30/15000.00 ms [00:27&lt;00:38, 226.40ms/s]
-Running simulation:  43%|████▎     | 6390.00/15000.00 ms [00:27&lt;00:38, 225.58ms/s]
-Running simulation:  43%|████▎     | 6412.70/15000.00 ms [00:27&lt;00:38, 225.80ms/s]
-Running simulation:  43%|████▎     | 6435.50/15000.00 ms [00:27&lt;00:37, 226.15ms/s]
-Running simulation:  43%|████▎     | 6458.30/15000.00 ms [00:27&lt;00:37, 226.63ms/s]
-Running simulation:  43%|████▎     | 6481.20/15000.00 ms [00:27&lt;00:37, 227.28ms/s]
-Running simulation:  43%|████▎     | 6504.10/15000.00 ms [00:27&lt;00:37, 227.54ms/s]
-Running simulation:  44%|████▎     | 6526.90/15000.00 ms [00:28&lt;00:37, 227.50ms/s]
-Running simulation:  44%|████▎     | 6549.80/15000.00 ms [00:28&lt;00:37, 227.77ms/s]
-Running simulation:  44%|████▍     | 6572.60/15000.00 ms [00:28&lt;00:37, 227.35ms/s]
-Running simulation:  44%|████▍     | 6595.40/15000.00 ms [00:28&lt;00:37, 226.12ms/s]
-Running simulation:  44%|████▍     | 6618.10/15000.00 ms [00:28&lt;00:37, 225.76ms/s]
-Running simulation:  44%|████▍     | 6640.80/15000.00 ms [00:28&lt;00:36, 226.01ms/s]
-Running simulation:  44%|████▍     | 6663.50/15000.00 ms [00:28&lt;00:36, 225.61ms/s]
-Running simulation:  45%|████▍     | 6686.10/15000.00 ms [00:28&lt;00:36, 225.46ms/s]
-Running simulation:  45%|████▍     | 6708.80/15000.00 ms [00:28&lt;00:36, 225.71ms/s]
-Running simulation:  45%|████▍     | 6731.50/15000.00 ms [00:28&lt;00:36, 225.90ms/s]
-Running simulation:  45%|████▌     | 6754.40/15000.00 ms [00:29&lt;00:36, 226.68ms/s]
-Running simulation:  45%|████▌     | 6777.20/15000.00 ms [00:29&lt;00:36, 227.04ms/s]
-Running simulation:  45%|████▌     | 6800.00/15000.00 ms [00:29&lt;00:36, 226.69ms/s]
-Running simulation:  45%|████▌     | 6822.90/15000.00 ms [00:29&lt;00:36, 227.08ms/s]
-Running simulation:  46%|████▌     | 6845.70/15000.00 ms [00:29&lt;00:35, 226.86ms/s]
-Running simulation:  46%|████▌     | 6868.50/15000.00 ms [00:29&lt;00:35, 227.20ms/s]
-Running simulation:  46%|████▌     | 6891.30/15000.00 ms [00:29&lt;00:35, 227.11ms/s]
-Running simulation:  46%|████▌     | 6914.10/15000.00 ms [00:29&lt;00:35, 226.70ms/s]
-Running simulation:  46%|████▌     | 6936.80/15000.00 ms [00:29&lt;00:35, 226.62ms/s]
-Running simulation:  46%|████▋     | 6959.50/15000.00 ms [00:29&lt;00:35, 226.50ms/s]
-Running simulation:  47%|████▋     | 6982.20/15000.00 ms [00:30&lt;00:35, 226.06ms/s]
-Running simulation:  47%|████▋     | 7004.90/15000.00 ms [00:30&lt;00:35, 225.89ms/s]
-Running simulation:  47%|████▋     | 7027.60/15000.00 ms [00:30&lt;00:35, 226.00ms/s]
-Running simulation:  47%|████▋     | 7050.30/15000.00 ms [00:30&lt;00:35, 225.99ms/s]
-Running simulation:  47%|████▋     | 7072.90/15000.00 ms [00:30&lt;00:35, 225.97ms/s]
-Running simulation:  47%|████▋     | 7095.70/15000.00 ms [00:30&lt;00:34, 226.36ms/s]
-Running simulation:  47%|████▋     | 7118.50/15000.00 ms [00:30&lt;00:34, 226.75ms/s]
-Running simulation:  48%|████▊     | 7141.40/15000.00 ms [00:30&lt;00:34, 227.32ms/s]
-Running simulation:  48%|████▊     | 7164.30/15000.00 ms [00:30&lt;00:34, 227.69ms/s]
-Running simulation:  48%|████▊     | 7187.10/15000.00 ms [00:30&lt;00:34, 224.30ms/s]
-Running simulation:  48%|████▊     | 7210.10/15000.00 ms [00:31&lt;00:34, 225.86ms/s]
-Running simulation:  48%|████▊     | 7233.10/15000.00 ms [00:31&lt;00:34, 226.84ms/s]
-Running simulation:  48%|████▊     | 7255.80/15000.00 ms [00:31&lt;00:34, 226.10ms/s]
-Running simulation:  49%|████▊     | 7278.50/15000.00 ms [00:31&lt;00:34, 225.81ms/s]
-Running simulation:  49%|████▊     | 7301.10/15000.00 ms [00:31&lt;00:34, 225.51ms/s]
-Running simulation:  49%|████▉     | 7323.80/15000.00 ms [00:31&lt;00:34, 225.72ms/s]
-Running simulation:  49%|████▉     | 7346.40/15000.00 ms [00:31&lt;00:33, 225.79ms/s]
-Running simulation:  49%|████▉     | 7369.10/15000.00 ms [00:31&lt;00:33, 225.97ms/s]
-Running simulation:  49%|████▉     | 7391.70/15000.00 ms [00:31&lt;00:33, 225.87ms/s]
-Running simulation:  49%|████▉     | 7414.40/15000.00 ms [00:31&lt;00:33, 226.09ms/s]
-Running simulation:  50%|████▉     | 7437.10/15000.00 ms [00:32&lt;00:33, 226.20ms/s]
-Running simulation:  50%|████▉     | 7459.80/15000.00 ms [00:32&lt;00:33, 226.18ms/s]
-Running simulation:  50%|████▉     | 7482.50/15000.00 ms [00:32&lt;00:33, 226.12ms/s]
-Running simulation:  50%|█████     | 7505.20/15000.00 ms [00:32&lt;00:33, 225.99ms/s]
-Running simulation:  50%|█████     | 7528.00/15000.00 ms [00:32&lt;00:32, 226.56ms/s]
-Running simulation:  50%|█████     | 7550.90/15000.00 ms [00:32&lt;00:32, 227.17ms/s]
-Running simulation:  50%|█████     | 7573.70/15000.00 ms [00:32&lt;00:32, 227.04ms/s]
-Running simulation:  51%|█████     | 7596.50/15000.00 ms [00:32&lt;00:32, 227.04ms/s]
-Running simulation:  51%|█████     | 7619.30/15000.00 ms [00:32&lt;00:32, 226.87ms/s]
-Running simulation:  51%|█████     | 7642.00/15000.00 ms [00:32&lt;00:32, 226.59ms/s]
-Running simulation:  51%|█████     | 7664.70/15000.00 ms [00:33&lt;00:32, 226.52ms/s]
-Running simulation:  51%|█████     | 7687.40/15000.00 ms [00:33&lt;00:32, 226.53ms/s]
-Running simulation:  51%|█████▏    | 7710.10/15000.00 ms [00:33&lt;00:32, 226.38ms/s]
-Running simulation:  52%|█████▏    | 7732.80/15000.00 ms [00:33&lt;00:32, 225.97ms/s]
-Running simulation:  52%|█████▏    | 7755.60/15000.00 ms [00:33&lt;00:31, 226.52ms/s]
-Running simulation:  52%|█████▏    | 7778.40/15000.00 ms [00:33&lt;00:31, 226.79ms/s]
-Running simulation:  52%|█████▏    | 7801.30/15000.00 ms [00:33&lt;00:31, 227.17ms/s]
-Running simulation:  52%|█████▏    | 7824.10/15000.00 ms [00:33&lt;00:31, 227.25ms/s]
-Running simulation:  52%|█████▏    | 7846.90/15000.00 ms [00:33&lt;00:31, 227.18ms/s]
-Running simulation:  52%|█████▏    | 7869.70/15000.00 ms [00:33&lt;00:31, 227.08ms/s]
-Running simulation:  53%|█████▎    | 7892.50/15000.00 ms [00:34&lt;00:31, 227.06ms/s]
-Running simulation:  53%|█████▎    | 7915.50/15000.00 ms [00:34&lt;00:31, 227.69ms/s]
-Running simulation:  53%|█████▎    | 7938.30/15000.00 ms [00:34&lt;00:31, 227.78ms/s]
-Running simulation:  53%|█████▎    | 7961.10/15000.00 ms [00:34&lt;00:30, 227.23ms/s]
-Running simulation:  53%|█████▎    | 7983.90/15000.00 ms [00:34&lt;00:30, 226.81ms/s]
-Running simulation:  53%|█████▎    | 8006.60/15000.00 ms [00:34&lt;00:30, 226.65ms/s]
-Running simulation:  54%|█████▎    | 8029.40/15000.00 ms [00:34&lt;00:30, 226.84ms/s]
-Running simulation:  54%|█████▎    | 8052.10/15000.00 ms [00:34&lt;00:30, 225.81ms/s]
-Running simulation:  54%|█████▍    | 8074.80/15000.00 ms [00:34&lt;00:30, 226.08ms/s]
-Running simulation:  54%|█████▍    | 8097.60/15000.00 ms [00:34&lt;00:30, 226.48ms/s]
-Running simulation:  54%|█████▍    | 8120.50/15000.00 ms [00:35&lt;00:30, 227.03ms/s]
-Running simulation:  54%|█████▍    | 8143.40/15000.00 ms [00:35&lt;00:30, 227.42ms/s]
-Running simulation:  54%|█████▍    | 8166.20/15000.00 ms [00:35&lt;00:30, 227.55ms/s]
-Running simulation:  55%|█████▍    | 8189.00/15000.00 ms [00:35&lt;00:29, 227.56ms/s]
-Running simulation:  55%|█████▍    | 8211.90/15000.00 ms [00:35&lt;00:29, 227.94ms/s]
-Running simulation:  55%|█████▍    | 8234.80/15000.00 ms [00:35&lt;00:29, 228.25ms/s]
-Running simulation:  55%|█████▌    | 8257.70/15000.00 ms [00:35&lt;00:29, 228.38ms/s]
-Running simulation:  55%|█████▌    | 8280.60/15000.00 ms [00:35&lt;00:29, 228.18ms/s]
-Running simulation:  55%|█████▌    | 8303.50/15000.00 ms [00:35&lt;00:29, 227.68ms/s]
-Running simulation:  56%|█████▌    | 8326.30/15000.00 ms [00:35&lt;00:29, 227.42ms/s]
-Running simulation:  56%|█████▌    | 8349.10/15000.00 ms [00:36&lt;00:29, 226.77ms/s]
-Running simulation:  56%|█████▌    | 8371.80/15000.00 ms [00:36&lt;00:29, 226.25ms/s]
-Running simulation:  56%|█████▌    | 8394.50/15000.00 ms [00:36&lt;00:29, 226.02ms/s]
-Running simulation:  56%|█████▌    | 8417.20/15000.00 ms [00:36&lt;00:29, 226.10ms/s]
-Running simulation:  56%|█████▋    | 8440.00/15000.00 ms [00:36&lt;00:28, 226.52ms/s]
-Running simulation:  56%|█████▋    | 8462.80/15000.00 ms [00:36&lt;00:28, 226.71ms/s]
-Running simulation:  57%|█████▋    | 8485.70/15000.00 ms [00:36&lt;00:28, 227.32ms/s]
-Running simulation:  57%|█████▋    | 8508.60/15000.00 ms [00:36&lt;00:28, 227.60ms/s]
-Running simulation:  57%|█████▋    | 8531.40/15000.00 ms [00:36&lt;00:28, 227.63ms/s]
-Running simulation:  57%|█████▋    | 8554.30/15000.00 ms [00:36&lt;00:28, 227.79ms/s]
-Running simulation:  57%|█████▋    | 8577.10/15000.00 ms [00:37&lt;00:28, 227.04ms/s]
-Running simulation:  57%|█████▋    | 8599.90/15000.00 ms [00:37&lt;00:28, 226.23ms/s]
-Running simulation:  57%|█████▋    | 8622.60/15000.00 ms [00:37&lt;00:28, 225.69ms/s]
-Running simulation:  58%|█████▊    | 8645.20/15000.00 ms [00:37&lt;00:28, 225.77ms/s]
-Running simulation:  58%|█████▊    | 8667.80/15000.00 ms [00:37&lt;00:28, 225.53ms/s]
-Running simulation:  58%|█████▊    | 8690.40/15000.00 ms [00:37&lt;00:27, 225.42ms/s]
-Running simulation:  58%|█████▊    | 8713.00/15000.00 ms [00:37&lt;00:27, 225.41ms/s]
-Running simulation:  58%|█████▊    | 8735.60/15000.00 ms [00:37&lt;00:27, 225.16ms/s]
-Running simulation:  58%|█████▊    | 8758.20/15000.00 ms [00:37&lt;00:27, 224.85ms/s]
-Running simulation:  59%|█████▊    | 8781.00/15000.00 ms [00:37&lt;00:27, 225.52ms/s]
-Running simulation:  59%|█████▊    | 8803.60/15000.00 ms [00:38&lt;00:27, 225.53ms/s]
-Running simulation:  59%|█████▉    | 8826.40/15000.00 ms [00:38&lt;00:27, 226.05ms/s]
-Running simulation:  59%|█████▉    | 8849.10/15000.00 ms [00:38&lt;00:27, 225.95ms/s]
-Running simulation:  59%|█████▉    | 8871.70/15000.00 ms [00:38&lt;00:27, 225.45ms/s]
-Running simulation:  59%|█████▉    | 8894.40/15000.00 ms [00:38&lt;00:27, 225.79ms/s]
-Running simulation:  59%|█████▉    | 8917.00/15000.00 ms [00:38&lt;00:27, 225.06ms/s]
-Running simulation:  60%|█████▉    | 8939.60/15000.00 ms [00:38&lt;00:26, 224.77ms/s]
-Running simulation:  60%|█████▉    | 8962.30/15000.00 ms [00:38&lt;00:26, 225.23ms/s]
-Running simulation:  60%|█████▉    | 8984.90/15000.00 ms [00:38&lt;00:26, 225.15ms/s]
-Running simulation:  60%|██████    | 9007.50/15000.00 ms [00:38&lt;00:26, 224.99ms/s]
-Running simulation:  60%|██████    | 9030.20/15000.00 ms [00:39&lt;00:26, 225.55ms/s]
-Running simulation:  60%|██████    | 9052.90/15000.00 ms [00:39&lt;00:26, 225.78ms/s]
-Running simulation:  61%|██████    | 9075.60/15000.00 ms [00:39&lt;00:26, 226.05ms/s]
-Running simulation:  61%|██████    | 9098.30/15000.00 ms [00:39&lt;00:26, 225.91ms/s]
-Running simulation:  61%|██████    | 9120.90/15000.00 ms [00:39&lt;00:26, 225.75ms/s]
-Running simulation:  61%|██████    | 9143.50/15000.00 ms [00:39&lt;00:25, 225.59ms/s]
-Running simulation:  61%|██████    | 9166.20/15000.00 ms [00:39&lt;00:25, 225.80ms/s]
-Running simulation:  61%|██████▏   | 9188.90/15000.00 ms [00:39&lt;00:25, 225.95ms/s]
-Running simulation:  61%|██████▏   | 9211.50/15000.00 ms [00:39&lt;00:25, 225.76ms/s]
-Running simulation:  62%|██████▏   | 9234.10/15000.00 ms [00:40&lt;00:25, 225.45ms/s]
-Running simulation:  62%|██████▏   | 9256.70/15000.00 ms [00:40&lt;00:25, 225.60ms/s]
-Running simulation:  62%|██████▏   | 9279.30/15000.00 ms [00:40&lt;00:25, 225.64ms/s]
-Running simulation:  62%|██████▏   | 9302.00/15000.00 ms [00:40&lt;00:25, 225.89ms/s]
-Running simulation:  62%|██████▏   | 9324.70/15000.00 ms [00:40&lt;00:25, 226.07ms/s]
-Running simulation:  62%|██████▏   | 9347.50/15000.00 ms [00:40&lt;00:24, 226.51ms/s]
-Running simulation:  62%|██████▏   | 9370.20/15000.00 ms [00:40&lt;00:25, 224.90ms/s]
-Running simulation:  63%|██████▎   | 9393.00/15000.00 ms [00:40&lt;00:24, 225.63ms/s]
-Running simulation:  63%|██████▎   | 9415.80/15000.00 ms [00:40&lt;00:24, 226.17ms/s]
-Running simulation:  63%|██████▎   | 9438.60/15000.00 ms [00:40&lt;00:24, 226.68ms/s]
-Running simulation:  63%|██████▎   | 9461.30/15000.00 ms [00:41&lt;00:24, 223.75ms/s]
-Running simulation:  63%|██████▎   | 9484.00/15000.00 ms [00:41&lt;00:24, 224.67ms/s]
-Running simulation:  63%|██████▎   | 9506.70/15000.00 ms [00:41&lt;00:24, 225.16ms/s]
-Running simulation:  64%|██████▎   | 9529.50/15000.00 ms [00:41&lt;00:24, 225.87ms/s]
-Running simulation:  64%|██████▎   | 9552.20/15000.00 ms [00:41&lt;00:24, 226.15ms/s]
-Running simulation:  64%|██████▍   | 9575.10/15000.00 ms [00:41&lt;00:23, 226.90ms/s]
-Running simulation:  64%|██████▍   | 9598.00/15000.00 ms [00:41&lt;00:23, 227.30ms/s]
-Running simulation:  64%|██████▍   | 9621.10/15000.00 ms [00:41&lt;00:23, 228.19ms/s]
-Running simulation:  64%|██████▍   | 9644.10/15000.00 ms [00:41&lt;00:23, 228.48ms/s]
-Running simulation:  64%|██████▍   | 9667.00/15000.00 ms [00:41&lt;00:23, 227.82ms/s]
-Running simulation:  65%|██████▍   | 9689.90/15000.00 ms [00:42&lt;00:23, 227.86ms/s]
-Running simulation:  65%|██████▍   | 9712.70/15000.00 ms [00:42&lt;00:23, 227.03ms/s]
-Running simulation:  65%|██████▍   | 9735.50/15000.00 ms [00:42&lt;00:23, 226.80ms/s]
-Running simulation:  65%|██████▌   | 9758.30/15000.00 ms [00:42&lt;00:23, 226.97ms/s]
-Running simulation:  65%|██████▌   | 9781.00/15000.00 ms [00:42&lt;00:23, 226.85ms/s]
-Running simulation:  65%|██████▌   | 9803.80/15000.00 ms [00:42&lt;00:22, 226.94ms/s]
-Running simulation:  66%|██████▌   | 9826.50/15000.00 ms [00:42&lt;00:22, 226.79ms/s]
-Running simulation:  66%|██████▌   | 9849.20/15000.00 ms [00:42&lt;00:22, 226.69ms/s]
-Running simulation:  66%|██████▌   | 9871.90/15000.00 ms [00:42&lt;00:22, 226.41ms/s]
-Running simulation:  66%|██████▌   | 9894.60/15000.00 ms [00:42&lt;00:22, 226.32ms/s]
-Running simulation:  66%|██████▌   | 9917.30/15000.00 ms [00:43&lt;00:22, 226.52ms/s]
-Running simulation:  66%|██████▋   | 9940.00/15000.00 ms [00:43&lt;00:22, 226.06ms/s]
-Running simulation:  66%|██████▋   | 9962.70/15000.00 ms [00:43&lt;00:22, 226.20ms/s]
-Running simulation:  67%|██████▋   | 9985.50/15000.00 ms [00:43&lt;00:22, 226.51ms/s]
-Running simulation:  67%|██████▋   | 10008.20/15000.00 ms [00:43&lt;00:22, 226.14ms/s]
-Running simulation:  67%|██████▋   | 10030.90/15000.00 ms [00:43&lt;00:21, 226.14ms/s]
-Running simulation:  67%|██████▋   | 10053.60/15000.00 ms [00:43&lt;00:21, 224.94ms/s]
-Running simulation:  67%|██████▋   | 10076.30/15000.00 ms [00:43&lt;00:21, 225.29ms/s]
-Running simulation:  67%|██████▋   | 10099.10/15000.00 ms [00:43&lt;00:21, 225.88ms/s]
-Running simulation:  67%|██████▋   | 10121.70/15000.00 ms [00:43&lt;00:21, 225.72ms/s]
-Running simulation:  68%|██████▊   | 10144.40/15000.00 ms [00:44&lt;00:21, 226.10ms/s]
-Running simulation:  68%|██████▊   | 10167.10/15000.00 ms [00:44&lt;00:21, 226.22ms/s]
-Running simulation:  68%|██████▊   | 10189.80/15000.00 ms [00:44&lt;00:21, 226.24ms/s]
-Running simulation:  68%|██████▊   | 10212.50/15000.00 ms [00:44&lt;00:21, 226.08ms/s]
-Running simulation:  68%|██████▊   | 10235.20/15000.00 ms [00:44&lt;00:21, 225.32ms/s]
-Running simulation:  68%|██████▊   | 10258.00/15000.00 ms [00:44&lt;00:20, 226.07ms/s]
-Running simulation:  69%|██████▊   | 10280.70/15000.00 ms [00:44&lt;00:20, 226.05ms/s]
-Running simulation:  69%|██████▊   | 10303.50/15000.00 ms [00:44&lt;00:20, 226.38ms/s]
-Running simulation:  69%|██████▉   | 10326.30/15000.00 ms [00:44&lt;00:20, 226.73ms/s]
-Running simulation:  69%|██████▉   | 10349.00/15000.00 ms [00:44&lt;00:20, 226.26ms/s]
-Running simulation:  69%|██████▉   | 10371.70/15000.00 ms [00:45&lt;00:20, 226.29ms/s]
-Running simulation:  69%|██████▉   | 10394.40/15000.00 ms [00:45&lt;00:20, 226.14ms/s]
-Running simulation:  69%|██████▉   | 10417.10/15000.00 ms [00:45&lt;00:20, 225.50ms/s]
-Running simulation:  70%|██████▉   | 10439.70/15000.00 ms [00:45&lt;00:20, 225.08ms/s]
-Running simulation:  70%|██████▉   | 10462.30/15000.00 ms [00:45&lt;00:20, 225.18ms/s]
-Running simulation:  70%|██████▉   | 10484.90/15000.00 ms [00:45&lt;00:20, 225.16ms/s]
-Running simulation:  70%|███████   | 10507.50/15000.00 ms [00:45&lt;00:19, 225.36ms/s]
-Running simulation:  70%|███████   | 10530.40/15000.00 ms [00:45&lt;00:19, 226.26ms/s]
-Running simulation:  70%|███████   | 10553.30/15000.00 ms [00:45&lt;00:19, 226.86ms/s]
-Running simulation:  71%|███████   | 10576.20/15000.00 ms [00:45&lt;00:19, 227.35ms/s]
-Running simulation:  71%|███████   | 10599.00/15000.00 ms [00:46&lt;00:19, 227.00ms/s]
-Running simulation:  71%|███████   | 10621.70/15000.00 ms [00:46&lt;00:19, 226.59ms/s]
-Running simulation:  71%|███████   | 10644.40/15000.00 ms [00:46&lt;00:19, 226.57ms/s]
-Running simulation:  71%|███████   | 10667.10/15000.00 ms [00:46&lt;00:19, 226.17ms/s]
-Running simulation:  71%|███████▏  | 10689.80/15000.00 ms [00:46&lt;00:19, 225.26ms/s]
-Running simulation:  71%|███████▏  | 10712.70/15000.00 ms [00:46&lt;00:18, 226.16ms/s]
-Running simulation:  72%|███████▏  | 10735.40/15000.00 ms [00:46&lt;00:18, 225.87ms/s]
-Running simulation:  72%|███████▏  | 10758.00/15000.00 ms [00:46&lt;00:18, 225.68ms/s]
-Running simulation:  72%|███████▏  | 10780.60/15000.00 ms [00:46&lt;00:18, 225.77ms/s]
-Running simulation:  72%|███████▏  | 10803.20/15000.00 ms [00:46&lt;00:18, 225.63ms/s]
-Running simulation:  72%|███████▏  | 10825.80/15000.00 ms [00:47&lt;00:18, 225.73ms/s]
-Running simulation:  72%|███████▏  | 10848.40/15000.00 ms [00:47&lt;00:18, 225.33ms/s]
-Running simulation:  72%|███████▏  | 10871.00/15000.00 ms [00:47&lt;00:18, 225.51ms/s]
-Running simulation:  73%|███████▎  | 10893.70/15000.00 ms [00:47&lt;00:18, 225.74ms/s]
-Running simulation:  73%|███████▎  | 10916.40/15000.00 ms [00:47&lt;00:18, 226.09ms/s]
-Running simulation:  73%|███████▎  | 10939.20/15000.00 ms [00:47&lt;00:17, 226.50ms/s]
-Running simulation:  73%|███████▎  | 10961.90/15000.00 ms [00:47&lt;00:17, 225.98ms/s]
-Running simulation:  73%|███████▎  | 10984.50/15000.00 ms [00:47&lt;00:17, 225.69ms/s]
-Running simulation:  73%|███████▎  | 11007.20/15000.00 ms [00:47&lt;00:17, 226.01ms/s]
-Running simulation:  74%|███████▎  | 11029.90/15000.00 ms [00:47&lt;00:17, 225.45ms/s]
-Running simulation:  74%|███████▎  | 11052.50/15000.00 ms [00:48&lt;00:17, 225.11ms/s]
-Running simulation:  74%|███████▍  | 11075.10/15000.00 ms [00:48&lt;00:17, 225.19ms/s]
-Running simulation:  74%|███████▍  | 11097.70/15000.00 ms [00:48&lt;00:17, 225.34ms/s]
-Running simulation:  74%|███████▍  | 11120.30/15000.00 ms [00:48&lt;00:17, 225.45ms/s]
-Running simulation:  74%|███████▍  | 11143.00/15000.00 ms [00:48&lt;00:17, 225.65ms/s]
-Running simulation:  74%|███████▍  | 11165.80/15000.00 ms [00:48&lt;00:16, 226.27ms/s]
-Running simulation:  75%|███████▍  | 11188.60/15000.00 ms [00:48&lt;00:16, 226.61ms/s]
-Running simulation:  75%|███████▍  | 11211.30/15000.00 ms [00:48&lt;00:16, 226.69ms/s]
-Running simulation:  75%|███████▍  | 11234.10/15000.00 ms [00:48&lt;00:16, 226.88ms/s]
-Running simulation:  75%|███████▌  | 11256.90/15000.00 ms [00:48&lt;00:16, 227.04ms/s]
-Running simulation:  75%|███████▌  | 11279.70/15000.00 ms [00:49&lt;00:16, 227.03ms/s]
-Running simulation:  75%|███████▌  | 11302.50/15000.00 ms [00:49&lt;00:16, 226.85ms/s]
-Running simulation:  76%|███████▌  | 11325.20/15000.00 ms [00:49&lt;00:16, 225.91ms/s]
-Running simulation:  76%|███████▌  | 11347.80/15000.00 ms [00:49&lt;00:16, 225.75ms/s]
-Running simulation:  76%|███████▌  | 11370.40/15000.00 ms [00:49&lt;00:16, 225.54ms/s]
-Running simulation:  76%|███████▌  | 11393.00/15000.00 ms [00:49&lt;00:15, 225.65ms/s]
-Running simulation:  76%|███████▌  | 11415.70/15000.00 ms [00:49&lt;00:15, 225.77ms/s]
-Running simulation:  76%|███████▋  | 11438.30/15000.00 ms [00:49&lt;00:15, 225.77ms/s]
-Running simulation:  76%|███████▋  | 11461.10/15000.00 ms [00:49&lt;00:15, 226.34ms/s]
-Running simulation:  77%|███████▋  | 11484.00/15000.00 ms [00:49&lt;00:15, 226.95ms/s]
-Running simulation:  77%|███████▋  | 11506.80/15000.00 ms [00:50&lt;00:15, 227.09ms/s]
-Running simulation:  77%|███████▋  | 11529.60/15000.00 ms [00:50&lt;00:15, 226.75ms/s]
-Running simulation:  77%|███████▋  | 11552.60/15000.00 ms [00:50&lt;00:15, 227.44ms/s]
-Running simulation:  77%|███████▋  | 11575.50/15000.00 ms [00:50&lt;00:15, 227.74ms/s]
-Running simulation:  77%|███████▋  | 11598.40/15000.00 ms [00:50&lt;00:14, 227.89ms/s]
-Running simulation:  77%|███████▋  | 11621.20/15000.00 ms [00:50&lt;00:14, 227.32ms/s]
-Running simulation:  78%|███████▊  | 11644.10/15000.00 ms [00:50&lt;00:14, 227.78ms/s]
-Running simulation:  78%|███████▊  | 11666.90/15000.00 ms [00:50&lt;00:14, 227.67ms/s]
-Running simulation:  78%|███████▊  | 11689.70/15000.00 ms [00:50&lt;00:14, 227.76ms/s]
-Running simulation:  78%|███████▊  | 11712.80/15000.00 ms [00:50&lt;00:14, 228.44ms/s]
-Running simulation:  78%|███████▊  | 11735.70/15000.00 ms [00:51&lt;00:14, 225.71ms/s]
-Running simulation:  78%|███████▊  | 11758.90/15000.00 ms [00:51&lt;00:14, 227.50ms/s]
-Running simulation:  79%|███████▊  | 11782.30/15000.00 ms [00:51&lt;00:14, 229.32ms/s]
-Running simulation:  79%|███████▊  | 11805.70/15000.00 ms [00:51&lt;00:13, 230.66ms/s]
-Running simulation:  79%|███████▉  | 11829.00/15000.00 ms [00:51&lt;00:13, 231.25ms/s]
-Running simulation:  79%|███████▉  | 11852.50/15000.00 ms [00:51&lt;00:13, 232.08ms/s]
-Running simulation:  79%|███████▉  | 11875.90/15000.00 ms [00:51&lt;00:13, 232.64ms/s]
-Running simulation:  79%|███████▉  | 11899.20/15000.00 ms [00:51&lt;00:13, 232.72ms/s]
-Running simulation:  79%|███████▉  | 11922.50/15000.00 ms [00:51&lt;00:13, 232.71ms/s]
-Running simulation:  80%|███████▉  | 11945.80/15000.00 ms [00:51&lt;00:13, 232.52ms/s]
-Running simulation:  80%|███████▉  | 11969.10/15000.00 ms [00:52&lt;00:13, 232.49ms/s]
-Running simulation:  80%|███████▉  | 11992.50/15000.00 ms [00:52&lt;00:12, 232.85ms/s]
-Running simulation:  80%|████████  | 12018.60/15000.00 ms [00:52&lt;00:12, 241.16ms/s]
-Running simulation:  80%|████████  | 12046.00/15000.00 ms [00:52&lt;00:11, 250.73ms/s]
-Running simulation:  80%|████████  | 12073.70/15000.00 ms [00:52&lt;00:11, 258.50ms/s]
-Running simulation:  81%|████████  | 12101.30/15000.00 ms [00:52&lt;00:10, 263.64ms/s]
-Running simulation:  81%|████████  | 12128.80/15000.00 ms [00:52&lt;00:10, 266.91ms/s]
-Running simulation:  81%|████████  | 12156.80/15000.00 ms [00:52&lt;00:10, 270.76ms/s]
-Running simulation:  81%|████████  | 12184.10/15000.00 ms [00:52&lt;00:10, 271.14ms/s]
-Running simulation:  81%|████████▏ | 12211.40/15000.00 ms [00:52&lt;00:10, 271.65ms/s]
-Running simulation:  82%|████████▏ | 12239.00/15000.00 ms [00:53&lt;00:10, 272.85ms/s]
-Running simulation:  82%|████████▏ | 12266.40/15000.00 ms [00:53&lt;00:10, 273.02ms/s]
-Running simulation:  82%|████████▏ | 12293.90/15000.00 ms [00:53&lt;00:09, 273.40ms/s]
-Running simulation:  82%|████████▏ | 12321.30/15000.00 ms [00:53&lt;00:09, 272.93ms/s]
-Running simulation:  82%|████████▏ | 12348.60/15000.00 ms [00:53&lt;00:09, 271.86ms/s]
-Running simulation:  83%|████████▎ | 12376.00/15000.00 ms [00:53&lt;00:09, 272.30ms/s]
-Running simulation:  83%|████████▎ | 12403.30/15000.00 ms [00:53&lt;00:09, 272.49ms/s]
-Running simulation:  83%|████████▎ | 12430.70/15000.00 ms [00:53&lt;00:09, 272.86ms/s]
-Running simulation:  83%|████████▎ | 12458.30/15000.00 ms [00:53&lt;00:09, 273.56ms/s]
-Running simulation:  83%|████████▎ | 12486.20/15000.00 ms [00:53&lt;00:09, 274.95ms/s]
-Running simulation:  83%|████████▎ | 12514.00/15000.00 ms [00:54&lt;00:09, 275.58ms/s]
-Running simulation:  84%|████████▎ | 12541.60/15000.00 ms [00:54&lt;00:08, 274.93ms/s]
-Running simulation:  84%|████████▍ | 12569.30/15000.00 ms [00:54&lt;00:08, 275.41ms/s]
-Running simulation:  84%|████████▍ | 12597.30/15000.00 ms [00:54&lt;00:08, 276.49ms/s]
-Running simulation:  84%|████████▍ | 12625.00/15000.00 ms [00:54&lt;00:08, 274.36ms/s]
-Running simulation:  84%|████████▍ | 12652.50/15000.00 ms [00:54&lt;00:08, 274.29ms/s]
-Running simulation:  85%|████████▍ | 12680.00/15000.00 ms [00:54&lt;00:08, 274.14ms/s]
-Running simulation:  85%|████████▍ | 12707.50/15000.00 ms [00:54&lt;00:08, 274.17ms/s]
-Running simulation:  85%|████████▍ | 12735.10/15000.00 ms [00:54&lt;00:08, 274.59ms/s]
-Running simulation:  85%|████████▌ | 12762.60/15000.00 ms [00:54&lt;00:08, 274.09ms/s]
-Running simulation:  85%|████████▌ | 12790.10/15000.00 ms [00:55&lt;00:08, 273.78ms/s]
-Running simulation:  85%|████████▌ | 12817.50/15000.00 ms [00:55&lt;00:07, 273.05ms/s]
-Running simulation:  86%|████████▌ | 12844.90/15000.00 ms [00:55&lt;00:07, 272.33ms/s]
-Running simulation:  86%|████████▌ | 12872.20/15000.00 ms [00:55&lt;00:07, 272.29ms/s]
-Running simulation:  86%|████████▌ | 12900.10/15000.00 ms [00:55&lt;00:07, 274.07ms/s]
-Running simulation:  86%|████████▌ | 12927.60/15000.00 ms [00:55&lt;00:07, 273.47ms/s]
-Running simulation:  86%|████████▋ | 12955.80/15000.00 ms [00:55&lt;00:07, 275.88ms/s]
-Running simulation:  87%|████████▋ | 12983.40/15000.00 ms [00:55&lt;00:07, 275.25ms/s]
-Running simulation:  87%|████████▋ | 13011.00/15000.00 ms [00:55&lt;00:07, 274.55ms/s]
-Running simulation:  87%|████████▋ | 13038.50/15000.00 ms [00:55&lt;00:07, 274.58ms/s]
-Running simulation:  87%|████████▋ | 13066.00/15000.00 ms [00:56&lt;00:07, 273.12ms/s]
-Running simulation:  87%|████████▋ | 13093.40/15000.00 ms [00:56&lt;00:07, 272.20ms/s]
-Running simulation:  87%|████████▋ | 13120.80/15000.00 ms [00:56&lt;00:06, 272.50ms/s]
-Running simulation:  88%|████████▊ | 13148.10/15000.00 ms [00:56&lt;00:06, 271.74ms/s]
-Running simulation:  88%|████████▊ | 13175.50/15000.00 ms [00:56&lt;00:06, 272.36ms/s]
-Running simulation:  88%|████████▊ | 13203.20/15000.00 ms [00:56&lt;00:06, 273.55ms/s]
-Running simulation:  88%|████████▊ | 13230.60/15000.00 ms [00:56&lt;00:06, 271.20ms/s]
-Running simulation:  88%|████████▊ | 13258.00/15000.00 ms [00:56&lt;00:06, 271.74ms/s]
-Running simulation:  89%|████████▊ | 13285.50/15000.00 ms [00:56&lt;00:06, 272.39ms/s]
-Running simulation:  89%|████████▉ | 13313.30/15000.00 ms [00:56&lt;00:06, 273.87ms/s]
-Running simulation:  89%|████████▉ | 13341.10/15000.00 ms [00:57&lt;00:06, 274.83ms/s]
-Running simulation:  89%|████████▉ | 13368.60/15000.00 ms [00:57&lt;00:05, 274.58ms/s]
-Running simulation:  89%|████████▉ | 13396.10/15000.00 ms [00:57&lt;00:05, 272.62ms/s]
-Running simulation:  89%|████████▉ | 13424.00/15000.00 ms [00:57&lt;00:05, 274.28ms/s]
-Running simulation:  90%|████████▉ | 13451.60/15000.00 ms [00:57&lt;00:05, 274.73ms/s]
-Running simulation:  90%|████████▉ | 13479.10/15000.00 ms [00:57&lt;00:05, 273.82ms/s]
-Running simulation:  90%|█████████ | 13506.50/15000.00 ms [00:57&lt;00:05, 272.64ms/s]
-Running simulation:  90%|█████████ | 13534.20/15000.00 ms [00:57&lt;00:05, 273.88ms/s]
-Running simulation:  90%|█████████ | 13561.60/15000.00 ms [00:57&lt;00:05, 272.60ms/s]
-Running simulation:  91%|█████████ | 13589.10/15000.00 ms [00:57&lt;00:05, 273.08ms/s]
-Running simulation:  91%|█████████ | 13616.50/15000.00 ms [00:58&lt;00:05, 272.25ms/s]
-Running simulation:  91%|█████████ | 13644.00/15000.00 ms [00:58&lt;00:04, 272.73ms/s]
-Running simulation:  91%|█████████ | 13671.40/15000.00 ms [00:58&lt;00:04, 273.08ms/s]
-Running simulation:  91%|█████████▏| 13698.80/15000.00 ms [00:58&lt;00:04, 272.84ms/s]
-Running simulation:  92%|█████████▏| 13726.10/15000.00 ms [00:58&lt;00:04, 271.41ms/s]
-Running simulation:  92%|█████████▏| 13753.50/15000.00 ms [00:58&lt;00:04, 272.12ms/s]
-Running simulation:  92%|█████████▏| 13780.90/15000.00 ms [00:58&lt;00:04, 272.38ms/s]
-Running simulation:  92%|█████████▏| 13808.20/15000.00 ms [00:58&lt;00:04, 271.54ms/s]
-Running simulation:  92%|█████████▏| 13835.70/15000.00 ms [00:58&lt;00:04, 272.47ms/s]
-Running simulation:  92%|█████████▏| 13863.00/15000.00 ms [00:59&lt;00:04, 271.49ms/s]
-Running simulation:  93%|█████████▎| 13890.20/15000.00 ms [00:59&lt;00:04, 271.41ms/s]
-Running simulation:  93%|█████████▎| 13917.40/15000.00 ms [00:59&lt;00:03, 270.95ms/s]
-Running simulation:  93%|█████████▎| 13944.50/15000.00 ms [00:59&lt;00:03, 270.45ms/s]
-Running simulation:  93%|█████████▎| 13971.80/15000.00 ms [00:59&lt;00:03, 271.04ms/s]
-Running simulation:  93%|█████████▎| 13999.50/15000.00 ms [00:59&lt;00:03, 272.77ms/s]
-Running simulation:  94%|█████████▎| 14026.80/15000.00 ms [00:59&lt;00:03, 272.61ms/s]
-Running simulation:  94%|█████████▎| 14054.30/15000.00 ms [00:59&lt;00:03, 273.24ms/s]
-Running simulation:  94%|█████████▍| 14081.70/15000.00 ms [00:59&lt;00:03, 272.50ms/s]
-Running simulation:  94%|█████████▍| 14109.00/15000.00 ms [00:59&lt;00:03, 271.83ms/s]
-Running simulation:  94%|█████████▍| 14136.40/15000.00 ms [01:00&lt;00:03, 272.29ms/s]
-Running simulation:  94%|█████████▍| 14164.10/15000.00 ms [01:00&lt;00:03, 273.67ms/s]
-Running simulation:  95%|█████████▍| 14191.80/15000.00 ms [01:00&lt;00:02, 274.41ms/s]
-Running simulation:  95%|█████████▍| 14219.40/15000.00 ms [01:00&lt;00:02, 274.57ms/s]
-Running simulation:  95%|█████████▍| 14246.90/15000.00 ms [01:00&lt;00:02, 273.78ms/s]
-Running simulation:  95%|█████████▌| 14274.40/15000.00 ms [01:00&lt;00:02, 273.92ms/s]
-Running simulation:  95%|█████████▌| 14301.80/15000.00 ms [01:00&lt;00:02, 271.88ms/s]
-Running simulation:  96%|█████████▌| 14329.50/15000.00 ms [01:00&lt;00:02, 273.21ms/s]
-Running simulation:  96%|█████████▌| 14356.90/15000.00 ms [01:00&lt;00:02, 273.09ms/s]
-Running simulation:  96%|█████████▌| 14384.50/15000.00 ms [01:00&lt;00:02, 273.89ms/s]
-Running simulation:  96%|█████████▌| 14411.90/15000.00 ms [01:01&lt;00:02, 269.33ms/s]
-Running simulation:  96%|█████████▋| 14439.30/15000.00 ms [01:01&lt;00:02, 270.69ms/s]
-Running simulation:  96%|█████████▋| 14466.90/15000.00 ms [01:01&lt;00:01, 272.05ms/s]
-Running simulation:  97%|█████████▋| 14494.40/15000.00 ms [01:01&lt;00:01, 272.75ms/s]
-Running simulation:  97%|█████████▋| 14521.90/15000.00 ms [01:01&lt;00:01, 273.25ms/s]
-Running simulation:  97%|█████████▋| 14549.80/15000.00 ms [01:01&lt;00:01, 274.85ms/s]
-Running simulation:  97%|█████████▋| 14577.30/15000.00 ms [01:01&lt;00:01, 272.85ms/s]
-Running simulation:  97%|█████████▋| 14604.60/15000.00 ms [01:01&lt;00:01, 271.01ms/s]
-Running simulation:  98%|█████████▊| 14631.90/15000.00 ms [01:01&lt;00:01, 271.52ms/s]
-Running simulation:  98%|█████████▊| 14659.60/15000.00 ms [01:01&lt;00:01, 273.14ms/s]
-Running simulation:  98%|█████████▊| 14687.30/15000.00 ms [01:02&lt;00:01, 274.29ms/s]
-Running simulation:  98%|█████████▊| 14714.80/15000.00 ms [01:02&lt;00:01, 273.40ms/s]
-Running simulation:  98%|█████████▊| 14742.60/15000.00 ms [01:02&lt;00:00, 274.58ms/s]
-Running simulation:  98%|█████████▊| 14770.10/15000.00 ms [01:02&lt;00:00, 274.58ms/s]
-Running simulation:  99%|█████████▊| 14797.60/15000.00 ms [01:02&lt;00:00, 274.54ms/s]
-Running simulation:  99%|█████████▉| 14825.10/15000.00 ms [01:02&lt;00:00, 273.69ms/s]
-Running simulation:  99%|█████████▉| 14853.00/15000.00 ms [01:02&lt;00:00, 275.09ms/s]
-Running simulation:  99%|█████████▉| 14880.70/15000.00 ms [01:02&lt;00:00, 275.64ms/s]
-Running simulation:  99%|█████████▉| 14908.40/15000.00 ms [01:02&lt;00:00, 275.80ms/s]
-Running simulation: 100%|█████████▉| 14936.00/15000.00 ms [01:02&lt;00:00, 274.84ms/s]
-Running simulation: 100%|█████████▉| 14963.80/15000.00 ms [01:03&lt;00:00, 275.72ms/s]
-Running simulation: 100%|█████████▉| 14991.40/15000.00 ms [01:03&lt;00:00, 273.94ms/s]
-Running simulation: 100%|██████████| 15000.10/15000.00 ms [01:03&lt;00:00, 237.48ms/s]
+Running simulation:   1%|          | 91.40/15000.00 ms [00:00&lt;00:16, 913.96ms/s]
+Running simulation:   1%|          | 185.00/15000.00 ms [00:00&lt;00:15, 926.51ms/s]
+Running simulation:   2%|▏         | 278.30/15000.00 ms [00:00&lt;00:15, 929.09ms/s]
+Running simulation:   2%|▏         | 371.80/15000.00 ms [00:00&lt;00:15, 931.09ms/s]
+Running simulation:   3%|▎         | 465.00/15000.00 ms [00:00&lt;00:15, 930.67ms/s]
+Running simulation:   4%|▎         | 558.10/15000.00 ms [00:00&lt;00:15, 930.48ms/s]
+Running simulation:   4%|▍         | 651.20/15000.00 ms [00:00&lt;00:15, 928.94ms/s]
+Running simulation:   5%|▍         | 744.20/15000.00 ms [00:00&lt;00:15, 929.15ms/s]
+Running simulation:   6%|▌         | 837.20/15000.00 ms [00:00&lt;00:15, 929.04ms/s]
+Running simulation:   6%|▌         | 930.20/15000.00 ms [00:01&lt;00:15, 926.36ms/s]
+Running simulation:   7%|▋         | 1022.90/15000.00 ms [00:01&lt;00:15, 924.55ms/s]
+Running simulation:   7%|▋         | 1115.40/15000.00 ms [00:01&lt;00:15, 913.28ms/s]
+Running simulation:   8%|▊         | 1206.80/15000.00 ms [00:01&lt;00:15, 900.27ms/s]
+Running simulation:   9%|▊         | 1296.90/15000.00 ms [00:01&lt;00:15, 888.69ms/s]
+Running simulation:   9%|▉         | 1385.90/15000.00 ms [00:01&lt;00:15, 875.83ms/s]
+Running simulation:  10%|▉         | 1473.60/15000.00 ms [00:01&lt;00:15, 862.98ms/s]
+Running simulation:  10%|█         | 1560.00/15000.00 ms [00:01&lt;00:15, 851.14ms/s]
+Running simulation:  11%|█         | 1645.20/15000.00 ms [00:01&lt;00:15, 842.18ms/s]
+Running simulation:  12%|█▏        | 1729.50/15000.00 ms [00:01&lt;00:15, 836.91ms/s]
+Running simulation:  12%|█▏        | 1813.20/15000.00 ms [00:02&lt;00:15, 833.96ms/s]
+Running simulation:  13%|█▎        | 1896.60/15000.00 ms [00:02&lt;00:15, 829.69ms/s]
+Running simulation:  13%|█▎        | 1979.60/15000.00 ms [00:02&lt;00:15, 828.45ms/s]
+Running simulation:  14%|█▍        | 2062.70/15000.00 ms [00:02&lt;00:15, 828.88ms/s]
+Running simulation:  14%|█▍        | 2145.60/15000.00 ms [00:02&lt;00:15, 828.20ms/s]
+Running simulation:  15%|█▍        | 2228.60/15000.00 ms [00:02&lt;00:15, 828.63ms/s]
+Running simulation:  15%|█▌        | 2311.50/15000.00 ms [00:02&lt;00:15, 828.13ms/s]
+Running simulation:  16%|█▌        | 2394.40/15000.00 ms [00:02&lt;00:15, 827.23ms/s]
+Running simulation:  17%|█▋        | 2477.50/15000.00 ms [00:02&lt;00:15, 828.12ms/s]
+Running simulation:  17%|█▋        | 2560.60/15000.00 ms [00:02&lt;00:15, 828.75ms/s]
+Running simulation:  18%|█▊        | 2643.50/15000.00 ms [00:03&lt;00:14, 827.72ms/s]
+Running simulation:  18%|█▊        | 2726.30/15000.00 ms [00:03&lt;00:14, 825.57ms/s]
+Running simulation:  19%|█▊        | 2808.90/15000.00 ms [00:03&lt;00:14, 823.74ms/s]
+Running simulation:  19%|█▉        | 2891.30/15000.00 ms [00:03&lt;00:14, 821.01ms/s]
+Running simulation:  20%|█▉        | 2973.50/15000.00 ms [00:03&lt;00:14, 817.37ms/s]
+Running simulation:  20%|██        | 3055.30/15000.00 ms [00:03&lt;00:14, 816.52ms/s]
+Running simulation:  21%|██        | 3137.00/15000.00 ms [00:03&lt;00:14, 814.31ms/s]
+Running simulation:  21%|██▏       | 3218.50/15000.00 ms [00:03&lt;00:14, 812.16ms/s]
+Running simulation:  22%|██▏       | 3300.10/15000.00 ms [00:03&lt;00:14, 813.21ms/s]
+Running simulation:  23%|██▎       | 3382.00/15000.00 ms [00:03&lt;00:14, 814.75ms/s]
+Running simulation:  23%|██▎       | 3463.50/15000.00 ms [00:04&lt;00:14, 813.34ms/s]
+Running simulation:  24%|██▎       | 3544.90/15000.00 ms [00:04&lt;00:14, 811.06ms/s]
+Running simulation:  24%|██▍       | 3626.20/15000.00 ms [00:04&lt;00:14, 811.45ms/s]
+Running simulation:  25%|██▍       | 3707.70/15000.00 ms [00:04&lt;00:13, 812.23ms/s]
+Running simulation:  25%|██▌       | 3789.50/15000.00 ms [00:04&lt;00:13, 813.85ms/s]
+Running simulation:  26%|██▌       | 3870.90/15000.00 ms [00:04&lt;00:13, 813.34ms/s]
+Running simulation:  26%|██▋       | 3952.60/15000.00 ms [00:04&lt;00:13, 814.39ms/s]
+Running simulation:  27%|██▋       | 4034.10/15000.00 ms [00:04&lt;00:13, 814.51ms/s]
+Running simulation:  27%|██▋       | 4115.60/15000.00 ms [00:04&lt;00:13, 814.28ms/s]
+Running simulation:  28%|██▊       | 4197.70/15000.00 ms [00:04&lt;00:13, 816.22ms/s]
+Running simulation:  29%|██▊       | 4279.40/15000.00 ms [00:05&lt;00:13, 815.56ms/s]
+Running simulation:  29%|██▉       | 4361.00/15000.00 ms [00:05&lt;00:13, 814.57ms/s]
+Running simulation:  30%|██▉       | 4443.00/15000.00 ms [00:05&lt;00:12, 816.10ms/s]
+Running simulation:  30%|███       | 4524.70/15000.00 ms [00:05&lt;00:12, 815.70ms/s]
+Running simulation:  31%|███       | 4606.60/15000.00 ms [00:05&lt;00:12, 816.52ms/s]
+Running simulation:  31%|███▏      | 4688.30/15000.00 ms [00:05&lt;00:12, 816.21ms/s]
+Running simulation:  32%|███▏      | 4770.30/15000.00 ms [00:05&lt;00:12, 817.15ms/s]
+Running simulation:  32%|███▏      | 4852.10/15000.00 ms [00:05&lt;00:12, 816.92ms/s]
+Running simulation:  33%|███▎      | 4933.80/15000.00 ms [00:05&lt;00:12, 816.90ms/s]
+Running simulation:  33%|███▎      | 5015.50/15000.00 ms [00:05&lt;00:12, 816.85ms/s]
+Running simulation:  34%|███▍      | 5097.20/15000.00 ms [00:06&lt;00:12, 816.27ms/s]
+Running simulation:  35%|███▍      | 5178.90/15000.00 ms [00:06&lt;00:12, 815.37ms/s]
+Running simulation:  35%|███▌      | 5260.90/15000.00 ms [00:06&lt;00:11, 816.46ms/s]
+Running simulation:  36%|███▌      | 5342.60/15000.00 ms [00:06&lt;00:11, 816.44ms/s]
+Running simulation:  36%|███▌      | 5425.00/15000.00 ms [00:06&lt;00:11, 818.41ms/s]
+Running simulation:  37%|███▋      | 5507.60/15000.00 ms [00:06&lt;00:11, 820.62ms/s]
+Running simulation:  37%|███▋      | 5589.80/15000.00 ms [00:06&lt;00:11, 821.01ms/s]
+Running simulation:  38%|███▊      | 5672.20/15000.00 ms [00:06&lt;00:11, 821.65ms/s]
+Running simulation:  38%|███▊      | 5754.70/15000.00 ms [00:06&lt;00:11, 822.64ms/s]
+Running simulation:  39%|███▉      | 5837.80/15000.00 ms [00:06&lt;00:11, 824.93ms/s]
+Running simulation:  39%|███▉      | 5920.30/15000.00 ms [00:07&lt;00:11, 821.23ms/s]
+Running simulation:  40%|████      | 6002.50/15000.00 ms [00:07&lt;00:10, 821.33ms/s]
+Running simulation:  41%|████      | 6084.90/15000.00 ms [00:07&lt;00:10, 821.87ms/s]
+Running simulation:  41%|████      | 6168.00/15000.00 ms [00:07&lt;00:10, 824.54ms/s]
+Running simulation:  42%|████▏     | 6250.70/15000.00 ms [00:07&lt;00:10, 825.27ms/s]
+Running simulation:  42%|████▏     | 6333.30/15000.00 ms [00:07&lt;00:10, 823.94ms/s]
+Running simulation:  43%|████▎     | 6415.70/15000.00 ms [00:07&lt;00:10, 823.86ms/s]
+Running simulation:  43%|████▎     | 6498.10/15000.00 ms [00:07&lt;00:10, 819.60ms/s]
+Running simulation:  44%|████▍     | 6580.60/15000.00 ms [00:07&lt;00:10, 821.17ms/s]
+Running simulation:  44%|████▍     | 6663.50/15000.00 ms [00:07&lt;00:10, 823.36ms/s]
+Running simulation:  45%|████▍     | 6745.90/15000.00 ms [00:08&lt;00:10, 822.25ms/s]
+Running simulation:  46%|████▌     | 6828.40/15000.00 ms [00:08&lt;00:09, 823.00ms/s]
+Running simulation:  46%|████▌     | 6911.00/15000.00 ms [00:08&lt;00:09, 823.77ms/s]
+Running simulation:  47%|████▋     | 6993.40/15000.00 ms [00:08&lt;00:09, 823.33ms/s]
+Running simulation:  47%|████▋     | 7076.00/15000.00 ms [00:08&lt;00:09, 823.93ms/s]
+Running simulation:  48%|████▊     | 7158.40/15000.00 ms [00:08&lt;00:09, 822.43ms/s]
+Running simulation:  48%|████▊     | 7240.70/15000.00 ms [00:08&lt;00:09, 797.25ms/s]
+Running simulation:  49%|████▉     | 7323.70/15000.00 ms [00:08&lt;00:09, 806.60ms/s]
+Running simulation:  49%|████▉     | 7407.00/15000.00 ms [00:08&lt;00:09, 814.17ms/s]
+Running simulation:  50%|████▉     | 7490.00/15000.00 ms [00:08&lt;00:09, 818.68ms/s]
+Running simulation:  50%|█████     | 7572.70/15000.00 ms [00:09&lt;00:09, 820.90ms/s]
+Running simulation:  51%|█████     | 7655.60/15000.00 ms [00:09&lt;00:08, 823.13ms/s]
+Running simulation:  52%|█████▏    | 7738.50/15000.00 ms [00:09&lt;00:08, 824.62ms/s]
+Running simulation:  52%|█████▏    | 7821.00/15000.00 ms [00:09&lt;00:08, 824.10ms/s]
+Running simulation:  53%|█████▎    | 7903.50/15000.00 ms [00:09&lt;00:08, 824.28ms/s]
+Running simulation:  53%|█████▎    | 7986.10/15000.00 ms [00:09&lt;00:08, 824.58ms/s]
+Running simulation:  54%|█████▍    | 8068.60/15000.00 ms [00:09&lt;00:08, 824.40ms/s]
+Running simulation:  54%|█████▍    | 8151.10/15000.00 ms [00:09&lt;00:08, 821.20ms/s]
+Running simulation:  55%|█████▍    | 8233.90/15000.00 ms [00:09&lt;00:08, 823.02ms/s]
+Running simulation:  55%|█████▌    | 8316.50/15000.00 ms [00:09&lt;00:08, 823.78ms/s]
+Running simulation:  56%|█████▌    | 8398.90/15000.00 ms [00:10&lt;00:08, 821.25ms/s]
+Running simulation:  57%|█████▋    | 8481.10/15000.00 ms [00:10&lt;00:07, 820.54ms/s]
+Running simulation:  57%|█████▋    | 8563.50/15000.00 ms [00:10&lt;00:07, 821.26ms/s]
+Running simulation:  58%|█████▊    | 8645.70/15000.00 ms [00:10&lt;00:07, 820.82ms/s]
+Running simulation:  58%|█████▊    | 8728.10/15000.00 ms [00:10&lt;00:07, 821.64ms/s]
+Running simulation:  59%|█████▊    | 8810.30/15000.00 ms [00:10&lt;00:07, 821.63ms/s]
+Running simulation:  59%|█████▉    | 8892.70/15000.00 ms [00:10&lt;00:07, 822.13ms/s]
+Running simulation:  60%|█████▉    | 8975.00/15000.00 ms [00:10&lt;00:07, 821.71ms/s]
+Running simulation:  60%|██████    | 9057.30/15000.00 ms [00:10&lt;00:07, 821.88ms/s]
+Running simulation:  61%|██████    | 9139.70/15000.00 ms [00:10&lt;00:07, 822.45ms/s]
+Running simulation:  61%|██████▏   | 9222.20/15000.00 ms [00:11&lt;00:07, 823.06ms/s]
+Running simulation:  62%|██████▏   | 9304.60/15000.00 ms [00:11&lt;00:06, 822.67ms/s]
+Running simulation:  63%|██████▎   | 9387.30/15000.00 ms [00:11&lt;00:06, 823.94ms/s]
+Running simulation:  63%|██████▎   | 9469.90/15000.00 ms [00:11&lt;00:06, 824.44ms/s]
+Running simulation:  64%|██████▎   | 9552.40/15000.00 ms [00:11&lt;00:06, 820.41ms/s]
+Running simulation:  64%|██████▍   | 9634.50/15000.00 ms [00:11&lt;00:06, 789.41ms/s]
+Running simulation:  65%|██████▍   | 9716.30/15000.00 ms [00:11&lt;00:06, 797.50ms/s]
+Running simulation:  65%|██████▌   | 9798.30/15000.00 ms [00:11&lt;00:06, 803.94ms/s]
+Running simulation:  66%|██████▌   | 9880.30/15000.00 ms [00:11&lt;00:06, 808.53ms/s]
+Running simulation:  66%|██████▋   | 9961.90/15000.00 ms [00:11&lt;00:06, 810.50ms/s]
+Running simulation:  67%|██████▋   | 10044.30/15000.00 ms [00:12&lt;00:06, 814.28ms/s]
+Running simulation:  68%|██████▊   | 10127.10/15000.00 ms [00:12&lt;00:05, 818.30ms/s]
+Running simulation:  68%|██████▊   | 10209.70/15000.00 ms [00:12&lt;00:05, 820.46ms/s]
+Running simulation:  69%|██████▊   | 10292.40/15000.00 ms [00:12&lt;00:05, 822.11ms/s]
+Running simulation:  69%|██████▉   | 10374.70/15000.00 ms [00:12&lt;00:05, 822.36ms/s]
+Running simulation:  70%|██████▉   | 10457.30/15000.00 ms [00:12&lt;00:05, 823.13ms/s]
+Running simulation:  70%|███████   | 10539.80/15000.00 ms [00:12&lt;00:05, 823.38ms/s]
+Running simulation:  71%|███████   | 10622.20/15000.00 ms [00:12&lt;00:05, 823.12ms/s]
+Running simulation:  71%|███████▏  | 10705.10/15000.00 ms [00:12&lt;00:05, 824.67ms/s]
+Running simulation:  72%|███████▏  | 10787.80/15000.00 ms [00:12&lt;00:05, 825.25ms/s]
+Running simulation:  72%|███████▏  | 10870.40/15000.00 ms [00:13&lt;00:05, 824.91ms/s]
+Running simulation:  73%|███████▎  | 10952.90/15000.00 ms [00:13&lt;00:04, 823.37ms/s]
+Running simulation:  74%|███████▎  | 11035.30/15000.00 ms [00:13&lt;00:04, 822.55ms/s]
+Running simulation:  74%|███████▍  | 11117.60/15000.00 ms [00:13&lt;00:04, 822.33ms/s]
+Running simulation:  75%|███████▍  | 11199.90/15000.00 ms [00:13&lt;00:04, 822.46ms/s]
+Running simulation:  75%|███████▌  | 11282.30/15000.00 ms [00:13&lt;00:04, 822.86ms/s]
+Running simulation:  76%|███████▌  | 11365.00/15000.00 ms [00:13&lt;00:04, 823.81ms/s]
+Running simulation:  76%|███████▋  | 11447.40/15000.00 ms [00:13&lt;00:04, 823.63ms/s]
+Running simulation:  77%|███████▋  | 11530.10/15000.00 ms [00:13&lt;00:04, 824.53ms/s]
+Running simulation:  77%|███████▋  | 11613.70/15000.00 ms [00:13&lt;00:04, 827.75ms/s]
+Running simulation:  78%|███████▊  | 11698.80/15000.00 ms [00:14&lt;00:03, 834.72ms/s]
+Running simulation:  79%|███████▊  | 11785.20/15000.00 ms [00:14&lt;00:03, 843.36ms/s]
+Running simulation:  79%|███████▉  | 11872.50/15000.00 ms [00:14&lt;00:03, 852.24ms/s]
+Running simulation:  80%|███████▉  | 11961.60/15000.00 ms [00:14&lt;00:03, 863.80ms/s]
+Running simulation:  80%|████████  | 12053.50/15000.00 ms [00:14&lt;00:03, 880.15ms/s]
+Running simulation:  81%|████████  | 12146.80/15000.00 ms [00:14&lt;00:03, 895.92ms/s]
+Running simulation:  82%|████████▏ | 12239.70/15000.00 ms [00:14&lt;00:03, 905.78ms/s]
+Running simulation:  82%|████████▏ | 12332.20/15000.00 ms [00:14&lt;00:02, 911.55ms/s]
+Running simulation:  83%|████████▎ | 12425.30/15000.00 ms [00:14&lt;00:02, 917.09ms/s]
+Running simulation:  83%|████████▎ | 12518.30/15000.00 ms [00:14&lt;00:02, 920.67ms/s]
+Running simulation:  84%|████████▍ | 12611.60/15000.00 ms [00:15&lt;00:02, 924.17ms/s]
+Running simulation:  85%|████████▍ | 12704.80/15000.00 ms [00:15&lt;00:02, 926.31ms/s]
+Running simulation:  85%|████████▌ | 12797.80/15000.00 ms [00:15&lt;00:02, 927.26ms/s]
+Running simulation:  86%|████████▌ | 12891.00/15000.00 ms [00:15&lt;00:02, 928.59ms/s]
+Running simulation:  87%|████████▋ | 12983.90/15000.00 ms [00:15&lt;00:02, 921.55ms/s]
+Running simulation:  87%|████████▋ | 13076.40/15000.00 ms [00:15&lt;00:02, 922.39ms/s]
+Running simulation:  88%|████████▊ | 13168.70/15000.00 ms [00:15&lt;00:02, 905.93ms/s]
+Running simulation:  88%|████████▊ | 13261.10/15000.00 ms [00:15&lt;00:01, 911.24ms/s]
+Running simulation:  89%|████████▉ | 13353.80/15000.00 ms [00:15&lt;00:01, 915.83ms/s]
+Running simulation:  90%|████████▉ | 13446.60/15000.00 ms [00:16&lt;00:01, 919.17ms/s]
+Running simulation:  90%|█████████ | 13539.60/15000.00 ms [00:16&lt;00:01, 922.10ms/s]
+Running simulation:  91%|█████████ | 13631.90/15000.00 ms [00:16&lt;00:01, 921.79ms/s]
+Running simulation:  91%|█████████▏| 13724.70/15000.00 ms [00:16&lt;00:01, 923.58ms/s]
+Running simulation:  92%|█████████▏| 13817.70/15000.00 ms [00:16&lt;00:01, 925.35ms/s]
+Running simulation:  93%|█████████▎| 13910.60/15000.00 ms [00:16&lt;00:01, 926.20ms/s]
+Running simulation:  93%|█████████▎| 14003.40/15000.00 ms [00:16&lt;00:01, 926.69ms/s]
+Running simulation:  94%|█████████▍| 14096.20/15000.00 ms [00:16&lt;00:00, 926.88ms/s]
+Running simulation:  95%|█████████▍| 14189.10/15000.00 ms [00:16&lt;00:00, 927.31ms/s]
+Running simulation:  95%|█████████▌| 14281.90/15000.00 ms [00:16&lt;00:00, 927.32ms/s]
+Running simulation:  96%|█████████▌| 14374.70/15000.00 ms [00:17&lt;00:00, 927.23ms/s]
+Running simulation:  96%|█████████▋| 14467.50/15000.00 ms [00:17&lt;00:00, 926.25ms/s]
+Running simulation:  97%|█████████▋| 14560.50/15000.00 ms [00:17&lt;00:00, 927.16ms/s]
+Running simulation:  98%|█████████▊| 14653.40/15000.00 ms [00:17&lt;00:00, 927.57ms/s]
+Running simulation:  98%|█████████▊| 14746.40/15000.00 ms [00:17&lt;00:00, 928.11ms/s]
+Running simulation:  99%|█████████▉| 14839.30/15000.00 ms [00:17&lt;00:00, 928.01ms/s]
+Running simulation: 100%|█████████▉| 14932.40/15000.00 ms [00:17&lt;00:00, 928.71ms/s]/home/runner/work/MyoGen/MyoGen/.venv/lib/python3.12/site-packages/tqdm/std.py:636: TqdmWarning: clamping frac to range [0, 1]
+  full_bar = Bar(frac,
+
+Running simulation: 100%|██████████| 15000.10/15000.00 ms [00:17&lt;-00:00, 848.46ms/s]
 </pre></div>
 </div>
 </section>
@@ -1404,7 +990,7 @@ Running simulation: 100%|██████████| 15000.10/15000.00 ms [0
 <span class="c1"># Calculate DD firing rates</span>
 <a href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">dd_firing_rates</span></a> <span class="o">=</span> <a href="https://numpy.org/doc/stable/reference/generated/numpy.array.html#numpy.array" title="numpy.array" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-function"><span class="n">np</span><span class="o">.</span><span class="n">array</span></a><span class="p">(</span>
     <span class="p">[</span>
-        <span class="n">elephant</span><span class="o">.</span><span class="n">statistics</span><span class="o">.</span><span class="n">mean_firing_rate</span><span class="p">(</span><span class="n">st__s</span><span class="o">.</span><span class="n">time_slice</span><span class="p">(</span><span class="n">st__s</span><span class="o">.</span><span class="n">min</span><span class="p">(),</span> <span class="n">st__s</span><span class="o">.</span><span class="n">max</span><span class="p">()))</span>
+        <span class="n">mean_firing_rate</span><span class="p">(</span><span class="n">st__s</span><span class="o">.</span><span class="n">time_slice</span><span class="p">(</span><span class="n">st__s</span><span class="o">.</span><span class="n">min</span><span class="p">(),</span> <span class="n">st__s</span><span class="o">.</span><span class="n">max</span><span class="p">()))</span>
         <span class="k">for</span> <span class="n">st__s</span> <span class="ow">in</span> <a href="https://neo.readthedocs.io/en/latest/api_reference.html#neo.core.Segment" title="neo.core.segment.Segment" class="sphx-glr-backref-module-neo-core-segment sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">dd_segment</span></a><span class="o">.</span><span class="n">spiketrains</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">st__s</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span>
     <span class="p">]</span>
@@ -1413,7 +999,7 @@ Running simulation: 100%|██████████| 15000.10/15000.00 ms [0
 <span class="c1"># Calculate MN firing rates</span>
 <a href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">mn_firing_rates</span></a> <span class="o">=</span> <a href="https://numpy.org/doc/stable/reference/generated/numpy.array.html#numpy.array" title="numpy.array" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-function"><span class="n">np</span><span class="o">.</span><span class="n">array</span></a><span class="p">(</span>
     <span class="p">[</span>
-        <span class="n">elephant</span><span class="o">.</span><span class="n">statistics</span><span class="o">.</span><span class="n">mean_firing_rate</span><span class="p">(</span><span class="n">st__s</span><span class="o">.</span><span class="n">time_slice</span><span class="p">(</span><span class="n">st__s</span><span class="o">.</span><span class="n">min</span><span class="p">(),</span> <span class="n">st__s</span><span class="o">.</span><span class="n">max</span><span class="p">()))</span>
+        <span class="n">mean_firing_rate</span><span class="p">(</span><span class="n">st__s</span><span class="o">.</span><span class="n">time_slice</span><span class="p">(</span><span class="n">st__s</span><span class="o">.</span><span class="n">min</span><span class="p">(),</span> <span class="n">st__s</span><span class="o">.</span><span class="n">max</span><span class="p">()))</span>
         <span class="k">for</span> <span class="n">st__s</span> <span class="ow">in</span> <a href="https://neo.readthedocs.io/en/latest/api_reference.html#neo.core.Segment" title="neo.core.segment.Segment" class="sphx-glr-backref-module-neo-core-segment sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">mn_segment</span></a><span class="o">.</span><span class="n">spiketrains</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">st__s</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span>
     <span class="p">]</span>
@@ -1433,12 +1019,16 @@ Running simulation: 100%|██████████| 15000.10/15000.00 ms [0
 </pre></div>
 </div>
 <div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Firing rate analysis:
+/home/runner/work/MyoGen/MyoGen/.venv/lib/python3.12/site-packages/quantities/quantity.py:421: RuntimeWarning: divide by zero encountered in divide
+  return np.true_divide(other, self)
 Descending Drive neurons:
         Active neurons: 100/100
         Mean firing rate: 55.2 ± 4.3 pps
         Rate range: 48.3 - 64.3 pps
 Motor neurons:
         Active neurons: 78/100
+/home/runner/work/MyoGen/MyoGen/.venv/lib/python3.12/site-packages/numpy/_core/_methods.py:188: RuntimeWarning: invalid value encountered in subtract
+  x = um.subtract(arr, arrmean, out=...)
         Mean firing rate: inf ± nan pps
         Rate range: 3.1 - inf pps
 </pre></div>
@@ -1493,15 +1083,11 @@ Motor neurons:
 <span class="c1"># 4. Population firing rates over time (binned)</span>
 <a href="https://docs.python.org/3/library/functions.html#int" title="builtins.int" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">bin_size_ms</span></a> <span class="o">=</span> <span class="mi">100</span>
 
-<a href="https://neo.readthedocs.io/en/latest/api_reference.html#neo.core.AnalogSignal" title="neo.core.analogsignal.AnalogSignal" class="sphx-glr-backref-module-neo-core-analogsignal sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">dd_psth</span></a> <span class="o">=</span> <span class="n">elephant</span><span class="o">.</span><span class="n">statistics</span><span class="o">.</span><span class="n">time_histogram</span><span class="p">(</span><a href="https://neo.readthedocs.io/en/latest/api_reference.html#neo.core.Segment" title="neo.core.segment.Segment" class="sphx-glr-backref-module-neo-core-segment sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">dd_segment</span></a><span class="o">.</span><span class="n">spiketrains</span><span class="p">,</span> <a href="https://docs.python.org/3/library/functions.html#int" title="builtins.int" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">bin_size_ms</span></a> <span class="o">*</span> <span class="n">pq</span><span class="o">.</span><span class="n">ms</span><span class="p">)</span>
-<a href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">dd_rates_binned</span></a> <span class="o">=</span> <span class="p">(</span>
-    <span class="p">(</span><a href="https://neo.readthedocs.io/en/latest/api_reference.html#neo.core.AnalogSignal" title="neo.core.analogsignal.AnalogSignal" class="sphx-glr-backref-module-neo-core-analogsignal sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">dd_psth</span></a> <span class="o">/</span> <span class="p">(</span><a href="https://docs.python.org/3/library/functions.html#int" title="builtins.int" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">bin_size_ms</span></a> <span class="o">*</span> <span class="n">pq</span><span class="o">.</span><span class="n">ms</span><span class="p">)</span> <span class="o">/</span> <a href="https://docs.python.org/3/library/functions.html#int" title="builtins.int" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">descending_drive_pool</span><span class="o">.</span><span class="n">n</span></a><span class="p">)</span><span class="o">.</span><span class="n">rescale</span><span class="p">(</span><span class="n">pq</span><span class="o">.</span><span class="n">Hz</span><span class="p">)</span><span class="o">.</span><span class="n">magnitude</span>
-<span class="p">)</span>
+<a href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">dd_counts</span></a><span class="p">,</span> <a href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">bin_centers_s</span></a> <span class="o">=</span> <span class="n">population_psth</span><span class="p">(</span><a href="https://neo.readthedocs.io/en/latest/api_reference.html#neo.core.Segment" title="neo.core.segment.Segment" class="sphx-glr-backref-module-neo-core-segment sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">dd_segment</span></a><span class="o">.</span><span class="n">spiketrains</span><span class="p">,</span> <a href="https://docs.python.org/3/library/functions.html#int" title="builtins.int" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">bin_size_ms</span></a> <span class="o">*</span> <span class="n">pq</span><span class="o">.</span><span class="n">ms</span><span class="p">)</span>
+<a href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">dd_rates_binned</span></a> <span class="o">=</span> <a href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">dd_counts</span></a> <span class="o">/</span> <span class="p">(</span><a href="https://docs.python.org/3/library/functions.html#int" title="builtins.int" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">bin_size_ms</span></a> <span class="o">/</span> <span class="mf">1000.0</span><span class="p">)</span> <span class="o">/</span> <a href="https://docs.python.org/3/library/functions.html#int" title="builtins.int" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">descending_drive_pool</span><span class="o">.</span><span class="n">n</span></a>
 
-<a href="https://neo.readthedocs.io/en/latest/api_reference.html#neo.core.AnalogSignal" title="neo.core.analogsignal.AnalogSignal" class="sphx-glr-backref-module-neo-core-analogsignal sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">mn_psth</span></a> <span class="o">=</span> <span class="n">elephant</span><span class="o">.</span><span class="n">statistics</span><span class="o">.</span><span class="n">time_histogram</span><span class="p">(</span><a href="https://neo.readthedocs.io/en/latest/api_reference.html#neo.core.Segment" title="neo.core.segment.Segment" class="sphx-glr-backref-module-neo-core-segment sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">mn_segment</span></a><span class="o">.</span><span class="n">spiketrains</span><span class="p">,</span> <a href="https://docs.python.org/3/library/functions.html#int" title="builtins.int" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">bin_size_ms</span></a> <span class="o">*</span> <span class="n">pq</span><span class="o">.</span><span class="n">ms</span><span class="p">)</span>
-<a href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">mn_rates_binned</span></a> <span class="o">=</span> <span class="p">(</span><a href="https://neo.readthedocs.io/en/latest/api_reference.html#neo.core.AnalogSignal" title="neo.core.analogsignal.AnalogSignal" class="sphx-glr-backref-module-neo-core-analogsignal sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">mn_psth</span></a> <span class="o">/</span> <span class="p">(</span><a href="https://docs.python.org/3/library/functions.html#int" title="builtins.int" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">bin_size_ms</span></a> <span class="o">*</span> <span class="n">pq</span><span class="o">.</span><span class="n">ms</span><span class="p">)</span> <span class="o">/</span> <a href="https://docs.python.org/3/library/functions.html#int" title="builtins.int" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">motor_neuron_pool</span><span class="o">.</span><span class="n">n</span></a><span class="p">)</span><span class="o">.</span><span class="n">rescale</span><span class="p">(</span><span class="n">pq</span><span class="o">.</span><span class="n">Hz</span><span class="p">)</span><span class="o">.</span><span class="n">magnitude</span>
-
-<a href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">bin_centers_s</span></a> <span class="o">=</span> <a href="https://neo.readthedocs.io/en/latest/api_reference.html#neo.core.AnalogSignal" title="neo.core.analogsignal.AnalogSignal" class="sphx-glr-backref-module-neo-core-analogsignal sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">dd_psth</span></a><span class="o">.</span><span class="n">times</span><span class="o">.</span><span class="n">rescale</span><span class="p">(</span><span class="n">pq</span><span class="o">.</span><span class="n">s</span><span class="p">)</span><span class="o">.</span><span class="n">magnitude</span>
+<a href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">mn_counts</span></a><span class="p">,</span> <a href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">_</span></a> <span class="o">=</span> <span class="n">population_psth</span><span class="p">(</span><a href="https://neo.readthedocs.io/en/latest/api_reference.html#neo.core.Segment" title="neo.core.segment.Segment" class="sphx-glr-backref-module-neo-core-segment sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">mn_segment</span></a><span class="o">.</span><span class="n">spiketrains</span><span class="p">,</span> <a href="https://docs.python.org/3/library/functions.html#int" title="builtins.int" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">bin_size_ms</span></a> <span class="o">*</span> <span class="n">pq</span><span class="o">.</span><span class="n">ms</span><span class="p">)</span>
+<a href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">mn_rates_binned</span></a> <span class="o">=</span> <a href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">mn_counts</span></a> <span class="o">/</span> <span class="p">(</span><a href="https://docs.python.org/3/library/functions.html#int" title="builtins.int" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">bin_size_ms</span></a> <span class="o">/</span> <span class="mf">1000.0</span><span class="p">)</span> <span class="o">/</span> <a href="https://docs.python.org/3/library/functions.html#int" title="builtins.int" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">motor_neuron_pool</span><span class="o">.</span><span class="n">n</span></a>
 <a href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">axes</span></a><span class="p">[</span><span class="mi">3</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><a href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">bin_centers_s</span></a><span class="p">,</span> <a href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">dd_rates_binned</span></a><span class="p">,</span> <span class="s2">&quot;b-&quot;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;DD Population&quot;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.8</span><span class="p">)</span>
 <a href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">axes</span></a><span class="p">[</span><span class="mi">3</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><a href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">bin_centers_s</span></a><span class="p">,</span> <a href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">mn_rates_binned</span></a><span class="p">,</span> <span class="s2">&quot;r-&quot;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;MN Population&quot;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.8</span><span class="p">)</span>
 
@@ -1519,7 +1105,13 @@ Motor neurons:
 <a href="https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.show.html#matplotlib.pyplot.show" title="matplotlib.pyplot.show" class="sphx-glr-backref-module-matplotlib-pyplot sphx-glr-backref-type-py-function"><span class="n">plt</span><span class="o">.</span><span class="n">show</span></a><span class="p">()</span>
 </pre></div>
 </div>
-<img src="../../_images/sphx_glr_03_simulate_spike_trains_descending_drive_001.png" srcset="../../_images/sphx_glr_03_simulate_spike_trains_descending_drive_001.png" alt="Trapezoidal Descending Drive Pattern (Ramp Contraction), Descending Drive Population Activity (n=100), Motor Neuron Population Activity (n=78/100 active), Population Firing Rates Over Time" class = "sphx-glr-single-img"/></section>
+<img src="../../_images/sphx_glr_03_simulate_spike_trains_descending_drive_001.png" srcset="../../_images/sphx_glr_03_simulate_spike_trains_descending_drive_001.png" alt="Trapezoidal Descending Drive Pattern (Ramp Contraction), Descending Drive Population Activity (n=100), Motor Neuron Population Activity (n=78/100 active), Population Firing Rates Over Time" class = "sphx-glr-single-img"/><div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>/home/runner/work/MyoGen/MyoGen/examples/01_basic/03_simulate_spike_trains_descending_drive.py:395: MatplotlibDeprecationWarning: The get_cmap function was deprecated in Matplotlib 3.7 and will be removed in 3.11. Use ``matplotlib.colormaps[name]`` or ``matplotlib.colormaps.get_cmap()`` or ``pyplot.get_cmap()`` instead.
+  dd_colors = plt.cm.get_cmap(&quot;Blues&quot;)(np.linspace(0.3, 0.8, len(dd_segment.spiketrains)))
+/home/runner/work/MyoGen/MyoGen/examples/01_basic/03_simulate_spike_trains_descending_drive.py:406: MatplotlibDeprecationWarning: The get_cmap function was deprecated in Matplotlib 3.7 and will be removed in 3.11. Use ``matplotlib.colormaps[name]`` or ``matplotlib.colormaps.get_cmap()`` or ``pyplot.get_cmap()`` instead.
+  mn_colors = plt.cm.get_cmap(&quot;Reds&quot;)(np.linspace(0.3, 0.9, len(mn_segment.spiketrains)))
+</pre></div>
+</div>
+</section>
 <section id="individual-motor-neuron-discharge-rates">
 <h2>Individual Motor Neuron Discharge Rates<a class="headerlink" href="#individual-motor-neuron-discharge-rates" title="Link to this heading">#</a></h2>
 <p>Compute smoothed instantaneous firing rates for each motor neuron
@@ -1648,11 +1240,13 @@ using Elephant’s kernel-based rate estimation.</p>
 
 Population: Mean firing rate = 17.61 Hz, CV = 0.12
   Computed rates for 75 active motor neurons
+/home/runner/work/MyoGen/MyoGen/examples/01_basic/03_simulate_spike_trains_descending_drive.py:543: MatplotlibDeprecationWarning: The get_cmap function was deprecated in Matplotlib 3.7 and will be removed in 3.11. Use ``matplotlib.colormaps[name]`` or ``matplotlib.colormaps.get_cmap()`` or ``pyplot.get_cmap()`` instead.
+  colors = plt.cm.get_cmap(&quot;rainbow&quot;)(np.linspace(0, 1, n_to_plot))
 
 [DONE] Simulation complete with individual neuron noise and discharge rate analysis!
 </pre></div>
 </div>
-<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (1 minutes 50.562 seconds)</p>
+<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 57.468 seconds)</p>
 <div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-auto-examples-01-basic-03-simulate-spike-trains-descending-drive-py">
 <div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
 <p><a class="reference download internal" download="" href="../../_downloads/c30eb78c81893b6a9a81481bfde04876/03_simulate_spike_trains_descending_drive.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">03_simulate_spike_trains_descending_drive.ipynb</span></code></a></p>
@@ -1717,8 +1311,8 @@ Population: Mean firing rate = 17.61 Hz, CV = 0.12
   </div>
   
   <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script defer src="../../_static/scripts/bootstrap.js?digest=7f76b32a3354e82990f2"></script>
-<script defer src="../../_static/scripts/pydata-sphinx-theme.js?digest=7f76b32a3354e82990f2"></script>
+  <script defer src="../../_static/scripts/bootstrap.js?digest=0790524f97105ba85085"></script>
+<script defer src="../../_static/scripts/pydata-sphinx-theme.js?digest=0790524f97105ba85085"></script>
 
   <footer class="bd-footer">
 <div class="bd-footer__inner bd-page-width">

@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>myogen.simulator.neuron.network &#8212; MyoGen 0.9.0 Documentation</title>
+    <title>myogen.simulator.neuron.network &#8212; MyoGen 0.10.0 Documentation</title>
   
   
   
@@ -26,8 +26,8 @@
   </noscript>
   
   <!-- Loaded before other Sphinx assets -->
-  <link href="../../../../_static/styles/theme.css?digest=7f76b32a3354e82990f2" rel="stylesheet" />
-<link href="../../../../_static/styles/pydata-sphinx-theme.css?digest=7f76b32a3354e82990f2" rel="stylesheet" />
+  <link href="../../../../_static/styles/theme.css?digest=0790524f97105ba85085" rel="stylesheet" />
+<link href="../../../../_static/styles/pydata-sphinx-theme.css?digest=0790524f97105ba85085" rel="stylesheet" />
 
     <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=5349f25f" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/css/tooltipster.custom.css" />
@@ -39,7 +39,7 @@
     <link rel="stylesheet" type="text/css" href="../../../../_static/css/tooltipster-sideTip-borderless.min.css" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/css/micromodal.css" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/custom.css?v=9b95bd4c" />
-    <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery.css?v=d2d258e8" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery.css?v=fd6457a4" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery-binder.css?v=f4aeca0c" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
@@ -47,16 +47,17 @@
     <link rel="stylesheet" type="text/css" href="../../../../_static/custom.css?v=9b95bd4c" />
   
   <!-- So that users can add custom icons -->
-  <script defer src="../../../../_static/scripts/fontawesome.js?digest=7f76b32a3354e82990f2"></script>
+  <script defer src="../../../../_static/scripts/fontawesome.js?digest=0790524f97105ba85085"></script>
   <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="../../../../_static/scripts/bootstrap.js?digest=7f76b32a3354e82990f2" />
-<link rel="preload" as="script" href="../../../../_static/scripts/pydata-sphinx-theme.js?digest=7f76b32a3354e82990f2" />
+  <link rel="preload" as="script" href="../../../../_static/scripts/bootstrap.js?digest=0790524f97105ba85085" />
+<link rel="preload" as="script" href="../../../../_static/scripts/pydata-sphinx-theme.js?digest=0790524f97105ba85085" />
 
     <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
     <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-    <script src="../../../../_static/documentation_options.js?v=a82ae3da"></script>
+    <script src="../../../../_static/documentation_options.js?v=7e54ce6f"></script>
     <script src="../../../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../../_static/sg-tags.js?v=d80f6fa4"></script>
     <script src="../../../../_static/js/hoverxref.js"></script>
     <script src="../../../../_static/js/tooltipster.bundle.min.js"></script>
     <script src="../../../../_static/js/micromodal.min.js"></script>
@@ -506,7 +507,7 @@ window.runMermaid = runMermaid;</script>
     <link rel="search" title="Search" href="../../../../search.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="0.9.0" />
+  <meta name="docsearch:version" content="0.10.0" />
   
     
     <script src="../../../../_static/searchtools.js"></script>
@@ -524,7 +525,9 @@ window.runMermaid = runMermaid;</script>
   
   <button type="button" class="btn rounded-pill" id="pst-back-to-top">
     <i class="fa-solid fa-arrow-up"></i>Back to top</button>
-
+  
+  
+  
   
   <dialog id="pst-search-dialog">
     
@@ -579,8 +582,8 @@ window.runMermaid = runMermaid;</script>
       
     
     
-    <img src="../../../../_static/myogen_logo.png" class="logo__image only-light" alt="MyoGen 0.9.0 Documentation - Home"/>
-    <img src="../../../../_static/myogen_logo.png" class="logo__image only-dark pst-js-only" alt="MyoGen 0.9.0 Documentation - Home"/>
+    <img src="../../../../_static/myogen_logo.png" class="logo__image only-light" alt="MyoGen 0.10.0 Documentation - Home"/>
+    <img src="../../../../_static/myogen_logo.png" class="logo__image only-dark pst-js-only" alt="MyoGen 0.10.0 Documentation - Home"/>
   
   
 </a></div>
@@ -589,7 +592,7 @@ window.runMermaid = runMermaid;</script>
 <div class="nav-item">
   <div class="version-switcher__container dropdown">
       <button id="version-switcher-button" type="button" class="version-switcher__button btn btn-sm navbar-btn" aria-haspopup="true" aria-expanded="false">
-          Version 0.9.0
+          Version 0.10.0
       </button>
       
       
@@ -652,11 +655,18 @@ window.runMermaid = runMermaid;</script>
       
         <div class="navbar-item">
 
-<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
-  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
-  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
-  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
-</button></div>
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
       
         <div class="navbar-item"><ul class="navbar-icon-links"
     aria-label="Icon Links">
@@ -669,8 +679,7 @@ window.runMermaid = runMermaid;</script>
           
           
           
-          <a href="https://github.com/NSquaredLab/MyoGen" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i>
-            <span class="sr-only">GitHub</span></a>
+          <a href="https://github.com/NSquaredLab/MyoGen" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
         </li>
 </ul></div>
       
@@ -748,11 +757,18 @@ window.runMermaid = runMermaid;</script>
         
           <div class="navbar-item">
 
-<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
-  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
-  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
-  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
-</button></div>
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
         
           <div class="navbar-item"><ul class="navbar-icon-links"
     aria-label="Icon Links">
@@ -765,8 +781,7 @@ window.runMermaid = runMermaid;</script>
           
           
           
-          <a href="https://github.com/NSquaredLab/MyoGen" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i>
-            <span class="sr-only">GitHub</span></a>
+          <a href="https://github.com/NSquaredLab/MyoGen" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
         </li>
 </ul></div>
         
@@ -840,9 +855,10 @@ window.runMermaid = runMermaid;</script>
 <span class="sd">integrating with both the legacy NEURON-based populations and the modern MyoGen API.</span>
 <span class="sd">&quot;&quot;&quot;</span>
 
-<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Optional</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Optional</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">quantities</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pq</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">beartype.typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Callable</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">neuron</span><span class="w"> </span><span class="kn">import</span> <span class="n">h</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">myogen</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_random_generator</span>
@@ -869,6 +885,22 @@ window.runMermaid = runMermaid;</script>
 <span class="n">DEFAULT_SYNAPTIC_DELAY</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">*</span> <span class="n">pq</span><span class="o">.</span><span class="n">ms</span>  <span class="c1"># ms</span>
 <span class="n">EXTERNAL_INPUT_LABEL</span> <span class="o">=</span> <span class="s2">&quot;Spindle&quot;</span>
 <span class="n">EXTERNAL_TARGET_LABEL</span> <span class="o">=</span> <span class="s2">&quot;Muscle&quot;</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_to_float</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">unit</span><span class="p">:</span> <span class="n">pq</span><span class="o">.</span><span class="n">Quantity</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Rescale a Quantity to ``unit`` and return its native float magnitude.</span>
+
+<span class="sd">    NEURON&#39;s NetCon attributes (``delay``, ``weight[0]``, ``threshold``) accept</span>
+<span class="sd">    plain Python floats interpreted in NEURON&#39;s native units (ms, uS, mV).</span>
+<span class="sd">    Passing a :class:`pq.Quantity` directly invokes ``__float__``, which drops</span>
+<span class="sd">    the unit and returns the raw magnitude -- so a delay of ``1 * pq.s`` would</span>
+<span class="sd">    be silently stored as ``1.0`` ms instead of ``1000.0`` ms.</span>
+
+<span class="sd">    Plain numeric values pass through unchanged.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">pq</span><span class="o">.</span><span class="n">Quantity</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">value</span><span class="o">.</span><span class="n">rescale</span><span class="p">(</span><span class="n">unit</span><span class="p">)</span><span class="o">.</span><span class="n">magnitude</span><span class="p">)</span>
+    <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">_select_synapse</span><span class="p">(</span><span class="n">target_neuron</span><span class="p">,</span> <span class="n">inhibitory</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
@@ -939,19 +971,31 @@ window.runMermaid = runMermaid;</script>
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">_setup_muscle_activation</span><span class="p">(</span>
-    <span class="n">netcon</span><span class="p">:</span> <span class="n">h</span><span class="o">.</span><span class="n">NetCon</span><span class="p">,</span> <span class="n">muscle_callback</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Callable</span><span class="p">],</span> <span class="n">muscle</span><span class="p">,</span> <span class="n">source_neuron</span>
+    <span class="n">netcon</span><span class="p">:</span> <span class="n">h</span><span class="o">.</span><span class="n">NetCon</span><span class="p">,</span>
+    <span class="n">muscle_callback</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Callable</span><span class="p">],</span>
+    <span class="n">muscle</span><span class="p">,</span>
+    <span class="n">source_neuron</span><span class="p">,</span>
+    <span class="n">synaptic_delay</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
 <span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Setup muscle activation callback for motor neuron connections.</span>
 
 <span class="sd">    Creates a wrapper function that calls the muscle_callback with the appropriate</span>
-<span class="sd">    parameters when the source neuron fires.</span>
+<span class="sd">    parameters when the source neuron fires. The callback delay is the</span>
+<span class="sd">    requested ``synaptic_delay`` (falling back to ``DEFAULT_SYNAPTIC_DELAY``)</span>
+<span class="sd">    plus the source neuron&#39;s ``axon_delay__ms`` -- in NEURON&#39;s native ms.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="nb">callable</span><span class="p">(</span><span class="n">muscle_callback</span><span class="p">)</span> <span class="ow">and</span> <span class="n">muscle</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">synaptic_delay</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">delay__ms</span> <span class="o">=</span> <span class="n">_to_float</span><span class="p">(</span><span class="n">DEFAULT_SYNAPTIC_DELAY</span><span class="p">,</span> <span class="n">pq</span><span class="o">.</span><span class="n">ms</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">delay__ms</span> <span class="o">=</span> <span class="n">_to_float</span><span class="p">(</span><span class="n">synaptic_delay</span><span class="p">,</span> <span class="n">pq</span><span class="o">.</span><span class="n">ms</span><span class="p">)</span>
 
         <span class="k">def</span><span class="w"> </span><span class="nf">muscle_activation_wrapper</span><span class="p">():</span>
             <span class="k">return</span> <span class="n">muscle_callback</span><span class="p">(</span>
-                <span class="n">source_neuron</span><span class="o">.</span><span class="n">pool__ID</span><span class="p">,</span> <span class="n">muscle</span><span class="p">,</span> <span class="mi">1</span> <span class="o">+</span> <span class="nb">float</span><span class="p">(</span><span class="n">source_neuron</span><span class="o">.</span><span class="n">axon_delay__ms</span><span class="p">)</span>
+                <span class="n">source_neuron</span><span class="o">.</span><span class="n">pool__ID</span><span class="p">,</span>
+                <span class="n">muscle</span><span class="p">,</span>
+                <span class="n">delay__ms</span> <span class="o">+</span> <span class="nb">float</span><span class="p">(</span><span class="n">source_neuron</span><span class="o">.</span><span class="n">axon_delay__ms</span><span class="p">),</span>
             <span class="p">)</span>
 
         <span class="n">netcon</span><span class="o">.</span><span class="n">record</span><span class="p">(</span><span class="n">muscle_activation_wrapper</span><span class="p">)</span>
@@ -967,21 +1011,38 @@ window.runMermaid = runMermaid;</script>
         <span class="n">netcon</span><span class="o">.</span><span class="n">record</span><span class="p">(</span><span class="n">spike_vector</span><span class="p">,</span> <span class="n">id_vector</span><span class="p">,</span> <span class="n">neuron_id</span><span class="p">)</span>
 
 
-<span class="k">def</span><span class="w"> </span><span class="nf">_apply_default_synaptic_params</span><span class="p">(</span><span class="n">netcon</span><span class="p">:</span> <span class="n">h</span><span class="o">.</span><span class="n">NetCon</span><span class="p">,</span> <span class="n">source_neuron</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_apply_default_synaptic_params</span><span class="p">(</span><span class="n">netcon</span><span class="p">:</span> <span class="n">h</span><span class="o">.</span><span class="n">NetCon</span><span class="p">,</span> <span class="n">source_neuron</span><span class="p">,</span> <span class="n">synaptic_delay</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Apply default synaptic parameters to the NetCon.</span>
 
 <span class="sd">    Sets default weight, threshold, and delay, with optional axonal delay addition.</span>
+<span class="sd">    All values are rescaled to NEURON&#39;s native units (ms, uS, mV) so the</span>
+<span class="sd">    function is safe to call with :class:`pq.Quantity` inputs in any unit.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    netcon : h.NetCon</span>
+<span class="sd">        NEURON NetCon object whose ``weight``, ``threshold`` and ``delay``</span>
+<span class="sd">        attributes are set in place.</span>
+<span class="sd">    source_neuron : object</span>
+<span class="sd">        Optional source neuron. If it exposes a numeric ``axon_delay__ms``</span>
+<span class="sd">        attribute, that delay is added to the base synaptic delay.</span>
+<span class="sd">    synaptic_delay : float | pq.Quantity, optional</span>
+<span class="sd">        Override for the base synaptic delay. Defaults to</span>
+<span class="sd">        ``DEFAULT_SYNAPTIC_DELAY`` (1 ms).</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">netcon</span><span class="o">.</span><span class="n">weight</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">DEFAULT_SYNAPTIC_WEIGHT</span>
-    <span class="n">netcon</span><span class="o">.</span><span class="n">threshold</span> <span class="o">=</span> <span class="n">DEFAULT_SPIKE_THRESHOLD</span>
-    <span class="n">netcon</span><span class="o">.</span><span class="n">delay</span> <span class="o">=</span> <span class="n">DEFAULT_SYNAPTIC_DELAY</span>  <span class="c1"># 1ms synaptic + axon delay</span>
+    <span class="n">netcon</span><span class="o">.</span><span class="n">weight</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">_to_float</span><span class="p">(</span><span class="n">DEFAULT_SYNAPTIC_WEIGHT</span><span class="p">,</span> <span class="n">pq</span><span class="o">.</span><span class="n">uS</span><span class="p">)</span>
+    <span class="n">netcon</span><span class="o">.</span><span class="n">threshold</span> <span class="o">=</span> <span class="n">_to_float</span><span class="p">(</span><span class="n">DEFAULT_SPIKE_THRESHOLD</span><span class="p">,</span> <span class="n">pq</span><span class="o">.</span><span class="n">mV</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">synaptic_delay</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">base_delay__ms</span> <span class="o">=</span> <span class="n">_to_float</span><span class="p">(</span><span class="n">DEFAULT_SYNAPTIC_DELAY</span><span class="p">,</span> <span class="n">pq</span><span class="o">.</span><span class="n">ms</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">base_delay__ms</span> <span class="o">=</span> <span class="n">_to_float</span><span class="p">(</span><span class="n">synaptic_delay</span><span class="p">,</span> <span class="n">pq</span><span class="o">.</span><span class="n">ms</span><span class="p">)</span>
+    <span class="n">netcon</span><span class="o">.</span><span class="n">delay</span> <span class="o">=</span> <span class="n">base_delay__ms</span>  <span class="c1"># base synaptic delay (axon delay added below)</span>
 
     <span class="c1"># Add axonal delay if source neuron has it</span>
     <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">source_neuron</span><span class="p">,</span> <span class="s2">&quot;axon_delay__ms&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="n">source_neuron</span><span class="o">.</span><span class="n">axon_delay__ms</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">netcon</span><span class="o">.</span><span class="n">delay</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="n">DEFAULT_SYNAPTIC_DELAY</span> <span class="o">+</span> <span class="n">source_neuron</span><span class="o">.</span><span class="n">axon_delay__ms</span>
-        <span class="p">)</span>  <span class="c1"># 1ms synaptic + axon delay</span>
+        <span class="n">netcon</span><span class="o">.</span><span class="n">delay</span> <span class="o">=</span> <span class="n">base_delay__ms</span> <span class="o">+</span> <span class="nb">float</span><span class="p">(</span><span class="n">source_neuron</span><span class="o">.</span><span class="n">axon_delay__ms</span><span class="p">)</span>
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">_create_netcon</span><span class="p">(</span>
@@ -992,6 +1053,7 @@ window.runMermaid = runMermaid;</script>
     <span class="n">id_vector</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
     <span class="n">spike_vector</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
     <span class="n">muscle</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">synaptic_delay</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
 <span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Create a single NEURON NetCon (network connection) between two neurons.</span>
@@ -1052,13 +1114,15 @@ window.runMermaid = runMermaid;</script>
     <span class="n">netcon</span> <span class="o">=</span> <span class="n">_create_basic_netcon</span><span class="p">(</span><span class="n">source_neuron</span><span class="p">,</span> <span class="n">target_neuron</span><span class="p">)</span>
 
     <span class="c1"># Setup optional muscle activation callback</span>
-    <span class="n">_setup_muscle_activation</span><span class="p">(</span><span class="n">netcon</span><span class="p">,</span> <span class="n">muscle_callback</span><span class="p">,</span> <span class="n">muscle</span><span class="p">,</span> <span class="n">source_neuron</span><span class="p">)</span>
+    <span class="n">_setup_muscle_activation</span><span class="p">(</span>
+        <span class="n">netcon</span><span class="p">,</span> <span class="n">muscle_callback</span><span class="p">,</span> <span class="n">muscle</span><span class="p">,</span> <span class="n">source_neuron</span><span class="p">,</span> <span class="n">synaptic_delay</span><span class="o">=</span><span class="n">synaptic_delay</span>
+    <span class="p">)</span>
 
     <span class="c1"># Setup optional spike recording</span>
     <span class="n">_setup_spike_recording</span><span class="p">(</span><span class="n">netcon</span><span class="p">,</span> <span class="n">id_vector</span><span class="p">,</span> <span class="n">spike_vector</span><span class="p">,</span> <span class="n">neuron_id</span><span class="p">)</span>
 
     <span class="c1"># Apply default synaptic parameters</span>
-    <span class="n">_apply_default_synaptic_params</span><span class="p">(</span><span class="n">netcon</span><span class="p">,</span> <span class="n">source_neuron</span><span class="p">)</span>
+    <span class="n">_apply_default_synaptic_params</span><span class="p">(</span><span class="n">netcon</span><span class="p">,</span> <span class="n">source_neuron</span><span class="p">,</span> <span class="n">synaptic_delay</span><span class="o">=</span><span class="n">synaptic_delay</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">netcon</span>
 
@@ -1111,13 +1175,14 @@ window.runMermaid = runMermaid;</script>
                     <span class="n">id_vector</span><span class="o">=</span><span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;id_vector&quot;</span><span class="p">),</span>
                     <span class="n">spike_vector</span><span class="o">=</span><span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;spike_vector&quot;</span><span class="p">),</span>
                     <span class="n">neuron_id</span><span class="o">=</span><span class="n">source_neuron</span><span class="o">.</span><span class="n">global__ID</span><span class="p">,</span>
+                    <span class="n">synaptic_delay</span><span class="o">=</span><span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;synaptic_delay&quot;</span><span class="p">),</span>
                 <span class="p">)</span>
 
                 <span class="c1"># Apply custom synaptic parameters if provided</span>
                 <span class="k">if</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;synaptic_weight&quot;</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-                    <span class="n">netcon</span><span class="o">.</span><span class="n">weight</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;synaptic_weight&quot;</span><span class="p">)</span>
+                    <span class="n">netcon</span><span class="o">.</span><span class="n">weight</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">_to_float</span><span class="p">(</span><span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;synaptic_weight&quot;</span><span class="p">),</span> <span class="n">pq</span><span class="o">.</span><span class="n">uS</span><span class="p">)</span>
                 <span class="k">if</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;spike_threshold&quot;</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-                    <span class="n">netcon</span><span class="o">.</span><span class="n">threshold</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;spike_threshold&quot;</span><span class="p">)</span>
+                    <span class="n">netcon</span><span class="o">.</span><span class="n">threshold</span> <span class="o">=</span> <span class="n">_to_float</span><span class="p">(</span><span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;spike_threshold&quot;</span><span class="p">),</span> <span class="n">pq</span><span class="o">.</span><span class="n">mV</span><span class="p">)</span>
 
                 <span class="n">connections</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">netcon</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
@@ -1133,13 +1198,14 @@ window.runMermaid = runMermaid;</script>
                         <span class="n">id_vector</span><span class="o">=</span><span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;id_vector&quot;</span><span class="p">),</span>
                         <span class="n">spike_vector</span><span class="o">=</span><span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;spike_vector&quot;</span><span class="p">),</span>
                         <span class="n">neuron_id</span><span class="o">=</span><span class="n">source_neuron</span><span class="o">.</span><span class="n">global__ID</span><span class="p">,</span>
+                        <span class="n">synaptic_delay</span><span class="o">=</span><span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;synaptic_delay&quot;</span><span class="p">),</span>
                     <span class="p">)</span>
 
                     <span class="c1"># Apply custom synaptic parameters if provided</span>
                     <span class="k">if</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;synaptic_weight&quot;</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-                        <span class="n">netcon</span><span class="o">.</span><span class="n">weight</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;synaptic_weight&quot;</span><span class="p">)</span>
+                        <span class="n">netcon</span><span class="o">.</span><span class="n">weight</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">_to_float</span><span class="p">(</span><span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;synaptic_weight&quot;</span><span class="p">),</span> <span class="n">pq</span><span class="o">.</span><span class="n">uS</span><span class="p">)</span>
                     <span class="k">if</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;spike_threshold&quot;</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-                        <span class="n">netcon</span><span class="o">.</span><span class="n">threshold</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;spike_threshold&quot;</span><span class="p">)</span>
+                        <span class="n">netcon</span><span class="o">.</span><span class="n">threshold</span> <span class="o">=</span> <span class="n">_to_float</span><span class="p">(</span><span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;spike_threshold&quot;</span><span class="p">),</span> <span class="n">pq</span><span class="o">.</span><span class="n">mV</span><span class="p">)</span>
 
                     <span class="n">connections</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">netcon</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">connections</span>
@@ -1162,11 +1228,14 @@ window.runMermaid = runMermaid;</script>
             <span class="n">muscle</span><span class="o">=</span><span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;muscle&quot;</span><span class="p">),</span>
             <span class="n">spike_vector</span><span class="o">=</span><span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;spike_vector&quot;</span><span class="p">),</span>
             <span class="n">neuron_id</span><span class="o">=</span><span class="n">source_neuron</span><span class="o">.</span><span class="n">global__ID</span><span class="p">,</span>
+            <span class="n">synaptic_delay</span><span class="o">=</span><span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;synaptic_delay&quot;</span><span class="p">),</span>
         <span class="p">)</span>
 
-        <span class="c1"># Apply custom spike threshold if provided</span>
+        <span class="c1"># Apply custom synaptic parameters if provided</span>
+        <span class="k">if</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;synaptic_weight&quot;</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">netcon</span><span class="o">.</span><span class="n">weight</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">_to_float</span><span class="p">(</span><span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;synaptic_weight&quot;</span><span class="p">),</span> <span class="n">pq</span><span class="o">.</span><span class="n">uS</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;spike_threshold&quot;</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">netcon</span><span class="o">.</span><span class="n">threshold</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;spike_threshold&quot;</span><span class="p">)</span>
+            <span class="n">netcon</span><span class="o">.</span><span class="n">threshold</span> <span class="o">=</span> <span class="n">_to_float</span><span class="p">(</span><span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;spike_threshold&quot;</span><span class="p">),</span> <span class="n">pq</span><span class="o">.</span><span class="n">mV</span><span class="p">)</span>
 
         <span class="n">connections</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">netcon</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">connections</span>
@@ -1200,6 +1269,8 @@ window.runMermaid = runMermaid;</script>
     <span class="n">populations</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span>
     <span class="n">connection_probability</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">,</span>
     <span class="n">inhibitory</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="n">synaptic_delay</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">synaptic_weight</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
@@ -1275,13 +1346,16 @@ window.runMermaid = runMermaid;</script>
                 <span class="n">id_vector</span><span class="o">=</span><span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;id_vector&quot;</span><span class="p">),</span>
                 <span class="n">spike_vector</span><span class="o">=</span><span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;spike_vector&quot;</span><span class="p">),</span>
                 <span class="n">neuron_id</span><span class="o">=</span><span class="n">source_neuron</span><span class="o">.</span><span class="n">global__ID</span><span class="p">,</span>
+                <span class="n">synaptic_delay</span><span class="o">=</span><span class="n">synaptic_delay</span><span class="p">,</span>
             <span class="p">)</span>
 
             <span class="c1"># Apply custom synaptic parameters if provided</span>
-            <span class="k">if</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;synaptic_weight&quot;</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="n">netcon</span><span class="o">.</span><span class="n">weight</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;synaptic_weight&quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">synaptic_weight</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">netcon</span><span class="o">.</span><span class="n">weight</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">_to_float</span><span class="p">(</span><span class="n">synaptic_weight</span><span class="p">,</span> <span class="n">pq</span><span class="o">.</span><span class="n">uS</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;synaptic_weight&quot;</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">netcon</span><span class="o">.</span><span class="n">weight</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">_to_float</span><span class="p">(</span><span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;synaptic_weight&quot;</span><span class="p">),</span> <span class="n">pq</span><span class="o">.</span><span class="n">uS</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;spike_threshold&quot;</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="n">netcon</span><span class="o">.</span><span class="n">threshold</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;spike_threshold&quot;</span><span class="p">)</span>
+                <span class="n">netcon</span><span class="o">.</span><span class="n">threshold</span> <span class="o">=</span> <span class="n">_to_float</span><span class="p">(</span><span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;spike_threshold&quot;</span><span class="p">),</span> <span class="n">pq</span><span class="o">.</span><span class="n">mV</span><span class="p">)</span>
 
             <span class="n">connections</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">netcon</span><span class="p">)</span>
 
@@ -1297,6 +1371,7 @@ window.runMermaid = runMermaid;</script>
     <span class="n">id_vector</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
     <span class="n">spike_vector</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
     <span class="n">muscle</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">synaptic_delay</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">synaptic_weight</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">spike_threshold</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">deterministic</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
@@ -1394,6 +1469,7 @@ window.runMermaid = runMermaid;</script>
         <span class="s2">&quot;id_vector&quot;</span><span class="p">:</span> <span class="n">id_vector</span><span class="p">,</span>
         <span class="s2">&quot;spike_vector&quot;</span><span class="p">:</span> <span class="n">spike_vector</span><span class="p">,</span>
         <span class="s2">&quot;muscle&quot;</span><span class="p">:</span> <span class="n">muscle</span><span class="p">,</span>
+        <span class="s2">&quot;synaptic_delay&quot;</span><span class="p">:</span> <span class="n">synaptic_delay</span><span class="p">,</span>
         <span class="s2">&quot;synaptic_weight&quot;</span><span class="p">:</span> <span class="n">synaptic_weight</span><span class="p">,</span>
         <span class="s2">&quot;spike_threshold&quot;</span><span class="p">:</span> <span class="n">spike_threshold</span><span class="p">,</span>
         <span class="s2">&quot;deterministic&quot;</span><span class="p">:</span> <span class="n">deterministic</span><span class="p">,</span>
@@ -1779,9 +1855,9 @@ window.runMermaid = runMermaid;</script>
 
                     <span class="c1"># Set up spike recording with population-specific threshold</span>
                     <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">population</span><span class="p">,</span> <span class="s2">&quot;spike_threshold__mV&quot;</span><span class="p">):</span>
-                        <span class="n">nc</span><span class="o">.</span><span class="n">threshold</span> <span class="o">=</span> <span class="n">population</span><span class="o">.</span><span class="n">spike_threshold__mV</span>
+                        <span class="n">nc</span><span class="o">.</span><span class="n">threshold</span> <span class="o">=</span> <span class="n">_to_float</span><span class="p">(</span><span class="n">population</span><span class="o">.</span><span class="n">spike_threshold__mV</span><span class="p">,</span> <span class="n">pq</span><span class="o">.</span><span class="n">mV</span><span class="p">)</span>
                     <span class="k">else</span><span class="p">:</span>
-                        <span class="n">nc</span><span class="o">.</span><span class="n">threshold</span> <span class="o">=</span> <span class="n">DEFAULT_SPIKE_THRESHOLD</span>  <span class="c1"># Fallback for populations without explicit threshold</span>
+                        <span class="n">nc</span><span class="o">.</span><span class="n">threshold</span> <span class="o">=</span> <span class="n">_to_float</span><span class="p">(</span><span class="n">DEFAULT_SPIKE_THRESHOLD</span><span class="p">,</span> <span class="n">pq</span><span class="o">.</span><span class="n">mV</span><span class="p">)</span>  <span class="c1"># Fallback for populations without explicit threshold</span>
                     <span class="n">nc</span><span class="o">.</span><span class="n">record</span><span class="p">(</span><span class="n">spike_vector</span><span class="p">,</span> <span class="n">id_vector</span><span class="p">,</span> <span class="n">neuron</span><span class="o">.</span><span class="n">global__ID</span><span class="p">)</span>
                     <span class="n">recording_netcons</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">nc</span><span class="p">)</span>
 
@@ -1848,10 +1924,10 @@ window.runMermaid = runMermaid;</script>
         <span class="k">if</span> <span class="ow">not</span> <span class="mf">0.0</span> <span class="o">&lt;=</span> <span class="n">probability</span> <span class="o">&lt;=</span> <span class="mf">1.0</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Probability must be 0.0-1.0, got </span><span class="si">{</span><span class="n">probability</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
-        <span class="c1"># Extract numeric values (handle both Quantity objects and plain floats)</span>
-        <span class="n">weight_value</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">weight__uS</span><span class="p">,</span> <span class="s1">&#39;magnitude&#39;</span><span class="p">,</span> <span class="n">weight__uS</span><span class="p">)</span>
-        <span class="n">threshold_value</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">threshold__mV</span><span class="p">,</span> <span class="s1">&#39;magnitude&#39;</span><span class="p">,</span> <span class="n">threshold__mV</span><span class="p">)</span>
-        <span class="n">delay_value</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">delay__ms</span><span class="p">,</span> <span class="s1">&#39;magnitude&#39;</span><span class="p">,</span> <span class="n">delay__ms</span><span class="p">)</span>
+        <span class="c1"># Rescale Quantities to NEURON&#39;s native units (or pass plain floats through)</span>
+        <span class="n">weight_value</span> <span class="o">=</span> <span class="n">_to_float</span><span class="p">(</span><span class="n">weight__uS</span><span class="p">,</span> <span class="n">pq</span><span class="o">.</span><span class="n">uS</span><span class="p">)</span>
+        <span class="n">threshold_value</span> <span class="o">=</span> <span class="n">_to_float</span><span class="p">(</span><span class="n">threshold__mV</span><span class="p">,</span> <span class="n">pq</span><span class="o">.</span><span class="n">mV</span><span class="p">)</span>
+        <span class="n">delay_value</span> <span class="o">=</span> <span class="n">_to_float</span><span class="p">(</span><span class="n">delay__ms</span><span class="p">,</span> <span class="n">pq</span><span class="o">.</span><span class="n">ms</span><span class="p">)</span>
 
         <span class="c1"># Extract spike recording vectors for source population</span>
         <span class="n">id_vector</span> <span class="o">=</span> <span class="kc">None</span>
@@ -1866,6 +1942,7 @@ window.runMermaid = runMermaid;</script>
             <span class="n">source_pop</span><span class="o">=</span><span class="n">source</span><span class="p">,</span>
             <span class="n">target_pop</span><span class="o">=</span><span class="n">target</span><span class="p">,</span>
             <span class="n">connection_probability</span><span class="o">=</span><span class="n">probability</span><span class="p">,</span>
+            <span class="n">synaptic_delay</span><span class="o">=</span><span class="n">delay_value</span><span class="p">,</span>
             <span class="n">synaptic_weight</span><span class="o">=</span><span class="n">weight_value</span><span class="p">,</span>
             <span class="n">spike_threshold</span><span class="o">=</span><span class="n">threshold_value</span><span class="p">,</span>
             <span class="n">id_vector</span><span class="o">=</span><span class="n">id_vector</span><span class="p">,</span>
@@ -1899,6 +1976,7 @@ window.runMermaid = runMermaid;</script>
         <span class="n">muscle</span><span class="p">,</span>
         <span class="n">activation_callback</span><span class="p">:</span> <span class="n">Callable</span><span class="p">,</span>
         <span class="n">weight__uS</span><span class="p">:</span> <span class="n">Quantity__uS</span> <span class="o">=</span> <span class="n">DEFAULT_SYNAPTIC_WEIGHT</span><span class="p">,</span>
+        <span class="n">delay__ms</span><span class="p">:</span> <span class="n">Quantity__ms</span> <span class="o">=</span> <span class="n">DEFAULT_SYNAPTIC_DELAY</span><span class="p">,</span>
         <span class="n">threshold__mV</span><span class="p">:</span> <span class="n">Quantity__mV</span> <span class="o">=</span> <span class="n">DEFAULT_SPIKE_THRESHOLD</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
@@ -1926,9 +2004,10 @@ window.runMermaid = runMermaid;</script>
         <span class="k">if</span> <span class="n">source</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">populations</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Source population &#39;</span><span class="si">{</span><span class="n">source</span><span class="si">}</span><span class="s2">&#39; not found&quot;</span><span class="p">)</span>
 
-        <span class="c1"># Extract numeric values (handle both Quantity objects and plain floats)</span>
-        <span class="n">weight_value</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">weight__uS</span><span class="p">,</span> <span class="s1">&#39;magnitude&#39;</span><span class="p">,</span> <span class="n">weight__uS</span><span class="p">)</span>
-        <span class="n">threshold_value</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">threshold__mV</span><span class="p">,</span> <span class="s1">&#39;magnitude&#39;</span><span class="p">,</span> <span class="n">threshold__mV</span><span class="p">)</span>
+        <span class="c1"># Rescale Quantities to NEURON&#39;s native units (or pass plain floats through)</span>
+        <span class="n">weight_value</span> <span class="o">=</span> <span class="n">_to_float</span><span class="p">(</span><span class="n">weight__uS</span><span class="p">,</span> <span class="n">pq</span><span class="o">.</span><span class="n">uS</span><span class="p">)</span>
+        <span class="n">delay_value</span> <span class="o">=</span> <span class="n">_to_float</span><span class="p">(</span><span class="n">delay__ms</span><span class="p">,</span> <span class="n">pq</span><span class="o">.</span><span class="n">ms</span><span class="p">)</span>
+        <span class="n">threshold_value</span> <span class="o">=</span> <span class="n">_to_float</span><span class="p">(</span><span class="n">threshold__mV</span><span class="p">,</span> <span class="n">pq</span><span class="o">.</span><span class="n">mV</span><span class="p">)</span>
 
         <span class="c1"># Extract spike recording vectors for source population</span>
         <span class="n">id_vector</span> <span class="o">=</span> <span class="kc">None</span>
@@ -1945,6 +2024,7 @@ window.runMermaid = runMermaid;</script>
             <span class="n">connection_probability</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span>  <span class="c1"># All motor neurons connect</span>
             <span class="n">muscle_callback</span><span class="o">=</span><span class="n">activation_callback</span><span class="p">,</span>
             <span class="n">muscle</span><span class="o">=</span><span class="n">muscle</span><span class="p">,</span>
+            <span class="n">synaptic_delay</span><span class="o">=</span><span class="n">delay_value</span><span class="p">,</span>
             <span class="n">synaptic_weight</span><span class="o">=</span><span class="n">weight_value</span><span class="p">,</span>
             <span class="n">spike_threshold</span><span class="o">=</span><span class="n">threshold_value</span><span class="p">,</span>
             <span class="n">id_vector</span><span class="o">=</span><span class="n">id_vector</span><span class="p">,</span>
@@ -1959,6 +2039,7 @@ window.runMermaid = runMermaid;</script>
                 <span class="s2">&quot;muscle&quot;</span><span class="p">:</span> <span class="n">muscle</span><span class="p">,</span>
                 <span class="s2">&quot;callback&quot;</span><span class="p">:</span> <span class="n">activation_callback</span><span class="p">,</span>
                 <span class="s2">&quot;weight__uS&quot;</span><span class="p">:</span> <span class="n">weight_value</span><span class="p">,</span>
+                <span class="s2">&quot;delay__ms&quot;</span><span class="p">:</span> <span class="n">delay_value</span><span class="p">,</span>
                 <span class="s2">&quot;threshold__mV&quot;</span><span class="p">:</span> <span class="n">threshold_value</span><span class="p">,</span>
             <span class="p">}</span>
         <span class="p">)</span>
@@ -2001,10 +2082,10 @@ window.runMermaid = runMermaid;</script>
         <span class="k">if</span> <span class="n">target</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">populations</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Target population &#39;</span><span class="si">{</span><span class="n">target</span><span class="si">}</span><span class="s2">&#39; not found&quot;</span><span class="p">)</span>
 
-        <span class="c1"># Extract numeric values (handle both Quantity objects and plain floats)</span>
-        <span class="n">weight_value</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">weight__uS</span><span class="p">,</span> <span class="s1">&#39;magnitude&#39;</span><span class="p">,</span> <span class="n">weight__uS</span><span class="p">)</span>
-        <span class="n">delay_value</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">delay__ms</span><span class="p">,</span> <span class="s1">&#39;magnitude&#39;</span><span class="p">,</span> <span class="n">delay__ms</span><span class="p">)</span>
-        <span class="n">threshold_value</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">threshold__mV</span><span class="p">,</span> <span class="s1">&#39;magnitude&#39;</span><span class="p">,</span> <span class="n">threshold__mV</span><span class="p">)</span>
+        <span class="c1"># Rescale Quantities to NEURON&#39;s native units (or pass plain floats through)</span>
+        <span class="n">weight_value</span> <span class="o">=</span> <span class="n">_to_float</span><span class="p">(</span><span class="n">weight__uS</span><span class="p">,</span> <span class="n">pq</span><span class="o">.</span><span class="n">uS</span><span class="p">)</span>
+        <span class="n">delay_value</span> <span class="o">=</span> <span class="n">_to_float</span><span class="p">(</span><span class="n">delay__ms</span><span class="p">,</span> <span class="n">pq</span><span class="o">.</span><span class="n">ms</span><span class="p">)</span>
+        <span class="n">threshold_value</span> <span class="o">=</span> <span class="n">_to_float</span><span class="p">(</span><span class="n">threshold__mV</span><span class="p">,</span> <span class="n">pq</span><span class="o">.</span><span class="n">mV</span><span class="p">)</span>
 
         <span class="c1"># Create external NetCons manually to maintain individual access</span>
         <span class="kn">from</span><span class="w"> </span><span class="nn">neuron</span><span class="w"> </span><span class="kn">import</span> <span class="n">h</span>
@@ -2101,10 +2182,10 @@ window.runMermaid = runMermaid;</script>
         <span class="k">if</span> <span class="ow">not</span> <span class="mf">0.0</span> <span class="o">&lt;=</span> <span class="n">probability</span> <span class="o">&lt;=</span> <span class="mf">1.0</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Probability must be 0.0-1.0, got </span><span class="si">{</span><span class="n">probability</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
-        <span class="c1"># Extract numeric values (handle both Quantity objects and plain floats)</span>
-        <span class="n">weight_value</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">weight__uS</span><span class="p">,</span> <span class="s1">&#39;magnitude&#39;</span><span class="p">,</span> <span class="n">weight__uS</span><span class="p">)</span>
-        <span class="n">delay_value</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">delay__ms</span><span class="p">,</span> <span class="s1">&#39;magnitude&#39;</span><span class="p">,</span> <span class="n">delay__ms</span><span class="p">)</span>
-        <span class="n">threshold_value</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">threshold__mV</span><span class="p">,</span> <span class="s1">&#39;magnitude&#39;</span><span class="p">,</span> <span class="n">threshold__mV</span><span class="p">)</span>
+        <span class="c1"># Rescale Quantities to NEURON&#39;s native units (or pass plain floats through)</span>
+        <span class="n">weight_value</span> <span class="o">=</span> <span class="n">_to_float</span><span class="p">(</span><span class="n">weight__uS</span><span class="p">,</span> <span class="n">pq</span><span class="o">.</span><span class="n">uS</span><span class="p">)</span>
+        <span class="n">delay_value</span> <span class="o">=</span> <span class="n">_to_float</span><span class="p">(</span><span class="n">delay__ms</span><span class="p">,</span> <span class="n">pq</span><span class="o">.</span><span class="n">ms</span><span class="p">)</span>
+        <span class="n">threshold_value</span> <span class="o">=</span> <span class="n">_to_float</span><span class="p">(</span><span class="n">threshold__mV</span><span class="p">,</span> <span class="n">pq</span><span class="o">.</span><span class="n">mV</span><span class="p">)</span>
 
         <span class="c1"># Extract spike recording vectors for source population</span>
         <span class="n">id_vector</span> <span class="o">=</span> <span class="kc">None</span>
@@ -2119,6 +2200,7 @@ window.runMermaid = runMermaid;</script>
             <span class="n">target_pop</span><span class="o">=</span><span class="n">target</span><span class="p">,</span>
             <span class="n">populations</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">populations</span><span class="p">,</span>
             <span class="n">connection_probability</span><span class="o">=</span><span class="n">probability</span><span class="p">,</span>
+            <span class="n">synaptic_delay</span><span class="o">=</span><span class="n">delay_value</span><span class="p">,</span>
             <span class="n">synaptic_weight</span><span class="o">=</span><span class="n">weight_value</span><span class="p">,</span>
             <span class="n">spike_threshold</span><span class="o">=</span><span class="n">threshold_value</span><span class="p">,</span>
             <span class="n">id_vector</span><span class="o">=</span><span class="n">id_vector</span><span class="p">,</span>
@@ -2356,8 +2438,8 @@ window.runMermaid = runMermaid;</script>
   </div>
   
   <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script defer src="../../../../_static/scripts/bootstrap.js?digest=7f76b32a3354e82990f2"></script>
-<script defer src="../../../../_static/scripts/pydata-sphinx-theme.js?digest=7f76b32a3354e82990f2"></script>
+  <script defer src="../../../../_static/scripts/bootstrap.js?digest=0790524f97105ba85085"></script>
+<script defer src="../../../../_static/scripts/pydata-sphinx-theme.js?digest=0790524f97105ba85085"></script>
 
   <footer class="bd-footer">
 <div class="bd-footer__inner bd-page-width">

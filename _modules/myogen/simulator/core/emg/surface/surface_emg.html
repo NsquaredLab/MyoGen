@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>myogen.simulator.core.emg.surface.surface_emg &#8212; MyoGen 0.9.0 Documentation</title>
+    <title>myogen.simulator.core.emg.surface.surface_emg &#8212; MyoGen 0.10.0 Documentation</title>
   
   
   
@@ -26,8 +26,8 @@
   </noscript>
   
   <!-- Loaded before other Sphinx assets -->
-  <link href="../../../../../../_static/styles/theme.css?digest=7f76b32a3354e82990f2" rel="stylesheet" />
-<link href="../../../../../../_static/styles/pydata-sphinx-theme.css?digest=7f76b32a3354e82990f2" rel="stylesheet" />
+  <link href="../../../../../../_static/styles/theme.css?digest=0790524f97105ba85085" rel="stylesheet" />
+<link href="../../../../../../_static/styles/pydata-sphinx-theme.css?digest=0790524f97105ba85085" rel="stylesheet" />
 
     <link rel="stylesheet" type="text/css" href="../../../../../../_static/pygments.css?v=5349f25f" />
     <link rel="stylesheet" type="text/css" href="../../../../../../_static/css/tooltipster.custom.css" />
@@ -39,7 +39,7 @@
     <link rel="stylesheet" type="text/css" href="../../../../../../_static/css/tooltipster-sideTip-borderless.min.css" />
     <link rel="stylesheet" type="text/css" href="../../../../../../_static/css/micromodal.css" />
     <link rel="stylesheet" type="text/css" href="../../../../../../_static/custom.css?v=9b95bd4c" />
-    <link rel="stylesheet" type="text/css" href="../../../../../../_static/sg_gallery.css?v=d2d258e8" />
+    <link rel="stylesheet" type="text/css" href="../../../../../../_static/sg_gallery.css?v=fd6457a4" />
     <link rel="stylesheet" type="text/css" href="../../../../../../_static/sg_gallery-binder.css?v=f4aeca0c" />
     <link rel="stylesheet" type="text/css" href="../../../../../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
     <link rel="stylesheet" type="text/css" href="../../../../../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
@@ -47,16 +47,17 @@
     <link rel="stylesheet" type="text/css" href="../../../../../../_static/custom.css?v=9b95bd4c" />
   
   <!-- So that users can add custom icons -->
-  <script defer src="../../../../../../_static/scripts/fontawesome.js?digest=7f76b32a3354e82990f2"></script>
+  <script defer src="../../../../../../_static/scripts/fontawesome.js?digest=0790524f97105ba85085"></script>
   <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="../../../../../../_static/scripts/bootstrap.js?digest=7f76b32a3354e82990f2" />
-<link rel="preload" as="script" href="../../../../../../_static/scripts/pydata-sphinx-theme.js?digest=7f76b32a3354e82990f2" />
+  <link rel="preload" as="script" href="../../../../../../_static/scripts/bootstrap.js?digest=0790524f97105ba85085" />
+<link rel="preload" as="script" href="../../../../../../_static/scripts/pydata-sphinx-theme.js?digest=0790524f97105ba85085" />
 
     <script src="../../../../../../_static/jquery.js?v=5d32c60e"></script>
     <script src="../../../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-    <script src="../../../../../../_static/documentation_options.js?v=a82ae3da"></script>
+    <script src="../../../../../../_static/documentation_options.js?v=7e54ce6f"></script>
     <script src="../../../../../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../../../../_static/sg-tags.js?v=d80f6fa4"></script>
     <script src="../../../../../../_static/js/hoverxref.js"></script>
     <script src="../../../../../../_static/js/tooltipster.bundle.min.js"></script>
     <script src="../../../../../../_static/js/micromodal.min.js"></script>
@@ -506,7 +507,7 @@ window.runMermaid = runMermaid;</script>
     <link rel="search" title="Search" href="../../../../../../search.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="0.9.0" />
+  <meta name="docsearch:version" content="0.10.0" />
   
     
     <script src="../../../../../../_static/searchtools.js"></script>
@@ -524,7 +525,9 @@ window.runMermaid = runMermaid;</script>
   
   <button type="button" class="btn rounded-pill" id="pst-back-to-top">
     <i class="fa-solid fa-arrow-up"></i>Back to top</button>
-
+  
+  
+  
   
   <dialog id="pst-search-dialog">
     
@@ -579,8 +582,8 @@ window.runMermaid = runMermaid;</script>
       
     
     
-    <img src="../../../../../../_static/myogen_logo.png" class="logo__image only-light" alt="MyoGen 0.9.0 Documentation - Home"/>
-    <img src="../../../../../../_static/myogen_logo.png" class="logo__image only-dark pst-js-only" alt="MyoGen 0.9.0 Documentation - Home"/>
+    <img src="../../../../../../_static/myogen_logo.png" class="logo__image only-light" alt="MyoGen 0.10.0 Documentation - Home"/>
+    <img src="../../../../../../_static/myogen_logo.png" class="logo__image only-dark pst-js-only" alt="MyoGen 0.10.0 Documentation - Home"/>
   
   
 </a></div>
@@ -589,7 +592,7 @@ window.runMermaid = runMermaid;</script>
 <div class="nav-item">
   <div class="version-switcher__container dropdown">
       <button id="version-switcher-button" type="button" class="version-switcher__button btn btn-sm navbar-btn" aria-haspopup="true" aria-expanded="false">
-          Version 0.9.0
+          Version 0.10.0
       </button>
       
       
@@ -652,11 +655,18 @@ window.runMermaid = runMermaid;</script>
       
         <div class="navbar-item">
 
-<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
-  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
-  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
-  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
-</button></div>
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
       
         <div class="navbar-item"><ul class="navbar-icon-links"
     aria-label="Icon Links">
@@ -669,8 +679,7 @@ window.runMermaid = runMermaid;</script>
           
           
           
-          <a href="https://github.com/NSquaredLab/MyoGen" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i>
-            <span class="sr-only">GitHub</span></a>
+          <a href="https://github.com/NSquaredLab/MyoGen" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
         </li>
 </ul></div>
       
@@ -748,11 +757,18 @@ window.runMermaid = runMermaid;</script>
         
           <div class="navbar-item">
 
-<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
-  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
-  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
-  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
-</button></div>
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
         
           <div class="navbar-item"><ul class="navbar-icon-links"
     aria-label="Icon Links">
@@ -765,8 +781,7 @@ window.runMermaid = runMermaid;</script>
           
           
           
-          <a href="https://github.com/NSquaredLab/MyoGen" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i>
-            <span class="sr-only">GitHub</span></a>
+          <a href="https://github.com/NSquaredLab/MyoGen" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
         </li>
 </ul></div>
         
@@ -835,6 +850,7 @@ window.runMermaid = runMermaid;</script>
   <h1>Source code for myogen.simulator.core.emg.surface.surface_emg</h1><div class="highlight"><pre>
 <span></span><span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Optional</span>
 
+<span class="kn">from</span><span class="w"> </span><span class="nn">myogen.utils.binning</span><span class="w"> </span><span class="kn">import</span> <span class="n">bin_spike_trains</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">myogen.utils.neo</span><span class="w"> </span><span class="kn">import</span> <span class="n">create_grid_signal</span><span class="p">,</span> <span class="n">signal_to_grid</span>
 
 <span class="k">try</span><span class="p">:</span>
@@ -843,15 +859,6 @@ window.runMermaid = runMermaid;</script>
     <span class="n">HAS_CUPY</span> <span class="o">=</span> <span class="kc">True</span>
 <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
     <span class="n">HAS_CUPY</span> <span class="o">=</span> <span class="kc">False</span>
-
-<span class="k">try</span><span class="p">:</span>
-    <span class="kn">import</span><span class="w"> </span><span class="nn">elephant</span>
-    <span class="kn">import</span><span class="w"> </span><span class="nn">elephant.utils</span>
-
-    <span class="n">HAS_ELEPHANT</span> <span class="o">=</span> <span class="kc">True</span>
-<span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
-    <span class="n">HAS_ELEPHANT</span> <span class="o">=</span> <span class="kc">False</span>
-    <span class="n">elephant</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># type: ignore</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">copy</span><span class="w"> </span><span class="kn">import</span> <span class="n">deepcopy</span>
@@ -1051,7 +1058,12 @@ window.runMermaid = runMermaid;</script>
 
 <div class="viewcode-block" id="SurfaceEMG.simulate_muaps">
 <a class="viewcode-back" href="../../../../../../generated/myogen.simulator.SurfaceEMG.simulate_muaps.html#myogen.simulator.SurfaceEMG.simulate_muaps">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">simulate_muaps</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_jobs</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="o">-</span><span class="mi">2</span><span class="p">,</span> <span class="n">verbose</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">SURFACE_MUAP__Block</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">simulate_muaps</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">n_jobs</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="o">-</span><span class="mi">2</span><span class="p">,</span>
+        <span class="n">verbose</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="n">use_gpu</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">SURFACE_MUAP__Block</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Simulate MUAPs for all electrode arrays using the provided muscle model.</span>
 
@@ -1071,6 +1083,18 @@ window.runMermaid = runMermaid;</script>
 <span class="sd">            - n_jobs=N: Use exactly N cores</span>
 <span class="sd">        verbose : bool, default=True</span>
 <span class="sd">            If True, display progress bars. Set to False to disable.</span>
+<span class="sd">        use_gpu : bool or None, default=None</span>
+<span class="sd">            GPU acceleration control for the per-fiber volume-conductor solve</span>
+<span class="sd">            (mirrors :meth:`myogen.simulator.MotorUnitSim.calc_sfaps`):</span>
+
+<span class="sd">            - ``None``  → auto: use GPU if CuPy is available and</span>
+<span class="sd">              ``MYOGEN_DISABLE_GPU`` is not set in the environment; CPU otherwise.</span>
+<span class="sd">            - ``True``  → require GPU; raises ``RuntimeError`` if unavailable.</span>
+<span class="sd">            - ``False`` → force CPU execution.</span>
+
+<span class="sd">            Note: CuPy only supports NVIDIA GPUs (CUDA). AMD/ROCm is not</span>
+<span class="sd">            supported. For typical surface-EMG problem sizes, CPU is often</span>
+<span class="sd">            faster than GPU due to host↔device transfer overhead.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
@@ -1116,6 +1140,22 @@ window.runMermaid = runMermaid;</script>
             <span class="n">high</span><span class="o">=</span><span class="n">innervation_zone_variance</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span>
             <span class="n">size</span><span class="o">=</span><span class="n">n_motor_units</span><span class="p">,</span>
         <span class="p">)</span>
+
+        <span class="c1"># Pre-calculate per-MU fiber-length variations in the PARENT process.</span>
+        <span class="c1"># Drawing inside `_process_single_mu` (a joblib worker) is unsafe under</span>
+        <span class="c1"># the default loky backend: each worker inherits a copy of the parent&#39;s</span>
+        <span class="c1"># RNG state via fork/pickle and then advances independently, so two MUs</span>
+        <span class="c1"># processed in two different workers would draw from identical state.</span>
+        <span class="c1"># Mirroring the `innervation_zones` pre-compute pattern guarantees each</span>
+        <span class="c1"># MU gets a distinct, reproducible draw regardless of worker layout.</span>
+        <span class="n">fiber_length_variations_per_MU</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">get_random_generator</span><span class="p">()</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span>
+                <span class="n">low</span><span class="o">=-</span><span class="bp">self</span><span class="o">.</span><span class="n">_var_fiber_length__mm</span><span class="p">,</span>
+                <span class="n">high</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_var_fiber_length__mm</span><span class="p">,</span>
+                <span class="n">size</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="n">number_of_fibers_per_MUs</span><span class="p">[</span><span class="n">mu_idx</span><span class="p">]),</span>
+            <span class="p">)</span>
+            <span class="k">for</span> <span class="n">mu_idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_motor_units</span><span class="p">)</span>
+        <span class="p">]</span>
 
         <span class="c1"># Pre-allocate result shape at INTERNAL resolution (optimization: avoid repeated shape calculations)</span>
         <span class="c1"># Will be downsampled to output resolution after simulation</span>
@@ -1181,12 +1221,10 @@ window.runMermaid = runMermaid;</script>
 
                 <span class="n">innervation_zone</span> <span class="o">=</span> <span class="n">innervation_zones</span><span class="p">[</span><span class="n">MU_index</span><span class="p">]</span>
 
-                <span class="c1"># Batch generate random fiber lengths (optimization: single RNG call)</span>
-                <span class="n">fiber_length_variations</span> <span class="o">=</span> <span class="n">get_random_generator</span><span class="p">()</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span>
-                    <span class="n">low</span><span class="o">=-</span><span class="bp">self</span><span class="o">.</span><span class="n">_var_fiber_length__mm</span><span class="p">,</span>
-                    <span class="n">high</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_var_fiber_length__mm</span><span class="p">,</span>
-                    <span class="n">size</span><span class="o">=</span><span class="n">number_of_fibers</span><span class="p">,</span>
-                <span class="p">)</span>
+                <span class="c1"># Use the parent-precomputed fiber-length variations to keep</span>
+                <span class="c1"># per-MU RNG state independent of the joblib worker layout</span>
+                <span class="c1"># (see comment at the `fiber_length_variations_per_MU` site).</span>
+                <span class="n">fiber_length_variations</span> <span class="o">=</span> <span class="n">fiber_length_variations_per_MU</span><span class="p">[</span><span class="n">MU_index</span><span class="p">]</span>
 
                 <span class="c1"># Pre-compute geometric values for all fibers (optimization: vectorized)</span>
                 <span class="n">R_values</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">position_of_fibers</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="n">position_of_fibers</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span>
@@ -1273,7 +1311,10 @@ window.runMermaid = runMermaid;</script>
                             <span class="n">fiber_length__mm</span><span class="o">=</span><span class="n">kernel_length</span><span class="p">,</span>
                             <span class="n">A_matrix</span><span class="o">=</span><span class="kc">None</span> <span class="k">if</span> <span class="n">fiber_number</span> <span class="o">==</span> <span class="mi">0</span> <span class="k">else</span> <span class="n">A_matrix</span><span class="p">,</span>
                             <span class="n">B_incomplete</span><span class="o">=</span><span class="kc">None</span> <span class="k">if</span> <span class="n">fiber_number</span> <span class="o">==</span> <span class="mi">0</span> <span class="k">else</span> <span class="n">B_incomplete</span><span class="p">,</span>
-                            <span class="n">use_gpu</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                            <span class="c1"># `simulate_fiber_hybrid` takes a plain bool; map</span>
+                            <span class="c1"># the tri-state surface flag (None → CPU here, since</span>
+                            <span class="c1"># hybrid is experimental) before forwarding.</span>
+                            <span class="n">use_gpu</span><span class="o">=</span><span class="nb">bool</span><span class="p">(</span><span class="n">use_gpu</span><span class="p">)</span> <span class="k">if</span> <span class="n">use_gpu</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="kc">False</span><span class="p">,</span>
                             <span class="n">theta_offset</span><span class="o">=-</span><span class="n">theta</span><span class="p">,</span>
                             <span class="n">pos_z_precomputed</span><span class="o">=</span><span class="n">base_pos_z</span><span class="p">,</span>
                             <span class="n">pos_theta_precomputed</span><span class="o">=</span><span class="n">base_pos_theta</span><span class="p">,</span>
@@ -1303,7 +1344,10 @@ window.runMermaid = runMermaid;</script>
                             <span class="n">fiber_length__mm</span><span class="o">=</span><span class="n">kernel_length</span><span class="p">,</span>
                             <span class="n">A_matrix</span><span class="o">=</span><span class="kc">None</span> <span class="k">if</span> <span class="n">fiber_number</span> <span class="o">==</span> <span class="mi">0</span> <span class="k">else</span> <span class="n">A_matrix</span><span class="p">,</span>
                             <span class="n">B_incomplete</span><span class="o">=</span><span class="kc">None</span> <span class="k">if</span> <span class="n">fiber_number</span> <span class="o">==</span> <span class="mi">0</span> <span class="k">else</span> <span class="n">B_incomplete</span><span class="p">,</span>
-                            <span class="n">use_gpu</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                            <span class="c1"># Tri-state forwarded directly: None → auto, True →</span>
+                            <span class="c1"># require GPU, False → force CPU (resolved inside</span>
+                            <span class="c1"># `_simulate_fiber_v2_python`).</span>
+                            <span class="n">use_gpu</span><span class="o">=</span><span class="n">use_gpu</span><span class="p">,</span>
                             <span class="n">theta_offset</span><span class="o">=-</span><span class="n">theta</span><span class="p">,</span>
                             <span class="n">pos_z_precomputed</span><span class="o">=</span><span class="n">base_pos_z</span><span class="p">,</span>
                             <span class="n">pos_theta_precomputed</span><span class="o">=</span><span class="n">base_pos_theta</span><span class="p">,</span>
@@ -1460,12 +1504,6 @@ window.runMermaid = runMermaid;</script>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_muaps__Block</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;MUAP templates have not been generated. Call simulate_muaps() first.&quot;</span><span class="p">)</span>
 
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">HAS_ELEPHANT</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ImportError</span><span class="p">(</span>
-                <span class="s2">&quot;Elephant is required for surface EMG simulation. &quot;</span>
-                <span class="s2">&quot;Install with: pip install myogen[elephant]&quot;</span>
-            <span class="p">)</span>
-
         <span class="c1"># Store spike train data privately</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_spike_train__Block</span> <span class="o">=</span> <span class="n">spike_train__Block</span>
 
@@ -1481,24 +1519,13 @@ window.runMermaid = runMermaid;</script>
         <span class="n">first_spiketrain</span> <span class="o">=</span> <span class="n">spike_train__Block</span><span class="o">.</span><span class="n">segments</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">spiketrains</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
         <span class="n">spiketrain_timestep__ms</span> <span class="o">=</span> <span class="n">first_spiketrain</span><span class="o">.</span><span class="n">sampling_period</span><span class="o">.</span><span class="n">rescale</span><span class="p">(</span><span class="s2">&quot;ms&quot;</span><span class="p">)</span>
 
-        <span class="c1"># Convert spike trains to binary arrays using Elephant, suppressing rounding error logging</span>
-        <span class="n">elephant_utils_logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="n">elephant</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="vm">__file__</span><span class="p">)</span>
-        <span class="n">original_level</span> <span class="o">=</span> <span class="n">elephant_utils_logger</span><span class="o">.</span><span class="n">level</span>
-        <span class="n">elephant_utils_logger</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">ERROR</span><span class="p">)</span>
-
-        <span class="k">try</span><span class="p">:</span>
-            <span class="n">spike_trains</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
-                <span class="p">[</span>
-                    <span class="n">elephant</span><span class="o">.</span><span class="n">conversion</span><span class="o">.</span><span class="n">BinnedSpikeTrain</span><span class="p">(</span>
-                        <span class="n">segment</span><span class="o">.</span><span class="n">spiketrains</span><span class="p">,</span> <span class="n">bin_size</span><span class="o">=</span><span class="n">spiketrain_timestep__ms</span>
-                    <span class="p">)</span>
-                    <span class="o">.</span><span class="n">to_array</span><span class="p">()</span>
-                    <span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">bool</span><span class="p">)</span>
-                    <span class="k">for</span> <span class="n">segment</span> <span class="ow">in</span> <span class="n">spike_train__Block</span><span class="o">.</span><span class="n">segments</span>
-                <span class="p">]</span>
-            <span class="p">)</span>
-        <span class="k">finally</span><span class="p">:</span>
-            <span class="n">elephant_utils_logger</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">original_level</span><span class="p">)</span>
+        <span class="c1"># Bin each pool&#39;s spike trains into a boolean occupancy array.</span>
+        <span class="n">spike_trains</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
+            <span class="p">[</span>
+                <span class="n">bin_spike_trains</span><span class="p">(</span><span class="n">segment</span><span class="o">.</span><span class="n">spiketrains</span><span class="p">,</span> <span class="n">bin_size</span><span class="o">=</span><span class="n">spiketrain_timestep__ms</span><span class="p">)</span>
+                <span class="k">for</span> <span class="n">segment</span> <span class="ow">in</span> <span class="n">spike_train__Block</span><span class="o">.</span><span class="n">segments</span>
+            <span class="p">]</span>
+        <span class="p">)</span>
 
         <span class="c1"># Handle MUs to simulate</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_MUs_to_simulate</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -1585,7 +1612,7 @@ window.runMermaid = runMermaid;</script>
                             <span class="c1"># Process all active MUs on GPU</span>
                             <span class="n">convolutions</span> <span class="o">=</span> <span class="n">cp</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
                                 <span class="p">[</span>
-                                    <span class="n">cp</span><span class="o">.</span><span class="n">correlate</span><span class="p">(</span>
+                                    <span class="n">cp</span><span class="o">.</span><span class="n">convolve</span><span class="p">(</span>
                                         <span class="n">spike_gpu</span><span class="p">[</span><span class="n">pool_idx</span><span class="p">,</span> <span class="n">mu_idx</span><span class="p">],</span>
                                         <span class="n">muap_gpu</span><span class="p">[</span><span class="n">mu_idx</span><span class="p">,</span> <span class="n">row_idx</span><span class="p">,</span> <span class="n">col_idx</span><span class="p">],</span>
                                         <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;same&quot;</span><span class="p">,</span>
@@ -1616,7 +1643,7 @@ window.runMermaid = runMermaid;</script>
                             <span class="c1"># Process all active MUs</span>
                             <span class="n">convolutions</span> <span class="o">=</span> <span class="p">[]</span>
                             <span class="k">for</span> <span class="n">mu_idx</span> <span class="ow">in</span> <span class="n">MUs_to_simulate</span><span class="o">.</span><span class="n">intersection</span><span class="p">(</span><span class="n">pool_active_neurons</span><span class="p">):</span>
-                                <span class="n">conv</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">correlate</span><span class="p">(</span>
+                                <span class="n">conv</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">convolve</span><span class="p">(</span>
                                     <span class="n">spike_trains</span><span class="p">[</span><span class="n">pool_idx</span><span class="p">,</span> <span class="n">mu_idx</span><span class="p">],</span>
                                     <span class="n">muap_shapes</span><span class="p">[</span><span class="n">mu_idx</span><span class="p">,</span> <span class="n">row_idx</span><span class="p">,</span> <span class="n">col_idx</span><span class="p">],</span>
                                     <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;same&quot;</span><span class="p">,</span>
@@ -1641,22 +1668,24 @@ window.runMermaid = runMermaid;</script>
                     <span class="p">),</span>
                 <span class="p">)</span>
             <span class="p">)</span>
+            <span class="c1"># Native (spike-train-rate) and target (output-rate) time axes,</span>
+            <span class="c1"># built from integer sample counts so each grid matches its data</span>
+            <span class="c1"># length exactly while preserving the original sampling periods</span>
+            <span class="c1"># (dt for the native axis, 1 / fs for the target axis). np.arange</span>
+            <span class="c1"># with a float step can land one element off when N * timestep is</span>
+            <span class="c1"># not exactly representable in IEEE 754, which makes np.interp</span>
+            <span class="c1"># raise on an xp/fp length mismatch (issue #12).</span>
+            <span class="n">resample_timestep__s</span> <span class="o">=</span> <span class="n">spiketrain_timestep__ms</span><span class="o">.</span><span class="n">rescale</span><span class="p">(</span><span class="n">pq</span><span class="o">.</span><span class="n">s</span><span class="p">)</span><span class="o">.</span><span class="n">magnitude</span>
+            <span class="n">n_native</span> <span class="o">=</span> <span class="n">surface_emg</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+            <span class="n">n_resampled</span> <span class="o">=</span> <span class="n">surface_emg_resampled</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+            <span class="n">xp_time</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">n_native</span><span class="p">)</span> <span class="o">*</span> <span class="n">resample_timestep__s</span>
+            <span class="n">x_time</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">n_resampled</span><span class="p">)</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sampling_frequency__Hz</span>
             <span class="k">for</span> <span class="n">pool_idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_pools</span><span class="p">):</span>
                 <span class="k">for</span> <span class="n">row_idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_rows</span><span class="p">):</span>
                     <span class="k">for</span> <span class="n">col_idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_cols</span><span class="p">):</span>
                         <span class="n">surface_emg_resampled</span><span class="p">[</span><span class="n">pool_idx</span><span class="p">,</span> <span class="n">row_idx</span><span class="p">,</span> <span class="n">col_idx</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">interp</span><span class="p">(</span>
-                            <span class="n">x</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span>
-                                <span class="n">start</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
-                                <span class="n">stop</span><span class="o">=</span><span class="n">surface_emg</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
-                                <span class="o">*</span> <span class="n">spiketrain_timestep__ms</span><span class="o">.</span><span class="n">rescale</span><span class="p">(</span><span class="n">pq</span><span class="o">.</span><span class="n">s</span><span class="p">)</span><span class="o">.</span><span class="n">magnitude</span><span class="p">,</span>
-                                <span class="n">step</span><span class="o">=</span><span class="mi">1</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sampling_frequency__Hz</span><span class="p">,</span>
-                            <span class="p">),</span>
-                            <span class="n">xp</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span>
-                                <span class="n">start</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
-                                <span class="n">stop</span><span class="o">=</span><span class="n">surface_emg</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
-                                <span class="o">*</span> <span class="n">spiketrain_timestep__ms</span><span class="o">.</span><span class="n">rescale</span><span class="p">(</span><span class="n">pq</span><span class="o">.</span><span class="n">s</span><span class="p">)</span><span class="o">.</span><span class="n">magnitude</span><span class="p">,</span>
-                                <span class="n">step</span><span class="o">=</span><span class="n">spiketrain_timestep__ms</span><span class="o">.</span><span class="n">rescale</span><span class="p">(</span><span class="n">pq</span><span class="o">.</span><span class="n">s</span><span class="p">)</span><span class="o">.</span><span class="n">magnitude</span><span class="p">,</span>
-                            <span class="p">),</span>
+                            <span class="n">x</span><span class="o">=</span><span class="n">x_time</span><span class="p">,</span>
+                            <span class="n">xp</span><span class="o">=</span><span class="n">xp_time</span><span class="p">,</span>
                             <span class="n">fp</span><span class="o">=</span><span class="n">surface_emg</span><span class="p">[</span><span class="n">pool_idx</span><span class="p">,</span> <span class="n">row_idx</span><span class="p">,</span> <span class="n">col_idx</span><span class="p">],</span>
                         <span class="p">)</span>
 
@@ -1875,8 +1904,8 @@ window.runMermaid = runMermaid;</script>
   </div>
   
   <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script defer src="../../../../../../_static/scripts/bootstrap.js?digest=7f76b32a3354e82990f2"></script>
-<script defer src="../../../../../../_static/scripts/pydata-sphinx-theme.js?digest=7f76b32a3354e82990f2"></script>
+  <script defer src="../../../../../../_static/scripts/bootstrap.js?digest=0790524f97105ba85085"></script>
+<script defer src="../../../../../../_static/scripts/pydata-sphinx-theme.js?digest=0790524f97105ba85085"></script>
 
   <footer class="bd-footer">
 <div class="bd-footer__inner bd-page-width">

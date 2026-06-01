@@ -70,11 +70,12 @@ if not nwb_filepath.exists():
     print("Creating a minimal demonstration NWB file...")
 
     # Create a minimal NWB file for demonstration
-    from datetime import datetime
+    from datetime import datetime, timezone
 
     import quantities as pq
     from neo import AnalogSignal, Block, Segment, SpikeTrain
 
+    from myogen import get_random_generator
     from myogen.utils.nwb import export_to_nwb
 
     # Create sample data
@@ -84,7 +85,7 @@ if not nwb_filepath.exists():
 
     # Add sample spike trains
     for i in range(5):
-        spike_times = np.sort(np.random.uniform(0, 1000, size=50)) * pq.ms
+        spike_times = np.sort(get_random_generator().uniform(0, 1000, size=50)) * pq.ms
         st = SpikeTrain(spike_times, t_stop=1000 * pq.ms, units="ms")
         st.annotate(neuron_id=i, population="aMN")
         segment.spiketrains.append(st)
@@ -106,6 +107,9 @@ if not nwb_filepath.exists():
         nwb_filepath,
         session_description="Demonstration NWB file for MyoGen tutorial",
         institution="MyoGen Tutorial",
+        # Pass an explicit session_start_time so the demo is fully reproducible
+        # and avoids the new "no session_start_time" UserWarning.
+        session_start_time=datetime(1970, 1, 1, tzinfo=timezone.utc),
     )
     print(f"(OK) Created demonstration NWB file: {nwb_filepath}")
 else:

@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>myogen.simulator.neuron.proprioception.SpindleModel.create_default_spindle_parameters &#8212; MyoGen 0.9.0 Documentation</title>
+    <title>myogen.simulator.neuron.proprioception.SpindleModel.create_default_spindle_parameters &#8212; MyoGen 0.10.0 Documentation</title>
   
   
   
@@ -27,8 +27,8 @@
   </noscript>
   
   <!-- Loaded before other Sphinx assets -->
-  <link href="../_static/styles/theme.css?digest=7f76b32a3354e82990f2" rel="stylesheet" />
-<link href="../_static/styles/pydata-sphinx-theme.css?digest=7f76b32a3354e82990f2" rel="stylesheet" />
+  <link href="../_static/styles/theme.css?digest=0790524f97105ba85085" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=0790524f97105ba85085" rel="stylesheet" />
 
     <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=5349f25f" />
     <link rel="stylesheet" type="text/css" href="../_static/css/tooltipster.custom.css" />
@@ -40,7 +40,7 @@
     <link rel="stylesheet" type="text/css" href="../_static/css/tooltipster-sideTip-borderless.min.css" />
     <link rel="stylesheet" type="text/css" href="../_static/css/micromodal.css" />
     <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=9b95bd4c" />
-    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery.css?v=d2d258e8" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery.css?v=fd6457a4" />
     <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-binder.css?v=f4aeca0c" />
     <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-dataframe.css?v=2082cf3c" />
     <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
@@ -48,16 +48,17 @@
     <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=9b95bd4c" />
   
   <!-- So that users can add custom icons -->
-  <script defer src="../_static/scripts/fontawesome.js?digest=7f76b32a3354e82990f2"></script>
+  <script defer src="../_static/scripts/fontawesome.js?digest=0790524f97105ba85085"></script>
   <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=7f76b32a3354e82990f2" />
-<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=7f76b32a3354e82990f2" />
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=0790524f97105ba85085" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=0790524f97105ba85085" />
 
     <script src="../_static/jquery.js?v=5d32c60e"></script>
     <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-    <script src="../_static/documentation_options.js?v=a82ae3da"></script>
+    <script src="../_static/documentation_options.js?v=7e54ce6f"></script>
     <script src="../_static/doctools.js?v=9bcbadda"></script>
     <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/sg-tags.js?v=d80f6fa4"></script>
     <script src="../_static/js/hoverxref.js"></script>
     <script src="../_static/js/tooltipster.bundle.min.js"></script>
     <script src="../_static/js/micromodal.min.js"></script>
@@ -73,7 +74,7 @@
     <link rel="prev" title="myogen.simulator.neuron.proprioception.SpindleModel.__init__" href="myogen.simulator.neuron.proprioception.SpindleModel.__init__.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="0.9.0" />
+  <meta name="docsearch:version" content="0.10.0" />
   
     
     <script src="../_static/searchtools.js"></script>
@@ -91,7 +92,9 @@
   
   <button type="button" class="btn rounded-pill" id="pst-back-to-top">
     <i class="fa-solid fa-arrow-up"></i>Back to top</button>
-
+  
+  
+  
   
   <dialog id="pst-search-dialog">
     
@@ -146,8 +149,8 @@
       
     
     
-    <img src="../_static/myogen_logo.png" class="logo__image only-light" alt="MyoGen 0.9.0 Documentation - Home"/>
-    <img src="../_static/myogen_logo.png" class="logo__image only-dark pst-js-only" alt="MyoGen 0.9.0 Documentation - Home"/>
+    <img src="../_static/myogen_logo.png" class="logo__image only-light" alt="MyoGen 0.10.0 Documentation - Home"/>
+    <img src="../_static/myogen_logo.png" class="logo__image only-dark pst-js-only" alt="MyoGen 0.10.0 Documentation - Home"/>
   
   
 </a></div>
@@ -156,7 +159,7 @@
 <div class="nav-item">
   <div class="version-switcher__container dropdown">
       <button id="version-switcher-button" type="button" class="version-switcher__button btn btn-sm navbar-btn" aria-haspopup="true" aria-expanded="false">
-          Version 0.9.0
+          Version 0.10.0
       </button>
       
       
@@ -219,11 +222,18 @@
       
         <div class="navbar-item">
 
-<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
-  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
-  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
-  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
-</button></div>
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
       
         <div class="navbar-item"><ul class="navbar-icon-links"
     aria-label="Icon Links">
@@ -236,8 +246,7 @@
           
           
           
-          <a href="https://github.com/NSquaredLab/MyoGen" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i>
-            <span class="sr-only">GitHub</span></a>
+          <a href="https://github.com/NSquaredLab/MyoGen" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
         </li>
 </ul></div>
       
@@ -317,11 +326,18 @@
         
           <div class="navbar-item">
 
-<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
-  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
-  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
-  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
-</button></div>
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
         
           <div class="navbar-item"><ul class="navbar-icon-links"
     aria-label="Icon Links">
@@ -334,8 +350,7 @@
           
           
           
-          <a href="https://github.com/NSquaredLab/MyoGen" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i>
-            <span class="sr-only">GitHub</span></a>
+          <a href="https://github.com/NSquaredLab/MyoGen" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
         </li>
 </ul></div>
         
@@ -501,10 +516,35 @@
 <li class="toctree-l3"><a class="reference internal" href="myogen.simulator.ForceModel.twitch_mat.html">myogen.simulator.ForceModel.twitch_mat</a></li>
 </ul>
 </details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="myogen.simulator.core.force.MuscleGeometry.html">MuscleGeometry</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="myogen.simulator.core.force.MuscleGeometry.__init__.html">myogen.simulator.core.force.MuscleGeometry.__init__</a></li>
+<li class="toctree-l3"><a class="reference internal" href="myogen.simulator.core.force.MuscleGeometry.origin_coords.html">myogen.simulator.core.force.MuscleGeometry.origin_coords</a></li>
+<li class="toctree-l3"><a class="reference internal" href="myogen.simulator.core.force.MuscleGeometry.insertion_coords.html">myogen.simulator.core.force.MuscleGeometry.insertion_coords</a></li>
+<li class="toctree-l3"><a class="reference internal" href="myogen.simulator.core.force.MuscleGeometry.optimal_length__cm.html">myogen.simulator.core.force.MuscleGeometry.optimal_length__cm</a></li>
+<li class="toctree-l3"><a class="reference internal" href="myogen.simulator.core.force.MuscleGeometry.max_length_change__cm.html">myogen.simulator.core.force.MuscleGeometry.max_length_change__cm</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="myogen.simulator.core.force.JointGeometry.html">JointGeometry</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="myogen.simulator.core.force.JointGeometry.__init__.html">myogen.simulator.core.force.JointGeometry.__init__</a></li>
+<li class="toctree-l3"><a class="reference internal" href="myogen.simulator.core.force.JointGeometry.center_coords.html">myogen.simulator.core.force.JointGeometry.center_coords</a></li>
+<li class="toctree-l3"><a class="reference internal" href="myogen.simulator.core.force.JointGeometry.radius__cm.html">myogen.simulator.core.force.JointGeometry.radius__cm</a></li>
+<li class="toctree-l3"><a class="reference internal" href="myogen.simulator.core.force.JointGeometry.range_of_motion__degrees.html">myogen.simulator.core.force.JointGeometry.range_of_motion__degrees</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="myogen.simulator.core.force.JointBiomechanics.html">JointBiomechanics</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="myogen.simulator.core.force.JointBiomechanics.__init__.html">myogen.simulator.core.force.JointBiomechanics.__init__</a></li>
+<li class="toctree-l3"><a class="reference internal" href="myogen.simulator.core.force.JointBiomechanics.compute_joint_torque.html">myogen.simulator.core.force.JointBiomechanics.compute_joint_torque</a></li>
+<li class="toctree-l3"><a class="reference internal" href="myogen.simulator.core.force.JointBiomechanics.compute_muscle_length.html">myogen.simulator.core.force.JointBiomechanics.compute_muscle_length</a></li>
+<li class="toctree-l3"><a class="reference internal" href="myogen.simulator.core.force.JointBiomechanics.get_biomechanical_summary.html">myogen.simulator.core.force.JointBiomechanics.get_biomechanical_summary</a></li>
+<li class="toctree-l3"><a class="reference internal" href="myogen.simulator.core.force.JointBiomechanics.get_moment_arm.html">myogen.simulator.core.force.JointBiomechanics.get_moment_arm</a></li>
+<li class="toctree-l3"><a class="reference internal" href="myogen.simulator.core.force.JointBiomechanics.get_muscle_length_trajectory.html">myogen.simulator.core.force.JointBiomechanics.get_muscle_length_trajectory</a></li>
+</ul>
+</details></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="myogen.simulator.SurfaceElectrodeArray.html">SurfaceElectrodeArray</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l3"><a class="reference internal" href="myogen.simulator.SurfaceElectrodeArray.__init__.html">myogen.simulator.SurfaceElectrodeArray.__init__</a></li>
 <li class="toctree-l3"><a class="reference internal" href="myogen.simulator.SurfaceElectrodeArray.get_H_sf.html">myogen.simulator.SurfaceElectrodeArray.get_H_sf</a></li>
 <li class="toctree-l3"><a class="reference internal" href="myogen.simulator.SurfaceElectrodeArray.electrode_positions.html">myogen.simulator.SurfaceElectrodeArray.electrode_positions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="myogen.simulator.SurfaceElectrodeArray.num_channels.html">myogen.simulator.SurfaceElectrodeArray.num_channels</a></li>
 <li class="toctree-l3"><a class="reference internal" href="myogen.simulator.SurfaceElectrodeArray.pos_theta.html">myogen.simulator.SurfaceElectrodeArray.pos_theta</a></li>
 <li class="toctree-l3"><a class="reference internal" href="myogen.simulator.SurfaceElectrodeArray.pos_z.html">myogen.simulator.SurfaceElectrodeArray.pos_z</a></li>
 </ul>
@@ -682,7 +722,7 @@
 <dd><em class="sig-param"><span class="n"><span class="pre">deafferent_ii</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="hxr-hoverxref hxr-tooltip reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>,</dd>
 </dl>
 
-<span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="hxr-hoverxref hxr-tooltip reference external" href="https://docs.python.org/3/library/typing.html#typing.Dict" title="(in Python v3.14)"><span class="pre">Dict</span></a><span class="p"><span class="pre">[</span></span><a class="hxr-hoverxref hxr-tooltip reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="hxr-hoverxref hxr-tooltip reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.14)"><span class="pre">Any</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/myogen/simulator/neuron/proprioception/spindle.html#SpindleModel.create_default_spindle_parameters"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#myogen.simulator.neuron.proprioception.SpindleModel.create_default_spindle_parameters" title="Link to this definition">#</a></dt>
+<span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="hxr-hoverxref hxr-tooltip reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><span class="pre">dict</span></a><span class="p"><span class="pre">[</span></span><a class="hxr-hoverxref hxr-tooltip reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="hxr-hoverxref hxr-tooltip reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.14)"><span class="pre">Any</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/myogen/simulator/neuron/proprioception/spindle.html#SpindleModel.create_default_spindle_parameters"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#myogen.simulator.neuron.proprioception.SpindleModel.create_default_spindle_parameters" title="Link to this definition">#</a></dt>
 <dd><p>Create default spindle parameter dictionary.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -696,7 +736,7 @@
 <dd class="field-even"><p>Dictionary of spindle parameters with detailed explanations</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><em>Dict</em>[<a class="hxr-hoverxref hxr-tooltip reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>, <em>Any</em>]</p>
+<dd class="field-odd"><p><a class="hxr-hoverxref hxr-tooltip reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><em>dict</em></a>[<a class="hxr-hoverxref hxr-tooltip reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>, <em>Any</em>]</p>
 </dd>
 <dt class="field-even">Raises<span class="colon">:</span></dt>
 <dd class="field-even"><p><a class="hxr-hoverxref hxr-tooltip reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.14)"><strong>ValueError</strong></a> – If species is not recognized</p>
@@ -746,8 +786,8 @@
   </div>
   
   <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script defer src="../_static/scripts/bootstrap.js?digest=7f76b32a3354e82990f2"></script>
-<script defer src="../_static/scripts/pydata-sphinx-theme.js?digest=7f76b32a3354e82990f2"></script>
+  <script defer src="../_static/scripts/bootstrap.js?digest=0790524f97105ba85085"></script>
+<script defer src="../_static/scripts/pydata-sphinx-theme.js?digest=0790524f97105ba85085"></script>
 
   <footer class="bd-footer">
 <div class="bd-footer__inner bd-page-width">

@@ -209,8 +209,8 @@ Load Reference Force Data
 
     Loading Reference Force (Constant Drive)
     ==================================================
-    Reference force: 71.87 N (40.0 Hz constant)
-    Target force: 71.87 N (match with oscillation)
+    Reference force: 64.83 N (40.0 Hz constant)
+    Target force: 64.83 N (match with oscillation)
     Force scaling: 100 N maximum
     Oscillation: 20.0 Hz, amplitude 20.0 Hz
     DD neurons: 400
@@ -522,116 +522,116 @@ Run Optimization
 
     Optimizing DC Offset to Match Reference Force (Oscillating Drive)
     ==================================================
-    Target force: 71.87 N (40.0 Hz reference)
+    Target force: 64.83 N (40.0 Hz reference)
     Oscillation: 20.0 Hz (amplitude 20.0 Hz)
     Optimizing: DC offset component
     Trials: 25
 
       0%|          | 0/25 [00:00<?, ?it/s]
     Pool 1 Twitch trains (Numba):   0%|          | 0/800 [00:00<?, ?MU/s]
-    Pool 1 Twitch trains (Numba):   0%|          | 1/800 [00:00<01:44,  7.68MU/s]    Pool 1 Twitch trains (Numba): 100%|██████████| 800/800 [00:00<00:00, 4718.13MU/s]
-    Trial 0: Force=74.64N (target=71.87N), Error=3.9%, DC=38.1Hz, Active=464/800
-                                          [I 2026-04-19 07:12:39,246] Trial 0 finished with value: 0.038631953828206916 and parameters: {'dc_offset': 38.07947176588889}. Best is trial 0 with value: 0.038631953828206916.
-      0%|          | 0/25 [00:29<?, ?it/s]    Best trial: 0. Best value: 0.038632:   0%|          | 0/25 [00:29<?, ?it/s]    Best trial: 0. Best value: 0.038632:   4%|▍         | 1/25 [00:29<11:49, 29.56s/it]    Best trial: 0. Best value: 0.038632:   4%|▍         | 1/25 [00:29<11:49, 29.56s/it, 29.56/3600 seconds]
+    Pool 1 Twitch trains (Numba):   0%|          | 1/800 [00:00<01:45,  7.60MU/s]    Pool 1 Twitch trains (Numba): 100%|██████████| 800/800 [00:00<00:00, 4565.73MU/s]
+    Trial 0: Force=74.95N (target=64.83N), Error=15.6%, DC=38.1Hz, Active=467/800
+                                          [I 2026-06-01 07:37:55,401] Trial 0 finished with value: 0.15603331464884304 and parameters: {'dc_offset': 38.07947176588889}. Best is trial 0 with value: 0.15603331464884304.
+      0%|          | 0/25 [00:42<?, ?it/s]    Best trial: 0. Best value: 0.156033:   0%|          | 0/25 [00:42<?, ?it/s]    Best trial: 0. Best value: 0.156033:   4%|▍         | 1/25 [00:42<17:01, 42.58s/it]    Best trial: 0. Best value: 0.156033:   4%|▍         | 1/25 [00:42<17:01, 42.58s/it, 42.58/3600 seconds]
     Pool 1 Twitch trains (Numba):   0%|          | 0/800 [00:00<?, ?MU/s]
-    Pool 1 Twitch trains (Numba):   0%|          | 1/800 [00:00<01:44,  7.68MU/s]    Pool 1 Twitch trains (Numba): 100%|██████████| 800/800 [00:00<00:00, 4088.68MU/s]
-                                                                                                           [I 2026-04-19 07:13:12,130] Trial 1 finished with value: 0.24156491697859803 and parameters: {'dc_offset': 95.1207163345817}. Best is trial 0 with value: 0.038631953828206916.
-    Best trial: 0. Best value: 0.038632:   4%|▍         | 1/25 [01:02<11:49, 29.56s/it, 29.56/3600 seconds]    Best trial: 0. Best value: 0.038632:   4%|▍         | 1/25 [01:02<11:49, 29.56s/it, 29.56/3600 seconds]    Best trial: 0. Best value: 0.038632:   8%|▊         | 2/25 [01:02<12:04, 31.51s/it, 29.56/3600 seconds]    Best trial: 0. Best value: 0.038632:   8%|▊         | 2/25 [01:02<12:04, 31.51s/it, 62.44/3600 seconds]
+    Pool 1 Twitch trains (Numba):   0%|          | 1/800 [00:00<01:45,  7.61MU/s]    Pool 1 Twitch trains (Numba): 100%|██████████| 800/800 [00:00<00:00, 3937.63MU/s]
+                                                                                                           [I 2026-06-01 07:38:41,628] Trial 1 finished with value: 0.38518307211516883 and parameters: {'dc_offset': 95.1207163345817}. Best is trial 0 with value: 0.15603331464884304.
+    Best trial: 0. Best value: 0.156033:   4%|▍         | 1/25 [01:28<17:01, 42.58s/it, 42.58/3600 seconds]    Best trial: 0. Best value: 0.156033:   4%|▍         | 1/25 [01:28<17:01, 42.58s/it, 42.58/3600 seconds]    Best trial: 0. Best value: 0.156033:   8%|▊         | 2/25 [01:28<17:08, 44.72s/it, 42.58/3600 seconds]    Best trial: 0. Best value: 0.156033:   8%|▊         | 2/25 [01:28<17:08, 44.72s/it, 88.80/3600 seconds]
     Pool 1 Twitch trains (Numba):   0%|          | 0/800 [00:00<?, ?MU/s]
-    Pool 1 Twitch trains (Numba):   0%|          | 1/800 [00:00<01:43,  7.72MU/s]    Pool 1 Twitch trains (Numba): 100%|██████████| 800/800 [00:00<00:00, 4235.54MU/s]
-                                                                                                           [I 2026-04-19 07:13:44,280] Trial 2 finished with value: 0.18447398767728712 and parameters: {'dc_offset': 73.46740023932911}. Best is trial 0 with value: 0.038631953828206916.
-    Best trial: 0. Best value: 0.038632:   8%|▊         | 2/25 [01:34<12:04, 31.51s/it, 62.44/3600 seconds]    Best trial: 0. Best value: 0.038632:   8%|▊         | 2/25 [01:34<12:04, 31.51s/it, 62.44/3600 seconds]    Best trial: 0. Best value: 0.038632:  12%|█▏        | 3/25 [01:34<11:39, 31.80s/it, 62.44/3600 seconds]    Best trial: 0. Best value: 0.038632:  12%|█▏        | 3/25 [01:34<11:39, 31.80s/it, 94.59/3600 seconds]
+    Pool 1 Twitch trains (Numba):   0%|          | 1/800 [00:00<01:47,  7.41MU/s]    Pool 1 Twitch trains (Numba): 100%|██████████| 800/800 [00:00<00:00, 3980.31MU/s]
+                                                                                                           [I 2026-06-01 07:39:26,217] Trial 2 finished with value: 0.3484770067734119 and parameters: {'dc_offset': 73.46740023932911}. Best is trial 0 with value: 0.15603331464884304.
+    Best trial: 0. Best value: 0.156033:   8%|▊         | 2/25 [02:13<17:08, 44.72s/it, 88.80/3600 seconds]    Best trial: 0. Best value: 0.156033:   8%|▊         | 2/25 [02:13<17:08, 44.72s/it, 88.80/3600 seconds]    Best trial: 0. Best value: 0.156033:  12%|█▏        | 3/25 [02:13<16:22, 44.66s/it, 88.80/3600 seconds]    Best trial: 0. Best value: 0.156033:  12%|█▏        | 3/25 [02:13<16:22, 44.66s/it, 133.39/3600 seconds]
     Pool 1 Twitch trains (Numba):   0%|          | 0/800 [00:00<?, ?MU/s]
-    Pool 1 Twitch trains (Numba):   0%|          | 1/800 [00:00<01:42,  7.76MU/s]    Pool 1 Twitch trains (Numba): 100%|██████████| 800/800 [00:00<00:00, 4428.77MU/s]
-                                                                                                           [I 2026-04-19 07:14:15,621] Trial 3 finished with value: 0.17157266797498263 and parameters: {'dc_offset': 60.26718993550662}. Best is trial 0 with value: 0.038631953828206916.
-    Best trial: 0. Best value: 0.038632:  12%|█▏        | 3/25 [02:05<11:39, 31.80s/it, 94.59/3600 seconds]    Best trial: 0. Best value: 0.038632:  12%|█▏        | 3/25 [02:05<11:39, 31.80s/it, 94.59/3600 seconds]    Best trial: 0. Best value: 0.038632:  16%|█▌        | 4/25 [02:05<11:04, 31.62s/it, 94.59/3600 seconds]    Best trial: 0. Best value: 0.038632:  16%|█▌        | 4/25 [02:05<11:04, 31.62s/it, 125.93/3600 seconds]
+    Pool 1 Twitch trains (Numba):   0%|          | 1/800 [00:00<01:46,  7.49MU/s]    Pool 1 Twitch trains (Numba): 100%|██████████| 800/800 [00:00<00:00, 4185.88MU/s]
+                                                                                                            [I 2026-06-01 07:40:10,807] Trial 3 finished with value: 0.30497287019940317 and parameters: {'dc_offset': 60.26718993550662}. Best is trial 0 with value: 0.15603331464884304.
+    Best trial: 0. Best value: 0.156033:  12%|█▏        | 3/25 [02:57<16:22, 44.66s/it, 133.39/3600 seconds]    Best trial: 0. Best value: 0.156033:  12%|█▏        | 3/25 [02:57<16:22, 44.66s/it, 133.39/3600 seconds]    Best trial: 0. Best value: 0.156033:  16%|█▌        | 4/25 [02:57<15:37, 44.63s/it, 133.39/3600 seconds]    Best trial: 0. Best value: 0.156033:  16%|█▌        | 4/25 [02:57<15:37, 44.63s/it, 177.98/3600 seconds]
     Pool 1 Twitch trains (Numba):   0%|          | 0/800 [00:00<?, ?MU/s]
-    Pool 1 Twitch trains (Numba):   0%|          | 1/800 [00:00<01:41,  7.85MU/s]    Pool 1 Twitch trains (Numba): 100%|██████████| 800/800 [00:00<00:00, 5195.32MU/s]
-                                                                                                            [I 2026-04-19 07:14:43,808] Trial 4 finished with value: 1900.0 and parameters: {'dc_offset': 16.445845403801215}. Best is trial 0 with value: 0.038631953828206916.
-    Best trial: 0. Best value: 0.038632:  16%|█▌        | 4/25 [02:34<11:04, 31.62s/it, 125.93/3600 seconds]    Best trial: 0. Best value: 0.038632:  16%|█▌        | 4/25 [02:34<11:04, 31.62s/it, 125.93/3600 seconds]    Best trial: 0. Best value: 0.038632:  20%|██        | 5/25 [02:34<10:07, 30.38s/it, 125.93/3600 seconds]    Best trial: 0. Best value: 0.038632:  20%|██        | 5/25 [02:34<10:07, 30.38s/it, 154.12/3600 seconds]
+    Pool 1 Twitch trains (Numba):   0%|          | 1/800 [00:00<01:42,  7.76MU/s]    Pool 1 Twitch trains (Numba): 100%|██████████| 800/800 [00:00<00:00, 5039.94MU/s]
+                                                                                                            [I 2026-06-01 07:40:52,016] Trial 4 finished with value: 1700.0 and parameters: {'dc_offset': 16.445845403801215}. Best is trial 0 with value: 0.15603331464884304.
+    Best trial: 0. Best value: 0.156033:  16%|█▌        | 4/25 [03:39<15:37, 44.63s/it, 177.98/3600 seconds]    Best trial: 0. Best value: 0.156033:  16%|█▌        | 4/25 [03:39<15:37, 44.63s/it, 177.98/3600 seconds]    Best trial: 0. Best value: 0.156033:  20%|██        | 5/25 [03:39<14:27, 43.40s/it, 177.98/3600 seconds]    Best trial: 0. Best value: 0.156033:  20%|██        | 5/25 [03:39<14:27, 43.40s/it, 219.19/3600 seconds]
     Pool 1 Twitch trains (Numba):   0%|          | 0/800 [00:00<?, ?MU/s]
-    Pool 1 Twitch trains (Numba):   0%|          | 1/800 [00:00<01:42,  7.76MU/s]    Pool 1 Twitch trains (Numba): 100%|██████████| 800/800 [00:00<00:00, 5151.72MU/s]
-                                                                                                            [I 2026-04-19 07:15:12,121] Trial 5 finished with value: 1400.0 and parameters: {'dc_offset': 16.443457513284063}. Best is trial 0 with value: 0.038631953828206916.
-    Best trial: 0. Best value: 0.038632:  20%|██        | 5/25 [03:02<10:07, 30.38s/it, 154.12/3600 seconds]    Best trial: 0. Best value: 0.038632:  20%|██        | 5/25 [03:02<10:07, 30.38s/it, 154.12/3600 seconds]    Best trial: 0. Best value: 0.038632:  24%|██▍       | 6/25 [03:02<09:23, 29.68s/it, 154.12/3600 seconds]    Best trial: 0. Best value: 0.038632:  24%|██▍       | 6/25 [03:02<09:23, 29.68s/it, 182.43/3600 seconds]
+    Pool 1 Twitch trains (Numba):   0%|          | 1/800 [00:00<01:44,  7.64MU/s]    Pool 1 Twitch trains (Numba): 100%|██████████| 800/800 [00:00<00:00, 4977.42MU/s]
+                                                                                                            [I 2026-06-01 07:41:32,610] Trial 5 finished with value: 1300.0 and parameters: {'dc_offset': 16.443457513284063}. Best is trial 0 with value: 0.15603331464884304.
+    Best trial: 0. Best value: 0.156033:  20%|██        | 5/25 [04:19<14:27, 43.40s/it, 219.19/3600 seconds]    Best trial: 0. Best value: 0.156033:  20%|██        | 5/25 [04:19<14:27, 43.40s/it, 219.19/3600 seconds]    Best trial: 0. Best value: 0.156033:  24%|██▍       | 6/25 [04:19<13:26, 42.45s/it, 219.19/3600 seconds]    Best trial: 0. Best value: 0.156033:  24%|██▍       | 6/25 [04:19<13:26, 42.45s/it, 259.79/3600 seconds]
     Pool 1 Twitch trains (Numba):   0%|          | 0/800 [00:00<?, ?MU/s]
-    Pool 1 Twitch trains (Numba):   0%|          | 1/800 [00:00<01:42,  7.79MU/s]    Pool 1 Twitch trains (Numba): 100%|██████████| 800/800 [00:00<00:00, 5168.80MU/s]
-                                                                                                            [I 2026-04-19 07:15:40,554] Trial 6 finished with value: 2000.0 and parameters: {'dc_offset': 6.750277604651747}. Best is trial 0 with value: 0.038631953828206916.
-    Best trial: 0. Best value: 0.038632:  24%|██▍       | 6/25 [03:30<09:23, 29.68s/it, 182.43/3600 seconds]    Best trial: 0. Best value: 0.038632:  24%|██▍       | 6/25 [03:30<09:23, 29.68s/it, 182.43/3600 seconds]    Best trial: 0. Best value: 0.038632:  28%|██▊       | 7/25 [03:30<08:46, 29.27s/it, 182.43/3600 seconds]    Best trial: 0. Best value: 0.038632:  28%|██▊       | 7/25 [03:30<08:46, 29.27s/it, 210.86/3600 seconds]
+    Pool 1 Twitch trains (Numba):   0%|          | 1/800 [00:00<01:42,  7.76MU/s]    Pool 1 Twitch trains (Numba): 100%|██████████| 800/800 [00:00<00:00, 5042.60MU/s]
+                                                                                                            [I 2026-06-01 07:42:12,946] Trial 6 finished with value: 2000.0 and parameters: {'dc_offset': 6.750277604651747}. Best is trial 0 with value: 0.15603331464884304.
+    Best trial: 0. Best value: 0.156033:  24%|██▍       | 6/25 [05:00<13:26, 42.45s/it, 259.79/3600 seconds]    Best trial: 0. Best value: 0.156033:  24%|██▍       | 6/25 [05:00<13:26, 42.45s/it, 259.79/3600 seconds]    Best trial: 0. Best value: 0.156033:  28%|██▊       | 7/25 [05:00<12:31, 41.76s/it, 259.79/3600 seconds]    Best trial: 0. Best value: 0.156033:  28%|██▊       | 7/25 [05:00<12:31, 41.76s/it, 300.12/3600 seconds]
     Pool 1 Twitch trains (Numba):   0%|          | 0/800 [00:00<?, ?MU/s]
-    Pool 1 Twitch trains (Numba):   0%|          | 1/800 [00:00<01:45,  7.55MU/s]    Pool 1 Twitch trains (Numba): 100%|██████████| 800/800 [00:00<00:00, 4081.88MU/s]
-                                                                                                            [I 2026-04-19 07:16:13,514] Trial 7 finished with value: 0.18959351212516473 and parameters: {'dc_offset': 86.75143843171858}. Best is trial 0 with value: 0.038631953828206916.
-    Best trial: 0. Best value: 0.038632:  28%|██▊       | 7/25 [04:03<08:46, 29.27s/it, 210.86/3600 seconds]    Best trial: 0. Best value: 0.038632:  28%|██▊       | 7/25 [04:03<08:46, 29.27s/it, 210.86/3600 seconds]    Best trial: 0. Best value: 0.038632:  32%|███▏      | 8/25 [04:03<08:37, 30.45s/it, 210.86/3600 seconds]    Best trial: 0. Best value: 0.038632:  32%|███▏      | 8/25 [04:03<08:37, 30.45s/it, 243.82/3600 seconds]
+    Pool 1 Twitch trains (Numba):   0%|          | 1/800 [00:00<01:45,  7.59MU/s]    Pool 1 Twitch trains (Numba): 100%|██████████| 800/800 [00:00<00:00, 3967.93MU/s]
+                                                                                                            [I 2026-06-01 07:42:59,153] Trial 7 finished with value: 0.33518816462543416 and parameters: {'dc_offset': 86.75143843171858}. Best is trial 0 with value: 0.15603331464884304.
+    Best trial: 0. Best value: 0.156033:  28%|██▊       | 7/25 [05:46<12:31, 41.76s/it, 300.12/3600 seconds]    Best trial: 0. Best value: 0.156033:  28%|██▊       | 7/25 [05:46<12:31, 41.76s/it, 300.12/3600 seconds]    Best trial: 0. Best value: 0.156033:  32%|███▏      | 8/25 [05:46<12:13, 43.17s/it, 300.12/3600 seconds]    Best trial: 0. Best value: 0.156033:  32%|███▏      | 8/25 [05:46<12:13, 43.17s/it, 346.33/3600 seconds]
     Pool 1 Twitch trains (Numba):   0%|          | 0/800 [00:00<?, ?MU/s]
-    Pool 1 Twitch trains (Numba):   0%|          | 1/800 [00:00<01:42,  7.80MU/s]    Pool 1 Twitch trains (Numba): 100%|██████████| 800/800 [00:00<00:00, 4443.68MU/s]
-                                                                                                            [I 2026-04-19 07:16:44,791] Trial 8 finished with value: 0.11877508920599902 and parameters: {'dc_offset': 60.510386162577674}. Best is trial 0 with value: 0.038631953828206916.
-    Best trial: 0. Best value: 0.038632:  32%|███▏      | 8/25 [04:35<08:37, 30.45s/it, 243.82/3600 seconds]    Best trial: 0. Best value: 0.038632:  32%|███▏      | 8/25 [04:35<08:37, 30.45s/it, 243.82/3600 seconds]    Best trial: 0. Best value: 0.038632:  36%|███▌      | 9/25 [04:35<08:11, 30.71s/it, 243.82/3600 seconds]    Best trial: 0. Best value: 0.038632:  36%|███▌      | 9/25 [04:35<08:11, 30.71s/it, 275.10/3600 seconds]
+    Pool 1 Twitch trains (Numba):   0%|          | 1/800 [00:00<01:43,  7.70MU/s]    Pool 1 Twitch trains (Numba): 100%|██████████| 800/800 [00:00<00:00, 4266.13MU/s]
+                                                                                                            [I 2026-06-01 07:43:43,586] Trial 8 finished with value: 0.3073771708085631 and parameters: {'dc_offset': 60.510386162577674}. Best is trial 0 with value: 0.15603331464884304.
+    Best trial: 0. Best value: 0.156033:  32%|███▏      | 8/25 [06:30<12:13, 43.17s/it, 346.33/3600 seconds]    Best trial: 0. Best value: 0.156033:  32%|███▏      | 8/25 [06:30<12:13, 43.17s/it, 346.33/3600 seconds]    Best trial: 0. Best value: 0.156033:  36%|███▌      | 9/25 [06:30<11:37, 43.57s/it, 346.33/3600 seconds]    Best trial: 0. Best value: 0.156033:  36%|███▌      | 9/25 [06:30<11:37, 43.57s/it, 390.76/3600 seconds]
     Pool 1 Twitch trains (Numba):   0%|          | 0/800 [00:00<?, ?MU/s]
-    Pool 1 Twitch trains (Numba):   0%|          | 1/800 [00:00<01:43,  7.71MU/s]    Pool 1 Twitch trains (Numba): 100%|██████████| 800/800 [00:00<00:00, 4250.55MU/s]
-                                                                                                            [I 2026-04-19 07:17:16,707] Trial 9 finished with value: 0.14394177952341136 and parameters: {'dc_offset': 71.09918520180851}. Best is trial 0 with value: 0.038631953828206916.
-    Best trial: 0. Best value: 0.038632:  36%|███▌      | 9/25 [05:07<08:11, 30.71s/it, 275.10/3600 seconds]    Best trial: 0. Best value: 0.038632:  36%|███▌      | 9/25 [05:07<08:11, 30.71s/it, 275.10/3600 seconds]    Best trial: 0. Best value: 0.038632:  40%|████      | 10/25 [05:07<07:46, 31.08s/it, 275.10/3600 seconds]    Best trial: 0. Best value: 0.038632:  40%|████      | 10/25 [05:07<07:46, 31.08s/it, 307.02/3600 seconds]
+    Pool 1 Twitch trains (Numba):   0%|          | 1/800 [00:00<01:42,  7.81MU/s]    Pool 1 Twitch trains (Numba): 100%|██████████| 800/800 [00:00<00:00, 4169.11MU/s]
+                                                                                                            [I 2026-06-01 07:44:28,564] Trial 9 finished with value: 0.2855309797691053 and parameters: {'dc_offset': 71.09918520180851}. Best is trial 0 with value: 0.15603331464884304.
+    Best trial: 0. Best value: 0.156033:  36%|███▌      | 9/25 [07:15<11:37, 43.57s/it, 390.76/3600 seconds]    Best trial: 0. Best value: 0.156033:  36%|███▌      | 9/25 [07:15<11:37, 43.57s/it, 390.76/3600 seconds]    Best trial: 0. Best value: 0.156033:  40%|████      | 10/25 [07:15<11:00, 44.00s/it, 390.76/3600 seconds]    Best trial: 0. Best value: 0.156033:  40%|████      | 10/25 [07:15<11:00, 44.00s/it, 435.74/3600 seconds]
     Pool 1 Twitch trains (Numba):   0%|          | 0/800 [00:00<?, ?MU/s]
-    Pool 1 Twitch trains (Numba):   0%|          | 1/800 [00:00<01:43,  7.73MU/s]    Pool 1 Twitch trains (Numba): 100%|██████████| 800/800 [00:00<00:00, 4751.04MU/s]
-    Trial 10: Force=72.16N (target=71.87N), Error=0.4%, DC=38.1Hz, Active=460/800
-                                                                                                             [I 2026-04-19 07:17:46,922] Trial 10 finished with value: 0.004072670774146443 and parameters: {'dc_offset': 38.07318637690311}. Best is trial 10 with value: 0.004072670774146443.
-    Best trial: 0. Best value: 0.038632:  40%|████      | 10/25 [05:37<07:46, 31.08s/it, 307.02/3600 seconds]    Best trial: 10. Best value: 0.00407267:  40%|████      | 10/25 [05:37<07:46, 31.08s/it, 307.02/3600 seconds]    Best trial: 10. Best value: 0.00407267:  44%|████▍     | 11/25 [05:37<07:11, 30.82s/it, 307.02/3600 seconds]    Best trial: 10. Best value: 0.00407267:  44%|████▍     | 11/25 [05:37<07:11, 30.82s/it, 337.23/3600 seconds]
+    Pool 1 Twitch trains (Numba):   0%|          | 1/800 [00:00<05:21,  2.49MU/s]    Pool 1 Twitch trains (Numba): 100%|██████████| 800/800 [00:00<00:00, 1795.76MU/s]
+    Trial 10: Force=79.57N (target=64.83N), Error=22.7%, DC=38.1Hz, Active=455/800
+                                                                                                             [I 2026-06-01 07:45:11,539] Trial 10 finished with value: 0.22738602827152812 and parameters: {'dc_offset': 38.07318637690311}. Best is trial 0 with value: 0.15603331464884304.
+    Best trial: 0. Best value: 0.156033:  40%|████      | 10/25 [07:58<11:00, 44.00s/it, 435.74/3600 seconds]    Best trial: 0. Best value: 0.156033:  40%|████      | 10/25 [07:58<11:00, 44.00s/it, 435.74/3600 seconds]    Best trial: 0. Best value: 0.156033:  44%|████▍     | 11/25 [07:58<10:11, 43.69s/it, 435.74/3600 seconds]    Best trial: 0. Best value: 0.156033:  44%|████▍     | 11/25 [07:58<10:11, 43.69s/it, 478.72/3600 seconds]
     Pool 1 Twitch trains (Numba):   0%|          | 0/800 [00:00<?, ?MU/s]
-    Pool 1 Twitch trains (Numba):   0%|          | 1/800 [00:00<01:42,  7.83MU/s]    Pool 1 Twitch trains (Numba): 100%|██████████| 800/800 [00:00<00:00, 4806.50MU/s]
-                                                                                                                [I 2026-04-19 07:18:16,892] Trial 11 finished with value: 0.010438187597422358 and parameters: {'dc_offset': 38.36496804250745}. Best is trial 10 with value: 0.004072670774146443.
-    Best trial: 10. Best value: 0.00407267:  44%|████▍     | 11/25 [06:07<07:11, 30.82s/it, 337.23/3600 seconds]    Best trial: 10. Best value: 0.00407267:  44%|████▍     | 11/25 [06:07<07:11, 30.82s/it, 337.23/3600 seconds]    Best trial: 10. Best value: 0.00407267:  48%|████▊     | 12/25 [06:07<06:37, 30.56s/it, 337.23/3600 seconds]    Best trial: 10. Best value: 0.00407267:  48%|████▊     | 12/25 [06:07<06:37, 30.56s/it, 367.20/3600 seconds]
+    Pool 1 Twitch trains (Numba):   0%|          | 1/800 [00:00<01:43,  7.69MU/s]    Pool 1 Twitch trains (Numba): 100%|██████████| 800/800 [00:00<00:00, 4617.05MU/s]
+                                                                                                             [I 2026-06-01 07:45:54,926] Trial 11 finished with value: 0.1031321441074679 and parameters: {'dc_offset': 38.36496804250745}. Best is trial 11 with value: 0.1031321441074679.
+    Best trial: 0. Best value: 0.156033:  44%|████▍     | 11/25 [08:42<10:11, 43.69s/it, 478.72/3600 seconds]    Best trial: 11. Best value: 0.103132:  44%|████▍     | 11/25 [08:42<10:11, 43.69s/it, 478.72/3600 seconds]    Best trial: 11. Best value: 0.103132:  48%|████▊     | 12/25 [08:42<09:26, 43.60s/it, 478.72/3600 seconds]    Best trial: 11. Best value: 0.103132:  48%|████▊     | 12/25 [08:42<09:26, 43.60s/it, 522.10/3600 seconds]
     Pool 1 Twitch trains (Numba):   0%|          | 0/800 [00:00<?, ?MU/s]
-    Pool 1 Twitch trains (Numba):   0%|          | 1/800 [00:00<01:42,  7.79MU/s]    Pool 1 Twitch trains (Numba): 100%|██████████| 800/800 [00:00<00:00, 4812.03MU/s]
-                                                                                                                [I 2026-04-19 07:18:46,749] Trial 12 finished with value: 0.023661723459656742 and parameters: {'dc_offset': 36.00024627510359}. Best is trial 10 with value: 0.004072670774146443.
-    Best trial: 10. Best value: 0.00407267:  48%|████▊     | 12/25 [06:37<06:37, 30.56s/it, 367.20/3600 seconds]    Best trial: 10. Best value: 0.00407267:  48%|████▊     | 12/25 [06:37<06:37, 30.56s/it, 367.20/3600 seconds]    Best trial: 10. Best value: 0.00407267:  52%|█████▏    | 13/25 [06:37<06:04, 30.35s/it, 367.20/3600 seconds]    Best trial: 10. Best value: 0.00407267:  52%|█████▏    | 13/25 [06:37<06:04, 30.35s/it, 397.06/3600 seconds]
+    Pool 1 Twitch trains (Numba):   0%|          | 1/800 [00:00<01:46,  7.52MU/s]    Pool 1 Twitch trains (Numba): 100%|██████████| 800/800 [00:00<00:00, 4566.87MU/s]
+                                                                                                              [I 2026-06-01 07:46:37,803] Trial 12 finished with value: 0.07623987205304412 and parameters: {'dc_offset': 36.00024627510359}. Best is trial 12 with value: 0.07623987205304412.
+    Best trial: 11. Best value: 0.103132:  48%|████▊     | 12/25 [09:24<09:26, 43.60s/it, 522.10/3600 seconds]    Best trial: 12. Best value: 0.0762399:  48%|████▊     | 12/25 [09:24<09:26, 43.60s/it, 522.10/3600 seconds]    Best trial: 12. Best value: 0.0762399:  52%|█████▏    | 13/25 [09:24<08:40, 43.38s/it, 522.10/3600 seconds]    Best trial: 12. Best value: 0.0762399:  52%|█████▏    | 13/25 [09:24<08:40, 43.38s/it, 564.98/3600 seconds]
     Pool 1 Twitch trains (Numba):   0%|          | 0/800 [00:00<?, ?MU/s]
-    Pool 1 Twitch trains (Numba):   0%|          | 1/800 [00:00<01:43,  7.70MU/s]    Pool 1 Twitch trains (Numba): 100%|██████████| 800/800 [00:00<00:00, 4694.98MU/s]
-                                                                                                                [I 2026-04-19 07:19:16,539] Trial 13 finished with value: 0.15031978426355613 and parameters: {'dc_offset': 40.662452993324706}. Best is trial 10 with value: 0.004072670774146443.
-    Best trial: 10. Best value: 0.00407267:  52%|█████▏    | 13/25 [07:06<06:04, 30.35s/it, 397.06/3600 seconds]    Best trial: 10. Best value: 0.00407267:  52%|█████▏    | 13/25 [07:06<06:04, 30.35s/it, 397.06/3600 seconds]    Best trial: 10. Best value: 0.00407267:  56%|█████▌    | 14/25 [07:06<05:31, 30.18s/it, 397.06/3600 seconds]    Best trial: 10. Best value: 0.00407267:  56%|█████▌    | 14/25 [07:06<05:31, 30.18s/it, 426.85/3600 seconds]
+    Pool 1 Twitch trains (Numba):   0%|          | 1/800 [00:00<01:45,  7.57MU/s]    Pool 1 Twitch trains (Numba): 100%|██████████| 800/800 [00:00<00:00, 4616.17MU/s]
+                                                                                                               [I 2026-06-01 07:47:21,100] Trial 13 finished with value: 0.06690860730638155 and parameters: {'dc_offset': 35.33823824925556}. Best is trial 13 with value: 0.06690860730638155.
+    Best trial: 12. Best value: 0.0762399:  52%|█████▏    | 13/25 [10:08<08:40, 43.38s/it, 564.98/3600 seconds]    Best trial: 13. Best value: 0.0669086:  52%|█████▏    | 13/25 [10:08<08:40, 43.38s/it, 564.98/3600 seconds]    Best trial: 13. Best value: 0.0669086:  56%|█████▌    | 14/25 [10:08<07:56, 43.35s/it, 564.98/3600 seconds]    Best trial: 13. Best value: 0.0669086:  56%|█████▌    | 14/25 [10:08<07:56, 43.35s/it, 608.28/3600 seconds]
     Pool 1 Twitch trains (Numba):   0%|          | 0/800 [00:00<?, ?MU/s]
-    Pool 1 Twitch trains (Numba):   0%|          | 1/800 [00:00<01:44,  7.63MU/s]    Pool 1 Twitch trains (Numba): 100%|██████████| 800/800 [00:00<00:00, 4927.84MU/s]
-                                                                                                                [I 2026-04-19 07:19:45,867] Trial 14 finished with value: 0.23312883705261206 and parameters: {'dc_offset': 27.212246207920185}. Best is trial 10 with value: 0.004072670774146443.
-    Best trial: 10. Best value: 0.00407267:  56%|█████▌    | 14/25 [07:36<05:31, 30.18s/it, 426.85/3600 seconds]    Best trial: 10. Best value: 0.00407267:  56%|█████▌    | 14/25 [07:36<05:31, 30.18s/it, 426.85/3600 seconds]    Best trial: 10. Best value: 0.00407267:  60%|██████    | 15/25 [07:36<04:59, 29.92s/it, 426.85/3600 seconds]    Best trial: 10. Best value: 0.00407267:  60%|██████    | 15/25 [07:36<04:59, 29.92s/it, 456.18/3600 seconds]
+    Pool 1 Twitch trains (Numba):   0%|          | 1/800 [00:00<05:28,  2.43MU/s]    Pool 1 Twitch trains (Numba): 100%|██████████| 800/800 [00:00<00:00, 1800.88MU/s]
+                                                                                                               [I 2026-06-01 07:48:03,762] Trial 14 finished with value: 0.18450736439041984 and parameters: {'dc_offset': 25.059606651333088}. Best is trial 13 with value: 0.06690860730638155.
+    Best trial: 13. Best value: 0.0669086:  56%|█████▌    | 14/25 [10:50<07:56, 43.35s/it, 608.28/3600 seconds]    Best trial: 13. Best value: 0.0669086:  56%|█████▌    | 14/25 [10:50<07:56, 43.35s/it, 608.28/3600 seconds]    Best trial: 13. Best value: 0.0669086:  60%|██████    | 15/25 [10:50<07:11, 43.14s/it, 608.28/3600 seconds]    Best trial: 13. Best value: 0.0669086:  60%|██████    | 15/25 [10:50<07:11, 43.14s/it, 650.94/3600 seconds]
     Pool 1 Twitch trains (Numba):   0%|          | 0/800 [00:00<?, ?MU/s]
-    Pool 1 Twitch trains (Numba):   0%|          | 1/800 [00:00<01:42,  7.78MU/s]    Pool 1 Twitch trains (Numba): 100%|██████████| 800/800 [00:00<00:00, 4620.58MU/s]
-    Trial 15: Force=81.96N (target=71.87N), Error=14.1%, DC=48.9Hz, Active=535/800
-                                                                                                                [I 2026-04-19 07:20:16,059] Trial 15 finished with value: 0.14050851263480302 and parameters: {'dc_offset': 48.92220834352817}. Best is trial 10 with value: 0.004072670774146443.
-    Best trial: 10. Best value: 0.00407267:  60%|██████    | 15/25 [08:06<04:59, 29.92s/it, 456.18/3600 seconds]    Best trial: 10. Best value: 0.00407267:  60%|██████    | 15/25 [08:06<04:59, 29.92s/it, 456.18/3600 seconds]    Best trial: 10. Best value: 0.00407267:  64%|██████▍   | 16/25 [08:06<04:30, 30.00s/it, 456.18/3600 seconds]    Best trial: 10. Best value: 0.00407267:  64%|██████▍   | 16/25 [08:06<04:30, 30.00s/it, 486.37/3600 seconds]
+    Pool 1 Twitch trains (Numba):   0%|          | 1/800 [00:00<01:42,  7.81MU/s]    Pool 1 Twitch trains (Numba): 100%|██████████| 800/800 [00:00<00:00, 4539.58MU/s]
+    Trial 15: Force=79.47N (target=64.83N), Error=22.6%, DC=47.2Hz, Active=525/800
+                                                                                                               [I 2026-06-01 07:48:47,183] Trial 15 finished with value: 0.22586320477707283 and parameters: {'dc_offset': 47.18552537675954}. Best is trial 13 with value: 0.06690860730638155.
+    Best trial: 13. Best value: 0.0669086:  60%|██████    | 15/25 [11:34<07:11, 43.14s/it, 650.94/3600 seconds]    Best trial: 13. Best value: 0.0669086:  60%|██████    | 15/25 [11:34<07:11, 43.14s/it, 650.94/3600 seconds]    Best trial: 13. Best value: 0.0669086:  64%|██████▍   | 16/25 [11:34<06:29, 43.23s/it, 650.94/3600 seconds]    Best trial: 13. Best value: 0.0669086:  64%|██████▍   | 16/25 [11:34<06:29, 43.23s/it, 694.36/3600 seconds]
     Pool 1 Twitch trains (Numba):   0%|          | 0/800 [00:00<?, ?MU/s]
-    Pool 1 Twitch trains (Numba):   0%|          | 1/800 [00:00<01:42,  7.77MU/s]    Pool 1 Twitch trains (Numba): 100%|██████████| 800/800 [00:00<00:00, 5028.06MU/s]
-                                                                                                                [I 2026-04-19 07:20:45,011] Trial 16 finished with value: 0.33674183334956653 and parameters: {'dc_offset': 26.28890241775468}. Best is trial 10 with value: 0.004072670774146443.
-    Best trial: 10. Best value: 0.00407267:  64%|██████▍   | 16/25 [08:35<04:30, 30.00s/it, 486.37/3600 seconds]    Best trial: 10. Best value: 0.00407267:  64%|██████▍   | 16/25 [08:35<04:30, 30.00s/it, 486.37/3600 seconds]    Best trial: 10. Best value: 0.00407267:  68%|██████▊   | 17/25 [08:35<03:57, 29.69s/it, 486.37/3600 seconds]    Best trial: 10. Best value: 0.00407267:  68%|██████▊   | 17/25 [08:35<03:57, 29.69s/it, 515.32/3600 seconds]
+    Pool 1 Twitch trains (Numba):   0%|          | 1/800 [00:00<01:42,  7.80MU/s]    Pool 1 Twitch trains (Numba): 100%|██████████| 800/800 [00:00<00:00, 4944.37MU/s]
+                                                                                                               [I 2026-06-01 07:49:29,377] Trial 16 finished with value: 0.2174008832878993 and parameters: {'dc_offset': 26.28890241775468}. Best is trial 13 with value: 0.06690860730638155.
+    Best trial: 13. Best value: 0.0669086:  64%|██████▍   | 16/25 [12:16<06:29, 43.23s/it, 694.36/3600 seconds]    Best trial: 13. Best value: 0.0669086:  64%|██████▍   | 16/25 [12:16<06:29, 43.23s/it, 694.36/3600 seconds]    Best trial: 13. Best value: 0.0669086:  68%|██████▊   | 17/25 [12:16<05:43, 42.92s/it, 694.36/3600 seconds]    Best trial: 13. Best value: 0.0669086:  68%|██████▊   | 17/25 [12:16<05:43, 42.92s/it, 736.55/3600 seconds]
     Pool 1 Twitch trains (Numba):   0%|          | 0/800 [00:00<?, ?MU/s]
-    Pool 1 Twitch trains (Numba):   0%|          | 1/800 [00:00<01:41,  7.86MU/s]    Pool 1 Twitch trains (Numba): 100%|██████████| 800/800 [00:00<00:00, 4608.60MU/s]
-                                                                                                                [I 2026-04-19 07:21:15,163] Trial 17 finished with value: 0.19917421829339854 and parameters: {'dc_offset': 51.30334391088108}. Best is trial 10 with value: 0.004072670774146443.
-    Best trial: 10. Best value: 0.00407267:  68%|██████▊   | 17/25 [09:05<03:57, 29.69s/it, 515.32/3600 seconds]    Best trial: 10. Best value: 0.00407267:  68%|██████▊   | 17/25 [09:05<03:57, 29.69s/it, 515.32/3600 seconds]    Best trial: 10. Best value: 0.00407267:  72%|███████▏  | 18/25 [09:05<03:28, 29.83s/it, 515.32/3600 seconds]    Best trial: 10. Best value: 0.00407267:  72%|███████▏  | 18/25 [09:05<03:28, 29.83s/it, 545.47/3600 seconds]
+    Pool 1 Twitch trains (Numba):   0%|          | 1/800 [00:00<01:42,  7.83MU/s]    Pool 1 Twitch trains (Numba): 100%|██████████| 800/800 [00:00<00:00, 4492.87MU/s]
+                                                                                                               [I 2026-06-01 07:50:13,224] Trial 17 finished with value: 0.1503302068854029 and parameters: {'dc_offset': 49.66620821044337}. Best is trial 13 with value: 0.06690860730638155.
+    Best trial: 13. Best value: 0.0669086:  68%|██████▊   | 17/25 [13:00<05:43, 42.92s/it, 736.55/3600 seconds]    Best trial: 13. Best value: 0.0669086:  68%|██████▊   | 17/25 [13:00<05:43, 42.92s/it, 736.55/3600 seconds]    Best trial: 13. Best value: 0.0669086:  72%|███████▏  | 18/25 [13:00<05:02, 43.20s/it, 736.55/3600 seconds]    Best trial: 13. Best value: 0.0669086:  72%|███████▏  | 18/25 [13:00<05:02, 43.20s/it, 780.40/3600 seconds]
     Pool 1 Twitch trains (Numba):   0%|          | 0/800 [00:00<?, ?MU/s]
-    Pool 1 Twitch trains (Numba):   0%|          | 1/800 [00:00<01:43,  7.70MU/s]    Pool 1 Twitch trains (Numba): 100%|██████████| 800/800 [00:00<00:00, 4946.81MU/s]
-                                                                                                                [I 2026-04-19 07:21:44,519] Trial 18 finished with value: 0.26729018305186913 and parameters: {'dc_offset': 27.99939228147634}. Best is trial 10 with value: 0.004072670774146443.
-    Best trial: 10. Best value: 0.00407267:  72%|███████▏  | 18/25 [09:34<03:28, 29.83s/it, 545.47/3600 seconds]    Best trial: 10. Best value: 0.00407267:  72%|███████▏  | 18/25 [09:34<03:28, 29.83s/it, 545.47/3600 seconds]    Best trial: 10. Best value: 0.00407267:  76%|███████▌  | 19/25 [09:34<02:58, 29.69s/it, 545.47/3600 seconds]    Best trial: 10. Best value: 0.00407267:  76%|███████▌  | 19/25 [09:34<02:58, 29.69s/it, 574.83/3600 seconds]
+    Pool 1 Twitch trains (Numba):   0%|          | 1/800 [00:00<05:35,  2.38MU/s]    Pool 1 Twitch trains (Numba): 100%|██████████| 800/800 [00:00<00:00, 1760.60MU/s]
+                                                                                                               [I 2026-06-01 07:50:55,740] Trial 18 finished with value: 0.3561828816321954 and parameters: {'dc_offset': 27.872349077351792}. Best is trial 13 with value: 0.06690860730638155.
+    Best trial: 13. Best value: 0.0669086:  72%|███████▏  | 18/25 [13:42<05:02, 43.20s/it, 780.40/3600 seconds]    Best trial: 13. Best value: 0.0669086:  72%|███████▏  | 18/25 [13:42<05:02, 43.20s/it, 780.40/3600 seconds]    Best trial: 13. Best value: 0.0669086:  76%|███████▌  | 19/25 [13:42<04:17, 42.99s/it, 780.40/3600 seconds]    Best trial: 13. Best value: 0.0669086:  76%|███████▌  | 19/25 [13:42<04:17, 42.99s/it, 822.92/3600 seconds]
     Pool 1 Twitch trains (Numba):   0%|          | 0/800 [00:00<?, ?MU/s]
-    Pool 1 Twitch trains (Numba):   0%|          | 1/800 [00:00<01:42,  7.77MU/s]    Pool 1 Twitch trains (Numba): 100%|██████████| 800/800 [00:00<00:00, 5153.39MU/s]
-                                                                                                                [I 2026-04-19 07:22:11,691] Trial 19 finished with value: 2000.0 and parameters: {'dc_offset': 2.3044965138706885}. Best is trial 10 with value: 0.004072670774146443.
-    Best trial: 10. Best value: 0.00407267:  76%|███████▌  | 19/25 [10:02<02:58, 29.69s/it, 574.83/3600 seconds]    Best trial: 10. Best value: 0.00407267:  76%|███████▌  | 19/25 [10:02<02:58, 29.69s/it, 574.83/3600 seconds]    Best trial: 10. Best value: 0.00407267:  80%|████████  | 20/25 [10:02<02:24, 28.93s/it, 574.83/3600 seconds]    Best trial: 10. Best value: 0.00407267:  80%|████████  | 20/25 [10:02<02:24, 28.93s/it, 602.00/3600 seconds]
+    Pool 1 Twitch trains (Numba):   0%|          | 1/800 [00:00<01:41,  7.85MU/s]    Pool 1 Twitch trains (Numba): 100%|██████████| 800/800 [00:00<00:00, 5063.76MU/s]
+                                                                                                               [I 2026-06-01 07:51:36,043] Trial 19 finished with value: 2000.0 and parameters: {'dc_offset': 2.3044965138706885}. Best is trial 13 with value: 0.06690860730638155.
+    Best trial: 13. Best value: 0.0669086:  76%|███████▌  | 19/25 [14:23<04:17, 42.99s/it, 822.92/3600 seconds]    Best trial: 13. Best value: 0.0669086:  76%|███████▌  | 19/25 [14:23<04:17, 42.99s/it, 822.92/3600 seconds]    Best trial: 13. Best value: 0.0669086:  80%|████████  | 20/25 [14:23<03:30, 42.18s/it, 822.92/3600 seconds]    Best trial: 13. Best value: 0.0669086:  80%|████████  | 20/25 [14:23<03:30, 42.18s/it, 863.22/3600 seconds]
     Pool 1 Twitch trains (Numba):   0%|          | 0/800 [00:00<?, ?MU/s]
-    Pool 1 Twitch trains (Numba):   0%|          | 1/800 [00:00<01:47,  7.45MU/s]    Pool 1 Twitch trains (Numba): 100%|██████████| 800/800 [00:00<00:00, 4417.02MU/s]
-    Trial 20: Force=79.03N (target=71.87N), Error=10.0%, DC=51.4Hz, Active=549/800
-                                                                                                                [I 2026-04-19 07:22:42,124] Trial 20 finished with value: 0.09973559233916786 and parameters: {'dc_offset': 51.417301752243304}. Best is trial 10 with value: 0.004072670774146443.
-    Best trial: 10. Best value: 0.00407267:  80%|████████  | 20/25 [10:32<02:24, 28.93s/it, 602.00/3600 seconds]    Best trial: 10. Best value: 0.00407267:  80%|████████  | 20/25 [10:32<02:24, 28.93s/it, 602.00/3600 seconds]    Best trial: 10. Best value: 0.00407267:  84%|████████▍ | 21/25 [10:32<01:57, 29.38s/it, 602.00/3600 seconds]    Best trial: 10. Best value: 0.00407267:  84%|████████▍ | 21/25 [10:32<01:57, 29.38s/it, 632.43/3600 seconds]
+    Pool 1 Twitch trains (Numba):   0%|          | 1/800 [00:00<01:42,  7.79MU/s]    Pool 1 Twitch trains (Numba): 100%|██████████| 800/800 [00:00<00:00, 4323.77MU/s]
+    Trial 20: Force=80.27N (target=64.83N), Error=23.8%, DC=59.3Hz, Active=583/800
+                                                                                                               [I 2026-06-01 07:52:20,775] Trial 20 finished with value: 0.2381273771562084 and parameters: {'dc_offset': 59.299493077815356}. Best is trial 13 with value: 0.06690860730638155.
+    Best trial: 13. Best value: 0.0669086:  80%|████████  | 20/25 [15:07<03:30, 42.18s/it, 863.22/3600 seconds]    Best trial: 13. Best value: 0.0669086:  80%|████████  | 20/25 [15:07<03:30, 42.18s/it, 863.22/3600 seconds]    Best trial: 13. Best value: 0.0669086:  84%|████████▍ | 21/25 [15:07<02:51, 42.95s/it, 863.22/3600 seconds]    Best trial: 13. Best value: 0.0669086:  84%|████████▍ | 21/25 [15:07<02:51, 42.95s/it, 907.95/3600 seconds]
     Pool 1 Twitch trains (Numba):   0%|          | 0/800 [00:00<?, ?MU/s]
-    Pool 1 Twitch trains (Numba):   0%|          | 1/800 [00:00<01:42,  7.80MU/s]    Pool 1 Twitch trains (Numba): 100%|██████████| 800/800 [00:00<00:00, 4816.22MU/s]
-                                                                                                                [I 2026-04-19 07:23:11,651] Trial 21 finished with value: 0.07879144930382441 and parameters: {'dc_offset': 36.25303111016437}. Best is trial 10 with value: 0.004072670774146443.
-    Best trial: 10. Best value: 0.00407267:  84%|████████▍ | 21/25 [11:01<01:57, 29.38s/it, 632.43/3600 seconds]    Best trial: 10. Best value: 0.00407267:  84%|████████▍ | 21/25 [11:01<01:57, 29.38s/it, 632.43/3600 seconds]    Best trial: 10. Best value: 0.00407267:  88%|████████▊ | 22/25 [11:01<01:28, 29.43s/it, 632.43/3600 seconds]    Best trial: 10. Best value: 0.00407267:  88%|████████▊ | 22/25 [11:01<01:28, 29.43s/it, 661.96/3600 seconds]
+    Pool 1 Twitch trains (Numba):   0%|          | 1/800 [00:00<01:42,  7.81MU/s]    Pool 1 Twitch trains (Numba): 100%|██████████| 800/800 [00:00<00:00, 4636.73MU/s]
+                                                                                                               [I 2026-06-01 07:53:04,981] Trial 21 finished with value: 0.0996012180902253 and parameters: {'dc_offset': 39.750099530761936}. Best is trial 13 with value: 0.06690860730638155.
+    Best trial: 13. Best value: 0.0669086:  84%|████████▍ | 21/25 [15:52<02:51, 42.95s/it, 907.95/3600 seconds]    Best trial: 13. Best value: 0.0669086:  84%|████████▍ | 21/25 [15:52<02:51, 42.95s/it, 907.95/3600 seconds]    Best trial: 13. Best value: 0.0669086:  88%|████████▊ | 22/25 [15:52<02:09, 43.33s/it, 907.95/3600 seconds]    Best trial: 13. Best value: 0.0669086:  88%|████████▊ | 22/25 [15:52<02:09, 43.33s/it, 952.16/3600 seconds]
     Pool 1 Twitch trains (Numba):   0%|          | 0/800 [00:00<?, ?MU/s]
-    Pool 1 Twitch trains (Numba):   0%|          | 1/800 [00:00<01:42,  7.82MU/s]    Pool 1 Twitch trains (Numba): 100%|██████████| 800/800 [00:00<00:00, 4685.33MU/s]
-                                                                                                                [I 2026-04-19 07:23:41,765] Trial 22 finished with value: 0.11622653417185361 and parameters: {'dc_offset': 45.10321870223514}. Best is trial 10 with value: 0.004072670774146443.
-    Best trial: 10. Best value: 0.00407267:  88%|████████▊ | 22/25 [11:32<01:28, 29.43s/it, 661.96/3600 seconds]    Best trial: 10. Best value: 0.00407267:  88%|████████▊ | 22/25 [11:32<01:28, 29.43s/it, 661.96/3600 seconds]    Best trial: 10. Best value: 0.00407267:  92%|█████████▏| 23/25 [11:32<00:59, 29.63s/it, 661.96/3600 seconds]    Best trial: 10. Best value: 0.00407267:  92%|█████████▏| 23/25 [11:32<00:59, 29.63s/it, 692.08/3600 seconds]
+    Pool 1 Twitch trains (Numba):   0%|          | 1/800 [00:00<05:36,  2.37MU/s]    Pool 1 Twitch trains (Numba): 100%|██████████| 800/800 [00:00<00:00, 1708.65MU/s]
+                                                                                                               [I 2026-06-01 07:53:49,516] Trial 22 finished with value: 0.16134516492744702 and parameters: {'dc_offset': 43.19634914107002}. Best is trial 13 with value: 0.06690860730638155.
+    Best trial: 13. Best value: 0.0669086:  88%|████████▊ | 22/25 [16:36<02:09, 43.33s/it, 952.16/3600 seconds]    Best trial: 13. Best value: 0.0669086:  88%|████████▊ | 22/25 [16:36<02:09, 43.33s/it, 952.16/3600 seconds]    Best trial: 13. Best value: 0.0669086:  92%|█████████▏| 23/25 [16:36<01:27, 43.69s/it, 952.16/3600 seconds]    Best trial: 13. Best value: 0.0669086:  92%|█████████▏| 23/25 [16:36<01:27, 43.69s/it, 996.69/3600 seconds]
     Pool 1 Twitch trains (Numba):   0%|          | 0/800 [00:00<?, ?MU/s]
-    Pool 1 Twitch trains (Numba):   0%|          | 1/800 [00:00<01:43,  7.72MU/s]    Pool 1 Twitch trains (Numba): 100%|██████████| 800/800 [00:00<00:00, 4824.27MU/s]
-                                                                                                                [I 2026-04-19 07:24:11,465] Trial 23 finished with value: 0.09204201718133319 and parameters: {'dc_offset': 33.67753347925725}. Best is trial 10 with value: 0.004072670774146443.
-    Best trial: 10. Best value: 0.00407267:  92%|█████████▏| 23/25 [12:01<00:59, 29.63s/it, 692.08/3600 seconds]    Best trial: 10. Best value: 0.00407267:  92%|█████████▏| 23/25 [12:01<00:59, 29.63s/it, 692.08/3600 seconds]    Best trial: 10. Best value: 0.00407267:  96%|█████████▌| 24/25 [12:01<00:29, 29.65s/it, 692.08/3600 seconds]    Best trial: 10. Best value: 0.00407267:  96%|█████████▌| 24/25 [12:01<00:29, 29.65s/it, 721.78/3600 seconds]
+    Pool 1 Twitch trains (Numba):   0%|          | 1/800 [00:00<01:42,  7.77MU/s]    Pool 1 Twitch trains (Numba): 100%|██████████| 800/800 [00:00<00:00, 4832.88MU/s]
+                                                                                                               [I 2026-06-01 07:54:32,500] Trial 23 finished with value: 0.15521034165081057 and parameters: {'dc_offset': 29.931608084696627}. Best is trial 13 with value: 0.06690860730638155.
+    Best trial: 13. Best value: 0.0669086:  92%|█████████▏| 23/25 [17:19<01:27, 43.69s/it, 996.69/3600 seconds]    Best trial: 13. Best value: 0.0669086:  92%|█████████▏| 23/25 [17:19<01:27, 43.69s/it, 996.69/3600 seconds]    Best trial: 13. Best value: 0.0669086:  96%|█████████▌| 24/25 [17:19<00:43, 43.48s/it, 996.69/3600 seconds]    Best trial: 13. Best value: 0.0669086:  96%|█████████▌| 24/25 [17:19<00:43, 43.48s/it, 1039.68/3600 seconds]
     Pool 1 Twitch trains (Numba):   0%|          | 0/800 [00:00<?, ?MU/s]
-    Pool 1 Twitch trains (Numba):   0%|          | 1/800 [00:00<01:42,  7.80MU/s]    Pool 1 Twitch trains (Numba): 100%|██████████| 800/800 [00:00<00:00, 5162.25MU/s]
-                                                                                                                [I 2026-04-19 07:24:40,106] Trial 24 finished with value: 0.4912193983455916 and parameters: {'dc_offset': 17.63348517253716}. Best is trial 10 with value: 0.004072670774146443.
-    Best trial: 10. Best value: 0.00407267:  96%|█████████▌| 24/25 [12:30<00:29, 29.65s/it, 721.78/3600 seconds]    Best trial: 10. Best value: 0.00407267:  96%|█████████▌| 24/25 [12:30<00:29, 29.65s/it, 721.78/3600 seconds]    Best trial: 10. Best value: 0.00407267: 100%|██████████| 25/25 [12:30<00:00, 29.35s/it, 721.78/3600 seconds]    Best trial: 10. Best value: 0.00407267: 100%|██████████| 25/25 [12:30<00:00, 29.35s/it, 750.42/3600 seconds]    Best trial: 10. Best value: 0.00407267: 100%|██████████| 25/25 [12:30<00:00, 30.02s/it, 750.42/3600 seconds]
+    Pool 1 Twitch trains (Numba):   0%|          | 1/800 [00:00<01:42,  7.77MU/s]    Pool 1 Twitch trains (Numba): 100%|██████████| 800/800 [00:00<00:00, 5048.45MU/s]
+                                                                                                                [I 2026-06-01 07:55:14,344] Trial 24 finished with value: 1400.0 and parameters: {'dc_offset': 16.145315375649517}. Best is trial 13 with value: 0.06690860730638155.
+    Best trial: 13. Best value: 0.0669086:  96%|█████████▌| 24/25 [18:01<00:43, 43.48s/it, 1039.68/3600 seconds]    Best trial: 13. Best value: 0.0669086:  96%|█████████▌| 24/25 [18:01<00:43, 43.48s/it, 1039.68/3600 seconds]    Best trial: 13. Best value: 0.0669086: 100%|██████████| 25/25 [18:01<00:00, 42.99s/it, 1039.68/3600 seconds]    Best trial: 13. Best value: 0.0669086: 100%|██████████| 25/25 [18:01<00:00, 42.99s/it, 1081.52/3600 seconds]    Best trial: 13. Best value: 0.0669086: 100%|██████████| 25/25 [18:01<00:00, 43.26s/it, 1081.52/3600 seconds]
 
 
 
@@ -675,19 +675,19 @@ Analyze Results
 
     Optimization Complete
     ==================================================
-    Best trial: 10
-    Force error: 0.4%
+    Best trial: 13
+    Force error: 6.7%
 
     Force Results:
-      Target:   71.87 N (40.0 Hz reference)
-      Achieved: 72.16 N
-      Error:    0.4%
+      Target:   64.83 N (40.0 Hz reference)
+      Achieved: 69.17 N
+      Error:    6.7%
 
     Optimized Parameters:
-      DC offset: 38.07 Hz
+      DC offset: 35.34 Hz
       Oscillation: 20.0 Hz (amplitude 20.0 Hz)
-      Active MUs: 460/800
-      Firing rate: 7.9±2.5 Hz
+      Active MUs: 442/800
+      Firing rate: 6.8±2.6 Hz
 
 
 
@@ -857,9 +857,9 @@ Visualize Optimization History
 
 
     [DONE] DC offset optimization complete!
-    Best DC offset: 38.07 Hz
+    Best DC offset: 35.34 Hz
     Original Watanabe: 65 Hz constant → 58 Hz + oscillation (ratio: 0.892)
-    This implementation: 40.0 Hz constant → 38.1 Hz + oscillation (ratio: 0.952)
+    This implementation: 40.0 Hz constant → 35.3 Hz + oscillation (ratio: 0.883)
 
 
 
@@ -867,7 +867,7 @@ Visualize Optimization History
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (12 minutes 32.281 seconds)
+   **Total running time of the script:** (18 minutes 3.018 seconds)
 
 
 .. _sphx_glr_download_auto_examples_03_papers_watanabe_02_optimize_oscillating_dc.py:

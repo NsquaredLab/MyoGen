@@ -124,7 +124,7 @@ The **SurfaceEMG** object is initialized with the **muscle model**, the **electr
     electrode_array_monopolar = simulator.SurfaceElectrodeArray(
         num_rows=5,
         num_cols=5,
-        inter_electrode_distances__mm=5 * pq.mm,
+        inter_electrode_distance__mm=5 * pq.mm,
         electrode_radius__mm=5 * pq.mm,
         differentiation_mode="monopolar",
         bending_radius__mm=muscle.radius__mm + muscle.skin_thickness__mm + muscle.fat_thickness__mm,
@@ -195,7 +195,9 @@ To generate the **MUAPs**, we need to run the ``simulate_muaps`` method of the *
 
  .. code-block:: none
 
-    Electrode Array 1/1:   0%|          | 0/4 [00:00<?, ?it/s]    Electrode Array 1/1:  25%|██▌       | 1/4 [00:17<00:52, 17.66s/it]    Electrode Array 1/1:  50%|█████     | 2/4 [00:50<00:53, 26.62s/it]    Electrode Array 1/1: 100%|██████████| 4/4 [00:50<00:00, 12.64s/it]
+    Electrode Array 1/1:   0%|          | 0/4 [00:00<?, ?it/s]    Electrode Array 1/1:  25%|██▌       | 1/4 [00:28<01:24, 28.17s/it]/home/runner/work/MyoGen/MyoGen/.venv/lib/python3.12/site-packages/joblib/externals/loky/process_executor.py:782: UserWarning: A worker stopped while some jobs were given to the executor. This can be caused by a too short worker timeout or by a memory leak.
+      warnings.warn(
+    Electrode Array 1/1:  50%|█████     | 2/4 [00:50<00:49, 24.76s/it]    Electrode Array 1/1: 100%|██████████| 4/4 [00:53<00:00, 10.24s/it]    Electrode Array 1/1: 100%|██████████| 4/4 [00:53<00:00, 13.44s/it]
     MUAP simulation completed!
     Generated MUAPs shape: (256, 25) (stored as 2D for NWB compatibility)
       - 100 total motor units in muscle
@@ -281,28 +283,28 @@ Each subplot shows the MUAP waveform at one electrode position.
     *
 
       .. image-sg:: /auto_examples/01_basic/images/sphx_glr_05_simulate_surface_muaps_001.png
-         :alt: MUAP 0 (0.2 mV peak-to-peak)
+         :alt: MUAP 0 (0.6 mV peak-to-peak)
          :srcset: /auto_examples/01_basic/images/sphx_glr_05_simulate_surface_muaps_001.png
          :class: sphx-glr-multi-img
 
     *
 
       .. image-sg:: /auto_examples/01_basic/images/sphx_glr_05_simulate_surface_muaps_002.png
-         :alt: MUAP 1 (3.0 mV peak-to-peak)
+         :alt: MUAP 1 (15.1 mV peak-to-peak)
          :srcset: /auto_examples/01_basic/images/sphx_glr_05_simulate_surface_muaps_002.png
          :class: sphx-glr-multi-img
 
     *
 
       .. image-sg:: /auto_examples/01_basic/images/sphx_glr_05_simulate_surface_muaps_003.png
-         :alt: MUAP 2 (2.1 mV peak-to-peak)
+         :alt: MUAP 2 (10.5 mV peak-to-peak)
          :srcset: /auto_examples/01_basic/images/sphx_glr_05_simulate_surface_muaps_003.png
          :class: sphx-glr-multi-img
 
     *
 
       .. image-sg:: /auto_examples/01_basic/images/sphx_glr_05_simulate_surface_muaps_004.png
-         :alt: MUAP 3 (2.8 mV peak-to-peak)
+         :alt: MUAP 3 (11.5 mV peak-to-peak)
          :srcset: /auto_examples/01_basic/images/sphx_glr_05_simulate_surface_muaps_004.png
          :class: sphx-glr-multi-img
 
@@ -313,24 +315,24 @@ Each subplot shows the MUAP waveform at one electrode position.
 
 
     MUAP 0 amplitude range:
-            Min: -0.075473 mV (-75.47 uV)
-            Max: 0.094922 mV (94.92 uV)
-            Peak-to-peak: 0.170395 mV (170.39 uV)
+            Min: -0.245851 mV (-245.85 uV)
+            Max: 0.320643 mV (320.64 uV)
+            Peak-to-peak: 0.566494 mV (566.49 uV)
 
     MUAP 1 amplitude range:
-            Min: -1.418730 mV (-1418.73 uV)
-            Max: 1.574043 mV (1574.04 uV)
-            Peak-to-peak: 2.992773 mV (2992.77 uV)
+            Min: -6.868579 mV (-6868.58 uV)
+            Max: 8.275305 mV (8275.30 uV)
+            Peak-to-peak: 15.143884 mV (15143.88 uV)
 
     MUAP 2 amplitude range:
-            Min: -0.965593 mV (-965.59 uV)
-            Max: 1.103116 mV (1103.12 uV)
-            Peak-to-peak: 2.068709 mV (2068.71 uV)
+            Min: -4.703966 mV (-4703.97 uV)
+            Max: 5.765928 mV (5765.93 uV)
+            Peak-to-peak: 10.469893 mV (10469.89 uV)
 
     MUAP 3 amplitude range:
-            Min: -1.409962 mV (-1409.96 uV)
-            Max: 1.426678 mV (1426.68 uV)
-            Peak-to-peak: 2.836640 mV (2836.64 uV)
+            Min: -5.394776 mV (-5394.78 uV)
+            Max: 6.135689 mV (6135.69 uV)
+            Peak-to-peak: 11.530465 mV (11530.47 uV)
 
 
 
@@ -338,7 +340,7 @@ Each subplot shows the MUAP waveform at one electrode position.
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 54.273 seconds)
+   **Total running time of the script:** (0 minutes 56.776 seconds)
 
 
 .. _sphx_glr_download_auto_examples_01_basic_05_simulate_surface_muaps.py:
