@@ -47,6 +47,7 @@ from myogen.utils.nmodl import load_nmodl_mechanisms
 from myogen.utils.types import pps
 
 plt.style.use("fivethirtyeight")
+plt.rcParams["path.simplify"] = False  # draw every sample on dense EMG traces
 
 # %%
 
@@ -334,7 +335,7 @@ labels = list(conditions.keys())
 fig, axes = plt.subplots(len(labels), 1, figsize=(12, 8), sharex=True)
 for ax, label in zip(axes, labels):
     drive = conditions[label]["drive"]
-    ax.plot(drive.times.rescale(pq.s).magnitude, drive.magnitude, linewidth=1.2)
+    ax.plot(drive.times.rescale(pq.s).magnitude, drive.magnitude, linewidth=0.6)
     ax.set_ylabel("Drive (pps)")
     ax.set_title(label)
     ax.grid(True, alpha=0.3)
@@ -387,7 +388,7 @@ for ax, label in zip(axes, labels):
 
     rate_t__s, rate__pps = population_discharge_rate(sts)
     ax_rate = ax.twinx()
-    ax_rate.plot(rate_t__s, rate__pps, color="black", linewidth=1.5, alpha=0.85)
+    ax_rate.plot(rate_t__s, rate__pps, color="black", linewidth=0.75, alpha=0.85)
     ax_rate.set_ylabel("Discharge rate (pps)")
     ax_rate.set_ylim(bottom=0)
 axes[-1].set_xlabel("Time (s)")
@@ -408,7 +409,7 @@ plt.show()
 fig, axes = plt.subplots(len(labels), 1, figsize=(12, 8), sharex=True)
 for ax, label in zip(axes, labels):
     iemg = conditions[label]["iemg"][:, 0]
-    ax.plot(iemg.times.rescale(pq.s).magnitude, iemg.magnitude, linewidth=0.6)
+    ax.plot(iemg.times.rescale(pq.s).magnitude, iemg.magnitude, linewidth=0.3)
     ax.set_ylabel("iEMG (mV)")
     ax.set_title(label)
     ax.grid(True, alpha=0.3)
