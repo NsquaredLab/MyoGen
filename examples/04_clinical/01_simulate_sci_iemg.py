@@ -116,25 +116,29 @@ print(f"Muscle built: {N_MU} MUs, "
 # -----------------------
 #
 # Create a differential needle electrode and the iEMG simulator, then compute
-# the motor unit action potentials (MUAPs) **once**. The three conditions below
-# reuse these MUAPs and only re-run the (cheaper) spike-train -> EMG convolution.
+# the motor unit action potentials (MUAPs) and cache them. Computing MUAPs is the
+# most expensive step, so the simulator (with its MUAPs) is pickled and reloaded
+# on subsequent runs; the three conditions below then only re-run the cheaper
+# spike-train -> EMG convolution.
 
-electrode = simulator.IntramuscularElectrodeArray(
-    num_electrodes=4,
-    inter_electrode_distance__mm=2.0 * pq.mm,
-    differentiation_mode="consecutive",
-    position__mm=(0.0 * pq.mm, 0.0 * pq.mm, 15.0 * pq.mm),
-)
-
-iemg_sim = simulator.IntramuscularEMG(
-    muscle_model=muscle,
-    electrode_array=electrode,
-    MUs_to_simulate=list(range(N_MU)),
-)
-
-print("Computing MUAPs (once)...")
-muaps__Block = iemg_sim.simulate_muaps(n_jobs=2)
-joblib.dump(iemg_sim, save_path / "sci_iemg_simulator.pkl")
+iemg_cache = save_path / "sci_iemg_simulator.pkl"
+if iemg_cache.exists():
+    iemg_sim = joblib.load(iemg_cache)
+else:
+    electrode = simulator.IntramuscularElectrodeArray(
+        num_electrodes=4,
+        inter_electrode_distance__mm=2.0 * pq.mm,
+        differentiation_mode="consecutive",
+        position__mm=(0.0 * pq.mm, 0.0 * pq.mm, 15.0 * pq.mm),
+    )
+    iemg_sim = simulator.IntramuscularEMG(
+        muscle_model=muscle,
+        electrode_array=electrode,
+        MUs_to_simulate=list(range(N_MU)),
+    )
+    print("Computing MUAPs (once)...")
+    iemg_sim.simulate_muaps(n_jobs=2)
+    joblib.dump(iemg_sim, iemg_cache)
 
 # %%
 
@@ -332,7 +336,7 @@ for ax, label in zip(axes, labels):
     ax.set_title(label)
     ax.grid(True, alpha=0.3)
 axes[-1].set_xlabel("Time (s)")
-sns.despine(trim=True, right=True, top=True, offset=5)
+sns.despine(trim=True, left=False, bottom=False, right=True, top=True, offset=5)
 plt.tight_layout()
 plt.show()
 
@@ -355,7 +359,7 @@ for ax, label in zip(axes, labels):
     ax.set_title(label)
     ax.grid(True, alpha=0.3)
 axes[-1].set_xlabel("Time (s)")
-sns.despine(trim=True, right=True, top=True, offset=5)
+sns.despine(trim=True, left=False, bottom=False, right=True, top=True, offset=5)
 plt.tight_layout()
 plt.show()
 
@@ -377,6 +381,6 @@ for ax, label in zip(axes, labels):
     ax.set_title(label)
     ax.grid(True, alpha=0.3)
 axes[-1].set_xlabel("Time (s)")
-sns.despine(trim=True, right=True, top=True, offset=5)
+sns.despine(trim=True, left=False, bottom=False, right=True, top=True, offset=5)
 plt.tight_layout()
 plt.show()
