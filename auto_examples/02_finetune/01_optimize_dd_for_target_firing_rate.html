@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Optimizing Descending Drive Parameters for Target Firing Rates &#8212; MyoGen 0.10.0 Documentation</title>
+    <title>Optimizing Descending Drive Parameters for Target Firing Rates &#8212; MyoGen 0.10.1 Documentation</title>
   
   
   
@@ -55,7 +55,7 @@
 
     <script src="../../_static/jquery.js?v=5d32c60e"></script>
     <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-    <script src="../../_static/documentation_options.js?v=7e54ce6f"></script>
+    <script src="../../_static/documentation_options.js?v=d714ba09"></script>
     <script src="../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/sg-tags.js?v=d80f6fa4"></script>
@@ -74,7 +74,7 @@
     <link rel="prev" title="Step-by-step reproduction" href="index.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="0.10.0" />
+  <meta name="docsearch:version" content="0.10.1" />
   
     
     <script src="../../_static/searchtools.js"></script>
@@ -149,8 +149,8 @@
       
     
     
-    <img src="../../_static/myogen_logo.png" class="logo__image only-light" alt="MyoGen 0.10.0 Documentation - Home"/>
-    <img src="../../_static/myogen_logo.png" class="logo__image only-dark pst-js-only" alt="MyoGen 0.10.0 Documentation - Home"/>
+    <img src="../../_static/myogen_logo.png" class="logo__image only-light" alt="MyoGen 0.10.1 Documentation - Home"/>
+    <img src="../../_static/myogen_logo.png" class="logo__image only-dark pst-js-only" alt="MyoGen 0.10.1 Documentation - Home"/>
   
   
 </a></div>
@@ -159,7 +159,7 @@
 <div class="nav-item">
   <div class="version-switcher__container dropdown">
       <button id="version-switcher-button" type="button" class="version-switcher__button btn btn-sm navbar-btn" aria-haspopup="true" aria-expanded="false">
-          Version 0.10.0
+          Version 0.10.1
       </button>
       
       
@@ -814,206 +814,206 @@ TPE is a Bayesian optimization algorithm that builds probabilistic models of the
 </div>
 <div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Optimizing network parameters | Target: 16.8±2.5Hz | Trials: 25
 
-[I 2026-06-01 07:26:02,484] Using an existing study with name &#39;dd_optimization&#39; instead of creating a new one.
+[I 2026-06-01 10:10:17,277] Using an existing study with name &#39;dd_optimization&#39; instead of creating a new one.
 
   0%|          | 0/25 [00:00&lt;?, ?it/s]Trial 1: FR=240.7±201.1Hz, obj=92.777 (mean_err=13.313, std_err=79.439)
 
 
-[I 2026-06-01 07:26:30,496] Trial 1 finished with value: 92.77738072719333 and parameters: {&#39;dd_neurons&#39;: 437, &#39;conn_prob&#39;: 0.9556428757689246, &#39;dd_drive&#39;: 733.3339721023481}. Best is trial 1 with value: 92.77738072719333.
+[I 2026-06-01 10:10:45,641] Trial 1 finished with value: 92.77738072719333 and parameters: {&#39;dd_neurons&#39;: 437, &#39;conn_prob&#39;: 0.9556428757689246, &#39;dd_drive&#39;: 733.3339721023481}. Best is trial 1 with value: 92.77738072719333.
 
   0%|          | 0/25 [00:28&lt;?, ?it/s]
 Best trial: 1. Best value: 92.7774:   0%|          | 0/25 [00:28&lt;?, ?it/s]
-Best trial: 1. Best value: 92.7774:   4%|▍         | 1/25 [00:28&lt;11:12, 28.01s/it]
-Best trial: 1. Best value: 92.7774:   4%|▍         | 1/25 [00:28&lt;11:12, 28.01s/it, 28.01/36000 seconds]Trial 2: FR=37.8±6.2Hz, obj=2.707 (mean_err=1.245, std_err=1.462)
+Best trial: 1. Best value: 92.7774:   4%|▍         | 1/25 [00:28&lt;11:20, 28.36s/it]
+Best trial: 1. Best value: 92.7774:   4%|▍         | 1/25 [00:28&lt;11:20, 28.36s/it, 28.36/36000 seconds]Trial 2: FR=37.8±6.2Hz, obj=2.707 (mean_err=1.245, std_err=1.462)
 
 
-[I 2026-06-01 07:26:45,347] Trial 2 finished with value: 2.7070643735241093 and parameters: {&#39;dd_neurons&#39;: 639, &#39;conn_prob&#39;: 0.24041677639819287, &#39;dd_drive&#39;: 160.21454773452163}. Best is trial 2 with value: 2.7070643735241093.
+[I 2026-06-01 10:11:01,486] Trial 2 finished with value: 2.7070643735241093 and parameters: {&#39;dd_neurons&#39;: 639, &#39;conn_prob&#39;: 0.24041677639819287, &#39;dd_drive&#39;: 160.21454773452163}. Best is trial 2 with value: 2.7070643735241093.
 
-Best trial: 1. Best value: 92.7774:   4%|▍         | 1/25 [00:42&lt;11:12, 28.01s/it, 28.01/36000 seconds]
-Best trial: 2. Best value: 2.70706:   4%|▍         | 1/25 [00:42&lt;11:12, 28.01s/it, 28.01/36000 seconds]
-Best trial: 2. Best value: 2.70706:   8%|▊         | 2/25 [00:42&lt;07:46, 20.27s/it, 28.01/36000 seconds]
-Best trial: 2. Best value: 2.70706:   8%|▊         | 2/25 [00:42&lt;07:46, 20.27s/it, 42.86/36000 seconds]Trial 3: FR=86.9±7.4Hz, obj=6.142 (mean_err=4.167, std_err=1.957)
+Best trial: 1. Best value: 92.7774:   4%|▍         | 1/25 [00:44&lt;11:20, 28.36s/it, 28.36/36000 seconds]
+Best trial: 2. Best value: 2.70706:   4%|▍         | 1/25 [00:44&lt;11:20, 28.36s/it, 28.36/36000 seconds]
+Best trial: 2. Best value: 2.70706:   8%|▊         | 2/25 [00:44&lt;08:02, 21.00s/it, 28.36/36000 seconds]
+Best trial: 2. Best value: 2.70706:   8%|▊         | 2/25 [00:44&lt;08:02, 21.00s/it, 44.20/36000 seconds]Trial 3: FR=86.9±7.4Hz, obj=6.142 (mean_err=4.167, std_err=1.957)
 
 
-[I 2026-06-01 07:26:54,461] Trial 3 finished with value: 6.141855981188677 and parameters: {&#39;dd_neurons&#39;: 152, &#39;conn_prob&#39;: 0.8795585311974417, &#39;dd_drive&#39;: 603.1094366844927}. Best is trial 2 with value: 2.7070643735241093.
+[I 2026-06-01 10:11:11,033] Trial 3 finished with value: 6.141855981188677 and parameters: {&#39;dd_neurons&#39;: 152, &#39;conn_prob&#39;: 0.8795585311974417, &#39;dd_drive&#39;: 603.1094366844927}. Best is trial 2 with value: 2.7070643735241093.
 
-Best trial: 2. Best value: 2.70706:   8%|▊         | 2/25 [00:51&lt;07:46, 20.27s/it, 42.86/36000 seconds]
-Best trial: 2. Best value: 2.70706:   8%|▊         | 2/25 [00:51&lt;07:46, 20.27s/it, 42.86/36000 seconds]
-Best trial: 2. Best value: 2.70706:  12%|█▏        | 3/25 [00:51&lt;05:33, 15.17s/it, 42.86/36000 seconds]
-Best trial: 2. Best value: 2.70706:  12%|█▏        | 3/25 [00:51&lt;05:33, 15.17s/it, 51.97/36000 seconds]Trial 4: FR=88.1±9.5Hz, obj=7.020 (mean_err=4.240, std_err=2.780)
+Best trial: 2. Best value: 2.70706:   8%|▊         | 2/25 [00:53&lt;08:02, 21.00s/it, 44.20/36000 seconds]
+Best trial: 2. Best value: 2.70706:   8%|▊         | 2/25 [00:53&lt;08:02, 21.00s/it, 44.20/36000 seconds]
+Best trial: 2. Best value: 2.70706:  12%|█▏        | 3/25 [00:53&lt;05:46, 15.77s/it, 44.20/36000 seconds]
+Best trial: 2. Best value: 2.70706:  12%|█▏        | 3/25 [00:53&lt;05:46, 15.77s/it, 53.75/36000 seconds]Trial 4: FR=88.1±9.5Hz, obj=7.020 (mean_err=4.240, std_err=2.780)
 
 
-[I 2026-06-01 07:27:24,264] Trial 4 finished with value: 7.019776565689385 and parameters: {&#39;dd_neurons&#39;: 737, &#39;conn_prob&#39;: 0.1185260448662222, &#39;dd_drive&#39;: 970.0603029011844}. Best is trial 2 with value: 2.7070643735241093.
+[I 2026-06-01 10:11:39,326] Trial 4 finished with value: 7.019776565689385 and parameters: {&#39;dd_neurons&#39;: 737, &#39;conn_prob&#39;: 0.1185260448662222, &#39;dd_drive&#39;: 970.0603029011844}. Best is trial 2 with value: 2.7070643735241093.
 
-Best trial: 2. Best value: 2.70706:  12%|█▏        | 3/25 [01:21&lt;05:33, 15.17s/it, 51.97/36000 seconds]
-Best trial: 2. Best value: 2.70706:  12%|█▏        | 3/25 [01:21&lt;05:33, 15.17s/it, 51.97/36000 seconds]
-Best trial: 2. Best value: 2.70706:  16%|█▌        | 4/25 [01:21&lt;07:19, 20.95s/it, 51.97/36000 seconds]
-Best trial: 2. Best value: 2.70706:  16%|█▌        | 4/25 [01:21&lt;07:19, 20.95s/it, 81.77/36000 seconds]Trial 5: FR=60.0±6.2Hz, obj=4.091 (mean_err=2.566, std_err=1.500)
+Best trial: 2. Best value: 2.70706:  12%|█▏        | 3/25 [01:22&lt;05:46, 15.77s/it, 53.75/36000 seconds]
+Best trial: 2. Best value: 2.70706:  12%|█▏        | 3/25 [01:22&lt;05:46, 15.77s/it, 53.75/36000 seconds]
+Best trial: 2. Best value: 2.70706:  16%|█▌        | 4/25 [01:22&lt;07:14, 20.71s/it, 53.75/36000 seconds]
+Best trial: 2. Best value: 2.70706:  16%|█▌        | 4/25 [01:22&lt;07:14, 20.71s/it, 82.04/36000 seconds]Trial 5: FR=60.0±6.2Hz, obj=4.091 (mean_err=2.566, std_err=1.500)
 
 
-[I 2026-06-01 07:27:44,558] Trial 5 finished with value: 4.090678242811853 and parameters: {&#39;dd_neurons&#39;: 850, &#39;conn_prob&#39;: 0.29110519961044856, &#39;dd_drive&#39;: 185.9158423710651}. Best is trial 2 with value: 2.7070643735241093.
+[I 2026-06-01 10:12:00,977] Trial 5 finished with value: 4.090678242811853 and parameters: {&#39;dd_neurons&#39;: 850, &#39;conn_prob&#39;: 0.29110519961044856, &#39;dd_drive&#39;: 185.9158423710651}. Best is trial 2 with value: 2.7070643735241093.
 
-Best trial: 2. Best value: 2.70706:  16%|█▌        | 4/25 [01:42&lt;07:19, 20.95s/it, 81.77/36000 seconds]
-Best trial: 2. Best value: 2.70706:  16%|█▌        | 4/25 [01:42&lt;07:19, 20.95s/it, 81.77/36000 seconds]
-Best trial: 2. Best value: 2.70706:  20%|██        | 5/25 [01:42&lt;06:54, 20.71s/it, 81.77/36000 seconds]
-Best trial: 2. Best value: 2.70706:  20%|██        | 5/25 [01:42&lt;06:54, 20.71s/it, 102.07/36000 seconds]Trial 6: FR=64.4±7.1Hz, obj=4.655 (mean_err=2.832, std_err=1.823)
+Best trial: 2. Best value: 2.70706:  16%|█▌        | 4/25 [01:43&lt;07:14, 20.71s/it, 82.04/36000 seconds]
+Best trial: 2. Best value: 2.70706:  16%|█▌        | 4/25 [01:43&lt;07:14, 20.71s/it, 82.04/36000 seconds]
+Best trial: 2. Best value: 2.70706:  20%|██        | 5/25 [01:43&lt;07:01, 21.05s/it, 82.04/36000 seconds]
+Best trial: 2. Best value: 2.70706:  20%|██        | 5/25 [01:43&lt;07:01, 21.05s/it, 103.69/36000 seconds]Trial 6: FR=64.4±7.1Hz, obj=4.655 (mean_err=2.832, std_err=1.823)
 
 
-[I 2026-06-01 07:27:55,005] Trial 6 finished with value: 4.654843552990209 and parameters: {&#39;dd_neurons&#39;: 265, &#39;conn_prob&#39;: 0.373818018663584, &#39;dd_drive&#39;: 527.1326494740766}. Best is trial 2 with value: 2.7070643735241093.
+[I 2026-06-01 10:12:11,757] Trial 6 finished with value: 4.654843552990209 and parameters: {&#39;dd_neurons&#39;: 265, &#39;conn_prob&#39;: 0.373818018663584, &#39;dd_drive&#39;: 527.1326494740766}. Best is trial 2 with value: 2.7070643735241093.
 
-Best trial: 2. Best value: 2.70706:  20%|██        | 5/25 [01:52&lt;06:54, 20.71s/it, 102.07/36000 seconds]
-Best trial: 2. Best value: 2.70706:  20%|██        | 5/25 [01:52&lt;06:54, 20.71s/it, 102.07/36000 seconds]
-Best trial: 2. Best value: 2.70706:  24%|██▍       | 6/25 [01:52&lt;05:27, 17.22s/it, 102.07/36000 seconds]
-Best trial: 2. Best value: 2.70706:  24%|██▍       | 6/25 [01:52&lt;05:27, 17.22s/it, 112.51/36000 seconds]Trial 7: FR=104.6±9.4Hz, obj=7.973 (mean_err=5.218, std_err=2.755)
+Best trial: 2. Best value: 2.70706:  20%|██        | 5/25 [01:54&lt;07:01, 21.05s/it, 103.69/36000 seconds]
+Best trial: 2. Best value: 2.70706:  20%|██        | 5/25 [01:54&lt;07:01, 21.05s/it, 103.69/36000 seconds]
+Best trial: 2. Best value: 2.70706:  24%|██▍       | 6/25 [01:54&lt;05:33, 17.56s/it, 103.69/36000 seconds]
+Best trial: 2. Best value: 2.70706:  24%|██▍       | 6/25 [01:54&lt;05:33, 17.56s/it, 114.47/36000 seconds]Trial 7: FR=104.6±9.4Hz, obj=7.973 (mean_err=5.218, std_err=2.755)
 
 
-[I 2026-06-01 07:28:14,258] Trial 7 finished with value: 7.972837358522916 and parameters: {&#39;dd_neurons&#39;: 489, &#39;conn_prob&#39;: 0.36210622617823773, &#39;dd_drive&#39;: 613.7936302487676}. Best is trial 2 with value: 2.7070643735241093.
+[I 2026-06-01 10:12:31,044] Trial 7 finished with value: 7.972837358522916 and parameters: {&#39;dd_neurons&#39;: 489, &#39;conn_prob&#39;: 0.36210622617823773, &#39;dd_drive&#39;: 613.7936302487676}. Best is trial 2 with value: 2.7070643735241093.
 
-Best trial: 2. Best value: 2.70706:  24%|██▍       | 6/25 [02:11&lt;05:27, 17.22s/it, 112.51/36000 seconds]
-Best trial: 2. Best value: 2.70706:  24%|██▍       | 6/25 [02:11&lt;05:27, 17.22s/it, 112.51/36000 seconds]
-Best trial: 2. Best value: 2.70706:  28%|██▊       | 7/25 [02:11&lt;05:21, 17.89s/it, 112.51/36000 seconds]
-Best trial: 2. Best value: 2.70706:  28%|██▊       | 7/25 [02:11&lt;05:21, 17.89s/it, 131.77/36000 seconds]Trial 8: FR=43.7±5.6Hz, obj=2.842 (mean_err=1.599, std_err=1.243)
+Best trial: 2. Best value: 2.70706:  24%|██▍       | 6/25 [02:13&lt;05:33, 17.56s/it, 114.47/36000 seconds]
+Best trial: 2. Best value: 2.70706:  24%|██▍       | 6/25 [02:13&lt;05:33, 17.56s/it, 114.47/36000 seconds]
+Best trial: 2. Best value: 2.70706:  28%|██▊       | 7/25 [02:13&lt;05:26, 18.12s/it, 114.47/36000 seconds]
+Best trial: 2. Best value: 2.70706:  28%|██▊       | 7/25 [02:13&lt;05:26, 18.12s/it, 133.76/36000 seconds]Trial 8: FR=43.7±5.6Hz, obj=2.842 (mean_err=1.599, std_err=1.243)
 
 
-[I 2026-06-01 07:28:22,268] Trial 8 finished with value: 2.842381963320157 and parameters: {&#39;dd_neurons&#39;: 225, &#39;conn_prob&#39;: 0.3629301836816964, &#39;dd_drive&#39;: 369.53003407722326}. Best is trial 2 with value: 2.7070643735241093.
+[I 2026-06-01 10:12:39,456] Trial 8 finished with value: 2.842381963320157 and parameters: {&#39;dd_neurons&#39;: 225, &#39;conn_prob&#39;: 0.3629301836816964, &#39;dd_drive&#39;: 369.53003407722326}. Best is trial 2 with value: 2.7070643735241093.
 
-Best trial: 2. Best value: 2.70706:  28%|██▊       | 7/25 [02:19&lt;05:21, 17.89s/it, 131.77/36000 seconds]
-Best trial: 2. Best value: 2.70706:  28%|██▊       | 7/25 [02:19&lt;05:21, 17.89s/it, 131.77/36000 seconds]
-Best trial: 2. Best value: 2.70706:  32%|███▏      | 8/25 [02:19&lt;04:10, 14.74s/it, 131.77/36000 seconds]
-Best trial: 2. Best value: 2.70706:  32%|███▏      | 8/25 [02:19&lt;04:10, 14.74s/it, 139.78/36000 seconds]Trial 9: FR=90.2±7.5Hz, obj=6.370 (mean_err=4.366, std_err=1.994)
+Best trial: 2. Best value: 2.70706:  28%|██▊       | 7/25 [02:22&lt;05:26, 18.12s/it, 133.76/36000 seconds]
+Best trial: 2. Best value: 2.70706:  28%|██▊       | 7/25 [02:22&lt;05:26, 18.12s/it, 133.76/36000 seconds]
+Best trial: 2. Best value: 2.70706:  32%|███▏      | 8/25 [02:22&lt;04:15, 15.03s/it, 133.76/36000 seconds]
+Best trial: 2. Best value: 2.70706:  32%|███▏      | 8/25 [02:22&lt;04:15, 15.03s/it, 142.17/36000 seconds]Trial 9: FR=90.2±7.5Hz, obj=6.370 (mean_err=4.366, std_err=1.994)
 
 
-[I 2026-06-01 07:28:40,215] Trial 9 finished with value: 6.369968993632041 and parameters: {&#39;dd_neurons&#39;: 510, &#39;conn_prob&#39;: 0.8066583652537123, &#39;dd_drive&#39;: 203.67541324756795}. Best is trial 2 with value: 2.7070643735241093.
+[I 2026-06-01 10:12:59,290] Trial 9 finished with value: 6.369968993632041 and parameters: {&#39;dd_neurons&#39;: 510, &#39;conn_prob&#39;: 0.8066583652537123, &#39;dd_drive&#39;: 203.67541324756795}. Best is trial 2 with value: 2.7070643735241093.
 
-Best trial: 2. Best value: 2.70706:  32%|███▏      | 8/25 [02:37&lt;04:10, 14.74s/it, 139.78/36000 seconds]
-Best trial: 2. Best value: 2.70706:  32%|███▏      | 8/25 [02:37&lt;04:10, 14.74s/it, 139.78/36000 seconds]
-Best trial: 2. Best value: 2.70706:  36%|███▌      | 9/25 [02:37&lt;04:11, 15.74s/it, 139.78/36000 seconds]
-Best trial: 2. Best value: 2.70706:  36%|███▌      | 9/25 [02:37&lt;04:11, 15.74s/it, 157.72/36000 seconds]Trial 10: FR=29.9±5.9Hz, obj=2.148 (mean_err=0.780, std_err=1.368)
+Best trial: 2. Best value: 2.70706:  32%|███▏      | 8/25 [02:42&lt;04:15, 15.03s/it, 142.17/36000 seconds]
+Best trial: 2. Best value: 2.70706:  32%|███▏      | 8/25 [02:42&lt;04:15, 15.03s/it, 142.17/36000 seconds]
+Best trial: 2. Best value: 2.70706:  36%|███▌      | 9/25 [02:42&lt;04:24, 16.53s/it, 142.17/36000 seconds]
+Best trial: 2. Best value: 2.70706:  36%|███▌      | 9/25 [02:42&lt;04:24, 16.53s/it, 162.01/36000 seconds]Trial 10: FR=29.9±5.9Hz, obj=2.148 (mean_err=0.780, std_err=1.368)
 
 
-[I 2026-06-01 07:28:54,554] Trial 10 finished with value: 2.1481464462118653 and parameters: {&#39;dd_neurons&#39;: 563, &#39;conn_prob&#39;: 0.6331731119758383, &#39;dd_drive&#39;: 51.218160656397735}. Best is trial 10 with value: 2.1481464462118653.
+[I 2026-06-01 10:13:16,108] Trial 10 finished with value: 2.1481464462118653 and parameters: {&#39;dd_neurons&#39;: 563, &#39;conn_prob&#39;: 0.6331731119758383, &#39;dd_drive&#39;: 51.218160656397735}. Best is trial 10 with value: 2.1481464462118653.
 
-Best trial: 2. Best value: 2.70706:  36%|███▌      | 9/25 [02:52&lt;04:11, 15.74s/it, 157.72/36000 seconds]
-Best trial: 10. Best value: 2.14815:  36%|███▌      | 9/25 [02:52&lt;04:11, 15.74s/it, 157.72/36000 seconds]
-Best trial: 10. Best value: 2.14815:  40%|████      | 10/25 [02:52&lt;03:49, 15.31s/it, 157.72/36000 seconds]
-Best trial: 10. Best value: 2.14815:  40%|████      | 10/25 [02:52&lt;03:49, 15.31s/it, 172.06/36000 seconds]Trial 11: FR=161.1±143.9Hz, obj=65.172 (mean_err=8.579, std_err=56.569)
+Best trial: 2. Best value: 2.70706:  36%|███▌      | 9/25 [02:58&lt;04:24, 16.53s/it, 162.01/36000 seconds]
+Best trial: 10. Best value: 2.14815:  36%|███▌      | 9/25 [02:58&lt;04:24, 16.53s/it, 162.01/36000 seconds]
+Best trial: 10. Best value: 2.14815:  40%|████      | 10/25 [02:58&lt;04:09, 16.62s/it, 162.01/36000 seconds]
+Best trial: 10. Best value: 2.14815:  40%|████      | 10/25 [02:58&lt;04:09, 16.62s/it, 178.83/36000 seconds]Trial 11: FR=161.1±143.9Hz, obj=65.172 (mean_err=8.579, std_err=56.569)
 
 
-[I 2026-06-01 07:29:22,020] Trial 11 finished with value: 65.17195105578288 and parameters: {&#39;dd_neurons&#39;: 827, &#39;conn_prob&#39;: 0.799513413248344, &#39;dd_drive&#39;: 196.77676310377643}. Best is trial 10 with value: 2.1481464462118653.
+[I 2026-06-01 10:13:46,543] Trial 11 finished with value: 65.17195105578288 and parameters: {&#39;dd_neurons&#39;: 827, &#39;conn_prob&#39;: 0.799513413248344, &#39;dd_drive&#39;: 196.77676310377643}. Best is trial 10 with value: 2.1481464462118653.
 
-Best trial: 10. Best value: 2.14815:  40%|████      | 10/25 [03:19&lt;03:49, 15.31s/it, 172.06/36000 seconds]
-Best trial: 10. Best value: 2.14815:  40%|████      | 10/25 [03:19&lt;03:49, 15.31s/it, 172.06/36000 seconds]
-Best trial: 10. Best value: 2.14815:  44%|████▍     | 11/25 [03:19&lt;04:26, 19.03s/it, 172.06/36000 seconds]
-Best trial: 10. Best value: 2.14815:  44%|████▍     | 11/25 [03:19&lt;04:26, 19.03s/it, 199.53/36000 seconds]Trial 12: FR=4.2±2.0Hz, obj=0.954 (mean_err=0.753, std_err=0.202)
+Best trial: 10. Best value: 2.14815:  40%|████      | 10/25 [03:29&lt;04:09, 16.62s/it, 178.83/36000 seconds]
+Best trial: 10. Best value: 2.14815:  40%|████      | 10/25 [03:29&lt;04:09, 16.62s/it, 178.83/36000 seconds]
+Best trial: 10. Best value: 2.14815:  44%|████▍     | 11/25 [03:29&lt;04:51, 20.85s/it, 178.83/36000 seconds]
+Best trial: 10. Best value: 2.14815:  44%|████▍     | 11/25 [03:29&lt;04:51, 20.85s/it, 209.26/36000 seconds]Trial 12: FR=4.2±2.0Hz, obj=0.954 (mean_err=0.753, std_err=0.202)
 
 
-[I 2026-06-01 07:29:33,656] Trial 12 finished with value: 0.9543424415242502 and parameters: {&#39;dd_neurons&#39;: 632, &#39;conn_prob&#39;: 0.2027038856309737, &#39;dd_drive&#39;: 32.67355703031478}. Best is trial 12 with value: 0.9543424415242502.
+[I 2026-06-01 10:13:59,373] Trial 12 finished with value: 0.9543424415242502 and parameters: {&#39;dd_neurons&#39;: 632, &#39;conn_prob&#39;: 0.2027038856309737, &#39;dd_drive&#39;: 32.67355703031478}. Best is trial 12 with value: 0.9543424415242502.
 
-Best trial: 10. Best value: 2.14815:  44%|████▍     | 11/25 [03:31&lt;04:26, 19.03s/it, 199.53/36000 seconds]
-Best trial: 12. Best value: 0.954342:  44%|████▍     | 11/25 [03:31&lt;04:26, 19.03s/it, 199.53/36000 seconds]
-Best trial: 12. Best value: 0.954342:  48%|████▊     | 12/25 [03:31&lt;03:38, 16.78s/it, 199.53/36000 seconds]
-Best trial: 12. Best value: 0.954342:  48%|████▊     | 12/25 [03:31&lt;03:38, 16.78s/it, 211.17/36000 seconds]Trial 13: FR=25.9±4.0Hz, obj=1.144 (mean_err=0.540, std_err=0.600)
+Best trial: 10. Best value: 2.14815:  44%|████▍     | 11/25 [03:42&lt;04:51, 20.85s/it, 209.26/36000 seconds]
+Best trial: 12. Best value: 0.954342:  44%|████▍     | 11/25 [03:42&lt;04:51, 20.85s/it, 209.26/36000 seconds]
+Best trial: 12. Best value: 0.954342:  48%|████▊     | 12/25 [03:42&lt;03:59, 18.41s/it, 209.26/36000 seconds]
+Best trial: 12. Best value: 0.954342:  48%|████▊     | 12/25 [03:42&lt;03:59, 18.41s/it, 222.09/36000 seconds]Trial 13: FR=25.9±4.0Hz, obj=1.144 (mean_err=0.540, std_err=0.600)
 
 
-[I 2026-06-01 07:29:40,203] Trial 13 finished with value: 1.1441313350809266 and parameters: {&#39;dd_neurons&#39;: 189, &#39;conn_prob&#39;: 0.7436526509771155, &#39;dd_drive&#39;: 107.6606986145913}. Best is trial 12 with value: 0.9543424415242502.
+[I 2026-06-01 10:14:06,869] Trial 13 finished with value: 1.1441313350809266 and parameters: {&#39;dd_neurons&#39;: 189, &#39;conn_prob&#39;: 0.7436526509771155, &#39;dd_drive&#39;: 107.6606986145913}. Best is trial 12 with value: 0.9543424415242502.
 
-Best trial: 12. Best value: 0.954342:  48%|████▊     | 12/25 [03:37&lt;03:38, 16.78s/it, 211.17/36000 seconds]
-Best trial: 12. Best value: 0.954342:  48%|████▊     | 12/25 [03:37&lt;03:38, 16.78s/it, 211.17/36000 seconds]
-Best trial: 12. Best value: 0.954342:  52%|█████▏    | 13/25 [03:37&lt;02:44, 13.68s/it, 211.17/36000 seconds]
-Best trial: 12. Best value: 0.954342:  52%|█████▏    | 13/25 [03:37&lt;02:44, 13.68s/it, 217.71/36000 seconds]Trial 14: FR=32.8±4.8Hz, obj=1.869 (mean_err=0.948, std_err=0.917)
+Best trial: 12. Best value: 0.954342:  48%|████▊     | 12/25 [03:49&lt;03:59, 18.41s/it, 222.09/36000 seconds]
+Best trial: 12. Best value: 0.954342:  48%|████▊     | 12/25 [03:49&lt;03:59, 18.41s/it, 222.09/36000 seconds]
+Best trial: 12. Best value: 0.954342:  52%|█████▏    | 13/25 [03:49&lt;03:01, 15.10s/it, 222.09/36000 seconds]
+Best trial: 12. Best value: 0.954342:  52%|█████▏    | 13/25 [03:49&lt;03:01, 15.10s/it, 229.59/36000 seconds]Trial 14: FR=32.8±4.8Hz, obj=1.869 (mean_err=0.948, std_err=0.917)
 
 
-[I 2026-06-01 07:29:45,623] Trial 14 finished with value: 1.868660393094842 and parameters: {&#39;dd_neurons&#39;: 127, &#39;conn_prob&#39;: 0.7350413951529284, &#39;dd_drive&#39;: 218.4243128968272}. Best is trial 12 with value: 0.9543424415242502.
+[I 2026-06-01 10:14:12,931] Trial 14 finished with value: 1.868660393094842 and parameters: {&#39;dd_neurons&#39;: 127, &#39;conn_prob&#39;: 0.7350413951529284, &#39;dd_drive&#39;: 218.4243128968272}. Best is trial 12 with value: 0.9543424415242502.
 
-Best trial: 12. Best value: 0.954342:  52%|█████▏    | 13/25 [03:43&lt;02:44, 13.68s/it, 217.71/36000 seconds]
-Best trial: 12. Best value: 0.954342:  52%|█████▏    | 13/25 [03:43&lt;02:44, 13.68s/it, 217.71/36000 seconds]
-Best trial: 12. Best value: 0.954342:  56%|█████▌    | 14/25 [03:43&lt;02:03, 11.19s/it, 217.71/36000 seconds]
-Best trial: 12. Best value: 0.954342:  56%|█████▌    | 14/25 [03:43&lt;02:03, 11.19s/it, 223.13/36000 seconds]
+Best trial: 12. Best value: 0.954342:  52%|█████▏    | 13/25 [03:55&lt;03:01, 15.10s/it, 229.59/36000 seconds]
+Best trial: 12. Best value: 0.954342:  52%|█████▏    | 13/25 [03:55&lt;03:01, 15.10s/it, 229.59/36000 seconds]
+Best trial: 12. Best value: 0.954342:  56%|█████▌    | 14/25 [03:55&lt;02:16, 12.37s/it, 229.59/36000 seconds]
+Best trial: 12. Best value: 0.954342:  56%|█████▌    | 14/25 [03:55&lt;02:16, 12.37s/it, 235.65/36000 seconds]
 
-[I 2026-06-01 07:29:51,698] Trial 15 finished with value: 1000.0 and parameters: {&#39;dd_neurons&#39;: 285, &#39;conn_prob&#39;: 0.2251953201560079, &#39;dd_drive&#39;: 33.598377793099075}. Best is trial 12 with value: 0.9543424415242502.
+[I 2026-06-01 10:14:19,685] Trial 15 finished with value: 1000.0 and parameters: {&#39;dd_neurons&#39;: 285, &#39;conn_prob&#39;: 0.2251953201560079, &#39;dd_drive&#39;: 33.598377793099075}. Best is trial 12 with value: 0.9543424415242502.
 
-Best trial: 12. Best value: 0.954342:  56%|█████▌    | 14/25 [03:49&lt;02:03, 11.19s/it, 223.13/36000 seconds]
-Best trial: 12. Best value: 0.954342:  56%|█████▌    | 14/25 [03:49&lt;02:03, 11.19s/it, 223.13/36000 seconds]
-Best trial: 12. Best value: 0.954342:  60%|██████    | 15/25 [03:49&lt;01:36,  9.65s/it, 223.13/36000 seconds]
-Best trial: 12. Best value: 0.954342:  60%|██████    | 15/25 [03:49&lt;01:36,  9.65s/it, 229.21/36000 seconds]Trial 16: FR=37.9±5.6Hz, obj=2.532 (mean_err=1.251, std_err=1.253)
+Best trial: 12. Best value: 0.954342:  56%|█████▌    | 14/25 [04:02&lt;02:16, 12.37s/it, 235.65/36000 seconds]
+Best trial: 12. Best value: 0.954342:  56%|█████▌    | 14/25 [04:02&lt;02:16, 12.37s/it, 235.65/36000 seconds]
+Best trial: 12. Best value: 0.954342:  60%|██████    | 15/25 [04:02&lt;01:46, 10.68s/it, 235.65/36000 seconds]
+Best trial: 12. Best value: 0.954342:  60%|██████    | 15/25 [04:02&lt;01:46, 10.68s/it, 242.40/36000 seconds]Trial 16: FR=37.9±5.6Hz, obj=2.532 (mean_err=1.251, std_err=1.253)
 
 
-[I 2026-06-01 07:30:00,691] Trial 16 finished with value: 2.5323285488832967 and parameters: {&#39;dd_neurons&#39;: 247, &#39;conn_prob&#39;: 0.9883870136118017, &#39;dd_drive&#39;: 101.9221008068317}. Best is trial 12 with value: 0.9543424415242502.
+[I 2026-06-01 10:14:30,453] Trial 16 finished with value: 2.5323285488832967 and parameters: {&#39;dd_neurons&#39;: 247, &#39;conn_prob&#39;: 0.9883870136118017, &#39;dd_drive&#39;: 101.9221008068317}. Best is trial 12 with value: 0.9543424415242502.
 
-Best trial: 12. Best value: 0.954342:  60%|██████    | 15/25 [03:58&lt;01:36,  9.65s/it, 229.21/36000 seconds]
-Best trial: 12. Best value: 0.954342:  60%|██████    | 15/25 [03:58&lt;01:36,  9.65s/it, 229.21/36000 seconds]
-Best trial: 12. Best value: 0.954342:  64%|██████▍   | 16/25 [03:58&lt;01:25,  9.45s/it, 229.21/36000 seconds]
-Best trial: 12. Best value: 0.954342:  64%|██████▍   | 16/25 [03:58&lt;01:25,  9.45s/it, 238.20/36000 seconds]
+Best trial: 12. Best value: 0.954342:  60%|██████    | 15/25 [04:13&lt;01:46, 10.68s/it, 242.40/36000 seconds]
+Best trial: 12. Best value: 0.954342:  60%|██████    | 15/25 [04:13&lt;01:46, 10.68s/it, 242.40/36000 seconds]
+Best trial: 12. Best value: 0.954342:  64%|██████▍   | 16/25 [04:13&lt;01:36, 10.71s/it, 242.40/36000 seconds]
+Best trial: 12. Best value: 0.954342:  64%|██████▍   | 16/25 [04:13&lt;01:36, 10.71s/it, 253.17/36000 seconds]
 
-[I 2026-06-01 07:30:12,654] Trial 17 finished with value: 1000.0 and parameters: {&#39;dd_neurons&#39;: 699, &#39;conn_prob&#39;: 0.1163681670380706, &#39;dd_drive&#39;: 41.42729159294581}. Best is trial 12 with value: 0.9543424415242502.
+[I 2026-06-01 10:14:43,350] Trial 17 finished with value: 1000.0 and parameters: {&#39;dd_neurons&#39;: 699, &#39;conn_prob&#39;: 0.1163681670380706, &#39;dd_drive&#39;: 41.42729159294581}. Best is trial 12 with value: 0.9543424415242502.
 
-Best trial: 12. Best value: 0.954342:  64%|██████▍   | 16/25 [04:10&lt;01:25,  9.45s/it, 238.20/36000 seconds]
-Best trial: 12. Best value: 0.954342:  64%|██████▍   | 16/25 [04:10&lt;01:25,  9.45s/it, 238.20/36000 seconds]
-Best trial: 12. Best value: 0.954342:  68%|██████▊   | 17/25 [04:10&lt;01:21, 10.20s/it, 238.20/36000 seconds]
-Best trial: 12. Best value: 0.954342:  68%|██████▊   | 17/25 [04:10&lt;01:21, 10.20s/it, 250.16/36000 seconds]Trial 18: FR=2.9±1.6Hz, obj=1.198 (mean_err=0.826, std_err=0.372)
+Best trial: 12. Best value: 0.954342:  64%|██████▍   | 16/25 [04:26&lt;01:36, 10.71s/it, 253.17/36000 seconds]
+Best trial: 12. Best value: 0.954342:  64%|██████▍   | 16/25 [04:26&lt;01:36, 10.71s/it, 253.17/36000 seconds]
+Best trial: 12. Best value: 0.954342:  68%|██████▊   | 17/25 [04:26&lt;01:30, 11.36s/it, 253.17/36000 seconds]
+Best trial: 12. Best value: 0.954342:  68%|██████▊   | 17/25 [04:26&lt;01:30, 11.36s/it, 266.07/36000 seconds]Trial 18: FR=2.9±1.6Hz, obj=1.198 (mean_err=0.826, std_err=0.372)
 
 
-[I 2026-06-01 07:30:19,040] Trial 18 finished with value: 1.1979719460440283 and parameters: {&#39;dd_neurons&#39;: 244, &#39;conn_prob&#39;: 0.49701434068974637, &#39;dd_drive&#39;: 34.14678256500264}. Best is trial 12 with value: 0.9543424415242502.
+[I 2026-06-01 10:14:50,671] Trial 18 finished with value: 1.1979719460440283 and parameters: {&#39;dd_neurons&#39;: 244, &#39;conn_prob&#39;: 0.49701434068974637, &#39;dd_drive&#39;: 34.14678256500264}. Best is trial 12 with value: 0.9543424415242502.
 
-Best trial: 12. Best value: 0.954342:  68%|██████▊   | 17/25 [04:16&lt;01:21, 10.20s/it, 250.16/36000 seconds]
-Best trial: 12. Best value: 0.954342:  68%|██████▊   | 17/25 [04:16&lt;01:21, 10.20s/it, 250.16/36000 seconds]
-Best trial: 12. Best value: 0.954342:  72%|███████▏  | 18/25 [04:16&lt;01:03,  9.06s/it, 250.16/36000 seconds]
-Best trial: 12. Best value: 0.954342:  72%|███████▏  | 18/25 [04:16&lt;01:03,  9.06s/it, 256.55/36000 seconds]Trial 19: FR=86.8±7.4Hz, obj=6.129 (mean_err=4.160, std_err=1.969)
+Best trial: 12. Best value: 0.954342:  68%|██████▊   | 17/25 [04:33&lt;01:30, 11.36s/it, 266.07/36000 seconds]
+Best trial: 12. Best value: 0.954342:  68%|██████▊   | 17/25 [04:33&lt;01:30, 11.36s/it, 266.07/36000 seconds]
+Best trial: 12. Best value: 0.954342:  72%|███████▏  | 18/25 [04:33&lt;01:11, 10.15s/it, 266.07/36000 seconds]
+Best trial: 12. Best value: 0.954342:  72%|███████▏  | 18/25 [04:33&lt;01:11, 10.15s/it, 273.39/36000 seconds]Trial 19: FR=86.8±7.4Hz, obj=6.129 (mean_err=4.160, std_err=1.969)
 
 
-[I 2026-06-01 07:30:33,311] Trial 19 finished with value: 6.128944655101292 and parameters: {&#39;dd_neurons&#39;: 397, &#39;conn_prob&#39;: 0.5816522415604415, &#39;dd_drive&#39;: 341.3148169033072}. Best is trial 12 with value: 0.9543424415242502.
+[I 2026-06-01 10:15:06,069] Trial 19 finished with value: 6.128944655101292 and parameters: {&#39;dd_neurons&#39;: 397, &#39;conn_prob&#39;: 0.5816522415604415, &#39;dd_drive&#39;: 341.3148169033072}. Best is trial 12 with value: 0.9543424415242502.
 
-Best trial: 12. Best value: 0.954342:  72%|███████▏  | 18/25 [04:30&lt;01:03,  9.06s/it, 256.55/36000 seconds]
-Best trial: 12. Best value: 0.954342:  72%|███████▏  | 18/25 [04:30&lt;01:03,  9.06s/it, 256.55/36000 seconds]
-Best trial: 12. Best value: 0.954342:  76%|███████▌  | 19/25 [04:30&lt;01:03, 10.62s/it, 256.55/36000 seconds]
-Best trial: 12. Best value: 0.954342:  76%|███████▌  | 19/25 [04:30&lt;01:03, 10.62s/it, 270.82/36000 seconds]Trial 20: FR=28.2±5.8Hz, obj=1.997 (mean_err=0.675, std_err=1.321)
+Best trial: 12. Best value: 0.954342:  72%|███████▏  | 18/25 [04:48&lt;01:11, 10.15s/it, 273.39/36000 seconds]
+Best trial: 12. Best value: 0.954342:  72%|███████▏  | 18/25 [04:48&lt;01:11, 10.15s/it, 273.39/36000 seconds]
+Best trial: 12. Best value: 0.954342:  76%|███████▌  | 19/25 [04:48&lt;01:10, 11.73s/it, 273.39/36000 seconds]
+Best trial: 12. Best value: 0.954342:  76%|███████▌  | 19/25 [04:48&lt;01:10, 11.73s/it, 288.79/36000 seconds]Trial 20: FR=28.2±5.8Hz, obj=1.997 (mean_err=0.675, std_err=1.321)
 
 
-[I 2026-06-01 07:30:44,496] Trial 20 finished with value: 1.9968437074975487 and parameters: {&#39;dd_neurons&#39;: 386, &#39;conn_prob&#39;: 0.10546961333508002, &#39;dd_drive&#39;: 424.8623998947541}. Best is trial 12 with value: 0.9543424415242502.
+[I 2026-06-01 10:15:17,277] Trial 20 finished with value: 1.9968437074975487 and parameters: {&#39;dd_neurons&#39;: 386, &#39;conn_prob&#39;: 0.10546961333508002, &#39;dd_drive&#39;: 424.8623998947541}. Best is trial 12 with value: 0.9543424415242502.
 
-Best trial: 12. Best value: 0.954342:  76%|███████▌  | 19/25 [04:42&lt;01:03, 10.62s/it, 270.82/36000 seconds]
-Best trial: 12. Best value: 0.954342:  76%|███████▌  | 19/25 [04:42&lt;01:03, 10.62s/it, 270.82/36000 seconds]
-Best trial: 12. Best value: 0.954342:  80%|████████  | 20/25 [04:42&lt;00:53, 10.79s/it, 270.82/36000 seconds]
-Best trial: 12. Best value: 0.954342:  80%|████████  | 20/25 [04:42&lt;00:53, 10.79s/it, 282.01/36000 seconds]Trial 21: FR=295.0±235.7Hz, obj=109.836 (mean_err=16.537, std_err=93.293)
+Best trial: 12. Best value: 0.954342:  76%|███████▌  | 19/25 [04:59&lt;01:10, 11.73s/it, 288.79/36000 seconds]
+Best trial: 12. Best value: 0.954342:  76%|███████▌  | 19/25 [04:59&lt;01:10, 11.73s/it, 288.79/36000 seconds]
+Best trial: 12. Best value: 0.954342:  80%|████████  | 20/25 [04:59&lt;00:57, 11.57s/it, 288.79/36000 seconds]
+Best trial: 12. Best value: 0.954342:  80%|████████  | 20/25 [04:59&lt;00:57, 11.57s/it, 299.99/36000 seconds]Trial 21: FR=295.0±235.7Hz, obj=109.836 (mean_err=16.537, std_err=93.293)
 
 
-[I 2026-06-01 07:31:28,331] Trial 21 finished with value: 109.8360137509215 and parameters: {&#39;dd_neurons&#39;: 812, &#39;conn_prob&#39;: 0.6877028441297923, &#39;dd_drive&#39;: 822.0397670760491}. Best is trial 12 with value: 0.9543424415242502.
+[I 2026-06-01 10:16:01,017] Trial 21 finished with value: 109.8360137509215 and parameters: {&#39;dd_neurons&#39;: 812, &#39;conn_prob&#39;: 0.6877028441297923, &#39;dd_drive&#39;: 822.0397670760491}. Best is trial 12 with value: 0.9543424415242502.
 
-Best trial: 12. Best value: 0.954342:  80%|████████  | 20/25 [05:25&lt;00:53, 10.79s/it, 282.01/36000 seconds]
-Best trial: 12. Best value: 0.954342:  80%|████████  | 20/25 [05:25&lt;00:53, 10.79s/it, 282.01/36000 seconds]
-Best trial: 12. Best value: 0.954342:  84%|████████▍ | 21/25 [05:25&lt;01:22, 20.71s/it, 282.01/36000 seconds]
-Best trial: 12. Best value: 0.954342:  84%|████████▍ | 21/25 [05:25&lt;01:22, 20.71s/it, 325.84/36000 seconds]Trial 22: FR=10.5±3.1Hz, obj=0.600 (mean_err=0.375, std_err=0.225)
+Best trial: 12. Best value: 0.954342:  80%|████████  | 20/25 [05:43&lt;00:57, 11.57s/it, 299.99/36000 seconds]
+Best trial: 12. Best value: 0.954342:  80%|████████  | 20/25 [05:43&lt;00:57, 11.57s/it, 299.99/36000 seconds]
+Best trial: 12. Best value: 0.954342:  84%|████████▍ | 21/25 [05:43&lt;01:24, 21.23s/it, 299.99/36000 seconds]
+Best trial: 12. Best value: 0.954342:  84%|████████▍ | 21/25 [05:43&lt;01:24, 21.23s/it, 343.73/36000 seconds]Trial 22: FR=10.5±3.1Hz, obj=0.600 (mean_err=0.375, std_err=0.225)
 
 
-[I 2026-06-01 07:31:33,831] Trial 22 finished with value: 0.5996116548047449 and parameters: {&#39;dd_neurons&#39;: 184, &#39;conn_prob&#39;: 0.4939293797994684, &#39;dd_drive&#39;: 69.60861908369148}. Best is trial 22 with value: 0.5996116548047449.
+[I 2026-06-01 10:16:07,161] Trial 22 finished with value: 0.5996116548047449 and parameters: {&#39;dd_neurons&#39;: 184, &#39;conn_prob&#39;: 0.4939293797994684, &#39;dd_drive&#39;: 69.60861908369148}. Best is trial 22 with value: 0.5996116548047449.
 
-Best trial: 12. Best value: 0.954342:  84%|████████▍ | 21/25 [05:31&lt;01:22, 20.71s/it, 325.84/36000 seconds]
-Best trial: 22. Best value: 0.599612:  84%|████████▍ | 21/25 [05:31&lt;01:22, 20.71s/it, 325.84/36000 seconds]
-Best trial: 22. Best value: 0.599612:  88%|████████▊ | 22/25 [05:31&lt;00:48, 16.15s/it, 325.84/36000 seconds]
-Best trial: 22. Best value: 0.599612:  88%|████████▊ | 22/25 [05:31&lt;00:48, 16.15s/it, 331.34/36000 seconds]
+Best trial: 12. Best value: 0.954342:  84%|████████▍ | 21/25 [05:49&lt;01:24, 21.23s/it, 343.73/36000 seconds]
+Best trial: 22. Best value: 0.599612:  84%|████████▍ | 21/25 [05:49&lt;01:24, 21.23s/it, 343.73/36000 seconds]
+Best trial: 22. Best value: 0.599612:  88%|████████▊ | 22/25 [05:49&lt;00:50, 16.70s/it, 343.73/36000 seconds]
+Best trial: 22. Best value: 0.599612:  88%|████████▊ | 22/25 [05:49&lt;00:50, 16.70s/it, 349.88/36000 seconds]
 
-[I 2026-06-01 07:31:40,068] Trial 23 finished with value: 1000.0 and parameters: {&#39;dd_neurons&#39;: 225, &#39;conn_prob&#39;: 0.6225579547902492, &#39;dd_drive&#39;: 12.255596657755255}. Best is trial 22 with value: 0.5996116548047449.
+[I 2026-06-01 10:16:14,365] Trial 23 finished with value: 1000.0 and parameters: {&#39;dd_neurons&#39;: 225, &#39;conn_prob&#39;: 0.6225579547902492, &#39;dd_drive&#39;: 12.255596657755255}. Best is trial 22 with value: 0.5996116548047449.
 
-Best trial: 22. Best value: 0.599612:  88%|████████▊ | 22/25 [05:37&lt;00:48, 16.15s/it, 331.34/36000 seconds]
-Best trial: 22. Best value: 0.599612:  88%|████████▊ | 22/25 [05:37&lt;00:48, 16.15s/it, 331.34/36000 seconds]
-Best trial: 22. Best value: 0.599612:  92%|█████████▏| 23/25 [05:37&lt;00:26, 13.17s/it, 331.34/36000 seconds]
-Best trial: 22. Best value: 0.599612:  92%|█████████▏| 23/25 [05:37&lt;00:26, 13.17s/it, 337.58/36000 seconds]Trial 24: FR=23.9±4.8Hz, obj=1.360 (mean_err=0.421, std_err=0.938)
+Best trial: 22. Best value: 0.599612:  88%|████████▊ | 22/25 [05:57&lt;00:50, 16.70s/it, 349.88/36000 seconds]
+Best trial: 22. Best value: 0.599612:  88%|████████▊ | 22/25 [05:57&lt;00:50, 16.70s/it, 349.88/36000 seconds]
+Best trial: 22. Best value: 0.599612:  92%|█████████▏| 23/25 [05:57&lt;00:27, 13.85s/it, 349.88/36000 seconds]
+Best trial: 22. Best value: 0.599612:  92%|█████████▏| 23/25 [05:57&lt;00:27, 13.85s/it, 357.08/36000 seconds]Trial 24: FR=23.9±4.8Hz, obj=1.360 (mean_err=0.421, std_err=0.938)
 
 
-[I 2026-06-01 07:31:44,609] Trial 24 finished with value: 1.3595566419909677 and parameters: {&#39;dd_neurons&#39;: 110, &#39;conn_prob&#39;: 0.5344958254559738, &#39;dd_drive&#39;: 242.8626502922196}. Best is trial 22 with value: 0.5996116548047449.
+[I 2026-06-01 10:16:19,367] Trial 24 finished with value: 1.3595566419909677 and parameters: {&#39;dd_neurons&#39;: 110, &#39;conn_prob&#39;: 0.5344958254559738, &#39;dd_drive&#39;: 242.8626502922196}. Best is trial 22 with value: 0.5996116548047449.
 
-Best trial: 22. Best value: 0.599612:  92%|█████████▏| 23/25 [05:42&lt;00:26, 13.17s/it, 337.58/36000 seconds]
-Best trial: 22. Best value: 0.599612:  92%|█████████▏| 23/25 [05:42&lt;00:26, 13.17s/it, 337.58/36000 seconds]
-Best trial: 22. Best value: 0.599612:  96%|█████████▌| 24/25 [05:42&lt;00:10, 10.58s/it, 337.58/36000 seconds]
-Best trial: 22. Best value: 0.599612:  96%|█████████▌| 24/25 [05:42&lt;00:10, 10.58s/it, 342.12/36000 seconds]
+Best trial: 22. Best value: 0.599612:  92%|█████████▏| 23/25 [06:02&lt;00:27, 13.85s/it, 357.08/36000 seconds]
+Best trial: 22. Best value: 0.599612:  92%|█████████▏| 23/25 [06:02&lt;00:27, 13.85s/it, 357.08/36000 seconds]
+Best trial: 22. Best value: 0.599612:  96%|█████████▌| 24/25 [06:02&lt;00:11, 11.20s/it, 357.08/36000 seconds]
+Best trial: 22. Best value: 0.599612:  96%|█████████▌| 24/25 [06:02&lt;00:11, 11.20s/it, 362.08/36000 seconds]
 
-[I 2026-06-01 07:31:48,253] Trial 25 finished with value: 1000.0 and parameters: {&#39;dd_neurons&#39;: 113, &#39;conn_prob&#39;: 0.33655994061642874, &#39;dd_drive&#39;: 59.2298820046616}. Best is trial 22 with value: 0.5996116548047449.
+[I 2026-06-01 10:16:23,306] Trial 25 finished with value: 1000.0 and parameters: {&#39;dd_neurons&#39;: 113, &#39;conn_prob&#39;: 0.33655994061642874, &#39;dd_drive&#39;: 59.2298820046616}. Best is trial 22 with value: 0.5996116548047449.
 
-Best trial: 22. Best value: 0.599612:  96%|█████████▌| 24/25 [05:45&lt;00:10, 10.58s/it, 342.12/36000 seconds]
-Best trial: 22. Best value: 0.599612:  96%|█████████▌| 24/25 [05:45&lt;00:10, 10.58s/it, 342.12/36000 seconds]
-Best trial: 22. Best value: 0.599612: 100%|██████████| 25/25 [05:45&lt;00:00,  8.50s/it, 342.12/36000 seconds]
-Best trial: 22. Best value: 0.599612: 100%|██████████| 25/25 [05:45&lt;00:00,  8.50s/it, 345.76/36000 seconds]
-Best trial: 22. Best value: 0.599612: 100%|██████████| 25/25 [05:45&lt;00:00, 13.83s/it, 345.76/36000 seconds]
+Best trial: 22. Best value: 0.599612:  96%|█████████▌| 24/25 [06:06&lt;00:11, 11.20s/it, 362.08/36000 seconds]
+Best trial: 22. Best value: 0.599612:  96%|█████████▌| 24/25 [06:06&lt;00:11, 11.20s/it, 362.08/36000 seconds]
+Best trial: 22. Best value: 0.599612: 100%|██████████| 25/25 [06:06&lt;00:00,  9.02s/it, 362.08/36000 seconds]
+Best trial: 22. Best value: 0.599612: 100%|██████████| 25/25 [06:06&lt;00:00,  9.02s/it, 366.02/36000 seconds]
+Best trial: 22. Best value: 0.599612: 100%|██████████| 25/25 [06:06&lt;00:00, 14.64s/it, 366.02/36000 seconds]
 </pre></div>
 </div>
 </section>
@@ -1250,7 +1250,7 @@ Best parameters saved to: /home/runner/work/MyoGen/MyoGen/results/dd_optimizatio
 Full study saved to: /home/runner/work/MyoGen/MyoGen/results/dd_optimization/study.pkl
 </pre></div>
 </div>
-<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (5 minutes 47.430 seconds)</p>
+<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (6 minutes 7.815 seconds)</p>
 <div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-auto-examples-02-finetune-01-optimize-dd-for-target-firing-rate-py">
 <div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
 <p><a class="reference download internal" download="" href="../../_downloads/99b4e43b2fb4c8f869c55f3a5722f51e/01_optimize_dd_for_target_firing_rate.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">01_optimize_dd_for_target_firing_rate.ipynb</span></code></a></p>

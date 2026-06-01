@@ -183,7 +183,7 @@ a minimal example file for demonstration.
 
 
     (OK) Found NWB file: results/spinal_network_results.nwb
-        Size: 188455.8 KB
+        Size: 188450.1 KB
 
 
 
@@ -256,7 +256,7 @@ NWBInspector. This checks for schema compliance and best practices.
       ○ Best practice suggestions: 1
 
     Details:
-    ['**************************************************', 'NWBInspector Report Summary', '', 'Timestamp: 2026-06-01 07:24:58.171090+00:00', 'Platform: Linux-6.17.0-1015-azure-x86_64-with-glibc2.39', 'NWBInspector version: 0.7.2', '', 'Found 10 issues across 1 file(s):', '       1 - BEST_PRACTICE_VIOLATION', '       9 - BEST_PRACTICE_SUGGESTION', '**************************************************', '', '', '0  results/spinal_network_results.nwb', '=====================================', '', "0.0  Importance.BEST_PRACTICE_VIOLATION: check_units_resolution_is_set - 'Units' object with name 'units'", '       Message: Units table has spike_times but resolution is not set. Resolution indicates the smallest possible difference between two spike times and should be a positive float equal to 1/sampling_rate of the recording system (e.g., Units(resolution=1/30000) for a 30 kHz system). This information is needed to assess the precision of spike timing data.', '', "0.1  Importance.BEST_PRACTICE_SUGGESTION: check_description - 'TimeSeries' object at location '/acquisition/spin_secondary_afferent_firing__Hz'", "       Message: Description ('no description') is a placeholder.", '', "0.2  Importance.BEST_PRACTICE_SUGGESTION: check_description - 'TimeSeries' object at location '/acquisition/spin_primary_afferent_firing__Hz'", "       Message: Description ('no description') is a placeholder.", '', "0.3  Importance.BEST_PRACTICE_SUGGESTION: check_description - 'TimeSeries' object at location '/acquisition/spin_intrafusal_tensions'", "       Message: Description ('no description') is a placeholder.", '', "0.4  Importance.BEST_PRACTICE_SUGGESTION: check_description - 'TimeSeries' object at location '/acquisition/spin_chain_activation'", "       Message: Description ('no description') is a placeholder.", '', "0.5  Importance.BEST_PRACTICE_SUGGESTION: check_description - 'TimeSeries' object at location '/acquisition/spin_bag2_activation'", "       Message: Description ('no description') is a placeholder.", '', "0.6  Importance.BEST_PRACTICE_SUGGESTION: check_description - 'TimeSeries' object at location '/acquisition/spin_bag1_activation'", "       Message: Description ('no description') is a placeholder.", '', "0.7  Importance.BEST_PRACTICE_SUGGESTION: check_description - 'TimeSeries' object at location '/acquisition/hill_muscle_type2_activation'", "       Message: Description ('no description') is a placeholder.", '', "0.8  Importance.BEST_PRACTICE_SUGGESTION: check_description - 'TimeSeries' object at location '/acquisition/hill_muscle_type1_activation'", "       Message: Description ('no description') is a placeholder.", '', "0.9  Importance.BEST_PRACTICE_SUGGESTION: check_description - 'TimeSeries' object at location '/acquisition/hill_muscle_muscle_torque'", "       Message: Description ('no description') is a placeholder.", '']
+    ['**************************************************', 'NWBInspector Report Summary', '', 'Timestamp: 2026-06-01 10:09:10.190074+00:00', 'Platform: Linux-6.17.0-1015-azure-x86_64-with-glibc2.39', 'NWBInspector version: 0.7.2', '', 'Found 10 issues across 1 file(s):', '       1 - BEST_PRACTICE_VIOLATION', '       9 - BEST_PRACTICE_SUGGESTION', '**************************************************', '', '', '0  results/spinal_network_results.nwb', '=====================================', '', "0.0  Importance.BEST_PRACTICE_VIOLATION: check_units_resolution_is_set - 'Units' object with name 'units'", '       Message: Units table has spike_times but resolution is not set. Resolution indicates the smallest possible difference between two spike times and should be a positive float equal to 1/sampling_rate of the recording system (e.g., Units(resolution=1/30000) for a 30 kHz system). This information is needed to assess the precision of spike timing data.', '', "0.1  Importance.BEST_PRACTICE_SUGGESTION: check_description - 'TimeSeries' object at location '/acquisition/spin_secondary_afferent_firing__Hz'", "       Message: Description ('no description') is a placeholder.", '', "0.2  Importance.BEST_PRACTICE_SUGGESTION: check_description - 'TimeSeries' object at location '/acquisition/spin_primary_afferent_firing__Hz'", "       Message: Description ('no description') is a placeholder.", '', "0.3  Importance.BEST_PRACTICE_SUGGESTION: check_description - 'TimeSeries' object at location '/acquisition/spin_intrafusal_tensions'", "       Message: Description ('no description') is a placeholder.", '', "0.4  Importance.BEST_PRACTICE_SUGGESTION: check_description - 'TimeSeries' object at location '/acquisition/spin_chain_activation'", "       Message: Description ('no description') is a placeholder.", '', "0.5  Importance.BEST_PRACTICE_SUGGESTION: check_description - 'TimeSeries' object at location '/acquisition/spin_bag2_activation'", "       Message: Description ('no description') is a placeholder.", '', "0.6  Importance.BEST_PRACTICE_SUGGESTION: check_description - 'TimeSeries' object at location '/acquisition/spin_bag1_activation'", "       Message: Description ('no description') is a placeholder.", '', "0.7  Importance.BEST_PRACTICE_SUGGESTION: check_description - 'TimeSeries' object at location '/acquisition/hill_muscle_type2_activation'", "       Message: Description ('no description') is a placeholder.", '', "0.8  Importance.BEST_PRACTICE_SUGGESTION: check_description - 'TimeSeries' object at location '/acquisition/hill_muscle_type1_activation'", "       Message: Description ('no description') is a placeholder.", '', "0.9  Importance.BEST_PRACTICE_SUGGESTION: check_description - 'TimeSeries' object at location '/acquisition/hill_muscle_muscle_torque'", "       Message: Description ('no description') is a placeholder.", '']
       ... and 18 more messages
 
 
@@ -461,7 +461,7 @@ NWB organizes data hierarchically. Let's explore what's available.
       (empty)
 
     📁 Units (spike data):
-      └─ 964 units recorded
+      └─ 963 units recorded
           Columns: _name, segment, block, spike_times, obs_intervals
 
     📁 Stimulus:
@@ -579,15 +579,15 @@ If the NWB file contains spike data, let's extract and visualize it.
     STEP 4: EXTRACTING SPIKE DATA
     ============================================================
 
-    Found 964 units
+    Found 963 units
     Populations found: ['DD', 'aMN', 'Ia', 'II', 'Ib', 'gII', 'gIb']
       DD: 400 units, 39820 total spikes
-      aMN: 93 units, 2062 total spikes
-      Ia: 73 units, 11844 total spikes
+      aMN: 93 units, 2067 total spikes
+      Ia: 73 units, 11843 total spikes
       II: 80 units, 8691 total spikes
-      Ib: 58 units, 4619 total spikes
-      gII: 120 units, 1929 total spikes
-      gIb: 140 units, 864 total spikes
+      Ib: 58 units, 4623 total spikes
+      gII: 120 units, 1927 total spikes
+      gIb: 139 units, 859 total spikes
 
     (OK) Saved raster plot to: results/nwb_spike_raster.png
 
@@ -790,7 +790,7 @@ Let's compare loading from NWB vs the original pickle format.
     Feature                   NWB             Pickle         
     --------------------------------------------------
     File exists               ✓               ✓              
-    File size                 188455.8 KB     188359.2 KB    
+    File size                 188450.1 KB     188358.9 KB    
     Standardized format       Yes             No             
     Schema validation         Yes             No             
     Cross-language support    Yes (HDF5)      Python only    
@@ -891,7 +891,7 @@ For more information:
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 5.399 seconds)
+   **Total running time of the script:** (0 minutes 5.888 seconds)
 
 
 .. _sphx_glr_download_auto_examples_01_basic_13_load_and_inspect_nwb_data.py:

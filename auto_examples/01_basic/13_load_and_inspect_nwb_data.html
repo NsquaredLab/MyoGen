@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Loading and Inspecting NWB Data &#8212; MyoGen 0.10.0 Documentation</title>
+    <title>Loading and Inspecting NWB Data &#8212; MyoGen 0.10.1 Documentation</title>
   
   
   
@@ -55,7 +55,7 @@
 
     <script src="../../_static/jquery.js?v=5d32c60e"></script>
     <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-    <script src="../../_static/documentation_options.js?v=7e54ce6f"></script>
+    <script src="../../_static/documentation_options.js?v=d714ba09"></script>
     <script src="../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/sg-tags.js?v=d80f6fa4"></script>
@@ -74,7 +74,7 @@
     <link rel="prev" title="Extracting Data from Neo Blocks" href="12_extract_data_from_neo_blocks.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="0.10.0" />
+  <meta name="docsearch:version" content="0.10.1" />
   
     
     <script src="../../_static/searchtools.js"></script>
@@ -149,8 +149,8 @@
       
     
     
-    <img src="../../_static/myogen_logo.png" class="logo__image only-light" alt="MyoGen 0.10.0 Documentation - Home"/>
-    <img src="../../_static/myogen_logo.png" class="logo__image only-dark pst-js-only" alt="MyoGen 0.10.0 Documentation - Home"/>
+    <img src="../../_static/myogen_logo.png" class="logo__image only-light" alt="MyoGen 0.10.1 Documentation - Home"/>
+    <img src="../../_static/myogen_logo.png" class="logo__image only-dark pst-js-only" alt="MyoGen 0.10.1 Documentation - Home"/>
   
   
 </a></div>
@@ -159,7 +159,7 @@
 <div class="nav-item">
   <div class="version-switcher__container dropdown">
       <button id="version-switcher-button" type="button" class="version-switcher__button btn btn-sm navbar-btn" aria-haspopup="true" aria-expanded="false">
-          Version 0.10.0
+          Version 0.10.1
       </button>
       
       
@@ -591,7 +591,7 @@ a minimal example file for demonstration.</p>
 </pre></div>
 </div>
 <div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>(OK) Found NWB file: results/spinal_network_results.nwb
-    Size: 188455.8 KB
+    Size: 188450.1 KB
 </pre></div>
 </div>
 </section>
@@ -646,7 +646,7 @@ Found 28 message(s):
   ○ Best practice suggestions: 1
 
 Details:
-[&#39;**************************************************&#39;, &#39;NWBInspector Report Summary&#39;, &#39;&#39;, &#39;Timestamp: 2026-06-01 07:24:58.171090+00:00&#39;, &#39;Platform: Linux-6.17.0-1015-azure-x86_64-with-glibc2.39&#39;, &#39;NWBInspector version: 0.7.2&#39;, &#39;&#39;, &#39;Found 10 issues across 1 file(s):&#39;, &#39;       1 - BEST_PRACTICE_VIOLATION&#39;, &#39;       9 - BEST_PRACTICE_SUGGESTION&#39;, &#39;**************************************************&#39;, &#39;&#39;, &#39;&#39;, &#39;0  results/spinal_network_results.nwb&#39;, &#39;=====================================&#39;, &#39;&#39;, &quot;0.0  Importance.BEST_PRACTICE_VIOLATION: check_units_resolution_is_set - &#39;Units&#39; object with name &#39;units&#39;&quot;, &#39;       Message: Units table has spike_times but resolution is not set. Resolution indicates the smallest possible difference between two spike times and should be a positive float equal to 1/sampling_rate of the recording system (e.g., Units(resolution=1/30000) for a 30 kHz system). This information is needed to assess the precision of spike timing data.&#39;, &#39;&#39;, &quot;0.1  Importance.BEST_PRACTICE_SUGGESTION: check_description - &#39;TimeSeries&#39; object at location &#39;/acquisition/spin_secondary_afferent_firing__Hz&#39;&quot;, &quot;       Message: Description (&#39;no description&#39;) is a placeholder.&quot;, &#39;&#39;, &quot;0.2  Importance.BEST_PRACTICE_SUGGESTION: check_description - &#39;TimeSeries&#39; object at location &#39;/acquisition/spin_primary_afferent_firing__Hz&#39;&quot;, &quot;       Message: Description (&#39;no description&#39;) is a placeholder.&quot;, &#39;&#39;, &quot;0.3  Importance.BEST_PRACTICE_SUGGESTION: check_description - &#39;TimeSeries&#39; object at location &#39;/acquisition/spin_intrafusal_tensions&#39;&quot;, &quot;       Message: Description (&#39;no description&#39;) is a placeholder.&quot;, &#39;&#39;, &quot;0.4  Importance.BEST_PRACTICE_SUGGESTION: check_description - &#39;TimeSeries&#39; object at location &#39;/acquisition/spin_chain_activation&#39;&quot;, &quot;       Message: Description (&#39;no description&#39;) is a placeholder.&quot;, &#39;&#39;, &quot;0.5  Importance.BEST_PRACTICE_SUGGESTION: check_description - &#39;TimeSeries&#39; object at location &#39;/acquisition/spin_bag2_activation&#39;&quot;, &quot;       Message: Description (&#39;no description&#39;) is a placeholder.&quot;, &#39;&#39;, &quot;0.6  Importance.BEST_PRACTICE_SUGGESTION: check_description - &#39;TimeSeries&#39; object at location &#39;/acquisition/spin_bag1_activation&#39;&quot;, &quot;       Message: Description (&#39;no description&#39;) is a placeholder.&quot;, &#39;&#39;, &quot;0.7  Importance.BEST_PRACTICE_SUGGESTION: check_description - &#39;TimeSeries&#39; object at location &#39;/acquisition/hill_muscle_type2_activation&#39;&quot;, &quot;       Message: Description (&#39;no description&#39;) is a placeholder.&quot;, &#39;&#39;, &quot;0.8  Importance.BEST_PRACTICE_SUGGESTION: check_description - &#39;TimeSeries&#39; object at location &#39;/acquisition/hill_muscle_type1_activation&#39;&quot;, &quot;       Message: Description (&#39;no description&#39;) is a placeholder.&quot;, &#39;&#39;, &quot;0.9  Importance.BEST_PRACTICE_SUGGESTION: check_description - &#39;TimeSeries&#39; object at location &#39;/acquisition/hill_muscle_muscle_torque&#39;&quot;, &quot;       Message: Description (&#39;no description&#39;) is a placeholder.&quot;, &#39;&#39;]
+[&#39;**************************************************&#39;, &#39;NWBInspector Report Summary&#39;, &#39;&#39;, &#39;Timestamp: 2026-06-01 10:09:10.190074+00:00&#39;, &#39;Platform: Linux-6.17.0-1015-azure-x86_64-with-glibc2.39&#39;, &#39;NWBInspector version: 0.7.2&#39;, &#39;&#39;, &#39;Found 10 issues across 1 file(s):&#39;, &#39;       1 - BEST_PRACTICE_VIOLATION&#39;, &#39;       9 - BEST_PRACTICE_SUGGESTION&#39;, &#39;**************************************************&#39;, &#39;&#39;, &#39;&#39;, &#39;0  results/spinal_network_results.nwb&#39;, &#39;=====================================&#39;, &#39;&#39;, &quot;0.0  Importance.BEST_PRACTICE_VIOLATION: check_units_resolution_is_set - &#39;Units&#39; object with name &#39;units&#39;&quot;, &#39;       Message: Units table has spike_times but resolution is not set. Resolution indicates the smallest possible difference between two spike times and should be a positive float equal to 1/sampling_rate of the recording system (e.g., Units(resolution=1/30000) for a 30 kHz system). This information is needed to assess the precision of spike timing data.&#39;, &#39;&#39;, &quot;0.1  Importance.BEST_PRACTICE_SUGGESTION: check_description - &#39;TimeSeries&#39; object at location &#39;/acquisition/spin_secondary_afferent_firing__Hz&#39;&quot;, &quot;       Message: Description (&#39;no description&#39;) is a placeholder.&quot;, &#39;&#39;, &quot;0.2  Importance.BEST_PRACTICE_SUGGESTION: check_description - &#39;TimeSeries&#39; object at location &#39;/acquisition/spin_primary_afferent_firing__Hz&#39;&quot;, &quot;       Message: Description (&#39;no description&#39;) is a placeholder.&quot;, &#39;&#39;, &quot;0.3  Importance.BEST_PRACTICE_SUGGESTION: check_description - &#39;TimeSeries&#39; object at location &#39;/acquisition/spin_intrafusal_tensions&#39;&quot;, &quot;       Message: Description (&#39;no description&#39;) is a placeholder.&quot;, &#39;&#39;, &quot;0.4  Importance.BEST_PRACTICE_SUGGESTION: check_description - &#39;TimeSeries&#39; object at location &#39;/acquisition/spin_chain_activation&#39;&quot;, &quot;       Message: Description (&#39;no description&#39;) is a placeholder.&quot;, &#39;&#39;, &quot;0.5  Importance.BEST_PRACTICE_SUGGESTION: check_description - &#39;TimeSeries&#39; object at location &#39;/acquisition/spin_bag2_activation&#39;&quot;, &quot;       Message: Description (&#39;no description&#39;) is a placeholder.&quot;, &#39;&#39;, &quot;0.6  Importance.BEST_PRACTICE_SUGGESTION: check_description - &#39;TimeSeries&#39; object at location &#39;/acquisition/spin_bag1_activation&#39;&quot;, &quot;       Message: Description (&#39;no description&#39;) is a placeholder.&quot;, &#39;&#39;, &quot;0.7  Importance.BEST_PRACTICE_SUGGESTION: check_description - &#39;TimeSeries&#39; object at location &#39;/acquisition/hill_muscle_type2_activation&#39;&quot;, &quot;       Message: Description (&#39;no description&#39;) is a placeholder.&quot;, &#39;&#39;, &quot;0.8  Importance.BEST_PRACTICE_SUGGESTION: check_description - &#39;TimeSeries&#39; object at location &#39;/acquisition/hill_muscle_type1_activation&#39;&quot;, &quot;       Message: Description (&#39;no description&#39;) is a placeholder.&quot;, &#39;&#39;, &quot;0.9  Importance.BEST_PRACTICE_SUGGESTION: check_description - &#39;TimeSeries&#39; object at location &#39;/acquisition/hill_muscle_muscle_torque&#39;&quot;, &quot;       Message: Description (&#39;no description&#39;) is a placeholder.&quot;, &#39;&#39;]
   ... and 18 more messages
 </pre></div>
 </div>
@@ -815,7 +815,7 @@ STEP 3: DATA STRUCTURE
   (empty)
 
 📁 Units (spike data):
-  └─ 964 units recorded
+  └─ 963 units recorded
       Columns: _name, segment, block, spike_times, obs_intervals
 
 📁 Stimulus:
@@ -910,15 +910,15 @@ STEP 3: DATA STRUCTURE
 STEP 4: EXTRACTING SPIKE DATA
 ============================================================
 
-Found 964 units
+Found 963 units
 Populations found: [&#39;DD&#39;, &#39;aMN&#39;, &#39;Ia&#39;, &#39;II&#39;, &#39;Ib&#39;, &#39;gII&#39;, &#39;gIb&#39;]
   DD: 400 units, 39820 total spikes
-  aMN: 93 units, 2062 total spikes
-  Ia: 73 units, 11844 total spikes
+  aMN: 93 units, 2067 total spikes
+  Ia: 73 units, 11843 total spikes
   II: 80 units, 8691 total spikes
-  Ib: 58 units, 4619 total spikes
-  gII: 120 units, 1929 total spikes
-  gIb: 140 units, 864 total spikes
+  Ib: 58 units, 4623 total spikes
+  gII: 120 units, 1927 total spikes
+  gIb: 139 units, 859 total spikes
 
 (OK) Saved raster plot to: results/nwb_spike_raster.png
 </pre></div>
@@ -1080,7 +1080,7 @@ Format Comparison:
 Feature                   NWB             Pickle
 --------------------------------------------------
 File exists               ✓               ✓
-File size                 188455.8 KB     188359.2 KB
+File size                 188450.1 KB     188358.9 KB
 Standardized format       Yes             No
 Schema validation         Yes             No
 Cross-language support    Yes (HDF5)      Python only
@@ -1142,7 +1142,7 @@ Next steps:
   3. Upload to DANDI Archive for sharing: https://dandiarchive.org/
 </pre></div>
 </div>
-<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 5.399 seconds)</p>
+<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 5.888 seconds)</p>
 <div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-auto-examples-01-basic-13-load-and-inspect-nwb-data-py">
 <div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
 <p><a class="reference download internal" download="" href="../../_downloads/a95e9f4c31800af71bcf2343f46971dc/13_load_and_inspect_nwb_data.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">13_load_and_inspect_nwb_data.ipynb</span></code></a></p>
