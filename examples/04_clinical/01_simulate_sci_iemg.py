@@ -278,3 +278,39 @@ def run_drive(drive_signal: AnalogSignal, label: str) -> Block:
     ]
     block.segments.append(seg)
     return block
+
+
+# %%
+
+##############################################################################
+# Simulate the Three Conditions
+# -----------------------------
+#
+# For each condition: build the drive, run the network, synthesize iEMG from the
+# spike trains (reusing the precomputed MUAPs), and add realistic noise.
+
+conditions = {}  # label -> dict(drive, spikes, iemg)
+for label, builder in drive_builders.items():
+    print(f"Condition: {label}")
+    drive = builder()
+    spikes__Block = run_drive(drive, label)
+    iemg_sim.simulate_intramuscular_emg(spike_train__Block=spikes__Block)
+    noisy__Block = iemg_sim.add_noise(snr__dB=20)
+    conditions[label] = {
+        "drive": drive,
+        "spikes": spikes__Block,
+        "iemg": noisy__Block.segments[0].analogsignals[0],
+    }
+
+    # Per-condition statistics
+    sts = spikes__Block.segments[0].spiketrains
+    active = sum(1 for st in sts if len(st) > 0)
+    rates = [
+        float((len(st) / simulation_time.rescale(pq.s)).magnitude)
+        for st in sts
+        if len(st) > 0
+    ]
+    rms = float(np.sqrt(np.mean(conditions[label]["iemg"].magnitude ** 2)))
+    mean_rate = float(np.mean(rates)) if rates else 0.0
+    print(f"  active MUs: {active}/{N_MU} | mean rate: {mean_rate:.1f} pps "
+          f"| iEMG RMS: {rms:.3f} mV")
