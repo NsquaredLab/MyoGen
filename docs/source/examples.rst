@@ -36,6 +36,19 @@ Examples
         +++
         Requires Optuna
 
+    .. grid-item-card::
+        :link: clinical-examples
+        :link-type: ref
+        :text-align: center
+
+        Clinical & Pathology
+        ^^^
+
+        Pathological motor-control signals such as SCI-like iEMG.
+
+        +++
+        Self-contained
+
 Literature Reproductions
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
 
