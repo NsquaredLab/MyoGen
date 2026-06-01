@@ -379,22 +379,27 @@ def population_discharge_rate(spiketrains, bin__s=0.1, smooth_bins=5):
 fig, axes = plt.subplots(len(labels), 1, figsize=(12, 8), sharex=True)
 for ax, label in zip(axes, labels):
     sts = conditions[label]["spikes"].segments[0].spiketrains
-    mu_colors = plt.cm.viridis(np.linspace(0, 1, len(sts)))
-    for i, st in enumerate(sts):
-        if len(st) > 0:
-            # "Donut" markers: recruitment-order color fill + thin black edge
-            # ring (matching the finetune comparison example's marker style).
-            ax.scatter(
-                st.rescale(pq.s).magnitude,
-                [i] * len(st),
-                s=9,
-                facecolor=mu_colors[i],
-                edgecolors="black",
-                linewidth=0.2,
-                marker="o",
-                alpha=0.85,
-            )
-    ax.set_ylabel("MU #")
+    # Sort motor units by the time of their first spike (earliest-firing at the
+    # bottom) so the y-axis reflects recruitment order in actual time.
+    active = [u for u in range(len(sts)) if len(sts[u]) > 0]
+    first_spike__s = [float(sts[u].rescale(pq.s).magnitude.min()) for u in active]
+    order = [active[k] for k in np.argsort(first_spike__s)]
+    mu_colors = plt.cm.viridis(np.linspace(0, 1, max(len(order), 1)))
+    for rank, u in enumerate(order):
+        st = sts[u]
+        # "Donut" markers: first-spike-order color fill + thin black edge ring
+        # (matching the finetune comparison example's marker style).
+        ax.scatter(
+            st.rescale(pq.s).magnitude,
+            [rank] * len(st),
+            s=9,
+            facecolor=mu_colors[rank],
+            edgecolors="black",
+            linewidth=0.2,
+            marker="o",
+            alpha=0.85,
+        )
+    ax.set_ylabel("MU (1st-spike order)")
     ax.set_title(label)
     ax.grid(True, alpha=0.3)
 
