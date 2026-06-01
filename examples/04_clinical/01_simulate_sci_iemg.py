@@ -171,7 +171,7 @@ def build_voluntary_drive(peak__pps: float = 55.0) -> AnalogSignal:
 
 
 def build_no_derecruit_drive(
-    peak__pps: float = 55.0, floor__pps: float = 28.0, ramp__s: float = 1.0
+    peak__pps: float = 55.0, floor__pps: float = 42.0, ramp__s: float = 1.0
 ) -> AnalogSignal:
     """Sinusoid riding on a tonic floor after an initial recruiting ramp.
 
@@ -343,11 +343,34 @@ plt.show()
 # %%
 
 ##############################################################################
-# Figure 2 — Motor Neuron Rasters
-# -------------------------------
+# Figure 2 — Motor Neuron Rasters with Mean Discharge Rate
+# --------------------------------------------------------
 #
 # Derecruitment at troughs (top) vs. persistent tonic firing (middle) vs. clonic
-# bursting (bottom), at the spike level.
+# bursting (bottom), at the spike level. The black line overlays the mean
+# population discharge rate (averaged over units that fire at least once), which
+# makes the rate modulation explicit -- note how it never returns to zero for the
+# loss-of-derecruitment condition.
+
+
+def population_discharge_rate(spiketrains, bin__s=0.1, smooth_bins=5):
+    """Mean per-unit discharge rate (pps) over time across units that fire.
+
+    Returns ``(bin_centers__s, rate__pps)``. Each active unit contributes its
+    binned rate; the population mean is smoothed with a short moving average.
+    """
+    active = [st.rescale(pq.s).magnitude for st in spiketrains if len(st) > 0]
+    t_stop = float(simulation_time.rescale(pq.s))
+    edges = np.arange(0.0, t_stop + bin__s, bin__s)
+    centers = edges[:-1] + bin__s / 2.0
+    if not active:
+        return centers, np.zeros_like(centers)
+    per_unit = np.stack([np.histogram(sp, bins=edges)[0] / bin__s for sp in active])
+    mean_rate = per_unit.mean(axis=0)
+    if smooth_bins > 1:
+        mean_rate = np.convolve(mean_rate, np.ones(smooth_bins) / smooth_bins, mode="same")
+    return centers, mean_rate
+
 
 fig, axes = plt.subplots(len(labels), 1, figsize=(12, 8), sharex=True)
 for ax, label in zip(axes, labels):
@@ -358,8 +381,14 @@ for ax, label in zip(axes, labels):
     ax.set_ylabel("MU #")
     ax.set_title(label)
     ax.grid(True, alpha=0.3)
+
+    rate_t__s, rate__pps = population_discharge_rate(sts)
+    ax_rate = ax.twinx()
+    ax_rate.plot(rate_t__s, rate__pps, color="black", linewidth=1.5, alpha=0.85)
+    ax_rate.set_ylabel("Discharge rate (pps)")
+    ax_rate.set_ylim(bottom=0)
 axes[-1].set_xlabel("Time (s)")
-sns.despine(trim=True, left=False, bottom=False, right=True, top=True, offset=5)
+sns.despine(fig=fig, top=True)
 plt.tight_layout()
 plt.show()
 
