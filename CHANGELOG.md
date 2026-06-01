@@ -11,7 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 - **Calibratable colored iEMG noise model.** New `myogen.utils.emg_noise` module providing a physiologically-motivated colored-noise generator for intramuscular EMG whose spectral parameters can be **calibrated from a real recording**. Two new gallery examples demonstrate it: `examples/01_basic/15_calibrate_noise_from_real.py` (fit the model to measured noise) and `examples/01_basic/16_noise_parameter_sweep.py` (sweep the noise parameters).
-- **Optional GPU acceleration for SFAP computation (CuPy).** Single-fiber action-potential and surface-EMG bioelectric computations can now run on an NVIDIA GPU via the new `[gpu]` optional extra (`cupy-cuda12x`). A `use_gpu` tri-state (auto / on / off) selects the backend and transparently falls back to NumPy when CuPy or a CUDA device is unavailable; the xp-aware code paths keep NumPy and CuPy arrays from mixing.
+- **Optional GPU acceleration for SFAP computation (CuPy).** Single-fiber action-potential and surface-EMG bioelectric computations can now run on an NVIDIA GPU via the new `[gpu]` optional extra (`cupy-cuda12x`). A `use_gpu` tri-state (auto / on / off) selects the backend and transparently falls back to NumPy when CuPy or a CUDA device is unavailable; the xp-aware code paths keep NumPy and CuPy arrays from mixing. Contributed by @veylantis (#11).
 - **Top-level re-exports.** `ForceModelVectorized` and the biomechanics classes are now importable directly from `myogen.simulator` (previously only reachable through their submodules).
 - **Synaptic-delay control.** `connect_to_muscle(delay__ms=...)` and an end-to-end `synaptic_delay` parameter let you set conduction/synaptic delays through the spinal network.
 - **Expanded regression test suite** covering unit safety, `ForceModel`/`ForceModelVectorized` parity, EMG accuracy, determinism, and NWB round-trips.
@@ -31,8 +31,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Surface EMG.** Exact Laplacian spatial filter, corrected FFT bin grid, robust handling of a singular electrode inter-electrode distance, RNG worker pre-generation for reproducible parallel draws, and an off-by-one in the `np.arange` temporal-resampling grid.
 - **Intramuscular EMG.** Corrected `shift_padding` tail handling and the `shift_sfaps` sign convention, plus NumPy-2.0-safe scalar extraction.
 - **RNG determinism.** `set_random_seed` now resets the per-cell ID counters and seeds the Hill `durType=2` path; NWB exports are deterministic by default.
-- **Group II afferent rectification** is now applied per-region instead of after summation (external contribution, thanks @veylantis).
-- **`min_radial_dist` unit mismatch** in `calc_sfaps`.
+- **Group II afferent rectification** is now applied per-region instead of after summation.
+- **`min_radial_dist` unit mismatch** in `calc_sfaps`. Contributed by @veylantis (#10).
 - **`continuous_saver` f-string bug** that mangled a log message.
 - **NumPy 2.0 compatibility.** Replaced the removed `np.trapz` with `scipy.integrate.trapezoid`.
 - **Examples.** Corrected raster row offsets and PSTH right-edge binning.
