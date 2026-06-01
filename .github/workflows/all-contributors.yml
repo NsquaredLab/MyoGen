@@ -1,0 +1,47 @@
+name: all-contributors
+
+# Keeps the README All-Contributors table in sync with `.all-contributorsrc`.
+# The table is generated from the rc file; this job regenerates it and fails if
+# the committed README differs, so a manual edit to `.all-contributorsrc` that
+# forgets to re-run the generator can't silently drift. It only reads the repo
+# (no auto-commit), so it needs no write permissions and plays nice with branch
+# protection. To fix a failure locally:
+#   npx all-contributors-cli@6.26.1 generate
+
+on:
+  pull_request:
+    paths:
+      - ".all-contributorsrc"
+      - "README.md"
+      - ".github/workflows/all-contributors.yml"
+  push:
+    branches: [main]
+    paths:
+      - ".all-contributorsrc"
+      - "README.md"
+      - ".github/workflows/all-contributors.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    name: all-contributors table
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: "22"
+
+      - name: Regenerate contributors table from .all-contributorsrc
+        run: npx --yes all-contributors-cli@6.26.1 generate
+
+      - name: Fail if README table is out of sync
+        run: |
+          if ! git diff --exit-code -- README.md; then
+            echo "::error::README.md All-Contributors table is stale. Run: npx all-contributors-cli@6.26.1 generate"
+            exit 1
+          fi
