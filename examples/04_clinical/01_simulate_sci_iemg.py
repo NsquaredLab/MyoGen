@@ -379,9 +379,21 @@ def population_discharge_rate(spiketrains, bin__s=0.1, smooth_bins=5):
 fig, axes = plt.subplots(len(labels), 1, figsize=(12, 8), sharex=True)
 for ax, label in zip(axes, labels):
     sts = conditions[label]["spikes"].segments[0].spiketrains
+    mu_colors = plt.cm.viridis(np.linspace(0, 1, len(sts)))
     for i, st in enumerate(sts):
         if len(st) > 0:
-            ax.scatter(st.rescale(pq.s).magnitude, [i] * len(st), s=0.6, alpha=0.7)
+            # "Donut" markers: recruitment-order color fill + thin black edge
+            # ring (matching the finetune comparison example's marker style).
+            ax.scatter(
+                st.rescale(pq.s).magnitude,
+                [i] * len(st),
+                s=9,
+                facecolor=mu_colors[i],
+                edgecolors="black",
+                linewidth=0.2,
+                marker="o",
+                alpha=0.85,
+            )
     ax.set_ylabel("MU #")
     ax.set_title(label)
     ax.grid(True, alpha=0.3)
