@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+- **NumPy 2.0 regression driving descending-drive / afferent cells.** `DD.integrate`, `DD_Gamma.integrate` and `AffIa.integrate` now coerce their input to a scalar via `np.asarray(y).item()`, so driving a cell with a neo `AnalogSignal` slice (shape `(1,)`) works again under NumPy 2.0. Previously this raised `TypeError: only 0-dimensional arrays can be converted to Python scalars` (NumPy 2.0 no longer auto-casts a single-element array to a Python scalar), which broke the descending-drive example gallery. Covered by a regression test.
+- **Docs gallery build.** Corrected a wrong `bin_spike_trains` import (`myogen.utils` → `myogen.utils.binning`) in the Watanabe visualization example, made the noise parameter-sweep example sphinx-gallery-safe (`Path("./results")` instead of `Path(__file__)`), and excluded the noise-calibration example from gallery execution since it requires a private iEMG recording that isn't available in CI.
+
 ## [0.10.0] - 2026-06-01
 
 ### Added

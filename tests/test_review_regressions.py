@@ -1,4 +1,5 @@
 import numpy as np
+import pytest
 import quantities as pq
 from neo import AnalogSignal, Block, Group, Segment, SpikeTrain
 
@@ -612,3 +613,33 @@ def test_baseline_drift_rejects_invalid_params():
             baseline_drift_low_hz=2.0,
             baseline_drift_high_hz=1.0,
         )
+
+
+@pytest.mark.parametrize("cls_name", ["DD", "DD_Gamma", "AffIa"])
+def test_integrate_coerces_single_element_array_to_scalar(cls_name):
+    """``integrate`` must coerce a single-element array input to a scalar float.
+
+    Driving descending-drive / afferent cells with a neo ``AnalogSignal`` slice
+    (shape ``(1,)``) used to work because NumPy 1.x silently cast it to a float.
+    Under NumPy 2.0 the Cython ``compute(double)`` instead raised ``TypeError:
+    only 0-dimensional arrays can be converted to Python scalars``, which broke
+    the descending-drive example gallery. ``integrate`` now coerces its input
+    with ``np.asarray(y).item()`` before handing it to ``compute``.
+    """
+    from myogen.simulator.neuron import cells
+
+    cls = getattr(cells, cls_name)
+    cell = cls.__new__(cls)  # bypass the NEURON-heavy __init__
+    cell.RT = 0.0  # only read by AffIa.integrate; harmless on the others
+    cell.IFR = 0.0
+
+    received = {}
+    cell.compute = lambda value: (received.__setitem__("value", value) or 1)
+
+    drive = AnalogSignal(
+        np.full((4, 1), 30.0), units=pq.dimensionless, sampling_rate=1 * pq.kHz
+    )
+    out = cls.integrate(cell, drive[0])  # drive[0] has shape (1,)
+
+    assert out == 1
+    assert isinstance(received["value"], float)

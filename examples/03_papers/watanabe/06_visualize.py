@@ -31,7 +31,7 @@ coherence analysis, force timeseries, and detailed raster plots.
 
 **External Libraries Used**:
 
-- **MyoGen** (``myogen.utils.bin_spike_trains``):
+- **MyoGen** (``myogen.utils.binning.bin_spike_trains``):
   Converts NEO spike trains to binned format for coherence analysis.
   Dependency-free binning of NEO spike trains into boolean occupancy matrices.
 
@@ -86,7 +86,7 @@ from joblib import Parallel, delayed
 from matplotlib.patches import Rectangle
 from scipy import signal as scipy_signal
 
-from myogen.utils import bin_spike_trains
+from myogen.utils.binning import bin_spike_trains
 
 plt.style.use("fivethirtyeight")
 

@@ -75,7 +75,7 @@ plt.rcParams.update(
     }
 )
 
-save_path = Path(__file__).resolve().parent / "results"
+save_path = Path("./results")
 save_path.mkdir(exist_ok=True, parents=True)
 
 ##############################################################################

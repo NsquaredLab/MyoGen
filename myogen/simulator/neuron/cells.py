@@ -430,6 +430,9 @@ class DD(_Cell, _PoissonProcessGenerator__Cython):
         int
             Number of spikes generated in this time step (0 or 1 for Poisson).
         """
+        # NumPy 2.0 no longer auto-casts a single-element array (e.g. a neo
+        # AnalogSignal slice, shape (1,)) to a Python scalar, so coerce here.
+        y = np.asarray(y).item()
         return self.compute(y) if y > 0 else 0
 
 
@@ -517,6 +520,9 @@ class DD_Gamma(_Cell, _GammaProcessGenerator__Cython):
         int
             Number of spikes generated in this time step (0 or 1 for Gamma process).
         """
+        # NumPy 2.0 no longer auto-casts a single-element array (e.g. a neo
+        # AnalogSignal slice, shape (1,)) to a Python scalar, so coerce here.
+        y = np.asarray(y).item()
         return self.compute(y) if y > 0 else 0
 
 
@@ -609,6 +615,9 @@ class AffIa(_Cell, _GammaProcessGenerator__Cython):
             Number of spikes generated (0 or 1) based on Poisson process
             with rate determined by activation level above threshold.
         """
+        # NumPy 2.0 no longer auto-casts a single-element array (e.g. a neo
+        # AnalogSignal slice, shape (1,)) to a Python scalar, so coerce here.
+        y = np.asarray(y).item()
         act = y - self.RT + self.IFR
         return self.compute(act) if act > 0 else 0
 
