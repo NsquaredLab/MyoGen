@@ -521,17 +521,20 @@ sphinx_gallery_conf = {
         str(base_dir / "examples" / "01_basic"),
         str(base_dir / "examples" / "02_finetune"),
         str(base_dir / "examples" / "03_papers" / "watanabe"),
+        str(base_dir / "examples" / "04_clinical"),
     ],
     "gallery_dirs": [
         "auto_examples/01_basic",
         "auto_examples/02_finetune",
         "auto_examples/03_papers/watanabe",
+        "auto_examples/04_clinical",
     ],
     "subsection_order": ExplicitOrder(
         [
             str(base_dir / "examples" / "01_basic"),
             str(base_dir / "examples" / "02_finetune"),
             str(base_dir / "examples" / "03_papers" / "watanabe"),
+            str(base_dir / "examples" / "04_clinical"),
         ]
     ),
     "filename_pattern": r"\.py",

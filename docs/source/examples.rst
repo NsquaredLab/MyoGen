@@ -57,3 +57,4 @@ Literature Reproductions
    auto_examples/01_basic/index
    auto_examples/02_finetune/index
    auto_examples/03_papers/watanabe/index
+   auto_examples/04_clinical/index
