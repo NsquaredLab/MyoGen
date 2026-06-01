@@ -384,7 +384,7 @@ for ax, label in zip(axes, labels):
     active = [u for u in range(len(sts)) if len(sts[u]) > 0]
     first_spike__s = [float(sts[u].rescale(pq.s).magnitude.min()) for u in active]
     order = [active[k] for k in np.argsort(first_spike__s)]
-    mu_colors = plt.cm.viridis(np.linspace(0, 1, max(len(order), 1)))
+    mu_colors = plt.cm.rainbow(np.linspace(0, 1, max(len(order), 1)))
     for rank, u in enumerate(order):
         st = sts[u]
         # "Donut" markers: first-spike-order color fill + thin black edge ring
