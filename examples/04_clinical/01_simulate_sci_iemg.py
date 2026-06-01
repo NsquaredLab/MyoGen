@@ -413,7 +413,8 @@ for ax, label in zip(axes, labels):
 axes[-1].set_xlabel("Time (s)")
 axes[-1].set_xlim(0, 10)
 axes[-1].set_xticks(np.arange(0, 11, 2))
-sns.despine(fig=fig, top=True)
+for _ax in axes:
+    sns.despine(ax=_ax, trim=True, offset=2)
 plt.tight_layout()
 plt.show()
 
