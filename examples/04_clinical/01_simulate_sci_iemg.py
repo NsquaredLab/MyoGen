@@ -135,3 +135,68 @@ iemg_sim = simulator.IntramuscularEMG(
 print("Computing MUAPs (once)...")
 muaps__Block = iemg_sim.simulate_muaps(n_jobs=2)
 joblib.dump(iemg_sim, save_path / "sci_iemg_simulator.pkl")
+
+# %%
+
+##############################################################################
+# Descending-Drive Builders
+# --------------------------
+#
+# Each builder returns a 1-D ``neo.AnalogSignal`` (in ``pps``) of length
+# ``time_points``. The *only* thing that differs between the three SCI signals is
+# which builder produces the drive fed into the descending-drive pool.
+
+_t__s = np.linspace(
+    0.0, float(simulation_time.rescale(pq.s)), time_points, endpoint=False
+)  # time vector in seconds
+
+
+def _as_drive(signal__pps: np.ndarray) -> AnalogSignal:
+    """Wrap a pps array as an AnalogSignal, adding small non-negative noise."""
+    noise = np.clip(get_random_generator().normal(0, 1.0, size=time_points), 0, None)
+    return AnalogSignal(
+        signal=(signal__pps + noise) * pps,
+        sampling_period=timestep.rescale(pq.s),
+    )
+
+
+def build_voluntary_drive(peak__pps: float = 55.0) -> AnalogSignal:
+    """Sinusoid sweeping 0 -> peak -> 0 each cycle (units derecruit at troughs)."""
+    drive = (peak__pps / 2.0) * (1.0 - np.cos(2.0 * np.pi * base_freq__Hz * _t__s))
+    return _as_drive(drive)
+
+
+def build_no_derecruit_drive(
+    peak__pps: float = 55.0, floor__pps: float = 28.0, ramp__s: float = 1.0
+) -> AnalogSignal:
+    """Sinusoid riding on a tonic floor after an initial recruiting ramp.
+
+    The trough never returns to zero, so recruited units keep firing (rate
+    modulated, never silent).
+    """
+    osc = floor__pps + ((peak__pps - floor__pps) / 2.0) * (
+        1.0 - np.cos(2.0 * np.pi * base_freq__Hz * (_t__s - ramp__s))
+    )
+    ramp = np.clip(_t__s / ramp__s, 0.0, 1.0) * floor__pps  # 0 -> floor over ramp__s
+    drive = np.where(_t__s < ramp__s, ramp, osc)
+    return _as_drive(drive)
+
+
+def build_clonus_drive(
+    peak__pps: float = 55.0, tone__pps: float = 8.0, burst__pps: float = 60.0
+) -> AnalogSignal:
+    """Voluntary sinusoid for the first half, ~6 Hz clonic bursts for the second."""
+    half = float(simulation_time.rescale(pq.s)) / 2.0
+    voluntary = (peak__pps / 2.0) * (1.0 - np.cos(2.0 * np.pi * base_freq__Hz * _t__s))
+    clonus = tone__pps + burst__pps * np.clip(
+        np.sin(2.0 * np.pi * clonus_freq__Hz * _t__s), 0.0, None
+    )
+    drive = np.where(_t__s < half, voluntary, clonus)
+    return _as_drive(drive)
+
+
+drive_builders = {
+    "Voluntary modulation": build_voluntary_drive,
+    "Loss of derecruitment": build_no_derecruit_drive,
+    "Modulation -> clonus": build_clonus_drive,
+}
