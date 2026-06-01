@@ -314,3 +314,69 @@ for label, builder in drive_builders.items():
     mean_rate = float(np.mean(rates)) if rates else 0.0
     print(f"  active MUs: {active}/{N_MU} | mean rate: {mean_rate:.1f} pps "
           f"| iEMG RMS: {rms:.3f} mV")
+
+# %%
+
+##############################################################################
+# Figure 1 — Descending Drive
+# ---------------------------
+#
+# The three command signals. Same hardware below; only this input changes.
+
+labels = list(conditions.keys())
+fig, axes = plt.subplots(len(labels), 1, figsize=(12, 8), sharex=True)
+for ax, label in zip(axes, labels):
+    drive = conditions[label]["drive"]
+    ax.plot(drive.times.rescale(pq.s).magnitude, drive.magnitude, linewidth=1.2)
+    ax.set_ylabel("Drive (pps)")
+    ax.set_title(label)
+    ax.grid(True, alpha=0.3)
+axes[-1].set_xlabel("Time (s)")
+sns.despine(trim=True, right=True, top=True, offset=5)
+plt.tight_layout()
+plt.show()
+
+# %%
+
+##############################################################################
+# Figure 2 — Motor Neuron Rasters
+# -------------------------------
+#
+# Derecruitment at troughs (top) vs. persistent tonic firing (middle) vs. clonic
+# bursting (bottom), at the spike level.
+
+fig, axes = plt.subplots(len(labels), 1, figsize=(12, 8), sharex=True)
+for ax, label in zip(axes, labels):
+    sts = conditions[label]["spikes"].segments[0].spiketrains
+    for i, st in enumerate(sts):
+        if len(st) > 0:
+            ax.scatter(st.rescale(pq.s).magnitude, [i] * len(st), s=0.6, alpha=0.7)
+    ax.set_ylabel("MU #")
+    ax.set_title(label)
+    ax.grid(True, alpha=0.3)
+axes[-1].set_xlabel("Time (s)")
+sns.despine(trim=True, right=True, top=True, offset=5)
+plt.tight_layout()
+plt.show()
+
+# %%
+
+##############################################################################
+# Figure 3 — Intramuscular EMG
+# ----------------------------
+#
+# The headline result: three pathological iEMG recordings. (1) bursts with silent
+# gaps, (2) modulated but never silent, (3) voluntary modulation turning into
+# ~6 Hz clonus. First electrode channel shown.
+
+fig, axes = plt.subplots(len(labels), 1, figsize=(12, 8), sharex=True)
+for ax, label in zip(axes, labels):
+    iemg = conditions[label]["iemg"][:, 0]
+    ax.plot(iemg.times.rescale(pq.s).magnitude, iemg.magnitude, linewidth=0.6)
+    ax.set_ylabel("iEMG (mV)")
+    ax.set_title(label)
+    ax.grid(True, alpha=0.3)
+axes[-1].set_xlabel("Time (s)")
+sns.despine(trim=True, right=True, top=True, offset=5)
+plt.tight_layout()
+plt.show()
