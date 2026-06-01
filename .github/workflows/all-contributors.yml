@@ -1,21 +1,27 @@
 name: all-contributors
 
-# Keeps the README All-Contributors table in sync with `.all-contributorsrc`.
-# The table is generated from the rc file; this job regenerates it and fails if
-# the committed README differs, so a manual edit to `.all-contributorsrc` that
-# forgets to re-run the generator can't silently drift. It only reads the repo
-# (no auto-commit), so it needs no write permissions and plays nice with branch
-# protection. To fix a failure locally:
-#   npx all-contributors-cli@6.26.1 generate
+# Keeps the README All-Contributors table in sync with `.all-contributorsrc`
+# (the rc file is the source of truth; the README table is generated from it).
+#
+# - On push to main: regenerate the table and auto-commit README.md if it drifted,
+#   so editing `.all-contributorsrc` is enough — you never have to remember to run
+#   the generator. The bot commit uses the default GITHUB_TOKEN, which does not
+#   re-trigger workflows, so there is no loop.
+# - On pull requests: just fail if the table is stale (we can't push to fork PR
+#   branches), so drift is still caught before merge.
+#
+# NOTE: the auto-commit needs to push to main. If main is ever protected to require
+# pull requests, that push will be rejected and this job will fail — switch the
+# "auto-commit" step for the "fail if stale" check in that case.
 
 on:
-  pull_request:
+  push:
+    branches: [main]
     paths:
       - ".all-contributorsrc"
       - "README.md"
       - ".github/workflows/all-contributors.yml"
-  push:
-    branches: [main]
+  pull_request:
     paths:
       - ".all-contributorsrc"
       - "README.md"
@@ -23,10 +29,10 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
-  verify:
+  sync:
     name: all-contributors table
     runs-on: ubuntu-latest
     steps:
@@ -39,7 +45,21 @@ jobs:
       - name: Regenerate contributors table from .all-contributorsrc
         run: npx --yes all-contributors-cli@6.26.1 generate
 
-      - name: Fail if README table is out of sync
+      - name: Auto-commit regenerated table (push to main)
+        if: github.event_name == 'push'
+        run: |
+          if git diff --quiet -- README.md; then
+            echo "README table already in sync."
+          else
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git add README.md
+            git commit -m "docs: sync All-Contributors table [skip ci]"
+            git push origin HEAD:main
+          fi
+
+      - name: Fail if README table is out of sync (pull request)
+        if: github.event_name != 'push'
         run: |
           if ! git diff --exit-code -- README.md; then
             echo "::error::README.md All-Contributors table is stale. Run: npx all-contributors-cli@6.26.1 generate"
