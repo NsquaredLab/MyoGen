@@ -299,7 +299,10 @@ for label, builder in drive_builders.items():
     drive = builder()
     spikes__Block = run_drive(drive, label)
     iemg_sim.simulate_intramuscular_emg(spike_train__Block=spikes__Block)
-    noisy__Block = iemg_sim.add_noise(snr__dB=20)
+    # Realistic device noise: 1/f-like coloring, electrode-amplifier mid-band
+    # emphasis, heavy tails, and 50 Hz powerline + harmonics (use 60 Hz in the
+    # Americas). See myogen.utils.emg_noise for the model.
+    noisy__Block = iemg_sim.add_noise(snr__dB=20, noise_type="realistic")
     conditions[label] = {
         "drive": drive,
         "spikes": spikes__Block,
