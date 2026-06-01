@@ -200,3 +200,81 @@ drive_builders = {
     "Loss of derecruitment": build_no_derecruit_drive,
     "Modulation -> clonus": build_clonus_drive,
 }
+
+# %%
+
+##############################################################################
+# Motor Neuron Pool, Descending Drive Pool, and Network
+# -----------------------------------------------------
+#
+# Built once and reused for all three conditions.
+
+h.secondorder = 2  # Crank-Nicolson
+motor_neuron_pool = AlphaMN__Pool(
+    recruitment_thresholds__array=recruitment_thresholds,
+    config_file="alpha_mn_default.yaml",
+)
+descending_drive_pool = DescendingDrive__Pool(
+    n=100, poisson_batch_size=5, timestep__ms=timestep
+)
+
+network = Network({"DD": descending_drive_pool, "aMN": motor_neuron_pool})
+network.connect(source="DD", target="aMN", probability=0.5, weight__uS=0.15 * pq.uS)
+network.connect_from_external(source="cortical_input", target="DD", weight__uS=1.0 * pq.uS)
+dd_netcons = network.get_netcons("cortical_input", "DD")
+
+h.load_file("stdrun.hoc")
+h.dt = timestep
+h.tstop = simulation_time
+
+
+def run_drive(drive_signal: AnalogSignal, label: str) -> Block:
+    """Run one NEURON simulation for ``drive_signal`` and return MN spike trains.
+
+    Re-initializes NEURON state, drives the DD pool step-by-step with
+    ``drive_signal``, records motor-neuron spikes, and packages them into a Neo
+    ``Block`` with one ``SpikeTrain`` per motor unit.
+    """
+    # Fresh motor-neuron spike recorders for this run
+    mn_spike_recorders = []
+    for cell in motor_neuron_pool:
+        rec = h.Vector()
+        nc = h.NetCon(cell.soma(0.5)._ref_v, None, sec=cell.soma)
+        nc.threshold = 50
+        nc.record(rec)
+        mn_spike_recorders.append((nc, rec))  # keep nc alive for the run
+
+    # Initialize voltages for both pools, then reset NEURON time/state
+    for section, voltage in itertools.chain.from_iterable(
+        zip(*pool.get_initialization_data())
+        for pool in [motor_neuron_pool, descending_drive_pool]
+    ):
+        section.v = voltage
+    h.finitialize()
+
+    step_counter = 0
+    print(f"  running '{label}'...")
+    while h.t < h.tstop:
+        current_drive = drive_signal[min(step_counter, len(drive_signal) - 1)]
+        for dd_cell in descending_drive_pool:
+            if dd_cell.integrate(current_drive):
+                spike_time = h.t + 1
+                if spike_time < h.tstop:
+                    dd_netcons[dd_cell.pool__ID].event(spike_time)
+        h.fadvance()
+        step_counter += 1
+
+    block = Block(name=label)
+    seg = Segment(name="Motor Neurons")
+    seg.spiketrains = [
+        SpikeTrain(
+            (rec.as_numpy() * pq.ms).rescale(pq.s),
+            t_stop=simulation_time.rescale(pq.s),
+            sampling_rate=(1 / (h.dt * pq.ms)).rescale(pq.Hz),
+            sampling_period=h.dt * pq.ms,
+            name=f"MN_{i}",
+        )
+        for i, (_, rec) in enumerate(mn_spike_recorders)
+    ]
+    block.segments.append(seg)
+    return block
