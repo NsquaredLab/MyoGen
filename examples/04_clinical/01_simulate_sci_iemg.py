@@ -108,3 +108,30 @@ else:
 
 print(f"Muscle built: {N_MU} MUs, "
       f"{sum(muscle.resulting_number_of_innervated_fibers)} fibers total")
+
+# %%
+
+##############################################################################
+# Intramuscular EMG Setup
+# -----------------------
+#
+# Create a differential needle electrode and the iEMG simulator, then compute
+# the motor unit action potentials (MUAPs) **once**. The three conditions below
+# reuse these MUAPs and only re-run the (cheaper) spike-train -> EMG convolution.
+
+electrode = simulator.IntramuscularElectrodeArray(
+    num_electrodes=4,
+    inter_electrode_distance__mm=2.0 * pq.mm,
+    differentiation_mode="consecutive",
+    position__mm=(0.0 * pq.mm, 0.0 * pq.mm, 15.0 * pq.mm),
+)
+
+iemg_sim = simulator.IntramuscularEMG(
+    muscle_model=muscle,
+    electrode_array=electrode,
+    MUs_to_simulate=list(range(N_MU)),
+)
+
+print("Computing MUAPs (once)...")
+muaps__Block = iemg_sim.simulate_muaps(n_jobs=2)
+joblib.dump(iemg_sim, save_path / "sci_iemg_simulator.pkl")
