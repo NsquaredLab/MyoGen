@@ -28,6 +28,7 @@ import numpy as np
 import quantities as pq
 import seaborn as sns
 from matplotlib import pyplot as plt
+plt.rcParams["path.simplify"] = False  # draw every sample on dense EMG traces
 from neo import AnalogSignal
 
 from myogen import set_random_seed, get_random_generator

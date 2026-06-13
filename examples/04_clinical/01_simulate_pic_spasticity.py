@@ -18,6 +18,7 @@ from pathlib import Path
 import numpy as np
 import seaborn as sns
 from matplotlib import pyplot as plt
+plt.rcParams["path.simplify"] = False  # draw every sample on dense EMG traces
 
 from myogen import set_random_seed
 
