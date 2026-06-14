@@ -22,6 +22,13 @@ Modelling choices and honest caveats:
   physiological ~6-8 Hz (Gorassini 2004 ~5.2 Hz); NERLab's plateau floor is
   ~12-16 Hz, too high. This is a deliberate second model for this figure, not a
   silent swap -- a single-model limitation to acknowledge.
+* **Low discharge rate, by design.** Powers2017's mAHP caps the firing rate near
+  ~6 pps -- below voluntary FDI rates (~12-20 pps). We deliberately do NOT lift
+  it: mAHP is exactly what regularises firing, so reducing it (to raise the rate)
+  pushes the ISI CV to ~26% and destroys the spasm CV collapse. Because the
+  diagnostic spasticity signature is the low ISI CV -- not the rate (Gorassini
+  2004 found the self-sustained rate even RISES with added drive) -- we keep
+  mAHP intact and accept the low rate. ``mahp_factor`` exposes this trade-off.
 * **The PIC is bistable (all-or-nothing).** A gamma sweep shows it does not
   engage below gamma~1.15 and latches at its full ~22 nA dendritic plateau
   at/above it -- there is no "small PIC" self-sustained regime. This is the
@@ -78,6 +85,14 @@ NAP_CEILING = 0.00215
 # Without this the PIC discharge is artificially clock-like (CV <1%, an artifact).
 MN_NOISE = 3.0
 NOISE_FLOOR = 0.3
+# Model left at its native mAHP. We earlier tried halving mAHP to lift the
+# (low ~6 pps) discharge rate, but mAHP is exactly what REGULARISES firing:
+# reducing it pushed the ISI CV from ~10% to ~26% and destroyed the spasm CV
+# collapse (14.7% instead of ~4%). Since the diagnostic spasticity signature is
+# the low ISI CV, not the rate (Gorassini 2004: rate even RISES with drive), we
+# keep mAHP intact and accept the model's low voluntary discharge rate.
+MAHP_FACTOR = 1.0
+DD_WEIGHT = 0.15
 SPASM_ONSET_S = 4.0   # time the voluntary command stops -> PIC-sustained spasm
 XTICKS = np.arange(0, TOTAL_S + 1, 2)
 SPASM_LABEL = "Modulation -> spasm (SCI)"
@@ -139,7 +154,8 @@ else:
     for label, (drive, gamma, lam) in conditions.items():
         block = pic.run_pool(drive, n_mu=N_MU, gamma=gamma, model=MODEL,
                              lambda_factor=lam, total_s=TOTAL_S,
-                             mn_noise=MN_NOISE, noise_floor=NOISE_FLOOR)
+                             mn_noise=MN_NOISE, noise_floor=NOISE_FLOOR,
+                             dd_weight__uS=DD_WEIGHT, mahp_factor=MAHP_FACTOR)
         emg = pic.synthesize_iemg(block, N_MU, iemg_sim=iemg_sim, snr_dB=20)
         results[label] = {
             "block": block,
@@ -213,102 +229,124 @@ def overlay_rate_envelope(ax, centers, rate, span_max):
 
 
 # %%
-# Figure 1 -- motor-unit rasters; the red discharge-rate envelope rides on top.
-# First-spike-sorted, rainbow "donut" markers, matching the original example.
-fig, axes = plt.subplots(len(labels), 1, figsize=(12, 8), sharex=True)
-for ax, label in zip(axes, labels):
+# Single-cell PIC mechanism (cached): a Powers2017 cell near the bistable
+# threshold -- a brief pulse latches the dendritic Ca plateau (self-sustained
+# firing) and a gentle inhibition switches it off. The cell-level basis of the
+# pool spasm.
+mech_cache = save_path / "sci_mechanistic_singlecell.pkl"
+if mech_cache.exists():
+    mech = joblib.load(mech_cache)
+else:
+    mech = pic.single_cell_pic_mechanism()
+    joblib.dump(mech, mech_cache)
+
+# Gorassini et al. 2004 (Brain) self-sustained-firing ISI CV: 5.4 +/- 1.6 %.
+GOR_CV, GOR_CV_SD = 5.4, 1.6
+
+
+def draw_cv(ax, label, ylabel=False):
+    """ISI CV trace (purple, log) with the Gorassini 2004 self-sustained band."""
+    c_cv, cv = results[label]["cv"]
+    ax.axhspan(GOR_CV - GOR_CV_SD, GOR_CV + GOR_CV_SD, color="green", alpha=0.12,
+               zorder=0)
+    ax.plot(c_cv, np.ma.masked_invalid(cv), color="purple", linewidth=1.3)
+    ax.set_yscale("log")
+    _ylim, _ticks = cv_axis_range(cv)
+    ax.set_ylim(*_ylim)
+    ax.set_yticks(_ticks)
+    ax.yaxis.set_major_formatter(ScalarFormatter())
+    ax.minorticks_off()
+    if ylabel:
+        ax.set_ylabel("ISI CV (%)")
+    mark_spasm_onset(ax, label)
+
+
+# %%
+# Composite figure -- the whole story on one canvas.
+#   Top band: single-cell PIC mechanism (Vm + dendritic Ca PIC current).
+#   Grid: the SAME descending drive with only the motoneuron PIC varied (columns
+#   = healthy / loss of derecruitment / spasm), shown as drive -> raster -> iEMG
+#   -> ISI CV (rows). The green band on the CV row is the Gorassini 2004
+#   self-sustained-firing CV (5.4 +/- 1.6 %); the spasm column collapses into it
+#   once the drive withdraws.
+fig = plt.figure(figsize=(13, 15))
+gs = fig.add_gridspec(6, 3, height_ratios=[0.95, 0.85, 0.5, 1.5, 1.0, 1.0],
+                      hspace=0.55, wspace=0.32)
+
+# --- top band: single-cell mechanism (spans all 3 columns) ---
+ax_mv = fig.add_subplot(gs[0, :])
+ax_mi = fig.add_subplot(gs[1, :], sharex=ax_mv)
+ax_mv.plot(mech["t"], mech["vm"], color="k", linewidth=0.5)
+ax_mv.set_ylabel("Vm (mV)")
+ax_mv.set_title("Single-cell PIC mechanism (Powers2017, near bistable threshold): "
+                "pulse latches the Ca plateau -> self-sustained firing; "
+                "inhibition switches it off", fontsize=10)
+ax_mi.plot(mech["t"], mech["pic_nA"], color="red", linewidth=0.8)
+ax_mi.set_ylabel("dend Ca PIC (nA)")
+ax_mi.set_xlabel("Time (s)")
+ax_mi.set_xlim(mech["t"][0], mech["t"][-1])
+for axm in (ax_mv, ax_mi):
+    axm.axvspan(*mech["t_pulse"], color="0.85", zorder=0)
+    axm.axvspan(*mech["t_inhib"], color="#cfe0ff", zorder=0)
+    axm.grid(True, alpha=0.3)
+ax_mv.annotate("pulse", xy=(np.mean(mech["t_pulse"]), 0.96),
+               xycoords=("data", "axes fraction"), ha="center", va="top",
+               fontsize=8, color="0.3")
+ax_mv.annotate("inhibition", xy=(np.mean(mech["t_inhib"]), 0.96),
+               xycoords=("data", "axes fraction"), ha="center", va="top",
+               fontsize=8, color="#2b5fb0")
+
+# --- population grid: drive / raster / iEMG / CV  x  3 conditions ---
+for j, label in enumerate(labels):
     block = results[label]["block"]
+    drive, gamma, _lam = conditions[label]
+    first = j == 0
+
+    # drive (input command, pps) + PIC-state badge
+    ax_d = fig.add_subplot(gs[2, j])
+    d_dt = float(drive.sampling_period.rescale(pq.s).magnitude)
+    d_t = np.arange(len(drive)) * d_dt
+    ax_d.plot(d_t, np.asarray(drive.magnitude).ravel(), color="0.35", linewidth=0.9)
+    ax_d.set_ylim(0, 98)
+    ax_d.set_title(label, fontsize=10)
+    ax_d.text(0.03, 0.80, f"PIC $\\gamma$={gamma}", transform=ax_d.transAxes,
+              fontsize=9, color=("teal" if gamma < 1.0 else "crimson"))
+    if first:
+        ax_d.set_ylabel("drive (pps)")
+    mark_spasm_onset(ax_d, label, y_frac=0.9)
+
+    # raster (first-spike-ordered rainbow markers)
+    ax_r = fig.add_subplot(gs[3, j], sharex=ax_d)
     sts = block.segments[0].spiketrains
     active = [u for u in range(len(sts)) if len(sts[u]) > 0]
     order = sorted(active, key=lambda u: float(sts[u].rescale("s").magnitude.min()))
     colors = plt.cm.rainbow(np.linspace(0, 1, max(len(order), 1)))
     for rank, u in enumerate(order):
         st = sts[u].rescale("s").magnitude
-        ax.scatter(st, [rank] * len(st), s=9, facecolor=colors[rank],
-                   edgecolors="black", linewidth=0.2, marker="o", alpha=0.85)
-    ax.set_ylabel("MU (1st-spike order)")
-    ax.set_title(label)
-    ax.grid(True, alpha=0.3)
-    n = max(len(order), 1)
-    ax.set_ylim(-0.5, n - 0.5)
-    # overlay the ISI CV (purple) on the raster. Drive-scaled noise keeps
-    # voluntary firing irregular (~10%); once the drive withdraws in the spasm the
-    # PIC-paced discharge regularises and the CV drops toward ~4% (Gorassini 2004).
-    c_cv, cv = results[label]["cv"]
-    ax_cv = ax.twinx()
-    ax_cv.set_zorder(ax.get_zorder() + 1)
-    ax_cv.patch.set_visible(False)
-    ax_cv.plot(c_cv, np.ma.masked_invalid(cv), color="purple", linewidth=1.5)
-    ax_cv.set_ylabel("ISI CV (%)", color="purple")
-    ax_cv.tick_params(axis="y", colors="purple")
-    ax_cv.set_yscale("log")          # per-row data-driven min->max log scale
-    _ylim, _ticks = cv_axis_range(cv)
-    ax_cv.set_ylim(*_ylim)
-    ax_cv.set_yticks(_ticks)
-    ax_cv.yaxis.set_major_formatter(ScalarFormatter())  # plain numbers, not 10^x
-    ax_cv.minorticks_off()
-    ax_cv.grid(False)
-    mark_spasm_onset(ax_cv, label)
-axes[-1].set_xlabel("Time (s)")
-axes[-1].set_xlim(0, TOTAL_S)
-axes[-1].set_xticks(XTICKS)
-for _ax in axes:
-    sns.despine(ax=_ax, trim=True, offset=2, right=False)
-plt.tight_layout()
-fig.savefig(save_path / "sci_mechanistic_raster.svg")
-fig.savefig(save_path / "sci_mechanistic_raster.pdf")
+        ax_r.scatter(st, [rank] * len(st), s=6, facecolor=colors[rank],
+                     edgecolors="black", linewidth=0.15, marker="o", alpha=0.85)
+    ax_r.set_ylim(-0.5, max(len(order), 1) - 0.5)
+    if first:
+        ax_r.set_ylabel("MU (1st-spike order)")
+    mark_spasm_onset(ax_r, label)
 
-# %%
-# Figure 2 -- intramuscular EMG (first channel); the red discharge-rate envelope
-# rides from the EMG zero up to the EMG peak. Right axis = true rate in pps.
-fig, axes = plt.subplots(len(labels), 1, figsize=(12, 8), sharex=True)
-for ax, label in zip(axes, labels):
+    # iEMG (first channel)
+    ax_e = fig.add_subplot(gs[4, j], sharex=ax_d)
     emg = results[label]["iemg"]
-    ax.plot(emg["times"], emg["iemg"], linewidth=0.15, color="k")
-    ax.set_ylabel("iEMG (a.u.)")
-    ax.set_title(label)
-    ax.grid(True, alpha=0.3)
-    emg_max = float(np.abs(emg["iemg"]).max())
-    ax.set_ylim(-emg_max * 1.1, emg_max * 1.1)
-    centers, rate = results[label]["rate"]
-    overlay_rate_envelope(ax, centers, rate, emg_max)
-    mark_spasm_onset(ax, label)
-axes[-1].set_xlabel("Time (s)")
-axes[-1].set_xlim(0, TOTAL_S)
-axes[-1].set_xticks(XTICKS)
-for _ax in axes:
-    sns.despine(ax=_ax, trim=True, offset=5, right=False)
-plt.tight_layout()
-fig.savefig(save_path / "sci_mechanistic_iemg.svg")
-fig.savefig(save_path / "sci_mechanistic_iemg.pdf")
+    ax_e.plot(emg["times"], emg["iemg"], linewidth=0.12, color="k")
+    em = float(np.abs(emg["iemg"]).max())
+    ax_e.set_ylim(-em * 1.1, em * 1.1)
+    if first:
+        ax_e.set_ylabel("iEMG (a.u.)")
+    mark_spasm_onset(ax_e, label)
 
-# %%
-# Figure 3 -- ISI coefficient of variation (CV) over time. Voluntary firing is
-# irregular (~10%, driven by drive-scaled synaptic noise); when the drive
-# withdraws in the modulation->spasm condition the self-sustained discharge is
-# paced by the intrinsic PIC and the CV drops toward ~4% (Gorassini 2004: spasms
-# fire more regularly than voluntary effort). Alongside the low (~6-8 Hz)
-# self-sustained rate, this regularisation is the spasticity signature.
-fig, axes = plt.subplots(len(labels), 1, figsize=(12, 8), sharex=True)
-for ax, label in zip(axes, labels):
-    c_cv, cv = results[label]["cv"]
-    ax.plot(c_cv, np.ma.masked_invalid(cv), color="purple", linewidth=1.5)
-    ax.set_ylabel("ISI CV (%)")
-    ax.set_title(label)
-    ax.grid(True, alpha=0.3)
-    ax.set_yscale("log")             # per-row data-driven min->max log scale
-    _ylim, _ticks = cv_axis_range(cv)
-    ax.set_ylim(*_ylim)
-    ax.set_yticks(_ticks)
-    ax.yaxis.set_major_formatter(ScalarFormatter())  # plain numbers, not 10^x
-    ax.minorticks_off()
-    mark_spasm_onset(ax, label)
-axes[-1].set_xlabel("Time (s)")
-axes[-1].set_xlim(0, TOTAL_S)
-axes[-1].set_xticks(XTICKS)
-for _ax in axes:
-    sns.despine(ax=_ax, trim=True, offset=5)
-plt.tight_layout()
-fig.savefig(save_path / "sci_mechanistic_cv.svg")
-fig.savefig(save_path / "sci_mechanistic_cv.pdf")
+    # ISI CV (with Gorassini 2004 band)
+    ax_c = fig.add_subplot(gs[5, j], sharex=ax_d)
+    draw_cv(ax_c, label, ylabel=first)
+    ax_c.set_xlabel("Time (s)")
+    ax_c.set_xlim(0, TOTAL_S)
+    ax_c.set_xticks(XTICKS)
+
+fig.savefig(save_path / "sci_mechanistic_composite.svg")
+fig.savefig(save_path / "sci_mechanistic_composite.pdf")
 plt.show()

@@ -142,6 +142,58 @@ def after_discharge(gamma, nap_factor=1.0, hold_nA=0.6, pulse_nA=3.0,
     return dict(t=t, v=v, vhold=vhold, n_after=n_after, offset_ms=offset)
 
 
+def single_cell_pic_mechanism(gamma=1.15, hold_nA=0.1, pulse_nA=8.0,
+                              inhib_nA=-3.0, total_ms=5500.0,
+                              t_pulse=(1000.0, 1500.0),
+                              t_inhib=(3800.0, 4700.0)):
+    """Powers2017 single cell near the bistable PIC threshold, recording soma Vm
+    and the summed dendritic Ca PIC current (nA): subthreshold hold -> brief
+    excitatory pulse latches the regenerative Ca plateau (self-sustained firing,
+    PIC ~-22 nA) -> a gentle GLOBAL inhibition deactivates the plateau (firing
+    stops, the cell returns to the silent branch). This is the cell-level
+    bistability that drives the pool spasm; the inhibition illustrates the
+    off-switch the open-loop pool lacks. Returns traces in seconds / nA."""
+    pool = AlphaMN__Pool(recruitment_thresholds__array=_SINGLE_RT,
+                         model="Powers2017", gamma=gamma, lambda_factor=1.0)
+    cell = pool[0]
+    secs = _sections(cell)
+    h.dt = DT; h.celsius = CELSIUS
+    h.tstop = 400.0                                  # relax to rest
+    _ = h.FInitializeHandler(0, lambda: fi0_multicompartment(secs, [V_INIT] * len(secs)))
+    h.finitialize(); h.run()
+    vh = cell.soma(0.5).v
+    h.tstop = total_ms
+    _ = h.FInitializeHandler(0, lambda: fi0_multicompartment(secs, [vh] * len(secs)))
+    tw = np.arange(0.0, total_ms + 1.0, 1.0)
+    exc = np.minimum(tw / 400.0, 1.0) * hold_nA
+    exc[(tw >= t_pulse[0]) & (tw < t_pulse[1])] = pulse_nA
+    inh = np.zeros_like(tw)
+    inh[(tw >= t_inhib[0]) & (tw < t_inhib[1])] = inhib_nA
+    tv = h.Vector(tw)
+    stim = h.IClamp(cell.dend[0](0.5)); stim.delay = 0; stim.dur = total_ms
+    av = h.Vector(exc); av.play(stim._ref_amp, tv, True)
+    keep = [tv, av]                                  # keep play vectors alive
+    for sec in secs:                                 # global inhibition soma+dends
+        ic = h.IClamp(sec(0.5)); ic.delay = 0; ic.dur = total_ms
+        iv = h.Vector(inh); iv.play(ic._ref_amp, tv, True)
+        keep += [ic, iv]
+    vm = h.Vector(); vm.record(cell.soma(0.5)._ref_v)
+    t = h.Vector(); t.record(h._ref_t)
+    icas = [(h.Vector(), d) for d in cell.dend]
+    for rec, d in icas:
+        rec.record(d(0.5)._ref_icaL)
+    h.finitialize(); h.run()
+    t = np.array(t); vm = np.array(vm)
+    pic_nA = np.zeros_like(t)
+    for rec, d in icas:
+        area_cm2 = np.pi * d.L * d.diam * 1e-8        # um^2 -> cm^2
+        pic_nA = pic_nA + np.array(rec) * area_cm2 * 1e6   # mA/cm2 -> nA
+    inp = np.interp(t, tw, exc) + np.interp(t, tw, inh)
+    return dict(t=t / 1000.0, vm=vm, pic_nA=pic_nA, input_nA=inp, vhold=vh,
+                t_pulse=tuple(x / 1000.0 for x in t_pulse),
+                t_inhib=tuple(x / 1000.0 for x in t_inhib))
+
+
 import itertools
 
 import quantities as pq
@@ -178,7 +230,8 @@ def brief_command_drive(peak_pps=22.0, rise_s=1.0, plateau_s=1.5,
 
 def run_pool(command, n_mu, gamma, nap_factor=1.0, nap_ceiling=0.00215,
              total_s=10.0, model="NERLab", lambda_factor=1.0, dd_n=100,
-             dd_shape=None, mn_noise=0.0, noise_floor=0.3):
+             dd_shape=None, mn_noise=0.0, noise_floor=0.3, dd_weight__uS=0.15,
+             mahp_factor=1.0):
     """Build a motoneuron pool with PIC knobs, drive it with `command`, return
     the motor-neuron spike-train Block. Separate NEURON run per call.
 
@@ -198,6 +251,10 @@ def run_pool(command, n_mu, gamma, nap_factor=1.0, nap_ceiling=0.00215,
         mn_pool = AlphaMN__Pool(recruitment_thresholds__array=rt,
                                 model="Powers2017", gamma=gamma,
                                 lambda_factor=lambda_factor)
+        if mahp_factor != 1.0:        # scale the Ca-activated K (firing ceiling)
+            for cell in mn_pool:
+                for seg in cell.soma:
+                    seg.gkcamax_mAHP *= mahp_factor
     else:
         mn_pool = AlphaMN__Pool(recruitment_thresholds__array=rt, model="NERLab",
                                 gamma=gamma)
@@ -244,7 +301,8 @@ def run_pool(command, n_mu, gamma, nap_factor=1.0, nap_ceiling=0.00215,
         dd_pool = DescendingDrive__Pool(n=dd_n, poisson_batch_size=5,
                                         timestep__ms=_POOL_TIMESTEP)
     net = Network({"DD": dd_pool, "aMN": mn_pool})
-    net.connect(source="DD", target="aMN", probability=0.5, weight__uS=0.15 * pq.uS)
+    net.connect(source="DD", target="aMN", probability=0.5,
+                weight__uS=dd_weight__uS * pq.uS)
     net.connect_from_external(source="cortical_input", target="DD",
                               weight__uS=1.0 * pq.uS)
     dd_netcons = net.get_netcons("cortical_input", "DD")
