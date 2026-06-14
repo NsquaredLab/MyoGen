@@ -296,8 +296,8 @@ for j, label in enumerate(labels):
     n_units = max(len(order), 1)
     for rank, u in enumerate(order):
         st = sts[u].rescale("s").magnitude
-        ax_r.scatter(st, [rank] * len(st), s=5, facecolor="none",
-                     edgecolors=colors[rank], linewidth=0.6, marker="o", alpha=0.9)
+        ax_r.scatter(st, [rank] * len(st), s=3, facecolor="none",
+                     edgecolors=colors[rank], linewidth=0.45, marker="o", alpha=0.9)
     buf = max(1.0, 0.05 * n_units)          # y-buffer so edge markers aren't clipped
     ax_r.set_ylim(-0.5 - buf, n_units - 0.5 + buf)
     ax_r.set_xlim(0, TOTAL_S)
