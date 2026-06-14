@@ -283,7 +283,7 @@ def despine_fig(fig):
     labels so the secondary scale still reads without a spine line)."""
     for ax in fig.axes:
         is_twin = ax.spines["right"].get_visible()
-        sns.despine(ax=ax, top=True, right=True, offset=2, trim=not is_twin)
+        sns.despine(ax=ax, top=True, right=True, offset=5, trim=not is_twin)
         if is_twin:
             ax.tick_params(axis="y", which="both", right=True, labelright=True)
 
