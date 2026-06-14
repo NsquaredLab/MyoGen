@@ -10,25 +10,51 @@ phenotypes emerge from the motoneuron **persistent inward current (PIC)** state:
 
 1. **Voluntary modulation** -- healthy PIC; a 0.5 Hz voluntary command recruits
    and **derecruits** the pool each cycle.
-2. **Loss of derecruitment** -- up-regulated PIC (``gamma`` + somatic NaP); the
-   *same* command no longer lets units go silent at the troughs.
+2. **Loss of derecruitment** -- up-regulated PIC (``gamma``); the *same* command
+   no longer lets units go silent at the troughs.
 3. **Modulation -> spasm** -- up-regulated PIC; the voluntary command runs for
    the first half then stops, but the PIC sustains an **involuntary discharge**.
 
-(The original's third phenotype was 6 Hz *clonus*, a stretch-reflex-loop
-oscillation -- not a PIC phenomenon -- so it is replaced here by a PIC-driven
-spasm. NERLab model throughout, consistent with the manuscript. NERLab's caL
-does not inactivate, so recruited units latch rather than slowly decaying.)
+Modelling choices and honest caveats:
+
+* **Model = Powers2017**, not the manuscript's NERLab. We use it because its
+  mAHP + inactivating dendritic Ca PIC put the self-sustained discharge at a
+  physiological ~6-8 Hz (Gorassini 2004 ~5.2 Hz); NERLab's plateau floor is
+  ~12-16 Hz, too high. This is a deliberate second model for this figure, not a
+  silent swap -- a single-model limitation to acknowledge.
+* **The PIC is bistable (all-or-nothing).** A gamma sweep shows it does not
+  engage below gamma~1.15 and latches at its full ~22 nA dendritic plateau
+  at/above it -- there is no "small PIC" self-sustained regime. This is the
+  expected regenerative L-type Ca plateau (Lee & Heckman bistability), not a
+  tunable knob. The ~22 nA is the *dendritic* current; somatic voltage-clamp
+  estimates (~5-15 nA) underread it because of poor space clamp of the distal
+  dendrite, so a large dendritic value is consistent with the modelling lit
+  (ElBasiouny & Heckman).
+* **Firing variability is injected and drive-scaled.** An independent OU
+  membrane-noise current per motoneuron (``mn_noise``) models synaptic
+  bombardment; its amplitude tracks the descending drive and falls to a small
+  intrinsic floor when the drive withdraws. So voluntary firing is irregular
+  (CV ~10%) and the drive-off self-sustained spasm -- paced by the intrinsic PIC
+  -- is regular (CV ~4%), reproducing the Gorassini (2004) finding that spasms
+  fire more regularly than voluntary effort. Without injected noise the PIC
+  discharge is near-deterministic (CV <1%, an artifact).
+* **No afferent/reflex loops.** The original's third phenotype was 6 Hz *clonus*
+  (a stretch-reflex-loop oscillation); here it is replaced by an intrinsic
+  PIC-driven spasm. This spasm does **not** self-terminate within the window --
+  Powers2017's Ca PIC does not deactivate at these voltages, so a real off-
+  switch needs inhibition/afferent input (illustrated separately in the
+  single-cell demo), which is outside this open-loop pool.
 """
 # sphinx_gallery_thumbnail_number = -1
 import sys
 from pathlib import Path
 
+import joblib
 import numpy as np
 import quantities as pq
 import seaborn as sns
 from matplotlib import pyplot as plt
-plt.rcParams["path.simplify"] = False  # draw every sample on dense EMG traces
+from matplotlib.ticker import ScalarFormatter
 from neo import AnalogSignal
 
 from myogen import set_random_seed, get_random_generator
@@ -37,10 +63,22 @@ from myogen.utils.types import pps
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import pic_protocols as pic
 
+plt.style.use("fivethirtyeight")
+plt.rcParams["path.simplify"] = False  # draw every sample on dense EMG traces
+
 set_random_seed(42)
 N_MU = 40
 TOTAL_S = 8.0
 NAP_CEILING = 0.00215
+# Peak OU membrane-noise current (nA) per motoneuron, reached at full descending
+# drive; its amplitude SCALES WITH THE DRIVE (synaptic bombardment tracks input)
+# and falls to MN_NOISE*NOISE_FLOOR when the drive withdraws. So voluntary firing
+# is irregular (CV ~10%) while a drive-off self-sustained spasm, paced by the
+# intrinsic PIC, is regular (CV ~4%) -- the Gorassini (2004) spasm signature.
+# Without this the PIC discharge is artificially clock-like (CV <1%, an artifact).
+MN_NOISE = 3.0
+NOISE_FLOOR = 0.3
+XTICKS = np.arange(0, TOTAL_S + 1, 2)
 
 try:
     save_path = Path(__file__).parent / "results"
@@ -65,8 +103,6 @@ def modulation_then_silence(peak_pps=45.0, freq_hz=0.5, stop_s=4.0,
 # %%
 # Shared peripheral model: one muscle + electrode + MUAP set for all conditions.
 # Cache the (expensive) MUAP computation so re-runs are cheap.
-import joblib
-
 cache = save_path / f"sci_mechanistic_iemg_sim_n{N_MU}.pkl"
 if cache.exists():
     iemg_sim = joblib.load(cache)
@@ -75,67 +111,165 @@ else:
     iemg_sim = pic.make_iemg_simulator(muscle, N_MU)
     joblib.dump(iemg_sim, cache)
 
-voluntary, _ = pic.cyclic_voluntary_drive(peak_pps=45.0, freq_hz=0.5,
+voluntary, _ = pic.cyclic_voluntary_drive(peak_pps=90.0, freq_hz=0.5,
                                           total_s=TOTAL_S)
-spasm_drive = modulation_then_silence()
+spasm_drive = modulation_then_silence(peak_pps=90.0)
 
-# label -> (descending drive, gamma, nap_factor)
+# Powers2017 motoneuron model: it has the mAHP (Ca-activated K) and an
+# inactivating dendritic Ca PIC, so its self-sustained discharge sits at the
+# physiological ~6-8 Hz (lit ~5.2 Hz; NERLab's plateau floor is ~12-16 Hz, too
+# high). label -> (descending drive, gamma, lambda_factor).
+MODEL = "Powers2017"
 conditions = {
-    "Voluntary modulation (healthy PIC)": (voluntary, 0.2, 1.0),
-    "Loss of derecruitment (SCI PIC)": (voluntary, 1.5, 5.0),
-    "Modulation -> spasm (SCI PIC)": (spasm_drive, 1.5, 5.0),
+    "Voluntary modulation (healthy)": (voluntary, 0.5, 1.0),
+    "Loss of derecruitment (SCI)": (voluntary, 1.3, 1.0),
+    "Modulation -> spasm (SCI)": (spasm_drive, 1.3, 1.0),
 }
 
-results = {}
-for label, (drive, gamma, nap) in conditions.items():
-    block = pic.run_pool(drive, n_mu=N_MU, gamma=gamma, nap_factor=nap,
-                         nap_ceiling=NAP_CEILING, total_s=TOTAL_S)
-    emg = pic.synthesize_iemg(block, N_MU, iemg_sim=iemg_sim, snr_dB=20)
-    centers, rate = pic.population_rate(block, TOTAL_S)
-    results[label] = dict(drive=drive, block=block, iemg=emg, rate=(centers, rate))
-    active = sum(1 for st in block.segments[0].spiketrains if len(st) > 0)
-    print(f"{label}: active MUs={active}/{N_MU} | trough rate="
-          f"{pic.rate_in_windows(centers, rate, [2.0, 4.0, 6.0]):.1f} pps")
+# Run the three pool simulations once and cache the (slim) results, so figure
+# tweaks re-render in seconds. Delete this .pkl after changing any simulation
+# parameter (model, N_MU, gamma, lambda, drive, SNR) to force a re-simulation.
+results_cache = save_path / f"sci_mechanistic_sims_{MODEL}_n{N_MU}.pkl"
+if results_cache.exists():
+    results = joblib.load(results_cache)
+else:
+    results = {}
+    for label, (drive, gamma, lam) in conditions.items():
+        block = pic.run_pool(drive, n_mu=N_MU, gamma=gamma, model=MODEL,
+                             lambda_factor=lam, total_s=TOTAL_S,
+                             mn_noise=MN_NOISE, noise_floor=NOISE_FLOOR)
+        emg = pic.synthesize_iemg(block, N_MU, iemg_sim=iemg_sim, snr_dB=20)
+        results[label] = {
+            "block": block,
+            "iemg": {"iemg": emg["iemg"], "times": emg["times"]},
+        }
+        active = sum(1 for st in block.segments[0].spiketrains if len(st) > 0)
+        print(f"{label}: active MUs={active}/{N_MU}")
+    joblib.dump(results, results_cache)
+
+# Discharge rate and ISI CV are recomputed fresh each run (cheap) so the
+# binning/windowing can be tuned without re-running the simulations.
+for _label, _data in results.items():
+    _data["rate"] = pic.population_rate(_data["block"], TOTAL_S, win_s=0.8,
+                                        step_s=0.02)  # 0.8 s window, 20 ms steps
+    _data["cv"] = pic.population_cv(_data["block"], TOTAL_S, win_s=1.0, step_s=0.02)
+
+labels = list(conditions.keys())
+
+
+def overlay_rate_envelope(ax, centers, rate, span_max):
+    """Draw the discharge rate as a red envelope scaled 0 -> span_max in the
+    primary-axis units (so it rides on top like an envelope), and add a right
+    axis that reports the TRUE discharge rate in pps. DR = 0 is aligned with the
+    primary axis y = 0, DR = max with y = span_max -- the curve is scaled only
+    for viewing; the right-axis ticks give the real rate."""
+    denom = float(rate.max()) if rate.max() > 0 else 1.0
+    ax.plot(centers, rate / denom * span_max, color="red", linewidth=1.5,
+            alpha=0.9, zorder=5)
+    ax_r = ax.twinx()
+    lo, hi = ax.get_ylim()
+    scale = denom / span_max
+    ax_r.set_ylim(lo * scale, hi * scale)   # real pps; DR=0 aligns with ax y=0
+    ax_r.set_ylabel("Discharge rate (pps)", color="red")
+    ax_r.tick_params(axis="y", colors="red")
+    tick_step = 2 if denom <= 12 else (5 if denom <= 30 else 10)
+    ax_r.set_yticks(np.arange(0, denom + tick_step, tick_step))
+    ax_r.grid(False)
+    return ax_r
 
 
 # %%
-def raster(ax, block):
+# Figure 1 -- motor-unit rasters; the red discharge-rate envelope rides on top.
+# First-spike-sorted, rainbow "donut" markers, matching the original example.
+fig, axes = plt.subplots(len(labels), 1, figsize=(12, 8), sharex=True)
+for ax, label in zip(axes, labels):
+    block = results[label]["block"]
     sts = block.segments[0].spiketrains
     active = [u for u in range(len(sts)) if len(sts[u]) > 0]
     order = sorted(active, key=lambda u: float(sts[u].rescale("s").magnitude.min()))
     colors = plt.cm.rainbow(np.linspace(0, 1, max(len(order), 1)))
     for rank, u in enumerate(order):
         st = sts[u].rescale("s").magnitude
-        ax.scatter(st, [rank] * len(st), s=5, color=colors[rank], marker="|",
-                   linewidths=0.5)
-
-
-labels = list(conditions.keys())
-
-# Figure 1 -- motor unit rasters
-fig, axes = plt.subplots(len(labels), 1, figsize=(9, 7), sharex=True)
-for ax, label in zip(axes, labels):
-    raster(ax, results[label]["block"])
-    ax.set_ylabel("MU")
+        ax.scatter(st, [rank] * len(st), s=9, facecolor=colors[rank],
+                   edgecolors="black", linewidth=0.2, marker="o", alpha=0.85)
+    ax.set_ylabel("MU (1st-spike order)")
     ax.set_title(label)
-axes[-1].set_xlabel("time (s)")
-for ax in axes:
-    sns.despine(ax=ax, trim=True, offset=2)
-fig.tight_layout()
+    ax.grid(True, alpha=0.3)
+    n = max(len(order), 1)
+    ax.set_ylim(-0.5, n - 0.5)
+    # overlay the ISI CV (purple) on the raster. Drive-scaled noise keeps
+    # voluntary firing irregular (~10%); once the drive withdraws in the spasm the
+    # PIC-paced discharge regularises and the CV drops toward ~4% (Gorassini 2004).
+    c_cv, cv = results[label]["cv"]
+    ax_cv = ax.twinx()
+    ax_cv.set_zorder(ax.get_zorder() + 1)
+    ax_cv.patch.set_visible(False)
+    ax_cv.plot(c_cv, np.ma.masked_invalid(cv), color="purple", linewidth=1.5)
+    ax_cv.set_ylabel("ISI CV (%)", color="purple")
+    ax_cv.tick_params(axis="y", colors="purple")
+    ax_cv.set_yscale("log")          # shared log scale: 100x range (0.2-20%)
+    ax_cv.set_ylim(0.1, 30)
+    ax_cv.set_yticks([0.2, 0.5, 1, 2, 5, 10, 20])
+    ax_cv.yaxis.set_major_formatter(ScalarFormatter())  # plain numbers, not 10^x
+    ax_cv.minorticks_off()
+    ax_cv.grid(False)
+axes[-1].set_xlabel("Time (s)")
+axes[-1].set_xlim(0, TOTAL_S)
+axes[-1].set_xticks(XTICKS)
+for _ax in axes:
+    sns.despine(ax=_ax, trim=True, offset=2, right=False)
+plt.tight_layout()
 fig.savefig(save_path / "sci_mechanistic_raster.svg")
 fig.savefig(save_path / "sci_mechanistic_raster.pdf")
 
-# Figure 2 -- intramuscular EMG (first channel)
-fig, axes = plt.subplots(len(labels), 1, figsize=(9, 7), sharex=True)
+# %%
+# Figure 2 -- intramuscular EMG (first channel); the red discharge-rate envelope
+# rides from the EMG zero up to the EMG peak. Right axis = true rate in pps.
+fig, axes = plt.subplots(len(labels), 1, figsize=(12, 8), sharex=True)
 for ax, label in zip(axes, labels):
     emg = results[label]["iemg"]
-    ax.plot(emg["times"], emg["iemg"], lw=0.2, color="k")
+    ax.plot(emg["times"], emg["iemg"], linewidth=0.15, color="k")
     ax.set_ylabel("iEMG (a.u.)")
     ax.set_title(label)
-axes[-1].set_xlabel("time (s)")
-for ax in axes:
-    sns.despine(ax=ax, trim=True, offset=2)
-fig.tight_layout()
+    ax.grid(True, alpha=0.3)
+    emg_max = float(np.abs(emg["iemg"]).max())
+    ax.set_ylim(-emg_max * 1.1, emg_max * 1.1)
+    centers, rate = results[label]["rate"]
+    overlay_rate_envelope(ax, centers, rate, emg_max)
+axes[-1].set_xlabel("Time (s)")
+axes[-1].set_xlim(0, TOTAL_S)
+axes[-1].set_xticks(XTICKS)
+for _ax in axes:
+    sns.despine(ax=_ax, trim=True, offset=5, right=False)
+plt.tight_layout()
 fig.savefig(save_path / "sci_mechanistic_iemg.svg")
 fig.savefig(save_path / "sci_mechanistic_iemg.pdf")
+
+# %%
+# Figure 3 -- ISI coefficient of variation (CV) over time. Voluntary firing is
+# irregular (~10%, driven by drive-scaled synaptic noise); when the drive
+# withdraws in the modulation->spasm condition the self-sustained discharge is
+# paced by the intrinsic PIC and the CV drops toward ~4% (Gorassini 2004: spasms
+# fire more regularly than voluntary effort). Alongside the low (~6-8 Hz)
+# self-sustained rate, this regularisation is the spasticity signature.
+fig, axes = plt.subplots(len(labels), 1, figsize=(12, 8), sharex=True)
+for ax, label in zip(axes, labels):
+    c_cv, cv = results[label]["cv"]
+    ax.plot(c_cv, np.ma.masked_invalid(cv), color="purple", linewidth=1.5)
+    ax.set_ylabel("ISI CV (%)")
+    ax.set_title(label)
+    ax.grid(True, alpha=0.3)
+    ax.set_yscale("log")             # shared log scale across conditions
+    ax.set_ylim(0.1, 30)
+    ax.set_yticks([0.2, 0.5, 1, 2, 5, 10, 20])
+    ax.yaxis.set_major_formatter(ScalarFormatter())  # plain numbers, not 10^x
+    ax.minorticks_off()
+axes[-1].set_xlabel("Time (s)")
+axes[-1].set_xlim(0, TOTAL_S)
+axes[-1].set_xticks(XTICKS)
+for _ax in axes:
+    sns.despine(ax=_ax, trim=True, offset=5)
+plt.tight_layout()
+fig.savefig(save_path / "sci_mechanistic_cv.svg")
+fig.savefig(save_path / "sci_mechanistic_cv.pdf")
 plt.show()

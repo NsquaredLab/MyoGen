@@ -149,7 +149,8 @@ from neo import AnalogSignal, Block, Segment, SpikeTrain
 
 from myogen import get_random_generator, simulator
 from myogen.simulator.neuron import Network
-from myogen.simulator.neuron.populations import DescendingDrive__Pool
+from myogen.simulator.neuron.populations import (DescendingDrive__Pool,
+                                                 DescendingDrive_Gamma__Pool)
 from myogen.utils.types import pps
 
 _POOL_TIMESTEP = 0.1 * pq.ms
@@ -176,19 +177,72 @@ def brief_command_drive(peak_pps=22.0, rise_s=1.0, plateau_s=1.5,
 
 
 def run_pool(command, n_mu, gamma, nap_factor=1.0, nap_ceiling=0.00215,
-             total_s=10.0):
-    """Build a NERLab pool with PIC knobs, drive it with `command`, return the
-    motor-neuron spike-train Block. Separate NEURON run per call."""
+             total_s=10.0, model="NERLab", lambda_factor=1.0, dd_n=100,
+             dd_shape=None, mn_noise=0.0, noise_floor=0.3):
+    """Build a motoneuron pool with PIC knobs, drive it with `command`, return
+    the motor-neuron spike-train Block. Separate NEURON run per call.
+
+    NaP knob differs by model: NERLab scales somatic ``gnapbar_napp`` after
+    construction via ``nap_factor`` (scale_nap); Powers2017 sets NaP through
+    ``lambda_factor`` on the constructor (its ``naps`` mechanism) and ignores
+    ``nap_factor``. Powers2017 also has the ``mAHP`` Ca-activated K current and a
+    dendritic Ca PIC, giving a lower self-sustained rate (~6-8 Hz) than NERLab
+    (~12-16 Hz). Its Ca PIC is bistable (all-or-nothing) and does NOT self-
+    terminate at these voltages -- the spasm latches until inhibition removes
+    it."""
     rt, _ = simulator.RecruitmentThresholds(
         N=n_mu, recruitment_range__ratio=100, deluca__slope=5,
         konstantin__max_threshold__ratio=1.0, mode="combined")
     h.secondorder = 2
-    mn_pool = AlphaMN__Pool(recruitment_thresholds__array=rt, model="NERLab",
-                            gamma=gamma)
-    if nap_factor != 1.0:
-        scale_nap(mn_pool, nap_factor, nap_ceiling)
-    dd_pool = DescendingDrive__Pool(n=100, poisson_batch_size=5,
-                                    timestep__ms=_POOL_TIMESTEP)
+    if model == "Powers2017":
+        mn_pool = AlphaMN__Pool(recruitment_thresholds__array=rt,
+                                model="Powers2017", gamma=gamma,
+                                lambda_factor=lambda_factor)
+    else:
+        mn_pool = AlphaMN__Pool(recruitment_thresholds__array=rt, model="NERLab",
+                                gamma=gamma)
+        if nap_factor != 1.0:
+            scale_nap(mn_pool, nap_factor, nap_ceiling)
+    # spike-detect threshold: NERLab rests ~0 mV, Powers2017 ~-71 mV
+    spike_threshold = -10.0 if model == "Powers2017" else 50.0
+    # Independent OU (colored) noise current injected into each motoneuron, so
+    # firing is realistically irregular (real voluntary CV ~10-20%) rather than
+    # clock-like. (The built-in Gfluctdv conductance-noise mechanism does not
+    # generate -- its Scop random source stays 0 -- so we inject current.)
+    # mn_noise is the PEAK OU current sigma (nA), reached at full descending
+    # drive. The amplitude SCALES WITH THE DRIVE envelope (synaptic bombardment
+    # tracks input), dropping to `mn_noise * noise_floor` when the drive
+    # withdraws -- so a self-sustained spasm, paced by the intrinsic PIC, fires
+    # regularly (CV ~5%) while voluntary firing is irregular (CV ~12-15%).
+    _noise_keep = []
+    if mn_noise > 0:
+        from scipy.signal import lfilter
+        rng = get_random_generator()
+        n_steps = int(total_s * 1000.0)               # 1 ms resolution
+        a = np.exp(-1.0 / 20.0)                        # OU tau = 20 ms
+        amp_unit = np.sqrt(1.0 - a * a)               # -> unit-variance OU
+        # drive envelope on the 1 ms grid, normalised to its peak
+        cmd_mag = np.asarray(command.magnitude, dtype=float).ravel()
+        cmd_dt = float(command.sampling_period.rescale(pq.ms).magnitude)
+        cmd_t = np.arange(len(cmd_mag)) * cmd_dt
+        env = np.interp(np.arange(n_steps), cmd_t, cmd_mag)
+        peak = env.max() if env.max() > 0 else 1.0
+        env = noise_floor + (1.0 - noise_floor) * np.clip(env / peak, 0.0, 1.0)
+        tvec_n = h.Vector(np.arange(n_steps, dtype=float))
+        for cell in mn_pool:
+            ou = lfilter([amp_unit], [1.0, -a], rng.normal(0, 1, n_steps))
+            ou = mn_noise * env * ou                  # drive-scaled amplitude
+            ic = h.IClamp(cell.soma(0.5)); ic.delay = 0
+            ic.dur = total_s * 1000.0
+            iv = h.Vector(ou); iv.play(ic._ref_amp, tvec_n, True)
+            _noise_keep.append((ic, iv))
+        _noise_keep.append(tvec_n)
+    if dd_shape is not None:
+        dd_pool = DescendingDrive_Gamma__Pool(n=dd_n, timestep__ms=_POOL_TIMESTEP,
+                                              shape=dd_shape)
+    else:
+        dd_pool = DescendingDrive__Pool(n=dd_n, poisson_batch_size=5,
+                                        timestep__ms=_POOL_TIMESTEP)
     net = Network({"DD": dd_pool, "aMN": mn_pool})
     net.connect(source="DD", target="aMN", probability=0.5, weight__uS=0.15 * pq.uS)
     net.connect_from_external(source="cortical_input", target="DD",
@@ -201,7 +255,7 @@ def run_pool(command, n_mu, gamma, nap_factor=1.0, nap_ceiling=0.00215,
     for cell in mn_pool:
         rec = h.Vector()
         nc = h.NetCon(cell.soma(0.5)._ref_v, None, sec=cell.soma)
-        nc.threshold = 50
+        nc.threshold = spike_threshold
         nc.record(rec)
         recs.append((nc, rec))
     for section, voltage in itertools.chain.from_iterable(
@@ -255,19 +309,20 @@ def cyclic_voluntary_drive(peak_pps=45.0, freq_hz=0.5, total_s=8.0, n_points=Non
     return sig, total_s
 
 
-def population_rate(block, total_s, bin_s=0.1, smooth_bins=5):
-    """Mean per-unit discharge rate (pps) over time across units that fire.
-    Returns (bin_centers_s, rate_pps)."""
+def population_rate(block, total_s, win_s=0.8, step_s=0.02):
+    """Sliding-window mean per-unit discharge rate (pps) across active units.
+    `win_s` sets the window (larger = smoother); `step_s` the shift between
+    points (smaller = more, overlapping points). Returns (centers_s, rate_pps)."""
     sts = [st.rescale(pq.s).magnitude for st in block.segments[0].spiketrains
            if len(st) > 0]
-    edges = np.arange(0.0, total_s + bin_s, bin_s)
-    centers = edges[:-1] + bin_s / 2.0
+    centers = np.arange(win_s / 2.0, total_s - win_s / 2.0 + step_s, step_s)
     if not sts:
         return centers, np.zeros_like(centers)
-    per_unit = np.stack([np.histogram(s, bins=edges)[0] / bin_s for s in sts])
-    rate = per_unit.mean(axis=0)
-    if smooth_bins > 1:
-        rate = np.convolve(rate, np.ones(smooth_bins) / smooth_bins, mode="same")
+    half = win_s / 2.0
+    rate = np.array([
+        np.mean([np.count_nonzero((s >= c - half) & (s < c + half)) / win_s
+                 for s in sts])
+        for c in centers])
     return centers, rate
 
 
@@ -275,6 +330,38 @@ def rate_in_windows(centers, rate, times, half_w=0.25):
     """Mean rate in +/- half_w windows around each time in `times` (pps)."""
     return float(np.mean([rate[(centers > x - half_w) & (centers < x + half_w)].mean()
                           for x in times]))
+
+
+def population_cv(block, total_s, win_s=1.0, step_s=0.02, max_isi=0.3,
+                  min_isi=3, min_units=2):
+    """Sliding-window inter-spike-interval CV (%): per unit, then MEDIAN across
+    units (robust to outliers). Critically, ISIs longer than `max_isi`
+    (inter-burst gaps) are EXCLUDED, so the CV reflects WITHIN-burst regularity
+    and not the silent gaps -- otherwise a window straddling two bursts turns the
+    silence into one huge ISI and the CV spikes spuriously high in the gaps. NaN
+    where fewer than `min_units` units have >= `min_isi` valid (within-burst)
+    intervals -> rendered as gaps during true silence. With drive-scaled injected
+    noise (run_pool ``mn_noise``/``noise_floor``) the within-burst CV is ~10%
+    under voluntary drive and drops toward ~4% in a drive-off self-sustained
+    spasm; without injected noise the PIC discharge is artifactually clock-like
+    (<1%). Returns (centers_s, cv_percent), spanning 0..total_s."""
+    sts = [st.rescale("s").magnitude for st in block.segments[0].spiketrains
+           if len(st) > 1]
+    centers = np.arange(0.0, total_s + step_s, step_s)
+    half = win_s / 2.0
+    cv = []
+    for c in centers:
+        unit_cvs = []
+        for s in sts:
+            sw = s[(s >= c - half) & (s < c + half)]
+            if len(sw) >= 2:
+                isi = np.diff(sw)
+                isi = isi[isi <= max_isi]          # drop inter-burst gap ISIs
+                if len(isi) >= min_isi and isi.mean() > 0:
+                    unit_cvs.append(isi.std() / isi.mean())
+        cv.append(100.0 * float(np.median(unit_cvs))
+                  if len(unit_cvs) >= min_units else np.nan)
+    return centers, np.asarray(cv)
 
 
 def make_iemg_simulator(muscle, n_mu):
