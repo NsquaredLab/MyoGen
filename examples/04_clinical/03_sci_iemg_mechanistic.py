@@ -290,8 +290,9 @@ def despine_fig(fig):
 
 def save_fig(fig, stem):
     fig.tight_layout()
-    fig.savefig(save_path / f"{stem}.svg", bbox_inches="tight")
-    fig.savefig(save_path / f"{stem}.pdf", bbox_inches="tight")
+    # dpi pins the resolution of any rasterized=True artists (the raster markers)
+    fig.savefig(save_path / f"{stem}.svg", bbox_inches="tight", dpi=300)
+    fig.savefig(save_path / f"{stem}.pdf", bbox_inches="tight", dpi=300)
 
 
 # The three figures share the SAME descending drive; only the motoneuron PIC
@@ -302,7 +303,7 @@ apply_pub_style()                       # re-assert (myogen imports re-theme sns
 # %%
 # Figure 1 -- single-cell PIC mechanism: Vm and the up-regulated inward currents.
 fig_m, (ax_mv, ax_mi) = plt.subplots(2, 1, figsize=(11, 4.5), sharex=True)
-ax_mv.plot(mech["t"], mech["vm"], color="k", linewidth=0.5)
+ax_mv.plot(mech["t"], mech["vm"], color="k", linewidth=0.5, rasterized=True)
 ax_mv.set_ylabel("Vm (mV)")
 ax_mv.set_title("Single-cell PIC mechanism (NERLab): a pulse latches the "
                 "dendritic Ca PIC -> self-sustained firing; inhibition switches "
@@ -312,10 +313,11 @@ ax_mv.set_title("Single-cell PIC mechanism (NERLab): a pulse latches the "
 # x5 to help engage the Ca plateau, but NOT a subthreshold PIC. Floored so the ~0
 # off-state is finite on the log axis.
 ax_mi.plot(mech["t"], np.clip(-np.asarray(mech["pic_nA"]), 1e-2, None),
-           color="red", linewidth=0.8, label="dendritic Ca (PIC plateau)")
+           color="red", linewidth=0.8, label="dendritic Ca (PIC plateau)",
+           rasterized=True)
 ax_mi.plot(mech["t"], np.clip(-np.asarray(mech["nap_nA"]), 1e-2, None),
            color="darkorange", linewidth=0.7, alpha=0.8,
-           label="somatic Na (spike-coupled boost)")
+           label="somatic Na (spike-coupled boost)", rasterized=True)
 ax_mi.set_yscale("log")
 ax_mi.set_ylim(0.008, 20)               # floor == clip -> off-state at bottom edge
 ax_mi.set_yticks([0.01, 0.1, 1, 10])
@@ -353,7 +355,8 @@ for j, (label, ax_r) in enumerate(zip(labels, axes_r)):
     for rank, u in enumerate(order):
         st = sts[u].rescale("s").magnitude
         ax_r.scatter(st, [rank] * len(st), s=9, facecolor=colors[rank],
-                     edgecolors="black", linewidth=0.2, marker="o", alpha=0.85)
+                     edgecolors="black", linewidth=0.2, marker="o", alpha=0.85,
+                     rasterized=True)   # embed dense markers as bitmap (light PDF)
     buf = max(1.0, 0.05 * n_units)          # y-buffer so edge markers aren't clipped
     ax_r.set_ylim(-0.5 - buf, n_units - 0.5 + buf)
     ax_r.set_xlim(0, TOTAL_S)
@@ -389,7 +392,8 @@ save_fig(fig_r, "sci_mechanistic_raster")
 fig_e, axes_e = plt.subplots(1, len(labels), figsize=(13, 3.8))
 for j, (label, ax_e) in enumerate(zip(labels, axes_e)):
     emg = results[label]["iemg"]
-    ax_e.plot(emg["times"], emg["iemg"], linewidth=0.12, color="k", zorder=1)
+    ax_e.plot(emg["times"], emg["iemg"], linewidth=0.12, color="k", zorder=1,
+              rasterized=True)
     em = float(np.abs(emg["iemg"]).max())
     ax_e.set_ylim(-em * 1.1, em * 1.1)
     ax_e.set_xlim(0, TOTAL_S)
