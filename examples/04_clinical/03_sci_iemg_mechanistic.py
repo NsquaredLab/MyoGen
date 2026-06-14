@@ -371,9 +371,6 @@ for j, (label, ax_r) in enumerate(zip(labels, axes_r)):
     ax_dr.plot(d_t, np.asarray(drive.magnitude).ravel(), color="0.2",
                linewidth=1.3, alpha=0.7, zorder=6)
     ax_dr.set_ylim(0, 98)
-    badge = f"PIC $\\gamma$={gamma}" + (f", NaP$\\times${napf:.0f}" if napf > 1 else "")
-    ax_dr.text(0.03, 0.87, badge, transform=ax_dr.transAxes,
-               color=("teal" if napf <= 1 else "crimson"))
     if j == len(labels) - 1:
         ax_dr.set_ylabel("drive (pps)", color="0.2")
     ax_dr.tick_params(axis="y", colors="0.2")
