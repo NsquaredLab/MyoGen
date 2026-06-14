@@ -64,8 +64,33 @@ from myogen.utils.types import pps
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import pic_protocols as pic
 
-plt.style.use("fivethirtyeight")
-plt.rcParams["path.simplify"] = False  # draw every sample on dense EMG traces
+# Publication style (scienceplots science+nature), matching the MyoGen ISI-CV
+# figures -- NOT fivethirtyeight. Clean white background, sans-serif, thick axes,
+# top/right spines off (re-enabled per-twin-axis below).
+try:
+    import scienceplots  # noqa: F401
+    plt.style.use(["science", "nature"])
+    sns.set_context("paper", font_scale=1.0)   # comparison fig used 2; this
+    #                                            composite has many more panels
+except ImportError:
+    plt.style.use("fivethirtyeight")
+plt.rcParams["text.usetex"] = False
+plt.rcParams["figure.dpi"] = 300
+plt.rcParams["savefig.dpi"] = 300
+plt.rcParams["svg.fonttype"] = "none"        # keep text editable in SVG/PDF
+plt.rcParams["pdf.fonttype"] = 42
+plt.rcParams["font.family"] = "sans-serif"
+plt.rcParams["font.sans-serif"] = ["Liberation Sans", "Roboto", "DejaVu Sans"]
+plt.rcParams["axes.spines.top"] = False
+plt.rcParams["axes.spines.right"] = False
+plt.rcParams["xtick.top"] = False
+plt.rcParams["ytick.right"] = False
+plt.rcParams["axes.linewidth"] = 2.0
+plt.rcParams["xtick.major.width"] = 2.0
+plt.rcParams["ytick.major.width"] = 2.0
+plt.rcParams["xtick.minor.visible"] = False
+plt.rcParams["ytick.minor.visible"] = False
+plt.rcParams["path.simplify"] = False        # draw every sample on dense EMG
 
 set_random_seed(42)
 N_MU = 40
@@ -254,7 +279,7 @@ GOR_CV, GOR_CV_SD = 5.4, 1.6
 #   withdraws.
 fig = plt.figure(figsize=(13, 11))
 gs = fig.add_gridspec(4, 3, height_ratios=[0.9, 0.8, 1.9, 1.3],
-                      hspace=0.42, wspace=0.46)
+                      hspace=0.6, wspace=0.5)
 
 # --- top band: single-cell mechanism (spans all 3 columns) ---
 ax_mv = fig.add_subplot(gs[0, :])
@@ -324,6 +349,8 @@ for j, label in enumerate(labels):
         ax_r.set_ylabel("MU (1st-spike order)")
 
     ax_dr = ax_r.twinx()                    # descending drive overlay (pps)
+    ax_dr.spines["right"].set_visible(True)  # re-enable (rcParams hides it)
+    ax_dr.tick_params(axis="y", which="both", right=True, labelright=True)
     d_dt = float(drive.sampling_period.rescale(pq.s).magnitude)
     d_t = np.arange(len(drive)) * d_dt
     ax_dr.plot(d_t, np.asarray(drive.magnitude).ravel(), color="0.2",
@@ -353,6 +380,8 @@ for j, label in enumerate(labels):
     mark_spasm_onset(ax_e, label)
 
     ax_c = ax_e.twinx()
+    ax_c.spines["right"].set_visible(True)   # re-enable (rcParams hides it)
+    ax_c.tick_params(axis="y", which="both", right=True, labelright=True)
     ax_c.set_zorder(ax_e.get_zorder() + 1)
     ax_c.patch.set_visible(False)
     c_cv, cv = results[label]["cv"]
