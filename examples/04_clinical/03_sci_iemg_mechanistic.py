@@ -277,8 +277,8 @@ ax_mi.plot(mech["t"], np.clip(-np.asarray(mech["nap_nA"]), 1e-2, None),
            color="darkorange", linewidth=0.7, alpha=0.8,
            label="somatic Na (spike-coupled boost)")
 ax_mi.set_yscale("log")
-ax_mi.set_ylim(0.05, 20)
-ax_mi.set_yticks([0.1, 1, 10])
+ax_mi.set_ylim(0.008, 20)               # floor == clip, so the off-state (~0,
+ax_mi.set_yticks([0.01, 0.1, 1, 10])    # -> -inf on log) sits at the bottom edge
 ax_mi.yaxis.set_major_formatter(ScalarFormatter())   # plain numbers, not 10^x
 ax_mi.minorticks_off()
 ax_mi.set_ylabel("inward current (-nA)")
