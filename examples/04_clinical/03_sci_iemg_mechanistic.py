@@ -285,7 +285,7 @@ def despine_fig(fig):
             ax.tick_params(axis="y", which="both", right=True, labelright=True)
 
 
-RASTER_DPI = 600   # resolution of the rasterized=True artists (ticks/traces)
+RASTER_DPI = 1200   # resolution of the rasterized=True artists (dense ticks/traces)
 
 
 def save_fig(fig, stem):
@@ -353,11 +353,11 @@ for j, (label, ax_r) in enumerate(zip(labels, axes_r)):
     colors = plt.cm.rainbow(np.linspace(0, 1, max(len(order), 1)))
     n_units = max(len(order), 1)
     # eventplot tick-mark raster (the MyoGen raster style), rainbow by first-spike
-    # order. NOT rasterized: the ticks are line art (one LineCollection), so they
-    # stay perfectly crisp as vector -- rasterizing them only blurs thin lines.
+    # order. Rasterized (too many spikes for vector), at high dpi so the dense
+    # thin ticks don't alias/moire.
     ax_r.eventplot([sts[u].rescale("s").magnitude for u in order],
                    lineoffsets=np.arange(len(order)), colors=list(colors),
-                   linelengths=0.8, linewidths=0.7)
+                   linelengths=0.8, linewidths=0.7, rasterized=True)
     ax_r.set_ylim(-0.8, n_units - 0.2)
     ax_r.set_xlim(0, TOTAL_S)
     ax_r.set_xticks(XTICKS)
