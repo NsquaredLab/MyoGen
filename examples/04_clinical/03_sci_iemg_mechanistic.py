@@ -64,33 +64,43 @@ from myogen.utils.types import pps
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import pic_protocols as pic
 
-# Publication style (scienceplots science+nature), matching the MyoGen ISI-CV
-# figures -- NOT fivethirtyeight. Clean white background, sans-serif, thick axes,
-# top/right spines off (re-enabled per-twin-axis below).
-try:
-    import scienceplots  # noqa: F401
-    plt.style.use(["science", "nature"])
-    sns.set_context("paper", font_scale=1.0)   # comparison fig used 2; this
-    #                                            composite has many more panels
-except ImportError:
-    plt.style.use("fivethirtyeight")
-plt.rcParams["text.usetex"] = False
-plt.rcParams["figure.dpi"] = 300
-plt.rcParams["savefig.dpi"] = 300
-plt.rcParams["svg.fonttype"] = "none"        # keep text editable in SVG/PDF
-plt.rcParams["pdf.fonttype"] = 42
-plt.rcParams["font.family"] = "sans-serif"
-plt.rcParams["font.sans-serif"] = ["Liberation Sans", "Roboto", "DejaVu Sans"]
-plt.rcParams["axes.spines.top"] = False
-plt.rcParams["axes.spines.right"] = False
-plt.rcParams["xtick.top"] = False
-plt.rcParams["ytick.right"] = False
-plt.rcParams["axes.linewidth"] = 2.0
-plt.rcParams["xtick.major.width"] = 2.0
-plt.rcParams["ytick.major.width"] = 2.0
-plt.rcParams["xtick.minor.visible"] = False
-plt.rcParams["ytick.minor.visible"] = False
-plt.rcParams["path.simplify"] = False        # draw every sample on dense EMG
+def apply_pub_style():
+    """Publication style (scienceplots science+nature), matching the MyoGen
+    ISI-CV figures -- NOT fivethirtyeight. Clean white background, sans-serif,
+    thick axes, top/right spines off (re-enabled per twin axis). Importing
+    myogen applies the seaborn lavender theme as a side effect, so this is
+    re-asserted right before the figure is built, not only at import time."""
+    try:
+        import scienceplots  # noqa: F401
+        plt.style.use(["science", "nature"])
+        sns.set_context("paper", font_scale=1.0)
+    except Exception:
+        plt.style.use("fivethirtyeight")
+    plt.rcParams["text.usetex"] = False
+    plt.rcParams["figure.dpi"] = 300
+    plt.rcParams["savefig.dpi"] = 300
+    plt.rcParams["figure.facecolor"] = "white"
+    plt.rcParams["axes.facecolor"] = "white"
+    plt.rcParams["svg.fonttype"] = "none"        # keep text editable in SVG/PDF
+    plt.rcParams["pdf.fonttype"] = 42
+    plt.rcParams["font.family"] = "sans-serif"
+    plt.rcParams["font.sans-serif"] = ["Liberation Sans", "Roboto", "DejaVu Sans"]
+    plt.rcParams["axes.edgecolor"] = "black"
+    plt.rcParams["axes.spines.left"] = True
+    plt.rcParams["axes.spines.bottom"] = True
+    plt.rcParams["axes.spines.top"] = False
+    plt.rcParams["axes.spines.right"] = False
+    plt.rcParams["xtick.top"] = False
+    plt.rcParams["ytick.right"] = False
+    plt.rcParams["axes.linewidth"] = 2.0
+    plt.rcParams["xtick.major.width"] = 2.0
+    plt.rcParams["ytick.major.width"] = 2.0
+    plt.rcParams["xtick.minor.visible"] = False
+    plt.rcParams["ytick.minor.visible"] = False
+    plt.rcParams["path.simplify"] = False        # draw every sample on dense EMG
+
+
+apply_pub_style()
 
 set_random_seed(42)
 N_MU = 40
@@ -277,6 +287,7 @@ GOR_CV, GOR_CV_SD = 5.4, 1.6
 #   axis) overlaid. The green band is the Gorassini 2004 self-sustained-firing
 #   CV (5.4 +/- 1.6 %); the spasm column's CV collapses into it once the drive
 #   withdraws.
+apply_pub_style()                       # re-assert (myogen imports re-theme sns)
 fig = plt.figure(figsize=(13, 11))
 gs = fig.add_gridspec(4, 3, height_ratios=[0.9, 0.8, 1.9, 1.3],
                       hspace=0.6, wspace=0.5)
