@@ -244,23 +244,6 @@ else:
 GOR_CV, GOR_CV_SD = 5.4, 1.6
 
 
-def draw_cv(ax, label, ylabel=False):
-    """ISI CV trace (purple, log) with the Gorassini 2004 self-sustained band."""
-    c_cv, cv = results[label]["cv"]
-    ax.axhspan(GOR_CV - GOR_CV_SD, GOR_CV + GOR_CV_SD, color="green", alpha=0.12,
-               zorder=0)
-    ax.plot(c_cv, np.ma.masked_invalid(cv), color="purple", linewidth=1.3)
-    ax.set_yscale("log")
-    _ylim, _ticks = cv_axis_range(cv)
-    ax.set_ylim(*_ylim)
-    ax.set_yticks(_ticks)
-    ax.yaxis.set_major_formatter(ScalarFormatter())
-    ax.minorticks_off()
-    if ylabel:
-        ax.set_ylabel("ISI CV (%)")
-    mark_spasm_onset(ax, label)
-
-
 # %%
 # Composite figure -- the whole story on one canvas.
 #   Top band: single-cell PIC mechanism (Vm + dendritic Ca PIC current).
@@ -269,9 +252,9 @@ def draw_cv(ax, label, ylabel=False):
 #   -> ISI CV (rows). The green band on the CV row is the Gorassini 2004
 #   self-sustained-firing CV (5.4 +/- 1.6 %); the spasm column collapses into it
 #   once the drive withdraws.
-fig = plt.figure(figsize=(13, 15))
-gs = fig.add_gridspec(6, 3, height_ratios=[0.95, 0.85, 0.5, 1.5, 1.0, 1.0],
-                      hspace=0.55, wspace=0.32)
+fig = plt.figure(figsize=(13, 13))
+gs = fig.add_gridspec(5, 3, height_ratios=[0.9, 0.8, 0.5, 1.8, 1.2],
+                      hspace=0.5, wspace=0.46)
 
 # --- top band: single-cell mechanism (spans all 3 columns) ---
 ax_mv = fig.add_subplot(gs[0, :])
@@ -296,7 +279,7 @@ ax_mv.annotate("inhibition", xy=(np.mean(mech["t_inhib"]), 0.96),
                xycoords=("data", "axes fraction"), ha="center", va="top",
                fontsize=8, color="#2b5fb0")
 
-# --- population grid: drive / raster / iEMG / CV  x  3 conditions ---
+# --- population grid: drive / raster / iEMG(+ISI CV)  x  3 conditions ---
 for j, label in enumerate(labels):
     block = results[label]["block"]
     drive, gamma, _lam = conditions[label]
@@ -321,31 +304,49 @@ for j, label in enumerate(labels):
     active = [u for u in range(len(sts)) if len(sts[u]) > 0]
     order = sorted(active, key=lambda u: float(sts[u].rescale("s").magnitude.min()))
     colors = plt.cm.rainbow(np.linspace(0, 1, max(len(order), 1)))
+    n_units = max(len(order), 1)
     for rank, u in enumerate(order):
         st = sts[u].rescale("s").magnitude
         ax_r.scatter(st, [rank] * len(st), s=6, facecolor=colors[rank],
                      edgecolors="black", linewidth=0.15, marker="o", alpha=0.85)
-    ax_r.set_ylim(-0.5, max(len(order), 1) - 0.5)
+    buf = max(1.0, 0.05 * n_units)          # y-buffer so edge markers aren't clipped
+    ax_r.set_ylim(-0.5 - buf, n_units - 0.5 + buf)
     if first:
         ax_r.set_ylabel("MU (1st-spike order)")
     mark_spasm_onset(ax_r, label)
 
-    # iEMG (first channel)
+    # iEMG (first channel, black) with the ISI CV (purple, log) overlaid on a
+    # twin axis; the green band is the Gorassini 2004 self-sustained CV (5.4+-1.6%)
     ax_e = fig.add_subplot(gs[4, j], sharex=ax_d)
     emg = results[label]["iemg"]
-    ax_e.plot(emg["times"], emg["iemg"], linewidth=0.12, color="k")
+    ax_e.plot(emg["times"], emg["iemg"], linewidth=0.12, color="k", zorder=1)
     em = float(np.abs(emg["iemg"]).max())
     ax_e.set_ylim(-em * 1.1, em * 1.1)
     if first:
         ax_e.set_ylabel("iEMG (a.u.)")
+    ax_e.set_xlabel("Time (s)")
+    ax_e.set_xlim(0, TOTAL_S)
+    ax_e.set_xticks(XTICKS)
     mark_spasm_onset(ax_e, label)
 
-    # ISI CV (with Gorassini 2004 band)
-    ax_c = fig.add_subplot(gs[5, j], sharex=ax_d)
-    draw_cv(ax_c, label, ylabel=first)
-    ax_c.set_xlabel("Time (s)")
-    ax_c.set_xlim(0, TOTAL_S)
-    ax_c.set_xticks(XTICKS)
+    ax_c = ax_e.twinx()
+    ax_c.set_zorder(ax_e.get_zorder() + 1)
+    ax_c.patch.set_visible(False)
+    c_cv, cv = results[label]["cv"]
+    ax_c.axhspan(GOR_CV - GOR_CV_SD, GOR_CV + GOR_CV_SD, color="green",
+                 alpha=0.10, zorder=0)
+    ax_c.plot(c_cv, np.ma.masked_invalid(cv), color="purple", linewidth=1.4,
+              zorder=3)
+    ax_c.set_yscale("log")
+    _ylim, _ticks = cv_axis_range(cv)
+    ax_c.set_ylim(*_ylim)
+    ax_c.set_yticks(_ticks)
+    ax_c.yaxis.set_major_formatter(ScalarFormatter())
+    ax_c.minorticks_off()
+    ax_c.tick_params(axis="y", colors="purple")
+    if j == len(labels) - 1:
+        ax_c.set_ylabel("ISI CV (%)", color="purple")
+    ax_c.grid(False)
 
 fig.savefig(save_path / "sci_mechanistic_composite.svg")
 fig.savefig(save_path / "sci_mechanistic_composite.pdf")
