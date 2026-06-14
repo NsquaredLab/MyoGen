@@ -398,17 +398,16 @@ def rate_in_windows(centers, rate, times, half_w=0.25):
 
 def population_cv(block, total_s, win_s=1.0, step_s=0.02, max_isi=0.3,
                   min_isi=3, min_units=2):
-    """Sliding-window inter-spike-interval CV (%): per unit, then MEDIAN across
-    units (robust to outliers). Critically, ISIs longer than `max_isi`
-    (inter-burst gaps) are EXCLUDED, so the CV reflects WITHIN-burst regularity
-    and not the silent gaps -- otherwise a window straddling two bursts turns the
-    silence into one huge ISI and the CV spikes spuriously high in the gaps. NaN
-    where fewer than `min_units` units have >= `min_isi` valid (within-burst)
-    intervals -> rendered as gaps during true silence. With drive-scaled injected
-    noise (run_pool ``mn_noise``/``noise_floor``) the within-burst CV is ~10%
-    under voluntary drive and drops toward ~4% in a drive-off self-sustained
-    spasm; without injected noise the PIC discharge is artifactually clock-like
-    (<1%). Returns (centers_s, cv_percent), spanning 0..total_s."""
+    """Sliding-window ISI irregularity (%): per unit, then MEDIAN across units
+    (robust to outliers). Uses CV2 -- the mean of 2*|ISI_{i+1}-ISI_i| /
+    (ISI_{i+1}+ISI_i) over consecutive intervals -- NOT the plain CV. CV2 is a
+    LOCAL measure, insensitive to slow rate drift, so the cyclic voluntary drive
+    (which ramps the rate within a window) does not inflate it; for steady firing
+    CV2 == plain CV, so the self-sustained spasm value still matches Gorassini
+    2004. ISIs longer than `max_isi` (inter-burst gaps) are EXCLUDED so silence
+    is not counted as one huge interval. NaN where fewer than `min_units` units
+    have >= `min_isi` valid within-burst intervals -> gaps during true silence.
+    Returns (centers_s, cv_percent), spanning 0..total_s."""
     sts = [st.rescale("s").magnitude for st in block.segments[0].spiketrains
            if len(st) > 1]
     centers = np.arange(0.0, total_s + step_s, step_s)
@@ -421,8 +420,10 @@ def population_cv(block, total_s, win_s=1.0, step_s=0.02, max_isi=0.3,
             if len(sw) >= 2:
                 isi = np.diff(sw)
                 isi = isi[isi <= max_isi]          # drop inter-burst gap ISIs
-                if len(isi) >= min_isi and isi.mean() > 0:
-                    unit_cvs.append(isi.std() / isi.mean())
+                if len(isi) >= min_isi:
+                    a, b = isi[:-1], isi[1:]       # consecutive ISI pairs
+                    cv2 = np.mean(2.0 * np.abs(b - a) / (a + b))
+                    unit_cvs.append(cv2)
         cv.append(100.0 * float(np.median(unit_cvs))
                   if len(unit_cvs) >= min_units else np.nan)
     return centers, np.asarray(cv)
