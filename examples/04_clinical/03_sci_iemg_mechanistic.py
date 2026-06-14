@@ -353,10 +353,11 @@ for j, (label, ax_r) in enumerate(zip(labels, axes_r)):
     colors = plt.cm.rainbow(np.linspace(0, 1, max(len(order), 1)))
     n_units = max(len(order), 1)
     # eventplot tick-mark raster (the MyoGen raster style), rainbow by first-spike
-    # order; rasterized so the dense ticks embed as a light bitmap.
+    # order. NOT rasterized: the ticks are line art (one LineCollection), so they
+    # stay perfectly crisp as vector -- rasterizing them only blurs thin lines.
     ax_r.eventplot([sts[u].rescale("s").magnitude for u in order],
                    lineoffsets=np.arange(len(order)), colors=list(colors),
-                   linelengths=0.8, linewidths=0.7, rasterized=True)
+                   linelengths=0.8, linewidths=0.7)
     ax_r.set_ylim(-0.8, n_units - 0.2)
     ax_r.set_xlim(0, TOTAL_S)
     ax_r.set_xticks(XTICKS)
