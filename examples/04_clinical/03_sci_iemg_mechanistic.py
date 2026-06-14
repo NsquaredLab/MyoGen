@@ -302,7 +302,8 @@ apply_pub_style()                       # re-assert (myogen imports re-theme sns
 
 # %%
 # Figure 1 -- single-cell PIC mechanism: Vm and the up-regulated inward currents.
-fig_m, (ax_mv, ax_mi) = plt.subplots(2, 1, figsize=(11, 4.5), sharex=True)
+# figure width 7.18 in = 180 mm (Nature double-column); heights per figure.
+fig_m, (ax_mv, ax_mi) = plt.subplots(2, 1, figsize=(7.18, 3.0), sharex=True)
 ax_mv.plot(mech["t"], mech["vm"], color="k", linewidth=0.5, rasterized=True)
 ax_mv.set_ylabel("Vm (mV)")
 ax_mv.set_title("Single-cell PIC mechanism (NERLab): a pulse latches the "
@@ -343,7 +344,7 @@ save_fig(fig_m, "sci_mechanistic_mechanism")
 # %%
 # Figure 2 -- motor-unit rasters (first-spike order) with the descending drive
 # (grey, right axis) overlaid. Same input, only the PIC state varies.
-fig_r, axes_r = plt.subplots(1, len(labels), figsize=(13, 4))
+fig_r, axes_r = plt.subplots(1, len(labels), figsize=(7.18, 2.8))
 for j, (label, ax_r) in enumerate(zip(labels, axes_r)):
     block = results[label]["block"]
     drive, gamma, napf = conditions[label]
@@ -389,7 +390,7 @@ save_fig(fig_r, "sci_mechanistic_raster")
 # Figure 3 -- intramuscular EMG (black) with the ISI CV (purple, right axis)
 # overlaid. The green band is the Gorassini 2004 self-sustained CV (5.4 +/-
 # 1.6 %); the spasm column collapses into it once the drive withdraws.
-fig_e, axes_e = plt.subplots(1, len(labels), figsize=(13, 3.8))
+fig_e, axes_e = plt.subplots(1, len(labels), figsize=(7.18, 2.5))
 for j, (label, ax_e) in enumerate(zip(labels, axes_e)):
     emg = results[label]["iemg"]
     ax_e.plot(emg["times"], emg["iemg"], linewidth=0.12, color="k", zorder=1)
