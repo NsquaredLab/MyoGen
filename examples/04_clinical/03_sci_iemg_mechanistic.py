@@ -262,20 +262,22 @@ ax_mi = fig.add_subplot(gs[1, :], sharex=ax_mv)
 ax_mv.plot(mech["t"], mech["vm"], color="k", linewidth=0.5)
 ax_mv.set_ylabel("Vm (mV)")
 ax_mv.set_title("Single-cell PIC mechanism (NERLab): a pulse latches the "
-                "two-component PIC (dendritic Ca + somatic NaP) -> self-sustained "
-                "firing; inhibition switches it off", fontsize=10)
-# Two-component PIC (inward current magnitude, log): dendritic Ca (dominant)
-# + somatic NaP (smaller) -- both latch on the pulse and switch off with the
-# inhibition. Floored so the ~0 off-state is finite on the log axis.
+                "dendritic Ca PIC -> self-sustained firing; inhibition switches "
+                "it off", fontsize=10)
+# Dendritic Ca PIC, inward current magnitude on a log axis (floored so the ~0
+# off-state is finite). In NERLab this caL plateau carries the bistability on its
+# own -- the somatic napp NaP is a spike-coupled Na booster (activates only above
+# ~+60 mV), NOT a subthreshold PIC, so it is not shown as a PIC component.
 ax_mi.plot(mech["t"], np.clip(-np.asarray(mech["pic_nA"]), 1e-2, None),
-           color="red", linewidth=0.8, label="Ca (dendrite)")
-ax_mi.plot(mech["t"], np.clip(-np.asarray(mech["nap_nA"]), 1e-2, None),
-           color="darkorange", linewidth=0.8, label="NaP (soma)")
+           color="red", linewidth=0.8)
 ax_mi.set_yscale("log")
-ax_mi.set_ylabel("PIC current (-nA, log)")
+ax_mi.set_ylim(0.05, 20)
+ax_mi.set_yticks([0.1, 1, 10])
+ax_mi.yaxis.set_major_formatter(ScalarFormatter())   # plain numbers, not 10^x
+ax_mi.minorticks_off()
+ax_mi.set_ylabel("dend Ca PIC (-nA)")
 ax_mi.set_xlabel("Time (s)")
 ax_mi.set_xlim(mech["t"][0], mech["t"][-1])
-ax_mi.legend(loc="center right", fontsize=7, frameon=False)
 for axm in (ax_mv, ax_mi):
     axm.axvspan(*mech["t_pulse"], color="0.85", zorder=0)
     axm.axvspan(*mech["t_inhib"], color="#cfe0ff", zorder=0)
