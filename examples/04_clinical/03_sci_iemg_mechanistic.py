@@ -214,13 +214,15 @@ _CV_CAND = np.array([0.2, 0.3, 0.5, 1, 1.5, 2, 3, 4, 5, 6, 7, 8, 10, 12, 15,
 
 def cv_axis_range(cv):
     """Per-row data-driven (min->max) log y-range + nice ticks for one panel's
-    CV trace, so each condition's CV fills its own axis."""
+    CV trace. The lower bound is clamped to <= the Gorassini band floor so the
+    band is visible in EVERY condition (healthy/loss never enter it, spasm does)."""
     v = cv[np.isfinite(cv) & (cv > 0)]
     if v.size == 0:
-        return (1.0, 10.0), _CV_CAND[(_CV_CAND >= 1) & (_CV_CAND <= 10)]
-    ylim = (float(v.min()) / 1.15, float(v.max()) * 1.15)
-    ticks = _CV_CAND[(_CV_CAND >= ylim[0]) & (_CV_CAND <= ylim[1])]
-    return ylim, ticks
+        return (3.0, 10.0), _CV_CAND[(_CV_CAND >= 3) & (_CV_CAND <= 10)]
+    lo = min(float(v.min()) / 1.15, GOR_CV - GOR_CV_SD - 0.5)   # show the band
+    hi = float(v.max()) * 1.15
+    ticks = _CV_CAND[(_CV_CAND >= lo) & (_CV_CAND <= hi)]
+    return (lo, hi), ticks
 
 
 def mark_spasm_onset(ax, label, y_frac=0.97):
@@ -305,9 +307,7 @@ apply_pub_style()                       # re-assert (myogen imports re-theme sns
 fig_m, (ax_mv, ax_mi) = plt.subplots(2, 1, figsize=(7.18, 3.0), sharex=True)
 ax_mv.plot(mech["t"], mech["vm"], color="k", linewidth=0.5, rasterized=True)
 ax_mv.set_ylabel("Vm (mV)")
-ax_mv.set_title("Single-cell PIC mechanism (NERLab): a pulse latches the "
-                "dendritic Ca PIC -> self-sustained firing; inhibition switches "
-                "it off")
+ax_mv.set_title("Single-cell PIC mechanism (NERLab)")
 # Dendritic Ca (caL) is the bistable PLATEAU -- the real PIC carrying the firing.
 # The somatic Na (napp NaP) is SPIKE-COUPLED (>+60 mV, ~0 between spikes): boosted
 # x5 to help engage the Ca plateau, but NOT a subthreshold PIC. Floored so the ~0
@@ -387,11 +387,12 @@ save_fig(fig_r, "sci_mechanistic_raster")
 # overlaid. The green band is the Gorassini 2004 self-sustained CV (5.4 +/-
 # 1.6 %); the spasm column collapses into it once the drive withdraws.
 fig_e, axes_e = plt.subplots(1, len(labels), figsize=(7.18, 2.5))
+# shared iEMG y-axis so amplitudes are comparable across conditions
+em_global = max(float(np.abs(results[l]["iemg"]["iemg"]).max()) for l in labels)
 for j, (label, ax_e) in enumerate(zip(labels, axes_e)):
     emg = results[label]["iemg"]
     ax_e.plot(emg["times"], emg["iemg"], linewidth=0.12, color="k", zorder=1)
-    em = float(np.abs(emg["iemg"]).max())
-    ax_e.set_ylim(-em * 1.1, em * 1.1)
+    ax_e.set_ylim(-em_global * 1.1, em_global * 1.1)
     ax_e.set_xlim(0, TOTAL_S)
     ax_e.set_xticks(XTICKS)
     ax_e.set_xlabel("Time (s)")
@@ -422,4 +423,26 @@ for j, (label, ax_e) in enumerate(zip(labels, axes_e)):
     ax_c.grid(False)
 despine_fig(fig_e)
 save_fig(fig_e, "sci_mechanistic_iemg")
+
+# %%
+# Figure 4 -- mean per-unit discharge rate over time (shared y so conditions are
+# comparable). Voluntary modulation ramps up/down; loss of derecruitment stays
+# elevated at the drive troughs; the spasm rate drops after the command stops
+# (t=4 s) but does NOT go to zero -- the PIC-sustained discharge (cf. Gorassini
+# 2004, who reports self-sustained firing rate).
+fig_d, axes_d = plt.subplots(1, len(labels), figsize=(7.18, 2.0))
+r_max = max(float(results[l]["rate"][1].max()) for l in labels)
+for j, (label, ax_d) in enumerate(zip(labels, axes_d)):
+    centers, rate = results[label]["rate"]
+    ax_d.plot(centers, rate, color="0.15", linewidth=1.0)
+    ax_d.set_ylim(0, r_max * 1.05)
+    ax_d.set_xlim(0, TOTAL_S)
+    ax_d.set_xticks(XTICKS)
+    ax_d.set_xlabel("Time (s)")
+    ax_d.set_title(label)
+    if j == 0:
+        ax_d.set_ylabel("discharge rate (pps)")
+    mark_spasm_onset(ax_d, label)
+despine_fig(fig_d)
+save_fig(fig_d, "sci_mechanistic_rate")
 plt.show()
