@@ -78,7 +78,9 @@ NAP_CEILING = 0.00215
 # Without this the PIC discharge is artificially clock-like (CV <1%, an artifact).
 MN_NOISE = 3.0
 NOISE_FLOOR = 0.3
+SPASM_ONSET_S = 4.0   # time the voluntary command stops -> PIC-sustained spasm
 XTICKS = np.arange(0, TOTAL_S + 1, 2)
+SPASM_LABEL = "Modulation -> spasm (SCI)"
 
 try:
     save_path = Path(__file__).parent / "results"
@@ -113,7 +115,7 @@ else:
 
 voluntary, _ = pic.cyclic_voluntary_drive(peak_pps=90.0, freq_hz=0.5,
                                           total_s=TOTAL_S)
-spasm_drive = modulation_then_silence(peak_pps=90.0)
+spasm_drive = modulation_then_silence(peak_pps=90.0, stop_s=SPASM_ONSET_S)
 
 # Powers2017 motoneuron model: it has the mAHP (Ca-activated K) and an
 # inactivating dendritic Ca PIC, so its self-sustained discharge sits at the
@@ -156,14 +158,32 @@ for _label, _data in results.items():
 
 labels = list(conditions.keys())
 
-# Shared CV y-axis range, data-driven (min->max across all conditions) instead of
-# a fixed window, so the log axis spans only where the data actually live.
-_cv_vals = np.concatenate([results[l]["cv"][1] for l in labels])
-_cv_vals = _cv_vals[np.isfinite(_cv_vals) & (_cv_vals > 0)]
-CV_MIN, CV_MAX = float(_cv_vals.min()), float(_cv_vals.max())
-CV_YLIM = (CV_MIN / 1.15, CV_MAX * 1.15)
-_cand = np.array([0.2, 0.3, 0.5, 1, 2, 3, 4, 5, 7, 10, 15, 20, 30, 50])
-CV_TICKS = _cand[(_cand >= CV_YLIM[0]) & (_cand <= CV_YLIM[1])]
+_CV_CAND = np.array([0.2, 0.3, 0.5, 1, 1.5, 2, 3, 4, 5, 6, 7, 8, 10, 12, 15,
+                     20, 25, 30, 40, 50])
+
+
+def cv_axis_range(cv):
+    """Per-row data-driven (min->max) log y-range + nice ticks for one panel's
+    CV trace, so each condition's CV fills its own axis."""
+    v = cv[np.isfinite(cv) & (cv > 0)]
+    if v.size == 0:
+        return (1.0, 10.0), _CV_CAND[(_CV_CAND >= 1) & (_CV_CAND <= 10)]
+    ylim = (float(v.min()) / 1.15, float(v.max()) * 1.15)
+    ticks = _CV_CAND[(_CV_CAND >= ylim[0]) & (_CV_CAND <= ylim[1])]
+    return ylim, ticks
+
+
+def mark_spasm_onset(ax, label, y_frac=0.97):
+    """On the modulation->spasm panel, draw a dashed line at the moment the
+    voluntary command stops and the PIC-sustained spasm begins."""
+    if label != SPASM_LABEL:
+        return
+    ax.axvline(SPASM_ONSET_S, color="0.25", linestyle="--", linewidth=1.2,
+               zorder=6)
+    ax.annotate("command off -> spasm", xy=(SPASM_ONSET_S, y_frac),
+                xycoords=("data", "axes fraction"), xytext=(4, 0),
+                textcoords="offset points", va="top", ha="left",
+                color="0.25", zorder=7)
 
 
 def overlay_rate_envelope(ax, centers, rate, span_max):
@@ -216,12 +236,14 @@ for ax, label in zip(axes, labels):
     ax_cv.plot(c_cv, np.ma.masked_invalid(cv), color="purple", linewidth=1.5)
     ax_cv.set_ylabel("ISI CV (%)", color="purple")
     ax_cv.tick_params(axis="y", colors="purple")
-    ax_cv.set_yscale("log")          # shared log scale, data-driven min->max
-    ax_cv.set_ylim(*CV_YLIM)
-    ax_cv.set_yticks(CV_TICKS)
+    ax_cv.set_yscale("log")          # per-row data-driven min->max log scale
+    _ylim, _ticks = cv_axis_range(cv)
+    ax_cv.set_ylim(*_ylim)
+    ax_cv.set_yticks(_ticks)
     ax_cv.yaxis.set_major_formatter(ScalarFormatter())  # plain numbers, not 10^x
     ax_cv.minorticks_off()
     ax_cv.grid(False)
+    mark_spasm_onset(ax_cv, label)
 axes[-1].set_xlabel("Time (s)")
 axes[-1].set_xlim(0, TOTAL_S)
 axes[-1].set_xticks(XTICKS)
@@ -245,6 +267,7 @@ for ax, label in zip(axes, labels):
     ax.set_ylim(-emg_max * 1.1, emg_max * 1.1)
     centers, rate = results[label]["rate"]
     overlay_rate_envelope(ax, centers, rate, emg_max)
+    mark_spasm_onset(ax, label)
 axes[-1].set_xlabel("Time (s)")
 axes[-1].set_xlim(0, TOTAL_S)
 axes[-1].set_xticks(XTICKS)
@@ -268,11 +291,13 @@ for ax, label in zip(axes, labels):
     ax.set_ylabel("ISI CV (%)")
     ax.set_title(label)
     ax.grid(True, alpha=0.3)
-    ax.set_yscale("log")             # shared log scale, data-driven min->max
-    ax.set_ylim(*CV_YLIM)
-    ax.set_yticks(CV_TICKS)
+    ax.set_yscale("log")             # per-row data-driven min->max log scale
+    _ylim, _ticks = cv_axis_range(cv)
+    ax.set_ylim(*_ylim)
+    ax.set_yticks(_ticks)
     ax.yaxis.set_major_formatter(ScalarFormatter())  # plain numbers, not 10^x
     ax.minorticks_off()
+    mark_spasm_onset(ax, label)
 axes[-1].set_xlabel("Time (s)")
 axes[-1].set_xlim(0, TOTAL_S)
 axes[-1].set_xticks(XTICKS)
