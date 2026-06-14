@@ -248,13 +248,14 @@ GOR_CV, GOR_CV_SD = 5.4, 1.6
 # Composite figure -- the whole story on one canvas.
 #   Top band: single-cell PIC mechanism (Vm + dendritic Ca PIC current).
 #   Grid: the SAME descending drive with only the motoneuron PIC varied (columns
-#   = healthy / loss of derecruitment / spasm), shown as drive -> raster -> iEMG
-#   -> ISI CV (rows). The green band on the CV row is the Gorassini 2004
-#   self-sustained-firing CV (5.4 +/- 1.6 %); the spasm column collapses into it
-#   once the drive withdraws.
-fig = plt.figure(figsize=(13, 13))
-gs = fig.add_gridspec(5, 3, height_ratios=[0.9, 0.8, 0.5, 1.8, 1.2],
-                      hspace=0.5, wspace=0.46)
+#   = healthy / loss of derecruitment / spasm). Row 1 = raster with the drive
+#   (grey, right axis) overlaid; row 2 = iEMG with the ISI CV (purple, right
+#   axis) overlaid. The green band is the Gorassini 2004 self-sustained-firing
+#   CV (5.4 +/- 1.6 %); the spasm column's CV collapses into it once the drive
+#   withdraws.
+fig = plt.figure(figsize=(13, 11))
+gs = fig.add_gridspec(4, 3, height_ratios=[0.9, 0.8, 1.9, 1.3],
+                      hspace=0.42, wspace=0.46)
 
 # --- top band: single-cell mechanism (spans all 3 columns) ---
 ax_mv = fig.add_subplot(gs[0, :])
@@ -279,27 +280,16 @@ ax_mv.annotate("inhibition", xy=(np.mean(mech["t_inhib"]), 0.96),
                xycoords=("data", "axes fraction"), ha="center", va="top",
                fontsize=8, color="#2b5fb0")
 
-# --- population grid: drive / raster / iEMG(+ISI CV)  x  3 conditions ---
+# --- population grid: raster(+drive) / iEMG(+ISI CV)  x  3 conditions ---
 for j, label in enumerate(labels):
     block = results[label]["block"]
     drive, gamma, _lam = conditions[label]
     first = j == 0
+    last = j == len(labels) - 1
 
-    # drive (input command, pps) + PIC-state badge
-    ax_d = fig.add_subplot(gs[2, j])
-    d_dt = float(drive.sampling_period.rescale(pq.s).magnitude)
-    d_t = np.arange(len(drive)) * d_dt
-    ax_d.plot(d_t, np.asarray(drive.magnitude).ravel(), color="0.35", linewidth=0.9)
-    ax_d.set_ylim(0, 98)
-    ax_d.set_title(label, fontsize=10)
-    ax_d.text(0.03, 0.80, f"PIC $\\gamma$={gamma}", transform=ax_d.transAxes,
-              fontsize=9, color=("teal" if gamma < 1.0 else "crimson"))
-    if first:
-        ax_d.set_ylabel("drive (pps)")
-    mark_spasm_onset(ax_d, label, y_frac=0.9)
-
-    # raster (first-spike-ordered rainbow markers)
-    ax_r = fig.add_subplot(gs[3, j], sharex=ax_d)
+    # raster (first-spike-ordered rainbow markers) with the descending drive
+    # (grey, right axis) overlaid -- the same input, only the PIC state varies.
+    ax_r = fig.add_subplot(gs[2, j])
     sts = block.segments[0].spiketrains
     active = [u for u in range(len(sts)) if len(sts[u]) > 0]
     order = sorted(active, key=lambda u: float(sts[u].rescale("s").magnitude.min()))
@@ -311,13 +301,29 @@ for j, label in enumerate(labels):
                      edgecolors="black", linewidth=0.15, marker="o", alpha=0.85)
     buf = max(1.0, 0.05 * n_units)          # y-buffer so edge markers aren't clipped
     ax_r.set_ylim(-0.5 - buf, n_units - 0.5 + buf)
+    ax_r.set_xlim(0, TOTAL_S)
+    ax_r.set_xticks(XTICKS)
+    ax_r.set_title(label, fontsize=10)
     if first:
         ax_r.set_ylabel("MU (1st-spike order)")
-    mark_spasm_onset(ax_r, label)
+
+    ax_dr = ax_r.twinx()                    # descending drive overlay (pps)
+    d_dt = float(drive.sampling_period.rescale(pq.s).magnitude)
+    d_t = np.arange(len(drive)) * d_dt
+    ax_dr.plot(d_t, np.asarray(drive.magnitude).ravel(), color="0.2",
+               linewidth=1.3, alpha=0.7, zorder=6)
+    ax_dr.set_ylim(0, 98)
+    ax_dr.text(0.03, 0.87, f"PIC $\\gamma$={gamma}", transform=ax_dr.transAxes,
+               fontsize=9, color=("teal" if gamma < 1.0 else "crimson"))
+    if last:
+        ax_dr.set_ylabel("drive (pps)", color="0.2")
+    ax_dr.tick_params(axis="y", colors="0.2")
+    ax_dr.grid(False)
+    mark_spasm_onset(ax_dr, label)
 
     # iEMG (first channel, black) with the ISI CV (purple, log) overlaid on a
     # twin axis; the green band is the Gorassini 2004 self-sustained CV (5.4+-1.6%)
-    ax_e = fig.add_subplot(gs[4, j], sharex=ax_d)
+    ax_e = fig.add_subplot(gs[3, j], sharex=ax_r)
     emg = results[label]["iemg"]
     ax_e.plot(emg["times"], emg["iemg"], linewidth=0.12, color="k", zorder=1)
     em = float(np.abs(emg["iemg"]).max())
