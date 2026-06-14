@@ -188,15 +188,24 @@ def single_cell_pic_mechanism(gamma=1.2, nap_factor=5.0, hold_nA=0.3,
     icas = [(h.Vector(), d) for d in cell.dend]
     for rec, d in icas:
         rec.record(d(0.5)._ref_icaL)
+    nap_rec = h.Vector()                              # somatic NaP (2nd PIC comp.)
+    record_nap = model != "Powers2017"               # NERLab napp.inap
+    if record_nap:
+        nap_rec.record(cell.soma(0.5)._ref_inap_napp)
     h.finitialize(); h.run()
     t = np.array(t); vm = np.array(vm)
     pic_nA = np.zeros_like(t)
     for rec, d in icas:
         area_cm2 = np.pi * d.L * d.diam * 1e-8        # um^2 -> cm^2
         pic_nA = pic_nA + np.array(rec) * area_cm2 * 1e6   # mA/cm2 -> nA
+    if record_nap:
+        soma_area = np.pi * cell.soma.L * cell.soma.diam * 1e-8
+        nap_nA = np.array(nap_rec) * soma_area * 1e6
+    else:
+        nap_nA = np.zeros_like(t)
     inp = np.interp(t, tw, exc) + np.interp(t, tw, inh)
-    return dict(t=t / 1000.0, vm=vm, pic_nA=pic_nA, input_nA=inp, vhold=vh,
-                t_pulse=tuple(x / 1000.0 for x in t_pulse),
+    return dict(t=t / 1000.0, vm=vm, pic_nA=pic_nA, nap_nA=nap_nA, input_nA=inp,
+                vhold=vh, t_pulse=tuple(x / 1000.0 for x in t_pulse),
                 t_inhib=tuple(x / 1000.0 for x in t_inhib))
 
 
