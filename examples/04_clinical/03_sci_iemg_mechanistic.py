@@ -353,13 +353,12 @@ for j, (label, ax_r) in enumerate(zip(labels, axes_r)):
     order = sorted(active, key=lambda u: float(sts[u].rescale("s").magnitude.min()))
     colors = plt.cm.rainbow(np.linspace(0, 1, max(len(order), 1)))
     n_units = max(len(order), 1)
-    for rank, u in enumerate(order):
-        st = sts[u].rescale("s").magnitude
-        ax_r.scatter(st, [rank] * len(st), s=9, facecolor=colors[rank],
-                     edgecolors="black", linewidth=0.2, marker="o", alpha=0.85,
-                     rasterized=True)   # embed dense markers as bitmap (light PDF)
-    buf = max(1.0, 0.05 * n_units)          # y-buffer so edge markers aren't clipped
-    ax_r.set_ylim(-0.5 - buf, n_units - 0.5 + buf)
+    # eventplot tick-mark raster (the MyoGen raster style), rainbow by first-spike
+    # order; rasterized so the dense ticks embed as a light bitmap.
+    ax_r.eventplot([sts[u].rescale("s").magnitude for u in order],
+                   lineoffsets=np.arange(len(order)), colors=list(colors),
+                   linelengths=0.8, linewidths=0.7, rasterized=True)
+    ax_r.set_ylim(-0.8, n_units - 0.2)
     ax_r.set_xlim(0, TOTAL_S)
     ax_r.set_xticks(XTICKS)
     ax_r.set_xlabel("Time (s)")
