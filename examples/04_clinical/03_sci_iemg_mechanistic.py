@@ -92,9 +92,9 @@ def apply_pub_style():
     plt.rcParams["axes.spines.right"] = False
     plt.rcParams["xtick.top"] = False
     plt.rcParams["ytick.right"] = False
-    plt.rcParams["axes.linewidth"] = 2.0
-    plt.rcParams["xtick.major.width"] = 2.0
-    plt.rcParams["ytick.major.width"] = 2.0
+    plt.rcParams["axes.linewidth"] = 1.0     # comparison fig used 2.0 -- too
+    plt.rcParams["xtick.major.width"] = 1.0  # thick for this dense composite
+    plt.rcParams["ytick.major.width"] = 1.0
     plt.rcParams["xtick.minor.visible"] = False
     plt.rcParams["ytick.minor.visible"] = False
     plt.rcParams["path.simplify"] = False        # draw every sample on dense EMG
