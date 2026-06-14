@@ -411,14 +411,15 @@ for j, label in enumerate(labels):
         ax_c.set_ylabel("ISI CV (%)", color="purple")
     ax_c.grid(False)
 
-# Trimmed/offset spines (sns.despine), as in the other MyoGen figures. Twin axes
-# (drive / CV) are exactly those whose right spine we re-enabled, so keep their
-# right spine; main axes get the classic trimmed despine.
+# Trimmed/offset spines (sns.despine), as in the other MyoGen figures. ALL spines
+# top/right are removed, including on the twin axes (drive / CV) -- their tick
+# labels are kept so the right-hand scales still read without a spine line.
 for ax in fig.axes:
-    if ax.spines["right"].get_visible():
-        sns.despine(ax=ax, top=True, left=True, bottom=True, right=False, offset=2)
-    else:
-        sns.despine(ax=ax, trim=True, offset=2)
+    is_twin = ax.spines["right"].get_visible()
+    sns.despine(ax=ax, top=True, right=True, offset=2,
+                trim=not is_twin)
+    if is_twin:                              # keep the right-hand ticks + labels
+        ax.tick_params(axis="y", which="both", right=True, labelright=True)
 
 fig.savefig(save_path / "sci_mechanistic_composite.svg", bbox_inches="tight")
 fig.savefig(save_path / "sci_mechanistic_composite.pdf", bbox_inches="tight")
