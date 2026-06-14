@@ -142,19 +142,25 @@ def after_discharge(gamma, nap_factor=1.0, hold_nA=0.6, pulse_nA=3.0,
     return dict(t=t, v=v, vhold=vhold, n_after=n_after, offset_ms=offset)
 
 
-def single_cell_pic_mechanism(gamma=1.15, hold_nA=0.1, pulse_nA=8.0,
-                              inhib_nA=-3.0, total_ms=5500.0,
-                              t_pulse=(1000.0, 1500.0),
+def single_cell_pic_mechanism(gamma=1.2, nap_factor=5.0, hold_nA=0.3,
+                              pulse_nA=3.0, inhib_nA=-3.0, total_ms=5500.0,
+                              model="NERLab", t_pulse=(1000.0, 1500.0),
                               t_inhib=(3800.0, 4700.0)):
-    """Powers2017 single cell near the bistable PIC threshold, recording soma Vm
-    and the summed dendritic Ca PIC current (nA): subthreshold hold -> brief
-    excitatory pulse latches the regenerative Ca plateau (self-sustained firing,
-    PIC ~-22 nA) -> a gentle GLOBAL inhibition deactivates the plateau (firing
-    stops, the cell returns to the silent branch). This is the cell-level
-    bistability that drives the pool spasm; the inhibition illustrates the
-    off-switch the open-loop pool lacks. Returns traces in seconds / nA."""
-    pool = AlphaMN__Pool(recruitment_thresholds__array=_SINGLE_RT,
-                         model="Powers2017", gamma=gamma, lambda_factor=1.0)
+    """Single cell in the bistable PIC regime, recording soma Vm and the summed
+    dendritic Ca PIC current (nA): subthreshold hold -> brief excitatory pulse
+    latches the regenerative Ca plateau (self-sustained firing) -> a gentle
+    GLOBAL inhibition deactivates the plateau (firing stops, the cell returns to
+    the silent branch). This is the cell-level bistability that drives the pool
+    spasm; the inhibition illustrates the off-switch the open-loop pool lacks.
+    NERLab uses gamma + somatic NaP (``nap_factor``); Powers2017 uses gamma +
+    lambda. Returns traces in seconds / nA."""
+    if model == "Powers2017":
+        pool = AlphaMN__Pool(recruitment_thresholds__array=_SINGLE_RT,
+                             model="Powers2017", gamma=gamma, lambda_factor=1.0)
+    else:
+        pool = build_single_cell_pool(gamma=gamma)
+        if nap_factor != 1.0:
+            scale_nap(pool, nap_factor, 0.00215)
     cell = pool[0]
     secs = _sections(cell)
     h.dt = DT; h.celsius = CELSIUS

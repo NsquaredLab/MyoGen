@@ -17,40 +17,34 @@ phenotypes emerge from the motoneuron **persistent inward current (PIC)** state:
 
 Modelling choices and honest caveats:
 
-* **Model = Powers2017**, not the manuscript's NERLab. We use it because its
-  mAHP + inactivating dendritic Ca PIC put the self-sustained discharge at a
-  physiological ~6-8 Hz (Gorassini 2004 ~5.2 Hz); NERLab's plateau floor is
-  ~12-16 Hz, too high. This is a deliberate second model for this figure, not a
-  silent swap -- a single-model limitation to acknowledge.
-* **Low discharge rate, by design.** Powers2017's mAHP caps the firing rate near
-  ~6 pps -- below voluntary FDI rates (~12-20 pps). We deliberately do NOT lift
-  it: mAHP is exactly what regularises firing, so reducing it (to raise the rate)
-  pushes the ISI CV to ~26% and destroys the spasm CV collapse. Because the
-  diagnostic spasticity signature is the low ISI CV -- not the rate (Gorassini
-  2004 found the self-sustained rate even RISES with added drive) -- we keep
-  mAHP intact and accept the low rate. ``mahp_factor`` exposes this trade-off.
-* **The PIC is bistable (all-or-nothing).** A gamma sweep shows it does not
-  engage below gamma~1.15 and latches at its full ~22 nA dendritic plateau
-  at/above it -- there is no "small PIC" self-sustained regime. This is the
-  expected regenerative L-type Ca plateau (Lee & Heckman bistability), not a
-  tunable knob. The ~22 nA is the *dendritic* current; somatic voltage-clamp
-  estimates (~5-15 nA) underread it because of poor space clamp of the distal
-  dendrite, so a large dendritic value is consistent with the modelling lit
-  (ElBasiouny & Heckman).
-* **Firing variability is injected and drive-scaled.** An independent OU
-  membrane-noise current per motoneuron (``mn_noise``) models synaptic
-  bombardment; its amplitude tracks the descending drive and falls to a small
-  intrinsic floor when the drive withdraws. So voluntary firing is irregular
-  (CV ~10%) and the drive-off self-sustained spasm -- paced by the intrinsic PIC
-  -- is regular (CV ~4%), reproducing the Gorassini (2004) finding that spasms
-  fire more regularly than voluntary effort. Without injected noise the PIC
-  discharge is near-deterministic (CV <1%, an artifact).
+* **Model = NERLab** (Cisi-Kohn-Elias), the MyoGen manuscript's motoneuron.
+  SCI spasticity is induced purely by up-regulating the PIC: the dendritic Ca
+  PIC (``gamma``) PLUS somatic NaP (``nap_factor``) -- NERLab needs both to
+  self-sustain (gamma alone only amplifies). Healthy column: gamma=0.5, NaPx1;
+  SCI columns: gamma=1.3, NaPx5.
+* **PIC magnitude is physiological.** The single-cell sustained dendritic Ca PIC
+  is ~-9 nA, within the experimental ~5-15 nA range. NERLab's caL does not
+  inactivate, so a recruited unit latches (the plateau persists) rather than
+  decaying.
+* **Firing variability is drive-driven; the spasm CV collapses.** Voluntary
+  firing is irregular (ISI CV ~24%) -- the variability comes mostly from the
+  noisy descending drive, plus a small injected OU membrane-noise current
+  (``mn_noise``) that scales with the drive and leaves only a floor when it
+  withdraws. When the drive stops, firing is paced by the intrinsic PIC and the
+  CV collapses to ~5-6 % -- squarely in the Gorassini (2004) self-sustained band
+  (5.4 +/- 1.6 %), reproducing their finding that spasms fire more regularly
+  than voluntary effort.
+* **Rate caveat.** NERLab gives realistic voluntary rates (~23 Hz, cf. FDI), and
+  the self-sustained spasm fires at ~11 Hz -- about half the voluntary rate, but
+  ~2x the ~5 Hz of real SCI spasms. NERLab's brief slow-K AHP keeps its f-I onset
+  somewhat high; it cannot be tuned down without killing the self-sustain or
+  contradicting the SCI literature (which REDUCES the AHP), so we accept it.
 * **No afferent/reflex loops.** The original's third phenotype was 6 Hz *clonus*
   (a stretch-reflex-loop oscillation); here it is replaced by an intrinsic
-  PIC-driven spasm. This spasm does **not** self-terminate within the window --
-  Powers2017's Ca PIC does not deactivate at these voltages, so a real off-
-  switch needs inhibition/afferent input (illustrated separately in the
-  single-cell demo), which is outside this open-loop pool.
+  PIC-driven spasm. The spasm does **not** self-terminate within the window --
+  NERLab's Ca PIC does not deactivate, so a real off-switch needs inhibition /
+  afferent input (illustrated in the single-cell mechanism panel), which is
+  outside this open-loop pool.
 """
 # sphinx_gallery_thumbnail_number = -1
 import sys
@@ -83,7 +77,7 @@ NAP_CEILING = 0.00215
 # is irregular (CV ~10%) while a drive-off self-sustained spasm, paced by the
 # intrinsic PIC, is regular (CV ~4%) -- the Gorassini (2004) spasm signature.
 # Without this the PIC discharge is artificially clock-like (CV <1%, an artifact).
-MN_NOISE = 3.0
+MN_NOISE = 0.4
 NOISE_FLOOR = 0.3
 # Model left at its native mAHP. We earlier tried halving mAHP to lift the
 # (low ~6 pps) discharge rate, but mAHP is exactly what REGULARISES firing:
@@ -132,15 +126,20 @@ voluntary, _ = pic.cyclic_voluntary_drive(peak_pps=90.0, freq_hz=0.5,
                                           total_s=TOTAL_S)
 spasm_drive = modulation_then_silence(peak_pps=90.0, stop_s=SPASM_ONSET_S)
 
-# Powers2017 motoneuron model: it has the mAHP (Ca-activated K) and an
-# inactivating dendritic Ca PIC, so its self-sustained discharge sits at the
-# physiological ~6-8 Hz (lit ~5.2 Hz; NERLab's plateau floor is ~12-16 Hz, too
-# high). label -> (descending drive, gamma, lambda_factor).
-MODEL = "Powers2017"
+# NERLab (Cisi-Kohn-Elias) motoneuron -- the model used in the MyoGen
+# manuscript. SCI spasticity is induced purely by up-regulating the motoneuron
+# PIC: the dendritic Ca PIC (``gamma``) plus somatic NaP (``nap_factor``), which
+# together produce self-sustained firing. label -> (drive, gamma, nap_factor).
+# Rate caveat: NERLab gives realistic voluntary rates (~23 Hz, cf. FDI), and the
+# self-sustained spasm fires at ~11 Hz (the drive-off discharge drops to roughly
+# half the voluntary rate). That is ~2x the ~5 Hz of real SCI spasms (Gorassini
+# 2004) -- NERLab's brief slow-K AHP keeps its floor somewhat high -- but the
+# loss of derecruitment and the ISI-CV collapse are reproduced cleanly.
+MODEL = "NERLab"
 conditions = {
     "Voluntary modulation (healthy)": (voluntary, 0.5, 1.0),
-    "Loss of derecruitment (SCI)": (voluntary, 1.3, 1.0),
-    "Modulation -> spasm (SCI)": (spasm_drive, 1.3, 1.0),
+    "Loss of derecruitment (SCI)": (voluntary, 1.3, 5.0),
+    "Modulation -> spasm (SCI)": (spasm_drive, 1.3, 5.0),
 }
 
 # Run the three pool simulations once and cache the (slim) results, so figure
@@ -151,11 +150,11 @@ if results_cache.exists():
     results = joblib.load(results_cache)
 else:
     results = {}
-    for label, (drive, gamma, lam) in conditions.items():
+    for label, (drive, gamma, napf) in conditions.items():
         block = pic.run_pool(drive, n_mu=N_MU, gamma=gamma, model=MODEL,
-                             lambda_factor=lam, total_s=TOTAL_S,
+                             nap_factor=napf, total_s=TOTAL_S,
                              mn_noise=MN_NOISE, noise_floor=NOISE_FLOOR,
-                             dd_weight__uS=DD_WEIGHT, mahp_factor=MAHP_FACTOR)
+                             dd_weight__uS=DD_WEIGHT)
         emg = pic.synthesize_iemg(block, N_MU, iemg_sim=iemg_sim, snr_dB=20)
         results[label] = {
             "block": block,
@@ -262,7 +261,7 @@ ax_mv = fig.add_subplot(gs[0, :])
 ax_mi = fig.add_subplot(gs[1, :], sharex=ax_mv)
 ax_mv.plot(mech["t"], mech["vm"], color="k", linewidth=0.5)
 ax_mv.set_ylabel("Vm (mV)")
-ax_mv.set_title("Single-cell PIC mechanism (Powers2017, near bistable threshold): "
+ax_mv.set_title("Single-cell PIC mechanism (NERLab, gamma + NaP): "
                 "pulse latches the Ca plateau -> self-sustained firing; "
                 "inhibition switches it off", fontsize=10)
 ax_mi.plot(mech["t"], mech["pic_nA"], color="red", linewidth=0.8)
@@ -283,7 +282,7 @@ ax_mv.annotate("inhibition", xy=(np.mean(mech["t_inhib"]), 0.96),
 # --- population grid: raster(+drive) / iEMG(+ISI CV)  x  3 conditions ---
 for j, label in enumerate(labels):
     block = results[label]["block"]
-    drive, gamma, _lam = conditions[label]
+    drive, gamma, napf = conditions[label]
     first = j == 0
     last = j == len(labels) - 1
 
@@ -313,8 +312,9 @@ for j, label in enumerate(labels):
     ax_dr.plot(d_t, np.asarray(drive.magnitude).ravel(), color="0.2",
                linewidth=1.3, alpha=0.7, zorder=6)
     ax_dr.set_ylim(0, 98)
-    ax_dr.text(0.03, 0.87, f"PIC $\\gamma$={gamma}", transform=ax_dr.transAxes,
-               fontsize=9, color=("teal" if gamma < 1.0 else "crimson"))
+    badge = f"PIC $\\gamma$={gamma}" + (f", NaP$\\times${napf:.0f}" if napf > 1 else "")
+    ax_dr.text(0.03, 0.87, badge, transform=ax_dr.transAxes,
+               fontsize=9, color=("teal" if napf <= 1 else "crimson"))
     if last:
         ax_dr.set_ylabel("drive (pps)", color="0.2")
     ax_dr.tick_params(axis="y", colors="0.2")
