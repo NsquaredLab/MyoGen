@@ -156,6 +156,15 @@ for _label, _data in results.items():
 
 labels = list(conditions.keys())
 
+# Shared CV y-axis range, data-driven (min->max across all conditions) instead of
+# a fixed window, so the log axis spans only where the data actually live.
+_cv_vals = np.concatenate([results[l]["cv"][1] for l in labels])
+_cv_vals = _cv_vals[np.isfinite(_cv_vals) & (_cv_vals > 0)]
+CV_MIN, CV_MAX = float(_cv_vals.min()), float(_cv_vals.max())
+CV_YLIM = (CV_MIN / 1.15, CV_MAX * 1.15)
+_cand = np.array([0.2, 0.3, 0.5, 1, 2, 3, 4, 5, 7, 10, 15, 20, 30, 50])
+CV_TICKS = _cand[(_cand >= CV_YLIM[0]) & (_cand <= CV_YLIM[1])]
+
 
 def overlay_rate_envelope(ax, centers, rate, span_max):
     """Draw the discharge rate as a red envelope scaled 0 -> span_max in the
@@ -207,9 +216,9 @@ for ax, label in zip(axes, labels):
     ax_cv.plot(c_cv, np.ma.masked_invalid(cv), color="purple", linewidth=1.5)
     ax_cv.set_ylabel("ISI CV (%)", color="purple")
     ax_cv.tick_params(axis="y", colors="purple")
-    ax_cv.set_yscale("log")          # shared log scale: 100x range (0.2-20%)
-    ax_cv.set_ylim(0.1, 30)
-    ax_cv.set_yticks([0.2, 0.5, 1, 2, 5, 10, 20])
+    ax_cv.set_yscale("log")          # shared log scale, data-driven min->max
+    ax_cv.set_ylim(*CV_YLIM)
+    ax_cv.set_yticks(CV_TICKS)
     ax_cv.yaxis.set_major_formatter(ScalarFormatter())  # plain numbers, not 10^x
     ax_cv.minorticks_off()
     ax_cv.grid(False)
@@ -259,9 +268,9 @@ for ax, label in zip(axes, labels):
     ax.set_ylabel("ISI CV (%)")
     ax.set_title(label)
     ax.grid(True, alpha=0.3)
-    ax.set_yscale("log")             # shared log scale across conditions
-    ax.set_ylim(0.1, 30)
-    ax.set_yticks([0.2, 0.5, 1, 2, 5, 10, 20])
+    ax.set_yscale("log")             # shared log scale, data-driven min->max
+    ax.set_ylim(*CV_YLIM)
+    ax.set_yticks(CV_TICKS)
     ax.yaxis.set_major_formatter(ScalarFormatter())  # plain numbers, not 10^x
     ax.minorticks_off()
 axes[-1].set_xlabel("Time (s)")
