@@ -73,7 +73,7 @@ def apply_pub_style():
     try:
         import scienceplots  # noqa: F401
         plt.style.use(["science", "nature"])
-        sns.set_context("paper", font_scale=1.0)
+        sns.set_context("paper", font_scale=0.7)   # 7.18 in panels are small
     except Exception:
         plt.style.use("fivethirtyeight")
     plt.rcParams["text.usetex"] = False
@@ -224,16 +224,13 @@ def cv_axis_range(cv):
 
 
 def mark_spasm_onset(ax, label, y_frac=0.97):
-    """On the modulation->spasm panel, draw a dashed line at the moment the
-    voluntary command stops and the PIC-sustained spasm begins."""
+    """On the modulation->spasm panel, draw a dashed vertical line at the moment
+    the voluntary command stops and the PIC-sustained spasm begins (line only --
+    no text label; annotate in post if needed)."""
     if label != SPASM_LABEL:
         return
     ax.axvline(SPASM_ONSET_S, color="0.25", linestyle="--", linewidth=1.2,
                zorder=6)
-    ax.annotate("command off -> spasm", xy=(SPASM_ONSET_S, y_frac),
-                xycoords=("data", "axes fraction"), xytext=(4, 0),
-                textcoords="offset points", va="top", ha="left",
-                color="0.25", zorder=7)
 
 
 def overlay_rate_envelope(ax, centers, rate, span_max):
@@ -308,7 +305,7 @@ ax_mv.plot(mech["t"], mech["vm"], color="k", linewidth=0.5, rasterized=True)
 ax_mv.set_ylabel("Vm (mV)")
 ax_mv.set_title("Single-cell PIC mechanism (NERLab): a pulse latches the "
                 "dendritic Ca PIC -> self-sustained firing; inhibition switches "
-                "it off", fontsize=10)
+                "it off")
 # Dendritic Ca (caL) is the bistable PLATEAU -- the real PIC carrying the firing.
 # The somatic Na (napp NaP) is SPIKE-COUPLED (>+60 mV, ~0 between spikes): boosted
 # x5 to help engage the Ca plateau, but NOT a subthreshold PIC. Floored so the ~0
@@ -327,24 +324,24 @@ ax_mi.minorticks_off()
 ax_mi.set_ylabel("inward current (-nA)")
 ax_mi.set_xlabel("Time (s)")
 ax_mi.set_xlim(mech["t"][0], mech["t"][-1])
-ax_mi.legend(loc="center right", fontsize=7, frameon=False)
+ax_mi.legend(loc="center right", frameon=False)
 for axm in (ax_mv, ax_mi):
     axm.axvspan(*mech["t_pulse"], color="0.85", zorder=0)
     axm.axvspan(*mech["t_inhib"], color="#cfe0ff", zorder=0)
     axm.grid(True, alpha=0.3)
 ax_mv.annotate("pulse", xy=(np.mean(mech["t_pulse"]), 0.96),
                xycoords=("data", "axes fraction"), ha="center", va="top",
-               fontsize=8, color="0.3")
+               color="0.3")
 ax_mv.annotate("inhibition", xy=(np.mean(mech["t_inhib"]), 0.96),
                xycoords=("data", "axes fraction"), ha="center", va="top",
-               fontsize=8, color="#2b5fb0")
+               color="#2b5fb0")
 despine_fig(fig_m)
 save_fig(fig_m, "sci_mechanistic_mechanism")
 
 # %%
 # Figure 2 -- motor-unit rasters (first-spike order) with the descending drive
 # (grey, right axis) overlaid. Same input, only the PIC state varies.
-fig_r, axes_r = plt.subplots(1, len(labels), figsize=(7.18, 2.8))
+fig_r, axes_r = plt.subplots(1, len(labels), figsize=(7.18, 1.4))
 for j, (label, ax_r) in enumerate(zip(labels, axes_r)):
     block = results[label]["block"]
     drive, gamma, napf = conditions[label]
@@ -362,7 +359,7 @@ for j, (label, ax_r) in enumerate(zip(labels, axes_r)):
     ax_r.set_xlim(0, TOTAL_S)
     ax_r.set_xticks(XTICKS)
     ax_r.set_xlabel("Time (s)")
-    ax_r.set_title(label, fontsize=10)
+    ax_r.set_title(label)
     if j == 0:
         ax_r.set_ylabel("MU (1st-spike order)")
 
@@ -376,7 +373,7 @@ for j, (label, ax_r) in enumerate(zip(labels, axes_r)):
     ax_dr.set_ylim(0, 98)
     badge = f"PIC $\\gamma$={gamma}" + (f", NaP$\\times${napf:.0f}" if napf > 1 else "")
     ax_dr.text(0.03, 0.87, badge, transform=ax_dr.transAxes,
-               fontsize=9, color=("teal" if napf <= 1 else "crimson"))
+               color=("teal" if napf <= 1 else "crimson"))
     if j == len(labels) - 1:
         ax_dr.set_ylabel("drive (pps)", color="0.2")
     ax_dr.tick_params(axis="y", colors="0.2")
@@ -398,7 +395,7 @@ for j, (label, ax_e) in enumerate(zip(labels, axes_e)):
     ax_e.set_xlim(0, TOTAL_S)
     ax_e.set_xticks(XTICKS)
     ax_e.set_xlabel("Time (s)")
-    ax_e.set_title(label, fontsize=10)
+    ax_e.set_title(label)
     if j == 0:
         ax_e.set_ylabel("iEMG (a.u.)")
     mark_spasm_onset(ax_e, label)
