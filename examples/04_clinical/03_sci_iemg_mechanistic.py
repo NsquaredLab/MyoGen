@@ -392,8 +392,7 @@ save_fig(fig_r, "sci_mechanistic_raster")
 fig_e, axes_e = plt.subplots(1, len(labels), figsize=(13, 3.8))
 for j, (label, ax_e) in enumerate(zip(labels, axes_e)):
     emg = results[label]["iemg"]
-    ax_e.plot(emg["times"], emg["iemg"], linewidth=0.12, color="k", zorder=1,
-              rasterized=True)
+    ax_e.plot(emg["times"], emg["iemg"], linewidth=0.12, color="k", zorder=1)
     em = float(np.abs(emg["iemg"]).max())
     ax_e.set_ylim(-em * 1.1, em * 1.1)
     ax_e.set_xlim(0, TOTAL_S)
