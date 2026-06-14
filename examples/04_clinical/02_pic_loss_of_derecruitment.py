@@ -75,10 +75,10 @@ def raster(ax, block, title):
     active = [u for u in range(len(sts)) if len(sts[u]) > 0]
     order = sorted(active, key=lambda u: float(sts[u].rescale("s").magnitude.min()))
     colors = plt.cm.rainbow(np.linspace(0, 1, max(len(order), 1)))
-    for rank, u in enumerate(order):
-        st = sts[u].rescale("s").magnitude
-        ax.scatter(st, [rank] * len(st), s=6, color=colors[rank], marker="|",
-                   linewidths=0.5)
+    ax.eventplot([sts[u].rescale("s").magnitude for u in order],
+                 lineoffsets=np.arange(len(order)), colors=list(colors),
+                 linelengths=0.8, linewidths=0.7, rasterized=True)
+    ax.set_ylim(-0.8, max(len(order), 1) - 0.2)
     ax.set_ylabel("MU (1st-spike order)")
     ax.set_title(title)
 

@@ -387,20 +387,17 @@ for ax, label in zip(axes, labels):
     first_spike__s = [float(sts[u].rescale(pq.s).magnitude.min()) for u in active]
     order = [active[k] for k in np.argsort(first_spike__s)]
     mu_colors = plt.cm.rainbow(np.linspace(0, 1, max(len(order), 1)))
-    for rank, u in enumerate(order):
-        st = sts[u]
-        # "Donut" markers: first-spike-order color fill + thin black edge ring
-        # (matching the finetune comparison example's marker style).
-        ax.scatter(
-            st.rescale(pq.s).magnitude,
-            [rank] * len(st),
-            s=9,
-            facecolor=mu_colors[rank],
-            edgecolors="black",
-            linewidth=0.2,
-            marker="o",
-            alpha=0.85,
-        )
+    # eventplot tick-mark raster, rainbow by first-spike order (the MyoGen raster
+    # style); rasterized so the dense ticks embed as a light bitmap.
+    ax.eventplot(
+        [sts[u].rescale(pq.s).magnitude for u in order],
+        lineoffsets=np.arange(len(order)),
+        colors=list(mu_colors),
+        linelengths=0.8,
+        linewidths=0.7,
+        rasterized=True,
+    )
+    ax.set_ylim(-0.8, max(len(order), 1) - 0.2)
     ax.set_ylabel("MU (1st-spike order)")
     ax.set_title(label)
     ax.grid(True, alpha=0.3)
