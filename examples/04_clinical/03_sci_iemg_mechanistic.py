@@ -411,6 +411,15 @@ for j, label in enumerate(labels):
         ax_c.set_ylabel("ISI CV (%)", color="purple")
     ax_c.grid(False)
 
-fig.savefig(save_path / "sci_mechanistic_composite.svg")
-fig.savefig(save_path / "sci_mechanistic_composite.pdf")
+# Trimmed/offset spines (sns.despine), as in the other MyoGen figures. Twin axes
+# (drive / CV) are exactly those whose right spine we re-enabled, so keep their
+# right spine; main axes get the classic trimmed despine.
+for ax in fig.axes:
+    if ax.spines["right"].get_visible():
+        sns.despine(ax=ax, top=True, left=True, bottom=True, right=False, offset=2)
+    else:
+        sns.despine(ax=ax, trim=True, offset=2)
+
+fig.savefig(save_path / "sci_mechanistic_composite.svg", bbox_inches="tight")
+fig.savefig(save_path / "sci_mechanistic_composite.pdf", bbox_inches="tight")
 plt.show()
