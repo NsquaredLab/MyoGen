@@ -285,11 +285,13 @@ def despine_fig(fig):
             ax.tick_params(axis="y", which="both", right=True, labelright=True)
 
 
+RASTER_DPI = 600   # resolution of the rasterized=True artists (ticks/traces)
+
+
 def save_fig(fig, stem):
     fig.tight_layout()
-    # dpi pins the resolution of any rasterized=True artists (the raster markers)
-    fig.savefig(save_path / f"{stem}.svg", bbox_inches="tight", dpi=300)
-    fig.savefig(save_path / f"{stem}.pdf", bbox_inches="tight", dpi=300)
+    fig.savefig(save_path / f"{stem}.svg", bbox_inches="tight", dpi=RASTER_DPI)
+    fig.savefig(save_path / f"{stem}.pdf", bbox_inches="tight", dpi=RASTER_DPI)
 
 
 # The three figures share the SAME descending drive; only the motoneuron PIC
