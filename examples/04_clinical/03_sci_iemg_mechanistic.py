@@ -278,34 +278,38 @@ else:
 GOR_CV, GOR_CV_SD = 5.4, 1.6
 
 
-# %%
-# Composite figure -- the whole story on one canvas.
-#   Top band: single-cell PIC mechanism (Vm + dendritic Ca PIC current).
-#   Grid: the SAME descending drive with only the motoneuron PIC varied (columns
-#   = healthy / loss of derecruitment / spasm). Row 1 = raster with the drive
-#   (grey, right axis) overlaid; row 2 = iEMG with the ISI CV (purple, right
-#   axis) overlaid. The green band is the Gorassini 2004 self-sustained-firing
-#   CV (5.4 +/- 1.6 %); the spasm column's CV collapses into it once the drive
-#   withdraws.
-apply_pub_style()                       # re-assert (myogen imports re-theme sns)
-fig = plt.figure(figsize=(13, 11))
-gs = fig.add_gridspec(4, 3, height_ratios=[0.9, 0.8, 1.9, 1.3],
-                      hspace=0.6, wspace=0.5)
+def despine_fig(fig):
+    """sns.despine top+right on every axis (twin axes keep their right tick
+    labels so the secondary scale still reads without a spine line)."""
+    for ax in fig.axes:
+        is_twin = ax.spines["right"].get_visible()
+        sns.despine(ax=ax, top=True, right=True, offset=2, trim=not is_twin)
+        if is_twin:
+            ax.tick_params(axis="y", which="both", right=True, labelright=True)
 
-# --- top band: single-cell mechanism (spans all 3 columns) ---
-ax_mv = fig.add_subplot(gs[0, :])
-ax_mi = fig.add_subplot(gs[1, :], sharex=ax_mv)
+
+def save_fig(fig, stem):
+    fig.tight_layout()
+    fig.savefig(save_path / f"{stem}.svg", bbox_inches="tight")
+    fig.savefig(save_path / f"{stem}.pdf", bbox_inches="tight")
+
+
+# The three figures share the SAME descending drive; only the motoneuron PIC
+# state varies across conditions (columns). Each is its own figure with its own
+# size, so panels can be assembled freely.
+apply_pub_style()                       # re-assert (myogen imports re-theme sns)
+
+# %%
+# Figure 1 -- single-cell PIC mechanism: Vm and the up-regulated inward currents.
+fig_m, (ax_mv, ax_mi) = plt.subplots(2, 1, figsize=(11, 4.5), sharex=True)
 ax_mv.plot(mech["t"], mech["vm"], color="k", linewidth=0.5)
 ax_mv.set_ylabel("Vm (mV)")
 ax_mv.set_title("Single-cell PIC mechanism (NERLab): a pulse latches the "
                 "dendritic Ca PIC -> self-sustained firing; inhibition switches "
                 "it off", fontsize=10)
-# The two up-regulated inward currents (magnitude, log axis), with their DISTINCT
-# roles made explicit. The dendritic Ca (caL) is the bistable PLATEAU -- the real
-# PIC that carries the self-sustained firing. The somatic Na (napp NaP) is
-# SPIKE-COUPLED (activates only ~>+60 mV, ~0 between spikes): we boost it x5 to
-# help engage the Ca plateau, but it is NOT a subthreshold PIC itself. The
-# smooth-plateau vs spiky contrast shows exactly that. Floored so the ~0
+# Dendritic Ca (caL) is the bistable PLATEAU -- the real PIC carrying the firing.
+# The somatic Na (napp NaP) is SPIKE-COUPLED (>+60 mV, ~0 between spikes): boosted
+# x5 to help engage the Ca plateau, but NOT a subthreshold PIC. Floored so the ~0
 # off-state is finite on the log axis.
 ax_mi.plot(mech["t"], np.clip(-np.asarray(mech["pic_nA"]), 1e-2, None),
            color="red", linewidth=0.8, label="dendritic Ca (PIC plateau)")
@@ -313,8 +317,8 @@ ax_mi.plot(mech["t"], np.clip(-np.asarray(mech["nap_nA"]), 1e-2, None),
            color="darkorange", linewidth=0.7, alpha=0.8,
            label="somatic Na (spike-coupled boost)")
 ax_mi.set_yscale("log")
-ax_mi.set_ylim(0.008, 20)               # floor == clip, so the off-state (~0,
-ax_mi.set_yticks([0.01, 0.1, 1, 10])    # -> -inf on log) sits at the bottom edge
+ax_mi.set_ylim(0.008, 20)               # floor == clip -> off-state at bottom edge
+ax_mi.set_yticks([0.01, 0.1, 1, 10])
 ax_mi.yaxis.set_major_formatter(ScalarFormatter())   # plain numbers, not 10^x
 ax_mi.minorticks_off()
 ax_mi.set_ylabel("inward current (-nA)")
@@ -331,17 +335,16 @@ ax_mv.annotate("pulse", xy=(np.mean(mech["t_pulse"]), 0.96),
 ax_mv.annotate("inhibition", xy=(np.mean(mech["t_inhib"]), 0.96),
                xycoords=("data", "axes fraction"), ha="center", va="top",
                fontsize=8, color="#2b5fb0")
+despine_fig(fig_m)
+save_fig(fig_m, "sci_mechanistic_mechanism")
 
-# --- population grid: raster(+drive) / iEMG(+ISI CV)  x  3 conditions ---
-for j, label in enumerate(labels):
+# %%
+# Figure 2 -- motor-unit rasters (first-spike order) with the descending drive
+# (grey, right axis) overlaid. Same input, only the PIC state varies.
+fig_r, axes_r = plt.subplots(1, len(labels), figsize=(13, 4))
+for j, (label, ax_r) in enumerate(zip(labels, axes_r)):
     block = results[label]["block"]
     drive, gamma, napf = conditions[label]
-    first = j == 0
-    last = j == len(labels) - 1
-
-    # raster (first-spike-ordered rainbow markers) with the descending drive
-    # (grey, right axis) overlaid -- the same input, only the PIC state varies.
-    ax_r = fig.add_subplot(gs[2, j])
     sts = block.segments[0].spiketrains
     active = [u for u in range(len(sts)) if len(sts[u]) > 0]
     order = sorted(active, key=lambda u: float(sts[u].rescale("s").magnitude.min()))
@@ -355,12 +358,13 @@ for j, label in enumerate(labels):
     ax_r.set_ylim(-0.5 - buf, n_units - 0.5 + buf)
     ax_r.set_xlim(0, TOTAL_S)
     ax_r.set_xticks(XTICKS)
+    ax_r.set_xlabel("Time (s)")
     ax_r.set_title(label, fontsize=10)
-    if first:
+    if j == 0:
         ax_r.set_ylabel("MU (1st-spike order)")
 
     ax_dr = ax_r.twinx()                    # descending drive overlay (pps)
-    ax_dr.spines["right"].set_visible(True)  # re-enable (rcParams hides it)
+    ax_dr.spines["right"].set_visible(True)
     ax_dr.tick_params(axis="y", which="both", right=True, labelright=True)
     d_dt = float(drive.sampling_period.rescale(pq.s).magnitude)
     d_t = np.arange(len(drive)) * d_dt
@@ -370,28 +374,34 @@ for j, label in enumerate(labels):
     badge = f"PIC $\\gamma$={gamma}" + (f", NaP$\\times${napf:.0f}" if napf > 1 else "")
     ax_dr.text(0.03, 0.87, badge, transform=ax_dr.transAxes,
                fontsize=9, color=("teal" if napf <= 1 else "crimson"))
-    if last:
+    if j == len(labels) - 1:
         ax_dr.set_ylabel("drive (pps)", color="0.2")
     ax_dr.tick_params(axis="y", colors="0.2")
     ax_dr.grid(False)
     mark_spasm_onset(ax_dr, label)
+despine_fig(fig_r)
+save_fig(fig_r, "sci_mechanistic_raster")
 
-    # iEMG (first channel, black) with the ISI CV (purple, log) overlaid on a
-    # twin axis; the green band is the Gorassini 2004 self-sustained CV (5.4+-1.6%)
-    ax_e = fig.add_subplot(gs[3, j], sharex=ax_r)
+# %%
+# Figure 3 -- intramuscular EMG (black) with the ISI CV (purple, right axis)
+# overlaid. The green band is the Gorassini 2004 self-sustained CV (5.4 +/-
+# 1.6 %); the spasm column collapses into it once the drive withdraws.
+fig_e, axes_e = plt.subplots(1, len(labels), figsize=(13, 3.8))
+for j, (label, ax_e) in enumerate(zip(labels, axes_e)):
     emg = results[label]["iemg"]
     ax_e.plot(emg["times"], emg["iemg"], linewidth=0.12, color="k", zorder=1)
     em = float(np.abs(emg["iemg"]).max())
     ax_e.set_ylim(-em * 1.1, em * 1.1)
-    if first:
-        ax_e.set_ylabel("iEMG (a.u.)")
-    ax_e.set_xlabel("Time (s)")
     ax_e.set_xlim(0, TOTAL_S)
     ax_e.set_xticks(XTICKS)
+    ax_e.set_xlabel("Time (s)")
+    ax_e.set_title(label, fontsize=10)
+    if j == 0:
+        ax_e.set_ylabel("iEMG (a.u.)")
     mark_spasm_onset(ax_e, label)
 
     ax_c = ax_e.twinx()
-    ax_c.spines["right"].set_visible(True)   # re-enable (rcParams hides it)
+    ax_c.spines["right"].set_visible(True)
     ax_c.tick_params(axis="y", which="both", right=True, labelright=True)
     ax_c.set_zorder(ax_e.get_zorder() + 1)
     ax_c.patch.set_visible(False)
@@ -410,17 +420,6 @@ for j, label in enumerate(labels):
     if j == len(labels) - 1:
         ax_c.set_ylabel("ISI CV (%)", color="purple")
     ax_c.grid(False)
-
-# Trimmed/offset spines (sns.despine), as in the other MyoGen figures. ALL spines
-# top/right are removed, including on the twin axes (drive / CV) -- their tick
-# labels are kept so the right-hand scales still read without a spine line.
-for ax in fig.axes:
-    is_twin = ax.spines["right"].get_visible()
-    sns.despine(ax=ax, top=True, right=True, offset=2,
-                trim=not is_twin)
-    if is_twin:                              # keep the right-hand ticks + labels
-        ax.tick_params(axis="y", which="both", right=True, labelright=True)
-
-fig.savefig(save_path / "sci_mechanistic_composite.svg", bbox_inches="tight")
-fig.savefig(save_path / "sci_mechanistic_composite.pdf", bbox_inches="tight")
+despine_fig(fig_e)
+save_fig(fig_e, "sci_mechanistic_iemg")
 plt.show()
