@@ -187,22 +187,27 @@ def mark_spasm_onset(ax, label, y_frac=0.97):
 
 
 def overlay_rate_envelope(ax, centers, rate, span_max):
-    """Draw the discharge rate as a red envelope scaled 0 -> span_max in the
-    primary-axis units (so it rides on top like an envelope), and add a right
-    axis that reports the TRUE discharge rate in pps. DR = 0 is aligned with the
-    primary axis y = 0, DR = max with y = span_max -- the curve is scaled only
-    for viewing; the right-axis ticks give the real rate."""
-    denom = float(rate.max()) if rate.max() > 0 else 1.0
-    ax.plot(centers, rate / denom * span_max, color="red", linewidth=1.5,
-            alpha=0.9, zorder=5)
+    """Draw the discharge rate as a red envelope scaled per row: its OWN min sits
+    at the EMG zero line and its max at the EMG peak (span_max), so the envelope
+    fills the panel. The right axis reports the TRUE rate in pps over the
+    envelope's [min, max]; the curve is scaled only for viewing."""
+    rmin = float(rate.min())
+    rmax = float(rate.max())
+    if rmax <= rmin:
+        rmax = rmin + 1.0
+    ax.plot(centers, (rate - rmin) / (rmax - rmin) * span_max, color="red",
+            linewidth=1.5, alpha=0.9, zorder=5)
     ax_r = ax.twinx()
     lo, hi = ax.get_ylim()
-    scale = denom / span_max
-    ax_r.set_ylim(lo * scale, hi * scale)   # real pps; DR=0 aligns with ax y=0
+    # invert the view scaling back to pps: y = 0 -> rmin, y = span_max -> rmax
+    to_pps = lambda y: rmin + (y / span_max) * (rmax - rmin)
+    ax_r.set_ylim(to_pps(lo), to_pps(hi))   # real pps; DR min aligns with EMG 0
     ax_r.set_ylabel("Discharge rate (pps)", color="red")
     ax_r.tick_params(axis="y", colors="red")
-    tick_step = 2 if denom <= 12 else (5 if denom <= 30 else 10)
-    ax_r.set_yticks(np.arange(0, denom + tick_step, tick_step))
+    span = rmax - rmin
+    tick_step = 1 if span <= 6 else (2 if span <= 12 else 5)
+    lo_tick = np.ceil(rmin / tick_step) * tick_step
+    ax_r.set_yticks(np.arange(lo_tick, rmax + tick_step / 2, tick_step))
     ax_r.grid(False)
     return ax_r
 
