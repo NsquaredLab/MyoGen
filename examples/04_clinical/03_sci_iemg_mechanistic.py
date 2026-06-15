@@ -208,8 +208,7 @@ for _label, _data in results.items():
 
 labels = list(conditions.keys())
 
-_CV_CAND = np.array([0.2, 0.3, 0.5, 1, 1.5, 2, 3, 4, 5, 6, 7, 8, 10, 12, 15,
-                     20, 25, 30, 40, 50])
+_CV_CAND = np.array([0.5, 1, 2, 5, 10, 20, 50])   # sparse 1-2-5 log ticks
 
 
 def cv_axis_range(cv):
@@ -409,7 +408,7 @@ for j, (label, ax_e) in enumerate(zip(labels, axes_e)):
     c_cv, cv = results[label]["cv"]
     ax_c.axhspan(GOR_CV - GOR_CV_SD, GOR_CV + GOR_CV_SD, color="green",
                  alpha=0.10, zorder=0)
-    ax_c.plot(c_cv, np.ma.masked_invalid(cv), color="purple", linewidth=1.4,
+    ax_c.plot(c_cv, np.ma.masked_invalid(cv), color="purple", linewidth=0.9,
               zorder=3)
     ax_c.set_yscale("log")
     _ylim, _ticks = cv_axis_range(cv)
