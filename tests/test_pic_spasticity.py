@@ -81,7 +81,6 @@ def test_iemg_synthesis_returns_signal_and_reports_tail_ratio(tmp_path):
     sci = pic.run_pool(command, n_mu=12, gamma=1.5, nap_factor=5.0,
                        nap_ceiling=NAP_CEILING, total_s=total_s)
     out = pic.synthesize_iemg(sci, n_mu=12, snr_dB=None, t_off_s=t_off_s)  # noiseless
-    print(f"tail_ratio={out['tail_ratio']:.4f}")
     assert out["iemg"].shape[0] > 0
     assert np.any(out["times"] > t_off_s), "tail window must be non-empty"
     assert np.isfinite(out["tail_ratio"]) and out["tail_ratio"] >= 0.0
@@ -96,6 +95,6 @@ def test_cyclic_voluntary_drive_returns_to_zero_at_troughs():
     t = np.linspace(0.0, total_s, len(mag), endpoint=False)
     trough = mag[(t > 1.9) & (t < 2.1)].mean()   # trough at t=2 s
     peak = mag[(t > 0.9) & (t < 1.1)].mean()      # peak at t=1 s
-    assert total_s == 8.0
+    assert total_s == pytest.approx(8.0)
     assert trough < 5.0, f"trough not ~0 (got {trough:.1f})"
     assert peak > 38.0, f"peak not ~45 (got {peak:.1f})"

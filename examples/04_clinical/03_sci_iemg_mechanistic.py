@@ -27,11 +27,11 @@ Modelling choices and honest caveats:
   inactivate, so a recruited unit latches (the plateau persists) rather than
   decaying.
 * **Firing variability is drive-driven; the spasm CV collapses.** Voluntary
-  firing is irregular (ISI CV ~24%) -- the variability comes mostly from the
+  firing is irregular (ISI CV ~19%) -- the variability comes mostly from the
   noisy descending drive, plus a small injected OU membrane-noise current
   (``mn_noise``) that scales with the drive and leaves only a floor when it
   withdraws. When the drive stops, firing is paced by the intrinsic PIC and the
-  CV collapses to ~5-6 % -- squarely in the Gorassini (2004) self-sustained band
+  CV collapses to ~7 % -- close to the Gorassini (2004) self-sustained band
   (5.4 +/- 1.6 %), reproducing their finding that spasms fire more regularly
   than voluntary effort.
 * **Rate caveat.** NERLab gives realistic voluntary rates (~23 Hz, cf. FDI), and
@@ -105,22 +105,19 @@ apply_pub_style()
 set_random_seed(42)
 N_MU = 40
 TOTAL_S = 8.0
-NAP_CEILING = 0.00215
 # Peak OU membrane-noise current (nA) per motoneuron, reached at full descending
 # drive; its amplitude SCALES WITH THE DRIVE (synaptic bombardment tracks input)
-# and falls to MN_NOISE*NOISE_FLOOR when the drive withdraws. So voluntary firing
-# is irregular (CV ~10%) while a drive-off self-sustained spasm, paced by the
-# intrinsic PIC, is regular (CV ~4%) -- the Gorassini (2004) spasm signature.
-# Without this the PIC discharge is artificially clock-like (CV <1%, an artifact).
-MN_NOISE = 0.4
-NOISE_FLOOR = 0.3
-# Model left at its native mAHP. We earlier tried halving mAHP to lift the
-# (low ~6 pps) discharge rate, but mAHP is exactly what REGULARISES firing:
-# reducing it pushed the ISI CV from ~10% to ~26% and destroyed the spasm CV
-# collapse (14.7% instead of ~4%). Since the diagnostic spasticity signature is
-# the low ISI CV, not the rate (Gorassini 2004: rate even RISES with drive), we
-# keep mAHP intact and accept the model's low voluntary discharge rate.
-MAHP_FACTOR = 1.0
+# and falls to MN_NOISE*NOISE_FLOOR when the drive withdraws. Calibrated so the
+# voluntary (drive-on) firing is irregular even at full rate (ISI CV ~19%,
+# matching the experimentally modulated unit), while the drive-off self-sustained
+# spasm, paced by the intrinsic PIC, stays regular (CV ~7%, the tonic unit /
+# Gorassini 2004 signature). The noisier voluntary command vs the smooth PIC
+# drive is what separates the two; without it the PIC discharge is clock-like.
+MN_NOISE = 2.0
+# Fraction of MN_NOISE that remains once the command withdraws. Kept low so the
+# drive-off self-sustained spasm noise stays ~0.12 nA (regular firing, ~7% CV)
+# even though the drive-on noise is now large (2.0 nA, irregular voluntary firing).
+NOISE_FLOOR = 0.06
 DD_WEIGHT = 0.15
 SPASM_ONSET_S = 4.0   # time the voluntary command stops -> PIC-sustained spasm
 XTICKS = np.arange(0, TOTAL_S + 1, 2)
@@ -179,14 +176,14 @@ conditions = {
 
 # Run the three pool simulations once and cache the (slim) results, so figure
 # tweaks re-render in seconds. Delete this .pkl after changing any simulation
-# parameter (model, N_MU, gamma, lambda, drive, SNR) to force a re-simulation.
+# parameter (N_MU, gamma, nap_factor, drive, SNR) to force a re-simulation.
 results_cache = save_path / f"sci_mechanistic_sims_{MODEL}_n{N_MU}.pkl"
 if results_cache.exists():
     results = joblib.load(results_cache)
 else:
     results = {}
     for label, (drive, gamma, napf) in conditions.items():
-        block = pic.run_pool(drive, n_mu=N_MU, gamma=gamma, model=MODEL,
+        block = pic.run_pool(drive, n_mu=N_MU, gamma=gamma,
                              nap_factor=napf, total_s=TOTAL_S,
                              mn_noise=MN_NOISE, noise_floor=NOISE_FLOOR,
                              dd_weight__uS=DD_WEIGHT)
@@ -199,30 +196,94 @@ else:
         print(f"{label}: active MUs={active}/{N_MU}")
     joblib.dump(results, results_cache)
 
-# Discharge rate and ISI CV are recomputed fresh each run (cheap) so the
-# binning/windowing can be tuned without re-running the simulations.
+# Discharge rate (sliding) and the ISI CV are recomputed fresh each run. The ISI
+# CV (a CV of inter-spike intervals) is only meaningful over a QUASI-STATIONARY
+# (roughly constant-rate) segment -- across a modulating cycle it conflates the
+# rate change with the spike-timing irregularity. We therefore follow standard
+# motor-unit practice and compute it only inside the discharge PLATEAUS, where the
+# drive is within `PLATEAU_FRAC` of its peak (the flattest, near-stationary part
+# of each cycle). Within those windows we take the drift-insensitive CV2 per unit
+# and report the MEDIAN across units -- the same per-unit view as the experimental
+# panel. For the spasm column the steady self-sustained discharge after the
+# command stops is itself a stationary segment and is treated as one plateau.
+EPOCH_MARGIN = 0.3     # s, keeps the rest epoch off the command-stop transient
+PLATEAU_FRAC = 0.75    # plateau = drive > 75 % of its peak (near-stationary)
+
+
+def plateau_intervals(drive, frac=PLATEAU_FRAC, t_lo=0.0, t_hi=TOTAL_S,
+                      smooth_s=0.1, min_dur_s=0.1):
+    """Contiguous (t0, t1) windows where the drive ENVELOPE exceeds `frac` of its
+    peak and lies within [t_lo, t_hi) -- the near-stationary plateau of each cycle.
+    The command carries synaptic noise, so the threshold is applied to a
+    `smooth_s` moving-average envelope and runs shorter than `min_dur_s` (noise
+    flicker) are discarded."""
+    dt = float(drive.sampling_period.rescale(pq.s).magnitude)
+    t = np.arange(len(drive)) * dt
+    d = np.asarray(drive.magnitude).ravel().astype(float)
+    w = max(1, int(round(smooth_s / dt)))
+    env = np.convolve(d, np.ones(w) / w, mode="same")     # command envelope
+    mask = (env > frac * env.max()) & (t >= t_lo) & (t < t_hi)
+    out, i = [], 0
+    while i < len(mask):
+        if mask[i]:
+            j = i
+            while j < len(mask) and mask[j]:
+                j += 1
+            if t[j - 1] - t[i] >= min_dur_s:              # drop noise flicker
+                out.append((float(t[i]), float(t[j - 1])))
+            i = j
+        else:
+            i += 1
+    return out
+
+
+def per_mu_cv2(block, intervals, max_isi=0.3, min_isi=3):
+    """Per-unit CV2 (drift-insensitive) pooling ISIs across the plateau
+    `intervals`, as an array over units. Consecutive-ISI pairs are taken WITHIN an
+    interval only; ISIs longer than `max_isi` (gaps) are dropped, so each value is
+    a within-plateau (stationary) estimate."""
+    vals = []
+    for st in block.segments[0].spiketrains:
+        s = np.sort(st.rescale("s").magnitude)
+        num, cnt, n_isi = 0.0, 0, 0
+        for a0, a1 in intervals:
+            ss = s[(s >= a0) & (s < a1)]
+            if len(ss) < 2:
+                continue
+            isi = np.diff(ss)
+            isi = isi[isi <= max_isi]
+            n_isi += len(isi)
+            if len(isi) >= 2:
+                a, b = isi[:-1], isi[1:]
+                num += float(np.sum(2.0 * np.abs(b - a) / (a + b)))
+                cnt += len(a)
+        if n_isi >= min_isi and cnt > 0:
+            vals.append(100.0 * num / cnt)
+    return np.asarray(vals)
+
+
 for _label, _data in results.items():
     _data["rate"] = pic.population_rate(_data["block"], TOTAL_S, win_s=0.8,
                                         step_s=0.02)  # 0.8 s window, 20 ms steps
-    _data["cv"] = pic.population_cv(_data["block"], TOTAL_S, win_s=1.0, step_s=0.02)
+    _drive = conditions[_label][0]
+    if _label == SPASM_LABEL:
+        # one segment per modulation-cycle plateau while the command is on, then
+        # the steady self-sustained discharge (one block) after it stops.
+        _segments = plateau_intervals(_drive, t_lo=0.0, t_hi=SPASM_ONSET_S) + \
+            [(SPASM_ONSET_S + EPOCH_MARGIN, TOTAL_S - EPOCH_MARGIN)]
+    else:
+        _segments = plateau_intervals(_drive)
+    # CV2 is computed WITHIN each cycle separately, so each marker shows that
+    # cycle's own median across units (cycle-to-cycle variation is preserved, not
+    # pooled into a single value).
+    _ec = []
+    for _t0, _t1 in _segments:
+        _v = per_mu_cv2(_data["block"], [(_t0, _t1)])
+        if _v.size:
+            _ec.append((_t0, _t1, float(np.median(_v))))
+    _data["epoch_cv"] = _ec
 
 labels = list(conditions.keys())
-
-_CV_CAND = np.array([0.5, 1, 2, 5, 10, 20, 50])   # sparse 1-2-5 log ticks
-
-
-def cv_axis_range(cv):
-    """Per-row data-driven (min->max) log y-range + nice ticks for one panel's
-    CV trace. The lower bound is clamped to <= the Gorassini band floor so the
-    band is visible in EVERY condition (healthy/loss never enter it, spasm does)."""
-    v = cv[np.isfinite(cv) & (cv > 0)]
-    if v.size == 0:
-        return (3.0, 10.0), _CV_CAND[(_CV_CAND >= 3) & (_CV_CAND <= 10)]
-    lo = min(float(v.min()) / 1.15, GOR_CV - GOR_CV_SD - 0.5)   # show the band
-    hi = float(v.max()) * 1.15
-    ticks = _CV_CAND[(_CV_CAND >= lo) & (_CV_CAND <= hi)]
-    return (lo, hi), ticks
-
 
 def mark_spasm_onset(ax, label, y_frac=0.97):
     """On the modulation->spasm panel, draw a dashed vertical line at the moment
@@ -248,7 +309,8 @@ def overlay_rate_envelope(ax, centers, rate, span_max):
     ax_r = ax.twinx()
     lo, hi = ax.get_ylim()
     # invert the view scaling back to pps: y = 0 -> rmin, y = span_max -> rmax
-    to_pps = lambda y: rmin + (y / span_max) * (rmax - rmin)
+    def to_pps(y):
+        return rmin + (y / span_max) * (rmax - rmin)
     ax_r.set_ylim(to_pps(lo), to_pps(hi))   # real pps; DR min aligns with EMG 0
     ax_r.set_ylabel("Discharge rate (pps)", color="red")
     ax_r.tick_params(axis="y", colors="red")
@@ -261,7 +323,7 @@ def overlay_rate_envelope(ax, centers, rate, span_max):
 
 
 # %%
-# Single-cell PIC mechanism (cached): a Powers2017 cell near the bistable
+# Single-cell PIC mechanism (cached): a NERLab cell near the bistable
 # threshold -- a brief pulse latches the dendritic Ca plateau (self-sustained
 # firing) and a gentle inhibition switches it off. The cell-level basis of the
 # pool spasm.
@@ -271,10 +333,6 @@ if mech_cache.exists():
 else:
     mech = pic.single_cell_pic_mechanism()
     joblib.dump(mech, mech_cache)
-
-# Gorassini et al. 2004 (Brain) self-sustained-firing ISI CV: 5.4 +/- 1.6 %.
-GOR_CV, GOR_CV_SD = 5.4, 1.6
-
 
 def despine_fig(fig):
     """sns.despine top+right on every axis (twin axes keep their right tick
@@ -382,12 +440,12 @@ despine_fig(fig_r)
 save_fig(fig_r, "sci_mechanistic_raster")
 
 # %%
-# Figure 3 -- intramuscular EMG (black) with the ISI CV (purple, right axis)
-# overlaid. The green band is the Gorassini 2004 self-sustained CV (5.4 +/-
-# 1.6 %); the spasm column collapses into it once the drive withdraws.
+# Figure 3 -- intramuscular EMG (black) with the per-epoch ISI CV (purple, right
+# axis): one value for the active modulation epoch and, for the spasm column,
+# one for the quiet self-sustained epoch (which collapses to a regular ~7 %).
 fig_e, axes_e = plt.subplots(1, len(labels), figsize=(7.18, 1.25))
 # shared iEMG y-axis so amplitudes are comparable across conditions
-em_global = max(float(np.abs(results[l]["iemg"]["iemg"]).max()) for l in labels)
+em_global = max(float(np.abs(results[lab]["iemg"]["iemg"]).max()) for lab in labels)
 for j, (label, ax_e) in enumerate(zip(labels, axes_e)):
     emg = results[label]["iemg"]
     ax_e.plot(emg["times"], emg["iemg"], linewidth=0.12, color="k", zorder=1)
@@ -405,15 +463,15 @@ for j, (label, ax_e) in enumerate(zip(labels, axes_e)):
     ax_c.tick_params(axis="y", which="both", right=True, labelright=True)
     ax_c.set_zorder(ax_e.get_zorder() + 1)
     ax_c.patch.set_visible(False)
-    c_cv, cv = results[label]["cv"]
-    ax_c.axhspan(GOR_CV - GOR_CV_SD, GOR_CV + GOR_CV_SD, color="green",
-                 alpha=0.10, zorder=0)
-    ax_c.plot(c_cv, np.ma.masked_invalid(cv), color="purple", linewidth=0.9,
-              zorder=3)
+    for t0, t1, med in results[label]["epoch_cv"]:   # one marker per cycle, true median
+        ax_c.plot([t0, t1], [med, med], color="purple", linewidth=2.4,
+                  solid_capstyle="round", zorder=3)
+        ax_c.annotate(f"{med:.0f}%", xy=(0.5 * (t0 + t1), med), xytext=(0, 3),
+                      textcoords="offset points", ha="center", va="bottom",
+                      fontsize=5.5, color="purple")
     ax_c.set_yscale("log")
-    _ylim, _ticks = cv_axis_range(cv)
-    ax_c.set_ylim(*_ylim)
-    ax_c.set_yticks(_ticks)
+    ax_c.set_ylim(3.0, 30.0)
+    ax_c.set_yticks([5, 10, 20])
     ax_c.yaxis.set_major_formatter(ScalarFormatter())
     ax_c.minorticks_off()
     ax_c.tick_params(axis="y", colors="purple")
@@ -430,7 +488,7 @@ save_fig(fig_e, "sci_mechanistic_iemg")
 # (t=4 s) but does NOT go to zero -- the PIC-sustained discharge (cf. Gorassini
 # 2004, who reports self-sustained firing rate).
 fig_d, axes_d = plt.subplots(1, len(labels), figsize=(7.18, 2.0))
-r_max = max(float(results[l]["rate"][1].max()) for l in labels)
+r_max = max(float(results[lab]["rate"][1].max()) for lab in labels)
 for j, (label, ax_d) in enumerate(zip(labels, axes_d)):
     centers, rate = results[label]["rate"]
     ax_d.plot(centers, rate, color="0.15", linewidth=1.0)

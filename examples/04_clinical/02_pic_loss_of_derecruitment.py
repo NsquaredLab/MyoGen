@@ -1,5 +1,5 @@
 """
-Mechanistic loss of derecruitment: same drive, flip the PIC
+Mechanistic Loss of Derecruitment: Same Drive, Flip the PIC
 ===========================================================
 
 The earlier SCI example reproduced *loss of derecruitment* by **hand-adding a
@@ -26,18 +26,33 @@ mechanism. NERLab model throughout (consistent with the manuscript).
     calcium-dependent-inactivation channel model (future work).
 """
 # sphinx_gallery_thumbnail_number = -1
+
+# %%
+
+##############################################################################
+# Import Libraries
+# ----------------
+
 import sys
 from pathlib import Path
 
 import numpy as np
 import seaborn as sns
 from matplotlib import pyplot as plt
-plt.rcParams["path.simplify"] = False  # draw every sample on dense EMG traces
 
 from myogen import set_random_seed
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-import pic_protocols as pic
+import pic_protocols as pic  # noqa: E402
+
+plt.style.use("fivethirtyeight")
+plt.rcParams["path.simplify"] = False  # draw every sample on dense EMG traces
+
+# %%
+
+##############################################################################
+# Setup
+# -----
 
 set_random_seed(42)
 N_MU = 40
@@ -53,7 +68,14 @@ except NameError:
 save_path.mkdir(exist_ok=True, parents=True)
 
 # %%
-# Same voluntary command for both conditions; only the PIC state differs.
+
+##############################################################################
+# Same Voluntary Command, Healthy vs Up-Regulated PIC
+# ---------------------------------------------------
+#
+# The same 0.5 Hz command drives both pools; only the PIC state differs. The
+# population rate sampled at the troughs reveals whether each pool derecruits.
+
 drive, total_s = pic.cyclic_voluntary_drive(peak_pps=45.0, freq_hz=0.5,
                                             total_s=TOTAL_S)
 ctrl = pic.run_pool(drive, n_mu=N_MU, gamma=0.2, nap_factor=1.0, total_s=total_s)
@@ -67,8 +89,16 @@ print(f"control: trough rate={pic.rate_in_windows(tc, rc, TROUGHS):.1f} pps  "
 print(f"SCI    : trough rate={pic.rate_in_windows(ts, rs, TROUGHS):.1f} pps  "
       f"peak rate={pic.rate_in_windows(ts, rs, PEAKS):.1f} pps")
 
-
 # %%
+
+##############################################################################
+# Figure: Rasters and Population Rate
+# -----------------------------------
+#
+# Drive, healthy-PIC raster, SCI-PIC raster, and the population rate. The healthy
+# rate returns to zero at every trough; the SCI rate stays elevated.
+
+
 def raster(ax, block, title):
     """First-spike-sorted rainbow raster."""
     sts = block.segments[0].spiketrains

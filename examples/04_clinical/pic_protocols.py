@@ -6,31 +6,49 @@ NERLab rests at ~0 mV; spikes are detected relative to the relaxed vhold.
 """
 from __future__ import annotations
 
-import importlib.util
-from pathlib import Path
+import itertools
 
 import numpy as np
+import quantities as pq
+from neo import AnalogSignal, Block, Segment, SpikeTrain
 from neuron import h
 
+from myogen import get_random_generator, simulator
+from myogen.simulator.neuron import Network
+from myogen.simulator.neuron.populations import (
+    AlphaMN__Pool,
+    DescendingDrive__Pool,
+)
 from myogen.utils.nmodl import load_nmodl_mechanisms
-from myogen.simulator.neuron.populations import AlphaMN__Pool
+from myogen.utils.types import pps
 
 h.load_file("stdrun.hoc")
 load_nmodl_mechanisms()
 
 V_INIT, DT, CELSIUS = -67.0, 0.0125, 36.0
-
-# import the known-good clamp helpers from example 10 (module name starts with a digit)
-_EX10 = (Path(__file__).resolve().parents[1] / "01_basic"
-         / "10_extract_neuron_parameters.py")
-_spec = importlib.util.spec_from_file_location("_ex10", _EX10)
-_ex10 = importlib.util.module_from_spec(_spec)
-_spec.loader.exec_module(_ex10)
-get_vhold__mV = _ex10.get_vhold__mV
-fi0_multicompartment = _ex10.fi0_multicompartment
+_POOL_TIMESTEP = 0.1 * pq.ms
 
 # a few low recruitment thresholds -> smallest is type-S (strongest PIC)
 _SINGLE_RT = np.array([0.05, 0.3, 0.6])
+
+
+def fi0_multicompartment(sections, voltages) -> None:
+    """Initialise the voltage of each compartment (for an FInitializeHandler)."""
+    for sec, v in zip(sections, voltages):
+        sec.v = v
+
+
+def get_vhold__mV(cell, sections, voltages, tstop__ms=500.0) -> float:
+    """Relax the cell to rest and return the steady-state somatic voltage (mV)."""
+    h.tstop = tstop__ms
+    h.dt = DT
+    h.celsius = CELSIUS
+    _ = h.FInitializeHandler(0, lambda: fi0_multicompartment(sections, voltages))
+    vsoma = h.Vector()
+    vsoma.record(cell.soma(0.5)._ref_v)
+    h.finitialize()
+    h.run()
+    return vsoma.to_python()[-1]
 
 
 def build_single_cell_pool(gamma: float) -> AlphaMN__Pool:
@@ -61,9 +79,12 @@ def count_spikes_under_step(cell, pool, amp_nA: float, dur_ms: float) -> int:
     _ = h.FInitializeHandler(0, lambda: fi0_multicompartment(secs, [vhold] * len(secs)))
     stim = h.IClamp(cell.dend[0](0.5))
     stim.delay, stim.dur, stim.amp = 0, dur_ms, amp_nA
-    v = h.Vector(); v.record(cell.soma(0.5)._ref_v)
-    t = h.Vector(); t.record(h._ref_t)
-    h.finitialize(); h.run()
+    v = h.Vector()
+    v.record(cell.soma(0.5)._ref_v)
+    t = h.Vector()
+    t.record(h._ref_t)
+    h.finitialize()
+    h.run()
     return _count_crossings(np.array(v), np.array(t), vhold + 20.0)
 
 
@@ -73,7 +94,8 @@ def _count_crossings(v, t, vthr, refr_ms=3.0):
     n, last = 0, -1e9
     for c in cross:
         if t[c] - last > refr_ms:
-            n += 1; last = t[c]
+            n += 1
+            last = t[c]
     return n
 
 
@@ -89,17 +111,25 @@ def ramp_hysteresis(gamma, nap_factor=1.0, imax_nA=12.0,
     vhold = get_vhold__mV(cell, secs, [V_INIT] * len(secs))
     vthr = vhold + 20.0
     tstop = t_up_ms + t_down_ms
-    h.tstop = tstop; h.dt = DT; h.celsius = CELSIUS
+    h.tstop = tstop
+    h.dt = DT
+    h.celsius = CELSIUS
     _ = h.FInitializeHandler(0, lambda: fi0_multicompartment(secs, [vhold] * len(secs)))
     tpts = np.arange(0.0, tstop + 1.0, 1.0)
     iwave = imax_nA * np.minimum(np.clip(tpts / t_up_ms, 0, 1),
                                  np.clip((tstop - tpts) / t_down_ms, 0, 1))
-    stim = h.IClamp(cell.dend[0](0.5)); stim.delay = 0; stim.dur = tstop
-    ivec = h.Vector(iwave); tvec = h.Vector(tpts)
+    stim = h.IClamp(cell.dend[0](0.5))
+    stim.delay = 0
+    stim.dur = tstop
+    ivec = h.Vector(iwave)
+    tvec = h.Vector(tpts)
     ivec.play(stim._ref_amp, tvec, True)
-    v = h.Vector(); v.record(cell.soma(0.5)._ref_v)
-    t = h.Vector(); t.record(h._ref_t)
-    h.finitialize(); h.run()
+    v = h.Vector()
+    v.record(cell.soma(0.5)._ref_v)
+    t = h.Vector()
+    t.record(h._ref_t)
+    h.finitialize()
+    h.run()
     v, t = np.array(v), np.array(t)
     icur = imax_nA * np.minimum(np.clip(t / t_up_ms, 0, 1),
                                 np.clip((tstop - t) / t_down_ms, 0, 1))
@@ -125,14 +155,24 @@ def after_discharge(gamma, nap_factor=1.0, hold_nA=0.6, pulse_nA=3.0,
     vhold = get_vhold__mV(cell, secs, [V_INIT] * len(secs))
     vthr = vhold + 20.0
     tstop = hold_ms + pulse_ms + tail_ms
-    h.tstop = tstop; h.dt = DT; h.celsius = CELSIUS
+    h.tstop = tstop
+    h.dt = DT
+    h.celsius = CELSIUS
     _ = h.FInitializeHandler(0, lambda: fi0_multicompartment(secs, [vhold] * len(secs)))
-    hold = h.IClamp(cell.dend[0](0.5)); hold.delay = 0; hold.dur = tstop; hold.amp = hold_nA
-    pulse = h.IClamp(cell.dend[0](0.5)); pulse.delay = hold_ms; pulse.dur = pulse_ms
+    hold = h.IClamp(cell.dend[0](0.5))
+    hold.delay = 0
+    hold.dur = tstop
+    hold.amp = hold_nA
+    pulse = h.IClamp(cell.dend[0](0.5))
+    pulse.delay = hold_ms
+    pulse.dur = pulse_ms
     pulse.amp = pulse_nA - hold_nA
-    v = h.Vector(); v.record(cell.soma(0.5)._ref_v)
-    t = h.Vector(); t.record(h._ref_t)
-    h.finitialize(); h.run()
+    v = h.Vector()
+    v.record(cell.soma(0.5)._ref_v)
+    t = h.Vector()
+    t.record(h._ref_t)
+    h.finitialize()
+    h.run()
     v, t = np.array(v), np.array(t)
     above = v > vthr
     sp = np.where((~above[:-1]) & (above[1:]))[0] + 1
@@ -144,7 +184,7 @@ def after_discharge(gamma, nap_factor=1.0, hold_nA=0.6, pulse_nA=3.0,
 
 def single_cell_pic_mechanism(gamma=1.2, nap_factor=5.0, hold_nA=0.3,
                               pulse_nA=3.0, inhib_nA=-3.0, total_ms=5500.0,
-                              model="NERLab", t_pulse=(1000.0, 1500.0),
+                              t_pulse=(1000.0, 1500.0),
                               t_inhib=(3800.0, 4700.0)):
     """Single cell in the bistable PIC regime, recording soma Vm and the summed
     dendritic Ca PIC current (nA): subthreshold hold -> brief excitatory pulse
@@ -152,21 +192,19 @@ def single_cell_pic_mechanism(gamma=1.2, nap_factor=5.0, hold_nA=0.3,
     GLOBAL inhibition deactivates the plateau (firing stops, the cell returns to
     the silent branch). This is the cell-level bistability that drives the pool
     spasm; the inhibition illustrates the off-switch the open-loop pool lacks.
-    NERLab uses gamma + somatic NaP (``nap_factor``); Powers2017 uses gamma +
-    lambda. Returns traces in seconds / nA."""
-    if model == "Powers2017":
-        pool = AlphaMN__Pool(recruitment_thresholds__array=_SINGLE_RT,
-                             model="Powers2017", gamma=gamma, lambda_factor=1.0)
-    else:
-        pool = build_single_cell_pool(gamma=gamma)
-        if nap_factor != 1.0:
-            scale_nap(pool, nap_factor, 0.00215)
+    The cell uses gamma + somatic NaP (``nap_factor``). Returns traces in
+    seconds / nA."""
+    pool = build_single_cell_pool(gamma=gamma)
+    if nap_factor != 1.0:
+        scale_nap(pool, nap_factor, 0.00215)
     cell = pool[0]
     secs = _sections(cell)
-    h.dt = DT; h.celsius = CELSIUS
+    h.dt = DT
+    h.celsius = CELSIUS
     h.tstop = 400.0                                  # relax to rest
     _ = h.FInitializeHandler(0, lambda: fi0_multicompartment(secs, [V_INIT] * len(secs)))
-    h.finitialize(); h.run()
+    h.finitialize()
+    h.run()
     vh = cell.soma(0.5).v
     h.tstop = total_ms
     _ = h.FInitializeHandler(0, lambda: fi0_multicompartment(secs, [vh] * len(secs)))
@@ -176,51 +214,42 @@ def single_cell_pic_mechanism(gamma=1.2, nap_factor=5.0, hold_nA=0.3,
     inh = np.zeros_like(tw)
     inh[(tw >= t_inhib[0]) & (tw < t_inhib[1])] = inhib_nA
     tv = h.Vector(tw)
-    stim = h.IClamp(cell.dend[0](0.5)); stim.delay = 0; stim.dur = total_ms
-    av = h.Vector(exc); av.play(stim._ref_amp, tv, True)
+    stim = h.IClamp(cell.dend[0](0.5))
+    stim.delay = 0
+    stim.dur = total_ms
+    av = h.Vector(exc)
+    av.play(stim._ref_amp, tv, True)
     keep = [tv, av]                                  # keep play vectors alive
     for sec in secs:                                 # global inhibition soma+dends
-        ic = h.IClamp(sec(0.5)); ic.delay = 0; ic.dur = total_ms
-        iv = h.Vector(inh); iv.play(ic._ref_amp, tv, True)
+        ic = h.IClamp(sec(0.5))
+        ic.delay = 0
+        ic.dur = total_ms
+        iv = h.Vector(inh)
+        iv.play(ic._ref_amp, tv, True)
         keep += [ic, iv]
-    vm = h.Vector(); vm.record(cell.soma(0.5)._ref_v)
-    t = h.Vector(); t.record(h._ref_t)
+    vm = h.Vector()
+    vm.record(cell.soma(0.5)._ref_v)
+    t = h.Vector()
+    t.record(h._ref_t)
     icas = [(h.Vector(), d) for d in cell.dend]
     for rec, d in icas:
         rec.record(d(0.5)._ref_icaL)
-    nap_rec = h.Vector()                              # somatic NaP (2nd PIC comp.)
-    record_nap = model != "Powers2017"               # NERLab napp.inap
-    if record_nap:
-        nap_rec.record(cell.soma(0.5)._ref_inap_napp)
-    h.finitialize(); h.run()
-    t = np.array(t); vm = np.array(vm)
+    nap_rec = h.Vector()                              # somatic NaP (napp.inap)
+    nap_rec.record(cell.soma(0.5)._ref_inap_napp)
+    h.finitialize()
+    h.run()
+    t = np.array(t)
+    vm = np.array(vm)
     pic_nA = np.zeros_like(t)
     for rec, d in icas:
         area_cm2 = np.pi * d.L * d.diam * 1e-8        # um^2 -> cm^2
         pic_nA = pic_nA + np.array(rec) * area_cm2 * 1e6   # mA/cm2 -> nA
-    if record_nap:
-        soma_area = np.pi * cell.soma.L * cell.soma.diam * 1e-8
-        nap_nA = np.array(nap_rec) * soma_area * 1e6
-    else:
-        nap_nA = np.zeros_like(t)
+    soma_area = np.pi * cell.soma.L * cell.soma.diam * 1e-8
+    nap_nA = np.array(nap_rec) * soma_area * 1e6
     inp = np.interp(t, tw, exc) + np.interp(t, tw, inh)
     return dict(t=t / 1000.0, vm=vm, pic_nA=pic_nA, nap_nA=nap_nA, input_nA=inp,
                 vhold=vh, t_pulse=tuple(x / 1000.0 for x in t_pulse),
                 t_inhib=tuple(x / 1000.0 for x in t_inhib))
-
-
-import itertools
-
-import quantities as pq
-from neo import AnalogSignal, Block, Segment, SpikeTrain
-
-from myogen import get_random_generator, simulator
-from myogen.simulator.neuron import Network
-from myogen.simulator.neuron.populations import (DescendingDrive__Pool,
-                                                 DescendingDrive_Gamma__Pool)
-from myogen.utils.types import pps
-
-_POOL_TIMESTEP = 0.1 * pq.ms
 
 
 def brief_command_drive(peak_pps=22.0, rise_s=1.0, plateau_s=1.5,
@@ -244,39 +273,21 @@ def brief_command_drive(peak_pps=22.0, rise_s=1.0, plateau_s=1.5,
 
 
 def run_pool(command, n_mu, gamma, nap_factor=1.0, nap_ceiling=0.00215,
-             total_s=10.0, model="NERLab", lambda_factor=1.0, dd_n=100,
-             dd_shape=None, mn_noise=0.0, noise_floor=0.3, dd_weight__uS=0.15,
-             mahp_factor=1.0):
-    """Build a motoneuron pool with PIC knobs, drive it with `command`, return
-    the motor-neuron spike-train Block. Separate NEURON run per call.
-
-    NaP knob differs by model: NERLab scales somatic ``gnapbar_napp`` after
-    construction via ``nap_factor`` (scale_nap); Powers2017 sets NaP through
-    ``lambda_factor`` on the constructor (its ``naps`` mechanism) and ignores
-    ``nap_factor``. Powers2017 also has the ``mAHP`` Ca-activated K current and a
-    dendritic Ca PIC, giving a lower self-sustained rate (~6-8 Hz) than NERLab
-    (~12-16 Hz). Its Ca PIC is bistable (all-or-nothing) and does NOT self-
-    terminate at these voltages -- the spasm latches until inhibition removes
-    it."""
+             total_s=10.0, dd_n=100, mn_noise=0.0, noise_floor=0.3,
+             dd_weight__uS=0.15):
+    """Build a NERLab motoneuron pool with PIC knobs, drive it with `command`,
+    return the motor-neuron spike-train Block. Separate NEURON run per call. The
+    somatic ``gnapbar_napp`` is scaled after construction via ``nap_factor``
+    (scale_nap), capped at ``nap_ceiling``."""
     rt, _ = simulator.RecruitmentThresholds(
         N=n_mu, recruitment_range__ratio=100, deluca__slope=5,
         konstantin__max_threshold__ratio=1.0, mode="combined")
     h.secondorder = 2
-    if model == "Powers2017":
-        mn_pool = AlphaMN__Pool(recruitment_thresholds__array=rt,
-                                model="Powers2017", gamma=gamma,
-                                lambda_factor=lambda_factor)
-        if mahp_factor != 1.0:        # scale the Ca-activated K (firing ceiling)
-            for cell in mn_pool:
-                for seg in cell.soma:
-                    seg.gkcamax_mAHP *= mahp_factor
-    else:
-        mn_pool = AlphaMN__Pool(recruitment_thresholds__array=rt, model="NERLab",
-                                gamma=gamma)
-        if nap_factor != 1.0:
-            scale_nap(mn_pool, nap_factor, nap_ceiling)
-    # spike-detect threshold: NERLab rests ~0 mV, Powers2017 ~-71 mV
-    spike_threshold = -10.0 if model == "Powers2017" else 50.0
+    mn_pool = AlphaMN__Pool(recruitment_thresholds__array=rt, model="NERLab",
+                            gamma=gamma)
+    if nap_factor != 1.0:
+        scale_nap(mn_pool, nap_factor, nap_ceiling)
+    spike_threshold = 50.0   # NERLab rests ~0 mV
     # Independent OU (colored) noise current injected into each motoneuron, so
     # firing is realistically irregular (real voluntary CV ~10-20%) rather than
     # clock-like. (The built-in Gfluctdv conductance-noise mechanism does not
@@ -304,17 +315,15 @@ def run_pool(command, n_mu, gamma, nap_factor=1.0, nap_ceiling=0.00215,
         for cell in mn_pool:
             ou = lfilter([amp_unit], [1.0, -a], rng.normal(0, 1, n_steps))
             ou = mn_noise * env * ou                  # drive-scaled amplitude
-            ic = h.IClamp(cell.soma(0.5)); ic.delay = 0
+            ic = h.IClamp(cell.soma(0.5))
+            ic.delay = 0
             ic.dur = total_s * 1000.0
-            iv = h.Vector(ou); iv.play(ic._ref_amp, tvec_n, True)
+            iv = h.Vector(ou)
+            iv.play(ic._ref_amp, tvec_n, True)
             _noise_keep.append((ic, iv))
         _noise_keep.append(tvec_n)
-    if dd_shape is not None:
-        dd_pool = DescendingDrive_Gamma__Pool(n=dd_n, timestep__ms=_POOL_TIMESTEP,
-                                              shape=dd_shape)
-    else:
-        dd_pool = DescendingDrive__Pool(n=dd_n, poisson_batch_size=5,
-                                        timestep__ms=_POOL_TIMESTEP)
+    dd_pool = DescendingDrive__Pool(n=dd_n, poisson_batch_size=5,
+                                    timestep__ms=_POOL_TIMESTEP)
     net = Network({"DD": dd_pool, "aMN": mn_pool})
     net.connect(source="DD", target="aMN", probability=0.5,
                 weight__uS=dd_weight__uS * pq.uS)
@@ -481,7 +490,8 @@ def synthesize_iemg(spike_block, n_mu, iemg_sim=None, muscle=None,
     if t_off_s is None:
         tail_ratio = float("nan")
     else:
-        on = arr[times <= t_off_s]; tail = arr[times > t_off_s]
+        on = arr[times <= t_off_s]
+        tail = arr[times > t_off_s]
         on_rms = np.sqrt(np.mean(on**2)) if on.size else 1.0
         tail_rms = np.sqrt(np.mean(tail**2)) if tail.size else 0.0
         tail_ratio = float(tail_rms / on_rms) if on_rms else 0.0
