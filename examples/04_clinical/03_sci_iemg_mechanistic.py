@@ -2,49 +2,24 @@
 SCI pathological iEMG, mechanistically: same model, vary only the PIC
 ====================================================================
 
-This is the mechanistic remake of the original SCI iEMG example. That version
-reproduced three discharge phenotypes by **hand-sculpting the descending drive**
-(a tonic floor for loss-of-derecruitment, 6 Hz bursts for clonus). Here all
-panels share the **same muscle, electrode, and motoneuron pool**, and the
-phenotypes emerge from the motoneuron **persistent inward current (PIC)** state:
+Instead of hand-sculpting the descending drive, the three discharge phenotypes
+emerge from the motoneuron persistent inward current (PIC). All panels share the
+same muscle, electrode, and motoneuron pool:
 
-1. **Voluntary modulation** -- healthy PIC; a 0.5 Hz voluntary command recruits
-   and **derecruits** the pool each cycle.
-2. **Loss of derecruitment** -- up-regulated PIC (``gamma``); the *same* command
-   no longer lets units go silent at the troughs.
-3. **Modulation -> spasm** -- up-regulated PIC; the voluntary command runs for
-   the first half then stops, but the PIC sustains an **involuntary discharge**.
+1. Voluntary modulation -- healthy PIC (gamma=0.5, NaPx1); a 0.5 Hz command
+   recruits and derecruits the pool each cycle.
+2. Loss of derecruitment -- up-regulated PIC (gamma=1.3, NaPx5); the same command
+   no longer lets units fall silent at the troughs.
+3. Modulation -> spasm -- up-regulated PIC; the command stops half-way but the
+   PIC sustains an involuntary discharge.
 
-Modelling choices and honest caveats:
-
-* **Model = NERLab** (Cisi-Kohn-Elias), the MyoGen manuscript's motoneuron.
-  SCI spasticity is induced purely by up-regulating the PIC: the dendritic Ca
-  PIC (``gamma``) PLUS somatic NaP (``nap_factor``) -- NERLab needs both to
-  self-sustain (gamma alone only amplifies). Healthy column: gamma=0.5, NaPx1;
-  SCI columns: gamma=1.3, NaPx5.
-* **PIC magnitude is physiological.** The single-cell sustained dendritic Ca PIC
-  is ~-9 nA, within the experimental ~5-15 nA range. NERLab's caL does not
-  inactivate, so a recruited unit latches (the plateau persists) rather than
-  decaying.
-* **Firing variability is drive-driven; the spasm CV collapses.** Voluntary
-  firing is irregular (ISI CV ~19%) -- the variability comes mostly from the
-  noisy descending drive, plus a small injected OU membrane-noise current
-  (``mn_noise``) that scales with the drive and leaves only a floor when it
-  withdraws. When the drive stops, firing is paced by the intrinsic PIC and the
-  CV collapses to ~7 % -- close to the Gorassini (2004) self-sustained band
-  (5.4 +/- 1.6 %), reproducing their finding that spasms fire more regularly
-  than voluntary effort.
-* **Rate caveat.** NERLab gives realistic voluntary rates (~23 Hz, cf. FDI), and
-  the self-sustained spasm fires at ~11 Hz -- about half the voluntary rate, but
-  ~2x the ~5 Hz of real SCI spasms. NERLab's brief slow-K AHP keeps its f-I onset
-  somewhat high; it cannot be tuned down without killing the self-sustain or
-  contradicting the SCI literature (which REDUCES the AHP), so we accept it.
-* **No afferent/reflex loops.** The original's third phenotype was 6 Hz *clonus*
-  (a stretch-reflex-loop oscillation); here it is replaced by an intrinsic
-  PIC-driven spasm. The spasm does **not** self-terminate within the window --
-  NERLab's Ca PIC does not deactivate, so a real off-switch needs inhibition /
-  afferent input (illustrated in the single-cell mechanism panel), which is
-  outside this open-loop pool.
+Model: NERLab (Cisi-Kohn-Elias). Self-sustained firing needs both the dendritic
+Ca PIC (gamma) and somatic NaP (nap_factor). Firing variability is drive-driven:
+voluntary firing is irregular (ISI CV ~19%) from the noisy drive plus a small
+drive-scaled OU membrane noise (``mn_noise``); when the drive withdraws the
+intrinsic PIC paces firing and the CV collapses to ~7% (cf. Gorassini 2004). The
+Ca PIC does not deactivate, so the spasm does not self-terminate within the window
+(a real off-switch needs inhibition; see the single-cell panel).
 """
 # sphinx_gallery_thumbnail_number = -1
 import sys
@@ -105,14 +80,10 @@ apply_pub_style()
 set_random_seed(42)
 N_MU = 40
 TOTAL_S = 8.0
-# Peak OU membrane-noise current (nA) per motoneuron, reached at full descending
-# drive; its amplitude SCALES WITH THE DRIVE (synaptic bombardment tracks input)
-# and falls to MN_NOISE*NOISE_FLOOR when the drive withdraws. Calibrated so the
-# voluntary (drive-on) firing is irregular even at full rate (ISI CV ~19%,
-# matching the experimentally modulated unit), while the drive-off self-sustained
-# spasm, paced by the intrinsic PIC, stays regular (CV ~7%, the tonic unit /
-# Gorassini 2004 signature). The noisier voluntary command vs the smooth PIC
-# drive is what separates the two; without it the PIC discharge is clock-like.
+# Peak OU membrane-noise current (nA) per motoneuron, scaled by the drive (falls
+# to MN_NOISE*NOISE_FLOOR when the drive withdraws). Calibrated so voluntary firing
+# is irregular (ISI CV ~19%) while the drive-off self-sustained spasm stays regular
+# (~7%, cf. Gorassini 2004).
 MN_NOISE = 2.0
 # Fraction of MN_NOISE that remains once the command withdraws. Kept low so the
 # drive-off self-sustained spasm noise stays ~0.12 nA (regular firing, ~7% CV)
@@ -158,15 +129,9 @@ voluntary, _ = pic.cyclic_voluntary_drive(peak_pps=90.0, freq_hz=0.5,
                                           total_s=TOTAL_S)
 spasm_drive = modulation_then_silence(peak_pps=90.0, stop_s=SPASM_ONSET_S)
 
-# NERLab (Cisi-Kohn-Elias) motoneuron -- the model used in the MyoGen
-# manuscript. SCI spasticity is induced purely by up-regulating the motoneuron
-# PIC: the dendritic Ca PIC (``gamma``) plus somatic NaP (``nap_factor``), which
-# together produce self-sustained firing. label -> (drive, gamma, nap_factor).
-# Rate caveat: NERLab gives realistic voluntary rates (~23 Hz, cf. FDI), and the
-# self-sustained spasm fires at ~11 Hz (the drive-off discharge drops to roughly
-# half the voluntary rate). That is ~2x the ~5 Hz of real SCI spasms (Gorassini
-# 2004) -- NERLab's brief slow-K AHP keeps its floor somewhat high -- but the
-# loss of derecruitment and the ISI-CV collapse are reproduced cleanly.
+# NERLab (Cisi-Kohn-Elias) motoneuron, the MyoGen manuscript's model. SCI
+# spasticity is induced by up-regulating the PIC: dendritic Ca (``gamma``) plus
+# somatic NaP (``nap_factor``). label -> (drive, gamma, nap_factor).
 MODEL = "NERLab"
 conditions = {
     "Voluntary modulation (healthy)": (voluntary, 0.5, 1.0),
@@ -196,16 +161,10 @@ else:
         print(f"{label}: active MUs={active}/{N_MU}")
     joblib.dump(results, results_cache)
 
-# Discharge rate (sliding) and the ISI CV are recomputed fresh each run. The ISI
-# CV (a CV of inter-spike intervals) is only meaningful over a QUASI-STATIONARY
-# (roughly constant-rate) segment -- across a modulating cycle it conflates the
-# rate change with the spike-timing irregularity. We therefore follow standard
-# motor-unit practice and compute it only inside the discharge PLATEAUS, where the
-# drive is within `PLATEAU_FRAC` of its peak (the flattest, near-stationary part
-# of each cycle). Within those windows we take the drift-insensitive CV2 per unit
-# and report the MEDIAN across units -- the same per-unit view as the experimental
-# panel. For the spasm column the steady self-sustained discharge after the
-# command stops is itself a stationary segment and is treated as one plateau.
+# ISI CV is only meaningful over a quasi-stationary (constant-rate) segment, so we
+# compute the drift-insensitive CV2 per unit only inside the discharge plateaus
+# (drive within `PLATEAU_FRAC` of peak) and, for the spasm, over the steady
+# self-sustained discharge, then report the median across units.
 EPOCH_MARGIN = 0.3     # s, keeps the rest epoch off the command-stop transient
 PLATEAU_FRAC = 0.75    # plateau = drive > 75 % of its peak (near-stationary)
 

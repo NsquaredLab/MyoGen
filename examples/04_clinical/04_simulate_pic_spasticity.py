@@ -1,22 +1,17 @@
 """
-Physiological PIC and Spasticity: Same Input, Flip the PIC State
-===============================================================
+Single-cell PIC mechanism and pool spasticity
+=============================================
 
-Reproduces the persistent-inward-current (PIC) signature mechanistically by
-up-regulating the motoneuron dendritic Ca PIC (``gamma``) and somatic Na PIC
-(``gnapbar_napp``) instead of hand-sculpting the descending drive.
+The cell-level basis for the pool-level phenotypes in
+``03_sci_iemg_mechanistic.py``. Up-regulating the motoneuron dendritic Ca PIC
+(``gamma``) and somatic Na PIC (``gnapbar_napp``), rather than sculpting the drive:
 
-**Top:** a single type-S motoneuron driven by the *same* dendritic ramp under
-control vs SCI conditions, showing amplification and self-sustained firing
-(recruitment/derecruitment hysteresis).
+- Top: a single type-S motoneuron under the same dendritic ramp, control vs SCI,
+  showing amplification and self-sustained firing (recruit/derecruit hysteresis).
+- Bottom: a motor pool in which the same brief low-MVC command yields a
+  self-sustained involuntary discharge (a spasm) only when the PIC is up-regulated.
 
-**Bottom:** a motor pool in which the *same* brief low-MVC voluntary command
-yields a self-sustained involuntary discharge (a spasm) only when the PIC is
-up-regulated.
-
-.. note::
-    This example reuses the shared helpers in ``pic_protocols.py`` (next to this
-    script). NERLab model throughout, consistent with the manuscript.
+Reuses the shared helpers in ``pic_protocols.py``. NERLab model throughout.
 """
 # sphinx_gallery_thumbnail_number = -1
 
