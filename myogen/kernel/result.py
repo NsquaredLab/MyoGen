@@ -51,3 +51,53 @@ class SimResult:
             n_units=state.n_units,
             grid_shape=grid,
         )
+
+    def to_neo(self):
+        """Build a neo.Block on demand. neo/quantities imported lazily here only."""
+        import neo
+        import quantities as pq
+
+        n_t = 0
+        if self.force_N is not None:
+            n_t = len(self.force_N)
+        elif self.surface_emg_V is not None:
+            n_t = self.surface_emg_V.shape[0]
+        t_stop = (self.t_start_s + n_t * self.dt_s) * pq.s
+        rate = (1.0 / self.dt_s) * pq.Hz
+        t_start = self.t_start_s * pq.s
+
+        block = neo.Block()
+        seg = neo.Segment()
+        block.segments.append(seg)
+
+        for times in self.spike_times_s:
+            seg.spiketrains.append(
+                neo.SpikeTrain(np.asarray(times) * pq.s, t_stop=t_stop)
+            )
+
+        if self.force_N is not None:
+            seg.analogsignals.append(
+                neo.AnalogSignal(
+                    np.asarray(self.force_N) * pq.N,
+                    sampling_rate=rate,
+                    t_start=t_start,
+                )
+            )
+
+        if self.surface_emg_V is not None:
+            emg = np.asarray(self.surface_emg_V)
+            seg.analogsignals.append(
+                neo.AnalogSignal(
+                    emg.reshape(emg.shape[0], -1) * pq.V,
+                    sampling_rate=rate,
+                    t_start=t_start,
+                )
+            )
+
+        return block
+
+    def to_nwb(self, path, **kwargs):
+        """Export to NWB by delegating to the existing exporter via to_neo()."""
+        from myogen.utils.nwb import export_to_nwb
+
+        return export_to_nwb(self.to_neo(), path, **kwargs)
