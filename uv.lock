@@ -1066,6 +1066,7 @@ gpu = [
     { name = "cupy-cuda12x" },
 ]
 nwb = [
+    { name = "h5py" },
     { name = "nwbinspector" },
     { name = "pynwb" },
 ]
@@ -1100,6 +1101,7 @@ docs = [
 requires-dist = [
     { name = "beartype", specifier = ">=0.21.0" },
     { name = "cupy-cuda12x", marker = "extra == 'gpu'", specifier = ">=13.0,<14" },
+    { name = "h5py", marker = "extra == 'nwb'", specifier = ">=3.0" },
     { name = "joblib", specifier = ">=1.3" },
     { name = "matplotlib", specifier = ">=3.10.1" },
     { name = "neo", specifier = ">=0.14.0" },
