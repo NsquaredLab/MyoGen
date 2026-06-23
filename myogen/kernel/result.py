@@ -34,9 +34,9 @@ class SimResult:
         else:
             spike_times = [np.empty(0) for _ in range(state.n_units)]
 
-        force = np.asarray(state.view("force")) if state.has("force") else None
+        force = np.array(state.view("force")) if state.has("force") else None
         emg = (
-            np.asarray(state.view("surface_emg"))
+            np.array(state.view("surface_emg"))
             if state.has("surface_emg")
             else None
         )

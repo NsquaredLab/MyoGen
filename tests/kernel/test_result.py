@@ -26,8 +26,11 @@ def test_from_state_extracts_spike_times_in_seconds():
 
 
 def test_from_state_copies_force_array():
-    res = SimResult.from_state(_state_with_spikes_and_force())
+    state = _state_with_spikes_and_force()
+    res = SimResult.from_state(state)
     assert np.array_equal(res.force_N[:, 0], np.array([0.0, 1.0, 2.0, 3.0]))
+    # the snapshot must NOT alias the live SimState buffer
+    assert not np.shares_memory(res.force_N, state.view("force"))
 
 
 def test_from_state_handles_missing_optional_buffers():
