@@ -50,5 +50,6 @@ conf = {
     "within_subsection_order": FileNameSortKey,
     "image_scrapers": ("matplotlib",),
     "reset_modules": (reset_neuron,),
-    "plot_gallery": True,
+    # Source-only by default; overridden from properdocs.yml via MKDOCS_GALLERY_PLOT.
+    "plot_gallery": False,
 }

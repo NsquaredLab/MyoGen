@@ -51,7 +51,12 @@ plugins:
   - section-index
   - gallery:
       conf_script: docs/gallery_conf.py
-      plot_gallery: !ENV [MKDOCS_GALLERY_PLOT, true]
+      # Source-only by default: examples render as markdown (prose + code) with
+      # "download full example code" links, but are NOT executed — many MyoGen
+      # examples use multiprocessing/joblib (which breaks under gallery exec) or
+      # form slow inter-dependent chains. Opt in to execution locally with
+      # MKDOCS_GALLERY_PLOT=true.
+      plot_gallery: !ENV [MKDOCS_GALLERY_PLOT, false]
   - mkdocstrings:
       handlers:
         python:
