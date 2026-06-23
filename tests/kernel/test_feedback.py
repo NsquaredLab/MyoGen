@@ -30,9 +30,9 @@ class _Reader:
 def test_feedback_has_one_tick_delay():
     # Reader runs before Writer, so it sees last tick's signal: a one-tick delay.
     sim = Simulation(_Reader(), _Writer(), n_units=1, dt_s=0.001, n_steps=4)
-    state = sim.run()
+    sim.run()
     # signal = [0,1,2,3]; fed_back = [0, signal[0], signal[1], signal[2]] = [0,0,1,2]
-    assert np.array_equal(state.view("fed_back"), np.array([0.0, 0.0, 1.0, 2.0]))
+    assert np.array_equal(sim.state.view("fed_back"), np.array([0.0, 0.0, 1.0, 2.0]))
 
 
 def test_on_step_callback_runs_each_tick_with_raw_state():

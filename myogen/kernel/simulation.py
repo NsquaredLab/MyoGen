@@ -4,6 +4,7 @@ from collections.abc import Callable
 
 import numpy as np
 
+from myogen.kernel.result import SimResult
 from myogen.kernel.state import SimState
 
 
@@ -39,7 +40,7 @@ class Simulation:
             stage.setup(self.state)
         self._setup_done = True
 
-    def run(self) -> SimState:
+    def run(self) -> SimResult:
         if not self._setup_done:
             self.setup()
         s = self.state
@@ -49,4 +50,4 @@ class Simulation:
                 stage.step(s, t)
             for cb in self._callbacks:
                 cb(s, t)
-        return s
+        return SimResult.from_state(s)
