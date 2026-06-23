@@ -25,6 +25,19 @@ class SimResult:
 
     @classmethod
     def from_state(cls, state: SimState) -> "SimResult":
+        """Snapshot a SimState into a buffer-first SimResult.
+
+        Conventions:
+        - ``spikes``: optional buffer of shape ``(n_steps, n_units)`` (nonzero =
+          spike); spike times are ``nonzero_step_index * dt_s`` seconds per unit.
+        - ``force``: optional ``(n_steps, n_pools)``; ``surface_emg``: optional
+          ``(n_steps, n_rows, n_cols)``.
+
+        All copies are made with numpy (host-side). For a non-numpy ``xp``
+        backend (jax/torch), move buffers to host first (e.g. ``.block_until_ready()``
+        / ``.cpu()``) before calling — ``np.flatnonzero``/``np.array`` assume
+        concrete host arrays.
+        """
         if state.has("spikes"):
             spikes = np.asarray(state.view("spikes"))
             spike_times = [
