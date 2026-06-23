@@ -22,9 +22,9 @@ jobs:
     steps:
       - uses: actions/checkout@v6
 
-      # NEURON + MPI system libraries: the example gallery executes the
-      # NEURON-based examples at build time, so these must be present (same
-      # set the old Sphinx docs workflow installed).
+      # NEURON + MPI system libraries: the build imports myogen for the
+      # mkdocstrings API reference (and supports opt-in gallery execution via
+      # MKDOCS_GALLERY_PLOT=true). Same set the old Sphinx docs workflow used.
       - name: Install NEURON/MPI system dependencies
         run: |
           sudo apt-get update
@@ -45,7 +45,7 @@ jobs:
       - name: Compile NMODL mechanisms
         run: uv run poe setup_myogen
 
-      - name: Build docs site (executes the example gallery)
+      - name: Build docs site
         run: uv run --group docs properdocs build
 
       - name: Upload Pages artifact
