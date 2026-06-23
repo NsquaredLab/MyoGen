@@ -75,7 +75,14 @@ class SimResult:
             n_t = len(self.force_N)
         elif self.surface_emg_V is not None:
             n_t = self.surface_emg_V.shape[0]
-        t_stop = (self.t_start_s + n_t * self.dt_s) * pq.s
+        t_stop_s = self.t_start_s + n_t * self.dt_s
+        # t_stop must cover every spike, even when no force/EMG was recorded
+        max_spike_s = max(
+            (float(np.asarray(times).max()) for times in self.spike_times_s if len(times) > 0),
+            default=0.0,
+        )
+        t_stop_s = max(t_stop_s, max_spike_s)
+        t_stop = t_stop_s * pq.s
         rate = (1.0 / self.dt_s) * pq.Hz
         t_start = self.t_start_s * pq.s
 

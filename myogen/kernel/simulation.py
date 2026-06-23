@@ -36,6 +36,8 @@ class Simulation:
         self._callbacks.append(fn)
 
     def setup(self) -> None:
+        if self._setup_done:
+            return
         for stage in self.stages:
             stage.setup(self.state)
         self._setup_done = True

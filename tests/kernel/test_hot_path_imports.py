@@ -26,5 +26,10 @@ def test_result_module_imports_neo_only_lazily():
 
     src = Path(result_mod.__file__).read_text()
     for line in src.splitlines():
-        if line.startswith("import neo") or line.startswith("import quantities"):
-            raise AssertionError(f"module-level import in result.py: {line!r}")
+        if (
+            line.startswith("import neo")
+            or line.startswith("import quantities")
+            or line.startswith("from neo")
+            or line.startswith("from quantities")
+        ):
+            raise AssertionError(f"module-level neo/quantities import in result.py: {line!r}")

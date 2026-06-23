@@ -53,3 +53,19 @@ def test_to_nwb_delegates_to_export_to_nwb(monkeypatch):
     assert captured["path"] == "/tmp/out.nwb"
     # delegated a real neo.Block built from this result
     assert len(captured["block"].segments[0].spiketrains) == 2
+
+
+def test_to_neo_spike_only_result_sets_tstop_to_cover_spikes():
+    res = SimResult(
+        spike_times_s=[np.array([0.5, 1.5])],
+        force_N=None,
+        surface_emg_V=None,
+        dt_s=0.5,
+        t_start_s=0.0,
+        n_units=1,
+        grid_shape=None,
+    )
+    block = res.to_neo()  # must NOT raise even with no force/EMG buffers
+    st = block.segments[0].spiketrains[0]
+    assert st.t_stop.rescale(pq.s).magnitude >= 1.5
+    assert np.allclose(st.rescale(pq.s).magnitude, [0.5, 1.5])
