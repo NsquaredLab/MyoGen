@@ -2,8 +2,10 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 from types import ModuleType
+from typing import Any
 
 import numpy as np
+import numpy.typing as npt
 
 
 @dataclass
@@ -22,7 +24,7 @@ class SimState:
     t: int = 0  # current step index, set by the driver each tick
     _buffers: dict = field(default_factory=dict, repr=False)
 
-    def alloc(self, name: str, shape: tuple[int, ...], dtype=None):
+    def alloc(self, name: str, shape: tuple[int, ...], dtype: npt.DTypeLike | None = None) -> Any:  # -> Any: concrete array type depends on xp (np/jax/torch)
         """Allocate a zeroed buffer and return it. Raises if name is taken."""
         if name in self._buffers:
             raise KeyError(f"buffer {name!r} already allocated")
