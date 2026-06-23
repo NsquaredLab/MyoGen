@@ -56,92 +56,41 @@ produce the same mean force. The original paper found 58 Hz offset vs 65 Hz cons
 
 import json
 import os
-
-os.environ["MPLBACKEND"] = "Agg"
-if "DISPLAY" in os.environ:
-    del os.environ["DISPLAY"]
-
-import warnings
+import subprocess
+import sys
 from pathlib import Path
 
-import joblib
 import matplotlib.pyplot as plt
-import numpy as np
 import optuna
-import quantities as pq
-from neo import Block, Segment, SpikeTrain
-from neuron import h
 
-from myogen import get_random_generator, set_random_seed
-from myogen.simulator import RecruitmentThresholds
-from myogen.simulator.core.force.force_model import ForceModel
-from myogen.simulator.neuron import Network
-from myogen.simulator.neuron.populations import AlphaMN__Pool, DescendingDrive__Pool
-from myogen.utils.helper import calculate_firing_rate_statistics
-from myogen.utils.nmodl import load_nmodl_mechanisms
+sys.path.insert(0, str(Path(__file__).parent))
+from _oscillating_dc_helpers import (  # noqa: E402
+    DD_CONNECTIVITY,
+    MAX_FORCE_N,
+    N_DD_NEURONS,
+    N_MOTOR_UNITS,
+    N_TRIALS,
+    OSC_AMPLITUDE__HZ,
+    OSC_FREQUENCY__HZ,
+    REFERENCE_DRIVE__HZ,
+    REFERENCE_FORCE__N,
+    RESULTS_DIR,
+    STUDY_NAME,
+    SYNAPTIC_WEIGHT,
+    TARGET_FORCE__N,
+    make_storage,
+    objective,
+    recruitment_thresholds,
+)
 
-warnings.filterwarnings("ignore")
 plt.style.use("fivethirtyeight")
 
 ##############################################################################
-# Configuration
-# -------------
-
-# Simulation parameters
-SIMULATION_TIME_MS = 5000.0  # Shorter simulation for efficient optimization
-TIMESTEP_MS = 0.1
-N_MOTOR_UNITS = 800  # Watanabe specification
-
-# Force model parameters
-RECORDING_FREQUENCY__HZ = 2048
-LONGEST_DURATION_RISE_TIME__MS = 90.0
-CONTRACTION_TIME_RANGE = 3
-
-# Oscillation parameters (Watanabe specification)
-OSC_FREQUENCY__HZ = 20.0  # 20 Hz physiological tremor
-OSC_AMPLITUDE__HZ = 20.0  # Amplitude of oscillation
-
-# Optimization settings
-N_TRIALS = 25  # Increase for production
-TIMEOUT_SECONDS = 3600
-
-# Network parameters (Watanabe specification)
-N_DD_NEURONS = 400
-DD_CONNECTIVITY = 0.3
-SYNAPTIC_WEIGHT = 0.05
-
-# Directories
-try:
-    _script_dir = Path(__file__).parent
-except NameError:
-    _script_dir = Path.cwd()
-BASELINE_DIR = _script_dir / "results" / "watanabe_optimization"
-RESULTS_DIR = _script_dir / "results" / "watanabe_optimization"
-RESULTS_DIR.mkdir(exist_ok=True, parents=True)
-
-##############################################################################
-# Load Reference Force Data
-# --------------------------
+# Configuration Banner
+# --------------------
 
 print("\nLoading Reference Force (Constant Drive)")
 print("=" * 50)
-
-reference_file = BASELINE_DIR / "force_reference.json"
-
-if not reference_file.exists():
-    raise FileNotFoundError(
-        f"Reference force not found: {reference_file}\nRun 01_compute_baseline_force.py first!"
-    )
-
-with open(reference_file, "r") as f:
-    reference_results = json.load(f)
-
-# Extract reference force and scaling
-REFERENCE_FORCE__N = reference_results["force"]["mean__N"]
-REFERENCE_DRIVE__HZ = reference_results["network_parameters"]["dd_drive__Hz"]
-TARGET_FORCE__N = REFERENCE_FORCE__N  # Match the reference force
-MAX_FORCE_N = reference_results["force_scaling"]["max_force__N"]
-
 print(f"Reference force: {REFERENCE_FORCE__N:.2f} N ({REFERENCE_DRIVE__HZ:.1f} Hz constant)")
 print(f"Target force: {TARGET_FORCE__N:.2f} N (match with oscillation)")
 print(f"Force scaling: {MAX_FORCE_N:.0f} N maximum")
@@ -151,223 +100,18 @@ print(f"Connection probability: {DD_CONNECTIVITY:.1%}")
 print("=" * 50 + "\n")
 
 ##############################################################################
-# Initialize NEURON
-# -----------------
-
-set_random_seed(42)
-load_nmodl_mechanisms()
-h.secondorder = 2
-
-##############################################################################
-# Define Simulation Function
-# ---------------------------
-
-
-def run_simulation_with_oscillating_drive(dc_offset, recruitment_thresholds):
-    """
-    Run network simulation with oscillating drive and compute resulting force.
-
-    Drive pattern: dc_offset + OSC_AMPLITUDE * sin(2*pi*OSC_FREQUENCY*t)
-
-    Parameters
-    ----------
-    dc_offset : float
-        DC offset component of oscillating drive (Hz)
-    recruitment_thresholds : np.ndarray
-        Motor unit recruitment thresholds
-
-    Returns
-    -------
-    tuple
-        (force_mean, n_active, fr_mean, fr_std)
-    """
-    # Create motor neuron pool
-    motor_neuron_pool = AlphaMN__Pool(
-        recruitment_thresholds__array=recruitment_thresholds,
-        config_file="alpha_mn_default.yaml",
-    )
-
-    # Create descending drive pool (Poisson - Watanabe specification)
-    descending_drive_pool = DescendingDrive__Pool(
-        n=N_DD_NEURONS,
-        timestep__ms=TIMESTEP_MS * pq.ms,
-        process_type="poisson",
-        poisson_batch_size=1,  # Order 1 Poisson (Watanabe)
-    )
-
-    # Build network
-    network = Network({"DD": descending_drive_pool, "aMN": motor_neuron_pool})
-    network.connect(
-        source="DD",
-        target="aMN",
-        probability=DD_CONNECTIVITY,
-        weight__uS=SYNAPTIC_WEIGHT * pq.uS,
-    )
-    network.connect_from_external(source="cortical_input", target="DD", weight__uS=1.0 * pq.uS)
-    dd_netcons = network.get_netcons("cortical_input", "DD")
-
-    # Setup spike recording
-    mn_spike_recorders = []
-    for cell in motor_neuron_pool:
-        spike_recorder = h.Vector()
-        nc = h.NetCon(cell.soma(0.5)._ref_v, None, sec=cell.soma)
-        nc.threshold = 50
-        nc.record(spike_recorder)
-        mn_spike_recorders.append(spike_recorder)
-
-    # Create oscillating drive signal: DC + amplitude * sin(2*pi*freq*t)
-    time_points = int(SIMULATION_TIME_MS / TIMESTEP_MS)
-    time_s = np.arange(time_points) * TIMESTEP_MS / 1000.0
-
-    # Oscillating component
-    drive_signal = dc_offset + OSC_AMPLITUDE__HZ * np.sin(2 * np.pi * OSC_FREQUENCY__HZ * time_s)
-
-    # Clip to prevent negative firing rates
-    drive_signal = np.clip(drive_signal, 0, None)
-
-    # Add small noise
-    drive_signal += np.clip(get_random_generator().normal(0, 1.0, size=time_points), 0, None)
-
-    # Initialize simulation
-    h.load_file("stdrun.hoc")
-    h.dt = TIMESTEP_MS
-    h.tstop = SIMULATION_TIME_MS
-
-    for section, voltage in zip(*motor_neuron_pool.get_initialization_data()):
-        section.v = voltage
-    for section, voltage in zip(*descending_drive_pool.get_initialization_data()):
-        section.v = voltage
-
-    h.finitialize()
-
-    # Run simulation
-    step_counter = 0
-    while h.t < h.tstop:
-        current_drive = drive_signal[min(step_counter, len(drive_signal) - 1)]
-        for dd_cell in descending_drive_pool:
-            if dd_cell.integrate(current_drive):
-                if h.t < h.tstop:
-                    dd_netcons[dd_cell.pool__ID].event(h.t + 1)
-        h.fadvance()
-        step_counter += 1
-
-    # Convert to Neo format
-    dt_s = h.dt / 1000.0
-    mn_segment = Segment(name="Motor Neurons")
-    mn_segment.spiketrains = [
-        SpikeTrain(
-            recorder.as_numpy() / 1000 * pq.s,
-            t_stop=SIMULATION_TIME_MS / 1000 * pq.s,
-            sampling_rate=(1 / dt_s * pq.Hz),
-            sampling_period=dt_s * pq.s,
-            name=f"MN_{i}",
-        )
-        for i, recorder in enumerate(mn_spike_recorders)
-    ]
-
-    spike_train__Block = Block(name="Motor Unit Pool")
-    spike_train__Block.segments = [mn_segment]
-
-    # Calculate statistics
-    n_active = sum(1 for st in mn_segment.spiketrains if len(st) > 1)
-    stats = calculate_firing_rate_statistics(mn_segment.spiketrains)
-    fr_mean = float(stats["FR_mean"])
-    fr_std = float(stats["FR_std"])
-
-    # Generate force
-    force_model = ForceModel(
-        recruitment_thresholds=recruitment_thresholds,
-        recording_frequency__Hz=RECORDING_FREQUENCY__HZ * pq.Hz,
-        longest_duration_rise_time__ms=LONGEST_DURATION_RISE_TIME__MS * pq.ms,
-        contraction_time_range_factor=CONTRACTION_TIME_RANGE,
-    )
-
-    force_output = force_model.generate_force(spike_train__Block=spike_train__Block)
-    force_raw = force_output.magnitude[:, 0]  # Arbitrary units (sum of MU twitches)
-
-    # Normalize force to 0-1 range, then scale to Newtons
-    # (ForceModel outputs sum of MU twitch forces, not normalized values)
-    force_max_raw = np.max(force_raw)
-    force_signal = (force_raw / force_max_raw) * MAX_FORCE_N  # Scale to Newtons
-
-    # Calculate steady-state force
-    steady_idx = len(force_signal) // 2
-    force_mean = np.mean(force_signal[steady_idx:])
-
-    return force_mean, n_active, fr_mean, fr_std
-
-
-##############################################################################
-# Define Objective Function
-# --------------------------
-
-# Generate recruitment thresholds
-recruitment_thresholds, _ = RecruitmentThresholds(
-    N=N_MOTOR_UNITS,
-    recruitment_range__ratio=100,
-    deluca__slope=5,
-    konstantin__max_threshold__ratio=1.0,
-    mode="combined",
-)
-
-
-def objective(trial):
-    """
-    Optimize DC offset to match reference force with oscillation.
-
-    Parameters
-    ----------
-    trial : optuna.Trial
-        Optimization trial
-
-    Returns
-    -------
-    float
-        Relative force error (minimize)
-    """
-    try:
-        # Optimize DC offset (will be lower than constant drive)
-        dc_offset = trial.suggest_float("dc_offset", 1.0, 100.0)
-
-        # Run simulation with oscillating drive
-        force_mean, n_active, fr_mean, fr_std = run_simulation_with_oscillating_drive(
-            dc_offset, recruitment_thresholds
-        )
-
-        # Check minimum recruitment
-        if n_active < 10:  # At least 1.25% of neurons
-            return 1000.0 + (10 - n_active) * 100.0
-
-        # Calculate relative error
-        force_error = abs(force_mean - TARGET_FORCE__N) / TARGET_FORCE__N
-
-        # Store metadata
-        trial.set_user_attr("force_achieved", float(force_mean))
-        trial.set_user_attr("force_error", float(force_error))
-        trial.set_user_attr("n_active", n_active)
-        trial.set_user_attr("dc_offset__Hz", float(dc_offset))
-        trial.set_user_attr("FR_mean", float(fr_mean))
-        trial.set_user_attr("FR_std", float(fr_std))
-
-        if trial.number % 5 == 0:
-            print(
-                f"Trial {trial.number}: "
-                f"Force={force_mean:.2f}N (target={TARGET_FORCE__N:.2f}N), "
-                f"Error={force_error:.1%}, "
-                f"DC={dc_offset:.1f}Hz, "
-                f"Active={n_active}/{N_MOTOR_UNITS}"
-            )
-
-        return force_error
-
-    except Exception as e:
-        print(f"Trial {trial.number} failed: {e}")
-        return 1000.0
-
-
-##############################################################################
-# Run Optimization
-# ----------------
+# Run Optimization (Parallel Workers)
+# ------------------------------------
+#
+# Each trial is a fully independent NEURON simulation (~80 s), so we fan out
+# across worker *processes*. NEURON's ``h`` object is a process-global singleton
+# and cannot be shared across threads. Workers are separate interpreter
+# processes (``_optimize_dc_worker.py``) — they do not re-import this gallery
+# file, avoiding the macOS ``spawn`` fork-bomb problem. All workers write to a
+# single shared SQLite Optuna study.
+#
+# Override the worker count via ``MYOGEN_OPTUNA_WORKERS`` (e.g. ``=1`` for
+# strictly sequential, or a small number on memory-constrained CI).
 
 print(f"\nOptimizing DC Offset to Match Reference Force (Oscillating Drive)")
 print("=" * 50)
@@ -378,16 +122,30 @@ print(f"Trials: {N_TRIALS}\n")
 
 colors = plt.rcParams["axes.prop_cycle"].by_key()["color"]
 
-storage_name = f"sqlite:///{RESULTS_DIR}/optuna_oscillating_dc.db"
 study = optuna.create_study(
     direction="minimize",
     sampler=optuna.samplers.TPESampler(seed=42),
-    study_name="dc_offset_oscillating_match",
-    storage=storage_name,
+    study_name=STUDY_NAME,
+    storage=make_storage(),
     load_if_exists=True,
 )
 
-study.optimize(objective, n_trials=N_TRIALS, timeout=TIMEOUT_SECONDS, show_progress_bar=True)
+n_workers = int(os.environ.get("MYOGEN_OPTUNA_WORKERS", min(8, N_TRIALS)))
+n_workers = max(1, min(n_workers, N_TRIALS))
+
+per_worker = [N_TRIALS // n_workers + (1 if i < N_TRIALS % n_workers else 0) for i in range(n_workers)]
+worker_script = str(Path(__file__).parent / "_optimize_dc_worker.py")
+print(f"Launching {n_workers} worker process(es): trial split {per_worker}")
+procs = [
+    subprocess.Popen([sys.executable, worker_script, "--n-trials", str(n), "--seed", str(42 + i)])
+    for i, n in enumerate(per_worker) if n > 0
+]
+exit_codes = [p.wait() for p in procs]
+if any(code != 0 for code in exit_codes):
+    raise RuntimeError(f"Optuna worker(s) failed with exit codes {exit_codes}")
+
+# Reload to see all trials written by the workers
+study = optuna.load_study(study_name=STUDY_NAME, storage=make_storage())
 
 ##############################################################################
 # Analyze Results
@@ -444,6 +202,7 @@ json_path = RESULTS_DIR / "dc_offset_optimized.json"
 with open(json_path, "w") as f:
     json.dump(results, f, indent=2)
 
+import joblib
 joblib.dump(study, RESULTS_DIR / "study_oscillating_dc.pkl")
 
 print(f"\nSaved results: {json_path}")
