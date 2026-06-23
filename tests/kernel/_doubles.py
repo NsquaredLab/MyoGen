@@ -34,3 +34,16 @@ class CountingBackend:
 
     def teardown(self) -> None:
         self.calls.append("teardown")
+
+
+class BackendStage:
+    """A Stage that delegates each step to a Backend (the seam pattern)."""
+
+    def __init__(self, backend):
+        self.backend = backend
+
+    def setup(self, state: SimState) -> None:
+        self.backend.init(state)
+
+    def step(self, state: SimState, t: int) -> None:
+        self.backend.advance(state, state.dt_s)
