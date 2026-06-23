@@ -49,6 +49,9 @@ theme:
 plugins:
   - search
   - section-index
+  - gallery:
+      conf_script: docs/gallery_conf.py
+      plot_gallery: !ENV [MKDOCS_GALLERY_PLOT, true]
   - mkdocstrings:
       handlers:
         python:
@@ -100,6 +103,10 @@ nav:
   - Home: index.md
   - Getting Started: getting-started.md
   - Neo blocks: neo-blocks.md
+  - Examples:
+      - Basics: auto_examples/01_basic/index.md
+      - Fine-tuning: auto_examples/02_finetune/index.md
+      - Watanabe (paper): auto_examples/03_papers/watanabe/index.md
   - API reference:
       - api/index.md
       - Top-level: api/myogen.md
