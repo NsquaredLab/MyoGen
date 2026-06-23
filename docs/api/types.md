@@ -27,3 +27,7 @@
         - SURFACE_EMG__Block
         - INTRAMUSCULAR_MUAP__Block
         - INTRAMUSCULAR_EMG__Block
+        - CORTICAL_INPUT__MATRIX
+        - RECRUITMENT_THRESHOLDS__ARRAY
+        - JOINT_ANGLE__ARRAY
+        - MOMENT_ARM__MATRIX

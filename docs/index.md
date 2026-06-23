@@ -35,3 +35,31 @@ configurable building blocks that can be combined and extended independently.
 Head to [Getting Started](getting-started.md) to install MyoGen and run your
 first simulation, browse the [Examples](auto_examples/01_basic/index.md)
 gallery, or dive into the [API Reference](api/index.md).
+
+## How to cite
+
+If you use MyoGen in your research, please cite:
+
+```bibtex
+@article{simpetru_molinari_2026_myogen,
+  title   = {MyoGen: Unified Biophysical Modeling of Human Neuromotor Activity and Resulting Signals},
+  author  = {S{\^i}mpetru, Raul C. and Molinari, Ricardo G. and Rohlf, Devon R. and
+             Batichotti, Rebeka L. and Watanabe, Renato N. and
+             Elias, Leonardo A. and Del Vecchio, Alessandro},
+  journal = {bioRxiv},
+  note    = {preprint},
+  year    = {2026},
+  doi     = {10.64898/2026.01.01.697284},
+  url     = {https://www.biorxiv.org/content/10.64898/2026.01.01.697284}
+}
+```
+
+## Contributing
+
+Contributions are welcome — see the
+[issue tracker](https://github.com/NsquaredLab/MyoGen/issues) to report a bug or
+propose a feature.
+
+## License
+
+MyoGen is released under the **AGPL-3.0-or-later** license.

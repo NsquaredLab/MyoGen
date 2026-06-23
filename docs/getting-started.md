@@ -98,6 +98,10 @@ surface_emg = simulator.SurfaceEMG(
     sampling_frequency__Hz=2048.0,
     MUs_to_simulate=[0, 1, 2, 3, 4],
 )
+
+# 5. Simulate MUAPs and access the results
+muaps = surface_emg.simulate_muaps()          # neo.Block of MUAP templates
+first_mu = muaps.segments[0].analogsignals[0]  # everything is inspectable
 ```
 
 For the full pipeline — spike trains, force, intramuscular EMG, spinal networks

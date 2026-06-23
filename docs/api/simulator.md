@@ -32,3 +32,8 @@
 ::: myogen.simulator.SpindleModel
 ::: myogen.simulator.GolgiTendonOrganModel
 ::: myogen.simulator.JointDynamics
+
+## Geometry & biomechanics
+::: myogen.simulator.MuscleGeometry
+::: myogen.simulator.JointGeometry
+::: myogen.simulator.JointBiomechanics
