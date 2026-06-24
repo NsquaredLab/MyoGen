@@ -1,6 +1,6 @@
 """
-Spinal Network Simulation with Systematic Tendon Tap Protocol
-==============================================================
+Spinal Network & Tendon Tap
+===========================
 
 This example demonstrates **complete spinal reflex network modeling** with a **comprehensive tendon tap
 protocol** that systematically varies mechanical perturbations, fusimotor drive, and cortical activity.
