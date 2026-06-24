@@ -3,7 +3,7 @@ Calibrate the Noise Profile from a Real Recording
 =================================================
 
 This example takes a real iEMG recording, derives a device-matched
-noise profile with :func:`myogen.utils.calibrate_realistic_noise_profile`,
+noise profile with `myogen.utils.calibrate_realistic_noise_profile`,
 then generates simulated noise with the derived parameters and overlays
 the real and simulated PSDs in a single figure so the match is
 visually verifiable.
@@ -21,10 +21,10 @@ The derived dict can be unpacked directly into the simulator via::
 
     iemg.add_noise(snr__dB=20.0, noise_type="realistic", **profile)
 
-.. note::
-    This example expects a MAT v7.3 file with an ``EMGSIGNAL`` struct
-    (``data`` shape ``(n_channels, n_samples)``, ``rate`` in Hz) and a
-    ``target_signal`` (drive envelope, ``0`` = rest). Adjust the
+!!! note
+    This example expects a MAT v7.3 file with an `EMGSIGNAL` struct
+    (`data` shape `(n_channels, n_samples)`, `rate` in Hz) and a
+    `target_signal` (drive envelope, `0` = rest). Adjust the
     loader for other formats — only the µV array + sample rate
     + optional rest mask actually feed the calibration.
 """

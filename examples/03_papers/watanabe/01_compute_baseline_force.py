@@ -5,7 +5,7 @@ Compute Reference Force with Constant Drive
 This example computes the reference muscle force using constant descending drive.
 This force is used as the target for optimizing the oscillating drive DC offset in Phase 3.
 
-.. note::
+!!! note
     **Purpose**: Establish force baseline using Watanabe network parameters
 
     - 800 motor neurons
@@ -20,24 +20,24 @@ This force is used as the target for optimizing the oscillating drive DC offset 
 
 **MyoGen Components Used**:
 
-- :class:`~myogen.simulator.neuron.populations.AlphaMN__Pool`:
+- `AlphaMN__Pool`:
   Pool of 800 alpha motor neurons with exponentially distributed recruitment thresholds.
   Each neuron is a biophysically detailed NEURON model with soma, dendrites, and ion channels.
 
-- :class:`~myogen.simulator.neuron.populations.DescendingDrive__Pool`:
+- `DescendingDrive__Pool`:
   Pool of 400 "descending drive" neurons that generate Poisson spike trains.
   These represent cortical/brainstem input to motor neurons.
   ``poisson_batch_size=1`` creates order-1 (renewal) Poisson processes.
 
-- :class:`~myogen.simulator.Network`:
+- `Network`:
   Container that manages populations and synaptic connections between them.
   Supports probabilistic connectivity (``connect()``) and external input (``connect_from_external()``).
 
-- :class:`~myogen.simulator.RecruitmentThresholds`:
+- `RecruitmentThresholds`:
   Generates recruitment threshold distribution following Fuglevand/DeLuca models.
   The ``mode="combined"`` blends exponential and linear distributions.
 
-- :class:`~myogen.simulator.core.force.force_model.ForceModel`:
+- `ForceModel`:
   Converts motor neuron spike trains to muscle force using Fuglevand's twitch model.
   Each motor unit has amplitude and contraction time determined by recruitment threshold.
 

@@ -25,7 +25,7 @@ Prerequisites
 
 This example requires an NWB file from example 11 (``spinal_network_results.nwb``).
 
-.. note::
+!!! note
     If you haven't run example 11, this example will create a minimal
     NWB file for demonstration purposes.
 """

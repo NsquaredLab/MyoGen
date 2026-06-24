@@ -4,7 +4,7 @@ Surface EMG Signals
 
 After having created the **MUAPs**, we can finally simulate the **surface EMG** by creating a **surface EMG model**.
 
-.. note::
+!!! note
     The **surface EMG** signals are the **summation** of the **MUAPs** at the surface of the skin.
 
     In **Myogen**, we can simulate the **surface EMG** by convolving the **MUAPs** with the **spike trains** of the **motor units**.
@@ -66,12 +66,12 @@ joblib.dump(surface_emg_signals, save_path / "surface_emg_signals.pkl")
 # Visualize Surface EMG Results
 # -----------------------------
 #
-# .. note::
-#   Since **MyoGen** is a simulator, the results will have no real-world noise.
+# !!! note
+#     Since **MyoGen** is a simulator, the results will have no real-world noise.
 #
-#   We can add noise to the **surface EMG** signals to make them more realistic.
+#     We can add noise to the **surface EMG** signals to make them more realistic.
 #
-#   For this the method ``add_noise`` is used.
+#     For this the method `add_noise` is used.
 
 noisy_surface_emg__Block = surface_emg.add_noise(snr__dB=5.0)
 

@@ -6,7 +6,7 @@ This example demonstrates **force computation** using the optimized network para
 previous optimization study. It shows how to load saved parameters, run a simulation with those
 settings, and generate realistic force output from motor neuron spike trains.
 
-.. note::
+!!! note
     **Force generation workflow**:
 
     1. Load optimized DD parameters (neurons, connectivity, drive frequency)
@@ -15,11 +15,11 @@ settings, and generate realistic force output from motor neuron spike trains.
     4. Convert spike trains to muscle force using twitch dynamics
     5. Validate force characteristics (mean, variability, smoothness)
 
-.. important::
+!!! important
     **Prerequisites**: This example requires results from the optimization study:
 
-    - Run ``01_optimize_dd_for_target_firing_rate.py`` first
-    - Generates ``dd_optimized_params.json`` in ``results/dd_optimization/``
+    - Run `01_optimize_dd_for_target_firing_rate.py` first
+    - Generates `dd_optimized_params.json` in `results/dd_optimization/`
     - Contains best network parameters for target firing rate
 
 **Force Model**: Uses physiologically accurate motor unit twitch dynamics with:
@@ -294,13 +294,13 @@ print(f"  Coefficient of variation: {fr_std / fr_mean:.3f}\n")
 #
 # Convert spike trains to muscle force using motor unit twitch dynamics.
 #
-# .. note::
-#    The **ForceModel** implements:
+# !!! note
+#     The **ForceModel** implements:
 #
-#    - Size-dependent twitch rise times (Henneman's principle)
-#    - Nonlinear force summation during repetitive activation
-#    - Realistic contraction-relaxation dynamics
-#    - Physiologically validated parameter ranges
+#     - Size-dependent twitch rise times (Henneman's principle)
+#     - Nonlinear force summation during repetitive activation
+#     - Realistic contraction-relaxation dynamics
+#     - Physiologically validated parameter ranges
 
 force_model = ForceModel(
     recruitment_thresholds=recruitment_thresholds,

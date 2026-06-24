@@ -6,7 +6,7 @@ This example generates **publication-quality figures** for the Watanabe and Kohn
 spinal network model reproduction. It creates comprehensive visualizations including
 coherence analysis, force timeseries, and detailed raster plots.
 
-.. note::
+!!! note
     **Visualization pipeline**:
 
     1. Load simulation parameters and results from previous scripts
@@ -15,12 +15,12 @@ coherence analysis, force timeseries, and detailed raster plots.
     4. Create full-duration raster plot with adaptive zoom insets
     5. Save all figures in PDF format for publication
 
-.. important::
+!!! important
     **Prerequisites**: This example requires outputs from:
 
-    - ``03_10pct_mvc_simulation.py``: Simulation parameters and results
-    - ``04_load_and_analyze_results.py``: NEO-formatted data blocks
-    - ``05_compute_force_from_spinal_network.py``: Force model output (``watanabe__force_results.pkl``)
+    - `03_10pct_mvc_simulation.py`: Simulation parameters and results
+    - `04_load_and_analyze_results.py`: NEO-formatted data blocks
+    - `05_compute_force_from_spinal_network.py`: Force model output (`watanabe__force_results.pkl`)
 
 **Key Features**:
 

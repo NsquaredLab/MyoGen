@@ -6,7 +6,7 @@ This example demonstrates **spike train analysis** using optimized descending dr
 from previous optimization studies. It extracts inter-spike interval (ISI) and coefficient of
 variation (CV) statistics during realistic trapezoidal contraction patterns.
 
-.. note::
+!!! note
     **Analysis workflow**:
 
     1. Load optimized DD parameters from baseline or force-specific optimization
@@ -15,11 +15,11 @@ variation (CV) statistics during realistic trapezoidal contraction patterns.
     4. Extract ISI/CV statistics during plateau phase
     5. Visualize firing patterns and instantaneous discharge rates
 
-.. important::
+!!! important
     **Prerequisites**: This example requires results from previous optimizations:
 
-    - **Baseline mode**: Run ``01_optimize_dd_for_target_firing_rate.py`` first
-    - **Force mode**: Run ``02_optimize_dd_for_target_force.py`` for specific MVC level
+    - **Baseline mode**: Run `01_optimize_dd_for_target_firing_rate.py` first
+    - **Force mode**: Run `02_optimize_dd_for_target_force.py` for specific MVC level
     - Loads network structure and drive parameters from saved results
 
 **Trapezoidal Contraction**: Simulates realistic voluntary isometric contractions with:

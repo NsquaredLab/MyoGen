@@ -9,32 +9,32 @@ The drive pattern is: `DC_offset + 20*sin(2π*20*t)`.
 This finds the equivalent of the original 58 pps value (Phase 3) that produces the same
 force as constant drive (Phase 1) when combined with 20 Hz oscillation.
 
-.. note::
+!!! note
     **Purpose**: Find DC offset for Phase 3 that matches Phase 1 force
 
     - Reference: Constant drive force from script 01 (configurable, default 40 Hz)
     - Optimize: DC offset + 20 Hz oscillation to match that force
     - Result: DC offset < constant drive (oscillation adds activation)
 
-.. important::
-    **Prerequisites**: Run ``01_compute_baseline_force.py`` first
+!!! important
+    **Prerequisites**: Run `01_compute_baseline_force.py` first
 
 **Output**: ``results/watanabe_optimization/dc_offset_optimized.json``
 
 **MyoGen Components Used**:
 
-- :class:`~myogen.simulator.neuron.populations.AlphaMN__Pool`:
+- `AlphaMN__Pool`:
   Same motor neuron pool as script 01. Created fresh for each optimization trial
   to ensure independent network realizations.
 
-- :class:`~myogen.simulator.neuron.populations.DescendingDrive__Pool`:
+- `DescendingDrive__Pool`:
   Poisson spike generators driven by time-varying rate: ``DC_offset + amplitude*sin(2πft)``.
   The ``integrate()`` method advances the internal Poisson process by one timestep.
 
-- :class:`~myogen.simulator.Network`:
+- `Network`:
   Rebuilds the network for each trial with same connectivity parameters (30%).
 
-- :class:`~myogen.simulator.core.force.force_model.ForceModel`:
+- `ForceModel`:
   Computes steady-state force from spike trains to evaluate objective function.
 
 - **External dependency**: ``optuna`` for Bayesian optimization (TPE sampler).

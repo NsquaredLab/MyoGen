@@ -55,11 +55,11 @@ muscle: simulator.Muscle = joblib.load(save_path / "muscle_model.pkl")
 #
 # The **SurfaceEMG** object is initialized with the **muscle model**, the **electrode array**, and the **simulation parameters**.
 #
-# .. note::
-#    For simplicity, we only simulate the first motor unit.
-#    This can be changed by modifying the ``MUs_to_simulate`` parameter.
+# !!! note
+#     For simplicity, we only simulate the first motor unit.
+#     This can be changed by modifying the `MUs_to_simulate` parameter.
 #
-#   This is to simulate the **surface EMG** from two different directions.
+#     This is to simulate the **surface EMG** from two different directions.
 #
 
 electrode_array_monopolar = simulator.SurfaceElectrodeArray(

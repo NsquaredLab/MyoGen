@@ -6,7 +6,7 @@ This example demonstrates how to simulate **intramuscular EMG signals** using
 needle electrodes. It shows the complete pipeline from muscle model creation
 to EMG signal generation with realistic noise and motor unit detectability.
 
-.. note::
+!!! note
     **Intramuscular EMG** (iEMG) is recorded using needle electrodes inserted
     directly into the muscle tissue. This provides high spatial resolution
     and allows for the detection of individual motor unit action potentials
@@ -185,10 +185,10 @@ print(f"\tSignal RMS (after noise): {np.sqrt(np.mean(first_noisy_signal.magnitud
 #
 # Compare the **intramuscular EMG** signal with the input current.
 #
-# .. note::
-#   In this example, only **three motor units** (small, medium, large) contribute
-#   to the EMG signal. This demonstrates how individual MUAPs sum to create the
-#   composite EMG signal, and how different motor unit sizes affect signal amplitude.
+# !!! note
+#     In this example, only **three motor units** (small, medium, large) contribute
+#     to the EMG signal. This demonstrates how individual MUAPs sum to create the
+#     composite EMG signal, and how different motor unit sizes affect signal amplitude.
 
 plt.figure(figsize=(12, 6))
 

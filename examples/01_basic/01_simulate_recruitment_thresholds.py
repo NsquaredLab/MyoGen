@@ -4,10 +4,10 @@ Recruitment Thresholds
 
 The first step in using **MyoGen** is to generate the **recruitment thresholds** of the **motor units** (MUs).
 
-.. note::
+!!! note
     A **recruitment threshold** is the minimum force required to activate a MU.
 
-    In **MyoGen**, the threshold is defined between ``0`` and ``1``, where ``0`` is the minimum force required to activate a MU and ``1`` is the maximum force required to activate a MU.
+    In **MyoGen**, the threshold is defined between `0` and `1`, where `0` is the minimum force required to activate a MU and `1` is the maximum force required to activate a MU.
 
 **MyoGen** offers **4 different models** to generate the recruitment thresholds:
 
@@ -38,9 +38,9 @@ plt.style.use("fivethirtyeight")
 # - ``N``: Number of motor units in the pool
 # - ``recruitment_range``: Recruitment range (max_threshold / min_threshold)
 #
-# .. note::
-#    The **recruitment_range** is defined as the ratio between the ``maximum`` and ``minimum`` recruitment thresholds.
-#    For example, if the **recruitment_range** is ``50``, the biggest MU will have a **recruitment threshold** ``50`` times bigger than the smallest MU.
+# !!! note
+#     The **recruitment_range** is defined as the ratio between the `maximum` and `minimum` recruitment thresholds.
+#     For example, if the **recruitment_range** is `50`, the biggest MU will have a **recruitment threshold** `50` times bigger than the smallest MU.
 
 n_motor_units = 100  # Number of motor units in the pool
 recruitment_range = 100  # Recruitment range (max_threshold / min_threshold)
@@ -58,12 +58,12 @@ save_path.mkdir(exist_ok=True)
 #
 # **No additional parameters needed** - only requires the common parameters.
 #
-# .. important::
-#    **MyoGen** is intended to be used with the following API:
+# !!! important
+#     **MyoGen** is intended to be used with the following API:
 #
-#    .. code-block:: python
-#
-#       from myogen import simulator
+#     ```python
+#     from myogen import simulator
+#     ```
 
 rt_fuglevand, _ = simulator.RecruitmentThresholds(
     N=n_motor_units, recruitment_range__ratio=recruitment_range, mode="fuglevand"
@@ -167,8 +167,8 @@ plt.show()
 # Save Recruitment Thresholds
 # ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 #
-# .. note::
-#    All **MyoGen** objects can be saved to a file using ``joblib``. This is useful to **avoid re-running expensive simulations** if you need to use the same parameters.
+# !!! note
+#     All **MyoGen** objects can be saved to a file using `joblib`. This is useful to **avoid re-running expensive simulations** if you need to use the same parameters.
 
 joblib.dump(combined_results[5], save_path / "thresholds.pkl")
 

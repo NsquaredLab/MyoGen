@@ -60,10 +60,10 @@ grid_resolution = 256  # Spatial resolution for muscle discretization
 # Create Muscle Model
 # -------------------
 #
-# .. note::
-#    Depending on the parameters, the simulation can take a few minutes to run.
+# !!! note
+#     Depending on the parameters, the simulation can take a few minutes to run.
 #
-#    To **avoid running the simulation every time**, we can save the muscle model using ``joblib``.
+#     To **avoid running the simulation every time**, we can save the muscle model using `joblib`.
 
 # Create muscle model
 muscle = simulator.Muscle(
@@ -91,9 +91,9 @@ print(f"\tMuscle cross-sectional area: {np.pi * muscle_radius**2:.1f}")
 #
 # The **fiber centers** are the centers of the fibers that are innervated by the motor units.
 #
-# .. note::
-#    The **fiber centers** have been precalculated from a Voronoi tessellation of the muscle volume.
-#    Then depending on the **fiber density**, the **fiber centers** are distributed within the muscle volume.
+# !!! note
+#     The **fiber centers** have been precalculated from a Voronoi tessellation of the muscle volume.
+#     Then depending on the **fiber density**, the **fiber centers** are distributed within the muscle volume.
 
 plt.figure(figsize=(6, 6))
 
@@ -112,9 +112,9 @@ plt.show()
 #
 # Display the spatial organization of motor units and their innervation areas.
 #
-# .. note::
-#    The **innervation areas** are the areas where the motor units are innervated.
-#    They are calculated using the **recruitment thresholds** and the **fiber density**.
+# !!! note
+#     The **innervation areas** are the areas where the motor units are innervated.
+#     They are calculated using the **recruitment thresholds** and the **fiber density**.
 
 plt.figure(figsize=(6, 6))
 

@@ -46,7 +46,7 @@ This example teaches the following key concepts in neuromuscular control:
 - Repeat gamma drive pattern (0→25→50→75→100 pps)
 - Sinusoidal cortical drive (38±1 Hz at 1 Hz) recruiting ~75% of motor neurons
 
-.. note::
+!!! note
     This example builds upon all previous examples and demonstrates how the complete neuromuscular system
     functions as an integrated network:
 
@@ -57,7 +57,7 @@ This example teaches the following key concepts in neuromuscular control:
     - **Joint dynamics**: Closed-loop biomechanical control with realistic inertia and damping
     - **Descending drive**: Cortical control signals for voluntary movement (from example 01)
 
-.. important::
+!!! important
     **Spinal Reflex Networks** are the fundamental control circuits that coordinate muscle activity.
     Key physiological concepts demonstrated:
 

@@ -6,7 +6,7 @@ This example demonstrates **force-level optimization** by tuning descending driv
 to achieve specific muscle force outputs. Unlike firing rate optimization (example 01), this
 approach targets biomechanically relevant force production.
 
-.. note::
+!!! note
     **Force-based optimization workflow**:
 
     1. Load baseline force from previous optimization (example 01)
@@ -14,11 +14,11 @@ approach targets biomechanically relevant force production.
     3. Optimize DD drive frequency to match target force
     4. Keep network structure fixed (neurons, connectivity from baseline)
 
-.. important::
+!!! important
     **Prerequisites**: This example requires results from previous examples:
 
-    - Run ``01_optimize_dd_for_target_firing_rate.py`` first
-    - Run ``02_compute_force_from_optimized_dd.py`` second
+    - Run `01_optimize_dd_for_target_firing_rate.py` first
+    - Run `02_compute_force_from_optimized_dd.py` second
     - Generates baseline force measurements needed here
 
 **Optimization Strategy**: We optimize only the DD drive frequency while keeping the network

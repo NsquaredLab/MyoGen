@@ -6,7 +6,7 @@ This example demonstrates **realistic spike train simulation** using **sinusoida
 instead of direct current injection. This approach provides more physiologically accurate motor control
 patterns by modeling cortical input through descending drive populations.
 
-.. note::
+!!! note
     This example bridges the gap between simple current injection (example 02) and full spinal network
     simulation (11_simulate_spinal_network.py). It uses:
 
@@ -15,7 +15,7 @@ patterns by modeling cortical input through descending drive populations.
     - **Network**: Synaptic connections between DD and motor neuron populations
     - **Sinusoidal patterns**: Smooth, physiologically relevant input at 0.5-2 Hz
 
-.. important::
+!!! important
     **Descending Drive (DD)** refers to the cortical and subcortical neural pathways that provide
     voluntary motor commands to spinal motor neurons. This is more realistic than direct current
     injection because it models the actual synaptic input patterns from upper motor neurons.
@@ -27,23 +27,23 @@ patterns by modeling cortical input through descending drive populations.
 # Import Libraries
 # ----------------
 #
-# .. important::
-#    In **MyoGen** all **random number generation** is handled by the RNG returned from
-#    ``get_random_generator()``, a thin wrapper around ``numpy.random``.
+# !!! important
+#     In **MyoGen** all **random number generation** is handled by the RNG returned from
+#     `get_random_generator()`, a thin wrapper around `numpy.random`.
 #
-#    Always fetch the generator at the call site so the current seed is honored:
+#     Always fetch the generator at the call site so the current seed is honored:
 #
-#    .. code-block:: python
+#     ```python
+#     from myogen import simulator, get_random_generator
+#     get_random_generator().normal(0, 1)
+#     ```
 #
-#       from myogen import simulator, get_random_generator
-#       get_random_generator().normal(0, 1)
+#     To change the seed, use `set_random_seed`:
 #
-#    To change the seed, use ``set_random_seed``:
-#
-#    .. code-block:: python
-#
-#       from myogen import set_random_seed
-#       set_random_seed(42)
+#     ```python
+#     from myogen import set_random_seed
+#     set_random_seed(42)
+#     ```
 
 # %%
 
@@ -95,8 +95,9 @@ def population_psth(spiketrains, bin_size):
 #
 # We also create a **DescendingDrive__Pool** to represent the cortical input.
 #
-# .. note:: These neurons are modeled as Poisson point processes to convert the smooth input signal into realistic
-# spike patterns that represent cortical input to the spinal cord.
+# !!! note
+#     These neurons are modeled as Poisson point processes to convert the smooth input signal into realistic
+#     spike patterns that represent cortical input to the spinal cord.
 #
 
 load_nmodl_mechanisms()
