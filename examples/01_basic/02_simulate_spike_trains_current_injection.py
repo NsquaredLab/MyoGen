@@ -403,3 +403,5 @@ axhisty.set_position(
 )
 
 plt.show()
+
+# mkdocs_gallery_thumbnail_path = "gallery_thumbs/02_simulate_spike_trains_current_injection.png"

@@ -437,3 +437,5 @@ for ax in axes[:2]:
 plt.tight_layout()
 plt.savefig(OUTPUT_DIR / "force_validation.png", dpi=150, bbox_inches="tight")
 plt.show()
+
+# mkdocs_gallery_thumbnail_path = "gallery_thumbs/02_compute_force_from_optimized_dd.png"

@@ -292,3 +292,5 @@ print(f"Original Watanabe: 65 Hz constant → 58 Hz + oscillation (ratio: {58 / 
 print(
     f"This implementation: {REFERENCE_DRIVE__HZ:.1f} Hz constant → {best_trial.user_attrs['dc_offset__Hz']:.1f} Hz + oscillation (ratio: {best_trial.user_attrs['dc_offset__Hz'] / REFERENCE_DRIVE__HZ:.3f})"
 )
+
+# mkdocs_gallery_thumbnail_path = "gallery_thumbs/02_optimize_oscillating_dc.png"

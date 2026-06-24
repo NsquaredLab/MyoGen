@@ -671,3 +671,5 @@ plt.savefig(discharge_plot_path, dpi=150, bbox_inches="tight")
 plt.show()
 
 print(f"\nSaved discharge rate plot to: {discharge_plot_path}")
+
+# mkdocs_gallery_thumbnail_path = "gallery_thumbs/04_extract_isi_and_cv_per_ramps.png"

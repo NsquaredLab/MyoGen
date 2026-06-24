@@ -167,3 +167,5 @@ for muap_index in range(len(muaps.groups[0].segments)):
 
     plt.tight_layout()
     plt.show()
+
+# mkdocs_gallery_thumbnail_path = "gallery_thumbs/05_simulate_surface_muaps.png"

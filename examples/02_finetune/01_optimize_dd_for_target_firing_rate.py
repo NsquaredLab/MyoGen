@@ -571,3 +571,5 @@ plt.show()
 print("\n[DONE] Optimization complete!")
 print(f"Best parameters saved to: {json_path}")
 print(f"Full study saved to: {RESULTS_DIR / 'study.pkl'}")
+
+# mkdocs_gallery_thumbnail_path = "gallery_thumbs/01_optimize_dd_for_target_firing_rate.png"

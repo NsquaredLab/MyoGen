@@ -244,3 +244,5 @@ ax2.grid(True, alpha=0.3)
 
 plt.tight_layout()
 plt.show()
+
+# mkdocs_gallery_thumbnail_path = "gallery_thumbs/08_simulate_force.png"

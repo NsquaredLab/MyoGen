@@ -567,3 +567,5 @@ plt.tight_layout()
 plt.show()
 
 print("\n[DONE] Simulation complete with individual neuron noise and discharge rate analysis!")
+
+# mkdocs_gallery_thumbnail_path = "gallery_thumbs/03_simulate_spike_trains_descending_drive.png"

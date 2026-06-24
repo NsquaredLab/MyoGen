@@ -433,3 +433,5 @@ if "intramuscular_emg" in available_files:
         plt.tight_layout()
         plt.savefig(save_path / "intramuscular_emg_analysis.png", dpi=150)
         print(f"\nSaved EMG analysis to: {save_path / 'intramuscular_emg_analysis.png'}")
+
+# mkdocs_gallery_thumbnail_path = "gallery_thumbs/12_extract_data_from_neo_blocks.png"

@@ -49,6 +49,10 @@ conf = {
     "ignore_pattern": r"(14_calibrate_noise_from_real|_oscillating_dc_helpers|_optimize_dc_worker)\.py",
     "within_subsection_order": FileNameSortKey,
     "image_scrapers": ("matplotlib",),
+    # strip the `# mkdocs_gallery_thumbnail_path = ...` directives from rendered source
+    "remove_config_comments": True,
+    # fallback thumbnail for examples without a captured figure (logo)
+    "default_thumb_file": str(_ROOT / "docs" / "images" / "myogen_logo.png"),
     "reset_modules": (reset_neuron,),
     # Source-only by default; overridden from properdocs.yml via MKDOCS_GALLERY_PLOT.
     "plot_gallery": False,

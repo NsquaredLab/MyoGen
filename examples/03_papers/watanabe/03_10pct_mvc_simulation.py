@@ -516,3 +516,5 @@ print(f"  Spikes: {save_path / 'watanabe_spikes.pkl'}")
 print(f"\nPhase 1 constant drive: {DD_DRIVE_CONSTANT:.2f} Hz")
 print(f"Phase 3 DC offset: {DC_OFFSET_OPTIMIZED:.2f} Hz (optimized to match Phase 1 force)")
 print(f"Ratio: {DC_OFFSET_OPTIMIZED / DD_DRIVE_CONSTANT:.3f} (Watanabe: {58 / 65:.3f})")
+
+# mkdocs_gallery_thumbnail_path = "gallery_thumbs/03_10pct_mvc_simulation.png"

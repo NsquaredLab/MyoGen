@@ -807,3 +807,5 @@ print(f"\n{'=' * 80}")
 print(f"Total motor units plotted: {total_motor_units}")
 print(f"Total muscle types: {len(all_muscle_data)}")
 print("=" * 80)
+
+# mkdocs_gallery_thumbnail_path = "gallery_thumbs/05_plot_isi_cv_multi_muscle_comparison.png"

@@ -556,3 +556,5 @@ for zoom_idx, (t_start_zoom, t_stop_zoom) in enumerate(zoom_windows):
 plt.tight_layout()
 plt.savefig(watanabe_plots_dir / "watanabe_raster_full_duration.pdf", dpi=300, bbox_inches="tight")
 plt.show()
+
+# mkdocs_gallery_thumbnail_path = "gallery_thumbs/06_visualize.png"

@@ -353,3 +353,5 @@ print("\nSaving NEO Block for future use...")
 neo_output_path = chunks_path.parent / "watanabe_results_neo.pkl"
 joblib.dump(results, neo_output_path, compress=0)  # No compression = faster
 print(f"(OK) NEO Block saved to: {neo_output_path}")
+
+# mkdocs_gallery_thumbnail_path = "gallery_thumbs/04_load_and_analyze_results.png"

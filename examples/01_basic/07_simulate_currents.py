@@ -222,3 +222,5 @@ axes[-1].set_xlabel("Time (ms)")
 fig.suptitle("Trapezoid Currents")
 plt.tight_layout()
 plt.show()
+
+# mkdocs_gallery_thumbnail_path = "gallery_thumbs/07_simulate_currents.png"

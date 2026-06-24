@@ -513,3 +513,5 @@ plt.savefig(
     bbox_inches="tight",
 )
 plt.show()
+
+# mkdocs_gallery_thumbnail_path = "gallery_thumbs/03_optimize_dd_for_target_force.png"

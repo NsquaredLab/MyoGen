@@ -970,3 +970,5 @@ plot_gto_dynamics(
 plt.tight_layout()
 plt.savefig(save_path / "gto_dynamics.png", dpi=150, bbox_inches="tight")
 plt.show()
+
+# mkdocs_gallery_thumbnail_path = "gallery_thumbs/11_simulate_spinal_network.png"

@@ -171,3 +171,5 @@ plt.show()
 #    All **MyoGen** objects can be saved to a file using ``joblib``. This is useful to **avoid re-running expensive simulations** if you need to use the same parameters.
 
 joblib.dump(combined_results[5], save_path / "thresholds.pkl")
+
+# mkdocs_gallery_thumbnail_path = "gallery_thumbs/01_simulate_recruitment_thresholds.png"

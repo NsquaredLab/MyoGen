@@ -126,3 +126,5 @@ plt.grid(False)
 
 plt.tight_layout()
 plt.show()
+
+# mkdocs_gallery_thumbnail_path = "gallery_thumbs/04_simulate_muscle.png"

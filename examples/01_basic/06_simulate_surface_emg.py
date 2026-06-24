@@ -120,3 +120,5 @@ plt.title("Surface EMG\nand Input Current")
 
 plt.tight_layout()
 plt.show()
+
+# mkdocs_gallery_thumbnail_path = "gallery_thumbs/06_simulate_surface_emg.png"

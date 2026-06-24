@@ -216,3 +216,5 @@ plt.legend()
 
 plt.tight_layout()
 plt.show()
+
+# mkdocs_gallery_thumbnail_path = "gallery_thumbs/09_simulate_intramuscular_emg.png"
