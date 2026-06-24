@@ -20,24 +20,24 @@ This force is used as the target for optimizing the oscillating drive DC offset 
 
 **MyoGen Components Used**:
 
-- `AlphaMN__Pool`:
+- [`AlphaMN__Pool`][myogen.simulator.neuron.populations.AlphaMN__Pool]:
   Pool of 800 alpha motor neurons with exponentially distributed recruitment thresholds.
   Each neuron is a biophysically detailed NEURON model with soma, dendrites, and ion channels.
 
-- `DescendingDrive__Pool`:
+- [`DescendingDrive__Pool`][myogen.simulator.neuron.populations.DescendingDrive__Pool]:
   Pool of 400 "descending drive" neurons that generate Poisson spike trains.
   These represent cortical/brainstem input to motor neurons.
   ``poisson_batch_size=1`` creates order-1 (renewal) Poisson processes.
 
-- `Network`:
+- [`Network`][myogen.simulator.Network]:
   Container that manages populations and synaptic connections between them.
   Supports probabilistic connectivity (``connect()``) and external input (``connect_from_external()``).
 
-- `RecruitmentThresholds`:
+- [`RecruitmentThresholds`][myogen.simulator.RecruitmentThresholds]:
   Generates recruitment threshold distribution following Fuglevand/DeLuca models.
   The ``mode="combined"`` blends exponential and linear distributions.
 
-- `ForceModel`:
+- [`ForceModel`][myogen.simulator.ForceModel]:
   Converts motor neuron spike trains to muscle force using Fuglevand's twitch model.
   Each motor unit has amplitude and contraction time determined by recruitment threshold.
 

@@ -23,18 +23,18 @@ force as constant drive (Phase 1) when combined with 20 Hz oscillation.
 
 **MyoGen Components Used**:
 
-- `AlphaMN__Pool`:
+- [`AlphaMN__Pool`][myogen.simulator.neuron.populations.AlphaMN__Pool]:
   Same motor neuron pool as script 01. Created fresh for each optimization trial
   to ensure independent network realizations.
 
-- `DescendingDrive__Pool`:
+- [`DescendingDrive__Pool`][myogen.simulator.neuron.populations.DescendingDrive__Pool]:
   Poisson spike generators driven by time-varying rate: ``DC_offset + amplitude*sin(2πft)``.
   The ``integrate()`` method advances the internal Poisson process by one timestep.
 
-- `Network`:
+- [`Network`][myogen.simulator.Network]:
   Rebuilds the network for each trial with same connectivity parameters (30%).
 
-- `ForceModel`:
+- [`ForceModel`][myogen.simulator.ForceModel]:
   Computes steady-state force from spike trains to evaluate objective function.
 
 - **External dependency**: ``optuna`` for Bayesian optimization (TPE sampler).

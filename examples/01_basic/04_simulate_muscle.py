@@ -29,7 +29,7 @@ plt.style.use("fivethirtyeight")
 # Define Parameters
 # -----------------
 #
-# The **muscle model** is created using the **Muscle** object.
+# The **muscle model** is created using the [`Muscle`][myogen.simulator.Muscle] object.
 #
 # The **Muscle** object takes the following parameters:
 #

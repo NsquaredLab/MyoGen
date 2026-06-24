@@ -33,7 +33,7 @@ force output using the Fuglevand force model with batched processing for memory 
 
 **MyoGen Components Used**:
 
-- `ForceModel`:
+- [`ForceModel`][myogen.simulator.ForceModel]:
   The Fuglevand force model converts spike trains to muscle force. Key parameters:
 
   - ``recruitment_thresholds``: Determines each motor unit's twitch amplitude
@@ -45,7 +45,7 @@ force output using the Fuglevand force model with batched processing for memory 
   The model generates a normalized twitch waveform for each motor unit, then
   convolves it with the spike train to produce force contributions.
 
-- `RecruitmentThresholds`:
+- [`RecruitmentThresholds`][myogen.simulator.RecruitmentThresholds]:
   Same thresholds used during simulation - ensures force model matches network.
 
 **How Force Generation Works**:

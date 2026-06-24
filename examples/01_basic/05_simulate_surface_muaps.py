@@ -26,7 +26,7 @@ plt.style.use("fivethirtyeight")
 # Define Parameters
 # -----------------
 #
-# The **surface EMG** is created using the **SurfaceEMG** object.
+# The **surface EMG** is created using the [`SurfaceEMG`][myogen.simulator.SurfaceEMG] object.
 #
 # The **SurfaceEMG** object takes the following parameters:
 #
@@ -53,7 +53,7 @@ muscle: simulator.Muscle = joblib.load(save_path / "muscle_model.pkl")
 # Create Surface EMG Model
 # -------------------------
 #
-# The **SurfaceEMG** object is initialized with the **muscle model**, the **electrode array**, and the **simulation parameters**.
+# The **SurfaceEMG** object is initialized with the **muscle model**, the [`SurfaceElectrodeArray`][myogen.simulator.SurfaceElectrodeArray], and the **simulation parameters**.
 #
 # !!! note
 #     For simplicity, we only simulate the first motor unit.

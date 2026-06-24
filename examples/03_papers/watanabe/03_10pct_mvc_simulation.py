@@ -26,11 +26,11 @@ Phase 1 (e.g., 58 < 65) because oscillation contributes additional activation.
 
 **MyoGen Components Used**:
 
-- `AlphaMN__Pool`:
+- [`AlphaMN__Pool`][myogen.simulator.neuron.populations.AlphaMN__Pool]:
   Pool of 800 motor neurons. Created from recruitment thresholds that determine
   each unit's excitability and force contribution.
 
-- `DescendingDrive__Pool`:
+- [`DescendingDrive__Pool`][myogen.simulator.neuron.populations.DescendingDrive__Pool]:
   Two separate pools are used here:
 
   1. **DD (Descending Drive)**: 400 neurons with *shared* input to motor neurons
@@ -38,18 +38,18 @@ Phase 1 (e.g., 58 < 65) because oscillation contributes additional activation.
   2. **IN (Independent Noise)**: 800 neurons with *one-to-one* connectivity.
      This decorrelates motor neuron activity. Driven at constant 125 Hz.
 
-- `Network`:
+- [`Network`][myogen.simulator.Network]:
   Manages multiple populations and different connection patterns:
 
   - ``connect(prob=0.3)``: Random connectivity for shared drive
   - ``connect_one_to_one()``: Private inputs for independent noise
   - ``connect_from_external()``: External command signals to drive populations
 
-- `SimulationRunner`:
+- [`SimulationRunner`][myogen.simulator.SimulationRunner]:
   High-level interface for running NEURON simulations with callbacks.
   The ``step_callback`` is called every timestep to update drives and record data.
 
-- `ContinuousSaver`:
+- [`ContinuousSaver`][myogen.utils.continuous_saver.ContinuousSaver]:
   Memory-efficient recording that saves data in chunks during long simulations.
   Essential for 15-second simulations with 800+ neurons.
 

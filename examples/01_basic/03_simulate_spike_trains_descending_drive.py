@@ -29,7 +29,7 @@ patterns by modeling cortical input through descending drive populations.
 #
 # !!! important
 #     In **MyoGen** all **random number generation** is handled by the RNG returned from
-#     `get_random_generator()`, a thin wrapper around `numpy.random`.
+#     [`get_random_generator`][myogen.get_random_generator], a thin wrapper around `numpy.random`.
 #
 #     Always fetch the generator at the call site so the current seed is honored:
 #
@@ -38,7 +38,7 @@ patterns by modeling cortical input through descending drive populations.
 #     get_random_generator().normal(0, 1)
 #     ```
 #
-#     To change the seed, use `set_random_seed`:
+#     To change the seed, use [`set_random_seed`][myogen.set_random_seed]:
 #
 #     ```python
 #     from myogen import set_random_seed
@@ -91,9 +91,9 @@ def population_psth(spiketrains, bin_size):
 # Create Populations
 # ------------------------
 #
-# Like the previous example, we create a **motor neuron pool** using the **AlphaMN__Pool** class.
+# Like the previous example, we create a **motor neuron pool** using the [`AlphaMN__Pool`][myogen.simulator.neuron.populations.AlphaMN__Pool] class.
 #
-# We also create a **DescendingDrive__Pool** to represent the cortical input.
+# We also create a [`DescendingDrive__Pool`][myogen.simulator.neuron.populations.DescendingDrive__Pool] to represent the cortical input.
 #
 # !!! note
 #     These neurons are modeled as Poisson point processes to convert the smooth input signal into realistic
@@ -206,7 +206,7 @@ print(f"\tRest after: {ramp_down_end} - {simulation_time} ms ({dd_baseline__pps}
 # Create Network and Connections
 # -------------------------------
 #
-# In MyoGen, populations can be connected using the **Network** class from the
+# In MyoGen, populations can be connected using the [`Network`][myogen.simulator.Network] class from the
 # `myogen.simulator.neuron` module.
 #
 # The **Network** class provides a high-level interface for creating and managing

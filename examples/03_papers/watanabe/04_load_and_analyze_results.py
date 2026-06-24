@@ -32,7 +32,7 @@ NEO format, and analyze membrane potentials, spike trains, and population dynami
 
 **MyoGen Components Used**:
 
-- `convert_chunks_to_neo`:
+- [`convert_chunks_to_neo`][myogen.utils.continuous_saver.convert_chunks_to_neo]:
   Converts chunked simulation data back into a standard NEO Block.
   This is the recommended way to load large simulation results.
 

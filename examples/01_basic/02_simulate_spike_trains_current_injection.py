@@ -21,7 +21,7 @@ Both workflows yield identical results; the manual version is provided purely fo
 #
 # !!! important
 #     In **MyoGen** all **random number generation** is handled by the RNG returned from
-#     `get_random_generator`, a thin wrapper around `numpy.random`.
+#     [`get_random_generator`][myogen.get_random_generator], a thin wrapper around `numpy.random`.
 #
 #     Always fetch the generator at the call site so the current seed is honored:
 #
@@ -30,7 +30,7 @@ Both workflows yield identical results; the manual version is provided purely fo
 #     get_random_generator().normal(0, 1)
 #     ```
 #
-#     To change the seed, use `set_random_seed`:
+#     To change the seed, use [`set_random_seed`][myogen.set_random_seed]:
 #
 #     ```python
 #     from myogen import set_random_seed
@@ -104,12 +104,12 @@ def rasterplot_rates(spiketrains, filter_function=None):
 #
 # A population can easily be created by specifying the number of cells. Plausible default parameters are already set.
 #
-# For a motor neuron population (referred to as **motor pool**), we can use the `AlphaMN__Pool` class.
+# For a motor neuron population (referred to as **motor pool**), we can use the [`AlphaMN__Pool`][myogen.simulator.neuron.populations.AlphaMN__Pool] class.
 # This class can also use the recruitment thresholds generated in the previous example to distribute the motor units properties in a physiologically plausible manner.
 #
 # !!! important
 #     These **Population** classes are custom-built and use therefore custom NMODL mechanisms.
-#     To use them, the NMODL mechanisms need to be loaded first using the `load_nmodl_mechanisms` function.
+#     To use them, the NMODL mechanisms need to be loaded first using the [`load_nmodl_mechanisms`][myogen.load_nmodl_mechanisms] function.
 #
 # To showcase MyoGen's capabilities, we will create two different motor neuron pools with identical properties but different input currents.
 load_nmodl_mechanisms()
@@ -130,7 +130,7 @@ motor_neuron_pools = [
 #
 # To drive the motor units, we use a **common input current profile**.
 #
-# In this example, we use a **trapezoid-shaped input current** which is generated using the `create_trapezoid_current` function.
+# In this example, we use a **trapezoid-shaped input current** which is generated using the [`create_trapezoid_current`][myogen.utils.currents.create_trapezoid_current] function.
 #
 # !!! note
 #     More convenient functions for generating input current profiles are available in the `myogen.utils.currents` module.
@@ -261,7 +261,7 @@ joblib.dump(spike_train__Block_manual, save_path / "spike_train__Block_manual.pk
 # ------------------------------------
 #
 # The manual approach above shows you exactly what happens during simulation.
-# However, since this is a common task, MyoGen provides the `inject_currents_and_simulate_spike_trains`
+# However, since this is a common task, MyoGen provides the [`inject_currents_and_simulate_spike_trains`][myogen.utils.neuron.inject_currents_into_populations.inject_currents_and_simulate_spike_trains]
 # utility function that encapsulates all these steps in a single call.
 #
 # This is the recommended approach for routine simulations, while the manual
