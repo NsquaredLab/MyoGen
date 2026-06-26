@@ -41,6 +41,8 @@ class AlphaMN__Pool(_Pool):
         By default uses "alpha_mn_default.yaml".
     model : str, optional
         Motor neuron model type ("NERLab" or "Powers2017"), by default "NERLab".
+        When ``model="Powers2017"``, the soma/dendrite parameters listed under
+        **Other Parameters** below become available.
     mode : str, optional
         Simulation mode ("active" or "passive"), by default "active".
     axon_velocities : tuple[float, float], optional
@@ -59,10 +61,10 @@ class AlphaMN__Pool(_Pool):
         Spike detection threshold for recording motor neuron spikes, by default 50.0.
         Motor neurons have large action potentials (80-100 mV) requiring higher thresholds.
 
-    Powers2017 Model Parameters (required when model="Powers2017")
-    --------------------------------------------------------
+    Other Parameters
+    ----------------
     soma_length_range : tuple[float, float, float], optional
-        Soma length [min, max, curve] (um).
+        Soma length [min, max, curve] (um). Only used when ``model="Powers2017"``.
     soma_diameter_range : tuple[float, float, float], optional
         Soma diameter [min, max, curve] (um).
     soma_capacitance_range : tuple[float, float, float], optional
