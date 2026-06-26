@@ -10,6 +10,11 @@ copyright: Copyright &copy; 2025-2026 n-squared lab, FAU Erlangen-Nürnberg
 exclude_docs: |
   superpowers/
 
+# Never ship Jupyter notebooks: strip the gallery's "Download Jupyter notebook"
+# button and delete every generated .ipynb from the built site.
+hooks:
+  - docs/hooks/no_notebooks.py
+
 extra_css:
   - stylesheets/gallery.css
 
