@@ -43,7 +43,7 @@ class RecruitmentThresholds:
             Number of motor units in the pool.
         recruitment_range__ratio : float
             Recruitment range (dimensionless ratio), defined as the ratio of the largest to smallest threshold
-            :math:`(rt(N)/rt(1))`.
+            $(rt(N)/rt(1))$.
         deluca__slope : float, optional
             Dimensionless slope parameter for the ``'deluca'`` mode. Required if ``mode='deluca'``.
             Controls the curvature of the threshold distribution. Typical values range from 0.001-100.
@@ -60,8 +60,8 @@ class RecruitmentThresholds:
             Recruitment thresholds for each motor unit (shape: (N,)).
             Values are monotonically increasing from ``rt[0]`` to ``rt[N-1]``.
         rtz : RECRUITMENT_THRESHOLDS__ARRAY
-            Zero-based recruitment thresholds where :math:`rtz[0] = 0` (shape: (N,)).
-            Computed as :math:`rtz = rt - rt[0]`, convenient for simulation.
+            Zero-based recruitment thresholds where $rtz[0] = 0$ (shape: (N,)).
+            Computed as $rtz = rt - rt[0]$, convenient for simulation.
 
         Raises
         ------
@@ -77,28 +77,33 @@ class RecruitmentThresholds:
         Notes
         -----
         **fuglevand** : Fuglevand et al. (1993) [1] exponential model
-            .. math:: rt(i) = \\exp( \\frac{i \\cdot \\ln(RR)}{N} ) / 100
 
-            where :math:`i = 1, 2, \\ldots, N`
+        $$rt(i) = \exp\left( \frac{i \cdot \ln(RR)}{N} \right) / 100$$
+
+        where $i = 1, 2, \ldots, N$
 
         **deluca** : De Luca & Contessa (2012) [2] model with slope correction
-            .. math::
-                rt(i) = \\frac{b \\cdot i}{N} \\cdot \\exp\\left(\\frac{i \\cdot \\ln(RR / b)}{N}\\right) / 100
 
-            where :math:`b` = ``deluca__slope``, :math:`i = 1, 2, \\ldots, N`
+        $$rt(i) = \frac{b \cdot i}{N} \cdot \exp\left(\frac{i \cdot \ln(RR / b)}{N}\right) / 100$$
+
+        where $b$ = ``deluca__slope``, $i = 1, 2, \ldots, N$
 
         **konstantin** : Konstantin et al. (2020) [3] model allowing explicit maximum threshold control
-            .. math::
-                rt(i) &= \\frac{RT_{max}}{RR} \\cdot \\exp\\left(\\frac{(i - 1) \\cdot \\ln(RR)}{N - 1}\\right) \\\\
-                rtz(i) &= \\frac{RT_{max}}{RR} \\cdot \\left(\\exp\\left(\\frac{(i - 1) \\cdot \\ln(RR + 1)}{N}\\right) - 1\\right)
 
-            where :math:`RT_{max}` = ``konstantin__max_threshold__ratio``, :math:`i = 1, 2, \\ldots, N`
+        $$
+        \begin{aligned}
+        rt(i) &= \frac{RT_{max}}{RR} \cdot \exp\left(\frac{(i - 1) \cdot \ln(RR)}{N - 1}\right) \\
+        rtz(i) &= \frac{RT_{max}}{RR} \cdot \left(\exp\left(\frac{(i - 1) \cdot \ln(RR + 1)}{N}\right) - 1\right)
+        \end{aligned}
+        $$
+
+        where $RT_{max}$ = ``konstantin__max_threshold__ratio``, $i = 1, 2, \ldots, N$
 
         **combined** : A corrected De Luca model that uses the slope parameter for shape control but properly respects the RR constraint and maximum threshold like the Konstantin model
-            .. math::
-                rt(i) = \\frac{RT_{max}}{RR} + \\left(\\frac{b \\cdot i}{N} \\cdot \\exp\\left(\\frac{i \\cdot \\ln(RR / b)}{N}\\right) - \\frac{RT_{max}}{RR}\\right) \\cdot \\left(\\frac{RT_{max} - RT_{max}/RR}{b \\cdot N \\cdot \\exp\\left(\\frac{i \\cdot \\ln(RR / b)}{N}\\right) - \\frac{RT_{max}}{RR}}\\right)
 
-            where :math:`b` = ``deluca__slope``, :math:`RT_{max}` = ``konstantin__max_threshold__ratio``, :math:`i = 1, 2, \\ldots, N`
+        $$rt(i) = \frac{RT_{max}}{RR} + \left(\frac{b \cdot i}{N} \cdot \exp\left(\frac{i \cdot \ln(RR / b)}{N}\right) - \frac{RT_{max}}{RR}\right) \cdot \left(\frac{RT_{max} - RT_{max}/RR}{b \cdot N \cdot \exp\left(\frac{i \cdot \ln(RR / b)}{N}\right) - \frac{RT_{max}}{RR}}\right)$$
+
+        where $b$ = ``deluca__slope``, $RT_{max}$ = ``konstantin__max_threshold__ratio``, $i = 1, 2, \ldots, N$
 
         Examples
         --------

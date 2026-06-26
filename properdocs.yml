@@ -18,6 +18,10 @@ hooks:
 extra_css:
   - stylesheets/gallery.css
 
+extra_javascript:
+  - javascripts/mathjax.js
+  - https://unpkg.com/mathjax@3/es5/tex-mml-chtml.js
+
 theme:
   name: material
   features:
@@ -90,6 +94,8 @@ plugins:
 markdown_extensions:
   - admonition
   - attr_list
+  - pymdownx.arithmatex:
+      generic: true
   - def_list
   - md_in_html
   - tables
