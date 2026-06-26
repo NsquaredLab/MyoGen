@@ -40,7 +40,7 @@ class SurfaceEMG:
 
     This class provides a simulation framework for generating
     surface electromyography signals from the muscle. It implements the
-    multi-layered cylindrical volume conductor model from Farina et al. 2004 [1]_.
+    multi-layered cylindrical volume conductor model from Farina et al. 2004 [1].
 
     Parameters
     ----------
@@ -98,7 +98,7 @@ class SurfaceEMG:
 
     References
     ----------
-    .. [1] Farina, D., Mesin, L., Martina, S., Merletti, R., 2004. A surface EMG generation model with multilayer cylindrical description of the volume conductor. IEEE Transactions on Biomedical Engineering 51, 415–426. https://doi.org/10.1109/TBME.2003.820998
+    [1] Farina, D., Mesin, L., Martina, S., Merletti, R., 2004. A surface EMG generation model with multilayer cylindrical description of the volume conductor. IEEE Transactions on Biomedical Engineering 51, 415–426. https://doi.org/10.1109/TBME.2003.820998
     """
 
     def __init__(
@@ -262,7 +262,7 @@ class SurfaceEMG:
         # Calculate innervation zone variance
         innervation_zone_variance = (
             self._mean_fiber_length__mm * 0.1
-        )  # 10% of the mean fiber length (see Botelho et al. 2019 [6]_)
+        )  # 10% of the mean fiber length (see Botelho et al. 2019 [6])
 
         # Extract fiber counts
         number_of_fibers_per_MUs = self._muscle_model.resulting_number_of_innervated_fibers

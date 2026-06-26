@@ -23,7 +23,7 @@ from .force_utils_vectorized import generate_force_vectorized
 @beartowertype
 class ForceModelVectorized:
     """
-    Vectorized force model based on Fuglevand et al. (1993) [1]_.
+    Vectorized force model based on Fuglevand et al. (1993) [1].
 
     This is an optimized version of :class:`ForceModel` that uses numpy
     vectorization for significantly better performance, especially for long
@@ -46,9 +46,7 @@ class ForceModelVectorized:
 
     References
     ----------
-    .. [1] Fuglevand, A. J., Winter, D. A., & Patla, A. E. (1993).
-        Models of recruitment and rate coding in motor-unit pools.
-        Journal of Neurophysiology, 70(2), 782-797.
+    [1] Fuglevand, A. J., Winter, D. A., & Patla, A. E. (1993). Models of recruitment and rate coding in motor-unit pools. Journal of Neurophysiology, 70(2), 782-797.
     """
 
     def __init__(

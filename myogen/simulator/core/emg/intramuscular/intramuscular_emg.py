@@ -66,14 +66,14 @@ class IntramuscularEMG:
         By default, the endplate is located at the center of the muscle (50% of the muscle length).
     nmj_jitter__s : Quantity__s, default=35e-6 * pq.s
         Standard deviation of neuromuscular junction jitter in seconds.
-        Default is set to 35e-6 s as determined by Konstantin et al. 2020 [1]_.
+        Default is set to 35e-6 s as determined by Konstantin et al. 2020 [1].
     branch_cvs__m_per_s : tuple[Quantity__m_per_s, Quantity__m_per_s], default=(5.0 * pq.m / pq.s, 2.0 * pq.m / pq.s)
         Conduction velocities for the two-layer model of the neuromuscular junction in m/s.
-        Default is set to (5.0, 2.0) m/s as determined by Konstantin et al. 2020 [1]_.
+        Default is set to (5.0, 2.0) m/s as determined by Konstantin et al. 2020 [1].
 
         .. note::
             The two-layer model is a simplification of the actual arborization pattern, but it is a good approximation for the purposes of this simulation.
-            Follows the implementation of Konstantin et al. 2020 [1]_.
+            Follows the implementation of Konstantin et al. 2020 [1].
     MUs_to_simulate : list[int], optional
         Indices of motor units to simulate. If None, all motor units are simulated.
         Default is None. For computational efficiency, consider
@@ -93,7 +93,7 @@ class IntramuscularEMG:
 
     References
     ----------
-    .. [1] Konstantin, A., Yu, T., Le Carpentier, E., Aoustin, Y., Farina, D., 2020. Simulation of Motor Unit Action Potential Recordings From Intramuscular Multichannel Scanning Electrodes. IEEE Transactions on Biomedical Engineering 67, 2005–2014. https://doi.org/10.1109/TBME.2019.2953680
+    [1] Konstantin, A., Yu, T., Le Carpentier, E., Aoustin, Y., Farina, D., 2020. Simulation of Motor Unit Action Potential Recordings From Intramuscular Multichannel Scanning Electrodes. IEEE Transactions on Biomedical Engineering 67, 2005–2014. https://doi.org/10.1109/TBME.2019.2953680
     """
 
     def __init__(

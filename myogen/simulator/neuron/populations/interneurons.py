@@ -28,9 +28,9 @@ class GII__Pool(_Pool):
     n : int
         Number of group II interneurons to create.
     soma_length_range__um : tuple[float, float]
-        Min and max soma length (um). By default, it is set to the estimated range for interneurons from Bui et al. 2003 [1]_.
+        Min and max soma length (um). By default, it is set to the estimated range for interneurons from Bui et al. 2003 [1].
     soma_diameter_range : tuple[float, float]
-        Min and max soma diameter (um). By default, it is set to the estimated range for interneurons from Bui et al. 2003 [1]_.
+        Min and max soma diameter (um). By default, it is set to the estimated range for interneurons from Bui et al. 2003 [1].
     passive_conductance_range : tuple[float, float]
         Min and max passive membrane conductance (S/cm²).
     na3rp_conductance_range : tuple[float, float]
@@ -54,7 +54,7 @@ class GII__Pool(_Pool):
 
     References
     ----------
-    .. [1] Bui, T.V., Cushing, S., Dewey, D., Fyffe, R.E., Rose, P.K., 2003. Comparison of the Morphological and Electrotonic Properties of Renshaw Cells, Ia Inhibitory Interneurons, and Motoneurons in the Cat. Journal of Neurophysiology 90, 2900–2918. https://doi.org/10.1152/jn.00533.2003
+    [1] Bui, T.V., Cushing, S., Dewey, D., Fyffe, R.E., Rose, P.K., 2003. Comparison of the Morphological and Electrotonic Properties of Renshaw Cells, Ia Inhibitory Interneurons, and Motoneurons in the Cat. Journal of Neurophysiology 90, 2900–2918. https://doi.org/10.1152/jn.00533.2003
 
     """
 

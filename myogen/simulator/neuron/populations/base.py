@@ -61,7 +61,7 @@ def _exp_interp(first: float, last: float, n: int, curv: float = 0.33, negative:
 
 
 def _get_interneuron_diameter_range__um() -> tuple[float, float]:
-    """Estimate interneuron soma diameter range based on Biu et al. 2003 [1]_.
+    """Estimate interneuron soma diameter range based on Biu et al. 2003 [1].
 
     Returns
     -------
@@ -70,7 +70,7 @@ def _get_interneuron_diameter_range__um() -> tuple[float, float]:
 
     References
     ----------
-    .. [1] Bui, T.V., Cushing, S., Dewey, D., Fyffe, R.E., Rose, P.K., 2003. Comparison of the Morphological and Electrotonic Properties of Renshaw Cells, Ia Inhibitory Interneurons, and Motoneurons in the Cat. Journal of Neurophysiology 90, 2900–2918. https://doi.org/10.1152/jn.00533.2003
+    [1] Bui, T.V., Cushing, S., Dewey, D., Fyffe, R.E., Rose, P.K., 2003. Comparison of the Morphological and Electrotonic Properties of Renshaw Cells, Ia Inhibitory Interneurons, and Motoneurons in the Cat. Journal of Neurophysiology 90, 2900–2918. https://doi.org/10.1152/jn.00533.2003
 
     """
     A_cell = 81390 + 3113

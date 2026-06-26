@@ -9,13 +9,9 @@ Rosenfalck 1969.
 
 References
 ----------
-.. [1] Farina, D., Merletti, R., 2001. A novel approach for precise simulation of
-       the EMG signal detected by surface electrodes. IEEE Transactions on
-       Biomedical Engineering 48, 637–646.
-.. [2] Rosenfalck, P., 1969. Intra- and extracellular potential fields of active
-       nerve and muscle fibres. Acta Physiologica Scandinavica Supplementum 321, 1–168.
-.. [3] Nandedkar, S.D., Stålberg, E., 1983. Simulation of single muscle fibre
-       action potentials. Medical & Biological Engineering & Computing 21, 158–165.
+[1] Farina, D., Merletti, R., 2001. A novel approach for precise simulation of the EMG signal detected by surface electrodes. IEEE Transactions on Biomedical Engineering 48, 637–646. <br>
+[2] Rosenfalck, P., 1969. Intra- and extracellular potential fields of active nerve and muscle fibres. Acta Physiologica Scandinavica Supplementum 321, 1–168. <br>
+[3] Nandedkar, S.D., Stålberg, E., 1983. Simulation of single muscle fibre action potentials. Medical & Biological Engineering & Computing 21, 158–165.
 """
 
 import numpy as np
