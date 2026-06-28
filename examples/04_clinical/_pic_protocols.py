@@ -451,9 +451,13 @@ def population_cv(block, total_s, win_s=1.0, step_s=0.02, max_isi=0.3,
 
 
 def make_iemg_simulator(muscle, n_mu):
+    # IntramuscularEMG returns MONOPOLAR per-contact channels; the figure shows a
+    # single illustrative trace. (differentiation_mode configures the electrode's
+    # optional differential_matrix tool, which is not auto-applied to the
+    # simulated output, so we leave it at its default rather than imply a montage
+    # that isn't used here.)
     electrode = simulator.IntramuscularElectrodeArray(
         num_electrodes=4, inter_electrode_distance__mm=2.0 * pq.mm,
-        differentiation_mode="consecutive",
         position__mm=(0.0 * pq.mm, 0.0 * pq.mm, 15.0 * pq.mm))
     sim = simulator.IntramuscularEMG(
         muscle_model=muscle, electrode_array=electrode,
