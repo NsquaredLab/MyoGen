@@ -116,16 +116,13 @@ def log_Kn(K_THETA, x):
 
 
 def f_minus_t(y):
-    # CIRCULAR (DFT-consistent) time reversal y[(-n) mod N], i.e. index 0 is kept
-    # fixed and the rest are reversed: [y0, y[-1], y[-2], ...]. This is intentional
-    # and required by the Farina/Merletti spectral model -- the DFT of this circular
-    # reversal of a real signal equals conj(Y), which is exactly the np.conj(PSI)
-    # used downstream. A plain y[::-1] would instead apply a one-sample phase ramp
-    # (conj(Y)*exp(-j2*pi*k/N)) and corrupt the SFAP kernel. Do NOT "simplify" to y[::-1].
-    y_new = np.zeros(len(y))
-    for i in range(0, len(y)):
-        y_new[i] = y[-i]
-    return y_new
+    # Spatial reflection psi(z) -> psi(-z) on the SYMMETRIC grid
+    # z = linspace(-L/2, L/2, N): the sample at z[i] maps to z[N-1-i] = -z[i],
+    # i.e. a full array reversal. The previous `y[-i]` was a one-sample-off bug
+    # (for i=0 it returned y[0] instead of y[-1], keeping z=-L/2 fixed), which
+    # shifted the SFAP kernel by one sample and disagreed with the (correct)
+    # Cython path in _simulate_fiber.pyx. Match that path.
+    return y[::-1].copy()
 
 
 # Numba-optimized helper functions for simulate_fiber_v3
