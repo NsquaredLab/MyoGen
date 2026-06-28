@@ -521,23 +521,28 @@ sphinx_gallery_conf = {
         str(base_dir / "examples" / "01_basic"),
         str(base_dir / "examples" / "02_finetune"),
         str(base_dir / "examples" / "03_papers" / "watanabe"),
+        str(base_dir / "examples" / "04_clinical"),
     ],
     "gallery_dirs": [
         "auto_examples/01_basic",
         "auto_examples/02_finetune",
         "auto_examples/03_papers/watanabe",
+        "auto_examples/04_clinical",
     ],
     "subsection_order": ExplicitOrder(
         [
             str(base_dir / "examples" / "01_basic"),
             str(base_dir / "examples" / "02_finetune"),
             str(base_dir / "examples" / "03_papers" / "watanabe"),
+            str(base_dir / "examples" / "04_clinical"),
         ]
     ),
     "filename_pattern": r"\.py",
     # 14_calibrate_noise_from_real.py needs a private iEMG .mat recording that
     # isn't available in CI, so it can't be executed by the gallery.
-    "ignore_pattern": r"14_calibrate_noise_from_real\.py",
+    # _pic_protocols.py is a shared helper module, not a standalone example, so
+    # it must not be parsed/executed as a gallery item (it has no example title).
+    "ignore_pattern": r"(14_calibrate_noise_from_real|_pic_protocols)\.py",
     "remove_config_comments": True,
     "within_subsection_order": FileNameSortKey,
     "show_memory": False,
