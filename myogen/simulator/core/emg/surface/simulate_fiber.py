@@ -116,10 +116,13 @@ def log_Kn(K_THETA, x):
 
 
 def f_minus_t(y):
-    y_new = np.zeros(len(y))
-    for i in range(0, len(y)):
-        y_new[i] = y[-i]
-    return y_new
+    # Spatial reflection psi(z) -> psi(-z) on the SYMMETRIC grid
+    # z = linspace(-L/2, L/2, N): the sample at z[i] maps to z[N-1-i] = -z[i],
+    # i.e. a full array reversal. The previous `y[-i]` was a one-sample-off bug
+    # (for i=0 it returned y[0] instead of y[-1], keeping z=-L/2 fixed), which
+    # shifted the SFAP kernel by one sample and disagreed with the (correct)
+    # Cython path in _simulate_fiber.pyx. Match that path.
+    return y[::-1].copy()
 
 
 # Numba-optimized helper functions for simulate_fiber_v3

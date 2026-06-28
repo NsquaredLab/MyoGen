@@ -510,7 +510,13 @@ cdef class _HillMuscleModel__Cython():
             for i in range(1, self.N + 1):
                 self.T[i - 1] = self.Tl * (1 / self.P[i - 1]) ** (1 / c)
         else:
-            self.T = np.random.uniform(self.Tl / self.RT, self.Tl, self.N)
+            # Use the seeded global RNG so durType != 1 contractions are
+            # reproducible under ``myogen.set_random_seed`` (mirrors the
+            # ForceSatParams path above). Lazy import to avoid an import cycle
+            # during package initialization.
+            from myogen import get_random_generator
+            self.T = get_random_generator().uniform(
+                self.Tl / self.RT, self.Tl, self.N)
 
     # FUNCTION NAME: sig
     # FUNCTION DESCRIPTION: Sigmoidal function used to simulate the
