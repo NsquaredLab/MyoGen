@@ -3,7 +3,7 @@ Single-cell PIC mechanism and pool spasticity
 =============================================
 
 The cell-level basis for the pool-level phenotypes in
-``03_sci_iemg_mechanistic.py``. Up-regulating the motoneuron dendritic Ca PIC
+``01_sci_iemg_mechanistic.py``. Up-regulating the motoneuron dendritic Ca PIC
 (``gamma``) and somatic Na PIC (``gnapbar_napp``), rather than sculpting the drive:
 
 - Top: a single type-S motoneuron under the same dendritic ramp, control vs SCI,
@@ -11,7 +11,7 @@ The cell-level basis for the pool-level phenotypes in
 - Bottom: a motor pool in which the same brief low-MVC command yields a
   self-sustained involuntary discharge (a spasm) only when the PIC is up-regulated.
 
-Reuses the shared helpers in ``pic_protocols.py``. NERLab model throughout.
+Reuses the shared helpers in ``_pic_protocols.py``. NERLab model throughout.
 """
 # sphinx_gallery_thumbnail_number = -1
 
@@ -30,7 +30,7 @@ from matplotlib import pyplot as plt
 from myogen import set_random_seed
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-import pic_protocols as pic  # noqa: E402
+import _pic_protocols as pic  # noqa: E402
 
 plt.style.use("fivethirtyeight")
 plt.rcParams["path.simplify"] = False  # draw every sample on dense EMG traces

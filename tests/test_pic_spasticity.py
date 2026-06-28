@@ -4,11 +4,11 @@ from pathlib import Path
 import numpy as np
 import pytest
 
-# pic_protocols lives next to the clinical example; make it importable
+# _pic_protocols lives next to the clinical example; make it importable
 _CLINICAL = Path(__file__).resolve().parents[1] / "examples" / "04_clinical"
 sys.path.insert(0, str(_CLINICAL))
 
-import pic_protocols as pic  # noqa: E402
+import _pic_protocols as pic  # noqa: E402
 
 NAP_CEILING = 0.00215  # S/cm^2 — type-S baseline (~0.00043) x5, the verified-safe max
 

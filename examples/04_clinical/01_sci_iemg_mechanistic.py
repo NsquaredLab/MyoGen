@@ -37,7 +37,7 @@ from myogen import set_random_seed, get_random_generator
 from myogen.utils.types import pps
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-import pic_protocols as pic
+import _pic_protocols as pic
 
 def apply_pub_style():
     """Publication style (scienceplots science+nature), matching the MyoGen
