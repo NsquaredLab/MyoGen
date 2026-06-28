@@ -116,6 +116,12 @@ def log_Kn(K_THETA, x):
 
 
 def f_minus_t(y):
+    # CIRCULAR (DFT-consistent) time reversal y[(-n) mod N], i.e. index 0 is kept
+    # fixed and the rest are reversed: [y0, y[-1], y[-2], ...]. This is intentional
+    # and required by the Farina/Merletti spectral model -- the DFT of this circular
+    # reversal of a real signal equals conj(Y), which is exactly the np.conj(PSI)
+    # used downstream. A plain y[::-1] would instead apply a one-sample phase ramp
+    # (conj(Y)*exp(-j2*pi*k/N)) and corrupt the SFAP kernel. Do NOT "simplify" to y[::-1].
     y_new = np.zeros(len(y))
     for i in range(0, len(y)):
         y_new[i] = y[-i]
