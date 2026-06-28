@@ -540,7 +540,9 @@ sphinx_gallery_conf = {
     "filename_pattern": r"\.py",
     # 14_calibrate_noise_from_real.py needs a private iEMG .mat recording that
     # isn't available in CI, so it can't be executed by the gallery.
-    "ignore_pattern": r"14_calibrate_noise_from_real\.py",
+    # _pic_protocols.py is a shared helper module, not a standalone example, so
+    # it must not be parsed/executed as a gallery item (it has no example title).
+    "ignore_pattern": r"(14_calibrate_noise_from_real|_pic_protocols)\.py",
     "remove_config_comments": True,
     "within_subsection_order": FileNameSortKey,
     "show_memory": False,

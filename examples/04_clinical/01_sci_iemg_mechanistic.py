@@ -22,6 +22,7 @@ Ca PIC does not deactivate, so the spasm does not self-terminate within the wind
 (a real off-switch needs inhibition; see the single-cell panel).
 """
 # sphinx_gallery_thumbnail_number = -1
+import hashlib
 import sys
 from pathlib import Path
 
@@ -77,9 +78,11 @@ def apply_pub_style():
 
 apply_pub_style()
 
-set_random_seed(42)
+SEED = 42
+set_random_seed(SEED)
 N_MU = 40
 TOTAL_S = 8.0
+SNR_DB = 20
 # Peak OU membrane-noise current (nA) per motoneuron, scaled by the drive (falls
 # to MN_NOISE*NOISE_FLOOR when the drive withdraws). Calibrated so voluntary firing
 # is irregular (ISI CV ~19%) while the drive-off self-sustained spasm stays regular
@@ -104,12 +107,16 @@ save_path.mkdir(exist_ok=True, parents=True)
 def modulation_then_silence(peak_pps=45.0, freq_hz=0.5, stop_s=4.0,
                             total_s=TOTAL_S):
     """Cyclic voluntary command for the first `stop_s`, then zero (the input
-    stops but the PIC sustains firing -> spasm)."""
+    stops but the PIC sustains firing -> spasm). After `stop_s` the command AND
+    its synaptic noise are both zero, so the post-offset discharge is driven by
+    the intrinsic PIC alone (no residual descending drive) -- matching the
+    manuscript's "absence of ongoing drive" claim."""
     n = int(total_s * 1000.0 / float(pic._POOL_TIMESTEP.magnitude))
     t = np.linspace(0.0, total_s, n, endpoint=False)
     cmd = (peak_pps / 2.0) * (1.0 - np.cos(2.0 * np.pi * freq_hz * t))
     cmd[t >= stop_s] = 0.0
     noise = np.clip(get_random_generator().normal(0, 1.0, size=n), 0, None)
+    noise[t >= stop_s] = 0.0          # truly silent: no residual drive after offset
     return AnalogSignal((cmd + noise) * pps,
                         sampling_period=(total_s / n) * pq.s)
 
@@ -140,19 +147,31 @@ conditions = {
 }
 
 # Run the three pool simulations once and cache the (slim) results, so figure
-# tweaks re-render in seconds. Delete this .pkl after changing any simulation
-# parameter (N_MU, gamma, nap_factor, drive, SNR) to force a re-simulation.
-results_cache = save_path / f"sci_mechanistic_sims_{MODEL}_n{N_MU}.pkl"
+# tweaks re-render in seconds. The cache filename embeds a hash of EVERY
+# simulation parameter (seed, pool size, PIC knobs, drive, noise, SNR), so
+# changing any of them yields a new cache key and silently stale results can't
+# leak into a manuscript figure -- no manual .pkl deletion needed.
+_sig = "|".join([
+    MODEL, f"n{N_MU}", f"seed{SEED}", f"total{TOTAL_S}",
+    f"noise{MN_NOISE},{NOISE_FLOOR}", f"dd{DD_WEIGHT}", f"snr{SNR_DB}", "mask1",
+    *(f"{lab}:{g},{nf}" for lab, (d, g, nf) in conditions.items()),
+])
+_tag = hashlib.md5(_sig.encode()).hexdigest()[:8]
+results_cache = save_path / f"sci_mechanistic_sims_{MODEL}_n{N_MU}_{_tag}.pkl"
 if results_cache.exists():
     results = joblib.load(results_cache)
 else:
     results = {}
     for label, (drive, gamma, napf) in conditions.items():
+        # Reseed identically before each pool so the descending-drive
+        # connectivity and OU membrane noise are the SAME substrate across
+        # conditions -- only the PIC (gamma, nap_factor) differs.
+        set_random_seed(SEED)
         block = pic.run_pool(drive, n_mu=N_MU, gamma=gamma,
                              nap_factor=napf, total_s=TOTAL_S,
                              mn_noise=MN_NOISE, noise_floor=NOISE_FLOOR,
                              dd_weight__uS=DD_WEIGHT)
-        emg = pic.synthesize_iemg(block, N_MU, iemg_sim=iemg_sim, snr_dB=20)
+        emg = pic.synthesize_iemg(block, N_MU, iemg_sim=iemg_sim, snr_dB=SNR_DB)
         results[label] = {
             "block": block,
             "iemg": {"iemg": emg["iemg"], "times": emg["times"]},
@@ -286,11 +305,15 @@ def overlay_rate_envelope(ax, centers, rate, span_max):
 # threshold -- a brief pulse latches the dendritic Ca plateau (self-sustained
 # firing) and a gentle inhibition switches it off. The cell-level basis of the
 # pool spasm.
-mech_cache = save_path / "sci_mechanistic_singlecell.pkl"
+# Use the manuscript SCI regime (gamma=1.3 = +160% from the 0.5 baseline,
+# nap_factor=5) so the single-cell L-type Ca plateau matches the ~9 nA reported
+# for the pool-level SCI condition.
+_MECH_GAMMA, _MECH_NAP = 1.3, 5.0
+mech_cache = save_path / f"sci_mechanistic_singlecell_g{_MECH_GAMMA}_nap{_MECH_NAP}.pkl"
 if mech_cache.exists():
     mech = joblib.load(mech_cache)
 else:
-    mech = pic.single_cell_pic_mechanism()
+    mech = pic.single_cell_pic_mechanism(gamma=_MECH_GAMMA, nap_factor=_MECH_NAP)
     joblib.dump(mech, mech_cache)
 
 def despine_fig(fig):
@@ -435,7 +458,7 @@ for j, (label, ax_e) in enumerate(zip(labels, axes_e)):
     ax_c.minorticks_off()
     ax_c.tick_params(axis="y", colors="purple")
     if j == len(labels) - 1:
-        ax_c.set_ylabel("ISI CV (%)", color="purple")
+        ax_c.set_ylabel("ISI CV2 (%)", color="purple")
     ax_c.grid(False)
 despine_fig(fig_e)
 save_fig(fig_e, "sci_mechanistic_iemg")

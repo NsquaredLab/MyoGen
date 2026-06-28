@@ -4,7 +4,12 @@ Single-cell PIC mechanism and pool spasticity
 
 The cell-level basis for the pool-level phenotypes in
 ``01_sci_iemg_mechanistic.py``. Up-regulating the motoneuron dendritic Ca PIC
-(``gamma``) and somatic Na PIC (``gnapbar_napp``), rather than sculpting the drive:
+(``gamma``) and somatic Na PIC (``gnapbar_napp``), rather than sculpting the drive.
+
+Note: this didactic example uses a deliberately strong ``gamma=0.2 -> 1.5`` stress
+test to make the bistability obvious; it is illustrative and is NOT the manuscript
+SCI parameterization (which is ``gamma=0.5 -> 1.3``, ``nap_factor=1 -> 5``, used in
+``01_sci_iemg_mechanistic.py``).
 
 - Top: a single type-S motoneuron under the same dendritic ramp, control vs SCI,
   showing amplification and self-sustained firing (recruit/derecruit hysteresis).
