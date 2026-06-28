@@ -255,7 +255,9 @@ def single_cell_pic_mechanism(gamma=1.2, nap_factor=5.0, hold_nA=0.3,
 def brief_command_drive(peak_pps=22.0, rise_s=1.0, plateau_s=1.5,
                         total_s=10.0, n_points=100000):
     """Low-MVC raised-cosine command: rise, brief plateau, fall to zero, then
-    silence. Returns (AnalogSignal in pps, command_offset_s, total_s)."""
+    TRUE silence (command and its synaptic noise both zero after offset, so any
+    post-offset discharge is paced by the intrinsic PIC, not residual drive).
+    Returns (AnalogSignal in pps, command_offset_s, total_s)."""
     t = np.linspace(0.0, total_s, n_points, endpoint=False)
     off = rise_s + plateau_s + rise_s
     cmd = np.zeros_like(t)
@@ -267,6 +269,7 @@ def brief_command_drive(peak_pps=22.0, rise_s=1.0, plateau_s=1.5,
     td = t[down] - (rise_s + plateau_s)
     cmd[down] = (peak_pps / 2.0) * (1.0 + np.cos(np.pi * td / rise_s))
     noise = np.clip(get_random_generator().normal(0, 1.0, size=n_points), 0, None)
+    noise[t >= off] = 0.0          # truly silent after offset: no residual drive
     sig = AnalogSignal((cmd + noise) * pps,
                        sampling_period=(total_s / n_points) * pq.s)
     return sig, off, total_s

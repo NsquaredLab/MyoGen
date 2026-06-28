@@ -40,6 +40,11 @@ from myogen.utils.types import pps
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import _pic_protocols as pic
 
+# Hash of the helper source: any change to the simulation/synthesis code in
+# _pic_protocols.py invalidates every cache below, so edits there can't silently
+# reuse stale results.
+_HELPER_SRC = hashlib.md5(Path(pic.__file__).read_bytes()).hexdigest()[:8]
+
 def apply_pub_style():
     """Publication style (scienceplots science+nature), matching the MyoGen
     ISI-CV figures -- NOT fivethirtyeight. Clean white background, sans-serif,
@@ -108,9 +113,10 @@ def modulation_then_silence(peak_pps=45.0, freq_hz=0.5, stop_s=4.0,
                             total_s=TOTAL_S):
     """Cyclic voluntary command for the first `stop_s`, then zero (the input
     stops but the PIC sustains firing -> spasm). After `stop_s` the command AND
-    its synaptic noise are both zero, so the post-offset discharge is driven by
-    the intrinsic PIC alone (no residual descending drive) -- matching the
-    manuscript's "absence of ongoing drive" claim."""
+    its synaptic noise are both zero, so the post-offset discharge is paced by
+    the intrinsic PIC under only a low membrane-noise floor (no residual
+    descending drive) -- matching the manuscript's "absence of ongoing drive"
+    claim."""
     n = int(total_s * 1000.0 / float(pic._POOL_TIMESTEP.magnitude))
     t = np.linspace(0.0, total_s, n, endpoint=False)
     cmd = (peak_pps / 2.0) * (1.0 - np.cos(2.0 * np.pi * freq_hz * t))
@@ -124,7 +130,7 @@ def modulation_then_silence(peak_pps=45.0, freq_hz=0.5, stop_s=4.0,
 # %%
 # Shared peripheral model: one muscle + electrode + MUAP set for all conditions.
 # Cache the (expensive) MUAP computation so re-runs are cheap.
-cache = save_path / f"sci_mechanistic_iemg_sim_n{N_MU}.pkl"
+cache = save_path / f"sci_mechanistic_iemg_sim_n{N_MU}_{_HELPER_SRC}.pkl"
 if cache.exists():
     iemg_sim = joblib.load(cache)
 else:
@@ -147,13 +153,18 @@ conditions = {
 }
 
 # Run the three pool simulations once and cache the (slim) results, so figure
-# tweaks re-render in seconds. The cache filename embeds a hash of EVERY
-# simulation parameter (seed, pool size, PIC knobs, drive, noise, SNR), so
-# changing any of them yields a new cache key and silently stale results can't
+# tweaks re-render in seconds. The cache key hashes EVERY input that changes the
+# result: the explicit sim parameters, the helper source (_HELPER_SRC), AND the
+# actual generated drive waveforms (so any change to a drive's shape, peak,
+# frequency, or stop time invalidates the cache). Stale results therefore can't
 # leak into a manuscript figure -- no manual .pkl deletion needed.
+_drive_bytes = b"".join(np.asarray(d.magnitude, dtype="float64").tobytes()
+                        for d, _, _ in conditions.values())
 _sig = "|".join([
     MODEL, f"n{N_MU}", f"seed{SEED}", f"total{TOTAL_S}",
     f"noise{MN_NOISE},{NOISE_FLOOR}", f"dd{DD_WEIGHT}", f"snr{SNR_DB}", "mask1",
+    f"helper{_HELPER_SRC}",
+    f"drive{hashlib.md5(_drive_bytes).hexdigest()[:8]}",
     *(f"{lab}:{g},{nf}" for lab, (d, g, nf) in conditions.items()),
 ])
 _tag = hashlib.md5(_sig.encode()).hexdigest()[:8]
@@ -217,24 +228,27 @@ def plateau_intervals(drive, frac=PLATEAU_FRAC, t_lo=0.0, t_hi=TOTAL_S,
 
 def per_mu_cv2(block, intervals, max_isi=0.3, min_isi=3):
     """Per-unit CV2 (drift-insensitive) pooling ISIs across the plateau
-    `intervals`, as an array over units. Consecutive-ISI pairs are taken WITHIN an
-    interval only; ISIs longer than `max_isi` (gaps) are dropped, so each value is
-    a within-plateau (stationary) estimate."""
+    `intervals`, as an array over units. A CV2 pair is formed from two ISIs that
+    are consecutive in the ORIGINAL spike train and BOTH within `max_isi`; a pair
+    straddling a long gap (one ISI > `max_isi`) is excluded, so a dropped gap
+    never joins two ISIs that were not actually adjacent. Each value is thus a
+    within-plateau (stationary) estimate."""
     vals = []
     for st in block.segments[0].spiketrains:
         s = np.sort(st.rescale("s").magnitude)
         num, cnt, n_isi = 0.0, 0, 0
         for a0, a1 in intervals:
             ss = s[(s >= a0) & (s < a1)]
-            if len(ss) < 2:
+            if len(ss) < 3:
                 continue
             isi = np.diff(ss)
-            isi = isi[isi <= max_isi]
-            n_isi += len(isi)
-            if len(isi) >= 2:
-                a, b = isi[:-1], isi[1:]
-                num += float(np.sum(2.0 * np.abs(b - a) / (a + b)))
-                cnt += len(a)
+            n_isi += int(np.sum(isi <= max_isi))
+            a, b = isi[:-1], isi[1:]
+            ok = (a <= max_isi) & (b <= max_isi)   # both adjacent ISIs valid
+            if np.any(ok):
+                num += float(np.sum(2.0 * np.abs(b[ok] - a[ok])
+                                    / (a[ok] + b[ok])))
+                cnt += int(np.sum(ok))
         if n_isi >= min_isi and cnt > 0:
             vals.append(100.0 * num / cnt)
     return np.asarray(vals)
@@ -306,10 +320,10 @@ def overlay_rate_envelope(ax, centers, rate, span_max):
 # firing) and a gentle inhibition switches it off. The cell-level basis of the
 # pool spasm.
 # Use the manuscript SCI regime (gamma=1.3 = +160% from the 0.5 baseline,
-# nap_factor=5) so the single-cell L-type Ca plateau matches the ~9 nA reported
+# nap_factor=5) so the single-cell L-type Ca plateau matches the ~10 nA reported
 # for the pool-level SCI condition.
 _MECH_GAMMA, _MECH_NAP = 1.3, 5.0
-mech_cache = save_path / f"sci_mechanistic_singlecell_g{_MECH_GAMMA}_nap{_MECH_NAP}.pkl"
+mech_cache = save_path / f"sci_mechanistic_singlecell_g{_MECH_GAMMA}_nap{_MECH_NAP}_{_HELPER_SRC}.pkl"
 if mech_cache.exists():
     mech = joblib.load(mech_cache)
 else:
