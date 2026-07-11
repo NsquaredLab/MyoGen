@@ -179,7 +179,6 @@ dd_parameters = {
     "synaptic_weight__uS": SYNAPTIC_WEIGHT,
     "dc_offset__Hz": best_trial.user_attrs["dc_offset__Hz"],
     "process_type": "poisson",
-    "poisson_batch_size": 1,
 }
 
 results = {

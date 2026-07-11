@@ -114,7 +114,7 @@ motor_neuron_pool = AlphaMN__Pool(
 
 timestep = 0.1 * pq.ms
 h.secondorder = 2  # Crank-Nicolson method (second-order accurate)
-descending_drive_pool = DescendingDrive__Pool(n=100, poisson_batch_size=5, timestep__ms=timestep)
+descending_drive_pool = DescendingDrive__Pool(n=100, process_type="poisson", timestep__ms=timestep)
 ##############################################################################
 # Generate Trapezoidal Drive Pattern
 # -----------------------------------

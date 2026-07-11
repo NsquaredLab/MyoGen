@@ -245,11 +245,11 @@ aMN = AlphaMN__Pool(recruitment_thresholds__array=rt)
 
 # Descending drive (DD) - SHARED input to motor neurons
 # These represent corticospinal neurons that project to multiple motor neurons.
-# poisson_batch_size=1 creates renewal (order-1) Poisson processes.
-# Higher batch sizes would create more regular spike trains (order-k gamma).
+# process_type="poisson" generates true Poisson processes (exponential ISIs, CV=1).
+# For regular, low-CV firing use process_type="gamma", shape=k instead.
 DD = DescendingDrive__Pool(
     n=nDD,
-    poisson_batch_size=1,  # Order 1 Poisson (Watanabe specification)
+    process_type="poisson",
     timestep__ms=dt * pq.ms,
 )
 
@@ -258,7 +258,7 @@ DD = DescendingDrive__Pool(
 # one motor neuron (one-to-one), providing uncorrelated background input.
 IN = DescendingDrive__Pool(
     n=nIN,
-    poisson_batch_size=1,  # Order 1 Poisson (Watanabe specification)
+    process_type="poisson",
     timestep__ms=dt * pq.ms,
 )
 

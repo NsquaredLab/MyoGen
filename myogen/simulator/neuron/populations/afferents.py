@@ -34,8 +34,9 @@ class AffIa__Pool(_Pool):
         Min and max axon conduction velocities (m/s).
     axon_length__m : Quantity__m
         Length of the axon (m).
-    poisson_batch_size : int
-        Batch size for exponential threshold generation algorithm.
+    shape : int
+        Gamma shape parameter controlling ISI regularity: CV = 1/sqrt(shape).
+        Larger values give more regular firing. Does not set the firing rate.
     timestep__ms : Quantity__ms
         Time step for simulation (ms).
     init_order : int
@@ -52,14 +53,14 @@ class AffIa__Pool(_Pool):
             75 * pq.m / pq.s,
         ),
         axon_length__m: Quantity__m = 0.6 * pq.m,
-        poisson_batch_size: int = 145,  # Shape param for Gamma process: CV = 1/sqrt(145) = 8.3%
+        shape: int = 145,  # Gamma shape: CV = 1/sqrt(145) = 8.3%
         init_order: int = 0,
     ):
         self.n = n
         self.recruitment_thresholds = recruitment_thresholds
         self.axon_velocities = axon_velocities__m_per_s
         self.axon_length = axon_length__m
-        self.poisson_batch_size = poisson_batch_size
+        self.shape = shape
         self.timestep__ms = timestep__ms
         self.init_order = init_order
 
@@ -70,7 +71,7 @@ class AffIa__Pool(_Pool):
         for i, (rt_i, vcon_i) in enumerate(zip(rt, vcon)):
             ia = cells.AffIa(
                 RT=rt_i,
-                N=poisson_batch_size,
+                shape=shape,
                 timestep__ms=timestep__ms,
                 initN=init_order,
                 pool__ID=i,
@@ -99,8 +100,9 @@ class AffII__Pool(_Pool):
         Min and max axon conduction velocities (m/s).
     axon_length__m : Quantity__m
         Length of the axon (m).
-    poisson_batch_size : int
-        Batch size for exponential threshold generation algorithm.
+    shape : int
+        Gamma shape parameter controlling ISI regularity: CV = 1/sqrt(shape).
+        Larger values give more regular firing. Does not set the firing rate.
     timestep__ms : Quantity__ms
         Time step for simulation (ms).
     init_order : int
@@ -117,14 +119,14 @@ class AffII__Pool(_Pool):
             50 * pq.m / pq.s,
         ),
         axon_length__m: Quantity__m = 0.6 * pq.m,
-        poisson_batch_size: int = 772,  # Shape param for Gamma process: CV = 1/sqrt(772) = 3.6%
+        shape: int = 772,  # Gamma shape: CV = 1/sqrt(772) = 3.6%
         init_order: int = 0,
     ):
         self.n = n
         self.recruitment_thresholds = recruitment_thresholds
         self.axon_velocities = axon_velocities__m_per_s
         self.axon_length = axon_length__m
-        self.poisson_batch_size = poisson_batch_size
+        self.shape = shape
         self.timestep__ms = timestep__ms
         self.init_order = init_order
 
@@ -135,7 +137,7 @@ class AffII__Pool(_Pool):
         for i, (rt_i, vcon_i) in enumerate(zip(rt, vcon)):
             ii = cells.AffII(
                 RT=rt_i,
-                N=poisson_batch_size,
+                shape=shape,
                 timestep__ms=timestep__ms,
                 initN=init_order,
                 pool__ID=i,
@@ -164,8 +166,9 @@ class AffIb__Pool(_Pool):
         Min and max axon conduction velocities (m/s).
     axon_length : float
         Length of the axon (mm).
-    poisson_batch_size : int
-        Batch size for exponential threshold generation algorithm.
+    shape : int
+        Gamma shape parameter controlling ISI regularity: CV = 1/sqrt(shape).
+        Larger values give more regular firing. Does not set the firing rate.
     timestep__ms : float
         Time step for simulation (ms).
     init_order : int
@@ -182,14 +185,14 @@ class AffIb__Pool(_Pool):
             72 * pq.m / pq.s,
         ),
         axon_length__mm: Quantity__mm = 0.6 * pq.mm,
-        poisson_batch_size: int = 145,  # Shape param for Gamma process: CV = 1/sqrt(145) = 8.3%
+        shape: int = 145,  # Gamma shape: CV = 1/sqrt(145) = 8.3%
         init_order: int = 0,
     ):
         self.n = n
         self.recruitment_thresholds = recruitment_thresholds
         self.axon_velocities = axon_velocities__m_per_s
         self.axon_length = axon_length__mm
-        self.poisson_batch_size = poisson_batch_size
+        self.shape = shape
         self.timestep__ms = timestep__ms
         self.init_order = init_order
 
@@ -200,7 +203,7 @@ class AffIb__Pool(_Pool):
         for i, (rt_i, vcon_i) in enumerate(zip(rt, vcon)):
             ib = cells.AffIb(
                 RT=rt_i,
-                N=poisson_batch_size,
+                shape=shape,
                 timestep__ms=timestep__ms,
                 initN=init_order,
                 pool__ID=i,

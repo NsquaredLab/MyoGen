@@ -1300,7 +1300,7 @@ class Network:
         Examples
         --------
         >>> # Create independent noise for each motor neuron
-        >>> noise_pool = DescendingDrive__Pool(n=10, poisson_batch_size=16, timestep__ms=0.05)
+        >>> noise_pool = DescendingDrive__Pool(n=10, timestep__ms=0.05)
         >>> mn_pool = AlphaMN__Pool(n=10)
         >>> network = Network({"noise": noise_pool, "mn": mn_pool})
         >>> network.connect_one_to_one("noise", "mn", weight__uS=0.5)
@@ -1426,7 +1426,7 @@ if __name__ == "__main__":
 
     timestep__ms = 0.05
 
-    dd__pool = DescendingDrive__Pool(n=2, poisson_batch_size=16, timestep__ms=timestep__ms)
+    dd__pool = DescendingDrive__Pool(n=2, timestep__ms=timestep__ms)
 
     n_type1 = 2
     n_type2 = 2

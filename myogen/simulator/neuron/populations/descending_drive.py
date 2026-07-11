@@ -24,16 +24,11 @@ class DescendingDrive__Pool(_Pool):
     ----------
     n : int
         Number of descending drive neurons to create.
-    poisson_batch_size : int, optional
-        Batch size for exponential threshold generation algorithm (only used when
-        process_type="poisson"). Higher values improve statistical accuracy but
-        increase computation. Typical values: 16-50.
-        Required if process_type="poisson", ignored if process_type="gamma".
     timestep__ms : float
         Time step for simulation (ms).
     process_type : str, optional
         Type of point process: "poisson" or "gamma", by default "poisson".
-        - "poisson": Irregular firing (CV=1.0)
+        - "poisson": true Poisson process, irregular firing (CV=1.0)
         - "gamma": More regular firing with CV controlled by shape parameter
     shape : float, optional
         Shape parameter for Gamma process (only used when process_type="gamma"),
@@ -46,7 +41,6 @@ class DescendingDrive__Pool(_Pool):
     def __init__(
         self,
         n: int,
-        poisson_batch_size: int | None = None,
         timestep__ms: Quantity__ms | None = None,
         process_type: str = "poisson",
         shape: float = 3.0,
@@ -69,10 +63,7 @@ class DescendingDrive__Pool(_Pool):
                 for i in range(n)
             ]
         elif process_type.lower() == "poisson":
-            if poisson_batch_size is None:
-                raise ValueError("poisson_batch_size is required when process_type='poisson'")
-            self.poisson_batch_size = poisson_batch_size
-            _cells = [cells.DD(N=poisson_batch_size, dt=timestep__ms, pool__ID=i) for i in range(n)]
+            _cells = [cells.DD(dt=timestep__ms, pool__ID=i) for i in range(n)]
         else:
             raise ValueError(
                 f"Invalid process_type '{process_type}'. Must be 'poisson' or 'gamma'."

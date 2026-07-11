@@ -27,7 +27,7 @@ This force is used as the target for optimizing the oscillating drive DC offset 
 - [`DescendingDrive__Pool`][myogen.simulator.neuron.populations.DescendingDrive__Pool]:
   Pool of 400 "descending drive" neurons that generate Poisson spike trains.
   These represent cortical/brainstem input to motor neurons.
-  ``poisson_batch_size=1`` creates order-1 (renewal) Poisson processes.
+  ``process_type="poisson"`` generates true Poisson processes (exponential ISIs, CV=1).
 
 - [`Network`][myogen.simulator.Network]:
   Container that manages populations and synaptic connections between them.
@@ -172,14 +172,12 @@ motor_neuron_pool = AlphaMN__Pool(
 # at a specified rate. They don't have membrane dynamics - just Poisson processes.
 #
 # Parameters:
-#   - process_type="poisson": Renewal Poisson process
-#   - poisson_batch_size=1: Order-1 (memoryless) - Watanabe specification
-#     Higher values create more regular spike trains (order-k gamma process)
+#   - process_type="poisson": true Poisson process (exponential ISIs, CV=1) - Watanabe specification
+#     For regular, low-CV firing use process_type="gamma", shape=k instead.
 descending_drive_pool = DescendingDrive__Pool(
     n=N_DD_NEURONS,
     timestep__ms=TIMESTEP_MS * pq.ms,
     process_type="poisson",
-    poisson_batch_size=1,  # Order 1 Poisson (Watanabe specification)
 )
 
 ##############################################################################
@@ -360,7 +358,6 @@ force_results = {
         "dd_drive__Hz": DD_DRIVE_HZ,
         "synaptic_weight__uS": SYNAPTIC_WEIGHT,
         "process_type": "poisson",
-        "poisson_batch_size": 1,
     },
     "force_scaling": {
         "max_force__N": MAX_FORCE_N,

@@ -40,8 +40,7 @@ Usage
 >>> motor_pool = AlphaMN__Pool(n=10, model="Powers2017", mode="active")
 >>>
 >>> # Create descending drive population with Poisson process (default)
->>> drive_pool = DescendingDrive__Pool(n=5, poisson_batch_size=16,
-...                                     timestep__ms=0.05)
+>>> drive_pool = DescendingDrive__Pool(n=5, timestep__ms=0.05)
 >>>
 >>> # Create descending drive with Gamma process for more regular firing
 >>> drive_gamma = DescendingDrive__Pool(n=5, timestep__ms=0.05, process_type='gamma',

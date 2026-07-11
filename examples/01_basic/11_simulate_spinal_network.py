@@ -196,7 +196,7 @@ naMN = nType1 + nType2  # Total α-motoneurons per muscle
 # Descending drive (cortical input)
 nDD = 400  # Total descending drive neurons (increased for more drive)
 DDorder = (
-    5  # Poisson process order for realistic spike patterns (higher order = more regular spiking)
+    5  # Gamma shape parameter for realistic spike patterns (higher shape = more regular spiking, CV=1/sqrt(shape))
 )
 
 print("Neural population sizes:")
@@ -327,7 +327,7 @@ print(f"\t- Initial angle: {artAng[0]}°")
 aMN = AlphaMN__Pool(recruitment_thresholds__array=recruitment_thresholds)  # α-motoneurons
 
 # Create descending drive population
-DD = DescendingDrive__Pool(n=nDD, poisson_batch_size=DDorder, timestep__ms=dt)
+DD = DescendingDrive__Pool(n=nDD, process_type="gamma", shape=DDorder, timestep__ms=dt)
 
 # Create afferent populations
 Ia = AffIa__Pool(n=nIa, timestep__ms=dt)  # Primary spindle afferents

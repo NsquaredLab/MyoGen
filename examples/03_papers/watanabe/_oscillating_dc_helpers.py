@@ -125,7 +125,6 @@ def run_simulation_with_oscillating_drive(dc_offset, recruitment_thresholds):
         n=N_DD_NEURONS,
         timestep__ms=TIMESTEP_MS * pq.ms,
         process_type="poisson",
-        poisson_batch_size=1,  # Order 1 Poisson (Watanabe)
     )
 
     # Build network
