@@ -545,7 +545,7 @@ axes[0].legend(framealpha=1.0, edgecolor="none")
 axes[0].grid(True, alpha=0.3)
 
 # 2. Motor neuron raster plot (recruitment ordered)
-mn_colors = plt.cm.get_cmap("Reds")(np.linspace(0.3, 0.9, len(mn_segment.spiketrains)))
+mn_colors = plt.get_cmap("Reds")(np.linspace(0.3, 0.9, len(mn_segment.spiketrains)))
 active_mn_count = 0
 for i, (spiketrain, color) in enumerate(zip(mn_segment.spiketrains, mn_colors)):
     if len(spiketrain) > 0:
@@ -642,7 +642,7 @@ if len(mn_instantaneous_rates) > 0:
     n_to_plot = len(active_neuron_ids)
 
     # Use colormap for lines (gradient showing recruitment order)
-    colors = plt.cm.get_cmap("rainbow")(np.linspace(0, 1, n_to_plot))
+    colors = plt.get_cmap("rainbow")(np.linspace(0, 1, n_to_plot))
 
     for neuron_idx in range(n_to_plot):
         axes2[1].plot(

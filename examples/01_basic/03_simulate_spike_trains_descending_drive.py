@@ -393,7 +393,7 @@ axes[0].legend()
 axes[0].grid(True, alpha=0.3)
 
 # 2. DD population raster plot
-dd_colors = plt.cm.get_cmap("Blues")(np.linspace(0.3, 0.8, len(dd_segment.spiketrains)))
+dd_colors = plt.get_cmap("Blues")(np.linspace(0.3, 0.8, len(dd_segment.spiketrains)))
 for i, (spiketrain, color) in enumerate(zip(dd_segment.spiketrains, dd_colors)):
     if len(spiketrain) > 0:
         axes[1].scatter(spiketrain.magnitude, [i] * len(spiketrain), c=[color], s=0.8, alpha=0.8)
@@ -404,7 +404,7 @@ axes[1].set_ylim(-1, descending_drive_pool.n)
 axes[1].grid(True, alpha=0.3)
 
 # 3. Motor neuron raster plot (recruitment ordered)
-mn_colors = plt.cm.get_cmap("Reds")(np.linspace(0.3, 0.9, len(mn_segment.spiketrains)))
+mn_colors = plt.get_cmap("Reds")(np.linspace(0.3, 0.9, len(mn_segment.spiketrains)))
 active_mn_count = 0
 for i, (spiketrain, color) in enumerate(zip(mn_segment.spiketrains, mn_colors)):
     if len(spiketrain) > 0:
@@ -541,7 +541,7 @@ if len(mn_instantaneous_rates) > 0:
     n_to_plot = len(active_neuron_ids)
 
     # Use colormap for lines (gradient from blue to red showing recruitment order)
-    colors = plt.cm.get_cmap("rainbow")(np.linspace(0, 1, n_to_plot))
+    colors = plt.get_cmap("rainbow")(np.linspace(0, 1, n_to_plot))
 
     for neuron_idx in range(n_to_plot):
         axes2[1].plot(
