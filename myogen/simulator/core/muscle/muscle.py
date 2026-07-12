@@ -123,9 +123,9 @@ class Muscle:
         Fat thickness in mm. Default is set to 0.3 mm as determined by Störchle et al. 2018 [5].
     skin_thickness__mm : float, default=1.29
         Skin thickness in mm. Default is set to the male skin thickness average of 1.29 mm as determined by Brodar 1960 [6].
-    muscle_conductivity_radial__S_m : float, default=0.09
+    muscle_conductivity_radial__S_per_m : float, default=0.09
         Muscle conductivity in radial direction. Default is set to 0.09 S/m as determined by Botelho et al. 2019 [7] (Table 1).
-    muscle_conductivity_longitudinal__S_m : float, default=0.4
+    muscle_conductivity_longitudinal__S_per_m : float, default=0.4
         Muscle conductivity in longitudinal direction. Default is set to 0.4 S/m as determined by Botelho et al. 2019 [7] (Table 1).
     fat_conductivity__S_per_m : float, default=4.07E-2
         Fat conductivity. Default is set to 4.07E-2 S/m as determined by Botelho et al. 2019 [7] (Table 1).
@@ -421,14 +421,14 @@ class Muscle:
         verbose : bool, default=True
             If True, display status messages. Set to False to disable.
 
-        Results are stored in the following properties after execution:
-
-            - `mf_centers`: Array of shape (n_fibers, 2) with fiber positions [x, y] in mm
-            - `number_of_muscle_fibers`: Total number of muscle fibers
-            - `muscle_border`: Array of border points for visualization
-
         Notes
         -----
+        Results are stored in the following properties after execution:
+
+        - `mf_centers`: Array of shape (n_fibers, 2) with fiber positions [x, y] in mm
+        - `number_of_muscle_fibers`: Total number of muscle fibers
+        - `muscle_border`: Array of border points for visualization
+
         This method should be called after distribute_innervation_centers() and
         before assign_mfs2mns(). The Voronoi-based distribution provides more
         realistic fiber spacing compared to regular grids or purely random distributions.
@@ -541,8 +541,6 @@ class Muscle:
         verbose : bool, default=True
             If True, display progress bars and status messages. Set to False to disable.
 
-        Results are stored in the `assignment` property after execution.
-
         Raises
         ------
         ValueError
@@ -551,6 +549,8 @@ class Muscle:
 
         Notes
         -----
+        Results are stored in the `assignment` property after execution.
+
         The algorithm compensates for out-of-muscle effects by calculating how much
         of each motor unit's Gaussian distribution falls outside the circular muscle
         boundary and adjusting the in-muscle probabilities accordingly.
