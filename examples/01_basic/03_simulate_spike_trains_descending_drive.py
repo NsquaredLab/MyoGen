@@ -345,7 +345,7 @@ dd_firing_rates = np.array(
     [
         mean_firing_rate(st__s.time_slice(st__s.min(), st__s.max()))
         for st__s in dd_segment.spiketrains
-        if len(st__s) > 0
+        if len(st__s) > 1  # need >=2 spikes for a rate over the spike span
     ]
 )
 
@@ -354,7 +354,7 @@ mn_firing_rates = np.array(
     [
         mean_firing_rate(st__s.time_slice(st__s.min(), st__s.max()))
         for st__s in mn_segment.spiketrains
-        if len(st__s) > 0
+        if len(st__s) > 1  # need >=2 spikes for a rate over the spike span
     ]
 )
 
