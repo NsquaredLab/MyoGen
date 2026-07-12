@@ -47,9 +47,9 @@ jobs:
 
       - name: Build docs site
         # Execute the example gallery so figures render inline in the deployed
-        # site (parity with the old Sphinx docs). ubuntu-latest runs NEURON +
-        # joblib forking stably; local macOS builds stay source-only to avoid a
-        # fork-related segfault in the joblib examples.
+        # site (parity with the old Sphinx docs). gallery_conf.py forces joblib
+        # to n_jobs=1 for the build: spawning loky worker processes after NEURON
+        # has initialised segfaults the long-lived gallery process (Linux + macOS).
         env:
           MKDOCS_GALLERY_PLOT: "true"
         run: uv run --group docs properdocs build

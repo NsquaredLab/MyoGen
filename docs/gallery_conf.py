@@ -40,6 +40,32 @@ def _disabled_tqdm_init(self, *args, **kwargs):
 
 _tqdm.std.tqdm.__init__ = _disabled_tqdm_init
 
+# NEURON initialises native runtime state that reset_neuron() below cannot
+# unwind. mkdocs-gallery executes every example sequentially in one long-lived
+# process; once that native state has accumulated, MyoGen launching joblib's
+# default `loky` worker processes (parallel muscle-fibre / MUAP generation)
+# segfaults the build on both Linux CI and macOS. Force every joblib.Parallel
+# to run in-process (n_jobs=1) for the duration of the build. As a bonus this
+# keeps the tqdm patch above effective (no fresh worker imports re-enable bars).
+import joblib  # noqa: E402
+
+_joblib_parallel_init = joblib.Parallel.__init__
+
+
+def _sequential_parallel_init(self, *args, **kwargs):
+    # n_jobs is Parallel.__init__'s first positional parameter. Override it in
+    # place so callers that pass it positionally (e.g. scikit-learn's
+    # ``Parallel(n_jobs, prefer="threads")``) don't raise "multiple values for
+    # argument 'n_jobs'".
+    if args:
+        args = (1, *args[1:])
+    else:
+        kwargs["n_jobs"] = 1
+    _joblib_parallel_init(self, *args, **kwargs)
+
+
+joblib.Parallel.__init__ = _sequential_parallel_init
+
 # mkdocs-gallery requires examples_dirs / gallery_dirs as absolute paths under
 # the project root (it calls Path(...).relative_to(project_root)). This file
 # lives at docs/gallery_conf.py, so its grandparent is the repo root.
@@ -70,14 +96,16 @@ conf = {
         str(_ROOT / "examples" / "01_basic"),
         str(_ROOT / "examples" / "02_finetune"),
         str(_ROOT / "examples" / "03_papers" / "watanabe"),
+        str(_ROOT / "examples" / "04_clinical"),
     ],
     "gallery_dirs": [
         str(_ROOT / "docs" / "auto_examples" / "01_basic"),
         str(_ROOT / "docs" / "auto_examples" / "02_finetune"),
         str(_ROOT / "docs" / "auto_examples" / "03_papers" / "watanabe"),
+        str(_ROOT / "docs" / "auto_examples" / "04_clinical"),
     ],
     "filename_pattern": r"\.py",
-    "ignore_pattern": r"(14_calibrate_noise_from_real|_oscillating_dc_helpers|_optimize_dc_worker)\.py",
+    "ignore_pattern": r"(14_calibrate_noise_from_real|_oscillating_dc_helpers|_optimize_dc_worker|_pic_protocols)\.py",
     "within_subsection_order": FileNameSortKey,
     "image_scrapers": ("matplotlib",),
     # strip the `# mkdocs_gallery_thumbnail_path = ...` directives from rendered source
