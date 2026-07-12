@@ -46,6 +46,12 @@ jobs:
         run: uv run poe setup_myogen
 
       - name: Build docs site
+        # Execute the example gallery so figures render inline in the deployed
+        # site (parity with the old Sphinx docs). ubuntu-latest runs NEURON +
+        # joblib forking stably; local macOS builds stay source-only to avoid a
+        # fork-related segfault in the joblib examples.
+        env:
+          MKDOCS_GALLERY_PLOT: "true"
         run: uv run --group docs properdocs build
 
       - name: Upload Pages artifact

@@ -1,5 +1,5 @@
 <div align="center" markdown>
-<h1><img src="images/myogen_logo.png" height="120" alt="MyoGen"></h1>
+<h1><img src="images/myogen_logo.png" alt="MyoGen" style="height:120px;width:auto"></h1>
 
 **The modular and extensible simulation toolkit for neurophysiology**
 
