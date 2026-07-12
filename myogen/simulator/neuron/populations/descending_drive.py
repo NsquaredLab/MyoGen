@@ -24,8 +24,8 @@ class DescendingDrive__Pool(_Pool):
     ----------
     n : int
         Number of descending drive neurons to create.
-    timestep__ms : float
-        Time step for simulation (ms).
+    timestep__ms : Quantity__ms
+        Time step for simulation as a Quantity with units of milliseconds (required).
     process_type : str, optional
         Type of point process: "poisson" or "gamma", by default "poisson".
         - "poisson": discrete-time Poisson process, irregular firing (CV=1.0, exact as dt->0)

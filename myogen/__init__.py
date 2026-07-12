@@ -34,17 +34,17 @@ def derive_subseed(*labels: int) -> int:
 
     Intended for seeding non-NumPy generators (Cython Mersenne spike
     generators, sklearn ``random_state``, etc.) so that a call to
-    :func:`set_random_seed` propagates to them. Label order matters:
+    ``set_random_seed`` propagates to them. Label order matters:
     ``derive_subseed(a, b)`` and ``derive_subseed(b, a)`` yield different
     sub-seeds. Each label must be a **non-negative** integer; callers with
     signed identifiers should offset them beforehand (NumPy's
-    :class:`~numpy.random.SeedSequence`, which backs this helper, rejects
+    ``numpy.random.SeedSequence``, which backs this helper, rejects
     negatives).
 
     This replaces the pre-existing ``SEED + (class_id+1)*(global_id+1)``
     derivation, which collided on swapped factors — e.g. ``(0, 5)`` and
     ``(1, 2)`` both produced ``+6``. The present mixing function uses
-    :class:`numpy.random.SeedSequence` to fold the inputs into a 32-bit
+    ``numpy.random.SeedSequence`` to fold the inputs into a 32-bit
     integer; collisions remain possible in principle (birthday-paradox
     probability ≈ ``N² / 2³³``) but are negligible for realistic motor-unit
     pool sizes (≲ 10⁻⁷ at 1000 cells).
@@ -64,7 +64,7 @@ def set_random_seed(seed: int = _DEFAULT_SEED) -> None:
     Set the random seed for reproducibility.
 
     Rebuilds the global NumPy ``Generator``. All modules that read the RNG
-    through :func:`get_random_generator` will observe the new state on their
+    through ``get_random_generator`` will observe the new state on their
     next draw; this includes seeds derived for non-NumPy RNGs (e.g. sklearn
     ``random_state`` arguments or Cython Mersenne generators), which are now
     drawn from the global RNG rather than read from a frozen module constant.

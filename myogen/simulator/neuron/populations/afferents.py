@@ -162,14 +162,14 @@ class AffIb__Pool(_Pool):
         Number of type Ib afferent neurons to create.
     recruitment_thresholds : tuple[float, float]
         Min and max recruitment thresholds (Hz).
-    axon_velocities : tuple[float, float]
+    axon_velocities__m_per_s : tuple[Quantity__m_per_s, Quantity__m_per_s]
         Min and max axon conduction velocities (m/s).
-    axon_length : float
+    axon_length__mm : Quantity__mm
         Length of the axon (mm).
     shape : int
         Gamma shape parameter controlling ISI regularity: CV = 1/sqrt(shape).
         Larger values give more regular firing. Does not set the firing rate.
-    timestep__ms : float
+    timestep__ms : Quantity__ms
         Time step for simulation (ms).
     init_order : int
         Initial order parameter for afferent initialization.

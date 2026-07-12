@@ -90,13 +90,13 @@ class Muscle:
     """
     A muscle model based on the cylindrical description of the volume conductor by Farina et al. 2004 [1] and the motor unit distribution by Konstantin et al. 2020 [2].
 
-    .. note::
-        All default values are set to simulate the First Dorsal Interosseous (FDI) muscle. Values are pulled from the literature.
+    All default values are set to simulate the First Dorsal Interosseous (FDI) muscle.
+    Values are pulled from the literature.
 
     Parameters
     ----------
     recruitment_thresholds : RECRUITMENT_THRESHOLDS__ARRAY
-        Array of recruitment thresholds for each motor unit (see `myogen.simulator.generate_mu_recruitment_thresholds`).
+        Array of recruitment thresholds for each motor unit (see `myogen.simulator.RecruitmentThresholds`).
         Values range from 0 to 1 with the largest motor units having thresholds near 1.
     radius__mm : float, default=6.91
         Radius of the muscle cross-section in millimeters. Default is set to 6.91 mm as determined by Jacobson et al. 1992 [3].
