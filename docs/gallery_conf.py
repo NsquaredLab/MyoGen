@@ -7,7 +7,21 @@ The module-level ``conf`` dict is loaded as the gallery's base configuration;
 
 from pathlib import Path
 
+import matplotlib
 from mkdocs_gallery.sorting import FileNameSortKey
+
+# Headless build: render figures off-screen and capture them, never try to
+# display. mkdocs-gallery's matplotlib scraper collects figures via
+# ``plt.get_fignums()`` (see mkdocs_gallery/scrapers.py), independently of
+# ``plt.show()``. Under the Agg backend ``plt.show()`` therefore does nothing
+# useful and only emits a "FigureCanvasAgg is non-interactive, and thus cannot
+# be shown" UserWarning that leaks (with the absolute source path) into every
+# example's Out block. sphinx-gallery no-ops ``show`` for exactly this reason;
+# mkdocs-gallery does not, so we do it here.
+matplotlib.use("Agg")
+import matplotlib.pyplot as plt  # noqa: E402  (must follow matplotlib.use)
+
+plt.show = lambda *args, **kwargs: None
 
 # mkdocs-gallery requires examples_dirs / gallery_dirs as absolute paths under
 # the project root (it calls Path(...).relative_to(project_root)). This file
