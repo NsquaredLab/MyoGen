@@ -59,6 +59,15 @@ nwb = [
 gpu = [
     "cupy-cuda12x>=13.0,<14",
 ]
+# Differentiable / RL proof-of-concept (JAX + jaxley). Never a core dep; NEURON users
+# are unaffected. jax is pinned <0.5 because jaxley 0.13.0 still calls the removed
+# jnp.clip(a_max=...) API (verified working on jax/jaxlib 0.4.30).
+diff = [
+    "jax==0.4.30",
+    "jaxlib==0.4.30",
+    "jaxley==0.13.0",
+    "optax>=0.2,<0.3",
+]
 
 [project.urls]
 Homepage = "https://nsquaredlab.github.io/MyoGen/"
