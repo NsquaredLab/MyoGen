@@ -48,7 +48,7 @@ SUBDIRS = ["01_basic", "02_finetune", "03_papers/watanabe", "04_clinical"]
 IGNORE = re.compile(
     r"(14_calibrate_noise_from_real|_oscillating_dc_helpers|_optimize_dc_worker|_pic_protocols)\.py"
 )
-MAX_ATTEMPTS = 6
+MAX_ATTEMPTS = 12  # heavy watanabe/clinical tail clears ~1-2 examples per fresh process
 # markdown image sources look like: ![alt](./images/mkd_glr_<name>_001.png){...}
 _IMG_SRC = re.compile(r"!\[[^\]]*\]\((\.?/?images/[^)]+\.(?:png|svg))\)")
 

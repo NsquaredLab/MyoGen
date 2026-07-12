@@ -56,7 +56,12 @@ jobs:
         # (gallery_conf.py additionally forces joblib to n_jobs=1 so no loky
         # worker processes are spawned mid-build.)
         env:
-          MKDOCS_GALLERY_PLOT: "true"
+          # Execute the gallery (inline plots) only where the site is actually
+          # deployed — the push to main — plus manual dispatch for pre-merge
+          # testing. On pull requests the gallery is source-only so review builds
+          # stay fast (~10s); the slow executed build (NEURON sims + retries to
+          # survive state-accumulation segfaults) runs once per merge.
+          MKDOCS_GALLERY_PLOT: ${{ (github.event_name == 'push' && github.ref == 'refs/heads/main') || github.event_name == 'workflow_dispatch' }}
         run: uv run --group docs python scripts/build_docs.py
 
       - name: Upload Pages artifact
