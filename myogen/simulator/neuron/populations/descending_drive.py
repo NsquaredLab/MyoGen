@@ -28,7 +28,7 @@ class DescendingDrive__Pool(_Pool):
         Time step for simulation (ms).
     process_type : str, optional
         Type of point process: "poisson" or "gamma", by default "poisson".
-        - "poisson": true Poisson process, irregular firing (CV=1.0)
+        - "poisson": discrete-time Poisson process, irregular firing (CV=1.0, exact as dt->0)
         - "gamma": More regular firing with CV controlled by shape parameter
     shape : float, optional
         Shape parameter for Gamma process (only used when process_type="gamma"),

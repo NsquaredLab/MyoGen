@@ -379,9 +379,9 @@ class DD(_Cell, _PoissonProcessGenerator__Cython):
     simulation of voluntary motor commands, reflex modulation, and other
     descending influences on spinal motor circuits.
 
-    The process is a genuine Poisson process (exponential inter-spike
-    intervals, CV = 1); the instantaneous rate is set by the drive signal
-    passed to :meth:`integrate`, not by a constructor argument. For regular,
+    The process is a discrete-time Poisson process (exponential inter-spike
+    intervals, CV = 1, exact as dt -> 0); the instantaneous rate is set by the
+    drive signal passed to :meth:`integrate`, not by a constructor argument. For regular,
     low-CV firing use :class:`DD_Gamma` instead.
 
     Parameters
@@ -615,7 +615,7 @@ class AffIa(_Cell, _GammaProcessGenerator__Cython):
         Returns
         -------
         int
-            Number of spikes generated (0 or 1) based on Poisson process
+            Number of spikes generated (0 or 1) based on a Gamma renewal process
             with rate determined by activation level above threshold.
         """
         # NumPy 2.0 no longer auto-casts a single-element array (e.g. a neo

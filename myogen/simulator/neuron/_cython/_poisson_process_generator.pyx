@@ -1,6 +1,6 @@
 # cython: language_level=3, boundscheck=False, wraparound=False
 
-from libc.math cimport log
+from libc.math cimport log, log1p
 from libc.stdint cimport uint64_t
 
 cdef class _PoissonProcessGenerator__Cython:
@@ -17,9 +17,12 @@ cdef class _PoissonProcessGenerator__Cython:
     are reset.
 
     Because the inter-spike threshold is a single ``Exp(1)`` draw, the emitted
-    process is a genuine Poisson process: at a constant input rate the
-    inter-spike intervals are exponentially distributed with coefficient of
-    variation ``CV = 1``. For deliberately regular, low-CV firing (e.g. muscle
+    process is a discrete-time Poisson process (exact in the ``dt -> 0`` limit):
+    at a constant input rate the inter-spike intervals are exponentially
+    distributed with coefficient of variation ``CV = 1``. (At finite ``dt`` the
+    ISIs are quantised to multiples of ``dt`` and at most one spike is emitted
+    per step, so the fit is approximate for ``rate * dt`` not << 1.) For
+    deliberately regular, low-CV firing (e.g. muscle
     afferents or cortical drive) use the Gamma generator instead — see
     ``_GammaProcessGenerator__Cython`` / ``DD_Gamma``.
 
@@ -99,18 +102,18 @@ cdef class _PoissonProcessGenerator__Cython:
         Draw the next inter-spike integrated-intensity threshold.
 
         For a Poisson process the integrated intensity accumulated between two
-        consecutive spikes is ``Exp(1)``-distributed. It is sampled here by
-        inverse transform, ``-log(U)``. Since ``_rand_uniform`` returns values
-        in ``[0, 1)``, ``1 - U`` lies in ``(0, 1]``, which avoids
-        ``log(0) = -inf`` (an infinite threshold would silence the unit
-        permanently) while remaining an exact ``Exp(1)`` draw.
+        consecutive spikes is ``Exp(1)``-distributed, sampled here by inverse
+        transform. ``_rand_uniform`` returns values in ``[0, 1)``, so ``-log1p(-U)``
+        (i.e. ``-log(1 - U)``, evaluated more accurately for small ``U``) is a
+        finite ``Exp(1)`` draw; ``U = 0`` yields a zero threshold (an immediate
+        spike), which is harmless.
 
         Returns
         -------
         double
             A single exponentially distributed threshold with unit mean.
         """
-        return -log(1.0 - self._rand_uniform())
+        return -log1p(-self._rand_uniform())
 
     cpdef int compute(self, double y):
         """
@@ -140,7 +143,7 @@ cdef class _PoissonProcessGenerator__Cython:
         When yi exceeds the current threshold, a spike is generated and both
         yi and the threshold are reset. The new threshold is a single ``Exp(1)``
         draw, which makes the inter-spike intervals exponentially distributed
-        (CV = 1) — i.e. a genuine Poisson process.
+        (CV = 1) — a discrete-time Poisson process (exact as ``dt -> 0``).
 
         This method can be called repeatedly with time-varying input intensities
         to generate realistic Poisson spike trains that capture the temporal
