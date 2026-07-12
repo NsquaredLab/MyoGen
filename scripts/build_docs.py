@@ -44,6 +44,10 @@ ROOT = Path(__file__).resolve().parent.parent
 EXAMPLES = ROOT / "examples"
 GALLERY_OUT = ROOT / "docs" / "auto_examples"
 SUBDIRS = ["01_basic", "02_finetune", "03_papers/watanabe", "04_clinical"]
+# Only these subdirs are executed (must match filename_pattern in
+# docs/gallery_conf.py); watanabe/clinical render source-only, so they are not
+# expected to produce figures and are not part of the completeness target.
+EXECUTE_SUBDIRS = ["01_basic", "02_finetune"]
 # keep in sync with ignore_pattern in docs/gallery_conf.py
 IGNORE = re.compile(
     r"(14_calibrate_noise_from_real|_oscillating_dc_helpers|_optimize_dc_worker|_pic_protocols)\.py"
@@ -51,12 +55,14 @@ IGNORE = re.compile(
 MAX_ATTEMPTS = 12  # heavy watanabe/clinical tail clears ~1-2 examples per fresh process
 # markdown image sources look like: ![alt](./images/mkd_glr_<name>_001.png){...}
 _IMG_SRC = re.compile(r"!\[[^\]]*\]\((\.?/?images/[^)]+\.(?:png|svg))\)")
+# mkdocs-gallery logs: "<path>/<name>.py failed to execute correctly: Traceback"
+_FAILED = re.compile(r"([^\s/\\]+)\.py failed to execute correctly")
 
 
 def executable_examples() -> set[str]:
     """Names of example .py files that the gallery is expected to execute."""
     names: set[str] = set()
-    for sub in SUBDIRS:
+    for sub in EXECUTE_SUBDIRS:
         for py in sorted((EXAMPLES / sub).glob("*.py")):
             if not IGNORE.search(py.name):
                 names.add(py.stem)
@@ -94,8 +100,16 @@ def validate_cache() -> tuple[set[str], list[str]]:
     return complete, dropped
 
 
-def run_build() -> tuple[int, bool]:
-    """Run one ``properdocs build``; return (exit code, any example failed)."""
+def drop_stamps(names: set[str]) -> None:
+    """Delete the .py.md5 stamps for the given examples so they re-run."""
+    for sub in SUBDIRS:
+        for name in names:
+            for stamp in (GALLERY_OUT / sub).rglob(f"{name}.py.md5"):
+                stamp.unlink(missing_ok=True)
+
+
+def run_build() -> tuple[int, set[str]]:
+    """Run one ``properdocs build``; return (exit code, names of failed examples)."""
     proc = subprocess.run(
         ["properdocs", "build"],
         cwd=ROOT,
@@ -107,7 +121,7 @@ def run_build() -> tuple[int, bool]:
     sys.stdout.write(proc.stdout[-6000:])
     sys.stderr.write(proc.stderr[-3000:])
     sys.stdout.flush()
-    failed = "failed to execute correctly" in (proc.stdout + proc.stderr)
+    failed = set(_FAILED.findall(proc.stdout + proc.stderr))
     return proc.returncode, failed
 
 
@@ -123,33 +137,35 @@ def main() -> int:
         code, failed = run_build()
         print("::endgroup::", flush=True)
 
+        # A failed example is untrustworthy even if it got a stamp (mkdocs-gallery
+        # renders a broken page): drop its stamp so it re-executes, and don't
+        # count it complete. A deterministically-failing example then shows up as
+        # "no progress" below rather than a silent broken page in the deploy.
+        drop_stamps(failed)
         complete, dropped = validate_cache()
-        if dropped:
-            print(f"  re-running {len(dropped)} example(s) with incomplete outputs: "
-                  f"{', '.join(sorted(dropped))}")
-        print(f"attempt {attempt}: exit={code} failed_examples={failed} "
+        rerun = sorted(failed | set(dropped))
+        if rerun:
+            print(f"  will re-run {len(rerun)} example(s): {', '.join(rerun)}")
+        print(f"attempt {attempt}: exit={code} failed={sorted(failed) or 'none'} "
               f"complete={len(complete)}/{len(target)}", flush=True)
 
-        if code == 0:
-            if failed:
-                print("::error::an example failed to execute (Python error); "
-                      "retrying will not fix it. Not deploying a broken gallery.")
-                return 1
+        if code == 0 and not failed:
             missing = target - complete if executing else set()
             if missing:
-                print(f"::error::build succeeded but these examples are missing "
-                      f"figures/pages: {', '.join(sorted(missing))}")
+                print(f"::error::build reported success but these examples are "
+                      f"missing figures/pages: {', '.join(sorted(missing))}")
                 return 1
             print(f"docs build complete on attempt {attempt}.")
             return 0
 
-        # crashed (segfault etc.): only keep going if we actually made progress
+        # crashed (segfault) or an example failed: retry only if making progress
         if not executing:
             print("::error::source-only build failed (not a gallery segfault).")
             return code
         if len(complete) <= prev_complete:
             print(f"::error::no progress on attempt {attempt} "
-                  f"({len(complete)} <= {prev_complete} complete). Aborting retries.")
+                  f"({len(complete)} <= {prev_complete} complete). A deterministically "
+                  f"failing example won't be fixed by retrying. Aborting.")
             return 1
         prev_complete = len(complete)
 

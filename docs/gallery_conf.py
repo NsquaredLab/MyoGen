@@ -104,7 +104,13 @@ conf = {
         str(_ROOT / "docs" / "auto_examples" / "03_papers" / "watanabe"),
         str(_ROOT / "docs" / "auto_examples" / "04_clinical"),
     ],
-    "filename_pattern": r"\.py",
+    # Execute only the self-contained tutorial + fine-tuning galleries. The
+    # paper (03_papers/watanabe) and clinical (04_clinical) examples rely on
+    # ``__file__`` (undefined under mkdocs-gallery's exec()) to locate a results
+    # directory and load each other's ``.pkl`` outputs, so they cannot execute
+    # cleanly in the gallery — they render source-only. (When MKDOCS_GALLERY_PLOT
+    # is false, everything is source-only regardless.)
+    "filename_pattern": r"/(01_basic|02_finetune)/",
     "ignore_pattern": r"(14_calibrate_noise_from_real|_oscillating_dc_helpers|_optimize_dc_worker|_pic_protocols)\.py",
     "within_subsection_order": FileNameSortKey,
     "image_scrapers": ("matplotlib",),
