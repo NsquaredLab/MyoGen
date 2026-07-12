@@ -23,6 +23,23 @@ import matplotlib.pyplot as plt  # noqa: E402  (must follow matplotlib.use)
 
 plt.show = lambda *args, **kwargs: None
 
+# Progress bars are terminal UX with no place in rendered docs. mkdocs-gallery
+# scrapes stderr, so a live tqdm bar would be captured into an example's Out
+# block. tqdm reads TQDM_DISABLE only at its own import (too early to set
+# reliably from here), so instead force every tqdm instance created during the
+# build to be disabled.
+import tqdm as _tqdm  # noqa: E402
+
+_tqdm_init = _tqdm.std.tqdm.__init__
+
+
+def _disabled_tqdm_init(self, *args, **kwargs):
+    kwargs["disable"] = True
+    _tqdm_init(self, *args, **kwargs)
+
+
+_tqdm.std.tqdm.__init__ = _disabled_tqdm_init
+
 # mkdocs-gallery requires examples_dirs / gallery_dirs as absolute paths under
 # the project root (it calls Path(...).relative_to(project_root)). This file
 # lives at docs/gallery_conf.py, so its grandparent is the repo root.
