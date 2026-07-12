@@ -40,7 +40,6 @@ Both workflows yield identical results; the manual version is provided purely fo
 from pathlib import Path
 
 import joblib
-import neuron
 import numpy as np
 import quantities as pq
 import seaborn as sns
@@ -222,7 +221,11 @@ for pool in motor_neuron_pools:
 
 # Initialize NEURON's internal state and run the simulation
 h.finitialize()  # Initialize all mechanisms and variables
-neuron.run(simulation_time__ms)
+# Advance the solver to the end of the simulation (replaces the deprecated
+# neuron.run(); finitialize() above already set the initial state).
+h.tstop = float(simulation_time__ms)
+while h.t < h.tstop:
+    h.fadvance()
 
 # Step 4: Convert recorded data to `neo.core.Block` format
 # ==================================================================
