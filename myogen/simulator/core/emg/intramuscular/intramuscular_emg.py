@@ -52,9 +52,9 @@ class IntramuscularEMG:
     Parameters
     ----------
     muscle_model : Muscle
-        Pre-computed muscle model (see :class:`myogen.simulator.Muscle`).
+        Pre-computed muscle model (see `myogen.simulator.Muscle`).
     electrode_array : IntramuscularElectrodeArray
-        Intramuscular electrode array configuration to use for simulation (see :class:`myogen.simulator.IntramuscularElectrodeArray`).
+        Intramuscular electrode array configuration to use for simulation (see `myogen.simulator.IntramuscularElectrodeArray`).
     sampling_frequency__Hz : Quantity__Hz, default=10240.0 * pq.Hz
         Sampling frequency in Hz for EMG simulation.
         Default is set to 10240 Hz as used by the Quattrocento (OT Bioelettronica, Turin, Italy) system.
@@ -71,9 +71,8 @@ class IntramuscularEMG:
         Conduction velocities for the two-layer model of the neuromuscular junction in m/s.
         Default is set to (5.0, 2.0) m/s as determined by Konstantin et al. 2020 [1].
 
-        .. note::
-            The two-layer model is a simplification of the actual arborization pattern, but it is a good approximation for the purposes of this simulation.
-            Follows the implementation of Konstantin et al. 2020 [1].
+        Note: The two-layer model is a simplification of the actual arborization pattern, but it is a good approximation for the purposes of this simulation.
+        Follows the implementation of Konstantin et al. 2020 [1].
     MUs_to_simulate : list[int], optional
         Indices of motor units to simulate. If None, all motor units are simulated.
         Default is None. For computational efficiency, consider
@@ -762,7 +761,7 @@ class IntramuscularEMG:
           1/f-like base, mid-band spectral emphasis from
           electrode–amplifier bandwidth, heavy tails from cross-talk
           artifacts, and additive 50/60 Hz powerline interference with
-          harmonics. See :mod:`myogen.utils.emg_noise` for the math.
+          harmonics. See `myogen.utils.emg_noise` for the math.
 
         Per-channel SNR is preserved across both modes: each electrode's
         noise RMS is computed from that channel's own signal RMS so
@@ -823,7 +822,7 @@ class IntramuscularEMG:
             The spectral form is paper-constrained; the amplitude
             defaults are *not* validated for intramuscular EMG —
             calibrate against real recordings via
-            :func:`myogen.utils.calibrate_baseline_drift_profile`.
+            `myogen.utils.calibrate_baseline_drift_profile`.
             Broadband movement artifacts (0–20 Hz, De Luca 2010) are
             a separate phenomenon out of scope here.
             Ignored when ``noise_type="gaussian"``.
@@ -852,7 +851,7 @@ class IntramuscularEMG:
         ------
         ValueError
             If intramuscular EMG has not been simulated (call
-            :meth:`simulate_intramuscular_emg` first) or ``noise_type``
+            `simulate_intramuscular_emg` first) or ``noise_type``
             is unrecognized.
         """
         if self._intramuscular_emg__Block is None:

@@ -381,8 +381,8 @@ class DD(_Cell, _PoissonProcessGenerator__Cython):
 
     The process is a discrete-time Poisson process (exponential inter-spike
     intervals, CV = 1, exact as dt -> 0); the instantaneous rate is set by the
-    drive signal passed to :meth:`integrate`, not by a constructor argument. For regular,
-    low-CV firing use :class:`DD_Gamma` instead.
+    drive signal passed to `integrate`, not by a constructor argument. For regular,
+    low-CV firing use `DD_Gamma` instead.
 
     Parameters
     ----------
@@ -1015,8 +1015,8 @@ def reset_cell_id_counters() -> None:
     """Reset every per-class ``itertools.count`` counter to zero.
 
     Cell classes assign ``global__ID`` / ``class__ID`` from module-level
-    :class:`itertools.count` instances. Those counters live for the
-    interpreter's lifetime, so a second call to :func:`myogen.set_random_seed`
+    `itertools.count` instances. Those counters live for the
+    interpreter's lifetime, so a second call to `myogen.set_random_seed`
     would deterministically reseed the RNG but still hand out
     monotonically increasing IDs from where the previous run stopped --
     breaking determinism across consecutive runs in the same process.

@@ -133,9 +133,14 @@ def test_pool_spike_counts_follow_poisson_distribution(poisson_pool_spikes):
     lam = counts.mean()
     kmax = int(counts.max())
     observed = np.bincount(counts, minlength=kmax + 1).astype(float)
-    expected = stats.poisson.pmf(np.arange(kmax + 1), lam) * counts.size
+    # Expected Poisson(lambda) frequencies. The final (k = kmax) bin carries the ENTIRE upper
+    # tail P(X > kmax) via the survival function, so the expected probabilities sum to 1 — an
+    # unconditional goodness-of-fit, not one conditioned away above the observed maximum.
+    expected = stats.poisson.pmf(np.arange(kmax + 1), lam)
+    expected[-1] += stats.poisson.sf(kmax, lam)
+    expected = expected * counts.size
 
-    # Merge tail bins so every expected frequency >= 5 (chi-square validity condition).
+    # Merge bins from the bottom so every expected frequency >= 5 (chi-square validity condition).
     obs_binned, exp_binned, acc_o, acc_e = [], [], 0.0, 0.0
     for o, e in zip(observed, expected):
         acc_o += o
@@ -148,7 +153,8 @@ def test_pool_spike_counts_follow_poisson_distribution(poisson_pool_spikes):
         obs_binned[-1] += acc_o
         exp_binned[-1] += acc_e
     obs_binned = np.asarray(obs_binned)
-    exp_binned = np.asarray(exp_binned) * (obs_binned.sum() / np.sum(exp_binned))
+    exp_binned = np.asarray(exp_binned)
+    exp_binned *= obs_binned.sum() / exp_binned.sum()  # float-safety only; totals already match
 
     # ddof=1 because lambda was estimated from the data.
     p_value = stats.chisquare(obs_binned, exp_binned, ddof=1).pvalue

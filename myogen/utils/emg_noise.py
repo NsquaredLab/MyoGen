@@ -297,7 +297,7 @@ def _emg_band_shape(
     Notes
     -----
     The analog HPF that strips infra-low drift is handled in a separate
-    explicit stage inside :func:`generate_realistic_noise`
+    explicit stage inside `generate_realistic_noise`
     (``analog_hpf_hz``), so this function performs only the band
     emphasis. Stacking two HPFs here would double the rolloff order
     and cut the PSD below the cutoff far steeper than any real device.
@@ -350,7 +350,7 @@ def _baseline_drift(
     sees the same amplitude they requested. A downstream user-applied
     HPF will attenuate it further (realistic).
 
-    Public input validation lives in :func:`generate_realistic_noise`;
+    Public input validation lives in `generate_realistic_noise`;
     this helper assumes its arguments have already been checked.
     """
     if target_rms == 0 or n_samples < 4:
@@ -450,27 +450,25 @@ def generate_realistic_noise(
         ``high_hz=1.0`` are the midpoint and upper bound of the
         reported electrode-noise regime, not validated physiological
         constants for intramuscular EMG. Calibrate against real
-        recordings via :func:`calibrate_baseline_drift_profile` if
+        recordings via `calibrate_baseline_drift_profile` if
         you need amplitude-accurate simulation. Movement artifacts
         (broadband, 0–20 Hz per De Luca et al. 2010, DOI
         10.1016/j.jbiomech.2010.01.027) are a separate phenomenon
         and would need their own contaminant model.
 
-        .. note::
-           **SNR contract**: drift is **additive on top** of the
-           broadband noise. ``noise_rms`` still controls the
-           broadband floor exactly, but enabling drift makes the
-           total noise RMS slightly higher
-           (``sqrt(noise_rms**2 + drift_rms**2)``). If you are
-           using ``snr__dB`` upstream to hit a target SNR, factor
-           this in or leave drift at 0.
+        Note: **SNR contract**: drift is **additive on top** of the
+        broadband noise. ``noise_rms`` still controls the
+        broadband floor exactly, but enabling drift makes the
+        total noise RMS slightly higher
+        (``sqrt(noise_rms**2 + drift_rms**2)``). If you are
+        using ``snr__dB`` upstream to hit a target SNR, factor
+        this in or leave drift at 0.
 
-        .. note::
-           When called from a multi-channel context (e.g.
-           :func:`add_realistic_noise`), each channel receives an
-           **independent** drift realisation. Real electrode-array
-           drift is often partially common-mode across nearby
-           electrodes; this model does not capture that correlation.
+        Note: When called from a multi-channel context (e.g.
+        `add_realistic_noise`), each channel receives an
+        **independent** drift realisation. Real electrode-array
+        drift is often partially common-mode across nearby
+        electrodes; this model does not capture that correlation.
     baseline_drift_alpha : float, default 1.75
         PSD slope α (positive number) for ``PSD ∝ 1/f^α``. Must be
         > 0. The literature regime is α ∈ [1.5, 2.0]; the default
@@ -662,17 +660,17 @@ def add_realistic_noise(
         Per-harmonic amplitude ratios relative to the fundamental.
     powerline_frequency_drift_hz : float, default 0.3
         STD of the slow drift of the mains instantaneous frequency.
-        See :func:`generate_realistic_noise`.
+        See `generate_realistic_noise`.
     powerline_amplitude_modulation_depth : float, default 0.15
         Fractional AM depth on the powerline carriers. See
-        :func:`generate_realistic_noise`.
+        `generate_realistic_noise`.
     peak_hz : float, default 750.0
         Center of EMG-band spectral emphasis.
     analog_hpf_hz : float, default 10.0
         Analog HPF cutoff applied before powerline is mixed in.
     baseline_drift_rms_uv : float, default 0.0
         Target RMS of the band-limited 1/f^α drift (off by default).
-        See :func:`generate_realistic_noise` for the paper-constrained
+        See `generate_realistic_noise` for the paper-constrained
         spectral form and calibration guidance. Each channel receives
         an independent drift realisation; common-mode array drift
         is not modelled.
@@ -832,8 +830,8 @@ def calibrate_realistic_noise_profile(
        post-notch RMS in a ±1 Hz band around each harmonic.
 
     The output dict is shaped to be unpacked straight into
-    :func:`generate_realistic_noise` /
-    :meth:`myogen.simulator.IntramuscularEMG.add_noise` so the simulator
+    `generate_realistic_noise` /
+    `myogen.simulator.IntramuscularEMG.add_noise` so the simulator
     will reproduce the same noise statistics as the real recording.
 
     Parameters
@@ -861,7 +859,7 @@ def calibrate_realistic_noise_profile(
     Returns
     -------
     dict
-        Keys ready to splat into :func:`generate_realistic_noise`:
+        Keys ready to splat into `generate_realistic_noise`:
 
         * ``noise_floor_uv`` — RMS of the noise residual (µV).
         * ``spectral_slope`` — PSD slope in log-log space above the peak.
@@ -1110,10 +1108,10 @@ def calibrate_baseline_drift_profile(
     """Estimate baseline-drift parameters from a real recording.
 
     Fits the band-limited 1/f^α drift model
-    (see :func:`generate_realistic_noise`) to the low-frequency PSD
+    (see `generate_realistic_noise`) to the low-frequency PSD
     of ``real_signal_uv`` over ``band = (low_hz, high_hz)``. Returns
     a dict with the four ``baseline_drift_*`` kwargs that
-    :func:`generate_realistic_noise` and downstream APIs accept, so
+    `generate_realistic_noise` and downstream APIs accept, so
     the user can splat it directly:
 
         >>> profile = calibrate_baseline_drift_profile(real_uv, fs_hz)
@@ -1123,12 +1121,11 @@ def calibrate_baseline_drift_profile(
     signal** (µV when the input is in µV); the function does *not*
     standardise the channels because that would erase the scale.
 
-    .. note::
-       The model's spectral form (PSD ∝ 1/f^α over a bounded band)
-       is paper-constrained for electrode/interface noise (Huigen
-       2002, Gondran 1996). The fitted parameters become validated
-       only when this calibration is run on real recordings — they
-       are not pre-baked physiological constants.
+    Note: The model's spectral form (PSD ∝ 1/f^α over a bounded band)
+    is paper-constrained for electrode/interface noise (Huigen
+    2002, Gondran 1996). The fitted parameters become validated
+    only when this calibration is run on real recordings — they
+    are not pre-baked physiological constants.
 
     Parameters
     ----------
@@ -1260,7 +1257,7 @@ def tune_noise_profile_with_optuna(
 ) -> dict:
     """Refine a noise profile with Optuna to minimise PSD distance vs real.
 
-    Closed-form calibration (:func:`calibrate_realistic_noise_profile`)
+    Closed-form calibration (`calibrate_realistic_noise_profile`)
     matches the first few moments and spectral summary statistics but
     can leave residual shape mismatch — most visibly the low-frequency
     rolloff curvature and the line-peak shape. This function takes the
@@ -1279,7 +1276,7 @@ def tune_noise_profile_with_optuna(
     fs_hz : float
         Sampling rate.
     initial_profile : dict
-        Output of :func:`calibrate_realistic_noise_profile`. Used as
+        Output of `calibrate_realistic_noise_profile`. Used as
         starting point + to define the search bounds.
     rest_mask : ndarray of bool, optional
         Per-sample rest mask. If provided, the reference PSD is built

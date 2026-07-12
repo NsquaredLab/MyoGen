@@ -45,9 +45,9 @@ class SurfaceEMG:
     Parameters
     ----------
     muscle_model : Muscle
-        Pre-computed muscle model (see :class:`myogen.simulator.Muscle`).
+        Pre-computed muscle model (see `myogen.simulator.Muscle`).
     electrode_arrays : list[SurfaceElectrodeArray]
-        List of electrode arrays to use for simulation (see :class:`myogen.simulator.SurfaceElectrodeArray`).
+        List of electrode arrays to use for simulation (see `myogen.simulator.SurfaceElectrodeArray`).
     sampling_frequency__Hz : float, default=2048.0
         Sampling frequency in Hz. Default is set to 2048 Hz as used by the Quattrocento (OT Bioelettronica, Turin, Italy) system.
     sampling_points_in_t_and_z_domains : int, default=256
@@ -228,7 +228,7 @@ class SurfaceEMG:
             If True, display progress bars. Set to False to disable.
         use_gpu : bool or None, default=None
             GPU acceleration control for the per-fiber volume-conductor solve
-            (mirrors :meth:`myogen.simulator.MotorUnitSim.calc_sfaps`):
+            (mirrors `myogen.simulator.MotorUnitSim.calc_sfaps`):
 
             - ``None``  → auto: use GPU if CuPy is available and
               ``MYOGEN_DISABLE_GPU`` is not set in the environment; CPU otherwise.
