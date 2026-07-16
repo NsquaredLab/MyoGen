@@ -5,7 +5,7 @@ Compute Reference Force with Constant Drive
 This example computes the reference muscle force using constant descending drive.
 This force is used as the target for optimizing the oscillating drive DC offset in Phase 3.
 
-.. note::
+!!! note
     **Purpose**: Establish force baseline using Watanabe network parameters
 
     - 800 motor neurons
@@ -20,24 +20,24 @@ This force is used as the target for optimizing the oscillating drive DC offset 
 
 **MyoGen Components Used**:
 
-- :class:`~myogen.simulator.neuron.populations.AlphaMN__Pool`:
+- [`AlphaMN__Pool`][myogen.simulator.neuron.populations.AlphaMN__Pool]:
   Pool of 800 alpha motor neurons with exponentially distributed recruitment thresholds.
   Each neuron is a biophysically detailed NEURON model with soma, dendrites, and ion channels.
 
-- :class:`~myogen.simulator.neuron.populations.DescendingDrive__Pool`:
+- [`DescendingDrive__Pool`][myogen.simulator.neuron.populations.DescendingDrive__Pool]:
   Pool of 400 "descending drive" neurons that generate Poisson spike trains.
   These represent cortical/brainstem input to motor neurons.
-  ``poisson_batch_size=1`` creates order-1 (renewal) Poisson processes.
+  ``process_type="poisson"`` generates true Poisson processes (exponential ISIs, CV=1).
 
-- :class:`~myogen.simulator.Network`:
+- [`Network`][myogen.simulator.Network]:
   Container that manages populations and synaptic connections between them.
   Supports probabilistic connectivity (``connect()``) and external input (``connect_from_external()``).
 
-- :class:`~myogen.simulator.RecruitmentThresholds`:
+- [`RecruitmentThresholds`][myogen.simulator.RecruitmentThresholds]:
   Generates recruitment threshold distribution following Fuglevand/DeLuca models.
   The ``mode="combined"`` blends exponential and linear distributions.
 
-- :class:`~myogen.simulator.core.force.force_model.ForceModel`:
+- [`ForceModel`][myogen.simulator.ForceModel]:
   Converts motor neuron spike trains to muscle force using Fuglevand's twitch model.
   Each motor unit has amplitude and contraction time determined by recruitment threshold.
 
@@ -172,14 +172,12 @@ motor_neuron_pool = AlphaMN__Pool(
 # at a specified rate. They don't have membrane dynamics - just Poisson processes.
 #
 # Parameters:
-#   - process_type="poisson": Renewal Poisson process
-#   - poisson_batch_size=1: Order-1 (memoryless) - Watanabe specification
-#     Higher values create more regular spike trains (order-k gamma process)
+#   - process_type="poisson": true Poisson process (exponential ISIs, CV=1) - Watanabe specification
+#     For regular, low-CV firing use process_type="gamma", shape=k instead.
 descending_drive_pool = DescendingDrive__Pool(
     n=N_DD_NEURONS,
     timestep__ms=TIMESTEP_MS * pq.ms,
     process_type="poisson",
-    poisson_batch_size=1,  # Order 1 Poisson (Watanabe specification)
 )
 
 ##############################################################################
@@ -230,9 +228,13 @@ for cell in motor_neuron_pool:
 # ----------------------------------------
 
 time_points = int(SIMULATION_TIME_MS / TIMESTEP_MS)
-drive_signal = np.ones(time_points) * DD_DRIVE_HZ + np.clip(
-    get_random_generator().normal(0, 1.0, size=time_points), 0, None
+# Zero-mean noise, then clip the total to non-negative firing rates. (One-sided
+# clipped noise adds a systematic ~0.4 Hz bias, and must match the optimization
+# trials in _oscillating_dc_helpers.py so the reference and trials are comparable.)
+drive_signal = np.ones(time_points) * DD_DRIVE_HZ + get_random_generator().normal(
+    0, 1.0, size=time_points
 )
+drive_signal = np.clip(drive_signal, 0, None)
 
 ##############################################################################
 # Run Simulation
@@ -324,10 +326,12 @@ force_output = force_model.generate_force(spike_train__Block=spike_train__Block)
 force_raw = force_output.magnitude[:, 0]  # Arbitrary units (sum of MU twitches)
 force_time = force_output.times.rescale(pq.s).magnitude
 
-# Normalize force to 0-1 range, then scale to Newtons
-# (ForceModel outputs sum of MU twitch forces, not normalized values)
+# %MVC normalization (Watanabe methodology): normalize to the peak, then scale to
+# MAX_FORCE_N. This is the reference the optimization (script 02) matches, and it
+# normalizes trials the same way, so the comparison is of normalized force
+# *profiles*, not absolute Newtons.
 force_max_raw = np.max(force_raw)
-force_signal = (force_raw / force_max_raw) * MAX_FORCE_N  # Scale to Newtons
+force_signal = (force_raw / force_max_raw) * MAX_FORCE_N  # peak-normalized (%MVC), not absolute N
 
 ##############################################################################
 # Analyze Force Characteristics
@@ -360,7 +364,6 @@ force_results = {
         "dd_drive__Hz": DD_DRIVE_HZ,
         "synaptic_weight__uS": SYNAPTIC_WEIGHT,
         "process_type": "poisson",
-        "poisson_batch_size": 1,
     },
     "force_scaling": {
         "max_force__N": MAX_FORCE_N,
@@ -458,3 +461,5 @@ for ax in axes[:2]:
 plt.tight_layout()
 plt.savefig(RESULTS_DIR / "force_reference.png", dpi=150, bbox_inches="tight")
 plt.show()
+
+# mkdocs_gallery_thumbnail_path = "gallery_thumbs/01_compute_baseline_force.png"

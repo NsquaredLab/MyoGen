@@ -7,7 +7,7 @@ muscle types and force levels. It automatically detects available data files and
 publication-quality visualizations comparing simulated motor unit firing patterns against
 experimental data.
 
-.. note::
+!!! note
     **Analysis workflow**:
 
     1. Auto-detect available force levels for each muscle type
@@ -16,12 +16,12 @@ experimental data.
     4. Create multi-muscle comparison plot with color-coded muscles and force levels
     5. Generate summary statistics for all conditions
 
-.. important::
+!!! important
     **Prerequisites**: This example requires ISI/CV data files:
 
-    - Run ``03_extract_isi_and_cv_per_ramps.py`` for each muscle/force combination
-    - Generates CSV files: ``{prefix}isi_cv_data_{muscle}_{force}.csv``
-    - Optional: ``ISI_statistics.csv`` for experimental data overlay
+    - Run `03_extract_isi_and_cv_per_ramps.py` for each muscle/force combination
+    - Generates CSV files: `{prefix}isi_cv_data_{muscle}_{force}.csv`
+    - Optional: `ISI_statistics.csv` for experimental data overlay
 
 **Visualization Strategy**: Creates a comprehensive comparison showing:
 
@@ -807,3 +807,5 @@ print(f"\n{'=' * 80}")
 print(f"Total motor units plotted: {total_motor_units}")
 print(f"Total muscle types: {len(all_muscle_data)}")
 print("=" * 80)
+
+# mkdocs_gallery_thumbnail_path = "gallery_thumbs/05_plot_isi_cv_multi_muscle_comparison.png"

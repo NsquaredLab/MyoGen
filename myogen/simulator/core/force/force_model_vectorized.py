@@ -23,9 +23,9 @@ from .force_utils_vectorized import generate_force_vectorized
 @beartowertype
 class ForceModelVectorized:
     """
-    Vectorized force model based on Fuglevand et al. (1993) [1]_.
+    Vectorized force model based on Fuglevand et al. (1993) [1].
 
-    This is an optimized version of :class:`ForceModel` that uses numpy
+    This is an optimized version of `ForceModel` that uses numpy
     vectorization for significantly better performance, especially for long
     simulations. It shares the IPI/gain/twitch pipeline with the reference
     implementation via ``force_utils`` so the output is guaranteed to match
@@ -46,9 +46,7 @@ class ForceModelVectorized:
 
     References
     ----------
-    .. [1] Fuglevand, A. J., Winter, D. A., & Patla, A. E. (1993).
-        Models of recruitment and rate coding in motor-unit pools.
-        Journal of Neurophysiology, 70(2), 782-797.
+    [1] Fuglevand, A. J., Winter, D. A., & Patla, A. E. (1993). Models of recruitment and rate coding in motor-unit pools. Journal of Neurophysiology, 70(2), 782-797.
     """
 
     def __init__(
@@ -184,7 +182,7 @@ class ForceModelVectorized:
         """
         Generate force output from motor unit spike trains.
 
-        The body mirrors :meth:`ForceModel.generate_force` so that the two
+        The body mirrors `ForceModel.generate_force` so that the two
         implementations cannot drift apart silently. Only the per-spike
         accumulation differs (vectorized vs. per-spike loop).
         """
@@ -242,9 +240,9 @@ class ForceModelVectorized:
     ) -> np.ndarray:
         """Generate force using vectorized per-time-step accumulation.
 
-        Mirrors :meth:`ForceModel._generate_force` byte-for-byte except for
+        Mirrors `ForceModel._generate_force` byte-for-byte except for
         the inner per-spike accumulation, which is delegated to
-        :func:`generate_force_vectorized`.
+        `generate_force_vectorized`.
         """
         # Convert sparse to dense once at the start (mirrors ForceModel)
         if sp.issparse(spikes):

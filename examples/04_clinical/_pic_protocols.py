@@ -325,7 +325,7 @@ def run_pool(command, n_mu, gamma, nap_factor=1.0, nap_ceiling=0.00215,
             iv.play(ic._ref_amp, tvec_n, True)
             _noise_keep.append((ic, iv))
         _noise_keep.append(tvec_n)
-    dd_pool = DescendingDrive__Pool(n=dd_n, poisson_batch_size=5,
+    dd_pool = DescendingDrive__Pool(n=dd_n, process_type="gamma", shape=5,
                                     timestep__ms=_POOL_TIMESTEP)
     net = Network({"DD": dd_pool, "aMN": mn_pool})
     net.connect(source="DD", target="aMN", probability=0.5,

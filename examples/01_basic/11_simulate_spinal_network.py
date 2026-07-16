@@ -1,6 +1,6 @@
 """
-Spinal Network Simulation with Systematic Tendon Tap Protocol
-==============================================================
+Spinal Network & Tendon Tap
+===========================
 
 This example demonstrates **complete spinal reflex network modeling** with a **comprehensive tendon tap
 protocol** that systematically varies mechanical perturbations, fusimotor drive, and cortical activity.
@@ -46,7 +46,7 @@ This example teaches the following key concepts in neuromuscular control:
 - Repeat gamma drive pattern (0→25→50→75→100 pps)
 - Sinusoidal cortical drive (38±1 Hz at 1 Hz) recruiting ~75% of motor neurons
 
-.. note::
+!!! note
     This example builds upon all previous examples and demonstrates how the complete neuromuscular system
     functions as an integrated network:
 
@@ -57,7 +57,7 @@ This example teaches the following key concepts in neuromuscular control:
     - **Joint dynamics**: Closed-loop biomechanical control with realistic inertia and damping
     - **Descending drive**: Cortical control signals for voluntary movement (from example 01)
 
-.. important::
+!!! important
     **Spinal Reflex Networks** are the fundamental control circuits that coordinate muscle activity.
     Key physiological concepts demonstrated:
 
@@ -196,7 +196,7 @@ naMN = nType1 + nType2  # Total α-motoneurons per muscle
 # Descending drive (cortical input)
 nDD = 400  # Total descending drive neurons (increased for more drive)
 DDorder = (
-    5  # Poisson process order for realistic spike patterns (higher order = more regular spiking)
+    5  # Gamma shape parameter for realistic spike patterns (higher shape = more regular spiking, CV=1/sqrt(shape))
 )
 
 print("Neural population sizes:")
@@ -327,7 +327,7 @@ print(f"\t- Initial angle: {artAng[0]}°")
 aMN = AlphaMN__Pool(recruitment_thresholds__array=recruitment_thresholds)  # α-motoneurons
 
 # Create descending drive population
-DD = DescendingDrive__Pool(n=nDD, poisson_batch_size=DDorder, timestep__ms=dt)
+DD = DescendingDrive__Pool(n=nDD, process_type="gamma", shape=DDorder, timestep__ms=dt)
 
 # Create afferent populations
 Ia = AffIa__Pool(n=nIa, timestep__ms=dt)  # Primary spindle afferents
@@ -970,3 +970,5 @@ plot_gto_dynamics(
 plt.tight_layout()
 plt.savefig(save_path / "gto_dynamics.png", dpi=150, bbox_inches="tight")
 plt.show()
+
+# mkdocs_gallery_thumbnail_path = "gallery_thumbs/11_simulate_spinal_network.png"

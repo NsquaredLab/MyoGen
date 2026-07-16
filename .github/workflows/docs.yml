@@ -1,0 +1,86 @@
+name: Docs
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      # NEURON + MPI system libraries: the build imports myogen for the
+      # mkdocstrings API reference (and supports opt-in gallery execution via
+      # MKDOCS_GALLERY_PLOT=true). Same set the old Sphinx docs workflow used.
+      - name: Install NEURON/MPI system dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            libegl1-mesa-dev libgtk2.0-dev \
+            openmpi-bin openmpi-common libopenmpi-dev \
+            infiniband-diags ibverbs-utils libibverbs-dev \
+            libfabric1 libfabric-dev libpsm2-dev librdmacm-dev
+
+      - name: Set up uv
+        uses: astral-sh/setup-uv@v8.1.0
+        with:
+          enable-cache: true
+
+      - name: Sync project + docs/nwb extras
+        run: uv sync --locked --group docs --extra nwb
+
+      - name: Compile NMODL mechanisms
+        run: uv run poe setup_myogen
+
+      - name: Build docs site
+        # Execute the example gallery so figures render inline in the deployed
+        # site (parity with the old Sphinx docs). scripts/build_docs.py wraps
+        # `properdocs build` with bounded retries: NEURON's native runtime state
+        # accumulates across mkdocs-gallery's single-process execution and
+        # eventually segfaults, but each executed example is md5-cached, so
+        # retrying resumes past the crash. The wrapper aborts if a retry makes no
+        # progress and validates gallery completeness before the site can deploy.
+        # (gallery_conf.py additionally forces joblib to n_jobs=1 so no loky
+        # worker processes are spawned mid-build.)
+        env:
+          # Execute the gallery (inline plots) only where the site is actually
+          # deployed — the push to main — plus manual dispatch for pre-merge
+          # testing. On pull requests the gallery is source-only so review builds
+          # stay fast (~10s); the slow executed build (NEURON sims + retries to
+          # survive state-accumulation segfaults) runs once per merge.
+          MKDOCS_GALLERY_PLOT: ${{ (github.event_name == 'push' && github.ref == 'refs/heads/main') || github.event_name == 'workflow_dispatch' }}
+        run: uv run --group docs python scripts/build_docs.py
+
+      - name: Upload Pages artifact
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        uses: actions/upload-pages-artifact@v5
+        with:
+          path: site
+
+  deploy:
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    needs: build
+    runs-on: ubuntu-latest
+    # Serialize only the Pages deployment — scoping this to the deploy job (not
+    # the whole workflow) keeps PR "Docs" checks from queueing behind a long
+    # main-branch executed build.
+    concurrency:
+      group: pages
+      cancel-in-progress: false
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+    steps:
+      - name: Configure Pages
+        uses: actions/configure-pages@v6
+      - name: Deploy to GitHub Pages
+        id: deploy
+        uses: actions/deploy-pages@v5

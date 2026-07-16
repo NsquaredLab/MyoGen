@@ -25,7 +25,7 @@ Prerequisites
 
 This example requires an NWB file from example 11 (``spinal_network_results.nwb``).
 
-.. note::
+!!! note
     If you haven't run example 11, this example will create a minimal
     NWB file for demonstration purposes.
 """
@@ -486,3 +486,5 @@ print("\nNext steps:")
 print("  1. Run example 11 to generate full simulation NWB file")
 print("  2. Explore your data with NWB Widgets: pip install nwbwidgets")
 print("  3. Upload to DANDI Archive for sharing: https://dandiarchive.org/")
+
+# mkdocs_gallery_thumbnail_path = "gallery_thumbs/13_load_and_inspect_nwb_data.png"

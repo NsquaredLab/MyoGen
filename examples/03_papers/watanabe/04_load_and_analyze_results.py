@@ -6,7 +6,7 @@ This example demonstrates **post-simulation analysis** of the Watanabe and Kohn 
 spinal network model. It shows how to load chunked simulation data, convert it to
 NEO format, and analyze membrane potentials, spike trains, and population dynamics.
 
-.. note::
+!!! note
     **Analysis workflow**:
 
     1. Load simulation parameters from previous run
@@ -16,12 +16,12 @@ NEO format, and analyze membrane potentials, spike trains, and population dynami
     5. Compute population firing rates across simulation phases
     6. Save visualizations for publication
 
-.. important::
+!!! important
     **Prerequisites**: This example requires simulation output from:
 
-    - Run ``03_10pct_mvc_simulation.py`` first
-    - Generates chunked data in ``results/watanabe_chunks/``
-    - Creates simulation parameters in ``results/watanabe_simulation_params.pkl``
+    - Run `03_10pct_mvc_simulation.py` first
+    - Generates chunked data in `results/watanabe_chunks/`
+    - Creates simulation parameters in `results/watanabe_simulation_params.pkl`
 
 **Key Features**:
 
@@ -32,7 +32,7 @@ NEO format, and analyze membrane potentials, spike trains, and population dynami
 
 **MyoGen Components Used**:
 
-- :func:`~myogen.utils.continuous_saver.convert_chunks_to_neo`:
+- [`convert_chunks_to_neo`][myogen.utils.continuous_saver.convert_chunks_to_neo]:
   Converts chunked simulation data back into a standard NEO Block.
   This is the recommended way to load large simulation results.
 
@@ -353,3 +353,5 @@ print("\nSaving NEO Block for future use...")
 neo_output_path = chunks_path.parent / "watanabe_results_neo.pkl"
 joblib.dump(results, neo_output_path, compress=0)  # No compression = faster
 print(f"(OK) NEO Block saved to: {neo_output_path}")
+
+# mkdocs_gallery_thumbnail_path = "gallery_thumbs/04_load_and_analyze_results.png"

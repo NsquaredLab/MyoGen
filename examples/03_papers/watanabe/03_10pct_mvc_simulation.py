@@ -7,18 +7,18 @@ This example runs the Watanabe and Kohn (2015) spinal network simulation using:
 - Constant + oscillation (Phase 2) - oscillation added to baseline
 - Optimized DC + oscillation (Phase 3) - DC offset matches Phase 1 force
 
-.. note::
+!!! note
     **Simulation Phases** (5 seconds each):
 
     - **Phase 1**: Constant drive (baseline, e.g., 40-65 Hz)
     - **Phase 2**: Constant + 20*sin(20Hz) (oscillation added to baseline)
     - **Phase 3**: Optimized DC + 20*sin(20Hz) (DC offset matches Phase 1 force)
 
-.. important::
+!!! important
     **Prerequisites**:
 
-    1. ``01_compute_baseline_force.py`` - Compute reference force
-    2. ``02_optimize_oscillating_dc.py`` - Optimize DC offset
+    1. `01_compute_baseline_force.py` - Compute reference force
+    2. `02_optimize_oscillating_dc.py` - Optimize DC offset
 
 **Scientific Context**: Demonstrates how shared descending drive creates motor unit
 synchronization, while independent noise reduces it. Phase 3 uses lower DC offset than
@@ -26,11 +26,11 @@ Phase 1 (e.g., 58 < 65) because oscillation contributes additional activation.
 
 **MyoGen Components Used**:
 
-- :class:`~myogen.simulator.neuron.populations.AlphaMN__Pool`:
+- [`AlphaMN__Pool`][myogen.simulator.neuron.populations.AlphaMN__Pool]:
   Pool of 800 motor neurons. Created from recruitment thresholds that determine
   each unit's excitability and force contribution.
 
-- :class:`~myogen.simulator.neuron.populations.DescendingDrive__Pool`:
+- [`DescendingDrive__Pool`][myogen.simulator.neuron.populations.DescendingDrive__Pool]:
   Two separate pools are used here:
 
   1. **DD (Descending Drive)**: 400 neurons with *shared* input to motor neurons
@@ -38,18 +38,18 @@ Phase 1 (e.g., 58 < 65) because oscillation contributes additional activation.
   2. **IN (Independent Noise)**: 800 neurons with *one-to-one* connectivity.
      This decorrelates motor neuron activity. Driven at constant 125 Hz.
 
-- :class:`~myogen.simulator.neuron.Network`:
+- [`Network`][myogen.simulator.Network]:
   Manages multiple populations and different connection patterns:
 
   - ``connect(prob=0.3)``: Random connectivity for shared drive
   - ``connect_one_to_one()``: Private inputs for independent noise
   - ``connect_from_external()``: External command signals to drive populations
 
-- :class:`~myogen.simulator.neuron.simulation_runner.SimulationRunner`:
+- [`SimulationRunner`][myogen.simulator.SimulationRunner]:
   High-level interface for running NEURON simulations with callbacks.
   The ``step_callback`` is called every timestep to update drives and record data.
 
-- :class:`~myogen.utils.continuous_saver.ContinuousSaver`:
+- [`ContinuousSaver`][myogen.utils.continuous_saver.ContinuousSaver]:
   Memory-efficient recording that saves data in chunks during long simulations.
   Essential for 15-second simulations with 800+ neurons.
 
@@ -245,11 +245,11 @@ aMN = AlphaMN__Pool(recruitment_thresholds__array=rt)
 
 # Descending drive (DD) - SHARED input to motor neurons
 # These represent corticospinal neurons that project to multiple motor neurons.
-# poisson_batch_size=1 creates renewal (order-1) Poisson processes.
-# Higher batch sizes would create more regular spike trains (order-k gamma).
+# process_type="poisson" generates true Poisson processes (exponential ISIs, CV=1).
+# For regular, low-CV firing use process_type="gamma", shape=k instead.
 DD = DescendingDrive__Pool(
     n=nDD,
-    poisson_batch_size=1,  # Order 1 Poisson (Watanabe specification)
+    process_type="poisson",
     timestep__ms=dt * pq.ms,
 )
 
@@ -258,7 +258,7 @@ DD = DescendingDrive__Pool(
 # one motor neuron (one-to-one), providing uncorrelated background input.
 IN = DescendingDrive__Pool(
     n=nIN,
-    poisson_batch_size=1,  # Order 1 Poisson (Watanabe specification)
+    process_type="poisson",
     timestep__ms=dt * pq.ms,
 )
 
@@ -516,3 +516,5 @@ print(f"  Spikes: {save_path / 'watanabe_spikes.pkl'}")
 print(f"\nPhase 1 constant drive: {DD_DRIVE_CONSTANT:.2f} Hz")
 print(f"Phase 3 DC offset: {DC_OFFSET_OPTIMIZED:.2f} Hz (optimized to match Phase 1 force)")
 print(f"Ratio: {DC_OFFSET_OPTIMIZED / DD_DRIVE_CONSTANT:.3f} (Watanabe: {58 / 65:.3f})")
+
+# mkdocs_gallery_thumbnail_path = "gallery_thumbs/03_10pct_mvc_simulation.png"

@@ -6,7 +6,7 @@ This example demonstrates **muscle force generation** from the Watanabe spinal n
 simulation. It loads pre-computed spike trains and converts them to realistic muscle
 force output using the Fuglevand force model with batched processing for memory efficiency.
 
-.. note::
+!!! note
     **Force computation pipeline**:
 
     1. Load spike train data from previous analysis (NEO Block format)
@@ -16,11 +16,11 @@ force output using the Fuglevand force model with batched processing for memory 
     5. Accumulate force contributions from all motor units
     6. Save force output as NEO Block with comprehensive metadata
 
-.. important::
+!!! important
     **Prerequisites**: This example requires outputs from:
 
-    - ``03_10pct_mvc_simulation.py``: Simulation parameters
-    - ``04_load_and_analyze_results.py``: NEO-formatted spike train data (``watanabe_results_neo.pkl``)
+    - `03_10pct_mvc_simulation.py`: Simulation parameters
+    - `04_load_and_analyze_results.py`: NEO-formatted spike train data (`watanabe_results_neo.pkl`)
 
 **Key Features**:
 
@@ -33,7 +33,7 @@ force output using the Fuglevand force model with batched processing for memory 
 
 **MyoGen Components Used**:
 
-- :class:`~myogen.simulator.core.force.force_model.ForceModel`:
+- [`ForceModel`][myogen.simulator.ForceModel]:
   The Fuglevand force model converts spike trains to muscle force. Key parameters:
 
   - ``recruitment_thresholds``: Determines each motor unit's twitch amplitude
@@ -45,7 +45,7 @@ force output using the Fuglevand force model with batched processing for memory 
   The model generates a normalized twitch waveform for each motor unit, then
   convolves it with the spike train to produce force contributions.
 
-- :class:`~myogen.simulator.RecruitmentThresholds`:
+- [`RecruitmentThresholds`][myogen.simulator.RecruitmentThresholds]:
   Same thresholds used during simulation - ensures force model matches network.
 
 **How Force Generation Works**:

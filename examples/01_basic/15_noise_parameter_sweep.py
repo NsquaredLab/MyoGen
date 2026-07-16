@@ -744,3 +744,5 @@ fig.savefig(save_path / "noise_parameter_sweep.png", dpi=300, transparent=True)
 fig.savefig(save_path / "noise_parameter_sweep.svg", transparent=True)
 fig.savefig(save_path / "noise_parameter_sweep.pdf", transparent=True)
 plt.show()
+
+# mkdocs_gallery_thumbnail_path = "gallery_thumbs/15_noise_parameter_sweep.png"

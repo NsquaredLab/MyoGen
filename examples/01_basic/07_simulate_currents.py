@@ -5,7 +5,7 @@ Current Generation
 **MyoGen** provides various functions to generate different types of input currents for motor neuron pool simulations.
 These currents can be used to drive motor unit recruitment and firing patterns.
 
-.. note::
+!!! note
     **Input currents** are the electrical stimuli applied to motor neuron pools to simulate muscle activation.
     Different current shapes can produce different recruitment and firing patterns.
 
@@ -222,3 +222,5 @@ axes[-1].set_xlabel("Time (ms)")
 fig.suptitle("Trapezoid Currents")
 plt.tight_layout()
 plt.show()
+
+# mkdocs_gallery_thumbnail_path = "gallery_thumbs/07_simulate_currents.png"

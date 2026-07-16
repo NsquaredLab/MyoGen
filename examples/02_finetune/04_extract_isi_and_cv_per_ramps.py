@@ -6,7 +6,7 @@ This example demonstrates **spike train analysis** using optimized descending dr
 from previous optimization studies. It extracts inter-spike interval (ISI) and coefficient of
 variation (CV) statistics during realistic trapezoidal contraction patterns.
 
-.. note::
+!!! note
     **Analysis workflow**:
 
     1. Load optimized DD parameters from baseline or force-specific optimization
@@ -15,11 +15,11 @@ variation (CV) statistics during realistic trapezoidal contraction patterns.
     4. Extract ISI/CV statistics during plateau phase
     5. Visualize firing patterns and instantaneous discharge rates
 
-.. important::
+!!! important
     **Prerequisites**: This example requires results from previous optimizations:
 
-    - **Baseline mode**: Run ``01_optimize_dd_for_target_firing_rate.py`` first
-    - **Force mode**: Run ``02_optimize_dd_for_target_force.py`` for specific MVC level
+    - **Baseline mode**: Run `01_optimize_dd_for_target_firing_rate.py` first
+    - **Force mode**: Run `02_optimize_dd_for_target_force.py` for specific MVC level
     - Loads network structure and drive parameters from saved results
 
 **Trapezoidal Contraction**: Simulates realistic voluntary isometric contractions with:
@@ -466,7 +466,7 @@ dd_firing_rates = np.array(
     [
         _mean_firing_rate(st__s.time_slice(st__s.min(), st__s.max()))
         for st__s in dd_segment.spiketrains
-        if len(st__s) > 0
+        if len(st__s) > 1  # need >=2 spikes for a rate over the spike span
     ]
 )
 
@@ -475,7 +475,7 @@ mn_firing_rates = np.array(
     [
         _mean_firing_rate(st__s.time_slice(st__s.min(), st__s.max()))
         for st__s in mn_segment.spiketrains
-        if len(st__s) > 0
+        if len(st__s) > 1  # need >=2 spikes for a rate over the spike span
     ]
 )
 
@@ -545,7 +545,7 @@ axes[0].legend(framealpha=1.0, edgecolor="none")
 axes[0].grid(True, alpha=0.3)
 
 # 2. Motor neuron raster plot (recruitment ordered)
-mn_colors = plt.cm.get_cmap("Reds")(np.linspace(0.3, 0.9, len(mn_segment.spiketrains)))
+mn_colors = plt.get_cmap("Reds")(np.linspace(0.3, 0.9, len(mn_segment.spiketrains)))
 active_mn_count = 0
 for i, (spiketrain, color) in enumerate(zip(mn_segment.spiketrains, mn_colors)):
     if len(spiketrain) > 0:
@@ -642,7 +642,7 @@ if len(mn_instantaneous_rates) > 0:
     n_to_plot = len(active_neuron_ids)
 
     # Use colormap for lines (gradient showing recruitment order)
-    colors = plt.cm.get_cmap("rainbow")(np.linspace(0, 1, n_to_plot))
+    colors = plt.get_cmap("rainbow")(np.linspace(0, 1, n_to_plot))
 
     for neuron_idx in range(n_to_plot):
         axes2[1].plot(
@@ -671,3 +671,5 @@ plt.savefig(discharge_plot_path, dpi=150, bbox_inches="tight")
 plt.show()
 
 print(f"\nSaved discharge rate plot to: {discharge_plot_path}")
+
+# mkdocs_gallery_thumbnail_path = "gallery_thumbs/04_extract_isi_and_cv_per_ramps.png"

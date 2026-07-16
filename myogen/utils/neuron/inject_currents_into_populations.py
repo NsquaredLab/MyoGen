@@ -1,4 +1,3 @@
-import neuron
 import numpy as np
 import quantities as pq
 from beartype.typing import Sequence
@@ -166,7 +165,11 @@ def inject_currents_and_simulate_spike_trains(
 
     # Initialize and run the NEURON simulation
     h.finitialize()  # Use default initialization, voltages already set above
-    neuron.run(simulation_time__ms)
+    # Advance the solver to the end of the simulation (replaces the deprecated
+    # neuron.run(); finitialize() above already set the initial state).
+    h.tstop = float(simulation_time__ms)
+    while h.t < h.tstop:
+        h.fadvance()
 
     # Convert spike data to neo.Block format
     block = Block()

@@ -1,0 +1,138 @@
+site_name: MyoGen
+site_description: Modular neuromuscular simulation framework for motor-unit activity, force, and EMG.
+site_url: https://nsquaredlab.github.io/MyoGen/
+repo_url: https://github.com/NsquaredLab/MyoGen
+repo_name: MyoGen
+edit_uri: edit/main/docs/
+copyright: Copyright &copy; 2025-2026 n-squared lab, FAU Erlangen-Nürnberg
+
+# superpowers specs/plans live under docs/ but are not site pages
+exclude_docs: |
+  superpowers/
+
+# Never ship Jupyter notebooks: strip the gallery's "Download Jupyter notebook"
+# button and delete every generated .ipynb from the built site.
+hooks:
+  - docs/hooks/no_notebooks.py
+
+extra_css:
+  - stylesheets/gallery.css
+
+extra_javascript:
+  - javascripts/mathjax.js
+  - https://unpkg.com/mathjax@3/es5/tex-mml-chtml.js
+
+theme:
+  name: material
+  features:
+    - navigation.instant
+    - navigation.tracking
+    - navigation.tabs
+    - navigation.tabs.sticky
+    - navigation.sections
+    - navigation.indexes
+    - navigation.top
+    - search.suggest
+    - search.highlight
+    - content.code.copy
+    - content.code.annotate
+    - toc.follow
+  palette:
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: white
+      accent: indigo
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: black
+      accent: indigo
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+  font:
+    text: Inter
+    code: JetBrains Mono
+  icon:
+    repo: fontawesome/brands/github
+
+plugins:
+  - search
+  - section-index
+  - gallery:
+      conf_script: docs/gallery_conf.py
+      # Source-only by default: examples render as markdown (prose + code) with
+      # "download full example code" links, but are NOT executed — many MyoGen
+      # examples use multiprocessing/joblib (which breaks under gallery exec) or
+      # form slow inter-dependent chains. Opt in to execution locally with
+      # MKDOCS_GALLERY_PLOT=true.
+      plot_gallery: !ENV [MKDOCS_GALLERY_PLOT, false]
+  - mkdocstrings:
+      handlers:
+        python:
+          paths: [.]
+          inventories:
+            - https://docs.python.org/3/objects.inv
+            - https://numpy.org/doc/stable/objects.inv
+            - https://docs.scipy.org/doc/scipy/objects.inv
+          options:
+            docstring_style: numpy
+            show_source: true
+            show_root_heading: true
+            show_root_full_path: false
+            members_order: source
+            separate_signature: true
+            show_signature_annotations: true
+            signature_crossrefs: true
+            merge_init_into_class: true
+            heading_level: 2
+            filters:
+              - "!^_"
+
+markdown_extensions:
+  - admonition
+  - attr_list
+  - pymdownx.arithmatex:
+      generic: true
+  - def_list
+  - md_in_html
+  - tables
+  - toc:
+      permalink: true
+  - pymdownx.details
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+  - pymdownx.tabbed:
+      alternate_style: true
+  - pymdownx.highlight:
+      anchor_linenums: true
+      pygments_lang_class: true
+  - pymdownx.inlinehilite
+  - pymdownx.magiclink
+  - pymdownx.emoji:
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
+
+nav:
+  - Home: index.md
+  - Getting Started: getting-started.md
+  - Neo blocks: neo-blocks.md
+  - Examples:
+      - Basics: auto_examples/01_basic/index.md
+      - Fine-tuning: auto_examples/02_finetune/index.md
+      - Watanabe (paper): auto_examples/03_papers/watanabe/index.md
+      - Clinical: auto_examples/04_clinical/index.md
+  - API reference:
+      - api/index.md
+      - Top-level: api/myogen.md
+      - Simulator: api/simulator.md
+      - Currents: api/currents.md
+      - Injection & I/O: api/io-and-neuron.md
+      - Plotting: api/plotting.md
+      - Utilities: api/utils.md
+      - Types: api/types.md

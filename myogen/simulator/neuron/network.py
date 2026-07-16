@@ -42,7 +42,7 @@ def _to_float(value, unit: pq.Quantity) -> float:
 
     NEURON's NetCon attributes (``delay``, ``weight[0]``, ``threshold``) accept
     plain Python floats interpreted in NEURON's native units (ms, uS, mV).
-    Passing a :class:`pq.Quantity` directly invokes ``__float__``, which drops
+    Passing a `pq.Quantity` directly invokes ``__float__``, which drops
     the unit and returns the raw magnitude -- so a delay of ``1 * pq.s`` would
     be silently stored as ``1.0`` ms instead of ``1000.0`` ms.
 
@@ -167,7 +167,7 @@ def _apply_default_synaptic_params(netcon: h.NetCon, source_neuron, synaptic_del
 
     Sets default weight, threshold, and delay, with optional axonal delay addition.
     All values are rescaled to NEURON's native units (ms, uS, mV) so the
-    function is safe to call with :class:`pq.Quantity` inputs in any unit.
+    function is safe to call with `pq.Quantity` inputs in any unit.
 
     Parameters
     ----------
@@ -1300,7 +1300,7 @@ class Network:
         Examples
         --------
         >>> # Create independent noise for each motor neuron
-        >>> noise_pool = DescendingDrive__Pool(n=10, poisson_batch_size=16, timestep__ms=0.05)
+        >>> noise_pool = DescendingDrive__Pool(n=10, timestep__ms=0.05)
         >>> mn_pool = AlphaMN__Pool(n=10)
         >>> network = Network({"noise": noise_pool, "mn": mn_pool})
         >>> network.connect_one_to_one("noise", "mn", weight__uS=0.5)
@@ -1426,7 +1426,7 @@ if __name__ == "__main__":
 
     timestep__ms = 0.05
 
-    dd__pool = DescendingDrive__Pool(n=2, poisson_batch_size=16, timestep__ms=timestep__ms)
+    dd__pool = DescendingDrive__Pool(n=2, timestep__ms=timestep__ms)
 
     n_type1 = 2
     n_type2 = 2

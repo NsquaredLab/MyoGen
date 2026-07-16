@@ -6,7 +6,7 @@ This example demonstrates **realistic spike train simulation** using **sinusoida
 instead of direct current injection. This approach provides more physiologically accurate motor control
 patterns by modeling cortical input through descending drive populations.
 
-.. note::
+!!! note
     This example bridges the gap between simple current injection (example 02) and full spinal network
     simulation (11_simulate_spinal_network.py). It uses:
 
@@ -15,7 +15,7 @@ patterns by modeling cortical input through descending drive populations.
     - **Network**: Synaptic connections between DD and motor neuron populations
     - **Sinusoidal patterns**: Smooth, physiologically relevant input at 0.5-2 Hz
 
-.. important::
+!!! important
     **Descending Drive (DD)** refers to the cortical and subcortical neural pathways that provide
     voluntary motor commands to spinal motor neurons. This is more realistic than direct current
     injection because it models the actual synaptic input patterns from upper motor neurons.
@@ -27,23 +27,23 @@ patterns by modeling cortical input through descending drive populations.
 # Import Libraries
 # ----------------
 #
-# .. important::
-#    In **MyoGen** all **random number generation** is handled by the RNG returned from
-#    ``get_random_generator()``, a thin wrapper around ``numpy.random``.
+# !!! important
+#     In **MyoGen** all **random number generation** is handled by the RNG returned from
+#     [`get_random_generator`][myogen.get_random_generator], a thin wrapper around `numpy.random`.
 #
-#    Always fetch the generator at the call site so the current seed is honored:
+#     Always fetch the generator at the call site so the current seed is honored:
 #
-#    .. code-block:: python
+#     ```python
+#     from myogen import simulator, get_random_generator
+#     get_random_generator().normal(0, 1)
+#     ```
 #
-#       from myogen import simulator, get_random_generator
-#       get_random_generator().normal(0, 1)
+#     To change the seed, use [`set_random_seed`][myogen.set_random_seed]:
 #
-#    To change the seed, use ``set_random_seed``:
-#
-#    .. code-block:: python
-#
-#       from myogen import set_random_seed
-#       set_random_seed(42)
+#     ```python
+#     from myogen import set_random_seed
+#     set_random_seed(42)
+#     ```
 
 # %%
 
@@ -91,12 +91,13 @@ def population_psth(spiketrains, bin_size):
 # Create Populations
 # ------------------------
 #
-# Like the previous example, we create a **motor neuron pool** using the **AlphaMN__Pool** class.
+# Like the previous example, we create a **motor neuron pool** using the [`AlphaMN__Pool`][myogen.simulator.neuron.populations.AlphaMN__Pool] class.
 #
-# We also create a **DescendingDrive__Pool** to represent the cortical input.
+# We also create a [`DescendingDrive__Pool`][myogen.simulator.neuron.populations.DescendingDrive__Pool] to represent the cortical input.
 #
-# .. note:: These neurons are modeled as Poisson point processes to convert the smooth input signal into realistic
-# spike patterns that represent cortical input to the spinal cord.
+# !!! note
+#     These neurons are modeled as Poisson point processes to convert the smooth input signal into realistic
+#     spike patterns that represent cortical input to the spinal cord.
 #
 
 load_nmodl_mechanisms()
@@ -113,7 +114,7 @@ motor_neuron_pool = AlphaMN__Pool(
 
 timestep = 0.1 * pq.ms
 h.secondorder = 2  # Crank-Nicolson method (second-order accurate)
-descending_drive_pool = DescendingDrive__Pool(n=100, poisson_batch_size=5, timestep__ms=timestep)
+descending_drive_pool = DescendingDrive__Pool(n=100, process_type="poisson", timestep__ms=timestep)
 ##############################################################################
 # Generate Trapezoidal Drive Pattern
 # -----------------------------------
@@ -205,7 +206,7 @@ print(f"\tRest after: {ramp_down_end} - {simulation_time} ms ({dd_baseline__pps}
 # Create Network and Connections
 # -------------------------------
 #
-# In MyoGen, populations can be connected using the **Network** class from the
+# In MyoGen, populations can be connected using the [`Network`][myogen.simulator.Network] class from the
 # `myogen.simulator.neuron` module.
 #
 # The **Network** class provides a high-level interface for creating and managing
@@ -344,7 +345,7 @@ dd_firing_rates = np.array(
     [
         mean_firing_rate(st__s.time_slice(st__s.min(), st__s.max()))
         for st__s in dd_segment.spiketrains
-        if len(st__s) > 0
+        if len(st__s) > 1  # need >=2 spikes for a rate over the spike span
     ]
 )
 
@@ -353,7 +354,7 @@ mn_firing_rates = np.array(
     [
         mean_firing_rate(st__s.time_slice(st__s.min(), st__s.max()))
         for st__s in mn_segment.spiketrains
-        if len(st__s) > 0
+        if len(st__s) > 1  # need >=2 spikes for a rate over the spike span
     ]
 )
 
@@ -392,7 +393,7 @@ axes[0].legend()
 axes[0].grid(True, alpha=0.3)
 
 # 2. DD population raster plot
-dd_colors = plt.cm.get_cmap("Blues")(np.linspace(0.3, 0.8, len(dd_segment.spiketrains)))
+dd_colors = plt.get_cmap("Blues")(np.linspace(0.3, 0.8, len(dd_segment.spiketrains)))
 for i, (spiketrain, color) in enumerate(zip(dd_segment.spiketrains, dd_colors)):
     if len(spiketrain) > 0:
         axes[1].scatter(spiketrain.magnitude, [i] * len(spiketrain), c=[color], s=0.8, alpha=0.8)
@@ -403,7 +404,7 @@ axes[1].set_ylim(-1, descending_drive_pool.n)
 axes[1].grid(True, alpha=0.3)
 
 # 3. Motor neuron raster plot (recruitment ordered)
-mn_colors = plt.cm.get_cmap("Reds")(np.linspace(0.3, 0.9, len(mn_segment.spiketrains)))
+mn_colors = plt.get_cmap("Reds")(np.linspace(0.3, 0.9, len(mn_segment.spiketrains)))
 active_mn_count = 0
 for i, (spiketrain, color) in enumerate(zip(mn_segment.spiketrains, mn_colors)):
     if len(spiketrain) > 0:
@@ -540,7 +541,7 @@ if len(mn_instantaneous_rates) > 0:
     n_to_plot = len(active_neuron_ids)
 
     # Use colormap for lines (gradient from blue to red showing recruitment order)
-    colors = plt.cm.get_cmap("rainbow")(np.linspace(0, 1, n_to_plot))
+    colors = plt.get_cmap("rainbow")(np.linspace(0, 1, n_to_plot))
 
     for neuron_idx in range(n_to_plot):
         axes2[1].plot(
@@ -567,3 +568,5 @@ plt.tight_layout()
 plt.show()
 
 print("\n[DONE] Simulation complete with individual neuron noise and discharge rate analysis!")
+
+# mkdocs_gallery_thumbnail_path = "gallery_thumbs/03_simulate_spike_trains_descending_drive.png"

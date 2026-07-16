@@ -6,7 +6,7 @@ After generating **spike trains** from motor neuron pools, the next step is to s
 produced by the muscle. **MyoGen** provides a comprehensive force model based on the classic
 Fuglevand et al. (1993) approach.
 
-.. note::
+!!! note
     The **force model** converts spike trains into force by simulating individual motor unit twitches
     and their summation. Each motor unit has unique twitch characteristics (amplitude, duration)
     that depend on its recruitment threshold.
@@ -20,9 +20,8 @@ The force model includes:
 
 References
 ----------
-.. [1] Fuglevand, A. J., Winter, D. A., & Patla, A. E. (1993).
-    Models of recruitment and rate coding in motor-unit pools.
-    Journal of Neurophysiology, 70(2), 782-797.
+
+[1] Fuglevand, A. J., Winter, D. A., & Patla, A. E. (1993). Models of recruitment and rate coding in motor-unit pools. Journal of Neurophysiology, 70(2), 782-797.
 """
 
 ##############################################################################
@@ -244,3 +243,5 @@ ax2.grid(True, alpha=0.3)
 
 plt.tight_layout()
 plt.show()
+
+# mkdocs_gallery_thumbnail_path = "gallery_thumbs/08_simulate_force.png"

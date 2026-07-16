@@ -52,9 +52,9 @@ class IntramuscularEMG:
     Parameters
     ----------
     muscle_model : Muscle
-        Pre-computed muscle model (see :class:`myogen.simulator.Muscle`).
+        Pre-computed muscle model (see `myogen.simulator.Muscle`).
     electrode_array : IntramuscularElectrodeArray
-        Intramuscular electrode array configuration to use for simulation (see :class:`myogen.simulator.IntramuscularElectrodeArray`).
+        Intramuscular electrode array configuration to use for simulation (see `myogen.simulator.IntramuscularElectrodeArray`).
     sampling_frequency__Hz : Quantity__Hz, default=10240.0 * pq.Hz
         Sampling frequency in Hz for EMG simulation.
         Default is set to 10240 Hz as used by the Quattrocento (OT Bioelettronica, Turin, Italy) system.
@@ -66,14 +66,13 @@ class IntramuscularEMG:
         By default, the endplate is located at the center of the muscle (50% of the muscle length).
     nmj_jitter__s : Quantity__s, default=35e-6 * pq.s
         Standard deviation of neuromuscular junction jitter in seconds.
-        Default is set to 35e-6 s as determined by Konstantin et al. 2020 [1]_.
+        Default is set to 35e-6 s as determined by Konstantin et al. 2020 [1].
     branch_cvs__m_per_s : tuple[Quantity__m_per_s, Quantity__m_per_s], default=(5.0 * pq.m / pq.s, 2.0 * pq.m / pq.s)
         Conduction velocities for the two-layer model of the neuromuscular junction in m/s.
-        Default is set to (5.0, 2.0) m/s as determined by Konstantin et al. 2020 [1]_.
+        Default is set to (5.0, 2.0) m/s as determined by Konstantin et al. 2020 [1].
 
-        .. note::
-            The two-layer model is a simplification of the actual arborization pattern, but it is a good approximation for the purposes of this simulation.
-            Follows the implementation of Konstantin et al. 2020 [1]_.
+        Note: The two-layer model is a simplification of the actual arborization pattern, but it is a good approximation for the purposes of this simulation.
+        Follows the implementation of Konstantin et al. 2020 [1].
     MUs_to_simulate : list[int], optional
         Indices of motor units to simulate. If None, all motor units are simulated.
         Default is None. For computational efficiency, consider
@@ -93,7 +92,7 @@ class IntramuscularEMG:
 
     References
     ----------
-    .. [1] Konstantin, A., Yu, T., Le Carpentier, E., Aoustin, Y., Farina, D., 2020. Simulation of Motor Unit Action Potential Recordings From Intramuscular Multichannel Scanning Electrodes. IEEE Transactions on Biomedical Engineering 67, 2005–2014. https://doi.org/10.1109/TBME.2019.2953680
+    [1] Konstantin, A., Yu, T., Le Carpentier, E., Aoustin, Y., Farina, D., 2020. Simulation of Motor Unit Action Potential Recordings From Intramuscular Multichannel Scanning Electrodes. IEEE Transactions on Biomedical Engineering 67, 2005–2014. https://doi.org/10.1109/TBME.2019.2953680
     """
 
     def __init__(
@@ -762,7 +761,7 @@ class IntramuscularEMG:
           1/f-like base, mid-band spectral emphasis from
           electrode–amplifier bandwidth, heavy tails from cross-talk
           artifacts, and additive 50/60 Hz powerline interference with
-          harmonics. See :mod:`myogen.utils.emg_noise` for the math.
+          harmonics. See `myogen.utils.emg_noise` for the math.
 
         Per-channel SNR is preserved across both modes: each electrode's
         noise RMS is computed from that channel's own signal RMS so
@@ -823,7 +822,7 @@ class IntramuscularEMG:
             The spectral form is paper-constrained; the amplitude
             defaults are *not* validated for intramuscular EMG —
             calibrate against real recordings via
-            :func:`myogen.utils.calibrate_baseline_drift_profile`.
+            `myogen.utils.calibrate_baseline_drift_profile`.
             Broadband movement artifacts (0–20 Hz, De Luca 2010) are
             a separate phenomenon out of scope here.
             Ignored when ``noise_type="gaussian"``.
@@ -852,7 +851,7 @@ class IntramuscularEMG:
         ------
         ValueError
             If intramuscular EMG has not been simulated (call
-            :meth:`simulate_intramuscular_emg` first) or ``noise_type``
+            `simulate_intramuscular_emg` first) or ``noise_type``
             is unrecognized.
         """
         if self._intramuscular_emg__Block is None:

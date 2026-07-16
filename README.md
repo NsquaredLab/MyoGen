@@ -1,7 +1,7 @@
 <div align="center">
   <h1 style="display: flex; align-items: center; justify-content: center; gap: 10px;">
     <span>Welcome to</span>
-    <img src="https://raw.githubusercontent.com/NsquaredLab/MyoGen/main/docs/source/_static/myogen_logo.png" height="100" alt="MyoGen Logo">
+    <img src="https://raw.githubusercontent.com/NsquaredLab/MyoGen/main/docs/images/myogen_logo.png" height="100" alt="MyoGen Logo">
   </h1>
 
   <h2>The modular and extensible simulation toolkit for neurophysiology</h2>
@@ -10,9 +10,9 @@
   [![Python 3.12+](https://img.shields.io/badge/python-3.12+-blue.svg)](https://www.python.org/downloads/)
   [![Version](https://img.shields.io/badge/version-0.10.1-orange.svg)](https://github.com/NsquaredLab/MyoGen)
 
-  [Installation](https://nsquaredlab.github.io/MyoGen/#installation) •
+  [Installation](https://nsquaredlab.github.io/MyoGen/getting-started/#install) •
   [Documentation](https://nsquaredlab.github.io/MyoGen/) •
-  [Examples](https://nsquaredlab.github.io/MyoGen/examples.html) •
+  [Examples](https://nsquaredlab.github.io/MyoGen/auto_examples/01_basic/) •
   [How to Cite](https://nsquaredlab.github.io/MyoGen/#how-to-cite)
 </div>
 
@@ -161,7 +161,7 @@ uv add cupy-cuda12x
 
 📖 **[Read the full documentation](https://nsquaredlab.github.io/MyoGen/)**
 
-- [User Guide](https://nsquaredlab.github.io/MyoGen/neo_blocks_guide.html) — Working with simulation outputs
+- [User Guide](https://nsquaredlab.github.io/MyoGen/neo-blocks/) — Working with simulation outputs
 - [API Reference](https://nsquaredlab.github.io/MyoGen/api/) — Complete class documentation
 - [Examples](examples/) — Step-by-step tutorials from recruitment to EMG
 

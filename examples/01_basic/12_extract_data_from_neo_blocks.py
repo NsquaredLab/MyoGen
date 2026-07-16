@@ -5,11 +5,11 @@ Extracting Data from Neo Blocks
 This example demonstrates how to extract and work with data from the different
 Neo Block types used in MyoGen:
 
-- SPIKE_TRAIN__Block
-- SURFACE_MUAP__Block
-- SURFACE_EMG__Block
-- INTRAMUSCULAR_MUAP__Block
-- INTRAMUSCULAR_EMG__Block
+- [`SPIKE_TRAIN__Block`][myogen.utils.types.SPIKE_TRAIN__Block]
+- [`SURFACE_MUAP__Block`][myogen.utils.types.SURFACE_MUAP__Block]
+- [`SURFACE_EMG__Block`][myogen.utils.types.SURFACE_EMG__Block]
+- [`INTRAMUSCULAR_MUAP__Block`][myogen.utils.types.INTRAMUSCULAR_MUAP__Block]
+- [`INTRAMUSCULAR_EMG__Block`][myogen.utils.types.INTRAMUSCULAR_EMG__Block]
 
 Each section shows practical code for accessing and analyzing the data.
 """
@@ -433,3 +433,5 @@ if "intramuscular_emg" in available_files:
         plt.tight_layout()
         plt.savefig(save_path / "intramuscular_emg_analysis.png", dpi=150)
         print(f"\nSaved EMG analysis to: {save_path / 'intramuscular_emg_analysis.png'}")
+
+# mkdocs_gallery_thumbnail_path = "gallery_thumbs/12_extract_data_from_neo_blocks.png"

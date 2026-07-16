@@ -22,7 +22,7 @@ from .force_utils import get_gain_vectorized, sawtooth2ipi, spikes2sawtooth
 @beartowertype
 class ForceModel:
     """
-    Force model based on Fuglevand et al. (1993) [1]_.
+    Force model based on Fuglevand et al. (1993) [1].
 
     This class implements the Fuglevand force generation model for motor unit pools,
     computing individual motor unit twitch responses and their nonlinear gain modulation
@@ -70,9 +70,7 @@ class ForceModel:
 
     References
     ----------
-    .. [1] Fuglevand, A. J., Winter, D. A., & Patla, A. E. (1993).
-        Models of recruitment and rate coding in motor-unit pools.
-        Journal of Neurophysiology, 70(2), 782-797.
+    [1] Fuglevand, A. J., Winter, D. A., & Patla, A. E. (1993). Models of recruitment and rate coding in motor-unit pools. Journal of Neurophysiology, 70(2), 782-797.
 
     Examples
     --------

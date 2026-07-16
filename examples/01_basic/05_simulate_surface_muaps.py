@@ -26,7 +26,7 @@ plt.style.use("fivethirtyeight")
 # Define Parameters
 # -----------------
 #
-# The **surface EMG** is created using the **SurfaceEMG** object.
+# The **surface EMG** is created using the [`SurfaceEMG`][myogen.simulator.SurfaceEMG] object.
 #
 # The **SurfaceEMG** object takes the following parameters:
 #
@@ -53,13 +53,13 @@ muscle: simulator.Muscle = joblib.load(save_path / "muscle_model.pkl")
 # Create Surface EMG Model
 # -------------------------
 #
-# The **SurfaceEMG** object is initialized with the **muscle model**, the **electrode array**, and the **simulation parameters**.
+# The **SurfaceEMG** object is initialized with the **muscle model**, the [`SurfaceElectrodeArray`][myogen.simulator.SurfaceElectrodeArray], and the **simulation parameters**.
 #
-# .. note::
-#    For simplicity, we only simulate the first motor unit.
-#    This can be changed by modifying the ``MUs_to_simulate`` parameter.
+# !!! note
+#     For simplicity, we only simulate the first motor unit.
+#     This can be changed by modifying the `MUs_to_simulate` parameter.
 #
-#   This is to simulate the **surface EMG** from two different directions.
+#     This is to simulate the **surface EMG** from two different directions.
 #
 
 electrode_array_monopolar = simulator.SurfaceElectrodeArray(
@@ -167,3 +167,5 @@ for muap_index in range(len(muaps.groups[0].segments)):
 
     plt.tight_layout()
     plt.show()
+
+# mkdocs_gallery_thumbnail_path = "gallery_thumbs/05_simulate_surface_muaps.png"

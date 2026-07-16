@@ -88,22 +88,22 @@ def _perform_fast_marching(speed_map: np.ndarray, seed_points: np.ndarray) -> np
 @beartowertype
 class Muscle:
     """
-    A muscle model based on the cylindrical description of the volume conductor by Farina et al. 2004 [1]_ and the motor unit distribution by Konstantin et al. 2020 [2]_.
+    A muscle model based on the cylindrical description of the volume conductor by Farina et al. 2004 [1] and the motor unit distribution by Konstantin et al. 2020 [2].
 
-    .. note::
-        All default values are set to simulate the First Dorsal Interosseous (FDI) muscle. Values are pulled from the literature.
+    All default values are set to simulate the First Dorsal Interosseous (FDI) muscle.
+    Values are pulled from the literature.
 
     Parameters
     ----------
     recruitment_thresholds : RECRUITMENT_THRESHOLDS__ARRAY
-        Array of recruitment thresholds for each motor unit (see `myogen.simulator.generate_mu_recruitment_thresholds`).
+        Array of recruitment thresholds for each motor unit (see `myogen.simulator.RecruitmentThresholds`).
         Values range from 0 to 1 with the largest motor units having thresholds near 1.
     radius__mm : float, default=6.91
-        Radius of the muscle cross-section in millimeters. Default is set to 6.91 mm as determined by Jacobson et al. 1992 [3]_.
+        Radius of the muscle cross-section in millimeters. Default is set to 6.91 mm as determined by Jacobson et al. 1992 [3].
     length__mm : float, default=30.0
         Length of the muscle in millimeters. Default is 30.0 mm, a nominal value chosen to match the order of magnitude of the FDI muscle; adjust to match the muscle under study.
     fiber_density__fibers_per_mm2 : float, default=350
-        Density of muscle fibers per square millimeter. Default is set to 350 fibers/mm² as determined by Bettelho et al. 2019 [7]_.
+        Density of muscle fibers per square millimeter. Default is set to 350 fibers/mm² as determined by Bettelho et al. 2019 [7].
     max_innervation_area_to_total_muscle_area__ratio : float, default=0.25
         Ratio defining the maximum territory size relative to total muscle area.
         Default is 0.25 as a pragmatic upper bound for the FDI, with no single published source; revisit for larger muscles.
@@ -111,26 +111,26 @@ class Muscle:
         of the total muscle cross-sectional area.
         Must be in range (0, 1].
     mean_conduction_velocity__m_per_s : float, default=4.2
-        Mean conduction velocity in m/s. Default is set to 4.2 m/s as determined by Nishizono et al. 1990 [4]_.
-        Experimental range determined by Nishizono et al. 1990 [4]_ is between 3.2 and 5.0 m/s.
+        Mean conduction velocity in m/s. Default is set to 4.2 m/s as determined by Nishizono et al. 1990 [4].
+        Experimental range determined by Nishizono et al. 1990 [4] is between 3.2 and 5.0 m/s.
     mean_fiber_length__mm : float, default=31.7
-        Mean fiber length in mm. Default is set to 31.7 mm as determined by Jacobson et al. 1992 [3]_ (Table 1).
+        Mean fiber length in mm. Default is set to 31.7 mm as determined by Jacobson et al. 1992 [3] (Table 1).
     var_fiber_length__mm : float, default=2.8
-        Fiber length variance in mm. Default is set to 2.8 mm as determined by Jacobson et al. 1992 [3]_ (Table 1).
+        Fiber length variance in mm. Default is set to 2.8 mm as determined by Jacobson et al. 1992 [3] (Table 1).
     radius_bone__mm : float, default=1
         Bone radius in mm. Default is set to 1 mm.
     fat_thickness__mm : float, default=0.3
-        Fat thickness in mm. Default is set to 0.3 mm as determined by Störchle et al. 2018 [5]_.
+        Fat thickness in mm. Default is set to 0.3 mm as determined by Störchle et al. 2018 [5].
     skin_thickness__mm : float, default=1.29
-        Skin thickness in mm. Default is set to the male skin thickness average of 1.29 mm as determined by Brodar 1960 [6]_.
-    muscle_conductivity_radial__S_m : float, default=0.09
-        Muscle conductivity in radial direction. Default is set to 0.09 S/m as determined by Botelho et al. 2019 [7]_ (Table 1).
-    muscle_conductivity_longitudinal__S_m : float, default=0.4
-        Muscle conductivity in longitudinal direction. Default is set to 0.4 S/m as determined by Botelho et al. 2019 [7]_ (Table 1).
+        Skin thickness in mm. Default is set to the male skin thickness average of 1.29 mm as determined by Brodar 1960 [6].
+    muscle_conductivity_radial__S_per_m : float, default=0.09
+        Muscle conductivity in radial direction. Default is set to 0.09 S/m as determined by Botelho et al. 2019 [7] (Table 1).
+    muscle_conductivity_longitudinal__S_per_m : float, default=0.4
+        Muscle conductivity in longitudinal direction. Default is set to 0.4 S/m as determined by Botelho et al. 2019 [7] (Table 1).
     fat_conductivity__S_per_m : float, default=4.07E-2
-        Fat conductivity. Default is set to 4.07E-2 S/m as determined by Botelho et al. 2019 [7]_ (Table 1).
+        Fat conductivity. Default is set to 4.07E-2 S/m as determined by Botelho et al. 2019 [7] (Table 1).
     skin_conductivity__S_per_m : float, default=4.88E-4
-        Skin conductivity. Default is set to 4.88E-4 S/m as determined by Botelho et al. 2019 [7]_ (Table 1).
+        Skin conductivity. Default is set to 4.88E-4 S/m as determined by Botelho et al. 2019 [7] (Table 1).
     grid_resolution : int, default=256
         Resolution of the computational grid used for innervation the muscle.
         Higher values provide more accurate spatial distribution but increase computational cost.
@@ -167,19 +167,13 @@ class Muscle:
 
     References
     ----------
-    .. [1] Farina, D., Mesin, L., Martina, S., Merletti, R., 2004. A surface EMG generation model with multilayer cylindrical description of the volume conductor. IEEE Transactions on Biomedical Engineering 51, 415–426. https://doi.org/10.1109/TBME.2003.820998
-
-    .. [2] Konstantin, A., Yu, T., Le Carpentier, E., Aoustin, Y., Farina, D., 2020. Simulation of Motor Unit Action Potential Recordings From Intramuscular Multichannel Scanning Electrodes. IEEE Transactions on Biomedical Engineering 67, 2005–2014. https://doi.org/10.1109/TBME.2019.2953680
-
-    .. [3] Jacobson, M.D., Raab, R., Fazeli, B.M., Abrams, R.A., Botte, M.J., Lieber, R.L., 1992. Architectural design of the human intrinsic hand muscles. The Journal of Hand Surgery 17, 804–809. https://doi.org/10.1016/0363-5023(92)90446-V
-
-    .. [4] Nishizono, H., Fujimoto, T., Ohtake, H., Miyashita, M., 1990. Muscle fiber conduction velocity and contractile properties estimated from surface electrode arrays. Electroencephalography and Clinical Neurophysiology 75, 75–81. https://doi.org/10.1016/0013-4694(90)90154-C
-
-    .. [5] Störchle, P., Müller, W., Sengeis, M., Lackner, S., Holasek, S., Fürhapter-Rieger, A., 2018. Measurement of mean subcutaneous fat thickness: eight standardised ultrasound sites compared to 216 randomly selected sites. Sci Rep 8, 16268. https://doi.org/10.1038/s41598-018-34213-0
-
-    .. [6] Brodar, V., 1960. Observations on skin thickness and subcutaneous tissue in man. Zeitschrift für Morphologie und Anthropologie 50, 386–395.
-
-    .. [7] Botelho, D.P., Curran, K., Lowery, M.M., 2019. Anatomically accurate model of EMG during index finger flexion and abduction derived from diffusion tensor imaging. PLOS Computational Biology 15, e1007267. https://doi.org/10.1371/journal.pcbi.1007267
+    [1] Farina, D., Mesin, L., Martina, S., Merletti, R., 2004. A surface EMG generation model with multilayer cylindrical description of the volume conductor. IEEE Transactions on Biomedical Engineering 51, 415–426. https://doi.org/10.1109/TBME.2003.820998 <br>
+    [2] Konstantin, A., Yu, T., Le Carpentier, E., Aoustin, Y., Farina, D., 2020. Simulation of Motor Unit Action Potential Recordings From Intramuscular Multichannel Scanning Electrodes. IEEE Transactions on Biomedical Engineering 67, 2005–2014. https://doi.org/10.1109/TBME.2019.2953680 <br>
+    [3] Jacobson, M.D., Raab, R., Fazeli, B.M., Abrams, R.A., Botte, M.J., Lieber, R.L., 1992. Architectural design of the human intrinsic hand muscles. The Journal of Hand Surgery 17, 804–809. https://doi.org/10.1016/0363-5023(92)90446-V <br>
+    [4] Nishizono, H., Fujimoto, T., Ohtake, H., Miyashita, M., 1990. Muscle fiber conduction velocity and contractile properties estimated from surface electrode arrays. Electroencephalography and Clinical Neurophysiology 75, 75–81. https://doi.org/10.1016/0013-4694(90)90154-C <br>
+    [5] Störchle, P., Müller, W., Sengeis, M., Lackner, S., Holasek, S., Fürhapter-Rieger, A., 2018. Measurement of mean subcutaneous fat thickness: eight standardised ultrasound sites compared to 216 randomly selected sites. Sci Rep 8, 16268. https://doi.org/10.1038/s41598-018-34213-0 <br>
+    [6] Brodar, V., 1960. Observations on skin thickness and subcutaneous tissue in man. Zeitschrift für Morphologie und Anthropologie 50, 386–395. <br>
+    [7] Botelho, D.P., Curran, K., Lowery, M.M., 2019. Anatomically accurate model of EMG during index finger flexion and abduction derived from diffusion tensor imaging. PLOS Computational Biology 15, e1007267. https://doi.org/10.1371/journal.pcbi.1007267
     """
 
     def __init__(
@@ -427,14 +421,14 @@ class Muscle:
         verbose : bool, default=True
             If True, display status messages. Set to False to disable.
 
-        Results are stored in the following properties after execution:
-
-            - `mf_centers`: Array of shape (n_fibers, 2) with fiber positions [x, y] in mm
-            - `number_of_muscle_fibers`: Total number of muscle fibers
-            - `muscle_border`: Array of border points for visualization
-
         Notes
         -----
+        Results are stored in the following properties after execution:
+
+        - `mf_centers`: Array of shape (n_fibers, 2) with fiber positions [x, y] in mm
+        - `number_of_muscle_fibers`: Total number of muscle fibers
+        - `muscle_border`: Array of border points for visualization
+
         This method should be called after distribute_innervation_centers() and
         before assign_mfs2mns(). The Voronoi-based distribution provides more
         realistic fiber spacing compared to regular grids or purely random distributions.
@@ -547,8 +541,6 @@ class Muscle:
         verbose : bool, default=True
             If True, display progress bars and status messages. Set to False to disable.
 
-        Results are stored in the `assignment` property after execution.
-
         Raises
         ------
         ValueError
@@ -557,6 +549,8 @@ class Muscle:
 
         Notes
         -----
+        Results are stored in the `assignment` property after execution.
+
         The algorithm compensates for out-of-muscle effects by calculating how much
         of each motor unit's Gaussian distribution falls outside the circular muscle
         boundary and adjusting the in-muscle probabilities accordingly.

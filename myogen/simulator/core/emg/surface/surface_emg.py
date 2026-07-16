@@ -40,14 +40,14 @@ class SurfaceEMG:
 
     This class provides a simulation framework for generating
     surface electromyography signals from the muscle. It implements the
-    multi-layered cylindrical volume conductor model from Farina et al. 2004 [1]_.
+    multi-layered cylindrical volume conductor model from Farina et al. 2004 [1].
 
     Parameters
     ----------
     muscle_model : Muscle
-        Pre-computed muscle model (see :class:`myogen.simulator.Muscle`).
+        Pre-computed muscle model (see `myogen.simulator.Muscle`).
     electrode_arrays : list[SurfaceElectrodeArray]
-        List of electrode arrays to use for simulation (see :class:`myogen.simulator.SurfaceElectrodeArray`).
+        List of electrode arrays to use for simulation (see `myogen.simulator.SurfaceElectrodeArray`).
     sampling_frequency__Hz : float, default=2048.0
         Sampling frequency in Hz. Default is set to 2048 Hz as used by the Quattrocento (OT Bioelettronica, Turin, Italy) system.
     sampling_points_in_t_and_z_domains : int, default=256
@@ -98,7 +98,7 @@ class SurfaceEMG:
 
     References
     ----------
-    .. [1] Farina, D., Mesin, L., Martina, S., Merletti, R., 2004. A surface EMG generation model with multilayer cylindrical description of the volume conductor. IEEE Transactions on Biomedical Engineering 51, 415–426. https://doi.org/10.1109/TBME.2003.820998
+    [1] Farina, D., Mesin, L., Martina, S., Merletti, R., 2004. A surface EMG generation model with multilayer cylindrical description of the volume conductor. IEEE Transactions on Biomedical Engineering 51, 415–426. https://doi.org/10.1109/TBME.2003.820998
     """
 
     def __init__(
@@ -228,7 +228,7 @@ class SurfaceEMG:
             If True, display progress bars. Set to False to disable.
         use_gpu : bool or None, default=None
             GPU acceleration control for the per-fiber volume-conductor solve
-            (mirrors :meth:`myogen.simulator.MotorUnitSim.calc_sfaps`):
+            (mirrors `myogen.simulator.MotorUnitSim.calc_sfaps`):
 
             - ``None``  → auto: use GPU if CuPy is available and
               ``MYOGEN_DISABLE_GPU`` is not set in the environment; CPU otherwise.
@@ -262,7 +262,7 @@ class SurfaceEMG:
         # Calculate innervation zone variance
         innervation_zone_variance = (
             self._mean_fiber_length__mm * 0.1
-        )  # 10% of the mean fiber length (see Botelho et al. 2019 [6]_)
+        )  # 10% of the mean fiber length (see Botelho et al. 2019 [6])
 
         # Extract fiber counts
         number_of_fibers_per_MUs = self._muscle_model.resulting_number_of_innervated_fibers

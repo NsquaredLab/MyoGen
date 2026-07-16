@@ -379,11 +379,13 @@ class DD(_Cell, _PoissonProcessGenerator__Cython):
     simulation of voluntary motor commands, reflex modulation, and other
     descending influences on spinal motor circuits.
 
+    The process is a discrete-time Poisson process (exponential inter-spike
+    intervals, CV = 1, exact as dt -> 0); the instantaneous rate is set by the
+    drive signal passed to `integrate`, not by a constructor argument. For regular,
+    low-CV firing use `DD_Gamma` instead.
+
     Parameters
     ----------
-    N : int
-        Maximum firing rate in Hz when input drive is at maximum. Determines
-        the scaling factor for converting drive signals to spike rates.
     dt : float
         Simulation time step in milliseconds. Must match the integration
         time step used in the main simulation loop.
@@ -405,11 +407,11 @@ class DD(_Cell, _PoissonProcessGenerator__Cython):
 
     _ids2 = itertools.count(0)
 
-    def __init__(self, N, dt, pool__ID: int | None = None):
+    def __init__(self, dt, pool__ID: int | None = None):
         self.ns = h.DUMMY()  # Dummy cell
         _Cell.__init__(self, next(self._ids2), pool__ID)
         _PoissonProcessGenerator__Cython.__init__(
-            self, derive_subseed(self.class__ID, self.global__ID), N, dt
+            self, derive_subseed(self.class__ID, self.global__ID), dt
         )
 
     def __repr__(self) -> str:
@@ -547,9 +549,10 @@ class AffIa(_Cell, _GammaProcessGenerator__Cython):
     RT : float
         Recruitment threshold - minimum input level required for activation.
         Represents the stretch sensitivity of the particular spindle ending.
-    N : int
-        Maximum firing rate in Hz when fully activated. Determines the
-        gain of the length-to-frequency transduction.
+    shape : int
+        Gamma shape parameter controlling ISI regularity: CV = 1/sqrt(shape).
+        Larger values give more regular (clock-like) firing. It does not set the
+        firing rate — the rate follows the input drive relative to RT.
     timestep__ms : Quantity__ms
         Simulation time step as a Quantity with units of milliseconds.
     initN : int, optional
@@ -581,7 +584,7 @@ class AffIa(_Cell, _GammaProcessGenerator__Cython):
     def __init__(
         self,
         RT,
-        N,
+        shape,
         timestep__ms: Quantity__ms,
         initN=0,
         class__ID: Optional[int] = None,
@@ -596,7 +599,7 @@ class AffIa(_Cell, _GammaProcessGenerator__Cython):
         _GammaProcessGenerator__Cython.__init__(
             self,
             seed=derive_subseed(self.class__ID, self.global__ID),
-            shape=N,  # Shape parameter controls ISI CV = 1/sqrt(N)
+            shape=shape,  # controls ISI CV = 1/sqrt(shape)
             dt=timestep__ms.magnitude,
         )
 
@@ -612,7 +615,7 @@ class AffIa(_Cell, _GammaProcessGenerator__Cython):
         Returns
         -------
         int
-            Number of spikes generated (0 or 1) based on Poisson process
+            Number of spikes generated (0 or 1) based on a Gamma renewal process
             with rate determined by activation level above threshold.
         """
         # NumPy 2.0 no longer auto-casts a single-element array (e.g. a neo
@@ -642,8 +645,8 @@ class AffII(AffIa):
     ----------
     RT : float
         Recruitment threshold for activation.
-    N : int
-        Maximum firing rate in Hz.
+    shape : int
+        Gamma shape parameter controlling ISI regularity: CV = 1/sqrt(shape).
     pool__ID : int, optional
         Pool identifier for muscle-specific grouping.
     *args, **kwargs
@@ -660,8 +663,8 @@ class AffII(AffIa):
 
     _ids2 = itertools.count(0)
 
-    def __init__(self, RT, N, pool__ID: int | None = None, *args, **kwargs):
-        super().__init__(RT, N, class__ID=next(self._ids2), pool__ID=pool__ID, *args, **kwargs)
+    def __init__(self, RT, shape, pool__ID: int | None = None, *args, **kwargs):
+        super().__init__(RT, shape, class__ID=next(self._ids2), pool__ID=pool__ID, *args, **kwargs)
 
 
 @beartowertype
@@ -684,8 +687,8 @@ class AffIb(AffIa):
     ----------
     RT : float
         Force recruitment threshold for activation.
-    N : int
-        Maximum firing rate in Hz at full force.
+    shape : int
+        Gamma shape parameter controlling ISI regularity: CV = 1/sqrt(shape).
     pool__ID : int, optional
         Pool identifier for muscle-specific grouping.
     *args, **kwargs
@@ -702,8 +705,8 @@ class AffIb(AffIa):
 
     _ids2 = itertools.count(0)
 
-    def __init__(self, RT, N, pool__ID: int | None = None, *args, **kwargs):
-        super().__init__(RT, N, class__ID=next(self._ids2), pool__ID=pool__ID, *args, **kwargs)
+    def __init__(self, RT, shape, pool__ID: int | None = None, *args, **kwargs):
+        super().__init__(RT, shape, class__ID=next(self._ids2), pool__ID=pool__ID, *args, **kwargs)
 
 
 # MOTORNEURON
@@ -1012,8 +1015,8 @@ def reset_cell_id_counters() -> None:
     """Reset every per-class ``itertools.count`` counter to zero.
 
     Cell classes assign ``global__ID`` / ``class__ID`` from module-level
-    :class:`itertools.count` instances. Those counters live for the
-    interpreter's lifetime, so a second call to :func:`myogen.set_random_seed`
+    `itertools.count` instances. Those counters live for the
+    interpreter's lifetime, so a second call to `myogen.set_random_seed`
     would deterministically reseed the RNG but still hand out
     monotonically increasing IDs from where the previous run stopped --
     breaking determinism across consecutive runs in the same process.

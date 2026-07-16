@@ -6,7 +6,7 @@ This example demonstrates **parameter optimization** for descending drive networ
 The goal is to find network parameters (number of DD neurons, connection probability, drive frequency)
 that produce motor neuron firing patterns matching target physiological characteristics.
 
-.. note::
+!!! note
     **Multi-objective optimization** is essential for tuning complex neural network models because:
 
     - Multiple parameters interact non-linearly (DD neurons, connectivity, synaptic weights)
@@ -14,13 +14,13 @@ that produce motor neuron firing patterns matching target physiological characte
     - Manual parameter tuning is time-consuming and may miss optimal combinations
     - Systematic search ensures reproducible, well-documented parameter choices
 
-.. important::
+!!! important
     **Descending Drive (DD) Networks** represent cortical input to spinal motor neurons. Key parameters:
 
-    - ``dd_neurons``: Population size (affects input diversity and convergence)
-    - ``conn_probability``: Synaptic connectivity (affects drive strength and correlation)
-    - ``dd_drive__Hz``: Input frequency (controls baseline excitation level)
-    - ``gamma_shape``: Variability of Poisson processes (affects temporal patterns)
+    - `dd_neurons`: Population size (affects input diversity and convergence)
+    - `conn_probability`: Synaptic connectivity (affects drive strength and correlation)
+    - `dd_drive__Hz`: Input frequency (controls baseline excitation level)
+    - `gamma_shape`: Variability of Poisson processes (affects temporal patterns)
 
 **Optimization Objective**: Match target motor neuron firing rate statistics while maintaining
 biologically plausible network parameters.
@@ -547,27 +547,29 @@ plt.show()
 # Using Optimized Parameters
 # ---------------------------
 #
-# .. important::
-#    The optimized parameters can be loaded and used in production simulations:
+# !!! important
+#     The optimized parameters can be loaded and used in production simulations:
 #
-#    .. code-block:: python
+#     ```python
+#     import json
+#     from pathlib import Path
 #
-#       import json
-#       from pathlib import Path
+#     # Load optimized parameters
+#     with open("results/dd_optimization/dd_optimized_params.json") as f:
+#         params = json.load(f)
 #
-#       # Load optimized parameters
-#       with open("results/dd_optimization/dd_optimized_params.json") as f:
-#           params = json.load(f)
+#     # Extract best values
+#     dd_neurons = int(params["best_trial"]["dd_neurons"])
+#     conn_prob = params["best_trial"]["conn_probability"]
+#     dd_drive_Hz = params["best_trial"]["dd_drive__Hz"]
 #
-#       # Extract best values
-#       dd_neurons = int(params["best_trial"]["dd_neurons"])
-#       conn_prob = params["best_trial"]["conn_probability"]
-#       dd_drive_Hz = params["best_trial"]["dd_drive__Hz"]
-#
-#       # Use in your simulation
-#       descending_drive_pool = DescendingDrive__Pool(n=dd_neurons, ...)
-#       network.connect("DD", "aMN", probability=conn_prob, ...)
+#     # Use in your simulation
+#     descending_drive_pool = DescendingDrive__Pool(n=dd_neurons, ...)
+#     network.connect("DD", "aMN", probability=conn_prob, ...)
+#     ```
 
 print("\n[DONE] Optimization complete!")
 print(f"Best parameters saved to: {json_path}")
 print(f"Full study saved to: {RESULTS_DIR / 'study.pkl'}")
+
+# mkdocs_gallery_thumbnail_path = "gallery_thumbs/01_optimize_dd_for_target_firing_rate.png"
