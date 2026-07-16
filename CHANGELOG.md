@@ -7,6 +7,30 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.11.0] - 2026-07-16
+
+### Added
+- **Clinical SCI/PIC simulation gallery.** Added `examples/04_clinical/` with mechanistic intramuscular-EMG examples showing persistent-inward-current amplification, recruitment/derecruitment hysteresis, loss of derecruitment, and self-sustained spasm-like discharge after spinal cord injury. New regression tests cover NaP scaling, PIC hysteresis, after-discharge, pool-level spasticity, iEMG synthesis, and the manuscript parameter regime.
+- **Statistical point-process tests.** Added `tests/test_poisson_process.py`, validating descending-drive firing rate, exponential ISIs, CV(ISI) = 1, Poisson-distributed spike counts, serial independence, and Gamma-process behavior using end-to-end and generator-level goodness-of-fit tests.
+- **MkDocs documentation site.** Replaced the Sphinx site with properdocs, MkDocs Material, mkdocstrings, and mkdocs-gallery. A new GitHub Pages workflow builds and deploys the site; deployed builds execute the `01_basic` and `02_finetune` galleries with inline plots, while the paper and clinical galleries render source-only.
+
+### Changed
+- **Breaking: descending-drive Poisson generation is now statistically Poisson.** The previous generator averaged `N` exponential draws, producing Gamma(`N`, `N`) inter-spike thresholds with CV = `1/sqrt(N)`. It now draws one Exp(1) threshold per interval, producing a discrete-time Poisson process with CV = 1 in the small-timestep limit. `DescendingDrive__Pool.poisson_batch_size` and the corresponding `DD` constructor argument/state were removed. Use `process_type="gamma", shape=N` when the former regular, low-CV behavior is desired. Bug identified and analyzed by @joaohbbittar in #22; the fix is included in #19.
+- **Breaking: afferent shape parameters renamed.** `poisson_batch_size` was renamed to `shape` on `AffIa__Pool`, `AffII__Pool`, and `AffIb__Pool`, and their `poisson_batch_size` attributes became `shape`. The underlying `AffIa`, `AffII`, and `AffIb` cell constructors likewise rename `N` to `shape`. Defaults and Gamma-renewal behavior are unchanged.
+- **Parallel Watanabe optimization.** The oscillating descending-drive Optuna example now distributes independent NEURON trials across configurable worker processes backed by a shared SQLite study, enabling roughly fivefold speedups on suitable hardware. Workers receive distinct MyoGen and seeded TPE sampler seeds, and the original one-hour optimization timeout remains enforced.
+- **NWB dependency completeness.** Added `h5py>=3.0` to the `nwb` optional extra.
+- **Documentation and gallery hygiene.** Converted API and narrative documentation to Markdown/mkdocstrings conventions, updated gallery directives and thumbnails, suppressed build-only progress output, and forced joblib to `n_jobs=1` while executing documentation examples.
+
+### Fixed
+- **Resilient documentation deployment.** `scripts/build_docs.py` retry-wraps executed gallery builds to recover from NEURON native-state accumulation segfaults, resumes from mkdocs-gallery's completed-example cache, rejects incomplete or failed pages, and aborts when retries stop making progress.
+- **Watanabe drive bias.** Drive noise is now sampled with zero mean before the total firing rate is clipped to non-negative values, removing the systematic offset introduced by clipping the noise itself (baseline and optimization trials).
+- **Watanabe worker reproducibility and timeout.** Each Optuna worker explicitly seeds its TPE sampler, and the optimization timeout discarded during the initial parallelization was restored.
+- **Documentation links and examples.** Updated README links for the new documentation routes and corrected assorted docstrings, cross-references, gallery metadata, and example formatting.
+
+### Migration
+- Code requesting Poisson descending drive should drop `poisson_batch_size` (`DescendingDrive__Pool(n=100, poisson_batch_size=16)` → `DescendingDrive__Pool(n=100)`); use `process_type="gamma", shape=16` to keep the former regular firing.
+- Afferent pools: rename `poisson_batch_size` to `shape` on `AffIa__Pool`/`AffII__Pool`/`AffIb__Pool` (and `AffIa`/`AffII`/`AffIb` cell `N` → `shape`).
+
 ## [0.10.1] - 2026-06-01
 
 ### Fixed
