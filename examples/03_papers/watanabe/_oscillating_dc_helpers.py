@@ -218,10 +218,12 @@ def run_simulation_with_oscillating_drive(dc_offset, recruitment_thresholds):
     force_output = force_model.generate_force(spike_train__Block=spike_train__Block)
     force_raw = force_output.magnitude[:, 0]  # Arbitrary units (sum of MU twitches)
 
-    # Normalize force to 0-1 range, then scale to Newtons
-    # (ForceModel outputs sum of MU twitch forces, not normalized values)
+    # %MVC normalization (Watanabe methodology): normalize each simulation to its
+    # OWN peak, then scale to MAX_FORCE_N. This deliberately matches the *shape* of
+    # the normalized force profile, not absolute force in Newtons — the baseline
+    # (script 01) is normalized the same way, so the two are directly comparable.
     force_max_raw = np.max(force_raw)
-    force_signal = (force_raw / force_max_raw) * MAX_FORCE_N  # Scale to Newtons
+    force_signal = (force_raw / force_max_raw) * MAX_FORCE_N  # peak-normalized (%MVC), not absolute N
 
     # Calculate steady-state force
     steady_idx = len(force_signal) // 2
@@ -249,7 +251,12 @@ recruitment_thresholds, _ = RecruitmentThresholds(
 
 def objective(trial):
     """
-    Optimize DC offset to match reference force with oscillation.
+    Optimize the DC offset so the oscillating drive reproduces the reference's
+    NORMALIZED steady-state force.
+
+    Both this trial and the baseline (script 01) are peak-normalized to
+    ``MAX_FORCE_N`` (%MVC methodology), so the objective matches the normalized
+    force *profile*, not absolute force in Newtons.
 
     Parameters
     ----------
@@ -259,7 +266,7 @@ def objective(trial):
     Returns
     -------
     float
-        Relative force error (minimize)
+        Relative error of the normalized steady-state force (minimize)
     """
     try:
         # Optimize DC offset (will be lower than constant drive)

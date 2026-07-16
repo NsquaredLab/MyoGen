@@ -326,10 +326,12 @@ force_output = force_model.generate_force(spike_train__Block=spike_train__Block)
 force_raw = force_output.magnitude[:, 0]  # Arbitrary units (sum of MU twitches)
 force_time = force_output.times.rescale(pq.s).magnitude
 
-# Normalize force to 0-1 range, then scale to Newtons
-# (ForceModel outputs sum of MU twitch forces, not normalized values)
+# %MVC normalization (Watanabe methodology): normalize to the peak, then scale to
+# MAX_FORCE_N. This is the reference the optimization (script 02) matches, and it
+# normalizes trials the same way, so the comparison is of normalized force
+# *profiles*, not absolute Newtons.
 force_max_raw = np.max(force_raw)
-force_signal = (force_raw / force_max_raw) * MAX_FORCE_N  # Scale to Newtons
+force_signal = (force_raw / force_max_raw) * MAX_FORCE_N  # peak-normalized (%MVC), not absolute N
 
 ##############################################################################
 # Analyze Force Characteristics
