@@ -296,7 +296,9 @@ if "surface_emg" in available_files:
         nperseg=min(256, len(emg_magnitude) // 4),
     )
 
-    ax2.pcolormesh(t, f, 10 * np.log10(Sxx), shading="gouraud", cmap="viridis")
+    # floor the power so zero-power cells don't trigger a log10 divide-by-zero
+    Sxx_db = 10 * np.log10(Sxx + np.finfo(Sxx.dtype).eps)
+    ax2.pcolormesh(t, f, Sxx_db, shading="gouraud", cmap="viridis")
     ax2.set_ylabel("Frequency (Hz)")
     ax2.set_xlabel("Time (s)")
     ax2.set_title("EMG Spectrogram")
