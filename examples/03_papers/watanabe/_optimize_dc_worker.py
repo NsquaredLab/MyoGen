@@ -23,7 +23,17 @@ def main() -> None:
     # Decorrelate per-worker membrane/drive noise; thresholds were already built at
     # import under seed 42 so they stay identical across workers.
     set_random_seed(args.seed)
-    study = optuna.load_study(study_name=STUDY_NAME, storage=make_storage())
+    # Seed this worker's TPE sampler explicitly. Optuna does NOT persist samplers
+    # to storage, so a bare load_study() would build a fresh *unseeded* sampler in
+    # every worker, making the dc_offset suggestions non-reproducible despite the
+    # study being created with a seed. (Bit-reproducibility across parallel workers
+    # sharing one study is still not achievable — trial interleaving is
+    # nondeterministic — but this removes the unseeded-sampler source of drift.)
+    study = optuna.load_study(
+        study_name=STUDY_NAME,
+        storage=make_storage(),
+        sampler=optuna.samplers.TPESampler(seed=args.seed),
+    )
     study.optimize(objective, n_trials=args.n_trials)
 
 

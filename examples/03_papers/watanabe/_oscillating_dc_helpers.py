@@ -154,11 +154,12 @@ def run_simulation_with_oscillating_drive(dc_offset, recruitment_thresholds):
     # Oscillating component
     drive_signal = dc_offset + OSC_AMPLITUDE__HZ * np.sin(2 * np.pi * OSC_FREQUENCY__HZ * time_s)
 
-    # Clip to prevent negative firing rates
+    # Add small zero-mean noise, then clip the total to non-negative firing rates.
+    # (Clipping the noise itself to [0, inf) makes it one-sided with mean ~0.4 Hz,
+    # injecting a systematic DC bias into every trial's drive and thus into the
+    # reported dc_offset.)
+    drive_signal += get_random_generator().normal(0, 1.0, size=time_points)
     drive_signal = np.clip(drive_signal, 0, None)
-
-    # Add small noise
-    drive_signal += np.clip(get_random_generator().normal(0, 1.0, size=time_points), 0, None)
 
     # Initialize simulation
     h.load_file("stdrun.hoc")

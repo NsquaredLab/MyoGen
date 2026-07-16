@@ -122,15 +122,25 @@ print(f"Trials: {N_TRIALS}\n")
 
 colors = plt.rcParams["axes.prop_cycle"].by_key()["color"]
 
+# Start each pipeline run from a clean study so a leftover SQLite DB from a
+# previous run doesn't accumulate stale trials into best_trial.
+try:
+    optuna.delete_study(study_name=STUDY_NAME, storage=make_storage())
+except KeyError:
+    pass
+
 study = optuna.create_study(
     direction="minimize",
-    sampler=optuna.samplers.TPESampler(seed=42),
+    sampler=optuna.samplers.TPESampler(seed=42),  # workers set their own seeded samplers
     study_name=STUDY_NAME,
     storage=make_storage(),
     load_if_exists=True,
 )
 
-n_workers = int(os.environ.get("MYOGEN_OPTUNA_WORKERS", min(8, N_TRIALS)))
+# Conservative default: each worker builds a memory-heavy 800-MN + 400-DD NEURON
+# network, so 8 concurrent workers can OOM a laptop/CI runner. Raise it via
+# MYOGEN_OPTUNA_WORKERS on a machine with enough RAM for the full speedup.
+n_workers = int(os.environ.get("MYOGEN_OPTUNA_WORKERS", min(4, N_TRIALS)))
 n_workers = max(1, min(n_workers, N_TRIALS))
 
 per_worker = [N_TRIALS // n_workers + (1 if i < N_TRIALS % n_workers else 0) for i in range(n_workers)]
