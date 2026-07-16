@@ -85,7 +85,7 @@ def validate_cache() -> tuple[set[str], list[str]]:
         for stamp in gdir.rglob("*.py.md5"):
             name = stamp.name[: -len(".py.md5")]
             md = stamp.parent / f"{name}.md"
-            ok = md.exists()
+            ok = md.exists() and md.stat().st_size > 0
             if ok:
                 for ref in _IMG_SRC.findall(md.read_text(errors="replace")):
                     img = stamp.parent / ref.lstrip("./")

@@ -228,9 +228,13 @@ for cell in motor_neuron_pool:
 # ----------------------------------------
 
 time_points = int(SIMULATION_TIME_MS / TIMESTEP_MS)
-drive_signal = np.ones(time_points) * DD_DRIVE_HZ + np.clip(
-    get_random_generator().normal(0, 1.0, size=time_points), 0, None
+# Zero-mean noise, then clip the total to non-negative firing rates. (One-sided
+# clipped noise adds a systematic ~0.4 Hz bias, and must match the optimization
+# trials in _oscillating_dc_helpers.py so the reference and trials are comparable.)
+drive_signal = np.ones(time_points) * DD_DRIVE_HZ + get_random_generator().normal(
+    0, 1.0, size=time_points
 )
+drive_signal = np.clip(drive_signal, 0, None)
 
 ##############################################################################
 # Run Simulation

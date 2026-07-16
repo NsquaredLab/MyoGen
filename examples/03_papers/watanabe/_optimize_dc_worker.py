@@ -9,6 +9,7 @@ import optuna  # noqa: E402
 
 from _oscillating_dc_helpers import (  # noqa: E402
     STUDY_NAME,
+    TIMEOUT_SECONDS,
     make_storage,
     objective,
 )
@@ -34,7 +35,10 @@ def main() -> None:
         storage=make_storage(),
         sampler=optuna.samplers.TPESampler(seed=args.seed),
     )
-    study.optimize(objective, n_trials=args.n_trials)
+    # Keep the wall-clock guard that existed before the parallelization: each
+    # worker stops at n_trials OR TIMEOUT_SECONDS, whichever comes first (workers
+    # run concurrently, so this bounds the whole optimization to ~TIMEOUT_SECONDS).
+    study.optimize(objective, n_trials=args.n_trials, timeout=TIMEOUT_SECONDS)
 
 
 if __name__ == "__main__":
