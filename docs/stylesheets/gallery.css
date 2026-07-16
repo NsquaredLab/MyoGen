@@ -22,3 +22,15 @@
 .mkd-glr-thumbcontainer p {
   text-align: center;
 }
+
+/* mkdocs-gallery "Out:" output blocks: sg_gallery.css hardcodes a pale-cream
+   (#fafae2) background, which leaves the text unreadable in the dark (slate)
+   scheme. Use Material's theme-aware code colors so the captured output stays
+   legible in both light and dark modes. Pygments syntax spans keep their own
+   colors (their rules are more specific). */
+.mkd-glr-script-out-disp,
+.mkd-glr-script-out-disp pre,
+.mkd-glr-script-out-disp code {
+  background-color: var(--md-code-bg-color) !important;
+  color: var(--md-code-fg-color) !important;
+}
