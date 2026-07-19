@@ -48,7 +48,7 @@ from neo import Block, Segment, SpikeTrain
 from scipy.ndimage import gaussian_filter1d
 from tqdm import tqdm
 
-from myogen import RANDOM_GENERATOR, simulator
+from myogen import get_random_generator, simulator
 from myogen.simulator.jaxley.populations import AlphaMN__Pool
 from myogen.utils.currents import create_trapezoid_current
 
@@ -156,9 +156,9 @@ current_amplitude = 15.0 * pq.nA
 # NO max_recruitment cutoff - simulate ALL neurons like NEURON does
 # Recruitment emerges from biophysics (cell size, conductances)
 
-rise_time_ms = list(RANDOM_GENERATOR.uniform(100, 500, size=n_pools)) * pq.ms
-plateau_time_ms = list(RANDOM_GENERATOR.uniform(1000, 2000, size=n_pools)) * pq.ms
-fall_time_ms = list(RANDOM_GENERATOR.uniform(1000, 2000, size=n_pools)) * pq.ms
+rise_time_ms = list(get_random_generator().uniform(100, 500, size=n_pools)) * pq.ms
+plateau_time_ms = list(get_random_generator().uniform(1000, 2000, size=n_pools)) * pq.ms
+fall_time_ms = list(get_random_generator().uniform(1000, 2000, size=n_pools)) * pq.ms
 
 input_current__AnalogSignal = create_trapezoid_current(
     n_pools,

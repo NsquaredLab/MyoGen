@@ -217,8 +217,8 @@ gDyn[(time >= 4750) & (time <= 5000)] = 100
 gStat = gDyn.copy()
 
 # Add small physiological variability
-gDyn = gDyn + myogen.RANDOM_GENERATOR.normal(0, 1, len(time))
-gStat = gStat + myogen.RANDOM_GENERATOR.normal(0, 1, len(time))
+gDyn = gDyn + myogen.get_random_generator().normal(0, 1, len(time))
+gStat = gStat + myogen.get_random_generator().normal(0, 1, len(time))
 
 # Ensure non-negative
 gDyn = np.maximum(gDyn, 0)
@@ -418,7 +418,7 @@ print("\nPre-computing neural connectivity...")
 
 # DD → MN (forward: mn_idx → dd_list; reverse: dd_idx → mn_list)
 dd_to_mn_connections = {
-    mn_idx: [j for j in range(nDD) if myogen.RANDOM_GENERATOR.random() < 0.3]
+    mn_idx: [j for j in range(nDD) if myogen.get_random_generator().random() < 0.3]
     for mn_idx in range(naMN)
 }
 dd_to_mn_rev = {dd: [] for dd in range(nDD)}
@@ -428,7 +428,7 @@ for mn_idx, dd_list in dd_to_mn_connections.items():
 
 # Ia → MN (forward and reverse)
 ia_to_mn_connections = {
-    mn_idx: [j for j in range(nIa) if myogen.RANDOM_GENERATOR.random() < 0.8]
+    mn_idx: [j for j in range(nIa) if myogen.get_random_generator().random() < 0.8]
     for mn_idx in range(naMN)
 }
 ia_to_mn_rev = {ia: [] for ia in range(nIa)}
@@ -438,7 +438,7 @@ for mn_idx, ia_list in ia_to_mn_connections.items():
 
 # II → gII (forward and reverse)
 ii_to_gii_connections = {
-    gii_idx: [j for j in range(nII) if myogen.RANDOM_GENERATOR.random() < 0.3]
+    gii_idx: [j for j in range(nII) if myogen.get_random_generator().random() < 0.3]
     for gii_idx in range(ngII)
 }
 ii_to_gii_rev = {ii: [] for ii in range(nII)}
@@ -448,7 +448,7 @@ for gii_idx, ii_list in ii_to_gii_connections.items():
 
 # Ib → gIb (forward and reverse)
 ib_to_gib_connections = {
-    gib_idx: [j for j in range(nIb) if myogen.RANDOM_GENERATOR.random() < 0.3]
+    gib_idx: [j for j in range(nIb) if myogen.get_random_generator().random() < 0.3]
     for gib_idx in range(ngIb)
 }
 ib_to_gib_rev = {ib: [] for ib in range(nIb)}

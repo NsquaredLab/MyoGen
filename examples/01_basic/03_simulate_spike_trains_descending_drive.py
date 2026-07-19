@@ -70,7 +70,7 @@ from matplotlib import pyplot as plt
 from neo import AnalogSignal, Block, Segment, SpikeTrain
 from tqdm import tqdm
 
-from myogen import RANDOM_GENERATOR
+from myogen import get_random_generator
 from myogen.simulator.jaxley.populations import AlphaMN__Pool, DescendingDrive__Pool
 from myogen.utils.types import pps
 
@@ -200,7 +200,7 @@ for i, t in enumerate(time_array):
 
 # Add small noise for realism
 trapezoid_drive = (
-    trapezoid_drive + np.clip(RANDOM_GENERATOR.normal(0, 1.0, size=time_points), 0, None) * pps
+    trapezoid_drive + np.clip(get_random_generator().normal(0, 1.0, size=time_points), 0, None) * pps
 )
 
 # Create AnalogSignal
@@ -330,7 +330,7 @@ e_syn   = 70.0                # mV — excitatory reversal in NERLab frame (mode
 DD_MN_CONNECTION_PROBABILITY = 0.5
 dd_to_mn_connections = {
     mn_idx: [dd_idx for dd_idx in range(n_dd)
-             if RANDOM_GENERATOR.random() < DD_MN_CONNECTION_PROBABILITY]
+             if get_random_generator().random() < DD_MN_CONNECTION_PROBABILITY]
     for mn_idx in range(n_mns)
 }
 
