@@ -301,7 +301,13 @@ def load_nmodl_mechanisms(quiet: bool = True, strict: bool = False) -> bool:
         return True
 
     except ImportError as e:
-        return error(f"NEURON not available, cannot load mechanisms: {str(e)}")
+        # NEURON simply not installed — expected in Jaxley-only installs. Only warn
+        # when not quiet (or raise under strict); never crash the import of myogen.
+        if strict:
+            raise NMODLLoadError(f"NEURON not available, cannot load mechanisms: {str(e)}")
+        if not quiet:
+            print(f"WARNING: NEURON not available, cannot load mechanisms: {str(e)}")
+        return False
     except Exception as e:
         return error(f"Failed to load NMODL mechanisms: {str(e)}")
 

@@ -67,37 +67,15 @@ class BuildWithNMODL(build_py):
             print("NMODL compilation complete!")
 
         except Exception as e:
-            if platform.system() == "Windows":
-                # Windows requires manual NEURON installation - fail with clear instructions
-                error_msg = f"""
-================================================================================
-  MyoGen Installation Failed - NEURON Required
-================================================================================
-
-MyoGen requires NEURON 8.2.7 to be installed BEFORE installing MyoGen.
-
-STEP 1: Download and install NEURON
------------------------------------
-  https://github.com/neuronsimulator/nrn/releases/download/8.2.7/nrn-8.2.7.w64-mingw-py-39-310-311-312-313-setup.exe
-
-  During installation, select "Add to PATH"
-
-STEP 2: Retry installation
-----------------------------------
-    Re-run the MyoGen installation command, e.g.:
-        pip install myogen or uv add myogen
-
-================================================================================
-Technical details: {e}
-================================================================================
-"""
-                raise RuntimeError(error_msg) from e
-            else:
-                # Linux/macOS - just warn, NMODL can be compiled later
-                print(f"Note: NMODL compilation skipped: {e}")
-                print(
-                    "Run 'python -c \"from myogen import _setup_myogen; _setup_myogen()\"' after installation"
-                )
+            # NMODL mechanisms are only needed for the OPTIONAL NEURON backend, so a
+            # missing NEURON at build time must never fail the install. On every
+            # platform we warn and continue; users who want the NEURON backend install
+            # `myogen[neuron]` and then run the setup task to compile mechanisms.
+            print(f"Note: NMODL compilation skipped (NEURON backend not built): {e}")
+            print(
+                'To use the optional NEURON backend, install `myogen[neuron]` and run:\n'
+                '  python -c "from myogen import _setup_myogen; _setup_myogen()"'
+            )
 
     def _compile_nmodl_windows(self, nmodl_path):
         """Compile NMODL on Windows."""
@@ -237,11 +215,15 @@ extensions = [
     ),
 ]
 
+# Parallel Cython compilation. Overridable via MYOGEN_CYTHONIZE_NTHREADS so builds in
+# process-pool-constrained sandboxes/CI can fall back to single-threaded (nthreads=1).
+_cythonize_nthreads = int(os.environ.get("MYOGEN_CYTHONIZE_NTHREADS", "4"))
+
 setup(
     ext_modules=cythonize(
         extensions,
         compiler_directives={"embedsignature": True, "language_level": "2"},
-        nthreads=4,
+        nthreads=_cythonize_nthreads,
     ),
     cmdclass={
         "build_py": BuildWithNMODL,

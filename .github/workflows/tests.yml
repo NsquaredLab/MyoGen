@@ -43,9 +43,11 @@ jobs:
           python -m pip install --upgrade pip
           python -m pip install uv
 
-      - name: Install project with dev group
+      - name: Install project with dev group + optional NEURON backend
+        # NEURON is now an optional extra (Jaxley is the default backend), so the
+        # test suite must opt into it to exercise the NEURON-backed tests.
         run: |
-          uv sync --group dev
+          uv sync --group dev --extra neuron
 
       - name: Compile NEURON mechanisms
         run: uv run poe setup_myogen
