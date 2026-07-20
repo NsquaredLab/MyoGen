@@ -34,8 +34,11 @@ jobs:
         with:
           enable-cache: true
 
-      - name: Sync project + docs/nwb extras
-        run: uv sync --locked --group docs --extra nwb
+      - name: Sync project + docs/nwb/neuron extras
+        # NEURON is now an optional extra (Jaxley is the default backend). The docs
+        # build needs it: `poe setup_myogen` compiles NMODL, and mkdocstrings imports
+        # the NEURON injection utilities (api/io-and-neuron.md) to document them.
+        run: uv sync --locked --group docs --extra nwb --extra neuron
 
       - name: Compile NMODL mechanisms
         run: uv run poe setup_myogen

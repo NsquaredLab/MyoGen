@@ -3,13 +3,30 @@
 ## Recruitment
 ::: myogen.simulator.RecruitmentThresholds
 
-## Neuron populations
+## Motor-unit populations
+
+Jaxley is the default backend. The NEURON backend (optional `neuron` extra) exposes
+API-compatible equivalents; both are documented below.
+
+### Jaxley (default)
+
+::: myogen.simulator.jaxley.populations.AlphaMN__Pool
+::: myogen.simulator.jaxley.populations.DescendingDrive__Pool
+
+`DescendingDrive_Gamma__Pool` is a backward-compatibility alias for a gamma-process
+descending drive.
+
+::: myogen.simulator.jaxley.populations.DescendingDrive_Gamma__Pool
+::: myogen.simulator.jaxley.populations.AffIa__Pool
+::: myogen.simulator.jaxley.populations.AffII__Pool
+::: myogen.simulator.jaxley.populations.AffIb__Pool
+::: myogen.simulator.jaxley.populations.GII__Pool
+::: myogen.simulator.jaxley.populations.GIb__Pool
+
+### NEURON (optional backend, `myogen[neuron]`)
+
 ::: myogen.simulator.neuron.populations.AlphaMN__Pool
 ::: myogen.simulator.neuron.populations.DescendingDrive__Pool
-
-`DescendingDrive_Gamma__Pool` is a backward-compatibility alias. New code should
-prefer `DescendingDrive__Pool(process_type="gamma", shape=...)`.
-
 ::: myogen.simulator.neuron.populations.DescendingDrive_Gamma__Pool
 ::: myogen.simulator.neuron.populations.AffIa__Pool
 ::: myogen.simulator.neuron.populations.AffII__Pool

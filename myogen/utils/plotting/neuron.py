@@ -100,9 +100,10 @@ def plot_raster_spikes(
                 spike_times.append(float(spike_time.rescale("ms").magnitude))
                 spike_ids.append(i)
 
-        if spike_times:
-            spike_times = np.array(spike_times)
-            spike_ids = np.array(spike_ids)
+        spike_times = np.array(spike_times)
+        spike_ids = np.array(spike_ids)
+
+        if spike_times.size > 0:
 
             # Apply time range filter if specified
             if time_range is not None:
@@ -720,6 +721,8 @@ def plot_spindle_dynamics(
                         "Bag2": signal_array[:, 1],
                         "Chain": signal_array[:, 2],
                     }
+        elif signal_name == "gamma_dynamic":
+            spindle_data["gamma_dynamic"] = signal_array.flatten()
         elif signal_name == "primary_afferent_firing__Hz":
             if "aff" not in spindle_data:
                 spindle_data["aff"] = {}
@@ -754,6 +757,8 @@ def plot_spindle_dynamics(
             elif key in ["act", "tension", "aff"]:
                 for subkey, subvalue in value.items():
                     spindle_data[key][subkey] = subvalue[time_mask]
+            elif key == "gamma_dynamic" and isinstance(value, np.ndarray):
+                spindle_data[key] = value[time_mask]
 
     # Plot signals
     plot_idx = 0
@@ -783,9 +788,30 @@ def plot_spindle_dynamics(
             if act_type in spindle_data["act"]:
                 ax.plot(plot_time, spindle_data["act"][act_type], label=act_type, **kwargs)
 
+        # Overlay gamma fusimotor drive on a secondary y-axis (right side, green)
+        if "gamma_dynamic" in spindle_data:
+            ax2 = ax.twinx()
+            ax2.plot(
+                plot_time,
+                spindle_data["gamma_dynamic"],
+                color="green",
+                linestyle="--",
+                linewidth=1.2,
+                alpha=0.7,
+                label="γ_dyn [pps]",
+            )
+            ax2.set_ylabel("γ drive [pps]", color="green")
+            ax2.tick_params(axis="y", labelcolor="green")
+            ax2.set_ylim(bottom=0)
+            # Merge legends from both axes
+            lines1, labels1 = ax.get_legend_handles_labels()
+            lines2, labels2 = ax2.get_legend_handles_labels()
+            ax.legend(lines1 + lines2, labels1 + labels2, loc="upper left")
+
         if apply_default_formatting:
             ax.set_ylabel("Activation [a.u.]")
-            ax.legend()
+            if "gamma_dynamic" not in spindle_data:
+                ax.legend()
             if plot_idx == 0:
                 ax.set_title(title)
             if plot_idx == len(ax_list) - 1:

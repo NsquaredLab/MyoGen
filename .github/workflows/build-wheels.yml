@@ -169,9 +169,64 @@ jobs:
         run: |
           python -c "from myogen.simulator.neuron.populations import AlphaMN__Pool; print('NEURON components OK')"
 
+  test_wheels_jaxley_only:
+    name: Test wheel WITHOUT NEURON/MPI (Jaxley-only install)
+    needs: [build_wheels]
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.12"]
+    steps:
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v6
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Download wheels
+        uses: actions/download-artifact@v7
+        with:
+          name: wheels-ubuntu-latest
+          path: dist/
+
+      # Deliberately DO NOT install NEURON, mpi4py, or system MPI. This proves the
+      # default (Jaxley-only) install works with none of the NEURON stack present.
+      - name: Install wheel (core deps only)
+        run: |
+          python -m pip install --upgrade pip
+          # dist/ holds both cp312 and cp313 wheels; install only the one matching
+          # this runner's Python so pip doesn't reject the other ABI.
+          tag="cp$(echo '${{ matrix.python-version }}' | tr -d .)"
+          pip install dist/*"${tag}-${tag}"*.whl
+
+      - name: Verify NEURON is absent
+        run: |
+          python -c "
+          try:
+              import neuron
+              raise SystemExit('FAIL: neuron is installed; this job must run without it')
+          except ImportError:
+              print('OK: NEURON runtime is not installed')
+          "
+
+      - name: Import MyoGen without NEURON
+        run: |
+          python -c "import myogen; print('import myogen OK')"
+          python -c "import myogen.simulator as s; print('import myogen.simulator OK; HillModel <-', s.HillModel.__module__)"
+          python -c "from myogen.simulator.jaxley import run_jax, value_and_grad_run, surface_emg_jax; print('differentiable API OK')"
+
+      - name: Build real NERLab motor neurons on the Jaxley backend
+        run: |
+          python -c "
+          import numpy as np
+          from myogen.simulator.jaxley.populations import AlphaMN__Pool
+          pool = AlphaMN__Pool(recruitment_thresholds__array=np.array([0.1, 0.3, 0.6]), mode='active')
+          assert len(pool) == 3, len(pool)
+          print('Jaxley-only install verified:', len(pool), 'NERLab MNs built, no NEURON present')
+          "
+
   publish:
     name: Publish to PyPI
-    needs: [build_wheels, build_sdist, test_wheels]
+    needs: [build_wheels, build_sdist, test_wheels, test_wheels_jaxley_only]
     runs-on: ubuntu-latest
     if: github.event_name == 'release' || (github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v'))
     permissions:

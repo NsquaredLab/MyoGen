@@ -17,6 +17,7 @@ The first step in using **MyoGen** is to generate the **recruitment thresholds**
 * **Combined** model: Hybrid approach combining De Luca shape with Konstantin scaling (*Ours*)
 """
 
+# this is a test comment
 # %%
 
 ##############################################################################
