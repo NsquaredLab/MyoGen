@@ -151,23 +151,30 @@ class TestLayeredCylinderTransfer:
     def test_even_and_odd_grids_agree_on_shared_bins(self):
         """Odd M/N give symmetric grids; the transfer at a given |k| pair must
         not depend on which grid it was requested from."""
+        # Same k_z spacing (Fs scales with N) so the two grids share bins.
         k_z_e, k_theta_e = _fft_bin_grids(N=512, M=32, Fs_kHz=4.096, v_m_s=4.0)
-        k_z_o, k_theta_o = _fft_bin_grids(N=513, M=33, Fs_kHz=4.096, v_m_s=4.0)
+        k_z_o, k_theta_o = _fft_bin_grids(
+            N=513, M=33, Fs_kHz=4.096 * 513 / 512, v_m_s=4.0
+        )
         H_e, _, _ = layered_cylinder_transfer(k_z_e, k_theta_e, **GEOMETRY_TRANSFER)
         H_o, _, _ = layered_cylinder_transfer(k_z_o, k_theta_o, **GEOMETRY_TRANSFER)
-        # Same angular orders at an arbitrary shared k_z magnitude.
-        k_probe = np.abs(k_z_e[100])
-        H_e_row, _, _ = layered_cylinder_transfer(
-            np.array([k_probe]), k_theta_e, **GEOMETRY_TRANSFER
-        )
-        H_o_row, _, _ = layered_cylinder_transfer(
-            np.array([k_probe]), k_theta_o, **GEOMETRY_TRANSFER
-        )
-        for n in range(-15, 16):
-            je = np.flatnonzero(k_theta_e == n)[0]
-            jo = np.flatnonzero(k_theta_o == n)[0]
-            np.testing.assert_allclose(H_e_row[0, je], H_o_row[0, jo], rtol=1e-12)
         assert H_e.shape == (512, 32) and H_o.shape == (513, 33)
+        # Every bin of the even grid exists on the odd grid (the nudged DC
+        # bin included, since the spacing is identical).
+        shared_z = [
+            (ie, io)
+            for ie, k in enumerate(k_z_e)
+            for io in np.flatnonzero(np.isclose(k_z_o, k, rtol=1e-12, atol=0.0))
+        ]
+        assert len(shared_z) == 512
+        shared_theta = [
+            (je, np.flatnonzero(k_theta_o == n)[0]) for je, n in enumerate(k_theta_e)
+        ]
+        ie, io = map(np.array, zip(*shared_z))
+        je, jo = map(np.array, zip(*shared_theta))
+        np.testing.assert_allclose(
+            H_e[np.ix_(ie, je)], H_o[np.ix_(io, jo)], rtol=1e-12, atol=0.0
+        )
 
     @pytest.mark.parametrize("N", [512, 2048])
     def test_thin_bone_is_continuous_with_no_bone(self, N):
