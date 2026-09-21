@@ -448,9 +448,14 @@ cpdef tuple simulate_fiber_v2(
     ## 1. Constants
     ###################################################################################################
 
-    # Model angular frequencies
-    k_theta = np.linspace(-(M - 1) / 2, (M - 1) / 2, M)
-    k_t = 2 * pi * np.linspace(-Fs / 2, Fs / 2, N)
+    # Model angular frequencies: integer orders on the FFT bin grid
+    # (-M/2 .. M/2-1 for even M), mirroring _simulate_fiber_v2_python.
+    k_theta = np.fft.fftshift(np.fft.fftfreq(M, d=1.0 / M))
+    # FFT-consistent temporal grid (bin spacing Fs/N).  The DC bin makes the
+    # Bessel system singular; nudge it by half a bin as the Python path does.
+    k_t = 2 * pi * np.fft.fftshift(np.fft.fftfreq(N, d=1.0 / Fs))
+    if N > 1:
+        k_t = np.where(k_t == 0.0, 0.5 * (2 * pi * Fs / N), k_t)
     k_z = k_t / v
     kt_mesh_kzkt, kz_mesh_kzkt = np.meshgrid(k_t, k_z)
 
@@ -516,14 +521,11 @@ cpdef tuple simulate_fiber_v2(
     cdef double bm = b * sqrt(sig_muscle_z / sig_muscle_rho)
     cdef double Rm = R * sqrt(sig_muscle_z / sig_muscle_rho)
 
-    cdef Py_ssize_t i_start = <Py_ssize_t>(len(k_z) / 2)
-    cdef Py_ssize_t i_end = len(k_z)
-    cdef Py_ssize_t j_start = <Py_ssize_t>(len(k_theta) / 2)
-    cdef Py_ssize_t j_end = len(k_theta)
-
-    # Create sub-arrays for positive frequencies
-    k_z_pos = k_z[i_start:i_end]
-    k_theta_pos = k_theta[j_start:j_end]
+    # H_vc is even in both k_z and k_theta: compute it once per unique |k|
+    # pair and map back onto the full grid with the ``np.unique`` inverse
+    # index (exact for symmetric and asymmetric FFT-bin grids alike).
+    k_z_pos, k_z_inverse = np.unique(np.abs(k_z), return_inverse=True)
+    k_theta_pos, k_theta_inverse = np.unique(np.abs(k_theta), return_inverse=True)
 
     K_THETA, K_Z = np.meshgrid(k_theta_pos, k_z_pos, indexing="ij")
 
@@ -672,7 +674,10 @@ cpdef tuple simulate_fiber_v2(
     B_flat = np.asarray(B).reshape(-1, 7, 1)
 
     if r_bone == 0:
-        A_flat = A_flat[..., 2:, 2:]
+        # No bone: muscle is the innermost layer and Kn diverges at rho=0, so
+        # the Kn_muscle coefficient (column 2) must be dropped, not In_muscle.
+        # Keep [In_muscle, In_fat, Kn_fat, In_skin, Kn_skin] (087caf33).
+        A_flat = A_flat[..., 2:, [1, 3, 4, 5, 6]]
         B_flat = B_flat[..., 2:, :]
 
         # Pure CPU solve (optimized for small-to-medium problems)
@@ -687,15 +692,8 @@ cpdef tuple simulate_fiber_v2(
         X = X.reshape(n_theta, n_z, 7, 1)
         H_vc = X[..., 5, 0] + X[..., 6, 0]
 
-    # Reconstruct full H_vc using symmetry
-    temp = np.zeros((len(k_z), len(k_theta)))
-    temp[i_start:i_end, j_start:j_end] = H_vc.T
-    H_vc = temp
-
-    H_vc_pos_section = H_vc[i_start:i_end, j_start:j_end]
-    H_vc[i_start:i_end, :j_start] = np.fliplr(H_vc_pos_section)
-    H_vc[:i_start, j_start:j_end] = np.flipud(H_vc_pos_section)
-    H_vc[:i_start, :j_start] = np.flipud(np.fliplr(H_vc_pos_section))
+    # Reconstruct the full (k_z, k_theta) grid from H_vc(|k_z|, |k_theta|).
+    H_vc = np.asarray(H_vc).T[np.ix_(k_z_inverse, k_theta_inverse)]
 
     ###################################################################################################
     ## 4. H_ele(k_z, k_theta)

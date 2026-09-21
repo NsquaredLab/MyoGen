@@ -48,14 +48,13 @@ from scipy.special import jv as Jn
 from scipy.special import kv as Kn
 from scipy.special import kve as Kn_scaled  # Exponentially scaled: kve(n,z) = kv(n,z)*exp(z)
 
+from myogen.simulator.core.emg.surface.volume_conductor import (  # noqa: F401 (re-exported)
+    HAS_CUPY,
+    layered_cylinder_transfer,
+    log_In,
+    log_Kn,
+)
 from myogen.utils.decorators import beartowertype
-
-try:
-    import cupy as cp
-
-    HAS_CUPY = True
-except ImportError:
-    HAS_CUPY = False
 
 try:
     import numba
@@ -95,24 +94,6 @@ def Kn_tilde(K_THETA, x):
 def Kn_tilde_scaled(K_THETA, x):
     """Scaled version of Kn_tilde to avoid overflow."""
     return (Kn_scaled(K_THETA + 1, x) + Kn_scaled(K_THETA - 1, x)) / 2
-
-
-def log_In(K_THETA, x):
-    """Compute log(In(n,z)) in a numerically stable way."""
-    # log(In(n,z)) = log(In_scaled(n,z)) + |z|
-    In_s = In_scaled(K_THETA, x)
-    # Handle zeros and negative values
-    result = np.where(In_s > 0, np.log(In_s) + np.abs(x), -np.inf)
-    return result
-
-
-def log_Kn(K_THETA, x):
-    """Compute log(Kn(n,z)) in a numerically stable way."""
-    # log(Kn(n,z)) = log(Kn_scaled(n,z)) - z
-    Kn_s = Kn_scaled(K_THETA, x)
-    # Handle zeros and negative values
-    result = np.where(Kn_s > 0, np.log(Kn_s) - x, -np.inf)
-    return result
 
 
 def f_minus_t(y):
@@ -372,13 +353,6 @@ def _simulate_fiber_v2_python(
     k_z = k_t / v
     (kt_mesh_kzkt, kz_mesh_kzkt) = np.meshgrid(k_t, k_z)
 
-    ## Model radii -> (Farina, 2004), Figure 1 - b)
-    th_muscle = r - th_fat - th_skin - r_bone
-    a = r_bone
-    b = r_bone + th_muscle
-    c = r_bone + th_muscle + th_fat
-    d = r_bone + th_muscle + th_fat + th_skin
-
     ###################################################################################################
     ## 2. I(k_t, k_z)
     # Rosenfalck (1969) intracellular action potential spatial distribution
@@ -429,393 +403,24 @@ def _simulate_fiber_v2_python(
     t = np.linspace(0, (N - 1) / Fs_effective, N)
 
     ###################################################################################################
-    ## 3. H_vc(k_z, k_theta)
-    am = a * math.sqrt(sig_muscle_z / sig_muscle_rho)
-    bm = b * math.sqrt(sig_muscle_z / sig_muscle_rho)
-    Rm = R * math.sqrt(sig_muscle_z / sig_muscle_rho)
-
-    i_start, i_end = int(len(k_z) / 2), len(k_z)
-    j_start, j_end = int(len(k_theta) / 2), len(k_theta)
-
-    # Create sub-arrays for positive frequencies
-    k_z_pos = k_z[i_start:i_end]
-    k_theta_pos = k_theta[j_start:j_end]
-
-    K_THETA, K_Z = np.meshgrid(k_theta_pos, k_z_pos, indexing="ij")
-
-    n_theta, n_z = K_THETA.shape
-
-    A_mat = np.zeros((n_theta, n_z, 7, 7))
-    B = np.zeros((n_theta, n_z, 7, 1))
-
-    """ print(
-        f"DEBUG: In_Rm_scaled range = [{np.min(In_Rm_scaled):.6e}, {np.max(In_Rm_scaled):.6e}], has inf: {np.any(np.isinf(In_Rm_scaled))}, has nan: {np.any(np.isnan(In_Rm_scaled))}"
+    ## 3. H_vc(k_z, k_theta) — single authority in volume_conductor.py
+    H_vc, A_matrix, B_incomplete = layered_cylinder_transfer(
+        k_z,
+        k_theta,
+        r=r,
+        r_bone=r_bone,
+        th_fat=th_fat,
+        th_skin=th_skin,
+        R=R,
+        sig_muscle_rho=sig_muscle_rho,
+        sig_muscle_z=sig_muscle_z,
+        sig_fat=sig_fat,
+        sig_skin=sig_skin,
+        sig_bone=sig_bone,
+        A_matrix=A_matrix,
+        B_incomplete=B_incomplete,
+        use_gpu=use_gpu,
     )
-    print(
-        f"DEBUG: Kn_Rm_scaled range = [{np.min(Kn_Rm_scaled):.6e}, {np.max(Kn_Rm_scaled):.6e}], has inf: {np.any(np.isinf(Kn_Rm_scaled))}, has nan: {np.any(np.isnan(Kn_Rm_scaled))}"
-    ) """
-
-    if A_matrix is not None and B_incomplete is not None:
-        # print(f"DEBUG: Using CACHED A_matrix and B_incomplete (am={am:.6f}, bm={bm:.6f})")
-        A_mat = A_matrix
-        B = B_incomplete.copy()
-    else:
-        # print(f"DEBUG: Computing NEW A_matrix and B_incomplete (am={am:.6f}, bm={bm:.6f})")
-        # Compute log-space Bessel functions for all radii to avoid overflow
-        # For ratios like In_am/In_bm, we use: exp(log_In(am) - log_In(bm))
-
-        log_In_a = log_In(K_THETA, a * K_Z)
-        log_In_am = log_In(K_THETA, am * K_Z)
-        log_In_b = log_In(K_THETA, b * K_Z)
-        log_In_bm = log_In(K_THETA, bm * K_Z)
-        log_In_c = log_In(K_THETA, c * K_Z)
-        log_In_d = log_In(K_THETA, d * K_Z)
-
-        log_Kn_am = log_Kn(K_THETA, am * K_Z)
-        log_Kn_b = log_Kn(K_THETA, b * K_Z)
-        log_Kn_bm = log_Kn(K_THETA, bm * K_Z)
-        log_Kn_c = log_Kn(K_THETA, c * K_Z)
-        log_Kn_d = log_Kn(K_THETA, d * K_Z)
-
-        # Compute log-space tilde functions: In_tilde = (In(n+1) + In(n-1)) / 2
-        log_In_tilde_a = np.logaddexp(
-            log_In(K_THETA + 1, a * K_Z), log_In(K_THETA - 1, a * K_Z)
-        ) - np.log(2)
-        log_In_tilde_am = np.logaddexp(
-            log_In(K_THETA + 1, am * K_Z), log_In(K_THETA - 1, am * K_Z)
-        ) - np.log(2)
-        log_In_tilde_b = np.logaddexp(
-            log_In(K_THETA + 1, b * K_Z), log_In(K_THETA - 1, b * K_Z)
-        ) - np.log(2)
-        log_In_tilde_bm = np.logaddexp(
-            log_In(K_THETA + 1, bm * K_Z), log_In(K_THETA - 1, bm * K_Z)
-        ) - np.log(2)
-        log_In_tilde_c = np.logaddexp(
-            log_In(K_THETA + 1, c * K_Z), log_In(K_THETA - 1, c * K_Z)
-        ) - np.log(2)
-        log_In_tilde_d = np.logaddexp(
-            log_In(K_THETA + 1, d * K_Z), log_In(K_THETA - 1, d * K_Z)
-        ) - np.log(2)
-
-        log_Kn_tilde_am = np.logaddexp(
-            log_Kn(K_THETA + 1, am * K_Z), log_Kn(K_THETA - 1, am * K_Z)
-        ) - np.log(2)
-        log_Kn_tilde_bm = np.logaddexp(
-            log_Kn(K_THETA + 1, bm * K_Z), log_Kn(K_THETA - 1, bm * K_Z)
-        ) - np.log(2)
-        log_Kn_tilde_c = np.logaddexp(
-            log_Kn(K_THETA + 1, c * K_Z), log_Kn(K_THETA - 1, c * K_Z)
-        ) - np.log(2)
-        log_Kn_tilde_d = np.logaddexp(
-            log_Kn(K_THETA + 1, d * K_Z), log_Kn(K_THETA - 1, d * K_Z)
-        ) - np.log(2)
-        log_Kn_tilde_b = np.logaddexp(
-            log_Kn(K_THETA + 1, b * K_Z), log_Kn(K_THETA - 1, b * K_Z)
-        ) - np.log(2)
-
-        # Debug: Check K_THETA shape and which values cause underflow
-        """  
-        print(f"DEBUG: K_THETA shape = {K_THETA.shape}, unique values = {np.unique(K_THETA)}")
-        print(
-            f"DEBUG: a = {a:.6f}, am = {am:.6f}, b = {b:.6f}, bm = {bm:.6f}, c = {c:.6f}, d = {d:.6f}"
-        )
-        print(f"DEBUG: sig_muscle_z = {sig_muscle_z:.6f}, sig_muscle_rho = {sig_muscle_rho:.6f}")
-        print(f"DEBUG: K_Z range = [{np.min(K_Z):.6e}, {np.max(K_Z):.6e}]")
-        print(f"DEBUG: a*K_Z range = [{np.min(a * K_Z):.6e}, {np.max(a * K_Z):.6e}]")
-        print(f"DEBUG: am*K_Z range = [{np.min(am * K_Z):.6e}, {np.max(am * K_Z):.6e}]") 
-        """
-
-        # Check which (K_THETA, K_Z) pairs cause -inf in log_In_am
-        is_neginf = np.isneginf(log_In_am)
-        if np.any(is_neginf):
-            bad_theta = K_THETA[is_neginf]
-            bad_kz = K_Z[is_neginf]
-            bad_arg = am * bad_kz
-            print(f"DEBUG: log_In_am -inf at {np.sum(is_neginf)} locations")
-            print(f"DEBUG:   K_THETA (order n) causing -inf: {np.unique(bad_theta)}")
-            print(f"DEBUG:   am*K_Z argument range: [{np.min(bad_arg):.6e}, {np.max(bad_arg):.6e}]")
-
-        # Build the A matrix using LOG-SPACE arithmetic to avoid overflow
-        # For ratios: In_x / In_y = exp(log_In_x - log_In_y)
-        # For products with scalars: scalar / In_x * In_tilde_y = scalar * exp(log_In_tilde_y - log_In_x)
-        # IMPORTANT: When log_In_y = -inf (denominator is zero), the ratio should be inf (which we'll handle)
-
-        # First row
-        A_mat[..., 0, 0] = 1
-        A_mat[..., 0, 1] = -np.exp(log_In_am - log_In_bm)  # -In_am / In_bm
-        A_mat[..., 0, 2] = -np.exp(log_Kn_am - log_Kn_bm)  # -Kn_am / Kn_bm
-
-        # Second row
-        A_mat[..., 1, 0] = sig_bone * np.exp(
-            log_In_tilde_a - log_In_a
-        )  # sig_bone / In_a * In_tilde_a
-        A_mat[..., 1, 1] = -math.sqrt(sig_muscle_rho * sig_muscle_z) * np.exp(
-            log_In_tilde_am - log_In_bm
-        )
-        A_mat[..., 1, 2] = math.sqrt(sig_muscle_rho * sig_muscle_z) * np.exp(
-            log_Kn_tilde_am - log_Kn_bm
-        )  # Note: (-1)*(-1) = +1
-
-        # Third row
-        A_mat[..., 2, 1] = 1
-        A_mat[..., 2, 2] = 1
-        A_mat[..., 2, 3] = -np.exp(log_In_b - log_In_c)  # -In_b / In_c
-        A_mat[..., 2, 4] = -np.exp(log_Kn_b - log_Kn_c)  # -Kn_b / Kn_c
-
-        # Fourth row
-        A_mat[..., 3, 1] = math.sqrt(sig_muscle_rho * sig_muscle_z) * np.exp(
-            log_In_tilde_bm - log_In_bm
-        )
-        A_mat[..., 3, 2] = -math.sqrt(sig_muscle_rho * sig_muscle_z) * np.exp(
-            log_Kn_tilde_bm - log_Kn_bm
-        )
-        A_mat[..., 3, 3] = -sig_fat * np.exp(
-            log_In_tilde_b - log_In_c
-        )  # -sig_fat / In_c * In_tilde_b
-        A_mat[..., 3, 4] = sig_fat * np.exp(
-            log_Kn_tilde_b - log_Kn_c
-        )  # -sig_fat / Kn_c * (-1) * Kn_tilde_b = +sig_fat * Kn_tilde_b / Kn_c
-
-        # Fifth row
-        A_mat[..., 4, 3] = 1
-        A_mat[..., 4, 4] = 1
-        A_mat[..., 4, 5] = -np.exp(log_In_c - log_In_d)  # -In_c / In_d
-        A_mat[..., 4, 6] = -np.exp(log_Kn_c - log_Kn_d)  # -Kn_c / Kn_d
-
-        # Sixth row
-        A_mat[..., 5, 3] = sig_fat * np.exp(
-            log_In_tilde_c - log_In_c
-        )  # sig_fat / In_c * In_tilde_c
-        A_mat[..., 5, 4] = -sig_fat * np.exp(
-            log_Kn_tilde_c - log_Kn_c
-        )  # sig_fat / Kn_c * (-1) * Kn_tilde_c
-        A_mat[..., 5, 5] = -sig_skin * np.exp(
-            log_In_tilde_c - log_In_d
-        )  # -sig_skin / In_d * In_tilde_c
-        A_mat[..., 5, 6] = sig_skin * np.exp(
-            log_Kn_tilde_c - log_Kn_d
-        )  # -sig_skin / Kn_d * (-1) * Kn_tilde_c = +sig_skin * Kn_tilde_c / Kn_d
-
-        # Seventh row
-        # Debug row 6 computation
-        log_diff_In_d = log_In_tilde_d - log_In_d
-        log_diff_Kn_d = log_Kn_tilde_d - log_Kn_d
-        """ 
-        print(
-            f"DEBUG: Row 6 - log_In_tilde_d range: [{np.min(log_In_tilde_d):.6e}, {np.max(log_In_tilde_d):.6e}]"
-        )
-        print(f"DEBUG: Row 6 - log_In_d range: [{np.min(log_In_d):.6e}, {np.max(log_In_d):.6e}]")
-        print(
-            f"DEBUG: Row 6 - log_diff (In) range: [{np.min(log_diff_In_d):.6e}, {np.max(log_diff_In_d):.6e}]"
-        )
-        print(
-            f"DEBUG: Row 6 - exp(log_diff_In) range: [{np.min(np.exp(log_diff_In_d)):.6e}, {np.max(np.exp(log_diff_In_d)):.6e}]"
-        ) 
-        """
-
-        A_mat[..., 6, 5] = sig_skin * np.exp(log_diff_In_d)  # sig_skin / In_d * In_tilde_d
-        A_mat[..., 6, 6] = -sig_skin * np.exp(log_diff_Kn_d)  # sig_skin / Kn_d * (-1) * Kn_tilde_d
-
-        """ 
-        print(
-            f"DEBUG: A[6,5] range: [{np.min(A_mat[..., 6, 5]):.6e}, {np.max(A_mat[..., 6, 5]):.6e}]"
-        )
-        print(
-            f"DEBUG: A[6,6] range: [{np.min(A_mat[..., 6, 6]):.6e}, {np.max(A_mat[..., 6, 6]):.6e}]"
-        ) 
-        """
-
-        # Check A matrix for numerical issues
-        has_inf = np.isinf(A_mat)
-        has_nan = np.isnan(A_mat)
-        """ 
-        print(
-            f"DEBUG: A_mat (log-space) - inf count: {np.sum(has_inf)}, nan count: {np.sum(has_nan)}, total elements: {A_mat.size}"
-        ) 
-        """
-
-        # Check if inf/nan are only in rows/columns 0-1 (bone-related, which will be discarded)
-        # has_inf_23456 = np.isinf(A_mat[..., 2:, 2:])
-        # has_nan_23456 = np.isnan(A_mat[..., 2:, 2:])
-        """ 
-        print(
-            f"DEBUG: A_mat[2:,2:] (kept part) - inf count: {np.sum(has_inf_23456)}, nan count: {np.sum(has_nan_23456)}"
-        ) 
-        """
-
-        if np.any(has_inf) or np.any(has_nan):
-            # print("WARNING: A_mat still has inf/nan after log-space reformulation!")
-            # Replace only to avoid solver crashes, but this shouldn't happen now
-            A_mat[np.isinf(A_mat)] = 0
-            A_mat[np.isnan(A_mat)] = 0
-
-        A_matrix = A_mat.copy()
-
-        """ 
-        print(
-            f"DEBUG: A_mat range (non-zero): [{np.min(np.abs(A_mat[A_mat != 0])):.6e}, {np.max(np.abs(A_mat)):.6e}]"
-        ) 
-        """
-
-        # B vector is updated later with log-space arithmetic
-        B_incomplete = B.copy()
-
-    # Update B vector using LOG-SPACE arithmetic to avoid overflow
-    # Compute products as: In*Kn = exp(log(In) + log(Kn))
-
-    # Compute log-space Bessel values
-    log_In_am = log_In(K_THETA, am * K_Z)
-    log_Kn_Rm = log_Kn(K_THETA, Rm * K_Z)
-    log_Kn_bm = log_Kn(K_THETA, bm * K_Z)
-    log_In_Rm = log_In(K_THETA, Rm * K_Z)
-
-    # Debug B vector computation
-    """  
-    print(f"DEBUG: B vector - am={am:.6f}, Rm={Rm:.6f}")
-    print(
-        f"DEBUG: B vector - log_In_am has -inf: {np.any(np.isneginf(log_In_am))}, count: {np.sum(np.isneginf(log_In_am))}"
-    )
-    print(
-        f"DEBUG: B vector - log_In_Rm has -inf: {np.any(np.isneginf(log_In_Rm))}, count: {np.sum(np.isneginf(log_In_Rm))}"
-    )
-    if not np.all(np.isneginf(log_In_Rm)):
-        print(
-            f"DEBUG: B vector - log_In_Rm range (non -inf): [{np.nanmin(log_In_Rm[~np.isneginf(log_In_Rm)]):.6e}, {np.nanmax(log_In_Rm):.6e}]"
-        )
-    print(
-        f"DEBUG: B vector - log_Kn_bm range: [{np.nanmin(log_Kn_bm):.6e}, {np.nanmax(log_Kn_bm):.6e}]"
-    ) 
-    """
-
-    # For In_tilde, we need log(In(n+1) + In(n-1)) which is trickier
-    # Use log-sum-exp trick: log(a+b) = log(a) + log(1 + exp(log(b)-log(a)))
-    log_In_p1 = log_In(K_THETA + 1, am * K_Z)
-    log_In_m1 = log_In(K_THETA - 1, am * K_Z)
-    log_In_tilde_am = np.logaddexp(log_In_p1, log_In_m1) - np.log(2)
-
-    log_Kn_p1 = log_Kn(K_THETA + 1, bm * K_Z)
-    log_Kn_m1 = log_Kn(K_THETA - 1, bm * K_Z)
-    log_Kn_tilde_bm = np.logaddexp(log_Kn_p1, log_Kn_m1) - np.log(2)
-
-    # Compute products in log space, then exponentiate
-    # Use np.where to handle potential overflow: if log value is too large, set to 0
-    # This prevents inf but maintains physics better than clipping
-    MAX_LOG_SAFE = 700.0  # exp(700) ≈ 1e304 (near float64 max)
-
-    # B[0,0] = In_am * Kn_Rm / sig_muscle_rho
-    log_val_00 = log_In_am + log_Kn_Rm
-    B[..., 0, 0] = np.where(log_val_00 < MAX_LOG_SAFE, np.exp(log_val_00), 0) / sig_muscle_rho
-
-    # B[1,0] = sqrt(sig_z/sig_rho) * In_tilde_am * Kn_Rm
-    log_val_10 = log_In_tilde_am + log_Kn_Rm
-    B[..., 1, 0] = math.sqrt(sig_muscle_z / sig_muscle_rho) * np.where(
-        log_val_10 < MAX_LOG_SAFE, np.exp(log_val_10), 0
-    )
-
-    # B[2,0] = -Kn_bm * In_Rm / sig_muscle_rho
-    log_val_20 = log_Kn_bm + log_In_Rm
-    B[..., 2, 0] = -np.where(log_val_20 < MAX_LOG_SAFE, np.exp(log_val_20), 0) / sig_muscle_rho
-
-    # B[3,0] = sqrt(sig_z/sig_rho) * Kn_tilde_bm * In_Rm
-    log_val_30 = log_Kn_tilde_bm + log_In_Rm
-    B[..., 3, 0] = math.sqrt(sig_muscle_z / sig_muscle_rho) * np.where(
-        log_val_30 < MAX_LOG_SAFE, np.exp(log_val_30), 0
-    )
-
-    """ 
-    print(f"DEBUG: B (log-space) has NaN: {np.any(np.isnan(B))}, has inf: {np.any(np.isinf(B))}")
-    print(
-        f"DEBUG: B (log-space) range: [{np.nanmin(np.abs(B[B != 0])):.6e}, {np.nanmax(np.abs(B)):.6e}]"
-    ) 
-    """
-
-    # Replace inf/nan in B to avoid solver issues
-    B[np.isinf(B)] = 0
-    B[np.isnan(B)] = 0
-
-    A_flat = A_mat.reshape(-1, 7, 7)
-    B_flat = B.reshape(-1, 7, 1)
-
-    """ 
-    print(
-        f"DEBUG: Before solve - B_flat range = [{np.min(np.abs(B_flat)):.6e}, {np.max(np.abs(B_flat)):.6e}]"
-    )
-    print(
-        f"DEBUG: Before solve - A_flat range = [{np.min(np.abs(A_flat[A_flat != 0])):.6e}, {np.max(np.abs(A_flat)):.6e}]"
-    ) 
-    """
-
-    # Solve the linear system
-    if r_bone == 0:
-        # When no bone, muscle is the innermost layer. Kn diverges at rho=0,
-        # so B2 (Kn_muscle coefficient, column 2) must be zero.
-        # Keep columns [1,3,4,5,6] = [In_muscle, In_fat, Kn_fat, In_skin, Kn_skin]
-        # Remove rows 0,1 (bone boundary conditions) and column 0 (bone) and 2 (Kn_muscle)
-        keep_cols = [1, 3, 4, 5, 6]
-        A_flat = A_flat[..., 2:, keep_cols]
-        B_flat = B_flat[..., 2:, :]
-
-        # Check condition number of a few matrices
-        cond_numbers = []
-        for idx in range(min(10, A_flat.shape[0])):
-            cond = np.linalg.cond(A_flat[idx])
-            cond_numbers.append(cond)
-        # print(f"DEBUG: A_flat (5x5) condition numbers (first 10): {np.array(cond_numbers)}")
-        # print(f"DEBUG: A_flat (5x5) mean condition number: {np.mean(cond_numbers):.6e}")
-        # print(f"DEBUG: A_flat (5x5) max condition number: {np.max(cond_numbers):.6e}")
-
-        # Check B_flat values - how many are non-zero?
-        # b_nonzero_per_row = [np.sum(np.abs(B_flat[:, i, 0]) > 1e-10) for i in range(5)]
-        # print(f"DEBUG: B_flat non-zero counts per row: {b_nonzero_per_row}")
-        # print(f"DEBUG: B_flat[0] (first matrix):\n{B_flat[0]}")
-        # print(f"DEBUG: A_flat[0] (first matrix):\n{A_flat[0]}")
-
-        if HAS_CUPY and use_gpu:
-            A_gpu = cp.asarray(A_flat)
-            B_gpu = cp.asarray(B_flat)
-            X = cp.linalg.solve(A_gpu, B_gpu)
-            X = cp.asnumpy(X)
-            del A_gpu, B_gpu
-        else:
-            X = np.linalg.solve(A_flat, B_flat)
-
-        X = X.reshape(n_theta, n_z, 5, 1)
-        """
-        print(
-            f"DEBUG: After solve (r_bone=0) - X range = [{np.min(np.abs(X)):.6e}, {np.max(np.abs(X)):.6e}]"
-        )
-        """
-
-        # for i in range(5):
-        #   print(f"DEBUG: X[{i}] range = [{np.min(X[..., i, 0]):.6e}, {np.max(X[..., i, 0]):.6e}]")
-        H_vc = X[..., 3, 0] + X[..., 4, 0]
-        """
-        print(
-            f"DEBUG: After sum (r_bone=0) - H_vc range = [{np.min(np.abs(H_vc)):.6e}, {np.max(np.abs(H_vc)):.6e}]"
-        )
-        """
-    else:
-        if HAS_CUPY and use_gpu:
-            A_gpu = cp.asarray(A_flat)
-            B_gpu = cp.asarray(B_flat)
-            X = cp.linalg.solve(A_gpu, B_gpu)
-            X = cp.asnumpy(X)
-            del A_gpu, B_gpu
-        else:
-            X = np.linalg.solve(A_flat, B_flat)
-
-        X = X.reshape(n_theta, n_z, 7, 1)
-        H_vc = X[..., 5, 0] + X[..., 6, 0]
-
-    # Reconstruct full H_vc using symmetry
-    temp = np.zeros((len(k_z), len(k_theta)))
-    temp[i_start:i_end, j_start:j_end] = H_vc.T
-    H_vc = temp
-
-    H_vc_pos_section = H_vc[i_start:i_end, j_start:j_end]
-    H_vc[i_start:i_end, :j_start] = np.fliplr(H_vc_pos_section)
-    H_vc[:i_start, j_start:j_end] = np.flipud(H_vc_pos_section)
-    H_vc[:i_start, :j_start] = np.flipud(np.fliplr(H_vc_pos_section))
 
     ###################################################################################################
     ## 4. H_ele(k_z, k_theta)
