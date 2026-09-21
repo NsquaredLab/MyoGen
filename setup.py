@@ -229,12 +229,6 @@ extensions = [
         extra_compile_args=["-O2"],
         include_dirs=[np.get_include()],
     ),
-    Extension(
-        "myogen.simulator.neuron._cython._simulate_fiber",
-        ["myogen/simulator/neuron/_cython/_simulate_fiber.pyx"],
-        extra_compile_args=["-O2"],
-        include_dirs=[np.get_include()],
-    ),
 ]
 
 setup(
