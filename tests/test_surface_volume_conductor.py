@@ -23,6 +23,7 @@ from __future__ import annotations
 import numpy as np
 import pytest
 import quantities as pq
+from scipy.special import iv
 
 from myogen.simulator.core.emg.electrodes import SurfaceElectrodeArray
 from myogen.simulator.core.emg.fiber_simulation import simulate_fiber_hybrid
@@ -30,6 +31,9 @@ from myogen.simulator.core.emg.surface.simulate_fiber import (
     HAS_CYTHON_FIBER,
     _simulate_fiber_v2_python,
     simulate_fiber_v2,
+)
+from myogen.simulator.core.emg.surface.volume_conductor import (
+    layered_cylinder_transfer,
 )
 
 # Standard validation cylinder (Farina 2004): bone 10, muscle to 35, fat to 38,
@@ -51,6 +55,10 @@ GEOMETRY = dict(
     sig_bone=0.02,
 )
 SIGNAL = dict(Fs=4.096, v=4.0, N=512)
+# Transfer-function-only view of the same cylinder (no fibre extent).
+GEOMETRY_TRANSFER = {
+    k: v for k, v in GEOMETRY.items() if k not in ("L1", "L2", "zi")
+} | {"R": 30.0}
 
 
 def _electrode_array() -> SurfaceElectrodeArray:
@@ -75,6 +83,101 @@ def _rel_l2(a: np.ndarray, b: np.ndarray) -> float:
 @pytest.fixture(scope="module")
 def electrode_array() -> SurfaceElectrodeArray:
     return _electrode_array()
+
+
+def _fft_bin_grids(N: int, M: int, Fs_kHz: float, v_m_s: float):
+    """k_z (rad/mm) and integer k_theta as built by ``_simulate_fiber_v2_python``."""
+    k_t = 2 * np.pi * np.fft.fftshift(np.fft.fftfreq(N, d=1.0 / Fs_kHz))
+    k_t = np.where(k_t == 0.0, 0.5 * (2 * np.pi * Fs_kHz / N), k_t)
+    k_theta = np.fft.fftshift(np.fft.fftfreq(M, d=1.0 / M))
+    return k_t / v_m_s, k_theta
+
+
+class TestLayeredCylinderTransfer:
+    """Direct checks on the shared transfer-function authority."""
+
+    ISO = dict(
+        r=40.0,
+        r_bone=10.0,
+        th_fat=2.0,
+        th_skin=1.0,
+        R=30.0,
+        sig_muscle_rho=0.2,
+        sig_muscle_z=0.2,
+        sig_fat=0.2,
+        sig_skin=0.2,
+        sig_bone=0.2,
+    )
+
+    def test_matches_homogeneous_cylinder_closed_form_on_full_grid(self):
+        """All layers at one isotropic sigma reduce the four-layer system to
+        a homogeneous cylinder of radius d, insulated at r = d, with a unit
+        line source at radius R.  The Wronskian I_n K_n' - I_n' K_n = -1/x
+        collapses the skin potential to
+
+            H_vc(k, n) = I_n(kR) / (sigma * k d * I_n'(kd)),
+            I_n'(x) = (I_{n-1}(x) + I_{n+1}(x)) / 2.
+
+        Checked at every (k_z, k_theta) slot, negative halves included, with
+        no free scale factor.
+        """
+        k_z, k_theta = _fft_bin_grids(N=512, M=32, Fs_kHz=4.096, v_m_s=4.0)
+        H, _, _ = layered_cylinder_transfer(k_z, k_theta, **self.ISO)
+
+        R, d, sigma = self.ISO["R"], self.ISO["r"], self.ISO["sig_muscle_rho"]
+        K, NN = np.meshgrid(np.abs(k_z), np.abs(k_theta), indexing="ij")
+        expected = iv(NN, K * R) / (
+            sigma * K * d * 0.5 * (iv(NN - 1, K * d) + iv(NN + 1, K * d))
+        )
+        # Beyond k_z ~ 1.5 rad/mm the Bessel ratios under/overflow in double
+        # precision in both the solver and the closed form; the source
+        # spectrum is negligible there.
+        sel = np.abs(k_z) < 1.5
+        rel_err = np.linalg.norm(H[sel] - expected[sel]) / np.linalg.norm(expected[sel])
+        assert rel_err < 1e-12
+
+    def test_even_in_both_arguments(self):
+        k_z, k_theta = _fft_bin_grids(N=512, M=32, Fs_kHz=4.096, v_m_s=4.0)
+        H, _, _ = layered_cylinder_transfer(k_z, k_theta, **GEOMETRY_TRANSFER)
+        for j, n in enumerate(k_theta):
+            j_mirror = np.flatnonzero(k_theta == -n)
+            if j_mirror.size:
+                np.testing.assert_array_equal(H[:, j], H[:, j_mirror[0]])
+        for i, k in enumerate(k_z):
+            i_mirror = np.flatnonzero(k_z == -k)
+            if i_mirror.size:
+                np.testing.assert_array_equal(H[i, :], H[i_mirror[0], :])
+
+    def test_even_and_odd_grids_agree_on_shared_bins(self):
+        """Odd M/N give symmetric grids; the transfer at a given |k| pair must
+        not depend on which grid it was requested from."""
+        k_z_e, k_theta_e = _fft_bin_grids(N=512, M=32, Fs_kHz=4.096, v_m_s=4.0)
+        k_z_o, k_theta_o = _fft_bin_grids(N=513, M=33, Fs_kHz=4.096, v_m_s=4.0)
+        H_e, _, _ = layered_cylinder_transfer(k_z_e, k_theta_e, **GEOMETRY_TRANSFER)
+        H_o, _, _ = layered_cylinder_transfer(k_z_o, k_theta_o, **GEOMETRY_TRANSFER)
+        # Same angular orders at an arbitrary shared k_z magnitude.
+        k_probe = np.abs(k_z_e[100])
+        H_e_row, _, _ = layered_cylinder_transfer(
+            np.array([k_probe]), k_theta_e, **GEOMETRY_TRANSFER
+        )
+        H_o_row, _, _ = layered_cylinder_transfer(
+            np.array([k_probe]), k_theta_o, **GEOMETRY_TRANSFER
+        )
+        for n in range(-15, 16):
+            je = np.flatnonzero(k_theta_e == n)[0]
+            jo = np.flatnonzero(k_theta_o == n)[0]
+            np.testing.assert_allclose(H_e_row[0, je], H_o_row[0, jo], rtol=1e-12)
+        assert H_e.shape == (512, 32) and H_o.shape == (513, 33)
+
+    def test_dc_column_is_zero_and_cache_is_reused(self):
+        k_z, k_theta = _fft_bin_grids(N=512, M=32, Fs_kHz=4.096, v_m_s=4.0)
+        k_z_with_dc = np.where(np.abs(k_z) == np.min(np.abs(k_z)), 0.0, k_z)
+        H, A, B = layered_cylinder_transfer(k_z_with_dc, k_theta, **GEOMETRY_TRANSFER)
+        assert np.all(H[k_z_with_dc == 0.0, :] == 0.0)
+        H2, _, _ = layered_cylinder_transfer(
+            k_z_with_dc, k_theta, A_matrix=A, B_incomplete=B, **GEOMETRY_TRANSFER
+        )
+        np.testing.assert_array_equal(H, H2)
 
 
 class TestAngularOrderTruncation:
