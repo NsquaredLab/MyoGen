@@ -169,6 +169,34 @@ class TestLayeredCylinderTransfer:
             np.testing.assert_allclose(H_e_row[0, je], H_o_row[0, jo], rtol=1e-12)
         assert H_e.shape == (512, 32) and H_o.shape == (513, 33)
 
+    @pytest.mark.parametrize("N", [512, 2048])
+    def test_thin_bone_is_continuous_with_no_bone(self, N):
+        """Normalising the muscle Kn coefficient at the outer radius made the
+        bone rows overflow past (bm - am) k ~ 700: r_bone < ~8 mm raised
+        LinAlgError at the default grid and every r_bone did at N >= 1024,
+        with garbage of ~1e20 just below the threshold.  The skin potential
+        must vary smoothly with the bone radius and be grid-converged."""
+        # Grid as built by _simulate_fiber_v2_python for fiber_length 150 mm.
+        Fs_eff = SIGNAL["v"] * (N - 1) / 150.0
+        k_z, k_theta = _fft_bin_grids(N=N, M=32, Fs_kHz=Fs_eff, v_m_s=SIGNAL["v"])
+        geometry = {k: v for k, v in GEOMETRY_TRANSFER.items() if k != "r_bone"}
+        H = {
+            rb: layered_cylinder_transfer(k_z, k_theta, r_bone=rb, **geometry)[0]
+            for rb in (0.0, 1.0, 3.0, 5.0, 10.0)
+        }
+        j0 = np.flatnonzero(k_theta == 0)[0]
+        # Mode 0 decays monotonically in |k_z| for every bone radius.
+        for rb, H_rb in H.items():
+            order = np.argsort(np.abs(k_z))
+            mode0 = np.abs(H_rb[order, j0])
+            assert np.all(np.diff(mode0[::2]) <= 0), rb
+            assert np.all(np.isfinite(H_rb))
+        # A 1 mm bone in a 40 mm cylinder is indistinguishable from none.
+        assert _rel_l2(H[1.0], H[0.0]) < 1e-3
+        # ...and the dependence on the bone radius is monotone.
+        peaks = [np.max(np.abs(H[rb])) for rb in (0.0, 1.0, 3.0, 5.0, 10.0)]
+        assert np.all(np.diff(peaks) > 0)
+
     def test_dc_column_is_zero_and_cache_is_reused(self):
         k_z, k_theta = _fft_bin_grids(N=512, M=32, Fs_kHz=4.096, v_m_s=4.0)
         k_z_with_dc = np.where(np.abs(k_z) == np.min(np.abs(k_z)), 0.0, k_z)

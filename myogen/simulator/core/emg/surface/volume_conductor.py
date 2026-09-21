@@ -184,21 +184,33 @@ def layered_cylinder_transfer(
 
         sig_muscle_geo = math.sqrt(sig_muscle_rho * sig_muscle_z)
 
+        # Unknown 1 (muscle In coefficient) is normalised at the outer muscle
+        # radius bm, unknown 2 (muscle Kn coefficient) at the inner radius am.
+        # Kn grows inward, so normalising it at bm would put
+        # Kn(am k)/Kn(bm k) ~ exp((bm - am) k) in the bone rows; past
+        # (bm - am) k ~ 700 that overflows while In(am k)/In(bm k)
+        # underflows, the two bone rows become proportional and the system is
+        # singular (in practice: any bone radius below ~8 mm at the default
+        # grid, and every bone radius at N >= 1024).  With the inner
+        # normalisation the bone rows stay O(1) and the muscle/fat rows carry
+        # the harmless underflow instead.  The skin unknowns are unaffected,
+        # so H_vc is unchanged up to round-off.
+
         # Row 0/1: potential and radial current continuity at the bone.
         A_mat[..., 0, 0] = 1
         A_mat[..., 0, 1] = -np.exp(log_In_am - log_In_bm)
-        A_mat[..., 0, 2] = -np.exp(log_Kn_am - log_Kn_bm)
+        A_mat[..., 0, 2] = -1
         A_mat[..., 1, 0] = sig_bone * np.exp(log_In_tilde_a - log_In_a)
         A_mat[..., 1, 1] = -sig_muscle_geo * np.exp(log_In_tilde_am - log_In_bm)
-        A_mat[..., 1, 2] = sig_muscle_geo * np.exp(log_Kn_tilde_am - log_Kn_bm)
+        A_mat[..., 1, 2] = sig_muscle_geo * np.exp(log_Kn_tilde_am - log_Kn_am)
 
         # Row 2/3: muscle / fat interface.
         A_mat[..., 2, 1] = 1
-        A_mat[..., 2, 2] = 1
+        A_mat[..., 2, 2] = np.exp(log_Kn_bm - log_Kn_am)
         A_mat[..., 2, 3] = -np.exp(log_In_b - log_In_c)
         A_mat[..., 2, 4] = -np.exp(log_Kn_b - log_Kn_c)
         A_mat[..., 3, 1] = sig_muscle_geo * np.exp(log_In_tilde_bm - log_In_bm)
-        A_mat[..., 3, 2] = -sig_muscle_geo * np.exp(log_Kn_tilde_bm - log_Kn_bm)
+        A_mat[..., 3, 2] = -sig_muscle_geo * np.exp(log_Kn_tilde_bm - log_Kn_am)
         A_mat[..., 3, 3] = -sig_fat * np.exp(log_In_tilde_b - log_In_c)
         A_mat[..., 3, 4] = sig_fat * np.exp(log_Kn_tilde_b - log_Kn_c)
 
