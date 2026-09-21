@@ -164,7 +164,6 @@ def _setup_myogen(quiet: bool = False, force_rebuild: bool = False, strict: bool
         "myogen.simulator.neuron._cython._gto",
         "myogen.simulator.neuron._cython._poisson_process_generator",
         "myogen.simulator.neuron._cython._gamma_process_generator",
-        "myogen.simulator.neuron._cython._simulate_fiber",
     ]
 
     all_compiled = True
@@ -238,11 +237,6 @@ def _setup_myogen(quiet: bool = False, force_rebuild: bool = False, strict: bool
                         Extension(
                             "myogen.simulator.neuron._cython._gamma_process_generator",
                             ["myogen/simulator/neuron/_cython/_gamma_process_generator.pyx"],
-                            extra_compile_args=["-O2"],
-                        ),
-                        Extension(
-                            "myogen.simulator.neuron._cython._simulate_fiber",
-                            ["myogen/simulator/neuron/_cython/_simulate_fiber.pyx"],
                             extra_compile_args=["-O2"],
                         ),
                     ],

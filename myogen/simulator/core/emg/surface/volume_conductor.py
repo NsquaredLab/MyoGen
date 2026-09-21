@@ -8,9 +8,6 @@ conductor used by every surface-EMG fibre model in MyoGen:
 * :func:`myogen.simulator.core.emg.fiber_simulation.simulate_fiber_hybrid`
 * :func:`myogen.simulator.core.emg.fiber_simulation.compute_surface_kernel`
 
-The Cython port in ``myogen.simulator.neuron._cython._simulate_fiber`` keeps
-its own typed copy of the same assembly.
-
 The boundary-condition system is assembled in log-space to keep the modified
 Bessel functions finite at large ``k_z * radius``; see the ``log_In`` /
 ``log_Kn`` helpers.
