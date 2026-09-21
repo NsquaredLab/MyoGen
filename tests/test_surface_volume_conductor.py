@@ -14,7 +14,6 @@ relying on any particular grid convention:
 * an odd ``M`` (symmetric truncation) must agree with an even ``M``,
 * rotating the electrode by a full turn must not change the signal
   (integer angular orders only),
-* the Cython port's reconstruction must satisfy the same invariants,
 * the ``r_bone = 0`` reduced system must be continuous with a small bone.
 """
 
@@ -28,7 +27,6 @@ from scipy.special import iv
 from myogen.simulator.core.emg.electrodes import SurfaceElectrodeArray
 from myogen.simulator.core.emg.fiber_simulation import simulate_fiber_hybrid
 from myogen.simulator.core.emg.surface.simulate_fiber import (
-    HAS_CYTHON_FIBER,
     _simulate_fiber_v2_python,
     simulate_fiber_v2,
 )
@@ -285,46 +283,21 @@ class TestAngularPeriodicity:
         np.testing.assert_allclose(phi_2pi, phi_0, rtol=1e-9, atol=1e-12)
 
 
-@pytest.mark.skipif(not HAS_CYTHON_FIBER, reason="Cython extension not built")
-class TestCythonVolumeConductor:
-    """The Cython port carries its own copy of the volume-conductor assembly.
-
-    Its source model diverged from the Python reference (fixed +-6 mm IAP
-    grid, different amplitude, real-valued angular sum), so waveform parity
-    with ``_simulate_fiber_v2_python`` is not expected; only the
-    volume-conductor reconstruction is pinned here.
-    """
-
-    @pytest.mark.parametrize("R", [33.0, 25.0])
-    def test_cython_even_and_odd_M_agree(self, electrode_array, R):
+class TestDispatcher:
+    def test_use_cython_is_deprecated_and_ignored(self, electrode_array):
         common = dict(
             **SIGNAL,
             **GEOMETRY,
-            R=R,
-            electrode_array=electrode_array,
-            fiber_length__mm=None,  # Cython supports the legacy z-grid only
-            use_gpu=False,
-        )
-        phi_even, _, _ = simulate_fiber_v2(use_cython=True, M=32, **common)
-        phi_odd, _, _ = simulate_fiber_v2(use_cython=True, M=33, **common)
-        assert _rel_l2(_centre(phi_even), _centre(phi_odd)) < 0.02
-
-    def test_cython_r_bone_zero_is_continuous_with_small_bone(self, electrode_array):
-        """r_bone = 0 selects a reduced 5x5 system; it must stay close to a
-        thin bone, not collapse to round-off (the pre-087caf33 column bug)."""
-        common = dict(
-            **SIGNAL,
-            **{k: v for k, v in GEOMETRY.items() if k != "r_bone"},
             M=32,
             R=33.0,
             electrode_array=electrode_array,
-            fiber_length__mm=None,
+            fiber_length__mm=150.0,
             use_gpu=False,
         )
-        phi_none, _, _ = simulate_fiber_v2(use_cython=True, r_bone=0.0, **common)
-        phi_thin, _, _ = simulate_fiber_v2(use_cython=True, r_bone=8.0, **common)
-        assert np.max(np.abs(phi_none)) > 1e-6
-        assert _rel_l2(_centre(phi_none), _centre(phi_thin)) < 0.05
+        phi_ref, _, _ = simulate_fiber_v2(**common)
+        with pytest.warns(DeprecationWarning, match="use_cython is deprecated"):
+            phi_flag, _, _ = simulate_fiber_v2(use_cython=True, **common)
+        np.testing.assert_array_equal(phi_flag, phi_ref)
 
 
 class TestPythonReducedSystem:
