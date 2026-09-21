@@ -559,7 +559,10 @@ def simulate_fiber_hybrid(
         pos_theta_rad = electrode_array.pos_theta.rescale(pq.rad).magnitude + theta_offset
 
     channels = [electrode_array.num_rows, electrode_array.num_cols]
-    k_theta = np.linspace(-(M - 1) / 2, (M - 1) / 2, M)
+    # Integer angular orders on the FFT bin grid (-M/2 .. M/2-1 for even M).
+    # The previous ``linspace(-(M-1)/2, (M-1)/2, M)`` gave half-integer orders
+    # for even M, i.e. a series with period 4*pi in theta.
+    k_theta = np.fft.fftshift(np.fft.fftfreq(M, d=1.0 / M))
 
     if fiber_length__mm is not None:
         Fs_effective = v * (N - 1) / fiber_length__mm
@@ -642,11 +645,11 @@ def simulate_fiber_hybrid(
     bm = b * math.sqrt(sig_muscle_z / sig_muscle_rho)
     Rm = R * math.sqrt(sig_muscle_z / sig_muscle_rho)
 
-    i_start, i_end = int(len(k_z) / 2), len(k_z)
-    j_start, j_end = int(len(k_theta) / 2), len(k_theta)
-
-    k_z_pos = k_z[i_start:i_end]
-    k_theta_pos = k_theta[j_start:j_end]
+    # H_vc is even in both k_z and k_theta: compute it once per unique |k|
+    # pair and map back onto the full grid with the ``np.unique`` inverse
+    # index, which is exact for symmetric and asymmetric (FFT bin) grids alike.
+    k_z_pos, k_z_inverse = np.unique(np.abs(k_z), return_inverse=True)
+    k_theta_pos, k_theta_inverse = np.unique(np.abs(k_theta), return_inverse=True)
     K_THETA, K_Z = np.meshgrid(k_theta_pos, k_z_pos, indexing="ij")
     n_theta, n_z = K_THETA.shape
 
@@ -756,14 +759,8 @@ def simulate_fiber_hybrid(
         X = X.reshape(n_theta, n_z, 7, 1)
         H_vc = X[..., 5, 0] + X[..., 6, 0]
 
-    # Reconstruct full H_vc using symmetry
-    temp = np.zeros((len(k_z), len(k_theta)))
-    temp[i_start:i_end, j_start:j_end] = H_vc.T
-    H_vc = temp
-    H_vc_pos = H_vc[i_start:i_end, j_start:j_end]
-    H_vc[i_start:i_end, :j_start] = np.fliplr(H_vc_pos)
-    H_vc[:i_start, j_start:j_end] = np.flipud(H_vc_pos)
-    H_vc[:i_start, :j_start] = np.flipud(np.fliplr(H_vc_pos))
+    # Reconstruct the full (k_z, k_theta) grid from H_vc(|k_z|, |k_theta|).
+    H_vc = H_vc.T[np.ix_(k_z_inverse, k_theta_inverse)]
 
     # Section 4: H_ele
     ktheta_mesh, kz_mesh = np.meshgrid(k_theta, k_z)

@@ -434,12 +434,14 @@ def _simulate_fiber_v2_python(
     bm = b * math.sqrt(sig_muscle_z / sig_muscle_rho)
     Rm = R * math.sqrt(sig_muscle_z / sig_muscle_rho)
 
-    i_start, i_end = int(len(k_z) / 2), len(k_z)
-    j_start, j_end = int(len(k_theta) / 2), len(k_theta)
-
-    # Create sub-arrays for positive frequencies
-    k_z_pos = k_z[i_start:i_end]
-    k_theta_pos = k_theta[j_start:j_end]
+    # H_vc is even in both k_z and k_theta, so it is computed once per unique
+    # |k| pair and mapped back onto the full grid below.  The FFT bin grid
+    # (-N/2 .. N/2-1) is not symmetric for even N, so a slice-and-flip of the
+    # upper half would place every negative bin one order off (DC twice, the
+    # Nyquist bin never); the inverse index from ``np.unique`` is exact for
+    # any grid.
+    k_z_pos, k_z_inverse = np.unique(np.abs(k_z), return_inverse=True)
+    k_theta_pos, k_theta_inverse = np.unique(np.abs(k_theta), return_inverse=True)
 
     K_THETA, K_Z = np.meshgrid(k_theta_pos, k_z_pos, indexing="ij")
 
@@ -807,15 +809,8 @@ def _simulate_fiber_v2_python(
         X = X.reshape(n_theta, n_z, 7, 1)
         H_vc = X[..., 5, 0] + X[..., 6, 0]
 
-    # Reconstruct full H_vc using symmetry
-    temp = np.zeros((len(k_z), len(k_theta)))
-    temp[i_start:i_end, j_start:j_end] = H_vc.T
-    H_vc = temp
-
-    H_vc_pos_section = H_vc[i_start:i_end, j_start:j_end]
-    H_vc[i_start:i_end, :j_start] = np.fliplr(H_vc_pos_section)
-    H_vc[:i_start, j_start:j_end] = np.flipud(H_vc_pos_section)
-    H_vc[:i_start, :j_start] = np.flipud(np.fliplr(H_vc_pos_section))
+    # Reconstruct the full (k_z, k_theta) grid from H_vc(|k_z|, |k_theta|).
+    H_vc = H_vc.T[np.ix_(k_z_inverse, k_theta_inverse)]
 
     ###################################################################################################
     ## 4. H_ele(k_z, k_theta)
