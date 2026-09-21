@@ -66,16 +66,12 @@ except ImportError:
 
 from myogen.simulator.core.emg.electrodes import SurfaceElectrodeArray
 
-# Try to import Cython-optimized version
-try:
-    from myogen.simulator.neuron._cython._simulate_fiber import (
-        simulate_fiber_v2 as _simulate_fiber_v2_cython,
-    )
-
-    HAS_CYTHON_FIBER = True
-except ImportError:
-    HAS_CYTHON_FIBER = False
-    _simulate_fiber_v2_cython = None  # type: ignore
+# The Cython transcription of this module (``_cython/_simulate_fiber.pyx``)
+# was removed in 0.12: it had drifted from the Python reference (its own IAP
+# grid and amplitude, real-valued angular sum, raw-Bessel assembly) and was
+# ~5x slower than the Numba-jitted Python path.  ``HAS_CYTHON_FIBER`` is kept
+# for importers that tested it; it is always False.
+HAS_CYTHON_FIBER = False
 
 
 def In_tilde(K_THETA, x):
@@ -101,8 +97,7 @@ def f_minus_t(y):
     # z = linspace(-L/2, L/2, N): the sample at z[i] maps to z[N-1-i] = -z[i],
     # i.e. a full array reversal. The previous `y[-i]` was a one-sample-off bug
     # (for i=0 it returned y[0] instead of y[-1], keeping z=-L/2 fixed), which
-    # shifted the SFAP kernel by one sample and disagreed with the (correct)
-    # Cython path in _simulate_fiber.pyx. Match that path.
+    # shifted the SFAP kernel by one sample.
     return y[::-1].copy()
 
 
@@ -573,7 +568,7 @@ def simulate_fiber_v2(
     sig_bone: float = 0,
     A_matrix: np.ndarray | None = None,
     B_incomplete: np.ndarray | None = None,
-    use_cython: bool = True,
+    use_cython: bool = False,
     use_gpu: bool = True,
     fiber_length__mm: float | None = None,
     theta_offset: float = 0.0,
@@ -582,10 +577,10 @@ def simulate_fiber_v2(
     rele_precomputed: float | None = None,
 ):
     """
-    Simulate a single fiber (dispatcher to Cython or Python implementation).
+    Simulate a single fiber in the layered-cylinder volume conductor.
 
-    This function automatically dispatches to the Cython-optimized implementation
-    if available, otherwise falls back to the Python version.
+    Thin wrapper around :func:`_simulate_fiber_v2_python`, kept for API
+    stability.
 
     Parameters
     ----------
@@ -630,12 +625,12 @@ def simulate_fiber_v2(
     B_incomplete : np.ndarray, optional
         Pre-computed B matrix for optimization.
     use_cython : bool, optional
-        If True (default), use optimized Cython CPU implementation.
-        If False, use Python implementation. Default is True (recommended).
+        Deprecated and ignored (the Cython implementation was removed in
+        0.12).  Passing ``True`` emits a ``DeprecationWarning``.
     use_gpu : bool, optional
-        If True (default), Python version may use GPU (CuPy) if available.
-        Cython version always uses CPU. For typical EMG simulations, CPU is faster
-        due to GPU memory transfer overhead. Default is True.
+        If True (default), the batched Bessel system may be solved on the GPU
+        (CuPy) if available. For typical EMG simulations, CPU is faster due
+        to GPU memory transfer overhead. Default is True.
     fiber_length__mm : float, optional
         Physical fiber length for IAP kernel evaluation in mm. This defines the spatial
         extent over which the intracellular action potential kernel is computed.
@@ -650,9 +645,6 @@ def simulate_fiber_v2(
 
         Example: fiber_length__mm=100 with v=4 m/s → ~12.5 ms MUAP duration.
 
-        **Note**: Currently only supported in Python implementation. Cython version
-        does not yet support this parameter and will use legacy behavior.
-
     Returns
     -------
     phi : np.ndarray
@@ -664,63 +656,22 @@ def simulate_fiber_v2(
 
     Notes
     -----
-    **Performance (Cython CPU vs Python+GPU):**
-
-    The Cython implementation outperforms GPU acceleration for typical EMG simulations:
-    - Small problems (64×16): **20x faster** than GPU (avoids memory transfer overhead)
-    - Medium problems (128×32): **1.5x faster** than GPU
-    - Large problems (256×64): Comparable to GPU
-    - Average across sizes: **7.5x faster** than GPU by eliminating memory transfer overhead
-
-    **Why CPU beats GPU:**
-
-    - No GPU memory transfers (eliminates 40% overhead)
-    - No kernel launch overhead
-    - Direct NumPy integration
-    - Optimized compiled C code
-    - OpenMP parallelization for multi-core CPUs
-
-    **Recommendation:** Use default settings (use_cython=True) for best performance.
+    The volume-conductor system matrix does not depend on the source radius
+    ``R``; pass the returned ``A_matrix`` / ``B_incomplete`` back in when
+    iterating over the fibres of a motor unit.
     """
-    if use_cython and HAS_CYTHON_FIBER:
-        # Cython version doesn't support fiber_length__mm yet
-        if fiber_length__mm is not None:
-            import warnings
+    if use_cython:
+        import warnings
 
-            warnings.warn(
-                "fiber_length__mm parameter is not supported by the Cython implementation. "
-                "Falling back to Python implementation. To use Cython, either set "
-                "fiber_length__mm=None (legacy behavior) or set use_cython=False.",
-                UserWarning,
-                stacklevel=2,
-            )
-            # Fall through to Python implementation
-        else:
-            assert _simulate_fiber_v2_cython is not None  # Type checker hint
-            return _simulate_fiber_v2_cython(
-                Fs,
-                v,
-                N,
-                M,
-                r,
-                r_bone,
-                th_fat,
-                th_skin,
-                R,
-                L1,
-                L2,
-                zi,
-                electrode_array,
-                sig_muscle_rho,
-                sig_muscle_z,
-                sig_fat,
-                sig_skin,
-                sig_bone,
-                A_matrix,
-                B_incomplete,
-            )
+        warnings.warn(
+            "use_cython is deprecated and ignored: the Cython simulate_fiber "
+            "implementation was removed in MyoGen 0.12 (it had diverged from "
+            "the Python reference and was slower). Pass use_cython=False to "
+            "silence this warning.",
+            DeprecationWarning,
+            stacklevel=2,
+        )
 
-    # Use Python implementation (either explicitly requested or Cython unavailable/incompatible)
     return _simulate_fiber_v2_python(
         Fs,
         v,
