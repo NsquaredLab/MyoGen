@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+- **Surface EMG volume conductor: negative-frequency reconstruction.** `H_vc(k_z, k_theta)` is even in both arguments and is solved on the non-negative quadrant only. Since 0.10 (`b666a3b3`) the `k_theta` / `k_t` grids are FFT bin centres (`-N/2 .. N/2-1`, asymmetric for even N) but the full grid was still rebuilt with a slice-and-flip mirror written for the previous symmetric `linspace` grid, placing every negative bin one order off (DC counted twice, the Nyquist bin never). The default `SurfaceEMG` path (`_simulate_fiber_v2_python`) was 1.8–2.3× too large for a fibre 7–20 mm below the skin of the standard 40 mm cylinder. The full grid is now indexed by `|k|` (`np.unique` inverse), exact for any grid and for odd `N`/`M` (odd `M` previously raised a broadcast error).
+- **Half-integer angular orders.** `simulate_fiber_hybrid` and the Cython `simulate_fiber_v2` built `k_theta` with `linspace(-(M-1)/2, (M-1)/2, M)`, i.e. Bessel orders 0.5, 1.5, … for even `M` (a series with period 4π in θ, 1–4 % amplitude error growing with depth). Both now use the integer FFT bin grid, matching the Python reference.
+- **Cython `r_bone = 0` reduced system.** Ported the 0.9.x column fix (`087caf33`): the Cython port kept the diverging `Kn_muscle` column and dropped `In_muscle`, collapsing the output to round-off.
+- **Thin bones and fine grids raised `LinAlgError`.** Both muscle unknowns were normalised at the outer muscle radius, so the bone rows carried `Kn(am·k)/Kn(bm·k) ~ exp((bm−am)k)`; past `(bm−am)k ≈ 700` this overflowed and the system went exactly singular (any `r_bone < ~8 mm` at the default grid, every `r_bone` at `N ≥ 1024`), with values of ~1e20 just below the threshold. The muscle `Kn` coefficient is now normalised at the bone radius; outputs are unchanged to round-off where they previously solved, and the skin potential is now monotone and grid-converged in `r_bone`.
+
+### Changed
+- **Single volume-conductor authority.** The Farina 2004 boundary-condition assembly and solve, previously duplicated in `_simulate_fiber_v2_python`, `simulate_fiber_hybrid` and `compute_surface_kernel`, now live in `myogen.simulator.core.emg.surface.volume_conductor.layered_cylinder_transfer`; all three callers route through it (bit-identical outputs). `log_In` / `log_Kn` are re-exported from `surface.simulate_fiber`. New tests in `tests/test_surface_volume_conductor.py` pin the transfer against the closed-form homogeneous-cylinder limit on the full grid (relative error 4e-16, no free scale), evenness in both arguments, even/odd grid agreement, 2π angular periodicity and bone-radius continuity.
+
 ## [0.11.0] - 2026-07-16
 
 ### Added
