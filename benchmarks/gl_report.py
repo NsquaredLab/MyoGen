@@ -184,7 +184,17 @@ source calls and are diagnostic observations, not matched incremental-memory
 measurements. Source execution reports separately record managed/pending peaks
 and sampled call RSS. Recording RSS is sampled during each call, but optimized
 calls also retain the comparison reference; do not interpret that as a controlled
-peak-memory reduction experiment. See measurements.json for exact observations.
+peak-memory reduction experiment. Observed source-process peaks (MiB; includes the caveats above):
+
+| Process | Observed sampled RSS peak |
+|---|---:|
+| Selected iEMG reference | {ir['peak_sampled_rss']/1024**2:.1f} |
+| Selected iEMG optimized | {io['peak_sampled_rss']/1024**2:.1f} |
+| Selected sEMG reference | {sr['peak_sampled_rss']/1024**2:.1f} |
+| Selected sEMG optimized | {so['peak_sampled_rss']/1024**2:.1f} |
+| Full optimized iEMG | {full['peak_sampled_rss']/1024**2:.1f} |
+
+See measurements.json for all call-level observations.
 The reserve is max(4 GiB, 20% of RAM), plus max(512 MiB, 10% of headroom), with an
 optional managed-buffer ceiling. No fixed 8-GiB ceiling or spare-RAM filling.
 
