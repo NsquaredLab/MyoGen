@@ -1,6 +1,8 @@
 """Content-addressed numerical caches; no pickle, object identity, or seed keys."""
 from __future__ import annotations
 from collections import OrderedDict
+from contextlib import contextmanager
+import errno
 import hashlib
 import json
 import os
@@ -8,6 +10,7 @@ from pathlib import Path
 import re
 import uuid
 import threading
+import time
 
 import numpy as np
 
@@ -113,6 +116,86 @@ class DiskCache:
         except (OSError, ValueError, KeyError, EOFError):
             return None
 
+    @contextmanager
+    def _writer_lock(self):
+        """Serialize directory mutations across instances, threads and processes.
+
+        The OS releases the lock if a writer exits. Keep the lock file itself
+        in place so every writer locks the same inode/file on both platforms.
+        Readers still use atomic manifests and need no lock.
+        """
+        with (self.directory / ".myogen-cache.lock").open("a+b") as stream:
+            if stream.tell() == 0:
+                stream.write(b"0")
+                stream.flush()
+            if os.name == "nt":
+                import msvcrt
+                def acquire():
+                    stream.seek(0)
+                    msvcrt.locking(stream.fileno(), msvcrt.LK_NBLCK, 1)
+                def release():
+                    stream.seek(0)
+                    msvcrt.locking(stream.fileno(), msvcrt.LK_UNLCK, 1)
+            else:
+                import fcntl
+                def acquire():
+                    fcntl.flock(stream.fileno(), fcntl.LOCK_EX | fcntl.LOCK_NB)
+                def release():
+                    fcntl.flock(stream.fileno(), fcntl.LOCK_UN)
+            deadline = time.monotonic() + 60
+            while True:
+                try:
+                    acquire()
+                    break
+                except OSError as error:
+                    if error.errno not in (errno.EACCES, errno.EAGAIN, errno.EDEADLK):
+                        raise
+                    if time.monotonic() >= deadline:
+                        raise TimeoutError("Cache writer lock exceeded 60 seconds") from error
+                    time.sleep(.05)
+            try:
+                yield
+            finally:
+                release()
+
+    def _recover(self):
+        """Reclaim only files named by our durable publication journals.
+
+        Never infer ownership of an unrelated NPY file from its UUID-like
+        name. Older unjournalled orphan files are deliberately left alone.
+        Caller holds the directory writer lock; no live writer can own these.
+        """
+        for journal in self.directory.glob(".myogen-*.json"):
+            match = re.fullmatch(r"\.myogen-([0-9a-f]{32})\.json", journal.name)
+            if match is None or journal.is_symlink():
+                continue
+            token = match[1]
+            try:
+                record = json.loads(journal.read_text(encoding="utf-8"))
+                if (not isinstance(record, dict) or record.get("owner") != OWNER
+                        or record.get("version") != VERSION):
+                    continue
+                key, previous = record["key"], record["previous"]
+                if not isinstance(key, str) or not re.fullmatch(r"[0-9a-f]{64}", key):
+                    continue
+                if previous is not None and (not isinstance(previous, str) or not re.fullmatch(
+                        r"(?:[0-9a-f]{32}|" + key + r"-(?:[0-9a-f]{32}|[0-9a-f]{64}))\.npy", previous)):
+                    continue
+                current = self._metadata(key)
+                referenced = None if current is None else current["payload"]
+                names = [f".{token}.npy.tmp", f".{token}.json.tmp", f"{token}.npy"]
+                if previous is not None:
+                    names.append(previous)
+                for name in names:
+                    path = self.directory / name
+                    if name != referenced and not path.is_symlink():
+                        path.unlink(missing_ok=True)
+                journal.unlink()
+            except (OSError, ValueError, KeyError, TypeError):
+                # An open Windows reader can retain the old payload. Keep the
+                # journal and retry recovery on the next mutation.
+                continue
+
     def put(self, key, array):
         if not re.fullmatch(r"[0-9a-f]{64}", key):
             raise ValueError("Invalid cache key")
@@ -121,46 +204,47 @@ class DiskCache:
             raise ValueError("Only finite numerical completed-MU results may be cached")
         if array.nbytes > self.limit:
             return
-        token = uuid.uuid4().hex
-        temporary = self.directory / (f".{token}.npy.tmp")
-        manifest_tmp = self.directory / (f".{token}.json.tmp")
-        previous = self._metadata(key)
-        payload = None
-        published = False
-        try:
-            with temporary.open("xb") as stream:
-                np.save(stream, array, allow_pickle=False)
-                stream.flush()
-                os.fsync(stream.fileno())
-            digest = checksum(temporary)
-            # Unique publication ownership also permits safe failure cleanup
-            # when another process is writing this same numerical key.
-            name = f"{token}.npy"
-            payload = self.directory / name
-            os.replace(temporary, payload)
-            metadata = dict(owner=OWNER, version=VERSION, key=key, payload=name,
-                            sha256=digest, shape=list(array.shape), dtype=array.dtype.str,
-                            nbytes=array.nbytes)
-            with manifest_tmp.open("x", encoding="utf-8") as stream:
-                json.dump(metadata, stream, sort_keys=True)
-                stream.flush()
-                os.fsync(stream.fileno())
-            # The manifest is the commit point. Readers never observe partial MUs.
-            os.replace(manifest_tmp, self.directory / (key + ".json"))
-            published = True
-            if previous is not None:
-                try:
-                    (self.directory / previous["payload"]).unlink(missing_ok=True)
-                except OSError:
-                    pass  # An existing Windows reader can retain its mapping.
-            self.evict()
-        finally:
-            temporary.unlink(missing_ok=True)
-            manifest_tmp.unlink(missing_ok=True)
-            if not published and payload is not None:
-                payload.unlink(missing_ok=True)
+        with self._writer_lock():
+            self._recover()
+            token = uuid.uuid4().hex
+            temporary = self.directory / f".{token}.npy.tmp"
+            manifest_tmp = self.directory / f".{token}.json.tmp"
+            journal = self.directory / f".myogen-{token}.json"
+            previous = self._metadata(key)
+            try:
+                # Publish ownership before any payload can be orphaned by an
+                # abrupt exit, including between payload and manifest rename.
+                with journal.open("x", encoding="utf-8") as stream:
+                    json.dump(dict(owner=OWNER, version=VERSION, key=key,
+                                   previous=None if previous is None else previous["payload"]), stream)
+                    stream.flush()
+                    os.fsync(stream.fileno())
+                with temporary.open("xb") as stream:
+                    np.save(stream, array, allow_pickle=False)
+                    stream.flush()
+                    os.fsync(stream.fileno())
+                digest = checksum(temporary)
+                name = f"{token}.npy"
+                os.replace(temporary, self.directory / name)
+                metadata = dict(owner=OWNER, version=VERSION, key=key, payload=name,
+                                sha256=digest, shape=list(array.shape), dtype=array.dtype.str,
+                                nbytes=array.nbytes)
+                with manifest_tmp.open("x", encoding="utf-8") as stream:
+                    json.dump(metadata, stream, sort_keys=True)
+                    stream.flush()
+                    os.fsync(stream.fileno())
+                # The manifest remains the completed-MU commit point.
+                os.replace(manifest_tmp, self.directory / (key + ".json"))
+            finally:
+                self._recover()
+            self._evict()
 
     def evict(self):
+        with self._writer_lock():
+            self._recover()
+            self._evict()
+
+    def _evict(self):
         entries = []
         for path in self.directory.glob("*.json"):
             if not re.fullmatch(r"[0-9a-f]{64}", path.stem):

@@ -54,12 +54,16 @@ def assemble(owner, spikes, policy, *, surface):
             longest = max(value.shape[0] for value in data)
             channel_shape = data[0].shape[1:]
             channels = int(np.prod(channel_shape))
-            duration = longest / native
+            # Preserve the reference conversion and operation order: an
+            # algebraically equivalent division can round a half sample down.
+            period = ((float((1 / native) * 1000) * pq.ms).rescale(pq.s).magnitude
+                      if surface else 1 / native)
+            duration = longest * period if surface else longest / native
             target = int(np.round(duration / dt))
             if surface:
                 target = max(1, target)
                 x = session.array(lambda: np.arange(target) * dt, target * 16)
-                xp = session.array(lambda: np.arange(longest) * (1 / native), longest * 16)
+                xp = session.array(lambda: np.arange(longest) * period, longest * 16)
             else:
                 x = session.array(lambda: np.linspace(0, duration, target, endpoint=False), (target + 2) * 16)
                 xp = session.array(lambda: np.arange(0, duration, 1 / native), (longest + 2) * 16)

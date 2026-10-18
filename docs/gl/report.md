@@ -4,8 +4,12 @@ The later [matched 470-fibre sEMG comparison](m470.md) measures this port agains
 the final old speedup branch under identical worker/thread settings.
 
 Branch: perf/basic-gitlab-cpu. Base: fc077cb4fa89b8cb23c7f0ec4fb50dc8fef05831.
-The separate bgl/MyoGen checkout leaves the older GitHub-based optimization,
-draft MR !3, and anatomical/VL checkout intact. Changes are committed locally.
+The separate bgl/MyoGen checkout leaves the anatomical/VL checkout untouched.
+The retired GitHub-based checkout and its artifacts are retained locally;
+GitLab draft MR !4 supersedes the old optimization proposal.
+
+The later [review fixes and verification](fixes.md) cover rounding boundaries,
+worker reservations, cache publication/recovery and dependency locking.
 
 ## What changed
 

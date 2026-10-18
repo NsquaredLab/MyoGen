@@ -8,6 +8,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from concurrent.futures import CancelledError
+from contextlib import contextmanager
 import ctypes
 import math
 import os
@@ -83,11 +84,13 @@ def physical_memory():
 
 
 class Reservation:
-    def __init__(self, controller, amount, resident=0):
+    def __init__(self, controller, amount, resident=0, *, parent=None, credit=0):
         self.controller = controller
         self.remaining = amount
         self.resident = resident
         self.closed = False
+        self.parent = parent
+        self.credit = credit
 
     def materialize(self, amount):
         with self.controller.lock:
@@ -106,13 +109,20 @@ class Reservation:
             self.remaining -= amount
             self.controller.pending -= amount
             self.controller.managed += amount
-            return Reservation(self.controller, 0, amount)
+            credit = min(amount, self.credit)
+            self.credit -= credit
+            return Reservation(self.controller, 0, amount, parent=self.parent, credit=credit)
 
     def close(self):
         with self.controller.lock:
             if not self.closed:
                 self.controller.pending -= self.remaining
                 self.controller.managed -= self.resident
+                # Recycle only the capacity borrowed from the job's minimum.
+                # Extra batch capacity is released, so shrinking is effective.
+                if self.parent is not None and not self.parent.closed:
+                    self.parent.remaining += self.credit
+                    self.controller.pending += self.credit
                 self.closed = True
 
     def __enter__(self):
@@ -130,6 +140,7 @@ class MemoryController:
         self.clock = clock
         self.sleep = sleep
         self.lock = threading.RLock()
+        self._local = threading.local()
         self.pending = 0
         self.managed = 0
         self.healthy = 0
@@ -186,10 +197,27 @@ class MemoryController:
         headroom = max(0, value.available - reserve)
         return reserve, max(512 * MIB, 0.1 * headroom)
 
+    @contextmanager
+    def use_admission(self, reservation):
+        """Keep a worker's minimum protected while its allocations consume it."""
+        previous = getattr(self._local, "admission", None)
+        self._local.admission = reservation
+        try:
+            yield
+        finally:
+            self._local.admission = previous
+            reservation.close()
+
+    def _admission(self):
+        reservation = getattr(self._local, "admission", None)
+        return reservation if reservation is not None and not reservation.closed else None
+
     def _allowance(self, value):
         reserve, margin = self.reserve_and_margin(value)
-        return max(0, int(min(value.available - reserve - margin - self.pending,
-                              self.ceiling - self.managed - self.pending)))
+        admission = self._admission()
+        credit = 0 if admission is None else admission.remaining
+        return max(0, int(min(value.available - reserve - margin - self.pending + credit,
+                              self.ceiling - self.managed - self.pending + credit)))
 
     def allowance(self):
         with self.lock:
@@ -198,11 +226,16 @@ class MemoryController:
     def track_resident(self, amount):
         """Account for already resident, uniquely owned numerical buffers."""
         with self.lock:
-            if amount < 0 or self.managed + self.pending + amount > self.ceiling:
+            admission = self._admission()
+            credit = 0 if admission is None else min(amount, admission.remaining)
+            if amount < 0 or self.managed + self.pending + amount - credit > self.ceiling:
                 raise self.failure(amount)
+            if admission is not None:
+                admission.remaining -= credit
+            self.pending -= credit
             self.managed += amount
             self.events["peak_managed_bytes"] = max(self.managed, self.events["peak_managed_bytes"])
-            return Reservation(self, 0, amount)
+            return Reservation(self, 0, amount, parent=admission, credit=credit)
 
     def try_reserve(self, amount):
         if amount < 0:
@@ -210,9 +243,13 @@ class MemoryController:
         with self.lock:
             if amount > self.allowance():
                 return None
-            self.pending += amount
+            admission = self._admission()
+            credit = 0 if admission is None else min(amount, admission.remaining)
+            if admission is not None:
+                admission.remaining -= credit
+            self.pending += amount - credit
             self.events["peak_pending_bytes"] = max(self.pending, self.events["peak_pending_bytes"])
-            return Reservation(self, amount)
+            return Reservation(self, amount, parent=admission, credit=credit)
 
     def failure(self, amount, reason="required minimum working set cannot fit"):
         value = self.last_sample

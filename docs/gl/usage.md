@@ -70,7 +70,10 @@ new successful result; inspect the exception and execution_report.
 Disk caching is opt-in: ExecutionPolicy(cache_dir="cache/mu"). Use a short path.
 Completed MU arrays use checksummed, versioned NPY/JSON entries and atomic
 manifest publication. Runtime cache reads never deserialize pickle. Owned valid
-entries are limited to 4 GiB; unrelated files are preserved.
+entries are limited to 4 GiB; unrelated files are preserved. Writers coordinate
+through a directory OS lock, and ownership journals recover interrupted writes
+on the next mutation. Older unjournalled orphan files are preserved because
+their ownership cannot be established safely. See [review fixes](fixes.md).
 
 The corrected sEMG namespace is surface-muap-gitlab-fc077-v1, so entries from the
 old GitHub-based conductor cannot mask the scientific corrections. Numerical
