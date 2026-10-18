@@ -189,24 +189,25 @@ class ExecutionSession:
         """Admit at most two outer jobs, with no unbounded prefetch queue.
 
         Threads share immutable inputs and the central memory controller.
-        Every numerical allocation is separately reserved at its safe boundary.
+        The admitted minimum stays protected until completion; allocations
+        consume that promise instead of charging the same capacity twice.
         """
         def run(item, admission):
-            admission.close()
-            import numba
-            previous = numba.get_num_threads()
-            numba.set_num_threads(1)
-            try:
-                self.check_cancelled()
-                return compute(item)
-            except BaseException as error:
-                with self.memory.lock:
-                    if self._failure is None and not isinstance(error, CancelledError):
-                        self._failure = error
-                    self.memory.cancelled.set()
-                raise
-            finally:
-                numba.set_num_threads(previous)
+            with self.memory.use_admission(admission):
+                import numba
+                previous = numba.get_num_threads()
+                numba.set_num_threads(1)
+                try:
+                    self.check_cancelled()
+                    return compute(item)
+                except BaseException as error:
+                    with self.memory.lock:
+                        if self._failure is None and not isinstance(error, CancelledError):
+                            self._failure = error
+                        self.memory.cancelled.set()
+                    raise
+                finally:
+                    numba.set_num_threads(previous)
         iterator = iter(items)
         queue = deque()
         marker = object()

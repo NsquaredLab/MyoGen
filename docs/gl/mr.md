@@ -41,11 +41,21 @@ No anatomical/VL implementation or unpublished development changes are included.
   a public CPU example, Windows setup instructions and measured acceptance reports.
   Fix empty-array fingerprints and DC-only preparation diagnostics.
 
+- Follow-up review fixes preserve surface half-sample rounding, retain worker
+  admission through allocation, serialize and recover cache publications, and
+  synchronize the dependency lockfile. Add ten focused regression cases and a
+  reproducible check of the approved real cohorts; see [verification](fixes.md).
+
 ## Validation
 
-Fresh pre-push CPU suite: **247 passed, 6 skipped, 1 deselected**, no failures,
-in 72.71 seconds. The unchanged slow clinical iEMG synthesis test remains excluded
+Fresh post-fix CPU suite: **257 passed, 6 skipped, 1 deselected**, no failures,
+in 77.89 seconds. The unchanged slow clinical iEMG synthesis test remains excluded
 under the agreed limited scope. GPU/unavailable-data tests are skipped.
+
+The 470-fibre iEMG and 88-fibre sEMG cohorts also passed fresh post-fix checks
+against saved corrected references, including exact RNG/bins/metadata, bitwise
+cache reloads and repeated complete recordings. Maximum recording error was
+2.66e-15, with zero changed peak samples. No new performance claim is made.
 
 Recorded numerical evidence:
 
