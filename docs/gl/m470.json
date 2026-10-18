@@ -1,0 +1,1252 @@
+{
+  "status": "complete",
+  "scope": "Optimized source MUAP generation only; 470 real fibres.",
+  "order": [
+    "old1",
+    "new1",
+    "new2",
+    "old2",
+    "old3",
+    "new3"
+  ],
+  "times": {
+    "old": [
+      21.514077599858865,
+      22.095750000094995,
+      21.67656090017408
+    ],
+    "new": [
+      21.649290200090036,
+      22.39299840014428,
+      22.25487479986623
+    ]
+  },
+  "medians": {
+    "old": 21.67656090017408,
+    "new": 22.25487479986623
+  },
+  "new_over_old": 1.0266792275008672,
+  "new_runtime_reduction_percent": -2.6679227500867153,
+  "old_over_new_speed_ratio": 0.9740140573742692,
+  "input_rng_metadata": "Exact across all six runs",
+  "repeat_waveforms": "Bitwise exact within each branch",
+  "cross_branch_waveforms": "Different conductor formulations; no equivalence claim",
+  "measured_source_sha256": {
+    "old": {
+      "myogen/__init__.py": "ca81ad54cc4bb3e2c6c4c8b048b5253d3d003611315a8e4b263462d0fc8d3f87",
+      "myogen/_cuda_env.py": "1ea0e2f9ac42ff08459bc5d103959549a48417a8351e0adcb2b1ee8e4ba17fb8",
+      "myogen/_neuron_home.py": "b68f6a3a1c190c150b38b5cb7e3d5f437481c1726bea6797d4c5dd167ae1ab60",
+      "myogen/simulator/__init__.py": "c7e1f95d6f26ff14748d4b81f5f49fb923d01188f75dcc7e885209f5a7c0698a",
+      "myogen/simulator/core/__init__.py": "824eacad45d999655d5ac04472883158d85491d00527736e14b2255f870e47c7",
+      "myogen/simulator/core/emg/__init__.py": "913fb393d509ef933e598b2082b4a7a89361134a8b1babb6b41e60050b02ca9c",
+      "myogen/simulator/core/emg/electrodes.py": "4a2caf2a177a182feba836be052e414736b910e4814d3e24d443dd410a86f2b9",
+      "myogen/simulator/core/emg/fiber_simulation.py": "e735170f92c41edf7b31523fbecc2fec5c39249d9e7e4ded29532786cba590bc",
+      "myogen/simulator/core/emg/intramuscular/__init__.py": "8d799fb56f161f13a827917adf7f131061713a55dd30428f5d70790824e00a2a",
+      "myogen/simulator/core/emg/intramuscular/bioelectric.py": "1ce3e21c0fba79691395585f0af739cd059f6cfc7087e572f466853e087477d6",
+      "myogen/simulator/core/emg/intramuscular/intramuscular_emg.py": "25b8107aebfb9746d55429acf2f31e2f0a6124716f96ef291b560c55501480bb",
+      "myogen/simulator/core/emg/intramuscular/motor_unit_sim.py": "d36d8bc5f3db9857334bc9229580a5d05d2b8c11579d262625e3c37bd0175f86",
+      "myogen/simulator/core/emg/runtime/__init__.py": "07eac9fd412524913f3a36ebab80feaecb64d001a86f065e032d5345ea1c07ae",
+      "myogen/simulator/core/emg/runtime/assembly.py": "41d4d358b1d1dccbe29f5a58522f4eeb62b1ac8c264470d87096a570c51bbeac",
+      "myogen/simulator/core/emg/runtime/cache.py": "da701085f07c588f35a2310fa89ef6a71451047cc652144ee7d1db069480084e",
+      "myogen/simulator/core/emg/runtime/density.py": "f0ecb5f0c52f4d5a002a5dfe77a7df421356921036c3759897b6c8c481c9f9a7",
+      "myogen/simulator/core/emg/runtime/iemg.py": "bf5c8f6e867a50bb6280ecee04338c6b3ad62b0d5525563e2578da60c417f98b",
+      "myogen/simulator/core/emg/runtime/memory.py": "6207373f6087858480f9a9c414768b0df104ca24ac5b93e3e4dd1a36e39be737",
+      "myogen/simulator/core/emg/runtime/policy.py": "07c179e52f7efb48fa46a3b210d600752e7d22146c683ab39d51712d6de40d83",
+      "myogen/simulator/core/emg/runtime/semg.py": "0bca6d5d7ef4f0a1b5d0ab2c612054a4e27de3fd0cdb28300ebc569c586b9e7b",
+      "myogen/simulator/core/emg/runtime/session.py": "1cc7ec93581c70761d2e4b3741baaa4e46cde00c24380a47ca2eb16dea2b0f3f",
+      "myogen/simulator/core/emg/runtime/surface_preparation.py": "24dcec0f5faef6f0a005b5a120aa1f3416d3a6334eef8a18fa53270a51863ac7",
+      "myogen/simulator/core/emg/runtime/surface_source.py": "c3399a6e24900a4872544c0b34f3739a471b91d620c637bb8c2859a85f649c11",
+      "myogen/simulator/core/emg/runtime/synthesis.py": "16e5affb33b7a234815ff74fb39fa1827fead1aada46f90db0e863b61c1b84eb",
+      "myogen/simulator/core/emg/surface/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "myogen/simulator/core/emg/surface/simulate_fiber.py": "8ace8e7d579bdb6499097240ba34553fc9404ca3e807a2a186340c77bf55b1a2",
+      "myogen/simulator/core/emg/surface/surface_emg.py": "077520daacdc2e1768d19d4e7d861d3c583ef926af7df656757ae59669aba3c8",
+      "myogen/simulator/core/force/__init__.py": "ecf1ed2d25ac9c230e819bf4d8d76b30731fcd167a5b2de5e4c75f8173700340",
+      "myogen/simulator/core/force/biomechanics.py": "2a82f1ab4f9cc58eabbbe9c7f6fa33f5767a3c9e6096d3872cad1b74524ade5c",
+      "myogen/simulator/core/force/force_model.py": "69ac50691f22a886a824fb3aad35aeaed7c58afbf46bb217891768a9c836a91f",
+      "myogen/simulator/core/force/force_model_vectorized.py": "0e536aedb6f520148f2e05edf0d8800916fcf30851ac786161bfe8b03a6dee0e",
+      "myogen/simulator/core/force/force_utils.py": "e5a43d03d77d2abd36aeffa4ecf7e901684c2a6b5ed58b48d28b18df810ef10a",
+      "myogen/simulator/core/force/force_utils_vectorized.py": "ad6330b6e65270a3339474748eaeb2abe1723cbda71d3b793859f23c7f990da4",
+      "myogen/simulator/core/muscle/__init__.py": "f33d0ec504283c6c1ee5cbf32a8d59b0ff6e1fb951e5bb8985646fb7d7d2a1af",
+      "myogen/simulator/core/muscle/muscle.py": "8754ec458b6b730587037e35ba8e4890773f236cbcfe811956a90d9e9413644f",
+      "myogen/simulator/core/physiological_distribution.py": "94e7c1dd45c9a044c27183c1fb5c77dd7f3957760195ab2c0404b0d17748dcd3",
+      "myogen/simulator/neuron/__init__.py": "51ffa5a946b3538d92fbac5c8bebaada8c280dc6ac93b5b30e986c20a4e44c87",
+      "myogen/simulator/neuron/cells.py": "917283c974da4a6f085d1ede7d76bf52ae3aac4f7d31d231a56149419439f8bb",
+      "myogen/simulator/neuron/joint_dynamics.py": "3a8c1157acc18691333e0917793bce1aec5f59a096bb9c3e8ebc871bc3fd9691",
+      "myogen/simulator/neuron/muscle.py": "01e4281b75aecc1e77a5c309fde891fc537863e8edfe07692e3389bcbe8cb650",
+      "myogen/simulator/neuron/network.py": "75e16a498d43fb6a1bd4358eadb675574b3282c595a817ebdb3a5b80611ea981",
+      "myogen/simulator/neuron/populations/__init__.py": "cad897626a5b06003be03d08d3f417ad17144bafcc511c6655102c080c98b74f",
+      "myogen/simulator/neuron/populations/afferents.py": "8f44539d92f6bcca0178a95aa427eb664dcb5ad745a83bd9001ec754f7bafc23",
+      "myogen/simulator/neuron/populations/base.py": "cfecfcbd9278674b3b331cbefb461b1b61ac47e0657454f33f9631e421146fab",
+      "myogen/simulator/neuron/populations/descending_drive.py": "f998cd05b17e5e62a97790c9d9682938ad154bb4402b697bc28700b55b1f2c9c",
+      "myogen/simulator/neuron/populations/interneurons.py": "006c5cb6d6f7cb5a1eac5baa023dc7a830d13699381fc332e2cb55056070bcd8",
+      "myogen/simulator/neuron/populations/motor_neurons.py": "2538098224defc7186b9d74afe5c577d19cc877aeb725cee6b77c40d13ea0aeb",
+      "myogen/simulator/neuron/proprioception/__init__.py": "a35352741406611acb9fa99f3f36f5597680dcb30e9e38fa5d97c52b969ee2b9",
+      "myogen/simulator/neuron/proprioception/golgi.py": "b9bcec215b80a95a823dba446e716f5382ec349a943eb5819dce9e7e4a5f5d61",
+      "myogen/simulator/neuron/proprioception/spindle.py": "1050b666633d02a3ae041bf3a72f4100221d0f235e20ede6df3b9a846c2095d7",
+      "myogen/simulator/neuron/simulation_runner.py": "ef4254b06525a0dee94a88699f04ab015180d07a21ddedd9a20b840739a60cd8",
+      "myogen/utils/__init__.py": "15d018e76a2865659af740ef8be59dce204a88a8d50f5c5d561af2a26f8b0bf2",
+      "myogen/utils/binning.py": "a58a6834bfece53f0554f0885a5c5ee00ad3b352b519aa5fc8a0de247c791f96",
+      "myogen/utils/config_loader.py": "ffb9a9c948be56480e67dc5abc964ad3f77befe5ed95770e09eacdeea563f72d",
+      "myogen/utils/continuous_saver.py": "e33028984f5d5293159b74a8b96814bceedc576e6346b85f334b28a8b09f7859",
+      "myogen/utils/currents.py": "c446a42a271be33f055a709c9ed59b96b43de7a80429ef54a2cc4e79417b4de0",
+      "myogen/utils/decorators.py": "e334c548efe594e6f6c14645efb789820a3f3ddb445b13494d6afc679244f5da",
+      "myogen/utils/emg_noise.py": "4a7151250d1ced6183f05a99f6f6570dac0504c2722bbcfbf26b9c8fc0a280d4",
+      "myogen/utils/helper.py": "c58f0eba95020fd334db02807cc09aa85b998bb975feda224d42d459dcaba5c8",
+      "myogen/utils/neo.py": "e8f3f82bda4255becc98aceb09c0a00b8da0b7b4577ef7e6802d86731f4c633e",
+      "myogen/utils/neuron/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "myogen/utils/neuron/inject_currents_into_populations.py": "13dd4778c023aa6ca2c3536ef02f971e78f1156ac497e7763ef506ce8390e2c6",
+      "myogen/utils/nmodl.py": "a6da404014e8b33be18f3cf262be32e61d22a3f1ea69a3436dc37b179ad13ee0",
+      "myogen/utils/nwb.py": "02da6f0b951eb70d1a0b85b7a23f2accaa9a80f3aa5042f35e63c395ca59d810",
+      "myogen/utils/plotting/__init__.py": "b0edae0c53a5f490a1e13da5fc70de122f69c6630d7702d5913dfcc68ccb16ef",
+      "myogen/utils/plotting/force.py": "50ec2645e26b4d2a9e88777f3417564a262feb64a47aae8dd0310debfec304f9",
+      "myogen/utils/plotting/muscle.py": "729100de60eeebbd04ae3b2d71af40d4ebb3667d66527e51b2ec37a10b25ba15",
+      "myogen/utils/plotting/neuron.py": "f1ded5da53e8d6fab7057ee0976b42cba08c810857aa0229d15c68f6e6b39a53",
+      "myogen/utils/types.py": "b639c3c21a39c4d4bb92489af1265ff188c65d20c81f43bf676acefef8825395"
+    },
+    "new": {
+      "myogen/__init__.py": "4de933c40a9b2347ff7b2043f2e2ab47a3dd2b5657b51fd94863ce96ae4dd173",
+      "myogen/_cuda_env.py": "1ea0e2f9ac42ff08459bc5d103959549a48417a8351e0adcb2b1ee8e4ba17fb8",
+      "myogen/_neuron_home.py": "b68f6a3a1c190c150b38b5cb7e3d5f437481c1726bea6797d4c5dd167ae1ab60",
+      "myogen/simulator/__init__.py": "c7e1f95d6f26ff14748d4b81f5f49fb923d01188f75dcc7e885209f5a7c0698a",
+      "myogen/simulator/core/__init__.py": "824eacad45d999655d5ac04472883158d85491d00527736e14b2255f870e47c7",
+      "myogen/simulator/core/emg/__init__.py": "913fb393d509ef933e598b2082b4a7a89361134a8b1babb6b41e60050b02ca9c",
+      "myogen/simulator/core/emg/electrodes.py": "4a2caf2a177a182feba836be052e414736b910e4814d3e24d443dd410a86f2b9",
+      "myogen/simulator/core/emg/fiber_simulation.py": "43630d34253b86d74ba003445c35294c402b065d95c9c82bebede571465d0c40",
+      "myogen/simulator/core/emg/intramuscular/__init__.py": "8d799fb56f161f13a827917adf7f131061713a55dd30428f5d70790824e00a2a",
+      "myogen/simulator/core/emg/intramuscular/bioelectric.py": "1ce3e21c0fba79691395585f0af739cd059f6cfc7087e572f466853e087477d6",
+      "myogen/simulator/core/emg/intramuscular/intramuscular_emg.py": "25b8107aebfb9746d55429acf2f31e2f0a6124716f96ef291b560c55501480bb",
+      "myogen/simulator/core/emg/intramuscular/motor_unit_sim.py": "d36d8bc5f3db9857334bc9229580a5d05d2b8c11579d262625e3c37bd0175f86",
+      "myogen/simulator/core/emg/runtime/__init__.py": "07eac9fd412524913f3a36ebab80feaecb64d001a86f065e032d5345ea1c07ae",
+      "myogen/simulator/core/emg/runtime/assembly.py": "41d4d358b1d1dccbe29f5a58522f4eeb62b1ac8c264470d87096a570c51bbeac",
+      "myogen/simulator/core/emg/runtime/cache.py": "758db1df1c1ef1e82375cda009b31ff66523a488a0d8b5c87175eecc9773c0c9",
+      "myogen/simulator/core/emg/runtime/density.py": "f0ecb5f0c52f4d5a002a5dfe77a7df421356921036c3759897b6c8c481c9f9a7",
+      "myogen/simulator/core/emg/runtime/iemg.py": "bf5c8f6e867a50bb6280ecee04338c6b3ad62b0d5525563e2578da60c417f98b",
+      "myogen/simulator/core/emg/runtime/memory.py": "6207373f6087858480f9a9c414768b0df104ca24ac5b93e3e4dd1a36e39be737",
+      "myogen/simulator/core/emg/runtime/policy.py": "07c179e52f7efb48fa46a3b210d600752e7d22146c683ab39d51712d6de40d83",
+      "myogen/simulator/core/emg/runtime/semg.py": "55cd9f0e4faee05d12408eafde630ee7e83084bc8491979fec6c890da9c5bce3",
+      "myogen/simulator/core/emg/runtime/session.py": "1cc7ec93581c70761d2e4b3741baaa4e46cde00c24380a47ca2eb16dea2b0f3f",
+      "myogen/simulator/core/emg/runtime/surface_preparation.py": "21285fd36472c1f27d4d8f4153a8a7aa3bd4b780e837af3ceba5d89cd042ab91",
+      "myogen/simulator/core/emg/runtime/surface_source.py": "c3399a6e24900a4872544c0b34f3739a471b91d620c637bb8c2859a85f649c11",
+      "myogen/simulator/core/emg/runtime/synthesis.py": "16e5affb33b7a234815ff74fb39fa1827fead1aada46f90db0e863b61c1b84eb",
+      "myogen/simulator/core/emg/surface/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "myogen/simulator/core/emg/surface/simulate_fiber.py": "51b544d1e03aa71c3e61518383883d0c788d6d38c6ea8abf9b221904483f2ae2",
+      "myogen/simulator/core/emg/surface/surface_emg.py": "077520daacdc2e1768d19d4e7d861d3c583ef926af7df656757ae59669aba3c8",
+      "myogen/simulator/core/emg/surface/volume_conductor.py": "17f83f09f1a9e07efb1c13426262dd5922d125dbd1ea437ce5abddc25c8cce4f",
+      "myogen/simulator/core/force/__init__.py": "ecf1ed2d25ac9c230e819bf4d8d76b30731fcd167a5b2de5e4c75f8173700340",
+      "myogen/simulator/core/force/biomechanics.py": "2a82f1ab4f9cc58eabbbe9c7f6fa33f5767a3c9e6096d3872cad1b74524ade5c",
+      "myogen/simulator/core/force/force_model.py": "69ac50691f22a886a824fb3aad35aeaed7c58afbf46bb217891768a9c836a91f",
+      "myogen/simulator/core/force/force_model_vectorized.py": "0e536aedb6f520148f2e05edf0d8800916fcf30851ac786161bfe8b03a6dee0e",
+      "myogen/simulator/core/force/force_utils.py": "e5a43d03d77d2abd36aeffa4ecf7e901684c2a6b5ed58b48d28b18df810ef10a",
+      "myogen/simulator/core/force/force_utils_vectorized.py": "ad6330b6e65270a3339474748eaeb2abe1723cbda71d3b793859f23c7f990da4",
+      "myogen/simulator/core/muscle/__init__.py": "f33d0ec504283c6c1ee5cbf32a8d59b0ff6e1fb951e5bb8985646fb7d7d2a1af",
+      "myogen/simulator/core/muscle/muscle.py": "8754ec458b6b730587037e35ba8e4890773f236cbcfe811956a90d9e9413644f",
+      "myogen/simulator/core/physiological_distribution.py": "94e7c1dd45c9a044c27183c1fb5c77dd7f3957760195ab2c0404b0d17748dcd3",
+      "myogen/simulator/neuron/__init__.py": "51ffa5a946b3538d92fbac5c8bebaada8c280dc6ac93b5b30e986c20a4e44c87",
+      "myogen/simulator/neuron/cells.py": "917283c974da4a6f085d1ede7d76bf52ae3aac4f7d31d231a56149419439f8bb",
+      "myogen/simulator/neuron/joint_dynamics.py": "3a8c1157acc18691333e0917793bce1aec5f59a096bb9c3e8ebc871bc3fd9691",
+      "myogen/simulator/neuron/muscle.py": "01e4281b75aecc1e77a5c309fde891fc537863e8edfe07692e3389bcbe8cb650",
+      "myogen/simulator/neuron/network.py": "75e16a498d43fb6a1bd4358eadb675574b3282c595a817ebdb3a5b80611ea981",
+      "myogen/simulator/neuron/populations/__init__.py": "cad897626a5b06003be03d08d3f417ad17144bafcc511c6655102c080c98b74f",
+      "myogen/simulator/neuron/populations/afferents.py": "8f44539d92f6bcca0178a95aa427eb664dcb5ad745a83bd9001ec754f7bafc23",
+      "myogen/simulator/neuron/populations/base.py": "cfecfcbd9278674b3b331cbefb461b1b61ac47e0657454f33f9631e421146fab",
+      "myogen/simulator/neuron/populations/descending_drive.py": "f998cd05b17e5e62a97790c9d9682938ad154bb4402b697bc28700b55b1f2c9c",
+      "myogen/simulator/neuron/populations/interneurons.py": "006c5cb6d6f7cb5a1eac5baa023dc7a830d13699381fc332e2cb55056070bcd8",
+      "myogen/simulator/neuron/populations/motor_neurons.py": "2538098224defc7186b9d74afe5c577d19cc877aeb725cee6b77c40d13ea0aeb",
+      "myogen/simulator/neuron/proprioception/__init__.py": "a35352741406611acb9fa99f3f36f5597680dcb30e9e38fa5d97c52b969ee2b9",
+      "myogen/simulator/neuron/proprioception/golgi.py": "b9bcec215b80a95a823dba446e716f5382ec349a943eb5819dce9e7e4a5f5d61",
+      "myogen/simulator/neuron/proprioception/spindle.py": "1050b666633d02a3ae041bf3a72f4100221d0f235e20ede6df3b9a846c2095d7",
+      "myogen/simulator/neuron/simulation_runner.py": "ef4254b06525a0dee94a88699f04ab015180d07a21ddedd9a20b840739a60cd8",
+      "myogen/utils/__init__.py": "15d018e76a2865659af740ef8be59dce204a88a8d50f5c5d561af2a26f8b0bf2",
+      "myogen/utils/binning.py": "a58a6834bfece53f0554f0885a5c5ee00ad3b352b519aa5fc8a0de247c791f96",
+      "myogen/utils/config_loader.py": "ffb9a9c948be56480e67dc5abc964ad3f77befe5ed95770e09eacdeea563f72d",
+      "myogen/utils/continuous_saver.py": "e33028984f5d5293159b74a8b96814bceedc576e6346b85f334b28a8b09f7859",
+      "myogen/utils/currents.py": "c446a42a271be33f055a709c9ed59b96b43de7a80429ef54a2cc4e79417b4de0",
+      "myogen/utils/decorators.py": "e334c548efe594e6f6c14645efb789820a3f3ddb445b13494d6afc679244f5da",
+      "myogen/utils/emg_noise.py": "4a7151250d1ced6183f05a99f6f6570dac0504c2722bbcfbf26b9c8fc0a280d4",
+      "myogen/utils/helper.py": "c58f0eba95020fd334db02807cc09aa85b998bb975feda224d42d459dcaba5c8",
+      "myogen/utils/neo.py": "e8f3f82bda4255becc98aceb09c0a00b8da0b7b4577ef7e6802d86731f4c633e",
+      "myogen/utils/neuron/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "myogen/utils/neuron/inject_currents_into_populations.py": "13dd4778c023aa6ca2c3536ef02f971e78f1156ac497e7763ef506ce8390e2c6",
+      "myogen/utils/nmodl.py": "a6da404014e8b33be18f3cf262be32e61d22a3f1ea69a3436dc37b179ad13ee0",
+      "myogen/utils/nwb.py": "02da6f0b951eb70d1a0b85b7a23f2accaa9a80f3aa5042f35e63c395ca59d810",
+      "myogen/utils/plotting/__init__.py": "b0edae0c53a5f490a1e13da5fc70de122f69c6630d7702d5913dfcc68ccb16ef",
+      "myogen/utils/plotting/force.py": "50ec2645e26b4d2a9e88777f3417564a262feb64a47aae8dd0310debfec304f9",
+      "myogen/utils/plotting/muscle.py": "729100de60eeebbd04ae3b2d71af40d4ebb3667d66527e51b2ec37a10b25ba15",
+      "myogen/utils/plotting/neuron.py": "f1ded5da53e8d6fab7057ee0976b42cba08c810857aa0229d15c68f6e6b39a53",
+      "myogen/utils/types.py": "b639c3c21a39c4d4bb92489af1265ff188c65d20c81f43bf676acefef8825395"
+    }
+  },
+  "runs": [
+    {
+      "status": "complete",
+      "label": "old1",
+      "root": "C:\\Users\\DRRohlf\\.codex\\worktrees\\basic-myogen-adaptive-memory\\MyoGen",
+      "head": "174a71404eceae963e31ad027b642f72572c72f3",
+      "harness_sha256": "69fba060fc88b21c2c4b94efbd615d4eede657afc32e0dbd2f133820fc816715",
+      "python": "C:\\Users\\DRRohlf\\PycharmProjects\\MyoGen\\.venv\\Scripts\\python.exe",
+      "imported": "C:\\Users\\DRRohlf\\.codex\\worktrees\\basic-myogen-adaptive-memory\\MyoGen\\myogen\\__init__.py",
+      "affinity": [
+        0,
+        2,
+        4,
+        6
+      ],
+      "mus": [
+        0,
+        25,
+        50
+      ],
+      "counts": [
+        14,
+        85,
+        371
+      ],
+      "fibres": 470,
+      "population": 100,
+      "total_fibres": 58755,
+      "native_threads": 1,
+      "n_jobs": 1,
+      "max_workers": 1,
+      "gpu": false,
+      "persistent_cache": false,
+      "physical_bytes": 68535443456,
+      "available_before": 36832382976,
+      "fixture_sha256": "a4a49351e69cb5422f7f5fd10ee42a0424a6808b96b5b8da890ba4f740b304a6",
+      "rng_fixture_sha256": "3557ff5013e2925e34e94fec68af40d9c27172e505d36ad4718c80f9cecc5bef",
+      "initial_rng": {
+        "bit_generator": "PCG64",
+        "state": {
+          "state": 337593171522386946240229993278563343696,
+          "inc": 259543946860559255418171984340536092047
+        },
+        "has_uint32": 1,
+        "uinteger": 4261789908
+      },
+      "timestamp": "2026-10-18T16:29:46.278170+00:00",
+      "native_pools_before": [
+        {
+          "user_api": "blas",
+          "internal_api": "openblas",
+          "num_threads": 1,
+          "prefix": "libscipy_openblas",
+          "filepath": "C:\\Users\\DRRohlf\\PycharmProjects\\MyoGen\\.venv\\Lib\\site-packages\\numpy.libs\\libscipy_openblas64_-9e3e5a4229c1ca39f10dc82bba9e2b2b.dll",
+          "version": "0.3.30",
+          "threading_layer": "pthreads",
+          "architecture": "Haswell"
+        },
+        {
+          "user_api": "blas",
+          "internal_api": "openblas",
+          "num_threads": 1,
+          "prefix": "libscipy_openblas",
+          "filepath": "C:\\Users\\DRRohlf\\PycharmProjects\\MyoGen\\.venv\\Lib\\site-packages\\scipy.libs\\libscipy_openblas-48c358d105077551cc9cc3ba79387ed5.dll",
+          "version": "0.3.29.dev",
+          "threading_layer": "pthreads",
+          "architecture": "Haswell"
+        },
+        {
+          "user_api": "openmp",
+          "internal_api": "openmp",
+          "num_threads": 1,
+          "prefix": "vcomp",
+          "filepath": "C:\\Users\\DRRohlf\\PycharmProjects\\MyoGen\\.venv\\Lib\\site-packages\\sklearn\\.libs\\vcomp140.dll",
+          "version": null
+        }
+      ],
+      "seconds": 21.514077599858865,
+      "cpu_seconds": 21.171875,
+      "rng": {
+        "bit_generator": "PCG64",
+        "state": {
+          "state": 63243315227465931225531549556570978581,
+          "inc": 259543946860559255418171984340536092047
+        },
+        "has_uint32": 1,
+        "uinteger": 4261789908
+      },
+      "execution_report": {
+        "policy": {
+          "backend": "cpu",
+          "memory_budget_mib": null,
+          "reserve_fraction": 0.2,
+          "reserve_min_mib": 4096,
+          "max_workers": 1,
+          "cache_dir": null
+        },
+        "backend": "cpu",
+        "stage": "surface_muaps",
+        "stage_seconds": {
+          "surface_muaps": 21.50564570003189
+        },
+        "status": "complete",
+        "error": null,
+        "batch_sizes": {
+          "array_0_MU_0": {
+            "initial": 4,
+            "final": 2
+          },
+          "array_0_MU_25": {
+            "initial": 4,
+            "final": 4
+          },
+          "array_0_MU_50": {
+            "initial": 4,
+            "final": 2
+          }
+        },
+        "worker_count_changes": [
+          1
+        ],
+        "rss_note": "CPU workers are threads; parent-process RSS counts their shared memory once",
+        "pressure_pauses": 0,
+        "allocation_retries": 0,
+        "cache_hits": 0,
+        "cache_evictions": 0,
+        "completed_work": 470,
+        "wait_seconds": 0.0,
+        "peak_managed_bytes": 115539808,
+        "peak_pending_bytes": 661350000,
+        "minimum_available_bytes": 36674068480,
+        "peak_process_rss_bytes": 395395072,
+        "physical_total_bytes": 68535443456,
+        "reserve_bytes": 13707088691.2,
+        "allocation_margin_bytes": 2301784801.28
+      },
+      "native_pools_after": [
+        {
+          "user_api": "blas",
+          "internal_api": "openblas",
+          "num_threads": 1,
+          "prefix": "libscipy_openblas",
+          "filepath": "C:\\Users\\DRRohlf\\PycharmProjects\\MyoGen\\.venv\\Lib\\site-packages\\numpy.libs\\libscipy_openblas64_-9e3e5a4229c1ca39f10dc82bba9e2b2b.dll",
+          "version": "0.3.30",
+          "threading_layer": "pthreads",
+          "architecture": "Haswell"
+        },
+        {
+          "user_api": "blas",
+          "internal_api": "openblas",
+          "num_threads": 1,
+          "prefix": "libscipy_openblas",
+          "filepath": "C:\\Users\\DRRohlf\\PycharmProjects\\MyoGen\\.venv\\Lib\\site-packages\\scipy.libs\\libscipy_openblas-48c358d105077551cc9cc3ba79387ed5.dll",
+          "version": "0.3.29.dev",
+          "threading_layer": "pthreads",
+          "architecture": "Haswell"
+        },
+        {
+          "user_api": "openmp",
+          "internal_api": "openmp",
+          "num_threads": 1,
+          "prefix": "vcomp",
+          "filepath": "C:\\Users\\DRRohlf\\PycharmProjects\\MyoGen\\.venv\\Lib\\site-packages\\sklearn\\.libs\\vcomp140.dll",
+          "version": null
+        }
+      ],
+      "waveform_sha256": "b84d88e81034c136bc4ed8a52345ce07858637f36fe90c2e44b5bd8f8088b529",
+      "metadata_sha256": "d9159d16fc1ac57fa7c4e75ff9bfa67ef4dc4cfef7baab1d198365e5c7959c33",
+      "realized_inputs_sha256": "c739c1e68f1601a018eb0d650ca9e52ef1d3be04004352fae9c0fb55ac291ed8",
+      "capture_scope": "Contract-only; zero-return replay outside timed numerical call.",
+      "available_after": 36824936448,
+      "saved_artifacts": {
+        "result.json": "fedc7cd06967eb256a42ef66679cb8e8965f81dafee8bcf0f545ccb576aa7896",
+        "input_ids.json": "600e73354c0f3ba0b22121e4fa30aa8e8d3a1845fdd0e9f9b25b8a5ae1a46832",
+        "metadata.json": "1134325ab8e9f79d6ed7fe055bd0c55fe6a712a07b6b780040990cfa2525ec02",
+        "templates.npz": "92c0fc6b4006d1d789571d703d973ca29ddee1d352c392c6a427a7445197895e"
+      }
+    },
+    {
+      "status": "complete",
+      "label": "new1",
+      "root": "C:\\Users\\DRRohlf\\.codex\\worktrees\\bgl\\MyoGen",
+      "head": "0f26b54d59067eb3a6b30ec4de144c6cd0c69f6d",
+      "harness_sha256": "69fba060fc88b21c2c4b94efbd615d4eede657afc32e0dbd2f133820fc816715",
+      "python": "C:\\Users\\DRRohlf\\PycharmProjects\\MyoGen\\.venv\\Scripts\\python.exe",
+      "imported": "C:\\Users\\DRRohlf\\.codex\\worktrees\\bgl\\MyoGen\\myogen\\__init__.py",
+      "affinity": [
+        0,
+        2,
+        4,
+        6
+      ],
+      "mus": [
+        0,
+        25,
+        50
+      ],
+      "counts": [
+        14,
+        85,
+        371
+      ],
+      "fibres": 470,
+      "population": 100,
+      "total_fibres": 58755,
+      "native_threads": 1,
+      "n_jobs": 1,
+      "max_workers": 1,
+      "gpu": false,
+      "persistent_cache": false,
+      "physical_bytes": 68535443456,
+      "available_before": 36827836416,
+      "fixture_sha256": "a4a49351e69cb5422f7f5fd10ee42a0424a6808b96b5b8da890ba4f740b304a6",
+      "rng_fixture_sha256": "3557ff5013e2925e34e94fec68af40d9c27172e505d36ad4718c80f9cecc5bef",
+      "initial_rng": {
+        "bit_generator": "PCG64",
+        "state": {
+          "state": 337593171522386946240229993278563343696,
+          "inc": 259543946860559255418171984340536092047
+        },
+        "has_uint32": 1,
+        "uinteger": 4261789908
+      },
+      "timestamp": "2026-10-18T16:30:09.934193+00:00",
+      "native_pools_before": [
+        {
+          "user_api": "blas",
+          "internal_api": "openblas",
+          "num_threads": 1,
+          "prefix": "libscipy_openblas",
+          "filepath": "C:\\Users\\DRRohlf\\PycharmProjects\\MyoGen\\.venv\\Lib\\site-packages\\numpy.libs\\libscipy_openblas64_-9e3e5a4229c1ca39f10dc82bba9e2b2b.dll",
+          "version": "0.3.30",
+          "threading_layer": "pthreads",
+          "architecture": "Haswell"
+        },
+        {
+          "user_api": "blas",
+          "internal_api": "openblas",
+          "num_threads": 1,
+          "prefix": "libscipy_openblas",
+          "filepath": "C:\\Users\\DRRohlf\\PycharmProjects\\MyoGen\\.venv\\Lib\\site-packages\\scipy.libs\\libscipy_openblas-48c358d105077551cc9cc3ba79387ed5.dll",
+          "version": "0.3.29.dev",
+          "threading_layer": "pthreads",
+          "architecture": "Haswell"
+        },
+        {
+          "user_api": "openmp",
+          "internal_api": "openmp",
+          "num_threads": 1,
+          "prefix": "vcomp",
+          "filepath": "C:\\Users\\DRRohlf\\PycharmProjects\\MyoGen\\.venv\\Lib\\site-packages\\sklearn\\.libs\\vcomp140.dll",
+          "version": null
+        }
+      ],
+      "seconds": 21.649290200090036,
+      "cpu_seconds": 21.296875,
+      "rng": {
+        "bit_generator": "PCG64",
+        "state": {
+          "state": 63243315227465931225531549556570978581,
+          "inc": 259543946860559255418171984340536092047
+        },
+        "has_uint32": 1,
+        "uinteger": 4261789908
+      },
+      "execution_report": {
+        "policy": {
+          "backend": "cpu",
+          "memory_budget_mib": null,
+          "reserve_fraction": 0.2,
+          "reserve_min_mib": 4096,
+          "max_workers": 1,
+          "cache_dir": null
+        },
+        "backend": "cpu",
+        "stage": "surface_muaps",
+        "stage_seconds": {
+          "surface_muaps": 21.639289200073108
+        },
+        "status": "complete",
+        "error": null,
+        "batch_sizes": {
+          "array_0_MU_0": {
+            "initial": 4,
+            "final": 2
+          },
+          "array_0_MU_25": {
+            "initial": 4,
+            "final": 4
+          },
+          "array_0_MU_50": {
+            "initial": 4,
+            "final": 2
+          }
+        },
+        "worker_count_changes": [
+          1
+        ],
+        "rss_note": "CPU workers are threads; parent-process RSS counts their shared memory once",
+        "pressure_pauses": 0,
+        "allocation_retries": 0,
+        "cache_hits": 0,
+        "cache_evictions": 0,
+        "completed_work": 470,
+        "wait_seconds": 0.0,
+        "peak_managed_bytes": 116064448,
+        "peak_pending_bytes": 661350000,
+        "minimum_available_bytes": 36597870592,
+        "peak_process_rss_bytes": 393998336,
+        "physical_total_bytes": 68535443456,
+        "reserve_bytes": 13707088691.2,
+        "allocation_margin_bytes": 2289078190.08
+      },
+      "native_pools_after": [
+        {
+          "user_api": "blas",
+          "internal_api": "openblas",
+          "num_threads": 1,
+          "prefix": "libscipy_openblas",
+          "filepath": "C:\\Users\\DRRohlf\\PycharmProjects\\MyoGen\\.venv\\Lib\\site-packages\\numpy.libs\\libscipy_openblas64_-9e3e5a4229c1ca39f10dc82bba9e2b2b.dll",
+          "version": "0.3.30",
+          "threading_layer": "pthreads",
+          "architecture": "Haswell"
+        },
+        {
+          "user_api": "blas",
+          "internal_api": "openblas",
+          "num_threads": 1,
+          "prefix": "libscipy_openblas",
+          "filepath": "C:\\Users\\DRRohlf\\PycharmProjects\\MyoGen\\.venv\\Lib\\site-packages\\scipy.libs\\libscipy_openblas-48c358d105077551cc9cc3ba79387ed5.dll",
+          "version": "0.3.29.dev",
+          "threading_layer": "pthreads",
+          "architecture": "Haswell"
+        },
+        {
+          "user_api": "openmp",
+          "internal_api": "openmp",
+          "num_threads": 1,
+          "prefix": "vcomp",
+          "filepath": "C:\\Users\\DRRohlf\\PycharmProjects\\MyoGen\\.venv\\Lib\\site-packages\\sklearn\\.libs\\vcomp140.dll",
+          "version": null
+        }
+      ],
+      "waveform_sha256": "24ba82dd5b02db50516324fe0616ecb8ea673b7583cf035a0d674c65361ed4c1",
+      "metadata_sha256": "d9159d16fc1ac57fa7c4e75ff9bfa67ef4dc4cfef7baab1d198365e5c7959c33",
+      "realized_inputs_sha256": "c739c1e68f1601a018eb0d650ca9e52ef1d3be04004352fae9c0fb55ac291ed8",
+      "capture_scope": "Contract-only; zero-return replay outside timed numerical call.",
+      "available_after": 36808814592,
+      "saved_artifacts": {
+        "result.json": "46c2b4e4b135520fd37b679755df16dfe0f3d3982a712290ef723c97cd45acc7",
+        "input_ids.json": "600e73354c0f3ba0b22121e4fa30aa8e8d3a1845fdd0e9f9b25b8a5ae1a46832",
+        "metadata.json": "1134325ab8e9f79d6ed7fe055bd0c55fe6a712a07b6b780040990cfa2525ec02",
+        "templates.npz": "c48b5857f82cd239d81fdd787474bb9af2e80be263a3b16150183f749320a0ce"
+      }
+    },
+    {
+      "status": "complete",
+      "label": "new2",
+      "root": "C:\\Users\\DRRohlf\\.codex\\worktrees\\bgl\\MyoGen",
+      "head": "0f26b54d59067eb3a6b30ec4de144c6cd0c69f6d",
+      "harness_sha256": "69fba060fc88b21c2c4b94efbd615d4eede657afc32e0dbd2f133820fc816715",
+      "python": "C:\\Users\\DRRohlf\\PycharmProjects\\MyoGen\\.venv\\Scripts\\python.exe",
+      "imported": "C:\\Users\\DRRohlf\\.codex\\worktrees\\bgl\\MyoGen\\myogen\\__init__.py",
+      "affinity": [
+        0,
+        2,
+        4,
+        6
+      ],
+      "mus": [
+        0,
+        25,
+        50
+      ],
+      "counts": [
+        14,
+        85,
+        371
+      ],
+      "fibres": 470,
+      "population": 100,
+      "total_fibres": 58755,
+      "native_threads": 1,
+      "n_jobs": 1,
+      "max_workers": 1,
+      "gpu": false,
+      "persistent_cache": false,
+      "physical_bytes": 68535443456,
+      "available_before": 36848705536,
+      "fixture_sha256": "a4a49351e69cb5422f7f5fd10ee42a0424a6808b96b5b8da890ba4f740b304a6",
+      "rng_fixture_sha256": "3557ff5013e2925e34e94fec68af40d9c27172e505d36ad4718c80f9cecc5bef",
+      "initial_rng": {
+        "bit_generator": "PCG64",
+        "state": {
+          "state": 337593171522386946240229993278563343696,
+          "inc": 259543946860559255418171984340536092047
+        },
+        "has_uint32": 1,
+        "uinteger": 4261789908
+      },
+      "timestamp": "2026-10-18T16:30:34.232501+00:00",
+      "native_pools_before": [
+        {
+          "user_api": "blas",
+          "internal_api": "openblas",
+          "num_threads": 1,
+          "prefix": "libscipy_openblas",
+          "filepath": "C:\\Users\\DRRohlf\\PycharmProjects\\MyoGen\\.venv\\Lib\\site-packages\\numpy.libs\\libscipy_openblas64_-9e3e5a4229c1ca39f10dc82bba9e2b2b.dll",
+          "version": "0.3.30",
+          "threading_layer": "pthreads",
+          "architecture": "Haswell"
+        },
+        {
+          "user_api": "blas",
+          "internal_api": "openblas",
+          "num_threads": 1,
+          "prefix": "libscipy_openblas",
+          "filepath": "C:\\Users\\DRRohlf\\PycharmProjects\\MyoGen\\.venv\\Lib\\site-packages\\scipy.libs\\libscipy_openblas-48c358d105077551cc9cc3ba79387ed5.dll",
+          "version": "0.3.29.dev",
+          "threading_layer": "pthreads",
+          "architecture": "Haswell"
+        },
+        {
+          "user_api": "openmp",
+          "internal_api": "openmp",
+          "num_threads": 1,
+          "prefix": "vcomp",
+          "filepath": "C:\\Users\\DRRohlf\\PycharmProjects\\MyoGen\\.venv\\Lib\\site-packages\\sklearn\\.libs\\vcomp140.dll",
+          "version": null
+        }
+      ],
+      "seconds": 22.39299840014428,
+      "cpu_seconds": 21.859375,
+      "rng": {
+        "bit_generator": "PCG64",
+        "state": {
+          "state": 63243315227465931225531549556570978581,
+          "inc": 259543946860559255418171984340536092047
+        },
+        "has_uint32": 1,
+        "uinteger": 4261789908
+      },
+      "execution_report": {
+        "policy": {
+          "backend": "cpu",
+          "memory_budget_mib": null,
+          "reserve_fraction": 0.2,
+          "reserve_min_mib": 4096,
+          "max_workers": 1,
+          "cache_dir": null
+        },
+        "backend": "cpu",
+        "stage": "surface_muaps",
+        "stage_seconds": {
+          "surface_muaps": 22.38268409995362
+        },
+        "status": "complete",
+        "error": null,
+        "batch_sizes": {
+          "array_0_MU_0": {
+            "initial": 4,
+            "final": 2
+          },
+          "array_0_MU_25": {
+            "initial": 4,
+            "final": 4
+          },
+          "array_0_MU_50": {
+            "initial": 4,
+            "final": 7
+          }
+        },
+        "worker_count_changes": [
+          1
+        ],
+        "rss_note": "CPU workers are threads; parent-process RSS counts their shared memory once",
+        "pressure_pauses": 0,
+        "allocation_retries": 0,
+        "cache_hits": 0,
+        "cache_evictions": 0,
+        "completed_work": 470,
+        "wait_seconds": 0.0,
+        "peak_managed_bytes": 116064448,
+        "peak_pending_bytes": 661350000,
+        "minimum_available_bytes": 36539604992,
+        "peak_process_rss_bytes": 395862016,
+        "physical_total_bytes": 68535443456,
+        "reserve_bytes": 13707088691.2,
+        "allocation_margin_bytes": 2303591546.88
+      },
+      "native_pools_after": [
+        {
+          "user_api": "blas",
+          "internal_api": "openblas",
+          "num_threads": 1,
+          "prefix": "libscipy_openblas",
+          "filepath": "C:\\Users\\DRRohlf\\PycharmProjects\\MyoGen\\.venv\\Lib\\site-packages\\numpy.libs\\libscipy_openblas64_-9e3e5a4229c1ca39f10dc82bba9e2b2b.dll",
+          "version": "0.3.30",
+          "threading_layer": "pthreads",
+          "architecture": "Haswell"
+        },
+        {
+          "user_api": "blas",
+          "internal_api": "openblas",
+          "num_threads": 1,
+          "prefix": "libscipy_openblas",
+          "filepath": "C:\\Users\\DRRohlf\\PycharmProjects\\MyoGen\\.venv\\Lib\\site-packages\\scipy.libs\\libscipy_openblas-48c358d105077551cc9cc3ba79387ed5.dll",
+          "version": "0.3.29.dev",
+          "threading_layer": "pthreads",
+          "architecture": "Haswell"
+        },
+        {
+          "user_api": "openmp",
+          "internal_api": "openmp",
+          "num_threads": 1,
+          "prefix": "vcomp",
+          "filepath": "C:\\Users\\DRRohlf\\PycharmProjects\\MyoGen\\.venv\\Lib\\site-packages\\sklearn\\.libs\\vcomp140.dll",
+          "version": null
+        }
+      ],
+      "waveform_sha256": "24ba82dd5b02db50516324fe0616ecb8ea673b7583cf035a0d674c65361ed4c1",
+      "metadata_sha256": "d9159d16fc1ac57fa7c4e75ff9bfa67ef4dc4cfef7baab1d198365e5c7959c33",
+      "realized_inputs_sha256": "c739c1e68f1601a018eb0d650ca9e52ef1d3be04004352fae9c0fb55ac291ed8",
+      "capture_scope": "Contract-only; zero-return replay outside timed numerical call.",
+      "available_after": 36846432256,
+      "saved_artifacts": {
+        "result.json": "d06c5f56997ba9b05782b2e6e95288a38bfc61a6582ebba1b885d41a9bd3fa98",
+        "input_ids.json": "600e73354c0f3ba0b22121e4fa30aa8e8d3a1845fdd0e9f9b25b8a5ae1a46832",
+        "metadata.json": "1134325ab8e9f79d6ed7fe055bd0c55fe6a712a07b6b780040990cfa2525ec02",
+        "templates.npz": "c48b5857f82cd239d81fdd787474bb9af2e80be263a3b16150183f749320a0ce"
+      }
+    },
+    {
+      "status": "complete",
+      "label": "old2",
+      "root": "C:\\Users\\DRRohlf\\.codex\\worktrees\\basic-myogen-adaptive-memory\\MyoGen",
+      "head": "174a71404eceae963e31ad027b642f72572c72f3",
+      "harness_sha256": "69fba060fc88b21c2c4b94efbd615d4eede657afc32e0dbd2f133820fc816715",
+      "python": "C:\\Users\\DRRohlf\\PycharmProjects\\MyoGen\\.venv\\Scripts\\python.exe",
+      "imported": "C:\\Users\\DRRohlf\\.codex\\worktrees\\basic-myogen-adaptive-memory\\MyoGen\\myogen\\__init__.py",
+      "affinity": [
+        0,
+        2,
+        4,
+        6
+      ],
+      "mus": [
+        0,
+        25,
+        50
+      ],
+      "counts": [
+        14,
+        85,
+        371
+      ],
+      "fibres": 470,
+      "population": 100,
+      "total_fibres": 58755,
+      "native_threads": 1,
+      "n_jobs": 1,
+      "max_workers": 1,
+      "gpu": false,
+      "persistent_cache": false,
+      "physical_bytes": 68535443456,
+      "available_before": 36894867456,
+      "fixture_sha256": "a4a49351e69cb5422f7f5fd10ee42a0424a6808b96b5b8da890ba4f740b304a6",
+      "rng_fixture_sha256": "3557ff5013e2925e34e94fec68af40d9c27172e505d36ad4718c80f9cecc5bef",
+      "initial_rng": {
+        "bit_generator": "PCG64",
+        "state": {
+          "state": 337593171522386946240229993278563343696,
+          "inc": 259543946860559255418171984340536092047
+        },
+        "has_uint32": 1,
+        "uinteger": 4261789908
+      },
+      "timestamp": "2026-10-18T16:30:58.841253+00:00",
+      "native_pools_before": [
+        {
+          "user_api": "blas",
+          "internal_api": "openblas",
+          "num_threads": 1,
+          "prefix": "libscipy_openblas",
+          "filepath": "C:\\Users\\DRRohlf\\PycharmProjects\\MyoGen\\.venv\\Lib\\site-packages\\numpy.libs\\libscipy_openblas64_-9e3e5a4229c1ca39f10dc82bba9e2b2b.dll",
+          "version": "0.3.30",
+          "threading_layer": "pthreads",
+          "architecture": "Haswell"
+        },
+        {
+          "user_api": "blas",
+          "internal_api": "openblas",
+          "num_threads": 1,
+          "prefix": "libscipy_openblas",
+          "filepath": "C:\\Users\\DRRohlf\\PycharmProjects\\MyoGen\\.venv\\Lib\\site-packages\\scipy.libs\\libscipy_openblas-48c358d105077551cc9cc3ba79387ed5.dll",
+          "version": "0.3.29.dev",
+          "threading_layer": "pthreads",
+          "architecture": "Haswell"
+        },
+        {
+          "user_api": "openmp",
+          "internal_api": "openmp",
+          "num_threads": 1,
+          "prefix": "vcomp",
+          "filepath": "C:\\Users\\DRRohlf\\PycharmProjects\\MyoGen\\.venv\\Lib\\site-packages\\sklearn\\.libs\\vcomp140.dll",
+          "version": null
+        }
+      ],
+      "seconds": 22.095750000094995,
+      "cpu_seconds": 21.9375,
+      "rng": {
+        "bit_generator": "PCG64",
+        "state": {
+          "state": 63243315227465931225531549556570978581,
+          "inc": 259543946860559255418171984340536092047
+        },
+        "has_uint32": 1,
+        "uinteger": 4261789908
+      },
+      "execution_report": {
+        "policy": {
+          "backend": "cpu",
+          "memory_budget_mib": null,
+          "reserve_fraction": 0.2,
+          "reserve_min_mib": 4096,
+          "max_workers": 1,
+          "cache_dir": null
+        },
+        "backend": "cpu",
+        "stage": "surface_muaps",
+        "stage_seconds": {
+          "surface_muaps": 22.086563399992883
+        },
+        "status": "complete",
+        "error": null,
+        "batch_sizes": {
+          "array_0_MU_0": {
+            "initial": 4,
+            "final": 2
+          },
+          "array_0_MU_25": {
+            "initial": 4,
+            "final": 4
+          },
+          "array_0_MU_50": {
+            "initial": 4,
+            "final": 3
+          }
+        },
+        "worker_count_changes": [
+          1
+        ],
+        "rss_note": "CPU workers are threads; parent-process RSS counts their shared memory once",
+        "pressure_pauses": 0,
+        "allocation_retries": 0,
+        "cache_hits": 0,
+        "cache_evictions": 0,
+        "completed_work": 470,
+        "wait_seconds": 0.0,
+        "peak_managed_bytes": 115539808,
+        "peak_pending_bytes": 661350000,
+        "minimum_available_bytes": 36527726592,
+        "peak_process_rss_bytes": 371388416,
+        "physical_total_bytes": 68535443456,
+        "reserve_bytes": 13707088691.2,
+        "allocation_margin_bytes": 2295053025.28
+      },
+      "native_pools_after": [
+        {
+          "user_api": "blas",
+          "internal_api": "openblas",
+          "num_threads": 1,
+          "prefix": "libscipy_openblas",
+          "filepath": "C:\\Users\\DRRohlf\\PycharmProjects\\MyoGen\\.venv\\Lib\\site-packages\\numpy.libs\\libscipy_openblas64_-9e3e5a4229c1ca39f10dc82bba9e2b2b.dll",
+          "version": "0.3.30",
+          "threading_layer": "pthreads",
+          "architecture": "Haswell"
+        },
+        {
+          "user_api": "blas",
+          "internal_api": "openblas",
+          "num_threads": 1,
+          "prefix": "libscipy_openblas",
+          "filepath": "C:\\Users\\DRRohlf\\PycharmProjects\\MyoGen\\.venv\\Lib\\site-packages\\scipy.libs\\libscipy_openblas-48c358d105077551cc9cc3ba79387ed5.dll",
+          "version": "0.3.29.dev",
+          "threading_layer": "pthreads",
+          "architecture": "Haswell"
+        },
+        {
+          "user_api": "openmp",
+          "internal_api": "openmp",
+          "num_threads": 1,
+          "prefix": "vcomp",
+          "filepath": "C:\\Users\\DRRohlf\\PycharmProjects\\MyoGen\\.venv\\Lib\\site-packages\\sklearn\\.libs\\vcomp140.dll",
+          "version": null
+        }
+      ],
+      "waveform_sha256": "b84d88e81034c136bc4ed8a52345ce07858637f36fe90c2e44b5bd8f8088b529",
+      "metadata_sha256": "d9159d16fc1ac57fa7c4e75ff9bfa67ef4dc4cfef7baab1d198365e5c7959c33",
+      "realized_inputs_sha256": "c739c1e68f1601a018eb0d650ca9e52ef1d3be04004352fae9c0fb55ac291ed8",
+      "capture_scope": "Contract-only; zero-return replay outside timed numerical call.",
+      "available_after": 36757291008,
+      "saved_artifacts": {
+        "result.json": "3226e465c456ff7abf5515434e4f889969863fedc7abd526ec6751ea4170d74b",
+        "input_ids.json": "600e73354c0f3ba0b22121e4fa30aa8e8d3a1845fdd0e9f9b25b8a5ae1a46832",
+        "metadata.json": "1134325ab8e9f79d6ed7fe055bd0c55fe6a712a07b6b780040990cfa2525ec02",
+        "templates.npz": "92c0fc6b4006d1d789571d703d973ca29ddee1d352c392c6a427a7445197895e"
+      }
+    },
+    {
+      "status": "complete",
+      "label": "old3",
+      "root": "C:\\Users\\DRRohlf\\.codex\\worktrees\\basic-myogen-adaptive-memory\\MyoGen",
+      "head": "174a71404eceae963e31ad027b642f72572c72f3",
+      "harness_sha256": "69fba060fc88b21c2c4b94efbd615d4eede657afc32e0dbd2f133820fc816715",
+      "python": "C:\\Users\\DRRohlf\\PycharmProjects\\MyoGen\\.venv\\Scripts\\python.exe",
+      "imported": "C:\\Users\\DRRohlf\\.codex\\worktrees\\basic-myogen-adaptive-memory\\MyoGen\\myogen\\__init__.py",
+      "affinity": [
+        0,
+        2,
+        4,
+        6
+      ],
+      "mus": [
+        0,
+        25,
+        50
+      ],
+      "counts": [
+        14,
+        85,
+        371
+      ],
+      "fibres": 470,
+      "population": 100,
+      "total_fibres": 58755,
+      "native_threads": 1,
+      "n_jobs": 1,
+      "max_workers": 1,
+      "gpu": false,
+      "persistent_cache": false,
+      "physical_bytes": 68535443456,
+      "available_before": 36774301696,
+      "fixture_sha256": "a4a49351e69cb5422f7f5fd10ee42a0424a6808b96b5b8da890ba4f740b304a6",
+      "rng_fixture_sha256": "3557ff5013e2925e34e94fec68af40d9c27172e505d36ad4718c80f9cecc5bef",
+      "initial_rng": {
+        "bit_generator": "PCG64",
+        "state": {
+          "state": 337593171522386946240229993278563343696,
+          "inc": 259543946860559255418171984340536092047
+        },
+        "has_uint32": 1,
+        "uinteger": 4261789908
+      },
+      "timestamp": "2026-10-18T16:31:23.290733+00:00",
+      "native_pools_before": [
+        {
+          "user_api": "blas",
+          "internal_api": "openblas",
+          "num_threads": 1,
+          "prefix": "libscipy_openblas",
+          "filepath": "C:\\Users\\DRRohlf\\PycharmProjects\\MyoGen\\.venv\\Lib\\site-packages\\numpy.libs\\libscipy_openblas64_-9e3e5a4229c1ca39f10dc82bba9e2b2b.dll",
+          "version": "0.3.30",
+          "threading_layer": "pthreads",
+          "architecture": "Haswell"
+        },
+        {
+          "user_api": "blas",
+          "internal_api": "openblas",
+          "num_threads": 1,
+          "prefix": "libscipy_openblas",
+          "filepath": "C:\\Users\\DRRohlf\\PycharmProjects\\MyoGen\\.venv\\Lib\\site-packages\\scipy.libs\\libscipy_openblas-48c358d105077551cc9cc3ba79387ed5.dll",
+          "version": "0.3.29.dev",
+          "threading_layer": "pthreads",
+          "architecture": "Haswell"
+        },
+        {
+          "user_api": "openmp",
+          "internal_api": "openmp",
+          "num_threads": 1,
+          "prefix": "vcomp",
+          "filepath": "C:\\Users\\DRRohlf\\PycharmProjects\\MyoGen\\.venv\\Lib\\site-packages\\sklearn\\.libs\\vcomp140.dll",
+          "version": null
+        }
+      ],
+      "seconds": 21.67656090017408,
+      "cpu_seconds": 21.59375,
+      "rng": {
+        "bit_generator": "PCG64",
+        "state": {
+          "state": 63243315227465931225531549556570978581,
+          "inc": 259543946860559255418171984340536092047
+        },
+        "has_uint32": 1,
+        "uinteger": 4261789908
+      },
+      "execution_report": {
+        "policy": {
+          "backend": "cpu",
+          "memory_budget_mib": null,
+          "reserve_fraction": 0.2,
+          "reserve_min_mib": 4096,
+          "max_workers": 1,
+          "cache_dir": null
+        },
+        "backend": "cpu",
+        "stage": "surface_muaps",
+        "stage_seconds": {
+          "surface_muaps": 21.667404299834743
+        },
+        "status": "complete",
+        "error": null,
+        "batch_sizes": {
+          "array_0_MU_0": {
+            "initial": 4,
+            "final": 2
+          },
+          "array_0_MU_25": {
+            "initial": 4,
+            "final": 4
+          },
+          "array_0_MU_50": {
+            "initial": 4,
+            "final": 7
+          }
+        },
+        "worker_count_changes": [
+          1
+        ],
+        "rss_note": "CPU workers are threads; parent-process RSS counts their shared memory once",
+        "pressure_pauses": 0,
+        "allocation_retries": 0,
+        "cache_hits": 0,
+        "cache_evictions": 0,
+        "completed_work": 470,
+        "wait_seconds": 0.0,
+        "peak_managed_bytes": 115539808,
+        "peak_pending_bytes": 661350000,
+        "minimum_available_bytes": 36606693376,
+        "peak_process_rss_bytes": 395218944,
+        "physical_total_bytes": 68535443456,
+        "reserve_bytes": 13707088691.2,
+        "allocation_margin_bytes": 2297647841.28
+      },
+      "native_pools_after": [
+        {
+          "user_api": "blas",
+          "internal_api": "openblas",
+          "num_threads": 1,
+          "prefix": "libscipy_openblas",
+          "filepath": "C:\\Users\\DRRohlf\\PycharmProjects\\MyoGen\\.venv\\Lib\\site-packages\\numpy.libs\\libscipy_openblas64_-9e3e5a4229c1ca39f10dc82bba9e2b2b.dll",
+          "version": "0.3.30",
+          "threading_layer": "pthreads",
+          "architecture": "Haswell"
+        },
+        {
+          "user_api": "blas",
+          "internal_api": "openblas",
+          "num_threads": 1,
+          "prefix": "libscipy_openblas",
+          "filepath": "C:\\Users\\DRRohlf\\PycharmProjects\\MyoGen\\.venv\\Lib\\site-packages\\scipy.libs\\libscipy_openblas-48c358d105077551cc9cc3ba79387ed5.dll",
+          "version": "0.3.29.dev",
+          "threading_layer": "pthreads",
+          "architecture": "Haswell"
+        },
+        {
+          "user_api": "openmp",
+          "internal_api": "openmp",
+          "num_threads": 1,
+          "prefix": "vcomp",
+          "filepath": "C:\\Users\\DRRohlf\\PycharmProjects\\MyoGen\\.venv\\Lib\\site-packages\\sklearn\\.libs\\vcomp140.dll",
+          "version": null
+        }
+      ],
+      "waveform_sha256": "b84d88e81034c136bc4ed8a52345ce07858637f36fe90c2e44b5bd8f8088b529",
+      "metadata_sha256": "d9159d16fc1ac57fa7c4e75ff9bfa67ef4dc4cfef7baab1d198365e5c7959c33",
+      "realized_inputs_sha256": "c739c1e68f1601a018eb0d650ca9e52ef1d3be04004352fae9c0fb55ac291ed8",
+      "capture_scope": "Contract-only; zero-return replay outside timed numerical call.",
+      "available_after": 36784422912,
+      "saved_artifacts": {
+        "result.json": "8829f1c35aefc529a9927dd6ec8fc76f766761d6fc10d8829662b7de1613e51c",
+        "input_ids.json": "600e73354c0f3ba0b22121e4fa30aa8e8d3a1845fdd0e9f9b25b8a5ae1a46832",
+        "metadata.json": "1134325ab8e9f79d6ed7fe055bd0c55fe6a712a07b6b780040990cfa2525ec02",
+        "templates.npz": "92c0fc6b4006d1d789571d703d973ca29ddee1d352c392c6a427a7445197895e"
+      }
+    },
+    {
+      "status": "complete",
+      "label": "new3",
+      "root": "C:\\Users\\DRRohlf\\.codex\\worktrees\\bgl\\MyoGen",
+      "head": "0f26b54d59067eb3a6b30ec4de144c6cd0c69f6d",
+      "harness_sha256": "69fba060fc88b21c2c4b94efbd615d4eede657afc32e0dbd2f133820fc816715",
+      "python": "C:\\Users\\DRRohlf\\PycharmProjects\\MyoGen\\.venv\\Scripts\\python.exe",
+      "imported": "C:\\Users\\DRRohlf\\.codex\\worktrees\\bgl\\MyoGen\\myogen\\__init__.py",
+      "affinity": [
+        0,
+        2,
+        4,
+        6
+      ],
+      "mus": [
+        0,
+        25,
+        50
+      ],
+      "counts": [
+        14,
+        85,
+        371
+      ],
+      "fibres": 470,
+      "population": 100,
+      "total_fibres": 58755,
+      "native_threads": 1,
+      "n_jobs": 1,
+      "max_workers": 1,
+      "gpu": false,
+      "persistent_cache": false,
+      "physical_bytes": 68535443456,
+      "available_before": 36727607296,
+      "fixture_sha256": "a4a49351e69cb5422f7f5fd10ee42a0424a6808b96b5b8da890ba4f740b304a6",
+      "rng_fixture_sha256": "3557ff5013e2925e34e94fec68af40d9c27172e505d36ad4718c80f9cecc5bef",
+      "initial_rng": {
+        "bit_generator": "PCG64",
+        "state": {
+          "state": 337593171522386946240229993278563343696,
+          "inc": 259543946860559255418171984340536092047
+        },
+        "has_uint32": 1,
+        "uinteger": 4261789908
+      },
+      "timestamp": "2026-10-18T16:31:47.238770+00:00",
+      "native_pools_before": [
+        {
+          "user_api": "blas",
+          "internal_api": "openblas",
+          "num_threads": 1,
+          "prefix": "libscipy_openblas",
+          "filepath": "C:\\Users\\DRRohlf\\PycharmProjects\\MyoGen\\.venv\\Lib\\site-packages\\numpy.libs\\libscipy_openblas64_-9e3e5a4229c1ca39f10dc82bba9e2b2b.dll",
+          "version": "0.3.30",
+          "threading_layer": "pthreads",
+          "architecture": "Haswell"
+        },
+        {
+          "user_api": "blas",
+          "internal_api": "openblas",
+          "num_threads": 1,
+          "prefix": "libscipy_openblas",
+          "filepath": "C:\\Users\\DRRohlf\\PycharmProjects\\MyoGen\\.venv\\Lib\\site-packages\\scipy.libs\\libscipy_openblas-48c358d105077551cc9cc3ba79387ed5.dll",
+          "version": "0.3.29.dev",
+          "threading_layer": "pthreads",
+          "architecture": "Haswell"
+        },
+        {
+          "user_api": "openmp",
+          "internal_api": "openmp",
+          "num_threads": 1,
+          "prefix": "vcomp",
+          "filepath": "C:\\Users\\DRRohlf\\PycharmProjects\\MyoGen\\.venv\\Lib\\site-packages\\sklearn\\.libs\\vcomp140.dll",
+          "version": null
+        }
+      ],
+      "seconds": 22.25487479986623,
+      "cpu_seconds": 21.953125,
+      "rng": {
+        "bit_generator": "PCG64",
+        "state": {
+          "state": 63243315227465931225531549556570978581,
+          "inc": 259543946860559255418171984340536092047
+        },
+        "has_uint32": 1,
+        "uinteger": 4261789908
+      },
+      "execution_report": {
+        "policy": {
+          "backend": "cpu",
+          "memory_budget_mib": null,
+          "reserve_fraction": 0.2,
+          "reserve_min_mib": 4096,
+          "max_workers": 1,
+          "cache_dir": null
+        },
+        "backend": "cpu",
+        "stage": "surface_muaps",
+        "stage_seconds": {
+          "surface_muaps": 22.242897000163794
+        },
+        "status": "complete",
+        "error": null,
+        "batch_sizes": {
+          "array_0_MU_0": {
+            "initial": 4,
+            "final": 2
+          },
+          "array_0_MU_25": {
+            "initial": 4,
+            "final": 4
+          },
+          "array_0_MU_50": {
+            "initial": 4,
+            "final": 3
+          }
+        },
+        "worker_count_changes": [
+          1
+        ],
+        "rss_note": "CPU workers are threads; parent-process RSS counts their shared memory once",
+        "pressure_pauses": 0,
+        "allocation_retries": 0,
+        "cache_hits": 0,
+        "cache_evictions": 0,
+        "completed_work": 470,
+        "wait_seconds": 0.0,
+        "peak_managed_bytes": 116064448,
+        "peak_pending_bytes": 661350000,
+        "minimum_available_bytes": 36459282432,
+        "peak_process_rss_bytes": 395313152,
+        "physical_total_bytes": 68535443456,
+        "reserve_bytes": 13707088691.2,
+        "allocation_margin_bytes": 2292139130.88
+      },
+      "native_pools_after": [
+        {
+          "user_api": "blas",
+          "internal_api": "openblas",
+          "num_threads": 1,
+          "prefix": "libscipy_openblas",
+          "filepath": "C:\\Users\\DRRohlf\\PycharmProjects\\MyoGen\\.venv\\Lib\\site-packages\\numpy.libs\\libscipy_openblas64_-9e3e5a4229c1ca39f10dc82bba9e2b2b.dll",
+          "version": "0.3.30",
+          "threading_layer": "pthreads",
+          "architecture": "Haswell"
+        },
+        {
+          "user_api": "blas",
+          "internal_api": "openblas",
+          "num_threads": 1,
+          "prefix": "libscipy_openblas",
+          "filepath": "C:\\Users\\DRRohlf\\PycharmProjects\\MyoGen\\.venv\\Lib\\site-packages\\scipy.libs\\libscipy_openblas-48c358d105077551cc9cc3ba79387ed5.dll",
+          "version": "0.3.29.dev",
+          "threading_layer": "pthreads",
+          "architecture": "Haswell"
+        },
+        {
+          "user_api": "openmp",
+          "internal_api": "openmp",
+          "num_threads": 1,
+          "prefix": "vcomp",
+          "filepath": "C:\\Users\\DRRohlf\\PycharmProjects\\MyoGen\\.venv\\Lib\\site-packages\\sklearn\\.libs\\vcomp140.dll",
+          "version": null
+        }
+      ],
+      "waveform_sha256": "24ba82dd5b02db50516324fe0616ecb8ea673b7583cf035a0d674c65361ed4c1",
+      "metadata_sha256": "d9159d16fc1ac57fa7c4e75ff9bfa67ef4dc4cfef7baab1d198365e5c7959c33",
+      "realized_inputs_sha256": "c739c1e68f1601a018eb0d650ca9e52ef1d3be04004352fae9c0fb55ac291ed8",
+      "capture_scope": "Contract-only; zero-return replay outside timed numerical call.",
+      "available_after": 36736638976,
+      "saved_artifacts": {
+        "result.json": "5b2813f87e470ce1760e628dfda2ffded82c07e8991ba7414d6f50c61f536532",
+        "input_ids.json": "600e73354c0f3ba0b22121e4fa30aa8e8d3a1845fdd0e9f9b25b8a5ae1a46832",
+        "metadata.json": "1134325ab8e9f79d6ed7fe055bd0c55fe6a712a07b6b780040990cfa2525ec02",
+        "templates.npz": "c48b5857f82cd239d81fdd787474bb9af2e80be263a3b16150183f749320a0ce"
+      }
+    }
+  ],
+  "excluded_attempt": {
+    "path": "artifacts/gl/m470/old1",
+    "reason": "Post-timer harness assertion compared immutable worker tuple to a list. Simulator completed; attempt excluded. Assertion corrected before all six accepted runs."
+  },
+  "timed_harness": {
+    "path": "artifacts/gl/m471/harness.py",
+    "sha256": "69fba060fc88b21c2c4b94efbd615d4eede657afc32e0dbd2f133820fc816715",
+    "note": "Tracked harness subsequently permits documentation-only descendants after verifying source/dependency files unchanged. Timed workload and validation unchanged."
+  }
+}
