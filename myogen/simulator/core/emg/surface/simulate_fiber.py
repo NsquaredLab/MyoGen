@@ -224,6 +224,7 @@ def _simulate_fiber_v2_python(
     pos_z_precomputed: np.ndarray | None = None,
     pos_theta_precomputed: np.ndarray | None = None,
     rele_precomputed: float | None = None,
+    _prepared=None,
 ):
     """
     Simulate a single fiber (Python implementation).
@@ -314,84 +315,102 @@ def _simulate_fiber_v2_python(
     ###################################################################################################
     ## 1. Constants
 
-    ## Model angular frequencies
-    # FFT-consistent bin centers (matches np.fft.fft + fftshift): spacing = 1, bins at
-    # (-M/2, ..., M/2 - 1) for even M (and the analogous range for odd M).
-    k_theta = np.fft.fftshift(np.fft.fftfreq(M, d=1.0 / M))
+    if _prepared is not None:
+        _prepared.bind((Fs, v, N, M, r, r_bone, th_fat, th_skin,
+                        sig_muscle_rho, sig_muscle_z, sig_fat, sig_skin, sig_bone, fiber_length__mm))
+    if _prepared is None or _prepared.grid is None:
+        ## Model angular frequencies
+        # FFT-consistent bin centers (matches np.fft.fft + fftshift): spacing = 1, bins at
+        # (-M/2, ..., M/2 - 1) for even M (and the analogous range for odd M).
+        k_theta = np.fft.fftshift(np.fft.fftfreq(M, d=1.0 / M))
 
-    # Calculate effective Fs based on grid spacing
-    # When fiber_length__mm is specified, we must use the corresponding Fs for FFT consistency
-    if fiber_length__mm is not None:
-        # z-grid spans fiber_length__mm with N points (before z /= 2 scaling)
-        # Grid spacing (before scaling): dz = fiber_length__mm / (N-1)
-        # For FFT: dz = v / Fs_eff → Fs_eff = v * (N-1) / fiber_length__mm
-        # Note: The z /= 2 scaling affects the IAP kernel evaluation but the FFT
-        # operates on the array structure, so we use the pre-scaling grid spacing
-        Fs_effective = v * (N - 1) / fiber_length__mm  # kHz
+        # Calculate effective Fs based on grid spacing
+        # When fiber_length__mm is specified, we must use the corresponding Fs for FFT consistency
+        if fiber_length__mm is not None:
+            # z-grid spans fiber_length__mm with N points (before z /= 2 scaling)
+            # Grid spacing (before scaling): dz = fiber_length__mm / (N-1)
+            # For FFT: dz = v / Fs_eff → Fs_eff = v * (N-1) / fiber_length__mm
+            # Note: The z /= 2 scaling affects the IAP kernel evaluation but the FFT
+            # operates on the array structure, so we use the pre-scaling grid spacing
+            Fs_effective = v * (N - 1) / fiber_length__mm  # kHz
+        else:
+            Fs_effective = Fs
+
+        # FFT-consistent angular-frequency grid (matches np.fft.fft + fftshift):
+        # bin spacing = Fs/N (not Fs/(N-1)). Using fftfreq guarantees the grid
+        # aligns with how the IFFT later interprets the spectrum, eliminating an
+        # off-by-half-bin error that affected the previous np.linspace-based grid.
+        k_t = 2 * math.pi * np.fft.fftshift(np.fft.fftfreq(N, d=1.0 / Fs_effective))
+        # The DC bin (k_t = 0 ⇒ k_z = 0) makes the Bessel-function arguments
+        # vanish and turns the 7×7 volume-conductor A-matrix singular. The
+        # previous np.linspace grid for even N happened to avoid k = 0 because
+        # of its (N-1) spacing; the FFT-correct grid lands exactly on it.
+        # Replace exact zeros with a tiny offset (half a bin) so the DC bin
+        # remains finite without measurably perturbing the rest of the spectrum.
+        if N > 1:
+            dk_t = 2 * math.pi * Fs_effective / N
+            k_t = np.where(k_t == 0.0, 0.5 * dk_t, k_t)
+        k_z = k_t / v
+        (kt_mesh_kzkt, kz_mesh_kzkt) = np.meshgrid(k_t, k_z)
+
+        ## Model radii -> (Farina, 2004), Figure 1 - b)
+        th_muscle = r - th_fat - th_skin - r_bone
+        a = r_bone
+        b = r_bone + th_muscle
+        c = r_bone + th_muscle + th_fat
+        d = r_bone + th_muscle + th_fat + th_skin
+
+        ###################################################################################################
+        ## 2. I(k_t, k_z)
+        # Rosenfalck (1969) intracellular action potential spatial distribution
+        # As used in Farina & Merletti (2001), equation 16
+        # IMPORTANT: This matches the original Farina implementation exactly (no normalization)
+        A = 96 / 10  # mV/mm^3 (amplitude parameter from Farina 2001, eq 16)
+
+        # Define spatial grid for IAP kernel evaluation
+        if fiber_length__mm is None:
+            # Legacy behavior: z-range depends on N (INCORRECT - causes MUAP duration to scale with N)
+            z = np.linspace(-(N - 1) * (v / Fs) / 2, (N - 1) * (v / Fs) / 2, N, dtype=np.longdouble)
+        else:
+            # Correct behavior: z-range defined by physical fiber length (independent of N)
+            # N controls only the resolution, not the physical extent
+            z = np.linspace(-fiber_length__mm / 2, fiber_length__mm / 2, N, dtype=np.longdouble)
+
+        z /= 2  # mm - scaling for Rosenfalck model
+
+        # Rosenfalck action potential: A * exp(-z) * (3z² - z³) for z ≥ 0
+        # Uses raw z values in mm (NOT normalized) to match original implementation
+        aux = np.zeros_like(z)
+        for i in range(len(z)):
+            if z[i] >= 0:
+                aux[i] = A * np.exp(-z[i]) * (3 * z[i] ** 2 - z[i] ** 3)
+
+        # print(f"DEBUG: z range = [{np.min(z):.2f}, {np.max(z):.2f}] mm")
+        # print(f"DEBUG: aux range = [{np.min(aux):.6e}, {np.max(aux):.6e}]")
+        # print(f"DEBUG: aux nonzero count = {np.count_nonzero(aux)}/{len(aux)}")
+
+        psi = -f_minus_t(aux)
+        # print(f"DEBUG: psi range = [{np.min(psi):.6e}, {np.max(psi):.6e}]")
+        PSI = np.fft.fftshift(np.fft.fft(psi)) / len(psi)
+        PSI_conj = np.conj(PSI)
+        PSI_conj = PSI_conj.reshape(-1, len(PSI_conj))
+        ones = np.ones((len(PSI_conj[0, :]), 1))
+        PSI_mesh_conj = np.dot(ones, PSI_conj)
+        if _prepared is not None:
+            _prepared.freeze_grid((k_theta, k_t, k_z, kt_mesh_kzkt, kz_mesh_kzkt, a, b, c, d, psi, PSI_mesh_conj, Fs_effective))
     else:
-        Fs_effective = Fs
-
-    # FFT-consistent angular-frequency grid (matches np.fft.fft + fftshift):
-    # bin spacing = Fs/N (not Fs/(N-1)). Using fftfreq guarantees the grid
-    # aligns with how the IFFT later interprets the spectrum, eliminating an
-    # off-by-half-bin error that affected the previous np.linspace-based grid.
-    k_t = 2 * math.pi * np.fft.fftshift(np.fft.fftfreq(N, d=1.0 / Fs_effective))
-    # The DC bin (k_t = 0 ⇒ k_z = 0) makes the Bessel-function arguments
-    # vanish and turns the 7×7 volume-conductor A-matrix singular. The
-    # previous np.linspace grid for even N happened to avoid k = 0 because
-    # of its (N-1) spacing; the FFT-correct grid lands exactly on it.
-    # Replace exact zeros with a tiny offset (half a bin) so the DC bin
-    # remains finite without measurably perturbing the rest of the spectrum.
-    if N > 1:
-        dk_t = 2 * math.pi * Fs_effective / N
-        k_t = np.where(k_t == 0.0, 0.5 * dk_t, k_t)
-    k_z = k_t / v
-    (kt_mesh_kzkt, kz_mesh_kzkt) = np.meshgrid(k_t, k_z)
-
-    ###################################################################################################
-    ## 2. I(k_t, k_z)
-    # Rosenfalck (1969) intracellular action potential spatial distribution
-    # As used in Farina & Merletti (2001), equation 16
-    # IMPORTANT: This matches the original Farina implementation exactly (no normalization)
-    A = 96 / 10  # mV/mm^3 (amplitude parameter from Farina 2001, eq 16)
-
-    # Define spatial grid for IAP kernel evaluation
-    if fiber_length__mm is None:
-        # Legacy behavior: z-range depends on N (INCORRECT - causes MUAP duration to scale with N)
-        z = np.linspace(-(N - 1) * (v / Fs) / 2, (N - 1) * (v / Fs) / 2, N, dtype=np.longdouble)
+        k_theta, k_t, k_z, kt_mesh_kzkt, kz_mesh_kzkt, a, b, c, d, psi, PSI_mesh_conj, Fs_effective = _prepared.grid
+    if _prepared is not None:
+        I_kzkt = _prepared.source_current(k_z, k_t, PSI_mesh_conj[0], v, zi, L1, L2)
     else:
-        # Correct behavior: z-range defined by physical fiber length (independent of N)
-        # N controls only the resolution, not the physical extent
-        z = np.linspace(-fiber_length__mm / 2, fiber_length__mm / 2, N, dtype=np.longdouble)
-
-    z /= 2  # mm - scaling for Rosenfalck model
-
-    # Rosenfalck action potential: A * exp(-z) * (3z² - z³) for z ≥ 0
-    # Uses raw z values in mm (NOT normalized) to match original implementation
-    aux = np.zeros_like(z)
-    for i in range(len(z)):
-        if z[i] >= 0:
-            aux[i] = A * np.exp(-z[i]) * (3 * z[i] ** 2 - z[i] ** 3)
-
-    # print(f"DEBUG: z range = [{np.min(z):.2f}, {np.max(z):.2f}] mm")
-    # print(f"DEBUG: aux range = [{np.min(aux):.6e}, {np.max(aux):.6e}]")
-    # print(f"DEBUG: aux nonzero count = {np.count_nonzero(aux)}/{len(aux)}")
-
-    psi = -f_minus_t(aux)
-    # print(f"DEBUG: psi range = [{np.min(psi):.6e}, {np.max(psi):.6e}]")
-    PSI = np.fft.fftshift(np.fft.fft(psi)) / len(psi)
-    PSI_conj = np.conj(PSI)
-    PSI_conj = PSI_conj.reshape(-1, len(PSI_conj))
-    ones = np.ones((len(PSI_conj[0, :]), 1))
-    PSI_mesh_conj = np.dot(ones, PSI_conj)
-    I_kzkt = 1j * np.multiply(
-        kz_mesh_kzkt / v, np.multiply(PSI_mesh_conj, np.exp(-1j * kz_mesh_kzkt * zi))
-    )
-    k_eps = kz_mesh_kzkt + kt_mesh_kzkt / v
-    k_beta = kz_mesh_kzkt - kt_mesh_kzkt / v
-    aux1 = np.multiply(np.exp(-1j * k_eps * L1 / 2), np.sinc(k_eps * L1 / 2 / math.pi) * L1)
-    aux2 = np.multiply(np.exp(1j * k_beta * L2 / 2), np.sinc(k_beta * L2 / 2 / math.pi) * L2)
-    I_kzkt = np.multiply(I_kzkt, (aux1 - aux2))
+        I_kzkt = 1j * np.multiply(
+            kz_mesh_kzkt / v, np.multiply(PSI_mesh_conj, np.exp(-1j * kz_mesh_kzkt * zi))
+        )
+        k_eps = kz_mesh_kzkt + kt_mesh_kzkt / v
+        k_beta = kz_mesh_kzkt - kt_mesh_kzkt / v
+        aux1 = np.multiply(np.exp(-1j * k_eps * L1 / 2), np.sinc(k_eps * L1 / 2 / math.pi) * L1)
+        aux2 = np.multiply(np.exp(1j * k_beta * L2 / 2), np.sinc(k_beta * L2 / 2 / math.pi) * L2)
+        I_kzkt = np.multiply(I_kzkt, (aux1 - aux2))
     # print(f"DEBUG: I_kzkt range = [{np.min(np.abs(I_kzkt)):.6e}, {np.max(np.abs(I_kzkt)):.6e}]")
 
     # Time grid: use the effective Fs (matches grid spacing)
@@ -415,26 +434,34 @@ def _simulate_fiber_v2_python(
         A_matrix=A_matrix,
         B_incomplete=B_incomplete,
         use_gpu=use_gpu,
+        _prepared=_prepared,
     )
 
     ###################################################################################################
     ## 4. H_ele(k_z, k_theta)
 
-    # Use the SurfaceElectrodeArray's spatial filtering capabilities
-    ktheta_mesh_kzktheta, kz_mesh_kzktheta = np.meshgrid(k_theta, k_z)
+    if _prepared is None or _prepared.electrode is None:
+        # Use the SurfaceElectrodeArray's spatial filtering capabilities
+        ktheta_mesh_kzktheta, kz_mesh_kzktheta = np.meshgrid(k_theta, k_z)
 
-    # Get spatial filter from electrode array
-    H_sf = electrode_array.get_H_sf(ktheta_mesh_kzktheta, kz_mesh_kzktheta)
+        # Get spatial filter from electrode array
+        H_sf = electrode_array.get_H_sf(ktheta_mesh_kzktheta, kz_mesh_kzktheta)
 
-    # Electrode size effect
-    arg = np.sqrt((rele * ktheta_mesh_kzktheta / r) ** 2 + (rele * kz_mesh_kzktheta) ** 2)
-    H_size = 2 * np.divide(Jn(1, arg), arg)
-    auxxx = np.ones(H_size.shape)
-    H_size[np.isnan(H_size)] = auxxx[np.isnan(H_size)]
+        # Electrode size effect
+        arg = np.sqrt((rele * ktheta_mesh_kzktheta / r) ** 2 + (rele * kz_mesh_kzktheta) ** 2)
+        H_size = 2 * np.divide(Jn(1, arg), arg)
+        auxxx = np.ones(H_size.shape)
+        H_size[np.isnan(H_size)] = auxxx[np.isnan(H_size)]
 
-    # Combined electrode response
-    H_ele = np.multiply(H_sf, H_size)
+        # Combined electrode response
+        H_ele = np.multiply(H_sf, H_size)
 
+        if _prepared is not None:
+            _prepared.electrode = (ktheta_mesh_kzktheta, kz_mesh_kzktheta, H_ele)
+            for value in _prepared.electrode:
+                value.flags.writeable = False
+    else:
+        ktheta_mesh_kzktheta, kz_mesh_kzktheta, H_ele = _prepared.electrode
     # print(f"DEBUG: H_vc range = [{np.min(np.abs(H_vc)):.6e}, {np.max(np.abs(H_vc)):.6e}]")
     # print(f"DEBUG: H_ele range = [{np.min(np.abs(H_ele)):.6e}, {np.max(np.abs(H_ele)):.6e}]")
 
@@ -472,9 +499,10 @@ def _simulate_fiber_v2_python(
     ###################################################################################################
     ## 6. phi(t) for each channel
 
-    if _numba_phi_func is not None:
+    if _prepared is not None or _numba_phi_func is not None:
         # Use Numba-optimized parallel computation
-        PHI_complex = _numba_phi_func(
+        PHI_complex = (_prepared.phi(I_kzkt, B_kz, pos_z_mm, k_z)
+                       if _prepared is not None else _numba_phi_func(
             np.ascontiguousarray(I_kzkt.real, dtype=np.float64),
             np.ascontiguousarray(I_kzkt.imag, dtype=np.float64),
             np.ascontiguousarray(B_kz, dtype=np.float64),
@@ -482,7 +510,7 @@ def _simulate_fiber_v2_python(
             np.ascontiguousarray(kz_mesh_kzkt, dtype=np.float64),
             channels[0], channels[1], len(k_z), len(k_t),
             float(k_z_diff),
-        )
+        ))
         # Apply IFFT to get time-domain signal
         phi = np.zeros((channels[0], channels[1], len(t)))
         for channel_z in range(channels[0]):

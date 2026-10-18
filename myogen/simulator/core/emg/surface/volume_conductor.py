@@ -73,6 +73,7 @@ def layered_cylinder_transfer(
     A_matrix: np.ndarray | None = None,
     B_incomplete: np.ndarray | None = None,
     use_gpu: bool = False,
+    _prepared=None,
 ) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
     """Surface potential transfer function of a fibre in a layered cylinder.
 
@@ -131,15 +132,31 @@ def layered_cylinder_transfer(
     bm = b * anisotropy
     Rm = R * anisotropy
 
-    # Unique |k| values.  The inverse indices map back onto the full grid.
-    k_z_abs, k_z_inverse = np.unique(np.abs(k_z), return_inverse=True)
-    k_theta_abs, k_theta_inverse = np.unique(np.abs(k_theta), return_inverse=True)
-    has_dc = bool(k_z_abs.size) and k_z_abs[0] == 0.0
-    k_z_solve = k_z_abs[1:] if has_dc else k_z_abs
+    if _prepared is not None:
+        if use_gpu:
+            raise ValueError("Prepared conductor execution is CPU only")
+        _prepared.bind_transfer(k_z, k_theta, r, r_bone, th_fat, th_skin,
+                                sig_muscle_rho, sig_muscle_z, sig_fat,
+                                sig_skin, sig_bone)
+    if _prepared is None or _prepared.transfer_grid is None:
+        # Unique |k| values.  The inverse indices map back onto the full grid.
+        k_z_abs, k_z_inverse = np.unique(np.abs(k_z), return_inverse=True)
+        k_theta_abs, k_theta_inverse = np.unique(np.abs(k_theta), return_inverse=True)
+        has_dc = bool(k_z_abs.size) and k_z_abs[0] == 0.0
+        k_z_solve = k_z_abs[1:] if has_dc else k_z_abs
 
-    K_THETA, K_Z = np.meshgrid(k_theta_abs, k_z_solve, indexing="ij")
-    n_theta, n_z = K_THETA.shape
+        K_THETA, K_Z = np.meshgrid(k_theta_abs, k_z_solve, indexing="ij")
+        n_theta, n_z = K_THETA.shape
 
+        if _prepared is not None:
+            _prepared.freeze_transfer_grid((K_THETA, K_Z, k_z_inverse,
+                                            k_theta_inverse, has_dc))
+    else:
+        K_THETA, K_Z, k_z_inverse, k_theta_inverse, has_dc = _prepared.transfer_grid
+        n_theta, n_z = K_THETA.shape
+
+    if _prepared is not None and _prepared.matrix is not None:
+        A_matrix, B_incomplete = _prepared.matrix, _prepared.incomplete
     if A_matrix is not None:
         A_mat = A_matrix
         B = (
@@ -232,12 +249,17 @@ def layered_cylinder_transfer(
         B_incomplete = B.copy()
 
     # Source vector (depends on R, so never cached).
-    log_In_am = log_In(K_THETA, am * K_Z)
+    if _prepared is None:
+        log_In_am = log_In(K_THETA, am * K_Z)
+        log_Kn_bm = log_Kn(K_THETA, bm * K_Z)
+        log_In_tilde_am = _log_tilde(log_In, K_THETA, am * K_Z)
+        log_Kn_tilde_bm = _log_tilde(log_Kn, K_THETA, bm * K_Z)
+    else:
+        log_In_am, log_Kn_bm, log_In_tilde_am, log_Kn_tilde_bm = (
+            _prepared.boundary_terms(K_THETA, K_Z, am, bm))
+    # These terms depend on each fibre's actual radius.
     log_Kn_Rm = log_Kn(K_THETA, Rm * K_Z)
-    log_Kn_bm = log_Kn(K_THETA, bm * K_Z)
     log_In_Rm = log_In(K_THETA, Rm * K_Z)
-    log_In_tilde_am = _log_tilde(log_In, K_THETA, am * K_Z)
-    log_Kn_tilde_bm = _log_tilde(log_Kn, K_THETA, bm * K_Z)
 
     def _safe_exp(log_val):
         return np.where(log_val < _MAX_LOG_SAFE, np.exp(log_val), 0)
@@ -265,17 +287,21 @@ def layered_cylinder_transfer(
     else:
         n_unknowns = 7
 
-    if HAS_CUPY and use_gpu:
-        A_gpu = cp.asarray(A_flat)
-        B_gpu = cp.asarray(B_flat)
-        X = cp.asnumpy(cp.linalg.solve(A_gpu, B_gpu))
-        del A_gpu, B_gpu
+    if _prepared is not None:
+        response = _prepared.conductor(A_matrix, B_incomplete, r_bone != 0)
+        H_vc_unique = response(B_flat).reshape(n_theta, n_z)
     else:
-        X = np.linalg.solve(A_flat, B_flat)
+        if HAS_CUPY and use_gpu:
+            A_gpu = cp.asarray(A_flat)
+            B_gpu = cp.asarray(B_flat)
+            X = cp.asnumpy(cp.linalg.solve(A_gpu, B_gpu))
+            del A_gpu, B_gpu
+        else:
+            X = np.linalg.solve(A_flat, B_flat)
 
-    X = X.reshape(n_theta, n_z, n_unknowns, 1)
-    # Skin potential = In_skin + Kn_skin coefficients (last two unknowns).
-    H_vc_unique = X[..., n_unknowns - 2, 0] + X[..., n_unknowns - 1, 0]
+        X = X.reshape(n_theta, n_z, n_unknowns, 1)
+        # Skin potential = In_skin + Kn_skin coefficients (last two unknowns).
+        H_vc_unique = X[..., n_unknowns - 2, 0] + X[..., n_unknowns - 1, 0]
 
     if has_dc:
         H_vc_unique = np.concatenate((np.zeros((n_theta, 1)), H_vc_unique), axis=1)
