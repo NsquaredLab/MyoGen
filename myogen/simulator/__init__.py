@@ -1,64 +1,46 @@
+"""Public names loaded on demand.
+
+Top-level myogen retains its existing NEURON mechanism-loading behavior.
 """
-MyoGen Simulator Module
+from importlib import import_module
 
-This module provides high-level simulation functions for muscle and EMG modeling.
-NMODL files are automatically loaded when needed.
-"""
+_EXPORTS = {
+    'ExecutionPolicy': 'myogen.simulator.core.emg.runtime',
+    'MemoryBudgetError': 'myogen.simulator.core.emg.runtime',
+    'RecruitmentThresholds': 'myogen.simulator.core.physiological_distribution',
+    'Muscle': 'myogen.simulator.core.muscle',
+    'Network': 'myogen.simulator.neuron.network',
+    'SimulationRunner': 'myogen.simulator.neuron.simulation_runner',
+    'SurfaceEMG': 'myogen.simulator.core.emg',
+    'IntramuscularEMG': 'myogen.simulator.core.emg',
+    'SurfaceElectrodeArray': 'myogen.simulator.core.emg',
+    'IntramuscularElectrodeArray': 'myogen.simulator.core.emg',
+    'ForceModel': 'myogen.simulator.core.force',
+    'ForceModelVectorized': 'myogen.simulator.core.force',
+    'JointBiomechanics': 'myogen.simulator.core.force',
+    'JointGeometry': 'myogen.simulator.core.force',
+    'MuscleGeometry': 'myogen.simulator.core.force',
+    'HillModel': 'myogen.simulator.neuron.muscle',
+    'SpindleModel': 'myogen.simulator.neuron.proprioception',
+    'GolgiTendonOrganModel': 'myogen.simulator.neuron.proprioception',
+    'JointDynamics': 'myogen.simulator.neuron.joint_dynamics',
+    'create_grid_signal': 'myogen.utils.neo',
+    'signal_to_grid': 'myogen.utils.neo',
+    'get_electrode': 'myogen.utils.neo',
+    'get_row': 'myogen.utils.neo',
+    'get_column': 'myogen.utils.neo',
+    'GridAnalogSignal': 'myogen.utils.neo',
+}
+__all__ = list(_EXPORTS)
 
-from myogen.simulator.core.emg import (
-    IntramuscularElectrodeArray,
-    IntramuscularEMG,
-    SurfaceElectrodeArray,
-    SurfaceEMG,
-)
-from myogen.simulator.core.force import (
-    ForceModel,
-    ForceModelVectorized,
-    JointBiomechanics,
-    JointGeometry,
-    MuscleGeometry,
-)
-from myogen.simulator.core.muscle import Muscle
 
-# Always import all public APIs (they will fail gracefully if NMODL not loaded)
-from myogen.simulator.core.physiological_distribution import RecruitmentThresholds
-from myogen.simulator.neuron.muscle import HillModel
-from myogen.simulator.neuron.joint_dynamics import JointDynamics
-from myogen.simulator.neuron.network import Network
-from myogen.simulator.neuron.proprioception import GolgiTendonOrganModel, SpindleModel
-from myogen.simulator.neuron.simulation_runner import SimulationRunner
-from myogen.utils.neo import (
-    create_grid_signal,
-    signal_to_grid,
-    get_electrode,
-    get_row,
-    get_column,
-    GridAnalogSignal,  # Deprecated, kept for backwards compatibility
-)
+def __getattr__(name):
+    if name not in _EXPORTS:
+        raise AttributeError(f"module {__name__!r} has no attribute {name!r}")
+    value = getattr(import_module(_EXPORTS[name], __package__), name)
+    globals()[name] = value
+    return value
 
-__all__ = [
-    "RecruitmentThresholds",
-    "Muscle",
-    "Network",
-    "SimulationRunner",
-    "SurfaceEMG",
-    "IntramuscularEMG",
-    "SurfaceElectrodeArray",
-    "IntramuscularElectrodeArray",
-    "ForceModel",
-    "ForceModelVectorized",
-    "JointBiomechanics",
-    "JointGeometry",
-    "MuscleGeometry",
-    "HillModel",
-    "SpindleModel",
-    "GolgiTendonOrganModel",
-    "JointDynamics",
-    # Grid signal utilities (NWB-compatible)
-    "create_grid_signal",
-    "signal_to_grid",
-    "get_electrode",
-    "get_row",
-    "get_column",
-    "GridAnalogSignal",  # Deprecated
-]
+
+def __dir__():
+    return sorted(set(globals()) | set(__all__))
