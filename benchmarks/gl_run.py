@@ -76,7 +76,8 @@ def main():
         while not stop.wait(.2):
             peak[0] = max(peak[0], process.memory_info().rss)
     thread = threading.Thread(target=monitor, daemon=True)
-    thread.start()
+    if not args.profile:
+        thread.start()
     try:
         with threadpool_limits(limits=1):
             result["native_pools"] = threadpool_info()
@@ -110,7 +111,8 @@ def main():
         raise
     finally:
         stop.set()
-        thread.join()
+        if not args.profile:
+            thread.join()
         result["peak_sampled_rss"] = peak[0]
         dump_json(folder/"result.json", result)
 
