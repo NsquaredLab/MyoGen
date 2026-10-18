@@ -1,7 +1,8 @@
 """
-GPU parity test: verify CuPy backend produces bit-identical SFAPs to NumPy.
+GPU parity checks and synthetic array-shift contract tests.
 
-Skipped automatically when CuPy is not installed or no CUDA GPU is available.
+Only GPU checks are skipped when CuPy or a CUDA device is unavailable.
+These small fixtures do not establish physiological or population parity.
 """
 
 import numpy as np
@@ -13,17 +14,13 @@ from myogen.simulator.core.emg.intramuscular.bioelectric import (
     shift_padding,
 )
 
-# Graceful skip: pytest.importorskip handles missing CuPy, then we
-# additionally check that a real CUDA device is present (e.g. Docker
-# images may have CuPy installed without a GPU).
-cupy = pytest.importorskip("cupy", reason="CuPy not installed")
-
-
-@pytest.fixture(autouse=True)
-def _require_cuda():
-    """Skip all tests in this module if no CUDA device is available."""
+@pytest.fixture
+def cupy():
+    """Require CUDA only for tests that request the GPU backend."""
+    cupy = pytest.importorskip("cupy", reason="CuPy not installed")
     if not cupy.cuda.is_available():
         pytest.skip("CUDA device not available")
+    return cupy
 
 
 # ── Helpers ──────────────────────────────────────────────────────────────────
@@ -47,7 +44,7 @@ def _make_inputs():
 class TestGPUParity:
     """Verify that CuPy-accelerated bioelectric kernels match CPU output."""
 
-    def test_current_density_parity(self):
+    def test_current_density_parity(self, cupy):
         """get_current_density: GPU vs CPU xcorr ≈ 1.0."""
         cp = cupy
 
@@ -65,7 +62,7 @@ class TestGPUParity:
         assert xcorr > 0.999999, f"xcorr={xcorr}"
         assert rmse < 1e-12, f"RMSE={rmse}"
 
-    def test_elementary_response_parity(self):
+    def test_elementary_response_parity(self, cupy):
         """get_elementary_current_response: GPU vs CPU."""
         cp = cupy
 
@@ -81,7 +78,7 @@ class TestGPUParity:
         xcorr = np.corrcoef(ecr_cpu.ravel(), ecr_back.ravel())[0, 1]
         assert xcorr > 0.999999, f"xcorr={xcorr}"
 
-    def test_full_sfap_pipeline_parity(self):
+    def test_full_sfap_pipeline_parity(self, cupy):
         """Full SFAP chain: current_density.T @ response → same on CPU and GPU."""
         cp = cupy
 
@@ -110,14 +107,11 @@ class TestShiftPadding:
     """Verify shift_padding semantics for positive, negative, and zero shifts."""
 
     def test_positive_shift(self):
-        """Positive shift: head and tail zeroed (original MATLAB semantics)."""
+        """Positive shift clears the vacated head and preserves valid tail samples."""
         vec = np.arange(1, 11, dtype=float)  # [1..10]
         result = shift_padding(vec.copy(), 3, axis=0)
-        # roll(3) wraps [8,9,10,1,2,3,4,5,6,7], then [:3]=0 and [-3:]=0
-        assert np.all(result[:3] == 0), f"head not zeroed: {result[:3]}"
-        assert np.all(result[-3:] == 0), f"tail not zeroed: {result[-3:]}"
-        # middle values preserved
-        np.testing.assert_array_equal(result[3:7], [1, 2, 3, 4])
+        # GitLab baseline fc077cb4: roll(3), then clear only [:3].
+        np.testing.assert_array_equal(result, [0, 0, 0, 1, 2, 3, 4, 5, 6, 7])
 
     def test_negative_shift(self):
         """Negative shift: only tail zeroed."""
@@ -133,7 +127,7 @@ class TestShiftPadding:
         result = shift_padding(vec.copy(), 0, axis=0)
         np.testing.assert_array_equal(result, vec)
 
-    def test_gpu_parity(self):
+    def test_gpu_parity(self, cupy):
         """shift_padding: GPU vs CPU produce identical output."""
         cp = cupy
         vec = np.random.default_rng(42).random(100)

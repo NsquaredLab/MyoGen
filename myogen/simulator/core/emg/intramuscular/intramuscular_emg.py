@@ -171,7 +171,7 @@ class IntramuscularEMG:
         self._noisy_intramuscular_emg__Block: Optional[INTRAMUSCULAR_EMG__Block] = None
         self._spike_train__Block: Optional[SPIKE_TRAIN__Block] = None
 
-    def simulate_muaps(self, n_jobs: int = -2, verbose: bool = True) -> INTRAMUSCULAR_MUAP__Block:
+    def simulate_muaps(self, n_jobs: int = -2, verbose: bool = True, *, execution=None) -> INTRAMUSCULAR_MUAP__Block:
         """
         Simulate MUAPs for all electrode arrays using the provided muscle model.
 
@@ -203,6 +203,9 @@ class IntramuscularEMG:
         includes: (1) motor unit initialization, (2) neuromuscular junction simulation,
         and (3) MUAP calculation with spatial filtering.
         """
+        if execution is not None:
+            from ..runtime.iemg import simulate_muaps
+            return simulate_muaps(self, execution, n_jobs, verbose)
         self._initialize_motor_units(verbose=verbose)
         self._simulate_neuromuscular_junctions(verbose=verbose)
         return self._calculate_muaps(n_jobs=n_jobs, verbose=verbose)
@@ -492,6 +495,8 @@ class IntramuscularEMG:
         self,
         spike_train__Block: SPIKE_TRAIN__Block,
         verbose: bool = True,
+        *,
+        execution=None,
     ) -> INTRAMUSCULAR_EMG__Block:
         """
         Generate intramuscular EMG signals using the provided spike train block.
@@ -518,6 +523,9 @@ class IntramuscularEMG:
         ValueError
             If MUAP templates have not been generated. Call simulate_muaps() first.
         """
+        if execution is not None:
+            from ..runtime.assembly import assemble
+            return assemble(self, spike_train__Block, execution, surface=False)
         if self._muaps__Block is None:
             raise ValueError("MUAP templates have not been generated. Call simulate_muaps() first.")
 
@@ -935,6 +943,11 @@ class IntramuscularEMG:
         return noisy_block
 
     # Property accessors for computed results
+    @property
+    def execution_report(self):
+        """Read-only report from the most recent optimized call, including failure."""
+        return getattr(self, "_execution_report", None)
+
     @property
     def muaps__Block(self) -> INTRAMUSCULAR_MUAP__Block:
         """

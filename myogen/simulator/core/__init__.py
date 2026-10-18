@@ -1,12 +1,24 @@
+"""Public names loaded on demand.
+
+Top-level myogen retains its existing NEURON mechanism-loading behavior.
 """
-Core components for the simulator package.
+from importlib import import_module
 
-This module contains the core classes and functions that are used across
-the simulator package, organized to eliminate circular dependencies.
-"""
+_EXPORTS = {
+    'Muscle': '.muscle',
+    'RecruitmentThresholds': '.physiological_distribution',
+    'SurfaceEMG': '.emg',
+}
+__all__ = list(_EXPORTS)
 
-from .emg import SurfaceEMG
-from .muscle import Muscle
-from .physiological_distribution import RecruitmentThresholds
 
-__all__ = ["Muscle", "RecruitmentThresholds", "SurfaceEMG"]
+def __getattr__(name):
+    if name not in _EXPORTS:
+        raise AttributeError(f"module {__name__!r} has no attribute {name!r}")
+    value = getattr(import_module(_EXPORTS[name], __package__), name)
+    globals()[name] = value
+    return value
+
+
+def __dir__():
+    return sorted(set(globals()) | set(__all__))
