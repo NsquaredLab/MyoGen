@@ -1,5 +1,10 @@
 # Corrected GitLab CPU port: results
 
+The later [Linux validation and sEMG demonstration](linux-validation.md) records
+the cache-lifetime fix, all 271 tests passing without skips, and noise examples.
+The Windows measurements and remaining population-validation limits below are
+historical evidence and are not replaced by the illustrative demo.
+
 The later [matched 470-fibre sEMG comparison](m470.md) measures this port against
 the final old speedup branch under identical worker/thread settings.
 
