@@ -70,6 +70,7 @@ class ExecutionSession:
         self.convolution_methods = {}
         self.leases = []
         self._tracked = {}
+        self._finalizers = []
         self._local = threading.local()
         self._failure = None
         self.started = time.perf_counter()
@@ -101,20 +102,31 @@ class ExecutionSession:
             raise
 
     def __exit__(self, kind, exc, traceback):
-        self.memory.close()
         final_error = None
-        if exc is None:
-            try:
-                self.memory.sample()
-            except MemoryBudgetError as error:
-                final_error = exc = error
-        if self.numba_threads is not None:
-            import numba
-            numba.set_num_threads(self.numba_threads)
-        if self.limits is not None:
-            leave_native_limit()
-        for lease in self.leases:
-            lease.close()
+        try:
+            self.memory.close()
+            if exc is None:
+                try:
+                    self.memory.sample()
+                except MemoryBudgetError as error:
+                    final_error = exc = error
+            if self.numba_threads is not None:
+                import numba
+                numba.set_num_threads(self.numba_threads)
+            if self.limits is not None:
+                leave_native_limit()
+        finally:
+            for lease in self.leases:
+                lease.close()
+            # Finalizers return capacity during a call. Once its ledger is
+            # closed, their bound callbacks must not retain the controller,
+            # its cache evictor, and consequently the cached arrays themselves.
+            for finalizer in self._finalizers:
+                finalizer.detach()
+            self._finalizers.clear()
+            self._tracked.clear()
+            self.leases.clear()
+            self.memory.evictors.clear()
         self.owner._execution_report = readonly({
             "policy": asdict(self.policy), "backend": "cpu", "stage": self.stage,
             "stage_seconds": {self.stage: time.perf_counter() - self.started},
@@ -159,7 +171,7 @@ class ExecutionSession:
 
     def _register(self, array, lease):
         self._tracked[id(array)] = weakref.ref(array)
-        weakref.finalize(array, lease.close)
+        self._finalizers.append(weakref.finalize(array, lease.close))
 
     def snapshot(self, array):
         array = np.asarray(array)

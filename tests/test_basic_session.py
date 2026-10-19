@@ -1,4 +1,8 @@
 """Synthetic contract-only tests of retry and reporting."""
+from contextlib import nullcontext
+import gc
+import weakref
+
 import numpy as np
 import pytest
 
@@ -9,6 +13,60 @@ from myogen.simulator.core.emg.runtime.memory import MemorySample
 
 class Owner:
     pass
+
+
+@pytest.mark.parametrize("failure", [None, "body", "entry", "final_probe"])
+def test_finished_session_releases_controller_with_live_cached_arrays(failure, monkeypatch):
+    from myogen.simulator.core.emg.runtime.cache import ArrayCache
+
+    owner = Owner()
+    owner._basic_preparation_cache = ArrayCache()
+    cached = np.arange(32.)
+    owner._basic_preparation_cache.put("retained", cached)
+    if failure == "entry":
+        original = ExecutionSession.track
+
+        def fail_after_tracking(self, arrays):
+            original(self, arrays)
+            raise ValueError("injected entry failure")
+
+        monkeypatch.setattr(ExecutionSession, "track", fail_after_tracking)
+
+    def run():
+        session = ExecutionSession(owner, ExecutionPolicy(), "lifetime", native_pools=False,
+            probe=lambda: MemorySample(16 * 1024**3, 12 * 1024**3, 0))
+        reference = weakref.ref(session.memory)
+        error_type = MemoryBudgetError if failure == "final_probe" else ValueError
+        expected = (nullcontext() if failure is None else
+                    pytest.raises(error_type, match=f"injected {failure} failure"))
+        with expected:
+            with session:
+                if failure == "body":
+                    raise ValueError("injected body failure")
+                if failure == "final_probe":
+                    session.memory.error = "injected final_probe failure"
+        assert session.memory.managed == session.memory.pending == 0
+        assert owner._execution_report["status"] == ("complete" if failure is None else "failed")
+        return reference
+
+    reference = run()
+    gc.collect()
+    # A live cache must not retain bookkeeping from completed or failed calls.
+    assert reference() is None
+    assert owner._basic_preparation_cache.get("retained") is cached
+    np.testing.assert_array_equal(cached, np.arange(32.))
+
+
+def test_temporary_array_collection_returns_capacity_during_session():
+    with ExecutionSession(Owner(), ExecutionPolicy(), "lifetime", native_pools=False,
+            probe=lambda: MemorySample(16 * 1024**3, 12 * 1024**3, 0)) as session:
+        array = session.zeros((32,))
+        reference = weakref.ref(array)
+        assert session.memory.managed == array.nbytes
+        del array
+        gc.collect()
+        assert reference() is None
+        assert session.memory.managed == session.memory.pending == 0
 
 
 def test_retry_does_not_commit_twice_or_draw_random_numbers():

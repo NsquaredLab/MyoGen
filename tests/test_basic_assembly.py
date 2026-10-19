@@ -1,5 +1,7 @@
 """Synthetic contract fixtures for public Neo adapters, not physiological evidence."""
 import copy
+import gc
+import weakref
 import numpy as np
 import quantities as pq
 import pytest
@@ -82,6 +84,40 @@ def test_preparation_reuse_and_mutation_invalidation(kind):
     group.segments[0].analogsignals[0].magnitude[0, 0] += 1
     call(spikes, verbose=False, execution=policy)
     assert set(sim._basic_preparation_cache.entries) != old_keys
+
+
+@pytest.mark.parametrize("kind", ["iemg", "semg"])
+def test_discarded_simulators_release_reused_preparation_caches(kind, monkeypatch):
+    from myogen.simulator.core.emg.runtime import session
+    from myogen.simulator.core.emg.runtime.memory import MemoryController, MemorySample
+
+    controllers = []
+
+    def controller(policy):
+        value = MemoryController(policy,
+            probe=lambda: MemorySample(16 * 1024**3, 12 * 1024**3, 0))
+        controllers.append(weakref.ref(value))
+        return value
+
+    monkeypatch.setattr(session, "MemoryController", controller)
+
+    def run():
+        sim, spikes = fixture(kind)
+        call = getattr(sim, "simulate_intramuscular_emg" if kind == "iemg" else "simulate_surface_emg")
+        call(spikes, verbose=False, execution=ExecutionPolicy())
+        cache = sim._basic_preparation_cache
+        arrays = [weakref.ref(value) for value in cache.entries.values()]
+        assert arrays
+        call(spikes, verbose=False, execution=ExecutionPolicy())
+        assert sim.execution_report["cache_hits"] > 0
+        assert all(reference() is value for reference, value in zip(arrays, cache.entries.values()))
+        gc.collect()
+        assert all(reference() is None for reference in controllers)
+        return [weakref.ref(sim), weakref.ref(cache), *arrays]
+
+    references = [reference for _ in range(3) for reference in run()]
+    gc.collect()
+    assert all(reference() is None for reference in references)
 
 
 @pytest.mark.parametrize("kind", ["iemg", "semg"])
