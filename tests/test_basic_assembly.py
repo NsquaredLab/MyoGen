@@ -10,6 +10,8 @@ from neo import AnalogSignal, Block, Group, Segment, SpikeTrain
 from myogen.simulator import ExecutionPolicy, IntramuscularEMG, SurfaceEMG
 from myogen.utils.neo import create_grid_signal
 
+pytestmark = pytest.mark.usefixtures("ample_session_memory")
+
 
 def fixture(kind):
     cls = IntramuscularEMG if kind == "iemg" else SurfaceEMG

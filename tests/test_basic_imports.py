@@ -28,7 +28,8 @@ from types import SimpleNamespace
 from myogen.simulator import ExecutionPolicy
 from myogen.simulator.core.emg.runtime.session import ExecutionSession
 from myogen.simulator.core.emg.runtime.synthesis import convolve_add
-with ExecutionSession(SimpleNamespace(), ExecutionPolicy(), 'optional_gpu_contract') as session:
+from tests._memory import ample_memory
+with ExecutionSession(SimpleNamespace(), ExecutionPolicy(), 'optional_gpu_contract', probe=ample_memory) as session:
     spikes, kernel = np.ones(101, bool), np.arange(7.)
     output = session.zeros((101,))
     convolve_add(output, spikes, kernel, session, method='fft', block_size=16)

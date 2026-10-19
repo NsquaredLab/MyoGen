@@ -16,15 +16,16 @@ from myogen.simulator.core.emg.runtime.memory import MemoryController, MemorySam
 
 def test_external_consumer_stops_admission_and_recovers_at_boundary():
     code = """
-import gc, sys
+import mmap, sys
 print('ready', flush=True)
 sys.stdin.readline()
-buffer = bytearray(64 * 1024**2)
-for index in range(0, len(buffer), 4096): buffer[index] = 1
+# Explicitly unmap the consumer's pages on release. Python's allocator may
+# retain a freed bytearray, so deleting it does not guarantee an RSS drop.
+buffer = mmap.mmap(-1, 64 * 1024**2)
+for index in range(0, len(buffer), mmap.PAGESIZE): buffer[index] = 1
 print('allocated', flush=True)
 sys.stdin.readline()
-del buffer
-gc.collect()
+buffer.close()
 print('released', flush=True)
 sys.stdin.readline()
 """
