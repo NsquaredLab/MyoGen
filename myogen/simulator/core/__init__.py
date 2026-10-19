@@ -3,6 +3,12 @@
 Top-level myogen retains its existing NEURON mechanism-loading behavior.
 """
 from importlib import import_module
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from .emg import SurfaceEMG as SurfaceEMG
+    from .muscle import Muscle as Muscle
+    from .physiological_distribution import RecruitmentThresholds as RecruitmentThresholds
 
 _EXPORTS = {
     'Muscle': '.muscle',

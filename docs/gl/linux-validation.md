@@ -76,7 +76,7 @@ timings still need the original frozen 58,755-fiber inputs and references.
 
 ## Clean and noisy sEMG
 
-The [reproduction scripts](../../benchmarks/semg_demo/README.md) generate a separate
+The [reproduction scripts](https://github.com/NsquaredLab/MyoGen/blob/8c7b41b8bc5ceb81ae1e92ec4a8eb7a0bd80854d/benchmarks/semg_demo/README.md) generate a separate
 illustration: 100 modeled motor units, the first 24 active (935 simulated fibers),
 16 monopolar channels, 2,048 Hz and eight seconds of prescribed firing. These are
 new illustrative inputs, not Devon's frozen benchmark cohort.
