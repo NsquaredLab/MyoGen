@@ -3,6 +3,46 @@
 Top-level myogen retains its existing NEURON mechanism-loading behavior.
 """
 from importlib import import_module
+from typing import TYPE_CHECKING
+
+# Make lazy public exports visible to static API documentation and type checkers
+# without importing the numerical kernels during normal package initialization.
+if TYPE_CHECKING:
+    from .core.emg import (
+        IntramuscularElectrodeArray as IntramuscularElectrodeArray,
+        IntramuscularEMG as IntramuscularEMG,
+        SurfaceElectrodeArray as SurfaceElectrodeArray,
+        SurfaceEMG as SurfaceEMG,
+    )
+    from .core.emg.runtime import (
+        ExecutionPolicy as ExecutionPolicy,
+        MemoryBudgetError as MemoryBudgetError,
+    )
+    from .core.force import (
+        ForceModel as ForceModel,
+        ForceModelVectorized as ForceModelVectorized,
+        JointBiomechanics as JointBiomechanics,
+        JointGeometry as JointGeometry,
+        MuscleGeometry as MuscleGeometry,
+    )
+    from .core.muscle import Muscle as Muscle
+    from .core.physiological_distribution import RecruitmentThresholds as RecruitmentThresholds
+    from .neuron.joint_dynamics import JointDynamics as JointDynamics
+    from .neuron.muscle import HillModel as HillModel
+    from .neuron.network import Network as Network
+    from .neuron.proprioception import (
+        GolgiTendonOrganModel as GolgiTendonOrganModel,
+        SpindleModel as SpindleModel,
+    )
+    from .neuron.simulation_runner import SimulationRunner as SimulationRunner
+    from myogen.utils.neo import (
+        GridAnalogSignal as GridAnalogSignal,
+        create_grid_signal as create_grid_signal,
+        get_column as get_column,
+        get_electrode as get_electrode,
+        get_row as get_row,
+        signal_to_grid as signal_to_grid,
+    )
 
 _EXPORTS = {
     'ExecutionPolicy': 'myogen.simulator.core.emg.runtime',
