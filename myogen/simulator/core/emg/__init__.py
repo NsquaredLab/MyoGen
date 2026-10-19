@@ -3,6 +3,15 @@
 Top-level myogen retains its existing NEURON mechanism-loading behavior.
 """
 from importlib import import_module
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from .electrodes import (
+        IntramuscularElectrodeArray as IntramuscularElectrodeArray,
+        SurfaceElectrodeArray as SurfaceElectrodeArray,
+    )
+    from .intramuscular.intramuscular_emg import IntramuscularEMG as IntramuscularEMG
+    from .surface.surface_emg import SurfaceEMG as SurfaceEMG
 
 _EXPORTS = {
     'SurfaceEMG': 'myogen.simulator.core.emg.surface.surface_emg',
