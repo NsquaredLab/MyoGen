@@ -15,19 +15,6 @@
       "selected_fibres": 88,
       "population": 100,
       "fibres": 58755,
-      "environment": {
-        "python": "C:\\Users\\DRRohlf\\PycharmProjects\\MyoGen\\.venv\\Scripts\\python.exe",
-        "imported": "C:\\Users\\DRRohlf\\.codex\\worktrees\\bgl\\MyoGen\\myogen\\__init__.py",
-        "affinity": [
-          0,
-          2,
-          4,
-          6
-        ],
-        "cpu_only": true,
-        "actual_total_memory": 68535443456,
-        "available_memory": 37200789504
-      },
       "fixture_sha256": "a4a49351e69cb5422f7f5fd10ee42a0424a6808b96b5b8da890ba4f740b304a6",
       "before_rng": {
         "bit_generator": "PCG64",
@@ -65,38 +52,7 @@
             "uinteger": 4261789908
           }
         }
-      ],
-      "native_pools": [
-        {
-          "user_api": "blas",
-          "internal_api": "openblas",
-          "num_threads": 1,
-          "prefix": "libscipy_openblas",
-          "filepath": "C:\\Users\\DRRohlf\\PycharmProjects\\MyoGen\\.venv\\Lib\\site-packages\\numpy.libs\\libscipy_openblas64_-9e3e5a4229c1ca39f10dc82bba9e2b2b.dll",
-          "version": "0.3.30",
-          "threading_layer": "pthreads",
-          "architecture": "Haswell"
-        },
-        {
-          "user_api": "blas",
-          "internal_api": "openblas",
-          "num_threads": 1,
-          "prefix": "libscipy_openblas",
-          "filepath": "C:\\Users\\DRRohlf\\PycharmProjects\\MyoGen\\.venv\\Lib\\site-packages\\scipy.libs\\libscipy_openblas-48c358d105077551cc9cc3ba79387ed5.dll",
-          "version": "0.3.29.dev",
-          "threading_layer": "pthreads",
-          "architecture": "Haswell"
-        },
-        {
-          "user_api": "openmp",
-          "internal_api": "openmp",
-          "num_threads": 1,
-          "prefix": "vcomp",
-          "filepath": "C:\\Users\\DRRohlf\\PycharmProjects\\MyoGen\\.venv\\Lib\\site-packages\\sklearn\\.libs\\vcomp140.dll",
-          "version": null
-        }
-      ],
-      "peak_sampled_rss": 452366336
+      ]
     },
     "so": {
       "base": "fc077cb4fa89b8cb23c7f0ec4fb50dc8fef05831",
@@ -112,19 +68,6 @@
       "selected_fibres": 88,
       "population": 100,
       "fibres": 58755,
-      "environment": {
-        "python": "C:\\Users\\DRRohlf\\PycharmProjects\\MyoGen\\.venv\\Scripts\\python.exe",
-        "imported": "C:\\Users\\DRRohlf\\.codex\\worktrees\\bgl\\MyoGen\\myogen\\__init__.py",
-        "affinity": [
-          0,
-          2,
-          4,
-          6
-        ],
-        "cpu_only": true,
-        "actual_total_memory": 68535443456,
-        "available_memory": 36928200704
-      },
       "fixture_sha256": "a4a49351e69cb5422f7f5fd10ee42a0424a6808b96b5b8da890ba4f740b304a6",
       "before_rng": {
         "bit_generator": "PCG64",
@@ -173,58 +116,6 @@
             "has_uint32": 1,
             "uinteger": 4261789908
           },
-          "execution_report": {
-            "policy": {
-              "backend": "cpu",
-              "memory_budget_mib": null,
-              "reserve_fraction": 0.2,
-              "reserve_min_mib": 4096,
-              "max_workers": 2,
-              "cache_dir": null
-            },
-            "backend": "cpu",
-            "stage": "surface_muaps",
-            "stage_seconds": {
-              "surface_muaps": 8.246773899998516
-            },
-            "status": "complete",
-            "error": null,
-            "batch_sizes": {
-              "array_0_MU_0": {
-                "initial": 4,
-                "final": 2
-              },
-              "array_0_MU_1": {
-                "initial": 4,
-                "final": 4
-              },
-              "array_0_MU_2": {
-                "initial": 4,
-                "final": 1
-              },
-              "array_0_MU_3": {
-                "initial": 4,
-                "final": 3
-              }
-            },
-            "worker_count_changes": [
-              1
-            ],
-            "rss_note": "CPU workers are threads; parent-process RSS counts their shared memory once",
-            "pressure_pauses": 0,
-            "allocation_retries": 0,
-            "cache_hits": 0,
-            "cache_evictions": 0,
-            "completed_work": 88,
-            "wait_seconds": 0.0,
-            "peak_managed_bytes": 116101728,
-            "peak_pending_bytes": 660850000,
-            "minimum_available_bytes": 36652040192,
-            "peak_process_rss_bytes": 396017664,
-            "physical_total_bytes": 68535443456,
-            "reserve_bytes": 13707088691.2,
-            "allocation_margin_bytes": 2300024750.08
-          },
           "comparison": {
             "status": "passed",
             "segments": 100,
@@ -238,38 +129,7 @@
             "threshold": "1e-12 + 1e-9 * per-channel reference peak"
           }
         }
-      ],
-      "native_pools": [
-        {
-          "user_api": "blas",
-          "internal_api": "openblas",
-          "num_threads": 1,
-          "prefix": "libscipy_openblas",
-          "filepath": "C:\\Users\\DRRohlf\\PycharmProjects\\MyoGen\\.venv\\Lib\\site-packages\\numpy.libs\\libscipy_openblas64_-9e3e5a4229c1ca39f10dc82bba9e2b2b.dll",
-          "version": "0.3.30",
-          "threading_layer": "pthreads",
-          "architecture": "Haswell"
-        },
-        {
-          "user_api": "blas",
-          "internal_api": "openblas",
-          "num_threads": 1,
-          "prefix": "libscipy_openblas",
-          "filepath": "C:\\Users\\DRRohlf\\PycharmProjects\\MyoGen\\.venv\\Lib\\site-packages\\scipy.libs\\libscipy_openblas-48c358d105077551cc9cc3ba79387ed5.dll",
-          "version": "0.3.29.dev",
-          "threading_layer": "pthreads",
-          "architecture": "Haswell"
-        },
-        {
-          "user_api": "openmp",
-          "internal_api": "openmp",
-          "num_threads": 1,
-          "prefix": "vcomp",
-          "filepath": "C:\\Users\\DRRohlf\\PycharmProjects\\MyoGen\\.venv\\Lib\\site-packages\\sklearn\\.libs\\vcomp140.dll",
-          "version": null
-        }
-      ],
-      "peak_sampled_rss": 421031936
+      ]
     },
     "ir": {
       "base": "fc077cb4fa89b8cb23c7f0ec4fb50dc8fef05831",
@@ -284,19 +144,6 @@
       "selected_fibres": 470,
       "population": 100,
       "fibres": 58755,
-      "environment": {
-        "python": "C:\\Users\\DRRohlf\\PycharmProjects\\MyoGen\\.venv\\Scripts\\python.exe",
-        "imported": "C:\\Users\\DRRohlf\\.codex\\worktrees\\bgl\\MyoGen\\myogen\\__init__.py",
-        "affinity": [
-          0,
-          2,
-          4,
-          6
-        ],
-        "cpu_only": true,
-        "actual_total_memory": 68535443456,
-        "available_memory": 36679942144
-      },
       "fixture_sha256": "a4a49351e69cb5422f7f5fd10ee42a0424a6808b96b5b8da890ba4f740b304a6",
       "before_rng": {
         "bit_generator": "PCG64",
@@ -334,38 +181,7 @@
             "uinteger": 4261789908
           }
         }
-      ],
-      "native_pools": [
-        {
-          "user_api": "blas",
-          "internal_api": "openblas",
-          "num_threads": 1,
-          "prefix": "libscipy_openblas",
-          "filepath": "C:\\Users\\DRRohlf\\PycharmProjects\\MyoGen\\.venv\\Lib\\site-packages\\numpy.libs\\libscipy_openblas64_-9e3e5a4229c1ca39f10dc82bba9e2b2b.dll",
-          "version": "0.3.30",
-          "threading_layer": "pthreads",
-          "architecture": "Haswell"
-        },
-        {
-          "user_api": "blas",
-          "internal_api": "openblas",
-          "num_threads": 1,
-          "prefix": "libscipy_openblas",
-          "filepath": "C:\\Users\\DRRohlf\\PycharmProjects\\MyoGen\\.venv\\Lib\\site-packages\\scipy.libs\\libscipy_openblas-48c358d105077551cc9cc3ba79387ed5.dll",
-          "version": "0.3.29.dev",
-          "threading_layer": "pthreads",
-          "architecture": "Haswell"
-        },
-        {
-          "user_api": "openmp",
-          "internal_api": "openmp",
-          "num_threads": 1,
-          "prefix": "vcomp",
-          "filepath": "C:\\Users\\DRRohlf\\PycharmProjects\\MyoGen\\.venv\\Lib\\site-packages\\sklearn\\.libs\\vcomp140.dll",
-          "version": null
-        }
-      ],
-      "peak_sampled_rss": 251047936
+      ]
     },
     "io": {
       "base": "fc077cb4fa89b8cb23c7f0ec4fb50dc8fef05831",
@@ -380,19 +196,6 @@
       "selected_fibres": 470,
       "population": 100,
       "fibres": 58755,
-      "environment": {
-        "python": "C:\\Users\\DRRohlf\\PycharmProjects\\MyoGen\\.venv\\Scripts\\python.exe",
-        "imported": "C:\\Users\\DRRohlf\\.codex\\worktrees\\bgl\\MyoGen\\myogen\\__init__.py",
-        "affinity": [
-          0,
-          2,
-          4,
-          6
-        ],
-        "cpu_only": true,
-        "actual_total_memory": 68535443456,
-        "available_memory": 36952391680
-      },
       "fixture_sha256": "a4a49351e69cb5422f7f5fd10ee42a0424a6808b96b5b8da890ba4f740b304a6",
       "before_rng": {
         "bit_generator": "PCG64",
@@ -441,54 +244,6 @@
             "has_uint32": 1,
             "uinteger": 4261789908
           },
-          "execution_report": {
-            "policy": {
-              "backend": "cpu",
-              "memory_budget_mib": null,
-              "reserve_fraction": 0.2,
-              "reserve_min_mib": 4096,
-              "max_workers": 2,
-              "cache_dir": null
-            },
-            "backend": "cpu",
-            "stage": "intramuscular_muaps",
-            "stage_seconds": {
-              "intramuscular_muaps": 3.2277423997875303
-            },
-            "status": "complete",
-            "error": null,
-            "batch_sizes": {
-              "MU_0": {
-                "initial": 8,
-                "final": 6
-              },
-              "MU_25": {
-                "initial": 8,
-                "final": 5
-              },
-              "MU_50": {
-                "initial": 8,
-                "final": 3
-              }
-            },
-            "worker_count_changes": [
-              1
-            ],
-            "rss_note": "CPU workers are threads; parent-process RSS counts their shared memory once",
-            "pressure_pauses": 0,
-            "allocation_retries": 0,
-            "cache_hits": 0,
-            "cache_evictions": 0,
-            "completed_work": 470,
-            "wait_seconds": 0.0,
-            "peak_managed_bytes": 6660176,
-            "peak_pending_bytes": 111733184,
-            "minimum_available_bytes": 36816547840,
-            "peak_process_rss_bytes": 262811648,
-            "physical_total_bytes": 68535443456,
-            "reserve_bytes": 13707088691.2,
-            "allocation_margin_bytes": 2311657799.68
-          },
           "comparison": {
             "status": "passed",
             "segments": 100,
@@ -502,38 +257,7 @@
             "threshold": "1e-12 + 1e-9 * per-channel reference peak"
           }
         }
-      ],
-      "native_pools": [
-        {
-          "user_api": "blas",
-          "internal_api": "openblas",
-          "num_threads": 1,
-          "prefix": "libscipy_openblas",
-          "filepath": "C:\\Users\\DRRohlf\\PycharmProjects\\MyoGen\\.venv\\Lib\\site-packages\\numpy.libs\\libscipy_openblas64_-9e3e5a4229c1ca39f10dc82bba9e2b2b.dll",
-          "version": "0.3.30",
-          "threading_layer": "pthreads",
-          "architecture": "Haswell"
-        },
-        {
-          "user_api": "blas",
-          "internal_api": "openblas",
-          "num_threads": 1,
-          "prefix": "libscipy_openblas",
-          "filepath": "C:\\Users\\DRRohlf\\PycharmProjects\\MyoGen\\.venv\\Lib\\site-packages\\scipy.libs\\libscipy_openblas-48c358d105077551cc9cc3ba79387ed5.dll",
-          "version": "0.3.29.dev",
-          "threading_layer": "pthreads",
-          "architecture": "Haswell"
-        },
-        {
-          "user_api": "openmp",
-          "internal_api": "openmp",
-          "num_threads": 1,
-          "prefix": "vcomp",
-          "filepath": "C:\\Users\\DRRohlf\\PycharmProjects\\MyoGen\\.venv\\Lib\\site-packages\\sklearn\\.libs\\vcomp140.dll",
-          "version": null
-        }
-      ],
-      "peak_sampled_rss": 265609216
+      ]
     }
   },
   "spot": {
@@ -553,19 +277,6 @@
     "selected_fibres": 58755,
     "population": 100,
     "fibres": 58755,
-    "environment": {
-      "python": "C:\\Users\\DRRohlf\\PycharmProjects\\MyoGen\\.venv\\Scripts\\python.exe",
-      "imported": "C:\\Users\\DRRohlf\\.codex\\worktrees\\bgl\\MyoGen\\myogen\\__init__.py",
-      "affinity": [
-        0,
-        2,
-        4,
-        6
-      ],
-      "cpu_only": true,
-      "actual_total_memory": 68535443456,
-      "available_memory": 37264957440
-    },
     "fixture_sha256": "a4a49351e69cb5422f7f5fd10ee42a0424a6808b96b5b8da890ba4f740b304a6",
     "before_rng": {
       "bit_generator": "PCG64",
@@ -613,476 +324,9 @@
           },
           "has_uint32": 1,
           "uinteger": 4261789908
-        },
-        "execution_report": {
-          "policy": {
-            "backend": "cpu",
-            "memory_budget_mib": null,
-            "reserve_fraction": 0.2,
-            "reserve_min_mib": 4096,
-            "max_workers": 2,
-            "cache_dir": null
-          },
-          "backend": "cpu",
-          "stage": "intramuscular_muaps",
-          "stage_seconds": {
-            "intramuscular_muaps": 325.0591321999673
-          },
-          "status": "complete",
-          "error": null,
-          "batch_sizes": {
-            "MU_0": {
-              "initial": 8,
-              "final": 6
-            },
-            "MU_1": {
-              "initial": 8,
-              "final": 2
-            },
-            "MU_2": {
-              "initial": 8,
-              "final": 1
-            },
-            "MU_3": {
-              "initial": 8,
-              "final": 7
-            },
-            "MU_4": {
-              "initial": 8,
-              "final": 5
-            },
-            "MU_5": {
-              "initial": 8,
-              "final": 3
-            },
-            "MU_6": {
-              "initial": 8,
-              "final": 1
-            },
-            "MU_7": {
-              "initial": 8,
-              "final": 4
-            },
-            "MU_8": {
-              "initial": 8,
-              "final": 4
-            },
-            "MU_9": {
-              "initial": 8,
-              "final": 1
-            },
-            "MU_10": {
-              "initial": 8,
-              "final": 3
-            },
-            "MU_11": {
-              "initial": 8,
-              "final": 5
-            },
-            "MU_12": {
-              "initial": 8,
-              "final": 6
-            },
-            "MU_13": {
-              "initial": 8,
-              "final": 3
-            },
-            "MU_14": {
-              "initial": 8,
-              "final": 2
-            },
-            "MU_15": {
-              "initial": 8,
-              "final": 1
-            },
-            "MU_16": {
-              "initial": 8,
-              "final": 2
-            },
-            "MU_17": {
-              "initial": 8,
-              "final": 8
-            },
-            "MU_18": {
-              "initial": 8,
-              "final": 6
-            },
-            "MU_19": {
-              "initial": 8,
-              "final": 8
-            },
-            "MU_20": {
-              "initial": 8,
-              "final": 7
-            },
-            "MU_21": {
-              "initial": 8,
-              "final": 7
-            },
-            "MU_22": {
-              "initial": 8,
-              "final": 2
-            },
-            "MU_23": {
-              "initial": 8,
-              "final": 7
-            },
-            "MU_24": {
-              "initial": 8,
-              "final": 4
-            },
-            "MU_25": {
-              "initial": 8,
-              "final": 5
-            },
-            "MU_26": {
-              "initial": 8,
-              "final": 3
-            },
-            "MU_27": {
-              "initial": 8,
-              "final": 3
-            },
-            "MU_28": {
-              "initial": 8,
-              "final": 3
-            },
-            "MU_29": {
-              "initial": 8,
-              "final": 2
-            },
-            "MU_30": {
-              "initial": 8,
-              "final": 8
-            },
-            "MU_31": {
-              "initial": 8,
-              "final": 3
-            },
-            "MU_32": {
-              "initial": 8,
-              "final": 4
-            },
-            "MU_33": {
-              "initial": 8,
-              "final": 8
-            },
-            "MU_34": {
-              "initial": 8,
-              "final": 8
-            },
-            "MU_35": {
-              "initial": 8,
-              "final": 3
-            },
-            "MU_36": {
-              "initial": 8,
-              "final": 1
-            },
-            "MU_37": {
-              "initial": 8,
-              "final": 7
-            },
-            "MU_38": {
-              "initial": 8,
-              "final": 7
-            },
-            "MU_39": {
-              "initial": 8,
-              "final": 8
-            },
-            "MU_40": {
-              "initial": 8,
-              "final": 5
-            },
-            "MU_41": {
-              "initial": 8,
-              "final": 8
-            },
-            "MU_42": {
-              "initial": 8,
-              "final": 2
-            },
-            "MU_43": {
-              "initial": 8,
-              "final": 8
-            },
-            "MU_44": {
-              "initial": 8,
-              "final": 1
-            },
-            "MU_45": {
-              "initial": 8,
-              "final": 4
-            },
-            "MU_46": {
-              "initial": 8,
-              "final": 8
-            },
-            "MU_47": {
-              "initial": 8,
-              "final": 8
-            },
-            "MU_48": {
-              "initial": 8,
-              "final": 7
-            },
-            "MU_49": {
-              "initial": 8,
-              "final": 4
-            },
-            "MU_50": {
-              "initial": 8,
-              "final": 9
-            },
-            "MU_51": {
-              "initial": 8,
-              "final": 6
-            },
-            "MU_52": {
-              "initial": 8,
-              "final": 4
-            },
-            "MU_53": {
-              "initial": 8,
-              "final": 1
-            },
-            "MU_54": {
-              "initial": 8,
-              "final": 5
-            },
-            "MU_55": {
-              "initial": 8,
-              "final": 5
-            },
-            "MU_56": {
-              "initial": 8,
-              "final": 1
-            },
-            "MU_57": {
-              "initial": 8,
-              "final": 2
-            },
-            "MU_58": {
-              "initial": 8,
-              "final": 4
-            },
-            "MU_59": {
-              "initial": 8,
-              "final": 7
-            },
-            "MU_60": {
-              "initial": 8,
-              "final": 7
-            },
-            "MU_61": {
-              "initial": 8,
-              "final": 6
-            },
-            "MU_62": {
-              "initial": 8,
-              "final": 2
-            },
-            "MU_63": {
-              "initial": 8,
-              "final": 7
-            },
-            "MU_64": {
-              "initial": 8,
-              "final": 3
-            },
-            "MU_65": {
-              "initial": 8,
-              "final": 4
-            },
-            "MU_66": {
-              "initial": 8,
-              "final": 7
-            },
-            "MU_67": {
-              "initial": 8,
-              "final": 10
-            },
-            "MU_68": {
-              "initial": 8,
-              "final": 5
-            },
-            "MU_69": {
-              "initial": 8,
-              "final": 1
-            },
-            "MU_70": {
-              "initial": 8,
-              "final": 6
-            },
-            "MU_71": {
-              "initial": 8,
-              "final": 7
-            },
-            "MU_72": {
-              "initial": 8,
-              "final": 6
-            },
-            "MU_73": {
-              "initial": 8,
-              "final": 10
-            },
-            "MU_74": {
-              "initial": 8,
-              "final": 3
-            },
-            "MU_75": {
-              "initial": 8,
-              "final": 2
-            },
-            "MU_76": {
-              "initial": 8,
-              "final": 10
-            },
-            "MU_77": {
-              "initial": 8,
-              "final": 8
-            },
-            "MU_78": {
-              "initial": 8,
-              "final": 2
-            },
-            "MU_79": {
-              "initial": 8,
-              "final": 3
-            },
-            "MU_80": {
-              "initial": 8,
-              "final": 6
-            },
-            "MU_81": {
-              "initial": 8,
-              "final": 1
-            },
-            "MU_82": {
-              "initial": 8,
-              "final": 10
-            },
-            "MU_83": {
-              "initial": 8,
-              "final": 10
-            },
-            "MU_84": {
-              "initial": 8,
-              "final": 9
-            },
-            "MU_85": {
-              "initial": 8,
-              "final": 7
-            },
-            "MU_86": {
-              "initial": 8,
-              "final": 9
-            },
-            "MU_87": {
-              "initial": 8,
-              "final": 7
-            },
-            "MU_88": {
-              "initial": 8,
-              "final": 5
-            },
-            "MU_89": {
-              "initial": 8,
-              "final": 1
-            },
-            "MU_90": {
-              "initial": 8,
-              "final": 8
-            },
-            "MU_91": {
-              "initial": 8,
-              "final": 5
-            },
-            "MU_92": {
-              "initial": 8,
-              "final": 8
-            },
-            "MU_93": {
-              "initial": 8,
-              "final": 12
-            },
-            "MU_94": {
-              "initial": 8,
-              "final": 4
-            },
-            "MU_95": {
-              "initial": 8,
-              "final": 13
-            },
-            "MU_96": {
-              "initial": 8,
-              "final": 3
-            },
-            "MU_97": {
-              "initial": 8,
-              "final": 5
-            },
-            "MU_98": {
-              "initial": 8,
-              "final": 14
-            },
-            "MU_99": {
-              "initial": 8,
-              "final": 9
-            }
-          },
-          "worker_count_changes": [
-            1
-          ],
-          "rss_note": "CPU workers are threads; parent-process RSS counts their shared memory once",
-          "pressure_pauses": 0,
-          "allocation_retries": 0,
-          "cache_hits": 0,
-          "cache_evictions": 0,
-          "completed_work": 58755,
-          "wait_seconds": 0.0,
-          "peak_managed_bytes": 7946496,
-          "peak_pending_bytes": 194084096,
-          "minimum_available_bytes": 36799000576,
-          "peak_process_rss_bytes": 259559424,
-          "physical_total_bytes": 68535443456,
-          "reserve_bytes": 13707088691.2,
-          "allocation_margin_bytes": 2340359290.88
         }
       }
     ],
-    "native_pools": [
-      {
-        "user_api": "blas",
-        "internal_api": "openblas",
-        "num_threads": 1,
-        "prefix": "libscipy_openblas",
-        "filepath": "C:\\Users\\DRRohlf\\PycharmProjects\\MyoGen\\.venv\\Lib\\site-packages\\numpy.libs\\libscipy_openblas64_-9e3e5a4229c1ca39f10dc82bba9e2b2b.dll",
-        "version": "0.3.30",
-        "threading_layer": "pthreads",
-        "architecture": "Haswell"
-      },
-      {
-        "user_api": "blas",
-        "internal_api": "openblas",
-        "num_threads": 1,
-        "prefix": "libscipy_openblas",
-        "filepath": "C:\\Users\\DRRohlf\\PycharmProjects\\MyoGen\\.venv\\Lib\\site-packages\\scipy.libs\\libscipy_openblas-48c358d105077551cc9cc3ba79387ed5.dll",
-        "version": "0.3.29.dev",
-        "threading_layer": "pthreads",
-        "architecture": "Haswell"
-      },
-      {
-        "user_api": "openmp",
-        "internal_api": "openmp",
-        "num_threads": 1,
-        "prefix": "vcomp",
-        "filepath": "C:\\Users\\DRRohlf\\PycharmProjects\\MyoGen\\.venv\\Lib\\site-packages\\sklearn\\.libs\\vcomp140.dll",
-        "version": null
-      }
-    ],
-    "peak_sampled_rss": 259629056,
     "full_population_comparison": {
       "waveform": {
         "status": "passed",
@@ -1110,19 +354,6 @@
     }
   },
   "recordings": {
-    "environment": {
-      "python": "C:\\Users\\DRRohlf\\PycharmProjects\\MyoGen\\.venv\\Scripts\\python.exe",
-      "imported": "C:\\Users\\DRRohlf\\.codex\\worktrees\\bgl\\MyoGen\\myogen\\__init__.py",
-      "affinity": [
-        0,
-        2,
-        4,
-        6
-      ],
-      "cpu_only": true,
-      "actual_total_memory": 68535443456,
-      "available_memory": 37179641856
-    },
     "spikes_sha256": "63ea033af4b8c31b1cd2a8837058e3bf7dbf9aa2e239e91b9a7f82d4b3b0fc27",
     "long_note": "60-second repetition of real spike schedules; numerical duration stress, not new physiology.",
     "results": [
@@ -1135,12 +366,10 @@
           50
         ],
         "reference": {
-          "seconds": 0.29077119985595345,
-          "peak_sampled_rss": 732676096
+          "seconds": 0.29077119985595345
         },
         "optimized": {
-          "seconds": 0.09595520002767444,
-          "peak_sampled_rss": 726654976
+          "seconds": 0.09595520002767444
         },
         "comparison": {
           "status": "passed",
@@ -1154,90 +383,45 @@
           "metadata": "exact",
           "threshold": "1e-12 + 1e-9 * per-channel reference peak"
         },
-        "execution": {
-          "policy": {
-            "backend": "cpu",
-            "memory_budget_mib": null,
-            "reserve_fraction": 0.2,
-            "reserve_min_mib": 4096,
-            "max_workers": 2,
-            "cache_dir": null
-          },
-          "backend": "cpu",
-          "stage": "intramuscular_emg",
-          "stage_seconds": {
-            "intramuscular_emg": 0.09297410002909601
-          },
-          "status": "complete",
-          "error": null,
-          "batch_sizes": {},
-          "worker_count_changes": [
-            1
-          ],
-          "rss_note": "CPU workers are threads; parent-process RSS counts their shared memory once",
-          "pressure_pauses": 0,
-          "allocation_retries": 0,
-          "cache_hits": 468,
-          "cache_evictions": 0,
-          "completed_work": 0,
-          "wait_seconds": 0.0,
-          "peak_managed_bytes": 40801552,
-          "peak_pending_bytes": 32000000,
-          "minimum_available_bytes": 36441772032,
-          "peak_process_rss_bytes": 2124075008,
-          "physical_total_bytes": 68535443456,
-          "reserve_bytes": 13707088691.2,
-          "allocation_margin_bytes": 2282281287.68
-        },
         "repeated": [
           {
             "seconds": 0.08903170004487038,
-            "peak_sampled_rss": 730685440,
             "cache_hits": 481
           },
           {
             "seconds": 0.09287380008026958,
-            "peak_sampled_rss": 732008448,
             "cache_hits": 481
           },
           {
             "seconds": 0.09400570020079613,
-            "peak_sampled_rss": 735977472,
             "cache_hits": 481
           },
           {
             "seconds": 0.09255149983800948,
-            "peak_sampled_rss": 737329152,
             "cache_hits": 481
           },
           {
             "seconds": 0.08862000005319715,
-            "peak_sampled_rss": 741322752,
             "cache_hits": 481
           },
           {
             "seconds": 0.08867119997739792,
-            "peak_sampled_rss": 742682624,
             "cache_hits": 481
           },
           {
             "seconds": 0.09142840001732111,
-            "peak_sampled_rss": 745361408,
             "cache_hits": 481
           },
           {
             "seconds": 0.0910370999481529,
-            "peak_sampled_rss": 749355008,
             "cache_hits": 481
           },
           {
             "seconds": 0.08767780009657145,
-            "peak_sampled_rss": 750845952,
             "cache_hits": 481
           },
           {
             "seconds": 0.09278569999150932,
-            "peak_sampled_rss": 732340224,
             "cache_hits": 481
           }
         ]
@@ -1251,12 +435,10 @@
           50
         ],
         "reference": {
-          "seconds": 3.5687076000031084,
-          "peak_sampled_rss": 1495457792
+          "seconds": 3.5687076000031084
         },
         "optimized": {
-          "seconds": 1.1627962000202388,
-          "peak_sampled_rss": 1445216256
+          "seconds": 1.1627962000202388
         },
         "comparison": {
           "status": "passed",
@@ -1269,41 +451,6 @@
           "maximum_relative_channel_gram_error": 6.737937037437377e-16,
           "metadata": "exact",
           "threshold": "1e-12 + 1e-9 * per-channel reference peak"
-        },
-        "execution": {
-          "policy": {
-            "backend": "cpu",
-            "memory_budget_mib": null,
-            "reserve_fraction": 0.2,
-            "reserve_min_mib": 4096,
-            "max_workers": 2,
-            "cache_dir": null
-          },
-          "backend": "cpu",
-          "stage": "intramuscular_emg",
-          "stage_seconds": {
-            "intramuscular_emg": 1.1177553997840732
-          },
-          "status": "complete",
-          "error": null,
-          "batch_sizes": {},
-          "worker_count_changes": [
-            1
-          ],
-          "rss_note": "CPU workers are threads; parent-process RSS counts their shared memory once",
-          "pressure_pauses": 0,
-          "allocation_retries": 0,
-          "cache_hits": 7020,
-          "cache_evictions": 0,
-          "completed_work": 0,
-          "wait_seconds": 0.0,
-          "peak_managed_bytes": 565929232,
-          "peak_pending_bytes": 480000000,
-          "minimum_available_bytes": 35993251840,
-          "peak_process_rss_bytes": 1305821184,
-          "physical_total_bytes": 68535443456,
-          "reserve_bytes": 13707088691.2,
-          "allocation_margin_bytes": 2233382830.08
         }
       },
       {
@@ -1316,12 +463,10 @@
           3
         ],
         "reference": {
-          "seconds": 1.2432627000380307,
-          "peak_sampled_rss": 868126720
+          "seconds": 1.2432627000380307
         },
         "optimized": {
-          "seconds": 0.44651070004329085,
-          "peak_sampled_rss": 797655040
+          "seconds": 0.44651070004329085
         },
         "comparison": {
           "status": "passed",
@@ -1335,90 +480,45 @@
           "metadata": "exact",
           "threshold": "1e-12 + 1e-9 * per-channel reference peak"
         },
-        "execution": {
-          "policy": {
-            "backend": "cpu",
-            "memory_budget_mib": null,
-            "reserve_fraction": 0.2,
-            "reserve_min_mib": 4096,
-            "max_workers": 2,
-            "cache_dir": null
-          },
-          "backend": "cpu",
-          "stage": "surface_emg",
-          "stage_seconds": {
-            "surface_emg": 0.44360550004057586
-          },
-          "status": "complete",
-          "error": null,
-          "batch_sizes": {},
-          "worker_count_changes": [
-            1
-          ],
-          "rss_note": "CPU workers are threads; parent-process RSS counts their shared memory once",
-          "pressure_pauses": 0,
-          "allocation_retries": 0,
-          "cache_hits": 3900,
-          "cache_evictions": 0,
-          "completed_work": 0,
-          "wait_seconds": 0.0,
-          "peak_managed_bytes": 50244216,
-          "peak_pending_bytes": 32000000,
-          "minimum_available_bytes": 36430704640,
-          "peak_process_rss_bytes": 752279552,
-          "physical_total_bytes": 68535443456,
-          "reserve_bytes": 13707088691.2,
-          "allocation_margin_bytes": 2273391329.28
-        },
         "repeated": [
           {
             "seconds": 0.4448183998465538,
-            "peak_sampled_rss": 801054720,
             "cache_hits": 4001
           },
           {
             "seconds": 0.43904519989155233,
-            "peak_sampled_rss": 804409344,
             "cache_hits": 4001
           },
           {
             "seconds": 0.4393996999133378,
-            "peak_sampled_rss": 807751680,
             "cache_hits": 4001
           },
           {
             "seconds": 0.4433513998519629,
-            "peak_sampled_rss": 804511744,
             "cache_hits": 4001
           },
           {
             "seconds": 0.43686829996295273,
-            "peak_sampled_rss": 807874560,
             "cache_hits": 4001
           },
           {
             "seconds": 0.4380793001037091,
-            "peak_sampled_rss": 811220992,
             "cache_hits": 4001
           },
           {
             "seconds": 0.4382075001485646,
-            "peak_sampled_rss": 814592000,
             "cache_hits": 4001
           },
           {
             "seconds": 0.4507422000169754,
-            "peak_sampled_rss": 817938432,
             "cache_hits": 4001
           },
           {
             "seconds": 0.4315255999099463,
-            "peak_sampled_rss": 808157184,
             "cache_hits": 4001
           },
           {
             "seconds": 0.43284110003151,
-            "peak_sampled_rss": 811520000,
             "cache_hits": 4001
           }
         ]
@@ -1433,12 +533,10 @@
           3
         ],
         "reference": {
-          "seconds": 18.605591099942103,
-          "peak_sampled_rss": 2438709248
+          "seconds": 18.605591099942103
         },
         "optimized": {
-          "seconds": 6.575503399828449,
-          "peak_sampled_rss": 1504251904
+          "seconds": 6.575503399828449
         },
         "comparison": {
           "status": "passed",
@@ -1451,41 +549,6 @@
           "maximum_relative_channel_gram_error": 3.968560866156165e-16,
           "metadata": "exact",
           "threshold": "1e-12 + 1e-9 * per-channel reference peak"
-        },
-        "execution": {
-          "policy": {
-            "backend": "cpu",
-            "memory_budget_mib": null,
-            "reserve_fraction": 0.2,
-            "reserve_min_mib": 4096,
-            "max_workers": 2,
-            "cache_dir": null
-          },
-          "backend": "cpu",
-          "stage": "surface_emg",
-          "stage_seconds": {
-            "surface_emg": 6.530289699789137
-          },
-          "status": "complete",
-          "error": null,
-          "batch_sizes": {},
-          "worker_count_changes": [
-            1
-          ],
-          "rss_note": "CPU workers are threads; parent-process RSS counts their shared memory once",
-          "pressure_pauses": 0,
-          "allocation_retries": 0,
-          "cache_hits": 58500,
-          "cache_evictions": 0,
-          "completed_work": 0,
-          "wait_seconds": 0.0,
-          "peak_managed_bytes": 580876920,
-          "peak_pending_bytes": 480000000,
-          "minimum_available_bytes": 35732631552,
-          "peak_process_rss_bytes": 1406627840,
-          "physical_total_bytes": 68535443456,
-          "reserve_bytes": 13707088691.2,
-          "allocation_margin_bytes": 2222823342.08
         }
       }
     ],
@@ -1541,58 +604,6 @@
         "maximum_relative_channel_gram_error": 6.289876720533419e-16,
         "metadata": "exact",
         "threshold": "1e-12 + 1e-9 * per-channel reference peak"
-      },
-      "execution": {
-        "policy": {
-          "backend": "cpu",
-          "memory_budget_mib": null,
-          "reserve_fraction": 0.2,
-          "reserve_min_mib": 4096,
-          "max_workers": 2,
-          "cache_dir": null
-        },
-        "backend": "cpu",
-        "stage": "surface_muaps",
-        "stage_seconds": {
-          "surface_muaps": 7.393951100064442
-        },
-        "status": "complete",
-        "error": null,
-        "batch_sizes": {
-          "array_0_MU_0": {
-            "initial": 4,
-            "final": 2
-          },
-          "array_0_MU_1": {
-            "initial": 4,
-            "final": 2
-          },
-          "array_0_MU_2": {
-            "initial": 4,
-            "final": 2
-          },
-          "array_0_MU_3": {
-            "initial": 4,
-            "final": 3
-          }
-        },
-        "worker_count_changes": [
-          1
-        ],
-        "rss_note": "CPU workers are threads; parent-process RSS counts their shared memory once",
-        "pressure_pauses": 0,
-        "allocation_retries": 1,
-        "cache_hits": 0,
-        "cache_evictions": 0,
-        "completed_work": 88,
-        "wait_seconds": 0.0,
-        "peak_managed_bytes": 116101728,
-        "peak_pending_bytes": 660850000,
-        "minimum_available_bytes": 36605001728,
-        "peak_process_rss_bytes": 463085568,
-        "physical_total_bytes": 68535443456,
-        "reserve_bytes": 13707088691.2,
-        "allocation_margin_bytes": 2309262458.88
       }
     },
     "cache_resume": {
@@ -1613,19 +624,6 @@
   },
   "variants": {
     "base": "fc077cb4fa89b8cb23c7f0ec4fb50dc8fef05831",
-    "environment": {
-      "python": "C:\\Users\\DRRohlf\\PycharmProjects\\MyoGen\\.venv\\Scripts\\python.exe",
-      "imported": "C:\\Users\\DRRohlf\\.codex\\worktrees\\bgl\\MyoGen\\myogen\\__init__.py",
-      "affinity": [
-        0,
-        2,
-        4,
-        6
-      ],
-      "cpu_only": true,
-      "actual_total_memory": 68535443456,
-      "available_memory": 37089566720
-    },
     "input_sha256": "e271d8026ed65a5b17af776c8697f2bc9af275c82625f0624529c11f6205f15b",
     "results": [
       {
