@@ -7,17 +7,35 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-### Fixed
-- **Surface EMG volume conductor: negative-frequency reconstruction.** `H_vc(k_z, k_theta)` is even in both arguments and is solved on the non-negative quadrant only. Since 0.10 (`b666a3b3`) the `k_theta` / `k_t` grids are FFT bin centres (`-N/2 .. N/2-1`, asymmetric for even N) but the full grid was still rebuilt with a slice-and-flip mirror written for the previous symmetric `linspace` grid, placing every negative bin one order off (DC counted twice, the Nyquist bin never). The default `SurfaceEMG` path (`_simulate_fiber_v2_python`) was 1.8–2.3× too large for a fibre 7–20 mm below the skin of the standard 40 mm cylinder. The full grid is now indexed by `|k|` (`np.unique` inverse), exact for any grid and for odd `N`/`M` (odd `M` previously raised a broadcast error).
-- **Half-integer angular orders.** `simulate_fiber_hybrid` and the Cython `simulate_fiber_v2` built `k_theta` with `linspace(-(M-1)/2, (M-1)/2, M)`, i.e. Bessel orders 0.5, 1.5, … for even `M` (a series with period 4π in θ, 1–4 % amplitude error growing with depth). Both now use the integer FFT bin grid, matching the Python reference.
-- **Cython `r_bone = 0` reduced system.** Ported the 0.9.x column fix (`087caf33`): the Cython port kept the diverging `Kn_muscle` column and dropped `In_muscle`, collapsing the output to round-off.
-- **Thin bones and fine grids raised `LinAlgError`.** Both muscle unknowns were normalised at the outer muscle radius, so the bone rows carried `Kn(am·k)/Kn(bm·k) ~ exp((bm−am)k)`; past `(bm−am)k ≈ 700` this overflowed and the system went exactly singular (any `r_bone < ~8 mm` at the default grid, every `r_bone` at `N ≥ 1024`), with values of ~1e20 just below the threshold. The muscle `Kn` coefficient is now normalised at the bone radius; outputs are unchanged to round-off where they previously solved, and the skin potential is now monotone and grid-converged in `r_bone`.
+## [0.12.0] - 2026-10-19
 
-### Removed
-- **Cython `simulate_fiber` extension.** `myogen/simulator/neuron/_cython/_simulate_fiber.pyx` was a 2025 transcription of the surface fibre model that had since diverged from the Python reference (its own ±6 mm IAP grid regardless of `Fs`, amplitude 96 vs 9.6, real-valued angular sum, raw-Bessel assembly that overflows where the log-space version does not, no `fiber_length__mm`/`theta_offset`) and was ~5× slower than the Numba-jitted Python path (923 vs 177 ms per fibre on an 8×8 grid). `SurfaceEMG` never called it, but it was the default of the public `simulate_fiber_v2(use_cython=True)`. `simulate_fiber_v2` now always runs the Python implementation; `use_cython` is kept as a deprecated, ignored argument (default `False`; `True` emits a `DeprecationWarning`), and `HAS_CYTHON_FIBER` is kept as a constant `False`.
+Thanks to the efforts of @DRohlf (Devon Rohlf), this release improves surface EMG numerical correctness and adds adaptive CPU execution.
+
+### Added
+
+- **Opt-in adaptive CPU execution.** `ExecutionPolicy` enables memory-aware execution for iEMG and sEMG, with bounded work batches, reusable preparation caches and optional disk caching of completed motor units.
+- **CPU execution guide and sEMG examples.** Added an execution-policy example and reproducible clean and noisy sEMG demonstrations.
+
+### Fixed
+
+- **Surface EMG frequency reconstruction and angular orders.** Corrected negative-frequency lookup and integer angular orders, including support for odd grid sizes.
+- **Layered-cylinder stability.** Stabilized the volume-conductor solve for thin bones and fine grids, and preserved continuity when no bone is present.
+- **Session cache cleanup.** Completed and failed sessions release their bookkeeping without retaining discarded simulators, while live simulators keep reusable cached arrays.
+- **API documentation and test portability.** Made lazy public exports visible to API documentation, removed host-memory assumptions from synthetic contract tests, and ensured CI uses the selected Python version.
 
 ### Changed
-- **Single volume-conductor authority.** The Farina 2004 boundary-condition assembly and solve, previously duplicated in `_simulate_fiber_v2_python`, `simulate_fiber_hybrid` and `compute_surface_kernel`, now live in `myogen.simulator.core.emg.surface.volume_conductor.layered_cylinder_transfer`; all three callers route through it (bit-identical outputs). `log_In` / `log_Kn` are re-exported from `surface.simulate_fiber`. New tests in `tests/test_surface_volume_conductor.py` pin the transfer against the closed-form homogeneous-cylinder limit on the full grid (relative error 4e-16, no free scale), evenness in both arguments, even/odd grid agreement, 2π angular periodicity and bone-radius continuity.
+
+- **Shared surface volume conductor.** Surface simulation entry points now use one implementation of the layered-cylinder boundary conditions and transfer function.
+- **Lazy public imports.** Execution-policy imports avoid eagerly loading simulator kernels while preserving existing public import names.
+
+### Removed
+
+- **Obsolete Cython surface-fiber extension.** `simulate_fiber_v2` now uses the Python implementation. The `use_cython` argument remains accepted but is ignored; `True` emits a deprecation warning. `HAS_CYTHON_FIBER` remains available as `False`.
+
+### Upgrade notes
+
+- The surface-conductor corrections intentionally change affected sEMG amplitudes. Regenerate affected reference outputs and comparisons when upgrading.
+- Adaptive CPU execution is opt-in through `ExecutionPolicy`; calls without a policy continue to use the standard execution path.
 
 ## [0.11.0] - 2026-07-16
 
