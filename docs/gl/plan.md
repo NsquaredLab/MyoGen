@@ -1,7 +1,6 @@
 # Corrected GitLab CPU optimization
 
-Base: fc077cb4fa89b8cb23c7f0ec4fb50dc8fef05831 (gitlab/main, checked 2026-10-18).
-Branch: perf/basic-gitlab-cpu; short managed worktree: bgl/MyoGen.
+Base: fc077cb4fa89b8cb23c7f0ec4fb50dc8fef05831 (corrected baseline).
 
 The earlier GitHub-based optimization and draft MR !3 are preserved. Their
 sEMG outputs and speedups are not reference evidence for this branch.
@@ -9,7 +8,7 @@ sEMG outputs and speedups are not reference evidence for this branch.
 ## Sequence
 
 1. Record baseline regression status and profile corrected GitLab code before
-   porting any implementation. Use CPU only, four physical-core affinity,
+   porting any implementation. Use CPU only, matched CPU settings and
    one native numerical thread and the unchanged frozen public 100-MU /
    58,755-fibre input population. Generated references are fresh GitLab output.
 2. Port independent adaptive-memory, bounded assembly, cache and iEMG changes.
@@ -27,16 +26,13 @@ sEMG outputs and speedups are not reference evidence for this branch.
    Profiling diagnostics are separate. No multi-day full reference benchmark.
 6. Record measured new-baseline timings, memory and validation limits; commit
    independent changes locally. Keep the existing MR and all other worktrees
-   unchanged. Physical four-core/16-GiB acceptance remains separate.
+   unchanged. Deployment-scale acceptance remains separate.
 
 ## Environment
 
-Use the specified main-project venv interpreter; prepend this checkout and its
-local .runtime-deps to existing PYTHONPATH. Shared installation is unchanged.
-Local NMODL mechanisms compiled successfully. psutil is copied from the prior
-isolated basic worktree into this worktree only. Resource detection reports
-14 physical cores, 63.83 GiB RAM and approximately 34 GiB available; GPU use is
-disabled for benchmarks. Other agents' Python processes are left untouched.
+Use an isolated project environment with the declared dependencies and compiled
+NMODL mechanisms. Benchmark reference and optimized paths under matched CPU and
+thread settings. Retain detailed local diagnostics outside the repository.
 
-Baseline CPU pytest excludes only the unchanged slow clinical iEMG synthesis
-test for this limited pass. Any skips, failures and warnings are retained.
+Baseline CPU tests historically excluded the slow clinical synthesis test and
+unavailable optional checks. See validation.md for the broader validation summary.

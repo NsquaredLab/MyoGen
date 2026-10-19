@@ -38,7 +38,6 @@ including rest. Noise RMS is therefore approximately 10% of that channel's
 full-recording RMS. Noise is stationary and independent between channels; it
 does not model motion artifacts, electrode drift or mains interference.
 
-The original run at `0a3c1e58` produced 935 simulated fibers and about 36.5 mV
-peak-to-peak on the displayed channel. **Absolute amplitude remains unvalidated.**
-Passing software tests and adding noise do not establish biological calibration.
-See the [recorded Linux results](../../docs/gl/linux-validation.md).
+**Absolute model amplitude remains unvalidated.** Passing software tests and
+adding noise do not establish biological calibration. See the
+[validation summary](../../docs/gl/validation.md).

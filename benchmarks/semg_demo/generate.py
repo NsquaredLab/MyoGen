@@ -108,7 +108,7 @@ def main(out):
                     plateau_rms_uV=rms.tolist(), peak_to_peak_uV=np.ptp(data,axis=0).tolist(),
                     elapsed_seconds=time.monotonic()-start,
                     firing='Prescribed rate-modulated gamma-renewal trains; interval CV=0.2 in rate-time; 24 of 100 MUs active. No neuronal simulation or experimental fitting.',
-                    purpose='Illustration; separate from Devon frozen-cohort benchmark.')
+                    purpose='Illustration; separate from the benchmark cohort.')
     (out/'metadata.json').write_text(json.dumps(metadata, indent=2)+'\n')
 
     print(json.dumps(metadata, indent=2), flush=True)

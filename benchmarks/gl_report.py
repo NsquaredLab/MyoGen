@@ -1,4 +1,4 @@
-"""Collect bounded GitLab-port evidence into a reviewable Markdown report."""
+"""Collect benchmark evidence into local, ignored reports for private review."""
 import json
 from pathlib import Path
 import xml.etree.ElementTree as ET
@@ -49,13 +49,10 @@ def main():
                tests=dict(passed=tests-skipped,skipped=skipped,failures=failures),
                artifacts={str(p.relative_to(ROOT)):sha(p) for p in sorted(OUT.rglob("result.json"))},
                test_log_sha256=sha(OUT/"final-tests.txt"))
-    dump_json(ROOT/"docs/gl/measurements.json",facts)
+    dump_json(OUT/"measurements.json",facts)
     text=f"""# Corrected GitLab CPU port: results
 
 Branch: perf/basic-gitlab-cpu. Base: {BASE}.
-The separate bgl/MyoGen checkout leaves the older GitHub-based optimization,
-draft MR !3, and anatomical/VL checkout intact. Changes are committed locally.
-
 ## What changed
 
 - Added explicit ExecutionPolicy CPU execution while retaining existing default execution.
@@ -79,9 +76,8 @@ physiology, or mixed-precision arithmetic were introduced.
 
 ## Measurement conditions
 
-Windows i7-13800H laptop, 63.83 GiB physical RAM, affinity to four physical cores
-(logical CPUs 0/2/4/6), one native numerical thread, CPU only. Timed source calls
-use one outer worker on both paths. No physical four-core/16-GiB acceptance claim.
+CPU-only comparisons used matched worker and numerical-thread settings.
+The measurements do not establish performance on other machines.
 The policy itself starts at most two workers and can admit zero work.
 
 Frozen public input: 100 MUs, 58,755 assigned fibres, seed 180319. Selected-MU
@@ -177,32 +173,11 @@ Final CPU suite: **{tests-skipped} passed, {skipped} skipped, 1 deselected**;
 no failures. GPU and unavailable experimental-data tests account for skips.
 Warnings and the complete JUnit output remain in local artifacts.
 
-## Memory observations and remaining gates
+## Remaining validation
 
-Source-process RSS samples include serialization/comparison outside the timed
-source calls and are diagnostic observations, not matched incremental-memory
-measurements. Source execution reports separately record managed/pending peaks
-and sampled call RSS. Recording RSS is sampled during each call, but optimized
-calls also retain the comparison reference; do not interpret that as a controlled
-peak-memory reduction experiment. Observed source-process peaks (MiB; includes the caveats above):
-
-| Process | Observed sampled RSS peak |
-|---|---:|
-| Selected iEMG reference | {ir['peak_sampled_rss']/1024**2:.1f} |
-| Selected iEMG optimized | {io['peak_sampled_rss']/1024**2:.1f} |
-| Selected sEMG reference | {sr['peak_sampled_rss']/1024**2:.1f} |
-| Selected sEMG optimized | {so['peak_sampled_rss']/1024**2:.1f} |
-| Full optimized iEMG | {full['peak_sampled_rss']/1024**2:.1f} |
-
-See measurements.json for all call-level observations.
-The reserve is max(4 GiB, 20% of RAM), plus max(512 MiB, 10% of headroom), with an
-optional managed-buffer ceiling. No fixed 8-GiB ceiling or spare-RAM filling.
-
-Still pending: physical four-core/16-GiB runs; exhaustive corrected sEMG
-full-population reference comparison; complete large MUs 50/75 against newly
-corrected sEMG references; full corrected sEMG pipeline timing and broad sustained
-pressure benchmarks. This port does not inherit old sEMG acceptance or speed
-figures. There is no measured combined full-pipeline speedup for this new baseline.
+Exhaustive corrected-sEMG full-population comparison, larger-MU reference checks,
+full-pipeline timing and broader pressure benchmarks remain pending. Selected
+cohorts and synthetic stress tests do not establish deployment-wide performance.
 
 ## Reproduce and inspect
 
@@ -213,11 +188,11 @@ Pass --inputs with the trusted existing public fixture directory.
 gl_reference.py reads the pinned GitLab source directly and verifies unchanged
 helpers. gl_fulli.py checks reference-source ancestry before reuse.
 Generated arrays, logs and profiles remain in ignored artifacts/gl; the committed
-measurements.json contains summary evidence, execution reports and artifact hashes.
+measurements.json contains numerical summaries without local environment metadata.
 Benchmarks refuse to overwrite completed run directories; preserve them.
 """
-    (ROOT/"docs/gl/report.md").write_text(text,encoding="utf-8")
-    print("Saved docs/gl/report.md and measurements.json")
+    (OUT/"report.md").write_text(text,encoding="utf-8")
+    print("Saved local reports under artifacts/gl; review before publishing summaries")
 
 if __name__=="__main__":
     main()

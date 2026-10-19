@@ -92,21 +92,15 @@ execution. use_gpu=True conflicts with an explicit CPU policy and raises.
 
 ## Local setup and examples
 
-Use the project's specified venv interpreter, never bare python. Preserve other
-PYTHONPATH entries while prepending this checkout:
+Use the project environment and compile its mechanisms before running examples:
 
-    $env:PYTHONPATH = "$PWD;$PWD\.runtime-deps;$env:PYTHONPATH"
-    & 'C:\Users\DRRohlf\PycharmProjects\MyoGen\.venv\Scripts\python.exe' -c 'import myogen; myogen._setup_myogen(strict=True); myogen.load_nmodl_mechanisms(strict=True)'
+    uv sync --locked --group dev
+    uv run poe setup_myogen
 
-The isolated checkout has its own compiled NMODL mechanisms. psutil and
-threadpoolctl are declared dependencies; this laptop's existing shared venv
-uses a checkout-local psutil copy in ignored .runtime-deps.
 Selected imports are lazy; top-level NEURON initialization remains.
+Run examples/01_basic/16_adaptive_cpu_execution.py --help for both modalities,
+repeated recordings and explicit cache restart. The surface example selects
+MUs 0-3; --all-mus evaluates every configured MU.
 
-Run examples/01_basic/16_adaptive_cpu_execution.py --help for saved public inputs,
-both modalities, repeated recordings and explicit cache restart. The surface
-example selects MUs 0-3; --all-mus evaluates every configured MU.
-
-See report.md before citing performance or parity. Four-core affinity on this
-63.83-GiB laptop does not establish acceptance on a physical four-core/16-GiB
-machine, and selected real fibres do not establish exhaustive population parity.
+See report.md before citing performance or parity. Selected-fiber comparisons
+and synthetic resource tests do not establish exhaustive population validation.

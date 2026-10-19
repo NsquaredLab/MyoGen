@@ -1,7 +1,7 @@
 # Baseline verification
 
 GitLab base: fc077cb4fa89b8cb23c7f0ec4fb50dc8fef05831.
-CPU-only pytest: 127 passed, 3 skipped, 1 deselected, 83 warnings in 67.56 s.
+The selected baseline CPU tests passed.
 The deselection is the unchanged slow clinical iEMG synthesis integration test.
 Skips: unavailable CuPy and two unavailable experimental-data checks.
 Warnings remain in artifacts/gl/baseline.txt and baseline.xml.

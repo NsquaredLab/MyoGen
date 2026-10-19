@@ -180,17 +180,8 @@
     {
       "status": "complete",
       "label": "old1",
-      "root": "C:\\Users\\DRRohlf\\.codex\\worktrees\\basic-myogen-adaptive-memory\\MyoGen",
       "head": "174a71404eceae963e31ad027b642f72572c72f3",
       "harness_sha256": "69fba060fc88b21c2c4b94efbd615d4eede657afc32e0dbd2f133820fc816715",
-      "python": "C:\\Users\\DRRohlf\\PycharmProjects\\MyoGen\\.venv\\Scripts\\python.exe",
-      "imported": "C:\\Users\\DRRohlf\\.codex\\worktrees\\basic-myogen-adaptive-memory\\MyoGen\\myogen\\__init__.py",
-      "affinity": [
-        0,
-        2,
-        4,
-        6
-      ],
       "mus": [
         0,
         25,
@@ -209,8 +200,6 @@
       "max_workers": 1,
       "gpu": false,
       "persistent_cache": false,
-      "physical_bytes": 68535443456,
-      "available_before": 36832382976,
       "fixture_sha256": "a4a49351e69cb5422f7f5fd10ee42a0424a6808b96b5b8da890ba4f740b304a6",
       "rng_fixture_sha256": "3557ff5013e2925e34e94fec68af40d9c27172e505d36ad4718c80f9cecc5bef",
       "initial_rng": {
@@ -222,39 +211,7 @@
         "has_uint32": 1,
         "uinteger": 4261789908
       },
-      "timestamp": "2026-10-18T16:29:46.278170+00:00",
-      "native_pools_before": [
-        {
-          "user_api": "blas",
-          "internal_api": "openblas",
-          "num_threads": 1,
-          "prefix": "libscipy_openblas",
-          "filepath": "C:\\Users\\DRRohlf\\PycharmProjects\\MyoGen\\.venv\\Lib\\site-packages\\numpy.libs\\libscipy_openblas64_-9e3e5a4229c1ca39f10dc82bba9e2b2b.dll",
-          "version": "0.3.30",
-          "threading_layer": "pthreads",
-          "architecture": "Haswell"
-        },
-        {
-          "user_api": "blas",
-          "internal_api": "openblas",
-          "num_threads": 1,
-          "prefix": "libscipy_openblas",
-          "filepath": "C:\\Users\\DRRohlf\\PycharmProjects\\MyoGen\\.venv\\Lib\\site-packages\\scipy.libs\\libscipy_openblas-48c358d105077551cc9cc3ba79387ed5.dll",
-          "version": "0.3.29.dev",
-          "threading_layer": "pthreads",
-          "architecture": "Haswell"
-        },
-        {
-          "user_api": "openmp",
-          "internal_api": "openmp",
-          "num_threads": 1,
-          "prefix": "vcomp",
-          "filepath": "C:\\Users\\DRRohlf\\PycharmProjects\\MyoGen\\.venv\\Lib\\site-packages\\sklearn\\.libs\\vcomp140.dll",
-          "version": null
-        }
-      ],
       "seconds": 21.514077599858865,
-      "cpu_seconds": 21.171875,
       "rng": {
         "bit_generator": "PCG64",
         "state": {
@@ -264,89 +221,10 @@
         "has_uint32": 1,
         "uinteger": 4261789908
       },
-      "execution_report": {
-        "policy": {
-          "backend": "cpu",
-          "memory_budget_mib": null,
-          "reserve_fraction": 0.2,
-          "reserve_min_mib": 4096,
-          "max_workers": 1,
-          "cache_dir": null
-        },
-        "backend": "cpu",
-        "stage": "surface_muaps",
-        "stage_seconds": {
-          "surface_muaps": 21.50564570003189
-        },
-        "status": "complete",
-        "error": null,
-        "batch_sizes": {
-          "array_0_MU_0": {
-            "initial": 4,
-            "final": 2
-          },
-          "array_0_MU_25": {
-            "initial": 4,
-            "final": 4
-          },
-          "array_0_MU_50": {
-            "initial": 4,
-            "final": 2
-          }
-        },
-        "worker_count_changes": [
-          1
-        ],
-        "rss_note": "CPU workers are threads; parent-process RSS counts their shared memory once",
-        "pressure_pauses": 0,
-        "allocation_retries": 0,
-        "cache_hits": 0,
-        "cache_evictions": 0,
-        "completed_work": 470,
-        "wait_seconds": 0.0,
-        "peak_managed_bytes": 115539808,
-        "peak_pending_bytes": 661350000,
-        "minimum_available_bytes": 36674068480,
-        "peak_process_rss_bytes": 395395072,
-        "physical_total_bytes": 68535443456,
-        "reserve_bytes": 13707088691.2,
-        "allocation_margin_bytes": 2301784801.28
-      },
-      "native_pools_after": [
-        {
-          "user_api": "blas",
-          "internal_api": "openblas",
-          "num_threads": 1,
-          "prefix": "libscipy_openblas",
-          "filepath": "C:\\Users\\DRRohlf\\PycharmProjects\\MyoGen\\.venv\\Lib\\site-packages\\numpy.libs\\libscipy_openblas64_-9e3e5a4229c1ca39f10dc82bba9e2b2b.dll",
-          "version": "0.3.30",
-          "threading_layer": "pthreads",
-          "architecture": "Haswell"
-        },
-        {
-          "user_api": "blas",
-          "internal_api": "openblas",
-          "num_threads": 1,
-          "prefix": "libscipy_openblas",
-          "filepath": "C:\\Users\\DRRohlf\\PycharmProjects\\MyoGen\\.venv\\Lib\\site-packages\\scipy.libs\\libscipy_openblas-48c358d105077551cc9cc3ba79387ed5.dll",
-          "version": "0.3.29.dev",
-          "threading_layer": "pthreads",
-          "architecture": "Haswell"
-        },
-        {
-          "user_api": "openmp",
-          "internal_api": "openmp",
-          "num_threads": 1,
-          "prefix": "vcomp",
-          "filepath": "C:\\Users\\DRRohlf\\PycharmProjects\\MyoGen\\.venv\\Lib\\site-packages\\sklearn\\.libs\\vcomp140.dll",
-          "version": null
-        }
-      ],
       "waveform_sha256": "b84d88e81034c136bc4ed8a52345ce07858637f36fe90c2e44b5bd8f8088b529",
       "metadata_sha256": "d9159d16fc1ac57fa7c4e75ff9bfa67ef4dc4cfef7baab1d198365e5c7959c33",
       "realized_inputs_sha256": "c739c1e68f1601a018eb0d650ca9e52ef1d3be04004352fae9c0fb55ac291ed8",
       "capture_scope": "Contract-only; zero-return replay outside timed numerical call.",
-      "available_after": 36824936448,
       "saved_artifacts": {
         "result.json": "fedc7cd06967eb256a42ef66679cb8e8965f81dafee8bcf0f545ccb576aa7896",
         "input_ids.json": "600e73354c0f3ba0b22121e4fa30aa8e8d3a1845fdd0e9f9b25b8a5ae1a46832",
@@ -357,17 +235,8 @@
     {
       "status": "complete",
       "label": "new1",
-      "root": "C:\\Users\\DRRohlf\\.codex\\worktrees\\bgl\\MyoGen",
       "head": "0f26b54d59067eb3a6b30ec4de144c6cd0c69f6d",
       "harness_sha256": "69fba060fc88b21c2c4b94efbd615d4eede657afc32e0dbd2f133820fc816715",
-      "python": "C:\\Users\\DRRohlf\\PycharmProjects\\MyoGen\\.venv\\Scripts\\python.exe",
-      "imported": "C:\\Users\\DRRohlf\\.codex\\worktrees\\bgl\\MyoGen\\myogen\\__init__.py",
-      "affinity": [
-        0,
-        2,
-        4,
-        6
-      ],
       "mus": [
         0,
         25,
@@ -386,8 +255,6 @@
       "max_workers": 1,
       "gpu": false,
       "persistent_cache": false,
-      "physical_bytes": 68535443456,
-      "available_before": 36827836416,
       "fixture_sha256": "a4a49351e69cb5422f7f5fd10ee42a0424a6808b96b5b8da890ba4f740b304a6",
       "rng_fixture_sha256": "3557ff5013e2925e34e94fec68af40d9c27172e505d36ad4718c80f9cecc5bef",
       "initial_rng": {
@@ -399,39 +266,7 @@
         "has_uint32": 1,
         "uinteger": 4261789908
       },
-      "timestamp": "2026-10-18T16:30:09.934193+00:00",
-      "native_pools_before": [
-        {
-          "user_api": "blas",
-          "internal_api": "openblas",
-          "num_threads": 1,
-          "prefix": "libscipy_openblas",
-          "filepath": "C:\\Users\\DRRohlf\\PycharmProjects\\MyoGen\\.venv\\Lib\\site-packages\\numpy.libs\\libscipy_openblas64_-9e3e5a4229c1ca39f10dc82bba9e2b2b.dll",
-          "version": "0.3.30",
-          "threading_layer": "pthreads",
-          "architecture": "Haswell"
-        },
-        {
-          "user_api": "blas",
-          "internal_api": "openblas",
-          "num_threads": 1,
-          "prefix": "libscipy_openblas",
-          "filepath": "C:\\Users\\DRRohlf\\PycharmProjects\\MyoGen\\.venv\\Lib\\site-packages\\scipy.libs\\libscipy_openblas-48c358d105077551cc9cc3ba79387ed5.dll",
-          "version": "0.3.29.dev",
-          "threading_layer": "pthreads",
-          "architecture": "Haswell"
-        },
-        {
-          "user_api": "openmp",
-          "internal_api": "openmp",
-          "num_threads": 1,
-          "prefix": "vcomp",
-          "filepath": "C:\\Users\\DRRohlf\\PycharmProjects\\MyoGen\\.venv\\Lib\\site-packages\\sklearn\\.libs\\vcomp140.dll",
-          "version": null
-        }
-      ],
       "seconds": 21.649290200090036,
-      "cpu_seconds": 21.296875,
       "rng": {
         "bit_generator": "PCG64",
         "state": {
@@ -441,89 +276,10 @@
         "has_uint32": 1,
         "uinteger": 4261789908
       },
-      "execution_report": {
-        "policy": {
-          "backend": "cpu",
-          "memory_budget_mib": null,
-          "reserve_fraction": 0.2,
-          "reserve_min_mib": 4096,
-          "max_workers": 1,
-          "cache_dir": null
-        },
-        "backend": "cpu",
-        "stage": "surface_muaps",
-        "stage_seconds": {
-          "surface_muaps": 21.639289200073108
-        },
-        "status": "complete",
-        "error": null,
-        "batch_sizes": {
-          "array_0_MU_0": {
-            "initial": 4,
-            "final": 2
-          },
-          "array_0_MU_25": {
-            "initial": 4,
-            "final": 4
-          },
-          "array_0_MU_50": {
-            "initial": 4,
-            "final": 2
-          }
-        },
-        "worker_count_changes": [
-          1
-        ],
-        "rss_note": "CPU workers are threads; parent-process RSS counts their shared memory once",
-        "pressure_pauses": 0,
-        "allocation_retries": 0,
-        "cache_hits": 0,
-        "cache_evictions": 0,
-        "completed_work": 470,
-        "wait_seconds": 0.0,
-        "peak_managed_bytes": 116064448,
-        "peak_pending_bytes": 661350000,
-        "minimum_available_bytes": 36597870592,
-        "peak_process_rss_bytes": 393998336,
-        "physical_total_bytes": 68535443456,
-        "reserve_bytes": 13707088691.2,
-        "allocation_margin_bytes": 2289078190.08
-      },
-      "native_pools_after": [
-        {
-          "user_api": "blas",
-          "internal_api": "openblas",
-          "num_threads": 1,
-          "prefix": "libscipy_openblas",
-          "filepath": "C:\\Users\\DRRohlf\\PycharmProjects\\MyoGen\\.venv\\Lib\\site-packages\\numpy.libs\\libscipy_openblas64_-9e3e5a4229c1ca39f10dc82bba9e2b2b.dll",
-          "version": "0.3.30",
-          "threading_layer": "pthreads",
-          "architecture": "Haswell"
-        },
-        {
-          "user_api": "blas",
-          "internal_api": "openblas",
-          "num_threads": 1,
-          "prefix": "libscipy_openblas",
-          "filepath": "C:\\Users\\DRRohlf\\PycharmProjects\\MyoGen\\.venv\\Lib\\site-packages\\scipy.libs\\libscipy_openblas-48c358d105077551cc9cc3ba79387ed5.dll",
-          "version": "0.3.29.dev",
-          "threading_layer": "pthreads",
-          "architecture": "Haswell"
-        },
-        {
-          "user_api": "openmp",
-          "internal_api": "openmp",
-          "num_threads": 1,
-          "prefix": "vcomp",
-          "filepath": "C:\\Users\\DRRohlf\\PycharmProjects\\MyoGen\\.venv\\Lib\\site-packages\\sklearn\\.libs\\vcomp140.dll",
-          "version": null
-        }
-      ],
       "waveform_sha256": "24ba82dd5b02db50516324fe0616ecb8ea673b7583cf035a0d674c65361ed4c1",
       "metadata_sha256": "d9159d16fc1ac57fa7c4e75ff9bfa67ef4dc4cfef7baab1d198365e5c7959c33",
       "realized_inputs_sha256": "c739c1e68f1601a018eb0d650ca9e52ef1d3be04004352fae9c0fb55ac291ed8",
       "capture_scope": "Contract-only; zero-return replay outside timed numerical call.",
-      "available_after": 36808814592,
       "saved_artifacts": {
         "result.json": "46c2b4e4b135520fd37b679755df16dfe0f3d3982a712290ef723c97cd45acc7",
         "input_ids.json": "600e73354c0f3ba0b22121e4fa30aa8e8d3a1845fdd0e9f9b25b8a5ae1a46832",
@@ -534,17 +290,8 @@
     {
       "status": "complete",
       "label": "new2",
-      "root": "C:\\Users\\DRRohlf\\.codex\\worktrees\\bgl\\MyoGen",
       "head": "0f26b54d59067eb3a6b30ec4de144c6cd0c69f6d",
       "harness_sha256": "69fba060fc88b21c2c4b94efbd615d4eede657afc32e0dbd2f133820fc816715",
-      "python": "C:\\Users\\DRRohlf\\PycharmProjects\\MyoGen\\.venv\\Scripts\\python.exe",
-      "imported": "C:\\Users\\DRRohlf\\.codex\\worktrees\\bgl\\MyoGen\\myogen\\__init__.py",
-      "affinity": [
-        0,
-        2,
-        4,
-        6
-      ],
       "mus": [
         0,
         25,
@@ -563,8 +310,6 @@
       "max_workers": 1,
       "gpu": false,
       "persistent_cache": false,
-      "physical_bytes": 68535443456,
-      "available_before": 36848705536,
       "fixture_sha256": "a4a49351e69cb5422f7f5fd10ee42a0424a6808b96b5b8da890ba4f740b304a6",
       "rng_fixture_sha256": "3557ff5013e2925e34e94fec68af40d9c27172e505d36ad4718c80f9cecc5bef",
       "initial_rng": {
@@ -576,39 +321,7 @@
         "has_uint32": 1,
         "uinteger": 4261789908
       },
-      "timestamp": "2026-10-18T16:30:34.232501+00:00",
-      "native_pools_before": [
-        {
-          "user_api": "blas",
-          "internal_api": "openblas",
-          "num_threads": 1,
-          "prefix": "libscipy_openblas",
-          "filepath": "C:\\Users\\DRRohlf\\PycharmProjects\\MyoGen\\.venv\\Lib\\site-packages\\numpy.libs\\libscipy_openblas64_-9e3e5a4229c1ca39f10dc82bba9e2b2b.dll",
-          "version": "0.3.30",
-          "threading_layer": "pthreads",
-          "architecture": "Haswell"
-        },
-        {
-          "user_api": "blas",
-          "internal_api": "openblas",
-          "num_threads": 1,
-          "prefix": "libscipy_openblas",
-          "filepath": "C:\\Users\\DRRohlf\\PycharmProjects\\MyoGen\\.venv\\Lib\\site-packages\\scipy.libs\\libscipy_openblas-48c358d105077551cc9cc3ba79387ed5.dll",
-          "version": "0.3.29.dev",
-          "threading_layer": "pthreads",
-          "architecture": "Haswell"
-        },
-        {
-          "user_api": "openmp",
-          "internal_api": "openmp",
-          "num_threads": 1,
-          "prefix": "vcomp",
-          "filepath": "C:\\Users\\DRRohlf\\PycharmProjects\\MyoGen\\.venv\\Lib\\site-packages\\sklearn\\.libs\\vcomp140.dll",
-          "version": null
-        }
-      ],
       "seconds": 22.39299840014428,
-      "cpu_seconds": 21.859375,
       "rng": {
         "bit_generator": "PCG64",
         "state": {
@@ -618,89 +331,10 @@
         "has_uint32": 1,
         "uinteger": 4261789908
       },
-      "execution_report": {
-        "policy": {
-          "backend": "cpu",
-          "memory_budget_mib": null,
-          "reserve_fraction": 0.2,
-          "reserve_min_mib": 4096,
-          "max_workers": 1,
-          "cache_dir": null
-        },
-        "backend": "cpu",
-        "stage": "surface_muaps",
-        "stage_seconds": {
-          "surface_muaps": 22.38268409995362
-        },
-        "status": "complete",
-        "error": null,
-        "batch_sizes": {
-          "array_0_MU_0": {
-            "initial": 4,
-            "final": 2
-          },
-          "array_0_MU_25": {
-            "initial": 4,
-            "final": 4
-          },
-          "array_0_MU_50": {
-            "initial": 4,
-            "final": 7
-          }
-        },
-        "worker_count_changes": [
-          1
-        ],
-        "rss_note": "CPU workers are threads; parent-process RSS counts their shared memory once",
-        "pressure_pauses": 0,
-        "allocation_retries": 0,
-        "cache_hits": 0,
-        "cache_evictions": 0,
-        "completed_work": 470,
-        "wait_seconds": 0.0,
-        "peak_managed_bytes": 116064448,
-        "peak_pending_bytes": 661350000,
-        "minimum_available_bytes": 36539604992,
-        "peak_process_rss_bytes": 395862016,
-        "physical_total_bytes": 68535443456,
-        "reserve_bytes": 13707088691.2,
-        "allocation_margin_bytes": 2303591546.88
-      },
-      "native_pools_after": [
-        {
-          "user_api": "blas",
-          "internal_api": "openblas",
-          "num_threads": 1,
-          "prefix": "libscipy_openblas",
-          "filepath": "C:\\Users\\DRRohlf\\PycharmProjects\\MyoGen\\.venv\\Lib\\site-packages\\numpy.libs\\libscipy_openblas64_-9e3e5a4229c1ca39f10dc82bba9e2b2b.dll",
-          "version": "0.3.30",
-          "threading_layer": "pthreads",
-          "architecture": "Haswell"
-        },
-        {
-          "user_api": "blas",
-          "internal_api": "openblas",
-          "num_threads": 1,
-          "prefix": "libscipy_openblas",
-          "filepath": "C:\\Users\\DRRohlf\\PycharmProjects\\MyoGen\\.venv\\Lib\\site-packages\\scipy.libs\\libscipy_openblas-48c358d105077551cc9cc3ba79387ed5.dll",
-          "version": "0.3.29.dev",
-          "threading_layer": "pthreads",
-          "architecture": "Haswell"
-        },
-        {
-          "user_api": "openmp",
-          "internal_api": "openmp",
-          "num_threads": 1,
-          "prefix": "vcomp",
-          "filepath": "C:\\Users\\DRRohlf\\PycharmProjects\\MyoGen\\.venv\\Lib\\site-packages\\sklearn\\.libs\\vcomp140.dll",
-          "version": null
-        }
-      ],
       "waveform_sha256": "24ba82dd5b02db50516324fe0616ecb8ea673b7583cf035a0d674c65361ed4c1",
       "metadata_sha256": "d9159d16fc1ac57fa7c4e75ff9bfa67ef4dc4cfef7baab1d198365e5c7959c33",
       "realized_inputs_sha256": "c739c1e68f1601a018eb0d650ca9e52ef1d3be04004352fae9c0fb55ac291ed8",
       "capture_scope": "Contract-only; zero-return replay outside timed numerical call.",
-      "available_after": 36846432256,
       "saved_artifacts": {
         "result.json": "d06c5f56997ba9b05782b2e6e95288a38bfc61a6582ebba1b885d41a9bd3fa98",
         "input_ids.json": "600e73354c0f3ba0b22121e4fa30aa8e8d3a1845fdd0e9f9b25b8a5ae1a46832",
@@ -711,17 +345,8 @@
     {
       "status": "complete",
       "label": "old2",
-      "root": "C:\\Users\\DRRohlf\\.codex\\worktrees\\basic-myogen-adaptive-memory\\MyoGen",
       "head": "174a71404eceae963e31ad027b642f72572c72f3",
       "harness_sha256": "69fba060fc88b21c2c4b94efbd615d4eede657afc32e0dbd2f133820fc816715",
-      "python": "C:\\Users\\DRRohlf\\PycharmProjects\\MyoGen\\.venv\\Scripts\\python.exe",
-      "imported": "C:\\Users\\DRRohlf\\.codex\\worktrees\\basic-myogen-adaptive-memory\\MyoGen\\myogen\\__init__.py",
-      "affinity": [
-        0,
-        2,
-        4,
-        6
-      ],
       "mus": [
         0,
         25,
@@ -740,8 +365,6 @@
       "max_workers": 1,
       "gpu": false,
       "persistent_cache": false,
-      "physical_bytes": 68535443456,
-      "available_before": 36894867456,
       "fixture_sha256": "a4a49351e69cb5422f7f5fd10ee42a0424a6808b96b5b8da890ba4f740b304a6",
       "rng_fixture_sha256": "3557ff5013e2925e34e94fec68af40d9c27172e505d36ad4718c80f9cecc5bef",
       "initial_rng": {
@@ -753,39 +376,7 @@
         "has_uint32": 1,
         "uinteger": 4261789908
       },
-      "timestamp": "2026-10-18T16:30:58.841253+00:00",
-      "native_pools_before": [
-        {
-          "user_api": "blas",
-          "internal_api": "openblas",
-          "num_threads": 1,
-          "prefix": "libscipy_openblas",
-          "filepath": "C:\\Users\\DRRohlf\\PycharmProjects\\MyoGen\\.venv\\Lib\\site-packages\\numpy.libs\\libscipy_openblas64_-9e3e5a4229c1ca39f10dc82bba9e2b2b.dll",
-          "version": "0.3.30",
-          "threading_layer": "pthreads",
-          "architecture": "Haswell"
-        },
-        {
-          "user_api": "blas",
-          "internal_api": "openblas",
-          "num_threads": 1,
-          "prefix": "libscipy_openblas",
-          "filepath": "C:\\Users\\DRRohlf\\PycharmProjects\\MyoGen\\.venv\\Lib\\site-packages\\scipy.libs\\libscipy_openblas-48c358d105077551cc9cc3ba79387ed5.dll",
-          "version": "0.3.29.dev",
-          "threading_layer": "pthreads",
-          "architecture": "Haswell"
-        },
-        {
-          "user_api": "openmp",
-          "internal_api": "openmp",
-          "num_threads": 1,
-          "prefix": "vcomp",
-          "filepath": "C:\\Users\\DRRohlf\\PycharmProjects\\MyoGen\\.venv\\Lib\\site-packages\\sklearn\\.libs\\vcomp140.dll",
-          "version": null
-        }
-      ],
       "seconds": 22.095750000094995,
-      "cpu_seconds": 21.9375,
       "rng": {
         "bit_generator": "PCG64",
         "state": {
@@ -795,89 +386,10 @@
         "has_uint32": 1,
         "uinteger": 4261789908
       },
-      "execution_report": {
-        "policy": {
-          "backend": "cpu",
-          "memory_budget_mib": null,
-          "reserve_fraction": 0.2,
-          "reserve_min_mib": 4096,
-          "max_workers": 1,
-          "cache_dir": null
-        },
-        "backend": "cpu",
-        "stage": "surface_muaps",
-        "stage_seconds": {
-          "surface_muaps": 22.086563399992883
-        },
-        "status": "complete",
-        "error": null,
-        "batch_sizes": {
-          "array_0_MU_0": {
-            "initial": 4,
-            "final": 2
-          },
-          "array_0_MU_25": {
-            "initial": 4,
-            "final": 4
-          },
-          "array_0_MU_50": {
-            "initial": 4,
-            "final": 3
-          }
-        },
-        "worker_count_changes": [
-          1
-        ],
-        "rss_note": "CPU workers are threads; parent-process RSS counts their shared memory once",
-        "pressure_pauses": 0,
-        "allocation_retries": 0,
-        "cache_hits": 0,
-        "cache_evictions": 0,
-        "completed_work": 470,
-        "wait_seconds": 0.0,
-        "peak_managed_bytes": 115539808,
-        "peak_pending_bytes": 661350000,
-        "minimum_available_bytes": 36527726592,
-        "peak_process_rss_bytes": 371388416,
-        "physical_total_bytes": 68535443456,
-        "reserve_bytes": 13707088691.2,
-        "allocation_margin_bytes": 2295053025.28
-      },
-      "native_pools_after": [
-        {
-          "user_api": "blas",
-          "internal_api": "openblas",
-          "num_threads": 1,
-          "prefix": "libscipy_openblas",
-          "filepath": "C:\\Users\\DRRohlf\\PycharmProjects\\MyoGen\\.venv\\Lib\\site-packages\\numpy.libs\\libscipy_openblas64_-9e3e5a4229c1ca39f10dc82bba9e2b2b.dll",
-          "version": "0.3.30",
-          "threading_layer": "pthreads",
-          "architecture": "Haswell"
-        },
-        {
-          "user_api": "blas",
-          "internal_api": "openblas",
-          "num_threads": 1,
-          "prefix": "libscipy_openblas",
-          "filepath": "C:\\Users\\DRRohlf\\PycharmProjects\\MyoGen\\.venv\\Lib\\site-packages\\scipy.libs\\libscipy_openblas-48c358d105077551cc9cc3ba79387ed5.dll",
-          "version": "0.3.29.dev",
-          "threading_layer": "pthreads",
-          "architecture": "Haswell"
-        },
-        {
-          "user_api": "openmp",
-          "internal_api": "openmp",
-          "num_threads": 1,
-          "prefix": "vcomp",
-          "filepath": "C:\\Users\\DRRohlf\\PycharmProjects\\MyoGen\\.venv\\Lib\\site-packages\\sklearn\\.libs\\vcomp140.dll",
-          "version": null
-        }
-      ],
       "waveform_sha256": "b84d88e81034c136bc4ed8a52345ce07858637f36fe90c2e44b5bd8f8088b529",
       "metadata_sha256": "d9159d16fc1ac57fa7c4e75ff9bfa67ef4dc4cfef7baab1d198365e5c7959c33",
       "realized_inputs_sha256": "c739c1e68f1601a018eb0d650ca9e52ef1d3be04004352fae9c0fb55ac291ed8",
       "capture_scope": "Contract-only; zero-return replay outside timed numerical call.",
-      "available_after": 36757291008,
       "saved_artifacts": {
         "result.json": "3226e465c456ff7abf5515434e4f889969863fedc7abd526ec6751ea4170d74b",
         "input_ids.json": "600e73354c0f3ba0b22121e4fa30aa8e8d3a1845fdd0e9f9b25b8a5ae1a46832",
@@ -888,17 +400,8 @@
     {
       "status": "complete",
       "label": "old3",
-      "root": "C:\\Users\\DRRohlf\\.codex\\worktrees\\basic-myogen-adaptive-memory\\MyoGen",
       "head": "174a71404eceae963e31ad027b642f72572c72f3",
       "harness_sha256": "69fba060fc88b21c2c4b94efbd615d4eede657afc32e0dbd2f133820fc816715",
-      "python": "C:\\Users\\DRRohlf\\PycharmProjects\\MyoGen\\.venv\\Scripts\\python.exe",
-      "imported": "C:\\Users\\DRRohlf\\.codex\\worktrees\\basic-myogen-adaptive-memory\\MyoGen\\myogen\\__init__.py",
-      "affinity": [
-        0,
-        2,
-        4,
-        6
-      ],
       "mus": [
         0,
         25,
@@ -917,8 +420,6 @@
       "max_workers": 1,
       "gpu": false,
       "persistent_cache": false,
-      "physical_bytes": 68535443456,
-      "available_before": 36774301696,
       "fixture_sha256": "a4a49351e69cb5422f7f5fd10ee42a0424a6808b96b5b8da890ba4f740b304a6",
       "rng_fixture_sha256": "3557ff5013e2925e34e94fec68af40d9c27172e505d36ad4718c80f9cecc5bef",
       "initial_rng": {
@@ -930,39 +431,7 @@
         "has_uint32": 1,
         "uinteger": 4261789908
       },
-      "timestamp": "2026-10-18T16:31:23.290733+00:00",
-      "native_pools_before": [
-        {
-          "user_api": "blas",
-          "internal_api": "openblas",
-          "num_threads": 1,
-          "prefix": "libscipy_openblas",
-          "filepath": "C:\\Users\\DRRohlf\\PycharmProjects\\MyoGen\\.venv\\Lib\\site-packages\\numpy.libs\\libscipy_openblas64_-9e3e5a4229c1ca39f10dc82bba9e2b2b.dll",
-          "version": "0.3.30",
-          "threading_layer": "pthreads",
-          "architecture": "Haswell"
-        },
-        {
-          "user_api": "blas",
-          "internal_api": "openblas",
-          "num_threads": 1,
-          "prefix": "libscipy_openblas",
-          "filepath": "C:\\Users\\DRRohlf\\PycharmProjects\\MyoGen\\.venv\\Lib\\site-packages\\scipy.libs\\libscipy_openblas-48c358d105077551cc9cc3ba79387ed5.dll",
-          "version": "0.3.29.dev",
-          "threading_layer": "pthreads",
-          "architecture": "Haswell"
-        },
-        {
-          "user_api": "openmp",
-          "internal_api": "openmp",
-          "num_threads": 1,
-          "prefix": "vcomp",
-          "filepath": "C:\\Users\\DRRohlf\\PycharmProjects\\MyoGen\\.venv\\Lib\\site-packages\\sklearn\\.libs\\vcomp140.dll",
-          "version": null
-        }
-      ],
       "seconds": 21.67656090017408,
-      "cpu_seconds": 21.59375,
       "rng": {
         "bit_generator": "PCG64",
         "state": {
@@ -972,89 +441,10 @@
         "has_uint32": 1,
         "uinteger": 4261789908
       },
-      "execution_report": {
-        "policy": {
-          "backend": "cpu",
-          "memory_budget_mib": null,
-          "reserve_fraction": 0.2,
-          "reserve_min_mib": 4096,
-          "max_workers": 1,
-          "cache_dir": null
-        },
-        "backend": "cpu",
-        "stage": "surface_muaps",
-        "stage_seconds": {
-          "surface_muaps": 21.667404299834743
-        },
-        "status": "complete",
-        "error": null,
-        "batch_sizes": {
-          "array_0_MU_0": {
-            "initial": 4,
-            "final": 2
-          },
-          "array_0_MU_25": {
-            "initial": 4,
-            "final": 4
-          },
-          "array_0_MU_50": {
-            "initial": 4,
-            "final": 7
-          }
-        },
-        "worker_count_changes": [
-          1
-        ],
-        "rss_note": "CPU workers are threads; parent-process RSS counts their shared memory once",
-        "pressure_pauses": 0,
-        "allocation_retries": 0,
-        "cache_hits": 0,
-        "cache_evictions": 0,
-        "completed_work": 470,
-        "wait_seconds": 0.0,
-        "peak_managed_bytes": 115539808,
-        "peak_pending_bytes": 661350000,
-        "minimum_available_bytes": 36606693376,
-        "peak_process_rss_bytes": 395218944,
-        "physical_total_bytes": 68535443456,
-        "reserve_bytes": 13707088691.2,
-        "allocation_margin_bytes": 2297647841.28
-      },
-      "native_pools_after": [
-        {
-          "user_api": "blas",
-          "internal_api": "openblas",
-          "num_threads": 1,
-          "prefix": "libscipy_openblas",
-          "filepath": "C:\\Users\\DRRohlf\\PycharmProjects\\MyoGen\\.venv\\Lib\\site-packages\\numpy.libs\\libscipy_openblas64_-9e3e5a4229c1ca39f10dc82bba9e2b2b.dll",
-          "version": "0.3.30",
-          "threading_layer": "pthreads",
-          "architecture": "Haswell"
-        },
-        {
-          "user_api": "blas",
-          "internal_api": "openblas",
-          "num_threads": 1,
-          "prefix": "libscipy_openblas",
-          "filepath": "C:\\Users\\DRRohlf\\PycharmProjects\\MyoGen\\.venv\\Lib\\site-packages\\scipy.libs\\libscipy_openblas-48c358d105077551cc9cc3ba79387ed5.dll",
-          "version": "0.3.29.dev",
-          "threading_layer": "pthreads",
-          "architecture": "Haswell"
-        },
-        {
-          "user_api": "openmp",
-          "internal_api": "openmp",
-          "num_threads": 1,
-          "prefix": "vcomp",
-          "filepath": "C:\\Users\\DRRohlf\\PycharmProjects\\MyoGen\\.venv\\Lib\\site-packages\\sklearn\\.libs\\vcomp140.dll",
-          "version": null
-        }
-      ],
       "waveform_sha256": "b84d88e81034c136bc4ed8a52345ce07858637f36fe90c2e44b5bd8f8088b529",
       "metadata_sha256": "d9159d16fc1ac57fa7c4e75ff9bfa67ef4dc4cfef7baab1d198365e5c7959c33",
       "realized_inputs_sha256": "c739c1e68f1601a018eb0d650ca9e52ef1d3be04004352fae9c0fb55ac291ed8",
       "capture_scope": "Contract-only; zero-return replay outside timed numerical call.",
-      "available_after": 36784422912,
       "saved_artifacts": {
         "result.json": "8829f1c35aefc529a9927dd6ec8fc76f766761d6fc10d8829662b7de1613e51c",
         "input_ids.json": "600e73354c0f3ba0b22121e4fa30aa8e8d3a1845fdd0e9f9b25b8a5ae1a46832",
@@ -1065,17 +455,8 @@
     {
       "status": "complete",
       "label": "new3",
-      "root": "C:\\Users\\DRRohlf\\.codex\\worktrees\\bgl\\MyoGen",
       "head": "0f26b54d59067eb3a6b30ec4de144c6cd0c69f6d",
       "harness_sha256": "69fba060fc88b21c2c4b94efbd615d4eede657afc32e0dbd2f133820fc816715",
-      "python": "C:\\Users\\DRRohlf\\PycharmProjects\\MyoGen\\.venv\\Scripts\\python.exe",
-      "imported": "C:\\Users\\DRRohlf\\.codex\\worktrees\\bgl\\MyoGen\\myogen\\__init__.py",
-      "affinity": [
-        0,
-        2,
-        4,
-        6
-      ],
       "mus": [
         0,
         25,
@@ -1094,8 +475,6 @@
       "max_workers": 1,
       "gpu": false,
       "persistent_cache": false,
-      "physical_bytes": 68535443456,
-      "available_before": 36727607296,
       "fixture_sha256": "a4a49351e69cb5422f7f5fd10ee42a0424a6808b96b5b8da890ba4f740b304a6",
       "rng_fixture_sha256": "3557ff5013e2925e34e94fec68af40d9c27172e505d36ad4718c80f9cecc5bef",
       "initial_rng": {
@@ -1107,39 +486,7 @@
         "has_uint32": 1,
         "uinteger": 4261789908
       },
-      "timestamp": "2026-10-18T16:31:47.238770+00:00",
-      "native_pools_before": [
-        {
-          "user_api": "blas",
-          "internal_api": "openblas",
-          "num_threads": 1,
-          "prefix": "libscipy_openblas",
-          "filepath": "C:\\Users\\DRRohlf\\PycharmProjects\\MyoGen\\.venv\\Lib\\site-packages\\numpy.libs\\libscipy_openblas64_-9e3e5a4229c1ca39f10dc82bba9e2b2b.dll",
-          "version": "0.3.30",
-          "threading_layer": "pthreads",
-          "architecture": "Haswell"
-        },
-        {
-          "user_api": "blas",
-          "internal_api": "openblas",
-          "num_threads": 1,
-          "prefix": "libscipy_openblas",
-          "filepath": "C:\\Users\\DRRohlf\\PycharmProjects\\MyoGen\\.venv\\Lib\\site-packages\\scipy.libs\\libscipy_openblas-48c358d105077551cc9cc3ba79387ed5.dll",
-          "version": "0.3.29.dev",
-          "threading_layer": "pthreads",
-          "architecture": "Haswell"
-        },
-        {
-          "user_api": "openmp",
-          "internal_api": "openmp",
-          "num_threads": 1,
-          "prefix": "vcomp",
-          "filepath": "C:\\Users\\DRRohlf\\PycharmProjects\\MyoGen\\.venv\\Lib\\site-packages\\sklearn\\.libs\\vcomp140.dll",
-          "version": null
-        }
-      ],
       "seconds": 22.25487479986623,
-      "cpu_seconds": 21.953125,
       "rng": {
         "bit_generator": "PCG64",
         "state": {
@@ -1149,89 +496,10 @@
         "has_uint32": 1,
         "uinteger": 4261789908
       },
-      "execution_report": {
-        "policy": {
-          "backend": "cpu",
-          "memory_budget_mib": null,
-          "reserve_fraction": 0.2,
-          "reserve_min_mib": 4096,
-          "max_workers": 1,
-          "cache_dir": null
-        },
-        "backend": "cpu",
-        "stage": "surface_muaps",
-        "stage_seconds": {
-          "surface_muaps": 22.242897000163794
-        },
-        "status": "complete",
-        "error": null,
-        "batch_sizes": {
-          "array_0_MU_0": {
-            "initial": 4,
-            "final": 2
-          },
-          "array_0_MU_25": {
-            "initial": 4,
-            "final": 4
-          },
-          "array_0_MU_50": {
-            "initial": 4,
-            "final": 3
-          }
-        },
-        "worker_count_changes": [
-          1
-        ],
-        "rss_note": "CPU workers are threads; parent-process RSS counts their shared memory once",
-        "pressure_pauses": 0,
-        "allocation_retries": 0,
-        "cache_hits": 0,
-        "cache_evictions": 0,
-        "completed_work": 470,
-        "wait_seconds": 0.0,
-        "peak_managed_bytes": 116064448,
-        "peak_pending_bytes": 661350000,
-        "minimum_available_bytes": 36459282432,
-        "peak_process_rss_bytes": 395313152,
-        "physical_total_bytes": 68535443456,
-        "reserve_bytes": 13707088691.2,
-        "allocation_margin_bytes": 2292139130.88
-      },
-      "native_pools_after": [
-        {
-          "user_api": "blas",
-          "internal_api": "openblas",
-          "num_threads": 1,
-          "prefix": "libscipy_openblas",
-          "filepath": "C:\\Users\\DRRohlf\\PycharmProjects\\MyoGen\\.venv\\Lib\\site-packages\\numpy.libs\\libscipy_openblas64_-9e3e5a4229c1ca39f10dc82bba9e2b2b.dll",
-          "version": "0.3.30",
-          "threading_layer": "pthreads",
-          "architecture": "Haswell"
-        },
-        {
-          "user_api": "blas",
-          "internal_api": "openblas",
-          "num_threads": 1,
-          "prefix": "libscipy_openblas",
-          "filepath": "C:\\Users\\DRRohlf\\PycharmProjects\\MyoGen\\.venv\\Lib\\site-packages\\scipy.libs\\libscipy_openblas-48c358d105077551cc9cc3ba79387ed5.dll",
-          "version": "0.3.29.dev",
-          "threading_layer": "pthreads",
-          "architecture": "Haswell"
-        },
-        {
-          "user_api": "openmp",
-          "internal_api": "openmp",
-          "num_threads": 1,
-          "prefix": "vcomp",
-          "filepath": "C:\\Users\\DRRohlf\\PycharmProjects\\MyoGen\\.venv\\Lib\\site-packages\\sklearn\\.libs\\vcomp140.dll",
-          "version": null
-        }
-      ],
       "waveform_sha256": "24ba82dd5b02db50516324fe0616ecb8ea673b7583cf035a0d674c65361ed4c1",
       "metadata_sha256": "d9159d16fc1ac57fa7c4e75ff9bfa67ef4dc4cfef7baab1d198365e5c7959c33",
       "realized_inputs_sha256": "c739c1e68f1601a018eb0d650ca9e52ef1d3be04004352fae9c0fb55ac291ed8",
       "capture_scope": "Contract-only; zero-return replay outside timed numerical call.",
-      "available_after": 36736638976,
       "saved_artifacts": {
         "result.json": "5b2813f87e470ce1760e628dfda2ffded82c07e8991ba7414d6f50c61f536532",
         "input_ids.json": "600e73354c0f3ba0b22121e4fa30aa8e8d3a1845fdd0e9f9b25b8a5ae1a46832",
