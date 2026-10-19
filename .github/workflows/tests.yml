@@ -15,6 +15,9 @@ jobs:
       matrix:
         os: [ubuntu-latest, macos-latest]
         python-version: ["3.12", "3.13"]
+    env:
+      # Override the repository's local interpreter pin for every uv command.
+      UV_PYTHON: ${{ matrix.python-version }}
     steps:
       - uses: actions/checkout@v5
 
@@ -45,7 +48,7 @@ jobs:
 
       - name: Install project with dev group
         run: |
-          uv sync --group dev
+          uv sync --locked --group dev
 
       - name: Compile NEURON mechanisms
         run: uv run poe setup_myogen

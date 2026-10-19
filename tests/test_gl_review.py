@@ -19,6 +19,7 @@ from myogen.utils.neo import create_grid_signal
     (256, 5885.057471264368, 90),
     (185, 10000., 38),
 ])
+@pytest.mark.usefixtures("ample_session_memory")
 def test_surface_half_sample_rounding_preserves_shape_and_time(samples, rate, expected_length, monkeypatch):
     from myogen.simulator.core.emg.surface import surface_emg
     monkeypatch.setattr(surface_emg, "HAS_CUPY", False)
