@@ -5,6 +5,7 @@ import pytest
 from myogen.simulator.core.emg.runtime.synthesis import convolve_add
 from myogen.simulator.core.emg.runtime.session import ExecutionSession
 from myogen.simulator.core.emg.runtime import ExecutionPolicy, MemoryBudgetError
+from tests._memory import ample_memory
 
 
 def test_float_method_estimate_reused_by_shape_but_integer_values_rechecked(monkeypatch):
@@ -13,7 +14,7 @@ def test_float_method_estimate_reused_by_shape_but_integer_values_rechecked(monk
     import myogen.simulator.core.emg.runtime.synthesis as module
     calls = []
     monkeypatch.setattr(module, "choose_conv_method", lambda *args, **kwargs: calls.append(1) or "direct")
-    with ExecutionSession(SimpleNamespace(), ExecutionPolicy(), "contract") as session:
+    with ExecutionSession(SimpleNamespace(), ExecutionPolicy(), "contract", probe=ample_memory) as session:
         output, spikes = session.zeros((64,)), np.ones(64, bool)
         for amplitude in (1., 2.):
             convolve_add(output, spikes, np.full(7, amplitude), session)
@@ -55,7 +56,7 @@ def test_fft_uses_one_worker_even_with_external_parallel_default(monkeypatch):
             workers.append(kwargs.get("workers"))
             return _original(*args, **kwargs)
         monkeypatch.setattr(module, name, measured)
-    with set_workers(4), ExecutionSession(SimpleNamespace(), ExecutionPolicy(), "contract") as session:
+    with set_workers(4), ExecutionSession(SimpleNamespace(), ExecutionPolicy(), "contract", probe=ample_memory) as session:
         output = session.zeros((64,))
         convolve_add(output, np.ones(64, bool), np.ones(7), session, method="fft")
     assert workers and set(workers) == {1}
@@ -70,7 +71,7 @@ def test_same_crop_overlap_and_first_last_events(length, kernel_length, method):
     expected = np.convolve(spikes, kernel, mode="same")
     class Owner:
         pass
-    with ExecutionSession(Owner(), ExecutionPolicy(), "contract") as session:
+    with ExecutionSession(Owner(), ExecutionPolicy(), "contract", probe=ample_memory) as session:
         out = session.zeros((max(length, kernel_length),))
         convolve_add(out, spikes, kernel, session, method=method, block_size=3)
         np.testing.assert_allclose(out, expected, atol=1e-12, rtol=1e-9)
@@ -79,7 +80,7 @@ def test_same_crop_overlap_and_first_last_events(length, kernel_length, method):
 def test_fft_zero_activity_stays_exactly_zero():
     class Owner:
         pass
-    with ExecutionSession(Owner(), ExecutionPolicy(), "contract") as session:
+    with ExecutionSession(Owner(), ExecutionPolicy(), "contract", probe=ample_memory) as session:
         out = session.zeros((40,))
         convolve_add(out, np.zeros(40, bool), np.ones(7), session, method="fft", block_size=4)
         np.testing.assert_array_equal(out, 0)
@@ -91,7 +92,7 @@ def test_direct_boolean_cast_and_result_must_both_fit_ceiling():
         pass
     spikes = np.ones(1_000_000, dtype=bool)
     kernel = np.ones(3)
-    with ExecutionSession(Owner(), ExecutionPolicy(memory_budget_mib=17), "contract") as session:
+    with ExecutionSession(Owner(), ExecutionPolicy(memory_budget_mib=17), "contract", probe=ample_memory) as session:
         session.track([spikes, kernel])
         output = session.zeros(spikes.shape)
         with pytest.raises(MemoryBudgetError):
@@ -104,7 +105,7 @@ def test_auto_uses_bounded_fft_when_direct_promotion_cannot_fit():
         pass
     spikes = np.ones(1_000_000, dtype=bool)
     kernel = np.ones(3)
-    with ExecutionSession(Owner(), ExecutionPolicy(memory_budget_mib=17), "contract") as session:
+    with ExecutionSession(Owner(), ExecutionPolicy(memory_budget_mib=17), "contract", probe=ample_memory) as session:
         session.track([spikes, kernel])
         output = session.zeros(spikes.shape)
         convolve_add(output, spikes, kernel, session)
@@ -126,7 +127,7 @@ def test_fft_retry_after_committed_block_never_duplicates_contribution(monkeypat
     spikes = np.ones(31, bool)
     kernel = np.arange(7.0)
     owner = Owner()
-    with ExecutionSession(owner, ExecutionPolicy(), "contract") as session:
+    with ExecutionSession(owner, ExecutionPolicy(), "contract", probe=ample_memory) as session:
         output = session.zeros(spikes.shape)
         convolve_add(output, spikes, kernel, session, method="fft", block_size=8)
         np.testing.assert_allclose(output, np.convolve(spikes, kernel, "same"), atol=1e-12, rtol=1e-9)
@@ -146,7 +147,7 @@ def test_failed_fft_releases_local_transform_before_tighter_retry(monkeypatch):
         return original(*args, **kwargs)
     monkeypatch.setattr(module, "irfft", fail_first)
     spikes, kernel = np.ones(32, bool), np.ones(1000)
-    with ExecutionSession(SimpleNamespace(), ExecutionPolicy(memory_budget_mib=.078), "contract") as session:
+    with ExecutionSession(SimpleNamespace(), ExecutionPolicy(memory_budget_mib=.078), "contract", probe=ample_memory) as session:
         session.track([spikes, kernel])
         output = session.zeros((1000,))
         convolve_add(output, spikes, kernel, session, method="fft", block_size=2)
@@ -163,7 +164,7 @@ def test_fft_key_reused_within_call_and_rebuilt_after_input_change(monkeypatch):
         return original(*args)
     monkeypatch.setattr(module, "fingerprint", measured)
     spikes, kernel = np.ones(71, bool), np.arange(9.)
-    with ExecutionSession(SimpleNamespace(), ExecutionPolicy(), "contract") as session:
+    with ExecutionSession(SimpleNamespace(), ExecutionPolicy(), "contract", probe=ample_memory) as session:
         output = session.zeros(spikes.shape)
         for change in (0., .25):
             kernel += change
@@ -192,7 +193,7 @@ def test_fft_key_changes_when_retry_shrinks_transform(monkeypatch):
     monkeypatch.setattr(module, "fingerprint", measured)
     monkeypatch.setattr(module, "irfft", fail_second)
     spikes, kernel = np.ones(71, bool), np.arange(9.)
-    with ExecutionSession(SimpleNamespace(), ExecutionPolicy(), "contract") as session:
+    with ExecutionSession(SimpleNamespace(), ExecutionPolicy(), "contract", probe=ample_memory) as session:
         output = session.zeros(spikes.shape)
         convolve_add(output, spikes, kernel, session, method="fft", block_size=16)
         assert len(hashes) == 2 and hashes[0] != hashes[1]
