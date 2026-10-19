@@ -1,18 +1,14 @@
 # Corrected GitLab CPU port: results
 
-The later [Linux validation and sEMG demonstration](linux-validation.md) records
-the cache-lifetime fix, all 271 tests passing without skips, and noise examples.
-The Windows measurements and remaining population-validation limits below are
+The later [validation summary and sEMG demonstration](validation.md) records
+the cache-lifetime fix, automated test coverage, and noise examples.
+The historical measurements and remaining population-validation limits below are
 historical evidence and are not replaced by the illustrative demo.
 
 The later [matched 470-fibre sEMG comparison](m470.md) measures this port against
 the final old speedup branch under identical worker/thread settings.
 
 Branch: perf/basic-gitlab-cpu. Base: fc077cb4fa89b8cb23c7f0ec4fb50dc8fef05831.
-The separate bgl/MyoGen checkout leaves the anatomical/VL checkout untouched.
-The retired GitHub-based checkout and its artifacts are retained locally;
-GitLab draft MR !4 supersedes the old optimization proposal.
-
 The later [review fixes and verification](fixes.md) cover rounding boundaries,
 worker reservations, cache publication/recovery and dependency locking.
 
@@ -39,9 +35,8 @@ physiology, or mixed-precision arithmetic were introduced.
 
 ## Measurement conditions
 
-Windows i7-13800H laptop, 63.83 GiB physical RAM, affinity to four physical cores
-(logical CPUs 0/2/4/6), one native numerical thread, CPU only. Timed source calls
-use one outer worker on both paths. No physical four-core/16-GiB acceptance claim.
+CPU-only comparisons used matched worker and numerical-thread settings.
+The measurements do not establish performance on other machines.
 The policy itself starts at most two workers and can admit zero work.
 
 Frozen public input: 100 MUs, 58,755 assigned fibres, seed 180319. Selected-MU
@@ -142,32 +137,11 @@ Final CPU suite: **247 passed, 6 skipped, 1 deselected**;
 no failures. GPU and unavailable experimental-data tests account for skips.
 Warnings and the complete JUnit output remain in local artifacts.
 
-## Memory observations and remaining gates
+## Remaining validation
 
-Source-process RSS samples include serialization/comparison outside the timed
-source calls and are diagnostic observations, not matched incremental-memory
-measurements. Source execution reports separately record managed/pending peaks
-and sampled call RSS. Recording RSS is sampled during each call, but optimized
-calls also retain the comparison reference; do not interpret that as a controlled
-peak-memory reduction experiment. Observed source-process peaks (MiB; includes the caveats above):
-
-| Process | Observed sampled RSS peak |
-|---|---:|
-| Selected iEMG reference | 239.4 |
-| Selected iEMG optimized | 253.3 |
-| Selected sEMG reference | 431.4 |
-| Selected sEMG optimized | 401.5 |
-| Full optimized iEMG | 247.6 |
-
-See measurements.json for all call-level observations.
-The reserve is max(4 GiB, 20% of RAM), plus max(512 MiB, 10% of headroom), with an
-optional managed-buffer ceiling. No fixed 8-GiB ceiling or spare-RAM filling.
-
-Still pending: physical four-core/16-GiB runs; exhaustive corrected sEMG
-full-population reference comparison; complete large MUs 50/75 against newly
-corrected sEMG references; full corrected sEMG pipeline timing and broad sustained
-pressure benchmarks. This port does not inherit old sEMG acceptance or speed
-figures. There is no measured combined full-pipeline speedup for this new baseline.
+Exhaustive corrected-sEMG full-population comparison, larger-MU reference checks,
+full-pipeline timing and broader pressure benchmarks remain pending. Selected
+cohorts and synthetic stress tests do not establish deployment-wide performance.
 
 ## Reproduce and inspect
 
@@ -178,5 +152,5 @@ Pass --inputs with the trusted existing public fixture directory.
 gl_reference.py reads the pinned GitLab source directly and verifies unchanged
 helpers. gl_fulli.py checks reference-source ancestry before reuse.
 Generated arrays, logs and profiles remain in ignored artifacts/gl; the committed
-measurements.json contains summary evidence, execution reports and artifact hashes.
+measurements.json contains numerical summaries without local environment metadata.
 Benchmarks refuse to overwrite completed run directories; preserve them.
