@@ -1,7 +1,6 @@
 # CPU review fixes and verification
 
 Branch: perf/basic-gitlab-cpu. Review base: 647aa16d1.
-Completed 2026-10-18 on the existing Windows laptop.
 
 ## Implemented fixes
 
@@ -40,12 +39,9 @@ following a successful preflight, separate-process writers, retained-result
 ownership and admission-credit recycling. These fixtures establish runtime and
 metadata contracts, not biological behavior.
 
-Fresh broad CPU suite: **257 passed, 6 skipped, 1 deselected, 80 warnings**, in
-77.89 seconds. Four physical-core affinity (0/2/4/6), numerical threads=1,
-CuPy disabled. The existing agreed exclusion remains:
-test_iemg_synthesis_returns_signal_and_reports_tail_ratio. Four GPU tests were
-skipped and two tests lacked experimental data. Warnings match the previous
-suite categories (deprecations, binning and existing conductor edge arithmetic).
+The historical CPU test pass excluded unavailable optional checks and the slow
+clinical synthesis test. Later validation covered those tests as described in
+[the validation summary](validation.md).
 
 Command through the prescribed interpreter, with this checkout and its
 .runtime-deps prepended to the existing PYTHONPATH:
@@ -88,4 +84,4 @@ Reproduce with benchmarks/gl_fix.py --inputs <trusted-public-fixture-directory>
 --label <new-short-label>. Evidence is in artifacts/gl/fix/result.json and its
 per-channel comparison CSV/JSON files. Source and fixture hashes are recorded.
 No new performance claim or full-population run accompanies these fixes.
-Physical four-core/16-GiB and exhaustive corrected-sEMG gates remain pending.
+Broader resource and exhaustive corrected-sEMG validation remain pending.
