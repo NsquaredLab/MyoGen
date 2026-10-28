@@ -185,8 +185,8 @@ def test_intramuscular_emg_uses_convolution_not_correlation(monkeypatch):
 def test_force_model_vectorized_matches_force_model():
     """ForceModelVectorized must produce the same force output as ForceModel.
 
-    The two classes share the IPI/gain/twitch pipeline via ``force_utils`` so the
-    optional vectorized path cannot silently drift from the reference model.
+    The backward-compatible subclass inherits the same discharge-gain and exact
+    twitch-summation implementation, so the two classes cannot drift apart.
     """
     from myogen.simulator.core.force.force_model import ForceModel
     from myogen.simulator.core.force.force_model_vectorized import (
