@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.13.0] - 2026-10-28
+
+Thanks to @joaohbbittar for the detailed report in #26, this release corrects the Fuglevand force model and the Hill muscle activation.
+
 ### Added
 
 - **Independent twitch-force range.** `ForceModel` and `ForceModelVectorized` accept `twitch_force_range` to set RP independently of recruitment thresholds in Fuglevand equations 13 and 14. The default (`None`) preserves the recruitment-threshold ratio used previously; set it to 100 to use the paper's twitch-force range.
@@ -17,6 +21,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Force resampling crash.** `generate_force` no longer raises `ValueError: fp and xp are not of the same length` for spike-train durations that are not exact multiples of the floating-point sampling period.
 - **HillModel activation normalisation.** Compute `tetF` from the post-sigmoid force at each motor unit's saturation frequency. Summed activation at full saturation is now approximately 1 instead of approximately 2.5 with the FDI defaults.
 - **Standalone current-injection simulation.** `inject_currents_and_simulate_spike_trains` now loads `stdrun.hoc` before setting `h.tstop`, so it works in a fresh interpreter.
+
+### Changed
+
+- **Single force-model implementation.** `ForceModelVectorized` is now a backward-compatible subclass of `ForceModel`, so the two cannot drift apart.
+
+### Removed
+
+- **Inter-pulse-interval helpers.** `spikes2sawtooth`, `sawtooth2spikes`, `sawtooth2ipi`, `get_gain` and `get_gain_vectorized` in `myogen.simulator.core.force.force_utils`, and the `force_utils_vectorized` module, are removed. The rate-dependent gain is available as `force_utils.fuglevand_gain`.
 
 ### Upgrade notes
 
