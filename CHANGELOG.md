@@ -14,12 +14,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - **Force model gain and twitch summation.** Corrected the per-discharge gain according to Fuglevand, Winter & Patla (1993), using the preceding inter-spike interval and consistent time units. Force is independent of recording rate and saturates at approximately 9.05 times peak twitch force per unit. Exact twitch summation removes the 5 T truncation, and the paper citation is corrected. Fixes #26
-- **Force resampling crash.** `generate_force` no longer raises `ValueError: fp and xp are not of the same length` for spike-train durations that are not exact multiples of the floating-point sampling period..
+- **Force resampling crash.** `generate_force` no longer raises `ValueError: fp and xp are not of the same length` for spike-train durations that are not exact multiples of the floating-point sampling period.
+- **HillModel activation normalisation.** Compute `tetF` from the post-sigmoid force at each motor unit's saturation frequency. Summed activation at full saturation is now approximately 1 instead of approximately 2.5 with the FDI defaults.
+- **Standalone current-injection simulation.** `inject_currents_and_simulate_spike_trains` now loads `stdrun.hoc` before setting `h.tstop`, so it works in a fresh interpreter.
 
 ### Upgrade notes
 
 - Absolute `ForceModel` and `ForceModelVectorized` outputs change. Regenerate stored force baselines, including `force_results.json` from `examples/02_finetune/02_compute_force_from_optimized_dd.py`.
 - %MVC targets tuned with 0.12.0 map to different drives with the corrected force model.
+- `HillModel` / `SimulationRunner` muscle force and torque outputs scale down, including in `examples/01_basic/11_simulate_spinal_network.py`. Re-calibrate anything tuned against the old output.
 
 ## [0.12.0] - 2026-10-19
 
