@@ -26,7 +26,7 @@ settings, and generate realistic force output from motor neuron spike trains.
 
 - **Twitch rise times**: Scaled by motor unit size (fast units: 20-40ms, slow units: 60-90ms)
 - **Contraction-relaxation**: Asymmetric temporal profile matching experimental data
-- **Summation**: Nonlinear fusion of individual twitches during repeated activation
+- **Summation**: Exact summation of twitches weighted by rate-dependent gain
 - **Recruitment order**: Hennemans size principle (small units first)
 """
 
@@ -298,7 +298,7 @@ print(f"  Coefficient of variation: {fr_std / fr_mean:.3f}\n")
 #     The **ForceModel** implements:
 #
 #     - Size-dependent twitch rise times (Henneman's principle)
-#     - Nonlinear force summation during repetitive activation
+#     - Exact twitch summation with nonlinear gain from each preceding inter-spike interval
 #     - Realistic contraction-relaxation dynamics
 #     - Physiologically validated parameter ranges
 
@@ -306,7 +306,7 @@ force_model = ForceModel(
     recruitment_thresholds=recruitment_thresholds,
     recording_frequency__Hz=2048 * pq.Hz,  # High sampling for smooth force
     longest_duration_rise_time__ms=90.0 * pq.ms,  # Slow unit rise time
-    contraction_time_range_factor=3,  # Rise:fall time ratio
+    contraction_time_range_factor=3,  # Contraction time range factor
 )
 
 force_output = force_model.generate_force(spike_train__Block=spike_train__Block)

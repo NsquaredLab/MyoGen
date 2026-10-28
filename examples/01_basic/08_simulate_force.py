@@ -21,7 +21,7 @@ The force model includes:
 References
 ----------
 
-[1] Fuglevand, A. J., Winter, D. A., & Patla, A. E. (1993). Models of recruitment and rate coding in motor-unit pools. Journal of Neurophysiology, 70(2), 782-797.
+[1] Fuglevand, A. J., Winter, D. A., & Patla, A. E. (1993). Models of recruitment and rate coding organization in motor-unit pools. J Neurophysiol, 70(6), 2470–2488. https://doi.org/10.1152/jn.1993.70.6.2470.
 """
 
 ##############################################################################
