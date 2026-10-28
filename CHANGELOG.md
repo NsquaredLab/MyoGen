@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- **Independent twitch-force range.** `ForceModel` and `ForceModelVectorized` accept `twitch_force_range` to set RP independently of recruitment thresholds in Fuglevand equations 13 and 14. The default (`None`) preserves the recruitment-threshold ratio used previously; set it to 100 to use the paper's twitch-force range.
+
 ### Fixed
 
 - **Force model gain and twitch summation.** Corrected the per-discharge gain according to Fuglevand, Winter & Patla (1993), using the preceding inter-spike interval and consistent time units. Force is independent of recording rate and saturates at approximately 9.05 times peak twitch force per unit. Exact twitch summation removes the 5 T truncation, and the paper citation is corrected. Fixes #26

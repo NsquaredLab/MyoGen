@@ -45,6 +45,11 @@ class ForceModel:
         Contraction time range factor (RT in _[1]). Determines the spread of contraction
         times across motor units. Generally between 2 and 5. Higher values create
         larger differences between fast and slow motor units.
+    twitch_force_range : float or None, default=None
+        Twitch-force range (RP in _[1]) used in equations 13 and 14. Must be greater
+        than 1. If None, defaults to the last/first recruitment-threshold ratio for
+        backward compatibility. Fuglevand et al. (1993) use RP = 100 independently
+        of the recruitment range RR = 30.
 
     Attributes
     ----------
@@ -70,6 +75,7 @@ class ForceModel:
         If recording_frequency__Hz is not positive.
         If longest_duration_rise_time__ms is not positive.
         If contraction_time_range_factor is not greater than 1.
+        If twitch_force_range is provided and is not greater than 1.
 
     Notes
     -----
@@ -100,6 +106,7 @@ class ForceModel:
         recording_frequency__Hz: Quantity__Hz,
         longest_duration_rise_time__ms: Quantity__ms = 90.0 * pq.ms,
         contraction_time_range_factor: float = 3.0,
+        twitch_force_range: float | None = None,
     ) -> None:
         # Input validation
         if len(recruitment_thresholds) == 0:
@@ -135,23 +142,32 @@ class ForceModel:
                 "This parameter determines the spread of contraction times. Typical values are 2.0-5.0."
             )
 
+        if twitch_force_range is not None and twitch_force_range <= 1.0:
+            raise ValueError(
+                f"twitch_force_range must be greater than 1.0, got {twitch_force_range}. "
+                "This parameter determines the spread of peak twitch forces. Fuglevand et al. (1993) use 100."
+            )
+
         # Immutable public access
         self.recruitment_thresholds = recruitment_thresholds
         self.recording_frequency__Hz = recording_frequency__Hz
         self.longest_duration_rise_time__ms = longest_duration_rise_time__ms
         self.contraction_time_range_factor = contraction_time_range_factor
+        self.twitch_force_range = twitch_force_range
 
         # Private copies for internal modifications
         self._recruitment_thresholds = recruitment_thresholds.copy()
         self._recording_frequency__Hz = recording_frequency__Hz
         self._longest_duration_rise_time__ms = longest_duration_rise_time__ms
         self._contraction_time_range_factor = contraction_time_range_factor
+        self._twitch_force_range = twitch_force_range
 
         # Derived properties
         self._number_of_neurons = len(self._recruitment_thresholds)
         self._recruitment_ratio = (
             self._recruitment_thresholds[-1] / self._recruitment_thresholds[0]
-        )  # referred in [1] as RP
+            if self._twitch_force_range is None else self._twitch_force_range
+        )  # Twitch-force range RP in [1]; legacy attribute name retained.
 
         self._longest_duration_rise_time__samples = float(
             (

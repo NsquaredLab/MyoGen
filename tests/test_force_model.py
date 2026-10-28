@@ -29,6 +29,40 @@ def _spike_block(times_by_unit, dt_ms=0.1, t_stop=2.0, t_start=0.0):
     return block
 
 
+@pytest.mark.parametrize("model_class", MODELS)
+def test_twitch_force_range_default_matches_recruitment_ratio(model_class):
+    ratio = THRESHOLDS[-1] / THRESHOLDS[0]
+    default = model_class(THRESHOLDS, 1000 * pq.Hz)
+    explicit = model_class(THRESHOLDS, 1000 * pq.Hz, twitch_force_range=ratio)
+    assert default.twitch_force_range is None
+    assert default._twitch_force_range is None
+    assert default._recruitment_ratio == explicit._recruitment_ratio == ratio
+    np.testing.assert_array_equal(default.peak_twitch_forces__unitless,
+                                  explicit.peak_twitch_forces__unitless)
+    np.testing.assert_array_equal(default.contraction_times__samples,
+                                  explicit.contraction_times__samples)
+
+
+@pytest.mark.parametrize("model_class", MODELS)
+def test_twitch_force_range_fuglevand_equations(model_class):
+    model = model_class(THRESHOLDS, 1000 * pq.Hz, twitch_force_range=100)
+    assert model.twitch_force_range == model._twitch_force_range == 100
+    assert model._recruitment_ratio == 100
+    P = model.peak_twitch_forces__unitless
+    assert P[-1] / P[0] == pytest.approx(100 ** (9 / 10))
+    expected_P = 100 ** (np.arange(1, 11) / 10)
+    expected_T = 90 * (1 / expected_P) ** (np.log(3) / np.log(100))
+    np.testing.assert_allclose(P, expected_P, rtol=1e-14)
+    np.testing.assert_allclose(model.contraction_times__samples, expected_T, rtol=1e-14)
+
+
+@pytest.mark.parametrize("model_class", MODELS)
+@pytest.mark.parametrize("twitch_force_range", [-10, 0, 0.5, 1])
+def test_twitch_force_range_invalid(model_class, twitch_force_range):
+    with pytest.raises(ValueError, match="twitch_force_range must be greater than 1.0"):
+        model_class(THRESHOLDS, 1000 * pq.Hz, twitch_force_range=twitch_force_range)
+
+
 def test_fuglevand_gain():
     np.testing.assert_array_equal(fuglevand_gain(np.array([0, 0.1, 0.3, 0.4])), 1)
     np.testing.assert_allclose(fuglevand_gain(np.array([0.4 - 1e-10, 0.4 + 1e-10])), 1,
