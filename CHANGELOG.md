@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- **HillModel activation normalisation.** Compute `tetF` from the post-sigmoid force at each motor unit's saturation frequency. Summed activation at full saturation is now approximately 1 instead of approximately 2.5 with the FDI defaults.
+- **Standalone current-injection simulation.** `inject_currents_and_simulate_spike_trains` now loads `stdrun.hoc` before setting `h.tstop`, so it works in a fresh interpreter.
+
+### Upgrade notes
+
+- `HillModel` / `SimulationRunner` muscle force and torque outputs scale down, including in `examples/01_basic/11_simulate_spinal_network.py`. Re-calibrate anything tuned against the old output.
+
 ## [0.12.0] - 2026-10-19
 
 Thanks to the efforts of @DRohlf (Devon Rohlf), this release improves surface EMG numerical correctness and adds adaptive CPU execution.
