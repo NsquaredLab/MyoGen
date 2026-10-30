@@ -54,12 +54,14 @@ def rosenfalck_line_source(u, sigma_i=SIGMA_I, diameter=DIAMETER):
     return sigma_i * math.pi * (diameter / 2) ** 2 * -np.gradient(dvm, u[1] - u[0])
 
 
-def _myogen_passing_wave(v, r, depth, prepared, z0=30.0, n=1024, kernel=300.0, **fibre):
+def _myogen_passing_wave(v, r, depth, prepared, z0=30.0, n=1024, kernel=300.0, th_fat=0.05, th_skin=0.05,
+                         r_bone=0.0, **fibre):
     array = SurfaceElectrodeArray(1, 1, 5 * pq.mm, 0.01 * pq.mm, center_point__mm_deg=(z0 * pq.mm, 0 * pq.deg),
                                   bending_radius__mm=r * pq.mm, differentiation_mode="monopolar")
     phi, _, _ = simulate_fiber._simulate_fiber_v2_python(
-        Fs=10.0, v=v, N=n, M=64, r=r, r_bone=0.0, th_fat=0.05, th_skin=0.05, R=r - depth, L1=140.0, L2=140.0,
-        zi=0.0, electrode_array=array, sig_muscle_rho=SIGMA, sig_muscle_z=SIGMA, sig_fat=SIGMA, sig_skin=SIGMA,
+        Fs=10.0, v=v, N=n, M=64, r=r, r_bone=r_bone, th_fat=th_fat, th_skin=th_skin, R=r - depth, L1=140.0,
+        L2=140.0, zi=0.0, electrode_array=array, sig_muscle_rho=SIGMA, sig_muscle_z=SIGMA, sig_fat=SIGMA,
+        sig_skin=SIGMA, sig_bone=SIGMA,
         fiber_length__mm=kernel, use_gpu=False, theta_offset=0.0,
         _prepared=SurfacePreparation() if prepared else None, **fibre)
     t = (np.arange(n) - n // 2) * kernel / (v * (n - 1))  # ms from the firing instant
@@ -75,6 +77,20 @@ def test_single_fibre_amplitude_matches_the_exact_cylinder_solution(r, depth, v,
     exact = exact_surface_profile(rosenfalck_line_source(u), DU, r - depth, r, SIGMA)
     simulated = _myogen_passing_wave(v, r, depth, prepared)
     # Amplitude must not depend on conduction velocity: the spatial wave is the same.
+    assert np.ptp(simulated) == pytest.approx(np.ptp(exact), rel=0.02)
+
+
+@pytest.mark.parametrize("prepared", [False, True], ids=["default", "prepared"])
+@pytest.mark.parametrize("layers", [dict(th_fat=1.5, th_skin=1.0), dict(r_bone=1.0),
+                                    dict(th_fat=1.5, th_skin=1.0, r_bone=1.0)],
+                         ids=["thick-fat-skin", "bone", "both"])
+def test_interfaces_between_equal_conductivities_are_transparent(layers, prepared):
+    # Production geometries use real layer thicknesses and a bone; with every
+    # conductivity equal they must reduce to the same exact homogeneous solution.
+    r, depth = 12.0, 5.0
+    u = np.arange(-60, 60, DU)
+    exact = exact_surface_profile(rosenfalck_line_source(u), DU, r - depth, r, SIGMA)
+    simulated = _myogen_passing_wave(4.0, r, depth, prepared, **layers)
     assert np.ptp(simulated) == pytest.approx(np.ptp(exact), rel=0.02)
 
 
