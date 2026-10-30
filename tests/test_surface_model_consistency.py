@@ -18,6 +18,7 @@ from myogen.simulator import (
     SurfaceEMG,
 )
 from myogen.simulator.core.emg import fiber_simulation
+from myogen.simulator.core.emg.runtime.surface_preparation import SurfacePreparation
 from myogen.simulator.core.emg.surface import simulate_fiber
 from myogen.utils.neo import signal_to_grid
 
@@ -36,10 +37,12 @@ def _array(rows, cols, ied, z0, mode="monopolar"):
                                  differentiation_mode=mode)
 
 
-def _fibre(array, *, R=5.5, theta=0.15, L1=16.0, L2=16.0, zi=0.0, kernel=KERNEL, n=N):
+def _fibre(array, *, R=5.5, theta=0.15, L1=16.0, L2=16.0, zi=0.0, kernel=KERNEL, n=N,
+           prepared=False):
     phi, _, _ = simulate_fiber._simulate_fiber_v2_python(
         Fs=10.0, v=V, N=n, M=32, R=R, L1=L1, L2=L2, zi=zi, electrode_array=array,
-        fiber_length__mm=kernel, use_gpu=False, theta_offset=-theta, **GEOMETRY)
+        fiber_length__mm=kernel, use_gpu=False, theta_offset=-theta,
+        _prepared=SurfacePreparation() if prepared else None, **GEOMETRY)
     return phi
 
 
@@ -48,24 +51,25 @@ def _upsampled_lag_ms(a, b, dt_ms, up=20):
     return (np.argmax(correlate(b2, a2, "full")) - (len(a2) - 1)) * dt_ms / up
 
 
-@pytest.fixture(params=["numba", "numpy"])
+@pytest.fixture(params=["numba", "numpy", "prepared"])
 def b_kz_backend(request, monkeypatch):
+    # "prepared" is the execution route's phi contraction (SurfacePreparation).
     if request.param == "numpy":
         monkeypatch.setattr(simulate_fiber, "_numba_B_kz_func", None)
         monkeypatch.setattr(simulate_fiber, "_numba_phi_func", None)
-    return request.param
+    return request.param == "prepared"
 
 
 def test_longitudinal_bipolar_equals_difference_of_monopolar_pair(b_kz_backend):
-    bipolar = _fibre(_array(1, 1, 10, 8, "bipolar_longitudinal"))[0, 0]
-    pair = _fibre(_array(2, 1, 10, 8))
+    bipolar = _fibre(_array(1, 1, 10, 8, "bipolar_longitudinal"), prepared=b_kz_backend)[0, 0]
+    pair = _fibre(_array(2, 1, 10, 8), prepared=b_kz_backend)
     expected = pair[1, 0] - pair[0, 0]
     np.testing.assert_allclose(bipolar, expected, atol=1e-9 * np.ptp(expected))
 
 
 def test_transversal_bipolar_equals_difference_of_monopolar_pair(b_kz_backend):
-    bipolar = _fibre(_array(1, 1, 3, 8, "bipolar_transversal"))[0, 0]
-    pair = _fibre(_array(1, 2, 3, 8))
+    bipolar = _fibre(_array(1, 1, 3, 8, "bipolar_transversal"), prepared=b_kz_backend)[0, 0]
+    pair = _fibre(_array(1, 2, 3, 8), prepared=b_kz_backend)
     expected = pair[0, 1] - pair[0, 0]
     np.testing.assert_allclose(bipolar, expected, atol=1e-9 * np.ptp(expected))
 
