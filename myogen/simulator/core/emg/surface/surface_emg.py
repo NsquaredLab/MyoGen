@@ -84,6 +84,12 @@ class SurfaceEMG:
         centre. ``K`` must hold the whole fibre plus the IAP, or the signal wraps
         around; it does not change the physical MUAP, only the window and the
         internal sampling step ``K / (v (N - 1))``.
+    fiber_diameter__um : float, optional
+        Muscle fibre diameter in µm, default 50. The source current scales with
+        the fibre cross-section (``d**2``).
+    intracellular_conductivity__S_m : float, optional
+        Intracellular conductivity in S/m, default 1.01. The source current
+        density is ``sigma_i * pi * (d/2)**2 * d2Vm/dz2`` (core-conductor model).
 
     Attributes
     ----------
@@ -112,6 +118,8 @@ class SurfaceEMG:
         internal_sampling_frequency__Hz: Quantity__Hz | None = None,
         iap_kernel_length__mm: float | None = None,
         use_unified: bool = False,
+        fiber_diameter__um: float = 50.0,
+        intracellular_conductivity__S_m: float = 1.01,
     ):
         # Immutable public arguments - never modify these
         self.muscle_model = muscle_model
@@ -122,6 +130,8 @@ class SurfaceEMG:
         self.MUs_to_simulate = MUs_to_simulate
         self.iap_kernel_length__mm = iap_kernel_length__mm
         self._use_unified = use_unified
+        self.fiber_diameter__um = fiber_diameter__um
+        self.intracellular_conductivity__S_m = intracellular_conductivity__S_m
 
         # Internal sampling frequency for higher resolution MUAP computation
         # If not specified, defaults to 10 kHz for better MUAP resolution
@@ -149,6 +159,8 @@ class SurfaceEMG:
         self._sampling_points_in_theta_domain = sampling_points_in_theta_domain
         self._MUs_to_simulate = MUs_to_simulate
         self._iap_kernel_length__mm = iap_kernel_length__mm
+        self._fiber_diameter__mm = float(fiber_diameter__um) * 1e-3
+        self._intracellular_conductivity__S_m = float(intracellular_conductivity__S_m)
 
         # Derived properties from muscle model - immutable public access
         self.mean_conduction_velocity__m_s = self._muscle_model.mean_conduction_velocity__m_s
@@ -500,6 +512,8 @@ class SurfaceEMG:
                             pos_z_precomputed=base_pos_z,
                             pos_theta_precomputed=base_pos_theta,
                             rele_precomputed=base_rele,
+                            sig_intracellular=self._intracellular_conductivity__S_m,
+                            fiber_diameter__mm=self._fiber_diameter__mm,
                         )
 
                     array_result_internal += phi_temp

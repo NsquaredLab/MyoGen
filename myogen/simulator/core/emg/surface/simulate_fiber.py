@@ -266,6 +266,9 @@ def _simulate_fiber_v2_python(
     pos_theta_precomputed: np.ndarray | None = None,
     rele_precomputed: float | None = None,
     _prepared=None,
+    *,
+    sig_intracellular: float = 1.01,
+    fiber_diameter__mm: float = 0.05,
 ):
     """
     Simulate a single fiber (Python implementation).
@@ -330,6 +333,12 @@ def _simulate_fiber_v2_python(
         instant at sample ``N // 2``. See :func:`muap_sampling_rate__Hz`.
 
         Example: fiber_length__mm=100 with v=4 m/s → 25 ms window.
+    sig_intracellular : float, optional
+        Intracellular conductivity (S/m), default 1.01.
+    fiber_diameter__mm : float, optional
+        Fibre diameter (mm), default 0.05. Together with ``sig_intracellular`` it
+        sets the line current density ``sig_i * pi * (d/2)**2 * d2Vm/dz2`` of the
+        source, so the output is the potential in mV.
 
     Returns
     -------
@@ -359,7 +368,8 @@ def _simulate_fiber_v2_python(
 
     if _prepared is not None:
         _prepared.bind((Fs, v, N, M, r, r_bone, th_fat, th_skin,
-                        sig_muscle_rho, sig_muscle_z, sig_fat, sig_skin, sig_bone, fiber_length__mm))
+                        sig_muscle_rho, sig_muscle_z, sig_fat, sig_skin, sig_bone, fiber_length__mm,
+                        sig_intracellular, fiber_diameter__mm))
     if _prepared is None or _prepared.grid is None:
         ## Model angular frequencies
         # FFT-consistent bin centers (matches np.fft.fft + fftshift): spacing = 1, bins at
@@ -401,10 +411,12 @@ def _simulate_fiber_v2_python(
 
         ###################################################################################################
         ## 2. I(k_t, k_z)
-        # Rosenfalck (1969) intracellular action potential spatial distribution
-        # As used in Farina & Merletti (2001), equation 16
-        # IMPORTANT: This matches the original Farina implementation exactly (no normalization)
-        A = 96 / 10  # mV/mm^3 (amplitude parameter from Farina 2001, eq 16)
+        # Rosenfalck (1969) intracellular action potential, Vm = 96 z^3 e^{-z} - 90 mV
+        # (Farina & Merletti 2001, eq. 16); aux below is dVm/dz in mV/mm.
+        A = 96  # mV/mm^3
+        # Line current density i = sig_i * pi * (d/2)^2 * d2Vm/dz2 (core-conductor
+        # model). With conductivities in S/m and lengths in mm, phi comes out in mV.
+        source_scale = sig_intracellular * math.pi * (fiber_diameter__mm / 2) ** 2
 
         # Define spatial grid for IAP kernel evaluation
         if fiber_length__mm is None:
@@ -421,7 +433,7 @@ def _simulate_fiber_v2_python(
         aux = np.zeros_like(z)
         for i in range(len(z)):
             if z[i] >= 0:
-                aux[i] = A * np.exp(-z[i]) * (3 * z[i] ** 2 - z[i] ** 3)
+                aux[i] = source_scale * A * np.exp(-z[i]) * (3 * z[i] ** 2 - z[i] ** 3)
 
         # print(f"DEBUG: z range = [{np.min(z):.2f}, {np.max(z):.2f}] mm")
         # print(f"DEBUG: aux range = [{np.min(aux):.6e}, {np.max(aux):.6e}]")
@@ -630,6 +642,9 @@ def simulate_fiber_v2(
     pos_z_precomputed: np.ndarray | None = None,
     pos_theta_precomputed: np.ndarray | None = None,
     rele_precomputed: float | None = None,
+    *,
+    sig_intracellular: float = 1.01,
+    fiber_diameter__mm: float = 0.05,
 ):
     """
     Simulate a single fiber in the layered-cylinder volume conductor.
@@ -700,6 +715,12 @@ def simulate_fiber_v2(
         instant at sample ``N // 2``. See :func:`muap_sampling_rate__Hz`.
 
         Example: fiber_length__mm=100 with v=4 m/s → 25 ms window.
+    sig_intracellular : float, optional
+        Intracellular conductivity (S/m), default 1.01.
+    fiber_diameter__mm : float, optional
+        Fibre diameter (mm), default 0.05. Together with ``sig_intracellular`` it
+        sets the line current density ``sig_i * pi * (d/2)**2 * d2Vm/dz2`` of the
+        source, so the output is the potential in mV.
 
     Returns
     -------
@@ -755,4 +776,6 @@ def simulate_fiber_v2(
         pos_z_precomputed,
         pos_theta_precomputed,
         rele_precomputed,
+        sig_intracellular=sig_intracellular,
+        fiber_diameter__mm=fiber_diameter__mm,
     )

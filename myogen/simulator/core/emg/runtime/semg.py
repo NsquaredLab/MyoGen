@@ -71,12 +71,13 @@ def simulate_muaps(owner, policy, n_jobs, verbose, use_gpu):
             radius = float(electrode.electrode_radius__mm.rescale(pq.mm).magnitude)
             preparation = SurfacePreparation()
             dependencies = (
-                "surface-muap-gitlab-fc077-v3", N, M, final_samples, kernel_length, rate,
+                "surface-muap-gitlab-fc077-v4", N, M, final_samples, kernel_length, rate,
                 owner._internal_sampling_frequency__Hz, owner._mean_conduction_velocity__m_s,
                 owner._radius_total, owner._radius_bone__mm,
                 owner._fat_thickness__mm, owner._skin_thickness__mm,
                 owner._muscle_conductivity_radial__S_m, owner._muscle_conductivity_longitudinal__S_m,
                 owner._fat_conductivity__S_m, owner._skin_conductivity__S_m,
+                owner._fiber_diameter__mm, owner._intracellular_conductivity__S_m,
                 vars(electrode), base_z, base_theta, radius,
             )
             results = {}
@@ -116,6 +117,8 @@ def simulate_muaps(owner, policy, n_jobs, verbose, use_gpu):
                             theta_offset=-angular[fibre], pos_z_precomputed=base_z,
                             pos_theta_precomputed=base_theta, rele_precomputed=radius,
                             _prepared=preparation,
+                            sig_intracellular=owner._intracellular_conductivity__S_m,
+                            fiber_diameter__mm=owner._fiber_diameter__mm,
                         )
                         if not np.all(np.isfinite(values[local])):
                             raise FloatingPointError(f"Nonfinite surface fibre in MU {mu_index}")
