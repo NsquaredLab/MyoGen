@@ -101,6 +101,37 @@ def f_minus_t(y):
     return y[::-1].copy()
 
 
+def fiber_semi_lengths(innervation_zone__mm: float, fiber_length__mm: float) -> tuple[float, float]:
+    """Return ``(L1, L2)`` for a fibre centred on z = 0 with its end-plate at ``zi``.
+
+    In the source term (Farina et al. 2004, eq. 1) ``L1`` is the semi-length
+    towards +z and ``L2`` towards -z, so the fibre spans ``[zi - L2, zi + L1]``.
+    Keeping the tendons at ``±fiber_length / 2`` gives ``L1 = l/2 - zi`` and
+    ``L2 = l/2 + zi``.
+    """
+    L1 = fiber_length__mm / 2 - innervation_zone__mm
+    L2 = fiber_length__mm / 2 + innervation_zone__mm
+    if L1 <= 0 or L2 <= 0:
+        raise ValueError(
+            f"End-plate at {innervation_zone__mm} mm lies outside a fibre of length {fiber_length__mm} mm"
+        )
+    return L1, L2
+
+
+def muap_sampling_rate__Hz(
+    conduction_velocity__m_s: float, internal_points: int, output_points: int, kernel_length__mm: float
+) -> float:
+    """Sampling rate of a fibre window resampled from ``internal_points`` to ``output_points``.
+
+    The internal window has ``internal_points`` samples at
+    ``Fs_eff = v * (N - 1) / kernel_length`` (see ``_simulate_fiber_v2_python``),
+    i.e. a period of ``N / Fs_eff``. Periodic (Fourier) resampling keeps that
+    period, so the output rate is ``output_points * Fs_eff / N``.
+    """
+    fs_effective__kHz = conduction_velocity__m_s * (internal_points - 1) / kernel_length__mm
+    return output_points * fs_effective__kHz / internal_points * 1e3
+
+
 # Numba-optimized helper functions for simulate_fiber_v3
 def _get_numba_functions():
     """Get Numba-optimized functions if available, otherwise return None."""
@@ -119,24 +150,32 @@ def _get_numba_functions():
         len_kz,
         len_ktheta,
     ):
-        """Numba-optimized computation of B_kz matrix."""
-        B_kz = np.zeros((channels_0, channels_1, len_kz))
+        """Numba-optimized computation of the complex B_kz matrix (Farina 2004, eq. 5).
+
+        B_kz is complex in general: a longitudinal bipolar filter is purely
+        imaginary, so its whole signal lives in the imaginary part.
+        """
+        B_kz = np.zeros((channels_0, channels_1, len_kz), dtype=np.complex128)
 
         for channel_z in prange(channels_0):
             for channel_theta in prange(channels_1):
                 pos_theta_val = pos_theta[channel_z, channel_theta]
                 for i in range(len_kz):
                     sum_real = 0.0
+                    sum_imag = 0.0
                     for j in range(len_ktheta):
                         phase = pos_theta_val * ktheta_mesh_kzktheta[i, j]
                         cos_phase = math.cos(phase)
                         sin_phase = math.sin(phase)
 
                         # Complex multiplication: H_glo * exp(1j * phase)
-                        result_real = H_glo_real[i, j] * cos_phase - H_glo_imag[i, j] * sin_phase
-                        sum_real += result_real
+                        sum_real += H_glo_real[i, j] * cos_phase - H_glo_imag[i, j] * sin_phase
+                        sum_imag += H_glo_real[i, j] * sin_phase + H_glo_imag[i, j] * cos_phase
 
-                    B_kz[channel_z, channel_theta, i] = sum_real * k_theta_diff / (2 * math.pi)
+                    B_kz[channel_z, channel_theta, i] = complex(
+                        sum_real * k_theta_diff / (2 * math.pi),
+                        sum_imag * k_theta_diff / (2 * math.pi),
+                    )
 
         return B_kz
 
@@ -144,7 +183,8 @@ def _get_numba_functions():
     def _compute_phi_fast(
         I_kzkt_real,
         I_kzkt_imag,
-        B_kz,
+        B_kz_real,
+        B_kz_imag,
         pos_z,
         kz_mesh_kzkt,
         channels_0,
@@ -166,9 +206,10 @@ def _get_numba_functions():
 
                     for i in range(len_kz):
                         # I_kzkt[i, j] * B_kz[channel_z, channel_theta, i]
-                        B_val = B_kz[channel_z, channel_theta, i]
-                        arg_real = I_kzkt_real[i, j] * B_val
-                        arg_imag = I_kzkt_imag[i, j] * B_val
+                        B_re = B_kz_real[channel_z, channel_theta, i]
+                        B_im = B_kz_imag[channel_z, channel_theta, i]
+                        arg_real = I_kzkt_real[i, j] * B_re - I_kzkt_imag[i, j] * B_im
+                        arg_imag = I_kzkt_real[i, j] * B_im + I_kzkt_imag[i, j] * B_re
 
                         # arg * exp(1j * pos_z * kz_mesh_kzkt[i, j])
                         phase = pos_z_val * kz_mesh_kzkt[i, j]
@@ -284,10 +325,11 @@ def _simulate_fiber_v2_python(
         **Recommended**: Set this explicitly (e.g., 50-100 mm for typical motor units)
         to ensure MUAP duration is physically accurate and independent of N.
 
-        The actual MUAP duration will be approximately: fiber_length__mm / (2 * v) ms
-        (factor of 2 due to internal scaling for Rosenfalck model).
+        The returned window spans fiber_length__mm / v ms (``N`` samples at
+        ``v * (N - 1) / fiber_length__mm`` kHz), with the fibre's firing
+        instant at sample ``N // 2``. See :func:`muap_sampling_rate__Hz`.
 
-        Example: fiber_length__mm=100 with v=4 m/s → ~12.5 ms MUAP duration.
+        Example: fiber_length__mm=100 with v=4 m/s → 25 ms window.
 
     Returns
     -------
@@ -327,11 +369,8 @@ def _simulate_fiber_v2_python(
         # Calculate effective Fs based on grid spacing
         # When fiber_length__mm is specified, we must use the corresponding Fs for FFT consistency
         if fiber_length__mm is not None:
-            # z-grid spans fiber_length__mm with N points (before z /= 2 scaling)
-            # Grid spacing (before scaling): dz = fiber_length__mm / (N-1)
+            # z-grid spans fiber_length__mm with N points: dz = fiber_length__mm / (N-1)
             # For FFT: dz = v / Fs_eff → Fs_eff = v * (N-1) / fiber_length__mm
-            # Note: The z /= 2 scaling affects the IAP kernel evaluation but the FFT
-            # operates on the array structure, so we use the pre-scaling grid spacing
             Fs_effective = v * (N - 1) / fiber_length__mm  # kHz
         else:
             Fs_effective = Fs
@@ -376,10 +415,9 @@ def _simulate_fiber_v2_python(
             # N controls only the resolution, not the physical extent
             z = np.linspace(-fiber_length__mm / 2, fiber_length__mm / 2, N, dtype=np.longdouble)
 
-        z /= 2  # mm - scaling for Rosenfalck model
-
-        # Rosenfalck action potential: A * exp(-z) * (3z² - z³) for z ≥ 0
-        # Uses raw z values in mm (NOT normalized) to match original implementation
+        # Rosenfalck action potential: A * exp(-z) * (3z² - z³) for z ≥ 0, with z in mm
+        # on the same grid as k_z (length scale 1 mm, as published). The source grid
+        # and the volume-conductor grid must share one z axis.
         aux = np.zeros_like(z)
         for i in range(len(z)):
             if z[i] >= 0:
@@ -486,7 +524,7 @@ def _simulate_fiber_v2_python(
             channels[0], channels[1], len(k_z), len(k_theta),
         )
     else:
-        B_kz = np.zeros((channels[0], channels[1], len(k_z)))
+        B_kz = np.zeros((channels[0], channels[1], len(k_z)), dtype=np.complex128)
         for channel_z in range(channels[0]):
             for channel_theta in range(channels[1]):
                 arg = np.multiply(
@@ -505,7 +543,8 @@ def _simulate_fiber_v2_python(
                        if _prepared is not None else _numba_phi_func(
             np.ascontiguousarray(I_kzkt.real, dtype=np.float64),
             np.ascontiguousarray(I_kzkt.imag, dtype=np.float64),
-            np.ascontiguousarray(B_kz, dtype=np.float64),
+            np.ascontiguousarray(B_kz.real, dtype=np.float64),
+            np.ascontiguousarray(B_kz.imag, dtype=np.float64),
             np.ascontiguousarray(pos_z_mm, dtype=np.float64),
             np.ascontiguousarray(kz_mesh_kzkt, dtype=np.float64),
             channels[0], channels[1], len(k_z), len(k_t),
@@ -549,24 +588,9 @@ def _simulate_fiber_v2_python(
                     )
                 )
 
-    # Center the MUAP signal in the time window by finding the peak and shifting
-    # For each electrode channel, find the peak and center it
-    N_time = phi.shape[2]
-    center_idx = N_time // 2
-
-    # Find the peak location (use center electrode as reference)
-    center_electrode_row = phi.shape[0] // 2
-    center_electrode_col = phi.shape[1] // 2
-    center_signal = phi[center_electrode_row, center_electrode_col, :]
-
-    # Find peak (max absolute value)
-    peak_idx = np.argmax(np.abs(center_signal))
-
-    # Calculate shift needed to center the peak
-    shift = center_idx - peak_idx
-
-    # Apply circular shift to all channels
-    phi = np.roll(phi, shift, axis=2)
+    # No per-fibre re-centring: the fibre fires at sample N // 2 (the IAP grid is
+    # centred on z = 0), and every fibre of a motor unit must keep that common
+    # instant so that the summed MUAP preserves the fibres' relative timing.
 
     # print(f"DEBUG: Final phi range = [{np.min(phi):.6e}, {np.max(phi):.6e}]")
     # print(f"DEBUG: Final phi peak-to-peak = {np.ptp(phi):.6e}")
@@ -668,10 +692,11 @@ def simulate_fiber_v2(
         **Recommended**: Set this explicitly (e.g., 50-100 mm for typical motor units)
         to ensure MUAP duration is physically accurate and independent of N.
 
-        The actual MUAP duration will be approximately: fiber_length__mm / (2 * v) ms
-        (factor of 2 due to internal scaling for Rosenfalck model).
+        The returned window spans fiber_length__mm / v ms (``N`` samples at
+        ``v * (N - 1) / fiber_length__mm`` kHz), with the fibre's firing
+        instant at sample ``N // 2``. See :func:`muap_sampling_rate__Hz`.
 
-        Example: fiber_length__mm=100 with v=4 m/s → ~12.5 ms MUAP duration.
+        Example: fiber_length__mm=100 with v=4 m/s → 25 ms window.
 
     Returns
     -------

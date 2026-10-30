@@ -22,7 +22,12 @@ from tqdm import tqdm
 
 from myogen import get_random_generator
 from myogen.simulator.core.emg.electrodes import SurfaceElectrodeArray
-from myogen.simulator.core.emg.surface.simulate_fiber import simulate_fiber_v2, _simulate_fiber_v2_python
+from myogen.simulator.core.emg.surface.simulate_fiber import (
+    _simulate_fiber_v2_python,
+    fiber_semi_lengths,
+    muap_sampling_rate__Hz,
+    simulate_fiber_v2,
+)
 from myogen.simulator.core.muscle import Muscle
 from myogen.utils.decorators import beartowertype
 from myogen.utils.types import (
@@ -72,18 +77,13 @@ class SurfaceEMG:
         If None, defaults to 10 kHz. Higher values provide better temporal resolution
         but increase computation time. Default is 10 kHz.
     iap_kernel_length__mm : float, optional
-        Physical spatial extent for intracellular action potential (IAP) kernel evaluation in mm.
-        If None (default), uses individual fiber lengths from muscle model, ensuring
-        MUAP duration is physiologically accurate and independent of sampling resolution.
+        Length ``K`` of the periodic z window (mm) on which each fibre is simulated.
+        If None (default), ``K = 2.5 × mean_fiber_length__mm``.
 
-        **Recommended**: Leave as None to use fiber-specific lengths for most realistic MUAPs.
-
-        Alternatively, set to a fixed value (e.g., 80-100 mm) to use the same kernel
-        extent for all fibers, which can simplify analysis but may be less physiologically
-        accurate for muscles with variable fiber lengths.
-
-        This parameter controls the spatial extent over which the IAP waveform is computed,
-        directly affecting MUAP duration: duration ≈ iap_kernel_length__mm / (2 * v) ms.
+        The MUAP template window spans ``K / v`` ms, with the firing instant at its
+        centre. ``K`` must hold the whole fibre plus the IAP, or the signal wraps
+        around; it does not change the physical MUAP, only the window and the
+        internal sampling step ``K / (v (N - 1))``.
 
     Attributes
     ----------
@@ -306,20 +306,16 @@ class SurfaceEMG:
             for mu_idx in range(n_motor_units)
         ]
 
-        # Pre-allocate result shape at INTERNAL resolution (optimization: avoid repeated shape calculations)
-        # Will be downsampled to output resolution after simulation
-        internal_result_shape = (
-            self._electrode_arrays[0].num_rows,
-            self._electrode_arrays[0].num_cols,
-            len(t_internal),
-        )
+        # Result shapes follow each electrode array's own grid (arrays may differ).
+        def internal_result_shape(electrode_array: SurfaceElectrodeArray) -> tuple[int, int, int]:
+            return electrode_array.num_rows, electrode_array.num_cols, len(t_internal)
 
-        # Final output shape after downsampling
-        output_result_shape = (
-            self._electrode_arrays[0].num_rows,
-            self._electrode_arrays[0].num_cols,
-            self._sampling_points_in_t_and_z_domains,
-        )
+        def output_result_shape(electrode_array: SurfaceElectrodeArray) -> tuple[int, int, int]:
+            return (
+                electrode_array.num_rows,
+                electrode_array.num_cols,
+                self._sampling_points_in_t_and_z_domains,
+            )
 
         # Helper function to process a single motor unit
         def _process_single_mu(
@@ -351,13 +347,17 @@ class SurfaceEMG:
                     electrode_array = electrode_array_original
 
                 # Pre-allocated result array at INTERNAL resolution (optimization: use pre-computed shape)
-                array_result_internal = np.zeros(internal_result_shape, dtype=np.float64)
+                array_result_internal = np.zeros(
+                    internal_result_shape(electrode_array), dtype=np.float64
+                )
 
                 number_of_fibers = number_of_fibers_per_MUs[MU_index]
 
                 if number_of_fibers == 0:
                     # Return empty signal (downsampled to output resolution)
-                    array_result_downsampled = np.zeros(output_result_shape, dtype=np.float64)
+                    array_result_downsampled = np.zeros(
+                        output_result_shape(electrode_array), dtype=np.float64
+                    )
                     return array_result_downsampled, f"MUAP_{MU_index}"
 
                 # Get fiber positions
@@ -428,9 +428,8 @@ class SurfaceEMG:
                     theta = theta_values[fiber_number]
                     fiber_length__mm = fiber_lengths[fiber_number]
 
-                    # Calculate fiber end positions
-                    L1 = abs(innervation_zone + fiber_length__mm / 2)
-                    L2 = abs(innervation_zone - fiber_length__mm / 2)
+                    # Semi-lengths towards +z (L1) and -z (L2) from the end-plate
+                    L1, L2 = fiber_semi_lengths(innervation_zone, fiber_length__mm)
 
                     if self._use_unified:
                         from myogen.simulator.core.emg.fiber_simulation import (
@@ -519,7 +518,7 @@ class SurfaceEMG:
                     f"Failed to process MU {MU_index} for electrode array {array_idx}: {e}"
                 )
                 # Return empty signal with error marker at output resolution
-                empty_result = np.zeros(output_result_shape, dtype=np.float64)
+                empty_result = np.zeros(output_result_shape(electrode_array_original), dtype=np.float64)
                 return empty_result, f"MUAP_{MU_index}_FAILED"
 
         block = Block()
@@ -576,21 +575,13 @@ class SurfaceEMG:
                 IAP_SCALE_FACTOR = 2.5
                 kernel_length_mm = self._mean_fiber_length__mm * IAP_SCALE_FACTOR
 
-            # Physical duration based on IAP kernel length (after /=2 scaling in simulate_fiber)
-            # Duration = (kernel_length_mm / 2) / velocity
-            muap_duration__s = (
-                kernel_length_mm / 2.0
-            ) / self._mean_conduction_velocity__m_s / 1000.0  # Convert ms to s
-
-            # Create custom time array for this duration
-            times__s = np.linspace(0, muap_duration__s, self._sampling_points_in_t_and_z_domains)
-
-            # Calculate effective sampling rate for these times
-            effective_sampling_rate__Hz = (
-                self._sampling_points_in_t_and_z_domains - 1
-            ) / muap_duration__s
-
-            use_custom_times = True
+            # The fibre window spans kernel_length / v (firing instant at its centre)
+            effective_sampling_rate__Hz = muap_sampling_rate__Hz(
+                self._mean_conduction_velocity__m_s,
+                self._internal_sampling_points,
+                self._sampling_points_in_t_and_z_domains,
+                kernel_length_mm,
+            )
 
             # Create segments for ALL MUs (maintaining index order)
             # Non-computed MUs get empty signals at output resolution
@@ -599,14 +590,13 @@ class SurfaceEMG:
                     array_result, segment_name = results[MU_index]
                 else:
                     # Create empty MUAP for non-computed MUs at output resolution
-                    array_result = np.zeros(output_result_shape, dtype=np.float64)
+                    array_result = np.zeros(output_result_shape(electrode_array), dtype=np.float64)
                     segment_name = f"MUAP_{MU_index}"
 
                 segment = Segment(name=segment_name)
                 group.segments.append(segment)
 
-                # Use actual physical duration based on fiber lengths
-                grid_shape = (output_result_shape[0], output_result_shape[1])
+                grid_shape = (electrode_array.num_rows, electrode_array.num_cols)
                 segment.analogsignals.append(
                     create_grid_signal(
                         signal=np.transpose(array_result, (2, 0, 1)) * pq.mV,

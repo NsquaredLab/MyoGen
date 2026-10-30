@@ -7,6 +7,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+This release corrects the surface-EMG pipeline against Farina, Mesin, Martina & Merletti (2004). The problems were reported in an external tutorial notebook. Both the default route and `execution=` are affected.
+
+### Fixed
+
+- **Longitudinal bipolar channels.** The angular integral B(k_z) is now complex. Keeping only its real part made `bipolar_longitudinal` channels about 10⁻⁷ of their true value and distorted rotated arrays. A bipolar channel now equals the difference of the two monopolar electrodes.
+- **MUAP time axis.** MUAP templates are labelled with the rate of the grid they were computed on (window `K / v`). The previous label was 2× too high, so MUAPs looked half as long, spectra sat an octave high, and conduction velocity estimated from the output was 2× the value set.
+- **Rosenfalck IAP length scale.** The IAP is evaluated on the simulation's own z axis (λ = 1 mm, as published), not on `z / 2`. The stretched IAP was 2× too long; it now agrees with the independent time-domain path (`simulate_fiber_hybrid`).
+- **Fibre semi-lengths.** `L1` (towards +z) and `L2` were swapped, which moved both tendons by 2·z_i with the end-plate. Fibres now span `±fiber_length / 2` with the end-plate at z_i (`fiber_semi_lengths`).
+- **Fibre timing within a motor unit.** Each fibre's potential was circularly shifted onto its own peak before summation, misaligning fibres (up to ~60 % MUAP error on bipolar channels). All fibres now share the firing instant at the window centre.
+- **Mixed electrode-array shapes.** On the default route each array's MUAPs have that array's own grid shape; previously every array was broadcast into the first array's shape.
+
+### Upgrade notes
+
+- sEMG outputs change in amplitude, shape, duration and spectrum. Bipolar outputs from 0.5.0–0.13.0 are invalid. Durations, mean/median frequencies and conduction-velocity estimates from those versions are off by about 2× and must be regenerated.
+- The `execution=` MUAP disk-cache key changes, so templates cached by earlier versions are recomputed.
+
 ## [0.13.0] - 2026-10-28
 
 Thanks to @joaohbbittar for the detailed report in #26, this release corrects the Fuglevand force model and the Hill muscle activation.
