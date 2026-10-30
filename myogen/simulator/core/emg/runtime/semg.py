@@ -71,7 +71,7 @@ def simulate_muaps(owner, policy, n_jobs, verbose, use_gpu):
             radius = float(electrode.electrode_radius__mm.rescale(pq.mm).magnitude)
             preparation = SurfacePreparation()
             dependencies = (
-                "surface-muap-gitlab-fc077-v2", N, M, final_samples, kernel_length, rate,
+                "surface-muap-gitlab-fc077-v3", N, M, final_samples, kernel_length, rate,
                 owner._internal_sampling_frequency__Hz, owner._mean_conduction_velocity__m_s,
                 owner._radius_total, owner._radius_bone__mm,
                 owner._fat_thickness__mm, owner._skin_thickness__mm,

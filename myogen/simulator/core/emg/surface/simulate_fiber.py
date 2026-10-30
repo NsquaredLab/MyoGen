@@ -429,7 +429,9 @@ def _simulate_fiber_v2_python(
 
         psi = -f_minus_t(aux)
         # print(f"DEBUG: psi range = [{np.min(psi):.6e}, {np.max(psi):.6e}]")
-        PSI = np.fft.fftshift(np.fft.fft(psi)) / len(psi)
+        # Continuous Fourier transform: integral psi(z) e^{-ikz} dz ~ dz * FFT. The
+        # inverse transforms in step 6 carry the matching dk_t / 2pi = Fs / N.
+        PSI = np.fft.fftshift(np.fft.fft(psi)) * float(z[1] - z[0])
         PSI_conj = np.conj(PSI)
         PSI_conj = PSI_conj.reshape(-1, len(PSI_conj))
         ones = np.ones((len(PSI_conj[0, :]), 1))
@@ -558,9 +560,10 @@ def _simulate_fiber_v2_python(
                 # applied when building the centered spectrum. They are
                 # equivalent for even N but differ by a one-sample phase ramp
                 # for odd N — ifftshift is the correct inverse here.
+                # (1/2pi) integral dk_t e^{i k_t t} = (Fs / N) * sum = Fs * ifft
                 phi[channel_z, channel_theta, :] = np.real(
                     np.fft.ifft(
-                        np.fft.ifftshift(PHI_complex[channel_z, channel_theta, :] * len(psi))
+                        np.fft.ifftshift(PHI_complex[channel_z, channel_theta, :] * Fs_effective)
                     )
                 )
     else:
@@ -584,7 +587,7 @@ def _simulate_fiber_v2_python(
                 # for odd N — ifftshift is the correct inverse here.
                 phi[channel_z, channel_theta, :] = np.real(
                     np.fft.ifft(
-                        np.fft.ifftshift(PHI / 2 / math.pi * len(psi))
+                        np.fft.ifftshift(PHI / 2 / math.pi * Fs_effective)
                     )
                 )
 
