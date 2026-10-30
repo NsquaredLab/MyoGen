@@ -17,10 +17,20 @@ This release corrects the surface-EMG pipeline against Farina, Mesin, Martina & 
 - **Fibre semi-lengths.** `L1` (towards +z) and `L2` were swapped, which moved both tendons by 2·z_i with the end-plate. Fibres now span `±fiber_length / 2` with the end-plate at z_i (`fiber_semi_lengths`).
 - **Fibre timing within a motor unit.** Each fibre's potential was circularly shifted onto its own peak before summation, misaligning fibres (up to ~60 % MUAP error on bipolar channels). All fibres now share the firing instant at the window centre.
 - **Mixed electrode-array shapes.** On the default route each array's MUAPs have that array's own grid shape; previously every array was broadcast into the first array's shape.
+- **Absolute sEMG amplitude.** Three scaling errors are corrected; together they made MUAPs labelled mV roughly 50-100× too large. A single fibre now matches an exact solution for a homogeneous insulated cylinder within 2 %.
+  - The Fourier transforms dropped their `dz` and `Fs/N` factors, so every potential was divided by the conduction velocity.
+  - The source was the bare Rosenfalck slope with an ad-hoc `A = 96/10`. It is now the core-conductor line current `σᵢ·π·(d/2)²·∂²Vm/∂z²` with the published `A = 96 mV/mm³`.
+  - The default skin conductivity was 4.88·10⁻⁴ S/m (dry skin), which raised amplitudes 3.5-6×. It is now 1 S/m, as in Farina et al. (2004).
+
+### Added
+
+- `SurfaceEMG(fiber_diameter__um=50, intracellular_conductivity__S_m=1.01)` set the source strength; amplitude scales with the fibre cross-section.
 
 ### Upgrade notes
 
 - sEMG outputs change in amplitude, shape, duration and spectrum. Bipolar outputs from 0.5.0–0.13.0 are invalid. Durations, mean/median frequencies and conduction-velocity estimates from those versions are off by about 2× and must be regenerated.
+- Absolute sEMG amplitudes change by one to two orders of magnitude (amplitude no longer depends on conduction velocity). Anything calibrated in µV or mV against earlier outputs must be regenerated. To keep the earlier dry-skin conductor, pass `skin_conductivity__S_per_m=4.88e-4 * pq.S / pq.m` to `Muscle`.
+- Pickled `SurfaceEMG` objects from earlier versions lack the new fibre properties; create them again.
 - The `execution=` MUAP disk-cache key changes, so templates cached by earlier versions are recomputed.
 
 ## [0.13.0] - 2026-10-28
