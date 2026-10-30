@@ -129,8 +129,11 @@ class Muscle:
         Muscle conductivity in longitudinal direction. Default is set to 0.4 S/m as determined by Botelho et al. 2019 [7] (Table 1).
     fat_conductivity__S_per_m : float, default=4.07E-2
         Fat conductivity. Default is set to 4.07E-2 S/m as determined by Botelho et al. 2019 [7] (Table 1).
-    skin_conductivity__S_per_m : float, default=4.88E-4
-        Skin conductivity. Default is set to 4.88E-4 S/m as determined by Botelho et al. 2019 [7] (Table 1).
+    skin_conductivity__S_per_m : float, default=1.0
+        Skin conductivity. Default is 1 S/m as in Farina et al. 2004 [1]: gel electrodes bypass the
+        dry stratum corneum. Botelho et al. 2019 [7] used 4.88E-4 S/m (tissue data at 150 Hz, the
+        dry-skin range), which raises surface amplitudes 3.5-6x; pass it explicitly to model dry
+        electrodes.
     grid_resolution : int, default=256
         Resolution of the computational grid used for innervation the muscle.
         Higher values provide more accurate spatial distribution but increase computational cost.
@@ -192,7 +195,7 @@ class Muscle:
         muscle_conductivity_radial__S_per_m: Quantity__S_per_m = 0.09 * pq.S / pq.m,
         muscle_conductivity_longitudinal__S_per_m: Quantity__S_per_m = 0.4 * pq.S / pq.m,
         fat_conductivity__S_per_m: Quantity__S_per_m = 4.07e-2 * pq.S / pq.m,
-        skin_conductivity__S_per_m: Quantity__S_per_m = 4.88e-4 * pq.S / pq.m,
+        skin_conductivity__S_per_m: Quantity__S_per_m = 1.0 * pq.S / pq.m,
         grid_resolution: int = 256,
         autorun: bool = False,
     ) -> None:

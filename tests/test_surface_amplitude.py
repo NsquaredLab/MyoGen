@@ -116,3 +116,13 @@ def test_surface_emg_passes_fibre_properties_to_every_fibre(route, monkeypatch):
     else:
         semg.simulate_muaps(n_jobs=1, verbose=False, execution=ExecutionPolicy())
     assert calls and all(d == pytest.approx(0.06) and s == pytest.approx(0.9) for d, s in calls)
+
+
+def test_default_skin_conductivity_is_hydrated_skin():
+    # Gel electrodes bypass the dry stratum corneum; Farina et al. (2004) use 1 S/m.
+    # The previous default (4.88e-4 S/m, dry skin) raised surface amplitudes 3.5-6x.
+    from myogen.simulator import Muscle, RecruitmentThresholds
+
+    thresholds, _ = RecruitmentThresholds(N=5, recruitment_range__ratio=10, mode="konstantin")
+    muscle = Muscle(thresholds)
+    assert float(muscle.skin_conductivity__S_m.rescale(pq.S / pq.m).magnitude) == pytest.approx(1.0)
