@@ -340,3 +340,16 @@ def test_other_routes_refuse_active_dispersion(muscle):
     semg = _semg(muscle, SurfaceFiberDispersion(nerve_delays=True))
     with pytest.raises(ValueError, match="dispersion"):
         semg.simulate_muaps(n_jobs=1, verbose=False, execution=ExecutionPolicy())
+
+
+def test_literature_candidate_preset():
+    preset = SurfaceFiberDispersion.literature_candidate()
+    assert preset.active
+    assert (preset.nmj_model, preset.nmj_scatter_scale, preset.nmj_coefficients) == ("two_layer_intra", 1.0, "published")
+    assert preset.nerve_delays and preset.nerve_cvs__m_per_s == (5.0, 2.0)
+    assert (preset.fiber_cv_threshold_slope, preset.fiber_cv_within_mu_cov, preset.fiber_cv_inter_mu_spread) == (
+        0.63, 0.05, 0.0)
+    assert not preset.diameter_scales_source
+    assert (preset.tendon_end_band__mm, preset.tendon_end_correlation__mm, preset.tendon_end_jitter__mm) == (
+        5.0, 5.0, 0.3)
+    assert SurfaceFiberDispersion.literature_candidate(seed=4).seed == 4

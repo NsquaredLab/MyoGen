@@ -130,6 +130,30 @@ class SurfaceFiberDispersion:
         if not 0 <= self.fiber_cv_within_mu_cov < 1 / 3:
             raise ValueError("fiber_cv_within_mu_cov must be in [0, 1/3)")
 
+    @classmethod
+    def literature_candidate(cls, seed: int = 0) -> "SurfaceFiberDispersion":
+        """Dispersion with each value taken from the literature or marked as an assumption.
+
+        - End-plates: two-layer within each unit, coefficients of Konstantin et al.
+          (2020), eq. 5-6.
+        - Nerve branches: 5 / 2 m/s, the values of Konstantin's reference code. They
+          keep the per-fibre delay SD (about 0.2 ms) inside the 0-1 ms range of
+          Stalberg & Karlsson (2001); the paper's 10 / 1 m/s gives about 0.4 ms.
+        - Unit conduction velocity: linear in recruitment threshold, slope 0.63
+          (Del Vecchio et al. 2017).
+        - Fibre velocity within a unit: CoV 5 %. A modelling assumption; no
+          measurement was found.
+        - Tendon ends: 5 mm band (Keenan et al. 2005), correlated over 5 mm with
+          0.3 mm per-fibre jitter (assumptions; no measurement of fibre-end stagger
+          was found).
+        - Diameter-scaled source: off, pending an amplitude check against published
+          ranges.
+        """
+        return cls(nmj_model="two_layer_intra", nmj_scatter_scale=1.0, nmj_coefficients="published",
+                   nerve_delays=True, nerve_cvs__m_per_s=(5.0, 2.0), fiber_cv_threshold_slope=0.63,
+                   fiber_cv_within_mu_cov=0.05, tendon_end_band__mm=5.0, tendon_end_correlation__mm=5.0,
+                   tendon_end_jitter__mm=0.3, seed=seed)
+
     @property
     def active(self) -> bool:
         return (self.nmj_model != "uniform_mu" or self.nerve_delays
