@@ -96,8 +96,33 @@ without the conducting skin. Per the rule, the fall-off arms (`s1`, `s0.15`,
 likely to cause this is end-plate scatter: theirs has SD 3 mm within a unit
 (about 0.8 ms at 3.8 m/s), which lowers the sharp potentials of shallow units
 more than the broad ones of deep units. Their compact tripole source would
-push the other way. Next step, if approved: add that scatter and rerun only
-the replication, with the same limits.
+push the other way.
+
+### Rerun with their end-plate scatter (2026-10-31): replication passes
+
+MyoGen's two-layer end-plate model cannot give one fixed SD (its spread
+depends on unit size, 0.97–3.46 mm at the scale that gives about 3 mm), so
+production code is left alone. `replicate.py` uses the fact that the cylinder
+is unbounded along the fibres: moving an end-plate by d equals moving the
+electrode by −d, so the unit's expected MUAP is a single-fibre profile (one
+column, rows every 1 mm, `gen.py` with `z_rows_mm`) smoothed along z by a
+Gaussian of SD 3 mm. The fibre ends move with the end-plate here; theirs
+scatter on their own (SD 4 mm), which matters little 24–36 mm from the
+end-plate. Same limits as before:
+
+| Ratio | SD 0 | SD 3 mm | Roeleveld | Off by (3 mm) |
+|---|---|---|---|---|
+| III 7.5 / 5 mm | 0.367 | 0.408 | 0.43 | −5 % |
+| III 15 / 5 mm | 0.071 | 0.085 | 0.09 | −6 % |
+| IIb 7.5 / 5 mm | 0.275 | 0.317 | 0.35 | −10 % |
+| IIb 15 / 5 mm | 0.032 | 0.042 | 0.046 | −9 % |
+| IIb / III at 5 mm | 4.88 | 4.42 | 4.17 | +6 % |
+
+SD 0 reproduces the first run exactly, which checks the method. With the
+scatter, all five pass. The fall-off arms were run without scatter, so they
+do not match the replicated model; they need a rerun with the same 3 mm
+scatter (rows 12–36 mm around the 24 mm row, one column per position A–D)
+before step 3 is read.
 
 ## Side finding: angular resolution limit
 
