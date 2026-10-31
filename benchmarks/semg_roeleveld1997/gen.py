@@ -19,7 +19,8 @@ units and the numerical resolution:
   (``ExecutionPolicy``), ``"default"`` the original per-fibre route.
 - ``z_rows_mm``: ``[first, last]`` replaces the grid by one column above the
   unit with rows every 1 mm from the end-plate (an odd count), for
-  ``replicate.py``.
+  ``replicate.py``. ``arcs_mm`` then places one such column at each arc
+  position (default ``[0]``, above the unit).
 - ``centre``: ``"roeleveld"`` puts the electrode rows 0, 12, 24 and 36 mm from
   each unit's end-plate (their electrodes 1-4); ``"zone"`` centres the rows on
   the end-plate (-18, -6, 6, 18 mm), to check the end-plate replication.
@@ -57,7 +58,8 @@ M, N_T = cfg.get("M", 128), cfg.get("n_t", 256)
 FS, FS_INT = cfg.get("fs", 2048.0), cfg.get("fs_internal", 10000.0)
 CENTRE = cfg.get("centre", "roeleveld")
 FAST = cfg.get("execution", "policy") == "policy"
-Z_ROWS = cfg.get("z_rows_mm")  # [first, last] row from the end-plate, 1 mm pitch, one column
+Z_ROWS = cfg.get("z_rows_mm")  # [first, last] row from the end-plate, 1 mm pitch
+ARCS = cfg.get("arcs_mm", [0.0])  # with z_rows_mm: one column per arc position
 CV, FIBRE_MM, FIBRE_VAR_MM = 3.8, 120.0, 4.0
 SEED_FIBRES, SEED_EMG = cfg.get("seed", 1), 7
 
@@ -102,18 +104,22 @@ for mu in range(len(units)):
         ring = SurfaceElectrodeArray(4, 7, 12 * pq.mm, 0.6 * pq.mm,
                                      center_point__mm_deg=(z_centre * pq.mm, 0 * pq.deg),
                                      bending_radius__mm=R_TOTAL * pq.mm, differentiation_mode="monopolar")
+        rings = [ring]
     else:
-        ring = SurfaceElectrodeArray(Z_ROWS[1] - Z_ROWS[0] + 1, 1, 1 * pq.mm, 0.6 * pq.mm,
-                                     center_point__mm_deg=((zones[mu] + sum(Z_ROWS) / 2) * pq.mm, 0 * pq.deg),
-                                     bending_radius__mm=R_TOTAL * pq.mm, differentiation_mode="monopolar")
+        rings = [SurfaceElectrodeArray(Z_ROWS[1] - Z_ROWS[0] + 1, 1, 1 * pq.mm, 0.6 * pq.mm,
+                                       center_point__mm_deg=((zones[mu] + sum(Z_ROWS) / 2) * pq.mm,
+                                                             np.degrees(arc / R_TOTAL) * pq.deg),
+                                       bending_radius__mm=R_TOTAL * pq.mm, differentiation_mode="monopolar")
+                 for arc in ARCS]
     set_random_seed(SEED_EMG)
-    semg = SurfaceEMG(muscle, [ring], sampling_frequency__Hz=FS * pq.Hz, sampling_points_in_t_and_z_domains=N_T,
+    semg = SurfaceEMG(muscle, rings, sampling_frequency__Hz=FS * pq.Hz, sampling_points_in_t_and_z_domains=N_T,
                       sampling_points_in_theta_domain=M, MUs_to_simulate=[mu],
                       internal_sampling_frequency__Hz=FS_INT * pq.Hz)
     block = semg.simulate_muaps(n_jobs=1, verbose=False,
                                 execution=ExecutionPolicy(max_workers=1) if FAST else None)
+    grids = [np.asarray(signal_to_grid(g.segments[mu].analogsignals[0].rescale(pq.mV))) for g in block.groups]
+    muaps.append(np.moveaxis(np.concatenate(grids, axis=2), 0, -1))  # row, col (arrays side by side), time
     sig = block.groups[0].segments[mu].analogsignals[0]
-    muaps.append(np.moveaxis(np.asarray(signal_to_grid(sig.rescale(pq.mV))), 0, -1))  # row, col, time
     fs_muap = float(sig.sampling_rate.rescale(pq.Hz).magnitude)
     print(f"unit {mu} rho {units[mu][0]} depth {units[mu][1]} fibres {len(positions[mu])} "
           f"{time.time() - t0:.0f} s", flush=True)
@@ -123,4 +129,4 @@ np.savez(out, myogen=myogen.__file__, config=json.dumps(cfg), rho=[u[0] for u in
          zones=zones, muaps=np.array(muaps), fs_muap=fs_muap, r_total=R_TOTAL, cv=CV,
          row_z_from_zone=(np.array([0, 12, 24, 36]) - (0 if CENTRE == "roeleveld" else 18) if Z_ROWS is None
                           else np.arange(Z_ROWS[0], Z_ROWS[1] + 1)),
-         col_arc_mm=np.arange(-3, 4) * 12.0 if Z_ROWS is None else np.zeros(1), seconds=time.time() - t0)
+         col_arc_mm=np.arange(-3, 4) * 12.0 if Z_ROWS is None else np.asarray(ARCS, dtype=float), seconds=time.time() - t0)

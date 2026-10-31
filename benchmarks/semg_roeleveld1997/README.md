@@ -124,6 +124,37 @@ do not match the replicated model; they need a rerun with the same 3 mm
 scatter (rows 12–36 mm around the 24 mm row, one column per position A–D)
 before step 3 is read.
 
+## Result of step 3 (2026-10-31): neither, inconclusive
+
+Arms rerun with the replicated model (`run_scatter_arms.sh`: one column per
+position A–D, rows 12–36 mm, smoothed with the 3 mm end-plate Gaussian;
+`falloff.py`). Target: depth exponent 1.8 ± 0.3 and lateral exponent ≤ 1.3
+(measured 1.0).
+
+| Skin S/m | ρ 0 | ρ 2.5 | ρ 5 | ρ 7.5 | ρ 12.5* |
+|---|---|---|---|---|---|
+| 1 | 2.54 / 1.73 | 2.68 / 1.80 | 2.70 / 1.94 | 2.48 / 2.02 | 0.97 / 0.83 |
+| 0.15 | 3.02 / 2.40 | 3.19 / 2.49 | 3.20 / 2.66 | 2.87 / 2.78 | 1.73 / 3.05 |
+| 4.88·10⁻⁴ | 3.40 / 2.75 | 3.60 / 2.86 | 3.56 / 3.06 | 3.11 / 3.21 | 1.70 / 3.61 |
+
+Depth exponent / median lateral exponent; no arm meets both.
+\*ρ 12.5 mm discs are mostly clipped by the muscle edge: centroids span only
+10.0–14.5 mm for nominal depths 5–15 mm, so its exponents describe the
+clipping, not a unit at that depth.
+
+- Territory does not explain the slow measured fall-off: from ρ 0 to 7.5 mm
+  the lateral exponent rises at every conductivity (nearby fibres boost the
+  potential right above the unit), the opposite of what was proposed.
+- 1 S/m is the closest of the three at every ρ ≤ 7.5 mm but still falls off
+  faster than measured (lateral 1.7–2.0 against 1.0, depth 2.5–2.7 against
+  1.8), as Roeleveld et al. also reported for their model III.
+- The measured values are much further off (lateral 2.4–3.2, depth 2.9–3.6).
+- Without the end-plate scatter all exponents are larger still (SD 0 run
+  of `falloff.py`), with the same ranking.
+
+Caveat: the measured depths came from scanning-EMG estimates of each unit's
+electrophysiological centre, here replaced by the fibre centroid.
+
 ## Side finding: angular resolution limit
 
 With `sampling_points_in_theta_domain` ≥ 256, `SurfaceEMG` returns MUAPs that
