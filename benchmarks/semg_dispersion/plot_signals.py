@@ -36,7 +36,12 @@ GROUPS = {
     "fdi": {"FDI: published candidate and tendon ends": ["candidate_published", "tendon_w5", "tendon_w5_corr5",
                                                          "tendon_w10"],
             "FDI: all effects (+ diameter-scaled source)": ["tendon_w5_corr5", "full_diameter"],
-            "FDI: skin thickness 2 and 3 mm": ["baseline_skin2", "full_skin2", "baseline_skin3", "full_skin3"]},
+            "FDI: skin thickness 2 and 3 mm": ["baseline_skin2", "full_skin2", "baseline_skin3", "full_skin3"],
+            "FDI: literature layers, undispersed (skin 1.2 mm)": [
+                "baseline_s1.2_f1.3_sig1", "baseline_s1.2_f0.3_sig0.15", "baseline_s1.2_f1.3_sig0.15",
+                "baseline_s1.2_f2.0_sig0.15"],
+            "FDI: literature layers, all effects (skin 1.2 mm)": [
+                "full_s1.2_f1.3_sig1", "full_s1.2_f0.3_sig0.15", "full_s1.2_f1.3_sig0.15", "full_s1.2_f2.0_sig0.15"]},
 }[SCENARIO]
 LABELS = {"nerve_cv_10_4": "nerve CV 10/4 m/s", "nerve_cv_5_2": "nerve CV 5/2 m/s (iEMG default)",
           "nerve_cv_2.5_1": "nerve CV 2.5/1 m/s (stress)", "nmj_intra_x0.5": "end-plate SD 0.6 mm",
@@ -53,7 +58,15 @@ LABELS = {"nerve_cv_10_4": "nerve CV 10/4 m/s", "nerve_cv_5_2": "nerve CV 5/2 m/
           "tendon_w5_corr10": "5 mm band, correlated over 10 mm",
           "full_diameter": "all effects + diameter-scaled source", "baseline_skin2": "undispersed, skin 2 mm",
           "full_skin2": "all effects, skin 2 mm", "baseline_skin3": "undispersed, skin 3 mm",
-          "full_skin3": "all effects, skin 3 mm"}
+          "full_skin3": "all effects, skin 3 mm",
+          "baseline_s1.2_f1.3_sig1": "undispersed, fat 1.3 mm, skin σ 1 S/m",
+          "full_s1.2_f1.3_sig1": "all effects, fat 1.3 mm, skin σ 1 S/m",
+          "baseline_s1.2_f1.3_sig0.15": "undispersed, fat 1.3 mm, skin σ 0.15 S/m",
+          "full_s1.2_f1.3_sig0.15": "all effects, fat 1.3 mm, skin σ 0.15 S/m",
+          "baseline_s1.2_f0.3_sig0.15": "undispersed, fat 0.3 mm, skin σ 0.15 S/m",
+          "full_s1.2_f0.3_sig0.15": "all effects, fat 0.3 mm, skin σ 0.15 S/m",
+          "baseline_s1.2_f2.0_sig0.15": "undispersed, fat 2.0 mm, skin σ 0.15 S/m",
+          "full_s1.2_f2.0_sig0.15": "all effects, fat 2.0 mm, skin σ 0.15 S/m"}
 
 
 def chain(x_mV):
