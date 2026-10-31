@@ -356,6 +356,7 @@ class SurfaceEMG:
                 mean_cv__m_s=float(self._mean_conduction_velocity__m_s),
                 fiber_lengths__mm=[self._mean_fiber_length__mm + variation
                                    for variation in fiber_length_variations_per_MU],
+                mean_fiber_length__mm=float(self._mean_fiber_length__mm),
             )
             self.fiber_dispersion_report = dispersion.report
 
@@ -473,7 +474,8 @@ class SurfaceEMG:
                     # The fibre must finish inside the second half of the window
                     # (firing at its centre), or the circular grid wraps it.
                     zone = dispersion.zi__mm[MU_index]
-                    reach = fiber_lengths / 2 + np.abs(zone) + 10.0  # mm, plus the IAP tail
+                    reach = np.maximum(dispersion.end_plus__mm[MU_index] - zone,
+                                       zone - dispersion.end_minus__mm[MU_index]) + 10.0  # mm, plus the IAP tail
                     finish = dispersion.delay__ms[MU_index] + reach / dispersion.cv__m_s[MU_index]
                     if np.max(finish) >= kernel_length / v_conduction / 2:
                         raise ValueError(
@@ -501,7 +503,11 @@ class SurfaceEMG:
                         fiber_zone, fiber_cv = innervation_zone, v_conduction
 
                     # Semi-lengths towards +z (L1) and -z (L2) from the end-plate
-                    L1, L2 = fiber_semi_lengths(fiber_zone, fiber_length__mm)
+                    if dispersion is not None:
+                        L1 = float(dispersion.end_plus__mm[MU_index][fiber_number]) - fiber_zone
+                        L2 = fiber_zone - float(dispersion.end_minus__mm[MU_index][fiber_number])
+                    else:
+                        L1, L2 = fiber_semi_lengths(fiber_zone, fiber_length__mm)
 
                     if self._use_unified:
                         from myogen.simulator.core.emg.fiber_simulation import (
