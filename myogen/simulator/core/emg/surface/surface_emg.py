@@ -600,13 +600,9 @@ class SurfaceEMG:
                 return array_result_downsampled, f"MUAP_{MU_index}"
 
             except Exception as e:
-                # Log error and return empty result to avoid crashing entire parallel job
-                logging.error(
-                    f"Failed to process MU {MU_index} for electrode array {array_idx}: {e}"
-                )
-                # Return empty signal with error marker at output resolution
-                empty_result = np.zeros(output_result_shape(electrode_array_original), dtype=np.float64)
-                return empty_result, f"MUAP_{MU_index}_FAILED"
+                # Fail loudly: an all-zero MUAP would pass for a valid, silent unit.
+                e.add_note(f"while simulating MU {MU_index} for electrode array {array_idx}")
+                raise
 
         block = Block()
         for array_idx, electrode_array in enumerate(self._electrode_arrays):

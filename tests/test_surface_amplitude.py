@@ -153,3 +153,34 @@ def test_default_layers_are_fdi_literature_values():
     muscle = Muscle(thresholds)
     assert float(muscle.skin_thickness__mm.rescale(pq.mm).magnitude) == pytest.approx(1.2)
     assert float(muscle.fat_thickness__mm.rescale(pq.mm).magnitude) == pytest.approx(1.3)
+
+
+@pytest.mark.parametrize("route", ["default", "execution"])
+@pytest.mark.usefixtures("ample_session_memory")
+def test_a_failing_motor_unit_raises_instead_of_returning_zeros(route, monkeypatch):
+    # A per-unit failure (e.g. a singular conductor system at high angular order) used to be logged and
+    # replaced by an all-zero MUAP, which looks like a valid, silent unit.
+    from myogen import set_random_seed
+    from myogen.simulator import ExecutionPolicy, Muscle, RecruitmentThresholds, SurfaceEMG
+    from myogen.simulator.core.emg.runtime import semg as runtime_semg
+    from myogen.simulator.core.emg.surface import surface_emg
+
+    set_random_seed(42)
+    thresholds, _ = RecruitmentThresholds(N=10, recruitment_range__ratio=20, mode="konstantin")
+    muscle = Muscle(thresholds, fiber_density__fibers_per_mm2=5 * pq.mm**-2)
+    muscle.distribute_innervation_centers()
+    muscle.generate_muscle_fiber_centers(verbose=False)
+    muscle.assign_mfs2mns(verbose=False, n_jobs=1)
+
+    def broken(**kwargs):
+        raise np.linalg.LinAlgError("Singular matrix")
+
+    monkeypatch.setattr(surface_emg, "_simulate_fiber_v2_python", broken)
+    monkeypatch.setattr(runtime_semg, "_simulate_fiber_v2_python", broken)
+    array = SurfaceElectrodeArray(1, 1, 5 * pq.mm, 0.5 * pq.mm, center_point__mm_deg=(8 * pq.mm, 0 * pq.deg))
+    semg = SurfaceEMG(muscle, [array], MUs_to_simulate=[1, 2])
+    with pytest.raises(np.linalg.LinAlgError):
+        if route == "default":
+            semg.simulate_muaps(n_jobs=1, verbose=False, use_gpu=False)
+        else:
+            semg.simulate_muaps(n_jobs=1, verbose=False, execution=ExecutionPolicy())

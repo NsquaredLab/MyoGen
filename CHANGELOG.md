@@ -22,6 +22,7 @@ This release corrects the surface-EMG pipeline against Farina, Mesin, Martina & 
   - The source was the bare Rosenfalck slope with an ad-hoc `A = 96/10`. It is now the core-conductor line current `σᵢ·π·(d/2)²·∂²Vm/∂z²` with the published `A = 96 mV/mm³`.
   - The default skin conductivity was 4.88·10⁻⁴ S/m (measured composite skin, Botelho et al. 2019), which raised amplitudes 3.5-6×. It is now 1 S/m, as in Farina et al. (2004). That value comes from Roeleveld et al. (1997), who chose it so their model matched how biceps MUAPs fall off with depth and around the arm; it is an effective value, not a measured skin conductivity.
 - **Default skin and fat thickness (FDI).** Skin 1.29 → 1.2 mm (hand dorsum median, Li et al. 2018) and fat 0.3 → 1.3 mm, so the total depth to muscle is 2.5 mm, the low end of the FDI depth measured by Nishikawa et al. (2024); the fat value is derived from that total, not measured. Surface amplitudes from the default `Muscle` fall by about 40 %.
+- **Failed motor units raise.** On the default `SurfaceEMG` route an exception while simulating one motor unit was logged and replaced by an all-zero MUAP, which passes for a valid, silent unit (seen with `sampling_points_in_theta_domain` ≥ 256, where one conductor system is singular). The exception is now re-raised with the unit and array index; the `ExecutionPolicy` route already raised.
 
 ### Added
 
