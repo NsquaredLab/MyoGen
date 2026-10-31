@@ -27,7 +27,7 @@ NMJ_SCHEDULE_COEFFICIENTS = {
 
 
 def nmj_branch_schedule(
-    recruitment_thresholds: np.ndarray, coefficients: str = "reference_code"
+    recruitment_thresholds: np.ndarray, coefficients: str = "published"
 ) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
     """Branch count and z spreads per motor unit, growing with motor-unit size.
 

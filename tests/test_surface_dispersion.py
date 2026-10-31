@@ -72,24 +72,25 @@ def test_two_layer_function_reproduces_motor_unit_sim():
 
 def test_branch_schedule_grows_with_motor_unit_size():
     thresholds = np.array([1.0, np.e, np.e**2, np.e**3])
+    # Default: published coefficients (Konstantin et al. 2020, eq. 5-6): a_mu=1, b_mu=2.5, a_sigma=0.25, b_sigma=1 mm
     n_branches, branch_sd, arbor_sd = nmj_branch_schedule(thresholds)
     np.testing.assert_array_equal(n_branches, [1, 2, 3, 4])
     spread = np.concatenate([[0], np.cumsum(thresholds)[:-1]]) / thresholds.sum()
-    np.testing.assert_allclose(branch_sd, 1.5 + 4.0 * spread)
-    np.testing.assert_allclose(arbor_sd, 0.5 + 1.5 * spread)
-    # Published coefficients (Konstantin et al. 2020, eq. 5-6): a_mu=1, b_mu=2.5, a_sigma=0.25, b_sigma=1 mm
-    _, branch_sd, arbor_sd = nmj_branch_schedule(thresholds, coefficients="published")
     np.testing.assert_allclose(branch_sd, 1.0 + 2.5 * spread)
     np.testing.assert_allclose(arbor_sd, 0.25 + 1.0 * spread)
+    # Konstantin's reference simulator code
+    _, branch_sd, arbor_sd = nmj_branch_schedule(thresholds, coefficients="reference_code")
+    np.testing.assert_allclose(branch_sd, 1.5 + 4.0 * spread)
+    np.testing.assert_allclose(arbor_sd, 0.5 + 1.5 * spread)
     with pytest.raises(ValueError):
         nmj_branch_schedule(thresholds, coefficients="other")
 
 
 def test_surface_dispersion_can_use_the_published_coefficients(muscle):
     zones = np.zeros(12)
-    script = _realize(muscle, SurfaceFiberDispersion(nmj_model="two_layer_intra"), zones)
-    paper = _realize(muscle, SurfaceFiberDispersion(nmj_model="two_layer_intra", nmj_coefficients="published"),
-                     zones)
+    script = _realize(muscle, SurfaceFiberDispersion(nmj_model="two_layer_intra", nmj_coefficients="reference_code"),
+                      zones)
+    paper = _realize(muscle, SurfaceFiberDispersion(nmj_model="two_layer_intra"), zones)
     big = max(range(12), key=lambda i: len(paper.zi__mm[i]))
     assert np.std(paper.zi__mm[big]) < np.std(script.zi__mm[big])
     with pytest.raises(ValueError):
@@ -214,7 +215,7 @@ def test_intra_mu_scatter_keeps_each_motor_unit_anchor(muscle):
     for mu in range(12):
         if len(real.zi__mm[mu]) > 1:
             assert np.mean(real.zi__mm[mu]) == pytest.approx(zones[mu], abs=1e-9)
-            assert np.std(real.zi__mm[mu]) > 0.3
+            assert np.std(real.zi__mm[mu]) > 0.1
 
 
 def test_nerve_delays_switch_independently_of_end_plates(muscle):
