@@ -255,6 +255,38 @@ def test_tendon_band_staggers_each_end_independently(muscle):
     assert real.report["end_sd__mm"][big] == pytest.approx(np.std(real.end_plus__mm[big]))
 
 
+def _end_variogram(muscle, real, near__mm, far__mm):
+    xy = np.concatenate([np.asarray(muscle.resulting_fiber_assignment(i))[:, :2] for i in range(12)])
+    plus = np.concatenate(real.end_plus__mm)
+    i, j = np.triu_indices(len(xy), k=1)
+    d = np.hypot(*(xy[i] - xy[j]).T)
+    sq = (plus[i] - plus[j]) ** 2
+    return np.mean(sq[d < near__mm]), np.mean(sq[d > far__mm])
+
+
+def test_correlated_tendon_ends_vary_smoothly_between_neighbours(muscle):
+    config = SurfaceFiberDispersion(tendon_end_band__mm=8.0, tendon_end_correlation__mm=2.0,
+                                    tendon_end_jitter__mm=0.3)
+    real, _ = _realize_with_lengths(muscle, config)
+    near, far = _end_variogram(muscle, real, 0.5, 8.0)
+    assert near < 0.2 * far
+    independent, _ = _realize_with_lengths(muscle, SurfaceFiberDispersion(tendon_end_band__mm=8.0))
+    near_independent, _ = _end_variogram(muscle, independent, 0.5, 8.0)
+    assert near < 0.2 * near_independent
+    sd = real.report["end_sd__mm"]
+    assert np.nanmedian(sd) < np.nanmedian(independent.report["end_sd__mm"])
+
+
+def test_tendon_end_correlation_needs_a_band_and_room_for_the_jitter():
+    with pytest.raises(ValueError, match="tendon_end_band"):
+        SurfaceFiberDispersion(tendon_end_correlation__mm=2.0)
+    with pytest.raises(ValueError, match="jitter"):
+        SurfaceFiberDispersion(tendon_end_band__mm=1.0, tendon_end_correlation__mm=2.0,
+                               tendon_end_jitter__mm=0.5)
+    with pytest.raises(ValueError, match="non-negative"):
+        SurfaceFiberDispersion(tendon_end_band__mm=5.0, tendon_end_correlation__mm=-1.0)
+
+
 def test_realisation_leaves_the_global_generator_untouched(muscle):
     set_random_seed(3)
     expected = get_random_generator().uniform(size=4)

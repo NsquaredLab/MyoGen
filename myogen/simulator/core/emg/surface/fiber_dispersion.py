@@ -76,6 +76,14 @@ class SurfaceFiberDispersion:
         Width of the band over which each fibre end is placed, independently
         at either end, uniform about ``±mean_fiber_length / 2``. Replaces the
         fibre-length variation (which moves both ends together). 0 keeps it.
+    tendon_end_correlation__mm : float
+        Correlation length of the fibre-end position across the cross-section.
+        0 draws every end independently over the band. Above 0, each end
+        follows a smooth Gaussian random field (squared-exponential covariance,
+        one field per tendon) plus ``tendon_end_jitter__mm`` per fibre, with the
+        total SD of the uniform band, ``tendon_end_band__mm / sqrt(12)``.
+    tendon_end_jitter__mm : float
+        SD of each fibre's own offset from the smooth field.
     seed : int
         Seed of the dispersion draws.
     """
@@ -92,6 +100,8 @@ class SurfaceFiberDispersion:
     cv_per_diameter__m_s_per_mm: float = 50.0
     cv_intercept__m_s: float = 0.95
     tendon_end_band__mm: float = 0.0
+    tendon_end_correlation__mm: float = 0.0
+    tendon_end_jitter__mm: float = 0.0
     seed: int = 0
 
     def __post_init__(self):
@@ -105,8 +115,14 @@ class SurfaceFiberDispersion:
             raise ValueError("nerve_cvs__m_per_s must be two positive velocities")
         if not 0 <= self.fiber_cv_inter_mu_spread < 2:
             raise ValueError("fiber_cv_inter_mu_spread must be in [0, 2)")
-        if self.tendon_end_band__mm < 0:
-            raise ValueError("tendon_end_band__mm must be non-negative")
+        if min(self.tendon_end_band__mm, self.tendon_end_correlation__mm, self.tendon_end_jitter__mm) < 0:
+            raise ValueError("tendon_end_band__mm, tendon_end_correlation__mm and tendon_end_jitter__mm "
+                             "must be non-negative")
+        if self.tendon_end_correlation__mm > 0:
+            if self.tendon_end_band__mm == 0:
+                raise ValueError("tendon_end_correlation__mm needs tendon_end_band__mm")
+            if self.tendon_end_jitter__mm >= self.tendon_end_band__mm / np.sqrt(12):
+                raise ValueError("tendon_end_jitter__mm must be below the band SD, tendon_end_band__mm / sqrt(12)")
         if self.fiber_cv_threshold_slope < 0:
             raise ValueError("fiber_cv_threshold_slope must be non-negative")
         if self.fiber_cv_threshold_slope and self.fiber_cv_inter_mu_spread:
@@ -135,6 +151,15 @@ class FiberDispersionRealization:
     report: dict = field(default_factory=dict)
 
 
+def _smooth_field(rng: np.random.Generator, correlation__mm: float, sd__mm: float, n_features: int = 1000):
+    """Gaussian random field over the cross-section with covariance
+    ``sd² exp(-r² / (2 correlation²))``, by random Fourier features."""
+    k = rng.normal(0.0, 1.0 / correlation__mm, size=(n_features, 2))
+    phase = rng.uniform(0.0, 2 * np.pi, size=n_features)
+    weight = sd__mm * np.sqrt(2.0 / n_features)
+    return lambda xy: weight * np.cos(xy @ k.T + phase).sum(axis=1)
+
+
 def realize_fiber_dispersion(
     config: SurfaceFiberDispersion,
     fiber_positions__mm: Sequence[np.ndarray],
@@ -161,6 +186,10 @@ def realize_fiber_dispersion(
     band = config.tendon_end_band__mm
     if band > 0 and (fiber_lengths__mm is None or mean_fiber_length__mm is None):
         raise ValueError("tendon_end_band__mm needs fiber_lengths__mm and mean_fiber_length__mm")
+    end_fields = None
+    if band > 0 and config.tendon_end_correlation__mm > 0:
+        field_sd = np.sqrt(band**2 / 12 - config.tendon_end_jitter__mm**2)
+        end_fields = [_smooth_field(end_rng, config.tendon_end_correlation__mm, field_sd) for _ in range(2)]
     needs_nerve = config.nmj_model != "uniform_mu" or config.nerve_delays
     if needs_nerve:
         n_branches, branch_sd, arbor_sd = nmj_branch_schedule(recruitment_thresholds, config.nmj_coefficients)
@@ -199,7 +228,12 @@ def realize_fiber_dispersion(
             if config.nerve_delays:
                 delay = nerve_delays__ms(paths, config.nerve_cvs__m_per_s)
         if fiber_lengths__mm is not None:
-            if band > 0:
+            if end_fields is not None:
+                xy = np.asarray(fiber_positions__mm[mu], dtype=float)[:, :2]
+                jitter = config.tendon_end_jitter__mm
+                end_plus = mean_fiber_length__mm / 2 + end_fields[0](xy) + end_rng.normal(0, jitter, size=n)
+                end_minus = -mean_fiber_length__mm / 2 + end_fields[1](xy) + end_rng.normal(0, jitter, size=n)
+            elif band > 0:
                 end_plus = mean_fiber_length__mm / 2 + end_rng.uniform(-band / 2, band / 2, size=n)
                 end_minus = -mean_fiber_length__mm / 2 + end_rng.uniform(-band / 2, band / 2, size=n)
             else:
