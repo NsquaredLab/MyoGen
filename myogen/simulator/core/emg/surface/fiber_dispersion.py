@@ -37,10 +37,10 @@ class SurfaceFiberDispersion:
         undispersed end-plate, isolating the spread within a motor unit.
     nmj_scatter_scale : float
         Multiplies both two-layer z spreads (1 = the coefficients as given).
-    nmj_coefficients : {"reference_code", "published"}
-        Two-layer z-spread coefficients: Konstantin's reference simulator code
-        (the intramuscular default) or the values printed in Konstantin et al.
-        (2020), eq. 5-6, which give about two-thirds of the spread.
+    nmj_coefficients : {"published", "reference_code"}
+        Two-layer z-spread coefficients: the values printed in Konstantin et al.
+        (2020), eq. 5-6 (default, as in intramuscular EMG), or those of
+        Konstantin's reference simulator code, about 1.5 times wider.
     nerve_delays : bool
         Delay each fibre by its axon-branch conduction time (two-layer nerve
         paths over ``nerve_cvs__m_per_s``). Independent of ``nmj_model``: with
@@ -78,7 +78,7 @@ class SurfaceFiberDispersion:
 
     nmj_model: Literal["uniform_mu", "two_layer", "two_layer_intra"] = "uniform_mu"
     nmj_scatter_scale: float = 1.0
-    nmj_coefficients: str = "reference_code"
+    nmj_coefficients: str = "published"
     nerve_delays: bool = False
     nerve_cvs__m_per_s: tuple[float, float] = (5.0, 2.0)
     fiber_cv_inter_mu_spread: float = 0.0

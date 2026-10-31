@@ -268,8 +268,8 @@ class IntramuscularEMG:
         """
         Simulate neuromuscular junction distributions for all motor units.
 
-        This implements the logic from s08_cl_init_muaps.m for generating
-        realistic NMJ branch patterns with size-dependent complexity.
+        Two-layer branch model of Konstantin et al. (2020) with the z spreads of
+        their eq. 5-6, growing with motor-unit size.
         """
         if not self._motor_units:
             raise ValueError("Must call _initialize_motor_units() first")
