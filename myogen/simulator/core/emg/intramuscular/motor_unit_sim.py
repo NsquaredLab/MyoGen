@@ -13,7 +13,6 @@ from contextlib import nullcontext
 from typing import Optional, List
 
 import numpy as np
-from sklearn.cluster import KMeans
 from tqdm import tqdm
 
 try:
@@ -25,6 +24,7 @@ except Exception:
 
 from myogen import derive_subseed, get_random_generator
 from myogen.utils.decorators import beartowertype
+from ..nerve_branches import two_layer_nmj
 from .bioelectric import (
     get_current_density,
     get_elementary_current_response,
@@ -139,60 +139,22 @@ class MotorUnitSim:
         arborization_z_std : float
             Standard deviation of secondary arborization in mm
         """
-        rng = get_random_generator()
-
-        self.nerve_paths = np.zeros(
-            (self._number_of_muscle_fibers, 2)
-        )  # Point coordinates
-
-        kmeans = KMeans(
-            n_clusters=n_branches, init="k-means++", max_iter=100, random_state=derive_subseed(n_branches)
+        nmj_z, self.nerve_paths, branch_xy, branch_z, _ = two_layer_nmj(
+            self.muscle_fiber_centers__mm,
+            n_branches,
+            endplate_center,
+            branches_z_std,
+            arborization_z_std,
+            rng=get_random_generator(),
+            kmeans_seed=derive_subseed(n_branches),
+            return_branches=True,
         )
-        idx = kmeans.fit_predict(self.muscle_fiber_centers__mm)
-        c = kmeans.cluster_centers_
-
-        self.branch_points_xy = c
-        self.branch_points_z = endplate_center + branches_z_std * rng.standard_normal(
-            size=(n_branches, 1)
-        )
-
-        self._neuromuscular_z_coordinates__mm = np.array(
-            [
-                self.branch_points_z[idx[i]]
-                + arborization_z_std * rng.standard_normal()
-                for i in range(self._number_of_muscle_fibers)
-            ]
-        )
-
+        self.branch_points_xy = branch_xy
+        self.branch_points_z = branch_z
+        self._neuromuscular_z_coordinates__mm = nmj_z[:, None]
         self._actual_center = np.concatenate(
-            [
-                np.mean(self.muscle_fiber_centers__mm, axis=0),
-                np.mean(self._neuromuscular_z_coordinates__mm, axis=0),
-            ]
+            [np.mean(self.muscle_fiber_centers__mm, axis=0), [np.mean(nmj_z)]]
         )[None]
-        for i in range(self._number_of_muscle_fibers):
-            cluster_center = np.concatenate(
-                [
-                    self.branch_points_xy[idx[i]],
-                    self.branch_points_z[idx[i]],
-                ]
-            )[None]
-            nmj_coordinates = np.concatenate(
-                [
-                    self.muscle_fiber_centers__mm[i],
-                    self._neuromuscular_z_coordinates__mm[i],
-                ]
-            )[None]
-
-            # Extract scalar from the (1,)-shape norm result via .item() so the
-            # assignment to a 0-D slot doesn't trigger the numpy 1.25 ndim>0
-            # deprecation (float() of a (1,)-shape array hits the same path).
-            self.nerve_paths[i, 0] = np.linalg.norm(
-                self._actual_center - cluster_center, axis=-1
-            ).item()
-            self.nerve_paths[i, 1] = np.linalg.norm(
-                nmj_coordinates - cluster_center, axis=-1
-            ).item()
 
         # Calculate delays
         # self._calculate_nmj_delays()
