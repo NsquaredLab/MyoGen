@@ -38,7 +38,7 @@ try:
 except (ImportError, Exception):
     HAS_CUPY = False
 
-from ..nerve_branches import nmj_branch_schedule
+from ..nerve_branches import NMJ_SCHEDULE_COEFFICIENTS, nmj_branch_schedule
 from .motor_unit_sim import MotorUnitSim
 
 
@@ -74,6 +74,10 @@ class IntramuscularEMG:
 
         Note: The two-layer model is a simplification of the actual arborization pattern, but it is a good approximation for the purposes of this simulation.
         Follows the implementation of Konstantin et al. 2020 [1].
+    nmj_coefficients : {"published", "reference_code"}, default="published"
+        z spreads of the two-layer end-plate model: the values printed in
+        Konstantin et al. 2020 [1], eq. 5-6, or those of their reference simulator
+        code (about 1.5 times wider; the default up to 0.13.0).
     MUs_to_simulate : list[int], optional
         Indices of motor units to simulate. If None, all motor units are simulated.
         Default is None. For computational efficiency, consider
@@ -109,7 +113,10 @@ class IntramuscularEMG:
             2.0 * pq.m / pq.s,
         ),
         MUs_to_simulate: list[int] | None = None,
+        nmj_coefficients: str = "published",
     ):
+        if nmj_coefficients not in NMJ_SCHEDULE_COEFFICIENTS:
+            raise ValueError(f"nmj_coefficients must be one of {tuple(NMJ_SCHEDULE_COEFFICIENTS)}")
         # Immutable public arguments - never modify these
         self.muscle_model = muscle_model
         self.electrode_array = electrode_array
@@ -119,6 +126,7 @@ class IntramuscularEMG:
         self.nmj_jitter__s = nmj_jitter__s
         self.branch_cvs__m_per_s = branch_cvs__m_per_s
         self.MUs_to_simulate = MUs_to_simulate
+        self.nmj_coefficients = nmj_coefficients
 
         # Private copies for internal modifications (extract magnitudes)
         self._muscle_model = muscle_model
@@ -275,7 +283,7 @@ class IntramuscularEMG:
             raise ValueError("Must call _initialize_motor_units() first")
 
         n_branches, branches_z_std, arborization_z_std = nmj_branch_schedule(
-            self._muscle_model.recruitment_thresholds
+            self._muscle_model.recruitment_thresholds, self.nmj_coefficients
         )
 
         for mu_idx, mu_sim in enumerate(
