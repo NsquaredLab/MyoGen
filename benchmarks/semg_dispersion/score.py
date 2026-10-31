@@ -43,7 +43,12 @@ GROUPS = {
     "fdi": {"FDI: published candidate and tendon ends": ["candidate_published", "tendon_w5", "tendon_w5_corr5",
                                                          "tendon_w10"],
             "FDI: all effects (+ diameter-scaled source)": ["tendon_w5_corr5", "full_diameter"],
-            "FDI: skin thickness 2 and 3 mm": ["baseline_skin2", "full_skin2", "baseline_skin3", "full_skin3"]},
+            "FDI: skin thickness 2 and 3 mm": ["baseline_skin2", "full_skin2", "baseline_skin3", "full_skin3"],
+            "FDI: literature layers, undispersed (skin 1.2 mm)": [
+                "baseline_s1.2_f1.3_sig1", "baseline_s1.2_f0.3_sig0.15", "baseline_s1.2_f1.3_sig0.15",
+                "baseline_s1.2_f2.0_sig0.15"],
+            "FDI: literature layers, all effects (skin 1.2 mm)": [
+                "full_s1.2_f1.3_sig1", "full_s1.2_f0.3_sig0.15", "full_s1.2_f1.3_sig0.15", "full_s1.2_f2.0_sig0.15"]},
 }[SCENARIO]
 
 

@@ -53,5 +53,9 @@ does three at a time and skips arms already present.
   cross-section, so that neighbours end close together, by about 11 %.
 - FDI skin thickness 1.29 → 3 mm lowers RMS by about 60 %; it is the strongest
   amplitude lever found so far.
+- Skin conductivity matters more than thickness: at skin 1.2 mm and fat 1.3 mm,
+  1 → 0.15 S/m raises FDI plateau RMS about 3.3×. With 1 S/m and these
+  thicknesses the all-effects model falls inside published FDI ranges; with
+  the measured 0.15 S/m it is about 3–4× too high.
 
 `benchmarks/semg_versions` compares outputs before and after the unreleased surface-EMG fixes.

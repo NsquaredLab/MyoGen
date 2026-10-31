@@ -15,8 +15,9 @@ dispersion configuration changes, so arms are paired against the baseline):
 Both use a 30 % excitation trapezoid (2 s ramps, 4 s hold, 0.5 s rest at each
 end), Fuglevand thresholds over a 50-fold range recruited up to 70 % excitation,
 8-35 Hz rate coding with ISI CV 0.2, 2048 Hz. An empty configuration ({}) is the
-undispersed baseline. The harness-only key ``_skin_thickness__mm`` sets the skin
-layer. Only the bipolar channel is simulated. The ``myogen`` that is imported
+undispersed baseline. Harness-only keys set the outer layers:
+``_skin_thickness__mm`` (default 1.29), ``_fat_thickness__mm`` (limb 4, FDI 0.3)
+and ``_skin_conductivity__S_per_m`` (default 1). Only the bipolar channel is simulated. The ``myogen`` that is imported
 (recorded in the output) must be the checkout under test; set PYTHONPATH if needed.
 """
 import hashlib
@@ -39,6 +40,8 @@ n_jobs = int(sys.argv[5]) if len(sys.argv) > 5 else 6
 if scenario not in ("limb", "fdi"):
     raise SystemExit(f"unknown scenario {scenario!r}")
 skin = config.pop("_skin_thickness__mm", 1.29)
+fat = config.pop("_fat_thickness__mm", 4.0 if scenario == "limb" else 0.3)
+skin_sigma = config.pop("_skin_conductivity__S_per_m", 1.0)
 if "nerve_cvs__m_per_s" in config:
     config["nerve_cvs__m_per_s"] = tuple(config["nerve_cvs__m_per_s"])
 dispersion = SurfaceFiberDispersion(**config)
@@ -52,12 +55,13 @@ thresholds, _ = RecruitmentThresholds(N=N_MU, recruitment_range__ratio=50, mode=
 if scenario == "limb":
     muscle = Muscle(recruitment_thresholds=thresholds, radius__mm=15 * pq.mm, length__mm=80 * pq.mm,
                     fiber_density__fibers_per_mm2=350 * pq.mm**-2, mean_fiber_length__mm=70 * pq.mm,
-                    var_fiber_length__mm=5 * pq.mm, radius_bone__mm=3 * pq.mm, fat_thickness__mm=4 * pq.mm,
-                    skin_thickness__mm=skin * pq.mm)
-    radius, fat = 15.0, 4.0
+                    var_fiber_length__mm=5 * pq.mm, radius_bone__mm=3 * pq.mm, fat_thickness__mm=fat * pq.mm,
+                    skin_thickness__mm=skin * pq.mm, skin_conductivity__S_per_m=skin_sigma * pq.S / pq.m)
+    radius = 15.0
 else:
-    muscle = Muscle(recruitment_thresholds=thresholds, skin_thickness__mm=skin * pq.mm)
-    radius, fat = 6.91, 0.3
+    muscle = Muscle(recruitment_thresholds=thresholds, skin_thickness__mm=skin * pq.mm, fat_thickness__mm=fat * pq.mm,
+                    skin_conductivity__S_per_m=skin_sigma * pq.S / pq.m)
+    radius = 6.91
 muscle.distribute_innervation_centers()
 muscle.generate_muscle_fiber_centers(verbose=False)
 muscle.assign_mfs2mns(verbose=False, n_jobs=n_jobs)
@@ -117,7 +121,7 @@ templates = np.array([np.asarray(signal_to_grid(muaps.groups[0].segments[m].anal
                       for m in mus])
 emg = semg.simulate_surface_emg(block, verbose=False).groups[0].segments[0].analogsignals[0]
 report = semg.fiber_dispersion_report or {}
-np.savez(out, label=label, scenario=scenario, myogen=myogen.__file__, config=json.dumps(config), skin=skin, mus=mus, counts=counts,
+np.savez(out, label=label, scenario=scenario, myogen=myogen.__file__, config=json.dumps(config), skin=skin, fat=fat, skin_sigma=skin_sigma, mus=mus, counts=counts,
          fibre_hash=fibre_hash, spike_hash=spike_hash, ramp=RAMP, hold=HOLD, level=LEVEL,
          bip_muaps=templates, pair_muap_fs=float(sig0.sampling_rate.rescale(pq.Hz).magnitude),
          bip_emg=np.asarray(signal_to_grid(emg.rescale(pq.mV))), fs=float(emg.sampling_rate.rescale(pq.Hz).magnitude),
