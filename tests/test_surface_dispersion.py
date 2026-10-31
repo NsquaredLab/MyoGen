@@ -171,12 +171,24 @@ def test_fibre_cv_spreads_follow_the_configuration(muscle):
     assert np.all(real.amplitude_scale[big] == 1.0)  # amplitude coupling is a separate switch
 
 
+def test_fibre_cv_rises_linearly_with_recruitment_threshold(muscle):
+    real = _realize(muscle, SurfaceFiberDispersion(fiber_cv_threshold_slope=0.63))
+    rt = np.asarray(muscle.recruitment_thresholds, dtype=float)
+    rt = rt / rt.max()
+    for mu, cv in enumerate(real.cv__m_s):
+        np.testing.assert_allclose(cv, 4.2 * (1 + 0.63 * (rt[mu] - rt.mean())))
+    with pytest.raises(ValueError):
+        SurfaceFiberDispersion(fiber_cv_threshold_slope=0.6, fiber_cv_inter_mu_spread=0.3)
+
+
 def test_diameter_coupling_scales_source_with_cross_section(muscle):
     cfg = SurfaceFiberDispersion(fiber_cv_within_mu_cov=0.08, diameter_scales_source=True)
     real = _realize(muscle, cfg)
     big = max(range(12), key=lambda i: len(real.cv__m_s[i]))
-    d_ratio = 1 + (real.cv__m_s[big] - 4.2) / (cfg.cv_per_diameter__m_s_per_mm * cfg.reference_diameter__mm)
-    np.testing.assert_allclose(real.amplitude_scale[big], d_ratio**2)
+    # Diameter from the CV line v = 0.95 m/s + 0.05 m/s/um * d (Nandedkar & Stalberg 1983)
+    diameter__um = (real.cv__m_s[big] - 0.95) / 0.05
+    np.testing.assert_allclose(real.amplitude_scale[big], (diameter__um / ((4.2 - 0.95) / 0.05)) ** 2)
+    assert real.report["diameter_mean__um"][big] == pytest.approx(np.mean(diameter__um))
 
 
 def test_intra_mu_scatter_keeps_each_motor_unit_anchor(muscle):
