@@ -16,8 +16,8 @@ Both use a 30 % excitation trapezoid (2 s ramps, 4 s hold, 0.5 s rest at each
 end), Fuglevand thresholds over a 50-fold range recruited up to 70 % excitation,
 8-35 Hz rate coding with ISI CV 0.2, 2048 Hz. An empty configuration ({}) is the
 undispersed baseline. Harness-only keys set the outer layers:
-``_skin_thickness__mm`` (default 1.29), ``_fat_thickness__mm`` (limb 4, FDI 0.3)
-and ``_skin_conductivity__S_per_m`` (default 1). Only the bipolar channel is simulated. The ``myogen`` that is imported
+``_skin_thickness__mm`` (default 1.29), ``_fat_thickness__mm`` (limb 4, FDI 0.3),
+``_skin_conductivity__S_per_m`` (default 1) and ``_fiber_diameter__um`` (default 50). Only the bipolar channel is simulated. The ``myogen`` that is imported
 (recorded in the output) must be the checkout under test; set PYTHONPATH if needed.
 """
 import hashlib
@@ -42,6 +42,7 @@ if scenario not in ("limb", "fdi"):
 skin = config.pop("_skin_thickness__mm", 1.29)
 fat = config.pop("_fat_thickness__mm", 4.0 if scenario == "limb" else 0.3)
 skin_sigma = config.pop("_skin_conductivity__S_per_m", 1.0)
+diameter = config.pop("_fiber_diameter__um", 50.0)
 if "nerve_cvs__m_per_s" in config:
     config["nerve_cvs__m_per_s"] = tuple(config["nerve_cvs__m_per_s"])
 dispersion = SurfaceFiberDispersion(**config)
@@ -113,7 +114,7 @@ else:
 set_random_seed(7)
 semg = SurfaceEMG(muscle, [bip], sampling_frequency__Hz=FS * pq.Hz, MUs_to_simulate=mus,
                   internal_sampling_frequency__Hz=FS * pq.Hz, fiber_dispersion=dispersion,
-                  iap_kernel_length__mm=kernel)
+                  iap_kernel_length__mm=kernel, fiber_diameter__um=diameter)
 t0 = time.time()
 muaps = semg.simulate_muaps(n_jobs=n_jobs, verbose=False, use_gpu=False)
 sig0 = muaps.groups[0].segments[mus[0]].analogsignals[0]
@@ -121,7 +122,7 @@ templates = np.array([np.asarray(signal_to_grid(muaps.groups[0].segments[m].anal
                       for m in mus])
 emg = semg.simulate_surface_emg(block, verbose=False).groups[0].segments[0].analogsignals[0]
 report = semg.fiber_dispersion_report or {}
-np.savez(out, label=label, scenario=scenario, myogen=myogen.__file__, config=json.dumps(config), skin=skin, fat=fat, skin_sigma=skin_sigma, mus=mus, counts=counts,
+np.savez(out, label=label, scenario=scenario, myogen=myogen.__file__, config=json.dumps(config), skin=skin, fat=fat, skin_sigma=skin_sigma, diameter=diameter, mus=mus, counts=counts,
          fibre_hash=fibre_hash, spike_hash=spike_hash, ramp=RAMP, hold=HOLD, level=LEVEL,
          bip_muaps=templates, pair_muap_fs=float(sig0.sampling_rate.rescale(pq.Hz).magnitude),
          bip_emg=np.asarray(signal_to_grid(emg.rescale(pq.mV))), fs=float(emg.sampling_rate.rescale(pq.Hz).magnitude),
