@@ -25,6 +25,21 @@ This release corrects the surface-EMG pipeline against Farina, Mesin, Martina & 
 ### Added
 
 - `SurfaceEMG(fiber_diameter__um=50, intracellular_conductivity__S_m=1.01)` set the source strength; amplitude scales with the fibre cross-section.
+- **Fibre dispersion in surface EMG.** `SurfaceEMG(fiber_dispersion=SurfaceFiberDispersion(...))` adds, each switched on independently:
+  - per-fibre end-plates from the two-layer nerve model of Konstantin et al. (2020), shared with intramuscular EMG;
+  - axon-branch conduction delays;
+  - motor-unit conduction velocity linear in recruitment threshold (Del Vecchio et al. 2017), and a spread of fibre velocities within each unit, each fibre propagating at its own velocity;
+  - a source scaled by fibre diameter (from the Nandedkar & Stålberg 1983 velocity–diameter line);
+  - tendon-end stagger: each fibre end in a band, independently or following a smooth random field across the cross-section so that neighbouring fibres end close together.
+
+  The realised spreads are reported per motor unit in `SurfaceEMG.fiber_dispersion_report`. The default is off and leaves outputs bit-identical. `SurfaceFiberDispersion.literature_candidate()` gives a preset whose values come from the literature or are marked as assumptions. The `execution=` route and `use_unified=True` refuse an active configuration.
+- `IntramuscularEMG(nmj_coefficients=...)` selects the end-plate spreads (see Changed).
+- `benchmarks/semg_dispersion/`: paired sweeps of these options on a limb-like cylinder and on the default (FDI) muscle.
+
+### Changed
+
+- **End-plate spreads in intramuscular EMG.** The two-layer end-plate model now uses the spreads printed in Konstantin et al. (2020, eq. 5-6) instead of the 1.5–2× wider values of their reference code: branch-point SD 1.0 + 2.5·s mm (was 1.5 + 4.0·s) and arborisation SD 0.25 + 1.0·s mm (was 0.5 + 1.5·s), with s the share of total threshold below the unit. In the sEMG limb sweep the realised within-unit end-plate SD fell from a median of 1.68 mm to 1.07 mm. iEMG MUAPs and signals change.
+- `Muscle.var_fiber_length__mm` is documented as the half-width of a uniform fibre-length variation (the FDI value of Jacobson et al. 1992), not a variance. Behaviour is unchanged.
 
 ### Upgrade notes
 
@@ -32,6 +47,7 @@ This release corrects the surface-EMG pipeline against Farina, Mesin, Martina & 
 - Absolute sEMG amplitudes change by one to two orders of magnitude (amplitude no longer depends on conduction velocity). Anything calibrated in µV or mV against earlier outputs must be regenerated. To keep the earlier dry-skin conductor, pass `skin_conductivity__S_per_m=4.88e-4 * pq.S / pq.m` to `Muscle`.
 - Pickled `SurfaceEMG` objects from earlier versions lack the new fibre properties; create them again.
 - The `execution=` MUAP disk-cache key changes, so templates cached by earlier versions are recomputed.
+- iEMG outputs change through the narrower end-plate spreads. Pass `IntramuscularEMG(..., nmj_coefficients="reference_code")` to reproduce earlier end-plates.
 
 ## [0.13.0] - 2026-10-28
 

@@ -77,7 +77,7 @@ class IntramuscularEMG:
     nmj_coefficients : {"published", "reference_code"}, default="published"
         z spreads of the two-layer end-plate model: the values printed in
         Konstantin et al. 2020 [1], eq. 5-6, or those of their reference simulator
-        code (about 1.5 times wider; the default up to 0.13.0).
+        code (1.5-2 times wider; the default up to 0.13.0).
     MUs_to_simulate : list[int], optional
         Indices of motor units to simulate. If None, all motor units are simulated.
         Default is None. For computational efficiency, consider
