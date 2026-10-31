@@ -28,6 +28,9 @@ def simulate_muaps(owner, policy, n_jobs, verbose, use_gpu):
             raise ValueError("execution=ExecutionPolicy(backend='cpu') contradicts use_gpu=True")
         if owner._use_unified:
             raise ValueError("use_unified=True requires the existing route (execution=None)")
+        dispersion = getattr(owner, "_fiber_dispersion", None)
+        if dispersion is not None and dispersion.active:
+            raise ValueError("fiber_dispersion requires the existing route (execution=None)")
         if any(type(array) is not SurfaceElectrodeArray for array in owner._electrode_arrays):
             raise ValueError("Custom electrodes require the existing route (execution=None)")
         shapes = {(a.num_rows, a.num_cols) for a in owner._electrode_arrays}
