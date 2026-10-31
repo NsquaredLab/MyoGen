@@ -142,3 +142,14 @@ def test_default_skin_conductivity_is_farina_value():
     thresholds, _ = RecruitmentThresholds(N=5, recruitment_range__ratio=10, mode="konstantin")
     muscle = Muscle(thresholds)
     assert float(muscle.skin_conductivity__S_m.rescale(pq.S / pq.m).magnitude) == pytest.approx(1.0)
+
+
+def test_default_layers_are_fdi_literature_values():
+    # Skin 1.2 mm over the hand dorsum (Li et al. 2018, controls); fat 1.3 mm makes the total depth
+    # to muscle 2.5 mm, the low end of the FDI subcutaneous depth of Nishikawa et al. (2024).
+    from myogen.simulator import Muscle, RecruitmentThresholds
+
+    thresholds, _ = RecruitmentThresholds(N=5, recruitment_range__ratio=10, mode="konstantin")
+    muscle = Muscle(thresholds)
+    assert float(muscle.skin_thickness__mm.rescale(pq.mm).magnitude) == pytest.approx(1.2)
+    assert float(muscle.fat_thickness__mm.rescale(pq.mm).magnitude) == pytest.approx(1.3)

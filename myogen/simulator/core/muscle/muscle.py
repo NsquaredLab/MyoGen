@@ -124,10 +124,15 @@ class Muscle:
         muscle (not verified against the table).
     radius_bone__mm : float, default=1
         Bone radius in mm. Default is set to 1 mm.
-    fat_thickness__mm : float, default=0.3
-        Fat thickness in mm. Default is set to 0.3 mm as determined by Störchle et al. 2018 [5].
-    skin_thickness__mm : float, default=1.29
-        Skin thickness in mm. Default is set to the male skin thickness average of 1.29 mm as determined by Brodar 1960 [6].
+    fat_thickness__mm : float, default=1.3
+        Fat thickness in mm. Default 1.3 mm, derived rather than measured: no study measures fat alone over
+        the FDI, so it is the total depth to muscle of 2.5 mm, the low end of the FDI subcutaneous depth of
+        Nishikawa et al. 2024 [12] (group means 2.54-3.30 mm, ultrasound), minus the skin below. Fat averaged
+        over the whole hand is thinner, 0.3 mm (Störchle et al. 2018 [5]; the previous default).
+    skin_thickness__mm : float, default=1.2
+        Skin (epidermis and dermis) thickness in mm. Default 1.2 mm, the median over the hand dorsum in healthy
+        controls of Li et al. 2018 [11] (range 0.79-1.50 mm, high-frequency ultrasound). The previous default,
+        1.29 mm, was a male average from Brodar 1960 [6].
     muscle_conductivity_radial__S_per_m : float, default=0.09
         Muscle conductivity in radial direction. Default is set to 0.09 S/m as determined by Botelho et al. 2019 [7] (Table 1).
     muscle_conductivity_longitudinal__S_per_m : float, default=0.4
@@ -188,7 +193,9 @@ class Muscle:
     [7] Botelho, D.P., Curran, K., Lowery, M.M., 2019. Anatomically accurate model of EMG during index finger flexion and abduction derived from diffusion tensor imaging. PLOS Computational Biology 15, e1007267. https://doi.org/10.1371/journal.pcbi.1007267 <br>
     [8] Roeleveld, K., Blok, J.H., Stegeman, D.F., van Oosterom, A., 1997. Volume conduction models for surface EMG; confrontation with measurements. Journal of Electromyography and Kinesiology 7, 221–232. https://doi.org/10.1016/S1050-6411(97)00009-6 <br>
     [9] Blok, J.H., Stegeman, D.F., van Oosterom, A., 2002. Three-layer volume conductor model and software package for applications in surface electromyography. Annals of Biomedical Engineering 30, 566–577. https://doi.org/10.1114/1.1475345 <br>
-    [10] Lowery, M.M., Stoykov, N.S., Taflove, A., Kuiken, T.A., 2002. A multiple-layer finite-element model of the surface EMG signal. IEEE Transactions on Biomedical Engineering 49, 446–454. https://doi.org/10.1109/10.995683
+    [10] Lowery, M.M., Stoykov, N.S., Taflove, A., Kuiken, T.A., 2002. A multiple-layer finite-element model of the surface EMG signal. IEEE Transactions on Biomedical Engineering 49, 446–454. https://doi.org/10.1109/10.995683 <br>
+    [11] Li, H., Furst, D.E., Jin, H., Sun, C., Wang, X., Yang, L., He, J., Wang, Y., Liu, A., 2018. High-frequency ultrasound of the skin in systemic sclerosis: an exploratory study to examine correlation with disease activity and to define the minimally detectable difference. Arthritis Research & Therapy 20, 181. https://doi.org/10.1186/s13075-018-1686-9 <br>
+    [12] Nishikawa, Y., Watanabe, K., Holobar, A., Kitamura, R., Maeda, N., Hyngstrom, A.S., 2024. Sex differences in laterality of motor unit firing behavior of the first dorsal interosseous muscle in strength-matched healthy young males and females. European Journal of Applied Physiology 124, 1979–1990. https://doi.org/10.1007/s00421-024-05420-7
     """
 
     def __init__(
@@ -202,8 +209,8 @@ class Muscle:
         mean_fiber_length__mm: Quantity__mm = 31.7 * pq.mm,
         var_fiber_length__mm: Quantity__mm = 2.8 * pq.mm,
         radius_bone__mm: Quantity__mm = 0 * pq.mm,
-        fat_thickness__mm: Quantity__mm = 0.3 * pq.mm,
-        skin_thickness__mm: Quantity__mm = 1.29 * pq.mm,
+        fat_thickness__mm: Quantity__mm = 1.3 * pq.mm,
+        skin_thickness__mm: Quantity__mm = 1.2 * pq.mm,
         muscle_conductivity_radial__S_per_m: Quantity__S_per_m = 0.09 * pq.S / pq.m,
         muscle_conductivity_longitudinal__S_per_m: Quantity__S_per_m = 0.4 * pq.S / pq.m,
         fat_conductivity__S_per_m: Quantity__S_per_m = 4.07e-2 * pq.S / pq.m,
