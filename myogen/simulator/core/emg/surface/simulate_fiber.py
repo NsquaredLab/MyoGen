@@ -118,6 +118,37 @@ def fiber_semi_lengths(innervation_zone__mm: float, fiber_length__mm: float) -> 
     return L1, L2
 
 
+def _source_spectrum(psi: np.ndarray, dz: float, stretch: float) -> np.ndarray:
+    """IAP spectrum for a fibre at ``v = v_grid / stretch`` on the ``v_grid`` time grid.
+
+    ``psi`` is sampled on the symmetric grid ``z_n = (n - (N-1)/2) dz``. Column
+    ``m`` (wavenumber ``k_m`` of the centred FFT grid) needs the spectrum at
+    ``k_m * stretch``; the phase stays referred to the grid's first sample at
+    ``k_m`` so that, as on the fibre's own grid, the firing instant is the
+    window centre. ``stretch == 1`` gives ``fftshift(fft(psi)) * dz``.
+    """
+    n = len(psi)
+    k = 2 * math.pi * np.fft.fftshift(np.fft.fftfreq(n, d=dz))
+    support = np.nonzero(psi)[0]
+    z = (support - (n - 1) / 2) * dz
+    spectrum = (np.exp(-1j * np.outer(k * stretch, z)) @ psi[support]) * dz
+    return spectrum * np.exp(-1j * k * (n - 1) / 2 * dz)
+
+
+def delay_fibre_signal(phi: np.ndarray, delay__ms: float, fs__kHz: float) -> np.ndarray:
+    """Delay ``phi`` along its last (time) axis by ``delay__ms``, allowing fractions of a sample.
+
+    Applied as a linear phase in the frequency domain, i.e. a circular shift:
+    the window must leave room for the delayed signal. Zero delay returns
+    ``phi`` unchanged.
+    """
+    if delay__ms == 0:
+        return phi
+    n = phi.shape[-1]
+    f__kHz = np.fft.rfftfreq(n, d=1.0 / fs__kHz)
+    return np.fft.irfft(np.fft.rfft(phi, axis=-1) * np.exp(-2j * np.pi * f__kHz * delay__ms), n=n, axis=-1)
+
+
 def muap_sampling_rate__Hz(
     conduction_velocity__m_s: float, internal_points: int, output_points: int, kernel_length__mm: float
 ) -> float:
@@ -269,6 +300,7 @@ def _simulate_fiber_v2_python(
     *,
     sig_intracellular: float = 1.01,
     fiber_diameter__mm: float = 0.05,
+    v_grid: float | None = None,
 ):
     """
     Simulate a single fiber (Python implementation).
@@ -339,6 +371,11 @@ def _simulate_fiber_v2_python(
         Fibre diameter (mm), default 0.05. Together with ``sig_intracellular`` it
         sets the line current density ``sig_i * pi * (d/2)**2 * d2Vm/dz2`` of the
         source, so the output is the potential in mV.
+    v_grid : float, optional
+        Reference conduction velocity (m/s) that sets the time grid (``v`` above
+        in the window and sampling-rate formulas). Defaults to ``v``. Fibres
+        that propagate at different ``v`` but share ``v_grid`` return signals on
+        the same time axis and can be summed directly.
 
     Returns
     -------
@@ -349,6 +386,10 @@ def _simulate_fiber_v2_python(
     B_incomplete : np.ndarray
         B matrix for reuse in subsequent calls
     """
+    # The grid velocity fixes the (k_z, k_t) grids; the fibre velocity enters
+    # only the source term below.
+    if v_grid is None:
+        v_grid = v
     # Get electrode configuration from the array
     channels = [electrode_array.num_rows, electrode_array.num_cols]
 
@@ -367,7 +408,7 @@ def _simulate_fiber_v2_python(
     ## 1. Constants
 
     if _prepared is not None:
-        _prepared.bind((Fs, v, N, M, r, r_bone, th_fat, th_skin,
+        _prepared.bind((Fs, v_grid, N, M, r, r_bone, th_fat, th_skin,
                         sig_muscle_rho, sig_muscle_z, sig_fat, sig_skin, sig_bone, fiber_length__mm,
                         sig_intracellular, fiber_diameter__mm))
     if _prepared is None or _prepared.grid is None:
@@ -381,7 +422,7 @@ def _simulate_fiber_v2_python(
         if fiber_length__mm is not None:
             # z-grid spans fiber_length__mm with N points: dz = fiber_length__mm / (N-1)
             # For FFT: dz = v / Fs_eff → Fs_eff = v * (N-1) / fiber_length__mm
-            Fs_effective = v * (N - 1) / fiber_length__mm  # kHz
+            Fs_effective = v_grid * (N - 1) / fiber_length__mm  # kHz
         else:
             Fs_effective = Fs
 
@@ -399,7 +440,7 @@ def _simulate_fiber_v2_python(
         if N > 1:
             dk_t = 2 * math.pi * Fs_effective / N
             k_t = np.where(k_t == 0.0, 0.5 * dk_t, k_t)
-        k_z = k_t / v
+        k_z = k_t / v_grid
         (kt_mesh_kzkt, kz_mesh_kzkt) = np.meshgrid(k_t, k_z)
 
         ## Model radii -> (Farina, 2004), Figure 1 - b)
@@ -421,7 +462,7 @@ def _simulate_fiber_v2_python(
         # Define spatial grid for IAP kernel evaluation
         if fiber_length__mm is None:
             # Legacy behavior: z-range depends on N (INCORRECT - causes MUAP duration to scale with N)
-            z = np.linspace(-(N - 1) * (v / Fs) / 2, (N - 1) * (v / Fs) / 2, N, dtype=np.longdouble)
+            z = np.linspace(-(N - 1) * (v_grid / Fs) / 2, (N - 1) * (v_grid / Fs) / 2, N, dtype=np.longdouble)
         else:
             # Correct behavior: z-range defined by physical fiber length (independent of N)
             # N controls only the resolution, not the physical extent
@@ -452,11 +493,18 @@ def _simulate_fiber_v2_python(
             _prepared.freeze_grid((k_theta, k_t, k_z, kt_mesh_kzkt, kz_mesh_kzkt, a, b, c, d, psi, PSI_mesh_conj, Fs_effective))
     else:
         k_theta, k_t, k_z, kt_mesh_kzkt, kz_mesh_kzkt, a, b, c, d, psi, PSI_mesh_conj, Fs_effective = _prepared.grid
+    # The source term reads the IAP spectrum at k = k_t / v (one column per k_t).
+    # On the fibre's own grid that is the k_z grid; a fibre propagating at
+    # v != v_grid needs the spectrum at k_z * v_grid / v instead.
+    PSI_row_conj = PSI_mesh_conj[0]
+    if v != v_grid:
+        dz = (fiber_length__mm / (N - 1)) if fiber_length__mm is not None else v_grid / Fs
+        PSI_row_conj = np.conj(_source_spectrum(np.asarray(psi, dtype=np.float64), dz, v_grid / v))
     if _prepared is not None:
-        I_kzkt = _prepared.source_current(k_z, k_t, PSI_mesh_conj[0], v, zi, L1, L2)
+        I_kzkt = _prepared.source_current(k_z, k_t, PSI_row_conj, v, zi, L1, L2)
     else:
         I_kzkt = 1j * np.multiply(
-            kz_mesh_kzkt / v, np.multiply(PSI_mesh_conj, np.exp(-1j * kz_mesh_kzkt * zi))
+            kz_mesh_kzkt / v, np.multiply(PSI_row_conj[None, :], np.exp(-1j * kz_mesh_kzkt * zi))
         )
         k_eps = kz_mesh_kzkt + kt_mesh_kzkt / v
         k_beta = kz_mesh_kzkt - kt_mesh_kzkt / v
