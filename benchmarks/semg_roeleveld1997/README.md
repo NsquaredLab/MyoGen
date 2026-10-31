@@ -153,7 +153,12 @@ clipping, not a unit at that depth.
   of `falloff.py`), with the same ranking.
 
 Caveat: the measured depths came from scanning-EMG estimates of each unit's
-electrophysiological centre, here replaced by the fibre centroid.
+electrophysiological centre, here replaced by the fibre centroid. The 1.8 / 1.0
+exponents are the pooled fit over 52 units quoted in the Discussion (the
+regression itself is in Roeleveld et al. 1997b, not read); the lateral limit
+treats 1.0 as a within-unit slope, which that fit may not be. A direct check
+that needs no exponent is their Fig. 6 (measured/simulated Nu against
+distance for model III, which this setup replicates); not done yet.
 
 ## Side finding: angular resolution limit
 
@@ -172,9 +177,18 @@ fibre here.
 
 ```bash
 # from the repository root, with PYTHONPATH set to this checkout if needed
-PY=python bash benchmarks/semg_roeleveld1997/run_arms.sh artifacts/semg_roeleveld1997
-python benchmarks/semg_roeleveld1997/analyze.py artifacts/semg_roeleveld1997/*.npz
+# step 2 (replication), with and without end-plate scatter
+python benchmarks/semg_roeleveld1997/gen.py artifacts/semg_roeleveld1997/rep_III.npz '{"skin_sigma": 1.0, "rhos_mm": [0], "depths_mm": [5, 7.5, 15], "point_fibres": 1, "z_rows_mm": [-15, 51]}'
+python benchmarks/semg_roeleveld1997/gen.py artifacts/semg_roeleveld1997/rep_IIb.npz '{"skin_sigma": 0.05, "rhos_mm": [0], "depths_mm": [5, 7.5, 15], "point_fibres": 1, "z_rows_mm": [-15, 51]}'
+python benchmarks/semg_roeleveld1997/replicate.py artifacts/semg_roeleveld1997/rep_III.npz artifacts/semg_roeleveld1997/rep_IIb.npz 0 3
+# step 3 (fall-off), about 20 min with 15 processes
+PY=python bash benchmarks/semg_roeleveld1997/run_scatter_arms.sh artifacts/semg_roeleveld1997/scatter
+python benchmarks/semg_roeleveld1997/falloff.py artifacts/semg_roeleveld1997/scatter 3
 ```
+
+`run_arms.sh` and `analyze.py` are the first, scatter-free version (sparse
+grid, positions on both sides); they are superseded by the commands above
+and kept only to reproduce the first run.
 
 Arms: `III` (skin 1 S/m) and `IIb` (skin σ = fat σ = 0.05 S/m) with point
 units; `s1` (1 S/m, territories), `s0.15` and `s4.88e-4` (point units and
