@@ -38,6 +38,7 @@ try:
 except (ImportError, Exception):
     HAS_CUPY = False
 
+from ..nerve_branches import nmj_branch_schedule
 from .motor_unit_sim import MotorUnitSim
 
 
@@ -273,27 +274,19 @@ class IntramuscularEMG:
         if not self._motor_units:
             raise ValueError("Must call _initialize_motor_units() first")
 
-        n_branches = 1 + np.round(
-            np.log(
-                self._muscle_model.recruitment_thresholds
-                / self._muscle_model.recruitment_thresholds[0]
-            )
+        n_branches, branches_z_std, arborization_z_std = nmj_branch_schedule(
+            self._muscle_model.recruitment_thresholds
         )
 
         for mu_idx, mu_sim in enumerate(
             tqdm(self._motor_units, desc="Setting up NMJ distributions", unit="Simulator", disable=not verbose)
         ):
-            spread_factor = np.sum(self._muscle_model.recruitment_thresholds[:mu_idx]) / np.sum(
-                self._muscle_model.recruitment_thresholds
-            )
-
-            # Create NMJ distribution
             # Branch spread increases with motor unit size
             mu_sim.sim_nmj_branches_two_layers(
                 n_branches=int(n_branches[mu_idx]),
                 endplate_center=self._endplate_center__mm,
-                branches_z_std=1.5 + spread_factor * 4.0,
-                arborization_z_std=0.5 + spread_factor * 1.5,
+                branches_z_std=float(branches_z_std[mu_idx]),
+                arborization_z_std=float(arborization_z_std[mu_idx]),
             )
 
     def _calculate_muaps(self, n_jobs: int = -2, verbose: bool = True) -> INTRAMUSCULAR_MUAP__Block:
