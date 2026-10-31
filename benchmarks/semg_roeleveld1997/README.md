@@ -158,7 +158,43 @@ exponents are the pooled fit over 52 units quoted in the Discussion (the
 regression itself is in Roeleveld et al. 1997b, not read); the lateral limit
 treats 1.0 as a within-unit slope, which that fit may not be. A direct check
 that needs no exponent is their Fig. 6 (measured/simulated Nu against
-distance for model III, which this setup replicates); not done yet.
+distance for model III, which this setup replicates); done below.
+
+## Fig. 6 check (2026-10-31): no physical skin value fits
+
+Fig. 6 plots measured/simulated Nu against radial distance r from the unit,
+normalised to the 5 mm unit at A, using their average measured data. Model III
+(skin 1 S/m), read from the figure by eye (+-0.2):
+
+| unit depth | A | B | C | D |
+|---|---|---|---|---|
+| 5 mm (r 5/12/22/32) | 1.0 | 1.4 | 2.4 | 4.2 |
+| 7.5 mm | 1.4 | 1.6 | 2.5 | 3.9 |
+| 15 mm (r 15/30) | 2.2 | | | 3.4 |
+
+Our 1 S/m arm replicates III (step 2), so measured/ours at skin s is
+Fig6_III x ours(1 S/m) / ours(s). `fig6check.py` computes it from the point
+arms (`sc_s*_r0`); rows 12-36, end-plate SD 3 mm at the 24 mm row
+(their A row is 36 mm for the 5 and 15 mm units; the unsmoothed 36 mm row
+gives the same picture). 1 = match:
+
+| skin S/m | 5 mm: A B C D | 7.5 mm: A B C D | 15 mm: A D |
+|---|---|---|---|
+| 100 | 1.00 0.99 1.12 1.48 | 1.22 1.06 1.13 1.38 | 1.24 1.22 |
+| 10 | 1.00 1.05 1.27 1.76 | 1.25 1.13 1.29 1.65 | 1.38 1.46 |
+| 3 | 1.00 1.16 1.59 2.44 | 1.31 1.29 1.65 2.29 | 1.67 2.03 |
+| 1 | 1.00 1.40 2.40 4.20 | 1.40 1.60 2.50 3.90 | 2.20 3.40 |
+| 0.15 | 1.00 2.66 7.35 13.34 | 1.64 2.92 6.90 11.52 | 3.74 8.99 |
+| 4.88e-4 | 1.00 6.31 17.97 26.35 | 1.92 5.69 15.16 22.38 | 5.68 16.91 |
+
+Only about 100 S/m reproduces the measured spread, which is not a skin value.
+Measured skin conductivities are 3-6x further off than 1 S/m. The measured
+lateral and depth spread is therefore not a skin effect; 1 S/m is the
+least-bad value of a model that misses something, and its effect on absolute
+amplitude is not physically grounded. Step 3 found that territories steepen
+rather than flatten the fall-off, so territory size is not the missing piece
+either. The 3, 10 and 100 S/m arms were run for this check only (same grid as
+`run_scatter_arms.sh`, territory radius 0).
 
 ## Side finding: angular resolution limit
 
