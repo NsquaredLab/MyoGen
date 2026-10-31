@@ -114,9 +114,14 @@ class Muscle:
         Mean conduction velocity in m/s. Default is set to 4.2 m/s as determined by Nishizono et al. 1990 [4].
         Experimental range determined by Nishizono et al. 1990 [4] is between 3.2 and 5.0 m/s.
     mean_fiber_length__mm : float, default=31.7
-        Mean fiber length in mm. Default is set to 31.7 mm as determined by Jacobson et al. 1992 [3] (Table 1).
+        Mean fiber length in mm. Default is the first dorsal interosseous (FDI) value of Jacobson et al. 1992 [3]
+        (Table 1).
     var_fiber_length__mm : float, default=2.8
-        Fiber length variance in mm. Default is set to 2.8 mm as determined by Jacobson et al. 1992 [3] (Table 1).
+        Half-width in mm of the uniform fibre-length variation: each fibre is ``mean_fiber_length__mm`` plus a
+        uniform draw in ``±var_fiber_length__mm``, with its ends at ``±length / 2``, so both ends move together
+        by up to half this value. Default 2.8 mm, the FDI fibre-length spread of Jacobson et al. 1992 [3]
+        (Table 1), which most likely describes variation between specimens rather than between fibres of one
+        muscle (not verified against the table).
     radius_bone__mm : float, default=1
         Bone radius in mm. Default is set to 1 mm.
     fat_thickness__mm : float, default=0.3
