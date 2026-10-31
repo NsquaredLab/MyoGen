@@ -72,6 +72,10 @@ class SurfaceFiberDispersion:
         the diameter at the mean CV.
     cv_per_diameter__m_s_per_mm, cv_intercept__m_s : float
         Slope and intercept of that line.
+    tendon_end_band__mm : float
+        Width of the band over which each fibre end is placed, independently
+        at either end, uniform about ``±mean_fiber_length / 2``. Replaces the
+        fibre-length variation (which moves both ends together). 0 keeps it.
     seed : int
         Seed of the dispersion draws.
     """
@@ -87,6 +91,7 @@ class SurfaceFiberDispersion:
     diameter_scales_source: bool = False
     cv_per_diameter__m_s_per_mm: float = 50.0
     cv_intercept__m_s: float = 0.95
+    tendon_end_band__mm: float = 0.0
     seed: int = 0
 
     def __post_init__(self):
@@ -100,6 +105,8 @@ class SurfaceFiberDispersion:
             raise ValueError("nerve_cvs__m_per_s must be two positive velocities")
         if not 0 <= self.fiber_cv_inter_mu_spread < 2:
             raise ValueError("fiber_cv_inter_mu_spread must be in [0, 2)")
+        if self.tendon_end_band__mm < 0:
+            raise ValueError("tendon_end_band__mm must be non-negative")
         if self.fiber_cv_threshold_slope < 0:
             raise ValueError("fiber_cv_threshold_slope must be non-negative")
         if self.fiber_cv_threshold_slope and self.fiber_cv_inter_mu_spread:
@@ -112,7 +119,7 @@ class SurfaceFiberDispersion:
         return (self.nmj_model != "uniform_mu" or self.nerve_delays
                 or self.fiber_cv_inter_mu_spread > 0 or self.fiber_cv_threshold_slope > 0
                 or self.fiber_cv_within_mu_cov > 0
-                or self.diameter_scales_source)
+                or self.diameter_scales_source or self.tendon_end_band__mm > 0)
 
 
 @dataclass
@@ -123,6 +130,8 @@ class FiberDispersionRealization:
     cv__m_s: list[np.ndarray]
     delay__ms: list[np.ndarray]
     amplitude_scale: list[np.ndarray]
+    end_plus__mm: Optional[list[np.ndarray]] = None
+    end_minus__mm: Optional[list[np.ndarray]] = None
     report: dict = field(default_factory=dict)
 
 
@@ -134,28 +143,35 @@ def realize_fiber_dispersion(
     mean_cv__m_s: float,
     fiber_lengths__mm: Optional[Sequence[np.ndarray]] = None,
     end_margin__mm: float = 1.0,
+    mean_fiber_length__mm: Optional[float] = None,
 ) -> FiberDispersionRealization:
     """Draw per-fibre end-plate, nerve delay, CV and source scale for every motor unit.
 
     ``mu_zones__mm`` holds each unit's undispersed end-plate (relative to the
-    fibre centre). With ``fiber_lengths__mm`` given, end-plates are clipped to
-    ``end_margin__mm`` inside each fibre and the clipped count is reported.
+    fibre centre). With ``fiber_lengths__mm`` given, each fibre's ends sit at
+    ``±length / 2`` (or are drawn in the tendon band, which needs
+    ``mean_fiber_length__mm``), and end-plates are clipped to
+    ``end_margin__mm`` inside the ends with the clipped count reported.
     """
     n_mu = len(fiber_positions__mm)
     counts = np.array([len(p) for p in fiber_positions__mm])
     nerve_rng = np.random.default_rng([config.seed, 0])
     cv_rng = np.random.default_rng([config.seed, 1])
+    end_rng = np.random.default_rng([config.seed, 2])
+    band = config.tendon_end_band__mm
+    if band > 0 and (fiber_lengths__mm is None or mean_fiber_length__mm is None):
+        raise ValueError("tendon_end_band__mm needs fiber_lengths__mm and mean_fiber_length__mm")
     needs_nerve = config.nmj_model != "uniform_mu" or config.nerve_delays
     if needs_nerve:
         n_branches, branch_sd, arbor_sd = nmj_branch_schedule(recruitment_thresholds, config.nmj_coefficients)
 
     report = {key: np.full(n_mu, np.nan) for key in (
         "zi_mean__mm", "zi_sd__mm", "cv_mean__m_s", "cv_cov", "delay_mean__ms", "delay_sd__ms",
-        "amplitude_scale_mean", "diameter_mean__um")}
+        "amplitude_scale_mean", "diameter_mean__um", "end_sd__mm")}
     report["n_fibers"] = counts
     report["n_branches"] = np.zeros(n_mu, dtype=int)
     report["zi_clipped"] = np.zeros(n_mu, dtype=int)
-    zi_all, cv_all, delay_all, scale_all = [], [], [], []
+    zi_all, cv_all, delay_all, scale_all, plus_all, minus_all = [], [], [], [], [], []
     rank = np.arange(n_mu) / max(n_mu - 1, 1)
     rt = np.asarray(recruitment_thresholds, dtype=float)
     rt = rt / rt.max()
@@ -182,11 +198,20 @@ def realize_fiber_dispersion(
                 zi = zi + (nmj_z - np.mean(nmj_z))
             if config.nerve_delays:
                 delay = nerve_delays__ms(paths, config.nerve_cvs__m_per_s)
-        if fiber_lengths__mm is not None and n:
-            limit = np.asarray(fiber_lengths__mm[mu]) / 2 - end_margin__mm
-            clipped = np.clip(zi, -limit, limit)
+        if fiber_lengths__mm is not None:
+            if band > 0:
+                end_plus = mean_fiber_length__mm / 2 + end_rng.uniform(-band / 2, band / 2, size=n)
+                end_minus = -mean_fiber_length__mm / 2 + end_rng.uniform(-band / 2, band / 2, size=n)
+            else:
+                end_plus = np.asarray(fiber_lengths__mm[mu]) / 2
+                end_minus = -np.asarray(fiber_lengths__mm[mu]) / 2
+            clipped = np.clip(zi, end_minus + end_margin__mm, end_plus - end_margin__mm)
             report["zi_clipped"][mu] = int(np.count_nonzero(clipped != zi))
             zi = clipped
+            plus_all.append(end_plus)
+            minus_all.append(end_minus)
+            if n:
+                report["end_sd__mm"][mu] = np.std(end_plus)
 
         cv_mu = mean_cv__m_s * threshold_factor[mu] * (1 - config.fiber_cv_inter_mu_spread / 2
                                                        + config.fiber_cv_inter_mu_spread * rank[mu])
@@ -212,4 +237,5 @@ def realize_fiber_dispersion(
             report["amplitude_scale_mean"][mu] = np.mean(scale)
             report["diameter_mean__um"][mu] = np.mean(diameter__um)
     report["config"] = asdict(config)
-    return FiberDispersionRealization(zi_all, cv_all, delay_all, scale_all, report)
+    ends = (plus_all, minus_all) if fiber_lengths__mm is not None else (None, None)
+    return FiberDispersionRealization(zi_all, cv_all, delay_all, scale_all, *ends, report=report)

@@ -226,6 +226,35 @@ def test_nerve_delays_switch_independently_of_end_plates(muscle):
     assert real.report["delay_sd__ms"][big] == pytest.approx(np.std(real.delay__ms[big]))
 
 
+def _realize_with_lengths(muscle, config, mean_length=70.0, var=2.8):
+    counts = np.asarray(muscle.resulting_number_of_innervated_fibers)
+    positions = [np.asarray(muscle.resulting_fiber_assignment(i)) for i in range(len(counts))]
+    lengths = [mean_length + np.random.default_rng(i).uniform(-var, var, size=n) for i, n in enumerate(counts)]
+    real = realize_fiber_dispersion(config, positions, np.asarray(muscle.recruitment_thresholds),
+                                    np.zeros(len(counts)), mean_cv__m_s=4.2, fiber_lengths__mm=lengths,
+                                    mean_fiber_length__mm=mean_length)
+    return real, lengths
+
+
+def test_fibre_ends_follow_the_fibre_length_by_default(muscle):
+    real, lengths = _realize_with_lengths(muscle, SurfaceFiberDispersion(nerve_delays=True))
+    for mu, length in enumerate(lengths):
+        np.testing.assert_array_equal(real.end_plus__mm[mu], length / 2)
+        np.testing.assert_array_equal(real.end_minus__mm[mu], -length / 2)
+
+
+def test_tendon_band_staggers_each_end_independently(muscle):
+    real, _ = _realize_with_lengths(muscle, SurfaceFiberDispersion(tendon_end_band__mm=8.0))
+    assert SurfaceFiberDispersion(tendon_end_band__mm=8.0).active
+    plus = np.concatenate(real.end_plus__mm)
+    minus = np.concatenate(real.end_minus__mm)
+    assert np.all(np.abs(plus - 35.0) <= 4.0) and np.all(np.abs(minus + 35.0) <= 4.0)
+    assert np.std(plus) == pytest.approx(8.0 / np.sqrt(12), rel=0.1)
+    assert abs(np.corrcoef(plus, minus)[0, 1]) < 4 / np.sqrt(len(plus))  # independent within sampling error
+    big = max(range(12), key=lambda i: len(real.end_plus__mm[i]))
+    assert real.report["end_sd__mm"][big] == pytest.approx(np.std(real.end_plus__mm[big]))
+
+
 def test_realisation_leaves_the_global_generator_untouched(muscle):
     set_random_seed(3)
     expected = get_random_generator().uniform(size=4)
@@ -266,6 +295,12 @@ def test_dispersion_changes_the_muap_and_is_reported(muscle):
     assert not np.allclose(base[11], dispersed[11])
     report = semg.fiber_dispersion_report
     assert report["delay_sd__ms"][11] > 0 and report["cv_cov"][11] > 0
+
+
+def test_tendon_band_changes_the_muap(muscle):
+    base = _muaps(_semg(muscle))
+    staggered = _muaps(_semg(muscle, SurfaceFiberDispersion(tendon_end_band__mm=10.0)))
+    assert not np.allclose(base[11], staggered[11])
 
 
 @pytest.mark.usefixtures("ample_session_memory")
