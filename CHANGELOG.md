@@ -20,7 +20,7 @@ This release corrects the surface-EMG pipeline against Farina, Mesin, Martina & 
 - **Absolute sEMG amplitude.** Three scaling errors are corrected; together they made MUAPs labelled mV roughly 50-100× too large. A single fibre now matches an exact solution for a homogeneous insulated cylinder within 2 %.
   - The Fourier transforms dropped their `dz` and `Fs/N` factors, so every potential was divided by the conduction velocity.
   - The source was the bare Rosenfalck slope with an ad-hoc `A = 96/10`. It is now the core-conductor line current `σᵢ·π·(d/2)²·∂²Vm/∂z²` with the published `A = 96 mV/mm³`.
-  - The default skin conductivity was 4.88·10⁻⁴ S/m (dry skin), which raised amplitudes 3.5-6×. It is now 1 S/m, as in Farina et al. (2004).
+  - The default skin conductivity was 4.88·10⁻⁴ S/m (measured composite skin, Botelho et al. 2019), which raised amplitudes 3.5-6×. It is now 1 S/m, as in Farina et al. (2004). That value comes from Roeleveld et al. (1997), who chose it so their model matched how biceps MUAPs fall off with depth and around the arm; it is an effective value, not a measured skin conductivity.
 
 ### Added
 
@@ -44,7 +44,7 @@ This release corrects the surface-EMG pipeline against Farina, Mesin, Martina & 
 ### Upgrade notes
 
 - sEMG outputs change in amplitude, shape, duration and spectrum. Bipolar outputs from 0.5.0–0.13.0 are invalid. Durations, mean/median frequencies and conduction-velocity estimates from those versions are off by about 2× and must be regenerated.
-- Absolute sEMG amplitudes change by one to two orders of magnitude (amplitude no longer depends on conduction velocity). Anything calibrated in µV or mV against earlier outputs must be regenerated. To keep the earlier dry-skin conductor, pass `skin_conductivity__S_per_m=4.88e-4 * pq.S / pq.m` to `Muscle`.
+- Absolute sEMG amplitudes change by one to two orders of magnitude (amplitude no longer depends on conduction velocity). Anything calibrated in µV or mV against earlier outputs must be regenerated. To keep the earlier resistive (measured) skin layer, pass `skin_conductivity__S_per_m=4.88e-4 * pq.S / pq.m` to `Muscle`.
 - Pickled `SurfaceEMG` objects from earlier versions lack the new fibre properties; create them again.
 - The `execution=` MUAP disk-cache key changes, so templates cached by earlier versions are recomputed.
 - iEMG outputs change through the narrower end-plate spreads. Pass `IntramuscularEMG(..., nmj_coefficients="reference_code")` to reproduce earlier end-plates.

@@ -135,10 +135,14 @@ class Muscle:
     fat_conductivity__S_per_m : float, default=4.07E-2
         Fat conductivity. Default is set to 4.07E-2 S/m as determined by Botelho et al. 2019 [7] (Table 1).
     skin_conductivity__S_per_m : float, default=1.0
-        Skin conductivity. Default is 1 S/m as in Farina et al. 2004 [1]: gel electrodes bypass the
-        dry stratum corneum. Botelho et al. 2019 [7] used 4.88E-4 S/m (tissue data at 150 Hz, the
-        dry-skin range), which raises surface amplitudes 3.5-6x; pass it explicitly to model dry
-        electrodes.
+        Skin conductivity. Default is 1 S/m, the value of Farina et al. 2004 [1], which they took
+        from the three-layer model of Roeleveld et al. 1997 [8] (also Blok et al. 2002 [9]). It is
+        an effective value chosen so that the model reproduces how biceps MUAPs fall off with
+        depth and around the arm, not a measured skin conductivity: Roeleveld et al. note that it
+        is not known whether skin conducts as well as 1 S/m, and Blok et al. that reference values
+        are scarce. Measured skin is far lower: 4.55E-4 to 4.88E-4 S/m for composite in-vivo skin
+        near 100-150 Hz (Gabriel et al. 1996, used by Lowery et al. 2002 [10] and Botelho et al.
+        2019 [7]). A resistive skin layer raises surface amplitudes (3.5-6x with 4.88E-4 S/m).
     grid_resolution : int, default=256
         Resolution of the computational grid used for innervation the muscle.
         Higher values provide more accurate spatial distribution but increase computational cost.
@@ -181,7 +185,10 @@ class Muscle:
     [4] Nishizono, H., Fujimoto, T., Ohtake, H., Miyashita, M., 1990. Muscle fiber conduction velocity and contractile properties estimated from surface electrode arrays. Electroencephalography and Clinical Neurophysiology 75, 75–81. https://doi.org/10.1016/0013-4694(90)90154-C <br>
     [5] Störchle, P., Müller, W., Sengeis, M., Lackner, S., Holasek, S., Fürhapter-Rieger, A., 2018. Measurement of mean subcutaneous fat thickness: eight standardised ultrasound sites compared to 216 randomly selected sites. Sci Rep 8, 16268. https://doi.org/10.1038/s41598-018-34213-0 <br>
     [6] Brodar, V., 1960. Observations on skin thickness and subcutaneous tissue in man. Zeitschrift für Morphologie und Anthropologie 50, 386–395. <br>
-    [7] Botelho, D.P., Curran, K., Lowery, M.M., 2019. Anatomically accurate model of EMG during index finger flexion and abduction derived from diffusion tensor imaging. PLOS Computational Biology 15, e1007267. https://doi.org/10.1371/journal.pcbi.1007267
+    [7] Botelho, D.P., Curran, K., Lowery, M.M., 2019. Anatomically accurate model of EMG during index finger flexion and abduction derived from diffusion tensor imaging. PLOS Computational Biology 15, e1007267. https://doi.org/10.1371/journal.pcbi.1007267 <br>
+    [8] Roeleveld, K., Blok, J.H., Stegeman, D.F., van Oosterom, A., 1997. Volume conduction models for surface EMG; confrontation with measurements. Journal of Electromyography and Kinesiology 7, 221–232. https://doi.org/10.1016/S1050-6411(97)00009-6 <br>
+    [9] Blok, J.H., Stegeman, D.F., van Oosterom, A., 2002. Three-layer volume conductor model and software package for applications in surface electromyography. Annals of Biomedical Engineering 30, 566–577. https://doi.org/10.1114/1.1475345 <br>
+    [10] Lowery, M.M., Stoykov, N.S., Taflove, A., Kuiken, T.A., 2002. A multiple-layer finite-element model of the surface EMG signal. IEEE Transactions on Biomedical Engineering 49, 446–454. https://doi.org/10.1109/10.995683
     """
 
     def __init__(
