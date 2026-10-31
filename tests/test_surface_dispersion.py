@@ -353,3 +353,34 @@ def test_literature_candidate_preset():
     assert (preset.tendon_end_band__mm, preset.tendon_end_correlation__mm, preset.tendon_end_jitter__mm) == (
         5.0, 5.0, 0.3)
     assert SurfaceFiberDispersion.literature_candidate(seed=4).seed == 4
+
+
+def test_intramuscular_emg_selects_the_end_plate_coefficients(monkeypatch):
+    from myogen.simulator import IntramuscularElectrodeArray, IntramuscularEMG
+    from myogen.simulator.core.emg.intramuscular.motor_unit_sim import MotorUnitSim
+
+    set_random_seed(5)
+    thresholds, _ = RecruitmentThresholds(N=4, recruitment_range__ratio=30)
+    muscle = Muscle(recruitment_thresholds=thresholds, radius__mm=2.0 * pq.mm, radius_bone__mm=0.5 * pq.mm,
+                    fiber_density__fibers_per_mm2=50 * pq.mm**-2, grid_resolution=32, autorun=True)
+    electrode = IntramuscularElectrodeArray(num_electrodes=2, inter_electrode_distance__mm=0.5 * pq.mm,
+                                            position__mm=(0.0 * pq.mm, 0.0 * pq.mm, 15.0 * pq.mm))
+    seen = []
+    original = MotorUnitSim.sim_nmj_branches_two_layers
+
+    def capture(self, **kwargs):
+        seen.append((kwargs["branches_z_std"], kwargs["arborization_z_std"]))
+        return original(self, **kwargs)
+
+    monkeypatch.setattr(MotorUnitSim, "sim_nmj_branches_two_layers", capture)
+    for coefficients in ("published", "reference_code"):
+        seen.clear()
+        kwargs = {} if coefficients == "published" else {"nmj_coefficients": coefficients}
+        iemg = IntramuscularEMG(muscle_model=muscle, electrode_array=electrode, **kwargs)
+        iemg._initialize_motor_units(verbose=False)
+        iemg._simulate_neuromuscular_junctions(verbose=False)
+        _, branch_sd, arbor_sd = nmj_branch_schedule(np.asarray(muscle.recruitment_thresholds), coefficients)
+        np.testing.assert_allclose([s[0] for s in seen], branch_sd)
+        np.testing.assert_allclose([s[1] for s in seen], arbor_sd)
+    with pytest.raises(ValueError, match="nmj_coefficients"):
+        IntramuscularEMG(muscle_model=muscle, electrode_array=electrode, nmj_coefficients="paper")
