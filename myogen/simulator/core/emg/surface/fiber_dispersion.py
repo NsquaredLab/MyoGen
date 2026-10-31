@@ -17,7 +17,7 @@ from typing import Literal, Optional, Sequence
 
 import numpy as np
 
-from ..nerve_branches import nerve_delays__ms, nmj_branch_schedule, two_layer_nmj
+from ..nerve_branches import NMJ_SCHEDULE_COEFFICIENTS, nerve_delays__ms, nmj_branch_schedule, two_layer_nmj
 
 NMJ_MODELS = ("uniform_mu", "two_layer", "two_layer_intra")
 
@@ -36,7 +36,11 @@ class SurfaceFiberDispersion:
         ``"two_layer_intra"``: the two-layer scatter re-centred on each unit's
         undispersed end-plate, isolating the spread within a motor unit.
     nmj_scatter_scale : float
-        Multiplies both two-layer z spreads (1 = the intramuscular default).
+        Multiplies both two-layer z spreads (1 = the coefficients as given).
+    nmj_coefficients : {"reference_code", "published"}
+        Two-layer z-spread coefficients: Konstantin's reference simulator code
+        (the intramuscular default) or the values printed in Konstantin et al.
+        (2020), eq. 5-6, which give about two-thirds of the spread.
     nerve_delays : bool
         Delay each fibre by its axon-branch conduction time (two-layer nerve
         paths over ``nerve_cvs__m_per_s``). Independent of ``nmj_model``: with
@@ -74,6 +78,7 @@ class SurfaceFiberDispersion:
 
     nmj_model: Literal["uniform_mu", "two_layer", "two_layer_intra"] = "uniform_mu"
     nmj_scatter_scale: float = 1.0
+    nmj_coefficients: str = "reference_code"
     nerve_delays: bool = False
     nerve_cvs__m_per_s: tuple[float, float] = (5.0, 2.0)
     fiber_cv_inter_mu_spread: float = 0.0
@@ -87,6 +92,8 @@ class SurfaceFiberDispersion:
     def __post_init__(self):
         if self.nmj_model not in NMJ_MODELS:
             raise ValueError(f"nmj_model must be one of {NMJ_MODELS}, got {self.nmj_model!r}")
+        if self.nmj_coefficients not in NMJ_SCHEDULE_COEFFICIENTS:
+            raise ValueError(f"nmj_coefficients must be one of {tuple(NMJ_SCHEDULE_COEFFICIENTS)}")
         if self.nmj_scatter_scale < 0:
             raise ValueError("nmj_scatter_scale must be non-negative")
         if len(self.nerve_cvs__m_per_s) != 2 or min(self.nerve_cvs__m_per_s) <= 0:
@@ -140,7 +147,7 @@ def realize_fiber_dispersion(
     cv_rng = np.random.default_rng([config.seed, 1])
     needs_nerve = config.nmj_model != "uniform_mu" or config.nerve_delays
     if needs_nerve:
-        n_branches, branch_sd, arbor_sd = nmj_branch_schedule(recruitment_thresholds)
+        n_branches, branch_sd, arbor_sd = nmj_branch_schedule(recruitment_thresholds, config.nmj_coefficients)
 
     report = {key: np.full(n_mu, np.nan) for key in (
         "zi_mean__mm", "zi_sd__mm", "cv_mean__m_s", "cv_cov", "delay_mean__ms", "delay_sd__ms",

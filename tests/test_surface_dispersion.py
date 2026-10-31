@@ -77,6 +77,23 @@ def test_branch_schedule_grows_with_motor_unit_size():
     spread = np.concatenate([[0], np.cumsum(thresholds)[:-1]]) / thresholds.sum()
     np.testing.assert_allclose(branch_sd, 1.5 + 4.0 * spread)
     np.testing.assert_allclose(arbor_sd, 0.5 + 1.5 * spread)
+    # Published coefficients (Konstantin et al. 2020, eq. 5-6): a_mu=1, b_mu=2.5, a_sigma=0.25, b_sigma=1 mm
+    _, branch_sd, arbor_sd = nmj_branch_schedule(thresholds, coefficients="published")
+    np.testing.assert_allclose(branch_sd, 1.0 + 2.5 * spread)
+    np.testing.assert_allclose(arbor_sd, 0.25 + 1.0 * spread)
+    with pytest.raises(ValueError):
+        nmj_branch_schedule(thresholds, coefficients="other")
+
+
+def test_surface_dispersion_can_use_the_published_coefficients(muscle):
+    zones = np.zeros(12)
+    script = _realize(muscle, SurfaceFiberDispersion(nmj_model="two_layer_intra"), zones)
+    paper = _realize(muscle, SurfaceFiberDispersion(nmj_model="two_layer_intra", nmj_coefficients="published"),
+                     zones)
+    big = max(range(12), key=lambda i: len(paper.zi__mm[i]))
+    assert np.std(paper.zi__mm[big]) < np.std(script.zi__mm[big])
+    with pytest.raises(ValueError):
+        SurfaceFiberDispersion(nmj_coefficients="other")
 
 
 def test_nerve_delay_is_path_over_branch_velocity():
