@@ -17,16 +17,31 @@ import numpy as np
 from sklearn.cluster import KMeans
 
 
-def nmj_branch_schedule(recruitment_thresholds: np.ndarray) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
+# (branch intercept, branch slope, arborisation intercept, arborisation slope), mm.
+# "reference_code": Konstantin's reference simulator (iemg_simulator, s08_cl_init_muaps.m).
+# "published": Konstantin et al. 2020, eq. 5-6 (a_mu = 1, b_mu = 2.5, a_sigma = 0.25, b_sigma = 1).
+NMJ_SCHEDULE_COEFFICIENTS = {
+    "reference_code": (1.5, 4.0, 0.5, 1.5),
+    "published": (1.0, 2.5, 0.25, 1.0),
+}
+
+
+def nmj_branch_schedule(
+    recruitment_thresholds: np.ndarray, coefficients: str = "reference_code"
+) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
     """Branch count and z spreads per motor unit, growing with motor-unit size.
 
     Returns ``(n_branches, branches_z_std__mm, arborization_z_std__mm)``. The
-    spread factor is the share of total threshold below each unit.
+    spread factor is the share of total threshold below each unit;
+    ``coefficients`` picks a set from ``NMJ_SCHEDULE_COEFFICIENTS``.
     """
+    if coefficients not in NMJ_SCHEDULE_COEFFICIENTS:
+        raise ValueError(f"coefficients must be one of {tuple(NMJ_SCHEDULE_COEFFICIENTS)}, got {coefficients!r}")
+    branch_a, branch_b, arbor_a, arbor_b = NMJ_SCHEDULE_COEFFICIENTS[coefficients]
     thresholds = np.asarray(recruitment_thresholds, dtype=float)
     n_branches = (1 + np.round(np.log(thresholds / thresholds[0]))).astype(int)
     spread = np.concatenate([[0.0], np.cumsum(thresholds)[:-1]]) / np.sum(thresholds)
-    return n_branches, 1.5 + spread * 4.0, 0.5 + spread * 1.5
+    return n_branches, branch_a + spread * branch_b, arbor_a + spread * arbor_b
 
 
 def two_layer_nmj(
