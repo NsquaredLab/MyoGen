@@ -46,18 +46,28 @@ class SurfaceFiberDispersion:
         (branch point to end-plate) layer. Default (5, 2) m/s as in
         intramuscular EMG (Konstantin et al. 2020).
     fiber_cv_inter_mu_spread : float
-        Size-principle spread of motor-unit mean fibre CV: the first-recruited
-        unit propagates at ``mean * (1 - spread / 2)``, the last at
-        ``mean * (1 + spread / 2)``, linear in recruitment order.
+        Spread of motor-unit mean fibre CV linear in recruitment order: the
+        first-recruited unit propagates at ``mean * (1 - spread / 2)``, the
+        last at ``mean * (1 + spread / 2)``.
+    fiber_cv_threshold_slope : float
+        Motor-unit mean fibre CV linear in recruitment threshold:
+        ``mean * (1 + slope * (rt - mean(rt)))`` with ``rt`` the threshold
+        relative to the largest. Del Vecchio et al. (2017) measured CV rising
+        linearly with recruitment threshold in tibialis anterior (406 units;
+        3.89 m/s at 0-30 % MVC, 5.12 m/s at 50-70 % MVC, overall mean 4.32),
+        about 0.63 of the mean per unit of threshold. Cannot be combined with
+        ``fiber_cv_inter_mu_spread``.
     fiber_cv_within_mu_cov : float
         Coefficient of variation of fibre CV within a motor unit (normal,
-        clipped at three standard deviations). Stålberg & Karlsson (1973)
-        report 5-10 % in healthy muscle.
+        clipped at three standard deviations). No measurement of this spread
+        was found; Del Vecchio et al. (2017) call it unknown.
     diameter_scales_source : bool
-        Scale each fibre's source by its cross-section, with diameter linear in
-        CV: ``d / d_ref = 1 + (cv - mean_cv) / (cv_per_diameter * d_ref)``.
-    cv_per_diameter__m_s_per_mm, reference_diameter__mm : float
-        Slope of CV against fibre diameter and the diameter at the mean CV.
+        Scale each fibre's source by its cross-section, with the diameter read
+        from the CV line ``cv = cv_intercept + cv_per_diameter * d``
+        (Nandedkar & Stålberg 1983: 0.95 m/s + 0.05 m/s per µm), relative to
+        the diameter at the mean CV.
+    cv_per_diameter__m_s_per_mm, cv_intercept__m_s : float
+        Slope and intercept of that line.
     seed : int
         Seed of the dispersion draws.
     """
@@ -67,10 +77,11 @@ class SurfaceFiberDispersion:
     nerve_delays: bool = False
     nerve_cvs__m_per_s: tuple[float, float] = (5.0, 2.0)
     fiber_cv_inter_mu_spread: float = 0.0
+    fiber_cv_threshold_slope: float = 0.0
     fiber_cv_within_mu_cov: float = 0.0
     diameter_scales_source: bool = False
-    cv_per_diameter__m_s_per_mm: float = 77.0
-    reference_diameter__mm: float = 0.05
+    cv_per_diameter__m_s_per_mm: float = 50.0
+    cv_intercept__m_s: float = 0.95
     seed: int = 0
 
     def __post_init__(self):
@@ -82,13 +93,18 @@ class SurfaceFiberDispersion:
             raise ValueError("nerve_cvs__m_per_s must be two positive velocities")
         if not 0 <= self.fiber_cv_inter_mu_spread < 2:
             raise ValueError("fiber_cv_inter_mu_spread must be in [0, 2)")
+        if self.fiber_cv_threshold_slope < 0:
+            raise ValueError("fiber_cv_threshold_slope must be non-negative")
+        if self.fiber_cv_threshold_slope and self.fiber_cv_inter_mu_spread:
+            raise ValueError("use either fiber_cv_threshold_slope or fiber_cv_inter_mu_spread, not both")
         if not 0 <= self.fiber_cv_within_mu_cov < 1 / 3:
             raise ValueError("fiber_cv_within_mu_cov must be in [0, 1/3)")
 
     @property
     def active(self) -> bool:
         return (self.nmj_model != "uniform_mu" or self.nerve_delays
-                or self.fiber_cv_inter_mu_spread > 0 or self.fiber_cv_within_mu_cov > 0
+                or self.fiber_cv_inter_mu_spread > 0 or self.fiber_cv_threshold_slope > 0
+                or self.fiber_cv_within_mu_cov > 0
                 or self.diameter_scales_source)
 
 
@@ -128,12 +144,20 @@ def realize_fiber_dispersion(
 
     report = {key: np.full(n_mu, np.nan) for key in (
         "zi_mean__mm", "zi_sd__mm", "cv_mean__m_s", "cv_cov", "delay_mean__ms", "delay_sd__ms",
-        "amplitude_scale_mean")}
+        "amplitude_scale_mean", "diameter_mean__um")}
     report["n_fibers"] = counts
     report["n_branches"] = np.zeros(n_mu, dtype=int)
     report["zi_clipped"] = np.zeros(n_mu, dtype=int)
     zi_all, cv_all, delay_all, scale_all = [], [], [], []
     rank = np.arange(n_mu) / max(n_mu - 1, 1)
+    rt = np.asarray(recruitment_thresholds, dtype=float)
+    rt = rt / rt.max()
+    threshold_factor = 1 + config.fiber_cv_threshold_slope * (rt - rt.mean())
+    if np.any(threshold_factor <= 0):
+        raise ValueError("fiber_cv_threshold_slope gives a non-positive CV for the first-recruited units")
+    d_mean__um = (mean_cv__m_s - config.cv_intercept__m_s) / config.cv_per_diameter__m_s_per_mm * 1e3
+    if config.diameter_scales_source and d_mean__um <= 0:
+        raise ValueError("the mean CV lies below the CV-diameter intercept")
     for mu in range(n_mu):
         n = int(counts[mu])
         zi = np.full(n, float(mu_zones__mm[mu]))
@@ -157,16 +181,16 @@ def realize_fiber_dispersion(
             report["zi_clipped"][mu] = int(np.count_nonzero(clipped != zi))
             zi = clipped
 
-        cv_mu = mean_cv__m_s * (1 - config.fiber_cv_inter_mu_spread / 2
-                                + config.fiber_cv_inter_mu_spread * rank[mu])
+        cv_mu = mean_cv__m_s * threshold_factor[mu] * (1 - config.fiber_cv_inter_mu_spread / 2
+                                                       + config.fiber_cv_inter_mu_spread * rank[mu])
         cov = config.fiber_cv_within_mu_cov
         if cov > 0:
             cv = np.clip(cv_rng.normal(cv_mu, cov * cv_mu, size=n), cv_mu * (1 - 3 * cov), cv_mu * (1 + 3 * cov))
         else:
             cv = np.full(n, cv_mu)
+        diameter__um = (cv - config.cv_intercept__m_s) / config.cv_per_diameter__m_s_per_mm * 1e3
         if config.diameter_scales_source:
-            ratio = 1 + (cv - mean_cv__m_s) / (config.cv_per_diameter__m_s_per_mm * config.reference_diameter__mm)
-            scale = ratio**2
+            scale = (diameter__um / d_mean__um) ** 2
         else:
             scale = np.ones(n)
 
@@ -179,5 +203,6 @@ def realize_fiber_dispersion(
             report["cv_mean__m_s"][mu], report["cv_cov"][mu] = np.mean(cv), np.std(cv) / np.mean(cv)
             report["delay_mean__ms"][mu], report["delay_sd__ms"][mu] = np.mean(delay), np.std(delay)
             report["amplitude_scale_mean"][mu] = np.mean(scale)
+            report["diameter_mean__um"][mu] = np.mean(diameter__um)
     report["config"] = asdict(config)
     return FiberDispersionRealization(zi_all, cv_all, delay_all, scale_all, report)
