@@ -1,0 +1,316 @@
+{
+ "limb": {
+  "baseline": {},
+  "nerve_cv_10_4": {
+   "nerve_delays": true,
+   "nerve_cvs__m_per_s": [
+    10.0,
+    4.0
+   ],
+   "nmj_coefficients": "reference_code"
+  },
+  "nerve_cv_5_2": {
+   "nerve_delays": true,
+   "nerve_cvs__m_per_s": [
+    5.0,
+    2.0
+   ],
+   "nmj_coefficients": "reference_code"
+  },
+  "nerve_cv_2.5_1": {
+   "nerve_delays": true,
+   "nerve_cvs__m_per_s": [
+    2.5,
+    1.0
+   ],
+   "nmj_coefficients": "reference_code"
+  },
+  "nmj_intra_x0.5": {
+   "nmj_model": "two_layer_intra",
+   "nmj_scatter_scale": 0.5,
+   "nmj_coefficients": "reference_code"
+  },
+  "nmj_intra_x1": {
+   "nmj_model": "two_layer_intra",
+   "nmj_scatter_scale": 1.0,
+   "nmj_coefficients": "reference_code"
+  },
+  "nmj_intra_x2": {
+   "nmj_model": "two_layer_intra",
+   "nmj_scatter_scale": 2.0,
+   "nmj_coefficients": "reference_code"
+  },
+  "nmj_two_layer_x1": {
+   "nmj_model": "two_layer",
+   "nmj_scatter_scale": 1.0,
+   "nmj_coefficients": "reference_code"
+  },
+  "fcv_within_5": {
+   "fiber_cv_within_mu_cov": 0.05
+  },
+  "fcv_within_10": {
+   "fiber_cv_within_mu_cov": 0.1
+  },
+  "fcv_inter_30": {
+   "fiber_cv_inter_mu_spread": 0.3
+  },
+  "fcv_both": {
+   "fiber_cv_inter_mu_spread": 0.3,
+   "fiber_cv_within_mu_cov": 0.05
+  },
+  "fcv_both_diameter": {
+   "fiber_cv_inter_mu_spread": 0.3,
+   "fiber_cv_within_mu_cov": 0.05,
+   "diameter_scales_source": true
+  },
+  "combined": {
+   "nmj_model": "two_layer",
+   "nerve_delays": true,
+   "fiber_cv_inter_mu_spread": 0.3,
+   "fiber_cv_within_mu_cov": 0.05,
+   "nmj_coefficients": "reference_code"
+  },
+  "combined_diameter": {
+   "nmj_model": "two_layer",
+   "nerve_delays": true,
+   "fiber_cv_inter_mu_spread": 0.3,
+   "fiber_cv_within_mu_cov": 0.05,
+   "diameter_scales_source": true,
+   "nmj_coefficients": "reference_code"
+  },
+  "candidate": {
+   "nmj_model": "two_layer_intra",
+   "nmj_scatter_scale": 1.0,
+   "nerve_delays": true,
+   "nerve_cvs__m_per_s": [
+    5.0,
+    2.0
+   ],
+   "fiber_cv_threshold_slope": 0.63,
+   "nmj_coefficients": "reference_code"
+  },
+  "candidate_within5": {
+   "nmj_model": "two_layer_intra",
+   "nmj_scatter_scale": 1.0,
+   "nerve_delays": true,
+   "nerve_cvs__m_per_s": [
+    5.0,
+    2.0
+   ],
+   "fiber_cv_threshold_slope": 0.63,
+   "fiber_cv_within_mu_cov": 0.05,
+   "nmj_coefficients": "reference_code"
+  },
+  "candidate_published": {
+   "nmj_model": "two_layer_intra",
+   "nmj_scatter_scale": 1.0,
+   "nerve_delays": true,
+   "nerve_cvs__m_per_s": [
+    5.0,
+    2.0
+   ],
+   "fiber_cv_threshold_slope": 0.63,
+   "fiber_cv_within_mu_cov": 0.05,
+   "nmj_coefficients": "published"
+  },
+  "tendon_w5": {
+   "nmj_model": "two_layer_intra",
+   "nmj_scatter_scale": 1.0,
+   "nerve_delays": true,
+   "nerve_cvs__m_per_s": [
+    5.0,
+    2.0
+   ],
+   "fiber_cv_threshold_slope": 0.63,
+   "fiber_cv_within_mu_cov": 0.05,
+   "nmj_coefficients": "published",
+   "tendon_end_band__mm": 5.0
+  },
+  "tendon_w10": {
+   "nmj_model": "two_layer_intra",
+   "nmj_scatter_scale": 1.0,
+   "nerve_delays": true,
+   "nerve_cvs__m_per_s": [
+    5.0,
+    2.0
+   ],
+   "fiber_cv_threshold_slope": 0.63,
+   "fiber_cv_within_mu_cov": 0.05,
+   "nmj_coefficients": "published",
+   "tendon_end_band__mm": 10.0
+  },
+  "tendon_w5_corr2": {
+   "nmj_model": "two_layer_intra",
+   "nmj_scatter_scale": 1.0,
+   "nerve_delays": true,
+   "nerve_cvs__m_per_s": [
+    5.0,
+    2.0
+   ],
+   "fiber_cv_threshold_slope": 0.63,
+   "fiber_cv_within_mu_cov": 0.05,
+   "nmj_coefficients": "published",
+   "tendon_end_band__mm": 5.0,
+   "tendon_end_correlation__mm": 2.0,
+   "tendon_end_jitter__mm": 0.3
+  },
+  "tendon_w5_corr5": {
+   "nmj_model": "two_layer_intra",
+   "nmj_scatter_scale": 1.0,
+   "nerve_delays": true,
+   "nerve_cvs__m_per_s": [
+    5.0,
+    2.0
+   ],
+   "fiber_cv_threshold_slope": 0.63,
+   "fiber_cv_within_mu_cov": 0.05,
+   "nmj_coefficients": "published",
+   "tendon_end_band__mm": 5.0,
+   "tendon_end_correlation__mm": 5.0,
+   "tendon_end_jitter__mm": 0.3
+  },
+  "tendon_w5_corr10": {
+   "nmj_model": "two_layer_intra",
+   "nmj_scatter_scale": 1.0,
+   "nerve_delays": true,
+   "nerve_cvs__m_per_s": [
+    5.0,
+    2.0
+   ],
+   "fiber_cv_threshold_slope": 0.63,
+   "fiber_cv_within_mu_cov": 0.05,
+   "nmj_coefficients": "published",
+   "tendon_end_band__mm": 5.0,
+   "tendon_end_correlation__mm": 10.0,
+   "tendon_end_jitter__mm": 0.3
+  },
+  "full_diameter": {
+   "nmj_model": "two_layer_intra",
+   "nmj_scatter_scale": 1.0,
+   "nerve_delays": true,
+   "nerve_cvs__m_per_s": [
+    5.0,
+    2.0
+   ],
+   "fiber_cv_threshold_slope": 0.63,
+   "fiber_cv_within_mu_cov": 0.05,
+   "nmj_coefficients": "published",
+   "tendon_end_band__mm": 5.0,
+   "tendon_end_correlation__mm": 5.0,
+   "tendon_end_jitter__mm": 0.3,
+   "diameter_scales_source": true
+  }
+ },
+ "fdi": {
+  "baseline": {},
+  "candidate_published": {
+   "nmj_model": "two_layer_intra",
+   "nmj_scatter_scale": 1.0,
+   "nerve_delays": true,
+   "nerve_cvs__m_per_s": [
+    5.0,
+    2.0
+   ],
+   "fiber_cv_threshold_slope": 0.63,
+   "fiber_cv_within_mu_cov": 0.05,
+   "nmj_coefficients": "published"
+  },
+  "tendon_w5": {
+   "nmj_model": "two_layer_intra",
+   "nmj_scatter_scale": 1.0,
+   "nerve_delays": true,
+   "nerve_cvs__m_per_s": [
+    5.0,
+    2.0
+   ],
+   "fiber_cv_threshold_slope": 0.63,
+   "fiber_cv_within_mu_cov": 0.05,
+   "nmj_coefficients": "published",
+   "tendon_end_band__mm": 5.0
+  },
+  "tendon_w5_corr5": {
+   "nmj_model": "two_layer_intra",
+   "nmj_scatter_scale": 1.0,
+   "nerve_delays": true,
+   "nerve_cvs__m_per_s": [
+    5.0,
+    2.0
+   ],
+   "fiber_cv_threshold_slope": 0.63,
+   "fiber_cv_within_mu_cov": 0.05,
+   "nmj_coefficients": "published",
+   "tendon_end_band__mm": 5.0,
+   "tendon_end_correlation__mm": 5.0,
+   "tendon_end_jitter__mm": 0.3
+  },
+  "tendon_w10": {
+   "nmj_model": "two_layer_intra",
+   "nmj_scatter_scale": 1.0,
+   "nerve_delays": true,
+   "nerve_cvs__m_per_s": [
+    5.0,
+    2.0
+   ],
+   "fiber_cv_threshold_slope": 0.63,
+   "fiber_cv_within_mu_cov": 0.05,
+   "nmj_coefficients": "published",
+   "tendon_end_band__mm": 10.0
+  },
+  "full_diameter": {
+   "nmj_model": "two_layer_intra",
+   "nmj_scatter_scale": 1.0,
+   "nerve_delays": true,
+   "nerve_cvs__m_per_s": [
+    5.0,
+    2.0
+   ],
+   "fiber_cv_threshold_slope": 0.63,
+   "fiber_cv_within_mu_cov": 0.05,
+   "nmj_coefficients": "published",
+   "tendon_end_band__mm": 5.0,
+   "tendon_end_correlation__mm": 5.0,
+   "tendon_end_jitter__mm": 0.3,
+   "diameter_scales_source": true
+  },
+  "baseline_skin2": {
+   "_skin_thickness__mm": 2.0
+  },
+  "full_skin2": {
+   "nmj_model": "two_layer_intra",
+   "nmj_scatter_scale": 1.0,
+   "nerve_delays": true,
+   "nerve_cvs__m_per_s": [
+    5.0,
+    2.0
+   ],
+   "fiber_cv_threshold_slope": 0.63,
+   "fiber_cv_within_mu_cov": 0.05,
+   "nmj_coefficients": "published",
+   "tendon_end_band__mm": 5.0,
+   "tendon_end_correlation__mm": 5.0,
+   "tendon_end_jitter__mm": 0.3,
+   "diameter_scales_source": true,
+   "_skin_thickness__mm": 2.0
+  },
+  "baseline_skin3": {
+   "_skin_thickness__mm": 3.0
+  },
+  "full_skin3": {
+   "nmj_model": "two_layer_intra",
+   "nmj_scatter_scale": 1.0,
+   "nerve_delays": true,
+   "nerve_cvs__m_per_s": [
+    5.0,
+    2.0
+   ],
+   "fiber_cv_threshold_slope": 0.63,
+   "fiber_cv_within_mu_cov": 0.05,
+   "nmj_coefficients": "published",
+   "tendon_end_band__mm": 5.0,
+   "tendon_end_correlation__mm": 5.0,
+   "tendon_end_jitter__mm": 0.3,
+   "diameter_scales_source": true,
+   "_skin_thickness__mm": 3.0
+  }
+ }
+}

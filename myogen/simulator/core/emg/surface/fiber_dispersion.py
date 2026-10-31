@@ -40,7 +40,7 @@ class SurfaceFiberDispersion:
     nmj_coefficients : {"published", "reference_code"}
         Two-layer z-spread coefficients: the values printed in Konstantin et al.
         (2020), eq. 5-6 (default, as in intramuscular EMG), or those of
-        Konstantin's reference simulator code, about 1.5 times wider.
+        Konstantin's reference simulator code, 1.5-2 times wider.
     nerve_delays : bool
         Delay each fibre by its axon-branch conduction time (two-layer nerve
         paths over ``nerve_cvs__m_per_s``). Independent of ``nmj_model``: with
@@ -136,9 +136,9 @@ class SurfaceFiberDispersion:
 
         - End-plates: two-layer within each unit, coefficients of Konstantin et al.
           (2020), eq. 5-6.
-        - Nerve branches: 5 / 2 m/s, the values of Konstantin's reference code. They
-          keep the per-fibre delay SD (about 0.2 ms) inside the 0-1 ms range of
-          Stalberg & Karlsson (2001); the paper's 10 / 1 m/s gives about 0.4 ms.
+        - Nerve branches: 5 / 2 m/s, the ``IntramuscularEMG`` default (Konstantin
+          et al. 2020). Within-unit delay SD is about 0.1-0.2 ms in the sweep
+          scenarios of ``benchmarks/semg_dispersion``.
         - Unit conduction velocity: linear in recruitment threshold, slope 0.63
           (Del Vecchio et al. 2017).
         - Fibre velocity within a unit: CoV 5 %. A modelling assumption; no
