@@ -17,7 +17,11 @@ end), Fuglevand thresholds over a 50-fold range recruited up to 70 % excitation,
 8-35 Hz rate coding with ISI CV 0.2, 2048 Hz. An empty configuration ({}) is the
 undispersed baseline. Harness-only keys set the outer layers:
 ``_skin_thickness__mm`` (default 1.29), ``_fat_thickness__mm`` (limb 4, FDI 0.3),
-``_skin_conductivity__S_per_m`` (default 1) and ``_fiber_diameter__um`` (default 50). Only the bipolar channel is simulated. The ``myogen`` that is imported
+``_skin_conductivity__S_per_m`` (default 1) and ``_fiber_diameter__um`` (default 50).
+``_rate_model`` selects the rate coding: absent, the linear rule below; a dict
+``{"onset", "peak_early", "peak_late", "steepness"}`` (Hz, Hz, Hz, 1/excitation) the
+onion-skin exponential of De Luca & Contessa (2012), FR = peak - (peak - onset) *
+exp(-steepness * (E - threshold)), with the peak falling linearly by recruitment rank. Only the bipolar channel is simulated. The ``myogen`` that is imported
 (recorded in the output) must be the checkout under test; set PYTHONPATH if needed.
 """
 import hashlib
@@ -43,6 +47,7 @@ skin = config.pop("_skin_thickness__mm", 1.29)
 fat = config.pop("_fat_thickness__mm", 4.0 if scenario == "limb" else 0.3)
 skin_sigma = config.pop("_skin_conductivity__S_per_m", 1.0)
 diameter = config.pop("_fiber_diameter__um", 50.0)
+rate_model = config.pop("_rate_model", None)
 if "nerve_cvs__m_per_s" in config:
     config["nerve_cvs__m_per_s"] = tuple(config["nerve_cvs__m_per_s"])
 dispersion = SurfaceFiberDispersion(**config)
@@ -73,6 +78,7 @@ fibre_hash = hashlib.sha1(b"".join(
 rng = np.random.default_rng(123)
 rte = np.asarray(thresholds, dtype=float)
 rte = rte / rte.max() * 0.7
+rank = np.argsort(np.argsort(rte)) / (N_MU - 1)  # 0 for the first recruited, 1 for the last
 
 
 def excitation(t):
@@ -88,7 +94,11 @@ for mu in range(N_MU):
         if e < rte[mu]:
             t += 1 / FS
             continue
-        rate = min(8.0 + 100 * (e - rte[mu]), 35.0)
+        if rate_model is None:
+            rate = min(8.0 + 100 * (e - rte[mu]), 35.0)
+        else:
+            peak = rate_model["peak_early"] + rank[mu] * (rate_model["peak_late"] - rate_model["peak_early"])
+            rate = peak - (peak - rate_model["onset"]) * np.exp(-rate_model["steepness"] * (e - rte[mu]))
         times.append(t)
         t += rng.gamma(1 / 0.2**2, 0.2**2 / rate)
     times = np.asarray([x for x in times if x < DURATION])
@@ -122,7 +132,7 @@ templates = np.array([np.asarray(signal_to_grid(muaps.groups[0].segments[m].anal
                       for m in mus])
 emg = semg.simulate_surface_emg(block, verbose=False).groups[0].segments[0].analogsignals[0]
 report = semg.fiber_dispersion_report or {}
-np.savez(out, label=label, scenario=scenario, myogen=myogen.__file__, config=json.dumps(config), skin=skin, fat=fat, skin_sigma=skin_sigma, diameter=diameter, mus=mus, counts=counts,
+np.savez(out, label=label, scenario=scenario, myogen=myogen.__file__, config=json.dumps(config), skin=skin, fat=fat, skin_sigma=skin_sigma, diameter=diameter, rate_model=json.dumps(rate_model), mus=mus, counts=counts,
          fibre_hash=fibre_hash, spike_hash=spike_hash, ramp=RAMP, hold=HOLD, level=LEVEL,
          bip_muaps=templates, pair_muap_fs=float(sig0.sampling_rate.rescale(pq.Hz).magnitude),
          bip_emg=np.asarray(signal_to_grid(emg.rescale(pq.mV))), fs=float(emg.sampling_rate.rescale(pq.Hz).magnitude),
