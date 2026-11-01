@@ -61,8 +61,11 @@ Bugs found against Farina et al. (2004), each with a test:
     --results-tag fuglevand50_rec52_deluca82_main
   ```
   (`--max-recruitment 0.7`, tag `fuglevand50_deluca82_main` for the 70 % run.)
-- [ ] `GFLUCTDV_RANGE` widened to (0.05, 0.5); 52 % calibration rerun with tag `fuglevand50_rec52_deluca82_main_gf05`.
-- [ ] Recruitment upper limit: the 52 % run was meant to stop recruiting at ~52 % MVC (De Luca et al. 1982, as cited in the launch script). `--max-recruitment` is in excitation, and 0.52 excitation is 68 % MVC on the force model; observed, the largest units start up to ~95 % MVC. Matching 52 % MVC needs `--max-recruitment` ≈ 0.39 (50 % MVC is at 0.377 excitation). Decision pending.
+- [x] `GFLUCTDV_RANGE` widened to (0.05, 0.5). The `_gf05` rerun was stopped before finishing (Devon 2026-11-01): it used the old wiring, which the next item replaces.
+- [x] Late recruitment of the largest units diagnosed (2026-11-01). Rheobase is linear in the designed threshold (5.2–18.6 nA, 3.6× for a 48× threshold range) and the DD pool is linear, but every MN got ~51 inputs (binomial, 38–66) of one weight, and large dendrites shunt more: one input delivered ~1.9× less current to a large soma than to a small one (soma clamped at rest), and the current per 100 Hz of drive falls ~45 % from low to full drive. ±13 % input-count scatter scrambles the top units, whose thresholds are ~3 % apart.
+- [x] Fix (Devon 2026-11-01, optimiser only): equal fan-in, input weights scaled by each MN's dendrite-to-soma transfer (`h.Impedance`), and a ceiling term on the excitation at which the last unit is recruited (separate ramp to full excitation). Verified with the main52 DD parameters: per-input soma current top/low 1.03 at 100 Hz, 1.17 at 400 Hz, 1.24 at 874 Hz; recruitment order matches the design exactly (rank correlation 1.0). All earlier calibrations (main52, main70, gf05) are not comparable and are refused by `run_dd_ramp`.
+- [ ] Recalibrate with the new wiring, last unit at ~55 % MVC (`--max-recruitment 0.41`, from the old force mapping; confirm % MVC with `fdi_spikes_force.py` afterwards) and the widened Gfluctdv range.
+- [ ] Out of scope, library: the NERLab pool's rheobase spans only 3.6× for a 48× threshold range (yaml interpolation curves).
 
 ### ForceModel twitch parameters against FDI data
 

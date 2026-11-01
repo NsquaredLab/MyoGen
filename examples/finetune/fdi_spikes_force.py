@@ -52,6 +52,7 @@ set_random_seed(42)
 thresholds, _ = opt._thresholds("fdi", args.n_mu)
 dd = {k: best[k] for k in ("dd_neurons", "conn_probability", "dd_drive__Hz", "synaptic_weight", "gamma_shape",
                            "gfluctdv_scale")}
+dd["network"] = best.get("network")  # absent in pre-2026-11-01 files: run_dd_ramp refuses them
 thr_hz, max_hz = float(best["threshold_hz"]), float(best["dd_drive__Hz"])
 dt = opt.TIMESTEP_MS
 FS_FORCE = 2048.0

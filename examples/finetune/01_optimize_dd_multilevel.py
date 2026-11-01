@@ -26,6 +26,7 @@ os.environ["MPLBACKEND"] = "Agg"
 warnings.filterwarnings("ignore")
 
 from pathlib import Path
+from types import SimpleNamespace
 
 import numpy as np
 import optuna
@@ -38,9 +39,10 @@ SCRIPT_DIR = Path(__file__).resolve().parent
 BASIC_DIR = SCRIPT_DIR.parent / "basic"
 sys.path.insert(0, str(BASIC_DIR))
 
-from myogen import set_random_seed
+from myogen import get_random_generator, set_random_seed
 from myogen.simulator import RecruitmentThresholds
 from myogen.simulator.neuron import Network
+from myogen.simulator.neuron.network import _create_netcon, _select_synapse
 from myogen.simulator.neuron.populations import AlphaMN__Pool, DescendingDrive__Pool
 from myogen.utils.fr_optimization_targets import compute_fr_targets
 from myogen.utils.helper import get_gamma_shape_for_mvc
@@ -49,7 +51,10 @@ from myogen.utils.ramp_analysis import extract_ramp_recruitment
 
 # ─── Constants ────────────────────────────────────────────────
 GAMMA_SHAPE = 3.0
-SYNAPTIC_WEIGHT = 0.05  # µS
+SYNAPTIC_WEIGHT = 0.05  # µS, DD input weight on the smallest (best-coupled) motor neuron
+NETWORK = {"fan_in": "equal", "weight_scaling": "dendritic_transfer"}  # DD -> MN wiring, see build_dd_mn_network
+CEILING_WEIGHT = 3.0       # Penalty weight for the recruitment ceiling (last unit's excitation vs MAX_RECRUITMENT)
+CEILING_RAMP_PER_S = 0.1   # Excitation per second in the ceiling ramp (the MVC ramp rate of fdi_spikes_force.py)
 GFLUCTDV_RANGE = (0.05, 0.5)  # Optuna search range for Gfluctdv scale (FDI best was 0.243 at the old 0.25 cap)
 ISI_CV_TARGET = (0.15, 0.22)   # Literature target: 15-22% (LIT-17)
 ISI_CV_WEIGHT = 2.0            # Penalty weight for ISI CV outside target
@@ -63,7 +68,7 @@ CHECKPOINT_WEIGHTS = {5: 1.0, 10: 3.0, 20: 2.0, 25: 2.0, 30: 1.0}
 # Threshold and target options; set from the command line in main().
 THRESHOLD_MODE = "combined"   # RecruitmentThresholds mode for the pool
 RECRUITMENT_RANGE = 30.0      # largest / smallest threshold
-MAX_RECRUITMENT = 1.0         # excitation at which the last unit is recruited (targets only)
+MAX_RECRUITMENT = 1.0         # excitation at which the last unit is recruited (targets and ceiling penalty)
 DE_LUCA_PARAMS: dict = {}     # overrides for de_luca_targets
 RESULTS_TAG = "polygon"
 
@@ -145,6 +150,100 @@ def _insert_gfluctdv(mn_pool, scale):
             d.g_i0_Gfluctdv *= scale
 
 
+def dendritic_transfer(mn_pool):
+    """Fraction of a steady current injected at each MN's DD synapse site that reaches its clamped soma.
+
+    DC transfer impedance (synapse site -> soma) over soma input impedance, from ``h.Impedance`` linearised at
+    the initial state (active channels included). Call before ``_insert_gfluctdv``.
+    """
+    for s, v in zip(*mn_pool.get_initialization_data()):
+        s.v = v
+    h.finitialize()
+    k = []
+    for cell in mn_pool:
+        syn = next(s for s in cell.synapse__list if s.e >= -40)
+        seg = syn.get_segment()
+        imp = h.Impedance()
+        imp.loc(0.5, sec=cell.soma)
+        imp.compute(0, 1)
+        k.append(imp.transfer(seg.x, sec=seg.sec) / imp.input(0.5, sec=cell.soma))
+    return np.array(k)
+
+
+def build_dd_mn_network(mn_pool, dd_pool, dd_params):
+    """Wire the DD pool to the motor neurons and the cortical input to the DD pool.
+
+    ``dd_params["network"]`` must be ``NETWORK``; parameter files without it (calibrated with random fan-in and
+    one weight for all neurons) are refused rather than reinterpreted.
+
+    - Equal fan-in: every MN receives exactly round(conn_probability * dd_neurons) DD inputs, drawn without
+      replacement. Modelling assumption (descending drive shared across the pool); it removes the binomial
+      +/-13 % input-count scatter that reordered the largest units, whose thresholds are ~3 % apart.
+    - Dendritic-transfer weights: weight_i = synaptic_weight * k_max / k_i (``dendritic_transfer``), so each input
+      delivers the same current to a clamped soma at low drive whatever the neuron's size, and recruitment
+      order follows rheobase. Modelling assumption: equal effective synaptic current per input, the equal-share
+      case of Heckman & Binder 1991 (J Neurophysiol 65:952); measured effective currents are input-system
+      specific (cat data) and none are known for corticospinal input to a hand muscle. Not compensated: the
+      Gfluctdv mean-conductance shunt and the driving-force saturation at high drive.
+    """
+    net_cfg = dd_params.get("network")
+    if net_cfg != NETWORK:
+        raise ValueError(
+            f"dd_params['network'] must be {NETWORK}, got {net_cfg!r}; parameter files from before 2026-11-01 "
+            "were calibrated with random fan-in and uniform weights and must be recalibrated."
+        )
+    n_dd = len(dd_pool)
+    n_in = int(round(dd_params["conn_probability"] * n_dd))
+    if n_in < 1:
+        raise ValueError(f"conn_probability * dd_neurons rounds to {n_in} inputs per motor neuron")
+    transfer = dendritic_transfer(mn_pool)
+    weights = dd_params["synaptic_weight"] * transfer.max() / transfer
+    rng = get_random_generator()
+    dd_cells = list(dd_pool)
+    dd_to_mn = []
+    for cell, w in zip(mn_pool, weights):
+        for j in rng.choice(n_dd, size=n_in, replace=False):
+            src = dd_cells[j]
+            nc = _create_netcon(src, _select_synapse(cell, inhibitory=False), neuron_id=src.global__ID,
+                                synaptic_delay=1.0)
+            nc.weight[0] = w
+            dd_to_mn.append(nc)
+    network = Network({"DD": dd_pool, "aMN": mn_pool})
+    network.connect_from_external(source="cortical_input", target="DD", weight__uS=1.0 * pq.uS)
+    return SimpleNamespace(network=network, dd_to_mn=dd_to_mn,
+                           cortical_netcons=network.get_netcons("cortical_input", "DD"),
+                           transfer=transfer, weights=weights)
+
+
+def recruitment_excitation(block, excitation, timestep_ms=TIMESTEP_MS, window_ms=500.0, min_spikes=3):
+    """Excitation at each unit's recruitment: the first spike of the first ``min_spikes`` spikes within
+    ``window_ms`` (sustained firing, as in ``extract_ramp_recruitment``). NaN for units never recruited."""
+    out = []
+    for st in block.segments[0].spiketrains:
+        t = np.asarray(st.rescale("s").magnitude)
+        hits = np.nonzero(t[min_spikes - 1:] - t[:len(t) - min_spikes + 1] < window_ms / 1000.0)[0]
+        if len(hits) == 0:
+            out.append(np.nan)
+            continue
+        i = min(int(round(t[hits[0]] * 1000.0 / timestep_ms)), len(excitation) - 1)
+        out.append(float(excitation[i]))
+    return np.array(out)
+
+
+def run_ceiling_ramp(thresholds, dd_params, threshold_hz):
+    """Ramp excitation from MAX_RECRUITMENT / 2 to 1 at CEILING_RAMP_PER_S; return the excitation at which each
+    unit is recruited. Drive mapping and 1 % noise as in fdi_spikes_force.py."""
+    e0 = 0.5 * MAX_RECRUITMENT
+    hold = np.full(int(500.0 / TIMESTEP_MS), e0)
+    ramp = np.linspace(e0, 1.0, int(round((1.0 - e0) / CEILING_RAMP_PER_S * 1000.0 / TIMESTEP_MS)))
+    e = np.concatenate([hold, ramp])
+    max_hz = dd_params["dd_drive__Hz"]
+    hz = threshold_hz + e * (max_hz - threshold_hz)
+    hz = hz + np.abs(np.random.default_rng(42).normal(0, max_hz * 0.01, size=hz.size))
+    block = run_dd_ramp(thresholds, hz, dd_params, len(e) * TIMESTEP_MS)
+    return recruitment_excitation(block, e)
+
+
 def run_dd_constant(thresholds, drive_hz, dd_params, duration_ms=3000.0):
     """Run a constant-drive DD simulation (for threshold detection)."""
     gamma_shape = get_gamma_shape_for_mvc(100, mvc_shape_value=dd_params["gamma_shape"])
@@ -153,23 +252,15 @@ def run_dd_constant(thresholds, drive_hz, dd_params, duration_ms=3000.0):
         recruitment_thresholds__array=thresholds,
         config_file="alpha_mn_default.yaml",
     )
-    _insert_gfluctdv(mn_pool, gfluctdv_scale)
     dd_pool = DescendingDrive__Pool(
         n=dd_params["dd_neurons"],
         timestep__ms=TIMESTEP_MS * pq.ms,
         process_type="gamma",
         shape=gamma_shape,
     )
-    network = Network({"DD": dd_pool, "aMN": mn_pool})
-    network.connect(
-        source="DD", target="aMN",
-        probability=dd_params["conn_probability"],
-        weight__uS=dd_params["synaptic_weight"] * pq.uS,
-    )
-    network.connect_from_external(
-        source="cortical_input", target="DD", weight__uS=1.0 * pq.uS,
-    )
-    dd_netcons = network.get_netcons("cortical_input", "DD")
+    wiring = build_dd_mn_network(mn_pool, dd_pool, dd_params)
+    _insert_gfluctdv(mn_pool, gfluctdv_scale)
+    dd_netcons = wiring.cortical_netcons
 
     mn_recorders = []
     for cell in mn_pool:
@@ -230,23 +321,15 @@ def run_dd_ramp(thresholds, drive_signal, dd_params, total_ms):
         recruitment_thresholds__array=thresholds,
         config_file="alpha_mn_default.yaml",
     )
-    _insert_gfluctdv(mn_pool, gfluctdv_scale)
     dd_pool = DescendingDrive__Pool(
         n=dd_params["dd_neurons"],
         timestep__ms=TIMESTEP_MS * pq.ms,
         process_type="gamma",
         shape=gamma_shape,
     )
-    network = Network({"DD": dd_pool, "aMN": mn_pool})
-    network.connect(
-        source="DD", target="aMN",
-        probability=dd_params["conn_probability"],
-        weight__uS=dd_params["synaptic_weight"] * pq.uS,
-    )
-    network.connect_from_external(
-        source="cortical_input", target="DD", weight__uS=1.0 * pq.uS,
-    )
-    dd_netcons = network.get_netcons("cortical_input", "DD")
+    wiring = build_dd_mn_network(mn_pool, dd_pool, dd_params)
+    _insert_gfluctdv(mn_pool, gfluctdv_scale)
+    dd_netcons = wiring.cortical_netcons
 
     mn_recorders = []
     for cell in mn_pool:
@@ -314,6 +397,7 @@ def make_objective(thresholds, fug_targets):
                 "synaptic_weight": SYNAPTIC_WEIGHT,
                 "gamma_shape": GAMMA_SHAPE,
                 "gfluctdv_scale": gfluctdv_scale,
+                "network": dict(NETWORK),
             }
 
             # Detect threshold for this param set
@@ -369,7 +453,18 @@ def make_objective(thresholds, fug_targets):
             elif mean_cv > cv_hi:
                 total_error += ISI_CV_WEIGHT * (mean_cv - cv_hi) / cv_hi
 
+            # Recruitment ceiling: the ramp above stops at RAMP_MVC_PCT, so the last unit is found on a separate
+            # ramp to full excitation. Units never recruited push the ceiling past 1.
+            e_rec = run_ceiling_ramp(thresholds, dd_params, threshold_hz)
+            n_unrecruited = int(np.isnan(e_rec).sum())
+            e_last = float(np.nanmax(e_rec)) if n_unrecruited < len(e_rec) else 1.0
+            if n_unrecruited:
+                e_last = 1.0 + n_unrecruited / len(e_rec)
+            total_error += CEILING_WEIGHT * abs(e_last - MAX_RECRUITMENT) / MAX_RECRUITMENT
+
             # Store metadata
+            trial.set_user_attr("e_last_recruited", e_last)
+            trial.set_user_attr("n_unrecruited", n_unrecruited)
             trial.set_user_attr("threshold_hz", threshold_hz)
             trial.set_user_attr("isi_cv_mean", mean_cv)
             trial.set_user_attr("gfluctdv_scale", gfluctdv_scale)
@@ -384,7 +479,7 @@ def make_objective(thresholds, fug_targets):
                 )
                 print(f"  Trial {trial.number}: err={total_error:.3f} | {active_str} | "
                       f"drive={dd_drive__Hz:.0f} thr={threshold_hz:.0f} "
-                      f"gf={gfluctdv_scale:.3f} cv={mean_cv*100:.1f}%")
+                      f"gf={gfluctdv_scale:.3f} cv={mean_cv*100:.1f}% e_last={e_last:.2f}")
 
             return total_error
 
@@ -482,6 +577,8 @@ def optimize_for_mu_count(n_mu, n_trials, profile, target_model="de_luca",
           f"gfluctdv={best.params.get('gfluctdv_scale', 0):.3f}")
     print(f"  ISI CV: {best.user_attrs.get('isi_cv_mean', 0)*100:.1f}% "
           f"(target: {ISI_CV_TARGET[0]*100:.0f}-{ISI_CV_TARGET[1]*100:.0f}%)")
+    print(f"  Last unit recruited at excitation {best.user_attrs.get('e_last_recruited', float('nan')):.2f} "
+          f"(target {MAX_RECRUITMENT:.2f}), unrecruited {best.user_attrs.get('n_unrecruited', '?')}")
     for p in CHECKPOINTS:
         sim_n = best.user_attrs.get(f"n_active_{p}", "?")
         sim_fr = best.user_attrs.get(f"mean_fr_{p}", 0)
@@ -511,6 +608,9 @@ def optimize_for_mu_count(n_mu, n_trials, profile, target_model="de_luca",
             "gamma_shape": GAMMA_SHAPE,
             "gfluctdv_scale": best.params.get("gfluctdv_scale", 0.0),
             "isi_cv_mean": best.user_attrs.get("isi_cv_mean", 0.0),
+            "network": dict(NETWORK),
+            "e_last_recruited": best.user_attrs.get("e_last_recruited"),
+            "n_unrecruited": best.user_attrs.get("n_unrecruited"),
             "threshold_hz": best.user_attrs.get("threshold_hz"),
             **{f"n_active_{p}": best.user_attrs.get(f"n_active_{p}") for p in CHECKPOINTS},
             **{f"mean_fr_{p}": best.user_attrs.get(f"mean_fr_{p}") for p in CHECKPOINTS},
@@ -521,6 +621,8 @@ def optimize_for_mu_count(n_mu, n_trials, profile, target_model="de_luca",
             "ramp_mvc_pct": RAMP_MVC_PCT,
             "checkpoints": CHECKPOINTS,
             "checkpoint_weights": CHECKPOINT_WEIGHTS,
+            "ceiling_weight": CEILING_WEIGHT,
+            "ceiling_ramp_per_s": CEILING_RAMP_PER_S,
             "elapsed_s": elapsed,
         },
     }
@@ -546,6 +648,8 @@ def _save_best_from_study(study, n_mu, target_muscle, target_model,
           f"gfluctdv={best.params.get('gfluctdv_scale', 0):.3f}")
     print(f"  ISI CV: {best.user_attrs.get('isi_cv_mean', 0)*100:.1f}% "
           f"(target: {ISI_CV_TARGET[0]*100:.0f}-{ISI_CV_TARGET[1]*100:.0f}%)")
+    print(f"  Last unit recruited at excitation {best.user_attrs.get('e_last_recruited', float('nan')):.2f} "
+          f"(target {MAX_RECRUITMENT:.2f}), unrecruited {best.user_attrs.get('n_unrecruited', '?')}")
     for p in CHECKPOINTS:
         sim_n = best.user_attrs.get(f"n_active_{p}", "?")
         sim_fr = best.user_attrs.get(f"mean_fr_{p}", 0)
@@ -574,6 +678,9 @@ def _save_best_from_study(study, n_mu, target_muscle, target_model,
             "gamma_shape": GAMMA_SHAPE,
             "gfluctdv_scale": best.params.get("gfluctdv_scale", 0.0),
             "isi_cv_mean": best.user_attrs.get("isi_cv_mean", 0.0),
+            "network": dict(NETWORK),
+            "e_last_recruited": best.user_attrs.get("e_last_recruited"),
+            "n_unrecruited": best.user_attrs.get("n_unrecruited"),
             "threshold_hz": best.user_attrs.get("threshold_hz"),
             **{f"n_active_{p}": best.user_attrs.get(f"n_active_{p}") for p in CHECKPOINTS},
             **{f"mean_fr_{p}": best.user_attrs.get(f"mean_fr_{p}") for p in CHECKPOINTS},
@@ -585,6 +692,8 @@ def _save_best_from_study(study, n_mu, target_muscle, target_model,
             "ramp_mvc_pct": RAMP_MVC_PCT,
             "checkpoints": CHECKPOINTS,
             "checkpoint_weights": CHECKPOINT_WEIGHTS,
+            "ceiling_weight": CEILING_WEIGHT,
+            "ceiling_ramp_per_s": CEILING_RAMP_PER_S,
             "elapsed_s": elapsed,
         },
     }
