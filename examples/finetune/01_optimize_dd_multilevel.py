@@ -50,7 +50,7 @@ from myogen.utils.ramp_analysis import extract_ramp_recruitment
 # ─── Constants ────────────────────────────────────────────────
 GAMMA_SHAPE = 3.0
 SYNAPTIC_WEIGHT = 0.05  # µS
-GFLUCTDV_RANGE = (0.05, 0.25)  # Optuna search range for Gfluctdv scale
+GFLUCTDV_RANGE = (0.05, 0.5)  # Optuna search range for Gfluctdv scale (FDI best was 0.243 at the old 0.25 cap)
 ISI_CV_TARGET = (0.15, 0.22)   # Literature target: 15-22% (LIT-17)
 ISI_CV_WEIGHT = 2.0            # Penalty weight for ISI CV outside target
 TIMESTEP_MS = 0.1
