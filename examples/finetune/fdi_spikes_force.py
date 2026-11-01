@@ -26,7 +26,6 @@ opt = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(opt)
 
 from myogen import set_random_seed  # noqa: E402
-from myogen.simulator.core.force.force_model import ForceModel  # noqa: E402
 from myogen.utils.nmodl import load_nmodl_mechanisms  # noqa: E402
 
 load_nmodl_mechanisms()
@@ -53,26 +52,14 @@ thresholds, _ = opt._thresholds("fdi", args.n_mu)
 dd = {k: best[k] for k in ("dd_neurons", "conn_probability", "dd_drive__Hz", "synaptic_weight", "gamma_shape",
                            "gfluctdv_scale")}
 dd["network"] = best.get("network")  # absent in pre-2026-11-01 files: run_dd_ramp refuses them
-thr_hz, max_hz = float(best["threshold_hz"]), float(best["dd_drive__Hz"])
+thr_hz = float(best["threshold_hz"])
 dt = opt.TIMESTEP_MS
-FS_FORCE = 2048.0
-
-
-def drive(segments):
-    """Piecewise-linear drive in excitation fraction, [(duration_s, start, end)], plus 1 % noise as in the optimiser."""
-    parts = [np.linspace(a, b, int(round(d * 1000 / dt)), endpoint=False) for d, a, b in segments]
-    e = np.concatenate(parts)
-    hz = np.where(e > 0, thr_hz + e * (max_hz - thr_hz), 0.8 * thr_hz)
-    hz = hz + np.abs(np.random.default_rng(42).normal(0, hz.max() * 0.01, size=hz.size))
-    return e, hz, len(e) * dt
+FS_FORCE = opt.FORCE_FS_HZ
 
 
 def simulate(segments):
-    e, hz, total_ms = drive(segments)
-    block = opt.run_dd_ramp(thresholds, hz, dd, total_ms)
-    fm = ForceModel(recruitment_thresholds=thresholds, recording_frequency__Hz=FS_FORCE * pq.Hz)
-    f = np.asarray(fm.generate_force(block).magnitude)[:, 0]
-    return e, block, f
+    """Drive, spikes and force as in the optimiser (``opt.simulate_force``)."""
+    return opt.simulate_force(thresholds, dd, thr_hz, segments)
 
 
 def save(name, e, block, force, mvc):
@@ -82,20 +69,22 @@ def save(name, e, block, force, mvc):
              dd=json.dumps(dd), threshold_hz=thr_hz, results_dir=str(args.results_dir))
 
 
-# 1. MVC and the force-excitation curve
-e, block, f = simulate([(0.5, 0.0, 0.0), (10.0, 0.0, 1.0), (3.0, 1.0, 1.0)])
+# 1. MVC and the force-excitation curve (the optimiser's MVC ramp, ``opt.run_mvc_ramp``)
+r = opt.run_mvc_ramp(thresholds, dd, thr_hz)
+e, block, f, mvc = r.e, r.block, r.force, r.mvc
 t = np.arange(f.size) / FS_FORCE
-mvc = float(np.mean(f[(t > 11.5) & (t < 13.5)]))
 e_t = np.interp(t, np.arange(e.size) * dt / 1000, e)
-ramp = (t > 0.5) & (t < 10.5)
-smooth = np.convolve(f, np.ones(int(0.25 * FS_FORCE)) / int(0.25 * FS_FORCE), mode="same")
+ramp = (t > opt.MVC_REST_S) & (t < opt.MVC_REST_S + 1.0 / opt.CEILING_RAMP_PER_S)
+smooth = opt.smoothed_force(f, FS_FORCE)
 curve = {int(p): float(e_t[ramp][np.argmax(smooth[ramp] >= p / 100 * mvc)]) for p in (5, 10, 20, 25, 30, 50)}
 save("mvc_ramp", e, block, f, mvc)
 print("MVC force (model units):", mvc)
-print("excitation at % MVC:", curve, flush=True)
+print("excitation at % MVC:", curve)
+print(f"last unit recruited at {r.pct_last:.1f} % MVC, unrecruited {r.n_unrecruited}", flush=True)
 
 # 2. Benchmark trapezoids
-summary = {"mvc": mvc, "excitation_at_pct_mvc": curve}
+summary = {"mvc": mvc, "excitation_at_pct_mvc": curve, "pct_mvc_last_recruited": r.pct_last,
+           "n_unrecruited": r.n_unrecruited}
 
 
 def trapezoid(name, level):

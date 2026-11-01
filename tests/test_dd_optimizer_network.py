@@ -98,3 +98,39 @@ def test_last_recruitment_excitation_uses_sustained_firing(opt):
     never = SpikeTrain(np.array([]) * pq.s, t_stop=t_stop)
     block.segments[0].spiketrains = [early, never]
     assert np.isnan(opt.recruitment_excitation(block, e, timestep_ms=dt_ms)[1])
+
+
+def test_recruitment_times_use_sustained_firing(opt):
+    t_stop = 10.0 * pq.s
+    early = SpikeTrain(np.arange(1.0, 10.0, 0.05) * pq.s, t_stop=t_stop)
+    late = SpikeTrain(np.r_[0.5, np.arange(6.0, 10.0, 0.05)] * pq.s, t_stop=t_stop)
+    never = SpikeTrain(np.array([]) * pq.s, t_stop=t_stop)
+    block = Block()
+    block.segments.append(Segment())
+    block.segments[0].spiketrains = [early, late, never]
+    t_rec = opt.recruitment_times(block)
+    np.testing.assert_allclose(t_rec[:2], [1.0, 6.0])
+    assert np.isnan(t_rec[2])
+
+
+def test_last_recruitment_force_is_read_from_the_smoothed_force_curve(opt):
+    fs = 1000.0
+    t = np.arange(0, 10.0, 1 / fs)
+    force = 50.0 * t  # 0 -> 500 model units; MVC 500
+    pct, n_unrec = opt.last_recruitment_pct_mvc(np.array([1.0, 4.4, 2.0]), force, fs, mvc=500.0)
+    assert n_unrec == 0
+    assert pct == pytest.approx(100 * 50.0 * 4.4 / 500.0, abs=0.1)
+
+
+def test_unrecruited_units_push_the_ceiling_past_mvc(opt):
+    fs = 1000.0
+    force = np.full(10000, 100.0)
+    pct, n_unrec = opt.last_recruitment_pct_mvc(np.array([1.0, np.nan, np.nan, 2.0]), force, fs, mvc=100.0)
+    assert n_unrec == 2
+    assert pct == pytest.approx(150.0)
+
+
+def test_ceiling_target_is_given_in_percent_mvc(opt):
+    assert opt.ceiling_penalty(55.0, 55.0) == 0.0
+    assert opt.ceiling_penalty(66.0, 55.0) == pytest.approx(opt.CEILING_WEIGHT * 11.0 / 55.0)
+    assert opt.ceiling_penalty(80.0, None) == 0.0, "no target: the ceiling term is off"

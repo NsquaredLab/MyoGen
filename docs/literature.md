@@ -27,7 +27,7 @@ To add a source: add a row in its topic table with an `id` anchor, link it from 
 | FDI fibre length and spread | [jacobson1992](#jacobson1992) | [Muscle](../myogen/simulator/core/muscle/muscle.py) |
 | FDI fibre diameter | [polgar1973](#polgar1973), [hwang2013](#hwang2013) | — |
 | FDI MU number, fibres, CSA | [feinstein1955](#feinstein1955), [zong2021](#zong2021), [infantolino2010](#infantolino2010) | — |
-| FDI recruitment ceiling (--max-recruitment) | [deluca1982](#deluca1982), [skarabot2023](#skarabot2023), [milnerbrown1973b](#milnerbrown1973b) | [DD optimiser](../examples/finetune/01_optimize_dd_multilevel.py) |
+| FDI recruitment ceiling (--last-recruit-mvc) | [deluca1982](#deluca1982), [skarabot2023](#skarabot2023), [milnerbrown1973b](#milnerbrown1973b) | [DD optimiser](../examples/finetune/01_optimize_dd_multilevel.py) |
 | Rate-coding targets | [deluca1982](#deluca1982), [delucacontessa2012](#delucacontessa2012) | [fr_optimization_targets](../myogen/utils/fr_optimization_targets.py), [DD optimiser](../examples/finetune/01_optimize_dd_multilevel.py) |
 | Twitch and force (ForceModel) | [fuglevand1993](#fuglevand1993), [milnerbrown1973a](#milnerbrown1973a), [milnerbrown1973b](#milnerbrown1973b) | [ForceModel](../myogen/simulator/core/force/force_model.py), [fdi_spikes_force](../examples/finetune/fdi_spikes_force.py) |
 | Gfluctdv noise, ISI CV | [destexhe2001](#destexhe2001), [moritz2005](#moritz2005) | [DD optimiser](../examples/finetune/01_optimize_dd_multilevel.py) |

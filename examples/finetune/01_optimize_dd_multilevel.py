@@ -41,6 +41,7 @@ sys.path.insert(0, str(BASIC_DIR))
 
 from myogen import get_random_generator, set_random_seed
 from myogen.simulator import RecruitmentThresholds
+from myogen.simulator.core.force.force_model import ForceModel
 from myogen.simulator.neuron import Network
 from myogen.simulator.neuron.network import _create_netcon, _select_synapse
 from myogen.simulator.neuron.populations import AlphaMN__Pool, DescendingDrive__Pool
@@ -53,8 +54,11 @@ from myogen.utils.ramp_analysis import extract_ramp_recruitment
 GAMMA_SHAPE = 3.0
 SYNAPTIC_WEIGHT = 0.05  # µS, DD input weight on the smallest (best-coupled) motor neuron
 NETWORK = {"fan_in": "equal", "weight_scaling": "dendritic_transfer"}  # DD -> MN wiring, see build_dd_mn_network
-CEILING_WEIGHT = 3.0       # Penalty weight for the recruitment ceiling (last unit's excitation vs MAX_RECRUITMENT)
-CEILING_RAMP_PER_S = 0.1   # Excitation per second in the ceiling ramp (the MVC ramp rate of fdi_spikes_force.py)
+CEILING_WEIGHT = 3.0       # Penalty weight for the recruitment ceiling (force at the last recruitment vs LAST_RECRUIT_PCT_MVC)
+CEILING_RAMP_PER_S = 0.1   # Excitation per second in the MVC ramp (also used by fdi_spikes_force.py)
+MVC_REST_S, MVC_HOLD_S = 0.5, 3.0  # MVC ramp: rest, ramp 0 -> 1 at CEILING_RAMP_PER_S, hold at full excitation
+FORCE_FS_HZ = 2048.0       # ForceModel sampling rate
+FORCE_SMOOTH_S = 0.25      # Moving-average window on the ramp force
 GFLUCTDV_RANGE = (0.05, 0.5)  # Optuna search range for Gfluctdv scale (FDI best was 0.243 at the old 0.25 cap)
 ISI_CV_TARGET = (0.15, 0.22)   # Literature target: 15-22% (LIT-17)
 ISI_CV_WEIGHT = 2.0            # Penalty weight for ISI CV outside target
@@ -68,7 +72,8 @@ CHECKPOINT_WEIGHTS = {5: 1.0, 10: 3.0, 20: 2.0, 25: 2.0, 30: 1.0}
 # Threshold and target options; set from the command line in main().
 THRESHOLD_MODE = "combined"   # RecruitmentThresholds mode for the pool
 RECRUITMENT_RANGE = 30.0      # largest / smallest threshold
-MAX_RECRUITMENT = 1.0         # excitation at which the last unit is recruited (targets and ceiling penalty)
+MAX_RECRUITMENT = 1.0         # excitation at which the last unit is recruited (rate-coding targets only)
+LAST_RECRUIT_PCT_MVC: float | None = None  # force (% MVC) at which the last unit is recruited; None: no ceiling term
 DE_LUCA_PARAMS: dict = {}     # overrides for de_luca_targets
 RESULTS_TAG = "polygon"
 
@@ -215,33 +220,79 @@ def build_dd_mn_network(mn_pool, dd_pool, dd_params):
                            transfer=transfer, weights=weights)
 
 
-def recruitment_excitation(block, excitation, timestep_ms=TIMESTEP_MS, window_ms=500.0, min_spikes=3):
-    """Excitation at each unit's recruitment: the first spike of the first ``min_spikes`` spikes within
-    ``window_ms`` (sustained firing, as in ``extract_ramp_recruitment``). NaN for units never recruited."""
+def recruitment_times(block, window_ms=500.0, min_spikes=3):
+    """Recruitment time (s) of each unit: the first spike of the first ``min_spikes`` spikes within ``window_ms``
+    (sustained firing, as in ``extract_ramp_recruitment``). NaN for units never recruited."""
     out = []
     for st in block.segments[0].spiketrains:
         t = np.asarray(st.rescale("s").magnitude)
         hits = np.nonzero(t[min_spikes - 1:] - t[:len(t) - min_spikes + 1] < window_ms / 1000.0)[0]
-        if len(hits) == 0:
-            out.append(np.nan)
-            continue
-        i = min(int(round(t[hits[0]] * 1000.0 / timestep_ms)), len(excitation) - 1)
-        out.append(float(excitation[i]))
+        out.append(float(t[hits[0]]) if len(hits) else np.nan)
     return np.array(out)
 
 
-def run_ceiling_ramp(thresholds, dd_params, threshold_hz):
-    """Ramp excitation from MAX_RECRUITMENT / 2 to 1 at CEILING_RAMP_PER_S; return the excitation at which each
-    unit is recruited. Drive mapping and 1 % noise as in fdi_spikes_force.py."""
-    e0 = 0.5 * MAX_RECRUITMENT
-    hold = np.full(int(500.0 / TIMESTEP_MS), e0)
-    ramp = np.linspace(e0, 1.0, int(round((1.0 - e0) / CEILING_RAMP_PER_S * 1000.0 / TIMESTEP_MS)))
-    e = np.concatenate([hold, ramp])
-    max_hz = dd_params["dd_drive__Hz"]
-    hz = threshold_hz + e * (max_hz - threshold_hz)
-    hz = hz + np.abs(np.random.default_rng(42).normal(0, max_hz * 0.01, size=hz.size))
+def recruitment_excitation(block, excitation, timestep_ms=TIMESTEP_MS, window_ms=500.0, min_spikes=3):
+    """Excitation at each unit's recruitment (see ``recruitment_times``). NaN for units never recruited."""
+    t_rec = recruitment_times(block, window_ms, min_spikes)
+    idx = np.clip(np.round(np.nan_to_num(t_rec) * 1000.0 / timestep_ms).astype(int), 0, len(excitation) - 1)
+    return np.where(np.isnan(t_rec), np.nan, np.asarray(excitation, dtype=float)[idx])
+
+
+def smoothed_force(force, fs):
+    w = max(int(FORCE_SMOOTH_S * fs), 1)
+    return np.convolve(force, np.ones(w) / w, mode="same")
+
+
+def last_recruitment_pct_mvc(t_rec, force, fs, mvc):
+    """Force (% MVC, smoothed) at the last unit's recruitment and the number of units never recruited.
+    Units never recruited push the value past 100 % (100 * (1 + n_unrecruited / n))."""
+    t_rec = np.asarray(t_rec, dtype=float)
+    n_unrec = int(np.isnan(t_rec).sum())
+    if n_unrec:
+        return 100.0 * (1.0 + n_unrec / len(t_rec)), n_unrec
+    i = min(int(round(np.max(t_rec) * fs)), len(force) - 1)
+    return float(100.0 * smoothed_force(force, fs)[i] / mvc), 0
+
+
+def ceiling_penalty(pct_last, target_pct=None):
+    """CEILING_WEIGHT * relative miss of the last recruitment force; 0 when no target is set."""
+    if target_pct is None:
+        return 0.0
+    return CEILING_WEIGHT * abs(pct_last - target_pct) / target_pct
+
+
+def mvc_drive(segments, threshold_hz, max_hz):
+    """Piecewise-linear excitation [(duration_s, start, end)] and its DD rate (Hz): threshold_hz + e (max - threshold),
+    0.8 threshold_hz at rest, plus 1 % half-normal noise."""
+    parts = [np.linspace(a, b, int(round(d * 1000 / TIMESTEP_MS)), endpoint=False) for d, a, b in segments]
+    e = np.concatenate(parts)
+    hz = np.where(e > 0, threshold_hz + e * (max_hz - threshold_hz), 0.8 * threshold_hz)
+    hz = hz + np.abs(np.random.default_rng(42).normal(0, hz.max() * 0.01, size=hz.size))
+    return e, hz
+
+
+def simulate_force(thresholds, dd_params, threshold_hz, segments):
+    """Run the drive of ``mvc_drive``; return (excitation, block, force at FORCE_FS_HZ) (Fuglevand 1993 twitches)."""
+    e, hz = mvc_drive(segments, threshold_hz, dd_params["dd_drive__Hz"])
     block = run_dd_ramp(thresholds, hz, dd_params, len(e) * TIMESTEP_MS)
-    return recruitment_excitation(block, e)
+    fm = ForceModel(recruitment_thresholds=thresholds, recording_frequency__Hz=FORCE_FS_HZ * pq.Hz)
+    return e, block, np.asarray(fm.generate_force(block).magnitude)[:, 0]
+
+
+def run_mvc_ramp(thresholds, dd_params, threshold_hz):
+    """MVC ramp: MVC_REST_S rest, excitation 0 -> 1 at CEILING_RAMP_PER_S, MVC_HOLD_S hold at 1.
+    MVC is the mean force over the last 2 s of the hold. Returns a namespace with e, block, force, mvc,
+    t_rec (recruitment times, s) and pct_last / n_unrecruited (see ``last_recruitment_pct_mvc``)."""
+    ramp_s = 1.0 / CEILING_RAMP_PER_S
+    e, block, f = simulate_force(thresholds, dd_params, threshold_hz,
+                                 [(MVC_REST_S, 0.0, 0.0), (ramp_s, 0.0, 1.0), (MVC_HOLD_S, 1.0, 1.0)])
+    t = np.arange(f.size) / FORCE_FS_HZ
+    t_end = MVC_REST_S + ramp_s + MVC_HOLD_S
+    mvc = float(np.mean(f[(t > t_end - 2.0) & (t < t_end)]))
+    t_rec = recruitment_times(block)
+    pct_last, n_unrec = last_recruitment_pct_mvc(t_rec, f, FORCE_FS_HZ, mvc)
+    return SimpleNamespace(e=e, block=block, force=f, mvc=mvc, t_rec=t_rec, pct_last=pct_last,
+                           n_unrecruited=n_unrec)
 
 
 def run_dd_constant(thresholds, drive_hz, dd_params, duration_ms=3000.0):
@@ -454,16 +505,15 @@ def make_objective(thresholds, fug_targets):
                 total_error += ISI_CV_WEIGHT * (mean_cv - cv_hi) / cv_hi
 
             # Recruitment ceiling: the ramp above stops at RAMP_MVC_PCT, so the last unit is found on a separate
-            # ramp to full excitation. Units never recruited push the ceiling past 1.
-            e_rec = run_ceiling_ramp(thresholds, dd_params, threshold_hz)
-            n_unrecruited = int(np.isnan(e_rec).sum())
-            e_last = float(np.nanmax(e_rec)) if n_unrecruited < len(e_rec) else 1.0
-            if n_unrecruited:
-                e_last = 1.0 + n_unrecruited / len(e_rec)
-            total_error += CEILING_WEIGHT * abs(e_last - MAX_RECRUITMENT) / MAX_RECRUITMENT
+            # MVC ramp, scored by the force (% MVC) at its recruitment. Units never recruited push it past 100 %.
+            pct_last, n_unrecruited = float("nan"), None
+            if LAST_RECRUIT_PCT_MVC is not None:
+                mvc_ramp = run_mvc_ramp(thresholds, dd_params, threshold_hz)
+                pct_last, n_unrecruited = mvc_ramp.pct_last, mvc_ramp.n_unrecruited
+                total_error += ceiling_penalty(pct_last, LAST_RECRUIT_PCT_MVC)
 
             # Store metadata
-            trial.set_user_attr("e_last_recruited", e_last)
+            trial.set_user_attr("pct_mvc_last_recruited", pct_last)
             trial.set_user_attr("n_unrecruited", n_unrecruited)
             trial.set_user_attr("threshold_hz", threshold_hz)
             trial.set_user_attr("isi_cv_mean", mean_cv)
@@ -479,7 +529,7 @@ def make_objective(thresholds, fug_targets):
                 )
                 print(f"  Trial {trial.number}: err={total_error:.3f} | {active_str} | "
                       f"drive={dd_drive__Hz:.0f} thr={threshold_hz:.0f} "
-                      f"gf={gfluctdv_scale:.3f} cv={mean_cv*100:.1f}% e_last={e_last:.2f}")
+                      f"gf={gfluctdv_scale:.3f} cv={mean_cv*100:.1f}% last={pct_last:.0f}%MVC")
 
             return total_error
 
@@ -577,8 +627,8 @@ def optimize_for_mu_count(n_mu, n_trials, profile, target_model="de_luca",
           f"gfluctdv={best.params.get('gfluctdv_scale', 0):.3f}")
     print(f"  ISI CV: {best.user_attrs.get('isi_cv_mean', 0)*100:.1f}% "
           f"(target: {ISI_CV_TARGET[0]*100:.0f}-{ISI_CV_TARGET[1]*100:.0f}%)")
-    print(f"  Last unit recruited at excitation {best.user_attrs.get('e_last_recruited', float('nan')):.2f} "
-          f"(target {MAX_RECRUITMENT:.2f}), unrecruited {best.user_attrs.get('n_unrecruited', '?')}")
+    print(f"  Last unit recruited at {best.user_attrs.get('pct_mvc_last_recruited', float('nan')):.1f} % MVC "
+          f"(target {LAST_RECRUIT_PCT_MVC}), unrecruited {best.user_attrs.get('n_unrecruited', '?')}")
     for p in CHECKPOINTS:
         sim_n = best.user_attrs.get(f"n_active_{p}", "?")
         sim_fr = best.user_attrs.get(f"mean_fr_{p}", 0)
@@ -593,6 +643,7 @@ def optimize_for_mu_count(n_mu, n_trials, profile, target_model="de_luca",
             "threshold_mode": THRESHOLD_MODE,
             "recruitment_range": RECRUITMENT_RANGE,
             "max_recruitment": MAX_RECRUITMENT,
+            "last_recruit_pct_mvc": LAST_RECRUIT_PCT_MVC,
             "de_luca_params": DE_LUCA_PARAMS,
             "targets": {str(k): v for k, v in fug.items()},
             "min_fr_hz": MIN_FR_HZ,
@@ -609,7 +660,7 @@ def optimize_for_mu_count(n_mu, n_trials, profile, target_model="de_luca",
             "gfluctdv_scale": best.params.get("gfluctdv_scale", 0.0),
             "isi_cv_mean": best.user_attrs.get("isi_cv_mean", 0.0),
             "network": dict(NETWORK),
-            "e_last_recruited": best.user_attrs.get("e_last_recruited"),
+            "pct_mvc_last_recruited": best.user_attrs.get("pct_mvc_last_recruited"),
             "n_unrecruited": best.user_attrs.get("n_unrecruited"),
             "threshold_hz": best.user_attrs.get("threshold_hz"),
             **{f"n_active_{p}": best.user_attrs.get(f"n_active_{p}") for p in CHECKPOINTS},
@@ -623,6 +674,8 @@ def optimize_for_mu_count(n_mu, n_trials, profile, target_model="de_luca",
             "checkpoint_weights": CHECKPOINT_WEIGHTS,
             "ceiling_weight": CEILING_WEIGHT,
             "ceiling_ramp_per_s": CEILING_RAMP_PER_S,
+            "mvc_rest_s": MVC_REST_S,
+            "mvc_hold_s": MVC_HOLD_S,
             "elapsed_s": elapsed,
         },
     }
@@ -648,8 +701,8 @@ def _save_best_from_study(study, n_mu, target_muscle, target_model,
           f"gfluctdv={best.params.get('gfluctdv_scale', 0):.3f}")
     print(f"  ISI CV: {best.user_attrs.get('isi_cv_mean', 0)*100:.1f}% "
           f"(target: {ISI_CV_TARGET[0]*100:.0f}-{ISI_CV_TARGET[1]*100:.0f}%)")
-    print(f"  Last unit recruited at excitation {best.user_attrs.get('e_last_recruited', float('nan')):.2f} "
-          f"(target {MAX_RECRUITMENT:.2f}), unrecruited {best.user_attrs.get('n_unrecruited', '?')}")
+    print(f"  Last unit recruited at {best.user_attrs.get('pct_mvc_last_recruited', float('nan')):.1f} % MVC "
+          f"(target {LAST_RECRUIT_PCT_MVC}), unrecruited {best.user_attrs.get('n_unrecruited', '?')}")
     for p in CHECKPOINTS:
         sim_n = best.user_attrs.get(f"n_active_{p}", "?")
         sim_fr = best.user_attrs.get(f"mean_fr_{p}", 0)
@@ -663,6 +716,7 @@ def _save_best_from_study(study, n_mu, target_muscle, target_model,
             "threshold_mode": THRESHOLD_MODE,
             "recruitment_range": RECRUITMENT_RANGE,
             "max_recruitment": MAX_RECRUITMENT,
+            "last_recruit_pct_mvc": LAST_RECRUIT_PCT_MVC,
             "de_luca_params": DE_LUCA_PARAMS,
             "targets": {str(k): v for k, v in fug_targets.items()},
             "min_fr_hz": MIN_FR_HZ,
@@ -679,7 +733,7 @@ def _save_best_from_study(study, n_mu, target_muscle, target_model,
             "gfluctdv_scale": best.params.get("gfluctdv_scale", 0.0),
             "isi_cv_mean": best.user_attrs.get("isi_cv_mean", 0.0),
             "network": dict(NETWORK),
-            "e_last_recruited": best.user_attrs.get("e_last_recruited"),
+            "pct_mvc_last_recruited": best.user_attrs.get("pct_mvc_last_recruited"),
             "n_unrecruited": best.user_attrs.get("n_unrecruited"),
             "threshold_hz": best.user_attrs.get("threshold_hz"),
             **{f"n_active_{p}": best.user_attrs.get(f"n_active_{p}") for p in CHECKPOINTS},
@@ -694,6 +748,8 @@ def _save_best_from_study(study, n_mu, target_muscle, target_model,
             "checkpoint_weights": CHECKPOINT_WEIGHTS,
             "ceiling_weight": CEILING_WEIGHT,
             "ceiling_ramp_per_s": CEILING_RAMP_PER_S,
+            "mvc_rest_s": MVC_REST_S,
+            "mvc_hold_s": MVC_HOLD_S,
             "elapsed_s": elapsed,
         },
     }
@@ -794,6 +850,7 @@ def run_parallel(args):
             "--threshold-mode", THRESHOLD_MODE,
             "--recruitment-range", str(RECRUITMENT_RANGE),
             "--max-recruitment", str(MAX_RECRUITMENT),
+            *(["--last-recruit-mvc", str(LAST_RECRUIT_PCT_MVC)] if LAST_RECRUIT_PCT_MVC is not None else []),
             "--de-luca-params", json.dumps(DE_LUCA_PARAMS),
             "--results-tag", RESULTS_TAG,
             "--_worker-seed", str(42 + w),
@@ -883,15 +940,21 @@ def main():
                     choices=["fuglevand", "deluca", "konstantin", "combined"])
     ap.add_argument("--recruitment-range", type=float, default=30.0)
     ap.add_argument("--max-recruitment", type=float, default=1.0,
-                    help="Excitation fraction at which the last unit is recruited (targets).")
+                    help="Excitation fraction at which the last unit is recruited (rate-coding targets).")
+    ap.add_argument("--last-recruit-mvc", type=float, default=None,
+                    help="Force (%% MVC) at which the last unit should be recruited, scored on a separate MVC ramp. "
+                         "Default: no ceiling term.")
     ap.add_argument("--de-luca-params", type=str, default="{}",
                     help="JSON overrides for de_luca_targets, e.g. fr_onset_hz.")
     ap.add_argument("--results-tag", type=str, default="polygon")
     args = ap.parse_args()
-    global THRESHOLD_MODE, RECRUITMENT_RANGE, MAX_RECRUITMENT, DE_LUCA_PARAMS, RESULTS_TAG
+    global THRESHOLD_MODE, RECRUITMENT_RANGE, MAX_RECRUITMENT, LAST_RECRUIT_PCT_MVC, DE_LUCA_PARAMS, RESULTS_TAG
     THRESHOLD_MODE, RECRUITMENT_RANGE = args.threshold_mode, args.recruitment_range
     MAX_RECRUITMENT, RESULTS_TAG = args.max_recruitment, args.results_tag
     DE_LUCA_PARAMS = json.loads(args.de_luca_params)
+    LAST_RECRUIT_PCT_MVC = args.last_recruit_mvc
+    if LAST_RECRUIT_PCT_MVC is None:
+        print("Recruitment ceiling term off (pass --last-recruit-mvc PCT to score the last unit's recruitment force).")
 
     if args.parallel:
         run_parallel(args)
