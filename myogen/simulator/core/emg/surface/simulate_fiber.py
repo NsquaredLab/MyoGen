@@ -301,6 +301,7 @@ def _simulate_fiber_v2_python(
     sig_intracellular: float = 1.01,
     fiber_diameter__mm: float = 0.05,
     v_grid: float | None = None,
+    iap_lambda__per_mm: float = 1.0,
 ):
     """
     Simulate a single fiber (Python implementation).
@@ -376,6 +377,11 @@ def _simulate_fiber_v2_python(
         in the window and sampling-rate formulas). Defaults to ``v``. Fibres
         that propagate at different ``v`` but share ``v_grid`` return signals on
         the same time axis and can be summed directly.
+    iap_lambda__per_mm : float, optional
+        Length scale of the Rosenfalck intracellular action potential,
+        ``Vm = 96 (lambda z)**3 exp(-lambda z) - 90`` mV with z in mm, default
+        1 / mm (Rosenfalck 1969). Values below 1 stretch the IAP along the fibre
+        and lower the spectral content of the MUAP; peak Vm is unchanged.
 
     Returns
     -------
@@ -410,7 +416,7 @@ def _simulate_fiber_v2_python(
     if _prepared is not None:
         _prepared.bind((Fs, v_grid, N, M, r, r_bone, th_fat, th_skin,
                         sig_muscle_rho, sig_muscle_z, sig_fat, sig_skin, sig_bone, fiber_length__mm,
-                        sig_intracellular, fiber_diameter__mm))
+                        sig_intracellular, fiber_diameter__mm, iap_lambda__per_mm))
     if _prepared is None or _prepared.grid is None:
         ## Model angular frequencies
         # FFT-consistent bin centers (matches np.fft.fft + fftshift): spacing = 1, bins at
@@ -452,8 +458,9 @@ def _simulate_fiber_v2_python(
 
         ###################################################################################################
         ## 2. I(k_t, k_z)
-        # Rosenfalck (1969) intracellular action potential, Vm = 96 z^3 e^{-z} - 90 mV
-        # (Farina & Merletti 2001, eq. 16); aux below is dVm/dz in mV/mm.
+        # Rosenfalck (1969) intracellular action potential, Vm = 96 (lz)^3 e^{-lz} - 90 mV
+        # with l = iap_lambda__per_mm (1 / mm as published; Farina & Merletti 2001,
+        # eq. 16); aux below is dVm/dz in mV/mm.
         A = 96  # mV/mm^3
         # Line current density i = sig_i * pi * (d/2)^2 * d2Vm/dz2 (core-conductor
         # model). With conductivities in S/m and lengths in mm, phi comes out in mV.
@@ -468,13 +475,15 @@ def _simulate_fiber_v2_python(
             # N controls only the resolution, not the physical extent
             z = np.linspace(-fiber_length__mm / 2, fiber_length__mm / 2, N, dtype=np.longdouble)
 
-        # Rosenfalck action potential: A * exp(-z) * (3z² - z³) for z ≥ 0, with z in mm
-        # on the same grid as k_z (length scale 1 mm, as published). The source grid
+        # Rosenfalck action potential: A * l * exp(-lz) * (3(lz)² - (lz)³) for z ≥ 0, with
+        # z in mm on the same grid as k_z (l = 1 / mm as published). The source grid
         # and the volume-conductor grid must share one z axis.
+        lam = iap_lambda__per_mm
         aux = np.zeros_like(z)
         for i in range(len(z)):
             if z[i] >= 0:
-                aux[i] = source_scale * A * np.exp(-z[i]) * (3 * z[i] ** 2 - z[i] ** 3)
+                lz = lam * z[i]
+                aux[i] = source_scale * A * lam * np.exp(-lz) * (3 * lz ** 2 - lz ** 3)
 
         # print(f"DEBUG: z range = [{np.min(z):.2f}, {np.max(z):.2f}] mm")
         # print(f"DEBUG: aux range = [{np.min(aux):.6e}, {np.max(aux):.6e}]")
@@ -693,6 +702,7 @@ def simulate_fiber_v2(
     *,
     sig_intracellular: float = 1.01,
     fiber_diameter__mm: float = 0.05,
+    iap_lambda__per_mm: float = 1.0,
 ):
     """
     Simulate a single fiber in the layered-cylinder volume conductor.
@@ -769,6 +779,11 @@ def simulate_fiber_v2(
         Fibre diameter (mm), default 0.05. Together with ``sig_intracellular`` it
         sets the line current density ``sig_i * pi * (d/2)**2 * d2Vm/dz2`` of the
         source, so the output is the potential in mV.
+    iap_lambda__per_mm : float, optional
+        Length scale of the Rosenfalck intracellular action potential,
+        ``Vm = 96 (lambda z)**3 exp(-lambda z) - 90`` mV with z in mm, default
+        1 / mm (Rosenfalck 1969). Values below 1 stretch the IAP along the fibre
+        and lower the spectral content of the MUAP; peak Vm is unchanged.
 
     Returns
     -------
@@ -826,4 +841,5 @@ def simulate_fiber_v2(
         rele_precomputed,
         sig_intracellular=sig_intracellular,
         fiber_diameter__mm=fiber_diameter__mm,
+        iap_lambda__per_mm=iap_lambda__per_mm,
     )

@@ -81,6 +81,7 @@ def simulate_muaps(owner, policy, n_jobs, verbose, use_gpu):
                 owner._muscle_conductivity_radial__S_m, owner._muscle_conductivity_longitudinal__S_m,
                 owner._fat_conductivity__S_m, owner._skin_conductivity__S_m,
                 owner._fiber_diameter__mm, owner._intracellular_conductivity__S_m,
+                owner._iap_lambda__per_mm,
                 vars(electrode), base_z, base_theta, radius,
             )
             results = {}
@@ -122,6 +123,7 @@ def simulate_muaps(owner, policy, n_jobs, verbose, use_gpu):
                             _prepared=preparation,
                             sig_intracellular=owner._intracellular_conductivity__S_m,
                             fiber_diameter__mm=owner._fiber_diameter__mm,
+                            iap_lambda__per_mm=owner._iap_lambda__per_mm,
                         )
                         if not np.all(np.isfinite(values[local])):
                             raise FloatingPointError(f"Nonfinite surface fibre in MU {mu_index}")

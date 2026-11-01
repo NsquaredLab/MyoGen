@@ -27,6 +27,7 @@ This release corrects the surface-EMG pipeline against Farina, Mesin, Martina & 
 ### Added
 
 - `SurfaceEMG(fiber_diameter__um=50, intracellular_conductivity__S_m=1.01)` set the source strength; amplitude scales with the fibre cross-section.
+- `SurfaceEMG(iap_lambda__per_mm=1.0)` sets the length scale of the Rosenfalck IAP, `Vm = 96 (λz)³ e^{−λz} − 90` mV. The default, 1 / mm, is the published value and leaves outputs unchanged. Values below 1 stretch the IAP, lower the MUAP's spectral content and raise surface amplitude. On the FDI defaults, λ = 0.7 matched the median frequency (~175 vs ~165 Hz measured) and adjacent-pin RMS of the Delsys recordings of Botelho et al. (2019) at 25 % MVC; λ = 1 gives ~200 Hz. Botelho et al. used 0.5 in their own FE model for the same reason. Any value other than 1 is a fitted modelling assumption, from one subject. Supported on the default and `execution=` routes; `use_unified=True` refuses λ ≠ 1.
 - **Fibre dispersion in surface EMG.** `SurfaceEMG(fiber_dispersion=SurfaceFiberDispersion(...))` adds, each switched on independently:
   - per-fibre end-plates from the two-layer nerve model of Konstantin et al. (2020), shared with intramuscular EMG;
   - axon-branch conduction delays;

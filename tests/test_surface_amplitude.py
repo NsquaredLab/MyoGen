@@ -44,13 +44,13 @@ def exact_surface_profile(i_line, du, rho0, r, sigma, n_max=200):
     return np.real(np.fft.ifft(S * g)) * n * (2 * math.pi / (n * du))
 
 
-def rosenfalck_line_source(u, sigma_i=SIGMA_I, diameter=DIAMETER):
+def rosenfalck_line_source(u, sigma_i=SIGMA_I, diameter=DIAMETER, lam=1.0):
     """Line current density sigma_i * pi a^2 * d2Vm/dz2 of a front at u = 0 travelling towards +z.
 
-    Vm = 96 z^3 e^{-z} - 90 mV (Rosenfalck 1969), z in mm behind the front.
+    Vm = 96 (lam z)^3 e^{-lam z} - 90 mV (Rosenfalck 1969 for lam = 1 / mm), z in mm behind the front.
     """
-    s = -u
-    dvm = np.where(s >= 0, 96 * np.exp(-s) * (3 * s**2 - s**3), 0.0)
+    s = -lam * u
+    dvm = np.where(s >= 0, 96 * lam * np.exp(-s) * (3 * s**2 - s**3), 0.0)
     return sigma_i * math.pi * (diameter / 2) ** 2 * -np.gradient(dvm, u[1] - u[0])
 
 
@@ -101,6 +101,29 @@ def test_source_scales_with_fibre_cross_section_and_intracellular_conductivity(f
     assert np.ptp(_myogen_passing_wave(4.0, 10.0, 2.0, False, **fibre)) == pytest.approx(scale * reference, rel=1e-6)
 
 
+@pytest.mark.parametrize("prepared", [False, True], ids=["default", "prepared"])
+@pytest.mark.parametrize("lam", [0.7, 0.5])
+def test_iap_length_scale_matches_the_exact_cylinder_solution(lam, prepared):
+    # lam < 1 / mm stretches the Rosenfalck IAP along the fibre (Botelho et al. 2019 used 0.5).
+    r, depth = 10.0, 2.0
+    u = np.arange(-60, 60, DU)
+    exact = exact_surface_profile(rosenfalck_line_source(u, lam=lam), DU, r - depth, r, SIGMA)
+    simulated = _myogen_passing_wave(4.0, r, depth, prepared, iap_lambda__per_mm=lam)
+    assert np.ptp(simulated) == pytest.approx(np.ptp(exact), rel=0.02)
+
+
+@pytest.mark.parametrize("kwargs", [dict(iap_lambda__per_mm=0.0), dict(iap_lambda__per_mm=0.7, use_unified=True)],
+                         ids=["non-positive", "unified-route"])
+def test_unsupported_iap_length_scales_are_rejected(kwargs):
+    # The unified route has its own Rosenfalck source and would silently ignore lambda.
+    from myogen.simulator import Muscle, RecruitmentThresholds, SurfaceEMG
+
+    thresholds, _ = RecruitmentThresholds(N=5, recruitment_range__ratio=10, mode="konstantin")
+    array = SurfaceElectrodeArray(1, 1, 5 * pq.mm, 0.5 * pq.mm, center_point__mm_deg=(8 * pq.mm, 0 * pq.deg))
+    with pytest.raises(ValueError, match="iap_lambda__per_mm"):
+        SurfaceEMG(Muscle(thresholds), [array], **kwargs)
+
+
 @pytest.mark.parametrize("route", ["default", "execution"])
 @pytest.mark.usefixtures("ample_session_memory")
 def test_surface_emg_passes_fibre_properties_to_every_fibre(route, monkeypatch):
@@ -118,7 +141,7 @@ def test_surface_emg_passes_fibre_properties_to_every_fibre(route, monkeypatch):
     calls = []
 
     def spy(**kwargs):
-        calls.append((kwargs["fiber_diameter__mm"], kwargs["sig_intracellular"]))
+        calls.append((kwargs["fiber_diameter__mm"], kwargs["sig_intracellular"], kwargs["iap_lambda__per_mm"]))
         array = kwargs["electrode_array"]
         return np.zeros((array.num_rows, array.num_cols, kwargs["N"])), None, None
 
@@ -126,12 +149,13 @@ def test_surface_emg_passes_fibre_properties_to_every_fibre(route, monkeypatch):
     monkeypatch.setattr(runtime_semg, "_simulate_fiber_v2_python", spy)
     array = SurfaceElectrodeArray(1, 1, 5 * pq.mm, 0.5 * pq.mm, center_point__mm_deg=(8 * pq.mm, 0 * pq.deg))
     semg = SurfaceEMG(muscle, [array], MUs_to_simulate=[1, 2], fiber_diameter__um=60.0,
-                      intracellular_conductivity__S_m=0.9)
+                      intracellular_conductivity__S_m=0.9, iap_lambda__per_mm=0.7)
     if route == "default":
         semg.simulate_muaps(n_jobs=1, verbose=False, use_gpu=False)
     else:
         semg.simulate_muaps(n_jobs=1, verbose=False, execution=ExecutionPolicy())
-    assert calls and all(d == pytest.approx(0.06) and s == pytest.approx(0.9) for d, s in calls)
+    assert calls and all(d == pytest.approx(0.06) and s == pytest.approx(0.9) and lam == pytest.approx(0.7)
+                         for d, s, lam in calls)
 
 
 def test_default_skin_conductivity_is_farina_value():

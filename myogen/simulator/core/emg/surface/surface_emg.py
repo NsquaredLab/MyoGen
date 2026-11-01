@@ -95,6 +95,16 @@ class SurfaceEMG:
     intracellular_conductivity__S_m : float, optional
         Intracellular conductivity in S/m, default 1.01. The source current
         density is ``sigma_i * pi * (d/2)**2 * d2Vm/dz2`` (core-conductor model).
+    iap_lambda__per_mm : float, optional
+        Length scale of the Rosenfalck intracellular action potential,
+        ``Vm = 96 (lambda z)**3 exp(-lambda z) - 90`` mV with z in mm. Default
+        1 / mm, as published (Rosenfalck 1969). Values below 1 stretch the IAP
+        along the fibre and lower the MUAP's spectral content and raise its
+        amplitude. Botelho et al. (2019) used 0.5 to match the frequency content of
+        their FDI recordings; in this conductor 0.7 matched their Delsys median
+        frequency and adjacent-pin RMS at 25 % MVC. Any value other than 1 is a
+        fitted modelling assumption, not a measurement. ``iap_kernel_length__mm``
+        must hold the longer IAP (its tail scales with ``1 / lambda``).
     fiber_dispersion : SurfaceFiberDispersion, optional
         Per-fibre end-plate scatter, axon-branch delays and fibre conduction
         velocities (see :class:`SurfaceFiberDispersion`). None (default) or an
@@ -136,6 +146,7 @@ class SurfaceEMG:
         fiber_diameter__um: float = 50.0,
         intracellular_conductivity__S_m: float = 1.01,
         fiber_dispersion: SurfaceFiberDispersion | None = None,
+        iap_lambda__per_mm: float = 1.0,
     ):
         # Immutable public arguments - never modify these
         self.muscle_model = muscle_model
@@ -148,6 +159,7 @@ class SurfaceEMG:
         self._use_unified = use_unified
         self.fiber_diameter__um = fiber_diameter__um
         self.intracellular_conductivity__S_m = intracellular_conductivity__S_m
+        self.iap_lambda__per_mm = iap_lambda__per_mm
         self.fiber_dispersion = fiber_dispersion
         self._fiber_dispersion = fiber_dispersion
         self.fiber_dispersion_report = None
@@ -180,6 +192,11 @@ class SurfaceEMG:
         self._iap_kernel_length__mm = iap_kernel_length__mm
         self._fiber_diameter__mm = float(fiber_diameter__um) * 1e-3
         self._intracellular_conductivity__S_m = float(intracellular_conductivity__S_m)
+        if not iap_lambda__per_mm > 0:
+            raise ValueError(f"iap_lambda__per_mm must be positive, got {iap_lambda__per_mm}")
+        if use_unified and iap_lambda__per_mm != 1.0:
+            raise ValueError("iap_lambda__per_mm is not supported with use_unified=True")
+        self._iap_lambda__per_mm = float(iap_lambda__per_mm)
 
         # Derived properties from muscle model - immutable public access
         self.mean_conduction_velocity__m_s = self._muscle_model.mean_conduction_velocity__m_s
@@ -581,6 +598,7 @@ class SurfaceEMG:
                             rele_precomputed=base_rele,
                             sig_intracellular=self._intracellular_conductivity__S_m,
                             fiber_diameter__mm=self._fiber_diameter__mm,
+                            iap_lambda__per_mm=self._iap_lambda__per_mm,
                         )
 
                     if dispersion is not None:
