@@ -184,3 +184,123 @@ def test_a_failing_motor_unit_raises_instead_of_returning_zeros(route, monkeypat
             semg.simulate_muaps(n_jobs=1, verbose=False, use_gpu=False)
         else:
             semg.simulate_muaps(n_jobs=1, verbose=False, execution=ExecutionPolicy())
+
+
+def _bessel_ratios():
+    from scipy.special import kve
+
+    def ir(n, a, b):  # I_n(a) / I_n(b)
+        return ive(n, a) / ive(n, b) * np.exp(a - b)
+
+    def ipr(n, a, b):  # I_n'(a) / I_n(b)
+        return 0.5 * (ive(n - 1, a) + ive(n + 1, a)) / ive(n, b) * np.exp(a - b)
+
+    def kr(n, a, b):  # K_n(a) / K_n(b)
+        return kve(n, a) / kve(n, b) * np.exp(b - a)
+
+    def kpr(n, a, b):  # K_n'(a) / K_n(b)
+        return -0.5 * (kve(n - 1, a) + kve(n + 1, a)) / kve(n, b) * np.exp(b - a)
+
+    return ir, ipr, kr, kpr, kve
+
+
+def layered_surface_profile(i_line, du, rho0, rm, rf, rs, sr, sz, sf, ss, n_max=120, k_max=40.0):
+    """Surface potential above a line source in an insulated cylinder: anisotropic muscle (sr, sz) to rm,
+    isotropic fat (sf) to rf and skin (ss) to rs. Per angular order and k_z, the muscle field is the free-space
+    term I_n(q rho<) K_n(q rho>) / sr (q = |k| sqrt(sz / sr)) plus A I_n(q rho); each outer layer is
+    B I_n(|k| rho) + C K_n(|k| rho); potential and normal current are continuous and the surface is insulated."""
+    ir, ipr, kr, kpr, kve = _bessel_ratios()
+    n = len(i_line)
+    k = 2 * math.pi * np.fft.fftfreq(n, d=du)
+    S = np.fft.fft(i_line) * du
+    sel = (np.abs(k) > 0) & (np.abs(k) < k_max)
+    kk = np.abs(k[sel])
+    q = math.sqrt(sz / sr) * kk
+    total = np.zeros(kk.size)
+    for order in range(-n_max, n_max + 1):
+        m = abs(order)
+        with np.errstate(all="ignore"):
+            src = ive(m, q * rho0) * np.exp(q * rho0 - q * rm) / sr
+            A = np.zeros((kk.size, 5, 5))
+            b = np.zeros((kk.size, 5))
+            A[:, 0, 0], A[:, 0, 1], A[:, 0, 2] = 1, -ir(m, kk * rm, kk * rf), -1
+            b[:, 0] = -src * kve(m, q * rm)
+            A[:, 1, 0] = sr * q * ipr(m, q * rm, q * rm)
+            A[:, 1, 1], A[:, 1, 2] = -sf * kk * ipr(m, kk * rm, kk * rf), -sf * kk * kpr(m, kk * rm, kk * rm)
+            b[:, 1] = sr * q * src * 0.5 * (kve(m - 1, q * rm) + kve(m + 1, q * rm))
+            A[:, 2, 1], A[:, 2, 2] = 1, kr(m, kk * rf, kk * rm)
+            A[:, 2, 3], A[:, 2, 4] = -ir(m, kk * rf, kk * rs), -1
+            A[:, 3, 1], A[:, 3, 2] = sf * kk * ipr(m, kk * rf, kk * rf), sf * kk * kpr(m, kk * rf, kk * rm)
+            A[:, 3, 3], A[:, 3, 4] = -ss * kk * ipr(m, kk * rf, kk * rs), -ss * kk * kpr(m, kk * rf, kk * rf)
+            A[:, 4, 3], A[:, 4, 4] = ipr(m, kk * rs, kk * rs), kpr(m, kk * rs, kk * rf)
+            ok = np.all(np.isfinite(A), axis=(1, 2)) & np.all(np.isfinite(b), axis=1)
+            x = np.zeros((kk.size, 5))
+            if ok.any():
+                x[ok] = np.linalg.solve(A[ok], b[ok][..., None])[..., 0]
+            phi = x[:, 3] + x[:, 4] * kr(m, kk * rs, kk * rf)
+        total += np.where(np.isfinite(phi), phi, 0.0)
+    g = np.zeros(n)
+    g[sel] = total / (4 * math.pi**2)
+    return np.real(np.fft.ifft(S * g)) * n * (2 * math.pi / (n * du))
+
+
+def _myogen_layered(v, rm, depth, sr, sz, fat, skin, sf, ss, z0=30.0, n=1024, kernel=300.0, L=140.0,
+                    mode="monopolar", ied=5.0, window=True):
+    # The volume conductor's r is the outer (skin) radius; R is the fibre's radial position.
+    array = SurfaceElectrodeArray(1, 1, ied * pq.mm, 0.01 * pq.mm, center_point__mm_deg=(z0 * pq.mm, 0 * pq.deg),
+                                  bending_radius__mm=(rm + fat + skin) * pq.mm, differentiation_mode=mode)
+    phi, _, _ = simulate_fiber._simulate_fiber_v2_python(
+        Fs=10.0, v=v, N=n, M=64, r=rm + fat + skin, r_bone=0.0, th_fat=fat, th_skin=skin, R=rm - depth, L1=L, L2=L,
+        zi=0.0, electrode_array=array, sig_muscle_rho=sr, sig_muscle_z=sz, sig_fat=sf, sig_skin=ss, sig_bone=sr,
+        fiber_length__mm=kernel, use_gpu=False, theta_offset=0.0)
+    if not window:
+        return phi[0, 0]
+    t = (np.arange(n) - n // 2) * kernel / (v * (n - 1))
+    return phi[0, 0][(t > (z0 - 12) / v) & (t < (z0 + 12) / v)]
+
+
+def test_layered_solver_reduces_to_the_homogeneous_solution():
+    u = np.arange(-60, 60, DU)
+    src = rosenfalck_line_source(u)
+    layered = layered_surface_profile(src, DU, 8.0, 9.0, 9.5, 10.0, SIGMA, SIGMA, SIGMA, SIGMA)
+    assert np.ptp(layered) == pytest.approx(np.ptp(exact_surface_profile(src, DU, 8.0, 10.0, SIGMA)), rel=1e-3)
+
+
+@pytest.mark.parametrize("skin_sigma", [1.0, 0.15])
+@pytest.mark.parametrize("depth", [0.5, 2.0])
+def test_anisotropic_muscle_under_fat_and_skin_matches_independent_solution(depth, skin_sigma):
+    # FDI-like layers: muscle 0.1 / 0.5 S/m (radial / axial), fat 0.05 S/m 1.3 mm, skin 1.2 mm.
+    rm = 6.91
+    u = np.arange(-60, 60, DU)
+    ref = layered_surface_profile(rosenfalck_line_source(u), DU, rm - depth, rm, rm + 1.3, rm + 2.5,
+                                  0.1, 0.5, 0.05, skin_sigma)
+    simulated = _myogen_layered(4.0, rm, depth, 0.1, 0.5, 1.3, 1.2, 0.05, skin_sigma)
+    assert np.ptp(simulated) == pytest.approx(np.ptp(ref), rel=0.01)
+
+
+@pytest.mark.parametrize("ied", [5.0, 10.0])
+def test_finite_fibre_bipolar_matches_sealed_end_cable_source(ied):
+    # End-plate generation and tendon extinction: the transmembrane current of a sealed-end fibre
+    # (axial current -sigma_i pi a^2 dVm/dz, zero beyond the ends), convolved with the layered point-source
+    # potential, against MyoGen's finite-fibre source. Bipolar, so the far-field common mode cancels.
+    rm, fat, skin, depth, half, v, ze = 6.91, 1.3, 1.2, 2.0, 15.0, 4.0, 8.0
+    u = np.arange(-80, 80, DU)
+    delta = np.zeros_like(u)
+    delta[np.argmin(np.abs(u))] = 1.0 / DU
+    green = layered_surface_profile(delta, DU, rm - depth, rm, rm + fat, rm + fat + skin, 0.1, 0.5, 0.05, 1.0,
+                                    n_max=150)
+    zf = np.arange(-half, half + DU / 2, DU)
+    channels = []
+    for z in (ze + ied / 2, ze - ied / 2):
+        g = np.interp(z - zf, u, green)
+        phi = []
+        for t in np.arange(0, 14, 0.02):
+            s = v * t - np.abs(zf)
+            vm = np.where(s >= 0, 96 * s**3 * np.exp(-np.clip(s, 0, None)), 0.0)
+            axial = np.concatenate([[0.0], -SIGMA_I * math.pi * (DIAMETER / 2) ** 2 * np.diff(vm) / DU, [0.0]])
+            phi.append(np.sum(-np.diff(axial) * g))
+        channels.append(np.array(phi))
+    reference = channels[0] - channels[1]
+    simulated = _myogen_layered(v, rm, depth, 0.1, 0.5, fat, skin, 0.05, 1.0, z0=ze, n=4096, L=half,
+                                mode="bipolar_longitudinal", ied=ied, window=False)
+    assert np.ptp(simulated) == pytest.approx(np.ptp(reference), rel=0.01)
