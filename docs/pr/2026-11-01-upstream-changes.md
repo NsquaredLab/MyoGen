@@ -5,6 +5,9 @@ tick an item only when it is committed, tested and its evidence is linked.
 
 Base: `github/main` = `b231049c9` (v0.13.0, 2026-10-28). No newer upstream commits as of 2026-11-01.
 
+
+Literature behind every default and calibration choice in this PR, with links to the code that uses it: [docs/literature.md](../literature.md).
+
 ## 1. Branches and push state
 
 | Branch | Content | State |

@@ -47,6 +47,7 @@ It also ports three fixes that never reached `main` (Gfluctdv noise, fibre condu
   - Every motor neuron receives the same number of descending-drive inputs, and each input's weight is scaled by the neuron's dendrite-to-soma current transfer, so one input delivers the same current to a clamped soma whatever the neuron's size and recruitment follows rheobase. With random input counts and one weight, large neurons received ~2× less current per input and the largest units were recruited late and out of order. Both are modelling assumptions (equal effective synaptic current per input, the equal-share case of Heckman & Binder 1991).
   - Each trial also ramps excitation to 1 and penalises the distance between the excitation at which the last unit is recruited and `--max-recruitment`; the calibration ramp stops at 30 % MVC, so this ceiling was previously unconstrained.
   - Parameter files record the wiring in a `network` block; files without it are refused.
+- `docs/literature.md`: register of the sources behind these defaults and calibrations, each linked to the code that uses it, with verification status (full text, abstract, secondary) and corrections.
 - `examples/finetune/fdi_spikes_force.py` maps excitation to % MVC with `ForceModel` on an MVC ramp and writes spike trains for force-matched trapezoids.
 
 ### Changed
