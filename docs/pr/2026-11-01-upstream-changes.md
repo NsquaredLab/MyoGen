@@ -79,7 +79,7 @@ The generic Fuglevand parameters match FDI closely (Fuglevand 1993 drew on these
 
 ## 7. Before opening the PR
 
-- [x] Full test suite on `calib/fdi-dd-main` with the Gfluctdv, CV and fibre-layout fixes: 387 passed, 2 skipped (2026-11-01, 29 min). On `fix/semg-amplitude-scale` with IAP λ (`78fe67e3f`): 389 passed, 2 skipped (10 min). Rerun on `calib/fdi-dd-main` after the rebase onto `78fe67e3f`.
+- [x] Full test suite on `calib/fdi-dd-main` with the Gfluctdv, CV and fibre-layout fixes: 387 passed, 2 skipped (2026-11-01, 29 min). On `fix/semg-amplitude-scale` with IAP λ (`78fe67e3f`): 389 passed, 2 skipped (10 min). `calib/fdi-dd-main` rebased onto it: 393 passed, 2 skipped (10 min). Rerun after any further change.
 - [ ] CHANGELOG entries for §3 breaking changes, §4 ports, §6 decisions.
 - [ ] Commit messages: reword `f43287720` rationale in the PR description (see §3).
 - [ ] Push as DRohlf; author Devon Rohlf <devon.rohlf@fau.de>.
