@@ -113,7 +113,7 @@ To add a source: add a row in its topic table with an `id` anchor, link it from 
 
 1. **Skin σ = 1 S/m rationale.** First explained as gel electrodes bypassing the stratum corneum (Farina 2004). Unsourced and withdrawn: the value is Roeleveld et al. 1997's fitted effective skin, inherited by Blok 2002, Farina & Rainoldi 1999, Farina & Merletti 2001 and Farina 2004. Commit message reworded; nexus Part A step 3 still has the old wording.
 2. **Roeleveld 1997 DOI** is 10.1016/S1050-6411(97)00009-6 (an earlier (96)00034-8 was wrong).
-3. **'Konstantin et al. 2020'** in MyoGen docstrings (muscle.py, intramuscular_emg.py, nerve_branches.py) is Akhmadeev et al. 2020. *Open: the code citations still say 'Konstantin, A.'.*
+3. **'Konstantin et al. 2020'** in MyoGen docstrings (muscle.py, intramuscular_emg.py, nerve_branches.py) is Akhmadeev et al. 2020. Fixed on `fix/semg-amplitude-scale` (028a14362); the `konstantin` threshold mode keeps its name.
 4. **Botelho 2019 simulated amplitude**: median ~0.16 mV; 0.10 mV was one sample trace. Their 24.8–40.6 µm diameters are Hwang 2013's FDI mean ± SD.
 5. **Feinstein 1955** authors are Feinstein, Lindegård, Nyman, Wohlfart; ~40,000 fibres (not 40,500).
 6. **Piasecki 2020 and Stålberg & Karlsson 2001** are one citation chain, not two anchors.
