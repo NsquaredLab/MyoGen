@@ -66,7 +66,7 @@ Milner-Brown, Stein & Yemm 1973, *J Physiol* 230:359–370 (doi 10.1113/jphysiol
 
 The generic Fuglevand parameters match FDI closely (Fuglevand 1993 drew on these data), so % MVC from `ForceModel` is supported for FDI. Open: FDI may span ~100-fold in threshold and twitch force rather than 50-fold (would need recalibration); the model has no contraction-time scatter around the threshold trend (small effect on pool force).
 - [ ] Decide whether the optimiser belongs in `myogen/` + `examples/finetune/` upstream or stays a bench tool. Main already has `examples/02_finetune/01_optimize_dd_for_target_firing_rate.py`; reconcile or replace.
-- [ ] `--extra-trap NAME:LEVEL` option in `fdi_spikes_force.py` exists only on the old fresh-trunk calibration branch; port if still needed.
+- [x] `--extra-trap NAME:LEVEL` option in `fdi_spikes_force.py`: included in `586cdccfa`.
 
 ## 6. Recommendations (need Devon's decision before the PR)
 
