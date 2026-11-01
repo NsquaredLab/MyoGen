@@ -38,9 +38,9 @@ class SurfaceFiberDispersion:
     nmj_scatter_scale : float
         Multiplies both two-layer z spreads (1 = the coefficients as given).
     nmj_coefficients : {"published", "reference_code"}
-        Two-layer z-spread coefficients: the values printed in Konstantin et al.
+        Two-layer z-spread coefficients: the values printed in Akhmadeev et al.
         (2020), eq. 5-6 (default, as in intramuscular EMG), or those of
-        Konstantin's reference simulator code, 1.5-2 times wider.
+        Akhmadeev's reference simulator code, 1.5-2 times wider.
     nerve_delays : bool
         Delay each fibre by its axon-branch conduction time (two-layer nerve
         paths over ``nerve_cvs__m_per_s``). Independent of ``nmj_model``: with
@@ -48,7 +48,7 @@ class SurfaceFiberDispersion:
     nerve_cvs__m_per_s : (float, float)
         Conduction velocity of the first (axon to branch point) and second
         (branch point to end-plate) layer. Default (5, 2) m/s as in
-        intramuscular EMG (Konstantin et al. 2020).
+        intramuscular EMG (Akhmadeev et al. 2020).
     fiber_cv_inter_mu_spread : float
         Spread of motor-unit mean fibre CV linear in recruitment order: the
         first-recruited unit propagates at ``mean * (1 - spread / 2)``, the
@@ -134,9 +134,9 @@ class SurfaceFiberDispersion:
     def literature_candidate(cls, seed: int = 0) -> "SurfaceFiberDispersion":
         """Dispersion with each value taken from the literature or marked as an assumption.
 
-        - End-plates: two-layer within each unit, coefficients of Konstantin et al.
+        - End-plates: two-layer within each unit, coefficients of Akhmadeev et al.
           (2020), eq. 5-6.
-        - Nerve branches: 5 / 2 m/s, the ``IntramuscularEMG`` default (Konstantin
+        - Nerve branches: 5 / 2 m/s, the ``IntramuscularEMG`` default (Akhmadeev
           et al. 2020). Within-unit delay SD is about 0.1-0.2 ms in the sweep
           scenarios of ``benchmarks/semg_dispersion``.
         - Unit conduction velocity: linear in recruitment threshold, slope 0.63

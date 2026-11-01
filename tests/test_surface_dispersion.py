@@ -1,7 +1,7 @@
 """Per-fibre dispersion in the surface-EMG model.
 
 Axon-branch delays and end-plate positions come from the two-layer nerve model
-that basic MyoGen already uses for intramuscular EMG (Konstantin et al. 2020);
+that basic MyoGen already uses for intramuscular EMG (Akhmadeev et al. 2020);
 muscle-fibre conduction velocity may vary per fibre. Every option defaults to
 off, and off must reproduce the undispersed model exactly.
 """
@@ -72,13 +72,13 @@ def test_two_layer_function_reproduces_motor_unit_sim():
 
 def test_branch_schedule_grows_with_motor_unit_size():
     thresholds = np.array([1.0, np.e, np.e**2, np.e**3])
-    # Default: published coefficients (Konstantin et al. 2020, eq. 5-6): a_mu=1, b_mu=2.5, a_sigma=0.25, b_sigma=1 mm
+    # Default: published coefficients (Akhmadeev et al. 2020, eq. 5-6): a_mu=1, b_mu=2.5, a_sigma=0.25, b_sigma=1 mm
     n_branches, branch_sd, arbor_sd = nmj_branch_schedule(thresholds)
     np.testing.assert_array_equal(n_branches, [1, 2, 3, 4])
     spread = np.concatenate([[0], np.cumsum(thresholds)[:-1]]) / thresholds.sum()
     np.testing.assert_allclose(branch_sd, 1.0 + 2.5 * spread)
     np.testing.assert_allclose(arbor_sd, 0.25 + 1.0 * spread)
-    # Konstantin's reference simulator code
+    # Akhmadeev's reference simulator code
     _, branch_sd, arbor_sd = nmj_branch_schedule(thresholds, coefficients="reference_code")
     np.testing.assert_allclose(branch_sd, 1.5 + 4.0 * spread)
     np.testing.assert_allclose(arbor_sd, 0.5 + 1.5 * spread)

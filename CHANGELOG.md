@@ -29,7 +29,7 @@ This release corrects the surface-EMG pipeline against Farina, Mesin, Martina & 
 - `SurfaceEMG(fiber_diameter__um=50, intracellular_conductivity__S_m=1.01)` set the source strength; amplitude scales with the fibre cross-section.
 - `SurfaceEMG(iap_lambda__per_mm=1.0)` sets the length scale of the Rosenfalck IAP, `Vm = 96 (λz)³ e^{−λz} − 90` mV. The default, 1 / mm, is the published value and leaves outputs unchanged. Values below 1 stretch the IAP, lower the MUAP's spectral content and raise surface amplitude. On the FDI defaults, λ = 0.7 matched the median frequency (~175 vs ~165 Hz measured) and adjacent-pin RMS of the Delsys recordings of Botelho et al. (2019) at 25 % MVC; λ = 1 gives ~200 Hz. Botelho et al. used 0.5 in their own FE model for the same reason. Any value other than 1 is a fitted modelling assumption, from one subject. Supported on the default and `execution=` routes; `use_unified=True` refuses λ ≠ 1.
 - **Fibre dispersion in surface EMG.** `SurfaceEMG(fiber_dispersion=SurfaceFiberDispersion(...))` adds, each switched on independently:
-  - per-fibre end-plates from the two-layer nerve model of Konstantin et al. (2020), shared with intramuscular EMG;
+  - per-fibre end-plates from the two-layer nerve model of Akhmadeev et al. (2020), shared with intramuscular EMG;
   - axon-branch conduction delays;
   - motor-unit conduction velocity linear in recruitment threshold (Del Vecchio et al. 2017), and a spread of fibre velocities within each unit, each fibre propagating at its own velocity;
   - a source scaled by fibre diameter (from the Nandedkar & Stålberg 1983 velocity–diameter line);
@@ -41,7 +41,8 @@ This release corrects the surface-EMG pipeline against Farina, Mesin, Martina & 
 
 ### Changed
 
-- **End-plate spreads in intramuscular EMG.** The two-layer end-plate model now uses the spreads printed in Konstantin et al. (2020, eq. 5-6) instead of the 1.5–2× wider values of their reference code: branch-point SD 1.0 + 2.5·s mm (was 1.5 + 4.0·s) and arborisation SD 0.25 + 1.0·s mm (was 0.5 + 1.5·s), with s the share of total threshold below the unit. In the sEMG limb sweep the realised within-unit end-plate SD fell from a median of 1.68 mm to 1.07 mm. iEMG MUAPs and signals change.
+- **End-plate spreads in intramuscular EMG.** The two-layer end-plate model now uses the spreads printed in Akhmadeev et al. (2020, eq. 5-6) instead of the 1.5–2× wider values of their reference code: branch-point SD 1.0 + 2.5·s mm (was 1.5 + 4.0·s) and arborisation SD 0.25 + 1.0·s mm (was 0.5 + 1.5·s), with s the share of total threshold below the unit. In the sEMG limb sweep the realised within-unit end-plate SD fell from a median of 1.68 mm to 1.07 mm. iEMG MUAPs and signals change.
+- Citation corrected: the two-layer end-plate and recruitment-threshold model cited as "Konstantin et al. 2020" is Akhmadeev, Yu, Le Carpentier, Aoustin & Farina (2020); Konstantin is the first author's given name. The `konstantin` threshold mode keeps its name.
 - `Muscle.var_fiber_length__mm` is documented as the half-width of a uniform fibre-length variation (the FDI value of Jacobson et al. 1992), not a variance. Behaviour is unchanged.
 
 ### Upgrade notes

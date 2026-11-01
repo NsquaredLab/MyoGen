@@ -1,4 +1,4 @@
-"""Two-layer motor-nerve branching model (Konstantin et al. 2020).
+"""Two-layer motor-nerve branching model (Akhmadeev et al. 2020).
 
 Single authority for where a motor unit's end-plates sit along its fibres and
 how far the action potential travels along the axon branches to reach them.
@@ -18,8 +18,8 @@ from sklearn.cluster import KMeans
 
 
 # (branch intercept, branch slope, arborisation intercept, arborisation slope), mm.
-# "reference_code": Konstantin's reference simulator (iemg_simulator, s08_cl_init_muaps.m).
-# "published": Konstantin et al. 2020, eq. 5-6 (a_mu = 1, b_mu = 2.5, a_sigma = 0.25, b_sigma = 1).
+# "reference_code": Akhmadeev's reference simulator (iemg_simulator, s08_cl_init_muaps.m).
+# "published": Akhmadeev et al. 2020, eq. 5-6 (a_mu = 1, b_mu = 2.5, a_sigma = 0.25, b_sigma = 1).
 NMJ_SCHEDULE_COEFFICIENTS = {
     "reference_code": (1.5, 4.0, 0.5, 1.5),
     "published": (1.0, 2.5, 0.25, 1.0),

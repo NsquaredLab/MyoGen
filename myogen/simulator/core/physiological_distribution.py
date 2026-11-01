@@ -34,7 +34,7 @@ class RecruitmentThresholds:
         Following models are available:  
             - Fuglevand et al. (1993) [1]
             - De Luca & Contessa (2012) [2]
-            - Konstantin et al. (2020) [3]
+            - Akhmadeev et al. (2020) [3]
             - Combined model
 
         Parameters
@@ -72,7 +72,7 @@ class RecruitmentThresholds:
         ----------
         [1] Fuglevand, A.J., Winter, D.A., Patla, A.E., 1993. Models of recruitment and rate coding organization in motor-unit pools. Journal of Neurophysiology 70, 2470-2488. https://doi.org/10.1152/jn.1993.70.6.2470 <br>
         [2] De Luca, C.J., Contessa, P., 2012. Hierarchical control of motor units in voluntary contractions. Journal of Neurophysiology 107, 178-195. https://doi.org/10.1152/jn.00961.2010 <br>
-        [3] Konstantin, A., Yu, T., Le Carpentier, E., Aoustin, Y., Farina, D., 2020. Simulation of Motor Unit Action Potential Recordings From Intramuscular Multichannel Scanning Electrodes. IEEE Transactions on Biomedical Engineering 67, 2005-2014. https://doi.org/10.1109/TBME.2019.2953680
+        [3] Akhmadeev, K., Yu, T., Le Carpentier, E., Aoustin, Y., Farina, D., 2020. Simulation of Motor Unit Action Potential Recordings From Intramuscular Multichannel Scanning Electrodes. IEEE Transactions on Biomedical Engineering 67, 2005-2014. https://doi.org/10.1109/TBME.2019.2953680
 
         Notes
         -----
@@ -88,7 +88,7 @@ class RecruitmentThresholds:
 
         where $b$ = ``deluca__slope``, $i = 1, 2, \ldots, N$
 
-        **konstantin** : Konstantin et al. (2020) [3] model allowing explicit maximum threshold control
+        **konstantin** : Akhmadeev et al. (2020) [3] model (named after the first author's given name) allowing explicit maximum threshold control
 
         $$
         \begin{aligned}
@@ -116,7 +116,7 @@ class RecruitmentThresholds:
         >>> rt = thresholds.rt
         >>> rtz = thresholds.rtz
         >>>
-        >>> # Generate thresholds using Konstantin model with explicit max threshold
+        >>> # Generate thresholds using the konstantin mode with explicit max threshold
         >>> thresholds = RecruitmentThresholds(
         ...     N=100, recruitment_range__ratio=50.0, konstantin__max_threshold__ratio=1.0, mode='konstantin'
         ... )

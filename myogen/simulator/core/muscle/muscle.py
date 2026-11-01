@@ -88,7 +88,7 @@ def _perform_fast_marching(speed_map: np.ndarray, seed_points: np.ndarray) -> np
 @beartowertype
 class Muscle:
     """
-    A muscle model based on the cylindrical description of the volume conductor by Farina et al. 2004 [1] and the motor unit distribution by Konstantin et al. 2020 [2].
+    A muscle model based on the cylindrical description of the volume conductor by Farina et al. 2004 [1] and the motor unit distribution by Akhmadeev et al. 2020 [2].
 
     All default values are set to simulate the First Dorsal Interosseous (FDI) muscle.
     Values are pulled from the literature.
@@ -185,7 +185,7 @@ class Muscle:
     References
     ----------
     [1] Farina, D., Mesin, L., Martina, S., Merletti, R., 2004. A surface EMG generation model with multilayer cylindrical description of the volume conductor. IEEE Transactions on Biomedical Engineering 51, 415–426. https://doi.org/10.1109/TBME.2003.820998 <br>
-    [2] Konstantin, A., Yu, T., Le Carpentier, E., Aoustin, Y., Farina, D., 2020. Simulation of Motor Unit Action Potential Recordings From Intramuscular Multichannel Scanning Electrodes. IEEE Transactions on Biomedical Engineering 67, 2005–2014. https://doi.org/10.1109/TBME.2019.2953680 <br>
+    [2] Akhmadeev, K., Yu, T., Le Carpentier, E., Aoustin, Y., Farina, D., 2020. Simulation of Motor Unit Action Potential Recordings From Intramuscular Multichannel Scanning Electrodes. IEEE Transactions on Biomedical Engineering 67, 2005–2014. https://doi.org/10.1109/TBME.2019.2953680 <br>
     [3] Jacobson, M.D., Raab, R., Fazeli, B.M., Abrams, R.A., Botte, M.J., Lieber, R.L., 1992. Architectural design of the human intrinsic hand muscles. The Journal of Hand Surgery 17, 804–809. https://doi.org/10.1016/0363-5023(92)90446-V <br>
     [4] Nishizono, H., Fujimoto, T., Ohtake, H., Miyashita, M., 1990. Muscle fiber conduction velocity and contractile properties estimated from surface electrode arrays. Electroencephalography and Clinical Neurophysiology 75, 75–81. https://doi.org/10.1016/0013-4694(90)90154-C <br>
     [5] Störchle, P., Müller, W., Sengeis, M., Lackner, S., Holasek, S., Fürhapter-Rieger, A., 2018. Measurement of mean subcutaneous fat thickness: eight standardised ultrasound sites compared to 216 randomly selected sites. Sci Rep 8, 16268. https://doi.org/10.1038/s41598-018-34213-0 <br>
