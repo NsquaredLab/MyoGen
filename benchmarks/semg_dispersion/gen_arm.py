@@ -18,6 +18,8 @@ end), Fuglevand thresholds over a 50-fold range recruited up to 70 % excitation,
 undispersed baseline. Harness-only keys set the outer layers:
 ``_skin_thickness__mm`` (default 1.29), ``_fat_thickness__mm`` (limb 4, FDI 0.3),
 ``_skin_conductivity__S_per_m`` (default 1) and ``_fiber_diameter__um`` (default 50).
+FDI only: ``_muscle_radius__mm`` (default 6.91) and ``_fiber_density__per_mm2`` (default 350).
+``_spike_file`` (npz with ``spikes`` and ``thresholds``) replaces the generated spike trains.
 ``_rate_model`` selects the rate coding: absent, the linear rule below; a dict
 ``{"onset", "peak_early", "peak_late", "steepness"}`` (Hz, Hz, Hz, 1/excitation) the
 onion-skin exponential of De Luca & Contessa (2012), FR = peak - (peak - onset) *
@@ -48,6 +50,9 @@ fat = config.pop("_fat_thickness__mm", 4.0 if scenario == "limb" else 0.3)
 skin_sigma = config.pop("_skin_conductivity__S_per_m", 1.0)
 diameter = config.pop("_fiber_diameter__um", 50.0)
 rate_model = config.pop("_rate_model", None)
+spike_file = config.pop("_spike_file", None)
+fdi_radius = config.pop("_muscle_radius__mm", 6.91)
+fdi_density = config.pop("_fiber_density__per_mm2", 350.0)
 if "nerve_cvs__m_per_s" in config:
     config["nerve_cvs__m_per_s"] = tuple(config["nerve_cvs__m_per_s"])
 dispersion = SurfaceFiberDispersion(**config)
@@ -65,9 +70,10 @@ if scenario == "limb":
                     skin_thickness__mm=skin * pq.mm, skin_conductivity__S_per_m=skin_sigma * pq.S / pq.m)
     radius = 15.0
 else:
-    muscle = Muscle(recruitment_thresholds=thresholds, skin_thickness__mm=skin * pq.mm, fat_thickness__mm=fat * pq.mm,
-                    skin_conductivity__S_per_m=skin_sigma * pq.S / pq.m)
-    radius = 6.91
+    muscle = Muscle(recruitment_thresholds=thresholds, radius__mm=fdi_radius * pq.mm,
+                    fiber_density__fibers_per_mm2=fdi_density * pq.mm**-2, skin_thickness__mm=skin * pq.mm,
+                    fat_thickness__mm=fat * pq.mm, skin_conductivity__S_per_m=skin_sigma * pq.S / pq.m)
+    radius = fdi_radius
 muscle.distribute_innervation_centers()
 muscle.generate_muscle_fiber_centers(verbose=False)
 muscle.assign_mfs2mns(verbose=False, n_jobs=n_jobs)
@@ -87,7 +93,16 @@ def excitation(t):
 
 
 trains, active = [], []
-for mu in range(N_MU):
+if spike_file is not None:
+    # Spike times per unit (s) from a NEURON simulation of the same threshold array (fdi_spikes_force.py).
+    loaded = np.load(spike_file, allow_pickle=True)
+    if not np.allclose(np.asarray(loaded["thresholds"]) / np.max(loaded["thresholds"]), rte / rte.max()):
+        raise SystemExit("spike file thresholds do not match the benchmark pool")
+    for times in loaded["spikes"]:
+        times = np.asarray(times, dtype=float); times = times[times < DURATION]
+        active.append(len(times) > 0)
+        trains.append(SpikeTrain(np.round(times * FS) / FS * pq.s, t_stop=DURATION * pq.s, sampling_rate=FS * pq.Hz))
+for mu in range(N_MU if spike_file is None else 0):
     times, t = [], 0.0
     while t < DURATION:
         e = excitation(t)
@@ -132,7 +147,7 @@ templates = np.array([np.asarray(signal_to_grid(muaps.groups[0].segments[m].anal
                       for m in mus])
 emg = semg.simulate_surface_emg(block, verbose=False).groups[0].segments[0].analogsignals[0]
 report = semg.fiber_dispersion_report or {}
-np.savez(out, label=label, scenario=scenario, myogen=myogen.__file__, config=json.dumps(config), skin=skin, fat=fat, skin_sigma=skin_sigma, diameter=diameter, rate_model=json.dumps(rate_model), mus=mus, counts=counts,
+np.savez(out, label=label, scenario=scenario, myogen=myogen.__file__, config=json.dumps(config), skin=skin, fat=fat, skin_sigma=skin_sigma, diameter=diameter, radius=radius, density=fdi_density, rate_model=json.dumps(rate_model), spike_file=str(spike_file), mus=mus, counts=counts,
          fibre_hash=fibre_hash, spike_hash=spike_hash, ramp=RAMP, hold=HOLD, level=LEVEL,
          bip_muaps=templates, pair_muap_fs=float(sig0.sampling_rate.rescale(pq.Hz).magnitude),
          bip_emg=np.asarray(signal_to_grid(emg.rescale(pq.mV))), fs=float(emg.sampling_rate.rescale(pq.Hz).magnitude),
