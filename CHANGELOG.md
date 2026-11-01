@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 This release corrects the surface-EMG pipeline against Farina, Mesin, Martina & Merletti (2004). The problems were reported in an external tutorial notebook. Both the default route and `execution=` are affected.
 
+It also ports three fixes that never reached `main` (Gfluctdv noise, fibre conduction velocities, large fibre layouts) and the multilevel descending-drive optimiser used to calibrate an FDI pool.
+
 ### Fixed
 
 - **Longitudinal bipolar channels.** The angular integral B(k_z) is now complex. Keeping only its real part made `bipolar_longitudinal` channels about 10⁻⁷ of their true value and distorted rotated arrays. A bipolar channel now equals the difference of the two monopolar electrodes.
@@ -23,6 +25,9 @@ This release corrects the surface-EMG pipeline against Farina, Mesin, Martina & 
   - The default skin conductivity was 4.88·10⁻⁴ S/m (measured composite skin, Botelho et al. 2019), which raised amplitudes 3.5-6×. It is now 1 S/m, as in Farina et al. (2004). That value comes from Roeleveld et al. (1997), who chose it so their model matched how biceps MUAPs fall off with depth and around the arm; it is an effective value, not a measured skin conductivity.
 - **Default skin and fat thickness (FDI).** Skin 1.29 → 1.2 mm (hand dorsum median, Li et al. 2018) and fat 0.3 → 1.3 mm, so the total depth to muscle is 2.5 mm, the low end of the FDI depth measured by Nishikawa et al. (2024); the fat value is derived from that total, not measured. Surface amplitudes from the default `Muscle` fall by about 40 %.
 - **Failed motor units raise.** On the default `SurfaceEMG` route an exception while simulating one motor unit was logged and replaced by an all-zero MUAP, which passes for a valid, silent unit (seen with `sampling_points_in_theta_domain` ≥ 256, where one conductor system is singular). The exception is now re-raised with the unit and array index; the `ExecutionPolicy` route already raised.
+- **Gfluctdv membrane noise was silent.** `AlphaMN.insert_Gfluctdv()` inserted the Destexhe (2001) fluctuating-conductance mechanism but left its GLOBAL multipliers `multex_Gfluctdv` / `multin_Gfluctdv` at the `.mod` default of 0, so it added no noise. They are now set to 1 on insertion. Any pool that calls `insert_Gfluctdv()` now has conductance noise and more variable discharge; this also makes the `gfluctdv` search in `examples/02_finetune/01_optimize_dd_for_target_firing_rate.py` effective.
+- **Fibre conduction velocities.** `Muscle` mixed units in the velocity–diameter line (5.5 (m/s)/mm with diameters in mm), giving ~1.1 m/s, which the 2 m/s clip then raised: every fibre had exactly 2.0 m/s. Fibre velocities now follow 0.95 + 0.05·d[µm] m/s (Nandedkar & Stålberg 1983; ~3.45 m/s at 50 µm), the same line `SurfaceFiberDispersion` uses; noise (SD 0.2 m/s) and clip (2–6 m/s) are unchanged. Intramuscular EMG uses these velocities; surface EMG uses the mean velocity and is unaffected.
+- **Large circular fibre layouts.** Fibre centres came from a 399 499-point table covering a square, of which only ~313 000 points lie inside the circle. Beyond that the outer ring was filled only at the diagonals, and beyond 399 499 the fibre count was silently capped. Layouts the table covers are unchanged (FDI defaults ≈ 54 000 fibres); larger counts now use a scrambled Halton sequence in the disc, seeded from MyoGen's generator, with a warning.
 
 ### Added
 
@@ -38,6 +43,8 @@ This release corrects the surface-EMG pipeline against Farina, Mesin, Martina & 
   The realised spreads are reported per motor unit in `SurfaceEMG.fiber_dispersion_report`. The default is off and leaves outputs bit-identical. `SurfaceFiberDispersion.literature_candidate()` gives a preset whose values come from the literature or are marked as assumptions. The `execution=` route and `use_unified=True` refuse an active configuration.
 - `IntramuscularEMG(nmj_coefficients=...)` selects the end-plate spreads (see Changed).
 - `benchmarks/semg_dispersion/`: paired sweeps of these options on a limb-like cylinder and on the default (FDI) muscle.
+- **Multilevel descending-drive optimiser.** `examples/finetune/01_optimize_dd_multilevel.py` fits the descending-drive network (and the Gfluctdv noise scale) to rate-coding targets over a trapezoidal ramp, sequentially or with parallel Optuna workers. Supporting modules: `myogen.utils.fr_optimization_targets` (Fuglevand, De Luca and experimental targets), `myogen.utils.ramp_analysis` and `myogen.utils.parallel_budget` (worker count from free RAM and CPUs).
+- `examples/finetune/fdi_spikes_force.py` maps excitation to % MVC with `ForceModel` on an MVC ramp and writes spike trains for force-matched trapezoids.
 
 ### Changed
 
@@ -51,6 +58,8 @@ This release corrects the surface-EMG pipeline against Farina, Mesin, Martina & 
 - Absolute sEMG amplitudes change by one to two orders of magnitude (amplitude no longer depends on conduction velocity). Anything calibrated in µV or mV against earlier outputs must be regenerated. To keep the earlier resistive (measured) skin layer, pass `skin_conductivity__S_per_m=4.88e-4 * pq.S / pq.m` to `Muscle`. To keep the earlier layers, pass `skin_thickness__mm=1.29 * pq.mm, fat_thickness__mm=0.3 * pq.mm`.
 - Pickled `SurfaceEMG` objects from earlier versions lack the new fibre properties; create them again.
 - The `execution=` MUAP disk-cache key changes, so templates cached by earlier versions are recomputed.
+- Pools that call `insert_Gfluctdv()` now produce noisy discharge: spike trains change, and descending-drive parameters fitted while the noise was silent should be refitted.
+- iEMG outputs change through the fibre conduction velocities (mean ~2.0 → ~3.45 m/s at the default diameter). Muscles with more than ~313 000 fibres get a different, now circular, fibre layout.
 - iEMG outputs change through the narrower end-plate spreads. Pass `IntramuscularEMG(..., nmj_coefficients="reference_code")` to reproduce earlier end-plates.
 
 ## [0.13.0] - 2026-10-28
