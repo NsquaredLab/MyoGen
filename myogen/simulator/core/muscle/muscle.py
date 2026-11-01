@@ -1,4 +1,5 @@
 import inspect
+import warnings
 from pathlib import Path
 from typing import Optional
 
@@ -7,7 +8,7 @@ import pandas as pd
 import skfmm
 from joblib import Parallel, delayed
 from scipy.integrate import dblquad
-from scipy.stats import chi2, multivariate_normal
+from scipy.stats import chi2, multivariate_normal, qmc
 from sklearn.neighbors import NearestNeighbors
 from tqdm import tqdm
 import quantities as pq
@@ -23,6 +24,21 @@ from myogen.utils.types import (
     Quantity__per_mm2,
 )
 from myogen.utils.decorators import beartowertype
+
+# Fibre conduction velocity against diameter: CV = 0.95 m/s + 0.05 m/s per um
+# (Nandedkar & Stalberg 1983; 3.7 m/s at 55 um). Shared with SurfaceFiberDispersion.
+CV_INTERCEPT__M_S = 0.95
+CV_PER_DIAMETER__M_S_PER_MM = 50.0
+
+
+def _halton_disc(n: int, rng: np.random.Generator) -> np.ndarray:
+    """``n`` quasi-uniform points in the unit disc: a scrambled Halton sequence in the square, kept inside the disc."""
+    sampler = qmc.Halton(d=2, scramble=True, rng=rng)
+    points = np.empty((0, 2))
+    while len(points) < n:
+        p = sampler.random(int((n - len(points)) * 4 / np.pi * 1.05) + 64) * 2 - 1
+        points = np.vstack([points, p[np.hypot(p[:, 0], p[:, 1]) <= 1]])
+    return points[:n]
 
 
 def _perform_fast_marching(speed_map: np.ndarray, seed_points: np.ndarray) -> np.ndarray:
@@ -342,11 +358,9 @@ class Muscle:
             self._muscle_fiber_diameters__mm, 20e-3 * pq.mm, 80e-3 * pq.mm
         )
 
-        # Generate conduction velocities based on fiber diameter
-        # CV = k * diameter + c, where k ≈ 4.5-6.0 (m/s)/mm, c ≈ 0.5-1.0 m/s
-        # Based on Hakansson (1956) and later studies
-        k = 5.5 * (pq.m / pq.s) / pq.mm  # (m/s)/mm
-        c = 0.8 * pq.m / pq.s  # m/s
+        # Generate conduction velocities based on fiber diameter (diameters are in mm)
+        k = CV_PER_DIAMETER__M_S_PER_MM * (pq.m / pq.s) / pq.mm  # (m/s)/mm
+        c = CV_INTERCEPT__M_S * pq.m / pq.s  # m/s
 
         # Add some biological variability
         cv_base = k * self._muscle_fiber_diameters__mm + c
@@ -480,19 +494,22 @@ class Muscle:
         )
         sorted_indices = np.argsort(dists)
 
-        if len(sorted_indices) >= self._number_of_muscle_fibers + 1:
+        # The table covers the square [-1.25, 1.25]^2, so only points inside the inscribed
+        # disc (~313 k) form a full circle; beyond that the outer ring holds only the corners.
+        n = self._number_of_muscle_fibers
+        if n + 1 <= len(sorted_indices) and dists[sorted_indices[n]].magnitude <= 1.25:
             self._muscle_fiber_centers__mm = (
-                self._muscle_fiber_centers__mm[sorted_indices[: self._number_of_muscle_fibers], :]
-                / dists[sorted_indices[self._number_of_muscle_fibers]]
+                self._muscle_fiber_centers__mm[sorted_indices[:n], :]
+                / dists[sorted_indices[n]]
                 * self._radius__mm
             )
         else:
-            self._muscle_fiber_centers__mm = (
-                self._muscle_fiber_centers__mm[sorted_indices, :]
-                / dists[sorted_indices[-1]]
-                * self._radius__mm
+            warnings.warn(
+                f"{n} fibres exceed the circular part of voronoi_pi1e5.csv; placing them on a "
+                "scrambled Halton sequence in the disc instead.",
+                stacklevel=2,
             )
-            self._number_of_muscle_fibers = len(self._muscle_fiber_centers__mm)
+            self._muscle_fiber_centers__mm = _halton_disc(n, get_random_generator()) * self._radius__mm
 
         # Remove fibers inside the bone boundary
         # Fibers should only exist in the muscle tissue, not in the bone core
