@@ -61,7 +61,7 @@ Bugs found against Farina et al. (2004), each with a test:
 
 ## 7. Before opening the PR
 
-- [ ] Full test suite on `calib/fdi-dd-main` (neuron subset: 64 passed after `001cbb105`).
+- [x] Full test suite on `calib/fdi-dd-main` with the Gfluctdv, CV and fibre-layout fixes: 387 passed, 2 skipped (2026-11-01, 29 min). Rerun after any further change.
 - [ ] CHANGELOG entries for §3 breaking changes, §4 ports, §6 decisions.
 - [ ] Commit messages: reword `f43287720` rationale in the PR description (see §3).
 - [ ] Push as DRohlf; author Devon Rohlf <devon.rohlf@fau.de>.
