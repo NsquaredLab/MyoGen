@@ -39,6 +39,7 @@ Bugs found against Farina et al. (2004), each with a test:
 - [x] Delsys 5-pin sensor and `_fs__Hz` harness: `d982bc93f`.
 - [x] `e4d1e8d7e` optional Rosenfalck IAP length scale `SurfaceEMG(iap_lambda__per_mm=1.0)`; default unchanged (see §6). Tests: exact cylinder at λ 0.7 / 0.5, passed to every fibre on both routes, invalid values and `use_unified=True` refused. CHANGELOG entry included.
 - [x] Roeleveld 1997 skin-σ benchmark (`benchmarks/semg_roeleveld1997/`, bench only) included in this PR, Devon 2026-11-01: it is the evidence for the 1 S/m default. Its 5 commits sit on `fix/semg-amplitude-scale` after the IAP λ commit.
+- [x] `028a14362` citation fix: "Konstantin et al. 2020" is Akhmadeev, Yu, Le Carpentier, Aoustin & Farina (2020, IEEE TBME 67:2005); docstrings, comments, example and CHANGELOG corrected, `konstantin` threshold mode name kept. On `fix/semg-amplitude-scale`; `calib/fdi-dd-main` still to be rebased onto it (after the running calibration).
 
 ## 4. Ported from the fresh-trunk line (fixes that never reached main)
 
