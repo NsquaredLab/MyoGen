@@ -314,7 +314,8 @@ class IntramuscularEMG:
         Returns
         -------
         INTRAMUSCULAR_MUAP__Block
-            Intramuscular MUAP shapes for all motor units stored in a neo.Block.
+            Intramuscular MUAP shapes for all motor units stored in a neo.Block, in mV
+            (tagged ``pq.dimensionless`` for backward compatibility).
         """
         if not self._motor_units:
             raise ValueError("Must call _initialize_motor_units() first")
@@ -516,8 +517,8 @@ class IntramuscularEMG:
         Returns
         -------
         INTRAMUSCULAR_EMG__Block
-            Intramuscular EMG signals for the electrode array stored in a neo.Block.
-            Results are stored in the `intramuscular_emg__Block` property after execution.
+            Intramuscular EMG signals for the electrode array stored in a neo.Block, in mV
+            (tagged ``pq.dimensionless`` for backward compatibility). Results are stored in the `intramuscular_emg__Block` property after execution.
 
         Raises
         ------

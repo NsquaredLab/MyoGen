@@ -55,8 +55,8 @@ def compute_intramuscular_kernel(
     z_grid: np.ndarray,
     electrode_z: np.ndarray,
     r: float,
-    sigma_r: float = 63.0,
-    sigma_z: float = 330.0,
+    sigma_r: float = 0.063,
+    sigma_z: float = 0.33,
 ) -> np.ndarray:
     """
     Compute the intramuscular volume conductor kernel using the Green's function.
@@ -72,9 +72,9 @@ def compute_intramuscular_kernel(
         Electrode z-positions in mm, shape (n_electrodes,).
     r : float
         Radial distance from fiber to electrode in mm.
-    sigma_r : float, default=63.0
+    sigma_r : float, default=0.063
         Radial conductivity in S/m.
-    sigma_z : float, default=330.0
+    sigma_z : float, default=0.33
         Longitudinal conductivity in S/m.
 
     Returns

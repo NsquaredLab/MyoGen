@@ -98,8 +98,8 @@ def get_elementary_current_response(
     z: np.ndarray,
     z_electrode: float,
     r: np.ndarray,
-    sigma_r: float = 63.0,  # S/m
-    sigma_z: float = 330.0,  # S/m
+    sigma_r: float = 0.063,  # S/m
+    sigma_z: float = 0.33,  # S/m
     xp=np,
 ) -> np.ndarray:
     """
@@ -117,9 +117,9 @@ def get_elementary_current_response(
         Electrode position along z-axis in mm
     r : np.ndarray
         Radial distance from fiber to electrode in mm
-    sigma_r : float, default=63.0
+    sigma_r : float, default=0.063
         Radial conductivity in S/m (from Andreassen & Rosenfalck 1980) [andreassenrosenfalck1980]
-    sigma_z : float, default=330.0
+    sigma_z : float, default=0.33
         Longitudinal conductivity in S/m (from Andreassen & Rosenfalck 1980) [andreassenrosenfalck1980]
     xp : module, default=np
         Array backend (numpy or cupy)
@@ -127,12 +127,13 @@ def get_elementary_current_response(
     Returns
     -------
     np.ndarray
-        Elementary current response (transfer function)
+        Transfer function in Ω: potential (mV) per mA of point current. Multiply the current per unit length from ``get_current_density``
+        (mA/mm) by this and by the spatial step dz (mm), and sum over z, to get the SFAP in mV.
     """
-    # ---- FIXED UNIT CONVERSIONS ----
-    # Convert conductivities from S/m to S/mm to match spatial units (mm)
-    sigma_r_S_per_mm = sigma_r / 1000.0  # CORRECTED: convert S/m → S/mm
-    sigma_z_S_per_mm = sigma_z / 1000.0  # CORRECTED: convert S/m → S/mm
+    # Unit system of the iEMG kernel: mm, mV, mA. 1 S/m = 1e-3 S/mm. The defaults were
+    # 63 / 330 "S/m" until 0.13.0 (1000x the tissue values), which made SFAPs 1000x too small.
+    sigma_r_S_per_mm = sigma_r / 1000.0
+    sigma_z_S_per_mm = sigma_z / 1000.0
 
     # Normalize inputs to computation backend (prevents numpy/cupy mixing)
     z = xp.asarray(z)
@@ -276,14 +277,17 @@ def get_current_density(
 
     # Compute psi (transmembrane current derivative)
     if L1 >= L2:
-        psi = -4 * get_tm_current_dz(-2 * (Z - zi - v * T), xp=xp)
+        # psi = dV_m/dz for the wave travelling towards +z, zeta = v t - (z - zi) in mm (Rosenfalck
+        # length scale 1 mm, as in the sEMG model). Until 0.13.0 this read -4 * V'(-2 * arg): the chain
+        # rule counted twice and the IAP compressed to half its length (8x the current).
+        psi = -get_tm_current_dz(-(Z - zi - v * T), xp=xp)
         longest_wave = xp.diff(psi, axis=0) / dz
         longest_wave *= tendon_terminator(Z[:-1, :] - zi - L1 / 2, L1)
         # Explicit bool→float64 cast required: CuPy does not support
         # implicit multiplication of bool arrays with float arrays.
         longest_wave *= ((Z[:-1, :] - zi) / v > 0).astype(xp.float64)
     else:
-        psi = 4 * get_tm_current_dz(-2 * (-Z + zi - v * T), xp=xp)
+        psi = get_tm_current_dz(-(-Z + zi - v * T), xp=xp)
         longest_wave = xp.diff(psi, axis=0) / dz
         longest_wave *= tendon_terminator(Z[:-1, :] - zi + L2 / 2, L2)
         longest_wave *= ((-Z[:-1, :] + zi) / v > 0).astype(xp.float64)  # bool→float64
@@ -296,10 +300,13 @@ def get_current_density(
 
     if L1 >= L2:
         shortest_wave *= tendon_terminator(Z[:-1, :] - zi + L2 / 2, L2)
-        iap = longest_wave - shortest_wave
+        # The mirrored array is already d2V/dz2 of the opposite wave (a second derivative is
+        # unchanged by reflection), so the two waves add. Until 0.13.0 they were subtracted,
+        # which inverted the wave travelling away from the longer half.
+        iap = longest_wave + shortest_wave
     else:
         shortest_wave *= tendon_terminator(Z[:-1, :] - zi - L1 / 2, L1)
-        iap = shortest_wave - longest_wave
+        iap = shortest_wave + longest_wave
 
     # Suppress endplate density if required
     if suppress_endplate_density:
@@ -315,7 +322,8 @@ def get_current_density(
     # Compute cross-sectional area in mm²
     area_mm2 = xp.pi * (d / 2) ** 2  # CORRECTED: removed extra /4
 
-    # Scale current density by intracellular conductivity and fiber cross-section area
+    # Scale current density by intracellular conductivity and fiber cross-section area:
+    # transmembrane current per unit length, S/mm * mm^2 * mV/mm^2 = mA/mm
     iap *= sigma_i * area_mm2
 
     return iap
@@ -329,7 +337,7 @@ def get_current_density_fast(
     L1: float,
     L2: float,
     v: float,
-    d: float = 55e-6,
+    d: float = 55e-3,
     suppress_endplate_density: bool = True,
     endplate_width: float = 0.5,
 ) -> np.ndarray:
@@ -355,7 +363,7 @@ def get_current_density_fast(
         Length from endplate to negative tendon in mm
     v : float
         Conduction velocity in mm/s
-    d : float, default=55e-6
+    d : float, default=55e-3
         Fiber diameter in mm
     suppress_endplate_density : bool, default=True
         Whether to suppress endplate region
