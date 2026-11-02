@@ -14,7 +14,8 @@ threshold along one ladder across the whole pool (design: docs/superpowers/specs
   Table 2]; ``sigma_within`` so that the pool's fibre log-SD equals that of Polgar's two-type
   mixture with ``type_log_sd`` per type (0.2, a modelling assumption).
 - Fibres scatter log-normally about their unit's mean; the combined log-deviation is truncated at
-  3 SD (a modelling assumption), and the diameters are scaled to the mixture mean (57.2 um).
+  3 SD (a modelling assumption), and the diameters are scaled to the mixture mean at the realised type
+  fraction (57.2 um at 57.4 %), so the type means stay at 50.0 / 67.0 um in small pools.
 
 A per-type ladder would make CV drop at the type boundary, against the linear CV-threshold
 relation measured with HD-sEMG [delvecchio2018 p. 2].
@@ -111,13 +112,16 @@ def fiber_type_ladder(
             f"fiber_type_ladder: sigma_within^2 = {within_var:.4f} <= 0; type_log_sd {type_log_sd} is too "
             "small for the spread the type means already need"
         )
+    # The pool mean follows the realised fraction (a unit's worth off f in small pools), so the type
+    # means stay at m1 / m2.
+    realised = float(n[type_i].sum() / n.sum())
     return FiberTypeLadder(
         unit_types=unit_types,
         unit_z=unit_z,
         sigma_between=sigma_between,
         sigma_within=float(np.sqrt(within_var)),
-        type_i_fiber_fraction=float(n[type_i].sum() / n.sum()),
-        target_mean__um=f * m1 + (1 - f) * m2,
+        type_i_fiber_fraction=realised,
+        target_mean__um=realised * m1 + (1 - realised) * m2,
     )
 
 

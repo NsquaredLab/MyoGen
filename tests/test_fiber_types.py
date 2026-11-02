@@ -34,7 +34,8 @@ def test_diameters_keep_polgar_means_and_spread(rng):
     t = lad.unit_types[assignment]
     assert d[t == 1].mean() == pytest.approx(50.0, abs=0.5)
     assert d[t == 2].mean() == pytest.approx(67.0, abs=0.5)
-    assert d.mean() == pytest.approx(0.574 * 50.0 + 0.426 * 67.0, abs=0.05)
+    f = lad.type_i_fiber_fraction
+    assert d.mean() == pytest.approx(f * 50.0 + (1 - f) * 67.0, abs=0.05)
     assert np.log(d).std() == pytest.approx(np.sqrt(0.04 + 0.574 * 0.426 * np.log(67 / 50) ** 2), abs=0.01)
 
 
@@ -69,3 +70,15 @@ def test_degenerate_typing_raises(counts, ths, f):
 def test_too_small_type_spread_raises():
     with pytest.raises(ValueError, match="sigma_within"):
         fiber_type_ladder(n, thresholds, type_log_sd=0.01)
+
+
+def test_type_means_hold_when_the_realised_fraction_is_coarse(rng):
+    """With few units the type I fraction lands a unit's worth off 57.4 %; the type means must
+    still be 50.0 / 67.0 um, so the pool mean follows the realised fraction."""
+    coarse = np.round(np.geomspace(40, 1600, 12)).astype(int)
+    lad = fiber_type_ladder(coarse, np.geomspace(1, 30, 12))
+    assert abs(lad.type_i_fiber_fraction - 0.574) > 0.01
+    d = draw_fiber_diameters__um(lad, np.repeat(np.arange(12), coarse), rng)
+    t = lad.unit_types[np.repeat(np.arange(12), coarse)]
+    assert d[t == 1].mean() == pytest.approx(50.0, abs=0.5)
+    assert d[t == 2].mean() == pytest.approx(67.0, abs=0.5)

@@ -14,6 +14,11 @@ from tqdm import tqdm
 import quantities as pq
 
 from myogen import get_random_generator
+from myogen.simulator.core.muscle.fiber_types import (
+    FiberTypeLadder,
+    draw_fiber_diameters__um,
+    fiber_type_ladder,
+)
 from myogen.utils.types import (
     RECRUITMENT_THRESHOLDS__ARRAY,
     Quantity__S_per_m,
@@ -132,13 +137,25 @@ class Muscle:
         of Nishizono et al. 1990 [4] [nishizono1990 p. 77], which ranged from 3.2 to 5.0 m/s. The units were
         recruited between 5 and 42 % MVC [nishizono1990 p. 78]. Used by surface EMG; the per-fibre
         velocities of intramuscular EMG follow ``mean_fiber_conduction_velocity__m_per_s``.
-    mean_fiber_conduction_velocity__m_per_s, sd_fiber_conduction_velocity__m_per_s : float, default=3.89, 0.50
-        Mean and SD of the per-fibre conduction velocities (intramuscular EMG). Default 3.89 +/- 0.50 m/s, the
-        motor-unit CV from high-density surface EMG of tibialis anterior units recruited at 0-30 % MVC
-        (Del Vecchio et al. 2018) [delvecchio2018 p. 2]. Fibres are ordered by diameter through the
-        Nandedkar & Stalberg line [nandedkar1983 p. 163], with 0.2 m/s of scatter (a modelling assumption),
-        and the result is rescaled to this mean and SD; at the FDI diameters this is an effective slope of
-        ~0.035 m/s per um.
+    mean_fiber_conduction_velocity__m_per_s, sd_fiber_conduction_velocity__m_per_s : float, default=4.32, 0.71
+        Mean and SD of the per-fibre conduction velocities (intramuscular EMG). Default 4.32 +/- 0.71 m/s, the
+        motor-unit CV from high-density surface EMG of all tibialis anterior units identified up to 70 % MVC
+        (range 2.78-6.21 m/s; Del Vecchio et al. 2018) [delvecchio2018 p. 2], taken over fibres. Fibres are
+        ordered by diameter through the Nandedkar & Stalberg line [nandedkar1983 p. 163], with 0.2 m/s of
+        scatter (a modelling assumption), and the result is rescaled to this mean and SD. Because diameters rise
+        with recruitment threshold (``type_*`` arguments), unit-mean CVs rise with threshold too (FDI default:
+        ~3.9 +/- 0.5 m/s over units). Every fibre is bounded to 2-6 m/s (a modelling assumption; ~2 % of fibres
+        sit at 6 m/s).
+    type_i_fiber_fraction : float, default=0.574
+        Fraction of fibres in type I units; FDI 57.4 % [polgar1973 p. 312 Table 4]. Units are typed in
+        recruitment order: the lowest-threshold units are type I until they hold this fraction. In the default
+        FDI muscle this makes ~86 % of units type I, because fibres concentrate in the large, late units.
+        Strict order is a simplification [garnett1979 p. 42].
+    type_mean_fiber_diameters__um : tuple of float, default=(50.0, 67.0)
+        Mean fibre diameter of type I and type II fibres, FDI [polgar1973 p. 310 Table 2].
+    type_fiber_diameter_log_sd : float, default=0.2
+        Log-SD of fibre diameter within each type (a modelling assumption). Unit mean diameters rise with
+        threshold along one ladder across the pool; see ``myogen.simulator.core.muscle.fiber_types``.
     mean_fiber_length__mm : float, default=31.7
         Mean fiber length in mm. Default is the first dorsal interosseous (FDI) value of Jacobson et al. 1992 [3]
         (Table 1) [jacobson1992 Table 1].
@@ -192,6 +209,10 @@ class Muscle:
         Muscle fiber diameters in mm. Available after _generate_fiber_properties().
     muscle_fiber_conduction_velocities__mm_per_s : np.ndarray
         Muscle fiber conduction velocities in mm/s. Available after _generate_fiber_properties().
+    motor_unit_fiber_types, muscle_fiber_types : np.ndarray
+        Fibre type (1 or 2) per unit and per fibre. Available after _generate_fiber_properties().
+    fiber_type_ladder : FiberTypeLadder
+        Unit types, ladder positions and derived spreads. Available after _generate_fiber_properties().
     assignment : np.ndarray
         Motor unit assignment for each muscle fiber. Available after assign_mfs2mns().
     number_of_muscle_fibers : int
@@ -232,8 +253,11 @@ class Muscle:
         fiber_density__fibers_per_mm2: Quantity__per_mm2 = 350 * pq.mm**-2,
         max_innervation_area_to_total_muscle_area__ratio: float = 1 / 4,
         mean_conduction_velocity__m_per_s: Quantity__m_per_s = 4.2 * pq.m / pq.s,
-        mean_fiber_conduction_velocity__m_per_s: Quantity__m_per_s = 3.89 * pq.m / pq.s,
-        sd_fiber_conduction_velocity__m_per_s: Quantity__m_per_s = 0.50 * pq.m / pq.s,
+        mean_fiber_conduction_velocity__m_per_s: Quantity__m_per_s = 4.32 * pq.m / pq.s,
+        sd_fiber_conduction_velocity__m_per_s: Quantity__m_per_s = 0.71 * pq.m / pq.s,
+        type_i_fiber_fraction: float = 0.574,
+        type_mean_fiber_diameters__um: tuple[float, float] = (50.0, 67.0),
+        type_fiber_diameter_log_sd: float = 0.2,
         mean_fiber_length__mm: Quantity__mm = 31.7 * pq.mm,
         var_fiber_length__mm: Quantity__mm = 2.8 * pq.mm,
         radius_bone__mm: Quantity__mm = 0 * pq.mm,
@@ -275,6 +299,9 @@ class Muscle:
         self._mean_conduction_velocity__m_s = mean_conduction_velocity__m_per_s
         self._mean_fiber_conduction_velocity__m_s = mean_fiber_conduction_velocity__m_per_s
         self._sd_fiber_conduction_velocity__m_s = sd_fiber_conduction_velocity__m_per_s
+        self._type_i_fiber_fraction = type_i_fiber_fraction
+        self._type_mean_fiber_diameters__um = type_mean_fiber_diameters__um
+        self._type_fiber_diameter_log_sd = type_fiber_diameter_log_sd
         self._mean_fiber_length__mm = mean_fiber_length__mm
         self._var_fiber_length__mm = var_fiber_length__mm
         self._radius_bone__mm = radius_bone__mm
@@ -301,6 +328,7 @@ class Muscle:
         self._assignment: Optional[np.ndarray] = None
         self._muscle_fiber_diameters__mm: Optional[Quantity__mm] = None
         self._muscle_fiber_conduction_velocities__mm_per_s: Optional[Quantity__mm_per_s] = None
+        self._fiber_type_ladder: Optional[FiberTypeLadder] = None
         self._number_of_muscle_fibers: Optional[int] = None
         self._muscle_border__mm: Optional[Quantity__mm] = None
 
@@ -354,28 +382,31 @@ class Muscle:
                 "Call generate_muscle_fiber_centers() before generating fiber properties."
             )
 
+        if self._assignment is None:
+            raise ValueError(
+                "Fibres must be assigned to motor units first. "
+                "Call assign_mfs2mns() before generating fiber properties."
+            )
+
         n_fibers = len(self._muscle_fiber_centers__mm)
 
-        # FDI fibre types: 57.4 % type I [polgar1973 p. 312 Table 4], mean diameters type I 50.0 um
-        # and type II 67.0 um [polgar1973 p. 310 Table 2] (mean 57.2 um). Polgar gives no
-        # within-muscle spread (Table 5 limits are between subjects [polgar1973 p. 309]), so each
-        # type is log-normal with log-SD 0.2, truncated at 3 log-SD about its median (type I
-        # 26.9-89.3 um, type II 36.1-119.7 um); spread and bound are modelling assumptions. Types are
-        # drawn per fibre, independent of the motor unit. Replaces the 20-80 um clip attributed to
-        # Brooke & Kaiser 1970 [brooke1970], which held ~10 % of fibres at 80 um; healthy quadriceps
-        # reaches 95 um [blijham2006 p. 1840].
-        type_i_fraction = 0.574
-        type_mean_diameters__mm = np.array([50.0e-3, 67.0e-3])
-        log_sd = 0.2
-        rng = get_random_generator()
-        is_type_ii = rng.random(n_fibers) >= type_i_fraction
-        log_median = np.log(type_mean_diameters__mm[is_type_ii.astype(int)]) - log_sd**2 / 2
-        z = truncnorm.rvs(-3.0, 3.0, size=n_fibers, random_state=rng)
-        self._muscle_fiber_diameters__mm = np.exp(log_median + log_sd * z) * pq.mm
+        # Fibre types by motor unit, with unit mean diameters rising with recruitment threshold along one
+        # ladder across the pool (fiber_types.py; FDI type I 57.4 % [polgar1973 p. 312 Table 4], type means
+        # 50.0 / 67.0 um [polgar1973 p. 310 Table 2]).
+        assignment = self._assignment.astype(int)
+        self._fiber_type_ladder = fiber_type_ladder(
+            np.bincount(assignment, minlength=self._number_of_neurons),
+            np.asarray(self._recruitment_thresholds),
+            type_i_fiber_fraction=self._type_i_fiber_fraction,
+            type_mean_diameters__um=tuple(self._type_mean_fiber_diameters__um),
+            type_log_sd=self._type_fiber_diameter_log_sd,
+        )
+        d_um = draw_fiber_diameters__um(self._fiber_type_ladder, assignment, get_random_generator())
+        self._muscle_fiber_diameters__mm = d_um * 1e-3 * pq.mm
 
         # Fibre CV: ordered by diameter through the CV-diameter line [nandedkar1983 p. 163] plus 0.2 m/s of
-        # scatter (a modelling assumption), then rescaled to 3.89 +/- 0.50 m/s, the HD-sEMG CV of units
-        # recruited at 0-30 % MVC [delvecchio2018 p. 2]. The line's own anchor (3.7 m/s at 55 um, biceps
+        # scatter (a modelling assumption), then rescaled over fibres to 4.32 +/- 0.71 m/s, the HD-sEMG CV of
+        # all units identified up to 70 % MVC [delvecchio2018 p. 2]. The line's own anchor (3.7 m/s at 55 um, biceps
         # needle data [nandedkar1983 p. 163]) is not used.
         def as_m_s(value):
             return float(pq.Quantity(value, pq.m / pq.s).rescale(pq.m / pq.s).magnitude)
@@ -390,7 +421,7 @@ class Muscle:
             + as_m_s(self._sd_fiber_conduction_velocity__m_s) * z_cv
         ) * pq.m / pq.s
 
-        # Sanity bounds 2-6 m/s (a modelling assumption, not sourced; at 3.89 +/- 0.50 m/s they rarely bind)
+        # Sanity bounds 2-6 m/s (a modelling assumption, not sourced; at 4.32 +/- 0.71 m/s ~2 % of fibres sit at 6 m/s)
         self._muscle_fiber_conduction_velocities__mm_per_s = np.clip(
             self._muscle_fiber_conduction_velocities__mm_per_s, 2.0 * pq.m / pq.s, 6.0 * pq.m / pq.s
         )
@@ -1067,6 +1098,26 @@ class Muscle:
                 "Call _generate_fiber_properties() first (usually done automatically)."
             )
         return self._muscle_fiber_conduction_velocities__mm_per_s
+
+    @property
+    def fiber_type_ladder(self) -> FiberTypeLadder:
+        """Unit fibre types, ladder positions and derived diameter spreads."""
+        if self._fiber_type_ladder is None:
+            raise ValueError(
+                "Muscle fiber properties not computed. "
+                "Call _generate_fiber_properties() first (usually done automatically)."
+            )
+        return self._fiber_type_ladder
+
+    @property
+    def motor_unit_fiber_types(self) -> np.ndarray:
+        """Fibre type (1 or 2) of each motor unit, in pool order."""
+        return self.fiber_type_ladder.unit_types
+
+    @property
+    def muscle_fiber_types(self) -> np.ndarray:
+        """Fibre type (1 or 2) of each fibre, aligned with ``muscle_fiber_diameters__mm``."""
+        return self.fiber_type_ladder.unit_types[self._assignment.astype(int)]
 
     @property
     def assignment(self) -> np.ndarray:
