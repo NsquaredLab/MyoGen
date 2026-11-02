@@ -89,6 +89,14 @@ Bugs found against Farina et al. (2004), each with a test:
       - The input spread across sizes is the lever for the onion skin and the high-force rates, but it raises the ceiling. Recruitment ceiling and onion skin trade off through the same weighting; only a recalibration with p free can test both together.
     - Powers2017 cell model as configured: rates 3–14 Hz (f-I 0.02–0.4 Hz/nA), largest cell blocks at 4× rheobase. Not usable for FDI without re-parameterisation.
     - FDI ΔF benchmark: 4.80 [4.31, 5.30] pps (Beauchamp et al. 2023, full-text table); model 0.2.
+- [x] Recalibrated with the DD weight exponent p free (`15d074533`, `--fit-weight-exponent`, p in [0, 1]; otherwise the `_human59` setup; `_human59_wexp`, 150 trials, 123 min). Best trial 85, error 1.25 (`_human59`: 1.79):
+  - dd_neurons 147, conn_prob 0.36, drive 760 Hz, Gfluctdv 0.36, **p 0.67**, ISI CV 20.3 %.
+  - Ceiling: last unit 62.9 % MVC, ranked unit 62.8 % (target 59). `fdi_spikes_force.py` (wiring redrawn): 66.9 / 63.5 %.
+  - High-force rates 22.8 / 36.7 Hz at 40 / 80 % MVC (`_human59` 20.6 / 33.5; De Luca 25.3 / 41.4): about 45 % of the gap closed. Force script: 21.9 / 36.0.
+  - Onion skin at 80 % MVC (force script, active units by threshold quartile, low to high): 37.3 / 37.2 / 37.2 / 32.5 Hz (`_human59`: 32.3 / 32.5 / 33.7 / 33.7). At MVC 55 → 51 Hz (`_human59` 50 → 54).
+  - Checkpoints (sim/target units; Hz): 5 % 61/55, 9.3/11.2; 10 % 81/76, 12.9/13.9; 20 % 99/97, 18.9/18.9; 25 % 107/104, 21.1/21.1; 30 % 111/110, 23.8/23.2. 25 % MVC at excitation 0.188 (103 units, 16.7 Hz).
+  - Trade-off across the 54 trials with error < 3 (median ranked ceiling; 40 / 80 % rates): p < 0.3 75.9 %, 25.0 / 41.1 Hz; 0.3–0.5 68.5 %, 24.2 / 39.5; 0.5–0.7 63.3 %, 23.1 / 36.7; 0.7–0.9 60.1 %, 22.3 / 36.0; ≥ 0.9 61.6 %, 20.5 / 31.5. No trial meets both 59 % and De Luca's rates; those with ceiling ≤ 61 % and 80 % rates above 41 Hz miss the checkpoint targets (error 3.5–7).
+  - p is a modelling assumption (how much descending input favours small motor neurons); no direct literature value. Decision for Devon: `_human59_wexp` (better rates and overall fit, ceiling 4–8 pp above 59 %) or `_human59` (ceiling met, rates ~19 % low, no onion skin).
 - [ ] Out of scope, library: the NERLab pool's rheobase spans only 3.6× for a 48× threshold range (yaml interpolation curves).
 - [ ] Out of scope, library: NERLab motor neurons rest at ~0 mV but `alpha_mn_default.yaml` initialises them at −67 mV (start-up transient).
 - [ ] Out of scope, library: inhibitory synapses use −75 mV (absolute frame), i.e. 75 mV below the NERLab rest; any inhibition onto NERLab motor neurons is far too strong.
