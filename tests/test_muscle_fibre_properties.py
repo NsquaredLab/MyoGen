@@ -15,25 +15,31 @@ def _muscle(radius__mm, density=None, **kw):
     return Muscle(recruitment_thresholds=thr, radius__mm=radius__mm * pq.mm, **kw)
 
 
-@pytest.mark.parametrize("mean_cv", [4.2, 3.6])
-def test_fibre_cv_follows_the_diameter_slope_about_the_muscle_mean(mean_cv):
-    """Slope 0.05 m/s per um of diameter (Nandedkar & Stalberg 1983), anchored so the fibre mean is
-    ``mean_conduction_velocity__m_per_s`` (FDI 4.2 m/s, Nishizono et al. 1990).
+@pytest.mark.parametrize("kw, mean_cv, sd_cv", [
+    ({}, 3.89, 0.50),
+    ({"mean_fiber_conduction_velocity__m_per_s": 4.2 * pq.m / pq.s,
+      "sd_fiber_conduction_velocity__m_per_s": 0.4 * pq.m / pq.s}, 4.2, 0.4),
+])
+def test_fibre_cv_has_the_requested_distribution_ordered_by_diameter(kw, mean_cv, sd_cv):
+    """Fibre CVs (intramuscular EMG) default to 3.89 +/- 0.50 m/s, the surface (HD-sEMG) CV of
+    tibialis anterior units recruited at 0-30 % MVC (Del Vecchio et al. 2018), ordered by fibre
+    diameter through the Nandedkar & Stalberg line. The muscle mean CV used by surface EMG is separate.
 
     With diameters in mm, the old slope of 5.5 (m/s)/mm gave ~1.1 m/s and the 2 m/s clip
     set every fibre to exactly 2.0 m/s.
     """
     set_random_seed(1)
-    m = _muscle(4, mean_conduction_velocity__m_per_s=mean_cv * pq.m / pq.s)
+    m = _muscle(4, mean_conduction_velocity__m_per_s=5.0 * pq.m / pq.s, **kw)
     m.generate_muscle_fiber_centers(verbose=False)
     m._generate_fiber_properties()
     d_um = np.asarray(m._muscle_fiber_diameters__mm.rescale(pq.mm)) * 1e3
     cv = np.asarray(m._muscle_fiber_conduction_velocities__mm_per_s.rescale(pq.m / pq.s))
 
     assert np.mean(np.isclose(cv, 2.0)) < 0.05
-    assert np.mean(cv) == pytest.approx(mean_cv, abs=0.03)
-    assert np.polyfit(d_um, cv, 1)[0] == pytest.approx(0.05, abs=0.003)
+    assert np.mean(cv) == pytest.approx(mean_cv, abs=0.01)
+    assert np.std(cv) == pytest.approx(sd_cv, abs=0.01)
     assert np.corrcoef(d_um, cv)[0, 1] > 0.9
+    assert float(m.mean_conduction_velocity__m_s.rescale(pq.m / pq.s)) == 5.0
 
 
 def test_fibre_diameters_are_the_fdi_type_mixture():

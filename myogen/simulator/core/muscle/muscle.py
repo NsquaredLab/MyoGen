@@ -130,7 +130,15 @@ class Muscle:
     mean_conduction_velocity__m_per_s : float, default=4.2
         Mean conduction velocity in m/s. Default is set to 4.2 m/s, the mean (SD 0.5) over 50 FDI motor units
         of Nishizono et al. 1990 [4] [nishizono1990 p. 77], which ranged from 3.2 to 5.0 m/s. The units were
-        recruited between 5 and 42 % MVC [nishizono1990 p. 78].
+        recruited between 5 and 42 % MVC [nishizono1990 p. 78]. Used by surface EMG; the per-fibre
+        velocities of intramuscular EMG follow ``mean_fiber_conduction_velocity__m_per_s``.
+    mean_fiber_conduction_velocity__m_per_s, sd_fiber_conduction_velocity__m_per_s : float, default=3.89, 0.50
+        Mean and SD of the per-fibre conduction velocities (intramuscular EMG). Default 3.89 +/- 0.50 m/s, the
+        motor-unit CV from high-density surface EMG of tibialis anterior units recruited at 0-30 % MVC
+        (Del Vecchio et al. 2018) [delvecchio2018 p. 2]. Fibres are ordered by diameter through the
+        Nandedkar & Stalberg line [nandedkar1983 p. 163], with 0.2 m/s of scatter (a modelling assumption),
+        and the result is rescaled to this mean and SD; at the FDI diameters this is an effective slope of
+        ~0.035 m/s per um.
     mean_fiber_length__mm : float, default=31.7
         Mean fiber length in mm. Default is the first dorsal interosseous (FDI) value of Jacobson et al. 1992 [3]
         (Table 1) [jacobson1992 Table 1].
@@ -224,6 +232,8 @@ class Muscle:
         fiber_density__fibers_per_mm2: Quantity__per_mm2 = 350 * pq.mm**-2,
         max_innervation_area_to_total_muscle_area__ratio: float = 1 / 4,
         mean_conduction_velocity__m_per_s: Quantity__m_per_s = 4.2 * pq.m / pq.s,
+        mean_fiber_conduction_velocity__m_per_s: Quantity__m_per_s = 3.89 * pq.m / pq.s,
+        sd_fiber_conduction_velocity__m_per_s: Quantity__m_per_s = 0.50 * pq.m / pq.s,
         mean_fiber_length__mm: Quantity__mm = 31.7 * pq.mm,
         var_fiber_length__mm: Quantity__mm = 2.8 * pq.mm,
         radius_bone__mm: Quantity__mm = 0 * pq.mm,
@@ -263,6 +273,8 @@ class Muscle:
             max_innervation_area_to_total_muscle_area__ratio
         )
         self._mean_conduction_velocity__m_s = mean_conduction_velocity__m_per_s
+        self._mean_fiber_conduction_velocity__m_s = mean_fiber_conduction_velocity__m_per_s
+        self._sd_fiber_conduction_velocity__m_s = sd_fiber_conduction_velocity__m_per_s
         self._mean_fiber_length__mm = mean_fiber_length__mm
         self._var_fiber_length__mm = var_fiber_length__mm
         self._radius_bone__mm = radius_bone__mm
@@ -361,19 +373,22 @@ class Muscle:
         z = truncnorm.rvs(-3.0, 3.0, size=n_fibers, random_state=rng)
         self._muscle_fiber_diameters__mm = np.exp(log_median + log_sd * z) * pq.mm
 
-        # Fibre CV: the slope of the CV-diameter line [nandedkar1983 p. 163] about the muscle mean CV
-        # (FDI 4.2 m/s [nishizono1990 p. 77]). The line's own anchor (3.7 m/s at 55 um, biceps
-        # [nandedkar1983 p. 163]) gives 3.8 m/s at the FDI diameters; the measured fit of Blijham et
-        # al. 2006 gives 3.3 m/s [blijham2006 p. 1840], so only the slope is used.
-        k = CV_PER_DIAMETER__M_S_PER_MM * (pq.m / pq.s) / pq.mm  # (m/s)/mm
-        mean_cv = float(pq.Quantity(self._mean_conduction_velocity__m_s, pq.m / pq.s).rescale(pq.m / pq.s).magnitude)
-        d_mean = np.mean(self._muscle_fiber_diameters__mm)
-        cv_base = k * (self._muscle_fiber_diameters__mm - d_mean) + mean_cv * pq.m / pq.s
+        # Fibre CV: ordered by diameter through the CV-diameter line [nandedkar1983 p. 163] plus 0.2 m/s of
+        # scatter (a modelling assumption), then rescaled to 3.89 +/- 0.50 m/s, the HD-sEMG CV of units
+        # recruited at 0-30 % MVC [delvecchio2018 p. 2]. The line's own anchor (3.7 m/s at 55 um, biceps
+        # needle data [nandedkar1983 p. 163]) is not used.
+        def as_m_s(value):
+            return float(pq.Quantity(value, pq.m / pq.s).rescale(pq.m / pq.s).magnitude)
 
-        # Fibre-to-fibre variability about the line, SD 0.2 m/s (~5 % of the mean; a modelling assumption)
-        cv_noise = get_random_generator().normal(0, 0.2, n_fibers) * pq.m / pq.s
-
-        self._muscle_fiber_conduction_velocities__mm_per_s = cv_base + cv_noise
+        k = CV_PER_DIAMETER__M_S_PER_MM * 1e-3  # (m/s)/um
+        d_um = np.asarray(self._muscle_fiber_diameters__mm.rescale(pq.mm).magnitude) * 1e3
+        raw_cv = k * d_um + get_random_generator().normal(0, 0.2, n_fibers)
+        spread = np.std(raw_cv)
+        z_cv = (raw_cv - np.mean(raw_cv)) / spread if spread > 0 else np.zeros(n_fibers)
+        self._muscle_fiber_conduction_velocities__mm_per_s = (
+            as_m_s(self._mean_fiber_conduction_velocity__m_s)
+            + as_m_s(self._sd_fiber_conduction_velocity__m_s) * z_cv
+        ) * pq.m / pq.s
 
         # Ensure velocities are within physiological range (2-6 m/s)
         self._muscle_fiber_conduction_velocities__mm_per_s = np.clip(
