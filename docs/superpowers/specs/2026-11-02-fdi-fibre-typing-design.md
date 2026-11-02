@@ -42,19 +42,19 @@ Sources and limits of strict order:
   - Type S units were small, slow and fatigue resistant; FR fast, intermediate, resistant; FF fast, large, fatigable [garnett1979 p. 33].
   - Glycogen depletion: S units were made of type 1 fibres, FF units of type 2b [garnett1979 p. 39–41].
   - Ranking units by size: "at low force levels both type S and type FR unit would be recruited. Above about 30 % of the total cumulative twitch tension only type FF units would be additionally recruited" [garnett1979 p. 42]. So type I and type IIa units interleave at low thresholds; only the type IIb (FF) units sit strictly at the top.
-  - Limits: medial gastrocnemius, not FDI; recruitment order deduced from size, not measured; sampling biased against the largest and smallest units [garnett1979 p. 41]; one small FF unit (5.3 g wt) was type 2b [garnett1979 p. 39–40].
+  - Limits: medial gastrocnemius, not FDI; recruitment order deduced from size, not measured; sampling biased against the largest and smallest units [garnett1979 p. 41]; the one type 2b depletion was a small FF unit (5.3 g wt) in perfused peroneus longus, not medial gastrocnemius [garnett1979 p. 39–40]; size means twitch tension throughout — Garnett gives no fibre diameters.
 - Therefore strict order is a **modelling simplification**: it is right for the large late units (type II at the top) and ignores the type I / IIa interleaving at low thresholds that Garnett describes. Polgar gives only type I / II for FDI [polgar1973 p. 308], so the IIa share cannot be placed from FDI data. Overlap is follow-up §8.3.
 
 ### 5.2 Diameters: one ladder across the pool (option A)
 
 Decided by Devon 2026-11-02 ("let's try A, but let's make sure to document this and the reason for it").
 
-**Reason.** The first draft ranked units within each type separately. The last type I unit then sat near 70 µm and the first type II unit near 46 µm, so CV against threshold climbed through type I, dropped at the boundary and climbed again through type II. That contradicts the measured linear CV–threshold relation (Del Vecchio 2018 [delvecchio2018 p. 2]; Nishizono 1990, FDI [nishizono1990 p. 79]) and Casolo 2023's finding that CV follows fibre size, not type [casolo2023 p. 1845]. Garnett 1979 also gives no basis for a size drop at the type boundary: FF (type 2b) units were the large ones [garnett1979 p. 37].
+**Reason.** The first draft ranked units within each type separately. The last type I unit then sat near 70 µm and the first type II unit near 46 µm, so CV against threshold climbed through type I, dropped at the boundary and climbed again through type II. That contradicts the measured linear CV–threshold relation (Del Vecchio 2018 [delvecchio2018 p. 2]; Nishizono 1990, FDI [nishizono1990 p. 79]) and Casolo 2023's finding that CV follows fibre size, not type [casolo2023 p. 1845]. Garnett 1979 reports twitch tension, not fibre diameter: FF (type 2b) units had the largest twitch tensions [garnett1979 p. 37]. So the fibre-size ordering rests on Polgar's type means plus the size-ordered recruitment Garnett and Milner-Brown describe; nothing in either supports a drop in fibre size at the boundary.
 
 **Design.** Units in threshold order; `q_u` = midpoint of the unit's share of the pool's cumulative fibre count (fibre-weighted, so fibre-level spreads match the targets).
 
 - Unit log-mean: `mu_u = c + sigma_b · clip(Φ⁻¹(q_u), −3, 3)`. Deterministic, strictly increasing with threshold across the whole pool. Types are labels on this ladder (lower 57.4 % of fibres type I).
-- Fibre: `d = exp(mu_u + sigma_w · z)`, `z` standard normal truncated at ±3.
+- Fibre: `d = exp(mu_u + sigma_w · z)`, `z` standard normal, truncated so the combined log-deviation `sigma_b·Φ⁻¹(q_u) + sigma_w·z` stays within ±3·sqrt(sigma_b² + sigma_w²) (my call: keeps today's ±3 SD tail rule at the fibre level; clipping the ladder and `z` separately at ±3 left a 19.9–134.8 µm range).
 - `sigma_b` is solved so the type I : type II fibre-weighted mean ratio is 50.0 : 67.0 [polgar1973 p. 310 Table 2] on the realised units.
 - `sigma_w` is solved so the pool's fibre log-SD equals that of Polgar's two-type mixture (each type log-SD 0.2, today's assumption): `sqrt(0.2² + 0.574·0.426·ln(67/50)²) = 0.247`.
 - `c` is set so the overall fibre-weighted mean is 57.2 µm; then the type means are 50.0 / 67.0 µm.
@@ -70,14 +70,17 @@ No free split is left: both spreads follow from Polgar's type means and fraction
 | Type means | 50.0 / 67.0 µm | 50.0 / 67.0 |
 | Type log-SD | 0.202 / 0.192 | 0.2 / 0.2 |
 | Pool log-SD | 0.246 | 0.247 |
-| Fibre range | 18.6–134.8 µm (ladder not yet clipped) | today 26.9–119.7 |
+| Fibre range | 26.4–116.8 µm | today 26.9–119.7 |
 | Unit-mean CV | 3.00–4.79 m/s | — |
-| Unit-mean CV vs threshold | R² 0.94, Spearman 0.998 | Del Vecchio R² 0.70 ± 0.09 |
+| Unit-mean CV vs threshold | R² 0.96 | Del Vecchio R² 0.70 ± 0.09 |
+| Unit-mean CV, lowest 30 % of threshold range / 50–70 % / top unit | 3.40 / 3.92 / 4.77 m/s | Del Vecchio 3.89 (0–30 % MVC) / 5.12 (50–70 % MVC) |
 
 **Costs, stated plainly.**
 - Each type's histogram is no longer a log-normal: type I and type II overlap only through within-unit scatter, not across units. Their means and log-SDs still match Polgar.
-- The tails widen (smallest units' fibres reach ~19 µm before clipping the ladder at ±3; the clip is new in this revision and narrows that).
+- Tails stay as today (26–117 µm) only through the combined truncation.
 - The model's CV–threshold relation is tighter (R² 0.94) than Del Vecchio's measurement (0.70 ± 0.09). Their R² includes HD-sEMG estimation error and between-unit variability the ladder lacks. Reported, not fitted.
+
+**Open — CV anchor (Devon).** The pool-wide fibre CV 3.89 ± 0.50 m/s is Del Vecchio's 0–30 % MVC band, chosen when CVs were not ordered by threshold. With the ladder, low-threshold units average ~3.4 m/s and the top unit ~4.8, below Del Vecchio's 3.89 / 5.12 band means (thresholds above are in excitation, not % MVC, so the comparison is approximate). `cv_from_recruitment_force` (ramp_analysis) encodes 3.89 → 5.12. Options: (i) keep 3.89 ± 0.50 and document the gap; (ii) anchor the pool to Del Vecchio's all-unit 4.32 ± 0.71 m/s [delvecchio2018 p. 2]; (iii) anchor the band means. Changes a default; needs Devon's yes.
 
 ### 5.3 Keeping the type means
 
@@ -98,7 +101,7 @@ Handled by solving `sigma_b` and `c` on the realised units (§5.2); no per-type 
 4. Type fibre-weighted means 50.0 / 67.0 µm (to 0.5 µm); overall ≈ 57.2 µm; pool log-SD ≈ 0.247.
 5. The designed unit mean `exp(mu_u)` is non-decreasing in threshold across the whole pool, including across the type boundary (my call: designed, not realised — small units' realised means wander by ~0.02 in log against ~0.003 between neighbours).
 6. Fibre CV mean/SD 3.89 / 0.50 (unchanged). Realised unit-mean CV vs threshold: Spearman and R² reported (not gated), compared with Del Vecchio's R² 0.70 ± 0.09.
-7. Existing iEMG tests pass; full suite green. The two existing tests in `tests/test_muscle_fibre_properties.py` call `_generate_fiber_properties()` without `assign_mfs2mns`; they are rebuilt with a full assignment (my call).
+7. Existing iEMG tests pass; full suite green. The two existing tests in `tests/test_muscle_fibre_properties.py` call `_generate_fiber_properties()` without `assign_mfs2mns`; they are rebuilt with a full assignment (my call). `test_fibre_diameters_are_the_fdi_type_mixture` (2026-11-02) is replaced: its per-type truncation bounds and two-component median check do not hold under one ladder.
 
 ## 6. Constraints
 
