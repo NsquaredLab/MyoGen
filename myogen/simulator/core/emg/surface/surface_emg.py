@@ -94,7 +94,9 @@ class SurfaceEMG:
         sqrt(sum f_i d_i**2) over type I 50.0 µm and type II 67.0 µm fibres
         [polgar1973 p. 310 Table 2] with 57.4 % type I [polgar1973 p. 312 Table 4].
         The RMS (not the mean, 57.2 µm) is the right single value because the source
-        current scales with the fibre cross-section (``d**2``). 50 until 0.13.0.
+        current scales with the fibre cross-section (``d**2``). 50 until 0.13.0. No effect
+        when ``fiber_dispersion`` takes the fibres from ``Muscle`` with a diameter-scaled
+        source (each fibre then has its own ``Muscle`` diameter).
     intracellular_conductivity__S_m : float, optional
         Intracellular conductivity in S/m, default 1.01. The source current
         density is ``sigma_i * pi * (d/2)**2 * d2Vm/dz2`` (core-conductor model).
@@ -115,7 +117,10 @@ class SurfaceEMG:
         velocities (see :class:`SurfaceFiberDispersion`). None (default) or an
         inactive configuration keeps one end-plate per motor unit, no nerve
         delays and the mean velocity for every fibre. Supported on the default
-        route only (``execution=None``, ``use_unified=False``).
+        route only (``execution=None``, ``use_unified=False``). With
+        ``fiber_properties="muscle"`` every fibre's CV and diameter come from the
+        ``Muscle`` (its fibre properties must be generated); the muscle mean
+        conduction velocity then only sets the simulation grid and window.
 
     Attributes
     ----------
@@ -370,6 +375,24 @@ class SurfaceEMG:
             for mu_idx in range(n_motor_units):
                 positions = self._muscle_model.resulting_fiber_assignment(mu_idx)
                 fiber_positions.append(np.asarray(getattr(positions, "magnitude", positions))[:, :2])
+            muscle_fibres = {}
+            if self._fiber_dispersion.fiber_properties == "muscle":
+                # Each fibre's CV and diameter from Muscle, split by unit in the order of
+                # resulting_fiber_assignment (both follow np.where(assignment == mu)).
+                try:
+                    cv_all = self._muscle_model.muscle_fiber_conduction_velocities__mm_per_s
+                    d_all = self._muscle_model.muscle_fiber_diameters__mm
+                except ValueError as error:
+                    raise ValueError(
+                        "fiber_properties='muscle' needs the Muscle fibre properties: run "
+                        "muscle._generate_fiber_properties() after assign_mfs2mns() (autorun=True does both)"
+                    ) from error
+                cv_all = np.asarray(cv_all.rescale(pq.m / pq.s).magnitude, dtype=float)
+                d_all = np.asarray(d_all.rescale(pq.um).magnitude, dtype=float)
+                assignment = np.asarray(self._muscle_model.assignment)
+                masks = [assignment == mu_idx for mu_idx in range(n_motor_units)]
+                muscle_fibres = dict(fiber_cv__m_s=[cv_all[mask] for mask in masks],
+                                     fiber_diameters__um=[d_all[mask] for mask in masks])
             dispersion = realize_fiber_dispersion(
                 self._fiber_dispersion,
                 fiber_positions,
@@ -380,6 +403,7 @@ class SurfaceEMG:
                                    for variation in fiber_length_variations_per_MU],
                 mean_fiber_length__mm=float(self._mean_fiber_length__mm),
                 fiber_diameter__um=float(self.fiber_diameter__um),
+                **muscle_fibres,
             )
             self.fiber_dispersion_report = dispersion.report
 
@@ -497,8 +521,9 @@ class SurfaceEMG:
                     # The fibre must finish inside the second half of the window
                     # (firing at its centre), or the circular grid wraps it.
                     zone = dispersion.zi__mm[MU_index]
+                    # plus the IAP tail, 10 mm at lambda = 1 / mm, longer as lambda falls
                     reach = np.maximum(dispersion.end_plus__mm[MU_index] - zone,
-                                       zone - dispersion.end_minus__mm[MU_index]) + 10.0  # mm, plus the IAP tail
+                                       zone - dispersion.end_minus__mm[MU_index]) + 10.0 / self._iap_lambda__per_mm
                     finish = dispersion.delay__ms[MU_index] + reach / dispersion.cv__m_s[MU_index]
                     if np.max(finish) >= kernel_length / v_conduction / 2:
                         raise ValueError(

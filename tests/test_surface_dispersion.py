@@ -344,7 +344,7 @@ def test_realisation_leaves_the_global_generator_untouched(muscle):
 
 # ---- SurfaceEMG integration ---------------------------------------------------------
 
-def _semg(muscle, dispersion=None, mus=(4, 11)):
+def _semg(muscle, dispersion=None, mus=(4, 11), **kw):
     array = SurfaceElectrodeArray(1, 1, 10 * pq.mm, 2.5 * pq.mm,
                                   center_point__mm_deg=(12 * pq.mm, 0 * pq.deg),
                                   bending_radius__mm=8.3 * pq.mm,
@@ -352,7 +352,7 @@ def _semg(muscle, dispersion=None, mus=(4, 11)):
     set_random_seed(7)
     return SurfaceEMG(muscle, [array], sampling_frequency__Hz=2048 * pq.Hz,
                       internal_sampling_frequency__Hz=2048 * pq.Hz,
-                      MUs_to_simulate=list(mus), fiber_dispersion=dispersion)
+                      MUs_to_simulate=list(mus), fiber_dispersion=dispersion, **kw)
 
 
 def _muaps(semg):
@@ -514,3 +514,46 @@ def test_muscle_source_needs_the_arrays(muscle):
     short = [cv[:-1] if len(cv) else cv for cv in cvs]
     with pytest.raises(ValueError, match="motor unit"):
         _realize(muscle, SurfaceFiberDispersion(fiber_properties="muscle"), fiber_cv__m_s=short)
+
+
+@pytest.fixture(scope="module")
+def typed():
+    muscle = _muscle()
+    muscle._generate_fiber_properties()
+    return muscle
+
+
+def test_surface_emg_takes_each_fibre_from_muscle(typed):
+    semg = _semg(typed, SurfaceFiberDispersion(fiber_properties="muscle", diameter_scales_source=True))
+    _muaps(semg)
+    report = semg.fiber_dispersion_report
+    cv = np.asarray(typed.muscle_fiber_conduction_velocities__mm_per_s.rescale(pq.m / pq.s).magnitude)
+    d = np.asarray(typed.muscle_fiber_diameters__mm.rescale(pq.um).magnitude)
+    for mu in range(len(typed.recruitment_thresholds)):
+        mask = typed.assignment == mu
+        if mask.any():
+            assert report["cv_mean__m_s"][mu] == pytest.approx(cv[mask].mean(), rel=1e-12)
+            assert report["diameter_mean__um"][mu] == pytest.approx(d[mask].mean(), rel=1e-12)
+
+
+def test_muscle_fibres_make_fibre_diameter_irrelevant(typed):
+    config = SurfaceFiberDispersion(fiber_properties="muscle", diameter_scales_source=True)
+    np.testing.assert_allclose(_muaps(_semg(typed, config, fiber_diameter__um=40.0)),
+                               _muaps(_semg(typed, config, fiber_diameter__um=70.0)), rtol=1e-10, atol=0)
+
+
+def test_muscle_fibres_change_the_muap(typed):
+    assert not np.allclose(_muaps(_semg(typed)), _muaps(_semg(typed, SurfaceFiberDispersion(fiber_properties="muscle"))))
+
+
+def test_muscle_fibres_need_generated_properties(muscle):
+    with pytest.raises(ValueError, match="_generate_fiber_properties"):
+        _semg(muscle, SurfaceFiberDispersion(fiber_properties="muscle")).simulate_muaps(n_jobs=1, verbose=False,
+                                                                                        use_gpu=False)
+
+
+def test_window_check_scales_the_iap_tail_with_lambda(muscle):
+    config = SurfaceFiberDispersion(nerve_delays=True)
+    _muaps(_semg(muscle, config, mus=(11,), iap_kernel_length__mm=105.0))
+    with pytest.raises(ValueError, match="iap_kernel_length__mm"):
+        _muaps(_semg(muscle, config, mus=(11,), iap_kernel_length__mm=105.0, iap_lambda__per_mm=0.4))
