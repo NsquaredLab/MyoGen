@@ -136,7 +136,7 @@ src("rodriguezfalces2013", "A", "Rodriguez-Falces J et al. (2013). Med Biol Eng 
 src("petersen2019", "A", "Petersen E, Rostalski P (2019). A comprehensive mathematical model of motor unit pool organization, surface electromyography, and force generation. Front Physiol 10:176.",
     "doi:10.3389/fphys.2019.00176; PMC6418040", "FT", "CONTEXT", "Farina-model implementation with λ = 1.", [], ["mdf"])
 src("andreassenrosenfalck1980", "A", "Andreassen & Rosenfalck (1980), muscle conductivities for the intramuscular kernel (details from code comment, unverified).",
-    "", "LINK", "ADOPTED", "Stated source of the radial and longitudinal muscle conductivities (sigma_r 63, sigma_z 330, labelled S/m) of the intramuscular point-electrode kernel in bioelectric.py (the same defaults, uncited, in fiber_simulation.py). Not in Zotero. Cited in code; not checked.", [], [])
+    "", "LINK", "ADOPTED", "Stated source of the radial and longitudinal muscle conductivities of the intramuscular point-electrode kernel in bioelectric.py (same defaults in fiber_simulation.py). Until 0.13.0 the defaults were 63 / 330 labelled S/m (1000x tissue values); since 2026-11-02 they are 0.063 / 0.33 S/m, the values the code comment attributes to this paper. Not in Zotero. Cited in code; not checked.", [], [])
 src("huigen2002", "A", "Huigen E, Peper A, Grimbergen CA (2002). Investigation into the origin of the noise of surface electrodes. Med Biol Eng Comput 40:332–338.",
     "doi:10.1007/BF02344216", "LINK", "ADOPTED", "With gondran1996, the stated basis of the 1/f^α baseline-drift form with α in 1.5–2.0 (default α 1.75, the midpoint) in IntramuscularEMG.add_noise and emg_noise.py. Not in Zotero. Cited in code; not checked.", [], [])
 src("gondran1996", "A", "Gondran C, Siebert E, Yacoub S, Novakov E (1996). Noise of surface bio-potential electrodes based on NASICON ceramic and Ag–AgCl. Med Biol Eng Comput 34:460–466.",
@@ -196,8 +196,8 @@ src("krammer2025", "C", "Krammer et al. (2025). Diagnostics 15:1600.", "", "FT",
 src("infantolino2010", "C", "Infantolino BW, Challis JH (2010). Architectural properties of the first dorsal interosseous muscle. J Anat 216:463.",
     "doi:10.1111/j.1469-7580.2009.01196.x; PMC2849523", "FT", "CONTEXT", "Volume 5.2 mL, fascicle 29.9 mm; derived CSA ~89 mm² vs model 150 mm².", [], ["pool"])
 src("polgar1973", "C", "Polgar J, Johnson MA, Weightman D, Appleton D (1973). Data on fibre size in thirty-six human muscles: an autopsy study. J Neurol Sci 19:307–318.",
-    "doi:10.1016/0022-510X(73)90094-4", "FT", "CONTEXT",
-    "Preferred FDI diameter source. FDI (autopsy): type I 50.0 µm, type II 67.0 µm [p. 310 Table 2]; type I fibres 57.4 % [p. 312 Table 4]. Weighted by that proportion: mean 57.2 µm, area (d²) weighted 57.9 µm (used in the calibration arms). Default kept at 50 µm (Devon), which the code attributes to brooke1970.", [], ["polgar", "diam"])
+    "doi:10.1016/0022-510X(73)90094-4", "FT", "ADOPTED",
+    "FDI fibre diameter defaults (since 2026-11-02, Devon). FDI (autopsy): type I 50.0 µm, type II 67.0 µm [p. 310 Table 2]; type I fibres 57.4 % [p. 312 Table 4]. Weighted by that proportion: mean 57.2 µm (Muscle log-normal mean), root-mean-square 57.9 µm (SurfaceEMG source default, since the source scales with d²). Replaces the 50 µm attributed to brooke1970.", [], ["polgar", "diam"])
 src("hwang2013", "C", "Hwang K, Huan F, Kim DJ (2013). Muscle fibre types of the lumbrical, interossei, flexor, and extensor muscles moving the index finger. J Plast Surg Hand Surg 47:268–272.",
     "doi:10.3109/2000656X.2012.755988", "FT", "REJECTED",
     "FDI ~31 µm (elderly, paraffin, diameter undefined): judged an underestimate. Source of Botelho's 24.8–40.6 µm.", [], ["hwang", "diam"])
@@ -207,7 +207,7 @@ src("zong2021", "C", "Zong Y et al. (2021). IEEE Trans Neural Syst Rehabil Eng 2
     "doi:10.1109/TNSRE.2021.3088061; PMC8780215", "FT", "CONTEXT", "FDI MUNE 108 ± 21; CMAP 16.75 mV (ceiling).", [], ["b3", "b5"])
 src("brooke1970", "C", "Brooke MH, Kaiser KK (1970). Muscle fiber types: how many and what kind? Arch Neurol 23:369–379.",
     "doi:10.1001/archneur.1970.00480280083010", "LINK", "CONTEXT",
-    "The code cites it for the log-normal fibre diameters (median 50 µm, 20–80 µm). By its title a histochemical fibre-typing paper; the diameter values are not checked against it. FDI-specific measurement: polgar1973 (57.9 µm).", [], [])
+    "The code cited it for the log-normal fibre diameters (median 50 µm until 0.13.0) and still cites it for the 20–80 µm clip. By its title a histochemical fibre-typing paper; the values are not checked against it. The diameter mean now comes from polgar1973.", [], [])
 
 # ── D–G. Recruitment, motor-neuron model, force, EMG benchmarks (section letter per entry; titles in TOPICS) ──
 src("deluca1982", "D", "De Luca CJ, LeFever RS, McCue MP, Xenakis AP (1982). Behaviour of human motor units in different muscles during linearly varying contractions. J Physiol 329:113–128.",
