@@ -390,7 +390,7 @@ class Muscle:
             + as_m_s(self._sd_fiber_conduction_velocity__m_s) * z_cv
         ) * pq.m / pq.s
 
-        # Ensure velocities are within physiological range (2-6 m/s)
+        # Sanity bounds 2-6 m/s (a modelling assumption, not sourced; at 3.89 +/- 0.50 m/s they rarely bind)
         self._muscle_fiber_conduction_velocities__mm_per_s = np.clip(
             self._muscle_fiber_conduction_velocities__mm_per_s, 2.0 * pq.m / pq.s, 6.0 * pq.m / pq.s
         )

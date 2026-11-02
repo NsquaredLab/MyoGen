@@ -104,8 +104,10 @@ class SurfaceEMG:
         1 / mm, as published (Rosenfalck 1969) [rosenfalck1969]. Values below 1 stretch the IAP
         along the fibre and lower the MUAP's spectral content and raise its
         amplitude. Botelho et al. (2019) [botelho2019] used 0.5 to match the frequency content of
-        their FDI recordings; in this conductor 0.7 matched their Delsys median
-        frequency and adjacent-pin RMS at 25 % MVC. Any value other than 1 is a
+        their FDI recordings. In this conductor, with ``diameter_scales_source`` and each
+        unit's CV mapped from its recruitment force through Del Vecchio et al. (2018)
+        [delvecchio2018 p. 2], 0.7 gives 175 / 169 Hz and 0.19 / 0.23 mV (corner-centre /
+        adjacent pins) at 25 % MVC against their ~165 Hz and 0.21 mV [botelho2019]. Any value other than 1 is a
         fitted modelling assumption, not a measurement. ``iap_kernel_length__mm``
         must hold the longer IAP (its tail scales with ``1 / lambda``).
     fiber_dispersion : SurfaceFiberDispersion, optional
