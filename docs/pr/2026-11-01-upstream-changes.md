@@ -76,8 +76,17 @@ Bugs found against Farina et al. (2004), each with a test:
   - Proposed: opt-in force-frequency parameters in ForceModel (default Fuglevand), score the ceiling on the fitted curve with target 59 %, add De Luca 40/80 % rate checks. No recalibration run.
   - Approved and done (`39b1a1768`): `ForceModel(force_frequency_shape=...)` (default Fuglevand), optimiser `--force-frequency human`, `--ceiling-rank 1` (unit with one above it), `--high-force-rates` (De Luca 1982 Table 1).
 - [x] Recalibrated with `--last-recruit-mvc 59 --ceiling-rank 1 --force-frequency human --high-force-rates` (`_human59`, 102 trials, 76 min): best error 1.79, dd_neurons 168, conn_prob 0.21, drive 967 Hz, Gfluctdv 0.25, ISI CV 16.9 %. Last unit at 59.0 % MVC, second-last 58.0 %. Checkpoints (sim/target units, Hz): 5 % 66/55 9.6/11.2; 10 % 82/76 12.2/13.9; 20 % 102/97 18.3/18.9; 25 % 111/104 20.5/21.1; 30 % 117/110 23.2/23.2. `fdi_spikes_force.py` (redrawn wiring): last unit 62.5 %, second-last 56.0 %; 25 % MVC at excitation 0.169 (104 units, 15.4 Hz). Full suite: 429 passed, 2 skipped.
-  - High-force rates stay ~19 % low: 20.6/33.5 Hz at 40/80 % MVC vs 25.3/41.4. No trial with a good fit got closer (best 40 % rate of any trial 23.5 Hz; 80 % rates near 40 Hz only in trials that over-recruit at the checkpoints, error > 11). The four network parameters cannot raise high-force rates without breaking the low-force targets; the cause is upstream (motor-neuron rate gain or the averaging: model mean over all active units vs De Luca's ≤8 tracked units per contraction). Not investigated.
+  - High-force rates stay ~19 % low: 20.6/33.5 Hz at 40/80 % MVC vs 25.3/41.4. No trial with a good fit got closer (best 40 % rate of any trial 23.5 Hz; 80 % rates near 40 Hz only in trials that over-recruit at the checkpoints, error > 11). The four network parameters cannot raise high-force rates without breaking the low-force targets; the cause is upstream (motor-neuron rate gain or the averaging: model mean over all active units vs De Luca's ≤8 tracked units per contraction).
+  - Investigated 2026-11-02 (nexus note, "Are spinal mechanisms behind the low high-force rates?"):
+    - Not the averaging: settled low-threshold units are also at 21/33 Hz.
+    - Rates are near-uniform across units (SD ~1 Hz at 80 % MVC vs 9.6), with no onion skin.
+    - The NERLab PIC is present but inert: paired-unit ΔF 0.2 Hz vs ~4.8 pps reported for FDI.
+    - Stronger or effort-dependent PICs (gamma 0.5, 1.0, 0.2→1.0) and push-pull or balanced inhibition leave the 80 % MVC rate at 29–34 Hz. More PIC inverts the onion skin.
+    - With uniform rates, the twitch law and force-frequency curve put 80 % MVC at ~32 Hz; 41 Hz is unreachable without an onion skin.
+    - Untested: the dendritic-transfer weight scaling at high drive (large cells receive more effective current than small ones), and the Powers2017 cell model.
 - [ ] Out of scope, library: the NERLab pool's rheobase spans only 3.6× for a 48× threshold range (yaml interpolation curves).
+- [ ] Out of scope, library: NERLab motor neurons rest at ~0 mV but `alpha_mn_default.yaml` initialises them at −67 mV (start-up transient).
+- [ ] Out of scope, library: inhibitory synapses use −75 mV (absolute frame), i.e. 75 mV below the NERLab rest; any inhibition onto NERLab motor neurons is far too strong.
 
 ### ForceModel twitch parameters against FDI data
 
