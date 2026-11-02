@@ -134,7 +134,7 @@ The generic Fuglevand parameters match FDI closely (Fuglevand 1993 drew on these
 - [x] **Human force-frequency curve as `ForceModel` default.** Decided 2026-11-02 (Devon): opt-in in this PR (`force_frequency_shape="human"`); propose as default for the next release.
 - [x] **IAP λ.** Default stays 1 (rule of 2026-11-01); λ 0.7 with recruitment-force CV documented as the FDI fit in the `iap_lambda__per_mm` docstring (0.192 / 0.228 mV, 175 / 169 Hz after the d² normalisation).
 - [x] **CV clip 2–6 m/s.** Kept as a sanity bound, labelled an assumption (2026-11-02).
-- [ ] **Fibre typing by motor unit.** Devon 2026-11-02: wanted. Design note `docs/superpowers/specs/2026-11-02-fdi-fibre-typing-design.md` (Draft); Garnett 1979 requested.
+- [x] **Fibre typing by motor unit.** Done 2026-11-02 (plan `docs/superpowers/plans/2026-11-02-fdi-fibre-typing.md`; commits a3dc1d7 `fiber_types.py`, 69f1237 `Muscle`). Default FDI muscle (seed 1): 102/120 units type I (fibre fraction 0.572); sigma_between 0.184, sigma_within 0.166; type means 50.0 / 67.0 µm, log-SD 0.200 / 0.191, pool 0.244; fibres 26.4–117.1 µm; fibre CV 4.31 ± 0.69 m/s (2.05 % at 6 m/s); unit-mean CV 3.88 ± 0.47 (3.14–5.47), R² 0.95 vs threshold. 6 m/s clip kept for now (Devon). Ruling: pool mean follows the realised type I fraction so type means hold in small pools. Devon 2026-11-02: wanted. Design note `docs/superpowers/specs/2026-11-02-fdi-fibre-typing-design.md` (Draft); Garnett 1979 requested.
 - [ ] **Branch-base check** in the contributor notes: before branching, verify the base contains upstream fixes for the modules touched (this PR exists partly because of a branch cut from the stale fresh-trunk line).
 
 ## 7. Before opening the PR

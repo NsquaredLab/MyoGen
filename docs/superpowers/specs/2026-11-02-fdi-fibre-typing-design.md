@@ -1,6 +1,6 @@
 # Fibre typing by motor unit (FDI) — design
 
-Status: **Approved** (Devon, 2026-11-02). Branch `calib/fdi-dd-main`. Requested by Devon ("that's an important step I'd like to do").
+Status: **Approved** (Devon, 2026-11-02). Implemented 2026-11-02 (plan `docs/superpowers/plans/2026-11-02-fdi-fibre-typing.md`). Branch `calib/fdi-dd-main`. Requested by Devon ("that's an important step I'd like to do").
 
 ## 1. Why
 
