@@ -557,3 +557,24 @@ def test_window_check_scales_the_iap_tail_with_lambda(muscle):
     _muaps(_semg(muscle, config, mus=(11,), iap_kernel_length__mm=105.0))
     with pytest.raises(ValueError, match="iap_kernel_length__mm"):
         _muaps(_semg(muscle, config, mus=(11,), iap_kernel_length__mm=105.0, iap_lambda__per_mm=0.4))
+
+
+def test_each_fibre_gets_its_own_muscle_values(typed, monkeypatch):
+    from myogen.simulator.core.emg.surface import surface_emg
+
+    seen = {}
+    real = surface_emg.realize_fiber_dispersion
+
+    def capture(config, positions, *args, **kwargs):
+        seen.update(positions=positions, **kwargs)
+        return real(config, positions, *args, **kwargs)
+
+    monkeypatch.setattr(surface_emg, "realize_fiber_dispersion", capture)
+    _muaps(_semg(typed, SurfaceFiberDispersion(fiber_properties="muscle", diameter_scales_source=True)))
+    centres = np.asarray(typed.muscle_fiber_centers__mm.rescale(pq.mm).magnitude)[:, :2]
+    cv = np.asarray(typed.muscle_fiber_conduction_velocities__mm_per_s.rescale(pq.m / pq.s).magnitude)
+    d = np.asarray(typed.muscle_fiber_diameters__mm.rescale(pq.um).magnitude)
+    for mu, positions in enumerate(seen["positions"]):
+        index = [int(np.flatnonzero(np.all(centres == xy, axis=1))[0]) for xy in positions]
+        np.testing.assert_array_equal(seen["fiber_cv__m_s"][mu], cv[index])
+        np.testing.assert_array_equal(seen["fiber_diameters__um"][mu], d[index])

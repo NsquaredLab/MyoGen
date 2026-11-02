@@ -46,7 +46,7 @@ New field `SurfaceFiberDispersion.fiber_properties: Literal["config", "muscle"] 
 
 `realize_fiber_dispersion(..., fiber_cv__m_s=None, fiber_diameters__um=None)`: two new optional arguments, per unit lists of per-fibre arrays in the same order as `fiber_positions__mm`. Required (ValueError) when `fiber_properties == "muscle"`; their per-unit lengths must equal the position counts (ValueError naming the unit). Ignored otherwise. End-plates, nerve delays and tendon ends are drawn exactly as now, from the same seeded generators, so switching the CV source leaves those draws unchanged.
 
-Report in `"muscle"` mode: `cv_mean__m_s`, `cv_cov` from the `Muscle` CVs; `diameter_mean__um` = mean `Muscle` diameter of the unit; `line_diameter_mean__um` NaN; `amplitude_scale_mean` as defined above.
+Report in `"muscle"` mode: `cv_mean__m_s`, `cv_cov` from the `Muscle` CVs; `diameter_mean__um` = the mean diameter the source uses (the `Muscle` diameter with scaling on, `fiber_diameter__um` with it off; existing meaning kept, builder check Q5); `line_diameter_mean__um` NaN; `amplitude_scale_mean` as defined above.
 
 ### 5.3 `SurfaceEMG`
 
