@@ -32,6 +32,27 @@ def test_fibre_cv_follows_the_diameter_line():
     assert np.corrcoef(d_um, cv)[0, 1] > 0.9
 
 
+def test_fibre_diameters_have_the_fdi_mean():
+    """Mean diameter 57.2 um, FDI type I/II sizes weighted by fibre-type proportion [polgar1973 p. 310 Table 2]
+    [polgar1973 p. 312 Table 4]; the 20-80 um clip pulls it down slightly."""
+    set_random_seed(1)
+    m = _muscle(4)
+    m.generate_muscle_fiber_centers(verbose=False)
+    m._generate_fiber_properties()
+    d_um = np.asarray(m._muscle_fiber_diameters__mm.rescale(pq.mm)) * 1e3
+    assert 55.5 < np.mean(d_um) < 57.5
+
+
+def test_surface_emg_fibre_diameter_default_is_fdi_rms():
+    """sqrt(0.574 * 50.0**2 + 0.426 * 67.0**2) = 57.9 um [polgar1973 p. 310 Table 2] [polgar1973 p. 312 Table 4]."""
+    import inspect
+
+    from myogen.simulator import SurfaceEMG
+
+    d = inspect.signature(SurfaceEMG.__init__).parameters["fiber_diameter__um"].default
+    assert d == pytest.approx(np.sqrt(0.574 * 50.0**2 + 0.426 * 67.0**2), abs=0.05)
+
+
 def _layout(radius__mm, density):
     set_random_seed(1)
     m = _muscle(radius__mm, density)

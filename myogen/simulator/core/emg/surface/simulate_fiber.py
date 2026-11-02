@@ -299,7 +299,7 @@ def _simulate_fiber_v2_python(
     _prepared=None,
     *,
     sig_intracellular: float = 1.01,
-    fiber_diameter__mm: float = 0.05,
+    fiber_diameter__mm: float = 0.0579,
     v_grid: float | None = None,
     iap_lambda__per_mm: float = 1.0,
 ):
@@ -369,7 +369,7 @@ def _simulate_fiber_v2_python(
     sig_intracellular : float, optional
         Intracellular conductivity (S/m), default 1.01.
     fiber_diameter__mm : float, optional
-        Fibre diameter (mm), default 0.05. Together with ``sig_intracellular`` it
+        Fibre diameter (mm), default 0.0579 (FDI, see ``SurfaceEMG``). Together with ``sig_intracellular`` it
         sets the line current density ``sig_i * pi * (d/2)**2 * d2Vm/dz2`` of the
         source, so the output is the potential in mV.
     v_grid : float, optional
@@ -701,7 +701,7 @@ def simulate_fiber_v2(
     rele_precomputed: float | None = None,
     *,
     sig_intracellular: float = 1.01,
-    fiber_diameter__mm: float = 0.05,
+    fiber_diameter__mm: float = 0.0579,
     iap_lambda__per_mm: float = 1.0,
 ):
     """
@@ -776,7 +776,7 @@ def simulate_fiber_v2(
     sig_intracellular : float, optional
         Intracellular conductivity (S/m), default 1.01.
     fiber_diameter__mm : float, optional
-        Fibre diameter (mm), default 0.05. Together with ``sig_intracellular`` it
+        Fibre diameter (mm), default 0.0579 (FDI, see ``SurfaceEMG``). Together with ``sig_intracellular`` it
         sets the line current density ``sig_i * pi * (d/2)**2 * d2Vm/dz2`` of the
         source, so the output is the potential in mV.
     iap_lambda__per_mm : float, optional

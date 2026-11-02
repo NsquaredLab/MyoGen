@@ -90,8 +90,11 @@ class SurfaceEMG:
         around; it does not change the physical MUAP, only the window and the
         internal sampling step ``K / (v (N - 1))``.
     fiber_diameter__um : float, optional
-        Muscle fibre diameter in µm, default 50. The source current scales with
-        the fibre cross-section (``d**2``).
+        Muscle fibre diameter in µm, default 57.9: the FDI root-mean-square diameter,
+        sqrt(sum f_i d_i**2) over type I 50.0 µm and type II 67.0 µm fibres
+        [polgar1973 p. 310 Table 2] with 57.4 % type I [polgar1973 p. 312 Table 4].
+        The RMS (not the mean, 57.2 µm) is the right single value because the source
+        current scales with the fibre cross-section (``d**2``). 50 until 0.13.0.
     intracellular_conductivity__S_m : float, optional
         Intracellular conductivity in S/m, default 1.01. The source current
         density is ``sigma_i * pi * (d/2)**2 * d2Vm/dz2`` (core-conductor model).
@@ -143,7 +146,7 @@ class SurfaceEMG:
         internal_sampling_frequency__Hz: Quantity__Hz | None = None,
         iap_kernel_length__mm: float | None = None,
         use_unified: bool = False,
-        fiber_diameter__um: float = 50.0,
+        fiber_diameter__um: float = 57.9,
         intracellular_conductivity__S_m: float = 1.01,
         fiber_dispersion: SurfaceFiberDispersion | None = None,
         iap_lambda__per_mm: float = 1.0,

@@ -17,7 +17,7 @@ end), Fuglevand thresholds over a 50-fold range recruited up to 70 % excitation,
 8-35 Hz rate coding with ISI CV 0.2, 2048 Hz. An empty configuration ({}) is the
 undispersed baseline. Harness-only keys set the outer layers:
 ``_skin_thickness__mm`` (default 1.29), ``_fat_thickness__mm`` (limb 4, FDI 0.3),
-``_skin_conductivity__S_per_m`` (default 1) and ``_fiber_diameter__um`` (default 50).
+``_skin_conductivity__S_per_m`` (default 1) and ``_fiber_diameter__um`` (default: the ``SurfaceEMG`` default).
 FDI only: ``_muscle_radius__mm`` (default 6.91) and ``_fiber_density__per_mm2`` (default 350).
 ``_spike_file`` (npz with ``spikes`` and ``thresholds``) replaces the generated spike trains.
 FDI only: ``_fs__Hz`` (default 2048) sets the output and internal sampling rate. ``_delsys5`` replaces the
@@ -53,7 +53,7 @@ if scenario not in ("limb", "fdi"):
 skin = config.pop("_skin_thickness__mm", 1.29)
 fat = config.pop("_fat_thickness__mm", 4.0 if scenario == "limb" else 0.3)
 skin_sigma = config.pop("_skin_conductivity__S_per_m", 1.0)
-diameter = config.pop("_fiber_diameter__um", 50.0)
+diameter = config.pop("_fiber_diameter__um", None)
 rate_model = config.pop("_rate_model", None)
 spike_file = config.pop("_spike_file", None)
 fdi_radius = config.pop("_muscle_radius__mm", 6.91)
@@ -154,7 +154,9 @@ else:
 set_random_seed(7)
 semg = SurfaceEMG(muscle, arrays, sampling_frequency__Hz=FS * pq.Hz, MUs_to_simulate=mus,
                   internal_sampling_frequency__Hz=FS * pq.Hz, fiber_dispersion=dispersion,
-                  iap_kernel_length__mm=kernel, fiber_diameter__um=diameter)
+                  iap_kernel_length__mm=kernel,
+                  **({} if diameter is None else {"fiber_diameter__um": diameter}))
+diameter = semg.fiber_diameter__um
 t0 = time.time()
 muaps = semg.simulate_muaps(n_jobs=n_jobs, verbose=False, use_gpu=False)
 sig0 = muaps.groups[0].segments[mus[0]].analogsignals[0]

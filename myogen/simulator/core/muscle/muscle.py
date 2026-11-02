@@ -342,18 +342,20 @@ class Muscle:
 
         n_fibers = len(self._muscle_fiber_centers__mm)
 
-        # Generate muscle fiber diameters using log-normal distribution
-        # Based on physiological measurements (Brooke & Kaiser, 1970) [brooke1970]
-        # Mean diameter ~50um, range 20-80um
-        mean_diameter__mm = 50e-3  # mm (50 um)
-        std_diameter__mm = 15e-3  # mm (15 um)
-
+        # Log-normal fibre diameters with the FDI mean: type I 50.0 um, type II 67.0 um
+        # [polgar1973 p. 310 Table 2], 57.4 % type I [polgar1973 p. 312 Table 4] -> 57.2 um.
+        # Until 0.13.0 the median was 50 um, attributed to Brooke & Kaiser 1970 [brooke1970].
+        # The log-SD 0.3 is a modelling assumption (not from Polgar).
+        mean_diameter__mm = 57.2e-3
+        log_sd = 0.3
         self._muscle_fiber_diameters__mm = (
-            get_random_generator().lognormal(mean=np.log(mean_diameter__mm), sigma=0.3, size=n_fibers)
+            get_random_generator().lognormal(
+                mean=np.log(mean_diameter__mm) - log_sd**2 / 2, sigma=log_sd, size=n_fibers
+            )
             * pq.mm
         )
 
-        # Ensure diameters are within physiological range (20-80 um)
+        # Ensure diameters are within physiological range (20-80 um) [brooke1970, not checked]
         self._muscle_fiber_diameters__mm = np.clip(
             self._muscle_fiber_diameters__mm, 20e-3 * pq.mm, 80e-3 * pq.mm
         )
