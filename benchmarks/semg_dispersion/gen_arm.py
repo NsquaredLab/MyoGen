@@ -24,6 +24,11 @@ FDI only: ``_muscle_radius__mm`` (default 6.91) and ``_fiber_density__per_mm2`` 
 ``_mean_cv__m_s`` (default: the ``Muscle`` default) sets the mean muscle-fibre conduction velocity.
 ``_fiber_cv_per_unit_file`` (json with ``cv__m_s``, one value per unit) sets each unit's mean fibre CV
 (``SurfaceFiberDispersion.fiber_cv_per_unit__m_s``).
+``fiber_properties: "muscle"`` (a ``SurfaceFiberDispersion`` field) takes every fibre's CV and diameter from the
+``Muscle``: its fibre properties are generated after the assignment, with the global generator's state restored
+afterwards so every other draw matches the earlier arms; their hash is saved as ``property_hash``.
+``_iap_kernel_length__mm`` (FDI default 150) sets ``SurfaceEMG.iap_kernel_length__mm``; slow fibres at small
+lambda need a longer window (the surface window check says so).
 FDI only: ``_fs__Hz`` (default 2048) sets the output and internal sampling rate. ``_delsys5`` replaces the
 bipolar pair with Delsys 5-pin sensors (0.5 mm pins at the corners and centre of a 5 x 5 mm square, as in
 Pereira Botelho et al. 2019): ``{"z__mm": [...], "rotation__deg": [...], "theta__deg": [...]}`` places one
@@ -45,7 +50,7 @@ import quantities as pq
 from neo import Block, Segment, SpikeTrain
 
 import myogen
-from myogen import set_random_seed
+from myogen import get_random_generator, set_random_seed
 from myogen.simulator import Muscle, RecruitmentThresholds, SurfaceElectrodeArray, SurfaceEMG
 from myogen.simulator.core.emg.surface.fiber_dispersion import SurfaceFiberDispersion
 from myogen.utils.neo import signal_to_grid
@@ -65,6 +70,7 @@ fdi_density = config.pop("_fiber_density__per_mm2", 350.0)
 fs_out = config.pop("_fs__Hz", 2048.0)
 delsys5 = config.pop("_delsys5", None)
 iap_lambda = config.pop("_iap_lambda__per_mm", 1.0)
+kernel_override = config.pop("_iap_kernel_length__mm", None)
 mean_cv = config.pop("_mean_cv__m_s", None)
 cv_kw = {} if mean_cv is None else {"mean_conduction_velocity__m_per_s": mean_cv * pq.m / pq.s}
 cv_file = config.pop("_fiber_cv_per_unit_file", None)
@@ -94,6 +100,14 @@ else:
 muscle.distribute_innervation_centers()
 muscle.generate_muscle_fiber_centers(verbose=False)
 muscle.assign_mfs2mns(verbose=False, n_jobs=n_jobs)
+property_hash = ""
+if dispersion.fiber_properties == "muscle":
+    state = get_random_generator().bit_generator.state
+    muscle._generate_fiber_properties()
+    get_random_generator().bit_generator.state = state
+    property_hash = hashlib.sha1(
+        np.ascontiguousarray(muscle.muscle_fiber_diameters__mm.magnitude).tobytes()
+        + np.ascontiguousarray(muscle.muscle_fiber_conduction_velocities__mm_per_s.magnitude).tobytes()).hexdigest()
 counts = np.asarray(muscle.resulting_number_of_innervated_fibers)
 fibre_hash = hashlib.sha1(b"".join(
     np.ascontiguousarray(muscle.resulting_fiber_assignment(i)).tobytes() for i in range(N_MU))).hexdigest()
@@ -153,6 +167,8 @@ else:
                                 bending_radius__mm=(radius + fat + skin) * pq.mm,
                                 differentiation_mode="bipolar_longitudinal")
     kernel = 150.0
+if kernel_override is not None:
+    kernel = float(kernel_override)
 sensors = []
 if delsys5 is not None:
     sensors = [(z, rot, th) for z in delsys5["z__mm"] for rot in delsys5["rotation__deg"] for th in delsys5["theta__deg"]]
@@ -183,7 +199,7 @@ else:
     mono = np.zeros((0,))
 report = semg.fiber_dispersion_report or {}
 np.savez(out, label=label, scenario=scenario, myogen=myogen.__file__, config=json.dumps(config), skin=skin, fat=fat, skin_sigma=skin_sigma, diameter=diameter, iap_lambda=iap_lambda, mean_cv=mean_cv, radius=radius, density=fdi_density, rate_model=json.dumps(rate_model), spike_file=str(spike_file), cv_file=str(cv_file), mus=mus, counts=counts,
-         fibre_hash=fibre_hash, spike_hash=spike_hash, ramp=RAMP, hold=HOLD, level=LEVEL,
+         fibre_hash=fibre_hash, spike_hash=spike_hash, property_hash=property_hash, kernel=np.nan if kernel is None else kernel, ramp=RAMP, hold=HOLD, level=LEVEL,
          bip_muaps=templates, pair_muap_fs=float(sig0.sampling_rate.rescale(pq.Hz).magnitude),
          bip_emg=np.asarray(signal_to_grid(emg.rescale(pq.mV))), mono_emg=mono, sensors=np.array(sensors),
          sensor_pos_z=np.array([a.pos_z for a in arrays]) if delsys5 is not None else np.zeros(0),
@@ -191,4 +207,4 @@ np.savez(out, label=label, scenario=scenario, myogen=myogen.__file__, config=jso
          report=np.array({k: v for k, v in report.items() if k != "config"}, dtype=object),
          seconds=time.time() - t0, allow_pickle=True)
 print(label, "fibres", int(counts[mus].sum()), "secs", round(time.time() - t0), "fibre", fibre_hash[:10],
-      "spikes", spike_hash[:10], flush=True)
+      "spikes", spike_hash[:10], "properties", property_hash[:10], flush=True)

@@ -34,7 +34,7 @@ Then decide one PR or several, routed through the issues. Source of truth for th
 
 ## Other open items
 
-- **Surface EMG reads `Muscle` fibres** (overnight 2026-11-03), then **λ refit** on the Botelho benchmark (λ 0.60–0.90 + 1.0 reference, MDF only).
+- **Surface EMG reads `Muscle` fibres**: implemented 2026-11-03 (`fiber_properties="muscle"`, opt-in). **λ refit** on the Botelho benchmark running (λ 0.60–0.90 + 1.0 reference, MDF only).
 - **Non-zero Gfluctdv default**: separate PR; generic current-injection calibration; recheck the primary source of the 15–22 % ISI CV target. Fits into profiles (item 1).
 - **Human force-frequency curve as `ForceModel` default**: proposed for the next release (item 1).
 - **`HillModel` type counts from `Muscle`** (fibre-typing follow-up).
