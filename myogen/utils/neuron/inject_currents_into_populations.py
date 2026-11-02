@@ -42,7 +42,8 @@ def inject_currents_into_populations(
     -----
     - Current injection vectors and IClamp objects are stored on each cell as
       `cell._stim_vectors` to prevent garbage collection
-    - The user is responsible for setting up spike recording and calling h.run()
+    - The user is responsible for setting up spike recording and advancing the
+      simulation with h.fadvance()
     """
     # Validate input dimensions
     n_pools = len(populations)
@@ -118,7 +119,7 @@ def inject_currents_and_simulate_spike_trains(
     This function performs the complete simulation pipeline:
     1. Sets up current injection (same as inject_currents_into_populations)
     2. Sets up spike recording for all neurons
-    3. Runs the NEURON simulation via h.run()
+    3. Advances the NEURON simulation via h.fadvance()
     4. Converts recorded spikes to neo.Block format
     """
     from neo import Block, Segment, SpikeTrain
@@ -164,6 +165,7 @@ def inject_currents_and_simulate_spike_trains(
             section.v = voltage
 
     # Initialize and run the NEURON simulation
+    h.load_file("stdrun.hoc")
     h.finitialize()  # Use default initialization, voltages already set above
     # Advance the solver to the end of the simulation (replaces the deprecated
     # neuron.run(); finitialize() above already set the initial state).

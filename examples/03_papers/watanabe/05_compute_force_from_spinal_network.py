@@ -42,8 +42,8 @@ force output using the Fuglevand force model with batched processing for memory 
   - ``longest_duration_rise_time__ms``: Slowest motor unit's twitch rise time
   - ``contraction_time_range_factor``: Ratio of slowest/fastest contraction times
 
-  The model generates a normalized twitch waveform for each motor unit, then
-  convolves it with the spike train to produce force contributions.
+  The model weights each discharge by gain from the preceding inter-spike interval,
+  then sums analytic twitches exactly to produce force contributions.
 
 - [`RecruitmentThresholds`][myogen.simulator.RecruitmentThresholds]:
   Same thresholds used during simulation - ensures force model matches network.
@@ -53,8 +53,8 @@ force output using the Fuglevand force model with batched processing for memory 
 1. Each motor unit has a characteristic twitch: ``F(t) = P * (t/T) * exp(1 - t/T)``
    where P = peak force (from recruitment threshold) and T = contraction time.
 
-2. Smaller motor units (low threshold): small P, short T → small, fast twitches
-   Larger motor units (high threshold): large P, long T → large, slow twitches
+2. Smaller motor units (low threshold): small P, long T → small, slow twitches
+   Larger motor units (high threshold): large P, short T → large, fast twitches
 
 3. Total muscle force = sum of all motor unit forces (unfused tetanus at ~10-30 Hz)
 

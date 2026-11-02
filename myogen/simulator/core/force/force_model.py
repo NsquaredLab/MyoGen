@@ -4,6 +4,7 @@ import numpy as np
 import quantities as pq
 import scipy.sparse as sp
 from neo import AnalogSignal
+from scipy.signal import lfilter
 from tqdm import tqdm
 
 from myogen.utils.binning import bin_spike_trains
@@ -16,7 +17,7 @@ from myogen.utils.types import (
     SPIKE_TRAIN__Block,
 )
 
-from .force_utils import get_gain_vectorized, sawtooth2ipi, spikes2sawtooth
+from .force_utils import fuglevand_gain
 
 
 @beartowertype
@@ -35,7 +36,7 @@ class ForceModel:
         Recruitment thresholds for each motor unit. Array of values typically ranging
         from 0 to 1 where larger motor units have higher thresholds.
     recording_frequency__Hz : Quantity__Hz
-        Recording frequency in Hz. Determines temporal resolution of force calculations.
+        Recording frequency in Hz. Determines temporal resolution of the force output.
         Typical values: 100-1000 Hz.
     longest_duration_rise_time__ms : Quantity__ms, default=90.0 * pq.ms
         Longest duration of the rise time in milliseconds. This parameter (T_L in _[1])
@@ -44,6 +45,11 @@ class ForceModel:
         Contraction time range factor (RT in _[1]). Determines the spread of contraction
         times across motor units. Generally between 2 and 5. Higher values create
         larger differences between fast and slow motor units.
+    twitch_force_range : float or None, default=None
+        Twitch-force range (RP in _[1]) used in equations 13 and 14. Must be greater
+        than 1. If None, defaults to the last/first recruitment-threshold ratio for
+        backward compatibility. Fuglevand et al. (1993) use RP = 100 independently
+        of the recruitment range RR = 30.
 
     Attributes
     ----------
@@ -51,14 +57,16 @@ class ForceModel:
         Peak twitch forces for each motor unit (unitless). Available after initialization.
         Computed according to Fuglevand equation 13.
     contraction_times__samples : np.ndarray
-        Contraction times for each motor unit in samples. Available after initialization.
-        Computed according to Fuglevand equation 14.
+        Contraction times for each motor unit in samples of recording_frequency__Hz.
+        Available after initialization. Computed according to Fuglevand equation 14.
     twitch_mat : np.ndarray
-        Complete twitch matrix for all motor units. Available after initialization.
+        Twitch matrix sampled up to 10 times the longest contraction time, for plotting only.
+        Available after initialization.
         Shape: (max_twitch_length, n_motor_units).
     twitch_list : list[np.ndarray]
         List of individual twitch responses for each motor unit. Available after initialization.
-        Each element contains the twitch response for one motor unit.
+        Each element contains one unit's twitch sampled up to 10 contraction times,
+        for plotting only.
 
     Raises
     ------
@@ -67,10 +75,19 @@ class ForceModel:
         If recording_frequency__Hz is not positive.
         If longest_duration_rise_time__ms is not positive.
         If contraction_time_range_factor is not greater than 1.
+        If twitch_force_range is provided and is not greater than 1.
+
+    Notes
+    -----
+    Force is in units of peak twitch force P, independent of recording_frequency__Hz.
+    Each unit saturates at approximately 9.05 P; the pool maximum is approximately
+    9.05 * sum(P). Twitches are summed exactly on the spike-train grid without truncation.
 
     References
     ----------
-    [1] Fuglevand, A. J., Winter, D. A., & Patla, A. E. (1993). Models of recruitment and rate coding in motor-unit pools. Journal of Neurophysiology, 70(2), 782-797.
+    [1] Fuglevand, A. J., Winter, D. A., & Patla, A. E. (1993). Models of recruitment
+    and rate coding organization in motor-unit pools. J Neurophysiol, 70(6), 2470–2488.
+    https://doi.org/10.1152/jn.1993.70.6.2470.
 
     Examples
     --------
@@ -89,6 +106,7 @@ class ForceModel:
         recording_frequency__Hz: Quantity__Hz,
         longest_duration_rise_time__ms: Quantity__ms = 90.0 * pq.ms,
         contraction_time_range_factor: float = 3.0,
+        twitch_force_range: float | None = None,
     ) -> None:
         # Input validation
         if len(recruitment_thresholds) == 0:
@@ -124,23 +142,32 @@ class ForceModel:
                 "This parameter determines the spread of contraction times. Typical values are 2.0-5.0."
             )
 
+        if twitch_force_range is not None and twitch_force_range <= 1.0:
+            raise ValueError(
+                f"twitch_force_range must be greater than 1.0, got {twitch_force_range}. "
+                "This parameter determines the spread of peak twitch forces. Fuglevand et al. (1993) use 100."
+            )
+
         # Immutable public access
         self.recruitment_thresholds = recruitment_thresholds
         self.recording_frequency__Hz = recording_frequency__Hz
         self.longest_duration_rise_time__ms = longest_duration_rise_time__ms
         self.contraction_time_range_factor = contraction_time_range_factor
+        self.twitch_force_range = twitch_force_range
 
         # Private copies for internal modifications
         self._recruitment_thresholds = recruitment_thresholds.copy()
         self._recording_frequency__Hz = recording_frequency__Hz
         self._longest_duration_rise_time__ms = longest_duration_rise_time__ms
         self._contraction_time_range_factor = contraction_time_range_factor
+        self._twitch_force_range = twitch_force_range
 
         # Derived properties
         self._number_of_neurons = len(self._recruitment_thresholds)
         self._recruitment_ratio = (
             self._recruitment_thresholds[-1] / self._recruitment_thresholds[0]
-        )  # referred in [1] as RP
+            if self._twitch_force_range is None else self._twitch_force_range
+        )  # Twitch-force range RP in [1]; legacy attribute name retained.
 
         self._longest_duration_rise_time__samples = float(
             (
@@ -199,8 +226,8 @@ class ForceModel:
                 "Twitch parameters not computed. Call _compute_twitch_parameters() first."
             )
 
-        # 5 is a rule of thumb number so we capture the entire twitch.
-        max_twitch_length = int(np.ceil(5 * np.max(self._contraction_times__samples)))
+        # Sample up to 10 contraction times for plotting; force generation uses the IIR.
+        max_twitch_length = int(np.ceil(10 * np.max(self._contraction_times__samples)))
 
         twitch_timelines_reshaped = np.arange(max_twitch_length)[:, np.newaxis]
 
@@ -211,13 +238,13 @@ class ForceModel:
             * np.exp(1 - twitch_timelines_reshaped / self._contraction_times__samples)
         )  # referred in [1] as f_i(t) (see eq. 11 and 12)
 
-        # Truncate the twitch to the effective length
+        # Keep each plotting twitch up to 10 of its own contraction times.
         self._twitch_list = [
             self._twitch_mat[:L, i]
             for i, L in enumerate(
                 np.minimum(
                     max_twitch_length,
-                    np.ceil(5 * self._contraction_times__samples).astype(int),
+                    np.ceil(10 * self._contraction_times__samples).astype(int),
                 )
             )
         ]
@@ -255,11 +282,13 @@ class ForceModel:
         Notes
         -----
         The force generation follows these steps:
-        1. Convert spike trains to inter-pulse intervals (IPIs)
-        2. Calculate nonlinear gain based on discharge rates
-        3. Sum weighted twitch responses for each spike
-        4. Apply gain modulation to final force output
-        5. Resample output to match recording_frequency__Hz
+        1. Bin spike trains on their sampling_period grid; each occupied bin is one discharge.
+        2. Compute each discharge's gain from the preceding inter-spike interval in seconds
+           and the contraction time in seconds; the first discharge has gain 1.
+        3. Filter each unit's gain-weighted impulses with a two-pole IIR to sum its analytic
+           twitches exactly on the spike-train grid, without truncation.
+        4. Accumulate the unit forces, processing one unit at a time.
+        5. Linearly interpolate the total force to recording_frequency__Hz.
         """
         if self._twitch_list is None:
             raise ValueError(
@@ -306,103 +335,49 @@ class ForceModel:
         self, spikes, spiketrain_timestep__ms: float, prefix: str = "", verbose: bool = True
     ) -> np.ndarray:
         """Generate force offline from spike trains with resampling to recording frequency."""
-        # Convert sparse to dense once at the start
+        # CSC keeps each unit's occupied bins accessible without a dense spike matrix.
         if sp.issparse(spikes):
-            spikes_dense = spikes.toarray()
-        else:
-            spikes_dense = spikes
+            spikes = spikes.tocsc()
 
-        L = spikes_dense.shape[0]
-
-        # Calculate target length for resampling to recording frequency
+        L = spikes.shape[0]
         spiketrain_timestep__s = spiketrain_timestep__ms / 1000.0
         force_timestep__s = float((1.0 / self._recording_frequency__Hz).rescale("s").magnitude)
-
-        # IPI signal generation out of spikes signal (for gain nonlinearity)
-        _, ipi = sawtooth2ipi(
-            spikes2sawtooth(np.vstack([spikes_dense[1:], np.zeros((1, self._number_of_neurons))])),
-            spikes_dense,
-        )
-
-        gain = get_gain_vectorized(ipi, self._contraction_times__samples)
-
-        # Optimize twitch resampling - pre-compute interpolation grids
-        resampled_twitches = []
-        for force_twitch in self._twitch_list:
-            # Pre-compute grid arrays - ensure exact length match
-            twitch_length = force_twitch.shape[0]
-            xp_orig = np.arange(twitch_length) * force_timestep__s
-            twitch_duration_s = (twitch_length - 1) * force_timestep__s
-            x_new = np.arange(0, twitch_duration_s + spiketrain_timestep__s, spiketrain_timestep__s)
-
-            resampled_twitches.append(np.interp(x_new, xp_orig, force_twitch))
-
-        # Generate force at spike train sampling rate - optimized to only iterate over spikes
+        fs = float(self._recording_frequency__Hz.rescale("Hz").magnitude)
+        contraction_times__s = self._contraction_times__samples / fs
         force = np.zeros(L)
 
-        # Try to use Numba if available for additional speedup
-        try:
-            force = self._generate_force_numba(
-                force, spikes_dense, gain, resampled_twitches, L, prefix, verbose
-            )
-        except (ImportError, AttributeError):
-            # Fallback to optimized NumPy version
-            for n in tqdm(
-                range(self._number_of_neurons),
-                desc=f"{prefix} Twitch trains are generated",
-                unit="MU",
-                disable=not verbose,
-            ):
-                # Only iterate over spike times, not all time points
-                spike_indices = np.where(spikes_dense[:, n])[0]
-                twitch = resampled_twitches[n]
-
-                for spike_t in spike_indices:
-                    to_take = min(len(twitch), L - spike_t)
-                    force[spike_t : spike_t + to_take] += gain[spike_t, n] * twitch[:to_take]
-
-        # Final resampling to target frequency
-        output_times = np.arange(0, L * spiketrain_timestep__s, force_timestep__s)
-        input_times = np.arange(0, L * spiketrain_timestep__s, spiketrain_timestep__s)
-
-        return np.interp(output_times, input_times, force)
-
-    def _generate_force_numba(
-        self,
-        force: np.ndarray,
-        spikes: np.ndarray,
-        gain: np.ndarray,
-        resampled_twitches: list,
-        L: int,
-        prefix: str,
-        verbose: bool = True,
-    ) -> np.ndarray:
-        """Generate force using Numba JIT compilation for maximum speed."""
-        try:
-            import numba
-        except ImportError:
-            raise ImportError("Numba not available, falling back to NumPy")
-
-        @numba.jit(nopython=True, parallel=False)
-        def add_twitches_jit(force, spikes, gain, n, twitch, L):
-            """Inner loop compiled with Numba for speed."""
-            for t in range(L):
-                if spikes[t, n]:
-                    to_take = min(len(twitch), L - t)
-                    for i in range(to_take):
-                        force[t + i] += gain[t, n] * twitch[i]
-            return force
-
-        # Process each neuron
         for n in tqdm(
             range(self._number_of_neurons),
-            desc=f"{prefix} Twitch trains (Numba)",
+            desc=f"{prefix} Twitch trains are generated",
             unit="MU",
             disable=not verbose,
         ):
-            force = add_twitches_jit(force, spikes, gain, n, resampled_twitches[n], L)
+            if sp.issparse(spikes):
+                idx = np.sort(spikes[:, n].nonzero()[0])
+            else:
+                idx = np.flatnonzero(spikes[:, n])
+            if idx.size == 0:
+                continue
 
-        return force
+            T = contraction_times__s[n]
+            P = self._peak_twitch_forces__unitless[n]
+            r = T / (np.diff(idx) * spiketrain_timestep__s)
+            x = np.zeros(L)
+            x[idx] = np.concatenate(([1.0], fuglevand_gain(r)))
+
+            # Exact sampled twitch impulse response, with no tail truncation.
+            a = np.exp(-spiketrain_timestep__s / T)
+            force += lfilter(
+                [0, P * np.e * (spiketrain_timestep__s / T) * a],
+                [1, -2 * a, a * a],
+                x,
+            )
+
+        # Final resampling to target frequency
+        output_times = np.arange(0, L * spiketrain_timestep__s, force_timestep__s)
+        input_times = np.arange(L) * spiketrain_timestep__s
+
+        return np.interp(output_times, input_times, force)
 
     # Property accessors for computed results
     @property
@@ -430,7 +405,7 @@ class ForceModel:
     @property
     def contraction_times__samples(self) -> np.ndarray:
         """
-        Contraction times for each motor unit in samples.
+        Contraction times for each motor unit in samples of recording_frequency__Hz.
 
         Returns
         -------
@@ -458,7 +433,7 @@ class ForceModel:
         -------
         np.ndarray
             Matrix of shape (max_twitch_length, n_motor_units) containing
-            the twitch responses for each motor unit.
+            the twitch responses for plotting, sampled up to 10 times the longest contraction time.
 
         Raises
         ------
@@ -481,7 +456,7 @@ class ForceModel:
         -------
         list[np.ndarray]
             List where each element is the twitch response array for one motor unit.
-            Each array may have different lengths based on the motor unit's contraction time.
+            Each array spans up to 10 of the motor unit's contraction times, for plotting only.
 
         Raises
         ------

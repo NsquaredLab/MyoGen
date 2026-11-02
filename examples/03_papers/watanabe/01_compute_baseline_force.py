@@ -307,11 +307,11 @@ print(f"  Coefficient of variation: {fr_std / fr_mean:.3f}\n")
 # The ForceModel implements Fuglevand's motor unit twitch model:
 #   - Each motor unit produces a twitch waveform: F(t) = P * (t/T) * exp(1 - t/T)
 #   - P (peak force) and T (contraction time) depend on recruitment threshold
-#   - Low-threshold units: small P, short T → small, fast twitches
-#   - High-threshold units: large P, long T → large, slow twitches
+#   - Low-threshold units: small P, long T → small, slow twitches
+#   - High-threshold units: large P, short T → large, fast twitches
 #
-# The force model convolves each unit's twitch with its spike train,
-# then sums across all units to get total muscle force.
+# The force model weights each discharge by gain from the preceding inter-spike
+# interval, then sums analytic twitches exactly across all units.
 
 force_model = ForceModel(
     recruitment_thresholds=recruitment_thresholds,
@@ -321,7 +321,7 @@ force_model = ForceModel(
 )
 
 # Generate force from spike trains
-# Returns a NEO AnalogSignal with units of "arbitrary" (sum of normalized twitches)
+# Returns a dimensionless NEO AnalogSignal in units of peak twitch force P
 force_output = force_model.generate_force(spike_train__Block=spike_train__Block)
 force_raw = force_output.magnitude[:, 0]  # Arbitrary units (sum of MU twitches)
 force_time = force_output.times.rescale(pq.s).magnitude

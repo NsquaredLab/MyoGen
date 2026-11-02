@@ -48,6 +48,9 @@ SUBDIRS = ["01_basic", "02_finetune", "03_papers/watanabe", "04_clinical"]
 # docs/gallery_conf.py); watanabe/clinical render source-only, so they are not
 # expected to produce figures and are not part of the completeness target.
 EXECUTE_SUBDIRS = ["01_basic", "02_finetune"]
+# Source-only CLI example: requires arguments and trusted local input files.
+# Keep in sync with filename_pattern in docs/gallery_conf.py.
+SOURCE_ONLY = {"16_adaptive_cpu_execution"}
 # keep in sync with ignore_pattern in docs/gallery_conf.py
 IGNORE = re.compile(
     r"(14_calibrate_noise_from_real|_oscillating_dc_helpers|_optimize_dc_worker|_pic_protocols)\.py"
@@ -64,7 +67,7 @@ def executable_examples() -> set[str]:
     names: set[str] = set()
     for sub in EXECUTE_SUBDIRS:
         for py in sorted((EXAMPLES / sub).glob("*.py")):
-            if not IGNORE.search(py.name):
+            if not IGNORE.search(py.name) and py.stem not in SOURCE_ONLY:
                 names.add(py.stem)
     return names
 

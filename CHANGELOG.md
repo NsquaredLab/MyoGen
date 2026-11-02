@@ -7,6 +7,65 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.13.0] - 2026-10-28
+
+Thanks to @joaohbbittar for the detailed report in #26, this release corrects the Fuglevand force model and the Hill muscle activation.
+
+### Added
+
+- **Independent twitch-force range.** `ForceModel` and `ForceModelVectorized` accept `twitch_force_range` to set RP independently of recruitment thresholds in Fuglevand equations 13 and 14. The default (`None`) preserves the recruitment-threshold ratio used previously; set it to 100 to use the paper's twitch-force range.
+
+### Fixed
+
+- **Force model gain and twitch summation.** Corrected the per-discharge gain according to Fuglevand, Winter & Patla (1993), using the preceding inter-spike interval and consistent time units. Force is independent of recording rate and saturates at approximately 9.05 times peak twitch force per unit. Exact twitch summation removes the 5 T truncation, and the paper citation is corrected. Fixes #26
+- **Force resampling crash.** `generate_force` no longer raises `ValueError: fp and xp are not of the same length` for spike-train durations that are not exact multiples of the floating-point sampling period.
+- **HillModel activation normalisation.** Compute `tetF` from the post-sigmoid force at each motor unit's saturation frequency. Summed activation at full saturation is now approximately 1 instead of approximately 2.5 with the FDI defaults.
+- **Standalone current-injection simulation.** `inject_currents_and_simulate_spike_trains` now loads `stdrun.hoc` before setting `h.tstop`, so it works in a fresh interpreter.
+
+### Changed
+
+- **Single force-model implementation.** `ForceModelVectorized` is now a backward-compatible subclass of `ForceModel`, so the two cannot drift apart.
+
+### Removed
+
+- **Inter-pulse-interval helpers.** `spikes2sawtooth`, `sawtooth2spikes`, `sawtooth2ipi`, `get_gain` and `get_gain_vectorized` in `myogen.simulator.core.force.force_utils`, and the `force_utils_vectorized` module, are removed. The rate-dependent gain is available as `force_utils.fuglevand_gain`.
+
+### Upgrade notes
+
+- Absolute `ForceModel` and `ForceModelVectorized` outputs change. Regenerate stored force baselines, including `force_results.json` from `examples/02_finetune/02_compute_force_from_optimized_dd.py`.
+- %MVC targets tuned with 0.12.0 map to different drives with the corrected force model.
+- `HillModel` / `SimulationRunner` muscle force and torque outputs scale down, including in `examples/01_basic/11_simulate_spinal_network.py`. Re-calibrate anything tuned against the old output.
+
+## [0.12.0] - 2026-10-19
+
+Thanks to the efforts of @DRohlf (Devon Rohlf), this release improves surface EMG numerical correctness and adds adaptive CPU execution.
+
+### Added
+
+- **Opt-in adaptive CPU execution.** `ExecutionPolicy` enables memory-aware execution for iEMG and sEMG, with bounded work batches, reusable preparation caches and optional disk caching of completed motor units.
+- **CPU execution guide and sEMG examples.** Added an execution-policy example and reproducible clean and noisy sEMG demonstrations.
+
+### Fixed
+
+- **Surface EMG frequency reconstruction and angular orders.** Corrected negative-frequency lookup and integer angular orders, including support for odd grid sizes.
+- **Layered-cylinder stability.** Stabilized the volume-conductor solve for thin bones and fine grids, and preserved continuity when no bone is present.
+- **Session cache cleanup.** Completed and failed sessions release their bookkeeping without retaining discarded simulators, while live simulators keep reusable cached arrays.
+- **API documentation and test portability.** Made lazy public exports visible to API documentation, removed host-memory assumptions from synthetic contract tests, and ensured CI uses the selected Python version.
+
+### Changed
+
+- **Shared surface volume conductor.** Surface simulation entry points now use one implementation of the layered-cylinder boundary conditions and transfer function.
+- **Lazy public imports.** Execution-policy imports avoid eagerly loading simulator kernels while preserving existing public import names.
+
+### Removed
+
+- **Obsolete Cython surface-fiber extension.** `simulate_fiber_v2` now uses the Python implementation. The `use_cython` argument remains accepted but is ignored; `True` emits a deprecation warning. `HAS_CYTHON_FIBER` remains available as `False`.
+
+### Upgrade notes
+
+- The surface-conductor corrections intentionally change affected sEMG amplitudes. Regenerate affected reference outputs and comparisons when upgrading.
+- Adaptive CPU execution is opt-in through `ExecutionPolicy`; calls without a policy continue to use the standard execution path.
+
 ## [0.11.0] - 2026-07-16
 
 ### Added

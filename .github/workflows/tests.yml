@@ -15,6 +15,9 @@ jobs:
       matrix:
         os: [ubuntu-latest, macos-latest]
         python-version: ["3.12", "3.13"]
+    env:
+      # Override the repository's local interpreter pin for every uv command.
+      UV_PYTHON: ${{ matrix.python-version }}
     steps:
       - uses: actions/checkout@v5
 
@@ -47,7 +50,7 @@ jobs:
         # NEURON is now an optional extra (Jaxley is the default backend), so the
         # test suite must opt into it to exercise the NEURON-backed tests.
         run: |
-          uv sync --group dev --extra neuron
+          uv sync --locked --group dev --extra neuron
 
       - name: Compile NEURON mechanisms
         run: uv run poe setup_myogen

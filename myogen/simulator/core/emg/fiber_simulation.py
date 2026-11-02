@@ -20,7 +20,9 @@ from scipy.integrate import trapezoid
 from scipy.special import jv as Jn
 
 from myogen.simulator.core.emg.electrodes import SurfaceElectrodeArray
-from myogen.simulator.core.emg.surface.simulate_fiber import log_In, log_Kn
+from myogen.simulator.core.emg.surface.volume_conductor import (
+    layered_cylinder_transfer,
+)
 
 
 def rosenfalck_dVm_dz(z: np.ndarray, D1: float = 96.0) -> np.ndarray:
@@ -171,17 +173,6 @@ def compute_surface_kernel(
     # Shift to match the convention used by the existing code (centered)
     k_z = np.fft.fftshift(k_z)
 
-    # --- Tissue geometry (Farina 2004 Fig 1b) ---
-    th_muscle = r - th_fat - th_skin - r_bone
-    a = r_bone                              # bone outer radius
-    b = r_bone + th_muscle                  # muscle outer radius
-    c = r_bone + th_muscle + th_fat         # fat outer radius
-    d = r_bone + th_muscle + th_fat + th_skin  # skin outer radius
-
-    am = a * math.sqrt(sig_muscle_z / sig_muscle_rho)
-    bm = b * math.sqrt(sig_muscle_z / sig_muscle_rho)
-    Rm = R * math.sqrt(sig_muscle_z / sig_muscle_rho)
-
     # --- Electrode properties ---
     rele = float(electrode_array.electrode_radius__mm.rescale(pq.mm).magnitude)
     pos_z_mm = electrode_array.pos_z.rescale(pq.mm).magnitude
@@ -189,209 +180,24 @@ def compute_surface_kernel(
     channels = [electrode_array.num_rows, electrode_array.num_cols]
 
     # =========================================================================
-    # Section 3: H_vc(kz, k_theta)  — Bessel volume conductor transfer function
+    # Section 3: H_vc(kz, k_theta) — single authority in volume_conductor.py.
+    # (Solved once per unique |kz|, |k_theta|; the kz = 0 column is zero.)
     # =========================================================================
-    # H_vc is even in both kz and k_theta, so we compute it for unique
-    # non-negative |kz| and |k_theta| values, then map back to the full grid.
-    kz_abs = np.abs(k_z)
-    kt_abs = np.abs(k_theta)
-
-    # Unique non-negative values (sorted) for computation
-    kz_unique = np.unique(kz_abs)
-    kt_unique = np.unique(kt_abs)
-
-    # Exclude kz=0 from computation (singular Bessel system; H_vc=0 at DC)
-    kz_unique_nz = kz_unique[kz_unique > 0]
-
-    K_THETA_u, K_Z_u = np.meshgrid(kt_unique, kz_unique_nz, indexing="ij")
-    n_theta_u, n_z_u = K_THETA_u.shape
-
-    A_mat = np.zeros((n_theta_u, n_z_u, 7, 7))
-    B = np.zeros((n_theta_u, n_z_u, 7, 1))
-
-    if A_matrix is not None:
-        A_mat = A_matrix
-    else:
-        # Log-space Bessel functions for all radii
-        log_In_a = log_In(K_THETA_u, a * K_Z_u)
-        log_In_am = log_In(K_THETA_u, am * K_Z_u)
-        log_In_b = log_In(K_THETA_u, b * K_Z_u)
-        log_In_bm = log_In(K_THETA_u, bm * K_Z_u)
-        log_In_c = log_In(K_THETA_u, c * K_Z_u)
-        log_In_d = log_In(K_THETA_u, d * K_Z_u)
-
-        log_Kn_am = log_Kn(K_THETA_u, am * K_Z_u)
-        log_Kn_b = log_Kn(K_THETA_u, b * K_Z_u)
-        log_Kn_bm = log_Kn(K_THETA_u, bm * K_Z_u)
-        log_Kn_c = log_Kn(K_THETA_u, c * K_Z_u)
-        log_Kn_d = log_Kn(K_THETA_u, d * K_Z_u)
-
-        # Tilde functions: In_tilde = (In(n+1) + In(n-1)) / 2
-        log_In_tilde_a = np.logaddexp(
-            log_In(K_THETA_u + 1, a * K_Z_u), log_In(K_THETA_u - 1, a * K_Z_u)
-        ) - np.log(2)
-        log_In_tilde_am = np.logaddexp(
-            log_In(K_THETA_u + 1, am * K_Z_u), log_In(K_THETA_u - 1, am * K_Z_u)
-        ) - np.log(2)
-        log_In_tilde_b = np.logaddexp(
-            log_In(K_THETA_u + 1, b * K_Z_u), log_In(K_THETA_u - 1, b * K_Z_u)
-        ) - np.log(2)
-        log_In_tilde_bm = np.logaddexp(
-            log_In(K_THETA_u + 1, bm * K_Z_u), log_In(K_THETA_u - 1, bm * K_Z_u)
-        ) - np.log(2)
-        log_In_tilde_c = np.logaddexp(
-            log_In(K_THETA_u + 1, c * K_Z_u), log_In(K_THETA_u - 1, c * K_Z_u)
-        ) - np.log(2)
-        log_In_tilde_d = np.logaddexp(
-            log_In(K_THETA_u + 1, d * K_Z_u), log_In(K_THETA_u - 1, d * K_Z_u)
-        ) - np.log(2)
-
-        log_Kn_tilde_am = np.logaddexp(
-            log_Kn(K_THETA_u + 1, am * K_Z_u), log_Kn(K_THETA_u - 1, am * K_Z_u)
-        ) - np.log(2)
-        log_Kn_tilde_bm = np.logaddexp(
-            log_Kn(K_THETA_u + 1, bm * K_Z_u), log_Kn(K_THETA_u - 1, bm * K_Z_u)
-        ) - np.log(2)
-        log_Kn_tilde_c = np.logaddexp(
-            log_Kn(K_THETA_u + 1, c * K_Z_u), log_Kn(K_THETA_u - 1, c * K_Z_u)
-        ) - np.log(2)
-        log_Kn_tilde_d = np.logaddexp(
-            log_Kn(K_THETA_u + 1, d * K_Z_u), log_Kn(K_THETA_u - 1, d * K_Z_u)
-        ) - np.log(2)
-        log_Kn_tilde_b = np.logaddexp(
-            log_Kn(K_THETA_u + 1, b * K_Z_u), log_Kn(K_THETA_u - 1, b * K_Z_u)
-        ) - np.log(2)
-
-        # Build A matrix (7x7 linear system per (kz, ktheta) pair)
-        # Row 0
-        A_mat[..., 0, 0] = 1
-        A_mat[..., 0, 1] = -np.exp(log_In_am - log_In_bm)
-        A_mat[..., 0, 2] = -np.exp(log_Kn_am - log_Kn_bm)
-
-        # Row 1
-        A_mat[..., 1, 0] = sig_bone * np.exp(log_In_tilde_a - log_In_a)
-        A_mat[..., 1, 1] = -math.sqrt(sig_muscle_rho * sig_muscle_z) * np.exp(
-            log_In_tilde_am - log_In_bm
-        )
-        A_mat[..., 1, 2] = math.sqrt(sig_muscle_rho * sig_muscle_z) * np.exp(
-            log_Kn_tilde_am - log_Kn_bm
-        )
-
-        # Row 2
-        A_mat[..., 2, 1] = 1
-        A_mat[..., 2, 2] = 1
-        A_mat[..., 2, 3] = -np.exp(log_In_b - log_In_c)
-        A_mat[..., 2, 4] = -np.exp(log_Kn_b - log_Kn_c)
-
-        # Row 3
-        A_mat[..., 3, 1] = math.sqrt(sig_muscle_rho * sig_muscle_z) * np.exp(
-            log_In_tilde_bm - log_In_bm
-        )
-        A_mat[..., 3, 2] = -math.sqrt(sig_muscle_rho * sig_muscle_z) * np.exp(
-            log_Kn_tilde_bm - log_Kn_bm
-        )
-        A_mat[..., 3, 3] = -sig_fat * np.exp(log_In_tilde_b - log_In_c)
-        A_mat[..., 3, 4] = sig_fat * np.exp(log_Kn_tilde_b - log_Kn_c)
-
-        # Row 4
-        A_mat[..., 4, 3] = 1
-        A_mat[..., 4, 4] = 1
-        A_mat[..., 4, 5] = -np.exp(log_In_c - log_In_d)
-        A_mat[..., 4, 6] = -np.exp(log_Kn_c - log_Kn_d)
-
-        # Row 5
-        A_mat[..., 5, 3] = sig_fat * np.exp(log_In_tilde_c - log_In_c)
-        A_mat[..., 5, 4] = -sig_fat * np.exp(log_Kn_tilde_c - log_Kn_c)
-        A_mat[..., 5, 5] = -sig_skin * np.exp(log_In_tilde_c - log_In_d)
-        A_mat[..., 5, 6] = sig_skin * np.exp(log_Kn_tilde_c - log_Kn_d)
-
-        # Row 6
-        log_diff_In_d = log_In_tilde_d - log_In_d
-        log_diff_Kn_d = log_Kn_tilde_d - log_Kn_d
-        A_mat[..., 6, 5] = sig_skin * np.exp(log_diff_In_d)
-        A_mat[..., 6, 6] = -sig_skin * np.exp(log_diff_Kn_d)
-
-        # Clean up numerical issues
-        A_mat[np.isinf(A_mat)] = 0
-        A_mat[np.isnan(A_mat)] = 0
-
-        A_matrix = A_mat.copy()
-
-    # --- Update B vector (depends on R, so not fully cacheable) ---
-    log_In_am_b = log_In(K_THETA_u, am * K_Z_u)
-    log_Kn_Rm = log_Kn(K_THETA_u, Rm * K_Z_u)
-    log_Kn_bm_b = log_Kn(K_THETA_u, bm * K_Z_u)
-    log_In_Rm = log_In(K_THETA_u, Rm * K_Z_u)
-
-    log_In_tilde_am_b = np.logaddexp(
-        log_In(K_THETA_u + 1, am * K_Z_u), log_In(K_THETA_u - 1, am * K_Z_u)
-    ) - np.log(2)
-    log_Kn_tilde_bm_b = np.logaddexp(
-        log_Kn(K_THETA_u + 1, bm * K_Z_u), log_Kn(K_THETA_u - 1, bm * K_Z_u)
-    ) - np.log(2)
-
-    MAX_LOG_SAFE = 700.0
-
-    # B[0,0] = In_am * Kn_Rm / sig_muscle_rho
-    log_val_00 = log_In_am_b + log_Kn_Rm
-    B[..., 0, 0] = np.where(
-        log_val_00 < MAX_LOG_SAFE, np.exp(log_val_00), 0
-    ) / sig_muscle_rho
-
-    # B[1,0] = sqrt(sig_z/sig_rho) * In_tilde_am * Kn_Rm
-    log_val_10 = log_In_tilde_am_b + log_Kn_Rm
-    B[..., 1, 0] = math.sqrt(sig_muscle_z / sig_muscle_rho) * np.where(
-        log_val_10 < MAX_LOG_SAFE, np.exp(log_val_10), 0
+    H_vc, A_matrix, _ = layered_cylinder_transfer(
+        k_z,
+        k_theta,
+        r=r,
+        r_bone=r_bone,
+        th_fat=th_fat,
+        th_skin=th_skin,
+        R=R,
+        sig_muscle_rho=sig_muscle_rho,
+        sig_muscle_z=sig_muscle_z,
+        sig_fat=sig_fat,
+        sig_skin=sig_skin,
+        sig_bone=sig_bone,
+        A_matrix=A_matrix,
     )
-
-    # B[2,0] = -Kn_bm * In_Rm / sig_muscle_rho
-    log_val_20 = log_Kn_bm_b + log_In_Rm
-    B[..., 2, 0] = -np.where(
-        log_val_20 < MAX_LOG_SAFE, np.exp(log_val_20), 0
-    ) / sig_muscle_rho
-
-    # B[3,0] = sqrt(sig_z/sig_rho) * Kn_tilde_bm * In_Rm
-    log_val_30 = log_Kn_tilde_bm_b + log_In_Rm
-    B[..., 3, 0] = math.sqrt(sig_muscle_z / sig_muscle_rho) * np.where(
-        log_val_30 < MAX_LOG_SAFE, np.exp(log_val_30), 0
-    )
-
-    B[np.isinf(B)] = 0
-    B[np.isnan(B)] = 0
-
-    # --- Solve the linear system ---
-    A_flat = A_mat.reshape(-1, 7, 7)
-    B_flat = B.reshape(-1, 7, 1)
-
-    if r_bone == 0:
-        # When no bone, muscle is innermost layer. Kn diverges at rho=0,
-        # so B2 (col 2) must be zero. Keep cols [1,3,4,5,6].
-        keep_cols = [1, 3, 4, 5, 6]
-        A_flat = A_flat[..., 2:, keep_cols]
-        B_flat = B_flat[..., 2:, :]
-        X = np.linalg.solve(A_flat, B_flat)
-        X = X.reshape(n_theta_u, n_z_u, 5, 1)
-        H_vc_unique = X[..., 3, 0] + X[..., 4, 0]  # shape: (n_kt_unique, n_kz_nz)
-    else:
-        X = np.linalg.solve(A_flat, B_flat)
-        X = X.reshape(n_theta_u, n_z_u, 7, 1)
-        H_vc_unique = X[..., 5, 0] + X[..., 6, 0]
-
-    # Map unique H_vc back to the full (kz, ktheta) grid.
-    # H_vc is even in both kz and ktheta, so H_vc(kz, ktheta) = H_vc(|kz|, |ktheta|).
-    # Build lookup: for each (i_kz, j_kt) in the full grid, find the index into
-    # the unique arrays.
-    kz_unique_all = np.concatenate(([0.0], kz_unique_nz))  # prepend DC
-    # H_vc at DC is 0
-    H_vc_with_dc = np.zeros((len(kt_unique), len(kz_unique_all)))
-    H_vc_with_dc[:, 1:] = H_vc_unique  # DC column stays 0
-
-    # Index maps: for each entry in k_z, find position in kz_unique_all
-    kz_idx = np.searchsorted(kz_unique_all, kz_abs)
-    kt_idx = np.searchsorted(kt_unique, kt_abs)
-
-    # Build full H_vc array: shape (len(k_z), len(k_theta))
-    H_vc = H_vc_with_dc[kt_idx, :][:, kz_idx].T  # transpose to (n_kz, n_kt)
 
     # =========================================================================
     # Section 4: H_ele(kz, k_theta)  — Electrode transfer function
@@ -559,7 +365,10 @@ def simulate_fiber_hybrid(
         pos_theta_rad = electrode_array.pos_theta.rescale(pq.rad).magnitude + theta_offset
 
     channels = [electrode_array.num_rows, electrode_array.num_cols]
-    k_theta = np.linspace(-(M - 1) / 2, (M - 1) / 2, M)
+    # Integer angular orders on the FFT bin grid (-M/2 .. M/2-1 for even M).
+    # The previous ``linspace(-(M-1)/2, (M-1)/2, M)`` gave half-integer orders
+    # for even M, i.e. a series with period 4*pi in theta.
+    k_theta = np.fft.fftshift(np.fft.fftfreq(M, d=1.0 / M))
 
     if fiber_length__mm is not None:
         Fs_effective = v * (N - 1) / fiber_length__mm
@@ -624,146 +433,30 @@ def simulate_fiber_hybrid(
     t = np.linspace(0, (N - 1) / Fs_effective, N)
 
     # ---- Sections 3-6: Volume conductor + electrode + integration + IFFT ----
-    # Reuse the old path for everything after the source construction.
-    # We call the old function but we need to pass our I_kzkt into it.
-    # Since the old function doesn't support this, we replicate sections 3-6 here
-    # by importing the building blocks.
+    # Sections 3-6 replicate the frequency-domain tail of
+    # _simulate_fiber_v2_python with the unified source above.
 
     from scipy.special import jv as Jn
-    from myogen.simulator.core.emg.surface.simulate_fiber import log_In, log_Kn
 
-    th_muscle = r - th_fat - th_skin - r_bone
-    a = r_bone
-    b = r_bone + th_muscle
-    c = r_bone + th_muscle + th_fat
-    d = r_bone + th_muscle + th_fat + th_skin
-
-    am = a * math.sqrt(sig_muscle_z / sig_muscle_rho)
-    bm = b * math.sqrt(sig_muscle_z / sig_muscle_rho)
-    Rm = R * math.sqrt(sig_muscle_z / sig_muscle_rho)
-
-    i_start, i_end = int(len(k_z) / 2), len(k_z)
-    j_start, j_end = int(len(k_theta) / 2), len(k_theta)
-
-    k_z_pos = k_z[i_start:i_end]
-    k_theta_pos = k_theta[j_start:j_end]
-    K_THETA, K_Z = np.meshgrid(k_theta_pos, k_z_pos, indexing="ij")
-    n_theta, n_z = K_THETA.shape
-
-    A_mat = np.zeros((n_theta, n_z, 7, 7))
-    B = np.zeros((n_theta, n_z, 7, 1))
-
-    if A_matrix is not None and B_incomplete is not None:
-        A_mat = A_matrix
-        B = B_incomplete.copy()
-    else:
-        # Build A matrix using log-space Bessel functions
-        # (identical to _simulate_fiber_v2_python sections 3)
-        log_In_a = log_In(K_THETA, a * K_Z)
-        log_In_am = log_In(K_THETA, am * K_Z)
-        log_In_b = log_In(K_THETA, b * K_Z)
-        log_In_bm = log_In(K_THETA, bm * K_Z)
-        log_In_c = log_In(K_THETA, c * K_Z)
-        log_In_d = log_In(K_THETA, d * K_Z)
-
-        log_Kn_am = log_Kn(K_THETA, am * K_Z)
-        log_Kn_b = log_Kn(K_THETA, b * K_Z)
-        log_Kn_bm = log_Kn(K_THETA, bm * K_Z)
-        log_Kn_c = log_Kn(K_THETA, c * K_Z)
-        log_Kn_d = log_Kn(K_THETA, d * K_Z)
-
-        log_In_tilde_a = np.logaddexp(log_In(K_THETA + 1, a * K_Z), log_In(K_THETA - 1, a * K_Z)) - np.log(2)
-        log_In_tilde_am = np.logaddexp(log_In(K_THETA + 1, am * K_Z), log_In(K_THETA - 1, am * K_Z)) - np.log(2)
-        log_In_tilde_b = np.logaddexp(log_In(K_THETA + 1, b * K_Z), log_In(K_THETA - 1, b * K_Z)) - np.log(2)
-        log_In_tilde_bm = np.logaddexp(log_In(K_THETA + 1, bm * K_Z), log_In(K_THETA - 1, bm * K_Z)) - np.log(2)
-        log_In_tilde_c = np.logaddexp(log_In(K_THETA + 1, c * K_Z), log_In(K_THETA - 1, c * K_Z)) - np.log(2)
-        log_In_tilde_d = np.logaddexp(log_In(K_THETA + 1, d * K_Z), log_In(K_THETA - 1, d * K_Z)) - np.log(2)
-
-        log_Kn_tilde_am = np.logaddexp(log_Kn(K_THETA + 1, am * K_Z), log_Kn(K_THETA - 1, am * K_Z)) - np.log(2)
-        log_Kn_tilde_bm = np.logaddexp(log_Kn(K_THETA + 1, bm * K_Z), log_Kn(K_THETA - 1, bm * K_Z)) - np.log(2)
-        log_Kn_tilde_c = np.logaddexp(log_Kn(K_THETA + 1, c * K_Z), log_Kn(K_THETA - 1, c * K_Z)) - np.log(2)
-        log_Kn_tilde_d = np.logaddexp(log_Kn(K_THETA + 1, d * K_Z), log_Kn(K_THETA - 1, d * K_Z)) - np.log(2)
-        log_Kn_tilde_b = np.logaddexp(log_Kn(K_THETA + 1, b * K_Z), log_Kn(K_THETA - 1, b * K_Z)) - np.log(2)
-
-        # A matrix rows (identical to old path)
-        A_mat[..., 0, 0] = 1
-        A_mat[..., 0, 1] = -np.exp(log_In_am - log_In_bm)
-        A_mat[..., 0, 2] = -np.exp(log_Kn_am - log_Kn_bm)
-        A_mat[..., 1, 0] = sig_bone * np.exp(log_In_tilde_a - log_In_a)
-        A_mat[..., 1, 1] = -math.sqrt(sig_muscle_rho * sig_muscle_z) * np.exp(log_In_tilde_am - log_In_bm)
-        A_mat[..., 1, 2] = math.sqrt(sig_muscle_rho * sig_muscle_z) * np.exp(log_Kn_tilde_am - log_Kn_bm)
-        A_mat[..., 2, 1] = 1
-        A_mat[..., 2, 2] = 1
-        A_mat[..., 2, 3] = -np.exp(log_In_b - log_In_c)
-        A_mat[..., 2, 4] = -np.exp(log_Kn_b - log_Kn_c)
-        A_mat[..., 3, 1] = math.sqrt(sig_muscle_rho * sig_muscle_z) * np.exp(log_In_tilde_bm - log_In_bm)
-        A_mat[..., 3, 2] = -math.sqrt(sig_muscle_rho * sig_muscle_z) * np.exp(log_Kn_tilde_bm - log_Kn_bm)
-        A_mat[..., 3, 3] = -sig_fat * np.exp(log_In_tilde_b - log_In_c)
-        A_mat[..., 3, 4] = sig_fat * np.exp(log_Kn_tilde_b - log_Kn_c)
-        A_mat[..., 4, 3] = 1
-        A_mat[..., 4, 4] = 1
-        A_mat[..., 4, 5] = -np.exp(log_In_c - log_In_d)
-        A_mat[..., 4, 6] = -np.exp(log_Kn_c - log_Kn_d)
-        A_mat[..., 5, 3] = sig_fat * np.exp(log_In_tilde_c - log_In_c)
-        A_mat[..., 5, 4] = -sig_fat * np.exp(log_Kn_tilde_c - log_Kn_c)
-        A_mat[..., 5, 5] = -sig_skin * np.exp(log_In_tilde_c - log_In_d)
-        A_mat[..., 5, 6] = sig_skin * np.exp(log_Kn_tilde_c - log_Kn_d)
-        log_diff_In_d = log_In_tilde_d - log_In_d
-        log_diff_Kn_d = log_Kn_tilde_d - log_Kn_d
-        A_mat[..., 6, 5] = sig_skin * np.exp(log_diff_In_d)
-        A_mat[..., 6, 6] = -sig_skin * np.exp(log_diff_Kn_d)
-
-        A_mat[np.isinf(A_mat)] = 0
-        A_mat[np.isnan(A_mat)] = 0
-        A_matrix = A_mat.copy()
-        B_incomplete = B.copy()
-
-    # B vector (depends on source position R)
-    log_In_am_b = log_In(K_THETA, am * K_Z)
-    log_Kn_Rm = log_Kn(K_THETA, Rm * K_Z)
-    log_Kn_bm_b = log_Kn(K_THETA, bm * K_Z)
-    log_In_Rm = log_In(K_THETA, Rm * K_Z)
-
-    log_In_tilde_am_b = np.logaddexp(log_In(K_THETA + 1, am * K_Z), log_In(K_THETA - 1, am * K_Z)) - np.log(2)
-    log_Kn_tilde_bm_b = np.logaddexp(log_Kn(K_THETA + 1, bm * K_Z), log_Kn(K_THETA - 1, bm * K_Z)) - np.log(2)
-
-    MAX_LOG_SAFE = 700.0
-    log_val_00 = log_In_am_b + log_Kn_Rm
-    B[..., 0, 0] = np.where(log_val_00 < MAX_LOG_SAFE, np.exp(log_val_00), 0) / sig_muscle_rho
-    log_val_10 = log_In_tilde_am_b + log_Kn_Rm
-    B[..., 1, 0] = math.sqrt(sig_muscle_z / sig_muscle_rho) * np.where(log_val_10 < MAX_LOG_SAFE, np.exp(log_val_10), 0)
-    log_val_20 = log_Kn_bm_b + log_In_Rm
-    B[..., 2, 0] = -np.where(log_val_20 < MAX_LOG_SAFE, np.exp(log_val_20), 0) / sig_muscle_rho
-    log_val_30 = log_Kn_tilde_bm_b + log_In_Rm
-    B[..., 3, 0] = math.sqrt(sig_muscle_z / sig_muscle_rho) * np.where(log_val_30 < MAX_LOG_SAFE, np.exp(log_val_30), 0)
-
-    B[np.isinf(B)] = 0
-    B[np.isnan(B)] = 0
-
-    # Solve linear system
-    A_flat = A_mat.reshape(-1, 7, 7)
-    B_flat = B.reshape(-1, 7, 1)
-
-    if r_bone == 0:
-        keep_cols = [1, 3, 4, 5, 6]
-        A_flat = A_flat[..., 2:, keep_cols]
-        B_flat = B_flat[..., 2:, :]
-        X = np.linalg.solve(A_flat, B_flat)
-        X = X.reshape(n_theta, n_z, 5, 1)
-        H_vc = X[..., 3, 0] + X[..., 4, 0]
-    else:
-        X = np.linalg.solve(A_flat, B_flat)
-        X = X.reshape(n_theta, n_z, 7, 1)
-        H_vc = X[..., 5, 0] + X[..., 6, 0]
-
-    # Reconstruct full H_vc using symmetry
-    temp = np.zeros((len(k_z), len(k_theta)))
-    temp[i_start:i_end, j_start:j_end] = H_vc.T
-    H_vc = temp
-    H_vc_pos = H_vc[i_start:i_end, j_start:j_end]
-    H_vc[i_start:i_end, :j_start] = np.fliplr(H_vc_pos)
-    H_vc[:i_start, j_start:j_end] = np.flipud(H_vc_pos)
-    H_vc[:i_start, :j_start] = np.flipud(np.fliplr(H_vc_pos))
+    # Section 3: H_vc(kz, k_theta) — single authority in volume_conductor.py.
+    # The hybrid path solves on the CPU regardless of ``use_gpu``.
+    H_vc, A_matrix, B_incomplete = layered_cylinder_transfer(
+        k_z,
+        k_theta,
+        r=r,
+        r_bone=r_bone,
+        th_fat=th_fat,
+        th_skin=th_skin,
+        R=R,
+        sig_muscle_rho=sig_muscle_rho,
+        sig_muscle_z=sig_muscle_z,
+        sig_fat=sig_fat,
+        sig_skin=sig_skin,
+        sig_bone=sig_bone,
+        A_matrix=A_matrix,
+        B_incomplete=B_incomplete,
+        use_gpu=False,
+    )
 
     # Section 4: H_ele
     ktheta_mesh, kz_mesh = np.meshgrid(k_theta, k_z)

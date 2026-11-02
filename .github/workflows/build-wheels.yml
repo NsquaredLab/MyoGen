@@ -27,8 +27,18 @@ jobs:
     steps:
       - uses: actions/checkout@v5
 
+      - name: Set up Python for cibuildwheel
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+
+      # Keep the release builder version while avoiding the v2.21 action's
+      # nested setup-python@v5 dependency on the deprecated Node.js runtime.
+      - name: Install cibuildwheel
+        run: python -m pip install cibuildwheel==2.21.3
+
       - name: Build wheels
-        uses: pypa/cibuildwheel@v2.21
+        run: python -m cibuildwheel --output-dir wheelhouse
         env:
           # Build for Python 3.12 and 3.13
           CIBW_BUILD: "cp312-* cp313-*"

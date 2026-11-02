@@ -206,6 +206,8 @@ class SurfaceEMG:
         n_jobs: int = -2,
         verbose: bool = True,
         use_gpu: Optional[bool] = None,
+        *,
+        execution=None,
     ) -> SURFACE_MUAP__Block:
         """
         Simulate MUAPs for all electrode arrays using the provided muscle model.
@@ -253,6 +255,10 @@ class SurfaceEMG:
         The motor units are processed in parallel using joblib, with each motor unit's
         fibers processed sequentially to maintain optimization efficiency.
         """
+        if execution is not None:
+            from ..runtime.semg import simulate_muaps
+            return simulate_muaps(self, execution, n_jobs, verbose, use_gpu)
+
         # Set default MUs to simulate
         if self._MUs_to_simulate is None:
             self._MUs_to_simulate = list(
@@ -615,7 +621,7 @@ class SurfaceEMG:
 
         return block
 
-    def simulate_surface_emg(self, spike_train__Block: SPIKE_TRAIN__Block, verbose: bool = True) -> SURFACE_EMG__Block:
+    def simulate_surface_emg(self, spike_train__Block: SPIKE_TRAIN__Block, verbose: bool = True, *, execution=None) -> SURFACE_EMG__Block:
         """
         Generate surface EMG signals for all electrode arrays using the provided spike train block.
 
@@ -641,6 +647,9 @@ class SurfaceEMG:
         ValueError
             If MUAP templates have not been generated. Call simulate_muaps() first.
         """
+        if execution is not None:
+            from ..runtime.assembly import assemble
+            return assemble(self, spike_train__Block, execution, surface=True)
         if self._muaps__Block is None:
             raise ValueError("MUAP templates have not been generated. Call simulate_muaps() first.")
 
@@ -846,6 +855,11 @@ class SurfaceEMG:
         # Store results privately
         self._surface_emg__Block = block
         return block
+
+    @property
+    def execution_report(self):
+        """Read-only report from the most recent optimized call, including failure."""
+        return getattr(self, "_execution_report", None)
 
     def add_noise(self, snr__dB: float, noise_type: str = "gaussian") -> SURFACE_EMG__Block:
         """
