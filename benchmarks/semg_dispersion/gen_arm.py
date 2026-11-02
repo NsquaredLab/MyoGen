@@ -20,6 +20,8 @@ undispersed baseline. Harness-only keys set the outer layers:
 ``_skin_conductivity__S_per_m`` (default 1) and ``_fiber_diameter__um`` (default: the ``SurfaceEMG`` default).
 FDI only: ``_muscle_radius__mm`` (default 6.91) and ``_fiber_density__per_mm2`` (default 350).
 ``_spike_file`` (npz with ``spikes`` and ``thresholds``) replaces the generated spike trains.
+``_iap_lambda__per_mm`` (default 1) sets the Rosenfalck IAP length scale (``SurfaceEMG.iap_lambda__per_mm``);
+``_mean_cv__m_s`` (default: the ``Muscle`` default) sets the mean muscle-fibre conduction velocity.
 FDI only: ``_fs__Hz`` (default 2048) sets the output and internal sampling rate. ``_delsys5`` replaces the
 bipolar pair with Delsys 5-pin sensors (0.5 mm pins at the corners and centre of a 5 x 5 mm square, as in
 Pereira Botelho et al. 2019): ``{"z__mm": [...], "rotation__deg": [...], "theta__deg": [...]}`` places one
@@ -60,6 +62,9 @@ fdi_radius = config.pop("_muscle_radius__mm", 6.91)
 fdi_density = config.pop("_fiber_density__per_mm2", 350.0)
 fs_out = config.pop("_fs__Hz", 2048.0)
 delsys5 = config.pop("_delsys5", None)
+iap_lambda = config.pop("_iap_lambda__per_mm", 1.0)
+mean_cv = config.pop("_mean_cv__m_s", None)
+cv_kw = {} if mean_cv is None else {"mean_conduction_velocity__m_per_s": mean_cv * pq.m / pq.s}
 if "nerve_cvs__m_per_s" in config:
     config["nerve_cvs__m_per_s"] = tuple(config["nerve_cvs__m_per_s"])
 dispersion = SurfaceFiberDispersion(**config)
@@ -74,12 +79,12 @@ if scenario == "limb":
     muscle = Muscle(recruitment_thresholds=thresholds, radius__mm=15 * pq.mm, length__mm=80 * pq.mm,
                     fiber_density__fibers_per_mm2=350 * pq.mm**-2, mean_fiber_length__mm=70 * pq.mm,
                     var_fiber_length__mm=5 * pq.mm, radius_bone__mm=3 * pq.mm, fat_thickness__mm=fat * pq.mm,
-                    skin_thickness__mm=skin * pq.mm, skin_conductivity__S_per_m=skin_sigma * pq.S / pq.m)
+                    skin_thickness__mm=skin * pq.mm, skin_conductivity__S_per_m=skin_sigma * pq.S / pq.m, **cv_kw)
     radius = 15.0
 else:
     muscle = Muscle(recruitment_thresholds=thresholds, radius__mm=fdi_radius * pq.mm,
                     fiber_density__fibers_per_mm2=fdi_density * pq.mm**-2, skin_thickness__mm=skin * pq.mm,
-                    fat_thickness__mm=fat * pq.mm, skin_conductivity__S_per_m=skin_sigma * pq.S / pq.m)
+                    fat_thickness__mm=fat * pq.mm, skin_conductivity__S_per_m=skin_sigma * pq.S / pq.m, **cv_kw)
     radius = fdi_radius
 muscle.distribute_innervation_centers()
 muscle.generate_muscle_fiber_centers(verbose=False)
@@ -154,9 +159,10 @@ else:
 set_random_seed(7)
 semg = SurfaceEMG(muscle, arrays, sampling_frequency__Hz=FS * pq.Hz, MUs_to_simulate=mus,
                   internal_sampling_frequency__Hz=FS * pq.Hz, fiber_dispersion=dispersion,
-                  iap_kernel_length__mm=kernel,
+                  iap_kernel_length__mm=kernel, iap_lambda__per_mm=iap_lambda,
                   **({} if diameter is None else {"fiber_diameter__um": diameter}))
 diameter = semg.fiber_diameter__um
+mean_cv = float(semg._mean_conduction_velocity__m_s)
 t0 = time.time()
 muaps = semg.simulate_muaps(n_jobs=n_jobs, verbose=False, use_gpu=False)
 sig0 = muaps.groups[0].segments[mus[0]].analogsignals[0]
@@ -171,7 +177,7 @@ else:
                           for m in mus])
     mono = np.zeros((0,))
 report = semg.fiber_dispersion_report or {}
-np.savez(out, label=label, scenario=scenario, myogen=myogen.__file__, config=json.dumps(config), skin=skin, fat=fat, skin_sigma=skin_sigma, diameter=diameter, radius=radius, density=fdi_density, rate_model=json.dumps(rate_model), spike_file=str(spike_file), mus=mus, counts=counts,
+np.savez(out, label=label, scenario=scenario, myogen=myogen.__file__, config=json.dumps(config), skin=skin, fat=fat, skin_sigma=skin_sigma, diameter=diameter, iap_lambda=iap_lambda, mean_cv=mean_cv, radius=radius, density=fdi_density, rate_model=json.dumps(rate_model), spike_file=str(spike_file), mus=mus, counts=counts,
          fibre_hash=fibre_hash, spike_hash=spike_hash, ramp=RAMP, hold=HOLD, level=LEVEL,
          bip_muaps=templates, pair_muap_fs=float(sig0.sampling_rate.rescale(pq.Hz).magnitude),
          bip_emg=np.asarray(signal_to_grid(emg.rescale(pq.mV))), mono_emg=mono, sensors=np.array(sensors),
