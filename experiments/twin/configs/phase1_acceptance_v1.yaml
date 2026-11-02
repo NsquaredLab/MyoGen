@@ -1,0 +1,92 @@
+# Phase-1C acceptance specification — v1 (FROZEN)
+#
+# Rule: a revision of any threshold after confirmatory runs begin requires a
+# new file (v2); thresholds below were derived from EXPLORATORY data only and
+# are frozen before the confirmatory PIC grid (new seeds) runs.
+#
+# Derivation rule per metric:  T = max(k * E_numerical, alpha * D_scientific)
+#   E_numerical  — measured timestep/precision refinement error (exploratory)
+#   D_scientific — smallest physiological difference the inverse experiment
+#                  must distinguish (declared)
+#   k            — numerical safety multiplier
+#   alpha        — acceptable fraction of the physiological effect
+#
+# Exploratory evidence used for E_numerical and sanity levels:
+#   - deliverable_b_full_binned_*  : binned-rate dt-halving EPS 0.30–0.83 Hz²
+#   - val_comparison_ef1bd7e8...   : subthreshold backend RMSE 0.00035–0.003 mV;
+#                                    step spike-count rel diff ≤ 1/745;
+#                                    step ±5 ms match 0.62–0.73
+#   - val_comparison_bac41198...   : pool ±5 ms match 0.87; counts 407 vs 405
+#   - phase1_pic_validation runs   : hysteresis −10…−14 Hz (×6.5), 7/7
+#                                    self-sustained at CaL×6.5+NaP×5
+
+version: 1
+frozen_at: "2026-10-18"
+status: FROZEN
+applies_to: "paired NEURON–Jaxley pool-phase comparisons (PIC grid, ramp protocol)"
+
+verdict_classes: [PASS, FAIL, OUTSIDE_VALIDATED_ENVELOPE, NOT_EVALUABLE]
+
+metrics:
+  binned_rate_rmse_hz2:
+    threshold: 2.5
+    derivation: {k: 3, E_numerical: 0.83, alpha: 0.5, D_scientific: 5.0}
+    units: "Hz^2 (50 ms bins, 300 ms smoothing, per-unit mean)"
+  active_unit_mismatch:
+    threshold: 1
+    derivation: {k: null, E_numerical: 0, alpha: 0.125, D_scientific: 8}
+    units: "units (|active_jaxley - active_neuron| and set difference)"
+  total_spike_rel_diff:
+    threshold: 0.05
+    derivation: {k: 3, E_numerical: 0.005, alpha: 0.25, D_scientific: 0.2}
+    units: "fraction of max(total spikes, 1)"
+  spike_match_pm5ms_fraction_min:
+    threshold: 0.60
+    derivation: {note: "exploratory pool 0.87, deterministic steps 0.62-0.73;
+                 timing drift is implementation-level — floor set below the
+                 worst exploratory value by design"}
+    units: "matched / max(jaxley_total, neuron_total); NOT_EVALUABLE if < 20 spikes"
+  hysteresis_mean_diff_hz:
+    threshold: 2.0
+    derivation: {k: null, alpha: 0.5, D_scientific: 4.0,
+                 note: "D = hysteresis change per CaL grid step (exploratory)"}
+    units: "Hz drive"
+  self_sustained_mismatch:
+    threshold: 1
+    derivation: {alpha: 0.125, D_scientific: 8}
+    units: "units; after-discharge censored at recording end → NOT_EVALUABLE
+            for duration comparisons, count comparison still evaluable"
+  delta_f_mean_diff_hz:
+    threshold: 2.0
+    requires_min_pairs_each: 3
+    derivation: {alpha: 0.2, D_scientific: 10.0,
+                 note: "ΔF spans ~0–16 Hz across the grid (exploratory)"}
+    units: "Hz; NOT_EVALUABLE if either backend has < 3 eligible pairs"
+  delta_f_eligible_fraction_diff:
+    threshold: 0.25
+    derivation: {note: "eligibility is protocol/estimator-driven; fraction
+                 difference beyond 0.25 means the two backends are in
+                 different ΔF regimes"}
+    units: "absolute fraction of possible pairs"
+  bistability_boundary_offset_steps:
+    threshold: 1
+    derivation: {note: "boundary = first CaL grid value with any
+                 self-sustained unit; must agree within one grid step"}
+    units: "CaL grid steps (per NaP level)"
+
+failure_policy:
+  max_fail_fraction: 0.10   # across (condition × seed × metric) inside envelope
+  rule: "conditions outside the declared envelope are OUTSIDE_VALIDATED_ENVELOPE,
+         not FAIL; the maximal contiguous passing region DEFINES the validated
+         envelope reported to downstream inference"
+
+declared_envelope_candidate:
+  gcal_scale: [0.0, 7.5]
+  gnap_scale: [1.0, 5.0]
+
+downstream_resolution_declaration:
+  note: "Phase-3 ladder: a parameter advances only if its sampled
+         compatibility interval is within ±20 % of truth across replicates
+         (predeclared; see r2a profiles)"
+  cal_resolution_rel: 0.20
+  nap_resolution_rel: 0.20
