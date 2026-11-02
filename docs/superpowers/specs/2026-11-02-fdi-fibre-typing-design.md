@@ -42,7 +42,7 @@ Source for strict order: the size principle in human units — Milner-Brown et a
 
 Per type T (median `m_T` chosen so the type's fibre-weighted mean is `mean_T`, §5.3):
 
-- Unit log-mean: `mu_u = log(m_T) + sigma_b · Φ⁻¹(q_u)`, where `q_u = (rank_u + 0.5) / n_T` is the unit's threshold rank within its type. Deterministic, strictly ordered.
+- Unit log-mean: `mu_u = log(m_T) + sigma_b · Φ⁻¹(q_u)`, where `q_u` is the midpoint of the unit's share of its type's cumulative fibre count, units in threshold order (my call: fibre-weighted, so the type's fibre histogram keeps log-SD 0.2 and the §5.3 factor stays near 1; a unit-rank quantile would shrink the fibre-level spread to ~0.16 because fibres sit in the top-ranked units). Deterministic, strictly ordered.
 - Fibre: `d = exp(mu_u + sigma_w · z)`, `z` standard normal truncated at ±3 (as now).
 - `sigma_b² + sigma_w² = 0.2²` keeps today's total within-type spread (log-SD 0.2, itself an assumption).
 
@@ -65,9 +65,9 @@ Large units hold more fibres and sit at the top of each type's rank order, so th
 2. Type I units are exactly the lowest-threshold ones (no type II unit below a type I unit).
 3. Type I fibre fraction within one unit's worth of 57.4 %.
 4. Type fibre-weighted means 50.0 / 67.0 µm (to 0.1 µm); overall ≈ 57.2 µm.
-5. Within each type, unit mean diameter is non-decreasing in threshold.
-6. Fibre CV mean/SD 3.89 / 0.50 (unchanged), and unit-mean CV rises with threshold (Spearman > 0.9).
-7. Existing iEMG tests pass; full suite green.
+5. Within each type, the designed unit mean `exp(mu_u)` is non-decreasing in threshold (my call: designed, not realised — small units' realised means wander by ~0.02 in log against ~0.003 between neighbours).
+6. Fibre CV mean/SD 3.89 / 0.50 (unchanged). Realised unit-mean CV vs threshold: Spearman and R² reported (not gated), compared with Del Vecchio's R² 0.70 ± 0.09.
+7. Existing iEMG tests pass; full suite green. The two existing tests in `tests/test_muscle_fibre_properties.py` call `_generate_fiber_properties()` without `assign_mfs2mns`; they are rebuilt with a full assignment (my call).
 
 ## 6. Constraints
 
