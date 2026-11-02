@@ -10,7 +10,7 @@ HUMAN_UNIT_FORCE_FREQUENCY = (0.93, 1.29)
 
 def fuglevand_gain(r: np.ndarray, a: float = 2.0, c: float = 3.0) -> np.ndarray:
     """
-    Compute the rate-dependent twitch gain from Fuglevand et al. (1993), eq. 17.
+    Compute the rate-dependent twitch gain from Fuglevand et al. (1993), eq. 17 [fuglevand1993 eq. 17].
 
     Parameters
     ----------
@@ -18,7 +18,7 @@ def fuglevand_gain(r: np.ndarray, a: float = 2.0, c: float = 3.0) -> np.ndarray:
         Dimensionless contraction time divided by the preceding inter-spike interval.
         Both times must be expressed in the same units.
     a, c : float, default 2.0, 3.0
-        Shape of the saturation S(r) = 1 - exp(-a * r**c); Fuglevand et al. (1993) use a = 2, c = 3.
+        Shape of the saturation S(r) = 1 - exp(-a * r**c); Fuglevand et al. (1993) [fuglevand1993] use a = 2, c = 3.
         ``HUMAN_UNIT_FORCE_FREQUENCY`` is a fit to human single motor units.
 
     Returns

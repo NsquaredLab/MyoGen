@@ -197,7 +197,7 @@ def build_dd_mn_network(mn_pool, dd_pool, dd_params):
     - Dendritic-transfer weights: weight_i = synaptic_weight * (k_max / k_i) ** p (``dendritic_transfer``), p from
       ``network["weight_exponent"]`` (default 1). With p = 1 each input delivers the same current to a clamped soma
       at low drive whatever the neuron's size, and recruitment order follows rheobase: equal effective synaptic
-      current per input, the equal-share case of Heckman & Binder 1991 (J Neurophysiol 65:952). p < 1 gives larger
+      current per input, the equal-share case of Heckman & Binder 1991 (J Neurophysiol 65:952) [heckmanbinder1991]. p < 1 gives larger
       neurons less effective current per input (p = 0: one weight for all). Modelling assumption either way;
       measured effective currents are input-system specific (cat data) and none are known for corticospinal
       input to a hand muscle. Not compensated: the Gfluctdv mean-conductance shunt and the driving-force
@@ -320,7 +320,7 @@ def mvc_drive(segments, threshold_hz, max_hz):
 
 
 def make_force_model(thresholds):
-    """ForceModel (Fuglevand 1993 twitches) at FORCE_FS_HZ with the FORCE_FREQUENCY_SHAPE saturation."""
+    """ForceModel (Fuglevand 1993 [fuglevand1993] twitches) at FORCE_FS_HZ with the FORCE_FREQUENCY_SHAPE saturation."""
     return ForceModel(recruitment_thresholds=thresholds, recording_frequency__Hz=FORCE_FS_HZ * pq.Hz,
                       force_frequency_shape=FORCE_FREQUENCY_SHAPE)
 
@@ -565,7 +565,7 @@ def make_objective(thresholds, fug_targets):
 
             # Recruitment ceiling: the ramp above stops at RAMP_MVC_PCT, so the last unit is found on a separate
             # MVC ramp, scored by the force (% MVC) at its recruitment. Units never recruited push it past 100 %.
-            # The same ramp gives the firing rates at high force (De Luca 1982), which the ramp above never reaches.
+            # The same ramp gives the firing rates at high force (De Luca 1982) [deluca1982], which the ramp above never reaches.
             pct_last, pct_ranked, n_unrecruited, hf_rates = float("nan"), float("nan"), None, {}
             if LAST_RECRUIT_PCT_MVC is not None or SCORE_HIGH_FORCE_RATES:
                 mvc_ramp = run_mvc_ramp(thresholds, dd_params, threshold_hz)

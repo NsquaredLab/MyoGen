@@ -1,4 +1,4 @@
-"""Layered-cylinder volume conductor transfer function (Farina & Merletti 2004).
+"""Layered-cylinder volume conductor transfer function (Farina & Merletti 2004) [farina2004].
 
 Single authority for the spatial transfer function ``H_vc(k_z, k_theta)`` of
 the four-layer (bone / anisotropic muscle / fat / skin) cylindrical volume
@@ -77,7 +77,7 @@ def layered_cylinder_transfer(
 ) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
     """Surface potential transfer function of a fibre in a layered cylinder.
 
-    Solves the Farina 2004 boundary-condition system for a line source at
+    Solves the Farina 2004 [farina2004] boundary-condition system for a line source at
     radius ``R`` inside the anisotropic muscle layer and returns the skin
     potential per unit source, ``H_vc(k_z, k_theta)``, on the full 2-D
     frequency grid.
@@ -120,7 +120,7 @@ def layered_cylinder_transfer(
     k_z = np.asarray(k_z, dtype=np.float64)
     k_theta = np.asarray(k_theta, dtype=np.float64)
 
-    # Model radii -> (Farina, 2004), Figure 1 - b)
+    # Model radii -> (Farina, 2004), Figure 1 - b) [farina2004 Fig. 1b]
     th_muscle = r - th_fat - th_skin - r_bone
     a = r_bone
     b = r_bone + th_muscle

@@ -26,7 +26,7 @@ from myogen.utils.types import (
 from myogen.utils.decorators import beartowertype
 
 # Fibre conduction velocity against diameter: CV = 0.95 m/s + 0.05 m/s per um
-# (Nandedkar & Stalberg 1983; 3.7 m/s at 55 um). Shared with SurfaceFiberDispersion.
+# (Nandedkar & Stalberg 1983; 3.7 m/s at 55 um) [nandedkar1983]. Shared with SurfaceFiberDispersion.
 CV_INTERCEPT__M_S = 0.95
 CV_PER_DIAMETER__M_S_PER_MM = 50.0
 
@@ -104,7 +104,7 @@ def _perform_fast_marching(speed_map: np.ndarray, seed_points: np.ndarray) -> np
 @beartowertype
 class Muscle:
     """
-    A muscle model based on the cylindrical description of the volume conductor by Farina et al. 2004 [1] and the motor unit distribution by Akhmadeev et al. 2020 [2].
+    A muscle model based on the cylindrical description of the volume conductor by Farina et al. 2004 [1] [farina2004] and the motor unit distribution by Akhmadeev et al. 2020 [2] [akhmadeev2020].
 
     All default values are set to simulate the First Dorsal Interosseous (FDI) muscle.
     Values are pulled from the literature.
@@ -115,11 +115,11 @@ class Muscle:
         Array of recruitment thresholds for each motor unit (see `myogen.simulator.RecruitmentThresholds`).
         Values range from 0 to 1 with the largest motor units having thresholds near 1.
     radius__mm : float, default=6.91
-        Radius of the muscle cross-section in millimeters. Default is set to 6.91 mm as determined by Jacobson et al. 1992 [3].
+        Radius of the muscle cross-section in millimeters. Default is set to 6.91 mm as determined by Jacobson et al. 1992 [3] [jacobson1992].
     length__mm : float, default=30.0
         Length of the muscle in millimeters. Default is 30.0 mm, a nominal value chosen to match the order of magnitude of the FDI muscle; adjust to match the muscle under study.
     fiber_density__fibers_per_mm2 : float, default=350
-        Density of muscle fibers per square millimeter. Default is set to 350 fibers/mm² as determined by Bettelho et al. 2019 [7].
+        Density of muscle fibers per square millimeter. Default is set to 350 fibers/mm² as determined by Bettelho et al. 2019 [7] [botelho2019].
     max_innervation_area_to_total_muscle_area__ratio : float, default=0.25
         Ratio defining the maximum territory size relative to total muscle area.
         Default is 0.25 as a pragmatic upper bound for the FDI, with no single published source; revisit for larger muscles.
@@ -127,43 +127,43 @@ class Muscle:
         of the total muscle cross-sectional area.
         Must be in range (0, 1].
     mean_conduction_velocity__m_per_s : float, default=4.2
-        Mean conduction velocity in m/s. Default is set to 4.2 m/s as determined by Nishizono et al. 1990 [4].
-        Experimental range determined by Nishizono et al. 1990 [4] is between 3.2 and 5.0 m/s.
+        Mean conduction velocity in m/s. Default is set to 4.2 m/s as determined by Nishizono et al. 1990 [4] [nishizono1990].
+        Experimental range determined by Nishizono et al. 1990 [4] [nishizono1990] is between 3.2 and 5.0 m/s.
     mean_fiber_length__mm : float, default=31.7
         Mean fiber length in mm. Default is the first dorsal interosseous (FDI) value of Jacobson et al. 1992 [3]
-        (Table 1).
+        (Table 1) [jacobson1992 Table 1].
     var_fiber_length__mm : float, default=2.8
         Half-width in mm of the uniform fibre-length variation: each fibre is ``mean_fiber_length__mm`` plus a
         uniform draw in ``±var_fiber_length__mm``, with its ends at ``±length / 2``, so both ends move together
         by up to half this value. Default 2.8 mm, the FDI fibre-length spread of Jacobson et al. 1992 [3]
-        (Table 1), which most likely describes variation between specimens rather than between fibres of one
+        (Table 1) [jacobson1992 Table 1], which most likely describes variation between specimens rather than between fibres of one
         muscle (not verified against the table).
     radius_bone__mm : float, default=1
         Bone radius in mm. Default is set to 1 mm.
     fat_thickness__mm : float, default=1.3
         Fat thickness in mm. Default 1.3 mm, derived rather than measured: no study measures fat alone over
         the FDI, so it is the total depth to muscle of 2.5 mm, the low end of the FDI subcutaneous depth of
-        Nishikawa et al. 2024 [12] (group means 2.54-3.30 mm, ultrasound), minus the skin below. Fat averaged
-        over the whole hand is thinner, 0.3 mm (Störchle et al. 2018 [5]; the previous default).
+        Nishikawa et al. 2024 [12] [nishikawa2024] (group means 2.54-3.30 mm, ultrasound), minus the skin below. Fat averaged
+        over the whole hand is thinner, 0.3 mm (Störchle et al. 2018 [5] [storchle2018]; the previous default).
     skin_thickness__mm : float, default=1.2
         Skin (epidermis and dermis) thickness in mm. Default 1.2 mm, the median over the hand dorsum in healthy
-        controls of Li et al. 2018 [11] (range 0.79-1.50 mm, high-frequency ultrasound). The previous default,
-        1.29 mm, was a male average from Brodar 1960 [6].
+        controls of Li et al. 2018 [11] [li2018] (range 0.79-1.50 mm, high-frequency ultrasound). The previous default,
+        1.29 mm, was a male average from Brodar 1960 [6] [brodar1960].
     muscle_conductivity_radial__S_per_m : float, default=0.09
-        Muscle conductivity in radial direction. Default is set to 0.09 S/m as determined by Botelho et al. 2019 [7] (Table 1).
+        Muscle conductivity in radial direction. Default is set to 0.09 S/m as determined by Botelho et al. 2019 [7] (Table 1) [botelho2019 Table 1].
     muscle_conductivity_longitudinal__S_per_m : float, default=0.4
-        Muscle conductivity in longitudinal direction. Default is set to 0.4 S/m as determined by Botelho et al. 2019 [7] (Table 1).
+        Muscle conductivity in longitudinal direction. Default is set to 0.4 S/m as determined by Botelho et al. 2019 [7] (Table 1) [botelho2019 Table 1].
     fat_conductivity__S_per_m : float, default=4.07E-2
-        Fat conductivity. Default is set to 4.07E-2 S/m as determined by Botelho et al. 2019 [7] (Table 1).
+        Fat conductivity. Default is set to 4.07E-2 S/m as determined by Botelho et al. 2019 [7] (Table 1) [botelho2019 Table 1].
     skin_conductivity__S_per_m : float, default=1.0
-        Skin conductivity. Default is 1 S/m, the value of Farina et al. 2004 [1], which they took
-        from the three-layer model of Roeleveld et al. 1997 [8] (also Blok et al. 2002 [9]). It is
+        Skin conductivity. Default is 1 S/m, the value of Farina et al. 2004 [1] [farina2004], which they took
+        from the three-layer model of Roeleveld et al. 1997 [8] [roeleveld1997] (also Blok et al. 2002 [9] [blok2002]). It is
         an effective value chosen so that the model reproduces how biceps MUAPs fall off with
         depth and around the arm, not a measured skin conductivity: Roeleveld et al. note that it
         is not known whether skin conducts as well as 1 S/m, and Blok et al. that reference values
         are scarce. Measured skin is far lower: 4.55E-4 to 4.88E-4 S/m for composite in-vivo skin
-        near 100-150 Hz (Gabriel et al. 1996, used by Lowery et al. 2002 [10] and Botelho et al.
-        2019 [7]). A resistive skin layer raises surface amplitudes (3.5-6x with 4.88E-4 S/m).
+        near 100-150 Hz (Gabriel et al. 1996 [gabriel1996], used by Lowery et al. 2002 [10] [lowery2002] and Botelho et al.
+        2019 [7] [botelho2019]). A resistive skin layer raises surface amplitudes (3.5-6x with 4.88E-4 S/m).
     grid_resolution : int, default=256
         Resolution of the computational grid used for innervation the muscle.
         Higher values provide more accurate spatial distribution but increase computational cost.
@@ -200,18 +200,18 @@ class Muscle:
 
     References
     ----------
-    [1] Farina, D., Mesin, L., Martina, S., Merletti, R., 2004. A surface EMG generation model with multilayer cylindrical description of the volume conductor. IEEE Transactions on Biomedical Engineering 51, 415–426. https://doi.org/10.1109/TBME.2003.820998 <br>
-    [2] Akhmadeev, K., Yu, T., Le Carpentier, E., Aoustin, Y., Farina, D., 2020. Simulation of Motor Unit Action Potential Recordings From Intramuscular Multichannel Scanning Electrodes. IEEE Transactions on Biomedical Engineering 67, 2005–2014. https://doi.org/10.1109/TBME.2019.2953680 <br>
-    [3] Jacobson, M.D., Raab, R., Fazeli, B.M., Abrams, R.A., Botte, M.J., Lieber, R.L., 1992. Architectural design of the human intrinsic hand muscles. The Journal of Hand Surgery 17, 804–809. https://doi.org/10.1016/0363-5023(92)90446-V <br>
-    [4] Nishizono, H., Fujimoto, T., Ohtake, H., Miyashita, M., 1990. Muscle fiber conduction velocity and contractile properties estimated from surface electrode arrays. Electroencephalography and Clinical Neurophysiology 75, 75–81. https://doi.org/10.1016/0013-4694(90)90154-C <br>
-    [5] Störchle, P., Müller, W., Sengeis, M., Lackner, S., Holasek, S., Fürhapter-Rieger, A., 2018. Measurement of mean subcutaneous fat thickness: eight standardised ultrasound sites compared to 216 randomly selected sites. Sci Rep 8, 16268. https://doi.org/10.1038/s41598-018-34213-0 <br>
-    [6] Brodar, V., 1960. Observations on skin thickness and subcutaneous tissue in man. Zeitschrift für Morphologie und Anthropologie 50, 386–395. <br>
-    [7] Botelho, D.P., Curran, K., Lowery, M.M., 2019. Anatomically accurate model of EMG during index finger flexion and abduction derived from diffusion tensor imaging. PLOS Computational Biology 15, e1007267. https://doi.org/10.1371/journal.pcbi.1007267 <br>
-    [8] Roeleveld, K., Blok, J.H., Stegeman, D.F., van Oosterom, A., 1997. Volume conduction models for surface EMG; confrontation with measurements. Journal of Electromyography and Kinesiology 7, 221–232. https://doi.org/10.1016/S1050-6411(97)00009-6 <br>
-    [9] Blok, J.H., Stegeman, D.F., van Oosterom, A., 2002. Three-layer volume conductor model and software package for applications in surface electromyography. Annals of Biomedical Engineering 30, 566–577. https://doi.org/10.1114/1.1475345 <br>
-    [10] Lowery, M.M., Stoykov, N.S., Taflove, A., Kuiken, T.A., 2002. A multiple-layer finite-element model of the surface EMG signal. IEEE Transactions on Biomedical Engineering 49, 446–454. https://doi.org/10.1109/10.995683 <br>
-    [11] Li, H., Furst, D.E., Jin, H., Sun, C., Wang, X., Yang, L., He, J., Wang, Y., Liu, A., 2018. High-frequency ultrasound of the skin in systemic sclerosis: an exploratory study to examine correlation with disease activity and to define the minimally detectable difference. Arthritis Research & Therapy 20, 181. https://doi.org/10.1186/s13075-018-1686-9 <br>
-    [12] Nishikawa, Y., Watanabe, K., Holobar, A., Kitamura, R., Maeda, N., Hyngstrom, A.S., 2024. Sex differences in laterality of motor unit firing behavior of the first dorsal interosseous muscle in strength-matched healthy young males and females. European Journal of Applied Physiology 124, 1979–1990. https://doi.org/10.1007/s00421-024-05420-7
+    [1] Farina, D., Mesin, L., Martina, S., Merletti, R., 2004. A surface EMG generation model with multilayer cylindrical description of the volume conductor. IEEE Transactions on Biomedical Engineering 51, 415–426. https://doi.org/10.1109/TBME.2003.820998 [farina2004] <br>
+    [2] Akhmadeev, K., Yu, T., Le Carpentier, E., Aoustin, Y., Farina, D., 2020. Simulation of Motor Unit Action Potential Recordings From Intramuscular Multichannel Scanning Electrodes. IEEE Transactions on Biomedical Engineering 67, 2005–2014. https://doi.org/10.1109/TBME.2019.2953680 [akhmadeev2020] <br>
+    [3] Jacobson, M.D., Raab, R., Fazeli, B.M., Abrams, R.A., Botte, M.J., Lieber, R.L., 1992. Architectural design of the human intrinsic hand muscles. The Journal of Hand Surgery 17, 804–809. https://doi.org/10.1016/0363-5023(92)90446-V [jacobson1992] <br>
+    [4] Nishizono, H., Fujimoto, T., Ohtake, H., Miyashita, M., 1990. Muscle fiber conduction velocity and contractile properties estimated from surface electrode arrays. Electroencephalography and Clinical Neurophysiology 75, 75–81. https://doi.org/10.1016/0013-4694(90)90154-C [nishizono1990] <br>
+    [5] Störchle, P., Müller, W., Sengeis, M., Lackner, S., Holasek, S., Fürhapter-Rieger, A., 2018. Measurement of mean subcutaneous fat thickness: eight standardised ultrasound sites compared to 216 randomly selected sites. Sci Rep 8, 16268. https://doi.org/10.1038/s41598-018-34213-0 [storchle2018] <br>
+    [6] Brodar, V., 1960. Observations on skin thickness and subcutaneous tissue in man. Zeitschrift für Morphologie und Anthropologie 50, 386–395. [brodar1960] <br>
+    [7] Botelho, D.P., Curran, K., Lowery, M.M., 2019. Anatomically accurate model of EMG during index finger flexion and abduction derived from diffusion tensor imaging. PLOS Computational Biology 15, e1007267. https://doi.org/10.1371/journal.pcbi.1007267 [botelho2019] <br>
+    [8] Roeleveld, K., Blok, J.H., Stegeman, D.F., van Oosterom, A., 1997. Volume conduction models for surface EMG; confrontation with measurements. Journal of Electromyography and Kinesiology 7, 221–232. https://doi.org/10.1016/S1050-6411(97)00009-6 [roeleveld1997] <br>
+    [9] Blok, J.H., Stegeman, D.F., van Oosterom, A., 2002. Three-layer volume conductor model and software package for applications in surface electromyography. Annals of Biomedical Engineering 30, 566–577. https://doi.org/10.1114/1.1475345 [blok2002] <br>
+    [10] Lowery, M.M., Stoykov, N.S., Taflove, A., Kuiken, T.A., 2002. A multiple-layer finite-element model of the surface EMG signal. IEEE Transactions on Biomedical Engineering 49, 446–454. https://doi.org/10.1109/10.995683 [lowery2002] <br>
+    [11] Li, H., Furst, D.E., Jin, H., Sun, C., Wang, X., Yang, L., He, J., Wang, Y., Liu, A., 2018. High-frequency ultrasound of the skin in systemic sclerosis: an exploratory study to examine correlation with disease activity and to define the minimally detectable difference. Arthritis Research & Therapy 20, 181. https://doi.org/10.1186/s13075-018-1686-9 [li2018] <br>
+    [12] Nishikawa, Y., Watanabe, K., Holobar, A., Kitamura, R., Maeda, N., Hyngstrom, A.S., 2024. Sex differences in laterality of motor unit firing behavior of the first dorsal interosseous muscle in strength-matched healthy young males and females. European Journal of Applied Physiology 124, 1979–1990. https://doi.org/10.1007/s00421-024-05420-7 [nishikawa2024]
     """
 
     def __init__(
@@ -343,7 +343,7 @@ class Muscle:
         n_fibers = len(self._muscle_fiber_centers__mm)
 
         # Generate muscle fiber diameters using log-normal distribution
-        # Based on physiological measurements (Brooke & Kaiser, 1970)
+        # Based on physiological measurements (Brooke & Kaiser, 1970) [brooke1970]
         # Mean diameter ~50um, range 20-80um
         mean_diameter__mm = 50e-3  # mm (50 um)
         std_diameter__mm = 15e-3  # mm (15 um)

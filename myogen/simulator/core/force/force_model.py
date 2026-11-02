@@ -23,7 +23,7 @@ from .force_utils import FUGLEVAND_FORCE_FREQUENCY, fuglevand_gain
 @beartowertype
 class ForceModel:
     """
-    Force model based on Fuglevand et al. (1993) [1].
+    Force model based on Fuglevand et al. (1993) [1] [fuglevand1993].
 
     This class implements the Fuglevand force generation model for motor unit pools,
     computing individual motor unit twitch responses and their nonlinear gain modulation
@@ -48,21 +48,21 @@ class ForceModel:
     twitch_force_range : float or None, default=None
         Twitch-force range (RP in _[1]) used in equations 13 and 14. Must be greater
         than 1. If None, defaults to the last/first recruitment-threshold ratio for
-        backward compatibility. Fuglevand et al. (1993) use RP = 100 independently
+        backward compatibility. Fuglevand et al. (1993) [fuglevand1993] use RP = 100 independently
         of the recruitment range RR = 30.
     force_frequency_shape : tuple of float, default=(2.0, 3.0)
         (a, c) of the force-frequency saturation S(r) = 1 - exp(-a r^c), r = contraction time / ISI.
-        The default is Fuglevand et al. (1993) eq. 17. ``force_utils.HUMAN_UNIT_FORCE_FREQUENCY``
+        The default is Fuglevand et al. (1993) eq. 17 [fuglevand1993 eq. 17]. ``force_utils.HUMAN_UNIT_FORCE_FREQUENCY``
         (0.93, 1.29) is fitted to human single motor units, which keep gaining force above ~20 Hz.
 
     Attributes
     ----------
     peak_twitch_forces__unitless : np.ndarray
         Peak twitch forces for each motor unit (unitless). Available after initialization.
-        Computed according to Fuglevand equation 13.
+        Computed according to Fuglevand equation 13 [fuglevand1993 eq. 13].
     contraction_times__samples : np.ndarray
         Contraction times for each motor unit in samples of recording_frequency__Hz.
-        Available after initialization. Computed according to Fuglevand equation 14.
+        Available after initialization. Computed according to Fuglevand equation 14 [fuglevand1993 eq. 14].
     twitch_mat : np.ndarray
         Twitch matrix sampled up to 10 times the longest contraction time, for plotting only.
         Available after initialization.
@@ -91,7 +91,7 @@ class ForceModel:
     ----------
     [1] Fuglevand, A. J., Winter, D. A., & Patla, A. E. (1993). Models of recruitment
     and rate coding organization in motor-unit pools. J Neurophysiol, 70(6), 2470–2488.
-    https://doi.org/10.1152/jn.1993.70.6.2470.
+    https://doi.org/10.1152/jn.1993.70.6.2470. [fuglevand1993]
 
     Examples
     --------
@@ -201,7 +201,7 @@ class ForceModel:
         Compute peak twitch forces and contraction times based on Fuglevand model.
 
         This method calculates the physiological parameters for each motor unit
-        according to the Fuglevand et al. (1993) model equations.
+        according to the Fuglevand et al. (1993) [fuglevand1993] model equations.
 
         Results are stored in the `peak_twitch_forces` and `contraction_times`
         properties after execution.
@@ -400,7 +400,7 @@ class ForceModel:
         Returns
         -------
         np.ndarray
-            Array of peak twitch forces according to Fuglevand model equation 13.
+            Array of peak twitch forces according to Fuglevand model equation 13 [fuglevand1993 eq. 13].
 
         Raises
         ------
@@ -422,7 +422,7 @@ class ForceModel:
         Returns
         -------
         np.ndarray
-            Array of contraction times according to Fuglevand model equation 14.
+            Array of contraction times according to Fuglevand model equation 14 [fuglevand1993 eq. 14].
 
         Raises
         ------

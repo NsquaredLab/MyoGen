@@ -50,7 +50,7 @@ class SurfaceEMG:
 
     This class provides a simulation framework for generating
     surface electromyography signals from the muscle. It implements the
-    multi-layered cylindrical volume conductor model from Farina et al. 2004 [1].
+    multi-layered cylindrical volume conductor model from Farina et al. 2004 [1] [farina2004].
 
     Parameters
     ----------
@@ -98,9 +98,9 @@ class SurfaceEMG:
     iap_lambda__per_mm : float, optional
         Length scale of the Rosenfalck intracellular action potential,
         ``Vm = 96 (lambda z)**3 exp(-lambda z) - 90`` mV with z in mm. Default
-        1 / mm, as published (Rosenfalck 1969). Values below 1 stretch the IAP
+        1 / mm, as published (Rosenfalck 1969) [rosenfalck1969]. Values below 1 stretch the IAP
         along the fibre and lower the MUAP's spectral content and raise its
-        amplitude. Botelho et al. (2019) used 0.5 to match the frequency content of
+        amplitude. Botelho et al. (2019) [botelho2019] used 0.5 to match the frequency content of
         their FDI recordings; in this conductor 0.7 matched their Delsys median
         frequency and adjacent-pin RMS at 25 % MVC. Any value other than 1 is a
         fitted modelling assumption, not a measurement. ``iap_kernel_length__mm``
@@ -129,7 +129,7 @@ class SurfaceEMG:
 
     References
     ----------
-    [1] Farina, D., Mesin, L., Martina, S., Merletti, R., 2004. A surface EMG generation model with multilayer cylindrical description of the volume conductor. IEEE Transactions on Biomedical Engineering 51, 415–426. https://doi.org/10.1109/TBME.2003.820998
+    [1] Farina, D., Mesin, L., Martina, S., Merletti, R., 2004. A surface EMG generation model with multilayer cylindrical description of the volume conductor. IEEE Transactions on Biomedical Engineering 51, 415–426. https://doi.org/10.1109/TBME.2003.820998 [farina2004]
     """
 
     def __init__(
@@ -316,7 +316,7 @@ class SurfaceEMG:
         # Calculate innervation zone variance
         innervation_zone_variance = (
             self._mean_fiber_length__mm * 0.1
-        )  # 10% of the mean fiber length (see Botelho et al. 2019 [6])
+        )  # 10% of the mean fiber length (see Botelho et al. 2019 [6]) [botelho2019]
 
         # Extract fiber counts
         number_of_fibers_per_MUs = self._muscle_model.resulting_number_of_innervated_fibers

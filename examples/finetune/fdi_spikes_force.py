@@ -3,7 +3,7 @@
 Usage: python fdi_spikes_force.py <results_dir> <out_dir> [--n-mu N] [--max-recruitment R]
 
 1. MVC: slow ramp of the drive from rest to 100 % (10 s) and a 3 s hold; force from the
-   Fuglevand (1993) twitch model; MVC = mean force over the last 2 s of the hold.
+   Fuglevand (1993) [fuglevand1993] twitch model; MVC = mean force over the last 2 s of the hold.
 2. The excitation (drive fraction above threshold, as in the optimiser) at which the ramp
    force first reaches 25 % MVC.
 3. Benchmark trapezoids with the sEMG harness timing (0.5 s rest, 2 s ramp, 4 s hold, 2 s ramp,

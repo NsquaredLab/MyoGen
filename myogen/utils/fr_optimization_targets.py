@@ -8,11 +8,11 @@ assumptions.
 
 Available models
 ----------------
-- ``fuglevand``: Linear rate coding (Fuglevand et al. 1993).
+- ``fuglevand``: Linear rate coding (Fuglevand et al. 1993) [fuglevand1993].
   Simple, closed-form. Tends to underestimate real rate coding at
   higher %MVC because it assumes linear FR vs excitation.
 
-- ``de_luca``: Exponential approach to peak (De Luca & Contessa 2012).
+- ``de_luca``: Exponential approach to peak (De Luca & Contessa 2012) [delucacontessa2012].
   Captures rapid rise after recruitment (PIC effect) and plateau at
   peak rate. Supports onion-skin (earliest recruited fire fastest).
   Recommended default for new work.
@@ -51,7 +51,7 @@ def fuglevand_targets(
     min_fr_hz: float = 8.0,
     max_fr_hz: float = 17.0,
 ) -> dict[float, dict]:
-    """Fuglevand 1993 linear rate coding targets.
+    """Fuglevand 1993 [fuglevand1993] linear rate coding targets.
 
     FR_i(E) = min_fr + (max_fr - min_fr) * (E - threshold_i)
     clipped to [min_fr, max_fr].
@@ -107,7 +107,7 @@ def de_luca_targets(
     fr_peak_late_hz: float = 12.0,
     steepness: float = 3.0,
 ) -> dict[float, dict]:
-    """De Luca & Contessa 2012 exponential rate coding targets.
+    """De Luca & Contessa 2012 [delucacontessa2012] exponential rate coding targets.
 
     Each MU's firing rate follows an exponential approach from
     ``fr_onset_hz`` at recruitment to its peak rate at full excitation:
@@ -137,7 +137,7 @@ def de_luca_targets(
         Firing rate at recruitment (both onset and minimum). Typical 6-8 Hz.
     fr_peak_early_hz : float
         Peak rate (at MVC) for the first-recruited (lowest threshold) MU.
-        Default 16 Hz tuned to approach Skarabot 2023 untrained VL mean
+        Default 16 Hz tuned to approach Skarabot 2023 [skarabot2023] untrained VL mean
         (14 Hz). For trained VL use ~24 Hz, for FDI ~26 Hz.
     fr_peak_late_hz : float
         Peak rate (at MVC) for the last-recruited (highest threshold) MU.
@@ -192,7 +192,7 @@ def de_luca_targets(
 # Per-muscle lookup: {mvc_pct: (mean_fr_hz, std_fr_hz)}
 #
 # Values are monotonically increasing toward the MVC peak rate from
-# Skarabot 2023. Sub-MVC values approximate the rise to peak based on
+# Skarabot 2023 [skarabot2023]. Sub-MVC values approximate the rise to peak based on
 # De Luca-style exponential approach.
 #
 # TODO: refine with direct measurements from decomposed MU recordings
@@ -201,7 +201,7 @@ def de_luca_targets(
 EXPERIMENTAL_FR_TARGETS: dict[str, dict[float, tuple[float, float]]] = {
     "vl": {
         # Vastus lateralis, untrained.
-        # Peak: Skarabot 2023 untrained VL (14.0 ± 4.5 pps at MVC).
+        # Peak: Skarabot 2023 [skarabot2023] untrained VL (14.0 ± 4.5 pps at MVC).
         # Sub-MVC: exponential approach from onset ~8 Hz to MVC peak.
         5:   (8.5, 2.0),
         10:  (9.5, 2.3),
@@ -211,7 +211,7 @@ EXPERIMENTAL_FR_TARGETS: dict[str, dict[float, tuple[float, float]]] = {
         100: (14.0, 4.5),   # Skarabot untrained VL mean
     },
     "vl_trained": {
-        # Resistance-trained VL. Peak: Skarabot 2023 (21.1 ± 4.1 pps).
+        # Resistance-trained VL. Peak: Skarabot 2023 [skarabot2023] (21.1 ± 4.1 pps).
         5:   (9.0, 2.2),
         10:  (11.0, 2.6),
         20:  (14.0, 3.0),
@@ -326,10 +326,10 @@ def compute_fr_targets(
     model : {"fuglevand", "de_luca", "experimental"}
         Target model to use.
 
-        - "fuglevand": linear rate coding (Fuglevand 1993). Params:
+        - "fuglevand": linear rate coding (Fuglevand 1993) [fuglevand1993]. Params:
           ``min_fr_hz``, ``max_fr_hz``.
         - "de_luca": exponential approach to peak (De Luca & Contessa
-          2012). Params: ``fr_onset_hz``, ``fr_peak_early_hz``,
+          2012) [delucacontessa2012]. Params: ``fr_onset_hz``, ``fr_peak_early_hz``,
           ``fr_peak_late_hz``, ``steepness``.
         - "experimental": muscle-specific lookup from published data.
           Requires ``muscle_name``.

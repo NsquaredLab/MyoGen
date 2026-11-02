@@ -197,6 +197,8 @@ src("feinstein1955", "C", "Feinstein B, Lindegård B, Nyman E, Wohlfart G (1955)
     "", "SEC", "CONTEXT", "FDI ~119 MUs, ~40,000 fibres, ~340 fibres/MU (via Piasecki 2016, De Luca 1982).", [], ["pool", "b5"])
 src("zong2021", "C", "Zong Y et al. (2021). IEEE Trans Neural Syst Rehabil Eng 29:1199.",
     "doi:10.1109/TNSRE.2021.3088061; PMC8780215", "FT", "CONTEXT", "FDI MUNE 108 ± 21; CMAP 16.75 mV (ceiling).", [], ["b3", "b5"])
+src("brooke1970", "C", "Brooke & Kaiser (1970), physiological measurements of muscle fibre diameter (details from code comment, unverified).",
+    "", "LINK", "ADOPTED", "Stated basis of Muscle's log-normal fibre diameters (median 50 µm, clipped to 20–80 µm). Cited in code; not checked.", [], [])
 
 # ── D–G. Recruitment, motor-neuron model, force, EMG benchmarks (section letter per entry; titles in TOPICS) ──
 src("deluca1982", "D", "De Luca CJ, LeFever RS, McCue MP, Xenakis AP (1982). Behaviour of human motor units in different muscles during linearly varying contractions. J Physiol 329:113–128.",
@@ -249,6 +251,14 @@ src("revillfuglevand2017", "E", "Revill AL, Fuglevand AJ (2017). Inhibition line
     "doi:10.1113/JP272823; PMID 27470946", "ABS", "CONTEXT", "Human MU rates rise steeply at recruitment then level off at modest rates while force keeps rising; reflex inhibition removes the steep rise (attributed to PICs).", [], ["spinal"])
 src("senneff2019", "E", "Senneff S, McManus L, Lowery MM (2019). Investigating the effect of persistent inward currents on motor unit firing rates and beta-band coherence in a model of the first dorsal interosseous muscle. Conf Proc IEEE EMBC 2019:2293–2296.",
     "doi:10.1109/EMBC.2019.8857534; PMID 31946358", "ABS", "CONTEXT", "Prior FDI motoneuron-pool model with PICs at 20–40 % MVC: PICs shift mean rates and reduce beta-band coherence. Prior art for the spinal checks.", [], ["spinal"])
+src("powers2001", "E", "Powers & Binder (2001), motor neuron biophysical characterization (details from code comment, unverified).",
+    "", "LINK", "CONTEXT", "Listed as a reference for the AlphaMN cell model in cells.py. Cited in code; not checked.", [], [])
+src("bui2003", "E", "Bui et al. (2003). Morphological and electrophysiological characterization of Ia inhibitory interneurons in cat spinal cord (details from code comment, unverified).",
+    "", "LINK", "ADOPTED", "Membrane area (81,390 µm²) and soma geometry of the INgII interneuron model in cells.py. Cited in code; not checked.", [], [])
+src("sanches2018", "E", "Sanches et al. (2018), synaptic parameter measurements (details from code comment, unverified).",
+    "", "LINK", "ADOPTED", "Default Exp2Syn synapse parameters (tau1 0.2 ms, tau2 0.3 ms, weight 0.6) in cells.py. Cited in code; not checked.", [], [])
+src("segev1990", "E", "Segev et al. (1990), alpha-function synaptic modelling (details from code comment, unverified).",
+    "", "LINK", "CONTEXT", "Listed as the reference for the synapse model form in cells.py (the code uses a double-exponential Exp2Syn). Cited in code; not checked.", [], [])
 src("moritz2005", "D", "Moritz CT, Barry BK, Pascoe MA, Enoka RM (2005). J Neurophysiol 93:2449 (FDI discharge variability; details from memory, unverified).",
     "", "LINK", "CONTEXT", "ISI CV falls with rate — **quoted from memory, unverified**.", [], [])
 src("hu2013", "G", "Hu X, Rymer WZ, Suresh NL (2013). J Neurophysiol 110:1205; companion J NeuroEng Rehabil (2013).",
