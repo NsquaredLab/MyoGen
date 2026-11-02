@@ -220,8 +220,24 @@ def test_diameter_coupling_scales_source_with_cross_section(muscle):
     big = max(range(12), key=lambda i: len(real.cv__m_s[i]))
     # Diameter from the CV line v = 0.95 m/s + 0.05 m/s/um * d (Nandedkar & Stalberg 1983)
     diameter__um = (real.cv__m_s[big] - 0.95) / 0.05
-    np.testing.assert_allclose(real.amplitude_scale[big], (diameter__um / ((4.2 - 0.95) / 0.05)) ** 2)
+    ratio = real.amplitude_scale[big] / real.amplitude_scale[big][0]
+    np.testing.assert_allclose(ratio, (diameter__um / diameter__um[0]) ** 2)
     assert real.report["diameter_mean__um"][big] == pytest.approx(np.mean(diameter__um))
+
+
+@pytest.mark.parametrize("cfg", [
+    dict(fiber_cv_within_mu_cov=0.08),
+    dict(fiber_cv_threshold_slope=0.63),
+    dict(fiber_cv_per_unit__m_s=tuple(3.5 + 0.1 * i for i in range(12))),
+])
+def test_diameter_scaled_source_averages_one_over_the_muscle(muscle, cfg):
+    """The source factor is normalised over every fibre of the pool, so ``fiber_diameter__um``
+    stays the population root-mean-square diameter and the CV line only sets the spread."""
+    real = _realize(muscle, SurfaceFiberDispersion(diameter_scales_source=True, **cfg))
+    assert np.mean(np.concatenate(real.amplitude_scale)) == pytest.approx(1.0)
+    diameter__um = (np.concatenate(real.cv__m_s) - 0.95) / 0.05
+    np.testing.assert_allclose(np.concatenate(real.amplitude_scale),
+                               diameter__um**2 / np.mean(diameter__um**2))
 
 
 def test_intra_mu_scatter_keeps_each_motor_unit_anchor(muscle):

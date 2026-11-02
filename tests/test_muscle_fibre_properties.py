@@ -32,15 +32,19 @@ def test_fibre_cv_follows_the_diameter_line():
     assert np.corrcoef(d_um, cv)[0, 1] > 0.9
 
 
-def test_fibre_diameters_have_the_fdi_mean():
-    """Mean diameter 57.2 um, FDI type I/II sizes weighted by fibre-type proportion [polgar1973 p. 310 Table 2]
-    [polgar1973 p. 312 Table 4]; the 20-80 um clip pulls it down slightly."""
+def test_fibre_diameters_are_the_fdi_type_mixture():
+    """57.4 % type I fibres of mean 50.0 um, type II of mean 67.0 um [polgar1973 p. 310 Table 2]
+    [polgar1973 p. 312 Table 4]: mean 57.2 um, and no fibres piled up at a clip bound."""
     set_random_seed(1)
     m = _muscle(4)
     m.generate_muscle_fiber_centers(verbose=False)
     m._generate_fiber_properties()
     d_um = np.asarray(m._muscle_fiber_diameters__mm.rescale(pq.mm)) * 1e3
-    assert 55.5 < np.mean(d_um) < 57.5
+    assert np.mean(d_um) == pytest.approx(0.574 * 50.0 + 0.426 * 67.0, abs=0.6)
+    assert np.mean(np.isclose(d_um, d_um.max())) < 1e-3
+    assert np.mean(np.isclose(d_um, d_um.min())) < 1e-3
+    # Two components: the lower half is mostly type I, the upper half mostly type II
+    assert np.median(d_um[d_um < np.median(d_um)]) < 50.0 < np.median(d_um) < 67.0
 
 
 def test_surface_emg_fibre_diameter_default_is_fdi_rms():

@@ -344,23 +344,20 @@ class Muscle:
 
         n_fibers = len(self._muscle_fiber_centers__mm)
 
-        # Log-normal fibre diameters with the FDI mean: type I 50.0 um, type II 67.0 um
-        # [polgar1973 p. 310 Table 2], 57.4 % type I [polgar1973 p. 312 Table 4] -> 57.2 um.
-        # Until 0.13.0 the median was 50 um, attributed to Brooke & Kaiser 1970 [brooke1970].
-        # The log-SD 0.3 is a modelling assumption (not from Polgar).
-        mean_diameter__mm = 57.2e-3
-        log_sd = 0.3
-        self._muscle_fiber_diameters__mm = (
-            get_random_generator().lognormal(
-                mean=np.log(mean_diameter__mm) - log_sd**2 / 2, sigma=log_sd, size=n_fibers
-            )
-            * pq.mm
-        )
-
-        # Ensure diameters are within physiological range (20-80 um) [brooke1970, not checked]
-        self._muscle_fiber_diameters__mm = np.clip(
-            self._muscle_fiber_diameters__mm, 20e-3 * pq.mm, 80e-3 * pq.mm
-        )
+        # FDI fibre types: 57.4 % type I [polgar1973 p. 312 Table 4], mean diameters type I 50.0 um
+        # and type II 67.0 um [polgar1973 p. 310 Table 2] (mean 57.2 um). Polgar gives no
+        # within-muscle spread (Table 5 limits are between subjects [polgar1973 p. 309]), so each
+        # type is log-normal with log-SD 0.2, a modelling assumption. Types are drawn per fibre,
+        # independent of the motor unit. No clip: the 20-80 um range attributed to Brooke & Kaiser
+        # 1970 [brooke1970] held ~10 % of fibres at 80 um; healthy quadriceps reaches 95 um
+        # [blijham2006 p. 1840].
+        type_i_fraction = 0.574
+        type_mean_diameters__mm = np.array([50.0e-3, 67.0e-3])
+        log_sd = 0.2
+        rng = get_random_generator()
+        is_type_ii = rng.random(n_fibers) >= type_i_fraction
+        log_median = np.log(type_mean_diameters__mm[is_type_ii.astype(int)]) - log_sd**2 / 2
+        self._muscle_fiber_diameters__mm = rng.lognormal(mean=log_median, sigma=log_sd) * pq.mm
 
         # Generate conduction velocities based on fiber diameter (diameters are in mm)
         k = CV_PER_DIAMETER__M_S_PER_MM * (pq.m / pq.s) / pq.mm  # (m/s)/mm
