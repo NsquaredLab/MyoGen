@@ -146,8 +146,8 @@ src("deluca2010", "A", "De Luca CJ, Gilmore LD, Kuznetsov M, Roy SH (2010). Filt
 
 # ── B. Fibre CV, end-plates, tendon ends, branch delays ──
 src("nandedkar1983", "B", "Nandedkar SD, Stålberg E (1983). Simulation of single muscle fibre action potentials. Med Biol Eng Comput 21:158–165.",
-    "doi:10.1007/BF02441531", "SEC", "ADOPTED",
-    "Fibre CV = 0.95 + 0.05·d[µm] m/s (fixes main's 2.0 m/s for every fibre); CV–diameter line for diameter-scaled sources. **Full text never read.**",
+    "doi:10.1007/BF02441531", "FT", "ADOPTED",
+    "Fibre CV = 0.95 + 0.05·d[µm] m/s (fixes main's 2.0 m/s for every fibre); CV–diameter line for diameter-scaled sources. Read 2026-11-02: a modelling construct, not a measured regression — Stålberg 1966 biceps diameters 25–85 µm and CV 3.7 ± 0.71 m/s, with 25 / 55 / 85 µm pinned to the 2-SD band 2.2 / 3.7 / 5.2 m/s; linear, square and square-root forms gave similar amplitudes (p. 163, Fig. 6). Also eq. 1 of delvecchio2018 (p. 7). At FDI values it is inconsistent: 57.9 µm (polgar1973) → 3.85 m/s, 4.2 m/s (nishizono1990) → 65 µm.",
     ["muscle", "disp", "t_fib", "t_disp", "cl", "pr4"], ["values"])
 src("nishizono1990", "B", "Nishizono H, Fujimoto T, Ohtake H, Miyashita M (1990). Muscle fiber conduction velocity and contractile properties estimated from surface electrode arrays. Electroencephalogr Clin Neurophysiol 75:75–81.",
     "doi:10.1016/0013-4694(90)90154-C; PMID 1688776", "FT", "ADOPTED", "FDI motor-unit CV by spike-triggered surface arrays (5 mm IED): 50 units from 4 men, 3.2–5.0 m/s, mean 4.2 ± 0.5 (p. 77) — MyoGen's default mean. Units recruited at 120–930 g, i.e. 5–42 % of the 2.2 kg mean MVC (p. 78); skin temperature held at 31–32 °C (p. 77); CV correlated with threshold force, r = 0.52 (p. 79). Botelho 2019 takes its CV range from this paper.", ["muscle"], ["values", "b5"])
@@ -155,6 +155,9 @@ src("kouyoumdjian2023", "B", "Kouyoumdjian JA et al. (2023). Muscle fiber conduc
     "doi:10.3389/fneur.2023.1118510; PMC9996126", "FT", "CONTEXT", "TA single-fibre CV 4.10 ± 0.66 m/s.", [], ["values"])
 src("zalewska2012", "B", "Zalewska E et al. (2012). A method for determination of muscle fiber diameter using single fiber potential (SFP) analysis. Med Biol Eng Comput.",
     "doi:10.1007/s11517-012-0965-x; PMC3514689", "FT", "CONTEXT", "Alternative CV–diameter line v = 2.2 + 0.05(d − 25).", [], ["values"])
+src("blijham2006", "B", "Blijham PJ, ter Laak HJ, Schelhaas HJ, van Engelen BGM, Stegeman DF, Zwarts MJ (2006). Relation between muscle fiber conduction velocity and fiber size in neuromuscular disorders. J Appl Physiol 100:1837–1841.",
+    "doi:10.1152/japplphysiol.01009.2005", "LINK", "CONTEXT",
+    "Measured CV against biopsy fibre diameter in patients; cited with nandedkar1983 for the CV–diameter line by delvecchio2018 (p. 7, ref. 6). Candidate measured replacement for the Nandedkar construct. Not yet read.", [], ["values"])
 src("delvecchio2018", "B", "Del Vecchio A, Negro F, Felici F, Farina D (2018). Distribution of muscle fibre conduction velocity for representative samples of motor units in the full recruitment range of the tibialis anterior muscle. Acta Physiol 222:e12930.",
     "doi:10.1111/apha.12930", "FT", "ADOPTED",
     "TA, 10 subjects, 406 MUs: MU CV 2.78–6.21 m/s (4.32 ± 0.71), linear in recruitment threshold (R² 0.70 ± 0.09); 3.89 ± 0.50 m/s at RT 0–30 % MVC, 5.12 ± 0.45 at 50–70 % (p. 2, Fig. 1 p. 3). Within-unit fibre CV distribution unknown (p. 5); CoV 5 % is a modelling assumption (Devon). CV→diameter by MFD = (MUCV − 0.95)/0.05 (p. 7 eq. 1). Basis of fiber_cv_threshold_slope (0.63 × mean, derived). Earlier cited in error as the 2017 J Appl Physiol paper.",
@@ -201,7 +204,7 @@ src("infantolino2010", "C", "Infantolino BW, Challis JH (2010). Architectural pr
     "doi:10.1111/j.1469-7580.2009.01196.x; PMC2849523", "FT", "CONTEXT", "Volume 5.2 mL, fascicle 29.9 mm; derived CSA ~89 mm² vs model 150 mm².", [], ["pool"])
 src("polgar1973", "C", "Polgar J, Johnson MA, Weightman D, Appleton D (1973). Data on fibre size in thirty-six human muscles: an autopsy study. J Neurol Sci 19:307–318.",
     "doi:10.1016/0022-510X(73)90094-4", "FT", "ADOPTED",
-    "FDI fibre diameter defaults (since 2026-11-02, Devon). FDI (autopsy): type I 50.0 µm, type II 67.0 µm [p. 310 Table 2]; type I fibres 57.4 % [p. 312 Table 4]. Weighted by that proportion: mean 57.2 µm (Muscle log-normal mean), root-mean-square 57.9 µm (SurfaceEMG source default, since the source scales with d²). Replaces the 50 µm attributed to brooke1970.", [], ["polgar", "diam"])
+    "FDI fibre diameter defaults (since 2026-11-02, Devon). FDI (autopsy): type I 50.0 µm, type II 67.0 µm [p. 310 Table 2]; type I fibres 57.4 % [p. 312 Table 4]. Weighted by that proportion: mean 57.2 µm (Muscle log-normal mean), root-mean-square 57.9 µm (SurfaceEMG source default, since the source scales with d²). Replaces the 50 µm attributed to brooke1970. Type II − type I 17.02 µm, P < 0.001 (p. 312 Table 4). FDI 95 % limits for a single subject's mean (between post-mortems, not the fibre-to-fibre spread): type I 35–66, type II 47–86 µm (p. 313 Table 5; methods p. 309). Minor-axis diameters, ≥ 200 fibres per sample (p. 308). Gives no within-muscle fibre SD.", [], ["polgar", "diam"])
 src("hwang2013", "C", "Hwang K, Huan F, Kim DJ (2013). Muscle fibre types of the lumbrical, interossei, flexor, and extensor muscles moving the index finger. J Plast Surg Hand Surg 47:268–272.",
     "doi:10.3109/2000656X.2012.755988", "FT", "REJECTED",
     "FDI ~31 µm (elderly, paraffin, diameter undefined): judged an underestimate. Source of Botelho's 24.8–40.6 µm.", [], ["hwang", "diam"])
@@ -303,7 +306,7 @@ INDEX = [
     ("Muscle and fat σ", ["botelho2019", "merlettifarina2016"], ["muscle"]),
     ("Source strength σi·π(d/2)²", ["lowery2002", "blok2002", "hodgkinnakajima1972"], ["semg"]),
     ("IAP shape and λ (iap_lambda__per_mm)", ["rosenfalck1969", "farinamerletti2001", "botelho2019", "dimitrova2006", "dimitrov1998", "rodriguezfalces2013", "petersen2019"], ["simfib", "semg"]),
-    ("Fibre CV vs diameter", ["nandedkar1983", "zalewska2012"], ["muscle", "disp"]),
+    ("Fibre CV vs diameter", ["nandedkar1983", "blijham2006", "zalewska2012"], ["muscle", "disp"]),
     ("Mean fibre CV 4.2 m/s", ["nishizono1990", "kouyoumdjian2023"], ["muscle"]),
     ("MU CV vs threshold; within-MU CV spread", ["delvecchio2018", "delvecchio2017"], ["disp"]),
     ("End-plate spread (two-layer model)", ["akhmadeev2020", "stalbergkarlsson2001", "piasecki2020", "jahanmiri2015"], ["nerve", "iemg", "disp"]),
