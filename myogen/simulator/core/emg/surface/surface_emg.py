@@ -377,6 +377,7 @@ class SurfaceEMG:
                 fiber_lengths__mm=[self._mean_fiber_length__mm + variation
                                    for variation in fiber_length_variations_per_MU],
                 mean_fiber_length__mm=float(self._mean_fiber_length__mm),
+                fiber_diameter__um=float(self.fiber_diameter__um),
             )
             self.fiber_dispersion_report = dispersion.report
 

@@ -8,27 +8,31 @@ from myogen import set_random_seed
 from myogen.simulator import Muscle, RecruitmentThresholds
 
 
-def _muscle(radius__mm, density=None):
+def _muscle(radius__mm, density=None, **kw):
     thr, _ = RecruitmentThresholds(N=20, recruitment_range__ratio=50, mode="fuglevand")
-    kw = {} if density is None else {"fiber_density__fibers_per_mm2": density * pq.mm**-2}
+    if density is not None:
+        kw["fiber_density__fibers_per_mm2"] = density * pq.mm**-2
     return Muscle(recruitment_thresholds=thr, radius__mm=radius__mm * pq.mm, **kw)
 
 
-def test_fibre_cv_follows_the_diameter_line():
-    """CV = 0.95 m/s + 0.05 m/s per um of diameter (Nandedkar & Stalberg 1983): ~3.45 m/s at 50 um.
+@pytest.mark.parametrize("mean_cv", [4.2, 3.6])
+def test_fibre_cv_follows_the_diameter_slope_about_the_muscle_mean(mean_cv):
+    """Slope 0.05 m/s per um of diameter (Nandedkar & Stalberg 1983), anchored so the fibre mean is
+    ``mean_conduction_velocity__m_per_s`` (FDI 4.2 m/s, Nishizono et al. 1990).
 
     With diameters in mm, the old slope of 5.5 (m/s)/mm gave ~1.1 m/s and the 2 m/s clip
     set every fibre to exactly 2.0 m/s.
     """
     set_random_seed(1)
-    m = _muscle(4)
+    m = _muscle(4, mean_conduction_velocity__m_per_s=mean_cv * pq.m / pq.s)
     m.generate_muscle_fiber_centers(verbose=False)
     m._generate_fiber_properties()
     d_um = np.asarray(m._muscle_fiber_diameters__mm.rescale(pq.mm)) * 1e3
     cv = np.asarray(m._muscle_fiber_conduction_velocities__mm_per_s.rescale(pq.m / pq.s))
 
     assert np.mean(np.isclose(cv, 2.0)) < 0.05
-    assert np.median(cv) == pytest.approx(0.95 + 0.05 * np.median(d_um), abs=0.05)
+    assert np.mean(cv) == pytest.approx(mean_cv, abs=0.03)
+    assert np.polyfit(d_um, cv, 1)[0] == pytest.approx(0.05, abs=0.003)
     assert np.corrcoef(d_um, cv)[0, 1] > 0.9
 
 
@@ -43,6 +47,9 @@ def test_fibre_diameters_are_the_fdi_type_mixture():
     assert np.mean(d_um) == pytest.approx(0.574 * 50.0 + 0.426 * 67.0, abs=0.6)
     assert np.mean(np.isclose(d_um, d_um.max())) < 1e-3
     assert np.mean(np.isclose(d_um, d_um.min())) < 1e-3
+    # Each type is truncated at 3 log-SD about its median (log-SD 0.2, a modelling assumption)
+    assert d_um.max() <= 67.0 * np.exp(-0.02 + 0.6) + 1e-6
+    assert d_um.min() >= 50.0 * np.exp(-0.02 - 0.6) - 1e-6
     # Two components: the lower half is mostly type I, the upper half mostly type II
     assert np.median(d_um[d_um < np.median(d_um)]) < 50.0 < np.median(d_um) < 67.0
 

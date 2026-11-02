@@ -8,7 +8,7 @@ import pandas as pd
 import skfmm
 from joblib import Parallel, delayed
 from scipy.integrate import dblquad
-from scipy.stats import chi2, multivariate_normal, qmc
+from scipy.stats import chi2, multivariate_normal, qmc, truncnorm
 from sklearn.neighbors import NearestNeighbors
 from tqdm import tqdm
 import quantities as pq
@@ -347,25 +347,31 @@ class Muscle:
         # FDI fibre types: 57.4 % type I [polgar1973 p. 312 Table 4], mean diameters type I 50.0 um
         # and type II 67.0 um [polgar1973 p. 310 Table 2] (mean 57.2 um). Polgar gives no
         # within-muscle spread (Table 5 limits are between subjects [polgar1973 p. 309]), so each
-        # type is log-normal with log-SD 0.2, a modelling assumption. Types are drawn per fibre,
-        # independent of the motor unit. No clip: the 20-80 um range attributed to Brooke & Kaiser
-        # 1970 [brooke1970] held ~10 % of fibres at 80 um; healthy quadriceps reaches 95 um
-        # [blijham2006 p. 1840].
+        # type is log-normal with log-SD 0.2, truncated at 3 log-SD about its median (type I
+        # 26.9-89.3 um, type II 36.1-119.7 um); spread and bound are modelling assumptions. Types are
+        # drawn per fibre, independent of the motor unit. Replaces the 20-80 um clip attributed to
+        # Brooke & Kaiser 1970 [brooke1970], which held ~10 % of fibres at 80 um; healthy quadriceps
+        # reaches 95 um [blijham2006 p. 1840].
         type_i_fraction = 0.574
         type_mean_diameters__mm = np.array([50.0e-3, 67.0e-3])
         log_sd = 0.2
         rng = get_random_generator()
         is_type_ii = rng.random(n_fibers) >= type_i_fraction
         log_median = np.log(type_mean_diameters__mm[is_type_ii.astype(int)]) - log_sd**2 / 2
-        self._muscle_fiber_diameters__mm = rng.lognormal(mean=log_median, sigma=log_sd) * pq.mm
+        z = truncnorm.rvs(-3.0, 3.0, size=n_fibers, random_state=rng)
+        self._muscle_fiber_diameters__mm = np.exp(log_median + log_sd * z) * pq.mm
 
-        # Generate conduction velocities based on fiber diameter (diameters are in mm)
+        # Fibre CV: the slope of the CV-diameter line [nandedkar1983 p. 163] about the muscle mean CV
+        # (FDI 4.2 m/s [nishizono1990 p. 77]). The line's own anchor (3.7 m/s at 55 um, biceps
+        # [nandedkar1983 p. 163]) gives 3.8 m/s at the FDI diameters; the measured fit of Blijham et
+        # al. 2006 gives 3.3 m/s [blijham2006 p. 1840], so only the slope is used.
         k = CV_PER_DIAMETER__M_S_PER_MM * (pq.m / pq.s) / pq.mm  # (m/s)/mm
-        c = CV_INTERCEPT__M_S * pq.m / pq.s  # m/s
+        mean_cv = float(pq.Quantity(self._mean_conduction_velocity__m_s, pq.m / pq.s).rescale(pq.m / pq.s).magnitude)
+        d_mean = np.mean(self._muscle_fiber_diameters__mm)
+        cv_base = k * (self._muscle_fiber_diameters__mm - d_mean) + mean_cv * pq.m / pq.s
 
-        # Add some biological variability
-        cv_base = k * self._muscle_fiber_diameters__mm + c
-        cv_noise = get_random_generator().normal(0, 0.2, n_fibers) * pq.m / pq.s  # 20% CV variation
+        # Fibre-to-fibre variability about the line, SD 0.2 m/s (~5 % of the mean; a modelling assumption)
+        cv_noise = get_random_generator().normal(0, 0.2, n_fibers) * pq.m / pq.s
 
         self._muscle_fiber_conduction_velocities__mm_per_s = cv_base + cv_noise
 

@@ -212,6 +212,7 @@ def realize_fiber_dispersion(
     fiber_lengths__mm: Optional[Sequence[np.ndarray]] = None,
     end_margin__mm: float = 1.0,
     mean_fiber_length__mm: Optional[float] = None,
+    fiber_diameter__um: Optional[float] = None,
 ) -> FiberDispersionRealization:
     """Draw per-fibre end-plate, nerve delay, CV and source scale for every motor unit.
 
@@ -220,6 +221,9 @@ def realize_fiber_dispersion(
     ``±length / 2`` (or are drawn in the tendon band, which needs
     ``mean_fiber_length__mm``), and end-plates are clipped to
     ``end_margin__mm`` inside the ends with the clipped count reported.
+    ``fiber_diameter__um`` (the ``SurfaceEMG`` source diameter) gives the
+    effective diameters in the report (``diameter_mean__um``; NaN without it);
+    ``line_diameter_mean__um`` is the diameter read from the CV line.
     """
     n_mu = len(fiber_positions__mm)
     counts = np.array([len(p) for p in fiber_positions__mm])
@@ -239,7 +243,7 @@ def realize_fiber_dispersion(
 
     report = {key: np.full(n_mu, np.nan) for key in (
         "zi_mean__mm", "zi_sd__mm", "cv_mean__m_s", "cv_cov", "delay_mean__ms", "delay_sd__ms",
-        "amplitude_scale_mean", "diameter_mean__um", "end_sd__mm")}
+        "amplitude_scale_mean", "diameter_mean__um", "line_diameter_mean__um", "end_sd__mm")}
     report["n_fibers"] = counts
     report["n_branches"] = np.zeros(n_mu, dtype=int)
     report["zi_clipped"] = np.zeros(n_mu, dtype=int)
@@ -314,13 +318,15 @@ def realize_fiber_dispersion(
             report["zi_mean__mm"][mu], report["zi_sd__mm"][mu] = np.mean(zi), np.std(zi)
             report["cv_mean__m_s"][mu], report["cv_cov"][mu] = np.mean(cv), np.std(cv) / np.mean(cv)
             report["delay_mean__ms"][mu], report["delay_sd__ms"][mu] = np.mean(delay), np.std(delay)
-            report["diameter_mean__um"][mu] = np.mean(diameter__um)
+            report["line_diameter_mean__um"][mu] = np.mean(diameter__um)
     if config.diameter_scales_source and counts.sum():
         mean_square = np.mean(np.concatenate(scale_all))
         scale_all = [scale / mean_square for scale in scale_all]
     for mu, scale in enumerate(scale_all):
         if len(scale):
             report["amplitude_scale_mean"][mu] = np.mean(scale)
+            if fiber_diameter__um is not None:
+                report["diameter_mean__um"][mu] = np.mean(fiber_diameter__um * np.sqrt(scale))
     report["config"] = asdict(config)
     ends = (plus_all, minus_all) if fiber_lengths__mm is not None else (None, None)
     return FiberDispersionRealization(zi_all, cv_all, delay_all, scale_all, *ends, report=report)

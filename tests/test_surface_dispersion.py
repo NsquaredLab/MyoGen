@@ -157,12 +157,12 @@ def muscle():
     return _muscle()
 
 
-def _realize(muscle, config, zones=None):
+def _realize(muscle, config, zones=None, **kwargs):
     counts = np.asarray(muscle.resulting_number_of_innervated_fibers)
     zones = np.zeros(len(counts)) if zones is None else zones
     positions = [np.asarray(muscle.resulting_fiber_assignment(i)) for i in range(len(counts))]
     return realize_fiber_dispersion(config, positions, np.asarray(muscle.recruitment_thresholds),
-                                    zones, mean_cv__m_s=4.2)
+                                    zones, mean_cv__m_s=4.2, **kwargs)
 
 
 def test_default_config_is_the_undispersed_model(muscle):
@@ -222,7 +222,21 @@ def test_diameter_coupling_scales_source_with_cross_section(muscle):
     diameter__um = (real.cv__m_s[big] - 0.95) / 0.05
     ratio = real.amplitude_scale[big] / real.amplitude_scale[big][0]
     np.testing.assert_allclose(ratio, (diameter__um / diameter__um[0]) ** 2)
-    assert real.report["diameter_mean__um"][big] == pytest.approx(np.mean(diameter__um))
+    assert real.report["line_diameter_mean__um"][big] == pytest.approx(np.mean(diameter__um))
+
+
+def test_report_gives_the_effective_fibre_diameter(muscle):
+    """``diameter_mean__um`` is the diameter each fibre's source uses: the line diameter rescaled so
+    the muscle's root-mean-square equals ``fiber_diameter__um`` (the line diameter is reported apart)."""
+    cfg = SurfaceFiberDispersion(fiber_cv_within_mu_cov=0.08, diameter_scales_source=True)
+    real = _realize(muscle, cfg, fiber_diameter__um=57.9)
+    effective = [57.9 * np.sqrt(scale) for scale in real.amplitude_scale]
+    for mu, d in enumerate(effective):
+        assert real.report["diameter_mean__um"][mu] == pytest.approx(np.mean(d))
+    assert np.sqrt(np.mean(np.concatenate(effective) ** 2)) == pytest.approx(57.9)
+    off = _realize(muscle, SurfaceFiberDispersion(fiber_cv_within_mu_cov=0.08), fiber_diameter__um=57.9)
+    np.testing.assert_allclose(off.report["diameter_mean__um"], 57.9)
+    assert np.all(np.isnan(_realize(muscle, cfg).report["diameter_mean__um"]))
 
 
 @pytest.mark.parametrize("cfg", [
