@@ -378,7 +378,7 @@ def _simulate_fiber_v2_python(
         that propagate at different ``v`` but share ``v_grid`` return signals on
         the same time axis and can be summed directly.
     iap_lambda__per_mm : float, optional
-        Length scale of the Rosenfalck intracellular action potential,
+        Length scale of the Rosenfalck [rosenfalck1969] intracellular action potential,
         ``Vm = 96 (lambda z)**3 exp(-lambda z) - 90`` mV with z in mm, default
         1 / mm (Rosenfalck 1969) [rosenfalck1969]. Values below 1 stretch the IAP along the fibre
         and lower the spectral content of the MUAP; peak Vm is unchanged.
@@ -475,7 +475,7 @@ def _simulate_fiber_v2_python(
             # N controls only the resolution, not the physical extent
             z = np.linspace(-fiber_length__mm / 2, fiber_length__mm / 2, N, dtype=np.longdouble)
 
-        # Rosenfalck action potential: A * l * exp(-lz) * (3(lz)² - (lz)³) for z ≥ 0, with
+        # Rosenfalck [rosenfalck1969] action potential: A * l * exp(-lz) * (3(lz)² - (lz)³) for z ≥ 0, with
         # z in mm on the same grid as k_z (l = 1 / mm as published). The source grid
         # and the volume-conductor grid must share one z axis.
         lam = iap_lambda__per_mm
@@ -780,7 +780,7 @@ def simulate_fiber_v2(
         sets the line current density ``sig_i * pi * (d/2)**2 * d2Vm/dz2`` of the
         source, so the output is the potential in mV.
     iap_lambda__per_mm : float, optional
-        Length scale of the Rosenfalck intracellular action potential,
+        Length scale of the Rosenfalck [rosenfalck1969] intracellular action potential,
         ``Vm = 96 (lambda z)**3 exp(-lambda z) - 90`` mV with z in mm, default
         1 / mm (Rosenfalck 1969) [rosenfalck1969]. Values below 1 stretch the IAP along the fibre
         and lower the spectral content of the MUAP; peak Vm is unchanged.

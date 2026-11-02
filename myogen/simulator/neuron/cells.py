@@ -755,8 +755,8 @@ class AlphaMN(_Cell):
 
     References
     ----------
-    - Powers & Binder (2001): Motor neuron biophysical characterization [powers2001]
-    - Powers et al. (2017): Updated ion channel models and parameters
+    - Powers & Binder (2001): Motor neuron biophysical characterization [powersbinder2001]
+    - Powers & Heckman (2017): ion channel mechanisms of their model, ModelDB 239582 [powersheckman2017]
     """
 
     _ids2 = itertools.count(0)
@@ -875,7 +875,7 @@ class AlphaMN(_Cell):
         Insert ion channels and set biophysical parameters for motor neuron.
 
         Implements detailed voltage-gated ion channel models based on experimental
-        characterization. Supports both Powers2017 and NERLab parameter sets with
+        characterization. Supports both Powers2017 [powersheckman2017] and NERLab parameter sets with
         different channel implementations and calibrations.
 
         The Powers2017 model includes the complete complement of motor neuron

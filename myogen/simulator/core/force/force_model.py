@@ -25,7 +25,7 @@ class ForceModel:
     """
     Force model based on Fuglevand et al. (1993) [1] [fuglevand1993].
 
-    This class implements the Fuglevand force generation model for motor unit pools,
+    This class implements the Fuglevand [fuglevand1993] force generation model for motor unit pools,
     computing individual motor unit twitch responses and their nonlinear gain modulation
     based on discharge rates. The model generates realistic force outputs from spike trains
     using physiologically-based parameters.
@@ -150,7 +150,7 @@ class ForceModel:
         if twitch_force_range is not None and twitch_force_range <= 1.0:
             raise ValueError(
                 f"twitch_force_range must be greater than 1.0, got {twitch_force_range}. "
-                "This parameter determines the spread of peak twitch forces. Fuglevand et al. (1993) use 100."
+                "This parameter determines the spread of peak twitch forces. Fuglevand et al. (1993) [fuglevand1993] use 100."
             )
 
         force_frequency_shape = tuple(float(v) for v in force_frequency_shape)
@@ -198,7 +198,7 @@ class ForceModel:
 
     def _compute_twitch_parameters(self) -> None:
         """
-        Compute peak twitch forces and contraction times based on Fuglevand model.
+        Compute peak twitch forces and contraction times based on Fuglevand model [fuglevand1993].
 
         This method calculates the physiological parameters for each motor unit
         according to the Fuglevand et al. (1993) [fuglevand1993] model equations.
@@ -263,7 +263,7 @@ class ForceModel:
 
     def generate_force(self, spike_train__Block: SPIKE_TRAIN__Block, verbose: bool = True) -> FORCE__AnalogSignal:
         """
-        Generate force output from motor unit spike trains using the Fuglevand model.
+        Generate force output from motor unit spike trains using the Fuglevand model [fuglevand1993].
 
         This method simulates muscle force by converting spike trains into force output
         through individual motor unit twitches with nonlinear gain modulation based on

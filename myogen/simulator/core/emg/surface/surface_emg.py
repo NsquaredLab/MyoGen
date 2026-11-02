@@ -96,7 +96,7 @@ class SurfaceEMG:
         Intracellular conductivity in S/m, default 1.01. The source current
         density is ``sigma_i * pi * (d/2)**2 * d2Vm/dz2`` (core-conductor model).
     iap_lambda__per_mm : float, optional
-        Length scale of the Rosenfalck intracellular action potential,
+        Length scale of the Rosenfalck [rosenfalck1969] intracellular action potential,
         ``Vm = 96 (lambda z)**3 exp(-lambda z) - 90`` mV with z in mm. Default
         1 / mm, as published (Rosenfalck 1969) [rosenfalck1969]. Values below 1 stretch the IAP
         along the fibre and lower the MUAP's spectral content and raise its
@@ -316,7 +316,7 @@ class SurfaceEMG:
         # Calculate innervation zone variance
         innervation_zone_variance = (
             self._mean_fiber_length__mm * 0.1
-        )  # 10% of the mean fiber length (see Botelho et al. 2019 [6]) [botelho2019]
+        )  # 10% of the mean fiber length (see Botelho et al. 2019) [botelho2019]
 
         # Extract fiber counts
         number_of_fibers_per_MUs = self._muscle_model.resulting_number_of_innervated_fibers
@@ -531,7 +531,7 @@ class SurfaceEMG:
                             simulate_fiber_hybrid,
                         )
 
-                        # Hybrid: time-domain Rosenfalck + frequency-domain volume conductor
+                        # Hybrid: time-domain Rosenfalck [rosenfalck1969] + frequency-domain volume conductor
                         # Same signature as _simulate_fiber_v2_python (drop-in replacement)
                         phi_temp, A_matrix, B_incomplete = simulate_fiber_hybrid(
                             Fs=Fs_internal,

@@ -208,7 +208,7 @@ EXPERIMENTAL_FR_TARGETS: dict[str, dict[float, tuple[float, float]]] = {
         20:  (11.0, 2.8),
         30:  (12.0, 3.2),
         50:  (13.0, 3.8),
-        100: (14.0, 4.5),   # Skarabot untrained VL mean
+        100: (14.0, 4.5),   # Skarabot untrained VL mean [skarabot2023]
     },
     "vl_trained": {
         # Resistance-trained VL. Peak: Skarabot 2023 [skarabot2023] (21.1 ± 4.1 pps).
@@ -217,7 +217,7 @@ EXPERIMENTAL_FR_TARGETS: dict[str, dict[float, tuple[float, float]]] = {
         20:  (14.0, 3.0),
         30:  (16.5, 3.4),
         50:  (19.0, 3.8),
-        100: (21.1, 4.1),   # Skarabot trained VL mean
+        100: (21.1, 4.1),   # Skarabot trained VL mean [skarabot2023]
     },
     "fdi": {
         # First dorsal interosseous. Higher peak rates than VL

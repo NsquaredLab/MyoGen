@@ -119,7 +119,7 @@ class Muscle:
     length__mm : float, default=30.0
         Length of the muscle in millimeters. Default is 30.0 mm, a nominal value chosen to match the order of magnitude of the FDI muscle; adjust to match the muscle under study.
     fiber_density__fibers_per_mm2 : float, default=350
-        Density of muscle fibers per square millimeter. Default is set to 350 fibers/mm² as determined by Bettelho et al. 2019 [7] [botelho2019].
+        Density of muscle fibers per square millimeter. Default is set to 350 fibers/mm² as determined by Botelho et al. 2019 [7] [botelho2019].
     max_innervation_area_to_total_muscle_area__ratio : float, default=0.25
         Ratio defining the maximum territory size relative to total muscle area.
         Default is 0.25 as a pragmatic upper bound for the FDI, with no single published source; revisit for larger muscles.
@@ -159,8 +159,8 @@ class Muscle:
         Skin conductivity. Default is 1 S/m, the value of Farina et al. 2004 [1] [farina2004], which they took
         from the three-layer model of Roeleveld et al. 1997 [8] [roeleveld1997] (also Blok et al. 2002 [9] [blok2002]). It is
         an effective value chosen so that the model reproduces how biceps MUAPs fall off with
-        depth and around the arm, not a measured skin conductivity: Roeleveld et al. note that it
-        is not known whether skin conducts as well as 1 S/m, and Blok et al. that reference values
+        depth and around the arm, not a measured skin conductivity: Roeleveld et al. [roeleveld1997] note that it
+        is not known whether skin conducts as well as 1 S/m, and Blok et al. [blok2002] that reference values
         are scarce. Measured skin is far lower: 4.55E-4 to 4.88E-4 S/m for composite in-vivo skin
         near 100-150 Hz (Gabriel et al. 1996 [gabriel1996], used by Lowery et al. 2002 [10] [lowery2002] and Botelho et al.
         2019 [7] [botelho2019]). A resistive skin layer raises surface amplitudes (3.5-6x with 4.88E-4 S/m).

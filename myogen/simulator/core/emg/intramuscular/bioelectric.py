@@ -4,14 +4,14 @@ Bioelectric functions for intramuscular EMG simulation.
 This module contains the core bioelectric modeling functions for simulating
 single fiber action potentials (SFAPs) and motor unit action potentials (MUAPs)
 in intramuscular EMG. The functions implement the volume conductor models
-from Farina et al. 2004 and the transmembrane current models from
-Rosenfalck 1969.
+from Farina et al. 2004 [farina2004] and the transmembrane current models from
+Rosenfalck 1969 [rosenfalck1969].
 
 References
 ----------
-[1] Farina, D., Merletti, R., 2001. A novel approach for precise simulation of the EMG signal detected by surface electrodes. IEEE Transactions on Biomedical Engineering 48, 637–646. <br>
-[2] Rosenfalck, P., 1969. Intra- and extracellular potential fields of active nerve and muscle fibres. Acta Physiologica Scandinavica Supplementum 321, 1–168. <br>
-[3] Nandedkar, S.D., Stålberg, E., 1983. Simulation of single muscle fibre action potentials. Medical & Biological Engineering & Computing 21, 158–165.
+[1] Farina, D., Merletti, R., 2001. A novel approach for precise simulation of the EMG signal detected by surface electrodes. IEEE Transactions on Biomedical Engineering 48, 637–646. [farinamerletti2001] <br>
+[2] Rosenfalck, P., 1969. Intra- and extracellular potential fields of active nerve and muscle fibres. Acta Physiologica Scandinavica Supplementum 321, 1–168. [rosenfalck1969] <br>
+[3] Nandedkar, S.D., Stålberg, E., 1983. Simulation of single muscle fibre action potentials. Medical & Biological Engineering & Computing 21, 158–165. [nandedkar1983]
 """
 
 import numpy as np
@@ -22,7 +22,7 @@ def get_tm_current(z: np.ndarray, D1: float = 96.0, D2: float = -90.0) -> np.nda
     Calculate transmembrane current using Rosenfalck's model.
 
     This function implements the transmembrane current model from:
-    P. Rosenfalck "Intra and extracellular fields of active nerve and muscle fibers" (1969)
+    P. Rosenfalck "Intra and extracellular fields of active nerve and muscle fibers" (1969) [rosenfalck1969]
 
     Parameters
     ----------
@@ -45,7 +45,7 @@ def get_tm_current(z: np.ndarray, D1: float = 96.0, D2: float = -90.0) -> np.nda
 
 def get_tm_current_dz(z: np.ndarray, D1: float = 96.0, xp=np) -> np.ndarray:
     """
-    Calculate first derivative of transmembrane current (Rosenfalck model).
+    Calculate first derivative of transmembrane current (Rosenfalck model) [rosenfalck1969].
 
     This is the spatial derivative of the transmembrane current model used
     for action potential propagation simulation.
@@ -73,7 +73,7 @@ def get_tm_current_dz(z: np.ndarray, D1: float = 96.0, xp=np) -> np.ndarray:
 
 def get_tm_current_ddz(z: np.ndarray, D1: float = 96.0) -> np.ndarray:
     """
-    Calculate second derivative of transmembrane current (Rosenfalck model).
+    Calculate second derivative of transmembrane current (Rosenfalck model) [rosenfalck1969].
 
     Parameters
     ----------
@@ -107,7 +107,7 @@ def get_elementary_current_response(
 
     This function calculates the potential response at electrode location
     due to a unit current source at different positions along the muscle fiber.
-    Based on Nandedkar & Stålberg 1983.
+    Based on Nandedkar & Stålberg 1983 [nandedkar1983].
 
     Parameters
     ----------
@@ -118,9 +118,9 @@ def get_elementary_current_response(
     r : np.ndarray
         Radial distance from fiber to electrode in mm
     sigma_r : float, default=63.0
-        Radial conductivity in S/m (from Andreassen & Rosenfalck 1980)
+        Radial conductivity in S/m (from Andreassen & Rosenfalck 1980) [andreassenrosenfalck1980]
     sigma_z : float, default=330.0
-        Longitudinal conductivity in S/m (from Andreassen & Rosenfalck 1980)
+        Longitudinal conductivity in S/m (from Andreassen & Rosenfalck 1980) [andreassenrosenfalck1980]
     xp : module, default=np
         Array backend (numpy or cupy)
 
@@ -228,7 +228,7 @@ def get_current_density(
 ):
     """
     Model the individual action potential (IAP) or single fiber action potential (SFAP) in space and time.
-    Translated from Farina & Merletti (2001) and Nandedkar & Stålberg (1998).
+    Translated from Farina & Merletti (2001) [farinamerletti2001] and Nandedkar & Stålberg (1998).
 
     Parameters
     ----------

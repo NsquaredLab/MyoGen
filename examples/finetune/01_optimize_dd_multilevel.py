@@ -2,7 +2,7 @@
 """
 Multi-level DD optimization using trapezoidal ramps.
 
-Optimizes DD network parameters to match Fuglevand recruitment targets
+Optimizes DD network parameters to match Fuglevand [fuglevand1993] recruitment targets
 across multiple %MVC levels simultaneously. Uses a single trapezoidal
 ramp per trial instead of separate constant-drive simulations.
 
@@ -63,7 +63,7 @@ MVC_REST_S, MVC_HOLD_S = 0.5, 3.0  # MVC ramp: rest, ramp 0 -> 1 at CEILING_RAMP
 FORCE_FS_HZ = 2048.0       # ForceModel sampling rate
 FORCE_SMOOTH_S = 0.25      # Moving-average window on the ramp force
 GFLUCTDV_RANGE = (0.05, 0.5)  # Optuna search range for Gfluctdv scale (FDI best was 0.243 at the old 0.25 cap)
-ISI_CV_TARGET = (0.15, 0.22)   # Literature target: 15-22% (LIT-17)
+ISI_CV_TARGET = (0.15, 0.22)   # Literature target: 15-22% at 30 % MVC [enokaduchateau2017] [dideriksen2012] (as synthesised in nexus LIT-17; range not checked against the papers)
 ISI_CV_WEIGHT = 2.0            # Penalty weight for ISI CV outside target
 TIMESTEP_MS = 0.1
 RAMP_MVC_PCT = 30  # Ramp target: 0→30% MVC
@@ -98,7 +98,7 @@ def _thresholds(profile, n_mu):
     thr = np.asarray(thr, dtype=float)
     thr = thr / thr.max()
     return thr, thr * MAX_RECRUITMENT
-# Fuglevand model parameters (back-compat)
+# Fuglevand model parameters [fuglevand1993] (back-compat)
 MIN_FR_HZ = 8.0
 MAX_FR_HZ = 17.0
 
@@ -1042,13 +1042,13 @@ def main():
     ap.add_argument("--ceiling-rank", type=int, default=0,
                     help="Score the unit with K units recruited above it instead of the last unit (default 0).")
     ap.add_argument("--force-frequency", choices=sorted(FORCE_FREQUENCY_SHAPES), default="fuglevand",
-                    help="ForceModel force-frequency saturation: fuglevand (1993, default) or human (fit to human "
+                    help="ForceModel force-frequency saturation: fuglevand (1993, default) [fuglevand1993] or human (fit to human "
                          "single motor units, force_utils.HUMAN_UNIT_FORCE_FREQUENCY).")
     ap.add_argument("--fit-weight-exponent", action="store_true",
                     help="Also fit the DD weight exponent p in [0, 1]: weights scale as (k_max / k_i) ** p "
                          "(default p = 1, equal current per input at rest; see build_dd_mn_network).")
     ap.add_argument("--high-force-rates", action="store_true",
-                    help="Also score MVC-ramp firing rates at 40 and 80 %% MVC against De Luca et al. 1982.")
+                    help="Also score MVC-ramp firing rates at 40 and 80 %% MVC against De Luca et al. 1982 [deluca1982].")
     ap.add_argument("--de-luca-params", type=str, default="{}",
                     help="JSON overrides for de_luca_targets, e.g. fr_onset_hz.")
     ap.add_argument("--results-tag", type=str, default="polygon")

@@ -7,7 +7,7 @@ mode: "active"  # Options: "active", "passive"
 axon_velocities: [50, 65]  # [min, max] conduction velocities (m/s)
 axon_length: 0.6  # Length of the axon (mm)
 gamma: 0.2  # Neuromodulation level (a.u.)
-lambda_factor: 1.0  # Lambda factor for Powers2017 model persistent sodium scaling
+lambda_factor: 1.0  # Lambda factor for Powers2017 [powersheckman2017] model persistent sodium scaling
 initial_voltage__mV: -67  # Initial membrane voltage (mV)
 spike_threshold__mV: 50.0  # Spike detection threshold (mV)
 
@@ -86,7 +86,7 @@ nerlab:
     r_alpha_v_offset: 55.0  # mV
     r_alpha_k: 4.0  # mV
 
-# Powers2017 Model Parameters
+# Powers2017 Model Parameters (cell model of [powersheckman2017], ModelDB 239582; values not checked against it)
 # All ranges are specified as [min, max, curve]
 powers2017:
   # Soma parameters
