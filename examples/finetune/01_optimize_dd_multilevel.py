@@ -80,7 +80,7 @@ LAST_RECRUIT_PCT_MVC: float | None = None  # force (% MVC) at which the last uni
 CEILING_RANK = 0              # score the unit with CEILING_RANK units recruited above it (0: the last unit)
 FORCE_FREQUENCY_SHAPE = FUGLEVAND_FORCE_FREQUENCY  # (a, c) of the ForceModel force-frequency saturation
 FORCE_FREQUENCY_SHAPES = {"fuglevand": FUGLEVAND_FORCE_FREQUENCY, "human": HUMAN_UNIT_FORCE_FREQUENCY}
-# Mean FDI firing rates (Hz) at % MVC, De Luca et al. 1982 Table 1 (peak rates in 40 and 80 % MVC contractions).
+# Mean FDI peak firing rates (Hz) in 40 and 80 % MVC contractions [deluca1982 p. 118 Table 1].
 HIGH_FORCE_RATE_TARGETS = {40: 25.3, 80: 41.4}
 HIGH_FORCE_RATE_WEIGHT = 1.0  # per level, relative rate error; scored on the MVC ramp
 SCORE_HIGH_FORCE_RATES = False

@@ -1,10 +1,10 @@
 import numpy as np
 
-# Force-frequency saturation S(r) = 1 - exp(-a r^c) fitted to human single motor units stimulated through their axons
-# (mean plateau force vs contraction time x rate): Macefield et al. 1996 (J Neurophysiol 75:2509), Fuglevand et al.
-# 1999 (J Neurophysiol 81:1718), McNulty et al. 2000 (J Physiol 526:445). rms error 0.05 (Fuglevand 1993: 0.13);
-# predicts twitch:tetanus 0.23 (measured 0.22-0.36; Fuglevand 1993: 0.11).
-FUGLEVAND_FORCE_FREQUENCY = (2.0, 3.0)
+# Force-frequency saturation S(r) = 1 - exp(-a r^c). Keys in [brackets] are entries of docs/literature.md.
+FUGLEVAND_FORCE_FREQUENCY = (2.0, 3.0)  # [fuglevand1993] (not read in full; no locator)
+# Fitted to human single motor units stimulated through their axons (mean plateau force vs contraction time x rate):
+# [macefield1996 Fig. 6C; CT Table 1], [fuglevand1999 Table 1, Fig. 6A], [mcnulty2000 Table 2; CT Table 1].
+# rms error 0.05 (Fuglevand 1993: 0.13); predicts twitch:tetanus 0.23 (measured 0.22-0.36; Fuglevand 1993: 0.11).
 HUMAN_UNIT_FORCE_FREQUENCY = (0.93, 1.29)
 
 
