@@ -150,15 +150,19 @@ src("nandedkar1983", "B", "Nandedkar SD, Stålberg E (1983). Simulation of singl
     "Fibre CV = 0.95 + 0.05·d[µm] m/s (fixes main's 2.0 m/s for every fibre); CV–diameter line for diameter-scaled sources. **Full text never read.**",
     ["muscle", "disp", "t_fib", "t_disp", "cl", "pr4"], ["values"])
 src("nishizono1990", "B", "Nishizono H, Fujimoto T, Ohtake H, Miyashita M (1990). Muscle fiber conduction velocity and contractile properties estimated from surface electrode arrays. Electroencephalogr Clin Neurophysiol 75:75–81.",
-    "doi:10.1016/0013-4694(90)90154-C; PMID 1688776", "ABS", "CONTEXT", "FDI CV 3.2–5.0 m/s, mean 4.2 (MyoGen's default mean).", ["muscle"], ["values", "b5"])
+    "doi:10.1016/0013-4694(90)90154-C; PMID 1688776", "FT", "ADOPTED", "FDI motor-unit CV by spike-triggered surface arrays (5 mm IED): 50 units from 4 men, 3.2–5.0 m/s, mean 4.2 ± 0.5 (p. 77) — MyoGen's default mean. Units recruited at 120–930 g, i.e. 5–42 % of the 2.2 kg mean MVC (p. 78); skin temperature held at 31–32 °C (p. 77); CV correlated with threshold force, r = 0.52 (p. 79). Botelho 2019 takes its CV range from this paper.", ["muscle"], ["values", "b5"])
 src("kouyoumdjian2023", "B", "Kouyoumdjian JA et al. (2023). Muscle fiber conduction velocity in situ revisited. Front Neurol 14:1118510.",
     "doi:10.3389/fneur.2023.1118510; PMC9996126", "FT", "CONTEXT", "TA single-fibre CV 4.10 ± 0.66 m/s.", [], ["values"])
 src("zalewska2012", "B", "Zalewska E et al. (2012). A method for determination of muscle fiber diameter using single fiber potential (SFP) analysis. Med Biol Eng Comput.",
     "doi:10.1007/s11517-012-0965-x; PMC3514689", "FT", "CONTEXT", "Alternative CV–diameter line v = 2.2 + 0.05(d − 25).", [], ["values"])
-src("delvecchio2017", "B", "Del Vecchio A, Negro F, Felici F, Farina D (2017). Associations between motor unit action potential parameters and surface EMG features. J Appl Physiol 123:835–843 (journal unverified).",
-    "", "FT", "ADOPTED",
-    "MU CV linear in recruitment threshold (TA, 406 MUs: 3.89 → 5.12 m/s), slope 0.63 × mean. Within-MU CV spread unknown; CoV 5 % is a modelling assumption (Devon).",
-    ["disp", "cl", "pr3"], ["values"])
+src("delvecchio2018", "B", "Del Vecchio A, Negro F, Felici F, Farina D (2018). Distribution of muscle fibre conduction velocity for representative samples of motor units in the full recruitment range of the tibialis anterior muscle. Acta Physiol 222:e12930.",
+    "doi:10.1111/apha.12930", "FT", "ADOPTED",
+    "TA, 10 subjects, 406 MUs: MU CV 2.78–6.21 m/s (4.32 ± 0.71), linear in recruitment threshold (R² 0.70 ± 0.09); 3.89 ± 0.50 m/s at RT 0–30 % MVC, 5.12 ± 0.45 at 50–70 % (p. 2, Fig. 1 p. 3). Within-unit fibre CV distribution unknown (p. 5); CoV 5 % is a modelling assumption (Devon). CV→diameter by MFD = (MUCV − 0.95)/0.05 (p. 7 eq. 1). Basis of fiber_cv_threshold_slope (0.63 × mean, derived). Earlier cited in error as the 2017 J Appl Physiol paper.",
+    ["disp", "cl", "pr3", "muscle"], ["values"])
+src("delvecchio2017", "B", "Del Vecchio A, Negro F, Felici F, Farina D (2017). Associations between motor unit action potential parameters and surface EMG features. J Appl Physiol 123:835–843.",
+    "doi:10.1152/japplphysiol.00482.2017", "FT", "CONTEXT",
+    "TA, 13 subjects, ramps to 70 % MVC: MU CV linear in recruitment threshold (R² 0.64 ± 0.14); intercept 3.88 ± 0.35 m/s (Table 2), mean slope 0.0224 m/s per % MVC of threshold (mean of the 13 subject slopes in Table 3). Global MDF poorly related to recruitment. Not cited in code.",
+    [], ["values"])
 src("akhmadeev2020", "B", "Akhmadeev K, Yu T, Le Carpentier E, Aoustin Y, Farina D (2020). Simulation of motor unit action potential recordings from intramuscular multichannel scanning electrodes. IEEE Trans Biomed Eng 67(7):2005–2014. Cited in MyoGen as 'Konstantin et al. 2020' (Konstantin is the first author's given name).",
     "doi:10.1109/TBME.2019.2953680; code: github.com/smetanadvorak/iemg_simulator", "FT + CODE", "ADOPTED",
     "Two-layer end-plate / nerve-branch model (shared iEMG/sEMG). Published eq. 5–6 coefficients are the default; reference-code coefficients kept as nmj_coefficients='reference_code'. Branch CVs 5/2 m/s from the reference code (paper: 10/1).",
@@ -301,7 +305,7 @@ INDEX = [
     ("IAP shape and λ (iap_lambda__per_mm)", ["rosenfalck1969", "farinamerletti2001", "botelho2019", "dimitrova2006", "dimitrov1998", "rodriguezfalces2013", "petersen2019"], ["simfib", "semg"]),
     ("Fibre CV vs diameter", ["nandedkar1983", "zalewska2012"], ["muscle", "disp"]),
     ("Mean fibre CV 4.2 m/s", ["nishizono1990", "kouyoumdjian2023"], ["muscle"]),
-    ("MU CV vs threshold; within-MU CV spread", ["delvecchio2017"], ["disp"]),
+    ("MU CV vs threshold; within-MU CV spread", ["delvecchio2018", "delvecchio2017"], ["disp"]),
     ("End-plate spread (two-layer model)", ["akhmadeev2020", "stalbergkarlsson2001", "piasecki2020", "jahanmiri2015"], ["nerve", "iemg", "disp"]),
     ("Nerve-branch delays", ["akhmadeev2020", "lateva2010"], ["nerve"]),
     ("Tendon-end band", ["keenan2005", "farinafosci2002", "lateva2010"], ["disp"]),

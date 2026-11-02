@@ -26,7 +26,8 @@ from myogen.utils.types import (
 from myogen.utils.decorators import beartowertype
 
 # Fibre conduction velocity against diameter: CV = 0.95 m/s + 0.05 m/s per um
-# (Nandedkar & Stalberg 1983; 3.7 m/s at 55 um) [nandedkar1983]. Shared with SurfaceFiberDispersion.
+# (Nandedkar & Stalberg 1983; 3.7 m/s at 55 um) [nandedkar1983]; the same line converts motor-unit
+# CV to fibre diameter in Del Vecchio et al. 2018 [delvecchio2018 p. 7 eq. 1]. Shared with SurfaceFiberDispersion.
 CV_INTERCEPT__M_S = 0.95
 CV_PER_DIAMETER__M_S_PER_MM = 50.0
 
@@ -127,8 +128,9 @@ class Muscle:
         of the total muscle cross-sectional area.
         Must be in range (0, 1].
     mean_conduction_velocity__m_per_s : float, default=4.2
-        Mean conduction velocity in m/s. Default is set to 4.2 m/s as determined by Nishizono et al. 1990 [4] [nishizono1990].
-        Experimental range determined by Nishizono et al. 1990 [4] [nishizono1990] is between 3.2 and 5.0 m/s.
+        Mean conduction velocity in m/s. Default is set to 4.2 m/s, the mean (SD 0.5) over 50 FDI motor units
+        of Nishizono et al. 1990 [4] [nishizono1990 p. 77], which ranged from 3.2 to 5.0 m/s. The units were
+        recruited between 5 and 42 % MVC [nishizono1990 p. 78].
     mean_fiber_length__mm : float, default=31.7
         Mean fiber length in mm. Default is the first dorsal interosseous (FDI) value of Jacobson et al. 1992 [3]
         (Table 1) [jacobson1992 Table 1].

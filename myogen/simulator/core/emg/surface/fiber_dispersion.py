@@ -57,19 +57,21 @@ class SurfaceFiberDispersion:
     fiber_cv_threshold_slope : float
         Motor-unit mean fibre CV linear in recruitment threshold:
         ``mean * (1 + slope * (rt - mean(rt)))`` with ``rt`` the threshold
-        relative to the largest. Del Vecchio et al. (2017) [delvecchio2017] measured CV rising
-        linearly with recruitment threshold in tibialis anterior (406 units;
-        3.89 m/s at 0-30 % MVC, 5.12 m/s at 50-70 % MVC, overall mean 4.32),
-        about 0.63 of the mean per unit of threshold. Cannot be combined with
+        relative to the largest. Del Vecchio et al. (2018) measured CV rising
+        linearly with recruitment threshold in tibialis anterior (406 units from
+        10 subjects; 3.89 m/s at 0-30 % MVC, 5.12 m/s at 50-70 % MVC, overall mean
+        4.32) [delvecchio2018 p. 2], about 0.63 of the mean per unit of threshold
+        (derived from those values). Cannot be combined with
         ``fiber_cv_inter_mu_spread``.
     fiber_cv_within_mu_cov : float
         Coefficient of variation of fibre CV within a motor unit (normal,
         clipped at three standard deviations). No measurement of this spread
-        was found; Del Vecchio et al. (2017) [delvecchio2017] call it unknown.
+        was found; Del Vecchio et al. (2018) call it unknown [delvecchio2018 p. 5].
     diameter_scales_source : bool
         Scale each fibre's source by its cross-section, with the diameter read
         from the CV line ``cv = cv_intercept + cv_per_diameter * d``
-        (Nandedkar & Stålberg 1983: 0.95 m/s + 0.05 m/s per µm) [nandedkar1983], relative to
+        (0.95 m/s + 0.05 m/s per µm; Nandedkar & Stålberg 1983 [nandedkar1983], used in the
+        same form by Del Vecchio et al. 2018 [delvecchio2018 p. 7 eq. 1]), relative to
         the diameter at the mean CV.
     cv_per_diameter__m_s_per_mm, cv_intercept__m_s : float
         Slope and intercept of that line.
@@ -141,7 +143,7 @@ class SurfaceFiberDispersion:
           et al. 2020) [akhmadeev2020]. Within-unit delay SD is about 0.1-0.2 ms in the sweep
           scenarios of ``benchmarks/semg_dispersion``.
         - Unit conduction velocity: linear in recruitment threshold, slope 0.63
-          (Del Vecchio et al. 2017) [delvecchio2017].
+          (Del Vecchio et al. 2018) [delvecchio2018 p. 2].
         - Fibre velocity within a unit: CoV 5 %. A modelling assumption; no
           measurement was found.
         - Tendon ends: 5 mm band (Keenan et al. 2005) [keenan2005], correlated over 5 mm with
