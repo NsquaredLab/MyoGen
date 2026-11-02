@@ -455,3 +455,62 @@ def test_muscle_candidate_preset():
                                    fiber_cv_threshold_slope=0.0, fiber_cv_within_mu_cov=0.0,
                                    diameter_scales_source=True)
     assert SurfaceFiberDispersion.muscle_candidate(seed=3) == expected
+
+
+def _muscle_arrays(muscle):
+    counts = np.asarray(muscle.resulting_number_of_innervated_fibers)
+    return [np.linspace(3, 5, n) for n in counts], [np.linspace(40, 80, n) for n in counts]
+
+
+def test_muscle_source_uses_the_given_fibre_cvs(muscle):
+    cvs, ds = _muscle_arrays(muscle)
+    real = _realize(muscle, SurfaceFiberDispersion(fiber_properties="muscle"), fiber_cv__m_s=cvs,
+                    fiber_diameters__um=ds, fiber_diameter__um=57.9)
+    for mu, cv in enumerate(cvs):
+        np.testing.assert_array_equal(real.cv__m_s[mu], cv)
+        if len(cv):
+            assert real.report["cv_mean__m_s"][mu] == pytest.approx(cv.mean(), rel=1e-12)
+
+
+def test_muscle_source_scales_by_absolute_cross_section(muscle):
+    cvs, ds = _muscle_arrays(muscle)
+    real = _realize(muscle, SurfaceFiberDispersion(fiber_properties="muscle", diameter_scales_source=True),
+                    fiber_cv__m_s=cvs, fiber_diameters__um=ds, fiber_diameter__um=50.0)
+    for mu, d in enumerate(ds):
+        np.testing.assert_allclose(real.amplitude_scale[mu], (d / 50.0) ** 2, rtol=1e-12)
+        if len(d):
+            assert real.report["diameter_mean__um"][mu] == pytest.approx(d.mean(), rel=1e-12)
+            assert np.isnan(real.report["line_diameter_mean__um"][mu])
+
+
+def test_muscle_source_without_scaling_keeps_unit_scale(muscle):
+    cvs, ds = _muscle_arrays(muscle)
+    real = _realize(muscle, SurfaceFiberDispersion(fiber_properties="muscle"), fiber_cv__m_s=cvs,
+                    fiber_diameters__um=ds, fiber_diameter__um=57.9)
+    for scale in real.amplitude_scale:
+        np.testing.assert_array_equal(scale, np.ones(len(scale)))
+
+
+def test_muscle_source_keeps_the_other_draws(muscle):
+    cvs, ds = _muscle_arrays(muscle)
+    common = dict(nmj_model="two_layer_intra", nerve_delays=True, tendon_end_band__mm=5.0, seed=5)
+    kw = dict(fiber_lengths__mm=[np.full(len(c), 50.0) for c in cvs], mean_fiber_length__mm=50.0)
+    config = _realize(muscle, SurfaceFiberDispersion(**common), **kw)
+    from_muscle = _realize(muscle, SurfaceFiberDispersion(fiber_properties="muscle", **common),
+                           fiber_cv__m_s=cvs, fiber_diameters__um=ds, **kw)
+    for a, b in ((config.zi__mm, from_muscle.zi__mm), (config.delay__ms, from_muscle.delay__ms),
+                 (config.end_plus__mm, from_muscle.end_plus__mm)):
+        for x, y in zip(a, b):
+            np.testing.assert_array_equal(x, y)
+
+
+def test_muscle_source_needs_the_arrays(muscle):
+    cvs, ds = _muscle_arrays(muscle)
+    with pytest.raises(ValueError, match="fiber_cv__m_s"):
+        _realize(muscle, SurfaceFiberDispersion(fiber_properties="muscle"))
+    with pytest.raises(ValueError, match="fiber_diameters__um"):
+        _realize(muscle, SurfaceFiberDispersion(fiber_properties="muscle", diameter_scales_source=True),
+                 fiber_cv__m_s=cvs, fiber_diameter__um=57.9)
+    short = [cv[:-1] if len(cv) else cv for cv in cvs]
+    with pytest.raises(ValueError, match="motor unit"):
+        _realize(muscle, SurfaceFiberDispersion(fiber_properties="muscle"), fiber_cv__m_s=short)

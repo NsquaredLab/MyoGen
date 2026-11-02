@@ -248,6 +248,8 @@ def realize_fiber_dispersion(
     end_margin__mm: float = 1.0,
     mean_fiber_length__mm: Optional[float] = None,
     fiber_diameter__um: Optional[float] = None,
+    fiber_cv__m_s: Optional[Sequence[np.ndarray]] = None,
+    fiber_diameters__um: Optional[Sequence[np.ndarray]] = None,
 ) -> FiberDispersionRealization:
     """Draw per-fibre end-plate, nerve delay, CV and source scale for every motor unit.
 
@@ -259,9 +261,29 @@ def realize_fiber_dispersion(
     ``fiber_diameter__um`` (the ``SurfaceEMG`` source diameter) gives the
     effective diameters in the report (``diameter_mean__um``; NaN without it);
     ``line_diameter_mean__um`` is the diameter read from the CV line.
+
+    With ``config.fiber_properties == "muscle"``, ``fiber_cv__m_s`` (and, when the source scales
+    with diameter, ``fiber_diameters__um`` and ``fiber_diameter__um``) give each fibre's CV and
+    diameter, per motor unit in the order of ``fiber_positions__mm``; the source scale is then
+    ``(d / fiber_diameter__um)**2``, not normalised. Ignored otherwise.
     """
     n_mu = len(fiber_positions__mm)
     counts = np.array([len(p) for p in fiber_positions__mm])
+    from_muscle = config.fiber_properties == "muscle"
+    if from_muscle:
+        scaled = config.diameter_scales_source
+        required = [("fiber_cv__m_s", fiber_cv__m_s)]
+        if scaled:
+            required += [("fiber_diameters__um", fiber_diameters__um), ("fiber_diameter__um", fiber_diameter__um)]
+        for name, value in required:
+            if value is None:
+                raise ValueError(f"fiber_properties='muscle' needs {name}")
+        for name, arrays in required[:2] if scaled else required:
+            if len(arrays) != n_mu:
+                raise ValueError(f"{name} has {len(arrays)} motor units, the positions {n_mu}")
+            for mu, values in enumerate(arrays):
+                if len(values) != counts[mu]:
+                    raise ValueError(f"{name}: motor unit {mu} has {len(values)} values for {counts[mu]} fibres")
     nerve_rng = np.random.default_rng([config.seed, 0])
     cv_rng = np.random.default_rng([config.seed, 1])
     end_rng = np.random.default_rng([config.seed, 2])
@@ -328,6 +350,21 @@ def realize_fiber_dispersion(
             if n:
                 report["end_sd__mm"][mu] = np.std(end_plus)
 
+        if from_muscle:
+            cv = np.asarray(fiber_cv__m_s[mu], dtype=float)
+            if config.diameter_scales_source:
+                scale = (np.asarray(fiber_diameters__um[mu], dtype=float) / fiber_diameter__um) ** 2
+            else:
+                scale = np.ones(n)
+            zi_all.append(zi)
+            cv_all.append(cv)
+            delay_all.append(delay)
+            scale_all.append(scale)
+            if n:
+                report["zi_mean__mm"][mu], report["zi_sd__mm"][mu] = np.mean(zi), np.std(zi)
+                report["cv_mean__m_s"][mu], report["cv_cov"][mu] = np.mean(cv), np.std(cv) / np.mean(cv)
+                report["delay_mean__ms"][mu], report["delay_sd__ms"][mu] = np.mean(delay), np.std(delay)
+            continue
         cv_mu = mean_cv__m_s * threshold_factor[mu] * (1 - config.fiber_cv_inter_mu_spread / 2
                                                        + config.fiber_cv_inter_mu_spread * rank[mu])
         if config.fiber_cv_per_unit__m_s is not None:
@@ -354,7 +391,7 @@ def realize_fiber_dispersion(
             report["cv_mean__m_s"][mu], report["cv_cov"][mu] = np.mean(cv), np.std(cv) / np.mean(cv)
             report["delay_mean__ms"][mu], report["delay_sd__ms"][mu] = np.mean(delay), np.std(delay)
             report["line_diameter_mean__um"][mu] = np.mean(diameter__um)
-    if config.diameter_scales_source and counts.sum():
+    if config.diameter_scales_source and counts.sum() and not from_muscle:
         mean_square = np.mean(np.concatenate(scale_all))
         scale_all = [scale / mean_square for scale in scale_all]
     for mu, scale in enumerate(scale_all):
