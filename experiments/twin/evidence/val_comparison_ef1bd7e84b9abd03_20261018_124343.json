@@ -1,0 +1,153 @@
+{
+ "artifact": {
+  "version": 2,
+  "seed": 0,
+  "dt_ms": 0.1,
+  "n_mn": 8,
+  "synapse": {
+   "site": "dendrite",
+   "tau_rise_ms": 0.2,
+   "tau_decay_ms": 0.3,
+   "e_exc_mV": 70.0,
+   "e_inh_mV": -15.0,
+   "w_exc_uS": 0.009,
+   "w_inh_uS": 0.009,
+   "live_driving_force": true,
+   "e_inh_convention": "frame-corrected driving force"
+  },
+  "cell": {
+   "gcal_scale": 1.0,
+   "gnap_scale": 1.0
+  },
+  "content_hash": "ef1bd7e84b9abd03"
+ },
+ "comparison": {
+  "content_hash": "ef1bd7e84b9abd03",
+  "pool": {
+   "v_rmse_mV": 0.0003514303395716632,
+   "v_max_abs_mV": 0.001064357153899298,
+   "v_dend_rmse_mV": 0.00038958527107967175,
+   "v_dend_max_abs_mV": 0.0011031375894381412,
+   "spikes_jaxley_per_mn": [
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0
+   ],
+   "spikes_neuron_per_mn": [
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0
+   ],
+   "spike_match_pm5ms": {
+    "matched": 0,
+    "jaxley_total": 0,
+    "neuron_total": 0
+   }
+  },
+  "current_steps": {
+   "5.0": {
+    "v_rmse_mV": 0.0027762454144517677,
+    "v_max_abs_mV": 0.027068122664278604,
+    "v_dend_rmse_mV": 0.003062220301082907,
+    "v_dend_max_abs_mV": 0.0324280108163979,
+    "spikes_jaxley_per_mn": [
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0
+    ],
+    "spikes_neuron_per_mn": [
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0
+    ],
+    "spike_match_pm5ms": {
+     "matched": 0,
+     "jaxley_total": 0,
+     "neuron_total": 0
+    }
+   },
+   "15.0": {
+    "v_rmse_mV": 3.085067592487133,
+    "v_max_abs_mV": 68.34554343209372,
+    "v_dend_rmse_mV": 0.6065513667095238,
+    "v_dend_max_abs_mV": 7.637296967278601,
+    "spikes_jaxley_per_mn": [
+     67,
+     65,
+     62,
+     54,
+     0,
+     0,
+     0,
+     0
+    ],
+    "spikes_neuron_per_mn": [
+     67,
+     65,
+     62,
+     54,
+     0,
+     0,
+     0,
+     0
+    ],
+    "spike_match_pm5ms": {
+     "matched": 180,
+     "jaxley_total": 248,
+     "neuron_total": 248
+    }
+   },
+   "30.0": {
+    "v_rmse_mV": 5.2833486490138775,
+    "v_max_abs_mV": 74.35096933079032,
+    "v_dend_rmse_mV": 0.8682390814816492,
+    "v_dend_max_abs_mV": 5.383255883702834,
+    "spikes_jaxley_per_mn": [
+     145,
+     139,
+     132,
+     124,
+     113,
+     92,
+     0,
+     0
+    ],
+    "spikes_neuron_per_mn": [
+     144,
+     139,
+     132,
+     124,
+     113,
+     92,
+     0,
+     0
+    ],
+    "spike_match_pm5ms": {
+     "matched": 462,
+     "jaxley_total": 745,
+     "neuron_total": 744
+    }
+   }
+  }
+ }
+}

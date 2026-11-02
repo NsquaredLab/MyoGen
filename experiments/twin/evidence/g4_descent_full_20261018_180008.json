@@ -1,0 +1,2622 @@
+{
+ "manifest": {
+  "git_revision": "a483b1d",
+  "git_dirty": true,
+  "provenance_note": "experiments/twin sources are untracked by git; reconstruction relies on the file hashes below, not the revision",
+  "source_sha256_16": {
+   "sensitivity_checks.py": "a433b78e7bd7e581",
+   "poolbuild.py": "2dd213214e166343",
+   "observables.py": "9ab3a99e798e3274",
+   "validation_protocol.py": "983f8bbcafebd67e",
+   "protocols.py": "404ea437741ea2ae",
+   "gradient_repair.py": "78812d0e94b7be75",
+   "deliverable_b.py": "8c16e479bcea843d",
+   "deliverable_c.py": "0c1896bdc5a2e5fc",
+   "pic_grid.py": "d900172c74ba1695",
+   "r2a_profiles.py": "ac4802b3bdfe1191",
+   "acceptance.py": "24200ac953a87395",
+   "myogen/simulator/jaxley/jax_models.py": "8b99fc4b69d735c7",
+   "myogen/simulator/jaxley/channels/nerlab_channels.py": "f6161ceaca04285e",
+   "myogen/simulator/jaxley/cells_api.py": "c6534ba58adaf3b1",
+   "myogen/simulator/jaxley/populations/motor_neurons.py": "736be1bb0c75807c"
+  },
+  "versions": {
+   "jax": "0.9.0",
+   "jaxley": "0.13.0",
+   "numpy": "2.3.5"
+  },
+  "device": "cpu",
+  "precision": "float64 (jax_enable_x64=True)",
+  "dt_ms": 0.1,
+  "voltage_frame": "NERLab 1952-HH (V_rest\u22480, spike threshold +50 mV)",
+  "seed_taxonomy": {
+   "connectivity": "TwinSpec.seed (numpy default_rng)",
+   "events": "jax.random.PRNGKey (rate path) / numpy default_rng (frozen renewal events)",
+   "fd_probes": "deterministic, no sampling"
+  },
+  "objectives": {
+   "t2": "mean soma voltage, subthreshold deterministic current",
+   "t3_t4": "mean exponentially-smoothed rate (tau 100 ms)",
+   "t5": "MSE of smoothed rates (tau 100 ms) vs frozen-event target"
+  },
+  "scope": "this Jaxley harness configuration only \u2014 NOT a validated NEURON-matched forward model; conclusions are specific to the stated parameter points, objectives, and frozen input realizations",
+  "g4_sha256_16": "c42a163d0ea57376",
+  "args": {
+   "smoke": false,
+   "iters": 10
+  },
+  "run_tag": "full"
+ },
+ "declared": {
+  "dt_ms": 0.025,
+  "window_s": 2.0,
+  "objective": "FULL-TRACE hard binned-rate MSE (50/300 ms) at dt 0.025; windows affect gradient flow only",
+  "starts": "S1 both-wrong, S2 gCaL-wrong-only, S3 w-wrong-only",
+  "lambdas": [
+   0.03,
+   0.1
+  ]
+ },
+ "stageA": {
+  "rows": [
+   {
+    "case": {
+     "conn_seed": 0,
+     "event_offset": 0,
+     "theta_true": [
+      1.5,
+      0.011
+     ]
+    },
+    "n_obs_spikes": 125,
+    "starts": {
+     "S1_both_wrong": {
+      "L0": 16.909722222222257,
+      "estimators": {
+       "surrogate": {
+        "grad": [
+         -9930.86337931859,
+         -17517649.89031852
+        ],
+        "direction": [
+         0.06286498093845376,
+         0.9980220409247523
+        ],
+        "joint": {
+         "0.03": {
+          "loss": 12.951388888888898,
+          "accepted": true
+         },
+         "0.1": {
+          "loss": 7.013888888888899,
+          "accepted": true
+         }
+        },
+        "coord": {
+         "gCaL": {
+          "loss": 16.458333333333368,
+          "accepted": true
+         },
+         "w": {
+          "loss": 7.083333333333343,
+          "accepted": true
+         }
+        }
+       },
+       "crn_fd": {
+        "grad": [
+         -4.513888888888928,
+         -10802.469135802505
+        ],
+        "direction": [
+         0.04637861118671757,
+         0.998923933252373
+        ],
+        "joint": {
+         "0.03": {
+          "loss": 12.951388888888898,
+          "accepted": true
+         },
+         "0.1": {
+          "loss": 7.013888888888899,
+          "accepted": true
+         }
+        },
+        "coord": {
+         "gCaL": {
+          "loss": 16.458333333333368,
+          "accepted": true
+         },
+         "w": {
+          "loss": 7.083333333333343,
+          "accepted": true
+         }
+        }
+       }
+      },
+      "cosine_sur_vs_fd": 0.9998636931013194
+     },
+     "S2_gcal_wrong_only": {
+      "L0": 1.6666666666666647,
+      "estimators": {
+       "surrogate": {
+        "grad": [
+         -2312.739595550043,
+         -2106542.4627247397
+        ],
+        "direction": [
+         0.09931421382456011,
+         0.9950561225038563
+        ],
+        "joint": {
+         "0.03": {
+          "loss": 1.0069444444444435,
+          "accepted": true
+         },
+         "0.1": {
+          "loss": 3.4027777777777746,
+          "accepted": false
+         }
+        },
+        "coord": {
+         "gCaL": {
+          "loss": 1.6319444444444426,
+          "accepted": true
+         },
+         "w": {
+          "loss": 3.4027777777777746,
+          "accepted": false
+         }
+        }
+       },
+       "crn_fd": {
+        "grad": [
+         0.347222222222221,
+         -2525.2525252525234
+        ],
+        "direction": [
+         -0.012499023551925984,
+         0.9999218841540815
+        ],
+        "joint": {
+         "0.03": {
+          "loss": 1.0069444444444435,
+          "accepted": true
+         },
+         "0.1": {
+          "loss": 3.4027777777777746,
+          "accepted": false
+         }
+        },
+        "coord": {
+         "gCaL": {
+          "loss": 1.7708333333333313,
+          "accepted": false
+         },
+         "w": {
+          "loss": 3.4027777777777746,
+          "accepted": false
+         }
+        }
+       }
+      },
+      "cosine_sur_vs_fd": 0.9937370621554763
+     },
+     "S3_w_wrong_only": {
+      "L0": 10.79861111111112,
+      "estimators": {
+       "surrogate": {
+        "grad": [
+         -38107.249287801,
+         -36635745.48176435
+        ],
+        "direction": [
+         0.1708131555698204,
+         0.9853034384819127
+        ],
+        "joint": {
+         "0.03": {
+          "loss": 9.201388888888902,
+          "accepted": true
+         },
+         "0.1": {
+          "loss": 3.6805555555555554,
+          "accepted": true
+         }
+        },
+        "coord": {
+         "gCaL": {
+          "loss": 9.548611111111121,
+          "accepted": true
+         },
+         "w": {
+          "loss": 3.6805555555555554,
+          "accepted": true
+         }
+        }
+       },
+       "crn_fd": {
+        "grad": [
+         -6.712962962962951,
+         -9297.839506172857
+        ],
+        "direction": [
+         0.11947010847565422,
+         0.9928377980218197
+        ],
+        "joint": {
+         "0.03": {
+          "loss": 9.201388888888902,
+          "accepted": true
+         },
+         "0.1": {
+          "loss": 3.6805555555555554,
+          "accepted": true
+         }
+        },
+        "coord": {
+         "gCaL": {
+          "loss": 9.548611111111121,
+          "accepted": true
+         },
+         "w": {
+          "loss": 3.6805555555555554,
+          "accepted": true
+         }
+        }
+       }
+      },
+      "cosine_sur_vs_fd": 0.9986535624707049
+     }
+    }
+   },
+   {
+    "case": {
+     "conn_seed": 0,
+     "event_offset": 0,
+     "theta_true": [
+      0.7,
+      0.008
+     ]
+    },
+    "n_obs_spikes": 36,
+    "starts": {
+     "S1_both_wrong": {
+      "L0": 3.506944444444443,
+      "estimators": {
+       "surrogate": {
+        "grad": [
+         3837.1588313830434,
+         7941670.502289136
+        ],
+        "direction": [
+         -0.053608105556254344,
+         -0.9985620516616228
+        ],
+        "joint": {
+         "0.03": {
+          "loss": 2.222222222222219,
+          "accepted": true
+         },
+         "0.1": {
+          "loss": 0.9027777777777772,
+          "accepted": true
+         }
+        },
+        "coord": {
+         "gCaL": {
+          "loss": 3.402777777777776,
+          "accepted": true
+         },
+         "w": {
+          "loss": 0.9027777777777772,
+          "accepted": true
+         }
+        }
+       },
+       "crn_fd": {
+        "grad": [
+         3.819444444444451,
+         5632.716049382726
+        ],
+        "direction": [
+         -0.075129531595126,
+         -0.9971737829898542
+        ],
+        "joint": {
+         "0.03": {
+          "loss": 2.222222222222219,
+          "accepted": true
+         },
+         "0.1": {
+          "loss": 0.9027777777777772,
+          "accepted": true
+         }
+        },
+        "coord": {
+         "gCaL": {
+          "loss": 3.402777777777776,
+          "accepted": true
+         },
+         "w": {
+          "loss": 0.9027777777777772,
+          "accepted": true
+         }
+        }
+       }
+      },
+      "cosine_sur_vs_fd": 0.9997674504656741
+     },
+     "S2_gcal_wrong_only": {
+      "L0": 0.5555555555555554,
+      "estimators": {
+       "surrogate": {
+        "grad": [
+         962.586596699731,
+         1390477.7952398334
+        ],
+        "direction": [
+         -0.08621161941587199,
+         -0.9962768474062282
+        ],
+        "joint": {
+         "0.03": {
+          "loss": 0.1041666666666667,
+          "accepted": true
+         },
+         "0.1": {
+          "loss": 1.2847222222222212,
+          "accepted": false
+         }
+        },
+        "coord": {
+         "gCaL": {
+          "loss": 0.5208333333333333,
+          "accepted": true
+         },
+         "w": {
+          "loss": 1.2499999999999991,
+          "accepted": false
+         }
+        }
+       },
+       "crn_fd": {
+        "grad": [
+         1.0416666666666652,
+         347.22222222222194
+        ],
+        "direction": [
+         -0.35112344158839154,
+         -0.9363291775690445
+        ],
+        "joint": {
+         "0.03": {
+          "loss": 0.1041666666666667,
+          "accepted": true
+         },
+         "0.1": {
+          "loss": 1.2499999999999991,
+          "accepted": false
+         }
+        },
+        "coord": {
+         "gCaL": {
+          "loss": 0.5208333333333333,
+          "accepted": true
+         },
+         "w": {
+          "loss": 1.2499999999999991,
+          "accepted": false
+         }
+        }
+       }
+      },
+      "cosine_sur_vs_fd": 0.9631140016771638
+     },
+     "S3_w_wrong_only": {
+      "L0": 2.361111111111108,
+      "estimators": {
+       "surrogate": {
+        "grad": [
+         3534.517813014828,
+         5059198.883518435
+        ],
+        "direction": [
+         -0.05425799532142149,
+         -0.9985269500337488
+        ],
+        "joint": {
+         "0.03": {
+          "loss": 1.458333333333332,
+          "accepted": true
+         },
+         "0.1": {
+          "loss": 0.3819444444444446,
+          "accepted": true
+         }
+        },
+        "coord": {
+         "gCaL": {
+          "loss": 2.0486111111111085,
+          "accepted": true
+         },
+         "w": {
+          "loss": 0.3819444444444446,
+          "accepted": true
+         }
+        }
+       },
+       "crn_fd": {
+        "grad": [
+         2.976190476190466,
+         4861.111111111119
+        ],
+        "direction": [
+         -0.04756514941544917,
+         -0.9988681377244376
+        ],
+        "joint": {
+         "0.03": {
+          "loss": 1.458333333333332,
+          "accepted": true
+         },
+         "0.1": {
+          "loss": 0.3819444444444446,
+          "accepted": true
+         }
+        },
+        "coord": {
+         "gCaL": {
+          "loss": 2.0486111111111085,
+          "accepted": true
+         },
+         "w": {
+          "loss": 0.3819444444444446,
+          "accepted": true
+         }
+        }
+       }
+      },
+      "cosine_sur_vs_fd": 0.9999775447023195
+     }
+    }
+   },
+   {
+    "case": {
+     "conn_seed": 0,
+     "event_offset": 10,
+     "theta_true": [
+      1.5,
+      0.011
+     ]
+    },
+    "n_obs_spikes": 129,
+    "starts": {
+     "S1_both_wrong": {
+      "L0": 15.173611111111137,
+      "estimators": {
+       "surrogate": {
+        "grad": [
+         -20589.719461357214,
+         -32452100.23581164
+        ],
+        "direction": [
+         0.07032158114681511,
+         0.9975243732485998
+        ],
+        "joint": {
+         "0.03": {
+          "loss": 13.472222222222232,
+          "accepted": true
+         },
+         "0.1": {
+          "loss": 8.68055555555557,
+          "accepted": true
+         }
+        },
+        "coord": {
+         "gCaL": {
+          "loss": 14.618055555555575,
+          "accepted": true
+         },
+         "w": {
+          "loss": 8.68055555555557,
+          "accepted": true
+         }
+        }
+       },
+       "crn_fd": {
+        "grad": [
+         -15.277777777777963,
+         -8371.91358024696
+        ],
+        "direction": [
+         0.19872105095794504,
+         0.980056092224404
+        ],
+        "joint": {
+         "0.03": {
+          "loss": 13.472222222222232,
+          "accepted": true
+         },
+         "0.1": {
+          "loss": 8.68055555555557,
+          "accepted": true
+         }
+        },
+        "coord": {
+         "gCaL": {
+          "loss": 14.618055555555575,
+          "accepted": true
+         },
+         "w": {
+          "loss": 8.68055555555557,
+          "accepted": true
+         }
+        }
+       }
+      },
+      "cosine_sur_vs_fd": 0.9916042176551401
+     },
+     "S2_gcal_wrong_only": {
+      "L0": 2.2916666666666643,
+      "estimators": {
+       "surrogate": {
+        "grad": [
+         12632.807880009952,
+         21147146.135355983
+        ],
+        "direction": [
+         -0.0542270478553772,
+         -0.9985286311773391
+        ],
+        "joint": {
+         "0.03": {
+          "loss": 3.090277777777774,
+          "accepted": false
+         },
+         "0.1": {
+          "loss": 8.68055555555557,
+          "accepted": false
+         }
+        },
+        "coord": {
+         "gCaL": {
+          "loss": 2.2569444444444424,
+          "accepted": true
+         },
+         "w": {
+          "loss": 8.68055555555557,
+          "accepted": false
+         }
+        }
+       },
+       "crn_fd": {
+        "grad": [
+         -3.124999999999998,
+         -3598.484848484854
+        ],
+        "direction": [
+         0.0787024854200105,
+         0.9968981486534686
+        ],
+        "joint": {
+         "0.03": {
+          "loss": 1.3888888888888875,
+          "accepted": true
+         },
+         "0.1": {
+          "loss": 2.847222222222219,
+          "accepted": false
+         }
+        },
+        "coord": {
+         "gCaL": {
+          "loss": 1.6666666666666643,
+          "accepted": true
+         },
+         "w": {
+          "loss": 2.847222222222219,
+          "accepted": false
+         }
+        }
+       }
+      },
+      "cosine_sur_vs_fd": -0.9996991472413795
+     },
+     "S3_w_wrong_only": {
+      "L0": 12.777777777777784,
+      "estimators": {
+       "surrogate": {
+        "grad": [
+         -22699.181639288523,
+         -21374392.620761607
+        ],
+        "direction": [
+         0.17428772387682784,
+         0.9846947696143382
+        ],
+        "joint": {
+         "0.03": {
+          "loss": 10.416666666666677,
+          "accepted": true
+         },
+         "0.1": {
+          "loss": 5.6944444444444535,
+          "accepted": true
+         }
+        },
+        "coord": {
+         "gCaL": {
+          "loss": 10.798611111111118,
+          "accepted": true
+         },
+         "w": {
+          "loss": 5.763888888888898,
+          "accepted": true
+         }
+        }
+       },
+       "crn_fd": {
+        "grad": [
+         -6.018518518518523,
+         -7137.345679012363
+        ],
+        "direction": [
+         0.13917281530317618,
+         0.990268108887986
+        ],
+        "joint": {
+         "0.03": {
+          "loss": 10.416666666666677,
+          "accepted": true
+         },
+         "0.1": {
+          "loss": 5.6944444444444535,
+          "accepted": true
+         }
+        },
+        "coord": {
+         "gCaL": {
+          "loss": 10.798611111111118,
+          "accepted": true
+         },
+         "w": {
+          "loss": 5.763888888888898,
+          "accepted": true
+         }
+        }
+       }
+      },
+      "cosine_sur_vs_fd": 0.9993679405426025
+     }
+    }
+   },
+   {
+    "case": {
+     "conn_seed": 0,
+     "event_offset": 10,
+     "theta_true": [
+      0.7,
+      0.008
+     ]
+    },
+    "n_obs_spikes": 38,
+    "starts": {
+     "S1_both_wrong": {
+      "L0": 5.138888888888895,
+      "estimators": {
+       "surrogate": {
+        "grad": [
+         12780.276677555523,
+         19384485.087007836
+        ],
+        "direction": [
+         -0.07306027176825657,
+         -0.9973275272893798
+        ],
+        "joint": {
+         "0.03": {
+          "loss": 2.9513888888888857,
+          "accepted": true
+         },
+         "0.1": {
+          "loss": 0.9722222222222213,
+          "accepted": true
+         }
+        },
+        "coord": {
+         "gCaL": {
+          "loss": 4.097222222222226,
+          "accepted": true
+         },
+         "w": {
+          "loss": 0.9722222222222213,
+          "accepted": true
+         }
+        }
+       },
+       "crn_fd": {
+        "grad": [
+         8.333333333333357,
+         4591.049382716059
+        ],
+        "direction": [
+         -0.1977000139471188,
+         -0.9802625691544633
+        ],
+        "joint": {
+         "0.03": {
+          "loss": 2.9513888888888857,
+          "accepted": true
+         },
+         "0.1": {
+          "loss": 0.9722222222222213,
+          "accepted": true
+         }
+        },
+        "coord": {
+         "gCaL": {
+          "loss": 4.097222222222226,
+          "accepted": true
+         },
+         "w": {
+          "loss": 0.9722222222222213,
+          "accepted": true
+         }
+        }
+       }
+      },
+      "cosine_sur_vs_fd": 0.9920868609367202
+     },
+     "S2_gcal_wrong_only": {
+      "L0": 0.6597222222222219,
+      "estimators": {
+       "surrogate": {
+        "grad": [
+         399.19485036264126,
+         435645.7503564779
+        ],
+        "direction": [
+         -0.1137970719318783,
+         -0.9935040142947239
+        ],
+        "joint": {
+         "0.03": {
+          "loss": 0.13888888888888892,
+          "accepted": true
+         },
+         "0.1": {
+          "loss": 1.0069444444444435,
+          "accepted": false
+         }
+        },
+        "coord": {
+         "gCaL": {
+          "loss": 0.41666666666666674,
+          "accepted": true
+         },
+         "w": {
+          "loss": 1.0069444444444435,
+          "accepted": false
+         }
+        }
+       },
+       "crn_fd": {
+        "grad": [
+         1.7361111111111094,
+         1432.2916666666642
+        ],
+        "direction": [
+         -0.14980537942799502,
+         -0.9887155042247665
+        ],
+        "joint": {
+         "0.03": {
+          "loss": 0.13888888888888892,
+          "accepted": true
+         },
+         "0.1": {
+          "loss": 1.0069444444444435,
+          "accepted": false
+         }
+        },
+        "coord": {
+         "gCaL": {
+          "loss": 0.41666666666666674,
+          "accepted": true
+         },
+         "w": {
+          "loss": 1.0069444444444435,
+          "accepted": false
+         }
+        }
+       }
+      },
+      "cosine_sur_vs_fd": 0.9993402359812874
+     },
+     "S3_w_wrong_only": {
+      "L0": 2.8472222222222197,
+      "estimators": {
+       "surrogate": {
+        "grad": [
+         1526.3934088640376,
+         2023457.2974954592
+        ],
+        "direction": [
+         -0.05857088069147903,
+         -0.9982832523562761
+        ],
+        "joint": {
+         "0.03": {
+          "loss": 1.944444444444442,
+          "accepted": true
+         },
+         "0.1": {
+          "loss": 0.38194444444444453,
+          "accepted": true
+         }
+        },
+        "coord": {
+         "gCaL": {
+          "loss": 2.6388888888888857,
+          "accepted": true
+         },
+         "w": {
+          "loss": 0.38194444444444453,
+          "accepted": true
+         }
+        }
+       },
+       "crn_fd": {
+        "grad": [
+         8.928571428571423,
+         4783.950617283959
+        ],
+        "direction": [
+         -0.14365563920417165,
+         -0.9896277367398515
+        ],
+        "joint": {
+         "0.03": {
+          "loss": 1.944444444444442,
+          "accepted": true
+         },
+         "0.1": {
+          "loss": 0.38194444444444453,
+          "accepted": true
+         }
+        },
+        "coord": {
+         "gCaL": {
+          "loss": 2.6388888888888857,
+          "accepted": true
+         },
+         "w": {
+          "loss": 0.38194444444444453,
+          "accepted": true
+         }
+        }
+       }
+      },
+      "cosine_sur_vs_fd": 0.9963428329591252
+     }
+    }
+   },
+   {
+    "case": {
+     "conn_seed": 1,
+     "event_offset": 0,
+     "theta_true": [
+      1.5,
+      0.011
+     ]
+    },
+    "n_obs_spikes": 152,
+    "starts": {
+     "S1_both_wrong": {
+      "L0": 15.034722222222232,
+      "estimators": {
+       "surrogate": {
+        "grad": [
+         -8133.782816624142,
+         -11779855.419187834
+        ],
+        "direction": [
+         0.07649547059133602,
+         0.9970699288309773
+        ],
+        "joint": {
+         "0.03": {
+          "loss": 11.493055555555559,
+          "accepted": true
+         },
+         "0.1": {
+          "loss": 6.180555555555564,
+          "accepted": true
+         }
+        },
+        "coord": {
+         "gCaL": {
+          "loss": 13.472222222222223,
+          "accepted": true
+         },
+         "w": {
+          "loss": 6.180555555555564,
+          "accepted": true
+         }
+        }
+       },
+       "crn_fd": {
+        "grad": [
+         -13.541666666666732,
+         -13117.283950617322
+        ],
+        "direction": [
+         0.11395863041154274,
+         0.9934854958954988
+        ],
+        "joint": {
+         "0.03": {
+          "loss": 11.493055555555559,
+          "accepted": true
+         },
+         "0.1": {
+          "loss": 6.180555555555564,
+          "accepted": true
+         }
+        },
+        "coord": {
+         "gCaL": {
+          "loss": 13.472222222222223,
+          "accepted": true
+         },
+         "w": {
+          "loss": 6.180555555555564,
+          "accepted": true
+         }
+        }
+       }
+      },
+      "cosine_sur_vs_fd": 0.9992918317484083
+     },
+     "S2_gcal_wrong_only": {
+      "L0": 1.7013888888888875,
+      "estimators": {
+       "surrogate": {
+        "grad": [
+         -3124.739302975264,
+         -3283268.9755985066
+        ],
+        "direction": [
+         0.08619760681163467,
+         0.9962780598708106
+        ],
+        "joint": {
+         "0.03": {
+          "loss": 0.9722222222222214,
+          "accepted": true
+         },
+         "0.1": {
+          "loss": 2.8819444444444415,
+          "accepted": false
+         }
+        },
+        "coord": {
+         "gCaL": {
+          "loss": 1.3194444444444435,
+          "accepted": true
+         },
+         "w": {
+          "loss": 2.8819444444444415,
+          "accepted": false
+         }
+        }
+       },
+       "crn_fd": {
+        "grad": [
+         -0.6944444444444464,
+         -2619.949494949492
+        ],
+        "direction": [
+         0.024089392975120152,
+         0.9997098084674824
+        ],
+        "joint": {
+         "0.03": {
+          "loss": 0.9722222222222214,
+          "accepted": true
+         },
+         "0.1": {
+          "loss": 2.8819444444444415,
+          "accepted": false
+         }
+        },
+        "coord": {
+         "gCaL": {
+          "loss": 1.3194444444444435,
+          "accepted": true
+         },
+         "w": {
+          "loss": 2.8819444444444415,
+          "accepted": false
+         }
+        }
+       }
+      },
+      "cosine_sur_vs_fd": 0.9980653964378033
+     },
+     "S3_w_wrong_only": {
+      "L0": 9.756944444444448,
+      "estimators": {
+       "surrogate": {
+        "grad": [
+         -5005.173816298737,
+         -5817210.9552992275
+        ],
+        "direction": [
+         0.1419492139507958,
+         0.9898739418020617
+        ],
+        "joint": {
+         "0.03": {
+          "loss": 7.6736111111111205,
+          "accepted": true
+         },
+         "0.1": {
+          "loss": 3.8194444444444415,
+          "accepted": true
+         }
+        },
+        "coord": {
+         "gCaL": {
+          "loss": 8.298611111111116,
+          "accepted": true
+         },
+         "w": {
+          "loss": 3.9930555555555554,
+          "accepted": true
+         }
+        }
+       },
+       "crn_fd": {
+        "grad": [
+         -11.805555555555534,
+         -9143.518518518524
+        ],
+        "direction": [
+         0.21037412892142535,
+         0.977620952046626
+        ],
+        "joint": {
+         "0.03": {
+          "loss": 7.6736111111111205,
+          "accepted": true
+         },
+         "0.1": {
+          "loss": 3.8541666666666643,
+          "accepted": true
+         }
+        },
+        "coord": {
+         "gCaL": {
+          "loss": 8.298611111111116,
+          "accepted": true
+         },
+         "w": {
+          "loss": 3.9930555555555554,
+          "accepted": true
+         }
+        }
+       }
+      },
+      "cosine_sur_vs_fd": 0.9975839476266577
+     }
+    }
+   },
+   {
+    "case": {
+     "conn_seed": 1,
+     "event_offset": 0,
+     "theta_true": [
+      0.7,
+      0.008
+     ]
+    },
+    "n_obs_spikes": 56,
+    "starts": {
+     "S1_both_wrong": {
+      "L0": 5.034722222222226,
+      "estimators": {
+       "surrogate": {
+        "grad": [
+         5419.667550823454,
+         7647301.83091794
+        ],
+        "direction": [
+         -0.07850179530284088,
+         -0.9969139722835823
+        ],
+        "joint": {
+         "0.03": {
+          "loss": 3.0902777777777746,
+          "accepted": true
+         },
+         "0.1": {
+          "loss": 1.2499999999999984,
+          "accepted": true
+         }
+        },
+        "coord": {
+         "gCaL": {
+          "loss": 4.652777777777782,
+          "accepted": true
+         },
+         "w": {
+          "loss": 1.2499999999999984,
+          "accepted": true
+         }
+        }
+       },
+       "crn_fd": {
+        "grad": [
+         1.7361111111111338,
+         6635.80246913581
+        ],
+        "direction": [
+         -0.029057492497498415,
+         -0.9995777419139333
+        ],
+        "joint": {
+         "0.03": {
+          "loss": 3.0902777777777746,
+          "accepted": true
+         },
+         "0.1": {
+          "loss": 1.2499999999999984,
+          "accepted": true
+         }
+        },
+        "coord": {
+         "gCaL": {
+          "loss": 4.652777777777782,
+          "accepted": true
+         },
+         "w": {
+          "loss": 1.2499999999999984,
+          "accepted": true
+         }
+        }
+       }
+      },
+      "cosine_sur_vs_fd": 0.9987740826257252
+     },
+     "S2_gcal_wrong_only": {
+      "L0": 1.0763888888888882,
+      "estimators": {
+       "surrogate": {
+        "grad": [
+         5059.898469513917,
+         6885860.358130202
+        ],
+        "direction": [
+         -0.09146800818722425,
+         -0.9958080153715685
+        ],
+        "joint": {
+         "0.03": {
+          "loss": 0.20833333333333337,
+          "accepted": true
+         },
+         "0.1": {
+          "loss": 1.4930555555555538,
+          "accepted": false
+         }
+        },
+        "coord": {
+         "gCaL": {
+          "loss": 0.8680555555555549,
+          "accepted": true
+         },
+         "w": {
+          "loss": 1.4930555555555538,
+          "accepted": false
+         }
+        }
+       },
+       "crn_fd": {
+        "grad": [
+         0.3472222222222232,
+         1562.4999999999977
+        ],
+        "direction": [
+         -0.027767067240353407,
+         -0.9996144206527183
+        ],
+        "joint": {
+         "0.03": {
+          "loss": 0.20833333333333337,
+          "accepted": true
+         },
+         "0.1": {
+          "loss": 1.4930555555555538,
+          "accepted": false
+         }
+        },
+        "coord": {
+         "gCaL": {
+          "loss": 0.8680555555555549,
+          "accepted": true
+         },
+         "w": {
+          "loss": 1.4930555555555538,
+          "accepted": false
+         }
+        }
+       }
+      },
+      "cosine_sur_vs_fd": 0.9979638507006595
+     },
+     "S3_w_wrong_only": {
+      "L0": 3.576388888888889,
+      "estimators": {
+       "surrogate": {
+        "grad": [
+         7621.241908431744,
+         13717106.740759248
+        ],
+        "direction": [
+         -0.043173140037555714,
+         -0.9990676053097196
+        ],
+        "joint": {
+         "0.03": {
+          "loss": 2.430555555555553,
+          "accepted": true
+         },
+         "0.1": {
+          "loss": 0.7638888888888885,
+          "accepted": true
+         }
+        },
+        "coord": {
+         "gCaL": {
+          "loss": 3.2638888888888875,
+          "accepted": true
+         },
+         "w": {
+          "loss": 0.7638888888888885,
+          "accepted": true
+         }
+        }
+       },
+       "crn_fd": {
+        "grad": [
+         2.9761904761904785,
+         4976.8518518518595
+        ],
+        "direction": [
+         -0.04646139935246815,
+         -0.9989200860780659
+        ],
+        "joint": {
+         "0.03": {
+          "loss": 2.430555555555553,
+          "accepted": true
+         },
+         "0.1": {
+          "loss": 0.7638888888888885,
+          "accepted": true
+         }
+        },
+        "coord": {
+         "gCaL": {
+          "loss": 3.2638888888888875,
+          "accepted": true
+         },
+         "w": {
+          "loss": 0.7638888888888885,
+          "accepted": true
+         }
+        }
+       }
+      },
+      "cosine_sur_vs_fd": 0.9999945827943773
+     }
+    }
+   },
+   {
+    "case": {
+     "conn_seed": 1,
+     "event_offset": 10,
+     "theta_true": [
+      1.5,
+      0.011
+     ]
+    },
+    "n_obs_spikes": 153,
+    "starts": {
+     "S1_both_wrong": {
+      "L0": 14.20138888888889,
+      "estimators": {
+       "surrogate": {
+        "grad": [
+         -11840.13073365276,
+         -14782202.006742565
+        ],
+        "direction": [
+         0.08864652743457038,
+         0.9960631471818399
+        ],
+        "joint": {
+         "0.03": {
+          "loss": 11.319444444444448,
+          "accepted": true
+         },
+         "0.1": {
+          "loss": 5.625000000000009,
+          "accepted": true
+         }
+        },
+        "coord": {
+         "gCaL": {
+          "loss": 12.743055555555557,
+          "accepted": true
+         },
+         "w": {
+          "loss": 5.625000000000009,
+          "accepted": true
+         }
+        }
+       },
+       "crn_fd": {
+        "grad": [
+         -10.763888888889,
+         -11072.530864197573
+        ],
+        "direction": [
+         0.10738929787670691,
+         0.9942170480843446
+        ],
+        "joint": {
+         "0.03": {
+          "loss": 11.319444444444448,
+          "accepted": true
+         },
+         "0.1": {
+          "loss": 5.625000000000009,
+          "accepted": true
+         }
+        },
+        "coord": {
+         "gCaL": {
+          "loss": 12.743055555555557,
+          "accepted": true
+         },
+         "w": {
+          "loss": 5.625000000000009,
+          "accepted": true
+         }
+        }
+       }
+      },
+      "cosine_sur_vs_fd": 0.9998226502371377
+     },
+     "S2_gcal_wrong_only": {
+      "L0": 1.5624999999999987,
+      "estimators": {
+       "surrogate": {
+        "grad": [
+         1973.4876179930393,
+         -203111.24891706434
+        ],
+        "direction": [
+         -0.6620202207533817,
+         0.7494859753948995
+        ],
+        "joint": {
+         "0.03": {
+          "loss": 1.3888888888888882,
+          "accepted": true
+         },
+         "0.1": {
+          "loss": 1.4583333333333317,
+          "accepted": true
+         }
+        },
+        "coord": {
+         "gCaL": {
+          "loss": 1.6319444444444429,
+          "accepted": false
+         },
+         "w": {
+          "loss": 2.812499999999997,
+          "accepted": false
+         }
+        }
+       },
+       "crn_fd": {
+        "grad": [
+         1.0416666666666696,
+         -2430.5555555555525
+        ],
+        "direction": [
+         -0.03893150188475965,
+         0.9992418817088268
+        ],
+        "joint": {
+         "0.03": {
+          "loss": 0.7986111111111107,
+          "accepted": true
+         },
+         "0.1": {
+          "loss": 2.812499999999997,
+          "accepted": false
+         }
+        },
+        "coord": {
+         "gCaL": {
+          "loss": 1.6319444444444429,
+          "accepted": false
+         },
+         "w": {
+          "loss": 2.812499999999997,
+          "accepted": false
+         }
+        }
+       }
+      },
+      "cosine_sur_vs_fd": 0.7746912178399841
+     },
+     "S3_w_wrong_only": {
+      "L0": 10.000000000000005,
+      "estimators": {
+       "surrogate": {
+        "grad": [
+         -38946.39342545843,
+         -53021586.51246857
+        ],
+        "direction": [
+         0.12151585593651514,
+         0.992589490552875
+        ],
+        "joint": {
+         "0.03": {
+          "loss": 7.291666666666673,
+          "accepted": true
+         },
+         "0.1": {
+          "loss": 3.8194444444444424,
+          "accepted": true
+         }
+        },
+        "coord": {
+         "gCaL": {
+          "loss": 8.02083333333334,
+          "accepted": true
+         },
+         "w": {
+          "loss": 3.8194444444444424,
+          "accepted": true
+         }
+        }
+       },
+       "crn_fd": {
+        "grad": [
+         -11.574074074074046,
+         -8912.037037037024
+        ],
+        "direction": [
+         0.21155127705207208,
+         0.9773668999805739
+        ],
+        "joint": {
+         "0.03": {
+          "loss": 7.291666666666673,
+          "accepted": true
+         },
+         "0.1": {
+          "loss": 3.8194444444444424,
+          "accepted": true
+         }
+        },
+        "coord": {
+         "gCaL": {
+          "loss": 8.02083333333334,
+          "accepted": true
+         },
+         "w": {
+          "loss": 3.8194444444444424,
+          "accepted": true
+         }
+        }
+       }
+      },
+      "cosine_sur_vs_fd": 0.995830947840406
+     }
+    }
+   },
+   {
+    "case": {
+     "conn_seed": 1,
+     "event_offset": 10,
+     "theta_true": [
+      0.7,
+      0.008
+     ]
+    },
+    "n_obs_spikes": 59,
+    "starts": {
+     "S1_both_wrong": {
+      "L0": 5.173611111111119,
+      "estimators": {
+       "surrogate": {
+        "grad": [
+         8621.654929975783,
+         10150036.685759857
+        ],
+        "direction": [
+         -0.09396255495010108,
+         -0.9955757320602231
+        ],
+        "joint": {
+         "0.03": {
+          "loss": 3.298611111111108,
+          "accepted": true
+         },
+         "0.1": {
+          "loss": 1.3888888888888873,
+          "accepted": true
+         }
+        },
+        "coord": {
+         "gCaL": {
+          "loss": 4.548611111111117,
+          "accepted": true
+         },
+         "w": {
+          "loss": 1.3888888888888873,
+          "accepted": true
+         }
+        }
+       },
+       "crn_fd": {
+        "grad": [
+         4.513888888888928,
+         5748.456790123469
+        ],
+        "direction": [
+         -0.08691812722563325,
+         -0.996215458201482
+        ],
+        "joint": {
+         "0.03": {
+          "loss": 3.298611111111108,
+          "accepted": true
+         },
+         "0.1": {
+          "loss": 1.3888888888888873,
+          "accepted": true
+         }
+        },
+        "coord": {
+         "gCaL": {
+          "loss": 4.548611111111117,
+          "accepted": true
+         },
+         "w": {
+          "loss": 1.3888888888888873,
+          "accepted": true
+         }
+        }
+       }
+      },
+      "cosine_sur_vs_fd": 0.9999749833942495
+     },
+     "S2_gcal_wrong_only": {
+      "L0": 1.0069444444444435,
+      "estimators": {
+       "surrogate": {
+        "grad": [
+         629.9482532243901,
+         872285.4636874392
+        ],
+        "direction": [
+         -0.08990707296639755,
+         -0.9959501585072493
+        ],
+        "joint": {
+         "0.03": {
+          "loss": 0.2083333333333334,
+          "accepted": true
+         },
+         "0.1": {
+          "loss": 1.6666666666666654,
+          "accepted": false
+         }
+        },
+        "coord": {
+         "gCaL": {
+          "loss": 0.8333333333333326,
+          "accepted": true
+         },
+         "w": {
+          "loss": 1.6666666666666654,
+          "accepted": false
+         }
+        }
+       },
+       "crn_fd": {
+        "grad": [
+         0.6944444444444431,
+         1562.4999999999977
+        ],
+        "direction": [
+         -0.05547001962252288,
+         -0.9984603532054125
+        ],
+        "joint": {
+         "0.03": {
+          "loss": 0.2083333333333334,
+          "accepted": true
+         },
+         "0.1": {
+          "loss": 1.6666666666666654,
+          "accepted": false
+         }
+        },
+        "coord": {
+         "gCaL": {
+          "loss": 0.8333333333333326,
+          "accepted": true
+         },
+         "w": {
+          "loss": 1.6666666666666654,
+          "accepted": false
+         }
+        }
+       }
+      },
+      "cosine_sur_vs_fd": 0.9994038941397845
+     },
+     "S3_w_wrong_only": {
+      "L0": 3.541666666666665,
+      "estimators": {
+       "surrogate": {
+        "grad": [
+         6209.944694689961,
+         10703896.399680983
+        ],
+        "direction": [
+         -0.04507748507695464,
+         -0.9989834935268636
+        ],
+        "joint": {
+         "0.03": {
+          "loss": 2.0486111111111085,
+          "accepted": true
+         },
+         "0.1": {
+          "loss": 0.8680555555555547,
+          "accepted": true
+         }
+        },
+        "coord": {
+         "gCaL": {
+          "loss": 3.2638888888888844,
+          "accepted": true
+         },
+         "w": {
+          "loss": 0.8680555555555547,
+          "accepted": true
+         }
+        }
+       },
+       "crn_fd": {
+        "grad": [
+         3.9682539682540114,
+         5555.555555555567
+        ],
+        "direction": [
+         -0.05547001962252341,
+         -0.9984603532054125
+        ],
+        "joint": {
+         "0.03": {
+          "loss": 2.0486111111111085,
+          "accepted": true
+         },
+         "0.1": {
+          "loss": 0.8680555555555547,
+          "accepted": true
+         }
+        },
+        "coord": {
+         "gCaL": {
+          "loss": 3.2638888888888844,
+          "accepted": true
+         },
+         "w": {
+          "loss": 0.8680555555555547,
+          "accepted": true
+         }
+        }
+       }
+      },
+      "cosine_sur_vs_fd": 0.9999458607749618
+     }
+    }
+   }
+  ],
+  "gate": {
+   "surrogate": {
+    "joint_accepted_fraction": 0.8333333333333334,
+    "coord_accepted_fraction": {
+     "gCaL": 0.9583333333333334,
+     "w": 0.6666666666666666
+    },
+    "nonfinite": 0,
+    "per_start": {
+     "S1_both_wrong": {
+      "joint_acc": 16,
+      "joint_tot": 16,
+      "coord_acc": {
+       "gCaL": 8,
+       "w": 8
+      },
+      "coord_tot": {
+       "gCaL": 8,
+       "w": 8
+      },
+      "nonfinite": 0
+     },
+     "S2_gcal_wrong_only": {
+      "joint_acc": 8,
+      "joint_tot": 16,
+      "coord_acc": {
+       "gCaL": 7,
+       "w": 0
+      },
+      "coord_tot": {
+       "gCaL": 8,
+       "w": 8
+      },
+      "nonfinite": 0
+     },
+     "S3_w_wrong_only": {
+      "joint_acc": 16,
+      "joint_tot": 16,
+      "coord_acc": {
+       "gCaL": 8,
+       "w": 8
+      },
+      "coord_tot": {
+       "gCaL": 8,
+       "w": 8
+      },
+      "nonfinite": 0
+     }
+    },
+    "joint_pass": true,
+    "gcal_pass": true
+   },
+   "crn_fd": {
+    "joint_accepted_fraction": 0.8333333333333334,
+    "coord_accepted_fraction": {
+     "gCaL": 0.9166666666666666,
+     "w": 0.6666666666666666
+    },
+    "nonfinite": 0,
+    "per_start": {
+     "S1_both_wrong": {
+      "joint_acc": 16,
+      "joint_tot": 16,
+      "coord_acc": {
+       "gCaL": 8,
+       "w": 8
+      },
+      "coord_tot": {
+       "gCaL": 8,
+       "w": 8
+      },
+      "nonfinite": 0
+     },
+     "S2_gcal_wrong_only": {
+      "joint_acc": 8,
+      "joint_tot": 16,
+      "coord_acc": {
+       "gCaL": 6,
+       "w": 0
+      },
+      "coord_tot": {
+       "gCaL": 8,
+       "w": 8
+      },
+      "nonfinite": 0
+     },
+     "S3_w_wrong_only": {
+      "joint_acc": 16,
+      "joint_tot": 16,
+      "coord_acc": {
+       "gCaL": 8,
+       "w": 8
+      },
+      "coord_tot": {
+       "gCaL": 8,
+       "w": 8
+      },
+      "nonfinite": 0
+     }
+    },
+    "joint_pass": true,
+    "gcal_pass": true
+   }
+  },
+  "cosine_sur_vs_fd": {
+   "mean": 0.9039791458985963,
+   "min": -0.9996991472413795
+  }
+ },
+ "stageB": {
+  "runs": [
+   {
+    "case": 0,
+    "start": "S1_both_wrong",
+    "estimator": "surrogate",
+    "eps_dt_halving": 0.17361111111111116,
+    "best_loss": 0.868055555555555,
+    "within_eps": false,
+    "theta_best": [
+     1.0174526894268923,
+     0.011357550714729624
+    ],
+    "rel_err": [
+     0.32169820704873847,
+     0.03250461042996585
+    ],
+    "gcal_recovered_20pct": false,
+    "w_recovered_20pct": true,
+    "heldout_mse": 0.6944444444444445,
+    "nonfinite": 0,
+    "hard_evals": 56,
+    "wall_s": 81.4
+   },
+   {
+    "case": 0,
+    "start": "S1_both_wrong",
+    "estimator": "crn_fd",
+    "eps_dt_halving": 0.17361111111111116,
+    "best_loss": 0.868055555555555,
+    "within_eps": false,
+    "theta_best": [
+     1.010178239491474,
+     0.011361972129434659
+    ],
+    "rel_err": [
+     0.32654784033901735,
+     0.032906557221332684
+    ],
+    "gcal_recovered_20pct": false,
+    "w_recovered_20pct": true,
+    "heldout_mse": 0.6944444444444445,
+    "nonfinite": 0,
+    "hard_evals": 66,
+    "wall_s": 60.0
+   },
+   {
+    "case": 0,
+    "start": "S2_gcal_wrong_only",
+    "estimator": "surrogate",
+    "eps_dt_halving": 0.17361111111111116,
+    "best_loss": 0.868055555555555,
+    "within_eps": false,
+    "theta_best": [
+     1.0033159594642416,
+     0.011370972204449778
+    ],
+    "rel_err": [
+     0.3311226936905056,
+     0.033724745859070815
+    ],
+    "gcal_recovered_20pct": false,
+    "w_recovered_20pct": true,
+    "heldout_mse": 0.6944444444444444,
+    "nonfinite": 0,
+    "hard_evals": 60,
+    "wall_s": 90.3
+   },
+   {
+    "case": 0,
+    "start": "S2_gcal_wrong_only",
+    "estimator": "crn_fd",
+    "eps_dt_halving": 0.17361111111111116,
+    "best_loss": 0.868055555555555,
+    "within_eps": false,
+    "theta_best": [
+     0.9995834526615446,
+     0.01137281663537103
+    ],
+    "rel_err": [
+     0.33361103155897026,
+     0.033892421397366354
+    ],
+    "gcal_recovered_20pct": false,
+    "w_recovered_20pct": true,
+    "heldout_mse": 0.6944444444444445,
+    "nonfinite": 0,
+    "hard_evals": 70,
+    "wall_s": 62.8
+   },
+   {
+    "case": 1,
+    "start": "S1_both_wrong",
+    "estimator": "surrogate",
+    "eps_dt_halving": 0.001,
+    "best_loss": 0.03472222222222223,
+    "within_eps": false,
+    "theta_best": [
+     0.9932374522301407,
+     0.007819227407696378
+    ],
+    "rel_err": [
+     0.4189106460430582,
+     0.02259657403795275
+    ],
+    "gcal_recovered_20pct": false,
+    "w_recovered_20pct": true,
+    "heldout_mse": 0.16666666666666666,
+    "nonfinite": 0,
+    "hard_evals": 52,
+    "wall_s": 79.8
+   },
+   {
+    "case": 1,
+    "start": "S1_both_wrong",
+    "estimator": "crn_fd",
+    "eps_dt_halving": 0.001,
+    "best_loss": 0.03472222222222223,
+    "within_eps": false,
+    "theta_best": [
+     0.9790331460091581,
+     0.007823135256261386
+    ],
+    "rel_err": [
+     0.39861878001308315,
+     0.02210809296732683
+    ],
+    "gcal_recovered_20pct": false,
+    "w_recovered_20pct": true,
+    "heldout_mse": 0.16666666666666666,
+    "nonfinite": 0,
+    "hard_evals": 61,
+    "wall_s": 54.6
+   },
+   {
+    "case": 1,
+    "start": "S2_gcal_wrong_only",
+    "estimator": "surrogate",
+    "eps_dt_halving": 0.001,
+    "best_loss": 0.03472222222222223,
+    "within_eps": false,
+    "theta_best": [
+     0.9980408513546359,
+     0.007824860268681124
+    ],
+    "rel_err": [
+     0.4257726447923371,
+     0.02189246641485956
+    ],
+    "gcal_recovered_20pct": false,
+    "w_recovered_20pct": true,
+    "heldout_mse": 0.16666666666666666,
+    "nonfinite": 0,
+    "hard_evals": 59,
+    "wall_s": 86.4
+   },
+   {
+    "case": 1,
+    "start": "S2_gcal_wrong_only",
+    "estimator": "crn_fd",
+    "eps_dt_halving": 0.001,
+    "best_loss": 0.03472222222222223,
+    "within_eps": false,
+    "theta_best": [
+     1.021695795718748,
+     0.007779930147878711
+    ],
+    "rel_err": [
+     0.4595654224553544,
+     0.027508731515161144
+    ],
+    "gcal_recovered_20pct": false,
+    "w_recovered_20pct": true,
+    "heldout_mse": 0.16666666666666666,
+    "nonfinite": 0,
+    "hard_evals": 68,
+    "wall_s": 61.5
+   },
+   {
+    "case": 2,
+    "start": "S1_both_wrong",
+    "estimator": "surrogate",
+    "eps_dt_halving": 0.03472222222222223,
+    "best_loss": 1.319444444444443,
+    "within_eps": false,
+    "theta_best": [
+     1.016856432622289,
+     0.011232648886819824
+    ],
+    "rel_err": [
+     0.3220957115851406,
+     0.02114989880180222
+    ],
+    "gcal_recovered_20pct": false,
+    "w_recovered_20pct": true,
+    "heldout_mse": 1.1111111111111105,
+    "nonfinite": 0,
+    "hard_evals": 55,
+    "wall_s": 81.1
+   },
+   {
+    "case": 2,
+    "start": "S1_both_wrong",
+    "estimator": "crn_fd",
+    "eps_dt_halving": 0.03472222222222223,
+    "best_loss": 0.7986111111111107,
+    "within_eps": false,
+    "theta_best": [
+     1.0425569125461829,
+     0.011572081194247217
+    ],
+    "rel_err": [
+     0.30496205830254475,
+     0.052007381295201605
+    ],
+    "gcal_recovered_20pct": false,
+    "w_recovered_20pct": true,
+    "heldout_mse": 0.5555555555555557,
+    "nonfinite": 0,
+    "hard_evals": 59,
+    "wall_s": 53.8
+   },
+   {
+    "case": 2,
+    "start": "S2_gcal_wrong_only",
+    "estimator": "surrogate",
+    "eps_dt_halving": 0.03472222222222223,
+    "best_loss": 2.2916666666666643,
+    "within_eps": false,
+    "theta_best": [
+     1.0,
+     0.011
+    ],
+    "rel_err": [
+     0.3333333333333333,
+     0.0
+    ],
+    "gcal_recovered_20pct": false,
+    "w_recovered_20pct": true,
+    "heldout_mse": 1.444444444444443,
+    "nonfinite": 0,
+    "hard_evals": 61,
+    "wall_s": 88.3
+   },
+   {
+    "case": 2,
+    "start": "S2_gcal_wrong_only",
+    "estimator": "crn_fd",
+    "eps_dt_halving": 0.03472222222222223,
+    "best_loss": 0.9027777777777773,
+    "within_eps": false,
+    "theta_best": [
+     1.0137899319310057,
+     0.011592080776270249
+    ],
+    "rel_err": [
+     0.3241400453793295,
+     0.05382552511547723
+    ],
+    "gcal_recovered_20pct": false,
+    "w_recovered_20pct": true,
+    "heldout_mse": 0.4722222222222224,
+    "nonfinite": 0,
+    "hard_evals": 67,
+    "wall_s": 61.2
+   },
+   {
+    "case": 3,
+    "start": "S1_both_wrong",
+    "estimator": "surrogate",
+    "eps_dt_halving": 0.001,
+    "best_loss": 0.3472222222222223,
+    "within_eps": false,
+    "theta_best": [
+     0.9889671020201137,
+     0.007880308093584407
+    ],
+    "rel_err": [
+     0.4128101457430197,
+     0.01496148830194919
+    ],
+    "gcal_recovered_20pct": false,
+    "w_recovered_20pct": true,
+    "heldout_mse": 0.2222222222222222,
+    "nonfinite": 0,
+    "hard_evals": 54,
+    "wall_s": 81.7
+   },
+   {
+    "case": 3,
+    "start": "S1_both_wrong",
+    "estimator": "crn_fd",
+    "eps_dt_halving": 0.001,
+    "best_loss": 0.13888888888888892,
+    "within_eps": false,
+    "theta_best": [
+     0.9799465738517067,
+     0.007798543512857444
+    ],
+    "rel_err": [
+     0.39992367693100966,
+     0.025182060892819543
+    ],
+    "gcal_recovered_20pct": false,
+    "w_recovered_20pct": true,
+    "heldout_mse": 0.1111111111111111,
+    "nonfinite": 0,
+    "hard_evals": 63,
+    "wall_s": 57.9
+   },
+   {
+    "case": 3,
+    "start": "S2_gcal_wrong_only",
+    "estimator": "surrogate",
+    "eps_dt_halving": 0.001,
+    "best_loss": 0.24305555555555558,
+    "within_eps": false,
+    "theta_best": [
+     0.9972994782453553,
+     0.007825458673143765
+    ],
+    "rel_err": [
+     0.42471354035050757,
+     0.02181766585702938
+    ],
+    "gcal_recovered_20pct": false,
+    "w_recovered_20pct": true,
+    "heldout_mse": 0.1111111111111111,
+    "nonfinite": 0,
+    "hard_evals": 59,
+    "wall_s": 85.6
+   },
+   {
+    "case": 3,
+    "start": "S2_gcal_wrong_only",
+    "estimator": "crn_fd",
+    "eps_dt_halving": 0.001,
+    "best_loss": 0.27777777777777785,
+    "within_eps": false,
+    "theta_best": [
+     0.9973237602454842,
+     0.007718285481663006
+    ],
+    "rel_err": [
+     0.4247482289221204,
+     0.03521431479212422
+    ],
+    "gcal_recovered_20pct": false,
+    "w_recovered_20pct": true,
+    "heldout_mse": 0.08333333333333333,
+    "nonfinite": 0,
+    "hard_evals": 70,
+    "wall_s": 70.1
+   },
+   {
+    "case": 4,
+    "start": "S1_both_wrong",
+    "estimator": "surrogate",
+    "eps_dt_halving": 0.24305555555555558,
+    "best_loss": 0.625,
+    "within_eps": false,
+    "theta_best": [
+     1.0179833467240678,
+     0.011442141067648104
+    ],
+    "rel_err": [
+     0.32134443551728814,
+     0.04019464251346402
+    ],
+    "gcal_recovered_20pct": false,
+    "w_recovered_20pct": true,
+    "heldout_mse": 0.8333333333333331,
+    "nonfinite": 0,
+    "hard_evals": 54,
+    "wall_s": 86.5
+   },
+   {
+    "case": 4,
+    "start": "S1_both_wrong",
+    "estimator": "crn_fd",
+    "eps_dt_halving": 0.24305555555555558,
+    "best_loss": 0.625,
+    "within_eps": false,
+    "theta_best": [
+     1.0330069128023789,
+     0.011425268898230246
+    ],
+    "rel_err": [
+     0.31132872479841406,
+     0.03866080893002242
+    ],
+    "gcal_recovered_20pct": false,
+    "w_recovered_20pct": true,
+    "heldout_mse": 0.7222222222222223,
+    "nonfinite": 0,
+    "hard_evals": 65,
+    "wall_s": 61.5
+   },
+   {
+    "case": 4,
+    "start": "S2_gcal_wrong_only",
+    "estimator": "surrogate",
+    "eps_dt_halving": 0.24305555555555558,
+    "best_loss": 0.5555555555555557,
+    "within_eps": false,
+    "theta_best": [
+     1.0034756800257272,
+     0.011455705117832607
+    ],
+    "rel_err": [
+     0.33101621331618186,
+     0.04142773798478248
+    ],
+    "gcal_recovered_20pct": false,
+    "w_recovered_20pct": true,
+    "heldout_mse": 0.8333333333333331,
+    "nonfinite": 0,
+    "hard_evals": 58,
+    "wall_s": 102.1
+   },
+   {
+    "case": 4,
+    "start": "S2_gcal_wrong_only",
+    "estimator": "crn_fd",
+    "eps_dt_halving": 0.24305555555555558,
+    "best_loss": 0.7291666666666665,
+    "within_eps": false,
+    "theta_best": [
+     1.0329571998023033,
+     0.011493249449398217
+    ],
+    "rel_err": [
+     0.3113618667984645,
+     0.044840859036201615
+    ],
+    "gcal_recovered_20pct": false,
+    "w_recovered_20pct": true,
+    "heldout_mse": 0.6944444444444445,
+    "nonfinite": 0,
+    "hard_evals": 68,
+    "wall_s": 64.7
+   },
+   {
+    "case": 5,
+    "start": "S1_both_wrong",
+    "estimator": "surrogate",
+    "eps_dt_halving": 0.06944444444444445,
+    "best_loss": 0.10416666666666666,
+    "within_eps": false,
+    "theta_best": [
+     0.98961498184151,
+     0.007821421369496146
+    ],
+    "rel_err": [
+     0.41373568834501434,
+     0.0223223288129818
+    ],
+    "gcal_recovered_20pct": false,
+    "w_recovered_20pct": true,
+    "heldout_mse": 0.27777777777777785,
+    "nonfinite": 0,
+    "hard_evals": 52,
+    "wall_s": 85.6
+   },
+   {
+    "case": 5,
+    "start": "S1_both_wrong",
+    "estimator": "crn_fd",
+    "eps_dt_halving": 0.06944444444444445,
+    "best_loss": 0.20833333333333337,
+    "within_eps": false,
+    "theta_best": [
+     1.0025211256897761,
+     0.007790324383936761
+    ],
+    "rel_err": [
+     0.43217303669968027,
+     0.026209452007904865
+    ],
+    "gcal_recovered_20pct": false,
+    "w_recovered_20pct": true,
+    "heldout_mse": 0.1388888888888889,
+    "nonfinite": 0,
+    "hard_evals": 64,
+    "wall_s": 63.9
+   },
+   {
+    "case": 5,
+    "start": "S2_gcal_wrong_only",
+    "estimator": "surrogate",
+    "eps_dt_halving": 0.06944444444444445,
+    "best_loss": 0.10416666666666666,
+    "within_eps": false,
+    "theta_best": [
+     0.9976216373592329,
+     0.007815440076427161
+    ],
+    "rel_err": [
+     0.42517376765604714,
+     0.02306999044660485
+    ],
+    "gcal_recovered_20pct": false,
+    "w_recovered_20pct": true,
+    "heldout_mse": 0.27777777777777785,
+    "nonfinite": 0,
+    "hard_evals": 55,
+    "wall_s": 93.4
+   },
+   {
+    "case": 5,
+    "start": "S2_gcal_wrong_only",
+    "estimator": "crn_fd",
+    "eps_dt_halving": 0.06944444444444445,
+    "best_loss": 0.20833333333333337,
+    "within_eps": false,
+    "theta_best": [
+     1.0220478583383055,
+     0.007767864751516597
+    ],
+    "rel_err": [
+     0.4600683690547222,
+     0.029016906060425344
+    ],
+    "gcal_recovered_20pct": false,
+    "w_recovered_20pct": true,
+    "heldout_mse": 0.1388888888888889,
+    "nonfinite": 0,
+    "hard_evals": 67,
+    "wall_s": 67.8
+   },
+   {
+    "case": 6,
+    "start": "S1_both_wrong",
+    "estimator": "surrogate",
+    "eps_dt_halving": 0.06944444444444442,
+    "best_loss": 1.5624999999999987,
+    "within_eps": false,
+    "theta_best": [
+     1.0155346421907887,
+     0.010985938227649828
+    ],
+    "rel_err": [
+     0.32297690520614086,
+     0.001278342940924628
+    ],
+    "gcal_recovered_20pct": false,
+    "w_recovered_20pct": true,
+    "heldout_mse": 2.3888888888888866,
+    "nonfinite": 0,
+    "hard_evals": 57,
+    "wall_s": 96.8
+   },
+   {
+    "case": 6,
+    "start": "S1_both_wrong",
+    "estimator": "crn_fd",
+    "eps_dt_halving": 0.06944444444444442,
+    "best_loss": 0.5208333333333331,
+    "within_eps": false,
+    "theta_best": [
+     1.0245019512723288,
+     0.011367572325574235
+    ],
+    "rel_err": [
+     0.3169986991517808,
+     0.03341566596129419
+    ],
+    "gcal_recovered_20pct": false,
+    "w_recovered_20pct": true,
+    "heldout_mse": 0.6944444444444444,
+    "nonfinite": 0,
+    "hard_evals": 63,
+    "wall_s": 64.9
+   },
+   {
+    "case": 6,
+    "start": "S2_gcal_wrong_only",
+    "estimator": "surrogate",
+    "eps_dt_halving": 0.06944444444444442,
+    "best_loss": 1.4583333333333317,
+    "within_eps": false,
+    "theta_best": [
+     0.9359417642934567,
+     0.011856116210522172
+    ],
+    "rel_err": [
+     0.3760388238043622,
+     0.07782874641110665
+    ],
+    "gcal_recovered_20pct": false,
+    "w_recovered_20pct": true,
+    "heldout_mse": 0.9999999999999994,
+    "nonfinite": 0,
+    "hard_evals": 59,
+    "wall_s": 97.5
+   },
+   {
+    "case": 6,
+    "start": "S2_gcal_wrong_only",
+    "estimator": "crn_fd",
+    "eps_dt_halving": 0.06944444444444442,
+    "best_loss": 0.5902777777777776,
+    "within_eps": false,
+    "theta_best": [
+     0.9987031249407404,
+     0.01137255885352186
+    ],
+    "rel_err": [
+     0.33419791670617305,
+     0.03386898668380556
+    ],
+    "gcal_recovered_20pct": false,
+    "w_recovered_20pct": true,
+    "heldout_mse": 0.9166666666666664,
+    "nonfinite": 0,
+    "hard_evals": 70,
+    "wall_s": 71.6
+   },
+   {
+    "case": 7,
+    "start": "S1_both_wrong",
+    "estimator": "surrogate",
+    "eps_dt_halving": 0.001,
+    "best_loss": 0.2083333333333334,
+    "within_eps": false,
+    "theta_best": [
+     0.9858612070925954,
+     0.007795055613108783
+    ],
+    "rel_err": [
+     0.40837315298942206,
+     0.02561804836140216
+    ],
+    "gcal_recovered_20pct": false,
+    "w_recovered_20pct": true,
+    "heldout_mse": 0.1111111111111111,
+    "nonfinite": 0,
+    "hard_evals": 53,
+    "wall_s": 103.6
+   },
+   {
+    "case": 7,
+    "start": "S1_both_wrong",
+    "estimator": "crn_fd",
+    "eps_dt_halving": 0.001,
+    "best_loss": 0.2083333333333334,
+    "within_eps": false,
+    "theta_best": [
+     0.9864314400034259,
+     0.007794519187758751
+    ],
+    "rel_err": [
+     0.40918777143346563,
+     0.025685101530156143
+    ],
+    "gcal_recovered_20pct": false,
+    "w_recovered_20pct": true,
+    "heldout_mse": 0.1111111111111111,
+    "nonfinite": 0,
+    "hard_evals": 63,
+    "wall_s": 66.8
+   },
+   {
+    "case": 7,
+    "start": "S2_gcal_wrong_only",
+    "estimator": "surrogate",
+    "eps_dt_halving": 0.001,
+    "best_loss": 0.2083333333333334,
+    "within_eps": false,
+    "theta_best": [
+     0.9972545115862486,
+     0.0077674243167458355
+    ],
+    "rel_err": [
+     0.42464930226606945,
+     0.029071960406770583
+    ],
+    "gcal_recovered_20pct": false,
+    "w_recovered_20pct": true,
+    "heldout_mse": 0.08333333333333333,
+    "nonfinite": 0,
+    "hard_evals": 60,
+    "wall_s": 102.7
+   },
+   {
+    "case": 7,
+    "start": "S2_gcal_wrong_only",
+    "estimator": "crn_fd",
+    "eps_dt_halving": 0.001,
+    "best_loss": 0.3125000000000001,
+    "within_eps": false,
+    "theta_best": [
+     0.9981527076945506,
+     0.007738125926358108
+    ],
+    "rel_err": [
+     0.42593243956364374,
+     0.032734259205236566
+    ],
+    "gcal_recovered_20pct": false,
+    "w_recovered_20pct": true,
+    "heldout_mse": 0.05555555555555555,
+    "nonfinite": 0,
+    "hard_evals": 70,
+    "wall_s": 78.0
+   }
+  ],
+  "summary": {
+   "surrogate": {
+    "n_runs": 16,
+    "gcal_recovered_20pct": 0,
+    "w_recovered_20pct": 16,
+    "within_eps": 0,
+    "nonfinite_runs": 0,
+    "median_heldout": 0.48611111111111116
+   },
+   "crn_fd": {
+    "n_runs": 16,
+    "gcal_recovered_20pct": 0,
+    "w_recovered_20pct": 16,
+    "within_eps": 0,
+    "nonfinite_runs": 0,
+    "median_heldout": 0.31944444444444453
+   }
+  }
+ },
+ "profile_case0": {
+  "g_axis": [
+   0.25,
+   0.32987697769322355,
+   0.43527528164806206,
+   0.5743491774985175,
+   0.7578582832551991,
+   1.0,
+   1.3195079107728946,
+   1.5,
+   1.7411011265922485,
+   2.29739670999407,
+   3.0314331330207964,
+   4.0
+  ],
+  "profile_gcal": [
+   3.194444444444441,
+   2.9861111111111076,
+   2.673611111111109,
+   2.6388888888888866,
+   2.291666666666664,
+   1.6666666666666647,
+   1.11111111111111,
+   0.0,
+   0.5208333333333334,
+   3.194444444444441,
+   2.7430555555555536,
+   5.104166666666677
+  ],
+  "eps": 0.17361111111111116,
+  "gcal_compat_interval": [
+   1.5,
+   1.5
+  ]
+ },
+ "wall_s": 3131.0
+}

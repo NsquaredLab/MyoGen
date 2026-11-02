@@ -69,7 +69,7 @@ def _straight_through_step(margin):
     fast-sigmoid derivative ``beta / (1 + beta*|margin|)**2`` so gradients flow
     through the crossing without changing the forward value.
     """
-    return (margin > 0.0).astype(jnp.float32)
+    return (margin > 0.0).astype(margin.dtype)
 
 
 @_straight_through_step.defjvp
@@ -77,7 +77,7 @@ def _straight_through_step_jvp(primals, tangents):
     (margin,) = primals
     (dm,) = tangents
     primal_out = _straight_through_step(margin)
-    beta = jnp.float32(SURROGATE_BETA)
+    beta = jnp.asarray(SURROGATE_BETA, dtype=margin.dtype)
     surrogate = beta / (1.0 + beta * jnp.abs(margin)) ** 2
     return primal_out, surrogate * dm
 
@@ -103,11 +103,12 @@ def spike_detect(v, prev_v, v_th, mode: str = "hard"):
     margin = v - v_th
     if mode == "surrogate":
         # Gate the smooth crossing to the "upward" event so forward matches hard.
-        rising = (prev_v <= v_th).astype(jnp.float32)
+        rising = (prev_v <= v_th).astype(v.dtype)
         return _straight_through_step(margin) * rising
     if mode == "rate":
-        rising = jax.nn.sigmoid(jnp.float32(SURROGATE_BETA) * (v_th - prev_v))
-        return jax.nn.sigmoid(jnp.float32(SURROGATE_BETA) * margin) * rising
+        beta = jnp.asarray(SURROGATE_BETA, dtype=v.dtype)
+        rising = jax.nn.sigmoid(beta * (v_th - prev_v))
+        return jax.nn.sigmoid(beta * margin) * rising
     raise ValueError(f"unknown spike_mode {mode!r}")
 
 

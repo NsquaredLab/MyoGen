@@ -1,0 +1,546 @@
+{
+  "manifest": {
+    "git_revision": "a483b1d",
+    "versions": {
+      "jax": "0.9.0",
+      "jaxley": "0.13.0",
+      "numpy": "2.3.5"
+    },
+    "device": "cpu",
+    "precision": "float32 (JAX default; x64 not enabled)",
+    "dt_ms": 0.1,
+    "voltage_frame": "NERLab 1952-HH (V_rest\u22480, spike threshold +50 mV)",
+    "seed_taxonomy": {
+      "connectivity": "TwinSpec.seed (numpy default_rng)",
+      "events": "jax.random.PRNGKey (rate path) / numpy default_rng (frozen renewal events)",
+      "fd_probes": "deterministic, no sampling"
+    },
+    "objectives": {
+      "t2": "mean soma voltage, subthreshold deterministic current",
+      "t3_t4": "mean exponentially-smoothed rate (tau 100 ms)",
+      "t5": "MSE of smoothed rates (tau 100 ms) vs frozen-event target"
+    },
+    "scope": "this Jaxley harness configuration only \u2014 NOT a validated NEURON-matched forward model; conclusions are specific to the stated parameter points, objectives, and frozen input realizations"
+  },
+  "t1": {
+    "ok": false,
+    "leaf_map": {
+      "gCaL_scale": [
+        "caL_gcaLbar"
+      ],
+      "gNaP_scale": [
+        "napp_gnapbar"
+      ],
+      "drive_gain": [],
+      "w_exc": [],
+      "w_inh": []
+    },
+    "plumbing_ok": {
+      "gCaL_scale": true,
+      "gNaP_scale": true,
+      "drive_gain": true,
+      "w_exc": true,
+      "w_inh": true
+    },
+    "max_output_effect_mV": {
+      "gCaL_scale": 2.3932723999023438,
+      "gNaP_scale": 57.749900817871094,
+      "drive_gain": 0.0,
+      "w_exc": 83.46661376953125,
+      "w_inh": 58.313323974609375,
+      "drive_gain (rate path)": 1.1866259574890137
+    },
+    "initialization_audit": {
+      "initial_state_theta_dependent": false,
+      "init_v_at_nerlab_rest": false,
+      "caveat": "theta changes do not re-equilibrate the initial state; fits must either discard the initial transient or treat x0 explicitly (roadmap x0_sc)"
+    },
+    "runtime_s": 6.3
+  },
+  "t2": {
+    "ok": true,
+    "loss0": 1.6953394412994385,
+    "subthreshold": true,
+    "autodiff": [
+      0.08275409042835236,
+      0.02414565719664097
+    ],
+    "fd": {
+      "gCaL_scale": {
+        "0.1": {
+          "fd": 0.08278548717498779,
+          "rel_err_vs_autodiff": 0.0003793981159105897
+        },
+        "0.01": {
+          "fd": 0.08283257484436035,
+          "rel_err_vs_autodiff": 0.000948405300732702
+        },
+        "0.001": {
+          "fd": 0.08368492126464844,
+          "rel_err_vs_autodiff": 0.011248154565691948
+        },
+        "0.0001": {
+          "fd": 0.09179115295410156,
+          "rel_err_vs_autodiff": 0.10920381546020508
+        }
+      },
+      "gNaP_scale": {
+        "0.1": {
+          "fd": 0.024253129959106445,
+          "rel_err_vs_autodiff": 0.004451018292456865
+        },
+        "0.01": {
+          "fd": 0.024443864822387695,
+          "rel_err_vs_autodiff": 0.012350362725555897
+        },
+        "0.001": {
+          "fd": 0.023066997528076172,
+          "rel_err_vs_autodiff": 0.04467302933335304
+        },
+        "0.0001": {
+          "fd": 0.019669532775878906,
+          "rel_err_vs_autodiff": 0.18538010120391846
+        }
+      }
+    },
+    "runtime_s": 12.4
+  },
+  "t3": {
+    "ok": true,
+    "n_spikes_at_init": 13,
+    "surrogate_grad": 85518612168704.0,
+    "hard_slope_fixed_key_eps5pct": 5.43792724609375,
+    "hard_slope_expected_8keys_eps5pct": 7.174005508422852,
+    "hard_slope_per_key": [
+      6.098613739013672,
+      8.701519966125488,
+      9.532957077026367,
+      4.320478439331055,
+      5.040860176086426,
+      13.226909637451172,
+      5.43668270111084,
+      5.034022331237793
+    ],
+    "hard_slope_sd_across_keys": 2.8719073159831106,
+    "note": "pathwise/fixed-key derivatives are fixed-realization quantities; agreement in sign with the expected-value slope is required, magnitudes are not expected to match",
+    "runtime_s": 40.6
+  },
+  "t4": {
+    "ok": false,
+    "per_horizon": {
+      "0.5": {
+        "n_spikes": 10,
+        "grad_gCaL": -21273692340224.0,
+        "grad_gNaP": -693043439075328.0,
+        "components_finite": true,
+        "grad_norm_f64": 693369871303292.5
+      },
+      "1.0": {
+        "n_spikes": 19,
+        "grad_gCaL": -1.4362193689672014e+27,
+        "grad_gNaP": -4.6639390035603405e+28,
+        "components_finite": true,
+        "grad_norm_f64": 4.666149835752104e+28
+      },
+      "2.0": {
+        "n_spikes": 37,
+        "grad_gCaL": NaN,
+        "grad_gNaP": NaN,
+        "components_finite": false,
+        "grad_norm_f64": NaN
+      },
+      "4.0": {
+        "n_spikes": 75,
+        "grad_gCaL": NaN,
+        "grad_gNaP": NaN,
+        "components_finite": false,
+        "grad_norm_f64": NaN
+      }
+    },
+    "norm_growth_shortest_to_longest": NaN,
+    "note": "distinguish: (a) dynamical explosion of finite components (e.g. ~1e28 at 1 s), (b) NaN components (true breakdown), (c) diagnostic float32 norm overflow \u2014 eliminated here by the float64 norm. 'ok' means all components finite at every horizon, NOT that magnitudes are usable.",
+    "runtime_s": 12.0
+  },
+  "t5": {
+    "ok": false,
+    "n_cases": 8,
+    "n_evaluated": 8,
+    "n_failures": 0,
+    "accepted_step_fraction": 0.5,
+    "coordinate_agreement": {
+      "gCaL_scale": {
+        "n_resolved": 8,
+        "n_unresolved": 0,
+        "agreement_rate": 0.625
+      },
+      "w_exc": {
+        "n_resolved": 8,
+        "n_unresolved": 0,
+        "agreement_rate": 0.5
+      }
+    },
+    "cases": [
+      {
+        "conn_seed": 0,
+        "event_seed": 0,
+        "true_theta": {
+          "gCaL_scale": 1.5,
+          "w_exc": 0.011
+        },
+        "n_obs_spikes": 40,
+        "loss_at_init_hard": 15.786011695861816,
+        "surrogate_grad": [
+          312621140017152.0,
+          2.516758579558482e+17
+        ],
+        "grad_finite": true,
+        "joint_sign_direction": [
+          -1.0,
+          -1.0
+        ],
+        "joint_steps": {
+          "0.03": {
+            "hard_loss": 17.777145385742188,
+            "improved": false
+          },
+          "0.1": {
+            "hard_loss": 25.474170684814453,
+            "improved": false
+          }
+        },
+        "coordinate_probes": {
+          "gCaL_scale": {
+            "hard_loss_up": 15.788641929626465,
+            "hard_loss_down": 15.929408073425293,
+            "true_descent_dir": 1,
+            "surrogate_dir": -1,
+            "agrees": false
+          },
+          "w_exc": {
+            "hard_loss_up": 9.060354232788086,
+            "hard_loss_down": 24.288192749023438,
+            "true_descent_dir": 1,
+            "surrogate_dir": -1,
+            "agrees": false
+          }
+        }
+      },
+      {
+        "conn_seed": 0,
+        "event_seed": 0,
+        "true_theta": {
+          "gCaL_scale": 0.7,
+          "w_exc": 0.008
+        },
+        "n_obs_spikes": 11,
+        "loss_at_init_hard": 5.275916576385498,
+        "surrogate_grad": [
+          -666105001541632.0,
+          -5.3622305913307136e+17
+        ],
+        "grad_finite": true,
+        "joint_sign_direction": [
+          1.0,
+          1.0
+        ],
+        "joint_steps": {
+          "0.03": {
+            "hard_loss": 7.321145534515381,
+            "improved": false
+          },
+          "0.1": {
+            "hard_loss": 11.727997779846191,
+            "improved": false
+          }
+        },
+        "coordinate_probes": {
+          "gCaL_scale": {
+            "hard_loss_up": 5.112833499908447,
+            "hard_loss_down": 5.3906683921813965,
+            "true_descent_dir": 1,
+            "surrogate_dir": 1,
+            "agrees": true
+          },
+          "w_exc": {
+            "hard_loss_up": 10.66342544555664,
+            "hard_loss_down": 1.6630901098251343,
+            "true_descent_dir": -1,
+            "surrogate_dir": 1,
+            "agrees": false
+          }
+        }
+      },
+      {
+        "conn_seed": 0,
+        "event_seed": 1,
+        "true_theta": {
+          "gCaL_scale": 1.5,
+          "w_exc": 0.011
+        },
+        "n_obs_spikes": 41,
+        "loss_at_init_hard": 15.428475379943848,
+        "surrogate_grad": [
+          -281944134778880.0,
+          -2.0783693778701517e+17
+        ],
+        "grad_finite": true,
+        "joint_sign_direction": [
+          1.0,
+          1.0
+        ],
+        "joint_steps": {
+          "0.03": {
+            "hard_loss": 14.013660430908203,
+            "improved": true
+          },
+          "0.1": {
+            "hard_loss": 8.015419960021973,
+            "improved": true
+          }
+        },
+        "coordinate_probes": {
+          "gCaL_scale": {
+            "hard_loss_up": 15.359977722167969,
+            "hard_loss_down": 16.232988357543945,
+            "true_descent_dir": 1,
+            "surrogate_dir": 1,
+            "agrees": true
+          },
+          "w_exc": {
+            "hard_loss_up": 8.818695068359375,
+            "hard_loss_down": 22.458179473876953,
+            "true_descent_dir": 1,
+            "surrogate_dir": 1,
+            "agrees": true
+          }
+        }
+      },
+      {
+        "conn_seed": 0,
+        "event_seed": 1,
+        "true_theta": {
+          "gCaL_scale": 0.7,
+          "w_exc": 0.008
+        },
+        "n_obs_spikes": 12,
+        "loss_at_init_hard": 5.6394453048706055,
+        "surrogate_grad": [
+          305276175515648.0,
+          2.2504273139361382e+17
+        ],
+        "grad_finite": true,
+        "joint_sign_direction": [
+          -1.0,
+          -1.0
+        ],
+        "joint_steps": {
+          "0.03": {
+            "hard_loss": 4.722307205200195,
+            "improved": true
+          },
+          "0.1": {
+            "hard_loss": 2.1072397232055664,
+            "improved": true
+          }
+        },
+        "coordinate_probes": {
+          "gCaL_scale": {
+            "hard_loss_up": 5.618084907531738,
+            "hard_loss_down": 4.980186939239502,
+            "true_descent_dir": -1,
+            "surrogate_dir": -1,
+            "agrees": true
+          },
+          "w_exc": {
+            "hard_loss_up": 11.663798332214355,
+            "hard_loss_down": 2.678187608718872,
+            "true_descent_dir": -1,
+            "surrogate_dir": -1,
+            "agrees": true
+          }
+        }
+      },
+      {
+        "conn_seed": 1,
+        "event_seed": 0,
+        "true_theta": {
+          "gCaL_scale": 1.5,
+          "w_exc": 0.011
+        },
+        "n_obs_spikes": 51,
+        "loss_at_init_hard": 16.66646957397461,
+        "surrogate_grad": [
+          5.70238512922624e+16,
+          4.45495503393443e+19
+        ],
+        "grad_finite": true,
+        "joint_sign_direction": [
+          -1.0,
+          -1.0
+        ],
+        "joint_steps": {
+          "0.03": {
+            "hard_loss": 18.89405059814453,
+            "improved": false
+          },
+          "0.1": {
+            "hard_loss": 25.002363204956055,
+            "improved": false
+          }
+        },
+        "coordinate_probes": {
+          "gCaL_scale": {
+            "hard_loss_up": 15.886414527893066,
+            "hard_loss_down": 16.795991897583008,
+            "true_descent_dir": 1,
+            "surrogate_dir": -1,
+            "agrees": false
+          },
+          "w_exc": {
+            "hard_loss_up": 10.28009033203125,
+            "hard_loss_down": 24.299158096313477,
+            "true_descent_dir": 1,
+            "surrogate_dir": -1,
+            "agrees": false
+          }
+        }
+      },
+      {
+        "conn_seed": 1,
+        "event_seed": 0,
+        "true_theta": {
+          "gCaL_scale": 0.7,
+          "w_exc": 0.008
+        },
+        "n_obs_spikes": 20,
+        "loss_at_init_hard": 5.717686653137207,
+        "surrogate_grad": [
+          -5.841590173250355e+16,
+          -4.563888488749361e+19
+        ],
+        "grad_finite": true,
+        "joint_sign_direction": [
+          1.0,
+          1.0
+        ],
+        "joint_steps": {
+          "0.03": {
+            "hard_loss": 6.890046119689941,
+            "improved": false
+          },
+          "0.1": {
+            "hard_loss": 12.25369644165039,
+            "improved": false
+          }
+        },
+        "coordinate_probes": {
+          "gCaL_scale": {
+            "hard_loss_up": 5.802124500274658,
+            "hard_loss_down": 5.316225528717041,
+            "true_descent_dir": -1,
+            "surrogate_dir": 1,
+            "agrees": false
+          },
+          "w_exc": {
+            "hard_loss_up": 11.21438980102539,
+            "hard_loss_down": 3.126026153564453,
+            "true_descent_dir": -1,
+            "surrogate_dir": 1,
+            "agrees": false
+          }
+        }
+      },
+      {
+        "conn_seed": 1,
+        "event_seed": 1,
+        "true_theta": {
+          "gCaL_scale": 1.5,
+          "w_exc": 0.011
+        },
+        "n_obs_spikes": 51,
+        "loss_at_init_hard": 15.88136100769043,
+        "surrogate_grad": [
+          -1.4785854138331693e+19,
+          -1.0807669705869399e+22
+        ],
+        "grad_finite": true,
+        "joint_sign_direction": [
+          1.0,
+          1.0
+        ],
+        "joint_steps": {
+          "0.03": {
+            "hard_loss": 13.869335174560547,
+            "improved": true
+          },
+          "0.1": {
+            "hard_loss": 7.843212604522705,
+            "improved": true
+          }
+        },
+        "coordinate_probes": {
+          "gCaL_scale": {
+            "hard_loss_up": 15.161964416503906,
+            "hard_loss_down": 16.50951385498047,
+            "true_descent_dir": 1,
+            "surrogate_dir": 1,
+            "agrees": true
+          },
+          "w_exc": {
+            "hard_loss_up": 7.944602012634277,
+            "hard_loss_down": 23.017820358276367,
+            "true_descent_dir": 1,
+            "surrogate_dir": 1,
+            "agrees": true
+          }
+        }
+      },
+      {
+        "conn_seed": 1,
+        "event_seed": 1,
+        "true_theta": {
+          "gCaL_scale": 0.7,
+          "w_exc": 0.008
+        },
+        "n_obs_spikes": 18,
+        "loss_at_init_hard": 7.505717754364014,
+        "surrogate_grad": [
+          1.1224109365453652e+19,
+          8.197015755525875e+21
+        ],
+        "grad_finite": true,
+        "joint_sign_direction": [
+          -1.0,
+          -1.0
+        ],
+        "joint_steps": {
+          "0.03": {
+            "hard_loss": 7.144341945648193,
+            "improved": true
+          },
+          "0.1": {
+            "hard_loss": 3.0422792434692383,
+            "improved": true
+          }
+        },
+        "coordinate_probes": {
+          "gCaL_scale": {
+            "hard_loss_up": 8.095317840576172,
+            "hard_loss_down": 7.290937423706055,
+            "true_descent_dir": -1,
+            "surrogate_dir": -1,
+            "agrees": true
+          },
+          "w_exc": {
+            "hard_loss_up": 16.495311737060547,
+            "hard_loss_down": 3.620619297027588,
+            "true_descent_dir": -1,
+            "surrogate_dir": -1,
+            "agrees": true
+          }
+        }
+      }
+    ],
+    "runtime_s": 77.9
+  }
+}

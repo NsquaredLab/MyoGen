@@ -1,0 +1,406 @@
+{
+ "manifest": {
+  "git_revision": "a483b1d",
+  "git_dirty": true,
+  "provenance_note": "experiments/twin sources are untracked by git; reconstruction relies on the file hashes below, not the revision",
+  "source_sha256_16": {
+   "sensitivity_checks.py": "993a2cfdebaeb499",
+   "poolbuild.py": "816d4ba42490e283",
+   "observables.py": "9ab3a99e798e3274",
+   "validation_protocol.py": "f7cf30f9880ce289",
+   "protocols.py": "404ea437741ea2ae"
+  },
+  "versions": {
+   "jax": "0.9.0",
+   "jaxley": "0.13.0",
+   "numpy": "2.3.5"
+  },
+  "device": "cpu",
+  "precision": "float32 (JAX default; x64 not enabled)",
+  "dt_ms": 0.1,
+  "voltage_frame": "NERLab 1952-HH (V_rest\u22480, spike threshold +50 mV)",
+  "seed_taxonomy": {
+   "connectivity": "TwinSpec.seed (numpy default_rng)",
+   "events": "jax.random.PRNGKey (rate path) / numpy default_rng (frozen renewal events)",
+   "fd_probes": "deterministic, no sampling"
+  },
+  "objectives": {
+   "t2": "mean soma voltage, subthreshold deterministic current",
+   "t3_t4": "mean exponentially-smoothed rate (tau 100 ms)",
+   "t5": "MSE of smoothed rates (tau 100 ms) vs frozen-event target"
+  },
+  "scope": "this Jaxley harness configuration only \u2014 NOT a validated NEURON-matched forward model; conclusions are specific to the stated parameter points, objectives, and frozen input realizations"
+ },
+ "declared": {
+  "unknowns": [
+   "gCaL_scale",
+   "w_exc"
+  ],
+  "fixed_known": [
+   "gNaP_scale=1",
+   "inhibition=0",
+   "connectivity seed",
+   "drive shape",
+   "exact event realizations (seeds 0/1/2)"
+  ],
+  "experiment_type": "conditional fit with known inputs \u2014 NOT joint excitation inference",
+  "observation_models": {
+   "full_obs": "all units, noiseless, same-model",
+   "partial_obs": "units [0, 1] (lowest-threshold half, deterministic)"
+  },
+  "objective": "mean over fit protocols of smoothed-rate MSE (tau 100 ms) on observed units",
+  "checkpoint_rule": "grid: argmin fit loss; gradient: best fit-loss iterate (final also reported)",
+  "theta_true": [
+   1.6,
+   0.0105
+  ],
+  "grid_bounds": {
+   "gCaL_scale": [
+    0.25,
+    4.0
+   ],
+   "w_exc": [
+    0.0045,
+    0.018
+   ]
+  }
+ },
+ "budget": {
+  "grid_forward_evals": 27,
+  "grad_forward_equiv_evals": 36,
+  "grid_wall_s": 2.3,
+  "grad_wall_s": 22.2,
+  "total_wall_s": 37.4
+ },
+ "grid": {
+  "full_obs": {
+   "observed_units": [
+    0,
+    1,
+    2,
+    3
+   ],
+   "grid_loss": [
+    [
+     42.44200801849365,
+     16.489697456359863,
+     54.625855922698975
+    ],
+    [
+     42.44200801849365,
+     13.021122455596924,
+     60.083982706069946
+    ],
+    [
+     19.341336250305176,
+     13.160927772521973,
+     148.98839473724365
+    ]
+   ],
+   "grid_best": [
+    1.0,
+    0.009
+   ],
+   "refined_best": [
+    1.0,
+    0.009
+   ],
+   "refined_loss": 13.021121978759766,
+   "boundary_hit": false
+  },
+  "partial_obs": {
+   "observed_units": [
+    0,
+    1
+   ],
+   "grid_loss": [
+    [
+     73.52735900878906,
+     21.622737884521484,
+     51.23210334777832
+    ],
+    [
+     73.52735900878906,
+     14.685587882995605,
+     57.001651763916016
+    ],
+    [
+     27.32601547241211,
+     11.205621719360352,
+     137.26646423339844
+    ]
+   ],
+   "grid_best": [
+    4.0,
+    0.009
+   ],
+   "refined_best": [
+    2.0,
+    0.009
+   ],
+   "refined_loss": 8.690441131591797,
+   "boundary_hit": true
+  }
+ },
+ "gradient_runs": {
+  "full_obs": [
+   {
+    "start": [
+     1.0,
+     0.009
+    ],
+    "label": "start_default",
+    "best": {
+     "loss": 13.011473655700684,
+     "theta": [
+      1.0,
+      0.008999999612569809
+     ],
+     "it": 0
+    },
+    "final": {
+     "it": 2,
+     "loss": 15.557589530944824,
+     "theta": [
+      0.9537362456321716,
+      0.008583626709878445
+     ]
+    },
+    "history": [
+     {
+      "it": 0,
+      "loss": 13.011473655700684,
+      "theta": [
+       1.0,
+       0.008999999612569809
+      ]
+     },
+     {
+      "it": 1,
+      "loss": 15.583248138427734,
+      "theta": [
+       0.9512297511100769,
+       0.00856106635183096
+      ]
+     },
+     {
+      "it": 2,
+      "loss": 15.557589530944824,
+      "theta": [
+       0.9537362456321716,
+       0.008583626709878445
+      ]
+     }
+    ]
+   },
+   {
+    "start": [
+     0.6,
+     0.014
+    ],
+    "label": "start_perturbed",
+    "best": {
+     "loss": 13.258604049682617,
+     "theta": [
+      0.6000000238418579,
+      0.014000003226101398
+     ],
+     "it": 0
+    },
+    "final": {
+     "it": 2,
+     "loss": 19.63079833984375,
+     "theta": [
+      0.6291047930717468,
+      0.01467911247164011
+     ]
+    },
+    "history": [
+     {
+      "it": 0,
+      "loss": 13.258604049682617,
+      "theta": [
+       0.6000000238418579,
+       0.014000003226101398
+      ]
+     },
+     {
+      "it": 1,
+      "loss": 20.544469833374023,
+      "theta": [
+       0.6307624578475952,
+       0.01471779402345419
+      ]
+     },
+     {
+      "it": 2,
+      "loss": 19.63079833984375,
+      "theta": [
+       0.6291047930717468,
+       0.01467911247164011
+      ]
+     }
+    ]
+   }
+  ],
+  "partial_obs": [
+   {
+    "start": [
+     1.0,
+     0.009
+    ],
+    "label": "start_default",
+    "best": {
+     "loss": 14.666291236877441,
+     "theta": [
+      1.0,
+      0.008999999612569809
+     ],
+     "it": 0
+    },
+    "final": {
+     "it": 2,
+     "loss": 19.758520126342773,
+     "theta": [
+      0.9537362456321716,
+      0.008583626709878445
+     ]
+    },
+    "history": [
+     {
+      "it": 0,
+      "loss": 14.666291236877441,
+      "theta": [
+       1.0,
+       0.008999999612569809
+      ]
+     },
+     {
+      "it": 1,
+      "loss": 19.809839248657227,
+      "theta": [
+       0.9512297511100769,
+       0.00856106635183096
+      ]
+     },
+     {
+      "it": 2,
+      "loss": 19.758520126342773,
+      "theta": [
+       0.9537362456321716,
+       0.008583626709878445
+      ]
+     }
+    ]
+   },
+   {
+    "start": [
+     0.6,
+     0.014
+    ],
+    "label": "start_perturbed",
+    "best": {
+     "loss": 14.206225395202637,
+     "theta": [
+      0.6000000238418579,
+      0.014000003226101398
+     ],
+     "it": 0
+    },
+    "final": {
+     "it": 2,
+     "loss": 19.552610397338867,
+     "theta": [
+      0.6291047930717468,
+      0.01467911247164011
+     ]
+    },
+    "history": [
+     {
+      "it": 0,
+      "loss": 14.206225395202637,
+      "theta": [
+       0.6000000238418579,
+       0.014000003226101398
+      ]
+     },
+     {
+      "it": 1,
+      "loss": 19.72198486328125,
+      "theta": [
+       0.6307624578475952,
+       0.01471779402345419
+      ]
+     },
+     {
+      "it": 2,
+      "loss": 19.552610397338867,
+      "theta": [
+       0.6291047930717468,
+       0.01467911247164011
+      ]
+     }
+    ]
+   }
+  ]
+ },
+ "recovery_table": [
+  {
+   "obs_model": "full_obs",
+   "method": "grid_refine",
+   "theta_hat": [
+    1.0,
+    0.009
+   ],
+   "param_rel_err": [
+    0.37500000000000006,
+    0.142857142857143
+   ],
+   "fit_loss": 13.021121978759766,
+   "heldout_mse": 4.096832275390625
+  },
+  {
+   "obs_model": "full_obs",
+   "method": "grad_best_of_starts",
+   "theta_hat": [
+    1.0,
+    0.008999999612569809
+   ],
+   "param_rel_err": [
+    0.37500000000000006,
+    0.14285717975525633
+   ],
+   "fit_loss": 13.021121978759766,
+   "heldout_mse": 4.096832275390625
+  },
+  {
+   "obs_model": "partial_obs",
+   "method": "grid_refine",
+   "theta_hat": [
+    2.0,
+    0.009
+   ],
+   "param_rel_err": [
+    0.24999999999999994,
+    0.142857142857143
+   ],
+   "fit_loss": 8.690441131591797,
+   "heldout_mse": 2.9221158027648926
+  },
+  {
+   "obs_model": "partial_obs",
+   "method": "grad_best_of_starts",
+   "theta_hat": [
+    0.6000000238418579,
+    0.014000003226101398
+   ],
+   "param_rel_err": [
+    0.6249999850988388,
+    0.3333336405810855
+   ],
+   "fit_loss": 13.915850639343262,
+   "heldout_mse": 7.698352336883545
+  }
+ ],
+ "heldout_mse_at_truth": 0.0
+}

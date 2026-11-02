@@ -1,0 +1,338 @@
+{
+ "manifest": {
+  "git_revision": "a483b1d",
+  "git_dirty": true,
+  "provenance_note": "experiments/twin sources are untracked by git; reconstruction relies on the file hashes below, not the revision",
+  "source_sha256_16": {
+   "sensitivity_checks.py": "a433b78e7bd7e581",
+   "poolbuild.py": "2dd213214e166343",
+   "observables.py": "9ab3a99e798e3274",
+   "validation_protocol.py": "983f8bbcafebd67e",
+   "protocols.py": "404ea437741ea2ae",
+   "gradient_repair.py": "78812d0e94b7be75",
+   "deliverable_b.py": "8c16e479bcea843d",
+   "deliverable_c.py": "0c1896bdc5a2e5fc",
+   "pic_grid.py": "d900172c74ba1695",
+   "r2a_profiles.py": "ac4802b3bdfe1191",
+   "acceptance.py": "24200ac953a87395",
+   "myogen/simulator/jaxley/jax_models.py": "8b99fc4b69d735c7",
+   "myogen/simulator/jaxley/channels/nerlab_channels.py": "f6161ceaca04285e",
+   "myogen/simulator/jaxley/cells_api.py": "c6534ba58adaf3b1",
+   "myogen/simulator/jaxley/populations/motor_neurons.py": "736be1bb0c75807c"
+  },
+  "versions": {
+   "jax": "0.9.0",
+   "jaxley": "0.13.0",
+   "numpy": "2.3.5"
+  },
+  "device": "cpu",
+  "precision": "float64 (jax_enable_x64=True)",
+  "dt_ms": 0.1,
+  "voltage_frame": "NERLab 1952-HH (V_rest\u22480, spike threshold +50 mV)",
+  "seed_taxonomy": {
+   "connectivity": "TwinSpec.seed (numpy default_rng)",
+   "events": "jax.random.PRNGKey (rate path) / numpy default_rng (frozen renewal events)",
+   "fd_probes": "deterministic, no sampling"
+  },
+  "objectives": {
+   "t2": "mean soma voltage, subthreshold deterministic current",
+   "t3_t4": "mean exponentially-smoothed rate (tau 100 ms)",
+   "t5": "MSE of smoothed rates (tau 100 ms) vs frozen-event target"
+  },
+  "scope": "this Jaxley harness configuration only \u2014 NOT a validated NEURON-matched forward model; conclusions are specific to the stated parameter points, objectives, and frozen input realizations",
+  "g4_sha256_16": "4720b692840068d9",
+  "args": {
+   "smoke": true,
+   "iters": 4
+  },
+  "run_tag": "smoke"
+ },
+ "declared": {
+  "dt_ms": 0.025,
+  "window_s": 2.0,
+  "protocol": "fit_ramp only",
+  "objective": "hard binned-rate MSE (50/300 ms) at dt 0.025",
+  "theta0": [
+   1.0,
+   0.009
+  ],
+  "lambdas": [
+   0.03,
+   0.1
+  ],
+  "gate": ">=80% accepted hard steps, zero non-finite",
+  "estimator_notes": {
+   "surrogate": "f64 straight-through (G2: known vth-sensitive residual bias + huge magnitudes)",
+   "event_time": "frozen-per-evaluation crossing indices; count changes between iterates not differentiated",
+   "hazard": "point-process NLL, output-only",
+   "crn_fd": "control"
+  }
+ },
+ "stageA": {
+  "rows": [
+   {
+    "case": {
+     "conn_seed": 0,
+     "event_offset": 0,
+     "theta_true": [
+      1.5,
+      0.011
+     ]
+    },
+    "n_obs_spikes": 41,
+    "L0": 8.055555555555555,
+    "estimators": {
+     "surrogate": {
+      "grad": [
+       57553.198764126166,
+       71723419.0032042
+      ],
+      "direction": [
+       -0.08880688096265361,
+       -0.9960488632058595
+      ],
+      "steps": {
+       "0.03": {
+        "loss": 9.722222222222218,
+        "accepted": false
+       },
+       "0.1": {
+        "loss": 13.333333333333336,
+        "accepted": false
+       }
+      }
+     },
+     "event_time": {
+      "grad": [
+       0.36066690306815224,
+       453.99320587356607
+      ],
+      "direction": [
+       -0.08792837601785931,
+       -0.9961267995043912
+      ],
+      "steps": {
+       "0.03": {
+        "loss": 9.722222222222218,
+        "accepted": false
+       },
+       "0.1": {
+        "loss": 13.333333333333336,
+        "accepted": false
+       }
+      }
+     },
+     "hazard": {
+      "grad": [
+       -0.34794066867071866,
+       -936.3721818552115
+      ],
+      "direction": [
+       0.04125193665960716,
+       0.9991487765702521
+      ],
+      "steps": {
+       "0.03": {
+        "loss": 7.013888888888886,
+        "accepted": true
+       },
+       "0.1": {
+        "loss": 3.2638888888888875,
+        "accepted": true
+       }
+      }
+     },
+     "crn_fd": {
+      "grad": [
+       -6.249999999999982,
+       -4552.4691358024675
+      ],
+      "direction": [
+       0.15079798967141003,
+       0.9885645989570238
+      ],
+      "steps": {
+       "0.03": {
+        "loss": 7.08333333333333,
+        "accepted": true
+       },
+       "0.1": {
+        "loss": 3.2638888888888875,
+        "accepted": true
+       }
+      }
+     }
+    }
+   }
+  ],
+  "gate": {
+   "surrogate": {
+    "accepted_fraction": 0.0,
+    "nonfinite": 0,
+    "passes": false
+   },
+   "event_time": {
+    "accepted_fraction": 0.0,
+    "nonfinite": 0,
+    "passes": false
+   },
+   "hazard": {
+    "accepted_fraction": 1.0,
+    "nonfinite": 0,
+    "passes": true
+   },
+   "crn_fd": {
+    "accepted_fraction": 1.0,
+    "nonfinite": 0,
+    "passes": true
+   }
+  }
+ },
+ "stageB": {
+  "hazard": {
+   "best": {
+    "loss": 0.8333333333333336,
+    "theta": [
+     1.0112403384542032,
+     0.010988952614138606
+    ],
+    "it": 2
+   },
+   "final": {
+    "it": 4,
+    "theta": [
+     1.0112403384542032,
+     0.010988952614138606
+    ],
+    "hard_loss": 0.8333333333333336,
+    "stepped": false
+   },
+   "trajectory": [
+    {
+     "it": 0,
+     "theta": [
+      1.0,
+      0.009
+     ],
+     "hard_loss": 8.055555555555555
+    },
+    {
+     "it": 1,
+     "theta": [
+      1.0041337139893176,
+      0.009945691626073777
+     ],
+     "hard_loss": 3.2638888888888875,
+     "stepped": true
+    },
+    {
+     "it": 2,
+     "theta": [
+      1.0112403384542032,
+      0.010988952614138606
+     ],
+     "hard_loss": 0.8333333333333336,
+     "stepped": true
+    },
+    {
+     "it": 3,
+     "theta": [
+      1.0112403384542032,
+      0.010988952614138606
+     ],
+     "hard_loss": 0.8333333333333336,
+     "stepped": false
+    },
+    {
+     "it": 4,
+     "theta": [
+      1.0112403384542032,
+      0.010988952614138606
+     ],
+     "hard_loss": 0.8333333333333336,
+     "stepped": false
+    }
+   ],
+   "param_rel_err_best": [
+    0.3258397743638645,
+    0.0010043078055812114
+   ],
+   "heldout_mse_best": 1.166666666666667,
+   "hard_evals_used": 21,
+   "wall_s": 15.3
+  },
+  "crn_fd": {
+   "best": {
+    "loss": 0.0,
+    "theta": [
+     1.0569166471691696,
+     0.011376117236243245
+    ],
+    "it": 4
+   },
+   "final": {
+    "it": 4,
+    "theta": [
+     1.0569166471691696,
+     0.011376117236243245
+    ],
+    "hard_loss": 0.0,
+    "stepped": true
+   },
+   "trajectory": [
+    {
+     "it": 0,
+     "theta": [
+      1.0,
+      0.009
+     ],
+     "hard_loss": 8.055555555555555
+    },
+    {
+     "it": 1,
+     "theta": [
+      1.0151940728219493,
+      0.009935170498264562
+     ],
+     "hard_loss": 3.2638888888888875,
+     "stepped": true
+    },
+    {
+     "it": 2,
+     "theta": [
+      1.037861518741912,
+      0.010952988781808115
+     ],
+     "hard_loss": 0.8333333333333336,
+     "stepped": true
+    },
+    {
+     "it": 3,
+     "theta": [
+      1.0468944831991178,
+      0.01131126983312654
+     ],
+     "hard_loss": 0.06944444444444445,
+     "stepped": true
+    },
+    {
+     "it": 4,
+     "theta": [
+      1.0569166471691696,
+      0.011376117236243245
+     ],
+     "hard_loss": 0.0,
+     "stepped": true
+    }
+   ],
+   "param_rel_err_best": [
+    0.2953889018872203,
+    0.03419247602211327
+   ],
+   "heldout_mse_best": 0.11111111111111113,
+   "hard_evals_used": 23,
+   "wall_s": 10.4
+  }
+ },
+ "wall_s": 58.5
+}

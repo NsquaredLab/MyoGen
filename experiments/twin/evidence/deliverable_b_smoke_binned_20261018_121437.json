@@ -1,0 +1,575 @@
+{
+ "manifest": {
+  "git_revision": "a483b1d",
+  "git_dirty": true,
+  "provenance_note": "experiments/twin sources are untracked by git; reconstruction relies on the file hashes below, not the revision",
+  "source_sha256_16": {
+   "sensitivity_checks.py": "993a2cfdebaeb499",
+   "poolbuild.py": "816d4ba42490e283",
+   "observables.py": "9ab3a99e798e3274",
+   "validation_protocol.py": "f7cf30f9880ce289",
+   "protocols.py": "404ea437741ea2ae"
+  },
+  "versions": {
+   "jax": "0.9.0",
+   "jaxley": "0.13.0",
+   "numpy": "2.3.5"
+  },
+  "device": "cpu",
+  "precision": "float32 (JAX default; x64 not enabled)",
+  "dt_ms": 0.1,
+  "voltage_frame": "NERLab 1952-HH (V_rest\u22480, spike threshold +50 mV)",
+  "seed_taxonomy": {
+   "connectivity": "TwinSpec.seed (numpy default_rng)",
+   "events": "jax.random.PRNGKey (rate path) / numpy default_rng (frozen renewal events)",
+   "fd_probes": "deterministic, no sampling"
+  },
+  "objectives": {
+   "t2": "mean soma voltage, subthreshold deterministic current",
+   "t3_t4": "mean exponentially-smoothed rate (tau 100 ms)",
+   "t5": "MSE of smoothed rates (tau 100 ms) vs frozen-event target"
+  },
+  "scope": "this Jaxley harness configuration only \u2014 NOT a validated NEURON-matched forward model; conclusions are specific to the stated parameter points, objectives, and frozen input realizations",
+  "deliverable_b_sha256_16": "a2be2e2dfb1c5eeb",
+  "args": {
+   "n_mn": 4,
+   "true": [
+    1.6,
+    0.0105
+   ],
+   "dense_n": 5,
+   "grid_n": 3,
+   "refine_n": 3,
+   "budget_iters": 2,
+   "replicates": 1,
+   "dur_scale": 0.5,
+   "observable": "binned"
+  },
+  "run_tag": "smoke",
+  "protocol_lengths_steps": {
+   "fit_ramp": 20000,
+   "fit_trap": 20000,
+   "heldout_slowramp": 25000
+  },
+  "optimizer": {
+   "chain": "clip(1.0)+adam(0.05)",
+   "starts": [
+    [
+     1.0,
+     0.009
+    ],
+    [
+     0.6,
+     0.014
+    ]
+   ],
+   "iters": 2
+  }
+ },
+ "declared": {
+  "unknowns": [
+   "gCaL_scale",
+   "w_exc"
+  ],
+  "experiment_type": "conditional fit with known inputs",
+  "observable": "binned",
+  "eps_rule": "per replicate \u00d7 observation model, dt-halving at truth over that model's units; floor 1e-03",
+  "eps_conservative_max": 0.4861111044883728,
+  "theta_true": [
+   1.6,
+   0.0105
+  ],
+  "axes_contain_truth": true
+ },
+ "g_dense": [
+  0.25,
+  0.5,
+  1.0,
+  1.6,
+  1.9999999999999998,
+  4.0
+ ],
+ "w_dense": [
+  0.0045,
+  0.006363961030678926,
+  0.008999999999999998,
+  0.0105,
+  0.012727922061357854,
+  0.018
+ ],
+ "replicates": [
+  {
+   "conn_seed": 0,
+   "event_offset": 0,
+   "active_units_at_truth": {
+    "fit_ramp": 3,
+    "fit_trap": 3,
+    "heldout_slowramp": 2
+   },
+   "truth_fit_loss": 0.0,
+   "eps_by_model": {
+    "full_obs": 0.2430555522441864,
+    "partial_obs": 0.4861111044883728
+   },
+   "dense_time_s": 7.6,
+   "event_hashes": {
+    "fit_ramp": "2add5e836a740de9",
+    "fit_trap": "3759abc9ddabcc0c",
+    "heldout_slowramp": "439f5325c7746bb7"
+   },
+   "full_obs": {
+    "observed_units": [
+     0,
+     1,
+     2,
+     3
+    ],
+    "eps": 0.2430555522441864,
+    "profile_gCaL": [
+     1.3888890743255615,
+     0.9375002980232239,
+     1.7708332538604736,
+     0.0,
+     1.2152776718139648,
+     2.430555582046509
+    ],
+    "profile_w_exc": [
+     16.80555534362793,
+     3.75,
+     1.2499998807907104,
+     0.0,
+     2.812500476837158,
+     50.10417175292969
+    ],
+    "gcal_interval": [
+     1.6,
+     1.6
+    ],
+    "wexc_interval": [
+     0.0105,
+     0.0105
+    ],
+    "dense_loss": [
+     [
+      41.00694751739502,
+      37.74306011199951,
+      13.819444417953491,
+      5.173611044883728,
+      2.812500536441803,
+      51.77084070444107
+     ],
+     [
+      41.00694751739502,
+      34.47916889190674,
+      13.055555820465088,
+      3.3680557012557983,
+      3.5763895511627197,
+      52.81250524520874
+     ],
+     [
+      41.00694751739502,
+      32.56944751739502,
+      10.277778148651123,
+      1.7708331942558289,
+      5.729168176651001,
+      55.937506914138794
+     ],
+     [
+      41.00694751739502,
+      24.444443702697754,
+      5.902777910232544,
+      0.0,
+      8.784724712371826,
+      69.7569522857666
+     ],
+     [
+      41.00694751739502,
+      22.118054389953613,
+      3.1597222685813904,
+      1.3194444179534912,
+      11.493059158325195,
+      75.00000762939453
+     ],
+     [
+      16.80555534362793,
+      3.75,
+      9.722224831581116,
+      24.270838260650635,
+      48.50695323944092,
+      150.2430682182312
+     ]
+    ]
+   },
+   "partial_obs": {
+    "observed_units": [
+     0,
+     1
+    ],
+    "eps": 0.4861111044883728,
+    "profile_gCaL": [
+     1.319445013999939,
+     1.3194448947906494,
+     1.805556297302246,
+     0.0,
+     1.666666865348816,
+     2.430555582046509
+    ],
+    "profile_w_exc": [
+     22.77777671813965,
+     4.236110687255859,
+     1.5972223281860352,
+     0.0,
+     2.5694456100463867,
+     47.29167556762695
+    ],
+    "gcal_interval": [
+     1.6,
+     1.6
+    ],
+    "wexc_interval": [
+     0.0105,
+     0.0105
+    ],
+    "dense_loss": [
+     [
+      71.18056106567383,
+      64.65278625488281,
+      16.80555486679077,
+      5.277777910232544,
+      2.569445490837097,
+      47.29167556762695
+     ],
+     [
+      71.18056106567383,
+      58.125003814697266,
+      15.277777671813965,
+      5.000000238418579,
+      3.263890266418457,
+      49.23611831665039
+     ],
+     [
+      71.18056106567383,
+      54.30556106567383,
+      9.722222328186035,
+      2.777777671813965,
+      4.7916693687438965,
+      51.66667366027832
+     ],
+     [
+      71.18056106567383,
+      38.0555534362793,
+      6.388889312744141,
+      0.0,
+      8.26389217376709,
+      69.58334350585938
+     ],
+     [
+      71.18056106567383,
+      33.402774810791016,
+      3.333333373069763,
+      1.666666865348816,
+      10.763893127441406,
+      74.79167556762695
+     ],
+     [
+      22.77777671813965,
+      4.236110687255859,
+      6.250002145767212,
+      17.013894081115723,
+      40.0694522857666,
+      136.80557250976562
+     ]
+    ]
+   }
+  }
+ ],
+ "estimators": {
+  "full_obs/grid_refine": {
+   "theta_hat": [
+    2.0,
+    0.008999999999999998
+   ],
+   "fit_loss": 3.159722328186035,
+   "within_eps": false,
+   "boundary_hit": true
+  },
+  "full_obs/grad_best_of_starts": {
+   "theta_hat": [
+    0.6000000296207707,
+    0.014000002950072156
+   ],
+   "fit_loss": 9.895835876464844,
+   "within_eps": false,
+   "n_failed_starts": 0,
+   "n_starts": 2,
+   "runs": [
+    {
+     "label": "start_default",
+     "start": [
+      1.0,
+      0.009
+     ],
+     "best": {
+      "hard_loss": 10.277778625488281,
+      "theta": [
+       1.0,
+       0.008999999493676799
+      ],
+      "it": 0
+     },
+     "nonfinite_iterates": 0,
+     "failed": false,
+     "history": [
+      {
+       "it": 0,
+       "hard_loss": 10.277778625488281,
+       "theta": [
+        1.0,
+        0.008999999493676799
+       ]
+      },
+      {
+       "it": 1,
+       "hard_loss": 13.05555534362793,
+       "theta": [
+        0.9512297427165632,
+        0.008561066788217404
+       ]
+      }
+     ]
+    },
+    {
+     "label": "start_perturbed",
+     "start": [
+      0.6,
+      0.014
+     ],
+     "best": {
+      "hard_loss": 9.895835876464844,
+      "theta": [
+       0.6000000296207707,
+       0.014000002950072156
+      ],
+      "it": 0
+     },
+     "nonfinite_iterates": 0,
+     "failed": false,
+     "history": [
+      {
+       "it": 0,
+       "hard_loss": 9.895835876464844,
+       "theta": [
+        0.6000000296207707,
+        0.014000002950072156
+       ]
+      },
+      {
+       "it": 1,
+       "hard_loss": 17.395837783813477,
+       "theta": [
+        0.6307624709060733,
+        0.014717794239794616
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  "partial_obs/grid_refine": {
+   "theta_hat": [
+    2.0,
+    0.008999999999999998
+   ],
+   "fit_loss": 3.3333334922790527,
+   "within_eps": false,
+   "boundary_hit": true
+  },
+  "partial_obs/grad_best_of_starts": {
+   "theta_hat": [
+    0.6000000296207707,
+    0.014000002950072156
+   ],
+   "fit_loss": 8.95833683013916,
+   "within_eps": false,
+   "n_failed_starts": 0,
+   "n_starts": 2,
+   "runs": [
+    {
+     "label": "start_default",
+     "start": [
+      1.0,
+      0.009
+     ],
+     "best": {
+      "hard_loss": 9.722222328186035,
+      "theta": [
+       1.0,
+       0.008999999493676799
+      ],
+      "it": 0
+     },
+     "nonfinite_iterates": 0,
+     "failed": false,
+     "history": [
+      {
+       "it": 0,
+       "hard_loss": 9.722222328186035,
+       "theta": [
+        1.0,
+        0.008999999493676799
+       ]
+      },
+      {
+       "it": 1,
+       "hard_loss": 15.277777671813965,
+       "theta": [
+        0.9512297427165632,
+        0.008561066788217404
+       ]
+      }
+     ]
+    },
+    {
+     "label": "start_perturbed",
+     "start": [
+      0.6,
+      0.014
+     ],
+     "best": {
+      "hard_loss": 8.95833683013916,
+      "theta": [
+       0.6000000296207707,
+       0.014000002950072156
+      ],
+      "it": 0
+     },
+     "nonfinite_iterates": 0,
+     "failed": false,
+     "history": [
+      {
+       "it": 0,
+       "hard_loss": 8.95833683013916,
+       "theta": [
+        0.6000000296207707,
+        0.014000002950072156
+       ]
+      },
+      {
+       "it": 1,
+       "hard_loss": 14.79167366027832,
+       "theta": [
+        0.6307624709060733,
+        0.014717794239794616
+       ]
+      }
+     ]
+    }
+   ]
+  }
+ },
+ "recovery_table": [
+  {
+   "obs_model": "full_obs",
+   "method": "grid_refine",
+   "theta_hat": [
+    2.0,
+    0.008999999999999998
+   ],
+   "param_rel_err": [
+    0.24999999999999994,
+    0.14285714285714313
+   ],
+   "fit_loss": 3.159722328186035,
+   "fit_within_eps": false,
+   "heldout_mse_by_limb": {
+    "pre": 0.0,
+    "rising": 1.2820512056350708,
+    "peak": 2.7777774333953857,
+    "falling": 4.273504257202148,
+    "post": 0.0,
+    "overall": 1.6666665077209473
+   }
+  },
+  {
+   "obs_model": "full_obs",
+   "method": "grad_best_of_starts",
+   "theta_hat": [
+    0.6000000296207707,
+    0.014000002950072156
+   ],
+   "param_rel_err": [
+    0.6249999814870183,
+    0.3333336142925862
+   ],
+   "fit_loss": 9.895835876464844,
+   "fit_within_eps": false,
+   "heldout_mse_by_limb": {
+    "pre": 0.0,
+    "rising": 5.769230842590332,
+    "peak": 36.11111068725586,
+    "falling": 4.914529800415039,
+    "post": 0.0,
+    "overall": 5.55555534362793
+   }
+  },
+  {
+   "obs_model": "partial_obs",
+   "method": "grid_refine",
+   "theta_hat": [
+    2.0,
+    0.008999999999999998
+   ],
+   "param_rel_err": [
+    0.24999999999999994,
+    0.14285714285714313
+   ],
+   "fit_loss": 3.3333334922790527,
+   "fit_within_eps": false,
+   "heldout_mse_by_limb": {
+    "pre": 0.0,
+    "rising": 1.2820512056350708,
+    "peak": 2.7777774333953857,
+    "falling": 4.273504257202148,
+    "post": 0.0,
+    "overall": 1.6666665077209473
+   }
+  },
+  {
+   "obs_model": "partial_obs",
+   "method": "grad_best_of_starts",
+   "theta_hat": [
+    0.6000000296207707,
+    0.014000002950072156
+   ],
+   "param_rel_err": [
+    0.6249999814870183,
+    0.3333336142925862
+   ],
+   "fit_loss": 8.95833683013916,
+   "fit_within_eps": false,
+   "heldout_mse_by_limb": {
+    "pre": 0.0,
+    "rising": 5.769230842590332,
+    "peak": 36.11111068725586,
+    "falling": 4.914529800415039,
+    "post": 0.0,
+    "overall": 5.55555534362793
+   }
+  }
+ ],
+ "heldout_at_truth_by_limb": {
+  "pre": 0.0,
+  "rising": 0.0,
+  "peak": 0.0,
+  "falling": 0.0,
+  "post": 0.0,
+  "overall": 0.0
+ },
+ "wall_times_s": {
+  "grid_full_obs": 4.0,
+  "grad_full_obs": 6.4,
+  "grid_partial_obs": 4.9,
+  "grad_partial_obs": 6.1,
+  "total": 47.4
+ }
+}

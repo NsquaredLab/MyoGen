@@ -1,0 +1,494 @@
+{
+ "manifest": {
+  "git_revision": "a483b1d",
+  "git_dirty": true,
+  "provenance_note": "experiments/twin sources are untracked by git; reconstruction relies on the file hashes below, not the revision",
+  "source_sha256_16": {
+   "sensitivity_checks.py": "993a2cfdebaeb499",
+   "poolbuild.py": "816d4ba42490e283",
+   "observables.py": "9ab3a99e798e3274",
+   "validation_protocol.py": "983f8bbcafebd67e",
+   "protocols.py": "404ea437741ea2ae"
+  },
+  "versions": {
+   "jax": "0.9.0",
+   "jaxley": "0.13.0",
+   "numpy": "2.3.5"
+  },
+  "device": "cpu",
+  "precision": "float32 (JAX default; x64 not enabled)",
+  "dt_ms": 0.1,
+  "voltage_frame": "NERLab 1952-HH (V_rest\u22480, spike threshold +50 mV)",
+  "seed_taxonomy": {
+   "connectivity": "TwinSpec.seed (numpy default_rng)",
+   "events": "jax.random.PRNGKey (rate path) / numpy default_rng (frozen renewal events)",
+   "fd_probes": "deterministic, no sampling"
+  },
+  "objectives": {
+   "t2": "mean soma voltage, subthreshold deterministic current",
+   "t3_t4": "mean exponentially-smoothed rate (tau 100 ms)",
+   "t5": "MSE of smoothed rates (tau 100 ms) vs frozen-event target"
+  },
+  "scope": "this Jaxley harness configuration only \u2014 NOT a validated NEURON-matched forward model; conclusions are specific to the stated parameter points, objectives, and frozen input realizations",
+  "pic_grid_sha256_16": "d900172c74ba1695",
+  "args": {
+   "seeds": [
+    101
+   ],
+   "gcal": [
+    0.0,
+    1.0,
+    6.5
+   ],
+   "gnap": [
+    1.0,
+    5.0
+   ],
+   "n_mn": 8,
+   "dur_scale": 0.3,
+   "skip_dt_ref": true
+  },
+  "run_tag": "smoke",
+  "acceptance_spec_version": 1
+ },
+ "dt_refinement_E_numerical_hz2": {},
+ "points": [
+  {
+   "gcal": 0.0,
+   "gnap": 1.0,
+   "seed": 101,
+   "metrics": {
+    "binned_rate_rmse_hz2": 0.21241827309131622,
+    "active_unit_mismatch": 0,
+    "active_jaxley": 5,
+    "active_neuron": 5,
+    "total_spike_rel_diff": 0.012195121951219513,
+    "total_jaxley": 82,
+    "total_neuron": 81,
+    "spike_match_pm5ms_fraction": 0.5487804878048781,
+    "spike_total_max": 82,
+    "hysteresis_mean_diff_hz": 0.0016002655029296875,
+    "hysteresis_jaxley": 0.46933326721191404,
+    "hysteresis_neuron": 0.46773300170898435,
+    "self_sustained_mismatch": 0,
+    "self_sustained_jaxley": 0,
+    "self_sustained_neuron": 0,
+    "after_discharge_censored_jaxley": 0,
+    "after_discharge_censored_neuron": 0,
+    "delta_f_mean_diff_hz": null,
+    "delta_f_pairs_jaxley": 0,
+    "delta_f_pairs_neuron": 0,
+    "delta_f_eligible_fraction_diff": 0.0
+   }
+  },
+  {
+   "gcal": 1.0,
+   "gnap": 1.0,
+   "seed": 101,
+   "metrics": {
+    "binned_rate_rmse_hz2": 0.06535946577787399,
+    "active_unit_mismatch": 0,
+    "active_jaxley": 6,
+    "active_neuron": 6,
+    "total_spike_rel_diff": 0.0,
+    "total_jaxley": 111,
+    "total_neuron": 111,
+    "spike_match_pm5ms_fraction": 0.9279279279279279,
+    "spike_total_max": 111,
+    "hysteresis_mean_diff_hz": 0.1717330932617187,
+    "hysteresis_jaxley": -1.4090667724609376,
+    "hysteresis_neuron": -1.5807998657226563,
+    "self_sustained_mismatch": 0,
+    "self_sustained_jaxley": 0,
+    "self_sustained_neuron": 0,
+    "after_discharge_censored_jaxley": 0,
+    "after_discharge_censored_neuron": 0,
+    "delta_f_mean_diff_hz": null,
+    "delta_f_pairs_jaxley": 0,
+    "delta_f_pairs_neuron": 0,
+    "delta_f_eligible_fraction_diff": 0.0
+   }
+  },
+  {
+   "gcal": 6.5,
+   "gnap": 1.0,
+   "seed": 101,
+   "metrics": {
+    "binned_rate_rmse_hz2": 0.8496732711791992,
+    "active_unit_mismatch": 0,
+    "active_jaxley": 8,
+    "active_neuron": 8,
+    "total_spike_rel_diff": 0.0018975332068311196,
+    "total_jaxley": 527,
+    "total_neuron": 526,
+    "spike_match_pm5ms_fraction": 0.698292220113852,
+    "spike_total_max": 527,
+    "hysteresis_mean_diff_hz": 0.06766617298126221,
+    "hysteresis_jaxley": -4.095666766166687,
+    "hysteresis_neuron": -4.163332939147949,
+    "self_sustained_mismatch": 0,
+    "self_sustained_jaxley": 0,
+    "self_sustained_neuron": 0,
+    "after_discharge_censored_jaxley": 0,
+    "after_discharge_censored_neuron": 0,
+    "delta_f_mean_diff_hz": null,
+    "delta_f_pairs_jaxley": 0,
+    "delta_f_pairs_neuron": 2,
+    "delta_f_eligible_fraction_diff": 0.07142857142857142
+   }
+  },
+  {
+   "gcal": 0.0,
+   "gnap": 5.0,
+   "seed": 101,
+   "metrics": {
+    "binned_rate_rmse_hz2": 0.2124183177947998,
+    "active_unit_mismatch": 0,
+    "active_jaxley": 6,
+    "active_neuron": 6,
+    "total_spike_rel_diff": 0.0,
+    "total_jaxley": 170,
+    "total_neuron": 170,
+    "spike_match_pm5ms_fraction": 0.8058823529411765,
+    "spike_total_max": 170,
+    "hysteresis_mean_diff_hz": 0.011555353800455581,
+    "hysteresis_jaxley": 2.712444305419922,
+    "hysteresis_neuron": 2.7008889516194663,
+    "self_sustained_mismatch": 0,
+    "self_sustained_jaxley": 0,
+    "self_sustained_neuron": 0,
+    "after_discharge_censored_jaxley": 0,
+    "after_discharge_censored_neuron": 0,
+    "delta_f_mean_diff_hz": null,
+    "delta_f_pairs_jaxley": 0,
+    "delta_f_pairs_neuron": 0,
+    "delta_f_eligible_fraction_diff": 0.0
+   }
+  },
+  {
+   "gcal": 1.0,
+   "gnap": 5.0,
+   "seed": 101,
+   "metrics": {
+    "binned_rate_rmse_hz2": 0.3594772219657898,
+    "active_unit_mismatch": 0,
+    "active_jaxley": 6,
+    "active_neuron": 6,
+    "total_spike_rel_diff": 0.004484304932735426,
+    "total_jaxley": 223,
+    "total_neuron": 222,
+    "spike_match_pm5ms_fraction": 0.7354260089686099,
+    "spike_total_max": 223,
+    "hysteresis_mean_diff_hz": 0.8168892860412595,
+    "hysteresis_jaxley": 2.3817779223124185,
+    "hysteresis_neuron": 1.564888636271159,
+    "self_sustained_mismatch": 0,
+    "self_sustained_jaxley": 0,
+    "self_sustained_neuron": 0,
+    "after_discharge_censored_jaxley": 0,
+    "after_discharge_censored_neuron": 0,
+    "delta_f_mean_diff_hz": null,
+    "delta_f_pairs_jaxley": 0,
+    "delta_f_pairs_neuron": 0,
+    "delta_f_eligible_fraction_diff": 0.0
+   }
+  },
+  {
+   "gcal": 6.5,
+   "gnap": 5.0,
+   "seed": 101,
+   "metrics": {
+    "binned_rate_rmse_hz2": 2.091503381729126,
+    "active_unit_mismatch": 0,
+    "active_jaxley": 8,
+    "active_neuron": 8,
+    "total_spike_rel_diff": 0.003992015968063872,
+    "total_jaxley": 1002,
+    "total_neuron": 998,
+    "spike_match_pm5ms_fraction": 0.5149700598802395,
+    "spike_total_max": 1002,
+    "hysteresis_mean_diff_hz": 0.021332979202270508,
+    "hysteresis_jaxley": -14.561333537101746,
+    "hysteresis_neuron": -14.582666516304016,
+    "self_sustained_mismatch": 0,
+    "self_sustained_jaxley": 7,
+    "self_sustained_neuron": 7,
+    "after_discharge_censored_jaxley": 7,
+    "after_discharge_censored_neuron": 7,
+    "delta_f_mean_diff_hz": 0.10258853852055161,
+    "delta_f_pairs_jaxley": 5,
+    "delta_f_pairs_neuron": 5,
+    "delta_f_eligible_fraction_diff": 0.0
+   }
+  }
+ ],
+ "acceptance": {
+  "spec_version": 1,
+  "n_points": 6,
+  "n_evaluated_metric_cells": 44,
+  "n_failed_metric_cells": 2,
+  "fail_fraction": 0.045454545454545456,
+  "failure_policy_ok": true,
+  "bistability_boundary": {
+   "1.0": {
+    "jaxley_first_bistable_gcal": null,
+    "neuron_first_bistable_gcal": null,
+    "offset_steps": null,
+    "class": "NOT_EVALUABLE"
+   },
+   "5.0": {
+    "jaxley_first_bistable_gcal": 6.5,
+    "neuron_first_bistable_gcal": 6.5,
+    "offset_steps": 0,
+    "class": "PASS"
+   }
+  },
+  "validated_envelope_gcal_by_gnap": {
+   "1.0": [
+    1.0,
+    6.5
+   ],
+   "5.0": [
+    0.0,
+    1.0
+   ]
+  }
+ },
+ "acceptance_points": [
+  {
+   "gcal": 0.0,
+   "gnap": 1.0,
+   "seed": 101,
+   "verdicts": {
+    "binned_rate_rmse_hz2": {
+     "class": "PASS",
+     "value": 0.21241827309131622
+    },
+    "active_unit_mismatch": {
+     "class": "PASS",
+     "value": 0
+    },
+    "total_spike_rel_diff": {
+     "class": "PASS",
+     "value": 0.012195121951219513
+    },
+    "spike_match_pm5ms_fraction_min": {
+     "class": "FAIL",
+     "value": 0.5487804878048781
+    },
+    "hysteresis_mean_diff_hz": {
+     "class": "PASS",
+     "value": 0.0016002655029296875
+    },
+    "self_sustained_mismatch": {
+     "class": "PASS",
+     "value": 0
+    },
+    "delta_f_mean_diff_hz": {
+     "class": "NOT_EVALUABLE",
+     "value": null
+    },
+    "delta_f_eligible_fraction_diff": {
+     "class": "PASS",
+     "value": 0.0
+    }
+   }
+  },
+  {
+   "gcal": 1.0,
+   "gnap": 1.0,
+   "seed": 101,
+   "verdicts": {
+    "binned_rate_rmse_hz2": {
+     "class": "PASS",
+     "value": 0.06535946577787399
+    },
+    "active_unit_mismatch": {
+     "class": "PASS",
+     "value": 0
+    },
+    "total_spike_rel_diff": {
+     "class": "PASS",
+     "value": 0.0
+    },
+    "spike_match_pm5ms_fraction_min": {
+     "class": "PASS",
+     "value": 0.9279279279279279
+    },
+    "hysteresis_mean_diff_hz": {
+     "class": "PASS",
+     "value": 0.1717330932617187
+    },
+    "self_sustained_mismatch": {
+     "class": "PASS",
+     "value": 0
+    },
+    "delta_f_mean_diff_hz": {
+     "class": "NOT_EVALUABLE",
+     "value": null
+    },
+    "delta_f_eligible_fraction_diff": {
+     "class": "PASS",
+     "value": 0.0
+    }
+   }
+  },
+  {
+   "gcal": 6.5,
+   "gnap": 1.0,
+   "seed": 101,
+   "verdicts": {
+    "binned_rate_rmse_hz2": {
+     "class": "PASS",
+     "value": 0.8496732711791992
+    },
+    "active_unit_mismatch": {
+     "class": "PASS",
+     "value": 0
+    },
+    "total_spike_rel_diff": {
+     "class": "PASS",
+     "value": 0.0018975332068311196
+    },
+    "spike_match_pm5ms_fraction_min": {
+     "class": "PASS",
+     "value": 0.698292220113852
+    },
+    "hysteresis_mean_diff_hz": {
+     "class": "PASS",
+     "value": 0.06766617298126221
+    },
+    "self_sustained_mismatch": {
+     "class": "PASS",
+     "value": 0
+    },
+    "delta_f_mean_diff_hz": {
+     "class": "NOT_EVALUABLE",
+     "value": null
+    },
+    "delta_f_eligible_fraction_diff": {
+     "class": "PASS",
+     "value": 0.07142857142857142
+    }
+   }
+  },
+  {
+   "gcal": 0.0,
+   "gnap": 5.0,
+   "seed": 101,
+   "verdicts": {
+    "binned_rate_rmse_hz2": {
+     "class": "PASS",
+     "value": 0.2124183177947998
+    },
+    "active_unit_mismatch": {
+     "class": "PASS",
+     "value": 0
+    },
+    "total_spike_rel_diff": {
+     "class": "PASS",
+     "value": 0.0
+    },
+    "spike_match_pm5ms_fraction_min": {
+     "class": "PASS",
+     "value": 0.8058823529411765
+    },
+    "hysteresis_mean_diff_hz": {
+     "class": "PASS",
+     "value": 0.011555353800455581
+    },
+    "self_sustained_mismatch": {
+     "class": "PASS",
+     "value": 0
+    },
+    "delta_f_mean_diff_hz": {
+     "class": "NOT_EVALUABLE",
+     "value": null
+    },
+    "delta_f_eligible_fraction_diff": {
+     "class": "PASS",
+     "value": 0.0
+    }
+   }
+  },
+  {
+   "gcal": 1.0,
+   "gnap": 5.0,
+   "seed": 101,
+   "verdicts": {
+    "binned_rate_rmse_hz2": {
+     "class": "PASS",
+     "value": 0.3594772219657898
+    },
+    "active_unit_mismatch": {
+     "class": "PASS",
+     "value": 0
+    },
+    "total_spike_rel_diff": {
+     "class": "PASS",
+     "value": 0.004484304932735426
+    },
+    "spike_match_pm5ms_fraction_min": {
+     "class": "PASS",
+     "value": 0.7354260089686099
+    },
+    "hysteresis_mean_diff_hz": {
+     "class": "PASS",
+     "value": 0.8168892860412595
+    },
+    "self_sustained_mismatch": {
+     "class": "PASS",
+     "value": 0
+    },
+    "delta_f_mean_diff_hz": {
+     "class": "NOT_EVALUABLE",
+     "value": null
+    },
+    "delta_f_eligible_fraction_diff": {
+     "class": "PASS",
+     "value": 0.0
+    }
+   }
+  },
+  {
+   "gcal": 6.5,
+   "gnap": 5.0,
+   "seed": 101,
+   "verdicts": {
+    "binned_rate_rmse_hz2": {
+     "class": "PASS",
+     "value": 2.091503381729126
+    },
+    "active_unit_mismatch": {
+     "class": "PASS",
+     "value": 0
+    },
+    "total_spike_rel_diff": {
+     "class": "PASS",
+     "value": 0.003992015968063872
+    },
+    "spike_match_pm5ms_fraction_min": {
+     "class": "FAIL",
+     "value": 0.5149700598802395
+    },
+    "hysteresis_mean_diff_hz": {
+     "class": "PASS",
+     "value": 0.021332979202270508
+    },
+    "self_sustained_mismatch": {
+     "class": "PASS",
+     "value": 0
+    },
+    "delta_f_mean_diff_hz": {
+     "class": "PASS",
+     "value": 0.10258853852055161
+    },
+    "delta_f_eligible_fraction_diff": {
+     "class": "PASS",
+     "value": 0.0
+    }
+   }
+  }
+ ],
+ "wall_s": 22.1
+}

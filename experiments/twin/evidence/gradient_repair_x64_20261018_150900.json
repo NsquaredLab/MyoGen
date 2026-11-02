@@ -1,0 +1,221 @@
+{
+ "manifest": {
+  "git_revision": "a483b1d",
+  "git_dirty": true,
+  "provenance_note": "experiments/twin sources are untracked by git; reconstruction relies on the file hashes below, not the revision",
+  "source_sha256_16": {
+   "sensitivity_checks.py": "b366ddb953c6efdf",
+   "poolbuild.py": "1c782bb1613e9e96",
+   "observables.py": "9ab3a99e798e3274",
+   "validation_protocol.py": "983f8bbcafebd67e",
+   "protocols.py": "404ea437741ea2ae",
+   "gradient_repair.py": "924e231edf254f1f",
+   "deliverable_b.py": "8c16e479bcea843d",
+   "deliverable_c.py": "0c1896bdc5a2e5fc",
+   "pic_grid.py": "d900172c74ba1695",
+   "r2a_profiles.py": "ac4802b3bdfe1191",
+   "acceptance.py": "24200ac953a87395"
+  },
+  "versions": {
+   "jax": "0.9.0",
+   "jaxley": "0.13.0",
+   "numpy": "2.3.5"
+  },
+  "device": "cpu",
+  "precision": "float64 (jax_enable_x64=True)",
+  "dt_ms": 0.1,
+  "voltage_frame": "NERLab 1952-HH (V_rest\u22480, spike threshold +50 mV)",
+  "seed_taxonomy": {
+   "connectivity": "TwinSpec.seed (numpy default_rng)",
+   "events": "jax.random.PRNGKey (rate path) / numpy default_rng (frozen renewal events)",
+   "fd_probes": "deterministic, no sampling"
+  },
+  "objectives": {
+   "t2": "mean soma voltage, subthreshold deterministic current",
+   "t3_t4": "mean exponentially-smoothed rate (tau 100 ms)",
+   "t5": "MSE of smoothed rates (tau 100 ms) vs frozen-event target"
+  },
+  "scope": "this Jaxley harness configuration only \u2014 NOT a validated NEURON-matched forward model; conclusions are specific to the stated parameter points, objectives, and frozen input realizations"
+ },
+ "x64": true,
+ "regime": "current",
+ "g2": {
+  "ok": true,
+  "n_variants": 10,
+  "per_coordinate": {
+   "gCaL": {
+    "agree": 9,
+    "wrong": 0,
+    "unresolved": 1
+   },
+   "w_exc": {
+    "agree": 10,
+    "wrong": 0,
+    "unresolved": 0
+   }
+  },
+  "rows": [
+   {
+    "variant": "beta=5.0",
+    "surrogate_grad": [
+     -758689408.0,
+     -646958678016.0
+    ],
+    "crn_fd_ref": [
+     -22.22222222222225,
+     -4320.98765432099
+    ],
+    "classification": [
+     "agree",
+     "agree"
+    ],
+    "grad_finite": true
+   },
+   {
+    "variant": "beta=10.0",
+    "surrogate_grad": [
+     -401491680.0,
+     -342364913664.0
+    ],
+    "crn_fd_ref": [
+     -22.22222222222225,
+     -4320.98765432099
+    ],
+    "classification": [
+     "agree",
+     "agree"
+    ],
+    "grad_finite": true
+   },
+   {
+    "variant": "beta=20.0",
+    "surrogate_grad": [
+     -206584448.0,
+     -176161210368.0
+    ],
+    "crn_fd_ref": [
+     -22.22222222222225,
+     -4320.98765432099
+    ],
+    "classification": [
+     "agree",
+     "agree"
+    ],
+    "grad_finite": true
+   },
+   {
+    "variant": "vth=49.0",
+    "surrogate_grad": [
+     -229278368.0,
+     -195512926208.0
+    ],
+    "crn_fd_ref": [
+     -22.22222222222225,
+     -4320.98765432099
+    ],
+    "classification": [
+     "agree",
+     "agree"
+    ],
+    "grad_finite": true
+   },
+   {
+    "variant": "vth=50.0",
+    "surrogate_grad": [
+     -401491680.0,
+     -342364913664.0
+    ],
+    "crn_fd_ref": [
+     -22.22222222222225,
+     -4320.98765432099
+    ],
+    "classification": [
+     "agree",
+     "agree"
+    ],
+    "grad_finite": true
+   },
+   {
+    "variant": "vth=51.0",
+    "surrogate_grad": [
+     -753239168.0,
+     -642312175616.0
+    ],
+    "crn_fd_ref": [
+     -22.22222222222225,
+     -4320.98765432099
+    ],
+    "classification": [
+     "agree",
+     "agree"
+    ],
+    "grad_finite": true
+   },
+   {
+    "variant": "dt=0.1",
+    "surrogate_grad": [
+     -401491680.0,
+     -342364913664.0
+    ],
+    "crn_fd_ref": [
+     -22.22222222222225,
+     -4320.98765432099
+    ],
+    "classification": [
+     "agree",
+     "agree"
+    ],
+    "grad_finite": true
+   },
+   {
+    "variant": "dt=0.05",
+    "surrogate_grad": [
+     -5631.42919921875,
+     -5286513.0
+    ],
+    "crn_fd_ref": [
+     0.0,
+     -4732.510288065846
+    ],
+    "classification": [
+     "unresolved",
+     "agree"
+    ],
+    "grad_finite": true
+   },
+   {
+    "variant": "evshift=0",
+    "surrogate_grad": [
+     -401491680.0,
+     -342364913664.0
+    ],
+    "crn_fd_ref": [
+     -22.22222222222225,
+     -4320.98765432099
+    ],
+    "classification": [
+     "agree",
+     "agree"
+    ],
+    "grad_finite": true
+   },
+   {
+    "variant": "evshift=1",
+    "surrogate_grad": [
+     -353295648.0,
+     -301266796544.0
+    ],
+    "crn_fd_ref": [
+     -22.22222222222225,
+     -4320.98765432099
+    ],
+    "classification": [
+     "agree",
+     "agree"
+    ],
+    "grad_finite": true
+   }
+  ],
+  "runtime_s": 39.8
+ }
+}
