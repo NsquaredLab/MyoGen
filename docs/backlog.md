@@ -42,6 +42,8 @@ Then decide one PR or several, routed through the issues. Source of truth for th
 - **6 m/s fibre CV bound**: ~2 % of fibres sit there at 4.32 ± 0.71; Del Vecchio's max is 6.21. Kept for now (Devon 2026-11-02).
 - **`--max-recruitment` alignment** with the human force-frequency curve at the next recalibration.
 - **Library findings out of scope so far**: NERLab rheobase spans 3.6× for a 48× threshold range; NERLab rests at ~0 mV but the yaml initialises −67 mV; inhibitory synapses at −75 mV absolute are far too strong for NERLab.
+- **Defects found by the settings inventory** (2026-11-03, `docs/superpowers/specs/2026-11-03-settings-inventory.md` §5; not yet fixed, each needs a test first): passive mode string `"pas"` vs `"passive"`; GTO `"generic"` raises NameError; inhibitory-synapse fallback; optimiser default threshold mode raises (`deluca__slope` never passed); docstring/default mismatches (bone radius, `peak_hz`, axon units); FDI calibration file is gitignored.
+- **Duplicated authorities** (same inventory): muscle conductivity sEMG 0.09/0.4 vs iEMG 0.063/0.33 S/m; fibre length 30 / 31.7 / 38.9 mm; fibre CV (sEMG 4.2, `Muscle` 4.32 ± 0.71, dispersion slope) — the last is now resolvable with `fiber_properties="muscle"`. iEMG output normalised to peak 1 (no physical amplitude); iEMG hard-codes λ; iEMG `execution=` still runs the pre-0.13.0 kernel. Inputs for item 1 and item 2.
 - **Intramuscular EMG**: deferred (Devon 2026-11-02), kept open.
 - **Future data**: possible HD-iEMG + HD-sEMG FDI dataset for a CV comparison paper (not available yet).
 
