@@ -366,15 +366,17 @@ class Muscle:
         """
         Generate muscle fiber diameters and conduction velocities based on physiological models.
 
-        This method should be called after generate_muscle_fiber_centers() to generate
-        realistic fiber properties based on the number and positions of muscle fibers.
+        This method must be called after generate_muscle_fiber_centers() and assign_mfs2mns():
+        fibre types and diameters are set per motor unit (``fiber_types.py``), then CVs from diameters.
 
-        Results are stored in the `mf_diameters` and `mf_cv` properties after execution.
+        Results are available as ``muscle_fiber_diameters__mm``, ``muscle_fiber_conduction_velocities__mm_per_s``,
+        ``motor_unit_fiber_types``, ``muscle_fiber_types`` and ``fiber_type_ladder``.
 
         Raises
         ------
         ValueError
-            If muscle fiber centers have not been generated first. Call generate_muscle_fiber_centers() first.
+            If muscle fiber centers have not been generated, or fibres not assigned to motor units
+            (call generate_muscle_fiber_centers() and assign_mfs2mns() first).
         """
         if self._muscle_fiber_centers__mm is None:
             raise ValueError(

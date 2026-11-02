@@ -61,7 +61,7 @@ def test_tied_thresholds_order_by_index():
     assert a.unit_z[10] <= a.unit_z[11]
 
 
-@pytest.mark.parametrize("counts, ths, f", [(np.array([100]), np.array([1.0]), 0.574), (n, thresholds, 1.0)])
+@pytest.mark.parametrize("counts, ths, f", [(np.array([100]), np.array([1.0]), 0.574), (n, thresholds, 0.99)])
 def test_degenerate_typing_raises(counts, ths, f):
     with pytest.raises(ValueError, match="type II"):
         fiber_type_ladder(counts, ths, type_i_fiber_fraction=f)
@@ -82,3 +82,27 @@ def test_type_means_hold_when_the_realised_fraction_is_coarse(rng):
     t = lad.unit_types[np.repeat(np.arange(12), coarse)]
     assert d[t == 1].mean() == pytest.approx(50.0, abs=0.5)
     assert d[t == 2].mean() == pytest.approx(67.0, abs=0.5)
+
+
+@pytest.mark.parametrize("kwargs, message", [
+    ({"type_mean_diameters__um": (67.0, 50.0)}, "type_mean_diameters__um"),
+    ({"type_i_fiber_fraction": 0.0}, "type_i_fiber_fraction"),
+    ({"type_i_fiber_fraction": -0.1}, "type_i_fiber_fraction"),
+    ({"type_log_sd": -0.2}, "type_log_sd"),
+    ({"recruitment_thresholds": thresholds[:-1]}, "same length"),
+])
+def test_bad_inputs_raise_clear_errors(kwargs, message):
+    args = {"fibers_per_unit": n, "recruitment_thresholds": thresholds, **kwargs}
+    with pytest.raises(ValueError, match=message):
+        fiber_type_ladder(**args)
+
+
+def test_a_subset_draw_keeps_each_units_own_mean(rng):
+    """The diameter scale is a property of the ladder, not of the fibres passed in: drawing only
+    the top unit's fibres gives that unit's mean, not the pool mean."""
+    lad = fiber_type_ladder(n, thresholds)
+    full = draw_fiber_diameters__um(lad, assignment, rng)
+    top = int(np.argmax(thresholds))
+    subset = draw_fiber_diameters__um(lad, np.full(5000, top), rng)
+    assert subset.mean() == pytest.approx(full[assignment == top].mean(), rel=0.02)
+    assert subset.mean() > 1.2 * lad.target_mean__um

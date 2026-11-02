@@ -14,8 +14,9 @@ threshold along one ladder across the whole pool (design: docs/superpowers/specs
   Table 2]; ``sigma_within`` so that the pool's fibre log-SD equals that of Polgar's two-type
   mixture with ``type_log_sd`` per type (0.2, a modelling assumption).
 - Fibres scatter log-normally about their unit's mean; the combined log-deviation is truncated at
-  3 SD (a modelling assumption), and the diameters are scaled to the mixture mean at the realised type
-  fraction (57.2 um at 57.4 %), so the type means stay at 50.0 / 67.0 um in small pools.
+  3 SD (a modelling assumption). The ladder offset is set so the expected pool mean is the mixture
+  mean at the realised type fraction (57.2 um at 57.4 %), so the type means stay at 50.0 / 67.0 um
+  in small pools.
 
 A per-type ladder would make CV drop at the type boundary, against the linear CV-threshold
 relation measured with HD-sEMG [delvecchio2018 p. 2].
@@ -43,7 +44,10 @@ class FiberTypeLadder:
     type_i_fiber_fraction : float
         Realised fraction of fibres in type I units.
     target_mean__um : float
-        Mean fibre diameter of the pool (um).
+        Expected mean fibre diameter of the pool (um).
+    log_offset : float
+        Ladder offset ``c``: a unit's median fibre diameter is ``exp(c + sigma_between * unit_z)`` um,
+        set so the expected pool mean (with each unit's truncation) is ``target_mean__um``.
     """
 
     unit_types: np.ndarray
@@ -52,6 +56,20 @@ class FiberTypeLadder:
     sigma_within: float
     type_i_fiber_fraction: float
     target_mean__um: float
+    log_offset: float
+
+
+def _truncated_lognormal_factor(centre: np.ndarray, sigma_between: float, sigma_within: float) -> tuple:
+    """Truncation bounds of ``z`` for units at ``centre`` and ``E[exp(sigma_within * z)]`` there.
+
+    The combined log-deviation ``centre + sigma_within * z`` is truncated at 3 SD of the pool
+    (a modelling assumption).
+    """
+    bound = 3.0 * np.hypot(sigma_between, sigma_within)
+    lo, hi = (-bound - centre) / sigma_within, (bound - centre) / sigma_within
+    mass = norm.cdf(hi) - norm.cdf(lo)
+    factor = np.exp(sigma_within**2 / 2) * (norm.cdf(hi - sigma_within) - norm.cdf(lo - sigma_within)) / mass
+    return lo, hi, factor
 
 
 def fiber_type_ladder(
@@ -79,11 +97,23 @@ def fiber_type_ladder(
     Raises
     ------
     ValueError
-        If either type gets no fibres, or the type spread is too small for the ladder.
+        If the inputs are out of range, either type gets no fibres, or the type spread is too small
+        for the ladder.
     """
     n = np.asarray(fibers_per_unit, dtype=float)
     f = float(type_i_fiber_fraction)
     m1, m2 = (float(v) for v in type_mean_diameters__um)
+    if len(n) != len(np.asarray(recruitment_thresholds)):
+        raise ValueError("fiber_type_ladder: fibers_per_unit and recruitment_thresholds must have the same length")
+    if not 0.0 < f < 1.0:
+        raise ValueError(f"fiber_type_ladder: type_i_fiber_fraction must lie in (0, 1), got {f}")
+    if not 0.0 < m1 < m2:
+        raise ValueError(
+            f"fiber_type_ladder: type_mean_diameters__um must be (type I, type II) with 0 < type I < type II, "
+            f"got ({m1}, {m2})"
+        )
+    if not type_log_sd > 0:
+        raise ValueError(f"fiber_type_ladder: type_log_sd must be positive, got {type_log_sd}")
 
     order = np.argsort(np.asarray(recruitment_thresholds), kind="stable")
     cum = np.cumsum(n[order])
@@ -115,29 +145,34 @@ def fiber_type_ladder(
     # The pool mean follows the realised fraction (a unit's worth off f in small pools), so the type
     # means stay at m1 / m2.
     realised = float(n[type_i].sum() / n.sum())
+    target = realised * m1 + (1 - realised) * m2
+    sigma_within = float(np.sqrt(within_var))
+    centre = sigma_between * unit_z
+    _, _, factor = _truncated_lognormal_factor(centre, sigma_between, sigma_within)
+    log_offset = float(np.log(target) - np.log(np.average(np.exp(centre) * factor, weights=n)))
     return FiberTypeLadder(
         unit_types=unit_types,
         unit_z=unit_z,
         sigma_between=sigma_between,
-        sigma_within=float(np.sqrt(within_var)),
+        sigma_within=sigma_within,
         type_i_fiber_fraction=realised,
-        target_mean__um=realised * m1 + (1 - realised) * m2,
+        target_mean__um=target,
+        log_offset=log_offset,
     )
 
 
 def draw_fiber_diameters__um(
     ladder: FiberTypeLadder, assignment: np.ndarray, rng: np.random.Generator
 ) -> np.ndarray:
-    """Draw each fibre's diameter (um) about its unit's ladder mean.
+    """Draw each fibre's diameter (um) about its unit's ladder median.
 
-    The combined log-deviation ``sigma_between * unit_z + sigma_within * z`` is truncated at
-    3 SD of the pool (a modelling assumption); diameters are then scaled to
-    ``ladder.target_mean__um``.
+    ``d = exp(log_offset + sigma_between * unit_z + sigma_within * z)``, with the combined
+    log-deviation truncated at 3 SD of the pool (a modelling assumption). The scale comes from the
+    ladder, so any subset of fibres can be drawn; the whole pool's mean is ``target_mean__um`` in
+    expectation.
     """
     unit = np.asarray(assignment).astype(int)
-    sb, sw = ladder.sigma_between, ladder.sigma_within
-    bound = 3.0 * np.hypot(sb, sw)
-    centre = sb * ladder.unit_z[unit]
-    z = truncnorm.rvs((-bound - centre) / sw, (bound - centre) / sw, random_state=rng)
-    d = np.exp(centre + sw * np.atleast_1d(z))
-    return d * (ladder.target_mean__um / d.mean())
+    centre = ladder.sigma_between * ladder.unit_z[unit]
+    lo, hi, _ = _truncated_lognormal_factor(centre, ladder.sigma_between, ladder.sigma_within)
+    z = truncnorm.rvs(lo, hi, random_state=rng)
+    return np.exp(ladder.log_offset + centre + ladder.sigma_within * np.atleast_1d(z))
