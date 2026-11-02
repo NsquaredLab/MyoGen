@@ -43,7 +43,7 @@ It also ports three fixes that never reached `main` (Gfluctdv noise, fibre condu
 - **Fibre dispersion in surface EMG.** `SurfaceEMG(fiber_dispersion=SurfaceFiberDispersion(...))` adds, each switched on independently:
   - per-fibre end-plates from the two-layer nerve model of Akhmadeev et al. (2020), shared with intramuscular EMG;
   - axon-branch conduction delays;
-  - motor-unit conduction velocity linear in recruitment threshold (Del Vecchio et al. 2018) [delvecchio2018 p. 2], and a spread of fibre velocities within each unit, each fibre propagating at its own velocity;
+  - motor-unit conduction velocity linear in recruitment threshold (Del Vecchio et al. 2018) [delvecchio2018 p. 2], or set per unit with `fiber_cv_per_unit__m_s` (e.g. mapped from each unit's recruitment force), and a spread of fibre velocities within each unit, each fibre propagating at its own velocity;
   - a source scaled by fibre diameter (from the Nandedkar & Stålberg 1983 velocity–diameter line);
   - tendon-end stagger: each fibre end in a band, independently or following a smooth random field across the cross-section so that neighbouring fibres end close together.
 

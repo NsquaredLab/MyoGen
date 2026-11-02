@@ -22,6 +22,8 @@ FDI only: ``_muscle_radius__mm`` (default 6.91) and ``_fiber_density__per_mm2`` 
 ``_spike_file`` (npz with ``spikes`` and ``thresholds``) replaces the generated spike trains.
 ``_iap_lambda__per_mm`` (default 1) sets the Rosenfalck IAP length scale (``SurfaceEMG.iap_lambda__per_mm``);
 ``_mean_cv__m_s`` (default: the ``Muscle`` default) sets the mean muscle-fibre conduction velocity.
+``_fiber_cv_per_unit_file`` (json with ``cv__m_s``, one value per unit) sets each unit's mean fibre CV
+(``SurfaceFiberDispersion.fiber_cv_per_unit__m_s``).
 FDI only: ``_fs__Hz`` (default 2048) sets the output and internal sampling rate. ``_delsys5`` replaces the
 bipolar pair with Delsys 5-pin sensors (0.5 mm pins at the corners and centre of a 5 x 5 mm square, as in
 Pereira Botelho et al. 2019): ``{"z__mm": [...], "rotation__deg": [...], "theta__deg": [...]}`` places one
@@ -65,6 +67,9 @@ delsys5 = config.pop("_delsys5", None)
 iap_lambda = config.pop("_iap_lambda__per_mm", 1.0)
 mean_cv = config.pop("_mean_cv__m_s", None)
 cv_kw = {} if mean_cv is None else {"mean_conduction_velocity__m_per_s": mean_cv * pq.m / pq.s}
+cv_file = config.pop("_fiber_cv_per_unit_file", None)
+if cv_file is not None:
+    config["fiber_cv_per_unit__m_s"] = tuple(json.load(open(cv_file))["cv__m_s"])
 if "nerve_cvs__m_per_s" in config:
     config["nerve_cvs__m_per_s"] = tuple(config["nerve_cvs__m_per_s"])
 dispersion = SurfaceFiberDispersion(**config)
@@ -177,7 +182,7 @@ else:
                           for m in mus])
     mono = np.zeros((0,))
 report = semg.fiber_dispersion_report or {}
-np.savez(out, label=label, scenario=scenario, myogen=myogen.__file__, config=json.dumps(config), skin=skin, fat=fat, skin_sigma=skin_sigma, diameter=diameter, iap_lambda=iap_lambda, mean_cv=mean_cv, radius=radius, density=fdi_density, rate_model=json.dumps(rate_model), spike_file=str(spike_file), mus=mus, counts=counts,
+np.savez(out, label=label, scenario=scenario, myogen=myogen.__file__, config=json.dumps(config), skin=skin, fat=fat, skin_sigma=skin_sigma, diameter=diameter, iap_lambda=iap_lambda, mean_cv=mean_cv, radius=radius, density=fdi_density, rate_model=json.dumps(rate_model), spike_file=str(spike_file), cv_file=str(cv_file), mus=mus, counts=counts,
          fibre_hash=fibre_hash, spike_hash=spike_hash, ramp=RAMP, hold=HOLD, level=LEVEL,
          bip_muaps=templates, pair_muap_fs=float(sig0.sampling_rate.rescale(pq.Hz).magnitude),
          bip_emg=np.asarray(signal_to_grid(emg.rescale(pq.mV))), mono_emg=mono, sensors=np.array(sensors),

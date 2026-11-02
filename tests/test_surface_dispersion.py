@@ -199,6 +199,21 @@ def test_fibre_cv_rises_linearly_with_recruitment_threshold(muscle):
         SurfaceFiberDispersion(fiber_cv_threshold_slope=0.6, fiber_cv_inter_mu_spread=0.3)
 
 
+def test_fibre_cv_per_unit_sets_each_unit_mean_and_keeps_end_plates(muscle):
+    per_unit = tuple(3.5 + 0.1 * i for i in range(12))
+    real = _realize(muscle, SurfaceFiberDispersion(nmj_model="two_layer", fiber_cv_per_unit__m_s=per_unit))
+    ref = _realize(muscle, SurfaceFiberDispersion(nmj_model="two_layer"))
+    for mu, cv in enumerate(real.cv__m_s):
+        np.testing.assert_allclose(cv, per_unit[mu])
+        np.testing.assert_array_equal(real.zi__mm[mu], ref.zi__mm[mu])
+    with pytest.raises(ValueError):
+        SurfaceFiberDispersion(fiber_cv_per_unit__m_s=per_unit, fiber_cv_threshold_slope=0.63)
+    with pytest.raises(ValueError):
+        SurfaceFiberDispersion(fiber_cv_per_unit__m_s=(4.0, -1.0))
+    with pytest.raises(ValueError):
+        _realize(muscle, SurfaceFiberDispersion(fiber_cv_per_unit__m_s=per_unit[:5]))
+
+
 def test_diameter_coupling_scales_source_with_cross_section(muscle):
     cfg = SurfaceFiberDispersion(fiber_cv_within_mu_cov=0.08, diameter_scales_source=True)
     real = _realize(muscle, cfg)

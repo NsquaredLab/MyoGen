@@ -63,6 +63,12 @@ class SurfaceFiberDispersion:
         4.32) [delvecchio2018 p. 2], about 0.63 of the mean per unit of threshold
         (derived from those values). Cannot be combined with
         ``fiber_cv_inter_mu_spread``.
+    fiber_cv_per_unit__m_s : tuple of float, optional
+        Mean fibre CV of each motor unit (m/s), in pool order, replacing
+        ``mean * threshold factor``; e.g. CV mapped from each unit's measured
+        recruitment force. Cannot be combined with ``fiber_cv_threshold_slope``
+        or ``fiber_cv_inter_mu_spread``. The diameter-scaled source stays
+        relative to the diameter at the muscle mean CV.
     fiber_cv_within_mu_cov : float
         Coefficient of variation of fibre CV within a motor unit (normal,
         clipped at three standard deviations). No measurement of this spread
@@ -99,6 +105,7 @@ class SurfaceFiberDispersion:
     fiber_cv_inter_mu_spread: float = 0.0
     fiber_cv_threshold_slope: float = 0.0
     fiber_cv_within_mu_cov: float = 0.0
+    fiber_cv_per_unit__m_s: Optional[tuple[float, ...]] = None
     diameter_scales_source: bool = False
     cv_per_diameter__m_s_per_mm: float = CV_PER_DIAMETER__M_S_PER_MM
     cv_intercept__m_s: float = CV_INTERCEPT__M_S
@@ -132,6 +139,12 @@ class SurfaceFiberDispersion:
             raise ValueError("use either fiber_cv_threshold_slope or fiber_cv_inter_mu_spread, not both")
         if not 0 <= self.fiber_cv_within_mu_cov < 1 / 3:
             raise ValueError("fiber_cv_within_mu_cov must be in [0, 1/3)")
+        if self.fiber_cv_per_unit__m_s is not None:
+            if self.fiber_cv_threshold_slope or self.fiber_cv_inter_mu_spread:
+                raise ValueError("fiber_cv_per_unit__m_s replaces fiber_cv_threshold_slope and "
+                                 "fiber_cv_inter_mu_spread; set those to 0")
+            if min(self.fiber_cv_per_unit__m_s) <= 0:
+                raise ValueError("fiber_cv_per_unit__m_s must be positive")
 
     @classmethod
     def literature_candidate(cls, seed: int = 0) -> "SurfaceFiberDispersion":
@@ -161,7 +174,7 @@ class SurfaceFiberDispersion:
     def active(self) -> bool:
         return (self.nmj_model != "uniform_mu" or self.nerve_delays
                 or self.fiber_cv_inter_mu_spread > 0 or self.fiber_cv_threshold_slope > 0
-                or self.fiber_cv_within_mu_cov > 0
+                or self.fiber_cv_within_mu_cov > 0 or self.fiber_cv_per_unit__m_s is not None
                 or self.diameter_scales_source or self.tendon_end_band__mm > 0)
 
 
@@ -232,6 +245,8 @@ def realize_fiber_dispersion(
     rt = np.asarray(recruitment_thresholds, dtype=float)
     rt = rt / rt.max()
     threshold_factor = 1 + config.fiber_cv_threshold_slope * (rt - rt.mean())
+    if config.fiber_cv_per_unit__m_s is not None and len(config.fiber_cv_per_unit__m_s) != n_mu:
+        raise ValueError(f"fiber_cv_per_unit__m_s has {len(config.fiber_cv_per_unit__m_s)} values for {n_mu} motor units")
     if np.any(threshold_factor <= 0):
         raise ValueError("fiber_cv_threshold_slope gives a non-positive CV for the first-recruited units")
     d_mean__um = (mean_cv__m_s - config.cv_intercept__m_s) / config.cv_per_diameter__m_s_per_mm * 1e3
@@ -276,6 +291,8 @@ def realize_fiber_dispersion(
 
         cv_mu = mean_cv__m_s * threshold_factor[mu] * (1 - config.fiber_cv_inter_mu_spread / 2
                                                        + config.fiber_cv_inter_mu_spread * rank[mu])
+        if config.fiber_cv_per_unit__m_s is not None:
+            cv_mu = float(config.fiber_cv_per_unit__m_s[mu])
         cov = config.fiber_cv_within_mu_cov
         if cov > 0:
             cv = np.clip(cv_rng.normal(cv_mu, cov * cv_mu, size=n), cv_mu * (1 - 3 * cov), cv_mu * (1 + 3 * cov))
