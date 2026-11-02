@@ -42,6 +42,7 @@ sys.path.insert(0, str(BASIC_DIR))
 from myogen import get_random_generator, set_random_seed
 from myogen.simulator import RecruitmentThresholds
 from myogen.simulator.core.force.force_model import ForceModel
+from myogen.simulator.core.force.force_utils import FUGLEVAND_FORCE_FREQUENCY, HUMAN_UNIT_FORCE_FREQUENCY
 from myogen.simulator.neuron import Network
 from myogen.simulator.neuron.network import _create_netcon, _select_synapse
 from myogen.simulator.neuron.populations import AlphaMN__Pool, DescendingDrive__Pool
@@ -74,6 +75,13 @@ THRESHOLD_MODE = "combined"   # RecruitmentThresholds mode for the pool
 RECRUITMENT_RANGE = 30.0      # largest / smallest threshold
 MAX_RECRUITMENT = 1.0         # excitation at which the last unit is recruited (rate-coding targets only)
 LAST_RECRUIT_PCT_MVC: float | None = None  # force (% MVC) at which the last unit is recruited; None: no ceiling term
+CEILING_RANK = 0              # score the unit with CEILING_RANK units recruited above it (0: the last unit)
+FORCE_FREQUENCY_SHAPE = FUGLEVAND_FORCE_FREQUENCY  # (a, c) of the ForceModel force-frequency saturation
+FORCE_FREQUENCY_SHAPES = {"fuglevand": FUGLEVAND_FORCE_FREQUENCY, "human": HUMAN_UNIT_FORCE_FREQUENCY}
+# Mean FDI firing rates (Hz) at % MVC, De Luca et al. 1982 Table 1 (peak rates in 40 and 80 % MVC contractions).
+HIGH_FORCE_RATE_TARGETS = {40: 25.3, 80: 41.4}
+HIGH_FORCE_RATE_WEIGHT = 1.0  # per level, relative rate error; scored on the MVC ramp
+SCORE_HIGH_FORCE_RATES = False
 DE_LUCA_PARAMS: dict = {}     # overrides for de_luca_targets
 RESULTS_TAG = "polygon"
 
@@ -243,15 +251,43 @@ def smoothed_force(force, fs):
     return np.convolve(force, np.ones(w) / w, mode="same")
 
 
-def last_recruitment_pct_mvc(t_rec, force, fs, mvc):
-    """Force (% MVC, smoothed) at the last unit's recruitment and the number of units never recruited.
-    Units never recruited push the value past 100 % (100 * (1 + n_unrecruited / n))."""
+def last_recruitment_pct_mvc(t_rec, force, fs, mvc, rank=0):
+    """Force (% MVC, smoothed) at the recruitment of the unit with ``rank`` units recruited after it (0: the last
+    unit), and the number of units never recruited. Unrecruited units count as recruited after it; more of them than
+    ``rank`` push the value past 100 % (100 * (1 + (n_unrecruited - rank) / n))."""
     t_rec = np.asarray(t_rec, dtype=float)
     n_unrec = int(np.isnan(t_rec).sum())
-    if n_unrec:
-        return 100.0 * (1.0 + n_unrec / len(t_rec)), n_unrec
-    i = min(int(round(np.max(t_rec) * fs)), len(force) - 1)
-    return float(100.0 * smoothed_force(force, fs)[i] / mvc), 0
+    if n_unrec > rank:
+        return 100.0 * (1.0 + (n_unrec - rank) / len(t_rec)), n_unrec
+    t = np.sort(t_rec[~np.isnan(t_rec)])[::-1][rank - n_unrec]
+    i = min(int(round(t * fs)), len(force) - 1)
+    return float(100.0 * smoothed_force(force, fs)[i] / mvc), n_unrec
+
+
+def rates_at_pct_mvc(trains, force, fs, mvc, levels=tuple(HIGH_FORCE_RATE_TARGETS), window_s=1.0, min_spikes=3):
+    """Mean firing rate (Hz) of the active units (>= min_spikes in window_s) centred where the smoothed force first
+    reaches each level (% MVC). ``trains`` are spike times in s. NaN for a level never reached."""
+    sm = smoothed_force(force, fs)
+    out = {}
+    for lev in levels:
+        hit = np.nonzero(sm >= lev / 100.0 * mvc)[0]
+        if not len(hit):
+            out[lev] = float("nan")
+            continue
+        t0 = hit[0] / fs
+        counts = [np.sum((np.asarray(st) > t0 - window_s / 2) & (np.asarray(st) <= t0 + window_s / 2)) for st in trains]
+        rates = [c / window_s for c in counts if c >= min_spikes]
+        out[lev] = float(np.mean(rates)) if rates else 0.0
+    return out
+
+
+def high_force_rate_penalty(rates):
+    """HIGH_FORCE_RATE_WEIGHT * relative rate error at each HIGH_FORCE_RATE_TARGETS level (1 per missing level)."""
+    err = 0.0
+    for lev, tgt in HIGH_FORCE_RATE_TARGETS.items():
+        r = rates.get(lev, float("nan"))
+        err += 1.0 if not np.isfinite(r) else abs(r - tgt) / tgt
+    return HIGH_FORCE_RATE_WEIGHT * err
 
 
 def ceiling_penalty(pct_last, target_pct=None):
@@ -271,18 +307,24 @@ def mvc_drive(segments, threshold_hz, max_hz):
     return e, hz
 
 
+def make_force_model(thresholds):
+    """ForceModel (Fuglevand 1993 twitches) at FORCE_FS_HZ with the FORCE_FREQUENCY_SHAPE saturation."""
+    return ForceModel(recruitment_thresholds=thresholds, recording_frequency__Hz=FORCE_FS_HZ * pq.Hz,
+                      force_frequency_shape=FORCE_FREQUENCY_SHAPE)
+
+
 def simulate_force(thresholds, dd_params, threshold_hz, segments):
-    """Run the drive of ``mvc_drive``; return (excitation, block, force at FORCE_FS_HZ) (Fuglevand 1993 twitches)."""
+    """Run the drive of ``mvc_drive``; return (excitation, block, force at FORCE_FS_HZ) (see ``make_force_model``)."""
     e, hz = mvc_drive(segments, threshold_hz, dd_params["dd_drive__Hz"])
     block = run_dd_ramp(thresholds, hz, dd_params, len(e) * TIMESTEP_MS)
-    fm = ForceModel(recruitment_thresholds=thresholds, recording_frequency__Hz=FORCE_FS_HZ * pq.Hz)
-    return e, block, np.asarray(fm.generate_force(block).magnitude)[:, 0]
+    return e, block, np.asarray(make_force_model(thresholds).generate_force(block).magnitude)[:, 0]
 
 
 def run_mvc_ramp(thresholds, dd_params, threshold_hz):
     """MVC ramp: MVC_REST_S rest, excitation 0 -> 1 at CEILING_RAMP_PER_S, MVC_HOLD_S hold at 1.
     MVC is the mean force over the last 2 s of the hold. Returns a namespace with e, block, force, mvc,
-    t_rec (recruitment times, s) and pct_last / n_unrecruited (see ``last_recruitment_pct_mvc``)."""
+    t_rec (recruitment times, s), pct_last / n_unrecruited (see ``last_recruitment_pct_mvc``), pct_ranked
+    (the CEILING_RANK unit) and rates (``rates_at_pct_mvc`` at the HIGH_FORCE_RATE_TARGETS levels)."""
     ramp_s = 1.0 / CEILING_RAMP_PER_S
     e, block, f = simulate_force(thresholds, dd_params, threshold_hz,
                                  [(MVC_REST_S, 0.0, 0.0), (ramp_s, 0.0, 1.0), (MVC_HOLD_S, 1.0, 1.0)])
@@ -291,8 +333,11 @@ def run_mvc_ramp(thresholds, dd_params, threshold_hz):
     mvc = float(np.mean(f[(t > t_end - 2.0) & (t < t_end)]))
     t_rec = recruitment_times(block)
     pct_last, n_unrec = last_recruitment_pct_mvc(t_rec, f, FORCE_FS_HZ, mvc)
+    pct_ranked, _ = last_recruitment_pct_mvc(t_rec, f, FORCE_FS_HZ, mvc, rank=CEILING_RANK)
+    trains = [np.asarray(st.rescale("s").magnitude) for st in block.segments[0].spiketrains]
+    rates = rates_at_pct_mvc(trains, f, FORCE_FS_HZ, mvc)
     return SimpleNamespace(e=e, block=block, force=f, mvc=mvc, t_rec=t_rec, pct_last=pct_last,
-                           n_unrecruited=n_unrec)
+                           n_unrecruited=n_unrec, pct_ranked=pct_ranked, rates=rates)
 
 
 def run_dd_constant(thresholds, drive_hz, dd_params, duration_ms=3000.0):
@@ -506,14 +551,21 @@ def make_objective(thresholds, fug_targets):
 
             # Recruitment ceiling: the ramp above stops at RAMP_MVC_PCT, so the last unit is found on a separate
             # MVC ramp, scored by the force (% MVC) at its recruitment. Units never recruited push it past 100 %.
-            pct_last, n_unrecruited = float("nan"), None
-            if LAST_RECRUIT_PCT_MVC is not None:
+            # The same ramp gives the firing rates at high force (De Luca 1982), which the ramp above never reaches.
+            pct_last, pct_ranked, n_unrecruited, hf_rates = float("nan"), float("nan"), None, {}
+            if LAST_RECRUIT_PCT_MVC is not None or SCORE_HIGH_FORCE_RATES:
                 mvc_ramp = run_mvc_ramp(thresholds, dd_params, threshold_hz)
                 pct_last, n_unrecruited = mvc_ramp.pct_last, mvc_ramp.n_unrecruited
-                total_error += ceiling_penalty(pct_last, LAST_RECRUIT_PCT_MVC)
+                pct_ranked, hf_rates = mvc_ramp.pct_ranked, mvc_ramp.rates
+                total_error += ceiling_penalty(pct_ranked, LAST_RECRUIT_PCT_MVC)
+                if SCORE_HIGH_FORCE_RATES:
+                    total_error += high_force_rate_penalty(hf_rates)
 
             # Store metadata
             trial.set_user_attr("pct_mvc_last_recruited", pct_last)
+            trial.set_user_attr("pct_mvc_ceiling_ranked", pct_ranked)
+            for lev, r in hf_rates.items():
+                trial.set_user_attr(f"mean_fr_{lev}_mvc_ramp", r)
             trial.set_user_attr("n_unrecruited", n_unrecruited)
             trial.set_user_attr("threshold_hz", threshold_hz)
             trial.set_user_attr("isi_cv_mean", mean_cv)
@@ -627,8 +679,12 @@ def optimize_for_mu_count(n_mu, n_trials, profile, target_model="de_luca",
           f"gfluctdv={best.params.get('gfluctdv_scale', 0):.3f}")
     print(f"  ISI CV: {best.user_attrs.get('isi_cv_mean', 0)*100:.1f}% "
           f"(target: {ISI_CV_TARGET[0]*100:.0f}-{ISI_CV_TARGET[1]*100:.0f}%)")
-    print(f"  Last unit recruited at {best.user_attrs.get('pct_mvc_last_recruited', float('nan')):.1f} % MVC "
+    print(f"  Last unit recruited at {best.user_attrs.get('pct_mvc_last_recruited', float('nan')):.1f} % MVC; "
+          f"unit with {CEILING_RANK} above it at {best.user_attrs.get('pct_mvc_ceiling_ranked', float('nan')):.1f} % "
           f"(target {LAST_RECRUIT_PCT_MVC}), unrecruited {best.user_attrs.get('n_unrecruited', '?')}")
+    print("  MVC-ramp rates: " + ", ".join(
+        f"{lev} % MVC {best.user_attrs.get(f'mean_fr_{lev}_mvc_ramp', float('nan')):.1f}/{tgt:.1f} Hz"
+        for lev, tgt in HIGH_FORCE_RATE_TARGETS.items()))
     for p in CHECKPOINTS:
         sim_n = best.user_attrs.get(f"n_active_{p}", "?")
         sim_fr = best.user_attrs.get(f"mean_fr_{p}", 0)
@@ -644,6 +700,9 @@ def optimize_for_mu_count(n_mu, n_trials, profile, target_model="de_luca",
             "recruitment_range": RECRUITMENT_RANGE,
             "max_recruitment": MAX_RECRUITMENT,
             "last_recruit_pct_mvc": LAST_RECRUIT_PCT_MVC,
+            "ceiling_rank": CEILING_RANK,
+            "force_frequency_shape": list(FORCE_FREQUENCY_SHAPE),
+            "high_force_rate_targets": HIGH_FORCE_RATE_TARGETS if SCORE_HIGH_FORCE_RATES else None,
             "de_luca_params": DE_LUCA_PARAMS,
             "targets": {str(k): v for k, v in fug.items()},
             "min_fr_hz": MIN_FR_HZ,
@@ -661,6 +720,9 @@ def optimize_for_mu_count(n_mu, n_trials, profile, target_model="de_luca",
             "isi_cv_mean": best.user_attrs.get("isi_cv_mean", 0.0),
             "network": dict(NETWORK),
             "pct_mvc_last_recruited": best.user_attrs.get("pct_mvc_last_recruited"),
+            "pct_mvc_ceiling_ranked": best.user_attrs.get("pct_mvc_ceiling_ranked"),
+            **{f"mean_fr_{lev}_mvc_ramp": best.user_attrs.get(f"mean_fr_{lev}_mvc_ramp")
+               for lev in HIGH_FORCE_RATE_TARGETS},
             "n_unrecruited": best.user_attrs.get("n_unrecruited"),
             "threshold_hz": best.user_attrs.get("threshold_hz"),
             **{f"n_active_{p}": best.user_attrs.get(f"n_active_{p}") for p in CHECKPOINTS},
@@ -675,6 +737,7 @@ def optimize_for_mu_count(n_mu, n_trials, profile, target_model="de_luca",
             "ceiling_weight": CEILING_WEIGHT,
             "ceiling_ramp_per_s": CEILING_RAMP_PER_S,
             "mvc_rest_s": MVC_REST_S,
+            "high_force_rate_weight": HIGH_FORCE_RATE_WEIGHT,
             "mvc_hold_s": MVC_HOLD_S,
             "elapsed_s": elapsed,
         },
@@ -701,8 +764,12 @@ def _save_best_from_study(study, n_mu, target_muscle, target_model,
           f"gfluctdv={best.params.get('gfluctdv_scale', 0):.3f}")
     print(f"  ISI CV: {best.user_attrs.get('isi_cv_mean', 0)*100:.1f}% "
           f"(target: {ISI_CV_TARGET[0]*100:.0f}-{ISI_CV_TARGET[1]*100:.0f}%)")
-    print(f"  Last unit recruited at {best.user_attrs.get('pct_mvc_last_recruited', float('nan')):.1f} % MVC "
+    print(f"  Last unit recruited at {best.user_attrs.get('pct_mvc_last_recruited', float('nan')):.1f} % MVC; "
+          f"unit with {CEILING_RANK} above it at {best.user_attrs.get('pct_mvc_ceiling_ranked', float('nan')):.1f} % "
           f"(target {LAST_RECRUIT_PCT_MVC}), unrecruited {best.user_attrs.get('n_unrecruited', '?')}")
+    print("  MVC-ramp rates: " + ", ".join(
+        f"{lev} % MVC {best.user_attrs.get(f'mean_fr_{lev}_mvc_ramp', float('nan')):.1f}/{tgt:.1f} Hz"
+        for lev, tgt in HIGH_FORCE_RATE_TARGETS.items()))
     for p in CHECKPOINTS:
         sim_n = best.user_attrs.get(f"n_active_{p}", "?")
         sim_fr = best.user_attrs.get(f"mean_fr_{p}", 0)
@@ -717,6 +784,9 @@ def _save_best_from_study(study, n_mu, target_muscle, target_model,
             "recruitment_range": RECRUITMENT_RANGE,
             "max_recruitment": MAX_RECRUITMENT,
             "last_recruit_pct_mvc": LAST_RECRUIT_PCT_MVC,
+            "ceiling_rank": CEILING_RANK,
+            "force_frequency_shape": list(FORCE_FREQUENCY_SHAPE),
+            "high_force_rate_targets": HIGH_FORCE_RATE_TARGETS if SCORE_HIGH_FORCE_RATES else None,
             "de_luca_params": DE_LUCA_PARAMS,
             "targets": {str(k): v for k, v in fug_targets.items()},
             "min_fr_hz": MIN_FR_HZ,
@@ -734,6 +804,9 @@ def _save_best_from_study(study, n_mu, target_muscle, target_model,
             "isi_cv_mean": best.user_attrs.get("isi_cv_mean", 0.0),
             "network": dict(NETWORK),
             "pct_mvc_last_recruited": best.user_attrs.get("pct_mvc_last_recruited"),
+            "pct_mvc_ceiling_ranked": best.user_attrs.get("pct_mvc_ceiling_ranked"),
+            **{f"mean_fr_{lev}_mvc_ramp": best.user_attrs.get(f"mean_fr_{lev}_mvc_ramp")
+               for lev in HIGH_FORCE_RATE_TARGETS},
             "n_unrecruited": best.user_attrs.get("n_unrecruited"),
             "threshold_hz": best.user_attrs.get("threshold_hz"),
             **{f"n_active_{p}": best.user_attrs.get(f"n_active_{p}") for p in CHECKPOINTS},
@@ -749,6 +822,7 @@ def _save_best_from_study(study, n_mu, target_muscle, target_model,
             "ceiling_weight": CEILING_WEIGHT,
             "ceiling_ramp_per_s": CEILING_RAMP_PER_S,
             "mvc_rest_s": MVC_REST_S,
+            "high_force_rate_weight": HIGH_FORCE_RATE_WEIGHT,
             "mvc_hold_s": MVC_HOLD_S,
             "elapsed_s": elapsed,
         },
@@ -851,6 +925,9 @@ def run_parallel(args):
             "--recruitment-range", str(RECRUITMENT_RANGE),
             "--max-recruitment", str(MAX_RECRUITMENT),
             *(["--last-recruit-mvc", str(LAST_RECRUIT_PCT_MVC)] if LAST_RECRUIT_PCT_MVC is not None else []),
+            "--ceiling-rank", str(CEILING_RANK),
+            "--force-frequency", next(k for k, v in FORCE_FREQUENCY_SHAPES.items() if v == FORCE_FREQUENCY_SHAPE),
+            *(["--high-force-rates"] if SCORE_HIGH_FORCE_RATES else []),
             "--de-luca-params", json.dumps(DE_LUCA_PARAMS),
             "--results-tag", RESULTS_TAG,
             "--_worker-seed", str(42 + w),
@@ -944,15 +1021,25 @@ def main():
     ap.add_argument("--last-recruit-mvc", type=float, default=None,
                     help="Force (%% MVC) at which the last unit should be recruited, scored on a separate MVC ramp. "
                          "Default: no ceiling term.")
+    ap.add_argument("--ceiling-rank", type=int, default=0,
+                    help="Score the unit with K units recruited above it instead of the last unit (default 0).")
+    ap.add_argument("--force-frequency", choices=sorted(FORCE_FREQUENCY_SHAPES), default="fuglevand",
+                    help="ForceModel force-frequency saturation: fuglevand (1993, default) or human (fit to human "
+                         "single motor units, force_utils.HUMAN_UNIT_FORCE_FREQUENCY).")
+    ap.add_argument("--high-force-rates", action="store_true",
+                    help="Also score MVC-ramp firing rates at 40 and 80 %% MVC against De Luca et al. 1982.")
     ap.add_argument("--de-luca-params", type=str, default="{}",
                     help="JSON overrides for de_luca_targets, e.g. fr_onset_hz.")
     ap.add_argument("--results-tag", type=str, default="polygon")
     args = ap.parse_args()
     global THRESHOLD_MODE, RECRUITMENT_RANGE, MAX_RECRUITMENT, LAST_RECRUIT_PCT_MVC, DE_LUCA_PARAMS, RESULTS_TAG
+    global CEILING_RANK, FORCE_FREQUENCY_SHAPE, SCORE_HIGH_FORCE_RATES
     THRESHOLD_MODE, RECRUITMENT_RANGE = args.threshold_mode, args.recruitment_range
     MAX_RECRUITMENT, RESULTS_TAG = args.max_recruitment, args.results_tag
     DE_LUCA_PARAMS = json.loads(args.de_luca_params)
     LAST_RECRUIT_PCT_MVC = args.last_recruit_mvc
+    CEILING_RANK, SCORE_HIGH_FORCE_RATES = args.ceiling_rank, args.high_force_rates
+    FORCE_FREQUENCY_SHAPE = FORCE_FREQUENCY_SHAPES[args.force_frequency]
     if LAST_RECRUIT_PCT_MVC is None:
         print("Recruitment ceiling term off (pass --last-recruit-mvc PCT to score the last unit's recruitment force).")
 

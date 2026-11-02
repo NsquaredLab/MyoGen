@@ -17,7 +17,7 @@ from myogen.utils.types import (
     SPIKE_TRAIN__Block,
 )
 
-from .force_utils import fuglevand_gain
+from .force_utils import FUGLEVAND_FORCE_FREQUENCY, fuglevand_gain
 
 
 @beartowertype
@@ -50,6 +50,10 @@ class ForceModel:
         than 1. If None, defaults to the last/first recruitment-threshold ratio for
         backward compatibility. Fuglevand et al. (1993) use RP = 100 independently
         of the recruitment range RR = 30.
+    force_frequency_shape : tuple of float, default=(2.0, 3.0)
+        (a, c) of the force-frequency saturation S(r) = 1 - exp(-a r^c), r = contraction time / ISI.
+        The default is Fuglevand et al. (1993) eq. 17. ``force_utils.HUMAN_UNIT_FORCE_FREQUENCY``
+        (0.93, 1.29) is fitted to human single motor units, which keep gaining force above ~20 Hz.
 
     Attributes
     ----------
@@ -107,6 +111,7 @@ class ForceModel:
         longest_duration_rise_time__ms: Quantity__ms = 90.0 * pq.ms,
         contraction_time_range_factor: float = 3.0,
         twitch_force_range: float | None = None,
+        force_frequency_shape: tuple[float, float] = FUGLEVAND_FORCE_FREQUENCY,
     ) -> None:
         # Input validation
         if len(recruitment_thresholds) == 0:
@@ -148,12 +153,19 @@ class ForceModel:
                 "This parameter determines the spread of peak twitch forces. Fuglevand et al. (1993) use 100."
             )
 
+        force_frequency_shape = tuple(float(v) for v in force_frequency_shape)
+        if len(force_frequency_shape) != 2 or min(force_frequency_shape) <= 0:
+            raise ValueError(
+                f"force_frequency_shape must be two positive numbers (a, c), got {force_frequency_shape}."
+            )
+
         # Immutable public access
         self.recruitment_thresholds = recruitment_thresholds
         self.recording_frequency__Hz = recording_frequency__Hz
         self.longest_duration_rise_time__ms = longest_duration_rise_time__ms
         self.contraction_time_range_factor = contraction_time_range_factor
         self.twitch_force_range = twitch_force_range
+        self.force_frequency_shape = force_frequency_shape
 
         # Private copies for internal modifications
         self._recruitment_thresholds = recruitment_thresholds.copy()
@@ -363,7 +375,7 @@ class ForceModel:
             P = self._peak_twitch_forces__unitless[n]
             r = T / (np.diff(idx) * spiketrain_timestep__s)
             x = np.zeros(L)
-            x[idx] = np.concatenate(([1.0], fuglevand_gain(r)))
+            x[idx] = np.concatenate(([1.0], fuglevand_gain(r, *self.force_frequency_shape)))
 
             # Exact sampled twitch impulse response, with no tail truncation.
             a = np.exp(-spiketrain_timestep__s / T)

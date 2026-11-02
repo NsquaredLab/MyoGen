@@ -134,3 +134,51 @@ def test_ceiling_target_is_given_in_percent_mvc(opt):
     assert opt.ceiling_penalty(55.0, 55.0) == 0.0
     assert opt.ceiling_penalty(66.0, 55.0) == pytest.approx(opt.CEILING_WEIGHT * 11.0 / 55.0)
     assert opt.ceiling_penalty(80.0, None) == 0.0, "no target: the ceiling term is off"
+
+
+def test_ceiling_rank_scores_the_unit_with_k_units_above_it(opt):
+    fs = 1000.0
+    force = 10.0 * np.arange(0, 10.0, 1 / fs)  # MVC 100 at t = 10 s
+    t_rec = np.array([1.0, 6.0, 3.0, 5.0])
+    assert opt.last_recruitment_pct_mvc(t_rec, force, fs, mvc=100.0)[0] == pytest.approx(60.0, abs=0.2)
+    assert opt.last_recruitment_pct_mvc(t_rec, force, fs, mvc=100.0, rank=1)[0] == pytest.approx(50.0, abs=0.2)
+
+
+def test_unrecruited_units_count_as_above_the_ranked_unit(opt):
+    fs = 1000.0
+    force = 10.0 * np.arange(0, 10.0, 1 / fs)
+    t_rec = np.array([1.0, np.nan, 3.0, 5.0])
+    pct, n_unrec = opt.last_recruitment_pct_mvc(t_rec, force, fs, mvc=100.0, rank=1)
+    assert n_unrec == 1
+    assert pct == pytest.approx(50.0, abs=0.2), "one unit (unrecruited) above: the highest recruited unit is scored"
+    pct, _ = opt.last_recruitment_pct_mvc(np.array([1.0, np.nan, np.nan, 5.0]), force, fs, mvc=100.0, rank=1)
+    assert pct == pytest.approx(125.0), "more unrecruited units than the rank allows: past 100 % as before"
+
+
+def test_rates_are_read_where_the_force_reaches_each_level(opt):
+    fs = 1000.0
+    force = 10.0 * np.arange(0, 10.0, 1 / fs)  # 40 % MVC at 4 s, 80 % at 8 s
+    trains = [np.arange(0.0, 10.0, 1 / 20.0), np.r_[np.arange(0.0, 6.0, 1 / 10.0), np.arange(6.0, 10.0, 1 / 30.0)],
+              np.array([9.5])]  # third unit not active at either level
+    rates = opt.rates_at_pct_mvc(trains, force, fs, mvc=100.0, levels=(40, 80))
+    assert rates[40] == pytest.approx((20 + 10) / 2, abs=1.0)
+    assert rates[80] == pytest.approx((20 + 30) / 2, abs=1.0)
+
+
+def test_high_force_rates_are_scored_against_de_luca_1982(opt):
+    assert opt.HIGH_FORCE_RATE_TARGETS == {40: 25.3, 80: 41.4}
+    assert opt.high_force_rate_penalty({40: 25.3, 80: 41.4}) == 0.0
+    expected = opt.HIGH_FORCE_RATE_WEIGHT * (5.06 / 25.3 + 8.28 / 41.4)
+    assert opt.high_force_rate_penalty({40: 20.24, 80: 33.12}) == pytest.approx(expected)
+
+
+def test_force_model_uses_the_selected_force_frequency_shape(opt):
+    from myogen.simulator.core.force.force_utils import FUGLEVAND_FORCE_FREQUENCY, HUMAN_UNIT_FORCE_FREQUENCY
+    thresholds = np.linspace(0.02, 1.0, 12)
+    assert opt.FORCE_FREQUENCY_SHAPE == FUGLEVAND_FORCE_FREQUENCY
+    old = opt.FORCE_FREQUENCY_SHAPE
+    try:
+        opt.FORCE_FREQUENCY_SHAPE = HUMAN_UNIT_FORCE_FREQUENCY
+        assert opt.make_force_model(thresholds).force_frequency_shape == HUMAN_UNIT_FORCE_FREQUENCY
+    finally:
+        opt.FORCE_FREQUENCY_SHAPE = old

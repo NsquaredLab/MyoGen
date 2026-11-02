@@ -47,6 +47,8 @@ tgt, best = res["target"], res["best_trial"]
 opt.THRESHOLD_MODE = args.threshold_mode or tgt.get("threshold_mode", "combined")
 opt.RECRUITMENT_RANGE = args.recruitment_range or float(tgt.get("recruitment_range", 30.0))
 opt.MAX_RECRUITMENT = args.max_recruitment or float(tgt.get("max_recruitment", 1.0))
+opt.FORCE_FREQUENCY_SHAPE = tuple(tgt.get("force_frequency_shape", opt.FORCE_FREQUENCY_SHAPE))  # as calibrated
+opt.CEILING_RANK = int(tgt.get("ceiling_rank", 0))
 set_random_seed(42)
 thresholds, _ = opt._thresholds("fdi", args.n_mu)
 dd = {k: best[k] for k in ("dd_neurons", "conn_probability", "dd_drive__Hz", "synaptic_weight", "gamma_shape",
@@ -80,11 +82,14 @@ curve = {int(p): float(e_t[ramp][np.argmax(smooth[ramp] >= p / 100 * mvc)]) for 
 save("mvc_ramp", e, block, f, mvc)
 print("MVC force (model units):", mvc)
 print("excitation at % MVC:", curve)
-print(f"last unit recruited at {r.pct_last:.1f} % MVC, unrecruited {r.n_unrecruited}", flush=True)
+print(f"force-frequency shape {opt.FORCE_FREQUENCY_SHAPE}; last unit recruited at {r.pct_last:.1f} % MVC, "
+      f"unit with {opt.CEILING_RANK} above at {r.pct_ranked:.1f} %, unrecruited {r.n_unrecruited}; rates {r.rates}",
+      flush=True)
 
 # 2. Benchmark trapezoids
 summary = {"mvc": mvc, "excitation_at_pct_mvc": curve, "pct_mvc_last_recruited": r.pct_last,
-           "n_unrecruited": r.n_unrecruited}
+           "n_unrecruited": r.n_unrecruited, "pct_mvc_ceiling_ranked": r.pct_ranked, "ceiling_rank": opt.CEILING_RANK,
+           "force_frequency_shape": list(opt.FORCE_FREQUENCY_SHAPE), "rates_at_pct_mvc": r.rates}
 
 
 def trapezoid(name, level):

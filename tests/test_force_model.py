@@ -6,7 +6,7 @@ import quantities as pq
 from neo import Block, Segment, SpikeTrain
 
 from myogen.simulator import ForceModel, ForceModelVectorized
-from myogen.simulator.core.force.force_utils import fuglevand_gain
+from myogen.simulator.core.force.force_utils import HUMAN_UNIT_FORCE_FREQUENCY, fuglevand_gain
 
 
 MODELS = (ForceModel, ForceModelVectorized)
@@ -164,3 +164,47 @@ def test_force_single_spike_has_analytic_tail(model_class, unit):
     lengths = np.ceil(10 * model.contraction_times__samples).astype(int)
     assert model.twitch_mat.shape == (max(lengths), len(THRESHOLDS))
     assert [len(twitch) for twitch in model.twitch_list] == list(lengths)
+
+
+def test_gain_saturation_shape_generalises_fuglevand():
+    r = np.array([0.1, 0.41, 0.6, 1, 2, 10])
+    np.testing.assert_array_equal(fuglevand_gain(r, a=2.0, c=3.0), fuglevand_gain(r))
+    a, c = HUMAN_UNIT_FORCE_FREQUENCY
+    s = lambda x: 1 - np.exp(-a * x**c)  # noqa: E731
+    expected = np.where(r > 0.4, s(r) / r / (s(0.4) / 0.4), 1.0)
+    np.testing.assert_allclose(fuglevand_gain(r, a=a, c=c), expected, rtol=1e-14)
+
+
+@pytest.mark.parametrize("model_class", MODELS)
+def test_force_frequency_shape_default_is_fuglevand(model_class):
+    assert model_class(THRESHOLDS, 1000 * pq.Hz).force_frequency_shape == (2.0, 3.0)
+
+
+@pytest.mark.parametrize("model_class", MODELS)
+@pytest.mark.parametrize("rate", [5, 10, 20, 40, 120])
+def test_force_matches_closed_form_with_human_unit_shape(model_class, rate):
+    a, c = HUMAN_UNIT_FORCE_FREQUENCY
+    model = model_class(THRESHOLDS, 10000 * pq.Hz, force_frequency_shape=(a, c))
+    block = _spike_block([np.arange(0.01, 2, 1 / rate)] + [[] for _ in range(9)])
+    force = model.generate_force(block, verbose=False)
+    T = model.contraction_times__samples[0] / 10000
+    P = model.peak_twitch_forces__unitless[0]
+    expected = np.e * P * T * rate * fuglevand_gain(T * rate, a=a, c=c)
+    assert force.magnitude[10000:, 0].mean() == pytest.approx(expected, rel=0.005)
+
+
+@pytest.mark.parametrize("model_class", MODELS)
+def test_human_unit_shape_gives_measured_twitch_tetanus_ratio(model_class):
+    # Measured 0.22-0.36 (Macefield et al. 1996; Fuglevand et al. 1999; McNulty et al. 2000); Fuglevand 1993 gives 0.11.
+    model = model_class(THRESHOLDS, 10000 * pq.Hz, force_frequency_shape=HUMAN_UNIT_FORCE_FREQUENCY)
+    force = model.generate_force(_spike_block([np.arange(0.01, 2, 1 / 200)] + [[] for _ in range(9)]),
+                                 verbose=False)
+    ratio = model.peak_twitch_forces__unitless[0] / force.magnitude[10000:, 0].mean()
+    assert 0.22 <= ratio <= 0.25
+
+
+@pytest.mark.parametrize("model_class", MODELS)
+@pytest.mark.parametrize("shape", [(0, 3), (2, 0), (-1, 1), (1, -2)])
+def test_force_frequency_shape_invalid(model_class, shape):
+    with pytest.raises(ValueError, match="force_frequency_shape"):
+        model_class(THRESHOLDS, 1000 * pq.Hz, force_frequency_shape=shape)
