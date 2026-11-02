@@ -55,6 +55,8 @@ from myogen.utils.ramp_analysis import extract_ramp_recruitment
 GAMMA_SHAPE = 3.0
 SYNAPTIC_WEIGHT = 0.05  # µS, DD input weight on the smallest (best-coupled) motor neuron
 NETWORK = {"fan_in": "equal", "weight_scaling": "dendritic_transfer"}  # DD -> MN wiring, see build_dd_mn_network
+WEIGHT_EXPONENT_RANGE = (0.0, 1.0)  # fitted range of the DD weight exponent (--fit-weight-exponent)
+FIT_WEIGHT_EXPONENT = False
 CEILING_WEIGHT = 3.0       # Penalty weight for the recruitment ceiling (force at the last recruitment vs LAST_RECRUIT_PCT_MVC)
 CEILING_RAMP_PER_S = 0.1   # Excitation per second in the MVC ramp (also used by fdi_spikes_force.py)
 MVC_REST_S, MVC_HOLD_S = 0.5, 3.0  # MVC ramp: rest, ramp 0 -> 1 at CEILING_RAMP_PER_S, hold at full excitation
@@ -192,14 +194,19 @@ def build_dd_mn_network(mn_pool, dd_pool, dd_params):
     - Equal fan-in: every MN receives exactly round(conn_probability * dd_neurons) DD inputs, drawn without
       replacement. Modelling assumption (descending drive shared across the pool); it removes the binomial
       +/-13 % input-count scatter that reordered the largest units, whose thresholds are ~3 % apart.
-    - Dendritic-transfer weights: weight_i = synaptic_weight * k_max / k_i (``dendritic_transfer``), so each input
-      delivers the same current to a clamped soma at low drive whatever the neuron's size, and recruitment
-      order follows rheobase. Modelling assumption: equal effective synaptic current per input, the equal-share
-      case of Heckman & Binder 1991 (J Neurophysiol 65:952); measured effective currents are input-system
-      specific (cat data) and none are known for corticospinal input to a hand muscle. Not compensated: the
-      Gfluctdv mean-conductance shunt and the driving-force saturation at high drive.
+    - Dendritic-transfer weights: weight_i = synaptic_weight * (k_max / k_i) ** p (``dendritic_transfer``), p from
+      ``network["weight_exponent"]`` (default 1). With p = 1 each input delivers the same current to a clamped soma
+      at low drive whatever the neuron's size, and recruitment order follows rheobase: equal effective synaptic
+      current per input, the equal-share case of Heckman & Binder 1991 (J Neurophysiol 65:952). p < 1 gives larger
+      neurons less effective current per input (p = 0: one weight for all). Modelling assumption either way;
+      measured effective currents are input-system specific (cat data) and none are known for corticospinal
+      input to a hand muscle. Not compensated: the Gfluctdv mean-conductance shunt and the driving-force
+      saturation at high drive.
     """
-    net_cfg = dd_params.get("network")
+    net_cfg = dict(dd_params.get("network") or {})
+    p = net_cfg.pop("weight_exponent", 1.0)
+    if not isinstance(p, (int, float)) or isinstance(p, bool) or not np.isfinite(p) or p < 0:
+        raise ValueError(f"network weight_exponent must be a finite number >= 0, got {p!r}")
     if net_cfg != NETWORK:
         raise ValueError(
             f"dd_params['network'] must be {NETWORK}, got {net_cfg!r}; parameter files from before 2026-11-01 "
@@ -210,7 +217,7 @@ def build_dd_mn_network(mn_pool, dd_pool, dd_params):
     if n_in < 1:
         raise ValueError(f"conn_probability * dd_neurons rounds to {n_in} inputs per motor neuron")
     transfer = dendritic_transfer(mn_pool)
-    weights = dd_params["synaptic_weight"] * transfer.max() / transfer
+    weights = dd_params["synaptic_weight"] * (transfer.max() / transfer) ** p
     rng = get_random_generator()
     dd_cells = list(dd_pool)
     dd_to_mn = []
@@ -226,6 +233,11 @@ def build_dd_mn_network(mn_pool, dd_pool, dd_params):
     return SimpleNamespace(network=network, dd_to_mn=dd_to_mn,
                            cortical_netcons=network.get_netcons("cortical_input", "DD"),
                            transfer=transfer, weights=weights)
+
+
+def network_block(weight_exponent=None):
+    """The ``network`` block of a parameter set: NETWORK, plus the DD weight exponent when it was fitted."""
+    return dict(NETWORK) if weight_exponent is None else {**NETWORK, "weight_exponent": float(weight_exponent)}
 
 
 def recruitment_times(block, window_ms=500.0, min_spikes=3):
@@ -485,6 +497,8 @@ def make_objective(thresholds, fug_targets):
             gfluctdv_scale = trial.suggest_float(
                 "gfluctdv_scale", *GFLUCTDV_RANGE,
             )
+            weight_exponent = (trial.suggest_float("weight_exponent", *WEIGHT_EXPONENT_RANGE)
+                               if FIT_WEIGHT_EXPONENT else None)
 
             dd_params = {
                 "dd_neurons": dd_neurons,
@@ -493,7 +507,7 @@ def make_objective(thresholds, fug_targets):
                 "synaptic_weight": SYNAPTIC_WEIGHT,
                 "gamma_shape": GAMMA_SHAPE,
                 "gfluctdv_scale": gfluctdv_scale,
-                "network": dict(NETWORK),
+                "network": network_block(weight_exponent),
             }
 
             # Detect threshold for this param set
@@ -581,7 +595,8 @@ def make_objective(thresholds, fug_targets):
                 )
                 print(f"  Trial {trial.number}: err={total_error:.3f} | {active_str} | "
                       f"drive={dd_drive__Hz:.0f} thr={threshold_hz:.0f} "
-                      f"gf={gfluctdv_scale:.3f} cv={mean_cv*100:.1f}% last={pct_last:.0f}%MVC")
+                      f"gf={gfluctdv_scale:.3f} cv={mean_cv*100:.1f}% last={pct_last:.0f}%MVC"
+                      + (f" p={weight_exponent:.2f}" if weight_exponent is not None else ""))
 
             return total_error
 
@@ -676,7 +691,8 @@ def optimize_for_mu_count(n_mu, n_trials, profile, target_model="de_luca",
     print(f"  dd_neurons={best.params['dd_neurons']}, "
           f"conn_prob={best.params['conn_prob']:.3f}, "
           f"dd_drive={best.params['dd_drive']:.0f} Hz, "
-          f"gfluctdv={best.params.get('gfluctdv_scale', 0):.3f}")
+          f"gfluctdv={best.params.get('gfluctdv_scale', 0):.3f}, "
+          f"weight exponent={best.params.get('weight_exponent', 1.0):.2f}")
     print(f"  ISI CV: {best.user_attrs.get('isi_cv_mean', 0)*100:.1f}% "
           f"(target: {ISI_CV_TARGET[0]*100:.0f}-{ISI_CV_TARGET[1]*100:.0f}%)")
     print(f"  Last unit recruited at {best.user_attrs.get('pct_mvc_last_recruited', float('nan')):.1f} % MVC; "
@@ -718,7 +734,7 @@ def optimize_for_mu_count(n_mu, n_trials, profile, target_model="de_luca",
             "gamma_shape": GAMMA_SHAPE,
             "gfluctdv_scale": best.params.get("gfluctdv_scale", 0.0),
             "isi_cv_mean": best.user_attrs.get("isi_cv_mean", 0.0),
-            "network": dict(NETWORK),
+            "network": network_block(best.params.get("weight_exponent")),
             "pct_mvc_last_recruited": best.user_attrs.get("pct_mvc_last_recruited"),
             "pct_mvc_ceiling_ranked": best.user_attrs.get("pct_mvc_ceiling_ranked"),
             **{f"mean_fr_{lev}_mvc_ramp": best.user_attrs.get(f"mean_fr_{lev}_mvc_ramp")
@@ -761,7 +777,8 @@ def _save_best_from_study(study, n_mu, target_muscle, target_model,
     print(f"  dd_neurons={best.params['dd_neurons']}, "
           f"conn_prob={best.params['conn_prob']:.3f}, "
           f"dd_drive={best.params['dd_drive']:.0f} Hz, "
-          f"gfluctdv={best.params.get('gfluctdv_scale', 0):.3f}")
+          f"gfluctdv={best.params.get('gfluctdv_scale', 0):.3f}, "
+          f"weight exponent={best.params.get('weight_exponent', 1.0):.2f}")
     print(f"  ISI CV: {best.user_attrs.get('isi_cv_mean', 0)*100:.1f}% "
           f"(target: {ISI_CV_TARGET[0]*100:.0f}-{ISI_CV_TARGET[1]*100:.0f}%)")
     print(f"  Last unit recruited at {best.user_attrs.get('pct_mvc_last_recruited', float('nan')):.1f} % MVC; "
@@ -802,7 +819,7 @@ def _save_best_from_study(study, n_mu, target_muscle, target_model,
             "gamma_shape": GAMMA_SHAPE,
             "gfluctdv_scale": best.params.get("gfluctdv_scale", 0.0),
             "isi_cv_mean": best.user_attrs.get("isi_cv_mean", 0.0),
-            "network": dict(NETWORK),
+            "network": network_block(best.params.get("weight_exponent")),
             "pct_mvc_last_recruited": best.user_attrs.get("pct_mvc_last_recruited"),
             "pct_mvc_ceiling_ranked": best.user_attrs.get("pct_mvc_ceiling_ranked"),
             **{f"mean_fr_{lev}_mvc_ramp": best.user_attrs.get(f"mean_fr_{lev}_mvc_ramp")
@@ -928,6 +945,7 @@ def run_parallel(args):
             "--ceiling-rank", str(CEILING_RANK),
             "--force-frequency", next(k for k, v in FORCE_FREQUENCY_SHAPES.items() if v == FORCE_FREQUENCY_SHAPE),
             *(["--high-force-rates"] if SCORE_HIGH_FORCE_RATES else []),
+            *(["--fit-weight-exponent"] if FIT_WEIGHT_EXPONENT else []),
             "--de-luca-params", json.dumps(DE_LUCA_PARAMS),
             "--results-tag", RESULTS_TAG,
             "--_worker-seed", str(42 + w),
@@ -1026,6 +1044,9 @@ def main():
     ap.add_argument("--force-frequency", choices=sorted(FORCE_FREQUENCY_SHAPES), default="fuglevand",
                     help="ForceModel force-frequency saturation: fuglevand (1993, default) or human (fit to human "
                          "single motor units, force_utils.HUMAN_UNIT_FORCE_FREQUENCY).")
+    ap.add_argument("--fit-weight-exponent", action="store_true",
+                    help="Also fit the DD weight exponent p in [0, 1]: weights scale as (k_max / k_i) ** p "
+                         "(default p = 1, equal current per input at rest; see build_dd_mn_network).")
     ap.add_argument("--high-force-rates", action="store_true",
                     help="Also score MVC-ramp firing rates at 40 and 80 %% MVC against De Luca et al. 1982.")
     ap.add_argument("--de-luca-params", type=str, default="{}",
@@ -1033,12 +1054,13 @@ def main():
     ap.add_argument("--results-tag", type=str, default="polygon")
     args = ap.parse_args()
     global THRESHOLD_MODE, RECRUITMENT_RANGE, MAX_RECRUITMENT, LAST_RECRUIT_PCT_MVC, DE_LUCA_PARAMS, RESULTS_TAG
-    global CEILING_RANK, FORCE_FREQUENCY_SHAPE, SCORE_HIGH_FORCE_RATES
+    global CEILING_RANK, FORCE_FREQUENCY_SHAPE, SCORE_HIGH_FORCE_RATES, FIT_WEIGHT_EXPONENT
     THRESHOLD_MODE, RECRUITMENT_RANGE = args.threshold_mode, args.recruitment_range
     MAX_RECRUITMENT, RESULTS_TAG = args.max_recruitment, args.results_tag
     DE_LUCA_PARAMS = json.loads(args.de_luca_params)
     LAST_RECRUIT_PCT_MVC = args.last_recruit_mvc
     CEILING_RANK, SCORE_HIGH_FORCE_RATES = args.ceiling_rank, args.high_force_rates
+    FIT_WEIGHT_EXPONENT = args.fit_weight_exponent
     FORCE_FREQUENCY_SHAPE = FORCE_FREQUENCY_SHAPES[args.force_frequency]
     if LAST_RECRUIT_PCT_MVC is None:
         print("Recruitment ceiling term off (pass --last-recruit-mvc PCT to score the last unit's recruitment force).")

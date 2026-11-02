@@ -83,6 +83,43 @@ def test_parameter_sets_without_a_network_block_are_refused(opt):
         opt.build_dd_mn_network(mn, dd, params)
 
 
+def _weights(opt, net, mn):
+    owner = _owner(mn)
+    w = np.zeros(len(mn))
+    for nc in net.dd_to_mn:
+        w[owner[nc.syn().get_segment().sec.hname()]] = nc.weight[0]
+    return w
+
+
+@pytest.mark.parametrize("p", [0.0, 0.5])
+def test_weight_exponent_sets_how_much_larger_neurons_are_compensated(opt, p):
+    _, mn, dd = _pools(opt)
+    net = opt.build_dd_mn_network(mn, dd, _params(weight_exponent=p))
+    k = np.asarray(net.transfer)
+    w = _weights(opt, net, mn)
+    np.testing.assert_allclose(w, 0.05 * (k.max() / k) ** p, rtol=1e-9)
+
+
+def test_weight_exponent_defaults_to_equal_current_per_input(opt):
+    _, mn, dd = _pools(opt)
+    a = _weights(opt, opt.build_dd_mn_network(mn, dd, _params()), mn)
+    _, mn2, dd2 = _pools(opt)
+    b = _weights(opt, opt.build_dd_mn_network(mn2, dd2, _params(weight_exponent=1.0)), mn2)
+    np.testing.assert_allclose(a, b, rtol=1e-12)
+
+
+@pytest.mark.parametrize("bad", [-0.1, float("nan"), "1"])
+def test_invalid_weight_exponent_is_refused(opt, bad):
+    _, mn, dd = _pools(opt)
+    with pytest.raises(ValueError, match="weight_exponent must be"):
+        opt.build_dd_mn_network(mn, dd, _params(weight_exponent=bad))
+
+
+def test_network_block_records_the_weight_exponent(opt):
+    assert opt.network_block() == opt.NETWORK
+    assert opt.network_block(0.4) == {**opt.NETWORK, "weight_exponent": 0.4}
+
+
 def test_last_recruitment_excitation_uses_sustained_firing(opt):
     dt_ms = 1.0
     e = np.linspace(0.0, 1.0, 10001)  # 10 s ramp, 1 ms steps
