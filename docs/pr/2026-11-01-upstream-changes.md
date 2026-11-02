@@ -83,7 +83,12 @@ Bugs found against Farina et al. (2004), each with a test:
     - The NERLab PIC is present but inert: paired-unit ΔF 0.2 Hz vs ~4.8 pps reported for FDI.
     - Stronger or effort-dependent PICs (gamma 0.5, 1.0, 0.2→1.0) and push-pull or balanced inhibition leave the 80 % MVC rate at 29–34 Hz. More PIC inverts the onion skin.
     - With uniform rates, the twitch law and force-frequency curve put 80 % MVC at ~32 Hz; 41 Hz is unreachable without an onion skin.
-    - Untested: the dendritic-transfer weight scaling at high drive (large cells receive more effective current than small ones), and the Powers2017 cell model.
+    - Probes (same day). DD weights `w·(k_max/k_i)^p` (calibration uses p = 1):
+      - p = 0.5: 22.7/35.0 Hz, SD 5.0, small−large +13.7 Hz at 80 % MVC, last unit 75 %.
+      - p = 0: 22.5/36.2 Hz, SD 7.0, +18.1 Hz, last unit ~101 %.
+      - The input spread across sizes is the lever for the onion skin and the high-force rates, but it raises the ceiling. Recruitment ceiling and onion skin trade off through the same weighting; only a recalibration with p free can test both together.
+    - Powers2017 cell model as configured: rates 3–14 Hz (f-I 0.02–0.4 Hz/nA), largest cell blocks at 4× rheobase. Not usable for FDI without re-parameterisation.
+    - FDI ΔF benchmark: 4.80 [4.31, 5.30] pps (Beauchamp et al. 2023, full-text table); model 0.2.
 - [ ] Out of scope, library: the NERLab pool's rheobase spans only 3.6× for a 48× threshold range (yaml interpolation curves).
 - [ ] Out of scope, library: NERLab motor neurons rest at ~0 mV but `alpha_mn_default.yaml` initialises them at −67 mV (start-up transient).
 - [ ] Out of scope, library: inhibitory synapses use −75 mV (absolute frame), i.e. 75 mV below the NERLab rest; any inhibition onto NERLab motor neurons is far too strong.
