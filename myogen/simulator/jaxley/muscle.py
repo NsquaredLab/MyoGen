@@ -157,13 +157,16 @@ class ForceSatParams:
         return mu_force
 
     def defTetanicParam(self, i: int, c_init: float) -> tuple:
-        """Find parameter c which saturates motor unit force at given frequency."""
+        """Find parameter c which saturates motor unit force at given frequency.
+
+        Returns the maximum post-sigmoid force at the unit's saturation frequency
+        (upstream fix 2b72066: normalise by force at saturation frequency, not 1 Hz).
+        """
         spikes = np.arange(0, 3e3, 1e3 / self.muSatFreq[i])
         mu_force = self.convMuForce(spikes, 1, self.T[i])
         n_c = newton(self.newton_f, c_init, args=(mu_force,), tol=1e-5)
-        muF1 = self.convMuForce(np.arange(0, 3e3, 1e3 / 1), 1, self.T[i])
-        fsat_freq1_max = np.max(self.sig(n_c, muF1))
-        return n_c, fsat_freq1_max
+        fsat_max = np.max(self.sig(n_c, mu_force))
+        return n_c, fsat_max
 
     def mapTetanic(self):
         """Map tetanic parameters for all motor units."""
