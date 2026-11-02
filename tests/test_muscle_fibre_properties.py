@@ -60,6 +60,36 @@ def test_type_means_are_polgar(typed_muscle):
     assert d[t == 2].mean() == pytest.approx(67.0, abs=0.5)
 
 
+@pytest.mark.parametrize("type_means", [(50.0, 67.0) * pq.um, (0.050, 0.067) * pq.mm])
+def test_type_mean_diameters_accept_any_length_unit(typed_muscle, type_means):
+    """Type means given as a Quantity are rescaled to um; plain numbers are read as um."""
+    m = _typed(type_mean_fiber_diameters__um=type_means)
+    assert m.fiber_type_ladder.target_mean__um == pytest.approx(
+        typed_muscle.fiber_type_ladder.target_mean__um, rel=1e-12
+    )
+
+
+def test_reassignment_clears_fibre_properties():
+    """Fibre types and diameters belong to one assignment; a new assignment invalidates them."""
+    m = _typed()
+    m.assign_mfs2mns(verbose=False, n_jobs=1)
+    with pytest.raises(ValueError, match="_generate_fiber_properties"):
+        m.muscle_fiber_types
+    with pytest.raises(ValueError, match="_generate_fiber_properties"):
+        m.muscle_fiber_diameters__mm
+    with pytest.raises(ValueError, match="_generate_fiber_properties"):
+        m.muscle_fiber_conduction_velocities__mm_per_s
+
+
+def test_fibre_properties_are_reproducible_under_a_seed(typed_muscle):
+    m = _typed()
+    for name in ("muscle_fiber_diameters__mm", "muscle_fiber_conduction_velocities__mm_per_s"):
+        np.testing.assert_array_equal(
+            np.asarray(getattr(m, name).magnitude), np.asarray(getattr(typed_muscle, name).magnitude)
+        )
+    np.testing.assert_array_equal(m.muscle_fiber_types, typed_muscle.muscle_fiber_types)
+
+
 @pytest.mark.parametrize("kw, mean_cv, sd_cv", [
     ({}, 4.32, 0.71),
     ({"mean_fiber_conduction_velocity__m_per_s": 4.2 * pq.m / pq.s,

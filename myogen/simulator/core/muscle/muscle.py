@@ -8,7 +8,7 @@ import pandas as pd
 import skfmm
 from joblib import Parallel, delayed
 from scipy.integrate import dblquad
-from scipy.stats import chi2, multivariate_normal, qmc, truncnorm
+from scipy.stats import chi2, multivariate_normal, qmc
 from sklearn.neighbors import NearestNeighbors
 from tqdm import tqdm
 import quantities as pq
@@ -17,7 +17,7 @@ from myogen import get_random_generator
 from myogen.simulator.core.muscle.fiber_types import (
     FiberTypeLadder,
     draw_fiber_diameters__um,
-    fiber_type_ladder,
+    fiber_type_ladder as build_fiber_type_ladder,  # aliased: Muscle.fiber_type_ladder is a property
 )
 from myogen.utils.types import (
     RECRUITMENT_THRESHOLDS__ARRAY,
@@ -151,8 +151,9 @@ class Muscle:
         recruitment order: the lowest-threshold units are type I until they hold this fraction. In the default
         FDI muscle this makes ~86 % of units type I, because fibres concentrate in the large, late units.
         Strict order is a simplification [garnett1979 p. 42].
-    type_mean_fiber_diameters__um : tuple of float, default=(50.0, 67.0)
-        Mean fibre diameter of type I and type II fibres, FDI [polgar1973 p. 310 Table 2].
+    type_mean_fiber_diameters__um : tuple of float or Quantity, default=(50.0, 67.0)
+        Mean fibre diameter of type I and type II fibres, FDI [polgar1973 p. 310 Table 2]. A Quantity in any
+        length unit is rescaled to um; plain numbers are read as um.
     type_fiber_diameter_log_sd : float, default=0.2
         Log-SD of fibre diameter within each type (a modelling assumption). Unit mean diameters rise with
         threshold along one ladder across the pool; see ``myogen.simulator.core.muscle.fiber_types``.
@@ -256,7 +257,7 @@ class Muscle:
         mean_fiber_conduction_velocity__m_per_s: Quantity__m_per_s = 4.32 * pq.m / pq.s,
         sd_fiber_conduction_velocity__m_per_s: Quantity__m_per_s = 0.71 * pq.m / pq.s,
         type_i_fiber_fraction: float = 0.574,
-        type_mean_fiber_diameters__um: tuple[float, float] = (50.0, 67.0),
+        type_mean_fiber_diameters__um: tuple[float, float] | pq.Quantity = (50.0, 67.0),
         type_fiber_diameter_log_sd: float = 0.2,
         mean_fiber_length__mm: Quantity__mm = 31.7 * pq.mm,
         var_fiber_length__mm: Quantity__mm = 2.8 * pq.mm,
@@ -300,7 +301,10 @@ class Muscle:
         self._mean_fiber_conduction_velocity__m_s = mean_fiber_conduction_velocity__m_per_s
         self._sd_fiber_conduction_velocity__m_s = sd_fiber_conduction_velocity__m_per_s
         self._type_i_fiber_fraction = type_i_fiber_fraction
-        self._type_mean_fiber_diameters__um = type_mean_fiber_diameters__um
+        # Type means in um: a Quantity is rescaled from any length unit, plain numbers are read as um.
+        if isinstance(type_mean_fiber_diameters__um, pq.Quantity):
+            type_mean_fiber_diameters__um = type_mean_fiber_diameters__um.rescale(pq.um).magnitude
+        self._type_mean_fiber_diameters__um = tuple(float(v) for v in type_mean_fiber_diameters__um)
         self._type_fiber_diameter_log_sd = type_fiber_diameter_log_sd
         self._mean_fiber_length__mm = mean_fiber_length__mm
         self._var_fiber_length__mm = var_fiber_length__mm
@@ -396,11 +400,11 @@ class Muscle:
         # ladder across the pool (fiber_types.py; FDI type I 57.4 % [polgar1973 p. 312 Table 4], type means
         # 50.0 / 67.0 um [polgar1973 p. 310 Table 2]).
         assignment = self._assignment.astype(int)
-        self._fiber_type_ladder = fiber_type_ladder(
+        self._fiber_type_ladder = build_fiber_type_ladder(
             np.bincount(assignment, minlength=self._number_of_neurons),
             np.asarray(self._recruitment_thresholds),
             type_i_fiber_fraction=self._type_i_fiber_fraction,
-            type_mean_diameters__um=tuple(self._type_mean_fiber_diameters__um),
+            type_mean_diameters__um=self._type_mean_fiber_diameters__um,
             type_log_sd=self._type_fiber_diameter_log_sd,
         )
         d_um = draw_fiber_diameters__um(self._fiber_type_ladder, assignment, get_random_generator())
@@ -653,6 +657,12 @@ class Muscle:
         the probability of assigning a fiber to a motor unit if its neighbors are
         already assigned to that unit.
         """
+        # Fibre types, diameters and CVs belong to one assignment; clear them until
+        # _generate_fiber_properties() runs again.
+        self._fiber_type_ladder = None
+        self._muscle_fiber_diameters__mm = None
+        self._muscle_fiber_conduction_velocities__mm_per_s = None
+
         # Ensure innervation_center_positions is available
         if self._innervation_center_positions__mm is None:
             raise ValueError(

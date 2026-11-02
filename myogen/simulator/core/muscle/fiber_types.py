@@ -9,10 +9,11 @@ threshold along one ladder across the whole pool (design: docs/superpowers/specs
   human medial gastrocnemius slow and fast fatigue-resistant units interleave at low force and
   only the fast fatigable (type 2b) units come strictly last [garnett1979 p. 42].
 - Ladder: a unit's position is the midpoint of its share of the pool's cumulative fibre count;
-  its log-mean diameter is ``sigma_between * clip(Phi^-1(q), -3, 3)``. ``sigma_between`` is solved
+  its log-mean diameter is ``sigma_between * clip(Phi^-1(q), -3, 3)``, non-decreasing with
+  threshold; units beyond +/-3 SD of the ladder share its end value. ``sigma_between`` is solved
   so that the type I : type II fibre-weighted mean ratio is 50.0 : 67.0 um [polgar1973 p. 310
   Table 2]; ``sigma_within`` so that the pool's fibre log-SD equals that of Polgar's two-type
-  mixture with ``type_log_sd`` per type (0.2, a modelling assumption).
+  mixture with ``type_log_sd`` per type (0.2, a modelling assumption), at the realised type fraction.
 - Fibres scatter log-normally about their unit's mean; the combined log-deviation is truncated at
   3 SD (a modelling assumption). The ladder offset is set so the expected pool mean is the mixture
   mean at the realised type fraction (57.2 um at 57.4 %), so the type means stay at 50.0 / 67.0 um
@@ -38,7 +39,8 @@ class FiberTypeLadder:
     unit_types : np.ndarray
         Fibre type of each unit (1 or 2), in pool order.
     unit_z : np.ndarray
-        Ladder position of each unit, ``clip(Phi^-1(q), -3, 3)``.
+        Ladder position of each unit, ``clip(Phi^-1(q), -3, 3)``: non-decreasing with threshold;
+        units beyond +/-3 SD of the ladder share its end value.
     sigma_between, sigma_within : float
         Log-SD of the unit means along the ladder, and of fibres within a unit.
     type_i_fiber_fraction : float
@@ -135,16 +137,16 @@ def fiber_type_ladder(
         return (w[type_i].sum() / n[type_i].sum()) / (w[~type_i].sum() / n[~type_i].sum()) - m1 / m2
 
     sigma_between = float(brentq(ratio, 1e-6, 3.0))
-    mixture_var = type_log_sd**2 + f * (1 - f) * np.log(m2 / m1) ** 2
+    # The pool mean and spread follow the realised fraction (a unit's worth off f in small pools), so
+    # the type means stay at m1 / m2: type properties outrank pool properties.
+    realised = float(n[type_i].sum() / n.sum())
+    mixture_var = type_log_sd**2 + realised * (1 - realised) * np.log(m2 / m1) ** 2
     within_var = mixture_var - sigma_between**2 * np.average(unit_z**2, weights=n)
     if within_var <= 0:
         raise ValueError(
             f"fiber_type_ladder: sigma_within^2 = {within_var:.4f} <= 0; type_log_sd {type_log_sd} is too "
             "small for the spread the type means already need"
         )
-    # The pool mean follows the realised fraction (a unit's worth off f in small pools), so the type
-    # means stay at m1 / m2.
-    realised = float(n[type_i].sum() / n.sum())
     target = realised * m1 + (1 - realised) * m2
     sigma_within = float(np.sqrt(within_var))
     centre = sigma_between * unit_z

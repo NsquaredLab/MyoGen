@@ -53,7 +53,7 @@ Decided by Devon 2026-11-02 ("let's try A, but let's make sure to document this 
 
 **Design.** Units in threshold order; `q_u` = midpoint of the unit's share of the pool's cumulative fibre count (fibre-weighted, so fibre-level spreads match the targets).
 
-- Unit log-mean: `mu_u = c + sigma_b · clip(Φ⁻¹(q_u), −3, 3)`. Deterministic, strictly increasing with threshold across the whole pool. Types are labels on this ladder (lower 57.4 % of fibres type I).
+- Unit log-mean: `mu_u = c + sigma_b · clip(Φ⁻¹(q_u), −3, 3)`. Deterministic, non-decreasing with threshold across the whole pool; units beyond ±3 SD of the ladder share its end value. Types are labels on this ladder (lower 57.4 % of fibres type I).
 - Fibre: `d = exp(mu_u + sigma_w · z)`, `z` standard normal, truncated so the combined log-deviation `sigma_b·Φ⁻¹(q_u) + sigma_w·z` stays within ±3·sqrt(sigma_b² + sigma_w²) (my call: keeps today's ±3 SD tail rule at the fibre level; clipping the ladder and `z` separately at ±3 left a 19.9–134.8 µm range).
 - `sigma_b` is solved so the type I : type II fibre-weighted mean ratio is 50.0 : 67.0 [polgar1973 p. 310 Table 2] on the realised units.
 - `sigma_w` is solved so the pool's fibre log-SD equals that of Polgar's two-type mixture (each type log-SD 0.2, today's assumption): `sqrt(0.2² + 0.574·0.426·ln(67/50)²) = 0.247`.

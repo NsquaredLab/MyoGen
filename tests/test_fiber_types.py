@@ -84,6 +84,20 @@ def test_type_means_hold_when_the_realised_fraction_is_coarse(rng):
     assert d[t == 2].mean() == pytest.approx(67.0, abs=0.5)
 
 
+def test_pool_spread_follows_the_realised_fraction(rng):
+    """The pool log-variance is that of Polgar's two-type mixture at the realised type fraction, as
+    the pool mean is. The drawn check is coarse (nominal vs realised differ by ~0.001 in log-SD here,
+    below sampling noise and the 3 SD truncation); the designed variance is checked exactly."""
+    coarse = np.round(np.geomspace(40, 1600, 12)).astype(int)
+    lad = fiber_type_ladder(coarse, np.geomspace(1, 30, 12))
+    r = lad.type_i_fiber_fraction
+    mixture_var = 0.04 + r * (1 - r) * np.log(67 / 50) ** 2
+    d = draw_fiber_diameters__um(lad, np.repeat(np.arange(12), coarse), rng)
+    assert np.log(d).std() == pytest.approx(np.sqrt(mixture_var), abs=0.01)
+    designed_var = lad.sigma_between**2 * np.average(lad.unit_z**2, weights=coarse) + lad.sigma_within**2
+    assert designed_var == pytest.approx(mixture_var, abs=1e-9)
+
+
 @pytest.mark.parametrize("kwargs, message", [
     ({"type_mean_diameters__um": (67.0, 50.0)}, "type_mean_diameters__um"),
     ({"type_i_fiber_fraction": 0.0}, "type_i_fiber_fraction"),
