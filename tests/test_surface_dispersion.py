@@ -5,6 +5,7 @@ that basic MyoGen already uses for intramuscular EMG (Akhmadeev et al. 2020);
 muscle-fibre conduction velocity may vary per fibre. Every option defaults to
 off, and off must reproduce the undispersed model exactly.
 """
+import dataclasses
 import numpy as np
 import pytest
 import quantities as pq
@@ -429,3 +430,28 @@ def test_intramuscular_emg_selects_the_end_plate_coefficients(monkeypatch):
         np.testing.assert_allclose([s[1] for s in seen], arbor_sd)
     with pytest.raises(ValueError, match="nmj_coefficients"):
         IntramuscularEMG(muscle_model=muscle, electrode_array=electrode, nmj_coefficients="paper")
+
+
+# ---- fibre properties from Muscle ---------------------------------------------------
+
+def test_muscle_fibre_source_is_active():
+    assert SurfaceFiberDispersion(fiber_properties="muscle").active
+
+
+@pytest.mark.parametrize("field, value", [("fiber_cv_threshold_slope", 0.63), ("fiber_cv_inter_mu_spread", 0.3),
+                                          ("fiber_cv_within_mu_cov", 0.05), ("fiber_cv_per_unit__m_s", (4.0,))])
+def test_muscle_fibre_source_rejects_surface_cv_options(field, value):
+    with pytest.raises(ValueError, match=field):
+        SurfaceFiberDispersion(fiber_properties="muscle", **{field: value})
+
+
+def test_fibre_property_source_must_be_known():
+    with pytest.raises(ValueError, match="fiber_properties"):
+        SurfaceFiberDispersion(fiber_properties="x")
+
+
+def test_muscle_candidate_preset():
+    expected = dataclasses.replace(SurfaceFiberDispersion.literature_candidate(seed=3), fiber_properties="muscle",
+                                   fiber_cv_threshold_slope=0.0, fiber_cv_within_mu_cov=0.0,
+                                   diameter_scales_source=True)
+    assert SurfaceFiberDispersion.muscle_candidate(seed=3) == expected

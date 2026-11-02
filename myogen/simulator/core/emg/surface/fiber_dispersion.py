@@ -12,7 +12,7 @@ MyoGen generator, so switching an option on leaves every other draw intact.
 """
 from __future__ import annotations
 
-from dataclasses import asdict, dataclass, field
+from dataclasses import asdict, dataclass, field, replace
 from typing import Literal, Optional, Sequence
 
 import numpy as np
@@ -21,6 +21,7 @@ from ...muscle.muscle import CV_INTERCEPT__M_S, CV_PER_DIAMETER__M_S_PER_MM
 from ..nerve_branches import NMJ_SCHEDULE_COEFFICIENTS, nerve_delays__ms, nmj_branch_schedule, two_layer_nmj
 
 NMJ_MODELS = ("uniform_mu", "two_layer", "two_layer_intra")
+FIBER_PROPERTY_SOURCES = ("config", "muscle")
 
 
 @dataclass(frozen=True)
@@ -72,8 +73,19 @@ class SurfaceFiberDispersion:
         Coefficient of variation of fibre CV within a motor unit (normal,
         clipped at three standard deviations). No measurement of this spread
         was found; Del Vecchio et al. (2018) call it unknown [delvecchio2018 p. 5].
+    fiber_properties : {"config", "muscle"}
+        Source of each fibre's conduction velocity and diameter. ``"config"`` (default): built
+        here from the options below (muscle mean CV, threshold factor or per-unit CVs, within-unit
+        spread; diameter read from the CV line). ``"muscle"``: taken fibre by fibre from ``Muscle``
+        (``muscle_fiber_conduction_velocities__mm_per_s``, ``muscle_fiber_diameters__mm``: typed by
+        motor unit, the fibres intramuscular EMG uses), so both signals share one set of fibres.
+        Cannot be combined with ``fiber_cv_threshold_slope``, ``fiber_cv_inter_mu_spread``,
+        ``fiber_cv_within_mu_cov`` or ``fiber_cv_per_unit__m_s``.
     diameter_scales_source : bool
-        Scale each fibre's source by its cross-section, with the diameter read
+        Scale each fibre's source by its cross-section. With ``fiber_properties="muscle"`` the
+        factor is ``(d / SurfaceEMG.fiber_diameter__um)**2`` with ``d`` the ``Muscle`` diameter, not
+        normalised, so each source scales with its own absolute ``d**2`` and
+        ``fiber_diameter__um`` has no effect. Otherwise the diameter is read
         from the CV line ``cv = cv_intercept + cv_per_diameter * d``
         (0.95 m/s + 0.05 m/s per µm; Nandedkar & Stålberg 1983 [nandedkar1983], used in the
         same form by Del Vecchio et al. 2018 [delvecchio2018 p. 7 eq. 1]; the measured fit of
@@ -112,6 +124,7 @@ class SurfaceFiberDispersion:
     diameter_scales_source: bool = False
     cv_per_diameter__m_s_per_mm: float = CV_PER_DIAMETER__M_S_PER_MM
     cv_intercept__m_s: float = CV_INTERCEPT__M_S
+    fiber_properties: Literal["config", "muscle"] = "config"
     tendon_end_band__mm: float = 0.0
     tendon_end_correlation__mm: float = 0.0
     tendon_end_jitter__mm: float = 0.0
@@ -142,6 +155,15 @@ class SurfaceFiberDispersion:
             raise ValueError("use either fiber_cv_threshold_slope or fiber_cv_inter_mu_spread, not both")
         if not 0 <= self.fiber_cv_within_mu_cov < 1 / 3:
             raise ValueError("fiber_cv_within_mu_cov must be in [0, 1/3)")
+        if self.fiber_properties not in FIBER_PROPERTY_SOURCES:
+            raise ValueError(f"fiber_properties must be one of {FIBER_PROPERTY_SOURCES}, got {self.fiber_properties!r}")
+        if self.fiber_properties == "muscle":
+            for name in ("fiber_cv_threshold_slope", "fiber_cv_inter_mu_spread", "fiber_cv_within_mu_cov"):
+                if getattr(self, name):
+                    raise ValueError(f"fiber_properties='muscle' takes each fibre's CV from Muscle; set {name} to 0")
+            if self.fiber_cv_per_unit__m_s is not None:
+                raise ValueError("fiber_properties='muscle' takes each fibre's CV from Muscle; "
+                                 "leave fiber_cv_per_unit__m_s unset")
         if self.fiber_cv_per_unit__m_s is not None:
             if self.fiber_cv_threshold_slope or self.fiber_cv_inter_mu_spread:
                 raise ValueError("fiber_cv_per_unit__m_s replaces fiber_cv_threshold_slope and "
@@ -173,12 +195,25 @@ class SurfaceFiberDispersion:
                    fiber_cv_within_mu_cov=0.05, tendon_end_band__mm=5.0, tendon_end_correlation__mm=5.0,
                    tendon_end_jitter__mm=0.3, seed=seed)
 
+    @classmethod
+    def muscle_candidate(cls, seed: int = 0) -> "SurfaceFiberDispersion":
+        """``literature_candidate`` with every fibre's CV and diameter taken from ``Muscle``.
+
+        End-plates, nerve delays and tendon ends as in ``literature_candidate``; the threshold
+        slope and within-unit CV spread give way to the ``Muscle`` fibres (typed by motor unit,
+        CV 4.32 +/- 0.71 m/s over fibres [delvecchio2018 p. 2]); each source scales with its own
+        cross-section.
+        """
+        return replace(cls.literature_candidate(seed=seed), fiber_properties="muscle",
+                       fiber_cv_threshold_slope=0.0, fiber_cv_within_mu_cov=0.0, diameter_scales_source=True)
+
     @property
     def active(self) -> bool:
         return (self.nmj_model != "uniform_mu" or self.nerve_delays
                 or self.fiber_cv_inter_mu_spread > 0 or self.fiber_cv_threshold_slope > 0
                 or self.fiber_cv_within_mu_cov > 0 or self.fiber_cv_per_unit__m_s is not None
-                or self.diameter_scales_source or self.tendon_end_band__mm > 0)
+                or self.diameter_scales_source or self.tendon_end_band__mm > 0
+                or self.fiber_properties == "muscle")
 
 
 @dataclass
