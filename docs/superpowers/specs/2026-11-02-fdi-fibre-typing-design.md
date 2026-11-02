@@ -1,6 +1,6 @@
 # Fibre typing by motor unit (FDI) — design
 
-Status: **Draft** (2026-11-02). Branch `calib/fdi-dd-main`. Requested by Devon ("that's an important step I'd like to do").
+Status: **Approved** (Devon, 2026-11-02). Branch `calib/fdi-dd-main`. Requested by Devon ("that's an important step I'd like to do").
 
 ## 1. Why
 
@@ -12,7 +12,7 @@ Status: **Draft** (2026-11-02). Branch `calib/fdi-dd-main`. Requested by Devon (
 2. Type I units are the lowest-threshold units, and type I fibres make up 57.4 % of all fibres [polgar1973 p. 312 Table 4].
 3. A unit's mean fibre diameter rises with its recruitment threshold across the whole pool, through the type boundary (option A, Devon 2026-11-02; §5.2); fibres within a unit scatter about that mean.
 4. Each type's fibre-weighted mean diameter stays at Polgar's 50.0 / 67.0 µm [polgar1973 p. 310 Table 2]; the overall mean stays 57.2 µm.
-5. Fibre CVs keep the current authority: ordered by diameter through the CV line plus 0.2 m/s scatter, rescaled to `mean_fiber_conduction_velocity__m_per_s` / `sd_fiber_conduction_velocity__m_per_s` (3.89 ± 0.50 m/s). With goal 3 this yields CV rising with threshold across the whole pool.
+5. Fibre CVs keep the current authority: ordered by diameter through the CV line plus 0.2 m/s scatter, rescaled to `mean_fiber_conduction_velocity__m_per_s` / `sd_fiber_conduction_velocity__m_per_s`, new defaults 4.32 ± 0.71 m/s (§5.2, CV anchor). With goal 3 this yields CV rising with threshold across the whole pool.
 6. Expose per-unit and per-fibre types on `Muscle`.
 
 ## 3. Non-goals
@@ -80,7 +80,16 @@ No free split is left: both spreads follow from Polgar's type means and fraction
 - Tails stay as today (26–117 µm) only through the combined truncation.
 - The model's CV–threshold relation is tighter (R² 0.94) than Del Vecchio's measurement (0.70 ± 0.09). Their R² includes HD-sEMG estimation error and between-unit variability the ladder lacks. Reported, not fitted.
 
-**Open — CV anchor (Devon).** The pool-wide fibre CV 3.89 ± 0.50 m/s is Del Vecchio's 0–30 % MVC band, chosen when CVs were not ordered by threshold. With the ladder, low-threshold units average ~3.4 m/s and the top unit ~4.8, below Del Vecchio's 3.89 / 5.12 band means (thresholds above are in excitation, not % MVC, so the comparison is approximate). `cv_from_recruitment_force` (ramp_analysis) encodes 3.89 → 5.12. Options: (i) keep 3.89 ± 0.50 and document the gap; (ii) anchor the pool to Del Vecchio's all-unit 4.32 ± 0.71 m/s [delvecchio2018 p. 2]; (iii) anchor the band means. Changes a default; needs Devon's yes.
+**CV anchor — decided (Devon 2026-11-02, option 2).** The previous default 3.89 ± 0.50 m/s is Del Vecchio's 0–30 % MVC band, chosen when CVs were not ordered by threshold; with the ladder the pool spans all thresholds, so the fibre CV defaults become Del Vecchio's all-unit 4.32 ± 0.71 m/s (range 2.78–6.21) [delvecchio2018 p. 2].
+
+My call: anchor over **fibres** (as today), not over unit means. Scratch check on the default FDI muscle:
+
+| Anchor | Fibre CV | Clipped at 2 / 6 m/s | Unit-mean CV | Lowest-threshold 80 units |
+|---|---|---|---|---|
+| Fibres (chosen) | 4.31 ± 0.69 | 2.1 % | 3.89 ± 0.47, 3.14–5.47 | 3.62 |
+| Unit means | 4.85 ± 0.85 | 16.2 % | 4.28 ± 0.63, 3.19–5.90 | 3.91 |
+
+Anchoring unit means pushes the large units' fibres into the 6 m/s clip. The fibre anchor clips ~2 % of fibres at 6 m/s, below Del Vecchio's maximum 6.21 m/s; whether to raise the sanity bound is a separate question for Devon (plan, open item).
 
 ### 5.3 Keeping the type means
 
