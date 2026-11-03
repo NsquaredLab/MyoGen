@@ -133,6 +133,8 @@ def cv_from_recruitment_force(
     cv_low__m_s: float = 3.89,
     cv_high__m_s: float = 5.12,
     unrecruited_pct_mvc: float = 100.0,
+    residual_sd__m_s: float = 0.39,
+    rng: np.random.Generator | None = None,
 ) -> tuple[np.ndarray, tuple[float, float]]:
     """Motor-unit conduction velocity linear in recruitment force.
 
@@ -144,6 +146,12 @@ def cv_from_recruitment_force(
     (a derivation: the paper gives no band-mean thresholds). Units with NaN
     recruitment force (not recruited on the ramp) are placed at
     ``unrecruited_pct_mvc``.
+
+    Each unit then scatters about the line by ``N(0, residual_sd__m_s)``. The
+    default 0.39 m/s is derived, not measured: CV is linear in threshold with
+    R² 0.70 ± 0.09 and SD 0.71 m/s over units [delvecchio2018 p. 2], so
+    sqrt(1 - 0.70) * 0.71 of it is left unexplained. Pass 0 for the line alone.
+    ``rng`` defaults to myogen's global generator (``set_random_seed``).
 
     Returns
     -------
@@ -161,4 +169,11 @@ def cv_from_recruitment_force(
     x_low, x_high = rt[low].mean(), rt[high].mean()
     b = (cv_high__m_s - cv_low__m_s) / (x_high - x_low)
     a = cv_low__m_s - b * x_low
-    return a + b * rt, (float(a), float(b))
+    cv = a + b * rt
+    if residual_sd__m_s > 0:
+        if rng is None:
+            from myogen import get_random_generator
+
+            rng = get_random_generator()
+        cv = cv + rng.normal(0.0, residual_sd__m_s, len(cv))
+    return cv, (float(a), float(b))

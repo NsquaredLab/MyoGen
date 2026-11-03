@@ -229,3 +229,17 @@ def test_large_fibre_layouts_stay_circular():
     ring = xy[r > 0.97 * 20]
     counts, _ = np.histogram(np.arctan2(ring[:, 1], ring[:, 0]), bins=16, range=(-np.pi, np.pi))
     assert counts.min() > 0.5 * counts.mean()
+
+
+def test_many_fibres_at_the_upper_cv_bound_warn():
+    """More than 5 % of fibres clipped to 6 m/s warns and points to per-unit CVs."""
+    with pytest.warns(UserWarning, match="motor_unit_conduction_velocities__m_per_s"):
+        _typed(mean_fiber_conduction_velocity__m_per_s=5.5 * pq.m / pq.s)
+
+
+def test_few_fibres_at_the_upper_cv_bound_do_not_warn():
+    import warnings
+    with warnings.catch_warnings():
+        warnings.simplefilter("error")
+        _typed(mean_fiber_conduction_velocity__m_per_s=4.0 * pq.m / pq.s,
+               sd_fiber_conduction_velocity__m_per_s=0.4 * pq.m / pq.s)

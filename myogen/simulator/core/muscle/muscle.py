@@ -483,7 +483,15 @@ class Muscle:
                 cv = mean_cv + b * (line - np.mean(present))
         self._muscle_fiber_conduction_velocities__mm_per_s = cv * pq.m / pq.s
 
-        # Sanity bounds 2-6 m/s (a modelling assumption, not sourced; at 4.32 +/- 0.71 m/s ~2 % of fibres sit at 6 m/s)
+        # Sanity bounds 2-6 m/s (a modelling assumption, not sourced)
+        at_bound = float(np.mean(cv >= 6.0))
+        if at_bound > 0.05:
+            warnings.warn(
+                f"{at_bound:.0%} of fibres exceed 6 m/s and are clipped to it. With mean and SD over unit means, "
+                "a pool of mostly small units stretches the large ones; consider "
+                "motor_unit_conduction_velocities__m_per_s (e.g. from cv_from_recruitment_force).",
+                stacklevel=2,
+            )
         self._muscle_fiber_conduction_velocities__mm_per_s = np.clip(
             self._muscle_fiber_conduction_velocities__mm_per_s, 2.0 * pq.m / pq.s, 6.0 * pq.m / pq.s
         )
