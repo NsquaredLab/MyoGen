@@ -6,5 +6,6 @@ calibrated drive; keywords passed to a builder override the card, and a note is 
 is one the card's calibration or fit depends on.
 """
 from myogen.profiles._card import CardField, Profile, ProfileError, available_profiles, load_profile
+from myogen.profiles._notes import ProfileNote
 
-__all__ = ["CardField", "Profile", "ProfileError", "available_profiles", "load_profile"]
+__all__ = ["CardField", "Profile", "ProfileError", "ProfileNote", "available_profiles", "load_profile"]

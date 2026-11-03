@@ -18,6 +18,7 @@ from myogen.utils.types import (
 )
 
 from .force_utils import FUGLEVAND_FORCE_FREQUENCY, fuglevand_gain
+from myogen.profiles._notes import hand_built
 
 
 @beartowertype
@@ -113,6 +114,7 @@ class ForceModel:
         twitch_force_range: float | None = None,
         force_frequency_shape: tuple[float, float] = FUGLEVAND_FORCE_FREQUENCY,
     ) -> None:
+        hand_built("ForceModel")  # one-line hint when built without a profile card
         # Input validation
         if len(recruitment_thresholds) == 0:
             raise ValueError(

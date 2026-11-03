@@ -305,11 +305,12 @@ from myogen.utils.nmodl import (
 # Use strict=True in your code to raise exceptions on failure
 _nmodl_loaded = load_nmodl_mechanisms(quiet=True, strict=False)
 
-from myogen.profiles import ProfileError, load_profile  # noqa: E402
+from myogen.profiles import ProfileError, ProfileNote, load_profile  # noqa: E402
 
 __all__ = [
     "load_profile",
     "ProfileError",
+    "ProfileNote",
     "get_random_generator",
     "get_random_seed",
     "derive_subseed",
