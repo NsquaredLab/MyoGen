@@ -29,6 +29,8 @@ FDI only: ``_muscle_radius__mm`` (default 6.91) and ``_fiber_density__per_mm2`` 
 afterwards so every other draw matches the earlier arms; their hash is saved as ``property_hash``.
 ``_iap_kernel_length__mm`` (FDI default 150) sets ``SurfaceEMG.iap_kernel_length__mm``; slow fibres at small
 lambda need a longer window (the surface window check says so).
+``_muscle_cv_within_cov`` (ablation, with ``fiber_properties: "muscle"``) rescales each unit's ``Muscle`` fibre CVs
+about the unit mean to this coefficient of variation; unit means and diameters stay as generated.
 FDI only: ``_fs__Hz`` (default 2048) sets the output and internal sampling rate. ``_delsys5`` replaces the
 bipolar pair with Delsys 5-pin sensors (0.5 mm pins at the corners and centre of a 5 x 5 mm square, as in
 Pereira Botelho et al. 2019): ``{"z__mm": [...], "rotation__deg": [...], "theta__deg": [...]}`` places one
@@ -71,6 +73,7 @@ fs_out = config.pop("_fs__Hz", 2048.0)
 delsys5 = config.pop("_delsys5", None)
 iap_lambda = config.pop("_iap_lambda__per_mm", 1.0)
 kernel_override = config.pop("_iap_kernel_length__mm", None)
+within_cov = config.pop("_muscle_cv_within_cov", None)
 mean_cv = config.pop("_mean_cv__m_s", None)
 cv_kw = {} if mean_cv is None else {"mean_conduction_velocity__m_per_s": mean_cv * pq.m / pq.s}
 cv_file = config.pop("_fiber_cv_per_unit_file", None)
@@ -105,6 +108,13 @@ if dispersion.fiber_properties == "muscle":
     state = get_random_generator().bit_generator.state
     muscle._generate_fiber_properties()
     get_random_generator().bit_generator.state = state
+    if within_cov is not None:
+        cv = np.asarray(muscle.muscle_fiber_conduction_velocities__mm_per_s.magnitude, float).copy()
+        for mu_idx in range(len(thresholds)):
+            sel = np.asarray(muscle.assignment) == mu_idx
+            if sel.sum() > 1 and cv[sel].std() > 0:
+                cv[sel] = cv[sel].mean() + (cv[sel] - cv[sel].mean()) * within_cov * cv[sel].mean() / cv[sel].std()
+        muscle._muscle_fiber_conduction_velocities__mm_per_s = cv * pq.mm / pq.s
     property_hash = hashlib.sha1(
         np.ascontiguousarray(muscle.muscle_fiber_diameters__mm.magnitude).tobytes()
         + np.ascontiguousarray(muscle.muscle_fiber_conduction_velocities__mm_per_s.magnitude).tobytes()).hexdigest()
