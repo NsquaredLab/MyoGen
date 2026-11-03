@@ -21,7 +21,7 @@ Started 2026-11-03 (Devon). Future work we must not lose sight of. Newest decisi
 
 **Why.** Trackable history for future sanity checks and backtracking: each key change since ~2026-10-30 gets an issue, and the fixes reach `main` through those issues.
 
-**Plan (to be drafted, not opened yet).** One issue per major change, each listing its commits on `calib/fdi-dd-main` (and earlier branches), the evidence, and the decision record (PR doc / design notes). Candidates:
+**Done 2026-11-03**: issues #29–#39 opened (texts in `docs/pr/2026-11-03-github-issues.md`); PR #40 (`fix/semg-farina2004`, closes #29, #32) and PR #41 (`calib/fdi-dd-main`, stacked on #40, closes the rest); old `fix/semg-amplitude-scale` deleted (all 22 commits patch-equivalent in #40). Original plan: One issue per major change, each listing its commits on `calib/fdi-dd-main` (and earlier branches), the evidence, and the decision record (PR doc / design notes). Candidates:
 - Surface EMG corrections against Farina 2004 (B(k_z) complex part, MUAP time axis, Rosenfalck λ / `z/2`, fibre semi-lengths, fibre timing, mixed arrays, absolute amplitude, skin/fat defaults, failed units raise).
 - Intramuscular SFAP units and polarity; end-plate spreads (Akhmadeev published coefficients).
 - Gfluctdv noise silent; large circular fibre layouts; fibre CV unit bug.
@@ -52,6 +52,7 @@ Then decide one PR or several, routed through the issues. Source of truth for th
 
 ## Done
 
+- 2026-11-03: GitHub issues #29–#39, PRs #40 and #41 (backlog item 2).
 - 2026-11-03: surface EMG reads `Muscle` fibres (`121546f55`, `d9dd47e7b`, `130ee929b`, `d3db69520`, `1ba5b18bb`); λ refit on Botelho: ≈ 0.72 (see PR doc).
 - 2026-11-03: within-unit fibre spread from Martin 1988 and per-unit `Muscle` CVs (`6a2719c4a`, `d82a03e5d`, `84870f42c`); λ refit ≈ 0.63 with RMS inside Botelho's range.
 - 2026-11-02: fibre typing by motor unit (`a3dc1d7`…`c9f39c04d`); % MVC / CV helpers (`c1331ab76`); decisions on calibration, Gfluctdv, force-frequency, λ, CV clip (`5e904a67f`).
