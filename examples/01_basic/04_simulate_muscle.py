@@ -18,9 +18,8 @@ from pathlib import Path
 import joblib
 import matplotlib.pyplot as plt
 import numpy as np
-import quantities as pq
 
-from myogen import simulator
+from myogen import load_profile
 from myogen.utils.plotting.muscle import plot_innervation_areas_2d, plot_mf_centers
 
 plt.style.use("fivethirtyeight")
@@ -29,32 +28,20 @@ plt.style.use("fivethirtyeight")
 # Define Parameters
 # -----------------
 #
-# The **muscle model** is created using the [`Muscle`][myogen.simulator.Muscle] object.
-#
-# The **Muscle** object takes the following parameters:
+# The **muscle model** is a [`Muscle`][myogen.simulator.Muscle] object. Its main parameters are:
 #
 # - ``recruitment_thresholds``: Recruitment thresholds of the motor units
-# - ``radius``: Radius of the muscle in mm
-# - ``fiber_density``: Fiber density per mm²
-# - ``max_innervation_area_to_total_muscle_area__ratio``: Maximum innervation area to total muscle area ratio
-# - ``grid_resolution``: Spatial resolution for muscle discretization
+# - ``radius__mm``: Radius of the muscle
+# - ``fiber_density__fibers_per_mm2``: Fiber density
+# - ``skin_thickness__mm``, ``fat_thickness__mm``: Layers between the muscle and the electrodes
 #
-# Since the **recruitment thresholds** are already generated, we can load them from the previous example using ``joblib``.
+# The ``fdi_semg`` **profile card** holds the FDI values with their sources (radius 6.91 mm, 267 fibres/mm²,
+# skin 1.2 mm, fat 1.3 mm, per-unit conduction velocities from recruitment force, ...). ``card.muscle()`` builds
+# the muscle with them and the thresholds of example 01. Keywords override a card value, e.g.
+# ``card.muscle(fat_thickness__mm=3 * pq.mm)``; the card then prints a note on what else that affects.
 
-# Load recruitment thresholds
 save_path = Path("./results")
-
-recruitment_thresholds = joblib.load(save_path / "thresholds.pkl")
-
-# Define muscle parameters
-muscle_radius = 4.9 * pq.mm  # Muscle radius in mm
-mean_fiber_length = 32 * pq.mm  # Mean fiber length in mm
-fiber_length_variation = 3 * pq.mm  # Fiber length variation in mm
-fiber_density = 400 * pq.mm**-2  # Fiber density in fibers per mm²
-
-# Define simulation parameters
-max_innervation_ratio = 1 / 4  # Maximum motor unit territory size
-grid_resolution = 256  # Spatial resolution for muscle discretization
+card = load_profile()  # fdi_semg
 
 ##############################################################################
 # Create Muscle Model
@@ -65,14 +52,8 @@ grid_resolution = 256  # Spatial resolution for muscle discretization
 #
 #     To **avoid running the simulation every time**, we can save the muscle model using `joblib`.
 
-# Create muscle model
-muscle = simulator.Muscle(
-    recruitment_thresholds=recruitment_thresholds,
-    radius_bone__mm=1.0 * pq.mm,  # Non-zero bone radius required for proper MUAP amplitudes
-    fiber_density__fibers_per_mm2=fiber_density,
-    fat_thickness__mm=10 * pq.mm,
-    autorun=True,
-)
+# Create muscle model (innervation areas, fibres, fibre-to-unit assignment, fibre properties)
+muscle = card.muscle()
 
 # Save muscle model for future use
 joblib.dump(muscle, save_path / "muscle_model.pkl")
@@ -82,8 +63,8 @@ total_fibers = sum(muscle.resulting_number_of_innervated_fibers)
 
 print("Muscle model statistics:")
 print(f"\tTotal muscle fibers: {total_fibers}")
-print(f"\tMean fibers per MU: {total_fibers / len(recruitment_thresholds):.1f}")
-print(f"\tMuscle cross-sectional area: {np.pi * muscle_radius**2:.1f}")
+print(f"\tMean fibers per MU: {total_fibers / len(muscle.resulting_number_of_innervated_fibers):.1f}")
+print(f"\tMuscle cross-sectional area: {np.pi * muscle.radius__mm**2:.1f}")
 
 ##############################################################################
 # Visualize Muscle Fiber Centers
