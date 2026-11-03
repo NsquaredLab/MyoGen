@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-This release corrects the surface-EMG pipeline against Farina, Mesin, Martina & Merletti (2004). The problems were reported in an external tutorial notebook. Both the default route and `execution=` are affected.
+This release corrects the surface-EMG pipeline against Farina, Mesin, Martina & Merletti (2004). The problems were found through feedback from @joaohbbittar; thank you. Both the default route and `execution=` are affected.
 
 It also ports three fixes that never reached `main` (Gfluctdv noise, fibre conduction velocities, large fibre layouts) and the multilevel descending-drive optimiser used to calibrate an FDI pool.
 
