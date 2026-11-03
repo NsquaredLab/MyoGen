@@ -2,10 +2,9 @@
 
 Research harness for the digital-twin program. **Canonical research plan:
 `docs/DIGITAL_TWIN_ROADMAP_REVISED.md`** (supervisor review, 2026-10-13 —
-sequence, gates, claim boundaries, Deliverables A/B/C);
-`docs/DIGITAL_TWIN_ROADMAP.md` records implementation status and the
-implemented-vs-planned table. This harness covers the drive→pool pathway
-only; afferents, muscle/force, and EMG are not wired in yet.
+sequence, gates, claim boundaries, Deliverables A/B/C). This harness covers
+the drive→pool pathway only; afferents, muscle/force, and EMG are not wired
+in yet.
 
 **Status: differentiable proof-of-concept harness.** Simulator validation
 (roadmap Phase 1 strict package) has not passed yet; inverse-recovery results
