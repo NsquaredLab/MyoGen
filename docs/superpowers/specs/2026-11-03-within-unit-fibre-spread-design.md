@@ -79,3 +79,9 @@ Option 3 matches the band means but has little spread inside a band (the helper 
 ## 9. λ refit (per-unit CVs from recruitment force)
 
 Arms `delsys5r_wexp_musclert_lam*` (kernel 200 mm, same fibres and spikes): mean MDF 155.6 / 161.9 / 166.9 / 172.5 / 177.5 / 181.2 / 196.2 Hz and corner–centre / adjacent RMS 0.202/0.246, 0.197/0.238, 0.192/0.231, 0.187/0.223, 0.182/0.216, 0.177/0.209, 0.159/0.184 mV at λ 0.55 / 0.6 / 0.65 / 0.7 / 0.75 / 0.8 / 1. MDF fit to ~165 Hz [botelho2019]: λ ≈ 0.63; RMS there 0.19 / 0.23 mV, inside Botelho's IQR. Default λ stays 1. The fallback (no per-unit CVs) was not fitted.
+
+## 10. Open points closed (Devon, 2026-11-03)
+
+- Residual scatter on per-unit CVs: `cv_from_recruitment_force(residual_sd__m_s=0.39)`, sqrt(1 − R² 0.70) × 0.71 m/s [delvecchio2018 p. 2] (derived). Benchmark pool: CVs 2.81–5.65 m/s (was 3.75–5.34), residual SD 0.38 in this draw. Arm `delsys5r_wexp_musclertsc_lam0.63`: cc 0.196 mV / 162 Hz, adj 0.233 mV / 158 Hz (without scatter 0.194 / 168, 0.234 / 162).
+- Fallback clipping: no model change; `Muscle` warns when more than 5 % of fibres reach 6 m/s.
+- Old-vs-new comparison (v0.13.0 → now, six stages, same fibres and spikes): nexus `MyoGen_sEMG/Assets/semg_old_vs_new_2026-11-03/`.
