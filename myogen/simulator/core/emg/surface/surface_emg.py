@@ -109,7 +109,11 @@ class SurfaceEMG:
         their FDI recordings. In this conductor, with ``diameter_scales_source`` and each
         unit's CV mapped from its recruitment force through Del Vecchio et al. (2018)
         [delvecchio2018 p. 2], 0.7 gives 175 / 169 Hz and 0.19 / 0.23 mV (corner-centre /
-        adjacent pins) at 25 % MVC against their ~165 Hz and 0.21 mV [botelho2019]. Any value other than 1 is a
+        adjacent pins) at 25 % MVC against their ~165 Hz and 0.21 mV [botelho2019]. With every fibre's
+        CV and diameter taken from the ``Muscle`` (``SurfaceFiberDispersion.muscle_candidate``), the
+        same benchmark puts the median-frequency match at about 0.72 (0.70 and 0.75 lie 1.9 Hz either
+        side of 165 Hz, within one 2.5 Hz spectral bin), at 0.17 / 0.21 mV; every value from 0.6 to 1
+        stays inside their MDF IQR of 152-185 Hz (one subject) [botelho2019]. Any value other than 1 is a
         fitted modelling assumption, not a measurement. ``iap_kernel_length__mm``
         must hold the longer IAP (its tail scales with ``1 / lambda``).
     fiber_dispersion : SurfaceFiberDispersion, optional
