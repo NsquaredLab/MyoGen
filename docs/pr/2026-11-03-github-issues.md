@@ -1,16 +1,14 @@
-# GitHub issues for the 2026-10-30 to 2026-11-03 changes (draft)
+# GitHub issues for the 2026-10-30 to 2026-11-03 changes
 
-Status: Draft, not opened. Backlog item 2 (`docs/backlog.md`). Nothing is posted to GitHub until Devon approves the list and the texts.
+Status: opened on GitHub 2026-11-03 (Devon approved). Backlog item 2 (`docs/backlog.md`).
 
 Repository: `NsquaredLab/MyoGen` (no open issues; labels: `bug`, `enhancement`, `documentation`). All hashes are on `calib/fdi-dd-main`, which holds every change below. The GitHub copy of `fix/semg-amplitude-scale` (`6137959e7`) predates the 2026-10-30 identity rewrite, so its hashes differ; map them with `.git/identity-rewrite-20261030/commit-map.txt` or delete that branch once the PRs are open.
 
 ## Routing
 
-Recommend two PRs, each closing its issues with `Fixes #n`:
-- **PR A, surface and intramuscular physics fixes**: issues 1–4. The commits up to `028a14362` are a contiguous prefix of the branch (they were `fix/semg-amplitude-scale`); `42a56ca03` (issue 3) and `334eb667b` (issue 2) sit later and would be cherry-picked or the PR would include the later prefix.
-- **PR B, models, calibration and tooling**: issues 5–10.
-
-One PR closing all ten is simpler to produce and still traceable through the issues; two PRs are easier to review. Devon to choose.
+Devon 2026-11-03: open the issues; two PRs. The split follows the branch history so no commit is rewritten:
+- **PR A, surface EMG physics and defaults** (`fix/semg-farina2004`, head `028a14362`, the first 36 commits of the branch, formerly `fix/semg-amplitude-scale`): closes issues 1 and 4; the skin conductivity and skin/fat parts of issue 2.
+- **PR B, everything after** (`calib/fdi-dd-main`, stacked on PR A until it merges): closes issue 2 (Polgar diameter, `334eb667b`), issue 3 (iEMG SFAP units, `42a56ca03`, which sits after the prefix) and issues 5–11.
 
 Each issue body follows: **Problem** (what was wrong or missing, with evidence), **Change**, **Commits**, **Evidence** (tests, benchmarks), **Decisions** (where recorded), **Impact** (what changes for users; upgrade notes).
 
