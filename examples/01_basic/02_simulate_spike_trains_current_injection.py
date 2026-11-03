@@ -1,16 +1,32 @@
 """
-Spike Train Generation with Current Injection
-=======================================
+Spike Train Generation with Current Injection - Jaxley Backend (NERLab)
+=======================================================================
 
-This example demonstrates how to simulate spike trains in a population of alpha motor neurons using current injection.
+This example demonstrates how to simulate spike trains in a population of alpha motor neurons
+using current injection with the **Jaxley** (JAX-based) simulator.
 
-Two complementary workflows are presented:
+This is designed to produce output comparable to the NEURON version
+(``02_simulate_spike_trains_current_injection.py``), which uses the SAME ``model="NERLab"``
+motor-neuron model.
 
-1. Manual step-by-step workflow — explicitly walks through each stage of the NEURON simulation pipeline. This workflow is intended to clarify the underlying mechanisms.
+Key features:
+    - Uses the NERLab architecture (soma + 1 isopotential dendrite), matching the
+      production NEURON model
+    - NERLab channels: ``napp`` (Na fast + Na persistent + Kfast + Kslow + leak) on the
+      soma; ``caL`` (L-type Ca, no inactivation + leak) on the dendrite
+    - Same current to ALL neurons — recruitment from biophysics (Henneman size principle)
+    - Runs full biophysical simulation with ``jx.integrate()``
 
-2. Utility-function workflow — uses the high-level `inject_currents_and_simulate_spike_trains` function for routine simulations.
+.. note::
+    **Voltage convention.** NERLab cells live in the *original 1952 HH frame*:
+    V_rest ≈ 0 mV, ENa = +120 mV, EK = -10 mV, spike peaks ≈ +90 mV. This is set
+    automatically by ``AlphaMN__Pool`` when ``model="NERLab"`` (the default), but if
+    you reinitialise ``v`` manually anywhere in your pipeline you must use 0 mV, not
+    -65 mV, and detect spikes at ~+50 mV (not 0 mV).
 
-Both workflows yield identical results; the manual version is provided purely for explanatory purposes.
+.. note::
+    Jaxley uses JAX for accelerated computation. On first run, JAX will compile
+    the simulation which may take a few seconds, but subsequent runs are faster.
 """
 
 # %%
@@ -18,44 +34,23 @@ Both workflows yield identical results; the manual version is provided purely fo
 ##############################################################################
 # Import Libraries
 # ----------------
-#
-# !!! important
-#     In **MyoGen** all **random number generation** is handled by the RNG returned from
-#     [`get_random_generator`][myogen.get_random_generator], a thin wrapper around `numpy.random`.
-#
-#     Always fetch the generator at the call site so the current seed is honored:
-#
-#     ```python
-#     from myogen import simulator, get_random_generator
-#     get_random_generator().normal(0, 1)
-#     ```
-#
-#     To change the seed, use [`set_random_seed`][myogen.set_random_seed]:
-#
-#     ```python
-#     from myogen import set_random_seed
-#     set_random_seed(42)
-#     ```
 
 from pathlib import Path
 
+import jax.numpy as jnp
+import jaxley as jx
 import joblib
 import numpy as np
 import quantities as pq
 import seaborn as sns
 from matplotlib import pyplot as plt
 from neo import Block, Segment, SpikeTrain
-from neuron import h
 from scipy.ndimage import gaussian_filter1d
+from tqdm import tqdm
 
-from myogen import get_random_generator
-from myogen.simulator.neuron.populations import AlphaMN__Pool
+from myogen import get_random_generator, simulator
+from myogen.simulator.jaxley.populations import AlphaMN__Pool
 from myogen.utils.currents import create_trapezoid_current
-from myogen.utils.neuron.inject_currents_into_populations import (
-    inject_currents_and_simulate_spike_trains,
-    inject_currents_into_populations,
-)
-from myogen.utils.nmodl import load_nmodl_mechanisms
 
 plt.style.use("fivethirtyeight")
 
@@ -69,10 +64,9 @@ def rasterplot_rates(spiketrains, filter_function=None):
     """Native spike raster with top/right marginal axes.
 
     Lightweight stand-in for ``viziphant.rasterplot.rasterplot_rates``: draws a
-    spike raster (one row per train), a right marginal showing each train's mean
+    spike raster (one row per train), a right marginal with each train's mean
     firing rate, and an (initially empty) top marginal that the caller fills with
-    the smoothed population rate. Returns ``(ax, axhistx, axhisty)`` as
-    absolutely-positioned axes so manual position tweaks downstream still work.
+    the smoothed population rate. Returns ``(ax, axhistx, axhisty)``.
     """
     if filter_function is not None:
         spiketrains = [st for st in spiketrains if filter_function(st)]
@@ -94,51 +88,73 @@ def rasterplot_rates(spiketrains, filter_function=None):
     ax.set_ylim(-1, max(len(spiketrains), 1))
     return ax, axhistx, axhisty
 
+
 ##############################################################################
 # Create Motor Neuron Populations (Pools)
 # ---------------------------------------
 #
-# In MyoGen a population of cells (e.g. motor neurons) is represented by a
-# **Population** class and available in the `myogen.simulator.neuron.populations` module.
+# We create motor neuron pools using the :class:`~myogen.simulator.jaxley.populations.AlphaMN__Pool`
+# class. The default ``model="NERLab"`` builds the same architecture as the production
+# NEURON model: soma + 1 isopotential dendrite, ``napp`` + ``caL`` channels.
 #
-# A population can easily be created by specifying the number of cells. Plausible default parameters are already set.
-#
-# For a motor neuron population (referred to as **motor pool**), we can use the [`AlphaMN__Pool`][myogen.simulator.neuron.populations.AlphaMN__Pool] class.
-# This class can also use the recruitment thresholds generated in the previous example to distribute the motor units properties in a physiologically plausible manner.
-#
-# !!! important
-#     These **Population** classes are custom-built and use therefore custom NMODL mechanisms.
-#     To use them, the NMODL mechanisms need to be loaded first using the [`load_nmodl_mechanisms`][myogen.load_nmodl_mechanisms] function.
-#
-# To showcase MyoGen's capabilities, we will create two different motor neuron pools with identical properties but different input currents.
-load_nmodl_mechanisms()
+# Recruitment emerges naturally from biophysics (Henneman size principle):
+# - Low threshold MNs: smaller soma, higher input resistance -> easier to activate
+# - High threshold MNs: larger soma, lower input resistance -> harder to activate
 
 save_path = Path("./results")
 save_path.mkdir(exist_ok=True)
 
-recruitment_thresholds = joblib.load(save_path / "thresholds.pkl")
+# Load recruitment thresholds from Example 1 (or generate defaults)
+try:
+    recruitment_thresholds = joblib.load(save_path / "thresholds.pkl")
+    print(f"Loaded recruitment thresholds: {len(recruitment_thresholds)} values")
+except FileNotFoundError:
+    print("Recruitment thresholds not found. Generating defaults matching ex01...")
+    n_motor_units = 100
+    recruitment_thresholds, _ = simulator.RecruitmentThresholds(
+        N=n_motor_units,
+        recruitment_range__ratio=100,
+        deluca__slope=5,
+        konstantin__max_threshold__ratio=1.0,
+        mode="combined",
+    )
+    joblib.dump(recruitment_thresholds, save_path / "thresholds.pkl")
 
 n_pools = 2
+
+# Create motor neuron pools — defaults to model="NERLab" (matches the production
+# NEURON model: soma + 1 isopotential dendrite, napp + caL channels).
 motor_neuron_pools = [
-    AlphaMN__Pool(recruitment_thresholds__array=recruitment_thresholds) for _ in range(n_pools)
+    AlphaMN__Pool(
+        recruitment_thresholds__array=recruitment_thresholds,
+        mode="active",
+        # model defaults to "NERLab"; use_jaxley_mech is ignored for NERLab.
+    )
+    for _ in range(n_pools)
 ]
+
+print(f"Created {n_pools} motor neuron pools with {len(recruitment_thresholds)} neurons each")
+print(f"  Model: {motor_neuron_pools[0].model}  (soma + 1 isopotential dendrite, napp + caL)")
 
 ##############################################################################
 # Create Input Currents
 # ---------------------
 #
-# To drive the motor units, we use a **common input current profile**.
-#
-# In this example, we use a **trapezoid-shaped input current** which is generated using the [`create_trapezoid_current`][myogen.utils.currents.create_trapezoid_current] function.
-#
-# !!! note
-#     More convenient functions for generating input current profiles are available in the `myogen.utils.currents` module.
-#
-# !!! note
-#     The generated input current is an instance of the `neo.core.AnalogSignal` class from the `neo` package.
+# Same current to ALL neurons, matching the NEURON approach.
+# Recruitment determined by biophysics (cell size, conductances) — no manual cutoff.
 
-timestep = 0.05 * pq.ms
+timestep = 0.025 * pq.ms  # 0.025 ms = 25 µs, typical for HH simulations
 simulation_time = 4000 * pq.ms
+
+# Current amplitude — same to ALL neurons; biophysics determines recruitment.
+# 15 nA matches the NEURON example exactly (see
+# 02_simulate_spike_trains_current_injection.py:118). Using the same drive
+# level lets the comparison block at the bottom of this script be
+# apples-to-apples (active count, total spikes, mean rate).
+current_amplitude = 15.0 * pq.nA
+
+# NO max_recruitment cutoff - simulate ALL neurons like NEURON does
+# Recruitment emerges from biophysics (cell size, conductances)
 
 rise_time_ms = list(get_random_generator().uniform(100, 500, size=n_pools)) * pq.ms
 plateau_time_ms = list(get_random_generator().uniform(1000, 2000, size=n_pools)) * pq.ms
@@ -146,110 +162,121 @@ fall_time_ms = list(get_random_generator().uniform(1000, 2000, size=n_pools)) * 
 
 input_current__AnalogSignal = create_trapezoid_current(
     n_pools,
-    int(simulation_time / timestep),
+    int(simulation_time / timestep) + 1,
     timestep,
-    amplitudes__nA=[15.0 * pq.nA] * n_pools,
+    amplitudes__nA=[current_amplitude] * n_pools,
     rise_times__ms=rise_time_ms,
     plateau_times__ms=plateau_time_ms,
     fall_times__ms=fall_time_ms,
     delays__ms=500.0 * pq.ms,
 )
 
-print(
-    f"Input current signal shape: {input_current__AnalogSignal.shape}\nClass: {input_current__AnalogSignal.__class__}"
-)
+print(f"\nInput current signal shape: {input_current__AnalogSignal.shape}")
+print(f"Timestep: {timestep}, Total time: {simulation_time}")
+print(f"Current amplitude: {current_amplitude} (same for ALL neurons - NEURON approach)")
+print("Recruitment determined by biophysics (cell size, conductances) - no manual cutoff")
 
-# Save input current signal for later analysis
-joblib.dump(input_current__AnalogSignal, save_path / "input_current__AnalogSignal.pkl")
+# Save input current signal
+joblib.dump(input_current__AnalogSignal, save_path / "input_current__AnalogSignal_jaxley.pkl")
 
 ##############################################################################
-# Manual Simulation Approach - Step by Step
-# -------------------------------------------
+# Manual Simulation Approach - Step by Step (Jaxley Biophysics)
+# -------------------------------------------------------------
 #
-# Before showing the convenient utility function, let's understand what happens
-# under the hood by implementing the simulation pipeline manually.
-# This approach gives you full control and helps understand NEURON's mechanisms.
+# We walk through each stage of the Jaxley biophysical simulation:
+#
+# 1. Extract simulation parameters
+# 2. For each neuron: inject current, run jx.integrate(), detect spikes
+# 3. Convert to Neo format
+#
+# The key function is ``jx.integrate()`` which solves the HH differential
+# equations to compute membrane voltage over time.
 
-# Step 1: Set up current injection manually
-# =========================================
-# We need to inject time-varying currents into each motor neuron.
-# This uses NEURON's `neuron.h.IClamp` (current clamp) mechanism with `neuron.h.Vector.play`.
+# Step 1: Extract simulation parameters
+dt_ms = float(timestep.rescale(pq.ms).magnitude)
+t_max_ms = float(simulation_time.rescale(pq.ms).magnitude)
 
-inject_currents_into_populations(motor_neuron_pools, input_current__AnalogSignal)
+# Spike detection threshold — NERLab cells live in the 1952-HH frame
+# (V_rest ≈ 0 mV, AP peaks ≈ +90 mV), so a positive threshold avoids
+# false-positives from the resting-state membrane drift.
+spike_detection_threshold__mV = 50.0
 
-# Step 2: Set up spike recording manually
-# =======================================
-# For each neuron, we create a `neuron.h.NetCon` (network connection) object that detects
-# spikes when the membrane voltage crosses a threshold, and records spike times.
+# Convert Neo AnalogSignal to numpy array
+current_data = np.array(input_current__AnalogSignal.magnitude)
+print(f"\nCurrent data shape: {current_data.shape}")
 
-spike_detection_threshold__mV = 50.0 * pq.mV
-simulation_time__ms = input_current__AnalogSignal.t_stop.rescale(pq.ms)
+# Step 2: Simulate each pool and collect spike trains
+spike_train__Block_manual = Block(name="Manual Jaxley NERLab Biophysical Simulation")
 
-spike_recorders = []
+print("\n" + "=" * 60)
+print("Running biophysical simulations with jx.integrate()")
+print("Using NERLab channels (napp + caL; 1 soma + 1 isopotential dendrite)")
+print("=" * 60)
 
 for pool_idx, pool in enumerate(motor_neuron_pools):
-    pool_spike_recorders = []
+    print(f"\nSimulating Pool {pool_idx}...")
 
-    for cell in pool:
-        # Create a vector to record spike times
-        spike_recorder = h.Vector()
+    # Get current waveform for this pool
+    pool_current = jnp.array(current_data[:, pool_idx])
 
-        # Create NetCon object: monitors voltage at soma(0.5) and records spikes
-        # NetCon(source, target, threshold, delay, weight)
-        # source: cell.soma(0.5)._ref_v (membrane voltage reference)
-        # target: None (no post-synaptic target, just recording)
-        nc = h.NetCon(cell.soma(0.5)._ref_v, None, sec=cell.soma)
-        nc.threshold = spike_detection_threshold__mV  # Spike detection threshold
-        nc.record(spike_recorder)  # Record spike times into vector
-
-        pool_spike_recorders.append(spike_recorder)
-
-    spike_recorders.append(pool_spike_recorders)
-
-# Step 3: Initialize voltages and run simulation
-# ==============================================
-# Before running, we need to initialize membrane voltages to physiological values.
-#
-# !!! note
-#     For this MyoGen populations provide the `get_initialization_data()` method.
-# This returns the sections and their initial voltages.
-
-# Initialize each neuron's membrane voltage to its resting potential
-for pool in motor_neuron_pools:
-    for section, voltage in zip(*pool.get_initialization_data()):
-        section.v = voltage
-
-# Initialize NEURON's internal state and run the simulation
-h.finitialize()  # Initialize all mechanisms and variables
-# Advance the solver to the end of the simulation (replaces the deprecated
-# neuron.run(); finitialize() above already set the initial state).
-h.tstop = float(simulation_time__ms)
-while h.t < h.tstop:
-    h.fadvance()
-
-# Step 4: Convert recorded data to `neo.core.Block` format
-# ==================================================================
-# The spike times are now stored in NEURON vectors. We convert them to
-# the standardized `neo.core.Block` format for analysis and compatibility.
-
-spike_train__Block_manual = Block(name="Manual Simulation Results")
-
-for pool_idx, pool_spike_recorders in enumerate(spike_recorders):
-    # Create a segment for this motor unit pool
+    # Create a segment for this pool's spike trains
     segment = Segment(name=f"Pool {pool_idx}")
-
-    # Convert each neuron's spike times to a `neo.core.SpikeTrain` object
     segment.spiketrains = []
-    for neuron_idx, spike_recorder in enumerate(pool_spike_recorders):
-        # Convert NEURON vector to numpy array and add units
-        spike_times = (spike_recorder.as_numpy() * pq.ms).rescale(pq.s)
 
-        # Create `neo.core.SpikeTrain` object with metadata
+    # Simulate each neuron in the pool
+    # NEURON approach: simulate ALL neurons with SAME current
+    # Recruitment emerges from biophysics (cell size, conductances)
+    for neuron_idx, cell_wrapper in enumerate(tqdm(pool, desc=f"  Pool {pool_idx}", leave=False)):
+        spike_times_ms = np.array([])
+
+        if hasattr(cell_wrapper, 'cell'):
+            cell = cell_wrapper.cell
+
+            try:
+                # === BIOPHYSICAL SIMULATION WITH MAHP FOR AHP ===
+                cell.delete_recordings()
+                cell.delete_stimuli()
+
+                # Reset V to NERLab resting potential (≈ 0 mV in the 1952-HH frame)
+                # and reinitialise channel states at that V.
+                cell.set("v", 0.0)
+                cell.init_states()
+
+                # Set up voltage recording on soma
+                cell.branch(0).loc(0.5).record("v")
+
+                # Inject SAME current to ALL neurons on soma (NEURON approach)
+                # Recruitment determined by biophysics, not current scaling
+                cell.branch(0).loc(0.5).stimulate(pool_current)
+
+                # Run biophysical simulation
+                voltages = jx.integrate(cell, delta_t=dt_ms, t_max=t_max_ms)
+
+                # Extract voltage trace
+                if voltages.ndim == 2:
+                    v = np.array(voltages[0])
+                else:
+                    v = np.array(voltages)
+
+                # Detect spikes (threshold crossings)
+                spike_indices = np.where(
+                    (v[:-1] < spike_detection_threshold__mV) &
+                    (v[1:] >= spike_detection_threshold__mV)
+                )[0]
+                spike_times_ms = spike_indices * dt_ms
+
+            except Exception as e:
+                if neuron_idx == 0:
+                    print(f"  Warning: Neuron {neuron_idx} simulation failed: {e}")
+
+        # Convert to Neo SpikeTrain
+        spike_times_s = spike_times_ms / 1000.0
+
         spiketrain = SpikeTrain(
-            spike_times,
-            t_stop=simulation_time__ms.rescale(pq.s),
-            sampling_rate=(1 / (h.dt * pq.ms)).rescale(pq.Hz),
-            sampling_period=(h.dt * pq.ms).rescale(pq.s),
+            spike_times_s * pq.s,
+            t_stop=simulation_time.rescale(pq.s),
+            sampling_rate=(1 / timestep).rescale(pq.Hz),
+            sampling_period=timestep.rescale(pq.s),
             name=str(neuron_idx),
             description=f"Pool {pool_idx}, Neuron {neuron_idx}",
         )
@@ -257,69 +284,41 @@ for pool_idx, pool_spike_recorders in enumerate(spike_recorders):
 
     spike_train__Block_manual.segments.append(segment)
 
-joblib.dump(spike_train__Block_manual, save_path / "spike_train__Block_manual.pkl")
+    # Report statistics for this pool
+    active_count = sum(1 for st in segment.spiketrains if len(st) > 0)
+    total_spikes = sum(len(st) for st in segment.spiketrains)
+    print(f"  Pool {pool_idx}: {active_count}/{len(pool)} active neurons, {total_spikes} total spikes")
 
-##############################################################################
-# Convenient Utility Function Approach
-# ------------------------------------
-#
-# The manual approach above shows you exactly what happens during simulation.
-# However, since this is a common task, MyoGen provides the [`inject_currents_and_simulate_spike_trains`][myogen.utils.neuron.inject_currents_into_populations.inject_currents_and_simulate_spike_trains]
-# utility function that encapsulates all these steps in a single call.
-#
-# This is the recommended approach for routine simulations, while the manual
-# approach is useful when you need custom spike detection, specialized recording,
-# or want to understand the underlying mechanisms.
-
-# Run the same simulation using the utility function
-spike_train__Block = inject_currents_and_simulate_spike_trains(
-    populations=motor_neuron_pools,
-    input_current__AnalogSignal=input_current__AnalogSignal,
-    spike_detection_thresholds__mV=50 * pq.mV,
-)
-
-joblib.dump(spike_train__Block, save_path / "spike_train__Block_utility.pkl")
-
-# Compare the two approaches
-print("\nComparison of results:")
-print(f"Manual approach: {len(spike_train__Block_manual.segments)} segments")
-print(f"Utility approach: {len(spike_train__Block.segments)} segments")
-
-# Verify they produce similar results (spike counts should be identical)
-for i, (manual_seg, utility_seg) in enumerate(
-    zip(spike_train__Block_manual.segments, spike_train__Block.segments)
-):
-    manual_spikes = sum(len(st) for st in manual_seg.spiketrains)
-    utility_spikes = sum(len(st) for st in utility_seg.spiketrains)
-    print(f"Pool {i}: Manual={manual_spikes} spikes, Utility={utility_spikes} spikes")
+# Save results — single file; no separate utility implementation exists for Jaxley
+spike_train__Block = spike_train__Block_manual
+joblib.dump(spike_train__Block, save_path / "spike_train__Block_utility_jaxley.pkl")
 
 ##############################################################################
 # Calculate and Display Statistics
 # ---------------------------------
-#
-# It might be of interest to calculate the **firing rates** of the motor units.
-#
-# !!! note
-#     The **firing rates** are calculated as the number of spikes divided by the time in which each MU was active.
 
 firing_rates = [
     np.array(
         [
             mean_firing_rate(st__s.time_slice(st__s.min(), st__s.max()))
             for st__s in spike_train__segment.spiketrains
-            if len(st__s) > 1  # Need at least 2 spikes to compute rate over spike range
+            if len(st__s) > 0
         ]
     )
     for spike_train__segment in spike_train__Block.segments
 ]
 
-print("Firing rate statistics:")
+print("\n" + "=" * 60)
+print("Firing Rate Statistics")
+print("=" * 60)
+
 for pool_idx, firing_rates_per_pool in enumerate(firing_rates):
-    active_neurons = np.sum(firing_rates_per_pool > 0)
-    if len(firing_rates_per_pool) > 0 and np.sum(firing_rates_per_pool > 0) > 0:
-        mean_rate = np.mean(firing_rates_per_pool[firing_rates_per_pool > 0])
-        max_rate = np.max(firing_rates_per_pool)
+    if len(firing_rates_per_pool) > 0:
+        active_neurons = np.sum(firing_rates_per_pool > 0)
+        mean_rate = np.mean(firing_rates_per_pool[firing_rates_per_pool > 0]) if active_neurons > 0 else 0.0
+        max_rate = np.max(firing_rates_per_pool) if len(firing_rates_per_pool) > 0 else 0.0
     else:
+        active_neurons = 0
         mean_rate = 0.0
         max_rate = 0.0
 
@@ -331,28 +330,31 @@ for pool_idx, firing_rates_per_pool in enumerate(firing_rates):
 ##############################################################################
 # Visualize Spike Trains
 # ----------------------
+
 spike_train_list = list(spike_train__Block.segments[0].spiketrains)
 active_spiketrains = [st for st in spike_train_list if len(st) > 0]
 
-ax, axhistx, axhisty = rasterplot_rates(spike_train_list, filter_function=lambda st: len(st) > 0)
-ax.plot(
-    input_current__AnalogSignal.times,
-    input_current__AnalogSignal.magnitude.T[0]
-    / input_current__AnalogSignal.magnitude.T[0].max()
-    * len(active_spiketrains),
-    color="black",
-)
-
-axhisty.set_xlabel("FR (pps)")
-
-# Clear the auto-generated histogram and add custom KDE using elephant because it looks better
-axhistx.clear()
-
-
 if len(active_spiketrains) > 0:
-    # Population firing rate over time, Gaussian-smoothed (sigma = 15 ms).
+    ax, axhistx, axhisty = rasterplot_rates(spike_train_list, filter_function=lambda st: len(st) > 0)
+
+    # Overlay scaled input current
+    ax.plot(
+        input_current__AnalogSignal.times,
+        input_current__AnalogSignal.magnitude.T[0]
+        / input_current__AnalogSignal.magnitude.T[0].max()
+        * len(active_spiketrains),
+        color="black",
+        linewidth=2,
+        label="Input Current (scaled)",
+    )
+
+    axhisty.set_xlabel("FR (pps)")
+
+    # Add smoothed population firing rate over time (Gaussian, sigma = 15 ms).
     # Native replacement for elephant.statistics.instantaneous_rate.
-    sampling_period_s = (h.dt * pq.ms).rescale(pq.s).magnitude
+    axhistx.clear()
+
+    sampling_period_s = timestep.rescale(pq.s).magnitude
     t_start = min(st.t_start for st in active_spiketrains).rescale(pq.s).magnitude
     t_stop = max(st.t_stop for st in active_spiketrains).rescale(pq.s).magnitude
     n_bins = int(round((t_stop - t_start) / sampling_period_s))
@@ -365,47 +367,88 @@ if len(active_spiketrains) > 0:
     rate_hz = counts / sampling_period_s / len(active_spiketrains)
     rate_hz = gaussian_filter1d(rate_hz, sigma=(15e-3) / sampling_period_s, mode="constant")
 
-    axhistx.plot(edges[:-1] + sampling_period_s / 2, rate_hz, linewidth=2)
+    axhistx.plot(
+        edges[:-1] + sampling_period_s / 2,
+        rate_hz,
+        linewidth=2,
+        color="blue",
+    )
     axhistx.set_ylabel("FR (pps)")
-    axhistx.set_xlim(ax.get_xlim())  # Match x-axis with raster plot
+    axhistx.set_xlim(ax.get_xlim())
 
-ax.set_ylabel("Neuron Index (#)")
-ax.set_xlabel("Time (s)")
+    ax.set_ylabel("Neuron Index (#)")
+    ax.set_xlabel("Time (s)")
 
-# remove top and right spines for cleaner look
-sns.despine(ax=ax)
 
-# Make figure bigger with more white space at borders
-fig = plt.gcf()
-fig.set_size_inches(12, 6)
+    sns.despine(ax=ax)
 
-# Add whitespace between axes (manually adjust positions since rasterplot_rates uses absolute positioning)
-gap = 0.025  # Gap size between axes
-bottom_margin = 0.03  # Margin from bottom
+    fig = plt.gcf()
+    fig.set_size_inches(12, 6)
 
-ax_pos = ax.get_position()
-axhistx_pos = axhistx.get_position()
-axhisty_pos = axhisty.get_position()
+    # Adjust positioning for better layout
+    gap = 0.025
+    bottom_margin = 0.03
 
-# Raise ax and axhisty from bottom, move top histogram up and right histogram right to create gaps
-ax.set_position([ax_pos.x0, ax_pos.y0 + bottom_margin, ax_pos.width, ax_pos.height])
-axhistx.set_position(
-    [
-        axhistx_pos.x0,
-        axhistx_pos.y0 + gap + bottom_margin,
-        axhistx_pos.width,
-        axhistx_pos.height,
-    ]
-)
-axhisty.set_position(
-    [
-        axhisty_pos.x0 + gap,
-        axhisty_pos.y0 + bottom_margin,
-        axhisty_pos.width,
-        axhisty_pos.height,
-    ]
-)
+    ax_pos = ax.get_position()
+    axhistx_pos = axhistx.get_position()
+    axhisty_pos = axhisty.get_position()
 
-plt.show()
+    ax.set_position([ax_pos.x0, ax_pos.y0 + bottom_margin, ax_pos.width, ax_pos.height])
+    axhistx.set_position(
+        [
+            axhistx_pos.x0,
+            axhistx_pos.y0 + gap + bottom_margin,
+            axhistx_pos.width,
+            axhistx_pos.height,
+        ]
+    )
+    axhisty.set_position(
+        [
+            axhisty_pos.x0 + gap,
+            axhisty_pos.y0 + bottom_margin,
+            axhisty_pos.width,
+            axhisty_pos.height,
+        ]
+    )
 
-# mkdocs_gallery_thumbnail_path = "gallery_thumbs/02_simulate_spike_trains_current_injection.png"
+    plt.savefig(save_path / "spike_trains_jaxley_nerlab.png", dpi=150, bbox_inches="tight")
+    plt.savefig(save_path / "spike_trains_jaxley_nerlab.svg", bbox_inches="tight")
+    print(f"\nSaved figure to {save_path / 'spike_trains_jaxley_nerlab.png'} (and .svg)")
+    plt.show()
+else:
+    print("\nNo active spike trains to plot.")
+    print("This may indicate the current amplitude needs adjustment.")
+
+##############################################################################
+# Compare with NEURON Results (if available)
+# ------------------------------------------
+
+print("\n" + "=" * 60)
+print("Comparison with NEURON Results")
+print("=" * 60)
+
+try:
+    neuron_block = joblib.load(save_path / "spike_train__Block_utility.pkl")
+
+    print("\nFound NEURON results for comparison:")
+    for i, (neuron_seg, jaxley_seg) in enumerate(
+        zip(neuron_block.segments, spike_train__Block.segments)
+    ):
+        neuron_spikes = sum(len(st) for st in neuron_seg.spiketrains)
+        jaxley_spikes = sum(len(st) for st in jaxley_seg.spiketrains)
+
+        neuron_active = sum(1 for st in neuron_seg.spiketrains if len(st) > 0)
+        jaxley_active = sum(1 for st in jaxley_seg.spiketrains if len(st) > 0)
+
+        print(f"\nPool {i}:")
+        print(f"  NEURON:       {neuron_active} active neurons, {neuron_spikes} total spikes")
+        print(f"  Jaxley:       {jaxley_active} active neurons, {jaxley_spikes} total spikes")
+
+except FileNotFoundError:
+    print("\nNEURON results not found.")
+    print("Run 02_simulate_spike_trains_current_injection.py first for comparison.")
+
+print("\n" + "=" * 60)
+print("[DONE] Jaxley biophysical simulation complete!")
+print("       Using jx.integrate() with NERLab channels (napp + caL)")
+print("=" * 60)

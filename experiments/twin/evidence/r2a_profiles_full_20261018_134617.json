@@ -1,0 +1,244 @@
+{
+ "manifest": {
+  "git_revision": "a483b1d",
+  "git_dirty": true,
+  "provenance_note": "experiments/twin sources are untracked by git; reconstruction relies on the file hashes below, not the revision",
+  "source_sha256_16": {
+   "sensitivity_checks.py": "993a2cfdebaeb499",
+   "poolbuild.py": "816d4ba42490e283",
+   "observables.py": "9ab3a99e798e3274",
+   "validation_protocol.py": "983f8bbcafebd67e",
+   "protocols.py": "404ea437741ea2ae"
+  },
+  "versions": {
+   "jax": "0.9.0",
+   "jaxley": "0.13.0",
+   "numpy": "2.3.5"
+  },
+  "device": "cpu",
+  "precision": "float32 (JAX default; x64 not enabled)",
+  "dt_ms": 0.1,
+  "voltage_frame": "NERLab 1952-HH (V_rest\u22480, spike threshold +50 mV)",
+  "seed_taxonomy": {
+   "connectivity": "TwinSpec.seed (numpy default_rng)",
+   "events": "jax.random.PRNGKey (rate path) / numpy default_rng (frozen renewal events)",
+   "fd_probes": "deterministic, no sampling"
+  },
+  "objectives": {
+   "t2": "mean soma voltage, subthreshold deterministic current",
+   "t3_t4": "mean exponentially-smoothed rate (tau 100 ms)",
+   "t5": "MSE of smoothed rates (tau 100 ms) vs frozen-event target"
+  },
+  "scope": "this Jaxley harness configuration only \u2014 NOT a validated NEURON-matched forward model; conclusions are specific to the stated parameter points, objectives, and frozen input realizations",
+  "r2a_sha256_16": "ac4802b3bdfe1191",
+  "args": {
+   "n_mn": 8,
+   "true": [
+    1.6,
+    0.7,
+    0.0105
+   ],
+   "dense_g": 13,
+   "dense_nap": 9,
+   "dense_w": 11,
+   "replicates": 2,
+   "dur_scale": 1.0
+  },
+  "run_tag": "full"
+ },
+ "declared": {
+  "unknowns_profiled": [
+   "gCaL_scale",
+   "gNaP_scale"
+  ],
+  "nuisance_reoptimized": [
+   "w_exc"
+  ],
+  "fixed_known": [
+   "inhibition absent",
+   "connectivity",
+   "frozen event realizations"
+  ],
+  "observable": "binned (50 ms / 300 ms)",
+  "resolution_rel_predeclared": 0.2,
+  "theta_true": [
+   1.6,
+   0.7,
+   0.0105
+  ],
+  "interval_terminology": "sampled compatibility intervals (deterministic level sets)"
+ },
+ "axes": {
+  "gcal": [
+   0.25,
+   0.3149802624737183,
+   0.39685026299204984,
+   0.5,
+   0.6299605249474366,
+   0.7937005259840998,
+   1.0,
+   1.2599210498948732,
+   1.5874010519681994,
+   1.6,
+   1.9999999999999998,
+   2.5198420997897464,
+   3.1748021039363983,
+   4.0
+  ],
+  "gnap": [
+   0.25,
+   0.3535533905932738,
+   0.5,
+   0.7,
+   0.7071067811865475,
+   1.0,
+   1.4142135623730951,
+   1.9999999999999998,
+   2.82842712474619,
+   4.0
+  ],
+  "w_exc": [
+   0.0045,
+   0.005169142597486656,
+   0.005937785598478024,
+   0.006820724549296786,
+   0.007834955069665113,
+   0.008999999999999998,
+   0.010338285194973314,
+   0.0105,
+   0.011875571196956045,
+   0.013641449098593581,
+   0.01566991013933023,
+   0.018
+  ]
+ },
+ "replicates": [
+  {
+   "conn_seed": 0,
+   "event_offset": 0,
+   "eps": 0.6250000596046448,
+   "profile_gcal": [
+    1.458332896232605,
+    1.302082896232605,
+    1.284721851348877,
+    0.9722223877906799,
+    1.1631944179534912,
+    0.9375001490116119,
+    0.9548611342906952,
+    0.8680557906627655,
+    0.538194552063942,
+    0.0,
+    0.9548611342906952,
+    1.8402772545814514,
+    2.4479161500930786,
+    3.1076372861862183
+   ],
+   "profile_gnap": [
+    0.9548611342906952,
+    1.3368052542209625,
+    1.1631942391395569,
+    0.0,
+    0.41666677594184875,
+    0.9027779996395111,
+    0.8680557906627655,
+    0.9375001490116119,
+    1.458332896232605,
+    1.6319440603256226
+   ],
+   "gcal_interval": [
+    1.5874010519681994,
+    1.6
+   ],
+   "gnap_interval": [
+    0.7,
+    0.7071067811865475
+   ],
+   "gcal_advances_at_pm20pct": 1.0,
+   "gnap_advances_at_pm20pct": 1.0,
+   "joint_compat_set_gcal_gnap": [
+    [
+     1.5874010519681994,
+     0.7
+    ],
+    [
+     1.6,
+     0.7
+    ],
+    [
+     1.6,
+     0.7071067811865475
+    ]
+   ],
+   "event_hashes": {
+    "fit_ramp": "5ef0d36f3c87eee4",
+    "fit_trap": "682ace78eb9e26c4"
+   }
+  },
+  {
+   "conn_seed": 1,
+   "event_offset": 10,
+   "eps": 0.6423613429069519,
+   "profile_gcal": [
+    1.215278148651123,
+    1.2673611640930176,
+    1.1458332538604736,
+    1.0069443881511688,
+    1.006944626569748,
+    0.9548612833023071,
+    0.9722224771976471,
+    0.8854169696569443,
+    0.5555558353662491,
+    0.0,
+    0.5729169100522995,
+    1.458333671092987,
+    2.2916672229766846,
+    3.1249998807907104
+   ],
+   "profile_gnap": [
+    0.5729169100522995,
+    0.7465279996395111,
+    0.9201391339302063,
+    0.0,
+    0.5555558353662491,
+    0.7291669845581055,
+    0.8854169696569443,
+    0.9548612833023071,
+    1.2673611640930176,
+    1.6840280890464783
+   ],
+   "gcal_interval": [
+    1.5874010519681994,
+    1.9999999999999998
+   ],
+   "gnap_interval": [
+    0.25,
+    0.7071067811865475
+   ],
+   "gcal_advances_at_pm20pct": 0.0,
+   "gnap_advances_at_pm20pct": 0.0,
+   "joint_compat_set_gcal_gnap": [
+    [
+     1.5874010519681994,
+     0.7071067811865475
+    ],
+    [
+     1.6,
+     0.7
+    ],
+    [
+     1.6,
+     0.7071067811865475
+    ],
+    [
+     1.9999999999999998,
+     0.25
+    ]
+   ],
+   "event_hashes": {
+    "fit_ramp": "ed698d364473ebbd",
+    "fit_trap": "e791fdc5716d20b5"
+   }
+  }
+ ],
+ "wall_s": 1477.4
+}

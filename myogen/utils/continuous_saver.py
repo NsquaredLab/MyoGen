@@ -16,8 +16,11 @@ import numpy as np
 # NEO imports for standard output format
 import quantities as pq
 from neo import AnalogSignal, Block, Segment, SpikeTrain
-from neuron import h
 from tqdm import tqdm
+
+# NOTE: ``ContinuousSaver`` is a NEURON step-callback utility. NEURON (``h``) is
+# imported lazily inside the methods that need the simulation clock so that
+# ``import myogen`` / ``myogen.utils`` works in a Jaxley-only install (no NEURON).
 
 from myogen.utils.types import Quantity__ms
 
@@ -82,6 +85,7 @@ class ContinuousSaver:
         timestep__ms : float
             Integration timestep in milliseconds
         """
+        from neuron import h
         current_time = h.t
 
         # Record current time
@@ -159,6 +163,7 @@ class ContinuousSaver:
         self.current_chunk_data.clear()
         self.current_chunk_times.clear()
         self.chunk_id += 1
+        from neuron import h
         self.last_save_time = h.t
 
     def finalize(self, timestep__ms: Quantity__ms, spike_results=None) -> None:

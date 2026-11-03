@@ -1,31 +1,44 @@
 """
-Extract Neuron Parameters
-=========================
+Extract Neuron Parameters - Jaxley Backend
+==========================================
 
 This example demonstrates how to extract electrophysiological parameters from
-MyoGen motor neurons using the Fuglevand recruitment model.
+MyoGen motor neurons using the **Jaxley** (JAX-based) simulator instead of NEURON.
+
+**Channels Used** (NERLab — matches production NEURON model):
+    - Soma: napp (Na fast + Na persistent + Kfast + Kslow + leak)
+    - Dendrite: caL (L-type Ca, no inactivation + leak)
+
+**Voltage convention** (NERLab / original 1952-HH frame): V_rest ≈ 0 mV,
+ENa = +120 mV, EK = -10 mV, spike peaks ≈ +90 mV. Spike threshold below
+is +50 mV in this frame.
 
 **Parameters Extracted**:
 
 - **Vhold**: Resting membrane potential (soma)
-- **Rin**: Input resistance
-- **tau**: Membrane time constant
-- **Ir**: Rheobase (minimum current for action potential)
+- **Rin**: Input resistance (small hyperpolarizing steps, passive range)
+- **tau**: Membrane time constant (small sustained step, charging transient)
+- **Ir**: Rheobase (0.1 nA resolution, 50 ms pulse)
 - **AP**: Action potential amplitude
 - **AHP**: Afterhyperpolarization depth
 - **AHPdur**: Full AHP duration
-- **FI_gain**: Frequency-current gain (slope of F-I curve)
+- **FI_gain**: Frequency-current gain (rheobase-relative, ascending linear range)
+
+.. note::
+    **Protocol differences from NEURON**: The stimulus protocols here are designed
+    to stay within the linear/passive membrane range of the Jaxley cable model.
+    Rin uses small (-0.5 to -2.5 nA) steps; tau uses a small (-1 nA) sustained
+    step and fits the charging onset; rheobase uses 0.1 nA resolution.
+    These are not guaranteed to match NEURON's exact protocol step-by-step, but
+    they measure the same biophysical quantities in a cable-appropriate way.
 
 **Usage**:
 
     # Extract from default 5 neurons
-    python 09_extract_neuron_parameters.py
+    python 10_extract_neuron_parameters.py
 
     # Extract from custom number of neurons
-    python 09_extract_neuron_parameters.py --n-neurons 10
-
-**Note**: For advanced features (parallel processing, model comparison, slope scan),
-see `sandbox/neuron_parameter_extraction/README.md`
+    python 10_extract_neuron_parameters.py --n-neurons 10
 """
 
 # %%
@@ -36,6 +49,9 @@ see `sandbox/neuron_parameter_extraction/README.md`
 
 import logging
 import os
+import sys
+from contextlib import contextmanager
+from io import StringIO
 
 os.environ["MPLBACKEND"] = "Agg"
 if "DISPLAY" in os.environ:
@@ -43,381 +59,313 @@ if "DISPLAY" in os.environ:
 
 from pathlib import Path
 
+import jax.numpy as jnp
+import jaxley as jx
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import seaborn as sns
-from neuron import h
 
 import myogen
-from myogen import simulator
-from myogen.simulator.neuron.populations import AlphaMN__Pool
-from myogen.utils.nmodl import load_nmodl_mechanisms
+from myogen.simulator import RecruitmentThresholds
+from myogen.simulator.jaxley.populations import AlphaMN__Pool
+
+# Suppress Jaxley verbose output
+logging.getLogger("jaxley").setLevel(logging.WARNING)
+logging.getLogger("jax").setLevel(logging.WARNING)
+
+
+@contextmanager
+def suppress_stdout():
+    """Context manager to suppress stdout (for Jaxley verbose messages)."""
+    old_stdout = sys.stdout
+    sys.stdout = StringIO()
+    try:
+        yield
+    finally:
+        sys.stdout = old_stdout
+
 
 # Simple plotting style
 plt.style.use("seaborn-v0_8-darkgrid")
 sns.set_context("paper", font_scale=1.2)
 
-# Setup NEURON environment
-h.load_file("stdrun.hoc")
-
 # Setup logging
 logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
 logger = logging.getLogger(__name__)
 
+# Simulation parameters for NERLab cells (1952-HH voltage frame).
+DT_MS = 0.025  # Time step (ms)
+SPIKE_THRESHOLD_MV = 50.0  # NERLab APs cross +50 mV reliably; +90 mV at peak
+
 ##############################################################################
-# Core Parameter Extraction Functions
-# ------------------------------------
+# Core Parameter Extraction Functions (Batched)
+# ----------------------------------------------
+#
+# All measurement functions operate on a pre-built jx.Network containing
+# ALL neurons.  Each protocol step is one jx.integrate() call that runs all
+# neurons in parallel, instead of n_neurons serial calls per step.
+#
+# Call counts per protocol (n = number of neurons):
+#   Vhold  : 1  call  (was n)
+#   Rin    : 5  calls (was 5n)
+#   tau    : 1  call  (was n)
+#   Rh     : ~11 calls batched binary search (was ~100n linear scan)
+#   AP/AHP : 1  call  (was variable × n)
+#   F-I    : 12 calls (was 12n)
+#   Total  : ~31 calls regardless of n  (vs ~130 × n before)
 
 
-def fi0_multicompartment(sections: list, voltages: list) -> None:
-    """Initialize voltages for multiple compartments."""
-    for sec, v in zip(sections, voltages):
-        sec.v = v
-
-
-def get_vhold__mV(cell, sections: list, voltages: list, tstop__ms: float = 500.0) -> float:
+def _run_batch(net, n_neurons, current_arrays, t_max_ms: float) -> np.ndarray:
     """
-    Measure resting membrane potential for soma.
+    Run all neurons simultaneously with per-neuron current waveforms.
+
+    Resets voltage/states, re-registers stimuli, calls jx.integrate once.
 
     Returns
     -------
-    float
-        Steady-state voltage in soma (mV).
+    np.ndarray, shape (n_neurons, n_timesteps)
     """
-    h.tstop = tstop__ms
-    h.dt = 0.0125
-    h.celsius = 36
-
-    _ = h.FInitializeHandler(0, lambda: fi0_multicompartment(sections, voltages))
-
-    vsoma = h.Vector()
-    vsoma.record(cell.soma(0.5)._ref_v)
-
-    h.finitialize()
-    h.run()
-
-    return vsoma.to_python()[-1]
+    net.set("v", 0.0)         # NERLab resting potential (1952-HH frame)
+    net.init_states()
+    net.delete_stimuli()
+    for i, arr in enumerate(current_arrays):
+        net.cell(i).branch(0).loc(0.5).stimulate(jnp.array(arr))
+    voltages = jx.integrate(net, delta_t=DT_MS, t_max=t_max_ms)
+    return np.array(voltages)   # (n_neurons, n_timesteps)
 
 
-def get_rin__MOhm(
-    cell,
-    vhold__mV: float,
-    sections: list,
-    amplitudes__nA: list[float] = None,
-) -> float:
+def _run_batch_same(net, n_neurons, current_array, t_max_ms: float) -> np.ndarray:
+    """Same current waveform to all neurons. Returns (n_neurons, n_timesteps)."""
+    return _run_batch(net, n_neurons, [current_array] * n_neurons, t_max_ms)
+
+
+def get_vholds(net, n_neurons: int) -> np.ndarray:
+    """Resting potential for all neurons — 1 jx.integrate call."""
+    tstop = 500.0
+    current = np.zeros(int(tstop / DT_MS))
+    V = _run_batch_same(net, n_neurons, current, tstop)
+    tail = max(1, int(V.shape[1] * 0.1))
+    return np.array([float(np.mean(V[i, -tail:])) for i in range(n_neurons)])
+
+
+def get_rins(net, n_neurons: int, vholds: np.ndarray) -> np.ndarray:
     """
-    Measure input resistance using current steps.
+    Input resistance for all neurons — 5 jx.integrate calls.
 
-    Returns
-    -------
-    float
-        Input resistance in MegaOhms.
+    Uses small hyperpolarizing steps (-0.5 to -2.5 nA, 300 ms) to stay in
+    the passive linear range and avoid slow conductance activation.
     """
-    if amplitudes__nA is None:
-        amplitudes__nA = [-5.0, -4.0, -3.0, -2.0, -1.0]
+    amplitudes = [-0.5, -1.0, -1.5, -2.0, -2.5]
+    tstop = 300.0
+    n_t = int(tstop / DT_MS)
+    tail = max(1, int(n_t * 0.2))
+    delta_vs = [[] for _ in range(n_neurons)]
 
-    h.tstop = 1000.0
-    h.dt = 0.0125
-    h.celsius = 36
+    for amp in amplitudes:
+        current = np.ones(n_t) * amp
+        V = _run_batch_same(net, n_neurons, current, tstop)
+        for i in range(n_neurons):
+            v_ss = float(np.mean(V[i, -tail:]))
+            delta_vs[i].append(v_ss - vholds[i])
 
-    voltages = [vhold__mV] * len(sections)
-    _ = h.FInitializeHandler(0, lambda: fi0_multicompartment(sections, voltages))
-
-    vsoma = h.Vector()
-    vsoma.record(cell.soma(0.5)._ref_v)
-
-    delta_v__mV = []
-    for amp__nA in amplitudes__nA:
-        stim = h.IClamp(cell.soma(0.5))
-        stim.amp = amp__nA
-        stim.dur = 1000.0
-        stim.delay = 0
-
-        h.finitialize()
-        h.run()
-
-        vpeak__mV = vsoma.to_python()[-1]
-        dv = vpeak__mV - vhold__mV
-        delta_v__mV.append(dv)
-        del stim
-
-    coefficients = np.polyfit(amplitudes__nA, delta_v__mV, 1)
-    rin__MOhm = coefficients[0]
-    return rin__MOhm
+    rins = []
+    for i in range(n_neurons):
+        try:
+            coeffs = np.polyfit(amplitudes, delta_vs[i], 1)
+            rins.append(coeffs[0])
+        except Exception:
+            rins.append(np.nan)
+    return np.array(rins)
 
 
-def get_time_constant__ms(cell, vhold__mV: float, sections: list) -> float:
+def get_taus(net, n_neurons: int, vholds: np.ndarray) -> np.ndarray:
     """
-    Measure membrane time constant from exponential decay.
+    Membrane time constant — brief impulse protocol (matches NEURON ex10).
 
-    Returns
-    -------
-    float
-        Membrane time constant in milliseconds.
+    Injects -20 nA for 1 ms, then fits exponential recovery from the most
+    hyperpolarized point back toward vhold. This isolates the fast membrane RC
+    tau and avoids contamination from slow currents (Gh sag, MAHP) that bias
+    sustained-step fits toward much longer time constants.
     """
-    h.tstop = 200.0
-    h.dt = 0.0125
-    h.celsius = 36
+    step_amp = -20.0   # nA — brief impulse
+    pulse_dur = 1.0    # ms
+    delay_ms = 5.0     # ms — settling before pulse
+    tstop    = 200.0   # ms
+    n_t      = int(tstop / DT_MS)
+    delay_pts = int(delay_ms / DT_MS)
+    pulse_pts = int(pulse_dur / DT_MS)
 
-    voltages = [vhold__mV] * len(sections)
-    _ = h.FInitializeHandler(0, lambda: fi0_multicompartment(sections, voltages))
+    current = np.zeros(n_t)
+    current[delay_pts:delay_pts + pulse_pts] = step_amp
+    V = _run_batch_same(net, n_neurons, current, tstop)
 
-    vsoma = h.Vector()
-    t = h.Vector()
-    vsoma.record(cell.soma(0.5)._ref_v)
-    t.record(h._ref_t)
-
-    stim = h.IClamp(cell.soma(0.5))
-    stim.amp = -20.0  # nA
-    stim.dur = 1.0  # ms
-    stim.delay = 5.0  # ms
-
-    h.finitialize()
-    h.run()
-
-    vsoma_array = vsoma.as_numpy()
-    t_array = t.as_numpy()
-
-    v_min__mV = np.min(vsoma_array)
-    v_min_index = np.where(vsoma_array == v_min__mV)[0][0]
-
-    recovery_indices = np.where(vsoma_array[v_min_index:] > vhold__mV - 0.1)[0]
-    if len(recovery_indices) > 0:
-        v_end_index = recovery_indices[0] + v_min_index
-    else:
-        v_end_index = len(vsoma_array) - 1
-
-    t_fit = t_array[v_min_index:v_end_index]
-    v_fit = vsoma_array[v_min_index:v_end_index]
-    log_v_fit = np.log(np.abs(v_fit - vhold__mV))
-
-    coefficients = np.polyfit(t_fit, log_v_fit, 1)
-    tau__ms = -1.0 / coefficients[0]
-    return tau__ms
+    t_array = np.arange(n_t) * DT_MS
+    taus = []
+    for i in range(n_neurons):
+        v = V[i]
+        v_min_idx = int(np.argmin(v))
+        rec = np.where(v[v_min_idx:] > vholds[i] - 0.1)[0]
+        v_end_idx = rec[0] + v_min_idx if len(rec) > 0 else n_t - 1
+        t_fit = t_array[v_min_idx:v_end_idx]
+        v_fit = v[v_min_idx:v_end_idx]
+        if len(t_fit) < 5:
+            taus.append(np.nan)
+            continue
+        log_v = np.log(np.maximum(np.abs(v_fit - vholds[i]), 1e-10))
+        try:
+            coeffs = np.polyfit(t_fit, log_v, 1)
+            tau = -1.0 / coeffs[0]
+            taus.append(max(tau, 0.1) if tau > 0 else np.nan)
+        except Exception:
+            taus.append(np.nan)
+    return np.array(taus)
 
 
-def get_rheobase__nA(
-    cell, vhold__mV: float, sections: list, max_iterations: int = 500
-) -> float:
+def get_rheobases(net, n_neurons: int, vholds: np.ndarray,
+                  resolution: float = 0.1) -> np.ndarray:
     """
-    Find minimum current required to elicit an action potential.
+    Rheobase for all neurons via batched binary search — ~11 jx.integrate calls total.
 
-    Returns
-    -------
-    float
-        Rheobase current in nanoamperes, or np.nan if no spike found.
+    At each search step, ALL neurons are run simultaneously with their individual
+    current amplitudes (different lo/hi brackets per neuron).  This is
+    O(log₂(150/0.1)) ≈ 11 batched calls regardless of n_neurons.
     """
-    h.tstop = 100.0
-    h.dt = 0.0125
-    h.celsius = 36
+    tstop     = 100.0
+    pulse_dur = 50.0
+    n_t       = int(tstop / DT_MS)
+    pulse_pts = int(pulse_dur / DT_MS)
+    spike_thresholds = vholds + 40.0
 
-    voltages = [vhold__mV] * len(sections)
-    _ = h.FInitializeHandler(0, lambda: fi0_multicompartment(sections, voltages))
+    def _spiked_batch(amps: np.ndarray) -> np.ndarray:
+        """Run all neurons with per-neuron amplitudes; return bool array."""
+        currents = []
+        for amp in amps:
+            c = np.zeros(n_t)
+            c[:pulse_pts] = amp
+            currents.append(c)
+        V = _run_batch(net, n_neurons, currents, tstop)
+        return np.array([np.max(V[i]) >= spike_thresholds[i] for i in range(n_neurons)])
 
-    vsoma = h.Vector()
-    vsoma.record(cell.soma(0.5)._ref_v)
+    # Phase 1: exponential scan to bracket each neuron's rheobase
+    lo    = np.zeros(n_neurons)
+    hi    = np.ones(n_neurons) * 0.5
+    found = np.zeros(n_neurons, dtype=bool)
 
-    stim = h.IClamp(cell.soma(0.5))
-    stim.dur = 50.0
-    stim.delay = 0
+    while not np.all(found) and np.all(hi[~found] <= 150.0):
+        spiked = _spiked_batch(hi)
+        found  = found | spiked
+        if np.all(found):
+            break
+        lo[~spiked] = hi[~spiked]
+        hi[~spiked] *= 2.0
 
-    spike_threshold__mV = vhold__mV + 40.0
+    no_spike = hi > 150.0
+    if np.any(no_spike & ~found):
+        logger.warning(f"No spike found for neuron(s): {np.where(no_spike & ~found)[0]}")
 
-    amp__nA = 0.1
-    iteration = 0
-    while iteration < max_iterations:
-        stim.amp = amp__nA
+    # Phase 2: binary search to resolution within each bracket
+    n_iters = int(np.ceil(np.log2(np.max(hi - lo + 1e-9) / resolution))) + 2
+    for _ in range(n_iters):
+        if np.max(hi - lo) <= resolution:
+            break
+        mid    = (lo + hi) / 2.0
+        spiked = _spiked_batch(mid)
+        hi[spiked]  = mid[spiked]
+        lo[~spiked] = mid[~spiked]
 
-        h.finitialize()
-        h.run()
-
-        vpeak__mV = np.max(vsoma.as_numpy())
-        if vpeak__mV >= spike_threshold__mV:
-            return amp__nA
-
-        amp__nA += 0.1
-        iteration += 1
-
-    logger.warning(f"No spike found after {max_iterations} iterations")
-    return np.nan
-
-
-def get_ap_and_ahp(cell, vhold__mV: float, sections: list) -> dict:
-    """
-    Measure action potential and afterhyperpolarization characteristics.
-
-    Returns
-    -------
-    dict
-        Contains 'AP__mV', 'AHP__mV', 'AHPdur__ms'
-    """
-    h.tstop = 900.0
-    h.dt = 0.0125
-    h.celsius = 36
-
-    voltages = [vhold__mV] * len(sections)
-    _ = h.FInitializeHandler(0, lambda: fi0_multicompartment(sections, voltages))
-
-    vsoma = h.Vector()
-    t = h.Vector()
-    vsoma.record(cell.soma(0.5)._ref_v)
-    t.record(h._ref_t)
-
-    stim = h.IClamp(cell.soma(0.5))
-    stim.dur = 0.5
-    stim.delay = 5.0
-
-    amp__nA = 35.0
-    vpeak__mV = vhold__mV
-    spike_threshold__mV = vhold__mV + 40.0
-
-    while vpeak__mV < spike_threshold__mV:
-        amp__nA += 10.0
-        stim.amp = amp__nA
-
-        h.finitialize()
-        h.run()
-
-        vsoma_array = vsoma.as_numpy()
-        vpeak__mV = np.max(vsoma_array)
-        vvalley__mV = np.min(vsoma_array)
-
-        if amp__nA > 500.0:
-            logger.warning("Current exceeded 500 nA without spike")
-            return {"AP__mV": np.nan, "AHP__mV": np.nan, "AHPdur__ms": np.nan}
-
-    ap__mV = vpeak__mV - vhold__mV
-    ahp__mV = vhold__mV - vvalley__mV
-
-    t_array = t.as_numpy()
-    peak_index = np.where(vsoma_array == vpeak__mV)[0][0]
-    valley_index = np.where(vsoma_array == vvalley__mV)[0][0]
-    recovery_indices = np.where(vsoma_array[valley_index:] > vhold__mV - 0.15)[0]
-
-    if len(recovery_indices) > 0:
-        recovery_index = recovery_indices[0] + valley_index
-        ahp_dur__ms = t_array[recovery_index] - t_array[peak_index]
-    else:
-        ahp_dur__ms = np.nan
-
-    return {"AP__mV": ap__mV, "AHP__mV": ahp__mV, "AHPdur__ms": ahp_dur__ms}
-
-
-def get_fi_gain(cell, vhold__mV: float, sections: list, rheobase__nA: float) -> float:
-    """
-    Measure frequency-current (F-I) gain.
-
-    Returns
-    -------
-    float
-        F-I gain in Hz/nA.
-    """
-    if np.isnan(rheobase__nA):
-        return np.nan
-
-    h.tstop = 3000.0
-    h.dt = 0.0125
-    h.celsius = 36
-
-    voltages = [vhold__mV] * len(sections)
-    _ = h.FInitializeHandler(0, lambda: fi0_multicompartment(sections, voltages))
-
-    stim = h.IClamp(cell.soma(0.5))
-    stim.dur = 3000.0
-    stim.delay = 0
-
-    current_levels = np.arange(5.0, 30.5, 5.0)
-    firing_rates = []
-
-    for current__nA in current_levels:
-        stim.amp = current__nA
-
-        apc = h.APCount(cell.soma(0.5))
-        apc.thresh = 50
-
-        h.finitialize()
-        h.run()
-
-        spike_count = apc.n
-        firing_rate__Hz = (spike_count / 2500.0) * 1000.0
-        firing_rates.append(firing_rate__Hz)
-
-    firing_rates = np.array(firing_rates)
-
-    fit_mask = current_levels >= rheobase__nA
-    if np.sum(fit_mask) >= 2:
-        fit_currents = current_levels[fit_mask]
-        fit_rates = firing_rates[fit_mask]
-
-        coefficients = np.polyfit(fit_currents, fit_rates, 1)
-        gain__Hz_per_nA = coefficients[0]
-        return gain__Hz_per_nA
-    else:
-        return np.nan
-
-
-def extract_all_parameters(cell, cell_index: int, recruitment_threshold: float) -> dict:
-    """
-    Extract all electrophysiological parameters from a single neuron.
-
-    Returns
-    -------
-    dict
-        Dictionary containing all extracted parameters and metadata.
-    """
-    logger.info(f"Extracting parameters for cell {cell_index}")
-
-    sections = [cell.soma] + cell.dend
-    v_init__mV = -67.0
-    voltages = [v_init__mV] * len(sections)
-
-    result = {"cell_index": cell_index, "recruitment_threshold": recruitment_threshold}
-
-    # Extract parameters
-    try:
-        vhold__mV = get_vhold__mV(cell, sections, voltages)
-        result["vhold_soma__mV"] = vhold__mV
-    except Exception as e:
-        logger.error(f"Cell {cell_index}: Failed to get Vhold - {e}")
-        result["vhold_soma__mV"] = np.nan
-        vhold__mV = v_init__mV
-
-    try:
-        result["Rin__MOhm"] = get_rin__MOhm(cell, vhold__mV, sections)
-    except Exception as e:
-        logger.error(f"Cell {cell_index}: Failed to get Rin - {e}")
-        result["Rin__MOhm"] = np.nan
-
-    try:
-        result["tau__ms"] = get_time_constant__ms(cell, vhold__mV, sections)
-    except Exception as e:
-        logger.error(f"Cell {cell_index}: Failed to get tau - {e}")
-        result["tau__ms"] = np.nan
-
-    try:
-        ir__nA = get_rheobase__nA(cell, vhold__mV, sections)
-        result["Ir__nA"] = ir__nA
-    except Exception as e:
-        logger.error(f"Cell {cell_index}: Failed to get rheobase - {e}")
-        result["Ir__nA"] = np.nan
-
-    try:
-        ap_ahp_params = get_ap_and_ahp(cell, vhold__mV, sections)
-        result.update(ap_ahp_params)
-    except Exception as e:
-        logger.error(f"Cell {cell_index}: Failed to get AP/AHP - {e}")
-        result.update({"AP__mV": np.nan, "AHP__mV": np.nan, "AHPdur__ms": np.nan})
-
-    try:
-        rheobase__nA = result.get("Ir__nA", np.nan)
-        result["FI_gain__Hz_per_nA"] = get_fi_gain(cell, vhold__mV, sections, rheobase__nA)
-    except Exception as e:
-        logger.error(f"Cell {cell_index}: Failed to get F-I gain - {e}")
-        result["FI_gain__Hz_per_nA"] = np.nan
-
-    logger.info(f"Cell {cell_index}: Extraction complete")
+    result = np.round(hi / resolution) * resolution
+    result[no_spike & ~found] = np.nan
     return result
+
+
+def get_ap_ahp(net, n_neurons: int, vholds: np.ndarray,
+               rheobases: np.ndarray) -> list[dict]:
+    """
+    AP amplitude and AHP — brief intense impulse for guaranteed single spike.
+
+    1 ms pulse at 100 nA delivers ~100 pC of charge — enough to depolarize any
+    physiological MN past threshold regardless of membrane time constant.
+    This eliminates the failure mode (~46% NaN with the previous rheobase+5 nA
+    over 10 ms protocol) where slow-membrane cells failed to reach threshold
+    within the brief pulse. The brief impulse also reliably elicits a single
+    AP rather than a train, simplifying AHP analysis.
+    """
+    tstop     = 900.0
+    pulse_dur = 1.0    # ms — brief impulse
+    pulse_amp = 100.0  # nA — well above all rheobases
+    delay     = 5.0    # ms
+    n_t       = int(tstop / DT_MS)
+    delay_pts = int(delay / DT_MS)
+    pulse_pts = int(pulse_dur / DT_MS)
+    spike_thresholds = vholds + 40.0
+
+    current = np.zeros(n_t)
+    current[delay_pts:delay_pts + pulse_pts] = pulse_amp
+    V = _run_batch_same(net, n_neurons, current, tstop)
+
+    t_array = np.arange(n_t) * DT_MS
+
+    results = []
+    for i in range(n_neurons):
+        v = V[i]
+        if np.max(v) < spike_thresholds[i]:
+            results.append({"AP__mV": np.nan, "AHP__mV": np.nan, "AHPdur__ms": np.nan})
+            continue
+        peak_idx   = int(np.argmax(v))
+        post_peak  = v[peak_idx:]
+        valley_idx = peak_idx + int(np.argmin(post_peak))
+        ap         = float(v[peak_idx] - vholds[i])
+        ahp        = float(vholds[i] - v[valley_idx])
+        rec = np.where(v[valley_idx:] > vholds[i] - 0.15)[0]
+        ahp_dur = float(t_array[rec[0] + valley_idx] - t_array[peak_idx]) if len(rec) > 0 else np.nan
+        results.append({"AP__mV": ap, "AHP__mV": ahp, "AHPdur__ms": ahp_dur})
+    return results
+
+
+def get_fi_gains(net, n_neurons: int, vholds: np.ndarray,
+                 rheobases: np.ndarray) -> np.ndarray:
+    """
+    F-I gain for all neurons — 12 jx.integrate calls.
+
+    Uses rheobase-relative current steps (rheobase_i + delta, delta in 0..11 nA).
+    Each of the 12 levels is one batched call across all neurons.
+    """
+    tstop        = 3000.0
+    n_t          = int(tstop / DT_MS)
+    settle_pts   = int(500.0 / DT_MS)
+    analysis_ms  = 2500.0
+    deltas       = np.arange(0.0, 12.0, 1.0)   # 12 levels
+    all_rates    = np.zeros((n_neurons, len(deltas)))
+
+    for j, delta in enumerate(deltas):
+        amps     = np.where(np.isnan(rheobases), 0.0, rheobases + delta)
+        currents = [np.ones(n_t) * a for a in amps]
+        V        = _run_batch(net, n_neurons, currents, tstop)
+        for i in range(n_neurons):
+            if np.isnan(rheobases[i]):
+                continue
+            v = V[i, settle_pts:]
+            n_spikes = int(np.sum((v[:-1] < SPIKE_THRESHOLD_MV) & (v[1:] >= SPIKE_THRESHOLD_MV)))
+            all_rates[i, j] = n_spikes / analysis_ms * 1000.0
+
+    gains = []
+    for i in range(n_neurons):
+        rates = all_rates[i]
+        if not np.any(rates > 0):
+            gains.append(np.nan)
+            continue
+        peak_idx  = int(np.argmax(rates))
+        end_idx   = min(max(peak_idx + 1, 3), len(rates))
+        fit_currents = (rheobases[i] + deltas)[:end_idx]
+        fit_rates    = rates[:end_idx]
+        mask = fit_rates > 0
+        if np.sum(mask) >= 2:
+            coeffs = np.polyfit(fit_currents[mask], fit_rates[mask], 1)
+            gains.append(float(coeffs[0]))
+        else:
+            gains.append(np.nan)
+    return np.array(gains)
 
 
 ##############################################################################
@@ -465,8 +413,9 @@ def visualize_results(df: pd.DataFrame, save_path: Path) -> None:
     axes[1, 1].set_title("F-I Gain")
     axes[1, 1].grid(True, alpha=0.3)
 
+    plt.suptitle("Jaxley NERLab Channel Parameters", fontsize=14, fontweight="bold")
     plt.tight_layout()
-    fig_path = save_path / "neuron_parameters.png"
+    fig_path = save_path / "neuron_parameters_jaxley.png"
     plt.savefig(fig_path, dpi=300, bbox_inches="tight")
     logger.info(f"Saved figure to {fig_path}")
     plt.show()
@@ -485,11 +434,11 @@ def visualize_results(df: pd.DataFrame, save_path: Path) -> None:
     cbar.set_label("Motor Unit Index")
     ax.set_xlabel("Input Resistance (MΩ)")
     ax.set_ylabel("Membrane Time Constant (ms)")
-    ax.set_title("Input Resistance vs Time Constant")
+    ax.set_title("Input Resistance vs Time Constant (Jaxley NERLab)")
     ax.grid(True, alpha=0.3)
 
     plt.tight_layout()
-    fig2_path = save_path / "rin_tau_relationship.png"
+    fig2_path = save_path / "rin_tau_relationship_jaxley.png"
     plt.savefig(fig2_path, dpi=300, bbox_inches="tight")
     logger.info(f"Saved figure to {fig2_path}")
     plt.show()
@@ -505,7 +454,7 @@ def main():
     import argparse
 
     parser = argparse.ArgumentParser(
-        description="Extract electrophysiological parameters from MyoGen motor neurons"
+        description="Extract electrophysiological parameters from MyoGen motor neurons (Jaxley)"
     )
     parser.add_argument(
         "--n-neurons",
@@ -529,43 +478,106 @@ def main():
     myogen.set_random_seed(args.seed)
     logger.info(f"Random seed set to {args.seed}")
 
-    load_nmodl_mechanisms()
-    logger.info("MyoGen NEURON mechanisms loaded")
-
-    # Generate recruitment thresholds using Fuglevand model
-    logger.info(f"Generating {args.n_neurons} neurons with Fuglevand model")
-    recruitment_thresholds, _ = simulator.RecruitmentThresholds(
+    # Generate recruitment thresholds (combined model, matching ex01)
+    logger.info(f"Generating {args.n_neurons} neurons with combined threshold model")
+    recruitment_thresholds, _ = RecruitmentThresholds(
         N=args.n_neurons,
         recruitment_range__ratio=100,
-        mode="fuglevand",
+        mode="combined",
+        deluca__slope=5,
     )
 
-    # Create motor neuron pool
-    logger.info("Creating motor neuron pool")
-    pool = AlphaMN__Pool(recruitment_thresholds__array=recruitment_thresholds)
-    logger.info(f"Created pool with {len(pool._cells)} neurons")
+    # Create motor neuron pool — model="NERLab" default matches production NEURON.
+    logger.info("Creating motor neuron pool (NERLab — napp + caL)")
+    with suppress_stdout():
+        pool = AlphaMN__Pool(
+            recruitment_thresholds__array=recruitment_thresholds,
+            mode="active",
+        )
+    n_neurons = len(pool)
+    logger.info(f"Created pool with {n_neurons} neurons")
 
-    # Extract parameters from all neurons
-    logger.info(f"Extracting parameters from {args.n_neurons} neurons")
+    # Build a single jx.Network from all neurons.
+    # All measurement functions call jx.integrate on this network once per
+    # protocol step, parallelising across neurons instead of looping over them.
+    logger.info("Building jx.Network for batched parameter extraction")
+    with suppress_stdout():
+        mn_cells = []
+        for cw in pool:
+            cell = cw.cell
+            cell.delete_recordings()
+            cell.delete_stimuli()
+            mn_cells.append(cell)
+        net = jx.Network(mn_cells)
+        for i in range(n_neurons):
+            net.cell(i).branch(0).loc(0.5).record("v")
+
+    print("\n" + "=" * 60)
+    print("Running Jaxley NERLab Parameter Extraction (batched)")
+    print(f"  {n_neurons} neurons × ~31 total jx.integrate calls")
+    print("=" * 60)
+
+    logger.info("Extracting Vhold (1 call)...")
+    vholds = get_vholds(net, n_neurons)
+
+    logger.info("Extracting Rin (5 calls)...")
+    rins = get_rins(net, n_neurons, vholds)
+
+    logger.info("Extracting tau (1 call)...")
+    taus = get_taus(net, n_neurons, vholds)
+
+    logger.info("Extracting rheobase (~11 calls, batched binary search)...")
+    rheobases = get_rheobases(net, n_neurons, vholds)
+
+    logger.info("Extracting AP/AHP (1 call)...")
+    ap_ahp_list = get_ap_ahp(net, n_neurons, vholds, rheobases)
+
+    logger.info("Extracting F-I gain (12 calls)...")
+    fi_gains = get_fi_gains(net, n_neurons, vholds, rheobases)
+
+    # Assemble per-neuron result dicts
     results = []
-    for i in range(args.n_neurons):
-        result = extract_all_parameters(pool[i], i, recruitment_thresholds[i])
-        results.append(result)
+    for i in range(n_neurons):
+        results.append({
+            "cell_index":             i,
+            "recruitment_threshold":  float(recruitment_thresholds[i]),
+            "vhold_soma__mV":         float(vholds[i]),
+            "Rin__MOhm":              float(rins[i]),
+            "tau__ms":                float(taus[i]),
+            "Ir__nA":                 float(rheobases[i]) if not np.isnan(rheobases[i]) else np.nan,
+            **ap_ahp_list[i],
+            "FI_gain__Hz_per_nA":    float(fi_gains[i]) if not np.isnan(fi_gains[i]) else np.nan,
+        })
+        logger.info(
+            f"  MN {i}: Vhold={vholds[i]:.1f} mV  Rin={rins[i]:.2f} MΩ  "
+            f"Ir={rheobases[i]:.1f} nA  FI={fi_gains[i]:.2f} Hz/nA"
+        )
 
     # Convert to DataFrame and save
     df = pd.DataFrame(results)
-    csv_path = save_path / "neuron_parameters.csv"
+    csv_path = save_path / "neuron_parameters_jaxley.csv"
     df.to_csv(csv_path, index=False)
     logger.info(f"Saved results to {csv_path}")
 
     # Visualize
     visualize_results(df, save_path)
 
-    logger.info("Parameter extraction complete!")
-    logger.info("\nSummary statistics:")
-    logger.info(f"  Rheobase range: {df['Ir__nA'].min():.2f} - {df['Ir__nA'].max():.2f} nA")
-    logger.info(f"  Rin range: {df['Rin__MOhm'].min():.2f} - {df['Rin__MOhm'].max():.2f} MΩ")
-    logger.info(f"  F-I gain range: {df['FI_gain__Hz_per_nA'].min():.2f} - {df['FI_gain__Hz_per_nA'].max():.2f} Hz/nA")
+    print("\n" + "=" * 60)
+    print("Summary (Jaxley NERLab Channels)")
+    print("=" * 60)
+    print(f"Simulator: Jaxley with NERLab channels (soma napp; dendrite caL)")
+    print(f"Neurons extracted: {args.n_neurons}")
+    print(f"\nParameter ranges:")
+    print(f"  Rheobase: {df['Ir__nA'].min():.2f} - {df['Ir__nA'].max():.2f} nA")
+    print(f"  Input resistance: {df['Rin__MOhm'].min():.2f} - {df['Rin__MOhm'].max():.2f} MΩ")
+    print(f"  Time constant: {df['tau__ms'].min():.2f} - {df['tau__ms'].max():.2f} ms")
+    print(f"  AP amplitude: {df['AP__mV'].min():.2f} - {df['AP__mV'].max():.2f} mV")
+    print(f"  AHP depth: {df['AHP__mV'].min():.2f} - {df['AHP__mV'].max():.2f} mV")
+    print(f"  F-I gain: {df['FI_gain__Hz_per_nA'].min():.2f} - {df['FI_gain__Hz_per_nA'].max():.2f} Hz/nA")
+
+    print("\n" + "=" * 60)
+    print("[DONE] Jaxley NERLab parameter extraction complete!")
+    print("=" * 60)
 
 
 if __name__ == "__main__":

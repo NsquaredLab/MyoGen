@@ -27,14 +27,14 @@ if TYPE_CHECKING:
     )
     from .core.muscle import Muscle as Muscle
     from .core.physiological_distribution import RecruitmentThresholds as RecruitmentThresholds
-    from .neuron.joint_dynamics import JointDynamics as JointDynamics
-    from .neuron.muscle import HillModel as HillModel
-    from .neuron.network import Network as Network
-    from .neuron.proprioception import (
+    from .jaxley.joint_dynamics import JointDynamics as JointDynamics
+    from .jaxley.muscle import HillModel as HillModel
+    from .jaxley.network import Network as Network
+    from .jaxley.proprioception import (
         GolgiTendonOrganModel as GolgiTendonOrganModel,
         SpindleModel as SpindleModel,
     )
-    from .neuron.simulation_runner import SimulationRunner as SimulationRunner
+    from .jaxley.simulation_runner import SimulationRunner as SimulationRunner
     from myogen.utils.neo import (
         GridAnalogSignal as GridAnalogSignal,
         create_grid_signal as create_grid_signal,
@@ -49,8 +49,8 @@ _EXPORTS = {
     'MemoryBudgetError': 'myogen.simulator.core.emg.runtime',
     'RecruitmentThresholds': 'myogen.simulator.core.physiological_distribution',
     'Muscle': 'myogen.simulator.core.muscle',
-    'Network': 'myogen.simulator.neuron.network',
-    'SimulationRunner': 'myogen.simulator.neuron.simulation_runner',
+    'Network': 'myogen.simulator.jaxley.network',
+    'SimulationRunner': 'myogen.simulator.jaxley.simulation_runner',
     'SurfaceEMG': 'myogen.simulator.core.emg',
     'IntramuscularEMG': 'myogen.simulator.core.emg',
     'SurfaceElectrodeArray': 'myogen.simulator.core.emg',
@@ -60,10 +60,10 @@ _EXPORTS = {
     'JointBiomechanics': 'myogen.simulator.core.force',
     'JointGeometry': 'myogen.simulator.core.force',
     'MuscleGeometry': 'myogen.simulator.core.force',
-    'HillModel': 'myogen.simulator.neuron.muscle',
-    'SpindleModel': 'myogen.simulator.neuron.proprioception',
-    'GolgiTendonOrganModel': 'myogen.simulator.neuron.proprioception',
-    'JointDynamics': 'myogen.simulator.neuron.joint_dynamics',
+    'HillModel': 'myogen.simulator.jaxley.muscle',
+    'SpindleModel': 'myogen.simulator.jaxley.proprioception',
+    'GolgiTendonOrganModel': 'myogen.simulator.jaxley.proprioception',
+    'JointDynamics': 'myogen.simulator.jaxley.joint_dynamics',
     'create_grid_signal': 'myogen.utils.neo',
     'signal_to_grid': 'myogen.utils.neo',
     'get_electrode': 'myogen.utils.neo',
@@ -73,8 +73,13 @@ _EXPORTS = {
 }
 __all__ = list(_EXPORTS)
 
-
 def __getattr__(name):
+    if name == "neuron":
+        # Optional NEURON backend namespace (requires the ``neuron`` extra); kept
+        # lazy so ``import myogen.simulator`` never touches the NEURON runtime.
+        value = import_module("myogen.simulator.neuron")
+        globals()[name] = value
+        return value
     if name not in _EXPORTS:
         raise AttributeError(f"module {__name__!r} has no attribute {name!r}")
     value = getattr(import_module(_EXPORTS[name], __package__), name)
@@ -83,4 +88,4 @@ def __getattr__(name):
 
 
 def __dir__():
-    return sorted(set(globals()) | set(__all__))
+    return sorted(set(globals()) | set(__all__) | {"neuron"})
