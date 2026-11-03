@@ -120,3 +120,36 @@ def test_a_subset_draw_keeps_each_units_own_mean(rng):
     subset = draw_fiber_diameters__um(lad, np.full(5000, top), rng)
     assert subset.mean() == pytest.approx(full[assignment == top].mean(), rel=0.02)
     assert subset.mean() > 1.2 * lad.target_mean__um
+
+
+def test_within_unit_spread_is_set_per_type(rng):
+    """Within-unit diameter log-SD by type: 0.08 (type I) and 0.13 (type II), half the cat TA
+    within-unit fibre-area CoV of slow and fast units [martin1988 p. C46 Table 1]."""
+    lad = fiber_type_ladder(n, thresholds, within_unit_log_sd=(0.08, 0.13))
+    np.testing.assert_allclose(lad.unit_sigma_within, np.where(lad.unit_types == 1, 0.08, 0.13))
+    d = draw_fiber_diameters__um(lad, assignment, rng)
+    for t, s in ((1, 0.08), (2, 0.13)):
+        sds = [np.log(d[assignment == u]).std() for u in range(len(n)) if lad.unit_types[u] == t and n[u] >= 100]
+        assert len(sds) >= 3
+        assert np.median(sds) == pytest.approx(s, rel=0.1)
+
+
+def test_per_type_spread_keeps_polgar_means(rng):
+    lad = fiber_type_ladder(n, thresholds, within_unit_log_sd=(0.08, 0.13))
+    d = draw_fiber_diameters__um(lad, assignment, rng)
+    t = lad.unit_types[assignment]
+    assert d[t == 1].mean() == pytest.approx(50.0, abs=0.5)
+    assert d[t == 2].mean() == pytest.approx(67.0, abs=0.5)
+    f = lad.type_i_fiber_fraction
+    assert d.mean() == pytest.approx(f * 50.0 + (1 - f) * 67.0, abs=0.1)
+
+
+def test_residual_ladder_has_one_within_unit_spread():
+    lad = fiber_type_ladder(n, thresholds)
+    assert np.all(lad.unit_sigma_within == lad.sigma_within)
+
+
+@pytest.mark.parametrize("value", [(0.0, 0.1), (0.1, -0.1), (0.1,)])
+def test_bad_within_unit_spread_raises(value):
+    with pytest.raises(ValueError, match="within_unit_log_sd"):
+        fiber_type_ladder(n, thresholds, within_unit_log_sd=value)

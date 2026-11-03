@@ -138,14 +138,17 @@ class Muscle:
         recruited between 5 and 42 % MVC [nishizono1990 p. 78]. Used by surface EMG; the per-fibre
         velocities of intramuscular EMG follow ``mean_fiber_conduction_velocity__m_per_s``.
     mean_fiber_conduction_velocity__m_per_s, sd_fiber_conduction_velocity__m_per_s : float, default=4.32, 0.71
-        Mean and SD of the per-fibre conduction velocities (intramuscular EMG). Default 4.32 +/- 0.71 m/s, the
-        motor-unit CV from high-density surface EMG of all tibialis anterior units identified up to 70 % MVC
-        (range 2.78-6.21 m/s; Del Vecchio et al. 2018) [delvecchio2018 p. 2], taken over fibres. Fibres are
-        ordered by diameter through the Nandedkar & Stalberg line [nandedkar1983 p. 163], with 0.2 m/s of
-        scatter (a modelling assumption), and the result is rescaled to this mean and SD. Because diameters rise
-        with recruitment threshold (``type_*`` arguments), unit-mean CVs rise with threshold too (FDI default:
-        ~3.9 +/- 0.5 m/s over units). Every fibre is bounded to 2-6 m/s (a modelling assumption; ~2 % of fibres
-        sit at 6 m/s).
+        Per-fibre conduction velocities (intramuscular EMG, and surface EMG with
+        ``SurfaceFiberDispersion(fiber_properties="muscle")``). Default 4.32 +/- 0.71 m/s, the motor-unit CV
+        from high-density surface EMG of all tibialis anterior units identified up to 70 % MVC (range
+        2.78-6.21 m/s; Del Vecchio et al. 2018) [delvecchio2018 p. 2]; human TA units by microstimulation
+        give 3.7 +/- 0.7 m/s [andreassen1987 p. 567]. Every fibre's CV is one affine map of the Nandedkar &
+        Stalberg line [nandedkar1983 p. 163], ``a + b * 0.05 * d[um]``, so CV follows diameter within and
+        between units: ``b`` makes the SD of the unit-mean CVs (each unit once) equal the SD, ``a`` makes the
+        mean over fibres equal the mean. Because diameters rise with recruitment threshold (``type_*``
+        arguments), unit-mean CVs rise with threshold too. With ``within_unit_fiber_diameter_log_sd=None`` the
+        model before 2026-11-03: the line plus 0.2 m/s of scatter (a modelling assumption), rescaled over
+        fibres. Every fibre is bounded to 2-6 m/s (a modelling assumption).
     type_i_fiber_fraction : float, default=0.574
         Fraction of fibres in type I units; FDI 57.4 % [polgar1973 p. 312 Table 4]. Units are typed in
         recruitment order: the lowest-threshold units are type I until they hold this fraction. In the default
@@ -155,8 +158,15 @@ class Muscle:
         Mean fibre diameter of type I and type II fibres, FDI [polgar1973 p. 310 Table 2]. A Quantity in any
         length unit is rescaled to um; plain numbers are read as um.
     type_fiber_diameter_log_sd : float, default=0.2
-        Log-SD of fibre diameter within each type (a modelling assumption). Unit mean diameters rise with
-        threshold along one ladder across the pool; see ``myogen.simulator.core.muscle.fiber_types``.
+        Log-SD of fibre diameter within each type (a modelling assumption); used only with
+        ``within_unit_fiber_diameter_log_sd=None``. Unit mean diameters rise with threshold along one ladder
+        across the pool; see ``myogen.simulator.core.muscle.fiber_types``.
+    within_unit_fiber_diameter_log_sd : tuple of float or None, default=(0.08, 0.13)
+        Log-SD of fibre diameter within a type I and a type II motor unit: half the within-unit fibre-area CoV
+        of cat tibialis anterior units, 16.5 % in slow and 25.5 % in fast units (means of Table 1; 8-10 fibres
+        per unit, single sections) [martin1988 p. C46 Table 1]; no human value is known. None restores the
+        model before 2026-11-03 (one within-unit spread left over from ``type_fiber_diameter_log_sd``, CV
+        scatter, CV SD over fibres), bit-identical.
     mean_fiber_length__mm : float, default=31.7
         Mean fiber length in mm. Default is the first dorsal interosseous (FDI) value of Jacobson et al. 1992 [3]
         (Table 1) [jacobson1992 Table 1].
@@ -259,6 +269,7 @@ class Muscle:
         type_i_fiber_fraction: float = 0.574,
         type_mean_fiber_diameters__um: tuple[float, float] | pq.Quantity = (50.0, 67.0),
         type_fiber_diameter_log_sd: float = 0.2,
+        within_unit_fiber_diameter_log_sd: tuple[float, float] | None = (0.08, 0.13),
         mean_fiber_length__mm: Quantity__mm = 31.7 * pq.mm,
         var_fiber_length__mm: Quantity__mm = 2.8 * pq.mm,
         radius_bone__mm: Quantity__mm = 0 * pq.mm,
@@ -306,6 +317,10 @@ class Muscle:
             type_mean_fiber_diameters__um = type_mean_fiber_diameters__um.rescale(pq.um).magnitude
         self._type_mean_fiber_diameters__um = tuple(float(v) for v in type_mean_fiber_diameters__um)
         self._type_fiber_diameter_log_sd = type_fiber_diameter_log_sd
+        self._within_unit_fiber_diameter_log_sd = (
+            None if within_unit_fiber_diameter_log_sd is None
+            else tuple(float(v) for v in within_unit_fiber_diameter_log_sd)
+        )
         self._mean_fiber_length__mm = mean_fiber_length__mm
         self._var_fiber_length__mm = var_fiber_length__mm
         self._radius_bone__mm = radius_bone__mm
@@ -406,26 +421,38 @@ class Muscle:
             type_i_fiber_fraction=self._type_i_fiber_fraction,
             type_mean_diameters__um=self._type_mean_fiber_diameters__um,
             type_log_sd=self._type_fiber_diameter_log_sd,
+            within_unit_log_sd=self._within_unit_fiber_diameter_log_sd,
         )
         d_um = draw_fiber_diameters__um(self._fiber_type_ladder, assignment, get_random_generator())
         self._muscle_fiber_diameters__mm = d_um * 1e-3 * pq.mm
 
-        # Fibre CV: ordered by diameter through the CV-diameter line [nandedkar1983 p. 163] plus 0.2 m/s of
-        # scatter (a modelling assumption), then rescaled over fibres to 4.32 +/- 0.71 m/s, the HD-sEMG CV of
-        # all units identified up to 70 % MVC [delvecchio2018 p. 2]. The line's own anchor (3.7 m/s at 55 um, biceps
-        # needle data [nandedkar1983 p. 163]) is not used.
         def as_m_s(value):
             return float(pq.Quantity(value, pq.m / pq.s).rescale(pq.m / pq.s).magnitude)
 
         k = CV_PER_DIAMETER__M_S_PER_MM * 1e-3  # (m/s)/um
         d_um = np.asarray(self._muscle_fiber_diameters__mm.rescale(pq.mm).magnitude) * 1e3
-        raw_cv = k * d_um + get_random_generator().normal(0, 0.2, n_fibers)
-        spread = np.std(raw_cv)
-        z_cv = (raw_cv - np.mean(raw_cv)) / spread if spread > 0 else np.zeros(n_fibers)
-        self._muscle_fiber_conduction_velocities__mm_per_s = (
-            as_m_s(self._mean_fiber_conduction_velocity__m_s)
-            + as_m_s(self._sd_fiber_conduction_velocity__m_s) * z_cv
-        ) * pq.m / pq.s
+        mean_cv = as_m_s(self._mean_fiber_conduction_velocity__m_s)
+        sd_cv = as_m_s(self._sd_fiber_conduction_velocity__m_s)
+        if self._within_unit_fiber_diameter_log_sd is None:
+            # Model before 2026-11-03: the CV-diameter line [nandedkar1983 p. 163] plus 0.2 m/s of scatter (a
+            # modelling assumption), rescaled over fibres to the mean and SD.
+            raw_cv = k * d_um + get_random_generator().normal(0, 0.2, n_fibers)
+            spread = np.std(raw_cv)
+            z_cv = (raw_cv - np.mean(raw_cv)) / spread if spread > 0 else np.zeros(n_fibers)
+            cv = mean_cv + sd_cv * z_cv
+        else:
+            # One affine map of the CV-diameter line [nandedkar1983 p. 163] for every fibre: the SD is that of
+            # motor-unit CVs [delvecchio2018 p. 2] [andreassen1987 p. 567], so it is matched over unit means
+            # (each unit once); the mean stays anchored over fibres. The line's own anchor (3.7 m/s at 55 um) is
+            # not used.
+            line = k * d_um
+            counts = np.bincount(assignment, minlength=self._number_of_neurons)
+            unit_line = (np.bincount(assignment, weights=line, minlength=self._number_of_neurons)
+                         / np.maximum(counts, 1))[counts > 0]
+            spread = np.std(unit_line)
+            b = sd_cv / spread if spread > 0 else 0.0
+            cv = mean_cv + b * (line - np.mean(line))
+        self._muscle_fiber_conduction_velocities__mm_per_s = cv * pq.m / pq.s
 
         # Sanity bounds 2-6 m/s (a modelling assumption, not sourced; at 4.32 +/- 0.71 m/s ~2 % of fibres sit at 6 m/s)
         self._muscle_fiber_conduction_velocities__mm_per_s = np.clip(

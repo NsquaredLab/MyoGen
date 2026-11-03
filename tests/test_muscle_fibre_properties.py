@@ -96,7 +96,7 @@ def test_fibre_properties_are_reproducible_under_a_seed(typed_muscle):
       "sd_fiber_conduction_velocity__m_per_s": 0.4 * pq.m / pq.s}, 4.2, 0.4),
 ])
 def test_fibre_cv_has_the_requested_distribution_ordered_by_diameter(kw, mean_cv, sd_cv):
-    """Fibre CVs (intramuscular EMG) default to 4.32 +/- 0.71 m/s, the surface (HD-sEMG) CV of all
+    """Old fibre model (``within_unit_fiber_diameter_log_sd=None``): fibre CVs are 4.32 +/- 0.71 m/s over fibres, the surface (HD-sEMG) CV of all
     tibialis anterior units in Del Vecchio et al. (2018), ordered by fibre diameter through the
     Nandedkar & Stalberg line; the 2-6 m/s sanity clip trims the top. The muscle mean CV used by
     surface EMG is separate. Unit-mean CV rises with recruitment threshold.
@@ -106,7 +106,7 @@ def test_fibre_cv_has_the_requested_distribution_ordered_by_diameter(kw, mean_cv
     """
     from scipy.stats import spearmanr
 
-    m = _typed(mean_conduction_velocity__m_per_s=5.0 * pq.m / pq.s, **kw)
+    m = _typed(mean_conduction_velocity__m_per_s=5.0 * pq.m / pq.s, within_unit_fiber_diameter_log_sd=None, **kw)
     d_um = np.asarray(m.muscle_fiber_diameters__mm.rescale(pq.mm)) * 1e3
     cv = np.asarray(m.muscle_fiber_conduction_velocities__mm_per_s.rescale(pq.m / pq.s))
 
@@ -118,6 +118,59 @@ def test_fibre_cv_has_the_requested_distribution_ordered_by_diameter(kw, mean_cv
     a = m._assignment.astype(int)
     unit_cv = np.bincount(a, weights=cv) / np.maximum(np.bincount(a), 1)
     assert spearmanr(m.recruitment_thresholds, unit_cv)[0] > 0
+
+
+def _cv_and_units(m):
+    cv = np.asarray(m.muscle_fiber_conduction_velocities__mm_per_s.rescale(pq.m / pq.s))
+    d_um = np.asarray(m.muscle_fiber_diameters__mm.rescale(pq.mm)) * 1e3
+    return cv, d_um, m._assignment.astype(int)
+
+
+def test_default_within_unit_spread_is_martin(typed_muscle):
+    """Within-unit diameter log-SD 0.08 (type I) / 0.13 (type II) [martin1988 p. C46 Table 1]."""
+    lad = typed_muscle.fiber_type_ladder
+    np.testing.assert_allclose(lad.unit_sigma_within, np.where(lad.unit_types == 1, 0.08, 0.13))
+
+
+@pytest.mark.parametrize("kw, mean_cv, sd_units", [
+    ({}, 4.32, 0.71),
+    ({"mean_fiber_conduction_velocity__m_per_s": 4.2 * pq.m / pq.s,
+      "sd_fiber_conduction_velocity__m_per_s": 0.4 * pq.m / pq.s}, 4.2, 0.4),
+])
+def test_cv_sd_is_over_unit_means(kw, mean_cv, sd_units):
+    """The CV SD is the spread of motor-unit CVs [delvecchio2018 p. 2] [andreassen1987 p. 567], so it
+    holds over unit means (each unit once); the mean stays anchored over fibres."""
+    m = _typed(**kw)
+    cv, _, a = _cv_and_units(m)
+    counts = np.bincount(a)
+    unit_cv = (np.bincount(a, weights=cv) / np.maximum(counts, 1))[counts > 0]
+    assert np.mean(cv) == pytest.approx(mean_cv, abs=0.03)
+    assert np.std(unit_cv) == pytest.approx(sd_units, abs=0.03)
+
+
+def test_cv_follows_diameter_within_each_unit(typed_muscle):
+    """No extra CV scatter: inside a unit every unclipped fibre sits on the same CV-diameter line."""
+    cv, d_um, a = _cv_and_units(typed_muscle)
+    free = (cv > 2.0 + 1e-9) & (cv < 6.0 - 1e-9)
+    slopes = []
+    for u in np.unique(a):
+        sel = free & (a == u)
+        if sel.sum() >= 3:
+            assert np.corrcoef(d_um[sel], cv[sel])[0, 1] > 0.9999
+            slopes.append(np.polyfit(d_um[sel], cv[sel], 1)[0])
+    assert np.ptp(slopes) < 1e-9
+
+
+def test_old_fibre_model_is_reproducible():
+    """``within_unit_fiber_diameter_log_sd=None`` gives exactly the fibres of the model before 2026-11-03."""
+    import hashlib
+
+    m = _typed(within_unit_fiber_diameter_log_sd=None)
+    h = hashlib.sha1(
+        np.ascontiguousarray(m.muscle_fiber_diameters__mm.magnitude).tobytes()
+        + np.ascontiguousarray(m.muscle_fiber_conduction_velocities__mm_per_s.magnitude).tobytes()
+    ).hexdigest()
+    assert h == "e64fc1212ef42ccc639d2c245fc2d2bdf1ab6db8"
 
 
 def test_surface_emg_fibre_diameter_default_is_fdi_rms():
