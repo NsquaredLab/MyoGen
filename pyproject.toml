@@ -87,6 +87,11 @@ dev = [
     "poethepoet>=0.37.0",
     "pytest>=8.0",
     "scipy-stubs>=1.16.1.0",
+    # experiments/twin harness, exercised by tests/test_twin_harness.py:
+    # optax drives the inverse-problem descent, pyyaml loads the frozen
+    # acceptance spec. Not runtime deps of myogen itself.
+    "optax>=0.2.4",
+    "pyyaml>=6.0",
 ]
 docs = [
     "properdocs>=1.6.7",
