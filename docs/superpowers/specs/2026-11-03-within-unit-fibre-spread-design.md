@@ -75,3 +75,7 @@ FDI benchmark muscle, per-unit CVs from the `_wexp` recruitment forces (`rt_forc
 | fibres at the 6 m/s bound | 1.0 % | 14.6 % | — |
 
 Option 3 matches the band means but has little spread inside a band (the helper maps recruitment force to CV deterministically). The fallback puts 14.6 % of fibres at the 6 m/s bound in this pool, because Fuglevand-distributed pools are mostly small units and the SD over units then stretches the large ones.
+
+## 9. λ refit (per-unit CVs from recruitment force)
+
+Arms `delsys5r_wexp_musclert_lam*` (kernel 200 mm, same fibres and spikes): mean MDF 155.6 / 161.9 / 166.9 / 172.5 / 177.5 / 181.2 / 196.2 Hz and corner–centre / adjacent RMS 0.202/0.246, 0.197/0.238, 0.192/0.231, 0.187/0.223, 0.182/0.216, 0.177/0.209, 0.159/0.184 mV at λ 0.55 / 0.6 / 0.65 / 0.7 / 0.75 / 0.8 / 1. MDF fit to ~165 Hz [botelho2019]: λ ≈ 0.63; RMS there 0.19 / 0.23 mV, inside Botelho's IQR. Default λ stays 1. The fallback (no per-unit CVs) was not fitted.

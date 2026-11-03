@@ -146,6 +146,15 @@ The generic Fuglevand parameters match FDI closely (Fuglevand 1993 drew on these
   | `Muscle` fibres λ 1 | 0.144 | 188 | 0.177 | 181 | 184.4 |
 
   MDF fit to Botelho's ~165 Hz [botelho2019]: λ ≈ 0.72 (interpolated 0.725; 0.70 and 0.75 lie 1.9 Hz either side, within one 2.5 Hz Welch bin). Every λ from 0.6 to 1 is inside Botelho's MDF IQR 152–185 Hz (one subject), so the fit is loose. At λ 0.72 the corner–centre RMS (~0.17 mV) is below Botelho's IQR 0.19–0.26 mV; adjacent (~0.21 mV) is inside. Switching to `Muscle` fibres at λ 0.7 lowers RMS 9 % / 5 % and MDF 172 → 163 Hz, against the design's prediction of +3.5 % amplitude: the active units at 25 % MVC are the smaller, lower-threshold ones (weighted source scale 0.78 vs 0.80; mean CV 3.97 vs 4.07 m/s), and the within-unit CV spread doubles (CoV 0.11 vs 0.05), which by inference desynchronises each unit's fibres. RMS was reported, not tuned (design §3). Default λ stays 1.
+  - **Refit 2026-11-03** after setting the within-unit fibre spread from Martin et al. (1988) and unit-mean CVs from recruitment force (`docs/superpowers/specs/2026-11-03-within-unit-fibre-spread-design.md`; arms `delsys5r_wexp_musclert_lam*`, kernel 200 mm, same fibres and spikes):
+
+    | λ | 0.55 | 0.6 | 0.65 | 0.7 | 0.75 | 0.8 | 1 |
+    |---|---|---|---|---|---|---|---|
+    | mean MDF (Hz) | 155.6 | 161.9 | 166.9 | 172.5 | 177.5 | 181.2 | 196.2 |
+    | cc RMS (mV) | 0.202 | 0.197 | 0.192 | 0.187 | 0.182 | 0.177 | 0.159 |
+    | adj RMS (mV) | 0.246 | 0.238 | 0.231 | 0.223 | 0.216 | 0.209 | 0.184 |
+
+    MDF fit to ~165 Hz: λ ≈ 0.63 (interpolated). At λ 0.6–0.65 both pin pairs are inside Botelho's RMS IQR 0.19–0.26 mV; the low RMS is gone. The fit holds for per-unit CVs from recruitment force; the `Muscle` fallback (4.32 ± 0.71 m/s over units) has not been fitted. Default λ stays 1.
 - [x] **CV clip 2–6 m/s.** Kept as a sanity bound, labelled an assumption (2026-11-02).
 - [x] **Fibre typing by motor unit.** Done 2026-11-02 (plan `docs/superpowers/plans/2026-11-02-fdi-fibre-typing.md`; commits a3dc1d7 `fiber_types.py`, 69f1237 `Muscle`). Default FDI muscle (seed 1): 102/120 units type I (fibre fraction 0.572); sigma_between 0.184, sigma_within 0.166; type means 50.0 / 67.0 µm, log-SD 0.200 / 0.191, pool 0.244; fibres 26.4–117.0 µm (after the review fix, pool mean 57.25 µm in expectation of 57.27); fibre CV 4.31 ± 0.69 m/s (2.05 % at 6 m/s); unit-mean CV 3.88 ± 0.47 (3.14–5.47), R² 0.95 vs threshold. 6 m/s clip kept for now (Devon). Ruling: pool mean follows the realised type I fraction so type means hold in small pools. Devon 2026-11-02: wanted. Design note `docs/superpowers/specs/2026-11-02-fdi-fibre-typing-design.md` (Draft); Garnett 1979 requested.
 - [ ] **Branch-base check** in the contributor notes: before branching, verify the base contains upstream fixes for the modules touched (this PR exists partly because of a branch cut from the stale fresh-trunk line).
