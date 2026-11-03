@@ -983,6 +983,8 @@ class SurfaceEMG:
                 )
 
         # Store results privately
+        if getattr(self, "profile_record", None) is not None:  # built from a profile card
+            block.annotations["myogen_profile"] = self.profile_record
         self._surface_emg__Block = block
         return block
 

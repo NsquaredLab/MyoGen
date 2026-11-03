@@ -16,6 +16,8 @@ from typing import Any
 
 import yaml
 
+from myogen.profiles._builders import CardBuilders
+
 CARD_DIR = Path(__file__).resolve().parent
 DEFAULT_PROFILE = "fdi_semg"
 SECTIONS = ("thresholds", "motor_neurons", "drive", "force", "muscle", "surface_emg")
@@ -82,8 +84,8 @@ def _fields(where: str, sections: Any) -> dict[str, CardField]:
     return out
 
 
-class Profile:
-    """A loaded card: its fields (read-only) and, from the builders, the overrides applied on this instance."""
+class Profile(CardBuilders):
+    """A loaded card: its fields (read-only), the builders, and the overrides applied on this instance."""
 
     def __init__(self, name: str, version: int, description: str, parent: str | None, seeds: dict,
                  fields: dict[str, CardField], calibration: dict, validation: dict | None, path: Path):
