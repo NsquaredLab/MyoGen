@@ -1,0 +1,17 @@
+# Variant of fdi_semg: each component as its source paper describes it. Fields not listed are inherited.
+name: fdi_semg.published
+parent: fdi_semg
+version: 1
+description: "fdi_semg with the published component models: Fuglevand 1993 force-frequency, Rosenfalck lambda 1, no fibre dispersion, surface (single) fibre CVs. For comparison with those papers and older MyoGen results; the drive is the calibrated one."
+sections:
+  force:
+    force_frequency_shape: {value: [2.0, 3.0], source: "[fuglevand1993] (not read in full; no locator)", calibrated: true, note: "The FDI drive calibration (trial 85) was fitted with this value. Changing it leaves drive.threshold_hz, drive.excitation_at_pct_mvc and drive.recruitment_pct_mvc stale, so % MVC levels and the per-unit fibre CVs no longer hold; rerun examples/finetune/01_optimize_dd_multilevel.py (then fdi_spikes_force.py) to recalibrate."}
+  muscle:
+    within_unit_fiber_diameter_log_sd: {value: null, source: "assumption (no within-unit spread; surface CVs)"}
+    unit_cv: {value: null, source: "assumption (surface CVs)"}
+  surface_emg:
+    fiber_dispersion: {value: null, source: "[farina2004] (no dispersion)"}
+    iap_lambda__per_mm: {value: 1.0, source: "[rosenfalck1969]", unit: "1/mm"}
+  drive:
+    mvc_model_units: {value: null, source: "derived: MVC ramp with the Fuglevand curve (benchmarks/profiles/validate_card.py --mvc-mapping; pending)"}
+    excitation_at_pct_mvc: {value: null, source: "derived: MVC ramp with the Fuglevand curve (benchmarks/profiles/validate_card.py --mvc-mapping; pending)"}
