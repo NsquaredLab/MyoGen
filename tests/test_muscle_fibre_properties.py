@@ -132,20 +132,45 @@ def test_default_within_unit_spread_is_martin(typed_muscle):
     np.testing.assert_allclose(lad.unit_sigma_within, np.where(lad.unit_types == 1, 0.08, 0.13))
 
 
-@pytest.mark.parametrize("kw, mean_cv, sd_units", [
-    ({}, 4.32, 0.71),
-    ({"mean_fiber_conduction_velocity__m_per_s": 4.2 * pq.m / pq.s,
-      "sd_fiber_conduction_velocity__m_per_s": 0.4 * pq.m / pq.s}, 4.2, 0.4),
-])
-def test_cv_sd_is_over_unit_means(kw, mean_cv, sd_units):
-    """The CV SD is the spread of motor-unit CVs [delvecchio2018 p. 2] [andreassen1987 p. 567], so it
-    holds over unit means (each unit once); the mean stays anchored over fibres."""
+@pytest.mark.parametrize("mean_cv, sd_units", [(4.0, 0.5), (4.2, 0.4)])
+def test_cv_is_over_unit_means(mean_cv, sd_units):
+    """Without per-unit CVs the mean and SD are those of motor-unit CVs [delvecchio2018 p. 2]
+    [andreassen1987 p. 567], so they hold over unit means, each unit once. (At the 4.32 +/- 0.71
+    default the 6 m/s bound trims the fastest units, so values are chosen clear of it.)"""
+    kw = {"mean_fiber_conduction_velocity__m_per_s": mean_cv * pq.m / pq.s,
+          "sd_fiber_conduction_velocity__m_per_s": sd_units * pq.m / pq.s}
     m = _typed(**kw)
     cv, _, a = _cv_and_units(m)
     counts = np.bincount(a)
     unit_cv = (np.bincount(a, weights=cv) / np.maximum(counts, 1))[counts > 0]
-    assert np.mean(cv) == pytest.approx(mean_cv, abs=0.03)
+    assert np.mean(unit_cv) == pytest.approx(mean_cv, abs=0.03)
     assert np.std(unit_cv) == pytest.approx(sd_units, abs=0.03)
+
+
+def test_given_unit_cvs_set_each_units_mean():
+    """Per-unit CVs (e.g. from ``cv_from_recruitment_force``) set each unit's mean CV; within a unit CV
+    follows diameter on the Nandedkar & Stalberg slope, 0.05 m/s per um [nandedkar1983 p. 163]."""
+    target = np.linspace(3.5, 5.0, 20)
+    m = _typed(motor_unit_conduction_velocities__m_per_s=target * pq.m / pq.s)
+    cv, d_um, a = _cv_and_units(m)
+    counts = np.bincount(a, minlength=20)
+    unit_cv = np.bincount(a, weights=cv, minlength=20) / np.maximum(counts, 1)
+    clipped = np.bincount(a, weights=(np.isclose(cv, 2.0) | np.isclose(cv, 6.0)).astype(float), minlength=20)
+    has = (counts > 0) & (clipped == 0)  # the 2-6 m/s bound moves a clipped unit's mean
+    assert has.sum() >= 15
+    np.testing.assert_allclose(unit_cv[has], target[has], atol=1e-9)
+    for u in np.flatnonzero(has & (counts >= 3)):
+        sel = a == u
+        assert np.polyfit(d_um[sel], cv[sel], 1)[0] == pytest.approx(0.05, rel=1e-9)
+
+
+@pytest.mark.parametrize("value, message", [
+    (np.full(19, 4.0), "motor_unit_conduction_velocities__m_per_s"),
+    (np.r_[np.full(19, 4.0), -1.0], "motor_unit_conduction_velocities__m_per_s"),
+])
+def test_bad_unit_cvs_raise(value, message):
+    with pytest.raises(ValueError, match=message):
+        _typed(motor_unit_conduction_velocities__m_per_s=value * pq.m / pq.s)
 
 
 def test_cv_follows_diameter_within_each_unit(typed_muscle):

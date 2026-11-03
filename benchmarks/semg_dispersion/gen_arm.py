@@ -31,6 +31,8 @@ afterwards so every other draw matches the earlier arms; their hash is saved as 
 lambda need a longer window (the surface window check says so).
 ``_muscle_cv_within_cov`` (ablation, with ``fiber_properties: "muscle"``) rescales each unit's ``Muscle`` fibre CVs
 about the unit mean to this coefficient of variation; unit means and diameters stay as generated.
+``_muscle_unit_cv_file`` (json with ``cv__m_s``, one value per unit) sets each unit's mean fibre CV in the ``Muscle``
+(``Muscle.motor_unit_conduction_velocities__m_per_s``).
 FDI only: ``_fs__Hz`` (default 2048) sets the output and internal sampling rate. ``_delsys5`` replaces the
 bipolar pair with Delsys 5-pin sensors (0.5 mm pins at the corners and centre of a 5 x 5 mm square, as in
 Pereira Botelho et al. 2019): ``{"z__mm": [...], "rotation__deg": [...], "theta__deg": [...]}`` places one
@@ -76,6 +78,9 @@ kernel_override = config.pop("_iap_kernel_length__mm", None)
 within_cov = config.pop("_muscle_cv_within_cov", None)
 mean_cv = config.pop("_mean_cv__m_s", None)
 cv_kw = {} if mean_cv is None else {"mean_conduction_velocity__m_per_s": mean_cv * pq.m / pq.s}
+unit_cv_file = config.pop("_muscle_unit_cv_file", None)
+if unit_cv_file is not None:
+    cv_kw["motor_unit_conduction_velocities__m_per_s"] = np.asarray(json.load(open(unit_cv_file))["cv__m_s"]) * pq.m / pq.s
 cv_file = config.pop("_fiber_cv_per_unit_file", None)
 if cv_file is not None:
     config["fiber_cv_per_unit__m_s"] = tuple(json.load(open(cv_file))["cv__m_s"])
