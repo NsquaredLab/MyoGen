@@ -8,6 +8,7 @@ is printed once per run (``ProfileNote``).
 from __future__ import annotations
 
 import inspect
+from dataclasses import dataclass
 from typing import Any
 
 import numpy as np
@@ -238,6 +239,69 @@ class CardBuilders:
             semg = SurfaceEMG(muscle, electrode_arrays, **kw)
         semg.profile_record = self.record()
         return semg
+
+    # -- running in % MVC -------------------------------------------------------------------------------------
+    def excitation_for_pct_mvc(self, pct):
+        """Excitation (0-1) for a force level in % MVC, interpolated on the card's MVC-ramp curve."""
+        from myogen.profiles._card import ProfileError
+
+        curve = self.value("drive.excitation_at_pct_mvc")
+        if curve is None:
+            raise ProfileError(f"{self.name}: drive.excitation_at_pct_mvc is not filled in, so % MVC levels cannot be "
+                               "mapped to excitation (run benchmarks/profiles/validate_card.py --mvc-mapping)")
+        pct_arr = np.asarray(pct, dtype=float)
+        if not np.all(np.isfinite(pct_arr)) or np.any(pct_arr < 0) or np.any(pct_arr > 100):
+            raise ValueError(f"force levels must be within 0-100 % MVC, got {pct!r}")
+        levels = np.array(sorted(float(k) for k in curve))
+        e = np.interp(pct_arr, levels, [curve[k] for k in sorted(curve, key=float)])
+        return float(e) if np.ndim(e) == 0 else e
+
+    def simulate(self, protocol, **overrides) -> "SimulationResult":
+        """Run the calibrated drive for ``protocol``, segments ``(duration_s, start_pct_mvc, end_pct_mvc)``.
+
+        Each segment's ends are mapped to excitation with ``excitation_for_pct_mvc`` and the excitation is linear in
+        between, as in the calibration. Returns the motor-unit spike trains, force in % MVC and the excitation.
+        Keywords override card fields of the thresholds, motor_neurons, drive and force sections.
+        """
+        from myogen import set_random_seed
+        from myogen.simulator.neuron.descending_drive_network import excitation_to_drive_hz, run_descending_drive
+
+        by_section = {s: {} for s in ("thresholds", "motor_neurons", "drive", "force")}
+        for key, val in overrides.items():
+            owner = next((s for s in by_section if key in self.section(s)), None)
+            if owner is None:
+                raise TypeError(f"{self.name}: unknown keyword {key!r} for simulate "
+                                f"(fields of {', '.join(by_section)})")
+            by_section[owner][key] = val
+        segments = [(float(d), self.excitation_for_pct_mvc(a), self.excitation_for_pct_mvc(b)) for d, a, b in protocol]
+        thr = self.thresholds(**by_section["thresholds"])
+        params = self.dd_params(**by_section["drive"], **by_section["motor_neurons"])
+        drive = {k: _magnitude(v, self.field(f"drive.{k}").unit) for k, v in self._take("drive", {}, set()).items()}
+        mn = self._take("motor_neurons", {}, set())
+        dt = float(drive["timestep_ms"])
+        e, hz = excitation_to_drive_hz(segments, float(drive["threshold_hz"]), params["dd_drive__Hz"],
+                                       timestep_ms=dt, noise_seed=int(self.seeds["drive"]))
+        set_random_seed(int(self.seeds["drive"]))
+        with building_from_card():
+            block = run_descending_drive(thr, hz, params, len(e) * dt, timestep_ms=dt, config_file=mn["config_file"])
+        fm = self.force_model(**by_section["force"])
+        force = np.asarray(fm.generate_force(block, verbose=False).magnitude, dtype=float)[:, 0]
+        record = self.record()
+        block.annotations["myogen_profile"] = record
+        fs = float(_magnitude(self.value("force.recording_frequency__Hz"), None))
+        return SimulationResult(spikes=block, force_pct_mvc=100.0 * force / float(drive["mvc_model_units"]),
+                                excitation=e, fs_force__Hz=fs, profile=record)
+
+
+@dataclass
+class SimulationResult:
+    """Spike trains (Neo block, annotated with the card record), force in % MVC at ``fs_force__Hz``, excitation per
+    drive time step, and the card record."""
+    spikes: Any
+    force_pct_mvc: np.ndarray
+    excitation: np.ndarray
+    fs_force__Hz: float
+    profile: dict
 
 
 def _is_object(value: Any) -> bool:
