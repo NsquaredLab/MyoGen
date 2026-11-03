@@ -30,7 +30,6 @@ from types import SimpleNamespace
 import numpy as np
 import optuna
 import quantities as pq
-from neo import Block, Segment, SpikeTrain
 from neuron import h
 
 SCRIPT_DIR = Path(__file__).resolve().parent
@@ -39,17 +38,17 @@ from myogen import set_random_seed
 from myogen.simulator import RecruitmentThresholds
 from myogen.simulator.core.force.force_model import ForceModel
 from myogen.simulator.core.force.force_utils import FUGLEVAND_FORCE_FREQUENCY, HUMAN_UNIT_FORCE_FREQUENCY
-from myogen.simulator.neuron import Network
-from myogen.simulator.neuron.populations import AlphaMN__Pool, DescendingDrive__Pool
 from myogen.utils.fr_optimization_targets import compute_fr_targets
-from myogen.utils.helper import get_gamma_shape_for_mvc
 from myogen.utils.nmodl import load_nmodl_mechanisms
 from myogen.utils.ramp_analysis import extract_ramp_recruitment
+from myogen.simulator.neuron.descending_drive_network import (  # noqa: E402  (one authority, shared with the profiles)
+    NETWORK, build_dd_mn_network, excitation_to_drive_hz, run_descending_drive,
+    insert_scaled_gfluctdv as _insert_gfluctdv,
+)
 
 # ─── Constants ────────────────────────────────────────────────
 GAMMA_SHAPE = 3.0
 SYNAPTIC_WEIGHT = 0.05  # µS, DD input weight on the smallest (best-coupled) motor neuron
-NETWORK = {"fan_in": "equal", "weight_scaling": "dendritic_transfer"}  # DD -> MN wiring, see build_dd_mn_network
 WEIGHT_EXPONENT_RANGE = (0.0, 1.0)  # fitted range of the DD weight exponent (--fit-weight-exponent)
 FIT_WEIGHT_EXPONENT = False
 CEILING_WEIGHT = 3.0       # Penalty weight for the recruitment ceiling (force at the last recruitment vs LAST_RECRUIT_PCT_MVC)
@@ -147,81 +146,6 @@ def detect_threshold(thresholds, dd_params, min_fr=5.0):
     return float(threshold_hz)
 
 
-def _insert_gfluctdv(mn_pool, scale):
-    """Insert Gfluctdv independent noise on all MN dendrites at given scale."""
-    if scale <= 0:
-        return
-    for cell in mn_pool:
-        cell.insert_Gfluctdv()
-        for d in cell.dend:
-            d.std_e_Gfluctdv *= scale
-            d.std_i_Gfluctdv *= scale
-            d.g_e0_Gfluctdv *= scale
-            d.g_i0_Gfluctdv *= scale
-
-
-def dendritic_transfer(mn_pool):
-    """Fraction of a steady current injected at each MN's DD synapse site that reaches its clamped soma.
-
-    DC transfer impedance (synapse site -> soma) over soma input impedance, from ``h.Impedance`` linearised at
-    the initial state (active channels included). Call before ``_insert_gfluctdv``.
-    """
-    for s, v in zip(*mn_pool.get_initialization_data()):
-        s.v = v
-    h.finitialize()
-    k = []
-    for cell in mn_pool:
-        syn = next(s for s in cell.synapse__list if s.e >= -40)
-        seg = syn.get_segment()
-        imp = h.Impedance()
-        imp.loc(0.5, sec=cell.soma)
-        imp.compute(0, 1)
-        k.append(imp.transfer(seg.x, sec=seg.sec) / imp.input(0.5, sec=cell.soma))
-    return np.array(k)
-
-
-def build_dd_mn_network(mn_pool, dd_pool, dd_params):
-    """Wire the DD pool to the motor neurons and the cortical input to the DD pool.
-
-    ``dd_params["network"]`` must be ``NETWORK``; parameter files without it (calibrated with random fan-in and
-    one weight for all neurons) are refused rather than reinterpreted.
-
-    - Equal fan-in: every MN receives exactly round(conn_probability * dd_neurons) DD inputs, drawn without
-      replacement. Modelling assumption (descending drive shared across the pool); it removes the binomial
-      +/-13 % input-count scatter that reordered the largest units, whose thresholds are ~3 % apart.
-    - Dendritic-transfer weights: weight_i = synaptic_weight * (k_max / k_i) ** p (``dendritic_transfer``), p from
-      ``network["weight_exponent"]`` (default 1). With p = 1 each input delivers the same current to a clamped soma
-      at low drive whatever the neuron's size, and recruitment order follows rheobase: equal effective synaptic
-      current per input, the equal-share case of Heckman & Binder 1991 (J Neurophysiol 65:952) [heckmanbinder1991]. p < 1 gives larger
-      neurons less effective current per input (p = 0: one weight for all). Modelling assumption either way;
-      measured effective currents are input-system specific (cat data) and none are known for corticospinal
-      input to a hand muscle. Not compensated: the Gfluctdv mean-conductance shunt and the driving-force
-      saturation at high drive.
-    """
-    net_cfg = dict(dd_params.get("network") or {})
-    p = net_cfg.pop("weight_exponent", 1.0)
-    if not isinstance(p, (int, float)) or isinstance(p, bool) or not np.isfinite(p) or p < 0:
-        raise ValueError(f"network weight_exponent must be a finite number >= 0, got {p!r}")
-    if net_cfg != NETWORK:
-        raise ValueError(
-            f"dd_params['network'] must be {NETWORK}, got {net_cfg!r}; parameter files from before 2026-11-01 "
-            "were calibrated with random fan-in and uniform weights and must be recalibrated."
-        )
-    n_dd = len(dd_pool)
-    n_in = int(round(dd_params["conn_probability"] * n_dd))
-    if n_in < 1:
-        raise ValueError(f"conn_probability * dd_neurons rounds to {n_in} inputs per motor neuron")
-    transfer = dendritic_transfer(mn_pool)
-    weights = dd_params["synaptic_weight"] * (transfer.max() / transfer) ** p
-    network = Network({"DD": dd_pool, "aMN": mn_pool})
-    dd_to_mn = network.connect_fan_in("DD", "aMN", n_inputs=n_in, weights__uS=weights * pq.uS,
-                                      delay__ms=1.0 * pq.ms)
-    network.connect_from_external(source="cortical_input", target="DD", weight__uS=1.0 * pq.uS)
-    return SimpleNamespace(network=network, dd_to_mn=dd_to_mn,
-                           cortical_netcons=network.get_netcons("cortical_input", "DD"),
-                           transfer=transfer, weights=weights)
-
-
 def network_block(weight_exponent=None):
     """The ``network`` block of a parameter set: NETWORK, plus the DD weight exponent when it was fitted."""
     return dict(NETWORK) if weight_exponent is None else {**NETWORK, "weight_exponent": float(weight_exponent)}
@@ -296,16 +220,6 @@ def ceiling_penalty(pct_last, target_pct=None):
     return CEILING_WEIGHT * abs(pct_last - target_pct) / target_pct
 
 
-def mvc_drive(segments, threshold_hz, max_hz):
-    """Piecewise-linear excitation [(duration_s, start, end)] and its DD rate (Hz): threshold_hz + e (max - threshold),
-    0.8 threshold_hz at rest, plus 1 % half-normal noise."""
-    parts = [np.linspace(a, b, int(round(d * 1000 / TIMESTEP_MS)), endpoint=False) for d, a, b in segments]
-    e = np.concatenate(parts)
-    hz = np.where(e > 0, threshold_hz + e * (max_hz - threshold_hz), 0.8 * threshold_hz)
-    hz = hz + np.abs(np.random.default_rng(42).normal(0, hz.max() * 0.01, size=hz.size))
-    return e, hz
-
-
 def make_force_model(thresholds):
     """ForceModel (Fuglevand 1993 [fuglevand1993] twitches) at FORCE_FS_HZ with the FORCE_FREQUENCY_SHAPE saturation."""
     return ForceModel(recruitment_thresholds=thresholds, recording_frequency__Hz=FORCE_FS_HZ * pq.Hz,
@@ -341,136 +255,21 @@ def run_mvc_ramp(thresholds, dd_params, threshold_hz):
 
 def run_dd_constant(thresholds, drive_hz, dd_params, duration_ms=3000.0):
     """Run a constant-drive DD simulation (for threshold detection)."""
-    gamma_shape = get_gamma_shape_for_mvc(100, mvc_shape_value=dd_params["gamma_shape"])
-    gfluctdv_scale = dd_params.get("gfluctdv_scale", 0.0)
-    mn_pool = AlphaMN__Pool(
-        recruitment_thresholds__array=thresholds,
-        config_file="alpha_mn_default.yaml",
-    )
-    dd_pool = DescendingDrive__Pool(
-        n=dd_params["dd_neurons"],
-        timestep__ms=TIMESTEP_MS * pq.ms,
-        process_type="gamma",
-        shape=gamma_shape,
-    )
-    wiring = build_dd_mn_network(mn_pool, dd_pool, dd_params)
-    _insert_gfluctdv(mn_pool, gfluctdv_scale)
-    dd_netcons = wiring.cortical_netcons
-
-    mn_recorders = []
-    for cell in mn_pool:
-        rec = h.Vector()
-        nc = h.NetCon(cell.soma(0.5)._ref_v, None, sec=cell.soma)
-        nc.threshold = 50
-        nc.record(rec)
-        mn_recorders.append(rec)
-
-    h.load_file("stdrun.hoc")
-    h.dt = TIMESTEP_MS
-    h.tstop = duration_ms
-
-    for s, v in zip(*mn_pool.get_initialization_data()):
-        s.v = v
-    for s, v in zip(*dd_pool.get_initialization_data()):
-        s.v = v
-    h.finitialize()
-
     n_steps = int(duration_ms / TIMESTEP_MS)
     drive = np.full(n_steps, drive_hz) + np.clip(
         np.random.default_rng(42).normal(0, drive_hz * 0.02, size=n_steps), 0, None,
     )
-
-    step = 0
-    while h.t < h.tstop:
-        d = drive[min(step, n_steps - 1)]
-        for dd_cell in dd_pool:
-            if dd_cell.integrate(d):
-                if h.t < h.tstop:
-                    dd_netcons[dd_cell.pool__ID].event(h.t + 1)
-        h.fadvance()
-        step += 1
-
-    fs = 10240.0
-    t_stop_s = duration_ms / 1000.0
-    block = Block()
-    seg = Segment()
-    block.segments.append(seg)
-    seg.spiketrains = [
-        SpikeTrain(
-            rec.as_numpy() / 1000 * pq.s,
-            t_stop=t_stop_s * pq.s,
-            sampling_rate=fs * pq.Hz,
-            sampling_period=(1 / fs) * pq.s,
-            name=str(i),
-        )
-        for i, rec in enumerate(mn_recorders)
-    ]
-    return block
+    return run_descending_drive(thresholds, drive, dd_params, duration_ms, timestep_ms=TIMESTEP_MS)
 
 
 def run_dd_ramp(thresholds, drive_signal, dd_params, total_ms):
-    """Run a DD simulation with time-varying drive (trapezoidal ramp)."""
-    gamma_shape = get_gamma_shape_for_mvc(100, mvc_shape_value=dd_params["gamma_shape"])
-    gfluctdv_scale = dd_params.get("gfluctdv_scale", 0.0)
-    mn_pool = AlphaMN__Pool(
-        recruitment_thresholds__array=thresholds,
-        config_file="alpha_mn_default.yaml",
-    )
-    dd_pool = DescendingDrive__Pool(
-        n=dd_params["dd_neurons"],
-        timestep__ms=TIMESTEP_MS * pq.ms,
-        process_type="gamma",
-        shape=gamma_shape,
-    )
-    wiring = build_dd_mn_network(mn_pool, dd_pool, dd_params)
-    _insert_gfluctdv(mn_pool, gfluctdv_scale)
-    dd_netcons = wiring.cortical_netcons
+    """Run a DD simulation with time-varying drive (``run_descending_drive`` at TIMESTEP_MS)."""
+    return run_descending_drive(thresholds, drive_signal, dd_params, total_ms, timestep_ms=TIMESTEP_MS)
 
-    mn_recorders = []
-    for cell in mn_pool:
-        rec = h.Vector()
-        nc = h.NetCon(cell.soma(0.5)._ref_v, None, sec=cell.soma)
-        nc.threshold = 50
-        nc.record(rec)
-        mn_recorders.append(rec)
 
-    h.load_file("stdrun.hoc")
-    h.dt = TIMESTEP_MS
-    h.tstop = total_ms
-
-    for s, v in zip(*mn_pool.get_initialization_data()):
-        s.v = v
-    for s, v in zip(*dd_pool.get_initialization_data()):
-        s.v = v
-    h.finitialize()
-
-    n_steps = len(drive_signal)
-    step = 0
-    while h.t < h.tstop:
-        d = drive_signal[min(step, n_steps - 1)]
-        for dd_cell in dd_pool:
-            if dd_cell.integrate(d):
-                if h.t < h.tstop:
-                    dd_netcons[dd_cell.pool__ID].event(h.t + 1)
-        h.fadvance()
-        step += 1
-
-    fs = 10240.0
-    t_stop_s = total_ms / 1000.0
-    block = Block()
-    seg = Segment()
-    block.segments.append(seg)
-    seg.spiketrains = [
-        SpikeTrain(
-            rec.as_numpy() / 1000 * pq.s,
-            t_stop=t_stop_s * pq.s,
-            sampling_rate=fs * pq.Hz,
-            sampling_period=(1 / fs) * pq.s,
-            name=str(i),
-        )
-        for i, rec in enumerate(mn_recorders)
-    ]
-    return block
+def mvc_drive(segments, threshold_hz, max_hz):
+    """``excitation_to_drive_hz`` at TIMESTEP_MS (see there)."""
+    return excitation_to_drive_hz(segments, threshold_hz, max_hz, timestep_ms=TIMESTEP_MS)
 
 
 def make_objective(thresholds, fug_targets):
