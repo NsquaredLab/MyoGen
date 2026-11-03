@@ -243,3 +243,17 @@ def test_few_fibres_at_the_upper_cv_bound_do_not_warn():
         warnings.simplefilter("error")
         _typed(mean_fiber_conduction_velocity__m_per_s=4.0 * pq.m / pq.s,
                sd_fiber_conduction_velocity__m_per_s=0.4 * pq.m / pq.s)
+
+
+@pytest.mark.parametrize("given", [
+    np.linspace(3.5, 5.0, 20),                          # plain array, as cv_from_recruitment_force returns: m/s
+    np.linspace(3500.0, 5000.0, 20) * pq.mm / pq.s,     # another velocity unit
+])
+def test_unit_cvs_accept_plain_arrays_and_other_velocity_units(given):
+    reference = _cv_and_units(_typed(motor_unit_conduction_velocities__m_per_s=np.linspace(3.5, 5.0, 20) * pq.m / pq.s))[0]
+    np.testing.assert_allclose(_cv_and_units(_typed(motor_unit_conduction_velocities__m_per_s=given))[0], reference)
+
+
+def test_unit_cvs_with_a_non_velocity_unit_raise():
+    with pytest.raises(ValueError):
+        _typed(motor_unit_conduction_velocities__m_per_s=np.full(20, 4.0) * pq.mm)

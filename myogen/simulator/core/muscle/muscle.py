@@ -145,8 +145,10 @@ class Muscle:
         give 3.7 +/- 0.7 m/s [andreassen1987 p. 567]. Every fibre's CV is one affine map of the Nandedkar &
         Stalberg line [nandedkar1983 p. 163], ``a + b * 0.05 * d[um]``, so CV follows diameter within and
         between units; ``a`` and ``b`` make the mean and SD of the unit-mean CVs (each unit once, as measured)
-        equal these. Because diameters rise with recruitment threshold (``type_*`` arguments), unit-mean CVs
-        rise with threshold too. Not used when ``motor_unit_conduction_velocities__m_per_s`` is given. With
+        equal these before the 2-6 m/s bound. In pools of mostly small units (e.g. the default FDI pool) the SD
+        stretches the large units past 6 m/s, so after the bound the mean and SD come out lower and a warning is
+        raised when more than 5 % of fibres are clipped. Because diameters rise with recruitment threshold
+        (``type_*`` arguments), unit-mean CVs rise with threshold too. Not used when ``motor_unit_conduction_velocities__m_per_s`` is given. With
         ``within_unit_fiber_diameter_log_sd=None`` the model before 2026-11-03: the line plus 0.2 m/s of
         scatter (a modelling assumption), rescaled over fibres. Every fibre is bounded to 2-6 m/s (a modelling
         assumption).
@@ -277,7 +279,7 @@ class Muscle:
         type_mean_fiber_diameters__um: tuple[float, float] | pq.Quantity = (50.0, 67.0),
         type_fiber_diameter_log_sd: float = 0.2,
         within_unit_fiber_diameter_log_sd: tuple[float, float] | None = (0.08, 0.13),
-        motor_unit_conduction_velocities__m_per_s: Quantity__m_per_s | None = None,
+        motor_unit_conduction_velocities__m_per_s: np.ndarray | list[float] | tuple[float, ...] | None = None,
         mean_fiber_length__mm: Quantity__mm = 31.7 * pq.mm,
         var_fiber_length__mm: Quantity__mm = 2.8 * pq.mm,
         radius_bone__mm: Quantity__mm = 0 * pq.mm,
@@ -330,10 +332,12 @@ class Muscle:
             else tuple(float(v) for v in within_unit_fiber_diameter_log_sd)
         )
         if motor_unit_conduction_velocities__m_per_s is not None:
-            unit_cv = np.asarray(
-                pq.Quantity(motor_unit_conduction_velocities__m_per_s, pq.m / pq.s).rescale(pq.m / pq.s).magnitude,
-                dtype=float,
-            ).ravel()
+            given = motor_unit_conduction_velocities__m_per_s
+            try:
+                unit_cv = (given.rescale(pq.m / pq.s).magnitude if isinstance(given, pq.Quantity) else given)
+            except ValueError as error:
+                raise ValueError(f"motor_unit_conduction_velocities__m_per_s must be a velocity: {error}") from error
+            unit_cv = np.asarray(unit_cv, dtype=float).ravel()
             if len(unit_cv) != len(recruitment_thresholds) or not np.all(np.isfinite(unit_cv) & (unit_cv > 0)):
                 raise ValueError(
                     "motor_unit_conduction_velocities__m_per_s must give one positive CV per motor unit "
