@@ -57,3 +57,21 @@ Rerun the λ sweep (`delsys5r_wexp_muscle_lam*`, kernel 200 mm, n_jobs ≤ 16, I
 | fibres clipped at 6 m/s | 4.9 % | 2.1 % | — |
 
 RT bands map thresholds linearly to 0–70 % MVC (approximate). Open (Devon): with the mean anchored over fibres, the many small low-threshold units come out ~0.6 m/s slower than Del Vecchio's RT 0–30 % group (and than Nishizono's FDI units, 4.2 ± 0.5 m/s, recruited 5–42 % MVC [nishizono1990 p. 77]). The λ refit waits for that decision.
+
+## 8. Decision on unit-mean CVs (Devon, 2026-11-03) and results
+
+Devon chose option 3 with option 2 as fallback:
+- `Muscle(motor_unit_conduction_velocities__m_per_s=...)` sets each unit's mean fibre CV (e.g. from `cv_from_recruitment_force`, Del Vecchio band means 3.89 / 5.12 m/s [delvecchio2018 p. 2]); within a unit, CV follows diameter on the Nandedkar–Stålberg slope, 0.05 m/s per µm [nandedkar1983 p. 163] (my call: the slope of the sourced line, since nothing is fitted in this mode).
+- Without it, 4.32 ± 0.71 m/s holds over unit means, each unit once (was: mean over fibres).
+
+FDI benchmark muscle, per-unit CVs from the `_wexp` recruitment forces (`rt_force_cv.json`, 3.75–5.34 m/s):
+
+| | per-unit CVs (option 3) | fallback (option 2) | reference |
+|---|---|---|---|
+| within-unit CV CoV, type I / II (median) | 0.046 / 0.087 | 0.062 / 0.084 | ≈ 0.06 / 0.10 [martin1988 p. C46 Table 1] |
+| unit-mean CV, each unit once | 4.02 ± 0.38 | 4.29 ± 0.65 | 4.32 ± 0.71 [delvecchio2018 p. 2] |
+| units RT 0–30 % MVC (approx.) | 3.85 ± 0.12 | 4.02 ± 0.40 | 3.89 ± 0.50 |
+| units RT 50–70 % MVC (approx.) | 4.98 ± 0.18 | 5.62 ± 0.20 | 5.12 ± 0.45 |
+| fibres at the 6 m/s bound | 1.0 % | 14.6 % | — |
+
+Option 3 matches the band means but has little spread inside a band (the helper maps recruitment force to CV deterministically). The fallback puts 14.6 % of fibres at the 6 m/s bound in this pool, because Fuglevand-distributed pools are mostly small units and the SD over units then stretches the large ones.
