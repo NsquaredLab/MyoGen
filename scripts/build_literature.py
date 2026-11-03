@@ -170,8 +170,8 @@ src("akhmadeev2020", "B", "Akhmadeev K, Yu T, Le Carpentier E, Aoustin Y, Farina
     "doi:10.1109/TBME.2019.2953680; code: github.com/smetanadvorak/iemg_simulator", "FT + CODE", "ADOPTED",
     "Two-layer end-plate / nerve-branch model (shared iEMG/sEMG). Published eq. 5–6 coefficients are the default; reference-code coefficients kept as nmj_coefficients='reference_code'. Branch CVs 5/2 m/s from the reference code (paper: 10/1).",
     ["nerve", "iemg", "disp", "t_disp", "cl", "pr3"], ["partB", "values"])
-src("stalbergkarlsson2001", "B", "Stålberg E, Karlsson L (2001). Simulation of EMG in pathological situations. Clin Neurophysiol 112:464–471 (title unverified).",
-    "", "FT", "CONTEXT", "Bound: end-plate position 0 ± 1 mm; per-fibre delay 0–1 ms. Piasecki 2020 reuses this value (one chain, not two anchors).", [], ["values"])
+src("stalbergkarlsson2001", "B", "Stålberg E, Karlsson L (2001). Simulation of the normal concentric needle electromyogram by using a muscle model. Clin Neurophysiol 112:464–471.",
+    "doi:10.1016/S1388-2457(01)00459-X", "FT", "CONTEXT", "Bound: end-plate position 0 ± 1 mm; per-fibre delay 0–1 ms. Piasecki 2020 reuses this value (one chain, not two anchors). Companion paper: Simulation of EMG in pathological situations, Clin Neurophysiol 112:869–878, doi:10.1016/S1388-2457(01)00498-9 (title and pages were mixed up here before 2026-11-03; checked against Zotero). Their fibre diameter 50 ± 5 µm within each motor unit is a model setting, no measurement cited (literature check 2026-11-03).", [], ["values"])
 src("piasecki2020", "B", "Piasecki M et al. (2020/2021). Near-fibre EMG (medRxiv; Clin Neurophysiol 132:1089).",
     "doi:10.1101/2020.10.07.20208348", "FT", "CONTEXT", "Healthy end-plate SD 1 mm (from Stålberg & Karlsson).", [], ["values"])
 src("lateva2010", "B", "Lateva ZC, McGill KC, Johanson ME (2010). J Appl Physiol 108:1530.",
