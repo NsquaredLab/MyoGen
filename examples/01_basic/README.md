@@ -41,5 +41,9 @@ semg = card.surface_emg(muscle, electrode_arrays)   # your electrodes
 - **Record**: `card.record()` lists the card, its version and every override; built
   objects carry it as `profile_record`, spike and surface-EMG blocks as the
   `myogen_profile` annotation.
+- **Seeds**: each builder draws its build from its own seed (the card's `seeds`, or `seed=`; recorded as `seed`),
+  so a build does not depend on what ran before it, and then gives your generator and seed back. This differs from
+  the rest of MyoGen, where library code never seeds and the script owns the seed (one `set_random_seed` call, or
+  the default 180319, for the whole script).
 - `load_profile("fdi_semg.published")` gives each component as its source paper
   describes it (for comparison with those papers and older MyoGen results).

@@ -1,9 +1,15 @@
 """Card builders: the library objects a card describes, with keyword overrides noted and recorded.
 
-Every builder reseeds the global generator from the card's ``seeds`` before it draws, so a build does not depend on
-what ran before it. A keyword that names a card field overrides it on this card instance: the override applies to
+Seeds. Each builder that draws takes a ``seed`` (default: the card's, from ``seeds``; recorded as ``seed`` in the
+built object's ``profile_record``) and draws its build from a generator seeded with it, so a build does not depend on
+what ran before it, and reproduces the per-stage seeds of the runs the card was validated with. Afterwards the
+caller's generator and seed are given back (``myogen._seed_scope``): the user's ``set_random_seed`` stream is as it
+was, and nothing is printed. This deviates from base MyoGen, where library code never seeds and the script owns
+the seed (one ``set_random_seed`` call, or the import-time default, for the whole script). The cell ID counters are
+reset at the start of a seeded build, as ``set_random_seed`` does. A keyword that names a card field overrides it on this card instance: the override applies to
 every later build from the same instance (``thresholds(n_units=60)`` then ``muscle()`` builds 60 units), is recorded
-(``overrides()``, ``record()``) and, when the field carries a note, prints the note once per card and field per run (``ProfileNote``).
+(``overrides()``, ``record()``) and, when the field carries a note, prints the note once per card and field per run
+(``ProfileNote``).
 A keyword equal to the card value (unit-aware) is not an override, and clears an earlier one. Constructor keywords
 the card does not set (electrodes, sampling, units to simulate, ...) are passed through and listed under
 ``keywords`` in the built object's ``profile_record``.
@@ -81,13 +87,23 @@ class CardBuilders:
         """Every override in force on this card instance, as ``{"section.field": value}`` (card units)."""
         return copy.deepcopy(self._overrides)
 
-    def record(self, keywords: dict | None = None) -> dict[str, Any]:
-        """What a result was built with: card name, version, parent, overrides (and passed-through keywords)."""
+    def record(self, keywords: dict | None = None, seed: int | None = None) -> dict[str, Any]:
+        """What a result was built with: card name, version, parent, overrides (and passed-through keywords, seed)."""
         rec = {"profile": self.name, "version": self.version, "parent": self.parent,
                "parent_version": self.parent_version, "overrides": self.overrides()}
         if keywords is not None:
             rec["keywords"] = dict(keywords)
+        if seed is not None:
+            rec["seed"] = seed
         return rec
+
+    def _seed(self, stage: str, seed: int | None) -> int:
+        """The seed of a build: ``seed`` if given, else the card's seed for ``stage``."""
+        if seed is None:
+            return int(self.seeds[stage])
+        if isinstance(seed, bool) or not isinstance(seed, (int, np.integer)):
+            raise TypeError(f"{self.name}: seed must be an integer, got {seed!r}")
+        return int(seed)
 
     def _card_form(self, path: str, field, key: str, given: Any) -> Any:
         """``given`` in the card's format and units (what the card value would be)."""
@@ -183,14 +199,15 @@ class CardBuilders:
         return np.asarray(cv, dtype=float)
 
     # -- builders ---------------------------------------------------------------------------------------------
-    def thresholds(self, **overrides) -> np.ndarray:
+    def thresholds(self, seed: int | None = None, **overrides) -> np.ndarray:
         """Recruitment thresholds, normalised to a largest value of 1."""
-        from myogen import set_random_seed
+        from myogen import _seed_scope
         from myogen.simulator import RecruitmentThresholds
 
+        seed = self._seed("thresholds", seed)
         v = self._take("thresholds", overrides, set())
-        set_random_seed(int(self.seeds["thresholds"]))
-        thr, _ = RecruitmentThresholds(**{_THRESHOLD_KEYWORDS[k]: v[k] for k in _THRESHOLD_KEYWORDS})
+        with _seed_scope(seed):
+            thr, _ = RecruitmentThresholds(**{_THRESHOLD_KEYWORDS[k]: v[k] for k in _THRESHOLD_KEYWORDS})
         thr = np.asarray(thr, dtype=float)
         return thr / thr.max()
 
@@ -215,30 +232,31 @@ class CardBuilders:
         kw.setdefault("recruitment_thresholds", self.thresholds())
         return kw
 
-    def muscle(self, n_jobs: int = -2, **overrides):
+    def muscle(self, n_jobs: int = -2, seed: int | None = None, **overrides):
         """The card's ``Muscle``, built (innervation centres, fibres, assignment, fibre properties).
 
         Fibre properties are generated only when the card's fibre dispersion uses Muscle fibres
         (``fiber_properties: muscle``), with the global generator's state restored afterwards, as in the benchmark
         the card was validated with, so every later draw is the same with or without them.
         """
-        from myogen import get_random_generator, set_random_seed
+        from myogen import _seed_scope
         from myogen.simulator import Muscle
 
+        seed = self._seed("muscle", seed)
         keywords: dict = {}
         kw = self._muscle_kwargs(overrides, keywords)
-        with building_from_card():
-            set_random_seed(int(self.seeds["muscle"]))
-            m = Muscle(**kw)
-        m.distribute_innervation_centers()
-        m.generate_muscle_fiber_centers(verbose=False)
-        m.assign_mfs2mns(verbose=False, n_jobs=n_jobs)
         disp = self._take("surface_emg", {}, set())["fiber_dispersion"]
-        if isinstance(disp, dict) and disp.get("fiber_properties") == "muscle":
-            state = get_random_generator().bit_generator.state
-            m._generate_fiber_properties()
-            get_random_generator().bit_generator.state = state
-        m.profile_record = self.record(keywords)
+        with _seed_scope(seed) as rng:
+            with building_from_card():
+                m = Muscle(**kw)
+            m.distribute_innervation_centers()
+            m.generate_muscle_fiber_centers(verbose=False)
+            m.assign_mfs2mns(verbose=False, n_jobs=n_jobs)
+            if isinstance(disp, dict) and disp.get("fiber_properties") == "muscle":
+                state = rng.bit_generator.state
+                m._generate_fiber_properties()
+                rng.bit_generator.state = state
+        m.profile_record = self.record(keywords, seed=seed)
         return m
 
     def force_model(self, **overrides):
@@ -271,19 +289,19 @@ class CardBuilders:
         p["gfluctdv_scale"] = float(mn["gfluctdv_scale"])
         return p
 
-    def motor_neuron_pool(self, **overrides):
+    def motor_neuron_pool(self, seed: int | None = None, **overrides):
         """Motor neuron pool, descending-drive pool and their calibrated wiring (``mn_pool``, ``dd_pool``, ``wiring``)."""
-        from myogen import set_random_seed
+        from myogen import _seed_scope
         from myogen.simulator.neuron.descending_drive_network import build_pools
 
+        seed = self._seed("drive", seed)
         params = self.dd_params(**overrides)
         mn = self._take("motor_neurons", {}, set())
         drive = self._take("drive", {}, set())
         thr = self.thresholds()
-        set_random_seed(int(self.seeds["drive"]))
-        with building_from_card():
+        with _seed_scope(seed), building_from_card():
             pools = build_pools(thr, params, float(drive["timestep_ms"]), mn["config_file"])
-        pools.profile_record = self.record()
+        pools.profile_record = self.record(seed=seed)
         return pools
 
     def surface_emg_kwargs(self, **overrides) -> dict[str, Any]:
@@ -303,22 +321,24 @@ class CardBuilders:
         kw["iap_kernel_length__mm"] = float(v["iap_kernel_length__mm"])
         return kw
 
-    def surface_emg(self, muscle, electrode_arrays, **overrides):
+    def surface_emg(self, muscle, electrode_arrays, seed: int | None = None, **overrides):
         """The card's ``SurfaceEMG`` for ``muscle`` (from ``muscle()``) and the user's electrode arrays.
 
-        The generator state after construction is kept on the object (``profile_rng_state``); ``simulate_muaps``
-        draws from it, so the MUAPs do not depend on what ran between building and simulating.
+        The seed and the generator state after construction are kept on the object (``profile_seed``,
+        ``profile_rng_state``); ``simulate_muaps`` draws from them and gives the caller's generator back, so the MUAPs
+        do not depend on what ran between building and simulating.
         """
-        from myogen import get_random_generator, set_random_seed
+        from myogen import _seed_scope
         from myogen.simulator import SurfaceEMG
 
+        seed = self._seed("surface_emg", seed)
         keywords: dict = {}
         kw = self._surface_emg_kwargs(overrides, keywords)
-        with building_from_card():
-            set_random_seed(int(self.seeds["surface_emg"]))
+        with _seed_scope(seed) as rng, building_from_card():
             semg = SurfaceEMG(muscle, electrode_arrays, **kw)
-        semg.profile_rng_state = copy.deepcopy(get_random_generator().bit_generator.state)
-        semg.profile_record = self.record(keywords)
+            semg.profile_rng_state = copy.deepcopy(rng.bit_generator.state)
+        semg.profile_seed = seed
+        semg.profile_record = self.record(keywords, seed=seed)
         return semg
 
     # -- running in % MVC -------------------------------------------------------------------------------------
@@ -343,15 +363,18 @@ class CardBuilders:
         e = np.interp(pct_arr, levels, [points[k] for k in levels])
         return float(e) if np.ndim(e) == 0 else e
 
-    def simulate(self, protocol, **overrides) -> "SimulationResult":
+    def simulate(self, protocol, seed: int | None = None, **overrides) -> "SimulationResult":
         """Run the calibrated drive for ``protocol``, segments ``(duration_s, start_pct_mvc, end_pct_mvc)``.
 
         Each segment's ends are mapped to excitation with ``excitation_for_pct_mvc`` and the excitation is linear in
         between, as in the calibration. Returns the motor-unit spike trains, force in % MVC and the excitation.
-        Keywords override card fields of the thresholds, motor_neurons, drive and force sections.
+        Keywords override card fields of the thresholds, motor_neurons, drive and force sections; ``seed`` (default:
+        the card's drive seed) seeds the drive noise and the network.
         """
-        from myogen import set_random_seed
+        from myogen import _seed_scope
         from myogen.simulator.neuron import descending_drive_network as ddn
+
+        seed = self._seed("drive", seed)
 
         by_section = {s: {} for s in ("thresholds", "motor_neurons", "drive", "force")}
         for key, val in overrides.items():
@@ -368,14 +391,13 @@ class CardBuilders:
         segments = [(float(d), self.excitation_for_pct_mvc(a), self.excitation_for_pct_mvc(b)) for d, a, b in protocol]
         dt = float(drive["timestep_ms"])
         e, hz = ddn.excitation_to_drive_hz(segments, float(drive["threshold_hz"]), params["dd_drive__Hz"],
-                                           timestep_ms=dt, noise_seed=int(self.seeds["drive"]))
-        set_random_seed(int(self.seeds["drive"]))
-        with building_from_card():
+                                           timestep_ms=dt, noise_seed=seed)
+        with _seed_scope(seed), building_from_card():
             block = ddn.run_descending_drive(thr, hz, params, len(e) * dt, timestep_ms=dt,
                                              config_file=mn["config_file"])
         fm = self.force_model()
         force = np.asarray(fm.generate_force(block, verbose=False).magnitude, dtype=float)[:, 0]
-        record = self.record()
+        record = self.record(seed=seed)
         block.annotations["myogen_profile"] = record
         fs = float(self._take("force", {}, set())["recording_frequency__Hz"])
         return SimulationResult(spikes=block, force_pct_mvc=100.0 * force / float(drive["mvc_model_units"]),

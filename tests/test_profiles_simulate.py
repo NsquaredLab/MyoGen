@@ -42,5 +42,5 @@ def test_simulate_short_run():
     assert res.fs_force__Hz == 2048.0
     assert res.force_pct_mvc.ndim == 1 and res.force_pct_mvc.size == int(1.5 * 2048)
     assert res.excitation.max() == pytest.approx(card.excitation_for_pct_mvc(25), rel=1e-3)
-    assert res.spikes.annotations["myogen_profile"] == card.record()
+    assert res.spikes.annotations["myogen_profile"] == card.record(seed=card.seeds["drive"])
     assert 0.0 <= res.force_pct_mvc.max() < 60.0
