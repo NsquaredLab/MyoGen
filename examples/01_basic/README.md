@@ -30,7 +30,11 @@ muscle = card.muscle()
 semg = card.surface_emg(muscle, electrode_arrays)   # your electrodes
 ```
 
-- **Override** a value with a keyword, e.g. `card.muscle(fat_thickness__mm=3 * pq.mm)`.
+- **Override** a value with a keyword, e.g. `card.muscle(fat_thickness__mm=3 * pq.mm)`. The override
+  stays on that card object for every later build (`card.thresholds(n_units=60)` then `card.muscle()`
+  builds 60 units); passing the card value again clears it. Use a fresh `load_profile()` for the card as is.
+- **Other keywords** (electrodes, sampling, units to simulate, ...) pass through to the class and are
+  listed under `keywords` in the built object's `profile_record`.
 - **Notes**: when an overridden value is one the drive calibration or the λ fit
   depends on, the card prints a note (once per run) saying what else to check.
   Silence them with `warnings.simplefilter("ignore", myogen.ProfileNote)`.

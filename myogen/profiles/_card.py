@@ -22,6 +22,18 @@ CARD_DIR = Path(__file__).resolve().parent
 DEFAULT_PROFILE = "fdi_semg"
 SECTIONS = ("thresholds", "motor_neurons", "drive", "force", "muscle", "surface_emg")
 FIELD_KEYS = {"value", "source", "unit", "note", "calibrated"}
+# Fields and seeds the builders read: a card (with its parent) must have all of them
+REQUIRED_FIELDS = {
+    "thresholds": ("n_units", "mode", "recruitment_range"),
+    "motor_neurons": ("config_file", "gfluctdv_scale"),
+    "drive": ("dd_neurons", "conn_probability", "dd_drive__Hz", "synaptic_weight", "gamma_shape", "network",
+              "threshold_hz", "timestep_ms", "mvc_model_units", "excitation_at_pct_mvc", "recruitment_pct_mvc"),
+    "force": ("force_frequency_shape", "recording_frequency__Hz"),
+    "muscle": ("radius__mm", "fiber_density__fibers_per_mm2", "skin_thickness__mm", "fat_thickness__mm",
+               "skin_conductivity__S_per_m", "within_unit_fiber_diameter_log_sd", "unit_cv"),
+    "surface_emg": ("fiber_dispersion", "iap_lambda__per_mm", "iap_kernel_length__mm"),
+}
+REQUIRED_SEEDS = ("thresholds", "muscle", "cv_scatter", "drive", "surface_emg")
 
 
 class ProfileError(ValueError):
@@ -145,6 +157,10 @@ def load_profile(name: str | Path = DEFAULT_PROFILE) -> Profile:
             fields[key] = f
         seeds = {**parent.seeds, **(raw.get("seeds") or {})}
         calibration = {**parent.calibration, **(raw.get("calibration") or {})}
+    missing = [f"{s}.{n}" for s, names in REQUIRED_FIELDS.items() for n in names if f"{s}.{n}" not in fields]
+    missing += [f"seeds.{k}" for k in REQUIRED_SEEDS if k not in seeds]
+    if missing:
+        raise ProfileError(f"{where}: missing required {', '.join(missing)}")
     return Profile(name=str(raw["name"]), version=int(raw["version"]), description=str(raw.get("description", "")),
                    parent=parent_name, seeds=seeds, fields=fields, calibration=calibration,
                    validation=raw.get("validation"), path=path)

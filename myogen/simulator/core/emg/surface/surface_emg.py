@@ -321,6 +321,8 @@ class SurfaceEMG:
         The motor units are processed in parallel using joblib, with each motor unit's
         fibers processed sequentially to maintain optimization efficiency.
         """
+        if getattr(self, "profile_rng_state", None) is not None:  # built from a profile card: draw as at build time
+            get_random_generator().bit_generator.state = deepcopy(self.profile_rng_state)
         if execution is not None:
             from ..runtime.semg import simulate_muaps
             return simulate_muaps(self, execution, n_jobs, verbose, use_gpu)

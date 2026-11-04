@@ -1,14 +1,18 @@
 """Card builders: the library objects a card describes, with keyword overrides noted and recorded.
 
 Every builder reseeds the global generator from the card's ``seeds`` before it draws, so a build does not depend on
-what ran before it. Keywords equal to the card value (unit-aware) are not overrides. A differing keyword is recorded
-(``overrides()``, ``record()``) and, when the field carries a note or the drive calibration depends on it, the note
-is printed once per run (``ProfileNote``).
+what ran before it. A keyword that names a card field overrides it on this card instance: the override applies to
+every later build from the same instance (``thresholds(n_units=60)`` then ``muscle()`` builds 60 units), is recorded
+(``overrides()``, ``record()``) and, when the field carries a note, prints the note once per run (``ProfileNote``).
+A keyword equal to the card value (unit-aware) is not an override, and clears an earlier one. Constructor keywords
+the card does not set (electrodes, sampling, units to simulate, ...) are passed through and listed under
+``keywords`` in the built object's ``profile_record``.
 """
 from __future__ import annotations
 
+import copy
 import inspect
-from dataclasses import dataclass
+from dataclasses import asdict, dataclass, is_dataclass
 from typing import Any
 
 import numpy as np
@@ -19,6 +23,7 @@ from myogen.profiles._notes import building_from_card, emit_note
 # Card field -> constructor keyword, where they differ
 _THRESHOLD_KEYWORDS = {"n_units": "N", "recruitment_range": "recruitment_range__ratio", "mode": "mode"}
 _UNIT_CV_KEYWORD = "motor_unit_conduction_velocities__m_per_s"
+_PER_UNIT = "per_unit__m_per_s"  # muscle.unit_cv override holding explicit per-unit CVs
 
 
 def _magnitude(value: Any, unit: str | None) -> Any:
@@ -31,7 +36,8 @@ def _same(a: Any, b: Any) -> bool:
     if a is None or b is None:
         return a is None and b is None
     if isinstance(a, dict) and isinstance(b, dict):
-        return a.keys() == b.keys() and all(_same(a[k], b[k]) for k in a)
+        return {str(k) for k in a} == {str(k) for k in b} and all(
+            _same(a[k], next(b[j] for j in b if str(j) == str(k))) for k in a)
     if isinstance(a, str) or isinstance(b, str):
         return a == b
     try:
@@ -41,17 +47,30 @@ def _same(a: Any, b: Any) -> bool:
     return x.shape == y.shape and bool(np.allclose(x, y, rtol=1e-12, atol=0.0))
 
 
-def _plain(value: Any, unit: str | None) -> Any:
-    """A JSON-friendly copy of an override for the record."""
-    from dataclasses import asdict, is_dataclass
-    if is_dataclass(value):
-        return asdict(value)
-    value = _magnitude(value, unit)
+def _jsonable(value: Any) -> Any:
     if isinstance(value, np.ndarray):
         return value.tolist()
     if isinstance(value, np.generic):
         return value.item()
+    if isinstance(value, tuple):
+        return list(value)
     return value
+
+
+def _describe(value: Any) -> Any:
+    """A JSON-friendly description of a passed-through keyword for the record."""
+    if isinstance(value, pq.Quantity):
+        mag = _jsonable(np.asarray(value.magnitude))
+        return f"{mag} {value.dimensionality.string}"
+    if is_dataclass(value):
+        return {k: _jsonable(v) for k, v in asdict(value).items()}
+    if isinstance(value, (str, int, float, bool, type(None), np.ndarray, np.generic, list, tuple, dict)):
+        return _jsonable(value)
+    return repr(value)
+
+
+def _dataclass_from(kind: type, spec: dict) -> Any:
+    return kind(**{k: tuple(x) if isinstance(x, list) else x for k, x in spec.items()})
 
 
 class CardBuilders:
@@ -59,42 +78,76 @@ class CardBuilders:
 
     # -- overrides --------------------------------------------------------------------------------------------
     def overrides(self) -> dict[str, Any]:
-        """Every override applied so far on this card instance, as ``{"section.field": value}``."""
-        return dict(self._overrides)
+        """Every override in force on this card instance, as ``{"section.field": value}`` (card units)."""
+        return copy.deepcopy(self._overrides)
 
-    def record(self) -> dict[str, Any]:
-        """What a result was built with: card name, version, parent and overrides."""
-        return {"profile": self.name, "version": self.version, "parent": self.parent, "overrides": self.overrides()}
+    def record(self, keywords: dict | None = None) -> dict[str, Any]:
+        """What a result was built with: card name, version, parent, overrides (and passed-through keywords)."""
+        rec = {"profile": self.name, "version": self.version, "parent": self.parent, "overrides": self.overrides()}
+        if keywords is not None:
+            rec["keywords"] = dict(keywords)
+        return rec
 
-    def _take(self, section: str, overrides: dict, allowed: set[str], aliases: dict[str, str] | None = None) -> dict:
-        """Card values of ``section`` with ``overrides`` applied; returns ``{field: value}`` (card units)."""
+    def _card_form(self, path: str, field, key: str, given: Any) -> Any:
+        """``given`` in the card's format and units (what the card value would be)."""
+        if key == _UNIT_CV_KEYWORD:
+            return {_PER_UNIT: np.asarray(_magnitude(given, "m/s"), dtype=float).tolist()}
+        if is_dataclass(given):
+            return {k: _jsonable(v) for k, v in asdict(given).items()}
+        if isinstance(given, pq.Quantity):
+            if field.unit is None:
+                raise TypeError(f"{self.name}: {path} has no unit; got the quantity {given!r}")
+            return _jsonable(_magnitude(given, field.unit))
+        return _jsonable(given)
+
+    def _card_value_in_form_of(self, path: str, key: str, given: Any) -> Any:
+        """The card value, in the same form as ``_card_form`` gives for ``given``."""
+        value = self.value(path)
+        if key == _UNIT_CV_KEYWORD:
+            cvs = self._unit_cvs(value)
+            return None if cvs is None else {_PER_UNIT: cvs.tolist()}
+        if is_dataclass(given) and isinstance(value, dict):
+            return {k: _jsonable(v) for k, v in asdict(_dataclass_from(type(given), value)).items()}
+        return value
+
+    def _take(self, section: str, overrides: dict, allowed: set[str], aliases: dict[str, str] | None = None,
+              keywords: dict | None = None) -> dict:
+        """Card values of ``section`` with this instance's overrides and ``overrides`` applied (card units).
+
+        Keywords naming a card field (or an alias of one) override it; keywords in ``allowed`` pass through and are
+        described in ``keywords``; anything else raises ``TypeError``.
+        """
         aliases = aliases or {}
-        out = {name: self.value(f"{section}.{name}") for name in self.section(section)}
+        fields = self.section(section)
+        out = {name: self.value(f"{section}.{name}") for name in fields}
+        for path, val in self._overrides.items():
+            sec, name = path.split(".", 1)
+            if sec == section:
+                out[name] = copy.deepcopy(val)
         for key, given in overrides.items():
             name = aliases.get(key, key)
             path = f"{section}.{name}"
-            if name in out:
+            if name in fields:
                 f = self.field(path)
-                if key in aliases:  # a constructor keyword standing in for a card field
-                    out[key] = given
-                    self._override(path, f, _plain(given, None))
+                plain = self._card_form(path, f, key, given)
+                if _same(plain, self._card_value_in_form_of(path, key, given)):
+                    self._overrides.pop(path, None)  # back to the card value
+                    out[name] = self.value(path)
                     continue
-                if _same(_magnitude(given, f.unit), f.value) and not _is_object(given):
-                    continue
-                if _is_object(given) and _same(_plain(given, None), f.value):
-                    continue
-                out[name] = given
-                self._override(path, f, _plain(given, f.unit))
-            elif key in allowed:  # a constructor keyword the card does not set (the user's choice): not recorded
+                out[name] = copy.deepcopy(plain)
+                self._override(path, f, plain)
+            elif key in allowed:  # a constructor keyword the card does not set: the user's choice
                 out[key] = given
+                if keywords is not None:
+                    keywords[key] = _describe(given)
             else:
                 raise TypeError(f"{self.name}: unknown keyword {key!r} for {section} "
-                                f"(card fields: {sorted(self.section(section))})")
+                                f"(card fields: {sorted(fields)})")
         return out
 
     def _override(self, path: str, field, value: Any) -> None:
         others = sorted(p for p in self._overrides if p != path)
-        self._overrides[path] = value
+        self._overrides[path] = copy.deepcopy(value)
         if field.note:
             text = f"{self.name}: {path} overridden ({value!r}). {field.note}"
             if others:
@@ -107,6 +160,22 @@ class CardBuilders:
         if unit is None or value is None or isinstance(value, pq.Quantity):
             return value
         return value * pq.Quantity(1.0, unit)
+
+    def _unit_cvs(self, spec: Any) -> np.ndarray | None:
+        """Per-unit fibre CVs (m/s) for a ``muscle.unit_cv`` value, or None for surface CVs."""
+        from myogen.utils.ramp_analysis import cv_from_recruitment_force
+
+        if spec is None:
+            return None
+        if _PER_UNIT in spec:
+            return np.asarray(spec[_PER_UNIT], dtype=float)
+        if spec.get("from") != "recruitment_force":
+            raise ValueError(f"{self.name}: muscle.unit_cv supports from: recruitment_force, got {spec!r}")
+        rt = self._take("drive", {}, set())["recruitment_pct_mvc"]
+        cv, _ = cv_from_recruitment_force(np.asarray(rt, dtype=float),
+                                          residual_sd__m_s=float(spec["residual_sd__m_s"]),
+                                          rng=np.random.default_rng(int(self.seeds["cv_scatter"])))
+        return np.asarray(cv, dtype=float)
 
     # -- builders ---------------------------------------------------------------------------------------------
     def thresholds(self, **overrides) -> np.ndarray:
@@ -121,28 +190,23 @@ class CardBuilders:
         return thr / thr.max()
 
     def muscle_kwargs(self, **overrides) -> dict[str, Any]:
-        """The ``Muscle(...)`` keywords of the card (pure: nothing is built)."""
+        """The ``Muscle(...)`` keywords of the card (nothing is built)."""
+        return self._muscle_kwargs(overrides, {})
+
+    def _muscle_kwargs(self, overrides: dict, keywords: dict) -> dict[str, Any]:
         from myogen.simulator import Muscle
-        from myogen.utils.ramp_analysis import cv_from_recruitment_force
 
         allowed = set(inspect.signature(Muscle.__init__).parameters) - {"self"}
-        v = self._take("muscle", overrides, allowed, aliases={_UNIT_CV_KEYWORD: "unit_cv"})
+        v = self._take("muscle", overrides, allowed, aliases={_UNIT_CV_KEYWORD: "unit_cv"}, keywords=keywords)
         kw = {k: val for k, val in v.items() if k in allowed}
         for name in ("radius__mm", "fiber_density__fibers_per_mm2", "skin_thickness__mm", "fat_thickness__mm",
                      "skin_conductivity__S_per_m"):
             kw[name] = self._q("muscle", name, v[name])
         log_sd = v["within_unit_fiber_diameter_log_sd"]
         kw["within_unit_fiber_diameter_log_sd"] = None if log_sd is None else tuple(log_sd)
-        if _UNIT_CV_KEYWORD not in v:
-            spec = v["unit_cv"]
-            if spec is not None:
-                if spec.get("from") != "recruitment_force":
-                    raise ValueError(f"{self.name}: muscle.unit_cv supports from: recruitment_force, got {spec!r}")
-                cv, _ = cv_from_recruitment_force(
-                    np.asarray(self.value("drive.recruitment_pct_mvc"), dtype=float),
-                    residual_sd__m_s=float(spec["residual_sd__m_s"]),
-                    rng=np.random.default_rng(int(self.seeds["cv_scatter"])))
-                kw[_UNIT_CV_KEYWORD] = cv
+        cvs = self._unit_cvs(v["unit_cv"])
+        if cvs is not None:
+            kw[_UNIT_CV_KEYWORD] = cvs
         kw.setdefault("recruitment_thresholds", self.thresholds())
         return kw
 
@@ -156,19 +220,20 @@ class CardBuilders:
         from myogen import get_random_generator, set_random_seed
         from myogen.simulator import Muscle
 
-        kw = self.muscle_kwargs(**overrides)
+        keywords: dict = {}
+        kw = self._muscle_kwargs(overrides, keywords)
         with building_from_card():
             set_random_seed(int(self.seeds["muscle"]))
             m = Muscle(**kw)
         m.distribute_innervation_centers()
         m.generate_muscle_fiber_centers(verbose=False)
         m.assign_mfs2mns(verbose=False, n_jobs=n_jobs)
-        disp = self.value("surface_emg.fiber_dispersion")
+        disp = self._take("surface_emg", {}, set())["fiber_dispersion"]
         if isinstance(disp, dict) and disp.get("fiber_properties") == "muscle":
             state = get_random_generator().bit_generator.state
             m._generate_fiber_properties()
             get_random_generator().bit_generator.state = state
-        m.profile_record = self.record()
+        m.profile_record = self.record(keywords)
         return m
 
     def force_model(self, **overrides):
@@ -176,7 +241,8 @@ class CardBuilders:
         from myogen.simulator.core.force.force_model import ForceModel
 
         allowed = set(inspect.signature(ForceModel.__init__).parameters) - {"self"}
-        v = self._take("force", overrides, allowed)
+        keywords: dict = {}
+        v = self._take("force", overrides, allowed, keywords=keywords)
         kw = {k: val for k, val in v.items() if k in allowed and k not in ("force_frequency_shape",
                                                                              "recording_frequency__Hz")}
         kw.setdefault("recruitment_thresholds", self.thresholds())
@@ -184,15 +250,19 @@ class CardBuilders:
             fm = ForceModel(recording_frequency__Hz=self._q("force", "recording_frequency__Hz",
                                                             v["recording_frequency__Hz"]),
                             force_frequency_shape=tuple(float(x) for x in v["force_frequency_shape"]), **kw)
-        fm.profile_record = self.record()
+        fm.profile_record = self.record(keywords)
         return fm
 
     def dd_params(self, **overrides) -> dict[str, Any]:
-        """Descending-drive parameters in the calibration's format (``run_descending_drive``)."""
-        drive = self._take("drive", {k: val for k, val in overrides.items() if k != "gfluctdv_scale"}, set())
-        mn = self._take("motor_neurons", {k: val for k, val in overrides.items() if k == "gfluctdv_scale"}, set())
-        p = {k: _magnitude(drive[k], self.field(f"drive.{k}").unit)
-             for k in ("dd_neurons", "conn_probability", "dd_drive__Hz", "synaptic_weight", "gamma_shape", "network")}
+        """Descending-drive parameters in the calibration's format (``run_descending_drive``).
+
+        Keywords may name fields of the drive or the motor_neurons section.
+        """
+        mn_fields = set(self.section("motor_neurons"))
+        drive = self._take("drive", {k: v for k, v in overrides.items() if k not in mn_fields}, set())
+        mn = self._take("motor_neurons", {k: v for k, v in overrides.items() if k in mn_fields}, set())
+        p = {k: drive[k] for k in ("dd_neurons", "conn_probability", "dd_drive__Hz", "synaptic_weight", "gamma_shape",
+                                   "network")}
         p["gfluctdv_scale"] = float(mn["gfluctdv_scale"])
         return p
 
@@ -201,59 +271,71 @@ class CardBuilders:
         from myogen import set_random_seed
         from myogen.simulator.neuron.descending_drive_network import build_pools
 
-        mn = self._take("motor_neurons", {k: v for k, v in overrides.items() if k == "config_file"}, set())
-        params = self.dd_params(**{k: v for k, v in overrides.items() if k != "config_file"})
+        params = self.dd_params(**overrides)
+        mn = self._take("motor_neurons", {}, set())
+        drive = self._take("drive", {}, set())
         thr = self.thresholds()
         set_random_seed(int(self.seeds["drive"]))
         with building_from_card():
-            pools = build_pools(thr, params, float(self.value("drive.timestep_ms")), mn["config_file"])
+            pools = build_pools(thr, params, float(drive["timestep_ms"]), mn["config_file"])
         pools.profile_record = self.record()
         return pools
 
     def surface_emg_kwargs(self, **overrides) -> dict[str, Any]:
-        """The card's ``SurfaceEMG`` keywords besides the muscle and electrodes (pure: nothing is built)."""
+        """The card's ``SurfaceEMG`` keywords besides the muscle and electrodes (nothing is built)."""
+        return self._surface_emg_kwargs(overrides, {})
+
+    def _surface_emg_kwargs(self, overrides: dict, keywords: dict) -> dict[str, Any]:
         from myogen.simulator import SurfaceEMG
         from myogen.simulator.core.emg.surface.fiber_dispersion import SurfaceFiberDispersion
 
         allowed = set(inspect.signature(SurfaceEMG.__init__).parameters) - {"self", "muscle_model", "electrode_arrays"}
-        v = self._take("surface_emg", overrides, allowed)
+        v = self._take("surface_emg", overrides, allowed, keywords=keywords)
         kw = {k: val for k, val in v.items() if k in allowed}
         disp = v["fiber_dispersion"]
-        if isinstance(disp, dict):
-            disp = SurfaceFiberDispersion(**{k: tuple(x) if isinstance(x, list) else x for k, x in disp.items()})
-        kw["fiber_dispersion"] = disp
-        kw["iap_lambda__per_mm"] = float(_magnitude(v["iap_lambda__per_mm"], "1/mm"))
-        kw["iap_kernel_length__mm"] = float(_magnitude(v["iap_kernel_length__mm"], "mm"))
-        if "sampling_frequency__Hz" in kw and "internal_sampling_frequency__Hz" not in kw:
-            kw["internal_sampling_frequency__Hz"] = kw["sampling_frequency__Hz"]  # simulate at the output rate
+        kw["fiber_dispersion"] = _dataclass_from(SurfaceFiberDispersion, disp) if isinstance(disp, dict) else disp
+        kw["iap_lambda__per_mm"] = float(v["iap_lambda__per_mm"])
+        kw["iap_kernel_length__mm"] = float(v["iap_kernel_length__mm"])
         return kw
 
     def surface_emg(self, muscle, electrode_arrays, **overrides):
-        """The card's ``SurfaceEMG`` for ``muscle`` (from ``muscle()``) and the user's electrode arrays."""
-        from myogen import set_random_seed
+        """The card's ``SurfaceEMG`` for ``muscle`` (from ``muscle()``) and the user's electrode arrays.
+
+        The generator state after construction is kept on the object (``profile_rng_state``); ``simulate_muaps``
+        draws from it, so the MUAPs do not depend on what ran between building and simulating.
+        """
+        from myogen import get_random_generator, set_random_seed
         from myogen.simulator import SurfaceEMG
 
-        kw = self.surface_emg_kwargs(**overrides)
+        keywords: dict = {}
+        kw = self._surface_emg_kwargs(overrides, keywords)
         with building_from_card():
             set_random_seed(int(self.seeds["surface_emg"]))
             semg = SurfaceEMG(muscle, electrode_arrays, **kw)
-        semg.profile_record = self.record()
+        semg.profile_rng_state = copy.deepcopy(get_random_generator().bit_generator.state)
+        semg.profile_record = self.record(keywords)
         return semg
 
     # -- running in % MVC -------------------------------------------------------------------------------------
     def excitation_for_pct_mvc(self, pct):
-        """Excitation (0-1) for a force level in % MVC, interpolated on the card's MVC-ramp curve."""
+        """Excitation (0-1) for a force level in % MVC, interpolated on the card's MVC-ramp curve.
+
+        The curve is extended to rest (0 % MVC, excitation 0) and MVC (100 %, excitation 1) when it stops short.
+        """
         from myogen.profiles._card import ProfileError
 
-        curve = self.value("drive.excitation_at_pct_mvc")
+        curve = self._take("drive", {}, set())["excitation_at_pct_mvc"]
         if curve is None:
             raise ProfileError(f"{self.name}: drive.excitation_at_pct_mvc is not filled in, so % MVC levels cannot be "
                                "mapped to excitation (run benchmarks/profiles/validate_card.py --mvc-mapping)")
         pct_arr = np.asarray(pct, dtype=float)
         if not np.all(np.isfinite(pct_arr)) or np.any(pct_arr < 0) or np.any(pct_arr > 100):
             raise ValueError(f"force levels must be within 0-100 % MVC, got {pct!r}")
-        levels = np.array(sorted(float(k) for k in curve))
-        e = np.interp(pct_arr, levels, [curve[k] for k in sorted(curve, key=float)])
+        points = {float(k): float(v) for k, v in curve.items()}
+        points.setdefault(0.0, 0.0)
+        points.setdefault(100.0, 1.0)
+        levels = sorted(points)
+        e = np.interp(pct_arr, levels, [points[k] for k in levels])
         return float(e) if np.ndim(e) == 0 else e
 
     def simulate(self, protocol, **overrides) -> "SimulationResult":
@@ -264,7 +346,7 @@ class CardBuilders:
         Keywords override card fields of the thresholds, motor_neurons, drive and force sections.
         """
         from myogen import set_random_seed
-        from myogen.simulator.neuron.descending_drive_network import excitation_to_drive_hz, run_descending_drive
+        from myogen.simulator.neuron import descending_drive_network as ddn
 
         by_section = {s: {} for s in ("thresholds", "motor_neurons", "drive", "force")}
         for key, val in overrides.items():
@@ -273,22 +355,24 @@ class CardBuilders:
                 raise TypeError(f"{self.name}: unknown keyword {key!r} for simulate "
                                 f"(fields of {', '.join(by_section)})")
             by_section[owner][key] = val
-        segments = [(float(d), self.excitation_for_pct_mvc(a), self.excitation_for_pct_mvc(b)) for d, a, b in protocol]
         thr = self.thresholds(**by_section["thresholds"])
         params = self.dd_params(**by_section["drive"], **by_section["motor_neurons"])
-        drive = {k: _magnitude(v, self.field(f"drive.{k}").unit) for k, v in self._take("drive", {}, set()).items()}
+        self._take("force", by_section["force"], set())
+        drive = self._take("drive", {}, set())
         mn = self._take("motor_neurons", {}, set())
+        segments = [(float(d), self.excitation_for_pct_mvc(a), self.excitation_for_pct_mvc(b)) for d, a, b in protocol]
         dt = float(drive["timestep_ms"])
-        e, hz = excitation_to_drive_hz(segments, float(drive["threshold_hz"]), params["dd_drive__Hz"],
-                                       timestep_ms=dt, noise_seed=int(self.seeds["drive"]))
+        e, hz = ddn.excitation_to_drive_hz(segments, float(drive["threshold_hz"]), params["dd_drive__Hz"],
+                                           timestep_ms=dt, noise_seed=int(self.seeds["drive"]))
         set_random_seed(int(self.seeds["drive"]))
         with building_from_card():
-            block = run_descending_drive(thr, hz, params, len(e) * dt, timestep_ms=dt, config_file=mn["config_file"])
-        fm = self.force_model(**by_section["force"])
+            block = ddn.run_descending_drive(thr, hz, params, len(e) * dt, timestep_ms=dt,
+                                             config_file=mn["config_file"])
+        fm = self.force_model()
         force = np.asarray(fm.generate_force(block, verbose=False).magnitude, dtype=float)[:, 0]
         record = self.record()
         block.annotations["myogen_profile"] = record
-        fs = float(_magnitude(self.value("force.recording_frequency__Hz"), None))
+        fs = float(self._take("force", {}, set())["recording_frequency__Hz"])
         return SimulationResult(spikes=block, force_pct_mvc=100.0 * force / float(drive["mvc_model_units"]),
                                 excitation=e, fs_force__Hz=fs, profile=record)
 
@@ -302,8 +386,3 @@ class SimulationResult:
     excitation: np.ndarray
     fs_force__Hz: float
     profile: dict
-
-
-def _is_object(value: Any) -> bool:
-    from dataclasses import is_dataclass
-    return is_dataclass(value)

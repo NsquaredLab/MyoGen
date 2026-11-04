@@ -77,7 +77,8 @@ def validate(name: str, n_jobs: int) -> dict:
     arrays = [SurfaceElectrodeArray(3, 3, 2.5 * pq.mm, 0.25 * pq.mm, center_point__mm_deg=(z * pq.mm, th * pq.deg),
                                     bending_radius__mm=bend, rotation_angle__deg=rot * pq.deg,
                                     differentiation_mode="monopolar") for z, rot, th in SENSORS]
-    semg = card.surface_emg(muscle, arrays, sampling_frequency__Hz=FS__HZ * pq.Hz, MUs_to_simulate=mus)
+    semg = card.surface_emg(muscle, arrays, sampling_frequency__Hz=FS__HZ * pq.Hz,
+                            internal_sampling_frequency__Hz=FS__HZ * pq.Hz, MUs_to_simulate=mus)  # as arm F
     semg.simulate_muaps(n_jobs=n_jobs, verbose=False, use_gpu=False)
     emg = semg.simulate_surface_emg(run.spikes, verbose=False)
     mono = np.stack([np.asarray(signal_to_grid(g.segments[0].analogsignals[0].rescale(pq.mV)), dtype=float)

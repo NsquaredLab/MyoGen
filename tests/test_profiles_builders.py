@@ -97,7 +97,7 @@ def test_force_model_uses_card_shape():
     card = load_profile()
     fm = card.force_model()
     assert fm.force_frequency_shape == (0.93, 1.29)
-    assert fm.profile_record == card.record()
+    assert fm.profile_record == card.record({})  # no pass-through keywords
     assert load_profile("fdi_semg.published").force_model().force_frequency_shape == (2.0, 3.0)
 
 
@@ -147,5 +147,5 @@ def test_sampling_frequency_is_the_users_choice():
     kw = card.surface_emg_kwargs()
     assert "sampling_frequency__Hz" not in kw and "internal_sampling_frequency__Hz" not in kw
     kw = card.surface_emg_kwargs(sampling_frequency__Hz=10240.0 * pq.Hz)
-    assert kw["sampling_frequency__Hz"] == kw["internal_sampling_frequency__Hz"] == 10240.0 * pq.Hz
+    assert kw["sampling_frequency__Hz"] == 10240.0 * pq.Hz and "internal_sampling_frequency__Hz" not in kw
     assert card.overrides() == {}  # not a card field: passed through, not recorded
