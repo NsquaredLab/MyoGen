@@ -13,6 +13,17 @@ calibration:
   last_recruit_target_pct_mvc: 59.0
   mvc_ramp: examples/finetune/fdi_spikes_force.py (summary.json, 2026-11-02)
   archived_inputs: nexus MyoGen_sEMG/Assets/_meta/profile_inputs_2026-11-03/
+validation:
+  date: "2026-11-04"
+  script: benchmarks/profiles/validate_card.py
+  result: benchmarks/profiles/results/fdi_semg.json
+  git_commit: 2d4911c15b7fa6700e6af77accad072f104fc115
+  setup: "25 % MVC trapezoid, 8 Delsys 5-pin sensors at 10240 Hz; limits frozen 2026-11-03 (cc / adj RMS +-10 % of 0.196 / 0.233 mV, MDF +-5 % of 162.5 / 157.5 Hz)"
+  cc: {rms_mV: 0.2004, mdf_Hz: 161.2}
+  adj: {rms_mV: 0.2340, mdf_Hz: 156.2}
+  hold_force_pct_mvc: 25.62
+  checked: true
+  passed: true
 sections:
   thresholds:
     n_units: {value: 120, source: "derived: [feinstein1955] ~119 FDI motor units (secondary; no locator read)", calibrated: true, note: "The FDI drive calibration (trial 85) was fitted with this value. Changing it leaves drive.threshold_hz, drive.excitation_at_pct_mvc and drive.recruitment_pct_mvc stale, so % MVC levels and the per-unit fibre CVs no longer hold; rerun examples/finetune/01_optimize_dd_multilevel.py (then fdi_spikes_force.py) to recalibrate."}

@@ -78,3 +78,16 @@ def test_missing_required_field_raises(tmp_path):
 def test_unknown_card_name_raises():
     with pytest.raises(ProfileError, match="fdi_semg"):
         load_profile("vl_semg")
+
+
+@pytest.mark.parametrize("name", SHIPPED)
+def test_validated_cards_record_their_validation(name):
+    card = load_profile(name)
+    assert card.validation is not None, f"{name} has no validation block"
+    v = card.validation
+    for key in ("date", "script", "result", "cc", "adj", "checked"):
+        assert key in v, f"{name}: validation.{key} missing"
+    assert v["checked"] is True
+    assert (REPO / v["result"]).is_file()
+    if name == "fdi_semg":
+        assert v["passed"] is True

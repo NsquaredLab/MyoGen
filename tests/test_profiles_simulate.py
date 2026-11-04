@@ -18,12 +18,18 @@ def test_excitation_for_pct_mvc():
             card.excitation_for_pct_mvc(bad)
 
 
-def test_published_refuses_pct_mvc_until_calibrated():
-    card = load_profile("fdi_semg.published")
-    if card.value("drive.excitation_at_pct_mvc") is not None:
-        pytest.skip("the variant's MVC mapping has been filled in")
+def test_card_without_mvc_mapping_refuses_pct_mvc(tmp_path):
+    path = tmp_path / "no_mapping.yaml"
+    path.write_text("name: no_mapping\nparent: fdi_semg\nversion: 1\nsections:\n  drive:\n"
+                    "    excitation_at_pct_mvc: {value: null, source: assumption}\n", encoding="utf-8")
     with pytest.raises(ProfileError, match="drive.excitation_at_pct_mvc"):
-        card.excitation_for_pct_mvc(25)
+        load_profile(path).excitation_for_pct_mvc(25)
+
+
+def test_published_variant_has_its_own_mvc_mapping():
+    card = load_profile("fdi_semg.published")
+    assert card.value("drive.mvc_model_units") != load_profile().value("drive.mvc_model_units")
+    assert 0.0 < card.excitation_for_pct_mvc(25) < 1.0
 
 
 def test_simulate_short_run():
