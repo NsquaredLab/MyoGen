@@ -45,5 +45,8 @@ semg = card.surface_emg(muscle, electrode_arrays)   # your electrodes
   so a build does not depend on what ran before it, and then gives your generator and seed back. This differs from
   the rest of MyoGen, where library code never seeds and the script owns the seed (one `set_random_seed` call, or
   the default 180319, for the whole script).
+- **Sampling**: generate sEMG at 2048 Hz (the `SurfaceEMG` default) and iEMG at 10240 Hz. The card's validation
+  (`benchmarks/profiles/validate_card.py`) records sEMG at 10240 Hz only to score the 20-2000 Hz band of its Delsys
+  comparator.
 - `load_profile("fdi_semg.published")` gives each component as its source paper
   describes it (for comparison with those papers and older MyoGen results).

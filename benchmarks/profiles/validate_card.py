@@ -10,6 +10,10 @@ monopolar grids, 2.5 mm pitch, 0.25 mm pins, as Pereira Botelho et al. 2019 and 
 benchmarks/semg_dispersion) at 10240 Hz, then scores cc / adj plateau RMS and median frequency (delsys.py). The
 result JSON holds the values, the limits, pass / fail, the card record and the git commit.
 
+10240 Hz is an analysis setting of this comparison, not a recording rate to copy: it lets the scorer use the
+20-2000 Hz band of the Delsys comparator, on which the limits were frozen. Generated sEMG is normally sampled at
+2048 Hz (the ``SurfaceEMG`` default; iEMG at 10240 Hz).
+
 The MVC mapping runs the card's drive on the MVC ramp of examples/finetune/fdi_spikes_force.py (0.5 s rest,
 excitation 0 -> 1 at 0.1 / s, 3 s hold; MVC = mean force over the last 2 s; force smoothed over 0.25 s) with the
 card's force model, and reports the MVC and the excitation at which the ramp force first reaches 5, 10, 20, 25, 30
@@ -45,7 +49,7 @@ REFERENCE = {"cc": (0.196, 162.5), "adj": (0.233, 157.5)}
 RMS_TOL, MDF_TOL = 0.10, 0.05
 LIMITED_CARDS = {"fdi_semg"}  # other cards (e.g. the published variant) are run and recorded, not judged
 
-FS__HZ = 10240.0
+FS__HZ = 10240.0  # for the comparator's 20-2000 Hz band only; generated sEMG is normally 2048 Hz (see above)
 RAMP_S, HOLD_S, LEVEL_PCT_MVC = 2.0, 4.0, 25.0
 SENSORS = [(z, rot, th) for z in (3.0, 9.0) for rot in (0.0, 45.0) for th in (0.0, 180.0)]
 
