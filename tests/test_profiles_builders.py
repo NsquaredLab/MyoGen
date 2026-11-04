@@ -64,7 +64,7 @@ def test_override_prints_note_and_is_recorded():
     assert len(notes) == 1 and "0.63" in notes[0]
     assert kw["iap_lambda__per_mm"] == 1.0
     assert card.overrides() == {"surface_emg.iap_lambda__per_mm": 1.0}
-    assert card.record() == {"profile": "fdi_semg", "version": 1, "parent": None,
+    assert card.record() == {"profile": "fdi_semg", "version": 1, "parent": None, "parent_version": None,
                              "overrides": {"surface_emg.iap_lambda__per_mm": 1.0}}
 
 

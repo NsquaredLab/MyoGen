@@ -37,7 +37,7 @@ plt.style.use("fivethirtyeight")
 #
 # The ``fdi_semg`` **profile card** holds the FDI values with their sources (radius 6.91 mm, 267 fibres/mm²,
 # skin 1.2 mm, fat 1.3 mm, per-unit conduction velocities from recruitment force, ...). ``card.muscle()`` builds
-# the muscle with them and the thresholds of example 01. Keywords override a card value, e.g.
+# the muscle with them and the card's recruitment thresholds (regenerated from its seed: those of example 01). Keywords override a card value, e.g.
 # ``card.muscle(fat_thickness__mm=3 * pq.mm)``; the card then prints a note on what else that affects.
 
 save_path = Path("./results")

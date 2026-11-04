@@ -3,7 +3,7 @@
 Every builder reseeds the global generator from the card's ``seeds`` before it draws, so a build does not depend on
 what ran before it. A keyword that names a card field overrides it on this card instance: the override applies to
 every later build from the same instance (``thresholds(n_units=60)`` then ``muscle()`` builds 60 units), is recorded
-(``overrides()``, ``record()``) and, when the field carries a note, prints the note once per run (``ProfileNote``).
+(``overrides()``, ``record()``) and, when the field carries a note, prints the note once per card and field per run (``ProfileNote``).
 A keyword equal to the card value (unit-aware) is not an override, and clears an earlier one. Constructor keywords
 the card does not set (electrodes, sampling, units to simulate, ...) are passed through and listed under
 ``keywords`` in the built object's ``profile_record``.
@@ -83,7 +83,8 @@ class CardBuilders:
 
     def record(self, keywords: dict | None = None) -> dict[str, Any]:
         """What a result was built with: card name, version, parent, overrides (and passed-through keywords)."""
-        rec = {"profile": self.name, "version": self.version, "parent": self.parent, "overrides": self.overrides()}
+        rec = {"profile": self.name, "version": self.version, "parent": self.parent,
+               "parent_version": self.parent_version, "overrides": self.overrides()}
         if keywords is not None:
             rec["keywords"] = dict(keywords)
         return rec
@@ -148,11 +149,15 @@ class CardBuilders:
     def _override(self, path: str, field, value: Any) -> None:
         others = sorted(p for p in self._overrides if p != path)
         self._overrides[path] = copy.deepcopy(value)
-        if field.note:
-            text = f"{self.name}: {path} overridden ({value!r}). {field.note}"
+        note = field.note
+        if not note and field.calibrated:
+            note = (f"The descending-drive calibration (trial {self.calibration.get('best_trial', '?')}) was fitted "
+                    "with this value, so the drive calibration no longer holds.")
+        if note:
+            text = f"{self.name}: {path} overridden ({value!r}). {note}"
             if others:
                 text += f" You also changed: {', '.join(others)}."
-            emit_note(path, text)
+            emit_note(f"{self.name}:{path}", text)
 
     def _q(self, section: str, name: str, value: Any) -> Any:
         """Attach the card unit to a plain value."""

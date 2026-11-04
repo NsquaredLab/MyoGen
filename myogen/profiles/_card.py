@@ -100,11 +100,13 @@ class Profile(CardBuilders):
     """A loaded card: its fields (read-only), the builders, and the overrides applied on this instance."""
 
     def __init__(self, name: str, version: int, description: str, parent: str | None, seeds: dict,
-                 fields: dict[str, CardField], calibration: dict, validation: dict | None, path: Path):
+                 fields: dict[str, CardField], calibration: dict, validation: dict | None, path: Path,
+                 parent_version: int | None = None):
         self.name = name
         self.version = version
         self.description = description
         self.parent = parent
+        self.parent_version = parent_version
         self.seeds = MappingProxyType(dict(seeds))
         self._fields = MappingProxyType(dict(fields))
         self.calibration = MappingProxyType(dict(calibration))
@@ -144,12 +146,14 @@ def load_profile(name: str | Path = DEFAULT_PROFILE) -> Profile:
         raise ProfileError(f"{where}: missing top-level 'sections'")
     own = _fields(where, raw["sections"])
     parent_name = raw.get("parent")
+    parent_version = None
     if parent_name is None:
         if "seeds" not in raw:
             raise ProfileError(f"{where}: missing top-level 'seeds'")
         fields, seeds, calibration = own, dict(raw["seeds"] or {}), dict(raw.get("calibration") or {})
     else:
         parent = load_profile(parent_name)
+        parent_version = parent.version
         fields = parent.fields()
         for key, f in own.items():
             if key not in fields:
@@ -163,4 +167,4 @@ def load_profile(name: str | Path = DEFAULT_PROFILE) -> Profile:
         raise ProfileError(f"{where}: missing required {', '.join(missing)}")
     return Profile(name=str(raw["name"]), version=int(raw["version"]), description=str(raw.get("description", "")),
                    parent=parent_name, seeds=seeds, fields=fields, calibration=calibration,
-                   validation=raw.get("validation"), path=path)
+                   validation=raw.get("validation"), path=path, parent_version=parent_version)

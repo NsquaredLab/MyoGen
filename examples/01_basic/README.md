@@ -36,7 +36,7 @@ semg = card.surface_emg(muscle, electrode_arrays)   # your electrodes
 - **Other keywords** (electrodes, sampling, units to simulate, ...) pass through to the class and are
   listed under `keywords` in the built object's `profile_record`.
 - **Notes**: when an overridden value is one the drive calibration or the λ fit
-  depends on, the card prints a note (once per run) saying what else to check.
+  depends on, the card prints a note (once per card and field per run) saying what else to check.
   Silence them with `warnings.simplefilter("ignore", myogen.ProfileNote)`.
 - **Record**: `card.record()` lists the card, its version and every override; built
   objects carry it as `profile_record`, spike and surface-EMG blocks as the

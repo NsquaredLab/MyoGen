@@ -5,6 +5,7 @@ note once. ``warnings.simplefilter("ignore", ProfileNote)`` silences them; ``"er
 """
 from __future__ import annotations
 
+import sys
 import warnings
 from contextlib import contextmanager
 from contextvars import ContextVar
@@ -17,12 +18,21 @@ class ProfileNote(UserWarning):
     """A note from a profile card, or the hint that a component was built without one."""
 
 
+def _caller_stacklevel() -> int:
+    """The ``stacklevel`` (for a ``warnings.warn`` in ``emit_note``) of the first frame outside MyoGen."""
+    level, frame = 2, sys._getframe(2)
+    while frame is not None and (str(frame.f_globals.get("__name__")).split(".")[0] == "myogen"
+                                 or frame.f_code.co_filename.startswith("<@beartype")):  # type-check wrappers
+        level, frame = level + 1, frame.f_back
+    return level
+
+
 def emit_note(key: str, text: str) -> None:
-    """Warn ``text`` as a ``ProfileNote`` the first time ``key`` is seen in this process."""
+    """Warn ``text`` as a ``ProfileNote`` the first time ``key`` is seen in this process, at the user's line."""
     if key in _shown:
         return
     _shown.add(key)
-    warnings.warn(text, ProfileNote, stacklevel=3)
+    warnings.warn(text, ProfileNote, stacklevel=_caller_stacklevel())
 
 
 def hand_built(component: str) -> None:
