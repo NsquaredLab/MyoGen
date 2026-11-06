@@ -23,7 +23,7 @@ from myogen.simulator.core.emg.surface import simulate_fiber
 
 SIGMA = 0.3       # S/m, every layer
 SIGMA_I = 1.01    # S/m, intracellular conductivity (default)
-DIAMETER = 0.05   # mm, fibre diameter (default)
+DIAMETER = 0.0579   # mm, fibre diameter (default; FDI RMS diameter [polgar1973 p. 310 Table 2])
 DU = 0.02         # mm
 
 

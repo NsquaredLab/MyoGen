@@ -14,6 +14,11 @@ from tqdm import tqdm
 import quantities as pq
 
 from myogen import get_random_generator
+from myogen.simulator.core.muscle.fiber_types import (
+    FiberTypeLadder,
+    draw_fiber_diameters__um,
+    fiber_type_ladder as build_fiber_type_ladder,  # aliased: Muscle.fiber_type_ladder is a property
+)
 from myogen.utils.types import (
     RECRUITMENT_THRESHOLDS__ARRAY,
     Quantity__S_per_m,
@@ -26,9 +31,30 @@ from myogen.utils.types import (
 from myogen.utils.decorators import beartowertype
 
 # Fibre conduction velocity against diameter: CV = 0.95 m/s + 0.05 m/s per um
-# (Nandedkar & Stalberg 1983; 3.7 m/s at 55 um). Shared with SurfaceFiberDispersion.
+# (Nandedkar & Stalberg 1983; 3.7 m/s at 55 um) [nandedkar1983]; the same line converts motor-unit
+# CV to fibre diameter in Del Vecchio et al. 2018 [delvecchio2018 p. 7 eq. 1]. Shared with SurfaceFiberDispersion.
 CV_INTERCEPT__M_S = 0.95
 CV_PER_DIAMETER__M_S_PER_MM = 50.0
+
+
+class _NotGiven:
+    """Marks an argument the caller left out, where None has its own meaning."""
+
+    def __repr__(self) -> str:
+        return "NOT_GIVEN"
+
+
+NOT_GIVEN = _NotGiven()
+
+# Defaults of the typed fibre model (fiber_model="typed"); see the Muscle docstring for sources.
+TYPED_FIBER_DEFAULTS = {
+    "mean_fiber_conduction_velocity__m_per_s": 4.32 * pq.m / pq.s,
+    "sd_fiber_conduction_velocity__m_per_s": 0.71 * pq.m / pq.s,
+    "type_i_fiber_fraction": 0.574,
+    "type_mean_fiber_diameters__um": (50.0, 67.0),
+    "type_fiber_diameter_log_sd": 0.2,
+    "within_unit_fiber_diameter_log_sd": (0.08, 0.13),
+}
 
 
 def _halton_disc(n: int, rng: np.random.Generator) -> np.ndarray:
@@ -104,7 +130,7 @@ def _perform_fast_marching(speed_map: np.ndarray, seed_points: np.ndarray) -> np
 @beartowertype
 class Muscle:
     """
-    A muscle model based on the cylindrical description of the volume conductor by Farina et al. 2004 [1] and the motor unit distribution by Akhmadeev et al. 2020 [2].
+    A muscle model based on the cylindrical description of the volume conductor by Farina et al. 2004 [farina2004] and the motor unit distribution by Akhmadeev et al. 2020 [akhmadeev2020].
 
     All default values are set to simulate the First Dorsal Interosseous (FDI) muscle.
     Values are pulled from the literature.
@@ -115,11 +141,11 @@ class Muscle:
         Array of recruitment thresholds for each motor unit (see `myogen.simulator.RecruitmentThresholds`).
         Values range from 0 to 1 with the largest motor units having thresholds near 1.
     radius__mm : float, default=6.91
-        Radius of the muscle cross-section in millimeters. Default is set to 6.91 mm as determined by Jacobson et al. 1992 [3].
+        Radius of the muscle cross-section in millimeters. Default is set to 6.91 mm as determined by Jacobson et al. 1992 [jacobson1992].
     length__mm : float, default=30.0
         Length of the muscle in millimeters. Default is 30.0 mm, a nominal value chosen to match the order of magnitude of the FDI muscle; adjust to match the muscle under study.
     fiber_density__fibers_per_mm2 : float, default=350
-        Density of muscle fibers per square millimeter. Default is set to 350 fibers/mm² as determined by Bettelho et al. 2019 [7].
+        Density of muscle fibers per square millimeter. Default is set to 350 fibers/mm² as determined by Botelho et al. 2019 [botelho2019].
     max_innervation_area_to_total_muscle_area__ratio : float, default=0.25
         Ratio defining the maximum territory size relative to total muscle area.
         Default is 0.25 as a pragmatic upper bound for the FDI, with no single published source; revisit for larger muscles.
@@ -127,45 +153,91 @@ class Muscle:
         of the total muscle cross-sectional area.
         Must be in range (0, 1].
     mean_conduction_velocity__m_per_s : float, default=4.2
-        Mean conduction velocity in m/s. Default is set to 4.2 m/s as determined by Nishizono et al. 1990 [4].
-        Experimental range determined by Nishizono et al. 1990 [4] is between 3.2 and 5.0 m/s.
+        Mean conduction velocity in m/s. Default is set to 4.2 m/s, the mean (SD 0.5) over 50 FDI motor units
+        of Nishizono et al. 1990 [nishizono1990 p. 77], which ranged from 3.2 to 5.0 m/s. The units were
+        recruited between 5 and 42 % MVC [nishizono1990 p. 78]. Used by surface EMG; the per-fibre
+        velocities of intramuscular EMG come from ``fiber_model``.
+    fiber_model : {"independent", "typed"}, default="independent"
+        How fibre diameters and conduction velocities (intramuscular EMG, and surface EMG with
+        ``SurfaceFiberDispersion(fiber_properties="muscle")``) are drawn. ``"independent"``, as in 0.13.0:
+        each fibre's diameter is log-normal around 50 um (log-SD 0.3, bounded to 20-80 um), its CV the
+        Nandedkar & Stalberg line [nandedkar1983 p. 163] plus 0.2 m/s of scatter, bounded to 2-6 m/s
+        (modelling assumptions); diameters do not depend on the motor unit. ``"typed"``: fibre types by motor
+        unit with FDI diameters (``fiber_types.py``), set by the arguments below, which need this model; call
+        ``assign_mfs2mns`` before ``_generate_fiber_properties``. Not used by surface EMG without
+        ``fiber_properties="muscle"``.
+    mean_fiber_conduction_velocity__m_per_s, sd_fiber_conduction_velocity__m_per_s : float, default=4.32, 0.71
+        Typed model only. Default 4.32 +/- 0.71 m/s, the motor-unit CV
+        from high-density surface EMG of all tibialis anterior units identified up to 70 % MVC (range
+        2.78-6.21 m/s; Del Vecchio et al. 2018) [delvecchio2018 p. 2]; human TA units by microstimulation
+        give 3.7 +/- 0.7 m/s [andreassen1987 p. 567]. Every fibre's CV is one affine map of the Nandedkar &
+        Stalberg line [nandedkar1983 p. 163], ``a + b * 0.05 * d[um]``, so CV follows diameter within and
+        between units; ``a`` and ``b`` make the mean and SD of the unit-mean CVs (each unit once, as measured)
+        equal these before the 2-6 m/s bound. In pools of mostly small units (e.g. the default FDI pool) the SD
+        stretches the large units past 6 m/s, so after the bound the mean and SD come out lower and a warning is
+        raised when more than 5 % of fibres are clipped. Because diameters rise with recruitment threshold
+        (``type_*`` arguments), unit-mean CVs rise with threshold too. Not used when ``motor_unit_conduction_velocities__m_per_s`` is given. With
+        ``within_unit_fiber_diameter_log_sd=None``: the line plus 0.2 m/s of scatter (a modelling assumption),
+        rescaled over fibres. Every fibre is bounded to 2-6 m/s (a modelling assumption).
+    motor_unit_conduction_velocities__m_per_s : Quantity or array, optional
+        Typed model only. Mean fibre CV of each motor unit, in pool order, e.g. from each unit's recruitment force through
+        ``myogen.utils.ramp_analysis.cv_from_recruitment_force`` (Del Vecchio et al. 2018 band means)
+        [delvecchio2018 p. 2]. Within a unit, fibre CV follows diameter on the Nandedkar & Stalberg slope,
+        0.05 m/s per um [nandedkar1983 p. 163]. Plain numbers are read as m/s. Default None: the mean and SD
+        above.
+    type_i_fiber_fraction : float, default=0.574
+        Typed model only. Fraction of fibres in type I units; FDI 57.4 % [polgar1973 p. 312 Table 4]. Units are typed in
+        recruitment order: the lowest-threshold units are type I until they hold this fraction. In the default
+        FDI muscle this makes ~86 % of units type I, because fibres concentrate in the large, late units.
+        Strict order is a simplification [garnett1979 p. 42].
+    type_mean_fiber_diameters__um : tuple of float or Quantity, default=(50.0, 67.0)
+        Typed model only. Mean fibre diameter of type I and type II fibres, FDI [polgar1973 p. 310 Table 2]. A Quantity in any
+        length unit is rescaled to um; plain numbers are read as um.
+    type_fiber_diameter_log_sd : float, default=0.2
+        Typed model only. Log-SD of fibre diameter within each type (a modelling assumption); used only with
+        ``within_unit_fiber_diameter_log_sd=None``. Unit mean diameters rise with threshold along one ladder
+        across the pool; see ``myogen.simulator.core.muscle.fiber_types``.
+    within_unit_fiber_diameter_log_sd : tuple of float or None, default=(0.08, 0.13)
+        Typed model only. Log-SD of fibre diameter within a type I and a type II motor unit: half the within-unit fibre-area CoV
+        of cat tibialis anterior units, 16.5 % in slow and 25.5 % in fast units (means of Table 1; 8-10 fibres
+        per unit, single sections) [martin1988 p. C46 Table 1]; no human value is known. None: no within-unit
+        spread of its own (the spread left over from ``type_fiber_diameter_log_sd``, CV scatter, CV SD over
+        fibres).
     mean_fiber_length__mm : float, default=31.7
-        Mean fiber length in mm. Default is the first dorsal interosseous (FDI) value of Jacobson et al. 1992 [3]
-        (Table 1).
+        Mean fiber length in mm. Default is the first dorsal interosseous (FDI) value of Jacobson et al. 1992 [jacobson1992 Table 1].
     var_fiber_length__mm : float, default=2.8
         Half-width in mm of the uniform fibre-length variation: each fibre is ``mean_fiber_length__mm`` plus a
         uniform draw in ``±var_fiber_length__mm``, with its ends at ``±length / 2``, so both ends move together
-        by up to half this value. Default 2.8 mm, the FDI fibre-length spread of Jacobson et al. 1992 [3]
-        (Table 1), which most likely describes variation between specimens rather than between fibres of one
+        by up to half this value. Default 2.8 mm, the FDI fibre-length spread of Jacobson et al. 1992 [jacobson1992 Table 1], which most likely describes variation between specimens rather than between fibres of one
         muscle (not verified against the table).
     radius_bone__mm : float, default=1
         Bone radius in mm. Default is set to 1 mm.
     fat_thickness__mm : float, default=1.3
         Fat thickness in mm. Default 1.3 mm, derived rather than measured: no study measures fat alone over
         the FDI, so it is the total depth to muscle of 2.5 mm, the low end of the FDI subcutaneous depth of
-        Nishikawa et al. 2024 [12] (group means 2.54-3.30 mm, ultrasound), minus the skin below. Fat averaged
-        over the whole hand is thinner, 0.3 mm (Störchle et al. 2018 [5]; the previous default).
+        Nishikawa et al. 2024 [nishikawa2024] (group means 2.54-3.30 mm, ultrasound), minus the skin below. Fat averaged
+        over the whole hand is thinner, 0.3 mm (Störchle et al. 2018 [storchle2018]; the previous default).
     skin_thickness__mm : float, default=1.2
         Skin (epidermis and dermis) thickness in mm. Default 1.2 mm, the median over the hand dorsum in healthy
-        controls of Li et al. 2018 [11] (range 0.79-1.50 mm, high-frequency ultrasound). The previous default,
-        1.29 mm, was a male average from Brodar 1960 [6].
+        controls of Li et al. 2018 [li2018] (range 0.79-1.50 mm, high-frequency ultrasound). The previous default,
+        1.29 mm, was a male average from Brodar 1960 [brodar1960].
     muscle_conductivity_radial__S_per_m : float, default=0.09
-        Muscle conductivity in radial direction. Default is set to 0.09 S/m as determined by Botelho et al. 2019 [7] (Table 1).
+        Muscle conductivity in radial direction. Default is set to 0.09 S/m as determined by Botelho et al. 2019 [botelho2019 Table 1].
     muscle_conductivity_longitudinal__S_per_m : float, default=0.4
-        Muscle conductivity in longitudinal direction. Default is set to 0.4 S/m as determined by Botelho et al. 2019 [7] (Table 1).
+        Muscle conductivity in longitudinal direction. Default is set to 0.4 S/m as determined by Botelho et al. 2019 [botelho2019 Table 1].
     fat_conductivity__S_per_m : float, default=4.07E-2
-        Fat conductivity. Default is set to 4.07E-2 S/m as determined by Botelho et al. 2019 [7] (Table 1).
+        Fat conductivity. Default is set to 4.07E-2 S/m as determined by Botelho et al. 2019 [botelho2019 Table 1].
     skin_conductivity__S_per_m : float, default=1.0
-        Skin conductivity. Default is 1 S/m, the value of Farina et al. 2004 [1], which they took
-        from the three-layer model of Roeleveld et al. 1997 [8] (also Blok et al. 2002 [9]). It is
+        Skin conductivity. Default is 1 S/m, the value of Farina et al. 2004 [farina2004], which they took
+        from the three-layer model of Roeleveld et al. 1997 [roeleveld1997] (also Blok et al. 2002 [blok2002]). It is
         an effective value chosen so that the model reproduces how biceps MUAPs fall off with
-        depth and around the arm, not a measured skin conductivity: Roeleveld et al. note that it
-        is not known whether skin conducts as well as 1 S/m, and Blok et al. that reference values
+        depth and around the arm, not a measured skin conductivity: Roeleveld et al. [roeleveld1997] note that it
+        is not known whether skin conducts as well as 1 S/m, and Blok et al. [blok2002] that reference values
         are scarce. Measured skin is far lower: 4.55E-4 to 4.88E-4 S/m for composite in-vivo skin
-        near 100-150 Hz (Gabriel et al. 1996, used by Lowery et al. 2002 [10] and Botelho et al.
-        2019 [7]); the IT'IS tissue database gives 0.148 +/- 0.042 S/m at low frequency (mean of
-        7 studies, 0.057-0.25 S/m, flagged for use with caution) [13]. A resistive skin layer
-        raises surface amplitudes (3.5-6x with 4.88E-4 S/m). MyoGen keeps 1 S/m as a
+        near 100-150 Hz (Gabriel et al. 1996 [gabriel1996], used by Lowery et al. 2002 [lowery2002] and Botelho et al.
+        2019 [botelho2019]); the IT'IS tissue database gives 0.148 +/- 0.042 S/m at low frequency
+        (mean of 7 studies, 0.057-0.25 S/m, flagged for use with caution) [itis]. A resistive skin
+        layer raises surface amplitudes (3.5-6x with 4.88E-4 S/m). MyoGen keeps 1 S/m as a
         calibration: with the IT'IS value of 0.15 S/m the FDI plateau RMS is about 2.5-4x above
         published ranges (``benchmarks/semg_dispersion``).
     grid_resolution : int, default=256
@@ -186,6 +258,10 @@ class Muscle:
         Muscle fiber diameters in mm. Available after _generate_fiber_properties().
     muscle_fiber_conduction_velocities__mm_per_s : np.ndarray
         Muscle fiber conduction velocities in mm/s. Available after _generate_fiber_properties().
+    motor_unit_fiber_types, muscle_fiber_types : np.ndarray
+        Fibre type (1 or 2) per unit and per fibre (``fiber_model="typed"``). Available after _generate_fiber_properties().
+    fiber_type_ladder : FiberTypeLadder
+        Unit types, ladder positions and derived spreads (``fiber_model="typed"``). Available after _generate_fiber_properties().
     assignment : np.ndarray
         Motor unit assignment for each muscle fiber. Available after assign_mfs2mns().
     number_of_muscle_fibers : int
@@ -204,19 +280,19 @@ class Muscle:
 
     References
     ----------
-    [1] Farina, D., Mesin, L., Martina, S., Merletti, R., 2004. A surface EMG generation model with multilayer cylindrical description of the volume conductor. IEEE Transactions on Biomedical Engineering 51, 415–426. https://doi.org/10.1109/TBME.2003.820998 <br>
-    [2] Akhmadeev, K., Yu, T., Le Carpentier, E., Aoustin, Y., Farina, D., 2020. Simulation of Motor Unit Action Potential Recordings From Intramuscular Multichannel Scanning Electrodes. IEEE Transactions on Biomedical Engineering 67, 2005–2014. https://doi.org/10.1109/TBME.2019.2953680 <br>
-    [3] Jacobson, M.D., Raab, R., Fazeli, B.M., Abrams, R.A., Botte, M.J., Lieber, R.L., 1992. Architectural design of the human intrinsic hand muscles. The Journal of Hand Surgery 17, 804–809. https://doi.org/10.1016/0363-5023(92)90446-V <br>
-    [4] Nishizono, H., Fujimoto, T., Ohtake, H., Miyashita, M., 1990. Muscle fiber conduction velocity and contractile properties estimated from surface electrode arrays. Electroencephalography and Clinical Neurophysiology 75, 75–81. https://doi.org/10.1016/0013-4694(90)90154-C <br>
-    [5] Störchle, P., Müller, W., Sengeis, M., Lackner, S., Holasek, S., Fürhapter-Rieger, A., 2018. Measurement of mean subcutaneous fat thickness: eight standardised ultrasound sites compared to 216 randomly selected sites. Sci Rep 8, 16268. https://doi.org/10.1038/s41598-018-34213-0 <br>
-    [6] Brodar, V., 1960. Observations on skin thickness and subcutaneous tissue in man. Zeitschrift für Morphologie und Anthropologie 50, 386–395. <br>
-    [7] Botelho, D.P., Curran, K., Lowery, M.M., 2019. Anatomically accurate model of EMG during index finger flexion and abduction derived from diffusion tensor imaging. PLOS Computational Biology 15, e1007267. https://doi.org/10.1371/journal.pcbi.1007267 <br>
-    [8] Roeleveld, K., Blok, J.H., Stegeman, D.F., van Oosterom, A., 1997. Volume conduction models for surface EMG; confrontation with measurements. Journal of Electromyography and Kinesiology 7, 221–232. https://doi.org/10.1016/S1050-6411(97)00009-6 <br>
-    [9] Blok, J.H., Stegeman, D.F., van Oosterom, A., 2002. Three-layer volume conductor model and software package for applications in surface electromyography. Annals of Biomedical Engineering 30, 566–577. https://doi.org/10.1114/1.1475345 <br>
-    [10] Lowery, M.M., Stoykov, N.S., Taflove, A., Kuiken, T.A., 2002. A multiple-layer finite-element model of the surface EMG signal. IEEE Transactions on Biomedical Engineering 49, 446–454. https://doi.org/10.1109/10.995683 <br>
-    [11] Li, H., Furst, D.E., Jin, H., Sun, C., Wang, X., Yang, L., He, J., Wang, Y., Liu, A., 2018. High-frequency ultrasound of the skin in systemic sclerosis: an exploratory study to examine correlation with disease activity and to define the minimally detectable difference. Arthritis Research & Therapy 20, 181. https://doi.org/10.1186/s13075-018-1686-9 <br>
-    [12] Nishikawa, Y., Watanabe, K., Holobar, A., Kitamura, R., Maeda, N., Hyngstrom, A.S., 2024. Sex differences in laterality of motor unit firing behavior of the first dorsal interosseous muscle in strength-matched healthy young males and females. European Journal of Applied Physiology 124, 1979–1990. https://doi.org/10.1007/s00421-024-05420-7 <br>
-    [13] Baumgartner, C., Hasgall, P.A., Di Gennaro, F., Neufeld, E., Lloyd, B., Gosselin, M.C., Payne, D., Klingenböck, A., Kuster, N., 2025. IT'IS Database for thermal and electromagnetic parameters of biological tissues, Version 5.0. https://doi.org/10.13099/VIP21000-05-0
+    [1] Farina, D., Mesin, L., Martina, S., Merletti, R., 2004. A surface EMG generation model with multilayer cylindrical description of the volume conductor. IEEE Transactions on Biomedical Engineering 51, 415–426. https://doi.org/10.1109/TBME.2003.820998 [farina2004] <br>
+    [2] Akhmadeev, K., Yu, T., Le Carpentier, E., Aoustin, Y., Farina, D., 2020. Simulation of Motor Unit Action Potential Recordings From Intramuscular Multichannel Scanning Electrodes. IEEE Transactions on Biomedical Engineering 67, 2005–2014. https://doi.org/10.1109/TBME.2019.2953680 [akhmadeev2020] <br>
+    [3] Jacobson, M.D., Raab, R., Fazeli, B.M., Abrams, R.A., Botte, M.J., Lieber, R.L., 1992. Architectural design of the human intrinsic hand muscles. The Journal of Hand Surgery 17, 804–809. https://doi.org/10.1016/0363-5023(92)90446-V [jacobson1992] <br>
+    [4] Nishizono, H., Fujimoto, T., Ohtake, H., Miyashita, M., 1990. Muscle fiber conduction velocity and contractile properties estimated from surface electrode arrays. Electroencephalography and Clinical Neurophysiology 75, 75–81. https://doi.org/10.1016/0013-4694(90)90154-C [nishizono1990] <br>
+    [5] Störchle, P., Müller, W., Sengeis, M., Lackner, S., Holasek, S., Fürhapter-Rieger, A., 2018. Measurement of mean subcutaneous fat thickness: eight standardised ultrasound sites compared to 216 randomly selected sites. Sci Rep 8, 16268. https://doi.org/10.1038/s41598-018-34213-0 [storchle2018] <br>
+    [6] Brodar, V., 1960. Observations on skin thickness and subcutaneous tissue in man. Zeitschrift für Morphologie und Anthropologie 50, 386–395. [brodar1960] <br>
+    [7] Botelho, D.P., Curran, K., Lowery, M.M., 2019. Anatomically accurate model of EMG during index finger flexion and abduction derived from diffusion tensor imaging. PLOS Computational Biology 15, e1007267. https://doi.org/10.1371/journal.pcbi.1007267 [botelho2019] <br>
+    [8] Roeleveld, K., Blok, J.H., Stegeman, D.F., van Oosterom, A., 1997. Volume conduction models for surface EMG; confrontation with measurements. Journal of Electromyography and Kinesiology 7, 221–232. https://doi.org/10.1016/S1050-6411(97)00009-6 [roeleveld1997] <br>
+    [9] Blok, J.H., Stegeman, D.F., van Oosterom, A., 2002. Three-layer volume conductor model and software package for applications in surface electromyography. Annals of Biomedical Engineering 30, 566–577. https://doi.org/10.1114/1.1475345 [blok2002] <br>
+    [10] Lowery, M.M., Stoykov, N.S., Taflove, A., Kuiken, T.A., 2002. A multiple-layer finite-element model of the surface EMG signal. IEEE Transactions on Biomedical Engineering 49, 446–454. https://doi.org/10.1109/10.995683 [lowery2002] <br>
+    [11] Li, H., Furst, D.E., Jin, H., Sun, C., Wang, X., Yang, L., He, J., Wang, Y., Liu, A., 2018. High-frequency ultrasound of the skin in systemic sclerosis: an exploratory study to examine correlation with disease activity and to define the minimally detectable difference. Arthritis Research & Therapy 20, 181. https://doi.org/10.1186/s13075-018-1686-9 [li2018] <br>
+    [12] Nishikawa, Y., Watanabe, K., Holobar, A., Kitamura, R., Maeda, N., Hyngstrom, A.S., 2024. Sex differences in laterality of motor unit firing behavior of the first dorsal interosseous muscle in strength-matched healthy young males and females. European Journal of Applied Physiology 124, 1979–1990. https://doi.org/10.1007/s00421-024-05420-7 [nishikawa2024] <br>
+    [13] Baumgartner, C., Hasgall, P.A., Di Gennaro, F., Neufeld, E., Lloyd, B., Gosselin, M.C., Payne, D., Klingenböck, A., Kuster, N., 2025. IT'IS Database for thermal and electromagnetic parameters of biological tissues, Version 5.0. https://doi.org/10.13099/VIP21000-05-0 [itis]
     """
 
     def __init__(
@@ -227,6 +303,14 @@ class Muscle:
         fiber_density__fibers_per_mm2: Quantity__per_mm2 = 350 * pq.mm**-2,
         max_innervation_area_to_total_muscle_area__ratio: float = 1 / 4,
         mean_conduction_velocity__m_per_s: Quantity__m_per_s = 4.2 * pq.m / pq.s,
+        fiber_model: str = "independent",
+        mean_fiber_conduction_velocity__m_per_s: Quantity__m_per_s | None = None,
+        sd_fiber_conduction_velocity__m_per_s: Quantity__m_per_s | None = None,
+        type_i_fiber_fraction: float | None = None,
+        type_mean_fiber_diameters__um: tuple[float, float] | pq.Quantity | None = None,
+        type_fiber_diameter_log_sd: float | None = None,
+        within_unit_fiber_diameter_log_sd: tuple[float, float] | None | _NotGiven = NOT_GIVEN,
+        motor_unit_conduction_velocities__m_per_s: np.ndarray | list[float] | tuple[float, ...] | None = None,
         mean_fiber_length__mm: Quantity__mm = 31.7 * pq.mm,
         var_fiber_length__mm: Quantity__mm = 2.8 * pq.mm,
         radius_bone__mm: Quantity__mm = 0 * pq.mm,
@@ -266,6 +350,67 @@ class Muscle:
             max_innervation_area_to_total_muscle_area__ratio
         )
         self._mean_conduction_velocity__m_s = mean_conduction_velocity__m_per_s
+        if fiber_model not in ("independent", "typed"):
+            raise ValueError(f"fiber_model must be 'independent' or 'typed', got {fiber_model!r}")
+        typed_given = [name for name, value in (
+            ("mean_fiber_conduction_velocity__m_per_s", mean_fiber_conduction_velocity__m_per_s),
+            ("sd_fiber_conduction_velocity__m_per_s", sd_fiber_conduction_velocity__m_per_s),
+            ("type_i_fiber_fraction", type_i_fiber_fraction),
+            ("type_mean_fiber_diameters__um", type_mean_fiber_diameters__um),
+            ("type_fiber_diameter_log_sd", type_fiber_diameter_log_sd),
+            ("within_unit_fiber_diameter_log_sd",
+             None if within_unit_fiber_diameter_log_sd is NOT_GIVEN else within_unit_fiber_diameter_log_sd),
+            ("motor_unit_conduction_velocities__m_per_s", motor_unit_conduction_velocities__m_per_s),
+        ) if value is not None]
+        if within_unit_fiber_diameter_log_sd is None:
+            typed_given.append("within_unit_fiber_diameter_log_sd")
+        if fiber_model == "independent" and typed_given:
+            raise ValueError(f"{', '.join(typed_given)} need fiber_model='typed'")
+        self._fiber_model = fiber_model
+        typed = dict(TYPED_FIBER_DEFAULTS)
+        if mean_fiber_conduction_velocity__m_per_s is None:
+            mean_fiber_conduction_velocity__m_per_s = typed["mean_fiber_conduction_velocity__m_per_s"]
+        if sd_fiber_conduction_velocity__m_per_s is None:
+            sd_fiber_conduction_velocity__m_per_s = typed["sd_fiber_conduction_velocity__m_per_s"]
+        if type_i_fiber_fraction is None:
+            type_i_fiber_fraction = typed["type_i_fiber_fraction"]
+        if type_mean_fiber_diameters__um is None:
+            type_mean_fiber_diameters__um = typed["type_mean_fiber_diameters__um"]
+        if type_fiber_diameter_log_sd is None:
+            type_fiber_diameter_log_sd = typed["type_fiber_diameter_log_sd"]
+        if within_unit_fiber_diameter_log_sd is NOT_GIVEN:
+            within_unit_fiber_diameter_log_sd = typed["within_unit_fiber_diameter_log_sd"]
+        self._mean_fiber_conduction_velocity__m_s = mean_fiber_conduction_velocity__m_per_s
+        self._sd_fiber_conduction_velocity__m_s = sd_fiber_conduction_velocity__m_per_s
+        self._type_i_fiber_fraction = type_i_fiber_fraction
+        # Type means in um: a Quantity is rescaled from any length unit, plain numbers are read as um.
+        if isinstance(type_mean_fiber_diameters__um, pq.Quantity):
+            type_mean_fiber_diameters__um = type_mean_fiber_diameters__um.rescale(pq.um).magnitude
+        self._type_mean_fiber_diameters__um = tuple(float(v) for v in type_mean_fiber_diameters__um)
+        self._type_fiber_diameter_log_sd = type_fiber_diameter_log_sd
+        self._within_unit_fiber_diameter_log_sd = (
+            None if within_unit_fiber_diameter_log_sd is None
+            else tuple(float(v) for v in within_unit_fiber_diameter_log_sd)
+        )
+        if motor_unit_conduction_velocities__m_per_s is not None:
+            given = motor_unit_conduction_velocities__m_per_s
+            try:
+                unit_cv = (given.rescale(pq.m / pq.s).magnitude if isinstance(given, pq.Quantity) else given)
+            except ValueError as error:
+                raise ValueError(f"motor_unit_conduction_velocities__m_per_s must be a velocity: {error}") from error
+            unit_cv = np.asarray(unit_cv, dtype=float).ravel()
+            if len(unit_cv) != len(recruitment_thresholds) or not np.all(np.isfinite(unit_cv) & (unit_cv > 0)):
+                raise ValueError(
+                    "motor_unit_conduction_velocities__m_per_s must give one positive CV per motor unit "
+                    f"({len(recruitment_thresholds)}), got {len(unit_cv)} values"
+                )
+            if within_unit_fiber_diameter_log_sd is None:
+                raise ValueError(
+                    "motor_unit_conduction_velocities__m_per_s needs within_unit_fiber_diameter_log_sd "
+                    "(the typed model without within-unit spread has no per-unit CVs)"
+                )
+            motor_unit_conduction_velocities__m_per_s = unit_cv
+        self._motor_unit_conduction_velocities__m_s = motor_unit_conduction_velocities__m_per_s
         self._mean_fiber_length__mm = mean_fiber_length__mm
         self._var_fiber_length__mm = var_fiber_length__mm
         self._radius_bone__mm = radius_bone__mm
@@ -292,6 +437,7 @@ class Muscle:
         self._assignment: Optional[np.ndarray] = None
         self._muscle_fiber_diameters__mm: Optional[Quantity__mm] = None
         self._muscle_fiber_conduction_velocities__mm_per_s: Optional[Quantity__mm_per_s] = None
+        self._fiber_type_ladder: Optional[FiberTypeLadder] = None
         self._number_of_muscle_fibers: Optional[int] = None
         self._muscle_border__mm: Optional[Quantity__mm] = None
 
@@ -325,33 +471,14 @@ class Muscle:
             self.assign_mfs2mns()
             self._generate_fiber_properties()
 
-    def _generate_fiber_properties(self) -> None:
-        """
-        Generate muscle fiber diameters and conduction velocities based on physiological models.
-
-        This method should be called after generate_muscle_fiber_centers() to generate
-        realistic fiber properties based on the number and positions of muscle fibers.
-
-        Results are stored in the `mf_diameters` and `mf_cv` properties after execution.
-
-        Raises
-        ------
-        ValueError
-            If muscle fiber centers have not been generated first. Call generate_muscle_fiber_centers() first.
-        """
-        if self._muscle_fiber_centers__mm is None:
-            raise ValueError(
-                "Muscle fiber centers must be generated first. "
-                "Call generate_muscle_fiber_centers() before generating fiber properties."
-            )
-
+    def _generate_independent_fiber_properties(self) -> None:
+        """Fibre diameters and CVs of ``fiber_model="independent"``, as in 0.13.0 with the CV line in mm."""
         n_fibers = len(self._muscle_fiber_centers__mm)
 
         # Generate muscle fiber diameters using log-normal distribution
         # Based on physiological measurements (Brooke & Kaiser, 1970)
         # Mean diameter ~50um, range 20-80um
         mean_diameter__mm = 50e-3  # mm (50 um)
-        std_diameter__mm = 15e-3  # mm (15 um)
 
         self._muscle_fiber_diameters__mm = (
             get_random_generator().lognormal(mean=np.log(mean_diameter__mm), sigma=0.3, size=n_fibers)
@@ -369,11 +496,104 @@ class Muscle:
 
         # Add some biological variability
         cv_base = k * self._muscle_fiber_diameters__mm + c
-        cv_noise = get_random_generator().normal(0, 0.2, n_fibers) * pq.m / pq.s  # 20% CV variation
+        cv_noise = get_random_generator().normal(0, 0.2, n_fibers) * pq.m / pq.s
 
-        self._muscle_fiber_conduction_velocities__mm_per_s = cv_base + cv_noise
+        # Ensure velocities are within physiological range (2-6 m/s), then convert to mm/s
+        self._muscle_fiber_conduction_velocities__mm_per_s = np.clip(
+            cv_base + cv_noise, 2.0 * pq.m / pq.s, 6.0 * pq.m / pq.s
+        ).rescale(pq.mm / pq.s)
 
-        # Ensure velocities are within physiological range (2-6 m/s)
+    def _generate_fiber_properties(self) -> None:
+        """
+        Generate muscle fiber diameters and conduction velocities based on physiological models.
+
+        Call after generate_muscle_fiber_centers(); with ``fiber_model="typed"`` also after assign_mfs2mns(),
+        because fibre types and diameters are then set per motor unit (``fiber_types.py``), then CVs from
+        diameters.
+
+        Results are available as ``muscle_fiber_diameters__mm`` and ``muscle_fiber_conduction_velocities__mm_per_s``;
+        with ``fiber_model="typed"`` also ``motor_unit_fiber_types``, ``muscle_fiber_types`` and ``fiber_type_ladder``.
+
+        Raises
+        ------
+        ValueError
+            If muscle fiber centers have not been generated, or (typed model) fibres not assigned to motor units
+            (call generate_muscle_fiber_centers() and assign_mfs2mns() first).
+        """
+        if self._muscle_fiber_centers__mm is None:
+            raise ValueError(
+                "Muscle fiber centers must be generated first. "
+                "Call generate_muscle_fiber_centers() before generating fiber properties."
+            )
+
+        if self._fiber_model == "independent":
+            self._generate_independent_fiber_properties()
+            return
+
+        if self._assignment is None:
+            raise ValueError(
+                "Fibres must be assigned to motor units first. "
+                "Call assign_mfs2mns() before generating fiber properties."
+            )
+
+        n_fibers = len(self._muscle_fiber_centers__mm)
+
+        # Fibre types by motor unit, with unit mean diameters rising with recruitment threshold along one
+        # ladder across the pool (fiber_types.py; FDI type I 57.4 % [polgar1973 p. 312 Table 4], type means
+        # 50.0 / 67.0 um [polgar1973 p. 310 Table 2]).
+        assignment = self._assignment.astype(int)
+        self._fiber_type_ladder = build_fiber_type_ladder(
+            np.bincount(assignment, minlength=self._number_of_neurons),
+            np.asarray(self._recruitment_thresholds),
+            type_i_fiber_fraction=self._type_i_fiber_fraction,
+            type_mean_diameters__um=self._type_mean_fiber_diameters__um,
+            type_log_sd=self._type_fiber_diameter_log_sd,
+            within_unit_log_sd=self._within_unit_fiber_diameter_log_sd,
+        )
+        d_um = draw_fiber_diameters__um(self._fiber_type_ladder, assignment, get_random_generator())
+        self._muscle_fiber_diameters__mm = d_um * 1e-3 * pq.mm
+
+        def as_m_s(value):
+            return float(pq.Quantity(value, pq.m / pq.s).rescale(pq.m / pq.s).magnitude)
+
+        k = CV_PER_DIAMETER__M_S_PER_MM * 1e-3  # (m/s)/um
+        d_um = np.asarray(self._muscle_fiber_diameters__mm.rescale(pq.mm).magnitude) * 1e3
+        mean_cv = as_m_s(self._mean_fiber_conduction_velocity__m_s)
+        sd_cv = as_m_s(self._sd_fiber_conduction_velocity__m_s)
+        if self._within_unit_fiber_diameter_log_sd is None:
+            # No within-unit spread: the CV-diameter line [nandedkar1983 p. 163] plus 0.2 m/s of scatter (a
+            # modelling assumption), rescaled over fibres to the mean and SD.
+            raw_cv = k * d_um + get_random_generator().normal(0, 0.2, n_fibers)
+            spread = np.std(raw_cv)
+            z_cv = (raw_cv - np.mean(raw_cv)) / spread if spread > 0 else np.zeros(n_fibers)
+            cv = mean_cv + sd_cv * z_cv
+        else:
+            line = k * d_um
+            counts = np.bincount(assignment, minlength=self._number_of_neurons)
+            unit_line = np.bincount(assignment, weights=line, minlength=self._number_of_neurons) / np.maximum(counts, 1)
+            if self._motor_unit_conduction_velocities__m_s is not None:
+                # Each unit's mean CV as given; within a unit, CV follows diameter on the line's slope
+                # [nandedkar1983 p. 163].
+                cv = self._motor_unit_conduction_velocities__m_s[assignment] + line - unit_line[assignment]
+            else:
+                # One affine map of the CV-diameter line [nandedkar1983 p. 163] for every fibre, with the mean
+                # and SD of motor-unit CVs [delvecchio2018 p. 2] [andreassen1987 p. 567] matched over unit means
+                # (each unit once). The line's own anchor (3.7 m/s at 55 um) is not used.
+                present = unit_line[counts > 0]
+                spread = np.std(present)
+                b = sd_cv / spread if spread > 0 else 0.0
+                cv = mean_cv + b * (line - np.mean(present))
+        self._muscle_fiber_conduction_velocities__mm_per_s = cv * pq.m / pq.s
+
+        # Sanity bounds 2-6 m/s (a modelling assumption, not sourced)
+        at_bound = float(np.mean(cv >= 6.0))
+        if at_bound > 0.05:
+            warnings.warn(
+                f"{at_bound:.0%} of fibres exceed 6 m/s and are clipped to it. With mean and SD over unit means, "
+                "a pool of mostly small units stretches the large ones; consider "
+                "motor_unit_conduction_velocities__m_per_s (e.g. from cv_from_recruitment_force).",
+                stacklevel=2,
+            )
         self._muscle_fiber_conduction_velocities__mm_per_s = np.clip(
             self._muscle_fiber_conduction_velocities__mm_per_s, 2.0 * pq.m / pq.s, 6.0 * pq.m / pq.s
         )
@@ -603,6 +823,12 @@ class Muscle:
         the probability of assigning a fiber to a motor unit if its neighbors are
         already assigned to that unit.
         """
+        # Fibre types, diameters and CVs belong to one assignment; clear them until
+        # _generate_fiber_properties() runs again.
+        self._fiber_type_ladder = None
+        self._muscle_fiber_diameters__mm = None
+        self._muscle_fiber_conduction_velocities__mm_per_s = None
+
         # Ensure innervation_center_positions is available
         if self._innervation_center_positions__mm is None:
             raise ValueError(
@@ -1050,6 +1276,28 @@ class Muscle:
                 "Call _generate_fiber_properties() first (usually done automatically)."
             )
         return self._muscle_fiber_conduction_velocities__mm_per_s
+
+    @property
+    def fiber_type_ladder(self) -> FiberTypeLadder:
+        """Unit fibre types, ladder positions and derived diameter spreads."""
+        if self._fiber_model != "typed":
+            raise ValueError("Fibre types exist only with fiber_model='typed'.")
+        if self._fiber_type_ladder is None:
+            raise ValueError(
+                "Muscle fiber properties not computed. "
+                "Call _generate_fiber_properties() first (usually done automatically)."
+            )
+        return self._fiber_type_ladder
+
+    @property
+    def motor_unit_fiber_types(self) -> np.ndarray:
+        """Fibre type (1 or 2) of each motor unit, in pool order."""
+        return self.fiber_type_ladder.unit_types
+
+    @property
+    def muscle_fiber_types(self) -> np.ndarray:
+        """Fibre type (1 or 2) of each fibre, aligned with ``muscle_fiber_diameters__mm``."""
+        return self.fiber_type_ladder.unit_types[self._assignment.astype(int)]
 
     @property
     def assignment(self) -> np.ndarray:

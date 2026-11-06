@@ -104,7 +104,7 @@ def f_minus_t(y):
 def fiber_semi_lengths(innervation_zone__mm: float, fiber_length__mm: float) -> tuple[float, float]:
     """Return ``(L1, L2)`` for a fibre centred on z = 0 with its end-plate at ``zi``.
 
-    In the source term (Farina et al. 2004, eq. 1) ``L1`` is the semi-length
+    In the source term (Farina et al. 2004, eq. 1) [farina2004 eq. 1] ``L1`` is the semi-length
     towards +z and ``L2`` towards -z, so the fibre spans ``[zi - L2, zi + L1]``.
     Keeping the tendons at ``±fiber_length / 2`` gives ``L1 = l/2 - zi`` and
     ``L2 = l/2 + zi``.
@@ -181,7 +181,7 @@ def _get_numba_functions():
         len_kz,
         len_ktheta,
     ):
-        """Numba-optimized computation of the complex B_kz matrix (Farina 2004, eq. 5).
+        """Numba-optimized computation of the complex B_kz matrix (Farina 2004, eq. 5) [farina2004 eq. 5].
 
         B_kz is complex in general: a longitudinal bipolar filter is purely
         imaginary, so its whole signal lives in the imaginary part.
@@ -299,7 +299,7 @@ def _simulate_fiber_v2_python(
     _prepared=None,
     *,
     sig_intracellular: float = 1.01,
-    fiber_diameter__mm: float = 0.05,
+    fiber_diameter__mm: float = 0.0579,
     v_grid: float | None = None,
     iap_lambda__per_mm: float = 1.0,
 ):
@@ -369,7 +369,7 @@ def _simulate_fiber_v2_python(
     sig_intracellular : float, optional
         Intracellular conductivity (S/m), default 1.01.
     fiber_diameter__mm : float, optional
-        Fibre diameter (mm), default 0.05. Together with ``sig_intracellular`` it
+        Fibre diameter (mm), default 0.0579 (FDI, see ``SurfaceEMG``). Together with ``sig_intracellular`` it
         sets the line current density ``sig_i * pi * (d/2)**2 * d2Vm/dz2`` of the
         source, so the output is the potential in mV.
     v_grid : float, optional
@@ -378,9 +378,9 @@ def _simulate_fiber_v2_python(
         that propagate at different ``v`` but share ``v_grid`` return signals on
         the same time axis and can be summed directly.
     iap_lambda__per_mm : float, optional
-        Length scale of the Rosenfalck intracellular action potential,
+        Length scale of the Rosenfalck [rosenfalck1969] intracellular action potential,
         ``Vm = 96 (lambda z)**3 exp(-lambda z) - 90`` mV with z in mm, default
-        1 / mm (Rosenfalck 1969). Values below 1 stretch the IAP along the fibre
+        1 / mm (Rosenfalck 1969) [rosenfalck1969]. Values below 1 stretch the IAP along the fibre
         and lower the spectral content of the MUAP; peak Vm is unchanged.
 
     Returns
@@ -449,7 +449,7 @@ def _simulate_fiber_v2_python(
         k_z = k_t / v_grid
         (kt_mesh_kzkt, kz_mesh_kzkt) = np.meshgrid(k_t, k_z)
 
-        ## Model radii -> (Farina, 2004), Figure 1 - b)
+        ## Model radii -> (Farina, 2004), Figure 1 - b) [farina2004 Fig. 1b]
         th_muscle = r - th_fat - th_skin - r_bone
         a = r_bone
         b = r_bone + th_muscle
@@ -458,9 +458,9 @@ def _simulate_fiber_v2_python(
 
         ###################################################################################################
         ## 2. I(k_t, k_z)
-        # Rosenfalck (1969) intracellular action potential, Vm = 96 (lz)^3 e^{-lz} - 90 mV
+        # Rosenfalck (1969) [rosenfalck1969] intracellular action potential, Vm = 96 (lz)^3 e^{-lz} - 90 mV
         # with l = iap_lambda__per_mm (1 / mm as published; Farina & Merletti 2001,
-        # eq. 16); aux below is dVm/dz in mV/mm.
+        # eq. 16 [farinamerletti2001 eq. 16]); aux below is dVm/dz in mV/mm.
         A = 96  # mV/mm^3
         # Line current density i = sig_i * pi * (d/2)^2 * d2Vm/dz2 (core-conductor
         # model). With conductivities in S/m and lengths in mm, phi comes out in mV.
@@ -475,7 +475,7 @@ def _simulate_fiber_v2_python(
             # N controls only the resolution, not the physical extent
             z = np.linspace(-fiber_length__mm / 2, fiber_length__mm / 2, N, dtype=np.longdouble)
 
-        # Rosenfalck action potential: A * l * exp(-lz) * (3(lz)² - (lz)³) for z ≥ 0, with
+        # Rosenfalck [rosenfalck1969] action potential: A * l * exp(-lz) * (3(lz)² - (lz)³) for z ≥ 0, with
         # z in mm on the same grid as k_z (l = 1 / mm as published). The source grid
         # and the volume-conductor grid must share one z axis.
         lam = iap_lambda__per_mm
@@ -701,7 +701,7 @@ def simulate_fiber_v2(
     rele_precomputed: float | None = None,
     *,
     sig_intracellular: float = 1.01,
-    fiber_diameter__mm: float = 0.05,
+    fiber_diameter__mm: float = 0.0579,
     iap_lambda__per_mm: float = 1.0,
 ):
     """
@@ -776,13 +776,13 @@ def simulate_fiber_v2(
     sig_intracellular : float, optional
         Intracellular conductivity (S/m), default 1.01.
     fiber_diameter__mm : float, optional
-        Fibre diameter (mm), default 0.05. Together with ``sig_intracellular`` it
+        Fibre diameter (mm), default 0.0579 (FDI, see ``SurfaceEMG``). Together with ``sig_intracellular`` it
         sets the line current density ``sig_i * pi * (d/2)**2 * d2Vm/dz2`` of the
         source, so the output is the potential in mV.
     iap_lambda__per_mm : float, optional
-        Length scale of the Rosenfalck intracellular action potential,
+        Length scale of the Rosenfalck [rosenfalck1969] intracellular action potential,
         ``Vm = 96 (lambda z)**3 exp(-lambda z) - 90`` mV with z in mm, default
-        1 / mm (Rosenfalck 1969). Values below 1 stretch the IAP along the fibre
+        1 / mm (Rosenfalck 1969) [rosenfalck1969]. Values below 1 stretch the IAP along the fibre
         and lower the spectral content of the MUAP; peak Vm is unchanged.
 
     Returns
