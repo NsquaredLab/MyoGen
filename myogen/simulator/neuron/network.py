@@ -7,6 +7,7 @@ integrating with both the legacy NEURON-based populations and the modern MyoGen 
 
 from typing import Optional
 
+import numpy as np
 import quantities as pq
 from beartype.typing import Callable
 from neuron import h
@@ -1105,6 +1106,67 @@ class Network:
         )
         self._netcons_by_connection[(source, target)] = netcons
 
+        return netcons
+
+    def connect_fan_in(
+        self,
+        source: str,
+        target: str,
+        n_inputs: int,
+        weights__uS,
+        delay__ms: Quantity__ms = DEFAULT_SYNAPTIC_DELAY,
+    ) -> list:
+        """
+        Give every target neuron exactly ``n_inputs`` excitatory inputs from ``source``.
+
+        For each target, in population order, ``n_inputs`` source neurons are drawn without
+        replacement from MyoGen's random generator.
+
+        Parameters
+        ----------
+        source, target : str
+            Population names.
+        n_inputs : int
+            Inputs per target neuron, 1 to the size of ``source``.
+        weights__uS : Quantity
+            One weight for all targets, or one per target neuron.
+        delay__ms : Quantity, optional
+            Synaptic delay, by default 1 ms.
+
+        Returns
+        -------
+        list[h.NetCon]
+            The connections, grouped by target neuron.
+        """
+        if source not in self.populations or target not in self.populations:
+            raise ValueError(f"Populations '{source}' and '{target}' must both exist")
+        sources = list(self.populations[source])
+        targets = list(self.populations[target])
+        if not 1 <= n_inputs <= len(sources):
+            raise ValueError(f"n_inputs must be 1 to {len(sources)}, got {n_inputs}")
+        weights = np.broadcast_to(
+            np.asarray(pq.Quantity(weights__uS).rescale(pq.uS).magnitude, dtype=float), (len(targets),))
+        delay_value = _to_float(delay__ms, pq.ms)
+
+        netcons = []
+        for target_neuron, weight in zip(targets, weights):
+            for j in get_random_generator().choice(len(sources), size=n_inputs, replace=False):
+                netcon = _create_netcon(sources[j], _select_synapse(target_neuron, inhibitory=False),
+                                        neuron_id=sources[j].global__ID, synaptic_delay=delay_value)
+                netcon.weight[0] = weight
+                netcons.append(netcon)
+
+        self.connections.append(
+            {
+                "type": "fan_in",
+                "source": source,
+                "target": target,
+                "n_inputs": n_inputs,
+                "weight__uS": weights.tolist(),
+                "delay__ms": delay_value,
+            }
+        )
+        self._netcons_by_connection[(source, target)] = netcons
         return netcons
 
     def connect_to_muscle(
