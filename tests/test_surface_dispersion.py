@@ -140,13 +140,13 @@ def test_delay_moves_the_signal_by_the_requested_time():
 
 # ---- realisation --------------------------------------------------------------------
 
-def _muscle():
+def _muscle(**kw):
     set_random_seed(42)
     thresholds, _ = RecruitmentThresholds(N=12, recruitment_range__ratio=30, mode="fuglevand")
     muscle = Muscle(thresholds, radius__mm=6 * pq.mm, length__mm=60 * pq.mm,
                     fiber_density__fibers_per_mm2=6 * pq.mm**-2, mean_fiber_length__mm=50 * pq.mm,
                     var_fiber_length__mm=2 * pq.mm, radius_bone__mm=0 * pq.mm,
-                    fat_thickness__mm=1 * pq.mm)
+                    fat_thickness__mm=1 * pq.mm, **kw)
     muscle.distribute_innervation_centers()
     muscle.generate_muscle_fiber_centers(verbose=False)
     muscle.assign_mfs2mns(verbose=False, n_jobs=1)
@@ -518,9 +518,22 @@ def test_muscle_source_needs_the_arrays(muscle):
 
 @pytest.fixture(scope="module")
 def typed():
-    muscle = _muscle()
+    muscle = _muscle(fiber_model="typed")
     muscle._generate_fiber_properties()
     return muscle
+
+
+def test_surface_emg_takes_independent_fibres_from_muscle_too():
+    """``fiber_properties="muscle"`` needs only fibre diameters and CVs, which the default model also gives."""
+    muscle = _muscle()
+    muscle._generate_fiber_properties()
+    semg = _semg(muscle, SurfaceFiberDispersion(fiber_properties="muscle", diameter_scales_source=True),
+                 iap_kernel_length__mm=250.0)
+    _muaps(semg)
+    cv = np.asarray(muscle.muscle_fiber_conduction_velocities__mm_per_s.rescale(pq.m / pq.s).magnitude)
+    for mu in (4, 11):
+        mask = muscle.assignment == mu
+        assert semg.fiber_dispersion_report["cv_mean__m_s"][mu] == pytest.approx(cv[mask].mean(), rel=1e-12)
 
 
 def test_surface_emg_takes_each_fibre_from_muscle(typed):

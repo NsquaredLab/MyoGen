@@ -50,7 +50,7 @@ class SurfaceEMG:
 
     This class provides a simulation framework for generating
     surface electromyography signals from the muscle. It implements the
-    multi-layered cylindrical volume conductor model from Farina et al. 2004 [1] [farina2004].
+    multi-layered cylindrical volume conductor model from Farina et al. 2004 [farina2004].
 
     Parameters
     ----------
