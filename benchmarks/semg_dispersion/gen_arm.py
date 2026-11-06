@@ -19,7 +19,8 @@ undispersed baseline. Harness-only keys set the outer layers:
 ``_skin_thickness__mm`` (default 1.29), ``_fat_thickness__mm`` (limb 4, FDI 0.3),
 ``_skin_conductivity__S_per_m`` (default 1) and ``_fiber_diameter__um`` (default 50).
 FDI only: ``_muscle_radius__mm`` (default 6.91) and ``_fiber_density__per_mm2`` (default 350).
-``_spike_file`` (npz with ``spikes`` and ``thresholds``) replaces the generated spike trains.
+``_spike_file`` (npz with ``spikes`` and ``thresholds``; relative paths are relative to this directory,
+e.g. ``spikes/nrn/fdi_rec70/trap_25mvc.npz``) replaces the generated spike trains.
 FDI only: ``_fs__Hz`` (default 2048) sets the output and internal sampling rate. ``_delsys5`` replaces the
 bipolar pair with Delsys 5-pin sensors (0.5 mm pins at the corners and centre of a 5 x 5 mm square, as in
 Pereira Botelho et al. 2019): ``{"z__mm": [...], "rotation__deg": [...], "theta__deg": [...]}`` places one
@@ -35,6 +36,7 @@ import hashlib
 import json
 import sys
 import time
+from pathlib import Path
 
 import numpy as np
 import quantities as pq
@@ -102,7 +104,9 @@ def excitation(t):
 trains, active = [], []
 if spike_file is not None:
     # Spike times per unit (s) from a NEURON simulation of the same threshold array (fdi_spikes_force.py).
-    loaded = np.load(spike_file, allow_pickle=True)
+    spike_path = Path(spike_file)
+    loaded = np.load(spike_path if spike_path.is_absolute() else Path(__file__).resolve().parent / spike_path,
+                     allow_pickle=True)
     if not np.allclose(np.asarray(loaded["thresholds"]) / np.max(loaded["thresholds"]), rte / rte.max()):
         raise SystemExit("spike file thresholds do not match the benchmark pool")
     for times in loaded["spikes"]:

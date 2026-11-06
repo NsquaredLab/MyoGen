@@ -24,6 +24,10 @@ Arms run before the published end-plate coefficients became the default pin
 `"nmj_coefficients": "reference_code"`, so they reproduce. `_skin_thickness__mm`
 is a harness key for the skin layer.
 
+Arms with `_spike_file` use NEURON spike trains of the calibrated FDI pool
+(spike times per unit and the pool thresholds), stored under `spikes/`; the
+path is relative to this directory.
+
 ## Running
 
 ```bash
