@@ -10,7 +10,7 @@ from .density import current_density as get_current_density
 from .session import ExecutionSession
 from .cache import DiskCache, fingerprint
 
-IEMG_CACHE_NAMESPACE = "intramuscular-muap-density-v2"
+IEMG_CACHE_NAMESPACE = "intramuscular-muap-density-v3"
 
 
 def stream_muap(mu, dt, dz, electrodes, session, *, batch_size=8, label="fibres"):
@@ -56,7 +56,8 @@ def stream_muap(mu, dt, dz, electrodes, session, *, batch_size=8, label="fibres"
                 if radius < minimum_radius:
                     radius = minimum_radius
                 responses.append(get_elementary_current_response(z, electrode[2], radius))
-            values[local] = current.T @ np.column_stack(responses)
+            # Line-source sum over the fibre: the spatial step is part of the integral.
+            values[local] = (current.T @ np.column_stack(responses)) * dz
             delay = float(delays[index] / dt)
             integer = int(np.floor(delay))
             fraction = delay - integer
