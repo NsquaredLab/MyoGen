@@ -337,12 +337,12 @@ def _baseline_drift(
 
     Spectral form is paper-constrained: PSD ∝ ``1/f^alpha`` over an
     explicit band ``[low_hz, high_hz]`` and zero outside, consistent
-    with Huigen, Peper & Grimbergen 2002 (DOI 10.1007/BF02344216) and
-    Gondran et al. 1996 (DOI 10.1007/BF02523851), which report α in
+    with Huigen, Peper & Grimbergen 2002 (DOI 10.1007/BF02344216) [huigen2002] and
+    Gondran et al. 1996 (DOI 10.1007/BF02523851) [gondran1996], which report α in
     the 1.5–2.0 range for electrode/interface noise. The hard band
     limit (rather than a Lorentzian rolloff) keeps the model scoped
     to baseline wander; broadband movement artifacts (0–20 Hz per
-    De Luca et al. 2010, DOI 10.1016/j.jbiomech.2010.01.027) are a
+    De Luca et al. 2010, DOI 10.1016/j.jbiomech.2010.01.027 [deluca2010]) are a
     separate phenomenon and require a different contaminant model.
 
     The drift represents the residual that survives the amplifier's
@@ -445,15 +445,15 @@ def generate_realistic_noise(
         Spectral form is paper-constrained: PSD ∝ 1/f^α over an
         explicit band ``[baseline_drift_low_hz, baseline_drift_high_hz]``,
         consistent with electrode/interface noise studies (Huigen,
-        Peper & Grimbergen 2002, DOI 10.1007/BF02344216; Gondran
-        et al. 1996, DOI 10.1007/BF02523851). The default α=1.75 and
+        Peper & Grimbergen 2002, DOI 10.1007/BF02344216 [huigen2002]; Gondran
+        et al. 1996, DOI 10.1007/BF02523851 [gondran1996]). The default α=1.75 and
         ``high_hz=1.0`` are the midpoint and upper bound of the
         reported electrode-noise regime, not validated physiological
         constants for intramuscular EMG. Calibrate against real
         recordings via `calibrate_baseline_drift_profile` if
         you need amplitude-accurate simulation. Movement artifacts
         (broadband, 0–20 Hz per De Luca et al. 2010, DOI
-        10.1016/j.jbiomech.2010.01.027) are a separate phenomenon
+        10.1016/j.jbiomech.2010.01.027 [deluca2010]) are a separate phenomenon
         and would need their own contaminant model.
 
         Note: **SNR contract**: drift is **additive on top** of the
@@ -554,7 +554,7 @@ def generate_realistic_noise(
         noise *= noise_rms / current_rms
 
     # 5b. Baseline drift — slow low-frequency wander attributed to
-    # the electrode/interface (Huigen 2002; Gondran 1996). Additive
+    # the electrode/interface (Huigen 2002; Gondran 1996) [huigen2002] [gondran1996]. Additive
     # in absolute units, post-HPF (i.e., what actually survives into
     # the recorded signal). Off by default.
     if baseline_drift_rms_uv > 0:
@@ -676,7 +676,7 @@ def add_realistic_noise(
         is not modelled.
     baseline_drift_alpha : float, default 1.75
         Drift PSD slope α. Midpoint of the [1.5, 2.0] electrode-noise
-        regime (Huigen 2002, Gondran 1996).
+        regime (Huigen 2002, Gondran 1996) [huigen2002] [gondran1996].
     baseline_drift_low_hz : float or None, default None
         Lower edge of the drift band (lowest nonzero FFT bin when None).
     baseline_drift_high_hz : float, default 1.0
@@ -1123,7 +1123,7 @@ def calibrate_baseline_drift_profile(
 
     Note: The model's spectral form (PSD ∝ 1/f^α over a bounded band)
     is paper-constrained for electrode/interface noise (Huigen
-    2002, Gondran 1996). The fitted parameters become validated
+    2002, Gondran 1996) [huigen2002] [gondran1996]. The fitted parameters become validated
     only when this calibration is run on real recordings — they
     are not pre-baked physiological constants.
 
