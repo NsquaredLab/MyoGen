@@ -19,7 +19,7 @@ from myogen.simulator import (
 )
 from myogen.simulator.core.emg import fiber_simulation
 from myogen.simulator.core.emg.runtime.surface_preparation import SurfacePreparation
-from myogen.simulator.core.emg.surface import simulate_fiber
+from myogen.simulator.core.emg.surface import simulate_fiber, volume_conductor
 from myogen.utils.neo import signal_to_grid
 
 GEOMETRY = dict(r=8.5, r_bone=0.0, th_fat=0.3, th_skin=1.29, sig_muscle_rho=0.09,
@@ -38,10 +38,16 @@ def _array(rows, cols, ied, z0, mode="monopolar"):
 
 
 def _fibre(array, *, R=5.5, theta=0.15, L1=16.0, L2=16.0, zi=0.0, kernel=KERNEL, n=N,
-           prepared=False):
+           prepared=False, hybrid=False, M=32, use_gpu=False):
+    if hybrid:
+        # use_unified=True route: time-domain Rosenfalck source, same conductor.
+        phi, _, _ = fiber_simulation.simulate_fiber_hybrid(
+            Fs=10.0, v=V, N=n, M=M, R=R, L1=L1, L2=L2, zi=zi, electrode_array=array,
+            fiber_length__mm=kernel, use_gpu=use_gpu, theta_offset=-theta, **GEOMETRY)
+        return phi
     phi, _, _ = simulate_fiber._simulate_fiber_v2_python(
-        Fs=10.0, v=V, N=n, M=32, R=R, L1=L1, L2=L2, zi=zi, electrode_array=array,
-        fiber_length__mm=kernel, use_gpu=False, theta_offset=-theta,
+        Fs=10.0, v=V, N=n, M=M, R=R, L1=L1, L2=L2, zi=zi, electrode_array=array,
+        fiber_length__mm=kernel, use_gpu=use_gpu, theta_offset=-theta,
         _prepared=SurfacePreparation() if prepared else None, **GEOMETRY)
     return phi
 
@@ -51,25 +57,26 @@ def _upsampled_lag_ms(a, b, dt_ms, up=20):
     return (np.argmax(correlate(b2, a2, "full")) - (len(a2) - 1)) * dt_ms / up
 
 
-@pytest.fixture(params=["numba", "numpy", "prepared"])
+@pytest.fixture(params=["numba", "numpy", "prepared", "hybrid"])
 def b_kz_backend(request, monkeypatch):
-    # "prepared" is the execution route's phi contraction (SurfacePreparation).
+    # "prepared" is the execution route's phi contraction (SurfacePreparation);
+    # "hybrid" is the use_unified=True route (simulate_fiber_hybrid).
     if request.param == "numpy":
         monkeypatch.setattr(simulate_fiber, "_numba_B_kz_func", None)
         monkeypatch.setattr(simulate_fiber, "_numba_phi_func", None)
-    return request.param == "prepared"
+    return dict(prepared=request.param == "prepared", hybrid=request.param == "hybrid")
 
 
 def test_longitudinal_bipolar_equals_difference_of_monopolar_pair(b_kz_backend):
-    bipolar = _fibre(_array(1, 1, 10, 8, "bipolar_longitudinal"), prepared=b_kz_backend)[0, 0]
-    pair = _fibre(_array(2, 1, 10, 8), prepared=b_kz_backend)
+    bipolar = _fibre(_array(1, 1, 10, 8, "bipolar_longitudinal"), **b_kz_backend)[0, 0]
+    pair = _fibre(_array(2, 1, 10, 8), **b_kz_backend)
     expected = pair[1, 0] - pair[0, 0]
     np.testing.assert_allclose(bipolar, expected, atol=1e-9 * np.ptp(expected))
 
 
 def test_transversal_bipolar_equals_difference_of_monopolar_pair(b_kz_backend):
-    bipolar = _fibre(_array(1, 1, 3, 8, "bipolar_transversal"), prepared=b_kz_backend)[0, 0]
-    pair = _fibre(_array(1, 2, 3, 8), prepared=b_kz_backend)
+    bipolar = _fibre(_array(1, 1, 3, 8, "bipolar_transversal"), **b_kz_backend)[0, 0]
+    pair = _fibre(_array(1, 2, 3, 8), **b_kz_backend)
     expected = pair[0, 1] - pair[0, 0]
     np.testing.assert_allclose(bipolar, expected, atol=1e-9 * np.ptp(expected))
 
@@ -191,3 +198,17 @@ def test_mixed_electrode_array_shapes_keep_their_own_shape(muscle):
     block = semg.simulate_muaps(n_jobs=1, verbose=False, use_gpu=False)
     shapes = [signal_to_grid(group.segments[1].analogsignals[0]).shape[1:] for group in block.groups]
     assert shapes == [(2, 1), (1, 1)]
+
+
+@pytest.mark.parametrize("hybrid", [False, True])
+def test_overflowing_angular_orders_raise_instead_of_a_singular_system(hybrid):
+    # Bessel overflow at high angular orders used to be zeroed, leaving a
+    # singular system on the CPU and NaN MUAPs on the GPU.
+    with pytest.raises(ValueError, match="sampling_points_in_theta_domain"):
+        _fibre(_array(1, 1, 10, 8), M=256, hybrid=hybrid)
+
+
+@pytest.mark.skipif(not volume_conductor.HAS_CUPY, reason="CuPy not available")
+def test_overflowing_angular_orders_raise_on_the_gpu_solve():
+    with pytest.raises(ValueError, match="sampling_points_in_theta_domain"):
+        _fibre(_array(1, 1, 10, 8), M=256, use_gpu=True)
