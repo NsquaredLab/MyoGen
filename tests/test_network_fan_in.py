@@ -56,3 +56,10 @@ def test_impossible_fan_in_is_refused(n_inputs):
     net, _, _ = _network()
     with pytest.raises(ValueError, match="n_inputs"):
         net.connect_fan_in("DD", "aMN", n_inputs=n_inputs, weights__uS=0.05 * pq.uS)
+
+
+def test_print_network_lists_the_fan_in_connection(capsys):
+    net, _, _ = _network()
+    net.connect_fan_in("DD", "aMN", n_inputs=3, weights__uS=0.05 * pq.uS)
+    net.print_network()
+    assert "DD → aMN [fan-in 3]" in capsys.readouterr().out

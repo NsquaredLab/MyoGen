@@ -1479,6 +1479,12 @@ class Network:
                     f"  {i + 1}. {conn['source']} → {conn['target']} [1-to-1] "
                     f"(p={conn['probability']}, w={conn['weight__uS']}uS)"
                 )
+            elif conn["type"] == "fan_in":
+                w = conn["weight__uS"]
+                print(
+                    f"  {i + 1}. {conn['source']} → {conn['target']} [fan-in {conn['n_inputs']}] "
+                    f"(w={min(w):.4g}-{max(w):.4g}uS)"
+                )
 
 
 if __name__ == "__main__":
