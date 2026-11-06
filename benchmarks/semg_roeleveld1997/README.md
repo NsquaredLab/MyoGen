@@ -201,8 +201,9 @@ either. The 3, 10 and 100 S/m arms were run for this check only (same grid as
 With `sampling_points_in_theta_domain` ≥ 256, `SurfaceEMG` returns MUAPs that
 are exactly zero for every electrode (seen at 256 and 512 in this geometry;
 224 works). The volume-conductor matrices replace NaN entries with zero
-(`volume_conductor.py`), which hides the failure. Not investigated or fixed
-here.
+(`volume_conductor.py`), which hides the failure. Fixed since: the scaled Bessel
+functions leave the float64 range at these orders, and `SurfaceEMG` now raises a
+`ValueError` naming `sampling_points_in_theta_domain`.
 
 ## Running
 

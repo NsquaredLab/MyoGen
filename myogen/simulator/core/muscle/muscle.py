@@ -148,6 +148,8 @@ class Muscle:
         are scarce. Measured skin is far lower: 4.55E-4 to 4.88E-4 S/m for composite in-vivo skin
         near 100-150 Hz (Gabriel et al. 1996, used by Lowery et al. 2002 [10] and Botelho et al.
         2019 [7]). A resistive skin layer raises surface amplitudes (3.5-6x with 4.88E-4 S/m).
+        MyoGen keeps 1 S/m as a calibration: with a measured 0.15 S/m the FDI plateau RMS is
+        about 3-4x above published ranges (``benchmarks/semg_dispersion``).
     grid_resolution : int, default=256
         Resolution of the computational grid used for innervation the muscle.
         Higher values provide more accurate spatial distribution but increase computational cost.

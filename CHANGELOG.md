@@ -7,11 +7,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-This release corrects the surface-EMG pipeline against Farina, Mesin, Martina & Merletti (2004). The problems were reported in an external tutorial notebook. Both the default route and `execution=` are affected.
+This is a breaking release. It corrects the surface-EMG pipeline against Farina, Mesin, Martina & Merletti (2004). The problems were reported in an external tutorial notebook. Both the default route and `execution=` are affected.
+
+### Breaking changes
+
+This release changes default outputs; regenerate anything calibrated against earlier versions.
+
+- sEMG outputs change in amplitude, shape, duration and spectrum. Bipolar outputs from 0.5.0–0.13.0 are invalid. Durations, mean/median frequencies and conduction-velocity estimates from those versions are off by about 2× and must be regenerated.
+- Absolute sEMG amplitudes change by one to two orders of magnitude (amplitude no longer depends on conduction velocity). Anything calibrated in µV or mV against earlier outputs must be regenerated. To keep the earlier resistive (measured) skin layer, pass `skin_conductivity__S_per_m=4.88e-4 * pq.S / pq.m` to `Muscle`. To keep the earlier layers, pass `skin_thickness__mm=1.29 * pq.mm, fat_thickness__mm=0.3 * pq.mm`.
+- Pickled `SurfaceEMG` objects from earlier versions lack the new fibre properties; create them again.
+- The `execution=` MUAP disk-cache key changes, so templates cached by earlier versions are recomputed.
+- iEMG outputs change through the narrower end-plate spreads. Pass `IntramuscularEMG(..., nmj_coefficients="reference_code")` to reproduce earlier end-plates.
 
 ### Fixed
 
-- **Longitudinal bipolar channels.** The angular integral B(k_z) is now complex. Keeping only its real part made `bipolar_longitudinal` channels about 10⁻⁷ of their true value and distorted rotated arrays. A bipolar channel now equals the difference of the two monopolar electrodes.
+- **Longitudinal bipolar channels.** The angular integral B(k_z) is now complex. Keeping only its real part made `bipolar_longitudinal` channels about 10⁻⁷ of their true value and distorted rotated arrays. A bipolar channel now equals the difference of the two monopolar electrodes, on the default, `execution=` and `use_unified=True` routes.
 - **MUAP time axis.** MUAP templates are labelled with the rate of the grid they were computed on (window `K / v`). The previous label was 2× too high, so MUAPs looked half as long, spectra sat an octave high, and conduction velocity estimated from the output was 2× the value set.
 - **Rosenfalck IAP length scale.** The IAP is evaluated on the simulation's own z axis (λ = 1 mm, as published), not on `z / 2`. The stretched IAP was 2× too long; it now agrees with the independent time-domain path (`simulate_fiber_hybrid`).
 - **Fibre semi-lengths.** `L1` (towards +z) and `L2` were swapped, which moved both tendons by 2·z_i with the end-plate. Fibres now span `±fiber_length / 2` with the end-plate at z_i (`fiber_semi_lengths`).
@@ -20,9 +30,10 @@ This release corrects the surface-EMG pipeline against Farina, Mesin, Martina & 
 - **Absolute sEMG amplitude.** Three scaling errors are corrected; together they made MUAPs labelled mV roughly 50-100× too large. A single fibre now matches an exact solution for a homogeneous insulated cylinder within 2 %.
   - The Fourier transforms dropped their `dz` and `Fs/N` factors, so every potential was divided by the conduction velocity.
   - The source was the bare Rosenfalck slope with an ad-hoc `A = 96/10`. It is now the core-conductor line current `σᵢ·π·(d/2)²·∂²Vm/∂z²` with the published `A = 96 mV/mm³`.
-  - The default skin conductivity was 4.88·10⁻⁴ S/m (measured composite skin, Botelho et al. 2019), which raised amplitudes 3.5-6×. It is now 1 S/m, as in Farina et al. (2004). That value comes from Roeleveld et al. (1997), who chose it so their model matched how biceps MUAPs fall off with depth and around the arm; it is an effective value, not a measured skin conductivity.
+  - The default skin conductivity was 4.88·10⁻⁴ S/m (measured composite skin, Botelho et al. 2019), which raised amplitudes 3.5-6×. It is now 1 S/m, as in Farina et al. (2004). That value comes from Roeleveld et al. (1997), who chose it so their model matched how biceps MUAPs fall off with depth and around the arm; it is an effective value, not a measured skin conductivity. MyoGen keeps it as a calibration: with a measured skin conductivity (0.15 S/m) the FDI plateau RMS is about 3-4× above published ranges (`benchmarks/semg_dispersion/`). A check against Roeleveld's fall-off data (`benchmarks/semg_roeleveld1997/`) was inconclusive and does not support 1 S/m as a skin property.
 - **Default skin and fat thickness (FDI).** Skin 1.29 → 1.2 mm (hand dorsum median, Li et al. 2018) and fat 0.3 → 1.3 mm, so the total depth to muscle is 2.5 mm, the low end of the FDI depth measured by Nishikawa et al. (2024); the fat value is derived from that total, not measured. Surface amplitudes from the default `Muscle` fall by about 40 %.
-- **Failed motor units raise.** On the default `SurfaceEMG` route an exception while simulating one motor unit was logged and replaced by an all-zero MUAP, which passes for a valid, silent unit (seen with `sampling_points_in_theta_domain` ≥ 256, where one conductor system is singular). The exception is now re-raised with the unit and array index; the `ExecutionPolicy` route already raised.
+- **Failed motor units raise.** On the default `SurfaceEMG` route an exception while simulating one motor unit was logged and replaced by an all-zero MUAP, which passes for a valid, silent unit The exception is now re-raised with the unit and array index; the `ExecutionPolicy` route already raised.
+- **Angular sampling overflow raises.** With `sampling_points_in_theta_domain` ≥ 256 the scaled modified Bessel functions leave the float64 range at the highest angular orders (I_n underflows to 0, K_n overflows). The volume conductor replaced the overflowing entries with zero, which gave a singular system on the CPU and NaN MUAPs on the GPU. It now raises a `ValueError` that names the setting.
 
 ### Added
 
@@ -44,14 +55,6 @@ This release corrects the surface-EMG pipeline against Farina, Mesin, Martina & 
 - **End-plate spreads in intramuscular EMG.** The two-layer end-plate model now uses the spreads printed in Akhmadeev et al. (2020, eq. 5-6) instead of the 1.5–2× wider values of their reference code: branch-point SD 1.0 + 2.5·s mm (was 1.5 + 4.0·s) and arborisation SD 0.25 + 1.0·s mm (was 0.5 + 1.5·s), with s the share of total threshold below the unit. In the sEMG limb sweep the realised within-unit end-plate SD fell from a median of 1.68 mm to 1.07 mm. iEMG MUAPs and signals change.
 - Citation corrected: the two-layer end-plate and recruitment-threshold model cited as "Konstantin et al. 2020" is Akhmadeev, Yu, Le Carpentier, Aoustin & Farina (2020); Konstantin is the first author's given name. The `konstantin` threshold mode keeps its name.
 - `Muscle.var_fiber_length__mm` is documented as the half-width of a uniform fibre-length variation (the FDI value of Jacobson et al. 1992), not a variance. Behaviour is unchanged.
-
-### Upgrade notes
-
-- sEMG outputs change in amplitude, shape, duration and spectrum. Bipolar outputs from 0.5.0–0.13.0 are invalid. Durations, mean/median frequencies and conduction-velocity estimates from those versions are off by about 2× and must be regenerated.
-- Absolute sEMG amplitudes change by one to two orders of magnitude (amplitude no longer depends on conduction velocity). Anything calibrated in µV or mV against earlier outputs must be regenerated. To keep the earlier resistive (measured) skin layer, pass `skin_conductivity__S_per_m=4.88e-4 * pq.S / pq.m` to `Muscle`. To keep the earlier layers, pass `skin_thickness__mm=1.29 * pq.mm, fat_thickness__mm=0.3 * pq.mm`.
-- Pickled `SurfaceEMG` objects from earlier versions lack the new fibre properties; create them again.
-- The `execution=` MUAP disk-cache key changes, so templates cached by earlier versions are recomputed.
-- iEMG outputs change through the narrower end-plate spreads. Pass `IntramuscularEMG(..., nmj_coefficients="reference_code")` to reproduce earlier end-plates.
 
 ## [0.13.0] - 2026-10-28
 
