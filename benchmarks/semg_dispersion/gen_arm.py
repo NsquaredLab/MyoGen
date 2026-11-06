@@ -85,7 +85,10 @@ iap_lambda = config.pop("_iap_lambda__per_mm", 1.0)
 kernel_override = config.pop("_iap_kernel_length__mm", None)
 within_cov = config.pop("_muscle_cv_within_cov", None)
 mean_cv = config.pop("_mean_cv__m_s", None)
-cv_kw = {} if mean_cv is None else {"mean_conduction_velocity__m_per_s": mean_cv * pq.m / pq.s}
+# The arms were generated with the typed fibre model (fibre types by unit, Polgar diameters).
+cv_kw = {"fiber_model": "typed"}
+if mean_cv is not None:
+    cv_kw["mean_conduction_velocity__m_per_s"] = mean_cv * pq.m / pq.s
 unit_cv_file = config.pop("_muscle_unit_cv_file", None)
 if unit_cv_file is not None:
     cv_kw["motor_unit_conduction_velocities__m_per_s"] = np.asarray(json.load(open(_local(unit_cv_file)))["cv__m_s"]) * pq.m / pq.s
