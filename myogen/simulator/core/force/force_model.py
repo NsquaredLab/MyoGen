@@ -17,15 +17,15 @@ from myogen.utils.types import (
     SPIKE_TRAIN__Block,
 )
 
-from .force_utils import fuglevand_gain
+from .force_utils import FUGLEVAND_FORCE_FREQUENCY, fuglevand_gain
 
 
 @beartowertype
 class ForceModel:
     """
-    Force model based on Fuglevand et al. (1993) [1].
+    Force model based on Fuglevand et al. (1993) [fuglevand1993].
 
-    This class implements the Fuglevand force generation model for motor unit pools,
+    This class implements the Fuglevand [fuglevand1993] force generation model for motor unit pools,
     computing individual motor unit twitch responses and their nonlinear gain modulation
     based on discharge rates. The model generates realistic force outputs from spike trains
     using physiologically-based parameters.
@@ -48,17 +48,21 @@ class ForceModel:
     twitch_force_range : float or None, default=None
         Twitch-force range (RP in _[1]) used in equations 13 and 14. Must be greater
         than 1. If None, defaults to the last/first recruitment-threshold ratio for
-        backward compatibility. Fuglevand et al. (1993) use RP = 100 independently
+        backward compatibility. Fuglevand et al. (1993) [fuglevand1993] use RP = 100 independently
         of the recruitment range RR = 30.
+    force_frequency_shape : tuple of float, default=(2.0, 3.0)
+        (a, c) of the force-frequency saturation S(r) = 1 - exp(-a r^c), r = contraction time / ISI.
+        The default is Fuglevand et al. (1993) eq. 17 [fuglevand1993 eq. 17]. ``force_utils.HUMAN_UNIT_FORCE_FREQUENCY``
+        (0.93, 1.29) is fitted to human single motor units, which keep gaining force above ~20 Hz.
 
     Attributes
     ----------
     peak_twitch_forces__unitless : np.ndarray
         Peak twitch forces for each motor unit (unitless). Available after initialization.
-        Computed according to Fuglevand equation 13.
+        Computed according to Fuglevand equation 13 [fuglevand1993 eq. 13].
     contraction_times__samples : np.ndarray
         Contraction times for each motor unit in samples of recording_frequency__Hz.
-        Available after initialization. Computed according to Fuglevand equation 14.
+        Available after initialization. Computed according to Fuglevand equation 14 [fuglevand1993 eq. 14].
     twitch_mat : np.ndarray
         Twitch matrix sampled up to 10 times the longest contraction time, for plotting only.
         Available after initialization.
@@ -87,7 +91,7 @@ class ForceModel:
     ----------
     [1] Fuglevand, A. J., Winter, D. A., & Patla, A. E. (1993). Models of recruitment
     and rate coding organization in motor-unit pools. J Neurophysiol, 70(6), 2470–2488.
-    https://doi.org/10.1152/jn.1993.70.6.2470.
+    https://doi.org/10.1152/jn.1993.70.6.2470. [fuglevand1993]
 
     Examples
     --------
@@ -107,6 +111,7 @@ class ForceModel:
         longest_duration_rise_time__ms: Quantity__ms = 90.0 * pq.ms,
         contraction_time_range_factor: float = 3.0,
         twitch_force_range: float | None = None,
+        force_frequency_shape: tuple[float, float] = FUGLEVAND_FORCE_FREQUENCY,
     ) -> None:
         # Input validation
         if len(recruitment_thresholds) == 0:
@@ -145,7 +150,13 @@ class ForceModel:
         if twitch_force_range is not None and twitch_force_range <= 1.0:
             raise ValueError(
                 f"twitch_force_range must be greater than 1.0, got {twitch_force_range}. "
-                "This parameter determines the spread of peak twitch forces. Fuglevand et al. (1993) use 100."
+                "This parameter determines the spread of peak twitch forces. Fuglevand et al. (1993) [fuglevand1993] use 100."
+            )
+
+        force_frequency_shape = tuple(float(v) for v in force_frequency_shape)
+        if len(force_frequency_shape) != 2 or min(force_frequency_shape) <= 0:
+            raise ValueError(
+                f"force_frequency_shape must be two positive numbers (a, c), got {force_frequency_shape}."
             )
 
         # Immutable public access
@@ -154,6 +165,7 @@ class ForceModel:
         self.longest_duration_rise_time__ms = longest_duration_rise_time__ms
         self.contraction_time_range_factor = contraction_time_range_factor
         self.twitch_force_range = twitch_force_range
+        self.force_frequency_shape = force_frequency_shape
 
         # Private copies for internal modifications
         self._recruitment_thresholds = recruitment_thresholds.copy()
@@ -186,10 +198,10 @@ class ForceModel:
 
     def _compute_twitch_parameters(self) -> None:
         """
-        Compute peak twitch forces and contraction times based on Fuglevand model.
+        Compute peak twitch forces and contraction times based on Fuglevand model [fuglevand1993].
 
         This method calculates the physiological parameters for each motor unit
-        according to the Fuglevand et al. (1993) model equations.
+        according to the Fuglevand et al. (1993) [fuglevand1993] model equations.
 
         Results are stored in the `peak_twitch_forces` and `contraction_times`
         properties after execution.
@@ -251,7 +263,7 @@ class ForceModel:
 
     def generate_force(self, spike_train__Block: SPIKE_TRAIN__Block, verbose: bool = True) -> FORCE__AnalogSignal:
         """
-        Generate force output from motor unit spike trains using the Fuglevand model.
+        Generate force output from motor unit spike trains using the Fuglevand model [fuglevand1993].
 
         This method simulates muscle force by converting spike trains into force output
         through individual motor unit twitches with nonlinear gain modulation based on
@@ -363,7 +375,7 @@ class ForceModel:
             P = self._peak_twitch_forces__unitless[n]
             r = T / (np.diff(idx) * spiketrain_timestep__s)
             x = np.zeros(L)
-            x[idx] = np.concatenate(([1.0], fuglevand_gain(r)))
+            x[idx] = np.concatenate(([1.0], fuglevand_gain(r, *self.force_frequency_shape)))
 
             # Exact sampled twitch impulse response, with no tail truncation.
             a = np.exp(-spiketrain_timestep__s / T)
@@ -388,7 +400,7 @@ class ForceModel:
         Returns
         -------
         np.ndarray
-            Array of peak twitch forces according to Fuglevand model equation 13.
+            Array of peak twitch forces according to Fuglevand model equation 13 [fuglevand1993 eq. 13].
 
         Raises
         ------
@@ -410,7 +422,7 @@ class ForceModel:
         Returns
         -------
         np.ndarray
-            Array of contraction times according to Fuglevand model equation 14.
+            Array of contraction times according to Fuglevand model equation 14 [fuglevand1993 eq. 14].
 
         Raises
         ------
