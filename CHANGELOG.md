@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-This is a breaking release. It corrects the surface-EMG pipeline against Farina, Mesin, Martina & Merletti (2004). The problems were reported in an external tutorial notebook. Both the default route and `execution=` are affected.
+This is a breaking release. It corrects the surface-EMG pipeline against Farina, Mesin, Martina & Merletti (2004). The problems were found through feedback from @joaohbbittar; thank you. Both the default route and `execution=` are affected.
 
 ### Breaking changes
 
