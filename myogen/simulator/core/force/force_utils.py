@@ -1,16 +1,16 @@
 import numpy as np
 
 # Force-frequency saturation S(r) = 1 - exp(-a r^c). Keys in [brackets] are entries of docs/literature.md.
-FUGLEVAND_FORCE_FREQUENCY = (2.0, 3.0)  # [fuglevand1993] (not read in full; no locator)
+FUGLEVAND_FORCE_FREQUENCY = (2.0, 3.0)  # [fuglevand1993 p. 2475 eq. 16]
 # Fitted to human single motor units stimulated through their axons (mean plateau force vs contraction time x rate):
 # [macefield1996 Fig. 6C; CT Table 1], [fuglevand1999 Table 1, Fig. 6A], [mcnulty2000 Table 2; CT Table 1].
-# rms error 0.05 (Fuglevand 1993 [fuglevand1993]: 0.13); predicts twitch:tetanus 0.23 (measured 0.22-0.36; Fuglevand 1993: 0.11).
+# rms error 0.05 (Fuglevand 1993 [fuglevand1993]: 0.13); predicts twitch:tetanus 0.23 (measured 0.22-0.36; Fuglevand 1993: 0.11 [fuglevand1993 p. 2475]).
 HUMAN_UNIT_FORCE_FREQUENCY = (0.93, 1.29)
 
 
 def fuglevand_gain(r: np.ndarray, a: float = 2.0, c: float = 3.0) -> np.ndarray:
     """
-    Compute the rate-dependent twitch gain from Fuglevand et al. (1993), eq. 17 [fuglevand1993 eq. 17].
+    Compute the rate-dependent twitch gain from Fuglevand et al. (1993), eq. 17 [fuglevand1993 p. 2475 eqs. 16-17].
 
     Parameters
     ----------
@@ -18,7 +18,7 @@ def fuglevand_gain(r: np.ndarray, a: float = 2.0, c: float = 3.0) -> np.ndarray:
         Dimensionless contraction time divided by the preceding inter-spike interval.
         Both times must be expressed in the same units.
     a, c : float, default 2.0, 3.0
-        Shape of the saturation S(r) = 1 - exp(-a * r**c); Fuglevand et al. (1993) [fuglevand1993] use a = 2, c = 3.
+        Shape of the saturation S(r) = 1 - exp(-a * r**c); Fuglevand et al. (1993) [fuglevand1993 p. 2475 eq. 16] use a = 2, c = 3.
         ``HUMAN_UNIT_FORCE_FREQUENCY`` is a fit to human single motor units.
 
     Returns
