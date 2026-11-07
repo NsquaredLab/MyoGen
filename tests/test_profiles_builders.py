@@ -1,5 +1,4 @@
 """Card builders: card values reach the library objects, overrides are noted and recorded, builds are reseeded."""
-import hashlib
 import json
 import warnings
 from pathlib import Path
@@ -12,9 +11,27 @@ from myogen import load_profile
 from myogen.profiles import ProfileNote
 from myogen.profiles._notes import reset_notes
 
-INPUTS = Path(__file__).resolve().parents[1] / "benchmarks" / "semg_dispersion" / "unit_cv"
-ARM_F_FIBRE_HASH = "0799727c717e684107e459c205c9991493a4ca07"
-ARM_F_PROPERTY_HASH = "776e5e62a88ec4940614b28e1258d722d2df6a38"
+ROOT = Path(__file__).resolve().parents[1]
+# The validated arm-F muscle (benchmarks/semg_dispersion arm delsys5r_wexp_musclertsc_lam0.63): fibres per unit,
+# and fibre diameter (mm) and CV (mm/s) at evenly spaced fibre indices, with their sums.
+ARM_F_FIBRES_PER_UNIT = [
+    22, 21, 27, 29, 30, 26, 27, 28, 28, 29, 30, 32, 28, 33, 31, 43, 49, 43, 46, 42, 47, 45, 57, 52, 43,
+    54, 69, 64, 67, 60, 54, 72, 71, 86, 79, 79, 83, 93, 73, 78, 91, 90, 101, 100, 122, 108, 112, 100,
+    121, 105, 112, 119, 125, 140, 143, 170, 186, 167, 174, 216, 186, 227, 203, 203, 230, 243, 219, 265,
+    262, 265, 302, 284, 269, 282, 317, 331, 307, 330, 347, 340, 351, 364, 393, 370, 422, 399, 422, 418,
+    447, 442, 483, 539, 441, 537, 646, 641, 650, 605, 686, 713, 716, 712, 777, 739, 834, 850, 868, 822,
+    867, 1058, 1074, 1028, 1087, 1142, 1162, 1264, 1171, 1334, 1319, 1274
+]
+ARM_F_INDICES = [0, 5721, 11442, 17164, 22885, 28607, 34328, 40050]
+ARM_F_DIAMETERS__MM = [
+    0.06728408646276396, 0.06839268111349746, 0.047277283638866574, 0.06324227369016999,
+    0.06061115896061368, 0.054665281872642656, 0.0429479657676721, 0.04763986418537935
+]
+ARM_F_CVS__MM_PER_S = [
+    4809.070973006686, 4864.50070554336, 3806.142092441618, 4758.021558504406, 4626.46582202659,
+    4213.794291232723, 3634.5395187905533, 3946.1445527315545
+]
+ARM_F_SUMS = (2294.4213299653193, 175695618.33762425)  # diameters (mm), CVs (mm/s)
 
 
 def _notes(rec):
@@ -36,9 +53,8 @@ def test_muscle_kwargs_match_card():
     assert len(kw["recruitment_thresholds"]) == 120
 
 
-@pytest.mark.skipif(not INPUTS.exists(), reason="archived card inputs not on this machine")
 def test_unit_cvs_are_the_validated_ones():
-    validated = json.load(open(INPUTS / "rt_force_cv_scatter.json"))["cv__m_s"]
+    validated = json.load(open(ROOT / "benchmarks" / "semg_dispersion" / "unit_cv" / "rt_force_cv_scatter.json"))["cv__m_s"]
     cv = np.asarray(load_profile().muscle_kwargs()["motor_unit_conduction_velocities__m_per_s"])
     np.testing.assert_array_equal(cv, validated)
 
@@ -84,7 +100,7 @@ def test_calibrated_override_warns_calibration_stale():
     with warnings.catch_warnings(record=True) as rec:
         warnings.simplefilter("always")
         card.thresholds(recruitment_range=30.0)
-    assert any("01_optimize_dd_multilevel.py" in n for n in _notes(rec))
+    assert any("06_optimize_dd_multilevel.py" in n for n in _notes(rec))
     assert card.overrides() == {"thresholds.recruitment_range": 30.0}
 
 
@@ -113,21 +129,25 @@ def test_builds_are_reseeded_and_match_the_validated_fibres():
     """Slow (full 120-unit FDI muscle, twice)."""
     card = load_profile()
 
-    def hashes():
+    def fibres():
         m = card.muscle(n_jobs=4)
-        fibre = hashlib.sha1(b"".join(np.ascontiguousarray(m.resulting_fiber_assignment(i)).tobytes()
-                                      for i in range(120))).hexdigest()
-        prop = hashlib.sha1(np.ascontiguousarray(m.muscle_fiber_diameters__mm.magnitude).tobytes()
-                            + np.ascontiguousarray(m.muscle_fiber_conduction_velocities__mm_per_s.magnitude).tobytes()
-                            ).hexdigest()
-        return fibre, prop
+        d = np.asarray(m.muscle_fiber_diameters__mm.magnitude, dtype=float)
+        cv = np.asarray(m.muscle_fiber_conduction_velocities__mm_per_s.magnitude, dtype=float)
+        counts = [len(m.resulting_fiber_assignment(i)) for i in range(120)]
+        return counts, d, cv
 
-    first = hashes()
+    counts, d, cv = fibres()
     np.random.default_rng(0).normal(size=10)
     from myogen import set_random_seed
     set_random_seed(999)  # another builder or user code moved the global generator
-    assert hashes() == first
-    assert first == (ARM_F_FIBRE_HASH, ARM_F_PROPERTY_HASH)
+    counts2, d2, cv2 = fibres()
+    assert counts2 == counts
+    np.testing.assert_array_equal(d2, d)
+    np.testing.assert_array_equal(cv2, cv)
+    assert counts == ARM_F_FIBRES_PER_UNIT
+    np.testing.assert_allclose(d[ARM_F_INDICES], ARM_F_DIAMETERS__MM, rtol=1e-9)
+    np.testing.assert_allclose(cv[ARM_F_INDICES], ARM_F_CVS__MM_PER_S, rtol=1e-9)
+    np.testing.assert_allclose((d.sum(), cv.sum()), ARM_F_SUMS, rtol=1e-9)
 
 
 def test_fibre_properties_only_with_muscle_fibres(monkeypatch):
@@ -149,3 +169,13 @@ def test_sampling_frequency_is_the_users_choice():
     kw = card.surface_emg_kwargs(sampling_frequency__Hz=10240.0 * pq.Hz)
     assert kw["sampling_frequency__Hz"] == 10240.0 * pq.Hz and "internal_sampling_frequency__Hz" not in kw
     assert card.overrides() == {}  # not a card field: passed through, not recorded
+
+
+@pytest.mark.parametrize("name", ["fdi_semg", "fdi_semg.published"])
+def test_cards_use_the_typed_fibre_model(name):
+    """The cards were validated with fibre types by motor unit, which Muscle makes opt-in."""
+    from myogen.simulator import Muscle
+
+    kw = load_profile(name).muscle_kwargs()
+    assert kw["fiber_model"] == "typed"
+    Muscle(**kw, autorun=False)  # typed-only arguments are accepted

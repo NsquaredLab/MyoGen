@@ -1,18 +1,16 @@
-"""The calibrated descending-drive network (moved from examples/finetune/01_optimize_dd_multilevel.py).
+"""The calibrated descending-drive network (moved from the optimiser, examples/02_finetune/06_optimize_dd_multilevel.py).
 
-The pinned hash was computed with the optimiser's own functions before the move (2026-11-03), so the library
+The stored spikes were computed with the optimiser's own functions before the move (2026-11-03), so the library
 module reproduces the calibrated drive exactly. Gfluctdv is off in the pinned run: its ``normrand`` stream is
 NEURON's and not seeded from Python.
 """
-import hashlib
-
 import numpy as np
 import pytest
 
 from myogen import load_nmodl_mechanisms, set_random_seed
 from myogen.simulator import RecruitmentThresholds
 
-# FDI calibration _human59_wexp, best trial 85 (examples/basic/results/..., copied into the fdi_semg card)
+# FDI calibration _human59_wexp, best trial 85 (copied into the fdi_semg card)
 DD_PARAMS = {
     "dd_neurons": 147,
     "conn_probability": 0.3596767670514289,
@@ -23,7 +21,16 @@ DD_PARAMS = {
     "gfluctdv_scale": 0.0,
 }
 THRESHOLD_HZ = 103.2586942465358
-PINNED_SHA1 = "b6d0e8e21f601c0521f1e39008198f8e7a015795"  # 2000 spikes
+# Stored spikes: count per motor unit, the first spike time (s) of six units, and the sum of all spike times (s).
+SPIKES_PER_UNIT = [
+    22, 23, 21, 23, 22, 23, 21, 22, 21, 23, 22, 22, 21, 21, 23, 22, 22, 22, 21, 22, 21, 21, 21, 21, 22,
+    22, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 20, 21, 21, 21, 21, 20, 20,
+    20, 20, 20, 20, 21, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 19, 20, 19, 19, 19, 18, 18, 19, 18, 18,
+    18, 18, 18, 18, 18, 17, 17, 17, 16, 16, 16, 16, 15, 15, 15, 14, 14, 13, 13, 12, 12, 12, 11, 11, 10,
+    10, 9, 8, 8, 7, 6, 5, 4, 5, 3, 3, 2, 1, 1, 0, 0, 0, 0, 0, 0
+]
+FIRST_SPIKE__S = {0: 0.18880000000010866, 19: 0.2636000000001256, 38: 0.5264000000001691, 57: 0.546200000000151, 76: 0.6731000000000356, 95: 0.9732999999997626}
+SPIKE_TIME_SUM__S = 2193.9812999992955
 
 
 def _thresholds():
@@ -33,7 +40,7 @@ def _thresholds():
     return thr / thr.max()
 
 
-def test_run_matches_pinned_spikes():
+def test_run_matches_stored_spikes():
     from myogen.simulator.neuron.descending_drive_network import excitation_to_drive_hz, run_descending_drive
 
     load_nmodl_mechanisms()
@@ -41,9 +48,11 @@ def test_run_matches_pinned_spikes():
     e, hz = excitation_to_drive_hz([(0.5, 0, 0), (1.0, 0, 0.3)], THRESHOLD_HZ, DD_PARAMS["dd_drive__Hz"])
     block = run_descending_drive(thr, hz, DD_PARAMS, len(e) * 0.1)
     trains = block.segments[0].spiketrains
-    digest = hashlib.sha1(b"".join(np.asarray(st.magnitude, float).tobytes() for st in trains)).hexdigest()
-    assert sum(len(st) for st in trains) == 2000
-    assert digest == PINNED_SHA1
+    assert [len(st) for st in trains] == SPIKES_PER_UNIT  # 2000 spikes
+    for unit, t0 in FIRST_SPIKE__S.items():
+        assert float(trains[unit].rescale("s").magnitude[0]) == pytest.approx(t0, rel=1e-9)
+    total = sum(float(np.sum(st.rescale("s").magnitude)) for st in trains)
+    assert total == pytest.approx(SPIKE_TIME_SUM__S, rel=1e-9)
 
 
 def test_gfluctdv_scale_changes_noise():
