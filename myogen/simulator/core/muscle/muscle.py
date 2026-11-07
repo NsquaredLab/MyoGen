@@ -127,6 +127,18 @@ def _perform_fast_marching(speed_map: np.ndarray, seed_points: np.ndarray) -> np
     return distance
 
 
+def _farthest_cell(distance: np.ndarray, rtol: float = 1e-12) -> int:
+    """Flat index of the farthest cell, the lowest index among ties.
+
+    The fast-marching field has exact ties (mirror cells), which floating point on another platform can break by a
+    last bit either way. Cells within ``rtol`` of the maximum count as tied; distinct values on the 256 grid differ by
+    at least 2.6e-9 relative over the first 300 centres. On ties this is what ``np.argmax`` already returns.
+    """
+    flat = np.ravel(distance)
+    top = flat.max()
+    return int(np.flatnonzero(flat >= top - rtol * abs(top))[0])
+
+
 @beartowertype
 class Muscle:
     """
@@ -639,7 +651,7 @@ class Muscle:
         for i in range(1, self._number_of_neurons + 1):
             # Use scikit-fmm for fast marching
             # Create speed map, avoiding division by zero
-            ind = np.argmax(_perform_fast_marching(density_map.copy(), vertices[:, :i]))
+            ind = _farthest_cell(_perform_fast_marching(density_map.copy(), vertices[:, :i]))
             x, y = np.unravel_index(ind, (self._grid_resolution, self._grid_resolution))
             vertices[:, i] = [x, y]
 

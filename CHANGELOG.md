@@ -49,6 +49,7 @@ This release changes default outputs; regenerate anything calibrated against ear
   - The sum over the fibre omitted the spatial step, so amplitudes scaled with `1/spatial_resolution__mm`.
   Together the bugs nearly cancelled at the default 0.01 mm step for a nearby electrode. On an FDI cylinder (bipolar fine wire, 2 mm IED, 15 units) MUAPs go from 0.03–1.8 mV to 0.9–37 mV peak-to-peak. These are point electrodes in an infinite homogeneous medium, which overestimates the near field (no electrode area, no near-field correction); see Breaking changes.
 - **Large circular fibre layouts.** Fibre centres came from a 399 499-point table covering a square, of which only ~313 000 points lie inside the circle. Beyond that the outer ring was filled only at the diagonals, and beyond 399 499 the fibre count was silently capped. Layouts the table covers are unchanged (FDI defaults ≈ 54 000 fibres); larger counts now use a scrambled Halton sequence in the disc, seeded from MyoGen's generator, with a warning.
+- **Innervation centres on other platforms.** The fast-marching placement has exact ties (two cells at the same distance, first at the second centre). `np.argmax` took whichever cell a platform's floating point put a last bit higher, so on another machine the centres could come out mirrored and most fibres went to other units. Ties now go to the lowest cell index, which is what `argmax` returned on exact ties, so layouts are unchanged where they were already reproducible and now agree across platforms.
 
 ### Added
 
