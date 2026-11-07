@@ -1,8 +1,7 @@
 """Fibre types and diameters by motor unit.
 
 Every motor unit has one fibre type, and its mean fibre diameter rises with its recruitment
-threshold along one ladder across the whole pool (design: docs/superpowers/specs/
-2026-11-02-fdi-fibre-typing-design.md, option A).
+threshold along one ladder across the whole pool.
 
 - Types: units in threshold order are type I until they hold the type I fibre fraction
   (FDI 57.4 % [polgar1973 p. 312 Table 4]). Strict order is a modelling simplification: in
