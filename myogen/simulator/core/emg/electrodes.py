@@ -186,7 +186,7 @@ class SurfaceElectrodeArray:
                     - self._inter_electrode_distance__mm / self._bending_radius__mm
                 )
 
-        ## Rotated detection system (Farina, 2004), eq (36)
+        ## Rotated detection system (Farina, 2004), eq (36) [farina2004 eq. 36]
         # Must use original (z, θ) for both transformations — save before overwriting
         displacement = self._center_point__mm_deg[0] * np.ones(_pos_z.shape)
         pos_z_orig = _pos_z.copy()
@@ -320,24 +320,24 @@ class SurfaceElectrodeArray:
 
         elif self.differentiation_mode == "bipolar_longitudinal":
             # Differential along muscle fiber direction (z-axis)
-            # Apply coordinate transformation for rotation (Farina 2004, eq 38)
+            # Apply coordinate transformation for rotation (Farina 2004, eq 38) [farina2004 eq. 38]
             alpha_rad = self._rotation_angle__deg * np.pi / 180
             kz_new = ktheta_mesh_kzktheta / self._bending_radius__mm * np.sin(
                 alpha_rad
             ) + kz_mesh_kzktheta * np.cos(alpha_rad)
-            # Spatial filter for longitudinal differential (Farina 2004, eq 30)
+            # Spatial filter for longitudinal differential (Farina 2004, eq 30) [farina2004 eq. 30]
             # Two electrodes at ±d_z/2: H_sf = exp(j·k'_z·d_z/2) - exp(-j·k'_z·d_z/2)
             half_ied = self._inter_electrode_distance__mm / 2
             H_sf = np.exp(1j * kz_new * half_ied) - np.exp(-1j * kz_new * half_ied)
 
         elif self.differentiation_mode == "bipolar_transversal":
             # Differential around muscle circumference (theta-axis)
-            # Apply coordinate transformation for rotation (Farina 2004, eq 38)
+            # Apply coordinate transformation for rotation (Farina 2004, eq 38) [farina2004 eq. 38]
             alpha_rad = self._rotation_angle__deg * np.pi / 180
             ktheta_new = ktheta_mesh_kzktheta * np.cos(
                 alpha_rad
             ) - kz_mesh_kzktheta * self._bending_radius__mm * np.sin(alpha_rad)
-            # Spatial filter for transversal differential (Farina 2004, eq 30-31)
+            # Spatial filter for transversal differential (Farina 2004, eq 30-31) [farina2004 eq. 30-31]
             # d_theta = IED / R_ele in radians
             half_d_theta = self._inter_electrode_distance__mm / (2 * self._bending_radius__mm)
             H_sf = np.exp(1j * ktheta_new * half_d_theta) - np.exp(
