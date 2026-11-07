@@ -4,7 +4,7 @@ A card is a mapping of sections (``thresholds``, ``motor_neurons``, ``drive``, `
 ``surface_emg``) to fields. Each field has a ``value``, a ``source`` (a literature-register key with a locator, the
 word ``assumption``, or ``derived: ...``), and optionally a ``unit``, a ``note`` (printed when the value is
 overridden) and ``calibrated: true`` (the descending-drive calibration was fitted with this value). A variant names
-its ``parent`` and lists only the fields it changes. See docs/superpowers/specs/2026-11-03-named-profiles-design.md.
+its ``parent`` and lists only the fields it changes.
 """
 from __future__ import annotations
 

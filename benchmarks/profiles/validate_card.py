@@ -14,7 +14,7 @@ result JSON holds the values, the limits, pass / fail, the card record and the g
 20-2000 Hz band of the Delsys comparator, on which the limits were frozen. Generated sEMG is normally sampled at
 2048 Hz (the ``SurfaceEMG`` default; iEMG at 10240 Hz).
 
-The MVC mapping runs the card's drive on the MVC ramp of examples/finetune/fdi_spikes_force.py (0.5 s rest,
+The MVC mapping runs the card's drive on the MVC ramp of examples/02_finetune/07_fdi_spikes_force.py (0.5 s rest,
 excitation 0 -> 1 at 0.1 / s, 3 s hold; MVC = mean force over the last 2 s; force smoothed over 0.25 s) with the
 card's force model, and reports the MVC and the excitation at which the ramp force first reaches 5, 10, 20, 25, 30
 and 50 % MVC: the values of ``drive.mvc_model_units`` and ``drive.excitation_at_pct_mvc``.

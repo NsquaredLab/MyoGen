@@ -1,12 +1,14 @@
 """The Delsys cc/adj scorer reproduces the archived arm-F numbers the fdi_semg limits were frozen from."""
 import importlib.util
+import os
 from pathlib import Path
 
 import numpy as np
 import pytest
 
 ROOT = Path(__file__).resolve().parents[1]
-ARM_F = Path(__import__("os").environ.get("MYOGEN_ARM_F_NPZ", "arm_F_not_set.npz"))
+# Arm delsys5r_wexp_musclertsc_lam0.63 of benchmarks/semg_dispersion (33 MB, not in the repo); set MYOGEN_ARM_F_NPZ to its path.
+ARM_F = Path(os.environ.get("MYOGEN_ARM_F_NPZ", "arm_F_not_set.npz"))
 
 
 def _delsys():
@@ -16,7 +18,7 @@ def _delsys():
     return mod
 
 
-@pytest.mark.skipif(not ARM_F.exists(), reason="archived arm-F result not on this machine")
+@pytest.mark.skipif(not ARM_F.exists(), reason="set MYOGEN_ARM_F_NPZ to the arm-F result")
 def test_scorer_reproduces_arm_f():
     d = np.load(ARM_F, allow_pickle=True)
     res = _delsys().score(d["mono_emg"], float(d["fs"]), float(d["ramp"]), float(d["hold"]))

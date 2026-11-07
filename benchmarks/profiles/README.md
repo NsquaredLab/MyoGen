@@ -28,7 +28,7 @@ records what it gives.
 
 ## MVC mapping
 
-`--mvc-mapping` runs the card's drive on the MVC ramp of `examples/finetune/fdi_spikes_force.py` (0.5 s rest,
+`--mvc-mapping` runs the card's drive on the MVC ramp of `examples/02_finetune/07_fdi_spikes_force.py` (0.5 s rest,
 excitation 0 → 1 at 0.1 / s, 3 s hold; MVC = mean force over the last 2 s; force smoothed over 0.25 s) with the card's
 force model and reports `drive.mvc_model_units` and `drive.excitation_at_pct_mvc`. The `fdi_semg.published` values
 were measured this way, since its force-frequency curve differs from the calibrated card's.

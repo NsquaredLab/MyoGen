@@ -1,4 +1,4 @@
-"""Profile cards: loading, variants and sources (docs/superpowers/specs/2026-11-03-named-profiles-design.md)."""
+"""Profile cards: loading, variants and sources."""
 import re
 from pathlib import Path
 
