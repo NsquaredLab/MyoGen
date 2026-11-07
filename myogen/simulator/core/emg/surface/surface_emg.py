@@ -50,7 +50,7 @@ class SurfaceEMG:
 
     This class provides a simulation framework for generating
     surface electromyography signals from the muscle. It implements the
-    multi-layered cylindrical volume conductor model from Farina et al. 2004 [1].
+    multi-layered cylindrical volume conductor model from Farina et al. 2004 [farina2004].
 
     Parameters
     ----------
@@ -90,19 +90,32 @@ class SurfaceEMG:
         around; it does not change the physical MUAP, only the window and the
         internal sampling step ``K / (v (N - 1))``.
     fiber_diameter__um : float, optional
-        Muscle fibre diameter in µm, default 50. The source current scales with
-        the fibre cross-section (``d**2``).
+        Muscle fibre diameter in µm, default 57.9: the FDI root-mean-square diameter,
+        sqrt(sum f_i d_i**2) over type I 50.0 µm and type II 67.0 µm fibres
+        [polgar1973 p. 310 Table 2] with 57.4 % type I [polgar1973 p. 312 Table 4].
+        The RMS (not the mean, 57.2 µm) is the right single value because the source
+        current scales with the fibre cross-section (``d**2``). 50 until 0.13.0. No effect
+        when ``fiber_dispersion`` takes the fibres from ``Muscle`` with a diameter-scaled
+        source (each fibre then has its own ``Muscle`` diameter).
     intracellular_conductivity__S_m : float, optional
         Intracellular conductivity in S/m, default 1.01. The source current
         density is ``sigma_i * pi * (d/2)**2 * d2Vm/dz2`` (core-conductor model).
     iap_lambda__per_mm : float, optional
-        Length scale of the Rosenfalck intracellular action potential,
+        Length scale of the Rosenfalck [rosenfalck1969] intracellular action potential,
         ``Vm = 96 (lambda z)**3 exp(-lambda z) - 90`` mV with z in mm. Default
-        1 / mm, as published (Rosenfalck 1969). Values below 1 stretch the IAP
+        1 / mm, as published (Rosenfalck 1969) [rosenfalck1969]. Values below 1 stretch the IAP
         along the fibre and lower the MUAP's spectral content and raise its
-        amplitude. Botelho et al. (2019) used 0.5 to match the frequency content of
-        their FDI recordings; in this conductor 0.7 matched their Delsys median
-        frequency and adjacent-pin RMS at 25 % MVC. Any value other than 1 is a
+        amplitude. Botelho et al. (2019) [botelho2019] used 0.5 to match the frequency content of
+        their FDI recordings. In this conductor, with ``diameter_scales_source`` and each
+        unit's CV mapped from its recruitment force through Del Vecchio et al. (2018)
+        [delvecchio2018 p. 2], 0.7 gives 175 / 169 Hz and 0.19 / 0.23 mV (corner-centre /
+        adjacent pins) at 25 % MVC against their ~165 Hz and 0.21 mV [botelho2019]. With every fibre's
+        CV and diameter taken from the ``Muscle`` (``SurfaceFiberDispersion.muscle_candidate``), unit-mean
+        CVs from recruitment force as above (``Muscle(motor_unit_conduction_velocities__m_per_s=...)``)
+        and the within-unit fibre spread of Martin et al. (1988) [martin1988 p. C46 Table 1], the same
+        benchmark puts the median-frequency match at about 0.63 (0.60 and 0.65 give 162 / 167 Hz), at
+        0.19 / 0.23 mV; every value from 0.55 to 0.8 stays inside their MDF IQR of 152-185 Hz (one
+        subject) [botelho2019]. Any value other than 1 is a
         fitted modelling assumption, not a measurement. ``iap_kernel_length__mm``
         must hold the longer IAP (its tail scales with ``1 / lambda``).
     fiber_dispersion : SurfaceFiberDispersion, optional
@@ -110,7 +123,10 @@ class SurfaceEMG:
         velocities (see :class:`SurfaceFiberDispersion`). None (default) or an
         inactive configuration keeps one end-plate per motor unit, no nerve
         delays and the mean velocity for every fibre. Supported on the default
-        route only (``execution=None``, ``use_unified=False``).
+        route only (``execution=None``, ``use_unified=False``). With
+        ``fiber_properties="muscle"`` every fibre's CV and diameter come from the
+        ``Muscle`` (its fibre properties must be generated); the muscle mean
+        conduction velocity then only sets the simulation grid and window.
 
     Attributes
     ----------
@@ -129,7 +145,7 @@ class SurfaceEMG:
 
     References
     ----------
-    [1] Farina, D., Mesin, L., Martina, S., Merletti, R., 2004. A surface EMG generation model with multilayer cylindrical description of the volume conductor. IEEE Transactions on Biomedical Engineering 51, 415–426. https://doi.org/10.1109/TBME.2003.820998
+    [1] Farina, D., Mesin, L., Martina, S., Merletti, R., 2004. A surface EMG generation model with multilayer cylindrical description of the volume conductor. IEEE Transactions on Biomedical Engineering 51, 415–426. https://doi.org/10.1109/TBME.2003.820998 [farina2004]
     """
 
     def __init__(
@@ -143,7 +159,7 @@ class SurfaceEMG:
         internal_sampling_frequency__Hz: Quantity__Hz | None = None,
         iap_kernel_length__mm: float | None = None,
         use_unified: bool = False,
-        fiber_diameter__um: float = 50.0,
+        fiber_diameter__um: float = 57.9,
         intracellular_conductivity__S_m: float = 1.01,
         fiber_dispersion: SurfaceFiberDispersion | None = None,
         iap_lambda__per_mm: float = 1.0,
@@ -316,7 +332,7 @@ class SurfaceEMG:
         # Calculate innervation zone variance
         innervation_zone_variance = (
             self._mean_fiber_length__mm * 0.1
-        )  # 10% of the mean fiber length (see Botelho et al. 2019 [6])
+        )  # 10% of the mean fiber length (see Botelho et al. 2019) [botelho2019]
 
         # Extract fiber counts
         number_of_fibers_per_MUs = self._muscle_model.resulting_number_of_innervated_fibers
@@ -365,6 +381,24 @@ class SurfaceEMG:
             for mu_idx in range(n_motor_units):
                 positions = self._muscle_model.resulting_fiber_assignment(mu_idx)
                 fiber_positions.append(np.asarray(getattr(positions, "magnitude", positions))[:, :2])
+            muscle_fibres = {}
+            if self._fiber_dispersion.fiber_properties == "muscle":
+                # Each fibre's CV and diameter from Muscle, split by unit in the order of
+                # resulting_fiber_assignment (both follow np.where(assignment == mu)).
+                try:
+                    cv_all = self._muscle_model.muscle_fiber_conduction_velocities__mm_per_s
+                    d_all = self._muscle_model.muscle_fiber_diameters__mm
+                except ValueError as error:
+                    raise ValueError(
+                        "fiber_properties='muscle' needs the Muscle fibre properties: run "
+                        "muscle._generate_fiber_properties() after assign_mfs2mns() (autorun=True does both)"
+                    ) from error
+                cv_all = np.asarray(cv_all.rescale(pq.m / pq.s).magnitude, dtype=float)
+                d_all = np.asarray(d_all.rescale(pq.um).magnitude, dtype=float)
+                assignment = np.asarray(self._muscle_model.assignment)
+                masks = [assignment == mu_idx for mu_idx in range(n_motor_units)]
+                muscle_fibres = dict(fiber_cv__m_s=[cv_all[mask] for mask in masks],
+                                     fiber_diameters__um=[d_all[mask] for mask in masks])
             dispersion = realize_fiber_dispersion(
                 self._fiber_dispersion,
                 fiber_positions,
@@ -374,6 +408,8 @@ class SurfaceEMG:
                 fiber_lengths__mm=[self._mean_fiber_length__mm + variation
                                    for variation in fiber_length_variations_per_MU],
                 mean_fiber_length__mm=float(self._mean_fiber_length__mm),
+                fiber_diameter__um=float(self.fiber_diameter__um),
+                **muscle_fibres,
             )
             self.fiber_dispersion_report = dispersion.report
 
@@ -491,8 +527,9 @@ class SurfaceEMG:
                     # The fibre must finish inside the second half of the window
                     # (firing at its centre), or the circular grid wraps it.
                     zone = dispersion.zi__mm[MU_index]
+                    # plus the IAP tail, 10 mm at lambda = 1 / mm, longer as lambda falls
                     reach = np.maximum(dispersion.end_plus__mm[MU_index] - zone,
-                                       zone - dispersion.end_minus__mm[MU_index]) + 10.0  # mm, plus the IAP tail
+                                       zone - dispersion.end_minus__mm[MU_index]) + 10.0 / self._iap_lambda__per_mm
                     finish = dispersion.delay__ms[MU_index] + reach / dispersion.cv__m_s[MU_index]
                     if np.max(finish) >= kernel_length / v_conduction / 2:
                         raise ValueError(
@@ -531,7 +568,7 @@ class SurfaceEMG:
                             simulate_fiber_hybrid,
                         )
 
-                        # Hybrid: time-domain Rosenfalck + frequency-domain volume conductor
+                        # Hybrid: time-domain Rosenfalck [rosenfalck1969] + frequency-domain volume conductor
                         # Same signature as _simulate_fiber_v2_python (drop-in replacement)
                         phi_temp, A_matrix, B_incomplete = simulate_fiber_hybrid(
                             Fs=Fs_internal,

@@ -5,6 +5,7 @@ that basic MyoGen already uses for intramuscular EMG (Akhmadeev et al. 2020);
 muscle-fibre conduction velocity may vary per fibre. Every option defaults to
 off, and off must reproduce the undispersed model exactly.
 """
+import dataclasses
 import numpy as np
 import pytest
 import quantities as pq
@@ -139,13 +140,13 @@ def test_delay_moves_the_signal_by_the_requested_time():
 
 # ---- realisation --------------------------------------------------------------------
 
-def _muscle():
+def _muscle(**kw):
     set_random_seed(42)
     thresholds, _ = RecruitmentThresholds(N=12, recruitment_range__ratio=30, mode="fuglevand")
     muscle = Muscle(thresholds, radius__mm=6 * pq.mm, length__mm=60 * pq.mm,
                     fiber_density__fibers_per_mm2=6 * pq.mm**-2, mean_fiber_length__mm=50 * pq.mm,
                     var_fiber_length__mm=2 * pq.mm, radius_bone__mm=0 * pq.mm,
-                    fat_thickness__mm=1 * pq.mm)
+                    fat_thickness__mm=1 * pq.mm, **kw)
     muscle.distribute_innervation_centers()
     muscle.generate_muscle_fiber_centers(verbose=False)
     muscle.assign_mfs2mns(verbose=False, n_jobs=1)
@@ -157,12 +158,12 @@ def muscle():
     return _muscle()
 
 
-def _realize(muscle, config, zones=None):
+def _realize(muscle, config, zones=None, **kwargs):
     counts = np.asarray(muscle.resulting_number_of_innervated_fibers)
     zones = np.zeros(len(counts)) if zones is None else zones
     positions = [np.asarray(muscle.resulting_fiber_assignment(i)) for i in range(len(counts))]
     return realize_fiber_dispersion(config, positions, np.asarray(muscle.recruitment_thresholds),
-                                    zones, mean_cv__m_s=4.2)
+                                    zones, mean_cv__m_s=4.2, **kwargs)
 
 
 def test_default_config_is_the_undispersed_model(muscle):
@@ -199,14 +200,59 @@ def test_fibre_cv_rises_linearly_with_recruitment_threshold(muscle):
         SurfaceFiberDispersion(fiber_cv_threshold_slope=0.6, fiber_cv_inter_mu_spread=0.3)
 
 
+def test_fibre_cv_per_unit_sets_each_unit_mean_and_keeps_end_plates(muscle):
+    per_unit = tuple(3.5 + 0.1 * i for i in range(12))
+    real = _realize(muscle, SurfaceFiberDispersion(nmj_model="two_layer", fiber_cv_per_unit__m_s=per_unit))
+    ref = _realize(muscle, SurfaceFiberDispersion(nmj_model="two_layer"))
+    for mu, cv in enumerate(real.cv__m_s):
+        np.testing.assert_allclose(cv, per_unit[mu])
+        np.testing.assert_array_equal(real.zi__mm[mu], ref.zi__mm[mu])
+    with pytest.raises(ValueError):
+        SurfaceFiberDispersion(fiber_cv_per_unit__m_s=per_unit, fiber_cv_threshold_slope=0.63)
+    with pytest.raises(ValueError):
+        SurfaceFiberDispersion(fiber_cv_per_unit__m_s=(4.0, -1.0))
+    with pytest.raises(ValueError):
+        _realize(muscle, SurfaceFiberDispersion(fiber_cv_per_unit__m_s=per_unit[:5]))
+
+
 def test_diameter_coupling_scales_source_with_cross_section(muscle):
     cfg = SurfaceFiberDispersion(fiber_cv_within_mu_cov=0.08, diameter_scales_source=True)
     real = _realize(muscle, cfg)
     big = max(range(12), key=lambda i: len(real.cv__m_s[i]))
     # Diameter from the CV line v = 0.95 m/s + 0.05 m/s/um * d (Nandedkar & Stalberg 1983)
     diameter__um = (real.cv__m_s[big] - 0.95) / 0.05
-    np.testing.assert_allclose(real.amplitude_scale[big], (diameter__um / ((4.2 - 0.95) / 0.05)) ** 2)
-    assert real.report["diameter_mean__um"][big] == pytest.approx(np.mean(diameter__um))
+    ratio = real.amplitude_scale[big] / real.amplitude_scale[big][0]
+    np.testing.assert_allclose(ratio, (diameter__um / diameter__um[0]) ** 2)
+    assert real.report["line_diameter_mean__um"][big] == pytest.approx(np.mean(diameter__um))
+
+
+def test_report_gives_the_effective_fibre_diameter(muscle):
+    """``diameter_mean__um`` is the diameter each fibre's source uses: the line diameter rescaled so
+    the muscle's root-mean-square equals ``fiber_diameter__um`` (the line diameter is reported apart)."""
+    cfg = SurfaceFiberDispersion(fiber_cv_within_mu_cov=0.08, diameter_scales_source=True)
+    real = _realize(muscle, cfg, fiber_diameter__um=57.9)
+    effective = [57.9 * np.sqrt(scale) for scale in real.amplitude_scale]
+    for mu, d in enumerate(effective):
+        assert real.report["diameter_mean__um"][mu] == pytest.approx(np.mean(d))
+    assert np.sqrt(np.mean(np.concatenate(effective) ** 2)) == pytest.approx(57.9)
+    off = _realize(muscle, SurfaceFiberDispersion(fiber_cv_within_mu_cov=0.08), fiber_diameter__um=57.9)
+    np.testing.assert_allclose(off.report["diameter_mean__um"], 57.9)
+    assert np.all(np.isnan(_realize(muscle, cfg).report["diameter_mean__um"]))
+
+
+@pytest.mark.parametrize("cfg", [
+    dict(fiber_cv_within_mu_cov=0.08),
+    dict(fiber_cv_threshold_slope=0.63),
+    dict(fiber_cv_per_unit__m_s=tuple(3.5 + 0.1 * i for i in range(12))),
+])
+def test_diameter_scaled_source_averages_one_over_the_muscle(muscle, cfg):
+    """The source factor is normalised over every fibre of the pool, so ``fiber_diameter__um``
+    stays the population root-mean-square diameter and the CV line only sets the spread."""
+    real = _realize(muscle, SurfaceFiberDispersion(diameter_scales_source=True, **cfg))
+    assert np.mean(np.concatenate(real.amplitude_scale)) == pytest.approx(1.0)
+    diameter__um = (np.concatenate(real.cv__m_s) - 0.95) / 0.05
+    np.testing.assert_allclose(np.concatenate(real.amplitude_scale),
+                               diameter__um**2 / np.mean(diameter__um**2))
 
 
 def test_intra_mu_scatter_keeps_each_motor_unit_anchor(muscle):
@@ -298,7 +344,7 @@ def test_realisation_leaves_the_global_generator_untouched(muscle):
 
 # ---- SurfaceEMG integration ---------------------------------------------------------
 
-def _semg(muscle, dispersion=None, mus=(4, 11)):
+def _semg(muscle, dispersion=None, mus=(4, 11), **kw):
     array = SurfaceElectrodeArray(1, 1, 10 * pq.mm, 2.5 * pq.mm,
                                   center_point__mm_deg=(12 * pq.mm, 0 * pq.deg),
                                   bending_radius__mm=8.3 * pq.mm,
@@ -306,7 +352,7 @@ def _semg(muscle, dispersion=None, mus=(4, 11)):
     set_random_seed(7)
     return SurfaceEMG(muscle, [array], sampling_frequency__Hz=2048 * pq.Hz,
                       internal_sampling_frequency__Hz=2048 * pq.Hz,
-                      MUs_to_simulate=list(mus), fiber_dispersion=dispersion)
+                      MUs_to_simulate=list(mus), fiber_dispersion=dispersion, **kw)
 
 
 def _muaps(semg):
@@ -384,3 +430,164 @@ def test_intramuscular_emg_selects_the_end_plate_coefficients(monkeypatch):
         np.testing.assert_allclose([s[1] for s in seen], arbor_sd)
     with pytest.raises(ValueError, match="nmj_coefficients"):
         IntramuscularEMG(muscle_model=muscle, electrode_array=electrode, nmj_coefficients="paper")
+
+
+# ---- fibre properties from Muscle ---------------------------------------------------
+
+def test_muscle_fibre_source_is_active():
+    assert SurfaceFiberDispersion(fiber_properties="muscle").active
+
+
+@pytest.mark.parametrize("field, value", [("fiber_cv_threshold_slope", 0.63), ("fiber_cv_inter_mu_spread", 0.3),
+                                          ("fiber_cv_within_mu_cov", 0.05), ("fiber_cv_per_unit__m_s", (4.0,))])
+def test_muscle_fibre_source_rejects_surface_cv_options(field, value):
+    with pytest.raises(ValueError, match=field):
+        SurfaceFiberDispersion(fiber_properties="muscle", **{field: value})
+
+
+def test_fibre_property_source_must_be_known():
+    with pytest.raises(ValueError, match="fiber_properties"):
+        SurfaceFiberDispersion(fiber_properties="x")
+
+
+def test_muscle_candidate_preset():
+    expected = dataclasses.replace(SurfaceFiberDispersion.literature_candidate(seed=3), fiber_properties="muscle",
+                                   fiber_cv_threshold_slope=0.0, fiber_cv_within_mu_cov=0.0,
+                                   diameter_scales_source=True)
+    assert SurfaceFiberDispersion.muscle_candidate(seed=3) == expected
+
+
+def _muscle_arrays(muscle):
+    counts = np.asarray(muscle.resulting_number_of_innervated_fibers)
+    return [np.linspace(3, 5, n) for n in counts], [np.linspace(40, 80, n) for n in counts]
+
+
+def test_muscle_source_uses_the_given_fibre_cvs(muscle):
+    cvs, ds = _muscle_arrays(muscle)
+    real = _realize(muscle, SurfaceFiberDispersion(fiber_properties="muscle"), fiber_cv__m_s=cvs,
+                    fiber_diameters__um=ds, fiber_diameter__um=57.9)
+    for mu, cv in enumerate(cvs):
+        np.testing.assert_array_equal(real.cv__m_s[mu], cv)
+        if len(cv):
+            assert real.report["cv_mean__m_s"][mu] == pytest.approx(cv.mean(), rel=1e-12)
+
+
+def test_muscle_source_scales_by_absolute_cross_section(muscle):
+    cvs, ds = _muscle_arrays(muscle)
+    real = _realize(muscle, SurfaceFiberDispersion(fiber_properties="muscle", diameter_scales_source=True),
+                    fiber_cv__m_s=cvs, fiber_diameters__um=ds, fiber_diameter__um=50.0)
+    for mu, d in enumerate(ds):
+        np.testing.assert_allclose(real.amplitude_scale[mu], (d / 50.0) ** 2, rtol=1e-12)
+        if len(d):
+            assert real.report["diameter_mean__um"][mu] == pytest.approx(d.mean(), rel=1e-12)
+            assert np.isnan(real.report["line_diameter_mean__um"][mu])
+
+
+def test_muscle_source_without_scaling_keeps_unit_scale(muscle):
+    cvs, ds = _muscle_arrays(muscle)
+    real = _realize(muscle, SurfaceFiberDispersion(fiber_properties="muscle"), fiber_cv__m_s=cvs,
+                    fiber_diameters__um=ds, fiber_diameter__um=57.9)
+    for scale in real.amplitude_scale:
+        np.testing.assert_array_equal(scale, np.ones(len(scale)))
+
+
+def test_muscle_source_keeps_the_other_draws(muscle):
+    cvs, ds = _muscle_arrays(muscle)
+    common = dict(nmj_model="two_layer_intra", nerve_delays=True, tendon_end_band__mm=5.0, seed=5)
+    kw = dict(fiber_lengths__mm=[np.full(len(c), 50.0) for c in cvs], mean_fiber_length__mm=50.0)
+    config = _realize(muscle, SurfaceFiberDispersion(**common), **kw)
+    from_muscle = _realize(muscle, SurfaceFiberDispersion(fiber_properties="muscle", **common),
+                           fiber_cv__m_s=cvs, fiber_diameters__um=ds, **kw)
+    for a, b in ((config.zi__mm, from_muscle.zi__mm), (config.delay__ms, from_muscle.delay__ms),
+                 (config.end_plus__mm, from_muscle.end_plus__mm)):
+        for x, y in zip(a, b):
+            np.testing.assert_array_equal(x, y)
+
+
+def test_muscle_source_needs_the_arrays(muscle):
+    cvs, ds = _muscle_arrays(muscle)
+    with pytest.raises(ValueError, match="fiber_cv__m_s"):
+        _realize(muscle, SurfaceFiberDispersion(fiber_properties="muscle"))
+    with pytest.raises(ValueError, match="fiber_diameters__um"):
+        _realize(muscle, SurfaceFiberDispersion(fiber_properties="muscle", diameter_scales_source=True),
+                 fiber_cv__m_s=cvs, fiber_diameter__um=57.9)
+    short = [cv[:-1] if len(cv) else cv for cv in cvs]
+    with pytest.raises(ValueError, match="motor unit"):
+        _realize(muscle, SurfaceFiberDispersion(fiber_properties="muscle"), fiber_cv__m_s=short)
+
+
+@pytest.fixture(scope="module")
+def typed():
+    muscle = _muscle(fiber_model="typed")
+    muscle._generate_fiber_properties()
+    return muscle
+
+
+def test_surface_emg_takes_independent_fibres_from_muscle_too():
+    """``fiber_properties="muscle"`` needs only fibre diameters and CVs, which the default model also gives."""
+    muscle = _muscle()
+    muscle._generate_fiber_properties()
+    semg = _semg(muscle, SurfaceFiberDispersion(fiber_properties="muscle", diameter_scales_source=True),
+                 iap_kernel_length__mm=250.0)
+    _muaps(semg)
+    cv = np.asarray(muscle.muscle_fiber_conduction_velocities__mm_per_s.rescale(pq.m / pq.s).magnitude)
+    for mu in (4, 11):
+        mask = muscle.assignment == mu
+        assert semg.fiber_dispersion_report["cv_mean__m_s"][mu] == pytest.approx(cv[mask].mean(), rel=1e-12)
+
+
+def test_surface_emg_takes_each_fibre_from_muscle(typed):
+    semg = _semg(typed, SurfaceFiberDispersion(fiber_properties="muscle", diameter_scales_source=True))
+    _muaps(semg)
+    report = semg.fiber_dispersion_report
+    cv = np.asarray(typed.muscle_fiber_conduction_velocities__mm_per_s.rescale(pq.m / pq.s).magnitude)
+    d = np.asarray(typed.muscle_fiber_diameters__mm.rescale(pq.um).magnitude)
+    for mu in range(len(typed.recruitment_thresholds)):
+        mask = typed.assignment == mu
+        if mask.any():
+            assert report["cv_mean__m_s"][mu] == pytest.approx(cv[mask].mean(), rel=1e-12)
+            assert report["diameter_mean__um"][mu] == pytest.approx(d[mask].mean(), rel=1e-12)
+
+
+def test_muscle_fibres_make_fibre_diameter_irrelevant(typed):
+    config = SurfaceFiberDispersion(fiber_properties="muscle", diameter_scales_source=True)
+    np.testing.assert_allclose(_muaps(_semg(typed, config, fiber_diameter__um=40.0)),
+                               _muaps(_semg(typed, config, fiber_diameter__um=70.0)), rtol=1e-10, atol=0)
+
+
+def test_muscle_fibres_change_the_muap(typed):
+    assert not np.allclose(_muaps(_semg(typed)), _muaps(_semg(typed, SurfaceFiberDispersion(fiber_properties="muscle"))))
+
+
+def test_muscle_fibres_need_generated_properties(muscle):
+    with pytest.raises(ValueError, match="_generate_fiber_properties"):
+        _semg(muscle, SurfaceFiberDispersion(fiber_properties="muscle")).simulate_muaps(n_jobs=1, verbose=False,
+                                                                                        use_gpu=False)
+
+
+def test_window_check_scales_the_iap_tail_with_lambda(muscle):
+    config = SurfaceFiberDispersion(nerve_delays=True)
+    _muaps(_semg(muscle, config, mus=(11,), iap_kernel_length__mm=105.0))
+    with pytest.raises(ValueError, match="iap_kernel_length__mm"):
+        _muaps(_semg(muscle, config, mus=(11,), iap_kernel_length__mm=105.0, iap_lambda__per_mm=0.4))
+
+
+def test_each_fibre_gets_its_own_muscle_values(typed, monkeypatch):
+    from myogen.simulator.core.emg.surface import surface_emg
+
+    seen = {}
+    real = surface_emg.realize_fiber_dispersion
+
+    def capture(config, positions, *args, **kwargs):
+        seen.update(positions=positions, **kwargs)
+        return real(config, positions, *args, **kwargs)
+
+    monkeypatch.setattr(surface_emg, "realize_fiber_dispersion", capture)
+    _muaps(_semg(typed, SurfaceFiberDispersion(fiber_properties="muscle", diameter_scales_source=True)))
+    centres = np.asarray(typed.muscle_fiber_centers__mm.rescale(pq.mm).magnitude)[:, :2]
+    cv = np.asarray(typed.muscle_fiber_conduction_velocities__mm_per_s.rescale(pq.m / pq.s).magnitude)
+    d = np.asarray(typed.muscle_fiber_diameters__mm.rescale(pq.um).magnitude)
+    for mu, positions in enumerate(seen["positions"]):
+        index = [int(np.flatnonzero(np.all(centres == xy, axis=1))[0]) for xy in positions]
+        np.testing.assert_array_equal(seen["fiber_cv__m_s"][mu], cv[index])
+        np.testing.assert_array_equal(seen["fiber_diameters__um"][mu], d[index])
