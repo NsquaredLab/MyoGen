@@ -50,7 +50,7 @@ SUBDIRS = ["01_basic", "02_finetune", "03_papers/watanabe", "04_clinical"]
 EXECUTE_SUBDIRS = ["01_basic", "02_finetune"]
 # Source-only CLI example: requires arguments and trusted local input files.
 # Keep in sync with filename_pattern in docs/gallery_conf.py.
-SOURCE_ONLY = {"16_adaptive_cpu_execution"}
+SOURCE_ONLY = {"16_adaptive_cpu_execution", "06_optimize_dd_multilevel", "07_fdi_spikes_force"}
 # keep in sync with ignore_pattern in docs/gallery_conf.py
 IGNORE = re.compile(
     r"(14_calibrate_noise_from_real|_oscillating_dc_helpers|_optimize_dc_worker|_pic_protocols)\.py"
