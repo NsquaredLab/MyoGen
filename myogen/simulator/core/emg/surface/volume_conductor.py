@@ -56,6 +56,23 @@ def _log_tilde(log_fn, K_THETA, x):
     return np.logaddexp(log_fn(K_THETA + 1, x), log_fn(K_THETA - 1, x)) - np.log(2)
 
 
+def _solved_block(system, r_bone, columns=True):
+    """The rows (and columns) of ``system`` that the linear solve uses."""
+    if r_bone != 0:
+        return system
+    rows = system[..., 2:, :]
+    return rows[..., [1, 3, 4, 5, 6]] if columns else rows
+
+
+def _require_finite(block, name, K_THETA):
+    if not np.all(np.isfinite(block)):
+        raise ValueError(
+            f"The layered-cylinder {name} is not finite for angular orders up to "
+            f"|k_theta| = {int(np.max(np.abs(K_THETA)))}: the scaled modified Bessel "
+            "functions leave the float64 range (I_n underflows, K_n overflows). Reduce sampling_points_in_theta_domain (default 32)."
+        )
+
+
 def layered_cylinder_transfer(
     k_z: np.ndarray,
     k_theta: np.ndarray,
@@ -242,8 +259,12 @@ def layered_cylinder_transfer(
         A_mat[..., 6, 5] = sig_skin * np.exp(log_In_tilde_d - log_In_d)
         A_mat[..., 6, 6] = -sig_skin * np.exp(log_Kn_tilde_d - log_Kn_d)
 
-        A_mat[np.isinf(A_mat)] = 0
-        A_mat[np.isnan(A_mat)] = 0
+        # Without bone, rows 0-1 and columns 0/2 are dropped before the solve
+        # and hold harmless log(0) - log(0) = NaN entries.  Anything
+        # non-finite in the solved block means the Bessel functions left the
+        # float64 range; zeroing it gave a singular system or NaN MUAPs.
+        _require_finite(_solved_block(A_mat, r_bone), "system matrix", K_THETA)
+        A_mat[~np.isfinite(A_mat)] = 0
 
         A_matrix = A_mat.copy()
         B_incomplete = B.copy()
@@ -269,8 +290,8 @@ def layered_cylinder_transfer(
     B[..., 2, 0] = -_safe_exp(log_Kn_bm + log_In_Rm) / sig_muscle_rho
     B[..., 3, 0] = anisotropy * _safe_exp(log_Kn_tilde_bm + log_In_Rm)
 
-    B[np.isinf(B)] = 0
-    B[np.isnan(B)] = 0
+    _require_finite(_solved_block(B, r_bone, columns=False), "source vector", K_THETA)
+    B[~np.isfinite(B)] = 0
 
     A_flat = A_mat.reshape(-1, 7, 7)
     B_flat = B.reshape(-1, 7, 1)

@@ -471,7 +471,7 @@ def simulate_fiber_hybrid(
     k_theta_diff = k_theta[1] - k_theta[0]
     k_z_diff = k_z[1] - k_z[0]
 
-    B_kz = np.zeros((channels[0], channels[1], len(k_z)))
+    B_kz = np.zeros((channels[0], channels[1], len(k_z)), dtype=complex)
     for ch_z in range(channels[0]):
         for ch_theta in range(channels[1]):
             arg_int = np.multiply(

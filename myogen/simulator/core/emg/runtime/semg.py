@@ -8,7 +8,11 @@ from scipy.signal import resample
 from myogen import get_random_generator
 from myogen.utils.neo import create_grid_signal
 from ..electrodes import SurfaceElectrodeArray
-from ..surface.simulate_fiber import _simulate_fiber_v2_python
+from ..surface.simulate_fiber import (
+    _simulate_fiber_v2_python,
+    fiber_semi_lengths,
+    muap_sampling_rate__Hz,
+)
 from .session import ExecutionSession
 from .surface_preparation import SurfacePreparation
 from .cache import DiskCache, fingerprint
@@ -24,6 +28,9 @@ def simulate_muaps(owner, policy, n_jobs, verbose, use_gpu):
             raise ValueError("execution=ExecutionPolicy(backend='cpu') contradicts use_gpu=True")
         if owner._use_unified:
             raise ValueError("use_unified=True requires the existing route (execution=None)")
+        dispersion = getattr(owner, "_fiber_dispersion", None)
+        if dispersion is not None and dispersion.active:
+            raise ValueError("fiber_dispersion requires the existing route (execution=None)")
         if any(type(array) is not SurfaceElectrodeArray for array in owner._electrode_arrays):
             raise ValueError("Custom electrodes require the existing route (execution=None)")
         shapes = {(a.num_rows, a.num_cols) for a in owner._electrode_arrays}
@@ -52,8 +59,8 @@ def simulate_muaps(owner, policy, n_jobs, verbose, use_gpu):
         rows, cols = next(iter(shapes))
         shape = (rows, cols, N)
         final_samples = owner._sampling_points_in_t_and_z_domains
-        duration = (kernel_length / 2.0) / owner._mean_conduction_velocity__m_s / 1000
-        rate = (final_samples - 1) / duration
+        rate = muap_sampling_rate__Hz(owner._mean_conduction_velocity__m_s, N, final_samples,
+                                      kernel_length)
         # Source-grid arithmetic retains the original precision and complete
         # N x N grids. Estimate all live complex/native temporaries generously.
         workspace = N * N * 16 * 24 + N * M * 8 * 180 + rows * cols * N * 16 * 4
@@ -67,12 +74,14 @@ def simulate_muaps(owner, policy, n_jobs, verbose, use_gpu):
             radius = float(electrode.electrode_radius__mm.rescale(pq.mm).magnitude)
             preparation = SurfacePreparation()
             dependencies = (
-                "surface-muap-gitlab-fc077-v1", N, M, final_samples, kernel_length, rate,
+                "surface-muap-gitlab-fc077-v4", N, M, final_samples, kernel_length, rate,
                 owner._internal_sampling_frequency__Hz, owner._mean_conduction_velocity__m_s,
                 owner._radius_total, owner._radius_bone__mm,
                 owner._fat_thickness__mm, owner._skin_thickness__mm,
                 owner._muscle_conductivity_radial__S_m, owner._muscle_conductivity_longitudinal__S_m,
                 owner._fat_conductivity__S_m, owner._skin_conductivity__S_m,
+                owner._fiber_diameter__mm, owner._intracellular_conductivity__S_m,
+                owner._iap_lambda__per_mm,
                 vars(electrode), base_z, base_theta, radius,
             )
             results = {}
@@ -94,6 +103,7 @@ def simulate_muaps(owner, policy, n_jobs, verbose, use_gpu):
                 def compute(start, stop):
                     values = np.empty((stop - start, *shape))
                     for local, fibre in enumerate(range(start, stop)):
+                        L1, L2 = fiber_semi_lengths(zone, lengths[fibre])
                         values[local], _, _ = _simulate_fiber_v2_python(
                             Fs=float(owner._internal_sampling_frequency__Hz * 1e-3),
                             v=float(owner._mean_conduction_velocity__m_s),
@@ -101,8 +111,7 @@ def simulate_muaps(owner, policy, n_jobs, verbose, use_gpu):
                             r_bone=float(owner._radius_bone__mm),
                             th_fat=float(owner._fat_thickness__mm),
                             th_skin=float(owner._skin_thickness__mm),
-                            R=radial[fibre], L1=abs(zone + lengths[fibre] / 2),
-                            L2=abs(zone - lengths[fibre] / 2), zi=zone,
+                            R=radial[fibre], L1=L1, L2=L2, zi=zone,
                             electrode_array=electrode,
                             sig_muscle_rho=float(owner._muscle_conductivity_radial__S_m),
                             sig_muscle_z=float(owner._muscle_conductivity_longitudinal__S_m),
@@ -112,6 +121,9 @@ def simulate_muaps(owner, policy, n_jobs, verbose, use_gpu):
                             theta_offset=-angular[fibre], pos_z_precomputed=base_z,
                             pos_theta_precomputed=base_theta, rele_precomputed=radius,
                             _prepared=preparation,
+                            sig_intracellular=owner._intracellular_conductivity__S_m,
+                            fiber_diameter__mm=owner._fiber_diameter__mm,
+                            iap_lambda__per_mm=owner._iap_lambda__per_mm,
                         )
                         if not np.all(np.isfinite(values[local])):
                             raise FloatingPointError(f"Nonfinite surface fibre in MU {mu_index}")

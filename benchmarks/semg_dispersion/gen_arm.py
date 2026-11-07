@@ -1,0 +1,185 @@
+"""Simulate one sweep arm: a frozen sEMG scenario with a fibre-dispersion configuration.
+
+Usage: python gen_arm.py <scenario> <label> <out.npz> <config-json> [n_jobs]
+
+Scenarios (muscle, spike trains, electrode and seeds are fixed; only the
+dispersion configuration changes, so arms are paired against the baseline):
+
+- ``limb``: limb-like cylinder, r 15 mm, bone 3 mm, fat 4 mm, 80 mm long,
+  70 +/- 5 mm fibres, 350 fibres/mm2, 100 MUs; bipolar 5 mm contacts, IED 10 mm,
+  centred 20 mm from the end-plate band.
+- ``fdi``: the default ``Muscle`` (tuned for the first dorsal interosseous),
+  120 MUs; bipolar 2 mm contacts, IED 5 mm, centred 8 mm from the end-plate band;
+  IAP window 150 mm so slow dispersed fibres fit.
+
+Both use a 30 % excitation trapezoid (2 s ramps, 4 s hold, 0.5 s rest at each
+end), Fuglevand thresholds over a 50-fold range recruited up to 70 % excitation,
+8-35 Hz rate coding with ISI CV 0.2, 2048 Hz. An empty configuration ({}) is the
+undispersed baseline. Harness-only keys set the outer layers:
+``_skin_thickness__mm`` (default 1.29), ``_fat_thickness__mm`` (limb 4, FDI 0.3),
+``_skin_conductivity__S_per_m`` (default 1) and ``_fiber_diameter__um`` (default 50).
+FDI only: ``_muscle_radius__mm`` (default 6.91) and ``_fiber_density__per_mm2`` (default 350).
+``_spike_file`` (npz with ``spikes`` and ``thresholds``; relative paths are relative to this directory,
+e.g. ``spikes/nrn/fdi_rec70/trap_25mvc.npz``) replaces the generated spike trains.
+FDI only: ``_fs__Hz`` (default 2048) sets the output and internal sampling rate. ``_delsys5`` replaces the
+bipolar pair with Delsys 5-pin sensors (0.5 mm pins at the corners and centre of a 5 x 5 mm square, as in
+Pereira Botelho et al. 2019): ``{"z__mm": [...], "rotation__deg": [...], "theta__deg": [...]}`` places one
+monopolar 3 x 3 grid (2.5 mm pitch, 0.25 mm radius) per combination; the five pins are its corners and centre,
+and channels are formed from them afterwards (saved as ``mono_emg``, time x sensor x 3 x 3).
+``_rate_model`` selects the rate coding: absent, the linear rule below; a dict
+``{"onset", "peak_early", "peak_late", "steepness"}`` (Hz, Hz, Hz, 1/excitation) the
+onion-skin exponential of De Luca & Contessa (2012), FR = peak - (peak - onset) *
+exp(-steepness * (E - threshold)), with the peak falling linearly by recruitment rank. Only the bipolar channel is simulated. The ``myogen`` that is imported
+(recorded in the output) must be the checkout under test; set PYTHONPATH if needed.
+"""
+import hashlib
+import json
+import sys
+import time
+from pathlib import Path
+
+import numpy as np
+import quantities as pq
+from neo import Block, Segment, SpikeTrain
+
+import myogen
+from myogen import set_random_seed
+from myogen.simulator import Muscle, RecruitmentThresholds, SurfaceElectrodeArray, SurfaceEMG
+from myogen.simulator.core.emg.surface.fiber_dispersion import SurfaceFiberDispersion
+from myogen.utils.neo import signal_to_grid
+
+scenario, label, out, config = sys.argv[1], sys.argv[2], sys.argv[3], json.loads(sys.argv[4])
+n_jobs = int(sys.argv[5]) if len(sys.argv) > 5 else 6
+if scenario not in ("limb", "fdi"):
+    raise SystemExit(f"unknown scenario {scenario!r}")
+skin = config.pop("_skin_thickness__mm", 1.29)
+fat = config.pop("_fat_thickness__mm", 4.0 if scenario == "limb" else 0.3)
+skin_sigma = config.pop("_skin_conductivity__S_per_m", 1.0)
+diameter = config.pop("_fiber_diameter__um", 50.0)
+rate_model = config.pop("_rate_model", None)
+spike_file = config.pop("_spike_file", None)
+fdi_radius = config.pop("_muscle_radius__mm", 6.91)
+fdi_density = config.pop("_fiber_density__per_mm2", 350.0)
+fs_out = config.pop("_fs__Hz", 2048.0)
+delsys5 = config.pop("_delsys5", None)
+if "nerve_cvs__m_per_s" in config:
+    config["nerve_cvs__m_per_s"] = tuple(config["nerve_cvs__m_per_s"])
+dispersion = SurfaceFiberDispersion(**config)
+
+N_MU, FS = (100 if scenario == "limb" else 120), float(fs_out)
+RAMP, HOLD, LEVEL = 2.0, 4.0, 0.30
+DURATION = 2 * RAMP + HOLD + 1.0
+
+set_random_seed(42)
+thresholds, _ = RecruitmentThresholds(N=N_MU, recruitment_range__ratio=50, mode="fuglevand")
+if scenario == "limb":
+    muscle = Muscle(recruitment_thresholds=thresholds, radius__mm=15 * pq.mm, length__mm=80 * pq.mm,
+                    fiber_density__fibers_per_mm2=350 * pq.mm**-2, mean_fiber_length__mm=70 * pq.mm,
+                    var_fiber_length__mm=5 * pq.mm, radius_bone__mm=3 * pq.mm, fat_thickness__mm=fat * pq.mm,
+                    skin_thickness__mm=skin * pq.mm, skin_conductivity__S_per_m=skin_sigma * pq.S / pq.m)
+    radius = 15.0
+else:
+    muscle = Muscle(recruitment_thresholds=thresholds, radius__mm=fdi_radius * pq.mm,
+                    fiber_density__fibers_per_mm2=fdi_density * pq.mm**-2, skin_thickness__mm=skin * pq.mm,
+                    fat_thickness__mm=fat * pq.mm, skin_conductivity__S_per_m=skin_sigma * pq.S / pq.m)
+    radius = fdi_radius
+muscle.distribute_innervation_centers()
+muscle.generate_muscle_fiber_centers(verbose=False)
+muscle.assign_mfs2mns(verbose=False, n_jobs=n_jobs)
+counts = np.asarray(muscle.resulting_number_of_innervated_fibers)
+fibre_hash = hashlib.sha1(b"".join(
+    np.ascontiguousarray(muscle.resulting_fiber_assignment(i)).tobytes() for i in range(N_MU))).hexdigest()
+
+rng = np.random.default_rng(123)
+rte = np.asarray(thresholds, dtype=float)
+rte = rte / rte.max() * 0.7
+rank = np.argsort(np.argsort(rte)) / (N_MU - 1)  # 0 for the first recruited, 1 for the last
+
+
+def excitation(t):
+    t = t - 0.5
+    return LEVEL * np.clip(np.minimum(t / RAMP, (2 * RAMP + HOLD - t) / RAMP), 0, 1)
+
+
+trains, active = [], []
+if spike_file is not None:
+    # Spike times per unit (s) from a NEURON simulation of the same threshold array (fdi_spikes_force.py).
+    spike_path = Path(spike_file)
+    loaded = np.load(spike_path if spike_path.is_absolute() else Path(__file__).resolve().parent / spike_path,
+                     allow_pickle=True)
+    if not np.allclose(np.asarray(loaded["thresholds"]) / np.max(loaded["thresholds"]), rte / rte.max()):
+        raise SystemExit("spike file thresholds do not match the benchmark pool")
+    for times in loaded["spikes"]:
+        times = np.asarray(times, dtype=float); times = times[times < DURATION]
+        active.append(len(times) > 0)
+        trains.append(SpikeTrain(np.round(times * FS) / FS * pq.s, t_stop=DURATION * pq.s, sampling_rate=FS * pq.Hz))
+for mu in range(N_MU if spike_file is None else 0):
+    times, t = [], 0.0
+    while t < DURATION:
+        e = excitation(t)
+        if e < rte[mu]:
+            t += 1 / FS
+            continue
+        if rate_model is None:
+            rate = min(8.0 + 100 * (e - rte[mu]), 35.0)
+        else:
+            peak = rate_model["peak_early"] + rank[mu] * (rate_model["peak_late"] - rate_model["peak_early"])
+            rate = peak - (peak - rate_model["onset"]) * np.exp(-rate_model["steepness"] * (e - rte[mu]))
+        times.append(t)
+        t += rng.gamma(1 / 0.2**2, 0.2**2 / rate)
+    times = np.asarray([x for x in times if x < DURATION])
+    active.append(len(times) > 0)
+    trains.append(SpikeTrain(np.round(times * FS) / FS * pq.s, t_stop=DURATION * pq.s, sampling_rate=FS * pq.Hz))
+block = Block()
+seg = Segment()
+seg.spiketrains = trains
+block.segments.append(seg)
+spike_hash = hashlib.sha1(b"".join(np.asarray(st.magnitude).tobytes() for st in trains)).hexdigest()
+mus = [m for m in range(N_MU) if active[m] and counts[m] > 0]
+
+if scenario == "limb":
+    bip = SurfaceElectrodeArray(1, 1, 10 * pq.mm, 2.5 * pq.mm, center_point__mm_deg=(20 * pq.mm, 0 * pq.deg),
+                                bending_radius__mm=(radius + fat + skin) * pq.mm,
+                                differentiation_mode="bipolar_longitudinal")
+    kernel = None
+else:
+    bip = SurfaceElectrodeArray(1, 1, 5 * pq.mm, 1.0 * pq.mm, center_point__mm_deg=(8 * pq.mm, 0 * pq.deg),
+                                bending_radius__mm=(radius + fat + skin) * pq.mm,
+                                differentiation_mode="bipolar_longitudinal")
+    kernel = 150.0
+sensors = []
+if delsys5 is not None:
+    sensors = [(z, rot, th) for z in delsys5["z__mm"] for rot in delsys5["rotation__deg"] for th in delsys5["theta__deg"]]
+    arrays = [SurfaceElectrodeArray(3, 3, 2.5 * pq.mm, 0.25 * pq.mm, center_point__mm_deg=(z * pq.mm, th * pq.deg),
+                                    bending_radius__mm=(radius + fat + skin) * pq.mm, rotation_angle__deg=rot * pq.deg,
+                                    differentiation_mode="monopolar") for z, rot, th in sensors]
+else:
+    arrays = [bip]
+set_random_seed(7)
+semg = SurfaceEMG(muscle, arrays, sampling_frequency__Hz=FS * pq.Hz, MUs_to_simulate=mus,
+                  internal_sampling_frequency__Hz=FS * pq.Hz, fiber_dispersion=dispersion,
+                  iap_kernel_length__mm=kernel, fiber_diameter__um=diameter)
+t0 = time.time()
+muaps = semg.simulate_muaps(n_jobs=n_jobs, verbose=False, use_gpu=False)
+sig0 = muaps.groups[0].segments[mus[0]].analogsignals[0]
+emg_block = semg.simulate_surface_emg(block, verbose=False)
+emg = emg_block.groups[0].segments[0].analogsignals[0]
+if delsys5 is not None:
+    templates = np.zeros((0, 1, 1, 1))
+    mono = np.stack([np.asarray(signal_to_grid(g.segments[0].analogsignals[0].rescale(pq.mV)), dtype=np.float32)
+                     for g in emg_block.groups], axis=1)
+else:
+    templates = np.array([np.asarray(signal_to_grid(muaps.groups[0].segments[m].analogsignals[0].rescale(pq.mV)))
+                          for m in mus])
+    mono = np.zeros((0,))
+report = semg.fiber_dispersion_report or {}
+np.savez(out, label=label, scenario=scenario, myogen=myogen.__file__, config=json.dumps(config), skin=skin, fat=fat, skin_sigma=skin_sigma, diameter=diameter, radius=radius, density=fdi_density, rate_model=json.dumps(rate_model), spike_file=str(spike_file), mus=mus, counts=counts,
+         fibre_hash=fibre_hash, spike_hash=spike_hash, ramp=RAMP, hold=HOLD, level=LEVEL,
+         bip_muaps=templates, pair_muap_fs=float(sig0.sampling_rate.rescale(pq.Hz).magnitude),
+         bip_emg=np.asarray(signal_to_grid(emg.rescale(pq.mV))), mono_emg=mono, sensors=np.array(sensors),
+         sensor_pos_z=np.array([a.pos_z for a in arrays]) if delsys5 is not None else np.zeros(0),
+         sensor_pos_theta=np.array([a.pos_theta for a in arrays]) if delsys5 is not None else np.zeros(0), fs=float(emg.sampling_rate.rescale(pq.Hz).magnitude),
+         report=np.array({k: v for k, v in report.items() if k != "config"}, dtype=object),
+         seconds=time.time() - t0, allow_pickle=True)
+print(label, "fibres", int(counts[mus].sum()), "secs", round(time.time() - t0), "fibre", fibre_hash[:10],
+      "spikes", spike_hash[:10], flush=True)

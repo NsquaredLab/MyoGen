@@ -13,7 +13,7 @@ The first step in using **MyoGen** is to generate the **recruitment thresholds**
 
 * **Fuglevand** model: Classic exponential distribution (*Fuglevand et al., 1993*)
 * **De Luca** model: Slope-corrected exponential distribution (*De Luca & Contessa, 2012*)
-* **Konstantin** model: Exponential with explicit maximum threshold control (*Konstantin et al., 2020*)
+* **Konstantin** model: Exponential with explicit maximum threshold control (*Akhmadeev et al., 2020*; the mode is named after the first author's given name, Konstantin)
 * **Combined** model: Hybrid approach combining De Luca shape with Konstantin scaling (*Ours*)
 """
 
