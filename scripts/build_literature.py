@@ -138,7 +138,7 @@ src("huigen2002", "A", "Huigen E, Peper A, Grimbergen CA (2002). Investigation i
 src("gondran1996", "A", "Gondran C, Siebert E, Yacoub S, Novakov E (1996). Noise of surface bio-potential electrodes based on NASICON ceramic and Ag–AgCl. Med Biol Eng Comput 34:460–466.",
     "doi:10.1007/BF02523851", "LINK", "ADOPTED", "With huigen2002, the stated basis of the 1/f^α baseline-drift form with α in 1.5–2.0 (default α 1.75) in IntramuscularEMG.add_noise and emg_noise.py. Not in Zotero. Cited in code; not checked.", [], [])
 src("deluca2010", "A", "De Luca CJ, Gilmore LD, Kuznetsov M, Roy SH (2010). Filtering the surface EMG signal: Movement artifact and baseline noise contamination. J Biomech 43(8):1573–1579.",
-    "doi:10.1016/j.jbiomech.2010.01.027; PMID 20206934", "LINK", "CONTEXT", "Cited in IntramuscularEMG.add_noise for broadband movement artifacts (0–20 Hz), which the baseline-drift model leaves out. Citation from Zotero (no full text attached), PMID from nexus note LIT-05. Cited in code; not checked.", [], [])
+    "doi:10.1016/j.jbiomech.2010.01.027; PMID 20206934", "LINK", "CONTEXT", "Cited in IntramuscularEMG.add_noise for broadband movement artifacts (0–20 Hz), which the baseline-drift model leaves out. Citation from Zotero (no full text attached). Cited in code; not checked.", [], [])
 
 # ── B. Fibre CV, end-plates, tendon ends, branch delays ──
 src("nandedkar1983", "B", "Nandedkar SD, Stålberg E (1983). Simulation of single muscle fibre action potentials. Med Biol Eng Comput 21:158–165.",
@@ -289,10 +289,10 @@ src("segev1990", "E", "Segev et al. (1990), alpha-function synaptic modelling (d
     "", "LINK", "CONTEXT", "Listed as the reference for the synapse model form in cells.py (the code uses a double-exponential Exp2Syn). Cited in code; not checked.", [], [])
 src("enokaduchateau2017", "D", "Enoka RM, Duchateau J (2017). Rate coding and the control of muscle force. Cold Spring Harb Perspect Med 7:a029702.",
     "doi:10.1101/cshperspect.a029702", "LINK", "CONTEXT",
-    "Review: ISI CV 10–30 % in voluntary contractions, falling with force. With dideriksen2012, the basis of the optimiser's ISI CV target 15–22 % at 30 % MVC as synthesised in nexus LIT-17. Not read here.", [], [])
+    "Review: ISI CV 10–30 % in voluntary contractions, falling with force. With dideriksen2012, the basis of the optimiser's ISI CV target 15–22 % at 30 % MVC. Not read here.", [], [])
 src("dideriksen2012", "D", "Dideriksen JL, Negro F, Enoka RM, Farina D (2012). Motor unit recruitment strategies and muscle properties determine the influence of synaptic noise on force steadiness. J Neurophysiol 107:3357–3369.",
     "doi:10.1152/jn.00938.2011", "LINK", "CONTEXT",
-    "Simulation of synaptic noise and force steadiness; cited with enokaduchateau2017 for the ISI CV target (nexus LIT-17). Not read here.", [], [])
+    "Simulation of synaptic noise and force steadiness; cited with enokaduchateau2017 for the ISI CV target. Not read here.", [], [])
 src("moritz2005", "D", "Moritz CT, Barry BK, Pascoe MA, Enoka RM (2005). J Neurophysiol 93:2449 (FDI discharge variability; details from memory, unverified).",
     "", "LINK", "CONTEXT", "ISI CV falls with rate — **quoted from memory, unverified**.", [], [])
 src("hu2013", "G", "Hu X, Rymer WZ, Suresh NL (2013). J Neurophysiol 110:1205; companion J NeuroEng Rehabil (2013).",
@@ -338,7 +338,7 @@ INDEX = [
 ]
 
 CORRECTIONS = [
-    "**Skin σ = 1 S/m rationale.** First explained as gel electrodes bypassing the stratum corneum (Farina 2004). Unsourced and withdrawn: the value is Roeleveld et al. 1997's fitted effective skin, inherited by Blok 2002, Farina & Rainoldi 1999, Farina & Merletti 2001 and Farina 2004. Commit message reworded; nexus Part A step 3 still has the old wording.",
+    "**Skin σ = 1 S/m rationale.** First explained as gel electrodes bypassing the stratum corneum (Farina 2004). Unsourced and withdrawn: the value is Roeleveld et al. 1997's fitted effective skin, inherited by Blok 2002, Farina & Rainoldi 1999, Farina & Merletti 2001 and Farina 2004.",
     "**Roeleveld 1997 DOI** is 10.1016/S1050-6411(97)00009-6 (an earlier (96)00034-8 was wrong).",
     "**'Konstantin et al. 2020'** in MyoGen docstrings (muscle.py, intramuscular_emg.py, nerve_branches.py) is Akhmadeev et al. 2020. Fixed on `fix/semg-amplitude-scale` (028a14362); the `konstantin` threshold mode keeps its name.",
     "**Botelho 2019 simulated amplitude**: median ~0.16 mV; 0.10 mV was one sample trace. Their 24.8–40.6 µm diameters are Hwang 2013's FDI mean ± SD.",
@@ -347,7 +347,7 @@ CORRECTIONS = [
     "**Jacobson 1992's 2.8 mm** is probably between-specimen spread; MyoGen uses it as a uniform half-width (docstring corrected).",
     "**Unverified, quoted from memory:** Moritz 2005 (ISI CV), Kukulka & Clamann 1981. **Never read in full:** Nandedkar & Stålberg 1983 (adopted CV line), Jacobson 1992 Table 1, Heckman & Binder 1991.",
     "**McManus 2019 'MUAP amplitude'**: metric undefined, not usable as a target.",
-    "**ISI CV target 15–22 %** in the optimiser cites 'LIT-17' (iEMG nexus literature note); its primary source was not re-checked in these sessions.",
+    "**ISI CV target 15–22 %** in the optimiser cites enokaduchateau2017 and dideriksen2012; the range was not checked against either paper.",
 ]
 
 STATUS = "FT full text · FIG read off a figure · ABS abstract only · SEC known only through a citing paper · CODE source code · LINK named only"

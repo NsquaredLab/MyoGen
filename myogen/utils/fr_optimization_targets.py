@@ -33,8 +33,6 @@ Example
 >>> targets = compute_fr_targets(thresholds, model="de_luca")
 >>> targets[10]["mean_fr_hz"]
 11.2
-
-See FUT-07 in nexus for full design rationale.
 """
 
 from __future__ import annotations
@@ -197,7 +195,7 @@ def de_luca_targets(
 #
 # TODO: refine with direct measurements from decomposed MU recordings
 # (MyoGen paper Fig 4, Skarabot raw data, etc.). Current values are
-# best-estimate placeholders. See FUT-07 for plan.
+# best-estimate placeholders.
 EXPERIMENTAL_FR_TARGETS: dict[str, dict[float, tuple[float, float]]] = {
     "vl": {
         # Vastus lateralis, untrained.
