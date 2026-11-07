@@ -17,6 +17,7 @@ from typing import Literal, Optional, Sequence
 
 import numpy as np
 
+from ...muscle.muscle import CV_INTERCEPT__M_S, CV_PER_DIAMETER__M_S_PER_MM
 from ..nerve_branches import NMJ_SCHEDULE_COEFFICIENTS, nerve_delays__ms, nmj_branch_schedule, two_layer_nmj
 
 NMJ_MODELS = ("uniform_mu", "two_layer", "two_layer_intra")
@@ -97,8 +98,8 @@ class SurfaceFiberDispersion:
     fiber_cv_threshold_slope: float = 0.0
     fiber_cv_within_mu_cov: float = 0.0
     diameter_scales_source: bool = False
-    cv_per_diameter__m_s_per_mm: float = 50.0
-    cv_intercept__m_s: float = 0.95
+    cv_per_diameter__m_s_per_mm: float = CV_PER_DIAMETER__M_S_PER_MM
+    cv_intercept__m_s: float = CV_INTERCEPT__M_S
     tendon_end_band__mm: float = 0.0
     tendon_end_correlation__mm: float = 0.0
     tendon_end_jitter__mm: float = 0.0

@@ -856,6 +856,9 @@ class AlphaMN(_Cell):
         These values produce realistic subthreshold membrane fluctuations
         (~2-3 mV RMS) typical of in vivo motor neuron recordings.
         """
+        # Enable the global multipliers (default 0 in the .mod file)
+        h.multex_Gfluctdv = 1
+        h.multin_Gfluctdv = 1
         for d in self.dend:
             d.insert("Gfluctdv")
             # Excitatory fluctuations

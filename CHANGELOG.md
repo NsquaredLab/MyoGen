@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 This is a breaking release. It corrects the surface-EMG pipeline against Farina, Mesin, Martina & Merletti (2004). The problems were found through feedback from @joaohbbittar; thank you. Both the default route and `execution=` are affected.
 
+It also ports three fixes that never reached `main` (Gfluctdv noise, fibre conduction velocities, large fibre layouts) and corrects the units of the intramuscular SFAP.
+
 ### Breaking changes
 
 This release changes default outputs; regenerate anything calibrated against earlier versions.
@@ -16,7 +18,10 @@ This release changes default outputs; regenerate anything calibrated against ear
 - sEMG outputs change in amplitude, shape, duration and spectrum. Bipolar outputs from 0.5.0–0.13.0 are invalid. Durations, mean/median frequencies and conduction-velocity estimates from those versions are off by about 2× and must be regenerated.
 - Absolute sEMG amplitudes change by one to two orders of magnitude (amplitude no longer depends on conduction velocity). Anything calibrated in µV or mV against earlier outputs must be regenerated. To keep the earlier resistive (measured) skin layer, pass `skin_conductivity__S_per_m=4.88e-4 * pq.S / pq.m` to `Muscle`. To keep the earlier layers, pass `skin_thickness__mm=1.29 * pq.mm, fat_thickness__mm=0.3 * pq.mm`.
 - Pickled `SurfaceEMG` objects from earlier versions lack the new fibre properties; create them again.
-- The `execution=` MUAP disk-cache key changes, so templates cached by earlier versions are recomputed.
+- The `execution=` MUAP disk-cache key changes, so templates cached by earlier versions are recomputed (sEMG and iEMG).
+- Pools that call `insert_Gfluctdv()` now produce noisy discharge: spike trains change, and descending-drive parameters fitted while the noise was silent should be refitted.
+- iEMG outputs change through the fibre conduction velocities (mean ~2.0 → ~3.45 m/s at the default diameter). Muscles with more than ~313 000 fibres get a different, now circular, fibre layout.
+- iEMG amplitudes, shapes and spectra change through the SFAP unit fixes (typically 20–50× larger at a fine wire). Anything tuned against earlier iEMG amplitudes, including `add_noise` floors given in absolute units, must be redone. Values are in mV.
 - iEMG outputs change through the narrower end-plate spreads. Pass `IntramuscularEMG(..., nmj_coefficients="reference_code")` to reproduce earlier end-plates.
 
 ### Fixed
@@ -34,6 +39,15 @@ This release changes default outputs; regenerate anything calibrated against ear
 - **Default skin and fat thickness (FDI).** Skin 1.29 → 1.2 mm (hand dorsum median, Li et al. 2018) and fat 0.3 → 1.3 mm, so the total depth to muscle is 2.5 mm, the low end of the FDI depth measured by Nishikawa et al. (2024); the fat value is derived from that total, not measured. Surface amplitudes from the default `Muscle` fall by about 40 %.
 - **Failed motor units raise.** On the default `SurfaceEMG` route an exception while simulating one motor unit was logged and replaced by an all-zero MUAP, which passes for a valid, silent unit. The exception is now re-raised with the unit and array index; the `ExecutionPolicy` route already raised.
 - **Angular sampling overflow raises.** With `sampling_points_in_theta_domain` ≥ 256 the scaled modified Bessel functions leave the float64 range at the highest angular orders (I_n underflows to 0, K_n overflows). The volume conductor replaced the overflowing entries with zero, which gave a singular system on the CPU and NaN MUAPs on the GPU. It now raises a `ValueError` that names the setting.
+- **Gfluctdv membrane noise was silent.** `AlphaMN.insert_Gfluctdv()` inserted the Destexhe (2001) fluctuating-conductance mechanism but left its GLOBAL multipliers `multex_Gfluctdv` / `multin_Gfluctdv` at the `.mod` default of 0, so it added no noise. They are now set to 1 on insertion. Any pool that calls `insert_Gfluctdv()` now has conductance noise and more variable discharge; this also makes the `gfluctdv` search in `examples/02_finetune/01_optimize_dd_for_target_firing_rate.py` effective.
+- **Fibre conduction velocities.** `Muscle` mixed units in the velocity–diameter line (5.5 (m/s)/mm with diameters in mm), giving ~1.1 m/s, which the 2 m/s clip then raised: every fibre had exactly 2.0 m/s. Fibre velocities now follow 0.95 + 0.05·d[µm] m/s (Nandedkar & Stålberg 1983; ~3.45 m/s at 50 µm), the same line `SurfaceFiberDispersion` uses; noise (SD 0.2 m/s) and clip (2–6 m/s) are unchanged. Intramuscular EMG uses these velocities; surface EMG uses the mean velocity and is unaffected.
+- **Intramuscular SFAP units and polarity.** Four errors in the iEMG source and volume conductor (`bioelectric.py`, `MotorUnitSim.calc_sfaps`) are corrected on both the default and `execution=` routes (`runtime/density.py`, `runtime/iemg.py`); a single-fibre SFAP now matches an independent SI line-source solution within 3 % at 0.1–1 mm (`tests/test_iemg_sfap_units.py`).
+  - Muscle conductivities defaulted to 63 / 330 "S/m" (1000× the tissue values of 0.063 / 0.33 S/m), making potentials 1000× too small. Defaults are now 0.063 / 0.33 S/m.
+  - The Rosenfalck IAP was evaluated at twice the distance and differentiated with the chain rule applied twice: an IAP half the published length and 8× the current. It now uses λ = 1 mm, as the sEMG model does.
+  - The wave travelling towards the shorter fibre half was subtracted instead of added, so it had inverted polarity; the two halves cancelled near the end-plate and in the far field.
+  - The sum over the fibre omitted the spatial step, so amplitudes scaled with `1/spatial_resolution__mm`.
+  Together the bugs nearly cancelled at the default 0.01 mm step for a nearby electrode. On an FDI cylinder (bipolar fine wire, 2 mm IED, 15 units) MUAPs go from 0.03–1.8 mV to 0.9–37 mV peak-to-peak. These are point electrodes in an infinite homogeneous medium, which overestimates the near field (no electrode area, no near-field correction); see Breaking changes.
+- **Large circular fibre layouts.** Fibre centres came from a 399 499-point table covering a square, of which only ~313 000 points lie inside the circle. Beyond that the outer ring was filled only at the diagonals, and beyond 399 499 the fibre count was silently capped. Layouts the table covers are unchanged (FDI defaults ≈ 54 000 fibres); larger counts now use a scrambled Halton sequence in the disc, seeded from MyoGen's generator, with a warning.
 
 ### Added
 

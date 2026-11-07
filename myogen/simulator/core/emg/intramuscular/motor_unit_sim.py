@@ -321,7 +321,8 @@ class MotorUnitSim:
                         ))
 
                     ecr_all = cp.column_stack(ecr_list)
-                    sfaps_dev[:, :, fiber_idx] = current_density.T @ ecr_all
+                    # mA/mm x Ω x dz (mm) summed over z: SFAP in mV
+                    sfaps_dev[:, :, fiber_idx] = (current_density.T @ ecr_all) * dz
 
             cp.cuda.Device(0).synchronize()
             self.sfaps = cp.asnumpy(sfaps_dev)
@@ -378,7 +379,8 @@ class MotorUnitSim:
                     ))
 
                 ecr_all = np.column_stack(ecr_list)
-                self.sfaps[:, :, fiber_idx] = current_density.T @ ecr_all
+                # mA/mm x Ω x dz (mm) summed over z: SFAP in mV
+                self.sfaps[:, :, fiber_idx] = (current_density.T @ ecr_all) * dz
 
         self.shift_sfaps(dt)
 

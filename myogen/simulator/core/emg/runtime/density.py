@@ -22,13 +22,17 @@ def _density(t, z, active, mirror, short_mask, end_mask, zi, v, dz, positive, sc
         for col in range(columns):
             value = 0.0
             if needed:
+                # zeta = v t - |z - zi| in mm, Rosenfalck length scale 1 mm, as
+                # in bioelectric.get_current_density (until 0.13.0 both read
+                # -2 * (...) and scaled by 4: half the IAP length, 8x the current).
                 if positive:
-                    x = -2 * (z[row] - zi - v * t[col])
+                    x = -(z[row] - zi - v * t[col])
                 else:
-                    x = -2 * (-z[row] + zi - v * t[col])
+                    x = -(-z[row] + zi - v * t[col])
                 if x > 0:
                     value = 96.0 * (3 * x**2 - x**3) * math.exp(-x)
-                value *= -4 if positive else 4
+                if positive:
+                    value = -value
             wave[row, col] = value
     # Ascending rows retain the unmodified next endpoint until it is consumed.
     for row in range(rows):
@@ -42,7 +46,9 @@ def _density(t, z, active, mirror, short_mask, end_mask, zi, v, dz, positive, sc
         source = mirror[row]
         for col in range(columns):
             short = wave[source, col] if source >= 0 and short_mask[row] else 0.0
-            value = wave[row, col] - short if positive else short - wave[row, col]
+            # The mirrored wave is already d2V/dz2 of the opposite wave, so the
+            # two add (they were subtracted until 0.13.0).
+            value = wave[row, col] + short
             result[row, col] = (value if end_mask[row] else 0.0) * scale
     return result
 
