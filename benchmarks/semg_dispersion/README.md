@@ -25,8 +25,11 @@ Arms run before the published end-plate coefficients became the default pin
 is a harness key for the skin layer.
 
 Arms with `_spike_file` use NEURON spike trains of the calibrated FDI pool
-(spike times per unit and the pool thresholds), stored under `spikes/`; the
-path is relative to this directory.
+(spike times per unit and the pool thresholds), stored under `spikes/`.
+`unit_cv/` holds per-unit mean fibre CVs from recruitment force
+(`myogen.utils.ramp_analysis.cv_from_recruitment_force`) for
+`_fiber_cv_per_unit_file` and `_muscle_unit_cv_file`. Input paths in
+`arms.json` are relative to this directory.
 
 ## Running
 

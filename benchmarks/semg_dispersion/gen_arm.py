@@ -17,10 +17,23 @@ end), Fuglevand thresholds over a 50-fold range recruited up to 70 % excitation,
 8-35 Hz rate coding with ISI CV 0.2, 2048 Hz. An empty configuration ({}) is the
 undispersed baseline. Harness-only keys set the outer layers:
 ``_skin_thickness__mm`` (default 1.29), ``_fat_thickness__mm`` (limb 4, FDI 0.3),
-``_skin_conductivity__S_per_m`` (default 1) and ``_fiber_diameter__um`` (default 50).
+``_skin_conductivity__S_per_m`` (default 1) and ``_fiber_diameter__um`` (default: the ``SurfaceEMG`` default).
 FDI only: ``_muscle_radius__mm`` (default 6.91) and ``_fiber_density__per_mm2`` (default 350).
 ``_spike_file`` (npz with ``spikes`` and ``thresholds``; relative paths are relative to this directory,
 e.g. ``spikes/nrn/fdi_rec70/trap_25mvc.npz``) replaces the generated spike trains.
+``_iap_lambda__per_mm`` (default 1) sets the Rosenfalck IAP length scale (``SurfaceEMG.iap_lambda__per_mm``);
+``_mean_cv__m_s`` (default: the ``Muscle`` default) sets the mean muscle-fibre conduction velocity.
+``_fiber_cv_per_unit_file`` (json with ``cv__m_s``, one value per unit) sets each unit's mean fibre CV
+(``SurfaceFiberDispersion.fiber_cv_per_unit__m_s``).
+``fiber_properties: "muscle"`` (a ``SurfaceFiberDispersion`` field) takes every fibre's CV and diameter from the
+``Muscle``: its fibre properties are generated after the assignment, with the global generator's state restored
+afterwards so every other draw matches the earlier arms; their hash is saved as ``property_hash``.
+``_iap_kernel_length__mm`` (FDI default 150) sets ``SurfaceEMG.iap_kernel_length__mm``; slow fibres at small
+lambda need a longer window (the surface window check says so).
+``_muscle_cv_within_cov`` (ablation, with ``fiber_properties: "muscle"``) rescales each unit's ``Muscle`` fibre CVs
+about the unit mean to this coefficient of variation; unit means and diameters stay as generated.
+``_muscle_unit_cv_file`` (json with ``cv__m_s``, one value per unit) sets each unit's mean fibre CV in the ``Muscle``
+(``Muscle.motor_unit_conduction_velocities__m_per_s``).
 FDI only: ``_fs__Hz`` (default 2048) sets the output and internal sampling rate. ``_delsys5`` replaces the
 bipolar pair with Delsys 5-pin sensors (0.5 mm pins at the corners and centre of a 5 x 5 mm square, as in
 Pereira Botelho et al. 2019): ``{"z__mm": [...], "rotation__deg": [...], "theta__deg": [...]}`` places one
@@ -43,10 +56,16 @@ import quantities as pq
 from neo import Block, Segment, SpikeTrain
 
 import myogen
-from myogen import set_random_seed
+from myogen import get_random_generator, set_random_seed
 from myogen.simulator import Muscle, RecruitmentThresholds, SurfaceElectrodeArray, SurfaceEMG
 from myogen.simulator.core.emg.surface.fiber_dispersion import SurfaceFiberDispersion
 from myogen.utils.neo import signal_to_grid
+
+def _local(path):
+    """Input files in arms.json are relative to this directory."""
+    path = Path(path)
+    return path if path.is_absolute() else Path(__file__).resolve().parent / path
+
 
 scenario, label, out, config = sys.argv[1], sys.argv[2], sys.argv[3], json.loads(sys.argv[4])
 n_jobs = int(sys.argv[5]) if len(sys.argv) > 5 else 6
@@ -55,13 +74,27 @@ if scenario not in ("limb", "fdi"):
 skin = config.pop("_skin_thickness__mm", 1.29)
 fat = config.pop("_fat_thickness__mm", 4.0 if scenario == "limb" else 0.3)
 skin_sigma = config.pop("_skin_conductivity__S_per_m", 1.0)
-diameter = config.pop("_fiber_diameter__um", 50.0)
+diameter = config.pop("_fiber_diameter__um", None)
 rate_model = config.pop("_rate_model", None)
 spike_file = config.pop("_spike_file", None)
 fdi_radius = config.pop("_muscle_radius__mm", 6.91)
 fdi_density = config.pop("_fiber_density__per_mm2", 350.0)
 fs_out = config.pop("_fs__Hz", 2048.0)
 delsys5 = config.pop("_delsys5", None)
+iap_lambda = config.pop("_iap_lambda__per_mm", 1.0)
+kernel_override = config.pop("_iap_kernel_length__mm", None)
+within_cov = config.pop("_muscle_cv_within_cov", None)
+mean_cv = config.pop("_mean_cv__m_s", None)
+# The arms were generated with the typed fibre model (fibre types by unit, Polgar diameters).
+cv_kw = {"fiber_model": "typed"}
+if mean_cv is not None:
+    cv_kw["mean_conduction_velocity__m_per_s"] = mean_cv * pq.m / pq.s
+unit_cv_file = config.pop("_muscle_unit_cv_file", None)
+if unit_cv_file is not None:
+    cv_kw["motor_unit_conduction_velocities__m_per_s"] = np.asarray(json.load(open(_local(unit_cv_file)))["cv__m_s"]) * pq.m / pq.s
+cv_file = config.pop("_fiber_cv_per_unit_file", None)
+if cv_file is not None:
+    config["fiber_cv_per_unit__m_s"] = tuple(json.load(open(_local(cv_file)))["cv__m_s"])
 if "nerve_cvs__m_per_s" in config:
     config["nerve_cvs__m_per_s"] = tuple(config["nerve_cvs__m_per_s"])
 dispersion = SurfaceFiberDispersion(**config)
@@ -76,16 +109,31 @@ if scenario == "limb":
     muscle = Muscle(recruitment_thresholds=thresholds, radius__mm=15 * pq.mm, length__mm=80 * pq.mm,
                     fiber_density__fibers_per_mm2=350 * pq.mm**-2, mean_fiber_length__mm=70 * pq.mm,
                     var_fiber_length__mm=5 * pq.mm, radius_bone__mm=3 * pq.mm, fat_thickness__mm=fat * pq.mm,
-                    skin_thickness__mm=skin * pq.mm, skin_conductivity__S_per_m=skin_sigma * pq.S / pq.m)
+                    skin_thickness__mm=skin * pq.mm, skin_conductivity__S_per_m=skin_sigma * pq.S / pq.m, **cv_kw)
     radius = 15.0
 else:
     muscle = Muscle(recruitment_thresholds=thresholds, radius__mm=fdi_radius * pq.mm,
                     fiber_density__fibers_per_mm2=fdi_density * pq.mm**-2, skin_thickness__mm=skin * pq.mm,
-                    fat_thickness__mm=fat * pq.mm, skin_conductivity__S_per_m=skin_sigma * pq.S / pq.m)
+                    fat_thickness__mm=fat * pq.mm, skin_conductivity__S_per_m=skin_sigma * pq.S / pq.m, **cv_kw)
     radius = fdi_radius
 muscle.distribute_innervation_centers()
 muscle.generate_muscle_fiber_centers(verbose=False)
 muscle.assign_mfs2mns(verbose=False, n_jobs=n_jobs)
+property_hash = ""
+if dispersion.fiber_properties == "muscle":
+    state = get_random_generator().bit_generator.state
+    muscle._generate_fiber_properties()
+    get_random_generator().bit_generator.state = state
+    if within_cov is not None:
+        cv = np.asarray(muscle.muscle_fiber_conduction_velocities__mm_per_s.magnitude, float).copy()
+        for mu_idx in range(len(thresholds)):
+            sel = np.asarray(muscle.assignment) == mu_idx
+            if sel.sum() > 1 and cv[sel].std() > 0:
+                cv[sel] = cv[sel].mean() + (cv[sel] - cv[sel].mean()) * within_cov * cv[sel].mean() / cv[sel].std()
+        muscle._muscle_fiber_conduction_velocities__mm_per_s = cv * pq.mm / pq.s
+    property_hash = hashlib.sha1(
+        np.ascontiguousarray(muscle.muscle_fiber_diameters__mm.magnitude).tobytes()
+        + np.ascontiguousarray(muscle.muscle_fiber_conduction_velocities__mm_per_s.magnitude).tobytes()).hexdigest()
 counts = np.asarray(muscle.resulting_number_of_innervated_fibers)
 fibre_hash = hashlib.sha1(b"".join(
     np.ascontiguousarray(muscle.resulting_fiber_assignment(i)).tobytes() for i in range(N_MU))).hexdigest()
@@ -104,8 +152,7 @@ def excitation(t):
 trains, active = [], []
 if spike_file is not None:
     # Spike times per unit (s) from a NEURON simulation of the same threshold array (fdi_spikes_force.py).
-    spike_path = Path(spike_file)
-    loaded = np.load(spike_path if spike_path.is_absolute() else Path(__file__).resolve().parent / spike_path,
+    loaded = np.load(_local(spike_file),
                      allow_pickle=True)
     if not np.allclose(np.asarray(loaded["thresholds"]) / np.max(loaded["thresholds"]), rte / rte.max()):
         raise SystemExit("spike file thresholds do not match the benchmark pool")
@@ -147,6 +194,8 @@ else:
                                 bending_radius__mm=(radius + fat + skin) * pq.mm,
                                 differentiation_mode="bipolar_longitudinal")
     kernel = 150.0
+if kernel_override is not None:
+    kernel = float(kernel_override)
 sensors = []
 if delsys5 is not None:
     sensors = [(z, rot, th) for z in delsys5["z__mm"] for rot in delsys5["rotation__deg"] for th in delsys5["theta__deg"]]
@@ -158,7 +207,10 @@ else:
 set_random_seed(7)
 semg = SurfaceEMG(muscle, arrays, sampling_frequency__Hz=FS * pq.Hz, MUs_to_simulate=mus,
                   internal_sampling_frequency__Hz=FS * pq.Hz, fiber_dispersion=dispersion,
-                  iap_kernel_length__mm=kernel, fiber_diameter__um=diameter)
+                  iap_kernel_length__mm=kernel, iap_lambda__per_mm=iap_lambda,
+                  **({} if diameter is None else {"fiber_diameter__um": diameter}))
+diameter = semg.fiber_diameter__um
+mean_cv = float(semg._mean_conduction_velocity__m_s)
 t0 = time.time()
 muaps = semg.simulate_muaps(n_jobs=n_jobs, verbose=False, use_gpu=False)
 sig0 = muaps.groups[0].segments[mus[0]].analogsignals[0]
@@ -173,8 +225,8 @@ else:
                           for m in mus])
     mono = np.zeros((0,))
 report = semg.fiber_dispersion_report or {}
-np.savez(out, label=label, scenario=scenario, myogen=myogen.__file__, config=json.dumps(config), skin=skin, fat=fat, skin_sigma=skin_sigma, diameter=diameter, radius=radius, density=fdi_density, rate_model=json.dumps(rate_model), spike_file=str(spike_file), mus=mus, counts=counts,
-         fibre_hash=fibre_hash, spike_hash=spike_hash, ramp=RAMP, hold=HOLD, level=LEVEL,
+np.savez(out, label=label, scenario=scenario, myogen=myogen.__file__, config=json.dumps(config), skin=skin, fat=fat, skin_sigma=skin_sigma, diameter=diameter, iap_lambda=iap_lambda, mean_cv=mean_cv, radius=radius, density=fdi_density, rate_model=json.dumps(rate_model), spike_file=str(spike_file), cv_file=str(cv_file), mus=mus, counts=counts,
+         fibre_hash=fibre_hash, spike_hash=spike_hash, property_hash=property_hash, kernel=np.nan if kernel is None else kernel, ramp=RAMP, hold=HOLD, level=LEVEL,
          bip_muaps=templates, pair_muap_fs=float(sig0.sampling_rate.rescale(pq.Hz).magnitude),
          bip_emg=np.asarray(signal_to_grid(emg.rescale(pq.mV))), mono_emg=mono, sensors=np.array(sensors),
          sensor_pos_z=np.array([a.pos_z for a in arrays]) if delsys5 is not None else np.zeros(0),
@@ -182,4 +234,4 @@ np.savez(out, label=label, scenario=scenario, myogen=myogen.__file__, config=jso
          report=np.array({k: v for k, v in report.items() if k != "config"}, dtype=object),
          seconds=time.time() - t0, allow_pickle=True)
 print(label, "fibres", int(counts[mus].sum()), "secs", round(time.time() - t0), "fibre", fibre_hash[:10],
-      "spikes", spike_hash[:10], flush=True)
+      "spikes", spike_hash[:10], "properties", property_hash[:10], flush=True)
