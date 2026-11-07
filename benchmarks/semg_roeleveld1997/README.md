@@ -9,7 +9,9 @@ They named missing territory size (real units 0.5–2.5 cm across) as an
 alternative explanation, and MyoGen spreads fibres over a territory.
 
 This benchmark repeats their test in MyoGen's surface volume conductor with
-point and distributed territories, at 1 S/m and at measured skin values.
+point and distributed territories, at 1 S/m and at measured skin values:
+0.15 S/m (low-frequency skin in the IT'IS tissue database, mean of 7 studies)
+and 4.88·10⁻⁴ S/m (composite in-vivo skin, Gabriel et al. 1996).
 It answers how amplitude falls off relative to the nearest unit, not absolute
 amplitude, so it does not set the step-4 amplitude bands.
 

@@ -147,9 +147,11 @@ class Muscle:
         is not known whether skin conducts as well as 1 S/m, and Blok et al. that reference values
         are scarce. Measured skin is far lower: 4.55E-4 to 4.88E-4 S/m for composite in-vivo skin
         near 100-150 Hz (Gabriel et al. 1996, used by Lowery et al. 2002 [10] and Botelho et al.
-        2019 [7]). A resistive skin layer raises surface amplitudes (3.5-6x with 4.88E-4 S/m).
-        MyoGen keeps 1 S/m as a calibration: with a measured 0.15 S/m the FDI plateau RMS is
-        about 3-4x above published ranges (``benchmarks/semg_dispersion``).
+        2019 [7]); the IT'IS tissue database gives 0.148 +/- 0.042 S/m at low frequency (mean of
+        7 studies, 0.057-0.25 S/m, flagged for use with caution) [13]. A resistive skin layer
+        raises surface amplitudes (3.5-6x with 4.88E-4 S/m). MyoGen keeps 1 S/m as a
+        calibration: with the IT'IS value of 0.15 S/m the FDI plateau RMS is about 2.5-4x above
+        published ranges (``benchmarks/semg_dispersion``).
     grid_resolution : int, default=256
         Resolution of the computational grid used for innervation the muscle.
         Higher values provide more accurate spatial distribution but increase computational cost.
@@ -197,7 +199,8 @@ class Muscle:
     [9] Blok, J.H., Stegeman, D.F., van Oosterom, A., 2002. Three-layer volume conductor model and software package for applications in surface electromyography. Annals of Biomedical Engineering 30, 566–577. https://doi.org/10.1114/1.1475345 <br>
     [10] Lowery, M.M., Stoykov, N.S., Taflove, A., Kuiken, T.A., 2002. A multiple-layer finite-element model of the surface EMG signal. IEEE Transactions on Biomedical Engineering 49, 446–454. https://doi.org/10.1109/10.995683 <br>
     [11] Li, H., Furst, D.E., Jin, H., Sun, C., Wang, X., Yang, L., He, J., Wang, Y., Liu, A., 2018. High-frequency ultrasound of the skin in systemic sclerosis: an exploratory study to examine correlation with disease activity and to define the minimally detectable difference. Arthritis Research & Therapy 20, 181. https://doi.org/10.1186/s13075-018-1686-9 <br>
-    [12] Nishikawa, Y., Watanabe, K., Holobar, A., Kitamura, R., Maeda, N., Hyngstrom, A.S., 2024. Sex differences in laterality of motor unit firing behavior of the first dorsal interosseous muscle in strength-matched healthy young males and females. European Journal of Applied Physiology 124, 1979–1990. https://doi.org/10.1007/s00421-024-05420-7
+    [12] Nishikawa, Y., Watanabe, K., Holobar, A., Kitamura, R., Maeda, N., Hyngstrom, A.S., 2024. Sex differences in laterality of motor unit firing behavior of the first dorsal interosseous muscle in strength-matched healthy young males and females. European Journal of Applied Physiology 124, 1979–1990. https://doi.org/10.1007/s00421-024-05420-7 <br>
+    [13] Baumgartner, C., Hasgall, P.A., Di Gennaro, F., Neufeld, E., Lloyd, B., Gosselin, M.C., Payne, D., Klingenböck, A., Kuster, N., 2025. IT'IS Database for thermal and electromagnetic parameters of biological tissues, Version 5.0. https://doi.org/10.13099/VIP21000-05-0
     """
 
     def __init__(

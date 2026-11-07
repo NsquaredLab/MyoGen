@@ -60,6 +60,7 @@ does three at a time and skips arms already present.
 - Skin conductivity matters more than thickness: at skin 1.2 mm and fat 1.3 mm,
   1 → 0.15 S/m raises FDI plateau RMS about 3.3×. With 1 S/m and these
   thicknesses the all-effects model falls inside published FDI ranges; with
-  the measured 0.15 S/m it is about 3–4× too high.
+  0.15 S/m, the low-frequency skin conductivity of the IT'IS tissue database
+  (mean of 7 studies, 0.06–0.25 S/m), it is about 2.5–4× too high.
 
 `benchmarks/semg_versions` compares outputs before and after the unreleased surface-EMG fixes.
