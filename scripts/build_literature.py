@@ -251,8 +251,8 @@ src("mcnulty2000", "F", "McNulty PA, Falland KJ, Macefield VG (2000). Comparison
 src("macefield1996", "F", "Macefield VG, Fuglevand AJ, Bigland-Ritchie B (1996). Contractile properties of single motor units in human toe extensors assessed by intraneural motor axon stimulation. J Neurophysiol 75(6):2509–2519.",
     "doi:10.1152/jn.1996.75.6.2509", "FT", "ADOPTED", "13 toe-extensor units: mean-force curve (Fig. 6C) 48/65/77/87/92 % at 10/15/20/30/50 Hz, CT 74.8 ms; maximum at 15–100 Hz (median 50); twitch:tetanus 0.22 (0.28 potentiated); CT unrelated to twitch force. Fuglevand gain saturates by ~20 Hz at this CT; used in the force-frequency refit (HUMAN_UNIT_FORCE_FREQUENCY, opt-in via ForceModel(force_frequency_shape=...) and --force-frequency human).", ["force", "futil", "opt"], ["ceilwhy"])
 src("fuglevand1993", "F", "Fuglevand AJ, Winter DA, Patla AE (1993). Models of recruitment and rate coding organization in motor-unit pools. J Neurophysiol 70(6):2470–2488.",
-    "doi:10.1152/jn.1993.70.6.2470", "SEC", "ADOPTED",
-    "Twitch/force model (upstream fix e794774db, checked against an independent implementation) and 50-fold exponential thresholds.",
+    "doi:10.1152/jn.1993.70.6.2470", "FT", "ADOPTED",
+    "Twitch/force model: exponential thresholds (p. 2472 eq. 1), twitch force and contraction time (p. 2474 eqs. 13-14), force-frequency saturation S = 1 - exp(-2 (T/ISI)^3) and gain (p. 2475 eqs. 16-17; twitch:tetanus 0.11). Implementation checked against an independent one.",
     ["force", "fsf", "opt"], ["rebase"])
 src("destexhe2001", "E", "Destexhe A, Rudolph M, Fellous J-M, Sejnowski TJ (2001). Fluctuating synaptic conductances recreate in vivo-like activity in neocortical neurons. Neuroscience 107:13–24.",
     "", "SEC", "ADOPTED", "Gfluctdv conductance noise (was silent on main); scale calibrated per drive.", ["t_gfl", "opt", "cl"], [])
