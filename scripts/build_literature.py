@@ -112,8 +112,8 @@ src("botelho2019", "A", "Pereira Botelho D, Curran K, Lowery MM (2019). Anatomic
     ["muscle", "semg", "cl"], ["botcorr", "mdf", "b3", "b4", "layers"])
 src("gabriel1996", "A", "Gabriel S, Lau RW, Gabriel C (1996). The dielectric properties of biological tissues (series). Phys Med Biol 41.",
     "", "SEC", "CONTEXT", "Dry skin ~2–5e-4 S/m; source of Lowery's and Botelho's skin values.", ["muscle"], ["sigma"])
-src("itis", "A", "IT'IS Foundation tissue properties database (low-frequency conductivity).", "https://itis.swiss/virtual-population/tissue-properties/",
-    "FT", "CONTEXT", "Skin 0.148 ± 0.042 S/m; 0.15 S/m in the cylinder gives ~2.5–2.9× too much amplitude.", [], ["skinlit", "sigma"])
+src("itis", "A", "Baumgartner C, Hasgall PA, Di Gennaro F, Neufeld E, Lloyd B, Gosselin MC, Payne D, Klingenböck A, Kuster N (2025). IT'IS Database for thermal and electromagnetic parameters of biological tissues, Version 5.0 (low-frequency conductivity table).", "doi:10.13099/VIP21000-05-0",
+    "FT", "CONTEXT", "Low-frequency skin 0.148 ± 0.042 S/m (7 studies, 0.057–0.25; the entry pools dry skin and epidermis/dermis, and the site advises caution). The 0.15 S/m of the calibration argument for 1 S/m; 0.15 S/m in the cylinder gives about 2.5–4× too much amplitude.", ["muscle"], ["skinlit", "sigma"])
 src("dideriksen2019", "A", "Dideriksen JL, Farina D (2019). PLoS Comput Biol (amplitude cancellation and neural drive; title unverified).",
     "", "FT", "CONTEXT", "Uses skin 2 mm / 1 S/m, attributed to 'a previously proposed model'.", [], ["sigma"])
 src("hodgkinnakajima1972", "A", "Hodgkin AL, Nakajima S (1972). The effect of diameter on the electrical constants of frog skeletal muscle fibres. J Physiol 221:105.",
