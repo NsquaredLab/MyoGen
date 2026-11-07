@@ -1,0 +1,27 @@
+# Variant of fdi_semg: each component as its source paper describes it. Fields not listed are inherited.
+name: fdi_semg.published
+parent: fdi_semg
+version: 1
+description: "fdi_semg with the published component models: Fuglevand 1993 force-frequency, Rosenfalck lambda 1, no fibre dispersion, surface (single) fibre CVs. For comparison with those papers and older MyoGen results; the drive is the calibrated one."
+validation:
+  date: "2026-11-07"
+  script: benchmarks/profiles/validate_card.py
+  result: benchmarks/profiles/results/fdi_semg.published.json
+  git_commit: a6fabd87d741a1bbfc7735d18703c0e7e683e07b
+  setup: "as fdi_semg (25 % MVC trapezoid, 8 Delsys 5-pin sensors at 10240 Hz); run and recorded, no limits (published components, not fitted)"
+  cc: {rms_mV: 0.2470, mdf_Hz: 227.5}
+  adj: {rms_mV: 0.3058, mdf_Hz: 220.0}
+  hold_force_pct_mvc: 25.49
+  checked: true
+sections:
+  force:
+    force_frequency_shape: {value: [2.0, 3.0], source: "[fuglevand1993 p. 2475 eq. 16] (S = 1 - exp(-2 r^3))", calibrated: true, note: "This variant's MVC mapping (drive.mvc_model_units, drive.excitation_at_pct_mvc; benchmarks/profiles/results/fdi_semg.published_mvc.json) was measured with this value. The drive itself (trial 85) was fitted with [0.93, 1.29]. Changing it leaves that mapping stale; rerun benchmarks/profiles/validate_card.py --mvc-mapping."}
+  muscle:
+    within_unit_fiber_diameter_log_sd: {value: null, source: "assumption (no within-unit spread; surface CVs)"}
+    unit_cv: {value: null, source: "assumption (surface CVs)"}
+  surface_emg:
+    fiber_dispersion: {value: null, source: "derived: the published model of [farina2004] has no fibre dispersion"}
+    iap_lambda__per_mm: {value: 1.0, source: "assumption (the library default λ of [rosenfalck1969]; secondary)", unit: "1/mm"}
+  drive:
+    mvc_model_units: {value: 13470.808768515415, source: "derived: MVC ramp with the Fuglevand curve (benchmarks/profiles/validate_card.py --mvc-mapping, 2026-11-04; results/fdi_semg.published_mvc.json)"}
+    excitation_at_pct_mvc: {value: {0: 0.0, 5: 0.05927734375, 10: 0.09799804687500001, 20: 0.153955078125, 25: 0.184521484375, 30: 0.212890625, 50: 0.31396484375, 100: 1.0}, source: "derived: MVC ramp with the Fuglevand curve (benchmarks/profiles/validate_card.py --mvc-mapping, 2026-11-04; results/fdi_semg.published_mvc.json); 0 and 100 are the ends of the ramp"}

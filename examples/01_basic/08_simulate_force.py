@@ -29,86 +29,34 @@ References
 # ----------------
 
 # %%
+from pathlib import Path
+
+import joblib
 import matplotlib.pyplot as plt
 import numpy as np
-import quantities as pq
 
-from myogen import simulator
-from myogen.simulator.core.force.force_model import ForceModel
-from myogen.simulator.neuron.populations import AlphaMN__Pool
-from myogen.utils.currents import create_trapezoid_current
-from myogen.utils.neuron.inject_currents_into_populations import (
-    inject_currents_and_simulate_spike_trains,
-)
-from myogen.utils.nmodl import load_nmodl_mechanisms
+from myogen import load_profile
 from myogen.utils.plotting.force import plot_twitch_parameter_assignment, plot_twitches
 
 plt.style.use("fivethirtyeight")
 
 ##############################################################################
-# Load NMODL Mechanisms
-# ---------------------
-#
-# Load the custom NEURON mechanisms required for the motor neuron models.
-
-load_nmodl_mechanisms()
-
-##############################################################################
-# Define Parameters
-# -----------------
-#
-# The **force model** requires several key parameters:
-#
-# - ``recruitment_thresholds``: Motor unit recruitment thresholds
-# - ``recording_frequency__Hz``: Sampling frequency for force simulation
-# - ``longest_duration_rise_time__ms``: Maximum twitch rise time
-# - ``contraction_time_range``: Range of contraction times across motor units
-#
-# For demonstration, we'll also create input currents and simulate the complete
-# pipeline from current input to force output.
-
-# Motor unit pool parameters
-n_motor_units = 50
-recruitment_range = 50  # Recruitment range (max_threshold / min_threshold)
-
-# Force model parameters
-recording_frequency__Hz = 2048 * pq.Hz  # 2048 Hz sampling rate
-longest_duration_rise_time__ms = 90.0 * pq.ms  # Maximum twitch rise time
-contraction_time_range = 3  # Contraction time range factor
-
-# Simulation parameters
-simulation_duration__ms = 10000.0  # 10 seconds
-timestep__ms = 0.05 * pq.ms  # 0.05 ms time step
-t_points = int(simulation_duration__ms / timestep__ms.magnitude)
-
-##############################################################################
-# Generate Recruitment Thresholds
-# --------------------------------
-#
-# First, we need to generate recruitment thresholds for our motor unit pool.
-# These will determine both the activation order and the force characteristics
-# of each motor unit.
-
-recruitment_thresholds, _ = simulator.RecruitmentThresholds(
-    N=n_motor_units,
-    recruitment_range__ratio=recruitment_range,
-    mode="combined",
-    deluca__slope=5,
-)
-
-##############################################################################
 # Create Force Model
 # ------------------
 #
-# The force model calculates individual motor unit twitch properties based on
-# recruitment thresholds and physiological scaling rules.
+# The [`ForceModel`][myogen.simulator.ForceModel] calculates each motor unit's twitch (peak force and contraction
+# time) from its recruitment threshold. Its main parameters are:
+#
+# - ``recruitment_thresholds``: Motor unit recruitment thresholds
+# - ``recording_frequency__Hz``: Sampling frequency of the force
+# - ``force_frequency_shape``: Shape of the force-frequency (gain) curve
+#
+# The ``fdi_semg`` profile card builds it with the thresholds and the human force-frequency curve
+# (Macefield 1996, Fuglevand 1999) the FDI drive was calibrated with.
+# ``load_profile("fdi_semg.published").force_model()`` uses the curve of Fuglevand 1993 instead.
 
-force_model = ForceModel(
-    recruitment_thresholds=recruitment_thresholds,
-    recording_frequency__Hz=recording_frequency__Hz,
-    longest_duration_rise_time__ms=longest_duration_rise_time__ms,
-    contraction_time_range_factor=contraction_time_range,
-)
+card = load_profile()  # fdi_semg
+force_model = card.force_model()
 
 # Display force model statistics
 print("Force model statistics:")
@@ -144,48 +92,13 @@ plt.tight_layout()
 plt.show()
 
 ##############################################################################
-# Generate Input Current
-# ----------------------
+# Load Spike Trains
+# -----------------
 #
-# To demonstrate force generation, we'll create a trapezoid current that will
-# drive motor unit recruitment and firing patterns.
+# The spike trains of the 25 % MVC contraction from example 03 (calibrated FDI drive).
 
-# Parameters for trapezoid current
-trap_amplitude = 15.0 * pq.nA  # Peak amplitude
-trap_rise_time = 5000.0 * pq.ms  # Rise duration (ms)
-trap_plateau_time = 8000.0 * pq.ms  # Plateau duration (ms)
-trap_fall_time = 3000.0 * pq.ms  # Fall duration (ms)
-trap_offset = 5.0 * pq.nA  # Baseline current
-trap_delay = 0.0 * pq.ms  # Initial delay (ms)
-
-input_current__AnalogSignal = create_trapezoid_current(
-    n_pools=1,
-    t_points=t_points,
-    timestep__ms=timestep__ms,
-    amplitudes__nA=[trap_amplitude],
-    rise_times__ms=[trap_rise_time],
-    plateau_times__ms=[trap_plateau_time],
-    fall_times__ms=[trap_fall_time],
-    offsets__nA=[trap_offset],
-    delays__ms=[trap_delay],
-)
-
-##############################################################################
-# Create Motor Neuron Pool and Generate Spike Trains
-# ---------------------------------------------------
-#
-# Now we'll create a motor neuron pool and generate spike trains in response
-# to the input current.
-
-
-motor_neuron_pool = AlphaMN__Pool(recruitment_thresholds__array=recruitment_thresholds)
-
-# Generate spike trains using the convenient utility function
-spike_train__Block = inject_currents_and_simulate_spike_trains(
-    populations=[motor_neuron_pool],
-    input_current__AnalogSignal=input_current__AnalogSignal,
-    spike_detection_thresholds__mV=50 * pq.mV,
-)
+save_path = Path("./results")
+spike_train__Block = joblib.load(save_path / "trapezoid_dd_spike_trains.pkl")
 
 ##############################################################################
 # Generate Force Output
@@ -195,8 +108,9 @@ spike_train__Block = inject_currents_and_simulate_spike_trains(
 # The model will simulate individual motor unit twitches and their temporal
 # summation to produce the total muscle force.
 
-# Generate force from spike trains
+# Generate force from spike trains, and express it in % MVC with the card's MVC (from its MVC ramp)
 force_output = force_model.generate_force(spike_train__Block=spike_train__Block)
+force_pct_mvc = 100.0 * force_output.magnitude[:, 0] / card.value("drive.mvc_model_units")
 
 # Add some realistic noise to the force signal
 noise_level = 0.015  # 0.15% of mean force
@@ -217,12 +131,12 @@ ax1 = plt.subplot(2, 1, 1)
 
 ax1.plot(
     force_output.times.rescale("s"),
-    force_output[:, 0],
+    force_pct_mvc,
     linewidth=2,
     label="Clean Force",
 )
 
-ax1.set_ylabel("Force (a.u.)")
+ax1.set_ylabel("Force (% MVC)")
 ax1.set_title("Simulated Force Output")
 ax1.grid(True, alpha=0.3)
 
