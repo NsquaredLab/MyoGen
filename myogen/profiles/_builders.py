@@ -7,8 +7,9 @@ caller's generator and seed are given back (``myogen._seed_scope``): the user's 
 was, and nothing is printed. This deviates from base MyoGen, where library code never seeds and the script owns
 the seed (one ``set_random_seed`` call, or the import-time default, for the whole script). The cell ID counters are
 reset at the start of a seeded build, as ``set_random_seed`` does. On any platform the seeded builds give the
-validated thresholds and fibres; ``simulate`` gives the same spike counts, with spike times agreeing to NEURON's
-floating point (about 1e-4 relative between platforms), so sEMG matches the validation within its limits.
+validated thresholds and fibres; ``simulate`` gives the same spikes up to NEURON's floating point, which differs
+between platforms (spike times can shift by a time step, and a unit can gain or lose a spike near the end of a run),
+so sEMG matches the validation within its limits.
 A keyword that names a card field overrides it on this card instance: the override applies to
 every later build from the same instance (``thresholds(n_units=60)`` then ``muscle()`` builds 60 units), is recorded
 (``overrides()``, ``record()``) and, when the field carries a note, prints the note once per card and field per run

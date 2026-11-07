@@ -48,12 +48,15 @@ def test_run_matches_stored_spikes():
     e, hz = excitation_to_drive_hz([(0.5, 0, 0), (1.0, 0, 0.3)], THRESHOLD_HZ, DD_PARAMS["dd_drive__Hz"])
     block = run_descending_drive(thr, hz, DD_PARAMS, len(e) * 0.1)
     trains = block.segments[0].spiketrains
-    assert [len(st) for st in trains] == SPIKES_PER_UNIT  # 2000 spikes
+    # NEURON's floating point differs between platforms. Once the network diverges, spike times shift by whole time
+    # steps, so a unit can gain or lose a spike near the end of the run. Against the stored run (2000 spikes): macOS
+    # arm64 matches every count and its sum is 1.1e-4 higher (2194.218 s); Linux x86_64 fires once more in unit 8
+    # (at 1.496 s of 1.5 s) and its sum is 5.9e-4 higher (2195.276 s). First spikes match on both to 1e-9.
+    counts = np.array([len(st) for st in trains])
+    assert np.abs(counts - SPIKES_PER_UNIT).max() <= 1
     for unit, t0 in FIRST_SPIKE__S.items():
         assert float(trains[unit].rescale("s").magnitude[0]) == pytest.approx(t0, rel=1e-9)
     total = sum(float(np.sum(st.rescale("s").magnitude)) for st in trains)
-    # NEURON's floating point differs between platforms: on macOS arm64 the counts and first spikes match and the
-    # sum is 1.1e-4 higher (2194.218 s), so spike times are compared only to 1e-3.
     assert total == pytest.approx(SPIKE_TIME_SUM__S, rel=1e-3)
 
 
