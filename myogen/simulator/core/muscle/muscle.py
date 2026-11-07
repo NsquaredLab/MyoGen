@@ -29,7 +29,6 @@ from myogen.utils.types import (
     Quantity__per_mm2,
 )
 from myogen.utils.decorators import beartowertype
-from myogen.profiles._notes import hand_built
 
 # Fibre conduction velocity against diameter: CV = 0.95 m/s + 0.05 m/s per um
 # (Nandedkar & Stalberg 1983; 3.7 m/s at 55 um) [nandedkar1983]; the same line converts motor-unit
@@ -336,7 +335,6 @@ class Muscle:
         grid_resolution: int = 256,
         autorun: bool = False,
     ) -> None:
-        hand_built("Muscle")  # one-line hint when built without a profile card
         # Muscle properties - immutable public access
         self.radius__mm = radius__mm
         self.length__mm = length__mm

@@ -27,7 +27,7 @@ from typing import Any
 import numpy as np
 import quantities as pq
 
-from myogen.profiles._notes import building_from_card, emit_note
+from myogen.profiles._notes import emit_note
 
 # Card field -> constructor keyword, where they differ
 _THRESHOLD_KEYWORDS = {"n_units": "N", "recruitment_range": "recruitment_range__ratio", "mode": "mode"}
@@ -250,8 +250,7 @@ class CardBuilders:
         kw = self._muscle_kwargs(overrides, keywords)
         disp = self._take("surface_emg", {}, set())["fiber_dispersion"]
         with _seed_scope(seed) as rng:
-            with building_from_card():
-                m = Muscle(**kw)
+            m = Muscle(**kw)
             m.distribute_innervation_centers()
             m.generate_muscle_fiber_centers(verbose=False)
             m.assign_mfs2mns(verbose=False, n_jobs=n_jobs)
@@ -272,10 +271,8 @@ class CardBuilders:
         kw = {k: val for k, val in v.items() if k in allowed and k not in ("force_frequency_shape",
                                                                              "recording_frequency__Hz")}
         kw.setdefault("recruitment_thresholds", self.thresholds())
-        with building_from_card():
-            fm = ForceModel(recording_frequency__Hz=self._q("force", "recording_frequency__Hz",
-                                                            v["recording_frequency__Hz"]),
-                            force_frequency_shape=tuple(float(x) for x in v["force_frequency_shape"]), **kw)
+        fm = ForceModel(recording_frequency__Hz=self._q("force", "recording_frequency__Hz", v["recording_frequency__Hz"]),
+                        force_frequency_shape=tuple(float(x) for x in v["force_frequency_shape"]), **kw)
         fm.profile_record = self.record(keywords)
         return fm
 
@@ -302,7 +299,7 @@ class CardBuilders:
         mn = self._take("motor_neurons", {}, set())
         drive = self._take("drive", {}, set())
         thr = self.thresholds()
-        with _seed_scope(seed), building_from_card():
+        with _seed_scope(seed):
             pools = build_pools(thr, params, float(drive["timestep_ms"]), mn["config_file"])
         pools.profile_record = self.record(seed=seed)
         return pools
@@ -337,7 +334,7 @@ class CardBuilders:
         seed = self._seed("surface_emg", seed)
         keywords: dict = {}
         kw = self._surface_emg_kwargs(overrides, keywords)
-        with _seed_scope(seed) as rng, building_from_card():
+        with _seed_scope(seed) as rng:
             semg = SurfaceEMG(muscle, electrode_arrays, **kw)
             semg.profile_rng_state = copy.deepcopy(rng.bit_generator.state)
         semg.profile_seed = seed
@@ -395,7 +392,7 @@ class CardBuilders:
         dt = float(drive["timestep_ms"])
         e, hz = ddn.excitation_to_drive_hz(segments, float(drive["threshold_hz"]), params["dd_drive__Hz"],
                                            timestep_ms=dt, noise_seed=seed)
-        with _seed_scope(seed), building_from_card():
+        with _seed_scope(seed):
             block = ddn.run_descending_drive(thr, hz, params, len(e) * dt, timestep_ms=dt,
                                              config_file=mn["config_file"])
         fm = self.force_model()

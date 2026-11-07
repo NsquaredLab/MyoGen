@@ -15,7 +15,7 @@ validation:
   checked: true
 sections:
   force:
-    force_frequency_shape: {value: [2.0, 3.0], source: "assumption (as [fuglevand1993]; not read in full, no locator)", calibrated: true, note: "This variant's MVC mapping (drive.mvc_model_units, drive.excitation_at_pct_mvc; benchmarks/profiles/results/fdi_semg.published_mvc.json) was measured with this value. The drive itself (trial 85) was fitted with [0.93, 1.29]. Changing it leaves that mapping stale; rerun benchmarks/profiles/validate_card.py --mvc-mapping."}
+    force_frequency_shape: {value: [2.0, 3.0], source: "[fuglevand1993 p. 2475 eq. 16] (S = 1 - exp(-2 r^3))", calibrated: true, note: "This variant's MVC mapping (drive.mvc_model_units, drive.excitation_at_pct_mvc; benchmarks/profiles/results/fdi_semg.published_mvc.json) was measured with this value. The drive itself (trial 85) was fitted with [0.93, 1.29]. Changing it leaves that mapping stale; rerun benchmarks/profiles/validate_card.py --mvc-mapping."}
   muscle:
     within_unit_fiber_diameter_log_sd: {value: null, source: "assumption (no within-unit spread; surface CVs)"}
     unit_cv: {value: null, source: "assumption (surface CVs)"}

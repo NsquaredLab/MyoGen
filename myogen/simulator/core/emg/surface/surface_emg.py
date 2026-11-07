@@ -41,7 +41,6 @@ from myogen.utils.types import (
     SURFACE_EMG__Block,
     SURFACE_MUAP__Block,
 )
-from myogen.profiles._notes import hand_built
 
 
 @beartowertype
@@ -165,7 +164,6 @@ class SurfaceEMG:
         fiber_dispersion: SurfaceFiberDispersion | None = None,
         iap_lambda__per_mm: float = 1.0,
     ):
-        hand_built("SurfaceEMG")  # one-line hint when built without a profile card
         # Immutable public arguments - never modify these
         self.muscle_model = muscle_model
         self.electrode_arrays = electrode_arrays

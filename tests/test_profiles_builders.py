@@ -117,14 +117,6 @@ def test_force_model_uses_card_shape():
     assert load_profile("fdi_semg.published").force_model().force_frequency_shape == (2.0, 3.0)
 
 
-def test_card_built_objects_do_not_hint():
-    reset_notes()
-    with warnings.catch_warnings(record=True) as rec:
-        warnings.simplefilter("always")
-        load_profile().force_model()
-    assert _notes(rec) == []
-
-
 def test_builds_are_reseeded_and_match_the_validated_fibres():
     """Slow (full 120-unit FDI muscle, twice)."""
     card = load_profile()

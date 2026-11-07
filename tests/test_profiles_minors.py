@@ -1,4 +1,4 @@
-"""Deferred minors of the named-profiles review: note text, warning location, note keys, parent version, hints."""
+"""Deferred minors of the named-profiles review: note text, warning location, note keys, parent version."""
 import warnings
 
 import numpy as np
@@ -50,17 +50,6 @@ def test_note_points_at_the_callers_line():
     assert all(w.filename == __file__ for w in notes), [w.filename for w in notes]
 
 
-def test_hand_built_hint_points_at_the_callers_line():
-    from myogen.simulator import Muscle
-
-    reset_notes()
-    with warnings.catch_warnings(record=True) as rec:
-        warnings.simplefilter("always")
-        Muscle(recruitment_thresholds=np.array([0.1, 0.5, 1.0]))
-    notes = _notes(rec)
-    assert len(notes) == 1 and notes[0].filename == __file__
-
-
 def test_same_field_on_two_cards_notes_twice():
     reset_notes()
     with warnings.catch_warnings(record=True) as rec:
@@ -76,32 +65,6 @@ def test_record_carries_the_parent_version():
     parent = load_profile("fdi_semg")
     assert load_profile("fdi_semg.published").record()["parent_version"] == parent.version
     assert parent.record()["parent_version"] is None
-
-
-def test_card_built_surface_emg_does_not_hint():
-    from myogen.simulator import SurfaceElectrodeArray
-    from tests.test_profiles_review_fixes import _small_muscle
-
-    muscle = _small_muscle()
-    array = SurfaceElectrodeArray(1, 1, 10 * pq.mm, 2.5 * pq.mm, center_point__mm_deg=(12 * pq.mm, 0 * pq.deg),
-                                  bending_radius__mm=8.3 * pq.mm, differentiation_mode="bipolar_longitudinal")
-    reset_notes()
-    with warnings.catch_warnings(record=True) as rec:
-        warnings.simplefilter("always")
-        load_profile().surface_emg(muscle, [array], fiber_dispersion=None)
-    assert [str(w.message) for w in _notes(rec) if "no profile used" in str(w.message)] == []
-
-
-def test_card_built_pools_do_not_hint():
-    from myogen.utils.nmodl import load_nmodl_mechanisms
-
-    load_nmodl_mechanisms()
-    reset_notes()
-    with warnings.catch_warnings(record=True) as rec:
-        warnings.simplefilter("always")
-        pools = load_profile().motor_neuron_pool()
-    assert [str(w.message) for w in _notes(rec) if "no profile used" in str(w.message)] == []
-    assert pools.profile_record["profile"] == "fdi_semg"
 
 
 @pytest.mark.parametrize("phrase", ["thresholds of example 01"])

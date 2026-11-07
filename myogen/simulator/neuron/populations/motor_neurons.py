@@ -16,7 +16,6 @@ from myogen.utils.decorators import beartowertype
 from myogen.utils.types import RECRUITMENT_THRESHOLDS__ARRAY
 
 from .base import _exp_interp, _Pool
-from myogen.profiles._notes import hand_built
 
 
 @beartowertype
@@ -150,7 +149,6 @@ class AlphaMN__Pool(_Pool):
         dendrite_ca_theta_m_range: tuple[float, float, float] | None = None,
         dendrite_ca_theta_h_range: tuple[float, float, float] | None = None,
     ):
-        hand_built("AlphaMN__Pool")  # one-line hint when built without a profile card
         # Load configuration from YAML files with fallback mechanism
         if config_file is None:
             config_file = "alpha_mn_default.yaml"

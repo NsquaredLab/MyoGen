@@ -37,7 +37,6 @@ sys.path.insert(0, str(HERE))
 import delsys  # noqa: E402
 
 from myogen import load_profile, set_random_seed  # noqa: E402
-from myogen.profiles._notes import building_from_card  # noqa: E402
 from myogen.simulator import SurfaceElectrodeArray  # noqa: E402
 from myogen.utils.neo import signal_to_grid  # noqa: E402
 from myogen.utils.nmodl import load_nmodl_mechanisms  # noqa: E402
@@ -121,9 +120,8 @@ def mvc_mapping(name: str) -> dict:
     e, hz = excitation_to_drive_hz(segments, float(card.value("drive.threshold_hz")), params["dd_drive__Hz"],
                                    timestep_ms=dt, noise_seed=int(card.seeds["drive"]))
     set_random_seed(int(card.seeds["drive"]))
-    with building_from_card():
-        block = run_descending_drive(thr, hz, params, len(e) * dt, timestep_ms=dt,
-                                     config_file=card.value("motor_neurons.config_file"))
+    block = run_descending_drive(thr, hz, params, len(e) * dt, timestep_ms=dt,
+                                 config_file=card.value("motor_neurons.config_file"))
     fm = card.force_model()
     fs = float(card.value("force.recording_frequency__Hz"))
     force = np.asarray(fm.generate_force(block, verbose=False).magnitude, dtype=float)[:, 0]
