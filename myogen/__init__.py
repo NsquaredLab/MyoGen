@@ -101,7 +101,8 @@ def _seed_scope(seed: int, state: dict | None = None, reset_cell_ids: bool = Tru
     Used by the profile-card builders (``myogen.profiles``), the one place where library code seeds: a card replays
     the per-stage seeds of the runs it was validated with. Unlike ``set_random_seed`` it prints nothing and leaves
     the caller's random stream (``get_random_generator``, ``get_random_seed``, ``derive_subseed``) as it was. The
-    cell ID counters are reset at the start, as ``set_random_seed`` does, and not restored.
+    cell ID counters are reset at the start, as ``set_random_seed`` does, and not restored; an error while
+    resetting them is raised after the caller's generator is given back.
     """
     global _random_generator, _current_seed
     saved = _random_generator, _current_seed
@@ -109,14 +110,14 @@ def _seed_scope(seed: int, state: dict | None = None, reset_cell_ids: bool = Tru
     _random_generator = np.random.default_rng(_current_seed)
     if state is not None:
         _random_generator.bit_generator.state = deepcopy(state)
-    if reset_cell_ids:
-        try:
-            from myogen.simulator.neuron.cells import reset_cell_id_counters
-
-            reset_cell_id_counters()
-        except Exception:
-            pass
     try:
+        if reset_cell_ids:
+            try:
+                from myogen.simulator.neuron.cells import reset_cell_id_counters
+            except ImportError:  # NEURON not installed: there are no cell counters to reset
+                pass
+            else:
+                reset_cell_id_counters()
         yield _random_generator
     finally:
         _random_generator, _current_seed = saved

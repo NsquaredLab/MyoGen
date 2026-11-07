@@ -45,6 +45,10 @@ semg = card.surface_emg(muscle, electrode_arrays)   # your electrodes
   so a build does not depend on what ran before it, and then gives your generator and seed back. This differs from
   the rest of MyoGen, where library code never seeds and the script owns the seed (one `set_random_seed` call, or
   the default 180319, for the whole script).
+- **What reproduces**: on any platform, `card.thresholds()` and `card.muscle()` give the validated thresholds and
+  fibres (each fibre's motor unit, diameter and conduction velocity). `card.simulate()` gives the same spike counts
+  per unit; spike times agree to NEURON's floating point, which differs between platforms (about 1e-4 relative in
+  the sum of spike times). sEMG from a card therefore matches the validation within its limits, not bit for bit.
 - **Sampling**: generate sEMG at 2048 Hz (the `SurfaceEMG` default) and iEMG at 10240 Hz. The card's validation
   (`benchmarks/profiles/validate_card.py`) records sEMG at 10240 Hz only to score the 20-2000 Hz band of its Delsys
   comparator.

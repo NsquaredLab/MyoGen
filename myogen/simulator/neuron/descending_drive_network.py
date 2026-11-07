@@ -77,8 +77,8 @@ def build_dd_mn_network(mn_pool, dd_pool, dd_params):
         raise ValueError(f"network weight_exponent must be a finite number >= 0, got {p!r}")
     if net_cfg != NETWORK:
         raise ValueError(
-            f"dd_params['network'] must be {NETWORK}, got {net_cfg!r}; parameter files from before 2026-11-01 "
-            "were calibrated with random fan-in and uniform weights and must be recalibrated."
+            f"dd_params['network'] must be {NETWORK}, got {net_cfg!r}; parameter files from MyoGen 0.13.0 or "
+            "earlier were calibrated with random fan-in and uniform weights and must be recalibrated."
         )
     n_dd = len(dd_pool)
     n_in = int(round(dd_params["conn_probability"] * n_dd))
