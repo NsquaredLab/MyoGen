@@ -25,7 +25,7 @@ from matplotlib import pyplot as plt
 
 from myogen import simulator
 from myogen.utils.neo import signal_to_grid
-from myogen.utils.types import CURRENT__AnalogSignal, SPIKE_TRAIN__Block
+from myogen.utils.types import SPIKE_TRAIN__Block
 
 plt.style.use("fivethirtyeight")
 
@@ -37,9 +37,7 @@ plt.style.use("fivethirtyeight")
 save_path = Path("./results")
 
 spike_train__Block: SPIKE_TRAIN__Block = joblib.load(save_path / "trapezoid_dd_spike_trains.pkl")
-input_current__AnalogSignal: CURRENT__AnalogSignal = joblib.load(
-    save_path / "trapezoid_drive_pattern.pkl"
-)
+excitation__AnalogSignal = joblib.load(save_path / "trapezoid_drive_pattern.pkl")  # drive excitation (0-1)
 surface_emg: simulator.SurfaceEMG = joblib.load(save_path / "surface_emg.pkl")
 
 ##############################################################################
@@ -75,8 +73,6 @@ joblib.dump(surface_emg_signals, save_path / "surface_emg_signals.pkl")
 
 noisy_surface_emg__Block = surface_emg.add_noise(snr__dB=5.0)
 
-# Load input current as AnalogSignal
-
 plt.rcParams.update({"font.size": 24})
 # Create single plot with normalized signals
 fig, ax = plt.subplots(figsize=(12, 6))
@@ -85,14 +81,12 @@ fig, ax = plt.subplots(figsize=(12, 6))
 noisy_signal = noisy_surface_emg__Block.groups[0].segments[0].analogsignals[0]
 emg_grid = signal_to_grid(noisy_signal)  # Convert to 3D (time, rows, cols)
 emg_signal = emg_grid[:, 2, 2]
-current_signal = input_current__AnalogSignal[:, 0].magnitude
+excitation = excitation__AnalogSignal[:, 0].magnitude
 
-# Normalize current between 0 and 1
-current_normalized = (current_signal - np.min(current_signal)) / (
-    np.max(current_signal) - np.min(current_signal)
-)
+# Normalize the excitation between 0 and 1
+excitation_normalized = (excitation - np.min(excitation)) / (np.max(excitation) - np.min(excitation))
 
-current_normalized *= np.max(emg_signal)  # Scale to match EMG amplitude range
+excitation_normalized *= np.max(emg_signal)  # Scale to match EMG amplitude range
 
 # Plot both normalized signals on same axis
 ax.plot(
@@ -103,10 +97,10 @@ ax.plot(
 )
 
 ax.plot(
-    input_current__AnalogSignal.times.rescale(pq.s).magnitude,
-    current_normalized,
+    excitation__AnalogSignal.times.rescale(pq.s).magnitude,
+    excitation_normalized,
     linewidth=2,
-    label="Input Current",
+    label="Excitation",
     alpha=1,
     zorder=4,
 )
@@ -116,7 +110,7 @@ ax.set_ylabel("Amplitude (mV)")
 
 sns.despine(trim=True, left=False, bottom=False, right=True, top=True, offset=5)
 
-plt.title("Surface EMG\nand Input Current")
+plt.title("Surface EMG\nand Drive Excitation")
 
 plt.tight_layout()
 plt.show()

@@ -319,6 +319,14 @@ class SurfaceEMG:
         The motor units are processed in parallel using joblib, with each motor unit's
         fibers processed sequentially to maintain optimization efficiency.
         """
+        if getattr(self, "profile_rng_state", None) is not None:  # built from a profile card: draw as at build time,
+            from myogen import _seed_scope                          # then give the caller's generator back
+
+            with _seed_scope(self.profile_seed, state=self.profile_rng_state, reset_cell_ids=False):
+                return self._simulate_muaps(n_jobs, verbose, use_gpu, execution)
+        return self._simulate_muaps(n_jobs, verbose, use_gpu, execution)
+
+    def _simulate_muaps(self, n_jobs, verbose, use_gpu, execution) -> SURFACE_MUAP__Block:
         if execution is not None:
             from ..runtime.semg import simulate_muaps
             return simulate_muaps(self, execution, n_jobs, verbose, use_gpu)
@@ -981,6 +989,8 @@ class SurfaceEMG:
                 )
 
         # Store results privately
+        if getattr(self, "profile_record", None) is not None:  # built from a profile card
+            block.annotations["myogen_profile"] = self.profile_record
         self._surface_emg__Block = block
         return block
 
