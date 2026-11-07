@@ -4,10 +4,10 @@ parent: fdi_semg
 version: 1
 description: "fdi_semg with the published component models: Fuglevand 1993 force-frequency, Rosenfalck lambda 1, no fibre dispersion, surface (single) fibre CVs. For comparison with those papers and older MyoGen results; the drive is the calibrated one."
 validation:
-  date: "2026-11-04"
+  date: "2026-11-07"
   script: benchmarks/profiles/validate_card.py
   result: benchmarks/profiles/results/fdi_semg.published.json
-  git_commit: 2d4911c15b7fa6700e6af77accad072f104fc115
+  git_commit: a6fabd87d741a1bbfc7735d18703c0e7e683e07b
   setup: "as fdi_semg (25 % MVC trapezoid, 8 Delsys 5-pin sensors at 10240 Hz); run and recorded, no limits (published components, not fitted)"
   cc: {rms_mV: 0.2470, mdf_Hz: 227.5}
   adj: {rms_mV: 0.3058, mdf_Hz: 220.0}

@@ -14,10 +14,10 @@ calibration:
   mvc_ramp: examples/02_finetune/07_fdi_spikes_force.py (2026-11-02)
   unit_cv_inputs: benchmarks/semg_dispersion/unit_cv/rt_force_cv_scatter.json
 validation:
-  date: "2026-11-04"
+  date: "2026-11-07"
   script: benchmarks/profiles/validate_card.py
   result: benchmarks/profiles/results/fdi_semg.json
-  git_commit: 2d4911c15b7fa6700e6af77accad072f104fc115
+  git_commit: a6fabd87d741a1bbfc7735d18703c0e7e683e07b
   setup: "25 % MVC trapezoid, 8 Delsys 5-pin sensors at 10240 Hz; limits frozen 2026-11-03 (cc / adj RMS +-10 % of 0.196 / 0.233 mV, MDF +-5 % of 162.5 / 157.5 Hz)"
   cc: {rms_mV: 0.2004, mdf_Hz: 161.2}
   adj: {rms_mV: 0.2340, mdf_Hz: 156.2}
