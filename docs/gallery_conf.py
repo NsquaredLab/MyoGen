@@ -109,10 +109,12 @@ conf = {
     # ``__file__`` (undefined under mkdocs-gallery's exec()) to locate a results
     # directory and load each other's ``.pkl`` outputs, so they cannot execute
     # cleanly in the gallery — they render source-only. The adaptive CPU CLI
-    # also requires arguments and user-provided input files, so render its
-    # source without executing it. Keep scripts/build_docs.py in sync.
+    # also requires arguments and user-provided input files, and the multilevel
+    # descending-drive optimiser and its spike/force script use ``__file__`` and
+    # long runs (07 takes arguments), so render their source without executing
+    # them. Keep SOURCE_ONLY in scripts/build_docs.py in sync.
     # When MKDOCS_GALLERY_PLOT is false, everything is source-only regardless.
-    "filename_pattern": r"/(01_basic|02_finetune)/(?!16_adaptive_cpu_execution\.py$)",
+    "filename_pattern": r"/(01_basic|02_finetune)/(?!16_adaptive_cpu_execution\.py$|06_optimize_dd_multilevel\.py$|07_fdi_spikes_force\.py$)",
     "ignore_pattern": r"(14_calibrate_noise_from_real|_oscillating_dc_helpers|_optimize_dc_worker|_pic_protocols)\.py",
     "within_subsection_order": FileNameSortKey,
     "image_scrapers": ("matplotlib",),

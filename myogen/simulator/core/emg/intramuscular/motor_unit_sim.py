@@ -5,7 +5,7 @@ This module implements individual motor unit simulation including neuromuscular
 junction modeling, single fiber action potential (SFAP) calculation, and
 motor unit action potential (MUAP) generation with realistic jitter.
 
-Based on the MU_Sim class from the MATLAB iemg_simulator.
+Based on the MU_Sim class from the MATLAB iemg_simulator [akhmadeev2020].
 """
 
 import os
