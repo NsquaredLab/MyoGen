@@ -390,7 +390,7 @@ by_key = {s["key"]: s for s in S}
 
 # In-code citations: [key] or [key locator], key = letters + year (+ optional letter), e.g. [mcnulty2000 Table 2].
 CITE = re.compile(r"\[([a-z]+\d{4}[a-z]?)((?:[ ,;:][^\]\n]*)?)\]")
-CITE_DIRS = ["myogen", "examples/finetune", "benchmarks", "tests", "scripts"]
+CITE_DIRS = ["myogen", "examples/02_finetune", "benchmarks", "tests", "scripts"]
 CITE_SKIP = ("_archive", "__pycache__", "build_literature.py")
 
 
