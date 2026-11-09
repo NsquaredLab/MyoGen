@@ -13,7 +13,7 @@ The first step in using **MyoGen** is to generate the **recruitment thresholds**
 
 * **Fuglevand** model: Classic exponential distribution (*Fuglevand et al., 1993*)
 * **De Luca** model: Slope-corrected exponential distribution (*De Luca & Contessa, 2012*)
-* **Konstantin** model: Exponential with explicit maximum threshold control (*Konstantin et al., 2020*)
+* **Konstantin** model: Exponential with explicit maximum threshold control (*Akhmadeev et al., 2020*; the mode is named after the first author's given name, Konstantin)
 * **Combined** model: Hybrid approach combining De Luca shape with Konstantin scaling (*Ours*)
 """
 
@@ -27,7 +27,7 @@ from pathlib import Path
 
 import joblib
 from matplotlib import pyplot as plt
-from myogen import simulator
+from myogen import load_profile, simulator
 
 plt.style.use("fivethirtyeight")
 
@@ -165,12 +165,33 @@ plt.tight_layout()
 plt.show()
 
 ##############################################################################
+# The FDI Profile Card
+# ^^^^^^^^^^^^^^^^^^^^
+#
+# The following examples simulate the **first dorsal interosseous** (FDI) with the ``fdi_semg`` **profile card**,
+# which holds every validated setting with its source (``myogen/profiles/fdi_semg.yaml``). Its thresholds are the
+# ones the FDI drive was calibrated with: 120 units, Fuglevand model, recruitment range 50.
+#
+# !!! note
+#     ``load_profile("fdi_semg.published")`` gives each component as its source paper describes it.
+
+card = load_profile()  # fdi_semg
+recruitment_thresholds = card.thresholds()
+
+plt.plot(recruitment_thresholds * 100, "-o")
+plt.title("FDI Card Recruitment Thresholds")
+plt.xlabel("Motor Unit (#)")
+plt.ylabel("Recruitment Threshold (%)")
+plt.tight_layout()
+plt.show()
+
+##############################################################################
 # Save Recruitment Thresholds
 # ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 #
 # !!! note
 #     All **MyoGen** objects can be saved to a file using `joblib`. This is useful to **avoid re-running expensive simulations** if you need to use the same parameters.
 
-joblib.dump(combined_results[5], save_path / "thresholds.pkl")
+joblib.dump(recruitment_thresholds, save_path / "thresholds.pkl")
 
 # mkdocs_gallery_thumbnail_path = "gallery_thumbs/01_simulate_recruitment_thresholds.png"

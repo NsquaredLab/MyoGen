@@ -24,7 +24,7 @@ class AlphaMN__Pool(_Pool):
     Container for a population of alpha motor neurons.
 
     Manages a collection of AlphaMN (alpha motor neuron) cells with different
-    biophysical models: ModALS or Powers2017. These cells form the final
+    biophysical models: ModALS or Powers2017 [powersheckman2017]. These cells form the final
     common pathway for motor control.
 
     Parameters
@@ -54,7 +54,7 @@ class AlphaMN__Pool(_Pool):
     cell_index : Optional[int], optional
         Specific cell index to create (creates only one cell), by default None.
     lambda_factor : float, optional
-        Lambda factor for Powers2017 model persistent sodium scaling, by default 1.0.
+        Lambda factor for Powers2017 [powersheckman2017] model persistent sodium scaling, by default 1.0.
     initial_voltage__mV : float or list[float], optional
         Initial membrane voltage (mV), by default -67.
     spike_threshold__mV : float, optional

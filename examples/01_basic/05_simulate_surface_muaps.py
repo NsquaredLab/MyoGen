@@ -17,7 +17,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import quantities as pq
 
-from myogen import simulator
+from myogen import load_profile, simulator
 from myogen.utils.neo import signal_to_grid
 
 plt.style.use("fivethirtyeight")
@@ -71,19 +71,17 @@ electrode_array_monopolar = simulator.SurfaceElectrodeArray(
     bending_radius__mm=muscle.radius__mm + muscle.skin_thickness__mm + muscle.fat_thickness__mm,
 )
 
-surface_emg = simulator.SurfaceEMG(
-    muscle_model=muscle,
-    electrode_arrays=[electrode_array_monopolar],
+# The ``fdi_semg`` card sets the volume conductor and action-potential settings it was validated with (fibre
+# dispersion, Rosenfalck lambda 0.63 fitted to Botelho 2019, 200 mm IAP kernel); the electrodes, the sampling rate
+# and the units to simulate are yours.
+card = load_profile()  # fdi_semg
+surface_emg = card.surface_emg(
+    muscle,
+    [electrode_array_monopolar],
     sampling_frequency__Hz=sampling_frequency,
     sampling_points_in_t_and_z_domains=256,
-    sampling_points_in_theta_domain=32,  # Restored to default (log-space Bessel implementation prevents overflow)
+    sampling_points_in_theta_domain=32,
     MUs_to_simulate=[0, 1, 2, 3],  # Simulate MUs 0, 1, 2, and 3
-    # iap_kernel_length__mm=None,  # Default: uses scaled fiber length (2.5× for boundary clearance)
-    # The IAP kernel is automatically scaled to 2.5× the mean fiber length to:
-    # 1. Prevent boundary truncation artifacts
-    # 2. Allow full IAP wavefront development and decay
-    # 3. Maintain proportionality to actual fiber lengths
-    # Result: Realistic MUAP durations (8-10 ms) independent of sampling resolution N!
 )
 
 ##############################################################################

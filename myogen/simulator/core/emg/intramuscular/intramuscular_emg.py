@@ -38,6 +38,7 @@ try:
 except (ImportError, Exception):
     HAS_CUPY = False
 
+from ..nerve_branches import NMJ_SCHEDULE_COEFFICIENTS, nmj_branch_schedule
 from .motor_unit_sim import MotorUnitSim
 
 
@@ -66,13 +67,17 @@ class IntramuscularEMG:
         By default, the endplate is located at the center of the muscle (50% of the muscle length).
     nmj_jitter__s : Quantity__s, default=35e-6 * pq.s
         Standard deviation of neuromuscular junction jitter in seconds.
-        Default is set to 35e-6 s as determined by Konstantin et al. 2020 [1].
+        Default is set to 35e-6 s as determined by Akhmadeev et al. 2020 [akhmadeev2020].
     branch_cvs__m_per_s : tuple[Quantity__m_per_s, Quantity__m_per_s], default=(5.0 * pq.m / pq.s, 2.0 * pq.m / pq.s)
         Conduction velocities for the two-layer model of the neuromuscular junction in m/s.
-        Default is set to (5.0, 2.0) m/s as determined by Konstantin et al. 2020 [1].
+        Default is set to (5.0, 2.0) m/s as determined by Akhmadeev et al. 2020 [akhmadeev2020].
 
         Note: The two-layer model is a simplification of the actual arborization pattern, but it is a good approximation for the purposes of this simulation.
-        Follows the implementation of Konstantin et al. 2020 [1].
+        Follows the implementation of Akhmadeev et al. 2020 [akhmadeev2020].
+    nmj_coefficients : {"published", "reference_code"}, default="published"
+        z spreads of the two-layer end-plate model: the values printed in
+        Akhmadeev et al. 2020 [1], eq. 5-6 [akhmadeev2020 eq. 5-6], or those of their reference simulator
+        code (1.5-2 times wider; the default up to 0.13.0).
     MUs_to_simulate : list[int], optional
         Indices of motor units to simulate. If None, all motor units are simulated.
         Default is None. For computational efficiency, consider
@@ -92,7 +97,7 @@ class IntramuscularEMG:
 
     References
     ----------
-    [1] Konstantin, A., Yu, T., Le Carpentier, E., Aoustin, Y., Farina, D., 2020. Simulation of Motor Unit Action Potential Recordings From Intramuscular Multichannel Scanning Electrodes. IEEE Transactions on Biomedical Engineering 67, 2005–2014. https://doi.org/10.1109/TBME.2019.2953680
+    [1] Akhmadeev, K., Yu, T., Le Carpentier, E., Aoustin, Y., Farina, D., 2020. Simulation of Motor Unit Action Potential Recordings From Intramuscular Multichannel Scanning Electrodes. IEEE Transactions on Biomedical Engineering 67, 2005–2014. https://doi.org/10.1109/TBME.2019.2953680 [akhmadeev2020]
     """
 
     def __init__(
@@ -108,7 +113,10 @@ class IntramuscularEMG:
             2.0 * pq.m / pq.s,
         ),
         MUs_to_simulate: list[int] | None = None,
+        nmj_coefficients: str = "published",
     ):
+        if nmj_coefficients not in NMJ_SCHEDULE_COEFFICIENTS:
+            raise ValueError(f"nmj_coefficients must be one of {tuple(NMJ_SCHEDULE_COEFFICIENTS)}")
         # Immutable public arguments - never modify these
         self.muscle_model = muscle_model
         self.electrode_array = electrode_array
@@ -118,6 +126,7 @@ class IntramuscularEMG:
         self.nmj_jitter__s = nmj_jitter__s
         self.branch_cvs__m_per_s = branch_cvs__m_per_s
         self.MUs_to_simulate = MUs_to_simulate
+        self.nmj_coefficients = nmj_coefficients
 
         # Private copies for internal modifications (extract magnitudes)
         self._muscle_model = muscle_model
@@ -267,33 +276,25 @@ class IntramuscularEMG:
         """
         Simulate neuromuscular junction distributions for all motor units.
 
-        This implements the logic from s08_cl_init_muaps.m for generating
-        realistic NMJ branch patterns with size-dependent complexity.
+        Two-layer branch model of Akhmadeev et al. (2020) with the z spreads of
+        their eq. 5-6 [akhmadeev2020 eq. 5-6], growing with motor-unit size.
         """
         if not self._motor_units:
             raise ValueError("Must call _initialize_motor_units() first")
 
-        n_branches = 1 + np.round(
-            np.log(
-                self._muscle_model.recruitment_thresholds
-                / self._muscle_model.recruitment_thresholds[0]
-            )
+        n_branches, branches_z_std, arborization_z_std = nmj_branch_schedule(
+            self._muscle_model.recruitment_thresholds, self.nmj_coefficients
         )
 
         for mu_idx, mu_sim in enumerate(
             tqdm(self._motor_units, desc="Setting up NMJ distributions", unit="Simulator", disable=not verbose)
         ):
-            spread_factor = np.sum(self._muscle_model.recruitment_thresholds[:mu_idx]) / np.sum(
-                self._muscle_model.recruitment_thresholds
-            )
-
-            # Create NMJ distribution
             # Branch spread increases with motor unit size
             mu_sim.sim_nmj_branches_two_layers(
                 n_branches=int(n_branches[mu_idx]),
                 endplate_center=self._endplate_center__mm,
-                branches_z_std=1.5 + spread_factor * 4.0,
-                arborization_z_std=0.5 + spread_factor * 1.5,
+                branches_z_std=float(branches_z_std[mu_idx]),
+                arborization_z_std=float(arborization_z_std[mu_idx]),
             )
 
     def _calculate_muaps(self, n_jobs: int = -2, verbose: bool = True) -> INTRAMUSCULAR_MUAP__Block:
@@ -313,7 +314,8 @@ class IntramuscularEMG:
         Returns
         -------
         INTRAMUSCULAR_MUAP__Block
-            Intramuscular MUAP shapes for all motor units stored in a neo.Block.
+            Intramuscular MUAP shapes for all motor units stored in a neo.Block, in mV
+            (tagged ``pq.dimensionless`` for backward compatibility).
         """
         if not self._motor_units:
             raise ValueError("Must call _initialize_motor_units() first")
@@ -515,8 +517,8 @@ class IntramuscularEMG:
         Returns
         -------
         INTRAMUSCULAR_EMG__Block
-            Intramuscular EMG signals for the electrode array stored in a neo.Block.
-            Results are stored in the `intramuscular_emg__Block` property after execution.
+            Intramuscular EMG signals for the electrode array stored in a neo.Block, in mV
+            (tagged ``pq.dimensionless`` for backward compatibility). Results are stored in the `intramuscular_emg__Block` property after execution.
 
         Raises
         ------
@@ -824,14 +826,14 @@ class IntramuscularEMG:
             Ignored when ``noise_type="gaussian"``.
         baseline_drift_rms_uv : float, default=0.0
             Target RMS (post-HPF) of a band-limited 1/f^α baseline
-            drift representing electrode/interface noise (Huigen 2002,
-            Gondran 1996). Same units as the EMG block. Set to 0 (the
+            drift representing electrode/interface noise (Huigen 2002 [huigen2002],
+            Gondran 1996 [gondran1996]). Same units as the EMG block. Set to 0 (the
             default) to disable, preserving legacy behaviour.
             The spectral form is paper-constrained; the amplitude
             defaults are *not* validated for intramuscular EMG —
             calibrate against real recordings via
             `myogen.utils.calibrate_baseline_drift_profile`.
-            Broadband movement artifacts (0–20 Hz, De Luca 2010) are
+            Broadband movement artifacts (0–20 Hz, De Luca 2010 [deluca2010]) are
             a separate phenomenon out of scope here.
             Ignored when ``noise_type="gaussian"``.
         baseline_drift_alpha : float, default=1.75

@@ -28,5 +28,5 @@ class ForceModelVectorized(ForceModel):
     ----------
     [1] Fuglevand, A. J., Winter, D. A., & Patla, A. E. (1993). Models of recruitment
     and rate coding organization in motor-unit pools. J Neurophysiol, 70(6), 2470–2488.
-    https://doi.org/10.1152/jn.1993.70.6.2470.
+    https://doi.org/10.1152/jn.1993.70.6.2470. [fuglevand1993]
     """

@@ -351,7 +351,7 @@ class TestOldVsNewComparison:
         # different mathematical approaches:
         #   - Old: frequency-domain convolution (FFT of source * H_vc, then IFFT)
         #   - New: spatial kernel IFFT + time-domain traveling-wave convolution
-        # They also differ in Rosenfalck parameterization (D1=9.6 + z/2 vs D1=96).
+        # They also differ in the Rosenfalck amplitude constant (D1=9.6 vs D1=96).
         # Strict waveform correlation is not expected; instead we verify that both
         # produce physically plausible signals with consistent structural properties.
 
@@ -392,12 +392,12 @@ class TestOldVsNewComparison:
         )
 
         # 4. The amplitude order of magnitude should be within a reasonable factor
-        # (allowing for the 10x D1 difference and z/2 scaling)
+        # (allowing for the 10x D1 difference)
         old_max = np.max(np.abs(phi_old))
         new_max = np.max(np.abs(phi_new))
         ratio = new_max / old_max
         print(f"Amplitude ratio (new/old): {ratio:.2f}")
-        # The D1 difference alone gives ~10x, plus z-scaling effects.
+        # The D1 difference alone gives ~10x.
         # Allow a wide range (0.1 to 10000) to accommodate the different formulations.
         assert 0.1 < ratio < 10000, (
             f"Amplitude ratio {ratio:.1f} outside plausible range [0.1, 10000]"

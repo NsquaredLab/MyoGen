@@ -2,13 +2,13 @@
 Unified fiber simulation module.
 
 Combines iEMG and sEMG fiber simulation under a single Rosenfalck source
-model (D1=96, z in physical mm) with volume conductor kernels computed
+model (D1=96, z in physical mm) [rosenfalck1969] with volume conductor kernels computed
 as 1D spatial impulse responses.
 
 References
 ----------
-[1] Rosenfalck, P., 1969. Intra- and extracellular potential fields of active nerve and muscle fibres. Acta Physiol. Scand. Suppl. 321, 1-168. <br>
-[2] Farina, D. et al., 2004. A surface EMG generation model with multilayer cylindrical description of the volume conductor. IEEE TBME 51(3), 415-426.
+[1] Rosenfalck, P., 1969. Intra- and extracellular potential fields of active nerve and muscle fibres. Acta Physiol. Scand. Suppl. 321, 1-168. [rosenfalck1969] <br>
+[2] Farina, D. et al., 2004. A surface EMG generation model with multilayer cylindrical description of the volume conductor. IEEE TBME 51(3), 415-426. [farina2004]
 """
 
 from __future__ import annotations
@@ -37,7 +37,7 @@ def rosenfalck_dVm_dz(z: np.ndarray, D1: float = 96.0) -> np.ndarray:
     z : np.ndarray
         Spatial coordinates along fiber in mm.
     D1 : float, default=96.0
-        Amplitude parameter in mV/mm^3 (Rosenfalck 1969).
+        Amplitude parameter in mV/mm^3 (Rosenfalck 1969) [rosenfalck1969].
 
     Returns
     -------
@@ -55,13 +55,13 @@ def compute_intramuscular_kernel(
     z_grid: np.ndarray,
     electrode_z: np.ndarray,
     r: float,
-    sigma_r: float = 63.0,
-    sigma_z: float = 330.0,
+    sigma_r: float = 0.063,
+    sigma_z: float = 0.33,
 ) -> np.ndarray:
     """
     Compute the intramuscular volume conductor kernel using the Green's function.
 
-    For an anisotropic infinite medium (Nandedkar & Stalberg 1983):
+    For an anisotropic infinite medium (Nandedkar & Stalberg 1983) [nandedkar1983]:
     b(z) = 1/(4*pi*sigma_r) / sqrt(sigma_z/sigma_r * r^2 + (z - z_elec)^2)
 
     Parameters
@@ -72,9 +72,9 @@ def compute_intramuscular_kernel(
         Electrode z-positions in mm, shape (n_electrodes,).
     r : float
         Radial distance from fiber to electrode in mm.
-    sigma_r : float, default=63.0
+    sigma_r : float, default=0.063
         Radial conductivity in S/m.
-    sigma_z : float, default=330.0
+    sigma_z : float, default=0.33
         Longitudinal conductivity in S/m.
 
     Returns
@@ -112,7 +112,7 @@ def compute_surface_kernel(
     """
     Compute the surface volume conductor spatial kernel b(z).
 
-    Extracts the Bessel volume conductor computation (Farina 2004) from the
+    Extracts the Bessel volume conductor computation (Farina 2004) [farina2004] from the
     existing sEMG pipeline and adds an IFFT step to produce the spatial kernel.
 
     Steps:
@@ -284,7 +284,7 @@ def simulate_fiber_hybrid(
     """
     Simulate a single fiber using the hybrid approach.
 
-    Time-domain Rosenfalck source (D1=96, physical mm) combined with the
+    Time-domain Rosenfalck source [rosenfalck1969] (D1=96, physical mm) combined with the
     frequency-domain Bessel volume conductor. Same math as the old path
     but with the correct, unified source parameterization.
 
@@ -327,7 +327,7 @@ def simulate_fiber_hybrid(
     fiber_length__mm : float or None
         Physical fiber length for IAP kernel evaluation in mm.
     D1 : float, optional
-        Rosenfalck amplitude parameter, default 96.0.
+        Rosenfalck amplitude parameter [rosenfalck1969], default 96.0.
 
     Returns
     -------
@@ -386,7 +386,7 @@ def simulate_fiber_hybrid(
     else:
         z = np.linspace(-(N - 1) * (v / Fs) / 2, (N - 1) * (v / Fs) / 2, N)
 
-    # Raw Rosenfalck — D1=96, z in physical mm, NO z/=2 scaling
+    # Raw Rosenfalck [rosenfalck1969] — D1=96, z in physical mm, NO z/=2 scaling
     source = rosenfalck_dVm_dz(z, D1=D1)
 
     # Convert dVm/dz (mV/mm) to transmembrane line current (A) by scaling
@@ -415,7 +415,7 @@ def simulate_fiber_hybrid(
     ones = np.ones((len(PSI_conj[0, :]), 1))
     PSI_mesh_conj = np.dot(ones, PSI_conj)
 
-    # Build I(kz, kt) using Farina 2004 eq (3)
+    # Build I(kz, kt) using Farina 2004 eq (3) [farina2004 eq. 3]
     I_kzkt = 1j * np.multiply(
         kz_mesh_kzkt / v,
         np.multiply(PSI_mesh_conj, np.exp(-1j * kz_mesh_kzkt * zi)),
@@ -471,7 +471,7 @@ def simulate_fiber_hybrid(
     k_theta_diff = k_theta[1] - k_theta[0]
     k_z_diff = k_z[1] - k_z[0]
 
-    B_kz = np.zeros((channels[0], channels[1], len(k_z)))
+    B_kz = np.zeros((channels[0], channels[1], len(k_z)), dtype=complex)
     for ch_z in range(channels[0]):
         for ch_theta in range(channels[1]):
             arg_int = np.multiply(
@@ -550,7 +550,7 @@ def simulate_fiber_unified(
     duration_ms : float
         Signal duration in ms.
     D1 : float, optional
-        Rosenfalck amplitude parameter, default 96.0.
+        Rosenfalck amplitude parameter [rosenfalck1969], default 96.0.
 
     Returns
     -------
@@ -565,7 +565,7 @@ def simulate_fiber_unified(
     n_samples = int(duration_ms * Fs)
     t = np.arange(n_samples) / Fs  # time in ms
 
-    # Rosenfalck spatial extent (effectively zero beyond ~10 mm)
+    # Rosenfalck [rosenfalck1969] spatial extent (effectively zero beyond ~10 mm)
     W = 10.0
 
     # Compute the source: dVm/dz on the kernel grid

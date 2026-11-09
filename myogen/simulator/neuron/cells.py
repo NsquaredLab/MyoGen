@@ -197,14 +197,14 @@ class _Cell:
         Notes
         -----
         Default parameters (tau1=0.2, tau2=0.3, weight=0.6) are based on
-        experimental data from Sanches (2018). For NERLab model compatibility,
+        experimental data from Sanches (2018) [sanches2018]. For NERLab model compatibility,
         the reversal potential is automatically set to 70 mV when the cell
         has the "model" attribute set to "NERLab".
 
         References
         ----------
-        - Sanches et al. (2018): Synaptic parameter measurements
-        - Segev et al. (1990): Alpha function synaptic modeling
+        - Sanches et al. (2018): Synaptic parameter measurements [sanches2018]
+        - Segev et al. (1990): Alpha function synaptic modeling [segev1990]
         """
         assert decay_time_constant__ms > rise_time_constant__ms, (
             "decay_time_constant__ms must be greater than tau1 for proper kinetics"
@@ -232,7 +232,7 @@ class INgII(_Cell):
     are part of the spinal reflex circuitry and contribute to muscle tone regulation
     and reciprocal inhibition between antagonist muscles.
 
-    The cell model is based on experimental data from Bui et al. (2003) for
+    The cell model is based on experimental data from Bui et al. (2003) [bui2003] for
     Ia inhibitory interneurons, with single-compartment soma containing
     physiologically realistic ion channels including sodium, potassium, h-current,
     and calcium-dependent afterhyperpolarization channels.
@@ -253,7 +253,7 @@ class INgII(_Cell):
     Notes
     -----
     The geometry and biophysics are based on cat spinal cord measurements:
-    - Membrane area: ~81,390 um² (Bui et al., 2003)
+    - Membrane area: ~81,390 um² (Bui et al., 2003) [bui2003]
     - Input resistance: ~20 MΩ (from g_pas = 5e-5 S/cm²)
     - Resting potential: -71 mV
     - Active channels: Na+, K+, h-current, Ca²⁺-dependent K+
@@ -261,7 +261,7 @@ class INgII(_Cell):
     References
     ----------
     Bui et al. (2003). Morphological and electrophysiological characterization
-    of Ia inhibitory interneurons in cat spinal cord.
+    of Ia inhibitory interneurons in cat spinal cord. [bui2003]
     """
 
     _ids2 = itertools.count(0)
@@ -278,11 +278,11 @@ class INgII(_Cell):
         """
         Set soma geometry based on experimental morphometric data.
 
-        Implements measurements from Bui et al. (2003) for Ia inhibitory
+        Implements measurements from Bui et al. (2003) [bui2003] for Ia inhibitory
         interneurons, calculating diameter from measured membrane surface area
         assuming spherical geometry.
         """
-        # Data from Bui et al., 2003 Ia Inhibitory interneurons
+        # Data from Bui et al., 2003 Ia Inhibitory interneurons [bui2003]
         Amu = 81390 + 3113  # Mean membrane area (um²)
         Aci = 1.96 * (891.5 + 46.141) / np.sqrt(8)  # Area confidence interval
         i = 0  # Use lower bound of area distribution
@@ -755,8 +755,8 @@ class AlphaMN(_Cell):
 
     References
     ----------
-    - Powers & Binder (2001): Motor neuron biophysical characterization
-    - Powers et al. (2017): Updated ion channel models and parameters
+    - Powers & Binder (2001): Motor neuron biophysical characterization [powersbinder2001]
+    - Powers & Heckman (2017): ion channel mechanisms of their model, ModelDB 239582 [powersheckman2017]
     """
 
     _ids2 = itertools.count(0)
@@ -856,6 +856,9 @@ class AlphaMN(_Cell):
         These values produce realistic subthreshold membrane fluctuations
         (~2-3 mV RMS) typical of in vivo motor neuron recordings.
         """
+        # Enable the global multipliers (default 0 in the .mod file)
+        h.multex_Gfluctdv = 1
+        h.multin_Gfluctdv = 1
         for d in self.dend:
             d.insert("Gfluctdv")
             # Excitatory fluctuations
@@ -872,7 +875,7 @@ class AlphaMN(_Cell):
         Insert ion channels and set biophysical parameters for motor neuron.
 
         Implements detailed voltage-gated ion channel models based on experimental
-        characterization. Supports both Powers2017 and NERLab parameter sets with
+        characterization. Supports both Powers2017 [powersheckman2017] and NERLab parameter sets with
         different channel implementations and calibrations.
 
         The Powers2017 model includes the complete complement of motor neuron
