@@ -36,8 +36,15 @@ plt.style.use("fivethirtyeight")
 
 save_path = Path("./results")
 
-spike_train__Block: SPIKE_TRAIN__Block = joblib.load(save_path / "trapezoid_dd_spike_trains.pkl")
-excitation__AnalogSignal = joblib.load(save_path / "trapezoid_drive_pattern.pkl")  # drive excitation (0-1)
+# The canonical Example 03 uses Jaxley and writes backend-qualified artifacts so
+# that its output can coexist with the NEURON validation run. Keep the backend
+# explicit here: EMG and excitation must come from the same Example 03 run.
+spike_train__Block: SPIKE_TRAIN__Block = joblib.load(
+    save_path / "trapezoid_dd_spike_trains_jaxley.pkl"
+)
+excitation__AnalogSignal = joblib.load(
+    save_path / "trapezoid_drive_pattern_jaxley.pkl"
+)  # drive excitation (0-1)
 surface_emg: simulator.SurfaceEMG = joblib.load(save_path / "surface_emg.pkl")
 
 ##############################################################################

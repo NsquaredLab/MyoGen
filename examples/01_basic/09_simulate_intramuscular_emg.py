@@ -36,7 +36,7 @@ import quantities as pq
 import seaborn as sns
 
 from myogen import simulator
-from myogen.utils.types import CURRENT__AnalogSignal, SPIKE_TRAIN__Block
+from myogen.utils.types import SPIKE_TRAIN__Block
 
 plt.style.use("fivethirtyeight")
 
@@ -148,13 +148,15 @@ plt.tight_layout()
 plt.show()
 
 ##############################################################################
-# Load Input Currents and Spike Trains
-# -----------------------
+# Load Drive Excitation and Jaxley Spike Trains
+# ----------------------------------------------
 #
 
-spike_train__Block: SPIKE_TRAIN__Block = joblib.load(save_path / "trapezoid_dd_spike_trains.pkl")
-input_current__AnalogSignal: CURRENT__AnalogSignal = joblib.load(
-    save_path / "trapezoid_drive_pattern.pkl"
+spike_train__Block: SPIKE_TRAIN__Block = joblib.load(
+    save_path / "trapezoid_dd_spike_trains_jaxley.pkl"
+)
+excitation__AnalogSignal = joblib.load(
+    save_path / "trapezoid_drive_pattern_jaxley.pkl"
 )
 
 ##############################################################################
@@ -183,32 +185,32 @@ print(f"\tSignal RMS (after noise): {np.sqrt(np.mean(first_noisy_signal.magnitud
 # Visualize Intramuscular EMG Results
 # ----------------------------------
 #
-# Compare the **intramuscular EMG** signal with the input current.
+# Compare the **intramuscular EMG** signal with the descending-drive excitation.
 #
 # !!! note
-#     In this example, only **three motor units** (small, medium, large) contribute
-#     to the EMG signal. This demonstrates how individual MUAPs sum to create the
-#     composite EMG signal, and how different motor unit sizes affect signal amplitude.
+#     The configured subset spans the recruitment range. This demonstrates how
+#     individual MUAPs sum into the composite recording and how motor-unit size
+#     affects signal amplitude.
 
 plt.figure(figsize=(12, 6))
 
 # Get the signals - use first electrode from the Block
 iemg_signal = noisy_emg_signals__Block.segments[0].analogsignals[0][:, 0]
-current_signal = input_current__AnalogSignal[:, 0]  # First current pool
+excitation_signal = excitation__AnalogSignal[:, 0]
 
 # Create time axes
 emg_time = iemg_signal.times.rescale("s").magnitude
-current_time = input_current__AnalogSignal.times.rescale("s").magnitude
+excitation_time = excitation__AnalogSignal.times.rescale("s").magnitude
 
-# Normalize current between 0 and 1
-current_normalized = (
-    (current_signal - np.min(current_signal))
-    / (np.max(current_signal) - np.min(current_signal))
+# Normalize excitation between 0 and 1
+excitation_normalized = (
+    (excitation_signal - np.min(excitation_signal))
+    / (np.max(excitation_signal) - np.min(excitation_signal))
     * np.max(iemg_signal.magnitude)
 )
 
 plt.plot(emg_time, iemg_signal.magnitude, label="Intramuscular EMG", linewidth=1)
-plt.plot(current_time, current_normalized, label="Input Current", linewidth=1)
+plt.plot(excitation_time, excitation_normalized, label="Drive excitation", linewidth=1)
 
 plt.xlabel("Time (s)")
 plt.ylabel("Amplitude (mV)")

@@ -52,9 +52,27 @@ sns.set_palette("husl")
 
 save_path = Path("./results")
 
-# Check which files exist
+# Example 03 keeps the two simulator outputs side by side. Select one
+# deliberately for the detailed analysis below while reporting availability of
+# both. Change this constant to ``"neuron"`` to inspect the reference run.
+SPIKE_BACKEND = "jaxley"
+spike_train_paths = {
+    "jaxley": save_path / "trapezoid_dd_spike_trains_jaxley.pkl",
+    "neuron": save_path / "trapezoid_dd_spike_trains.pkl",
+}
+
+if SPIKE_BACKEND not in spike_train_paths:
+    raise ValueError(f"SPIKE_BACKEND must be one of {tuple(spike_train_paths)}, got {SPIKE_BACKEND!r}")
+
+print("Example 03 spike-train artifacts:")
+for backend, path in spike_train_paths.items():
+    status = "available" if path.exists() else "missing"
+    print(f"  {backend:7s}: {status:9s} ({path.name})")
+
+# Check which files exist. ``spike_trains`` is the explicitly selected backend,
+# so the analysis never silently combines a Jaxley drive with NEURON spikes.
 files_to_check = {
-    "spike_trains": save_path / "trapezoid_dd_spike_trains.pkl",
+    "spike_trains": spike_train_paths[SPIKE_BACKEND],
     "surface_muaps": save_path / "surface_muaps.pkl",
     "surface_emg": save_path / "surface_emg_signals.pkl",
     "intramuscular_muaps": save_path / "intramuscular_muaps.pkl",
@@ -80,6 +98,7 @@ if "spike_trains" in available_files:
     print("\n" + "=" * 70)
     print("EXAMPLE 1: SPIKE_TRAIN__Block")
     print("=" * 70)
+    print(f"Backend: {SPIKE_BACKEND}")
 
     # Load spike train block
     spike_train__Block: SPIKE_TRAIN__Block = joblib.load(available_files["spike_trains"])

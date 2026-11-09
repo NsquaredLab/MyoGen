@@ -30,13 +30,13 @@ classifiers = [
 ]
 dependencies = [
     "beartype>=0.21.0",
+    "jax==0.9.0",
+    "jaxley==0.13.0",
+    "jaxley-mech==0.3.1",
     "joblib>=1.3",
     "psutil>=5.9",
     "threadpoolctl>=3.1",
     "matplotlib>=3.10.1",
-    "neuron==8.2.7 ; sys_platform == 'linux' or sys_platform == 'darwin'",
-    #"neuron-gpu-nightly>=9.0a0",
-    #"neuron-nightly>=9.0a1.dev1492",
     "neo>=0.14.0",
     "numba>=0.61.2",
     "numpy>=1.26",
@@ -58,6 +58,13 @@ nwb = [
     "pynwb>=2.8.0",
     "nwbinspector>=0.5.0",
     "h5py>=3.0",
+]
+# Optional NEURON backend (validation reference). Jaxley is the default backend and
+# requires none of these. Install with:  pip install "myogen[neuron]"
+neuron = [
+    "neuron==8.2.7 ; sys_platform == 'linux' or sys_platform == 'darwin'",
+    "mpi4py>=4.0.3",
+    "impi-rt>=2021.15.0 ; sys_platform == 'win32'",
 ]
 gpu = [
     "cupy-cuda12x>=13.0,<14",
@@ -81,6 +88,11 @@ dev = [
     "poethepoet>=0.37.0",
     "pytest>=8.0",
     "scipy-stubs>=1.16.1.0",
+    # experiments/twin harness, exercised by tests/test_twin_harness.py:
+    # optax drives the inverse-problem descent, pyyaml loads the frozen
+    # acceptance spec. Not runtime deps of myogen itself.
+    "optax>=0.2.4",
+    "pyyaml>=6.0",
 ]
 docs = [
     "properdocs>=1.6.7",

@@ -1,4 +1,7 @@
 ### Python template
+# macOS Finder metadata
+.DS_Store
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
@@ -212,3 +215,26 @@ notes/
 /artifacts/
 /.runtime-deps/
 /graphify-out/
+
+# Local working artifacts kept out of the public history
+docs/session_notes/*
+!docs/session_notes/2026-06-02_jaxley_nerlab_architecture_migration.md
+# Evidence: only the final full runs are versioned; exploratory/intermediate
+# runs stay local (git add -A must not re-add them).
+experiments/twin/evidence/*
+!experiments/twin/evidence/pic_grid_full_20261018_132043.json
+!experiments/twin/evidence/val_comparison_bac411989ee8d42b_20261018_124637.json
+!experiments/twin/evidence/val_comparison_ef1bd7e84b9abd03_20261018_124343.json
+!experiments/twin/evidence/deliverable_b_full_binned_20261018_123116.json
+!experiments/twin/evidence/deliverable_c_full_binned_20261018_131156.json
+!experiments/twin/evidence/g4_descent_full_20261018_180008.json
+!experiments/twin/evidence/g5_basin_full_20261018_191021.json
+!experiments/twin/evidence/r2a_profiles_full_20261018_134617.json
+!experiments/twin/evidence/sensitivity_checks_20261013_112432.json
+!experiments/twin/evidence/gradient_repair_x64_20261018_154132.json
+docs/DIGITAL_TWIN_ROADMAP.md
+debug_*.py
+diag_*.py
+README-old.md
+Figure_1.pdf
+Figure_1_preview.jpg

@@ -1,0 +1,1976 @@
+{
+ "manifest": {
+  "git_revision": "a483b1d",
+  "git_dirty": true,
+  "provenance_note": "experiments/twin sources are untracked by git; reconstruction relies on the file hashes below, not the revision",
+  "source_sha256_16": {
+   "sensitivity_checks.py": "993a2cfdebaeb499",
+   "poolbuild.py": "816d4ba42490e283",
+   "observables.py": "9ab3a99e798e3274",
+   "validation_protocol.py": "983f8bbcafebd67e",
+   "protocols.py": "404ea437741ea2ae"
+  },
+  "versions": {
+   "jax": "0.9.0",
+   "jaxley": "0.13.0",
+   "numpy": "2.3.5"
+  },
+  "device": "cpu",
+  "precision": "float32 (JAX default; x64 not enabled)",
+  "dt_ms": 0.1,
+  "voltage_frame": "NERLab 1952-HH (V_rest\u22480, spike threshold +50 mV)",
+  "seed_taxonomy": {
+   "connectivity": "TwinSpec.seed (numpy default_rng)",
+   "events": "jax.random.PRNGKey (rate path) / numpy default_rng (frozen renewal events)",
+   "fd_probes": "deterministic, no sampling"
+  },
+  "objectives": {
+   "t2": "mean soma voltage, subthreshold deterministic current",
+   "t3_t4": "mean exponentially-smoothed rate (tau 100 ms)",
+   "t5": "MSE of smoothed rates (tau 100 ms) vs frozen-event target"
+  },
+  "scope": "this Jaxley harness configuration only \u2014 NOT a validated NEURON-matched forward model; conclusions are specific to the stated parameter points, objectives, and frozen input realizations",
+  "pic_grid_sha256_16": "d900172c74ba1695",
+  "args": {
+   "seeds": [
+    101,
+    202
+   ],
+   "gcal": [
+    0.0,
+    0.5,
+    1.0,
+    2.0,
+    4.0,
+    6.5,
+    7.5
+   ],
+   "gnap": [
+    1.0,
+    5.0
+   ],
+   "n_mn": 8,
+   "dur_scale": 1.0,
+   "skip_dt_ref": false
+  },
+  "run_tag": "full",
+  "acceptance_spec_version": 1
+ },
+ "dt_refinement_E_numerical_hz2": {
+  "1.0,1.0": 0.7163742780685425,
+  "6.5,5.0": 3.4941518306732178
+ },
+ "points": [
+  {
+   "gcal": 0.0,
+   "gnap": 1.0,
+   "seed": 101,
+   "metrics": {
+    "binned_rate_rmse_hz2": 0.1388888657093048,
+    "active_unit_mismatch": 0,
+    "active_jaxley": 5,
+    "active_neuron": 5,
+    "total_spike_rel_diff": 0.0035971223021582736,
+    "total_jaxley": 277,
+    "total_neuron": 278,
+    "spike_match_pm5ms_fraction": 0.8812949640287769,
+    "spike_total_max": 278,
+    "hysteresis_mean_diff_hz": 0.0039997100830078125,
+    "hysteresis_jaxley": -0.017440414428710936,
+    "hysteresis_neuron": -0.02144012451171875,
+    "self_sustained_mismatch": 0,
+    "self_sustained_jaxley": 0,
+    "self_sustained_neuron": 0,
+    "after_discharge_censored_jaxley": 0,
+    "after_discharge_censored_neuron": 0,
+    "delta_f_mean_diff_hz": 0.08469741024728367,
+    "delta_f_pairs_jaxley": 4,
+    "delta_f_pairs_neuron": 3,
+    "delta_f_eligible_fraction_diff": 0.10000000000000003
+   }
+  },
+  {
+   "gcal": 0.5,
+   "gnap": 1.0,
+   "seed": 101,
+   "metrics": {
+    "binned_rate_rmse_hz2": 0.12426900118589401,
+    "active_unit_mismatch": 0,
+    "active_jaxley": 5,
+    "active_neuron": 5,
+    "total_spike_rel_diff": 0.0,
+    "total_jaxley": 332,
+    "total_neuron": 332,
+    "spike_match_pm5ms_fraction": 0.9036144578313253,
+    "spike_total_max": 332,
+    "hysteresis_mean_diff_hz": 0.005918884277343883,
+    "hysteresis_jaxley": 1.088799285888672,
+    "hysteresis_neuron": 1.082880401611328,
+    "self_sustained_mismatch": 0,
+    "self_sustained_jaxley": 0,
+    "self_sustained_neuron": 0,
+    "after_discharge_censored_jaxley": 0,
+    "after_discharge_censored_neuron": 0,
+    "delta_f_mean_diff_hz": 0.5138551444173961,
+    "delta_f_pairs_jaxley": 3,
+    "delta_f_pairs_neuron": 3,
+    "delta_f_eligible_fraction_diff": 0.0
+   }
+  },
+  {
+   "gcal": 1.0,
+   "gnap": 1.0,
+   "seed": 101,
+   "metrics": {
+    "binned_rate_rmse_hz2": 0.21198827028274536,
+    "active_unit_mismatch": 0,
+    "active_jaxley": 5,
+    "active_neuron": 5,
+    "total_spike_rel_diff": 0.007633587786259542,
+    "total_jaxley": 393,
+    "total_neuron": 390,
+    "spike_match_pm5ms_fraction": 0.811704834605598,
+    "spike_total_max": 393,
+    "hysteresis_mean_diff_hz": 0.05824012756347652,
+    "hysteresis_jaxley": 1.2731197357177735,
+    "hysteresis_neuron": 1.214879608154297,
+    "self_sustained_mismatch": 0,
+    "self_sustained_jaxley": 0,
+    "self_sustained_neuron": 0,
+    "after_discharge_censored_jaxley": 0,
+    "after_discharge_censored_neuron": 0,
+    "delta_f_mean_diff_hz": 0.6766043593993221,
+    "delta_f_pairs_jaxley": 1,
+    "delta_f_pairs_neuron": 1,
+    "delta_f_eligible_fraction_diff": 0.0
+   }
+  },
+  {
+   "gcal": 2.0,
+   "gnap": 1.0,
+   "seed": 101,
+   "metrics": {
+    "binned_rate_rmse_hz2": 0.22660820186138153,
+    "active_unit_mismatch": 0,
+    "active_jaxley": 6,
+    "active_neuron": 6,
+    "total_spike_rel_diff": 0.003838771593090211,
+    "total_jaxley": 521,
+    "total_neuron": 519,
+    "spike_match_pm5ms_fraction": 0.8771593090211133,
+    "spike_total_max": 521,
+    "hysteresis_mean_diff_hz": 0.8108795166015625,
+    "hysteresis_jaxley": -0.11632003784179687,
+    "hysteresis_neuron": 0.6945594787597656,
+    "self_sustained_mismatch": 0,
+    "self_sustained_jaxley": 0,
+    "self_sustained_neuron": 0,
+    "after_discharge_censored_jaxley": 0,
+    "after_discharge_censored_neuron": 0,
+    "delta_f_mean_diff_hz": 0.02082091349852888,
+    "delta_f_pairs_jaxley": 1,
+    "delta_f_pairs_neuron": 1,
+    "delta_f_eligible_fraction_diff": 0.0
+   }
+  },
+  {
+   "gcal": 4.0,
+   "gnap": 1.0,
+   "seed": 101,
+   "metrics": {
+    "binned_rate_rmse_hz2": 0.6140352487564087,
+    "active_unit_mismatch": 0,
+    "active_jaxley": 7,
+    "active_neuron": 7,
+    "total_spike_rel_diff": 0.003386004514672686,
+    "total_jaxley": 886,
+    "total_neuron": 883,
+    "spike_match_pm5ms_fraction": 0.672686230248307,
+    "spike_total_max": 886,
+    "hysteresis_mean_diff_hz": 0.004666487375895145,
+    "hysteresis_jaxley": -0.6574664115905762,
+    "hysteresis_neuron": -0.6621328989664713,
+    "self_sustained_mismatch": 0,
+    "self_sustained_jaxley": 0,
+    "self_sustained_neuron": 0,
+    "after_discharge_censored_jaxley": 0,
+    "after_discharge_censored_neuron": 0,
+    "delta_f_mean_diff_hz": 0.12319141530959099,
+    "delta_f_pairs_jaxley": 5,
+    "delta_f_pairs_neuron": 5,
+    "delta_f_eligible_fraction_diff": 0.0
+   }
+  },
+  {
+   "gcal": 6.5,
+   "gnap": 1.0,
+   "seed": 101,
+   "metrics": {
+    "binned_rate_rmse_hz2": 1.3304095268249512,
+    "active_unit_mismatch": 0,
+    "active_jaxley": 8,
+    "active_neuron": 8,
+    "total_spike_rel_diff": 0.005500550055005501,
+    "total_jaxley": 1818,
+    "total_neuron": 1808,
+    "spike_match_pm5ms_fraction": 0.6798679867986799,
+    "spike_total_max": 1818,
+    "hysteresis_mean_diff_hz": 0.7280998229980469,
+    "hysteresis_jaxley": -1.6875999569892883,
+    "hysteresis_neuron": -0.9595001339912415,
+    "self_sustained_mismatch": 0,
+    "self_sustained_jaxley": 0,
+    "self_sustained_neuron": 0,
+    "after_discharge_censored_jaxley": 0,
+    "after_discharge_censored_neuron": 0,
+    "delta_f_mean_diff_hz": 0.7925554056432866,
+    "delta_f_pairs_jaxley": 5,
+    "delta_f_pairs_neuron": 5,
+    "delta_f_eligible_fraction_diff": 0.0
+   }
+  },
+  {
+   "gcal": 7.5,
+   "gnap": 1.0,
+   "seed": 101,
+   "metrics": {
+    "binned_rate_rmse_hz2": 1.5752921104431152,
+    "active_unit_mismatch": 0,
+    "active_jaxley": 8,
+    "active_neuron": 8,
+    "total_spike_rel_diff": 0.0024793388429752068,
+    "total_jaxley": 2420,
+    "total_neuron": 2414,
+    "spike_match_pm5ms_fraction": 0.6520661157024793,
+    "spike_total_max": 2420,
+    "hysteresis_mean_diff_hz": 0.0447002649307251,
+    "hysteresis_jaxley": -8.121099829673767,
+    "hysteresis_neuron": -8.165800094604492,
+    "self_sustained_mismatch": 0,
+    "self_sustained_jaxley": 6,
+    "self_sustained_neuron": 6,
+    "after_discharge_censored_jaxley": 6,
+    "after_discharge_censored_neuron": 6,
+    "delta_f_mean_diff_hz": 0.027162311025743513,
+    "delta_f_pairs_jaxley": 10,
+    "delta_f_pairs_neuron": 10,
+    "delta_f_eligible_fraction_diff": 0.0
+   }
+  },
+  {
+   "gcal": 0.0,
+   "gnap": 5.0,
+   "seed": 101,
+   "metrics": {
+    "binned_rate_rmse_hz2": 0.6213451027870178,
+    "active_unit_mismatch": 0,
+    "active_jaxley": 6,
+    "active_neuron": 6,
+    "total_spike_rel_diff": 0.0017699115044247787,
+    "total_jaxley": 565,
+    "total_neuron": 564,
+    "spike_match_pm5ms_fraction": 0.5504424778761062,
+    "spike_total_max": 565,
+    "hysteresis_mean_diff_hz": 0.0025600433349609597,
+    "hysteresis_jaxley": -0.1705596923828125,
+    "hysteresis_neuron": -0.17311973571777345,
+    "self_sustained_mismatch": 0,
+    "self_sustained_jaxley": 0,
+    "self_sustained_neuron": 0,
+    "after_discharge_censored_jaxley": 0,
+    "after_discharge_censored_neuron": 0,
+    "delta_f_mean_diff_hz": 0.0038196085961832438,
+    "delta_f_pairs_jaxley": 3,
+    "delta_f_pairs_neuron": 3,
+    "delta_f_eligible_fraction_diff": 0.0
+   }
+  },
+  {
+   "gcal": 0.5,
+   "gnap": 5.0,
+   "seed": 101,
+   "metrics": {
+    "binned_rate_rmse_hz2": 0.5043861269950867,
+    "active_unit_mismatch": 0,
+    "active_jaxley": 6,
+    "active_neuron": 6,
+    "total_spike_rel_diff": 0.003115264797507788,
+    "total_jaxley": 642,
+    "total_neuron": 640,
+    "spike_match_pm5ms_fraction": 0.6900311526479751,
+    "spike_total_max": 642,
+    "hysteresis_mean_diff_hz": 0.003333409627278648,
+    "hysteresis_jaxley": 0.03906663258870443,
+    "hysteresis_neuron": 0.03573322296142578,
+    "self_sustained_mismatch": 0,
+    "self_sustained_jaxley": 0,
+    "self_sustained_neuron": 0,
+    "after_discharge_censored_jaxley": 0,
+    "after_discharge_censored_neuron": 0,
+    "delta_f_mean_diff_hz": null,
+    "delta_f_pairs_jaxley": 0,
+    "delta_f_pairs_neuron": 0,
+    "delta_f_eligible_fraction_diff": 0.0
+   }
+  },
+  {
+   "gcal": 1.0,
+   "gnap": 5.0,
+   "seed": 101,
+   "metrics": {
+    "binned_rate_rmse_hz2": 0.6871345639228821,
+    "active_unit_mismatch": 0,
+    "active_jaxley": 6,
+    "active_neuron": 6,
+    "total_spike_rel_diff": 0.004178272980501393,
+    "total_jaxley": 718,
+    "total_neuron": 715,
+    "spike_match_pm5ms_fraction": 0.6462395543175488,
+    "spike_total_max": 718,
+    "hysteresis_mean_diff_hz": 0.2422655423482259,
+    "hysteresis_jaxley": -0.4611991246541341,
+    "hysteresis_neuron": -0.2189335823059082,
+    "self_sustained_mismatch": 0,
+    "self_sustained_jaxley": 0,
+    "self_sustained_neuron": 0,
+    "after_discharge_censored_jaxley": 0,
+    "after_discharge_censored_neuron": 0,
+    "delta_f_mean_diff_hz": 1.4091694201963283,
+    "delta_f_pairs_jaxley": 5,
+    "delta_f_pairs_neuron": 5,
+    "delta_f_eligible_fraction_diff": 0.0
+   }
+  },
+  {
+   "gcal": 2.0,
+   "gnap": 5.0,
+   "seed": 101,
+   "metrics": {
+    "binned_rate_rmse_hz2": 0.6725149154663086,
+    "active_unit_mismatch": 0,
+    "active_jaxley": 6,
+    "active_neuron": 6,
+    "total_spike_rel_diff": 0.0010976948408342481,
+    "total_jaxley": 911,
+    "total_neuron": 910,
+    "spike_match_pm5ms_fraction": 0.7025246981339188,
+    "spike_total_max": 911,
+    "hysteresis_mean_diff_hz": 0.004533131917317718,
+    "hysteresis_jaxley": -0.14533344904581705,
+    "hysteresis_neuron": -0.14986658096313477,
+    "self_sustained_mismatch": 0,
+    "self_sustained_jaxley": 0,
+    "self_sustained_neuron": 0,
+    "after_discharge_censored_jaxley": 0,
+    "after_discharge_censored_neuron": 0,
+    "delta_f_mean_diff_hz": 0.2067227867245518,
+    "delta_f_pairs_jaxley": 5,
+    "delta_f_pairs_neuron": 5,
+    "delta_f_eligible_fraction_diff": 0.0
+   }
+  },
+  {
+   "gcal": 4.0,
+   "gnap": 5.0,
+   "seed": 101,
+   "metrics": {
+    "binned_rate_rmse_hz2": 1.220760464668274,
+    "active_unit_mismatch": 0,
+    "active_jaxley": 7,
+    "active_neuron": 7,
+    "total_spike_rel_diff": 0.0006779661016949153,
+    "total_jaxley": 1475,
+    "total_neuron": 1474,
+    "spike_match_pm5ms_fraction": 0.6149152542372881,
+    "spike_total_max": 1475,
+    "hysteresis_mean_diff_hz": 0.02114248275756836,
+    "hysteresis_jaxley": -1.0964570045471191,
+    "hysteresis_neuron": -1.0753145217895508,
+    "self_sustained_mismatch": 0,
+    "self_sustained_jaxley": 0,
+    "self_sustained_neuron": 0,
+    "after_discharge_censored_jaxley": 0,
+    "after_discharge_censored_neuron": 0,
+    "delta_f_mean_diff_hz": 0.43095101134947444,
+    "delta_f_pairs_jaxley": 5,
+    "delta_f_pairs_neuron": 5,
+    "delta_f_eligible_fraction_diff": 0.0
+   }
+  },
+  {
+   "gcal": 6.5,
+   "gnap": 5.0,
+   "seed": 101,
+   "metrics": {
+    "binned_rate_rmse_hz2": 2.5255849361419678,
+    "active_unit_mismatch": 0,
+    "active_jaxley": 8,
+    "active_neuron": 8,
+    "total_spike_rel_diff": 0.0010608203677510608,
+    "total_jaxley": 2828,
+    "total_neuron": 2825,
+    "spike_match_pm5ms_fraction": 0.4957567185289958,
+    "spike_total_max": 2828,
+    "hysteresis_mean_diff_hz": 0.02339988946914673,
+    "hysteresis_jaxley": -9.341000080108643,
+    "hysteresis_neuron": -9.36439996957779,
+    "self_sustained_mismatch": 0,
+    "self_sustained_jaxley": 7,
+    "self_sustained_neuron": 7,
+    "after_discharge_censored_jaxley": 7,
+    "after_discharge_censored_neuron": 7,
+    "delta_f_mean_diff_hz": 0.0373507447149084,
+    "delta_f_pairs_jaxley": 5,
+    "delta_f_pairs_neuron": 5,
+    "delta_f_eligible_fraction_diff": 0.0
+   }
+  },
+  {
+   "gcal": 7.5,
+   "gnap": 5.0,
+   "seed": 101,
+   "metrics": {
+    "binned_rate_rmse_hz2": 2.218567132949829,
+    "active_unit_mismatch": 0,
+    "active_jaxley": 8,
+    "active_neuron": 8,
+    "total_spike_rel_diff": 0.00331225534477567,
+    "total_jaxley": 3321,
+    "total_neuron": 3310,
+    "spike_match_pm5ms_fraction": 0.5441132189099669,
+    "spike_total_max": 3321,
+    "hysteresis_mean_diff_hz": 0.02520012855529785,
+    "hysteresis_jaxley": -8.569499880075455,
+    "hysteresis_neuron": -8.594700008630753,
+    "self_sustained_mismatch": 0,
+    "self_sustained_jaxley": 8,
+    "self_sustained_neuron": 8,
+    "after_discharge_censored_jaxley": 8,
+    "after_discharge_censored_neuron": 8,
+    "delta_f_mean_diff_hz": null,
+    "delta_f_pairs_jaxley": 0,
+    "delta_f_pairs_neuron": 0,
+    "delta_f_eligible_fraction_diff": 0.0
+   }
+  },
+  {
+   "gcal": 0.0,
+   "gnap": 1.0,
+   "seed": 202,
+   "metrics": {
+    "binned_rate_rmse_hz2": 0.1461988389492035,
+    "active_unit_mismatch": 0,
+    "active_jaxley": 5,
+    "active_neuron": 5,
+    "total_spike_rel_diff": 0.006514657980456026,
+    "total_jaxley": 307,
+    "total_neuron": 305,
+    "spike_match_pm5ms_fraction": 0.8859934853420195,
+    "spike_total_max": 307,
+    "hysteresis_mean_diff_hz": 0.3177619934082032,
+    "hysteresis_jaxley": -1.8292808532714844,
+    "hysteresis_neuron": -1.5115188598632812,
+    "self_sustained_mismatch": 0,
+    "self_sustained_jaxley": 0,
+    "self_sustained_neuron": 0,
+    "after_discharge_censored_jaxley": 0,
+    "after_discharge_censored_neuron": 0,
+    "delta_f_mean_diff_hz": 0.9142920941796274,
+    "delta_f_pairs_jaxley": 5,
+    "delta_f_pairs_neuron": 5,
+    "delta_f_eligible_fraction_diff": 0.0
+   }
+  },
+  {
+   "gcal": 0.5,
+   "gnap": 1.0,
+   "seed": 202,
+   "metrics": {
+    "binned_rate_rmse_hz2": 0.11695905774831772,
+    "active_unit_mismatch": 0,
+    "active_jaxley": 5,
+    "active_neuron": 5,
+    "total_spike_rel_diff": 0.0027397260273972603,
+    "total_jaxley": 364,
+    "total_neuron": 365,
+    "spike_match_pm5ms_fraction": 0.8986301369863013,
+    "spike_total_max": 365,
+    "hysteresis_mean_diff_hz": 0.005120468139648449,
+    "hysteresis_jaxley": -0.16527976989746093,
+    "hysteresis_neuron": -0.17040023803710938,
+    "self_sustained_mismatch": 0,
+    "self_sustained_jaxley": 0,
+    "self_sustained_neuron": 0,
+    "after_discharge_censored_jaxley": 0,
+    "after_discharge_censored_neuron": 0,
+    "delta_f_mean_diff_hz": 0.12301673129022733,
+    "delta_f_pairs_jaxley": 4,
+    "delta_f_pairs_neuron": 4,
+    "delta_f_eligible_fraction_diff": 0.0
+   }
+  },
+  {
+   "gcal": 1.0,
+   "gnap": 1.0,
+   "seed": 202,
+   "metrics": {
+    "binned_rate_rmse_hz2": 0.30701756477355957,
+    "active_unit_mismatch": 0,
+    "active_jaxley": 5,
+    "active_neuron": 5,
+    "total_spike_rel_diff": 0.004819277108433735,
+    "total_jaxley": 415,
+    "total_neuron": 413,
+    "spike_match_pm5ms_fraction": 0.7325301204819277,
+    "spike_total_max": 415,
+    "hysteresis_mean_diff_hz": 0.00304145812988299,
+    "hysteresis_jaxley": 1.720321273803711,
+    "hysteresis_neuron": 1.717279815673828,
+    "self_sustained_mismatch": 0,
+    "self_sustained_jaxley": 0,
+    "self_sustained_neuron": 0,
+    "after_discharge_censored_jaxley": 0,
+    "after_discharge_censored_neuron": 0,
+    "delta_f_mean_diff_hz": 0.09676233111716526,
+    "delta_f_pairs_jaxley": 4,
+    "delta_f_pairs_neuron": 4,
+    "delta_f_eligible_fraction_diff": 0.0
+   }
+  },
+  {
+   "gcal": 2.0,
+   "gnap": 1.0,
+   "seed": 202,
+   "metrics": {
+    "binned_rate_rmse_hz2": 0.3143276274204254,
+    "active_unit_mismatch": 0,
+    "active_jaxley": 6,
+    "active_neuron": 6,
+    "total_spike_rel_diff": 0.003484320557491289,
+    "total_jaxley": 574,
+    "total_neuron": 572,
+    "spike_match_pm5ms_fraction": 0.7770034843205574,
+    "spike_total_max": 574,
+    "hysteresis_mean_diff_hz": 0.08386643727620442,
+    "hysteresis_jaxley": -0.08626683553059895,
+    "hysteresis_neuron": -0.17013327280680338,
+    "self_sustained_mismatch": 0,
+    "self_sustained_jaxley": 0,
+    "self_sustained_neuron": 0,
+    "after_discharge_censored_jaxley": 0,
+    "after_discharge_censored_neuron": 0,
+    "delta_f_mean_diff_hz": 0.37859854069758014,
+    "delta_f_pairs_jaxley": 7,
+    "delta_f_pairs_neuron": 7,
+    "delta_f_eligible_fraction_diff": 0.0
+   }
+  },
+  {
+   "gcal": 4.0,
+   "gnap": 1.0,
+   "seed": 202,
+   "metrics": {
+    "binned_rate_rmse_hz2": 0.7236843705177307,
+    "active_unit_mismatch": 0,
+    "active_jaxley": 7,
+    "active_neuron": 7,
+    "total_spike_rel_diff": 0.006269592476489028,
+    "total_jaxley": 957,
+    "total_neuron": 951,
+    "spike_match_pm5ms_fraction": 0.7053291536050157,
+    "spike_total_max": 957,
+    "hysteresis_mean_diff_hz": 0.7953335444132487,
+    "hysteresis_jaxley": 1.3536003430684407,
+    "hysteresis_neuron": 0.558266798655192,
+    "self_sustained_mismatch": 0,
+    "self_sustained_jaxley": 0,
+    "self_sustained_neuron": 0,
+    "after_discharge_censored_jaxley": 0,
+    "after_discharge_censored_neuron": 0,
+    "delta_f_mean_diff_hz": 0.6240903616525737,
+    "delta_f_pairs_jaxley": 4,
+    "delta_f_pairs_neuron": 5,
+    "delta_f_eligible_fraction_diff": 0.047619047619047616
+   }
+  },
+  {
+   "gcal": 6.5,
+   "gnap": 1.0,
+   "seed": 202,
+   "metrics": {
+    "binned_rate_rmse_hz2": 1.030701756477356,
+    "active_unit_mismatch": 0,
+    "active_jaxley": 8,
+    "active_neuron": 8,
+    "total_spike_rel_diff": 0.00531632110579479,
+    "total_jaxley": 1881,
+    "total_neuron": 1871,
+    "spike_match_pm5ms_fraction": 0.7086656034024456,
+    "spike_total_max": 1881,
+    "hysteresis_mean_diff_hz": 0.2829001545906067,
+    "hysteresis_jaxley": -1.3730002343654633,
+    "hysteresis_neuron": -1.0901000797748566,
+    "self_sustained_mismatch": 0,
+    "self_sustained_jaxley": 0,
+    "self_sustained_neuron": 0,
+    "after_discharge_censored_jaxley": 0,
+    "after_discharge_censored_neuron": 0,
+    "delta_f_mean_diff_hz": 0.1705009000027673,
+    "delta_f_pairs_jaxley": 9,
+    "delta_f_pairs_neuron": 9,
+    "delta_f_eligible_fraction_diff": 0.0
+   }
+  },
+  {
+   "gcal": 7.5,
+   "gnap": 1.0,
+   "seed": 202,
+   "metrics": {
+    "binned_rate_rmse_hz2": 1.5679821968078613,
+    "active_unit_mismatch": 0,
+    "active_jaxley": 8,
+    "active_neuron": 8,
+    "total_spike_rel_diff": 0.004042037186742118,
+    "total_jaxley": 2474,
+    "total_neuron": 2464,
+    "spike_match_pm5ms_fraction": 0.6632983023443816,
+    "spike_total_max": 2474,
+    "hysteresis_mean_diff_hz": 0.15490001440048218,
+    "hysteresis_jaxley": -8.246499955654144,
+    "hysteresis_neuron": -8.091599941253662,
+    "self_sustained_mismatch": 0,
+    "self_sustained_jaxley": 6,
+    "self_sustained_neuron": 6,
+    "after_discharge_censored_jaxley": 6,
+    "after_discharge_censored_neuron": 6,
+    "delta_f_mean_diff_hz": 0.2873229557701684,
+    "delta_f_pairs_jaxley": 9,
+    "delta_f_pairs_neuron": 9,
+    "delta_f_eligible_fraction_diff": 0.0
+   }
+  },
+  {
+   "gcal": 0.0,
+   "gnap": 5.0,
+   "seed": 202,
+   "metrics": {
+    "binned_rate_rmse_hz2": 0.453216552734375,
+    "active_unit_mismatch": 0,
+    "active_jaxley": 6,
+    "active_neuron": 6,
+    "total_spike_rel_diff": 0.003246753246753247,
+    "total_jaxley": 616,
+    "total_neuron": 614,
+    "spike_match_pm5ms_fraction": 0.6444805194805194,
+    "spike_total_max": 616,
+    "hysteresis_mean_diff_hz": 0.005598704020182282,
+    "hysteresis_jaxley": 0.24066607157389322,
+    "hysteresis_neuron": 0.23506736755371094,
+    "self_sustained_mismatch": 0,
+    "self_sustained_jaxley": 0,
+    "self_sustained_neuron": 0,
+    "after_discharge_censored_jaxley": 0,
+    "after_discharge_censored_neuron": 0,
+    "delta_f_mean_diff_hz": 0.03285833267333382,
+    "delta_f_pairs_jaxley": 8,
+    "delta_f_pairs_neuron": 7,
+    "delta_f_eligible_fraction_diff": 0.06666666666666665
+   }
+  },
+  {
+   "gcal": 0.5,
+   "gnap": 5.0,
+   "seed": 202,
+   "metrics": {
+    "binned_rate_rmse_hz2": 0.48976612091064453,
+    "active_unit_mismatch": 0,
+    "active_jaxley": 6,
+    "active_neuron": 6,
+    "total_spike_rel_diff": 0.004285714285714286,
+    "total_jaxley": 700,
+    "total_neuron": 697,
+    "spike_match_pm5ms_fraction": 0.75,
+    "spike_total_max": 700,
+    "hysteresis_mean_diff_hz": 0.01360066731770837,
+    "hysteresis_jaxley": -0.7858667373657227,
+    "hysteresis_neuron": -0.799467404683431,
+    "self_sustained_mismatch": 0,
+    "self_sustained_jaxley": 0,
+    "self_sustained_neuron": 0,
+    "after_discharge_censored_jaxley": 0,
+    "after_discharge_censored_neuron": 0,
+    "delta_f_mean_diff_hz": 0.3268232694870956,
+    "delta_f_pairs_jaxley": 8,
+    "delta_f_pairs_neuron": 8,
+    "delta_f_eligible_fraction_diff": 0.0
+   }
+  },
+  {
+   "gcal": 1.0,
+   "gnap": 5.0,
+   "seed": 202,
+   "metrics": {
+    "binned_rate_rmse_hz2": 0.42397674918174744,
+    "active_unit_mismatch": 0,
+    "active_jaxley": 6,
+    "active_neuron": 6,
+    "total_spike_rel_diff": 0.0012755102040816326,
+    "total_jaxley": 784,
+    "total_neuron": 783,
+    "spike_match_pm5ms_fraction": 0.7627551020408163,
+    "spike_total_max": 784,
+    "hysteresis_mean_diff_hz": 0.1857334772745769,
+    "hysteresis_jaxley": -1.2122669219970703,
+    "hysteresis_neuron": -1.3980003992716472,
+    "self_sustained_mismatch": 0,
+    "self_sustained_jaxley": 0,
+    "self_sustained_neuron": 0,
+    "after_discharge_censored_jaxley": 0,
+    "after_discharge_censored_neuron": 0,
+    "delta_f_mean_diff_hz": 0.0897759652728638,
+    "delta_f_pairs_jaxley": 6,
+    "delta_f_pairs_neuron": 6,
+    "delta_f_eligible_fraction_diff": 0.0
+   }
+  },
+  {
+   "gcal": 2.0,
+   "gnap": 5.0,
+   "seed": 202,
+   "metrics": {
+    "binned_rate_rmse_hz2": 0.8333335518836975,
+    "active_unit_mismatch": 0,
+    "active_jaxley": 6,
+    "active_neuron": 6,
+    "total_spike_rel_diff": 0.0050968399592252805,
+    "total_jaxley": 981,
+    "total_neuron": 976,
+    "spike_match_pm5ms_fraction": 0.6432212028542303,
+    "spike_total_max": 981,
+    "hysteresis_mean_diff_hz": 0.1349333127339681,
+    "hysteresis_jaxley": -0.054800192515055336,
+    "hysteresis_neuron": 0.08013312021891277,
+    "self_sustained_mismatch": 0,
+    "self_sustained_jaxley": 0,
+    "self_sustained_neuron": 0,
+    "after_discharge_censored_jaxley": 0,
+    "after_discharge_censored_neuron": 0,
+    "delta_f_mean_diff_hz": 0.14791117551575783,
+    "delta_f_pairs_jaxley": 6,
+    "delta_f_pairs_neuron": 5,
+    "delta_f_eligible_fraction_diff": 0.06666666666666671
+   }
+  },
+  {
+   "gcal": 4.0,
+   "gnap": 5.0,
+   "seed": 202,
+   "metrics": {
+    "binned_rate_rmse_hz2": 1.030701756477356,
+    "active_unit_mismatch": 0,
+    "active_jaxley": 7,
+    "active_neuron": 7,
+    "total_spike_rel_diff": 0.004560260586319218,
+    "total_jaxley": 1535,
+    "total_neuron": 1528,
+    "spike_match_pm5ms_fraction": 0.6579804560260586,
+    "spike_total_max": 1535,
+    "hysteresis_mean_diff_hz": 0.4800000871930804,
+    "hysteresis_jaxley": -0.9265142168317523,
+    "hysteresis_neuron": -1.4065143040248327,
+    "self_sustained_mismatch": 0,
+    "self_sustained_jaxley": 0,
+    "self_sustained_neuron": 0,
+    "after_discharge_censored_jaxley": 0,
+    "after_discharge_censored_neuron": 0,
+    "delta_f_mean_diff_hz": 1.4659453215687712,
+    "delta_f_pairs_jaxley": 5,
+    "delta_f_pairs_neuron": 5,
+    "delta_f_eligible_fraction_diff": 0.0
+   }
+  },
+  {
+   "gcal": 6.5,
+   "gnap": 5.0,
+   "seed": 202,
+   "metrics": {
+    "binned_rate_rmse_hz2": 1.7105265855789185,
+    "active_unit_mismatch": 0,
+    "active_jaxley": 8,
+    "active_neuron": 8,
+    "total_spike_rel_diff": 0.001392757660167131,
+    "total_jaxley": 2872,
+    "total_neuron": 2868,
+    "spike_match_pm5ms_fraction": 0.6754874651810585,
+    "spike_total_max": 2872,
+    "hysteresis_mean_diff_hz": 0.02610000967979431,
+    "hysteresis_jaxley": -9.319500029087067,
+    "hysteresis_neuron": -9.345600038766861,
+    "self_sustained_mismatch": 0,
+    "self_sustained_jaxley": 7,
+    "self_sustained_neuron": 7,
+    "after_discharge_censored_jaxley": 7,
+    "after_discharge_censored_neuron": 7,
+    "delta_f_mean_diff_hz": 0.11586776351567529,
+    "delta_f_pairs_jaxley": 5,
+    "delta_f_pairs_neuron": 5,
+    "delta_f_eligible_fraction_diff": 0.0
+   }
+  },
+  {
+   "gcal": 7.5,
+   "gnap": 5.0,
+   "seed": 202,
+   "metrics": {
+    "binned_rate_rmse_hz2": 2.0138893127441406,
+    "active_unit_mismatch": 0,
+    "active_jaxley": 8,
+    "active_neuron": 8,
+    "total_spike_rel_diff": 0.0017878426698450535,
+    "total_jaxley": 3356,
+    "total_neuron": 3350,
+    "spike_match_pm5ms_fraction": 0.5390345649582837,
+    "spike_total_max": 3356,
+    "hysteresis_mean_diff_hz": 0.014499843120574951,
+    "hysteresis_jaxley": -8.504999965429306,
+    "hysteresis_neuron": -8.519499808549881,
+    "self_sustained_mismatch": 0,
+    "self_sustained_jaxley": 8,
+    "self_sustained_neuron": 8,
+    "after_discharge_censored_jaxley": 8,
+    "after_discharge_censored_neuron": 8,
+    "delta_f_mean_diff_hz": null,
+    "delta_f_pairs_jaxley": 0,
+    "delta_f_pairs_neuron": 0,
+    "delta_f_eligible_fraction_diff": 0.0
+   }
+  }
+ ],
+ "acceptance": {
+  "spec_version": 1,
+  "n_points": 28,
+  "n_evaluated_metric_cells": 221,
+  "n_failed_metric_cells": 5,
+  "fail_fraction": 0.02262443438914027,
+  "failure_policy_ok": true,
+  "bistability_boundary": {
+   "1.0": {
+    "jaxley_first_bistable_gcal": 7.5,
+    "neuron_first_bistable_gcal": 7.5,
+    "offset_steps": 0,
+    "class": "PASS"
+   },
+   "5.0": {
+    "jaxley_first_bistable_gcal": 6.5,
+    "neuron_first_bistable_gcal": 6.5,
+    "offset_steps": 0,
+    "class": "PASS"
+   }
+  },
+  "validated_envelope_gcal_by_gnap": {
+   "1.0": [
+    0.0,
+    7.5
+   ],
+   "5.0": [
+    0.5,
+    4.0
+   ]
+  }
+ },
+ "acceptance_points": [
+  {
+   "gcal": 0.0,
+   "gnap": 1.0,
+   "seed": 101,
+   "verdicts": {
+    "binned_rate_rmse_hz2": {
+     "class": "PASS",
+     "value": 0.1388888657093048
+    },
+    "active_unit_mismatch": {
+     "class": "PASS",
+     "value": 0
+    },
+    "total_spike_rel_diff": {
+     "class": "PASS",
+     "value": 0.0035971223021582736
+    },
+    "spike_match_pm5ms_fraction_min": {
+     "class": "PASS",
+     "value": 0.8812949640287769
+    },
+    "hysteresis_mean_diff_hz": {
+     "class": "PASS",
+     "value": 0.0039997100830078125
+    },
+    "self_sustained_mismatch": {
+     "class": "PASS",
+     "value": 0
+    },
+    "delta_f_mean_diff_hz": {
+     "class": "PASS",
+     "value": 0.08469741024728367
+    },
+    "delta_f_eligible_fraction_diff": {
+     "class": "PASS",
+     "value": 0.10000000000000003
+    }
+   }
+  },
+  {
+   "gcal": 0.5,
+   "gnap": 1.0,
+   "seed": 101,
+   "verdicts": {
+    "binned_rate_rmse_hz2": {
+     "class": "PASS",
+     "value": 0.12426900118589401
+    },
+    "active_unit_mismatch": {
+     "class": "PASS",
+     "value": 0
+    },
+    "total_spike_rel_diff": {
+     "class": "PASS",
+     "value": 0.0
+    },
+    "spike_match_pm5ms_fraction_min": {
+     "class": "PASS",
+     "value": 0.9036144578313253
+    },
+    "hysteresis_mean_diff_hz": {
+     "class": "PASS",
+     "value": 0.005918884277343883
+    },
+    "self_sustained_mismatch": {
+     "class": "PASS",
+     "value": 0
+    },
+    "delta_f_mean_diff_hz": {
+     "class": "PASS",
+     "value": 0.5138551444173961
+    },
+    "delta_f_eligible_fraction_diff": {
+     "class": "PASS",
+     "value": 0.0
+    }
+   }
+  },
+  {
+   "gcal": 1.0,
+   "gnap": 1.0,
+   "seed": 101,
+   "verdicts": {
+    "binned_rate_rmse_hz2": {
+     "class": "PASS",
+     "value": 0.21198827028274536
+    },
+    "active_unit_mismatch": {
+     "class": "PASS",
+     "value": 0
+    },
+    "total_spike_rel_diff": {
+     "class": "PASS",
+     "value": 0.007633587786259542
+    },
+    "spike_match_pm5ms_fraction_min": {
+     "class": "PASS",
+     "value": 0.811704834605598
+    },
+    "hysteresis_mean_diff_hz": {
+     "class": "PASS",
+     "value": 0.05824012756347652
+    },
+    "self_sustained_mismatch": {
+     "class": "PASS",
+     "value": 0
+    },
+    "delta_f_mean_diff_hz": {
+     "class": "NOT_EVALUABLE",
+     "value": 0.6766043593993221
+    },
+    "delta_f_eligible_fraction_diff": {
+     "class": "PASS",
+     "value": 0.0
+    }
+   }
+  },
+  {
+   "gcal": 2.0,
+   "gnap": 1.0,
+   "seed": 101,
+   "verdicts": {
+    "binned_rate_rmse_hz2": {
+     "class": "PASS",
+     "value": 0.22660820186138153
+    },
+    "active_unit_mismatch": {
+     "class": "PASS",
+     "value": 0
+    },
+    "total_spike_rel_diff": {
+     "class": "PASS",
+     "value": 0.003838771593090211
+    },
+    "spike_match_pm5ms_fraction_min": {
+     "class": "PASS",
+     "value": 0.8771593090211133
+    },
+    "hysteresis_mean_diff_hz": {
+     "class": "PASS",
+     "value": 0.8108795166015625
+    },
+    "self_sustained_mismatch": {
+     "class": "PASS",
+     "value": 0
+    },
+    "delta_f_mean_diff_hz": {
+     "class": "NOT_EVALUABLE",
+     "value": 0.02082091349852888
+    },
+    "delta_f_eligible_fraction_diff": {
+     "class": "PASS",
+     "value": 0.0
+    }
+   }
+  },
+  {
+   "gcal": 4.0,
+   "gnap": 1.0,
+   "seed": 101,
+   "verdicts": {
+    "binned_rate_rmse_hz2": {
+     "class": "PASS",
+     "value": 0.6140352487564087
+    },
+    "active_unit_mismatch": {
+     "class": "PASS",
+     "value": 0
+    },
+    "total_spike_rel_diff": {
+     "class": "PASS",
+     "value": 0.003386004514672686
+    },
+    "spike_match_pm5ms_fraction_min": {
+     "class": "PASS",
+     "value": 0.672686230248307
+    },
+    "hysteresis_mean_diff_hz": {
+     "class": "PASS",
+     "value": 0.004666487375895145
+    },
+    "self_sustained_mismatch": {
+     "class": "PASS",
+     "value": 0
+    },
+    "delta_f_mean_diff_hz": {
+     "class": "PASS",
+     "value": 0.12319141530959099
+    },
+    "delta_f_eligible_fraction_diff": {
+     "class": "PASS",
+     "value": 0.0
+    }
+   }
+  },
+  {
+   "gcal": 6.5,
+   "gnap": 1.0,
+   "seed": 101,
+   "verdicts": {
+    "binned_rate_rmse_hz2": {
+     "class": "PASS",
+     "value": 1.3304095268249512
+    },
+    "active_unit_mismatch": {
+     "class": "PASS",
+     "value": 0
+    },
+    "total_spike_rel_diff": {
+     "class": "PASS",
+     "value": 0.005500550055005501
+    },
+    "spike_match_pm5ms_fraction_min": {
+     "class": "PASS",
+     "value": 0.6798679867986799
+    },
+    "hysteresis_mean_diff_hz": {
+     "class": "PASS",
+     "value": 0.7280998229980469
+    },
+    "self_sustained_mismatch": {
+     "class": "PASS",
+     "value": 0
+    },
+    "delta_f_mean_diff_hz": {
+     "class": "PASS",
+     "value": 0.7925554056432866
+    },
+    "delta_f_eligible_fraction_diff": {
+     "class": "PASS",
+     "value": 0.0
+    }
+   }
+  },
+  {
+   "gcal": 7.5,
+   "gnap": 1.0,
+   "seed": 101,
+   "verdicts": {
+    "binned_rate_rmse_hz2": {
+     "class": "PASS",
+     "value": 1.5752921104431152
+    },
+    "active_unit_mismatch": {
+     "class": "PASS",
+     "value": 0
+    },
+    "total_spike_rel_diff": {
+     "class": "PASS",
+     "value": 0.0024793388429752068
+    },
+    "spike_match_pm5ms_fraction_min": {
+     "class": "PASS",
+     "value": 0.6520661157024793
+    },
+    "hysteresis_mean_diff_hz": {
+     "class": "PASS",
+     "value": 0.0447002649307251
+    },
+    "self_sustained_mismatch": {
+     "class": "PASS",
+     "value": 0
+    },
+    "delta_f_mean_diff_hz": {
+     "class": "PASS",
+     "value": 0.027162311025743513
+    },
+    "delta_f_eligible_fraction_diff": {
+     "class": "PASS",
+     "value": 0.0
+    }
+   }
+  },
+  {
+   "gcal": 0.0,
+   "gnap": 5.0,
+   "seed": 101,
+   "verdicts": {
+    "binned_rate_rmse_hz2": {
+     "class": "PASS",
+     "value": 0.6213451027870178
+    },
+    "active_unit_mismatch": {
+     "class": "PASS",
+     "value": 0
+    },
+    "total_spike_rel_diff": {
+     "class": "PASS",
+     "value": 0.0017699115044247787
+    },
+    "spike_match_pm5ms_fraction_min": {
+     "class": "FAIL",
+     "value": 0.5504424778761062
+    },
+    "hysteresis_mean_diff_hz": {
+     "class": "PASS",
+     "value": 0.0025600433349609597
+    },
+    "self_sustained_mismatch": {
+     "class": "PASS",
+     "value": 0
+    },
+    "delta_f_mean_diff_hz": {
+     "class": "PASS",
+     "value": 0.0038196085961832438
+    },
+    "delta_f_eligible_fraction_diff": {
+     "class": "PASS",
+     "value": 0.0
+    }
+   }
+  },
+  {
+   "gcal": 0.5,
+   "gnap": 5.0,
+   "seed": 101,
+   "verdicts": {
+    "binned_rate_rmse_hz2": {
+     "class": "PASS",
+     "value": 0.5043861269950867
+    },
+    "active_unit_mismatch": {
+     "class": "PASS",
+     "value": 0
+    },
+    "total_spike_rel_diff": {
+     "class": "PASS",
+     "value": 0.003115264797507788
+    },
+    "spike_match_pm5ms_fraction_min": {
+     "class": "PASS",
+     "value": 0.6900311526479751
+    },
+    "hysteresis_mean_diff_hz": {
+     "class": "PASS",
+     "value": 0.003333409627278648
+    },
+    "self_sustained_mismatch": {
+     "class": "PASS",
+     "value": 0
+    },
+    "delta_f_mean_diff_hz": {
+     "class": "NOT_EVALUABLE",
+     "value": null
+    },
+    "delta_f_eligible_fraction_diff": {
+     "class": "PASS",
+     "value": 0.0
+    }
+   }
+  },
+  {
+   "gcal": 1.0,
+   "gnap": 5.0,
+   "seed": 101,
+   "verdicts": {
+    "binned_rate_rmse_hz2": {
+     "class": "PASS",
+     "value": 0.6871345639228821
+    },
+    "active_unit_mismatch": {
+     "class": "PASS",
+     "value": 0
+    },
+    "total_spike_rel_diff": {
+     "class": "PASS",
+     "value": 0.004178272980501393
+    },
+    "spike_match_pm5ms_fraction_min": {
+     "class": "PASS",
+     "value": 0.6462395543175488
+    },
+    "hysteresis_mean_diff_hz": {
+     "class": "PASS",
+     "value": 0.2422655423482259
+    },
+    "self_sustained_mismatch": {
+     "class": "PASS",
+     "value": 0
+    },
+    "delta_f_mean_diff_hz": {
+     "class": "PASS",
+     "value": 1.4091694201963283
+    },
+    "delta_f_eligible_fraction_diff": {
+     "class": "PASS",
+     "value": 0.0
+    }
+   }
+  },
+  {
+   "gcal": 2.0,
+   "gnap": 5.0,
+   "seed": 101,
+   "verdicts": {
+    "binned_rate_rmse_hz2": {
+     "class": "PASS",
+     "value": 0.6725149154663086
+    },
+    "active_unit_mismatch": {
+     "class": "PASS",
+     "value": 0
+    },
+    "total_spike_rel_diff": {
+     "class": "PASS",
+     "value": 0.0010976948408342481
+    },
+    "spike_match_pm5ms_fraction_min": {
+     "class": "PASS",
+     "value": 0.7025246981339188
+    },
+    "hysteresis_mean_diff_hz": {
+     "class": "PASS",
+     "value": 0.004533131917317718
+    },
+    "self_sustained_mismatch": {
+     "class": "PASS",
+     "value": 0
+    },
+    "delta_f_mean_diff_hz": {
+     "class": "PASS",
+     "value": 0.2067227867245518
+    },
+    "delta_f_eligible_fraction_diff": {
+     "class": "PASS",
+     "value": 0.0
+    }
+   }
+  },
+  {
+   "gcal": 4.0,
+   "gnap": 5.0,
+   "seed": 101,
+   "verdicts": {
+    "binned_rate_rmse_hz2": {
+     "class": "PASS",
+     "value": 1.220760464668274
+    },
+    "active_unit_mismatch": {
+     "class": "PASS",
+     "value": 0
+    },
+    "total_spike_rel_diff": {
+     "class": "PASS",
+     "value": 0.0006779661016949153
+    },
+    "spike_match_pm5ms_fraction_min": {
+     "class": "PASS",
+     "value": 0.6149152542372881
+    },
+    "hysteresis_mean_diff_hz": {
+     "class": "PASS",
+     "value": 0.02114248275756836
+    },
+    "self_sustained_mismatch": {
+     "class": "PASS",
+     "value": 0
+    },
+    "delta_f_mean_diff_hz": {
+     "class": "PASS",
+     "value": 0.43095101134947444
+    },
+    "delta_f_eligible_fraction_diff": {
+     "class": "PASS",
+     "value": 0.0
+    }
+   }
+  },
+  {
+   "gcal": 6.5,
+   "gnap": 5.0,
+   "seed": 101,
+   "verdicts": {
+    "binned_rate_rmse_hz2": {
+     "class": "FAIL",
+     "value": 2.5255849361419678
+    },
+    "active_unit_mismatch": {
+     "class": "PASS",
+     "value": 0
+    },
+    "total_spike_rel_diff": {
+     "class": "PASS",
+     "value": 0.0010608203677510608
+    },
+    "spike_match_pm5ms_fraction_min": {
+     "class": "FAIL",
+     "value": 0.4957567185289958
+    },
+    "hysteresis_mean_diff_hz": {
+     "class": "PASS",
+     "value": 0.02339988946914673
+    },
+    "self_sustained_mismatch": {
+     "class": "PASS",
+     "value": 0
+    },
+    "delta_f_mean_diff_hz": {
+     "class": "PASS",
+     "value": 0.0373507447149084
+    },
+    "delta_f_eligible_fraction_diff": {
+     "class": "PASS",
+     "value": 0.0
+    }
+   }
+  },
+  {
+   "gcal": 7.5,
+   "gnap": 5.0,
+   "seed": 101,
+   "verdicts": {
+    "binned_rate_rmse_hz2": {
+     "class": "PASS",
+     "value": 2.218567132949829
+    },
+    "active_unit_mismatch": {
+     "class": "PASS",
+     "value": 0
+    },
+    "total_spike_rel_diff": {
+     "class": "PASS",
+     "value": 0.00331225534477567
+    },
+    "spike_match_pm5ms_fraction_min": {
+     "class": "FAIL",
+     "value": 0.5441132189099669
+    },
+    "hysteresis_mean_diff_hz": {
+     "class": "PASS",
+     "value": 0.02520012855529785
+    },
+    "self_sustained_mismatch": {
+     "class": "PASS",
+     "value": 0
+    },
+    "delta_f_mean_diff_hz": {
+     "class": "NOT_EVALUABLE",
+     "value": null
+    },
+    "delta_f_eligible_fraction_diff": {
+     "class": "PASS",
+     "value": 0.0
+    }
+   }
+  },
+  {
+   "gcal": 0.0,
+   "gnap": 1.0,
+   "seed": 202,
+   "verdicts": {
+    "binned_rate_rmse_hz2": {
+     "class": "PASS",
+     "value": 0.1461988389492035
+    },
+    "active_unit_mismatch": {
+     "class": "PASS",
+     "value": 0
+    },
+    "total_spike_rel_diff": {
+     "class": "PASS",
+     "value": 0.006514657980456026
+    },
+    "spike_match_pm5ms_fraction_min": {
+     "class": "PASS",
+     "value": 0.8859934853420195
+    },
+    "hysteresis_mean_diff_hz": {
+     "class": "PASS",
+     "value": 0.3177619934082032
+    },
+    "self_sustained_mismatch": {
+     "class": "PASS",
+     "value": 0
+    },
+    "delta_f_mean_diff_hz": {
+     "class": "PASS",
+     "value": 0.9142920941796274
+    },
+    "delta_f_eligible_fraction_diff": {
+     "class": "PASS",
+     "value": 0.0
+    }
+   }
+  },
+  {
+   "gcal": 0.5,
+   "gnap": 1.0,
+   "seed": 202,
+   "verdicts": {
+    "binned_rate_rmse_hz2": {
+     "class": "PASS",
+     "value": 0.11695905774831772
+    },
+    "active_unit_mismatch": {
+     "class": "PASS",
+     "value": 0
+    },
+    "total_spike_rel_diff": {
+     "class": "PASS",
+     "value": 0.0027397260273972603
+    },
+    "spike_match_pm5ms_fraction_min": {
+     "class": "PASS",
+     "value": 0.8986301369863013
+    },
+    "hysteresis_mean_diff_hz": {
+     "class": "PASS",
+     "value": 0.005120468139648449
+    },
+    "self_sustained_mismatch": {
+     "class": "PASS",
+     "value": 0
+    },
+    "delta_f_mean_diff_hz": {
+     "class": "PASS",
+     "value": 0.12301673129022733
+    },
+    "delta_f_eligible_fraction_diff": {
+     "class": "PASS",
+     "value": 0.0
+    }
+   }
+  },
+  {
+   "gcal": 1.0,
+   "gnap": 1.0,
+   "seed": 202,
+   "verdicts": {
+    "binned_rate_rmse_hz2": {
+     "class": "PASS",
+     "value": 0.30701756477355957
+    },
+    "active_unit_mismatch": {
+     "class": "PASS",
+     "value": 0
+    },
+    "total_spike_rel_diff": {
+     "class": "PASS",
+     "value": 0.004819277108433735
+    },
+    "spike_match_pm5ms_fraction_min": {
+     "class": "PASS",
+     "value": 0.7325301204819277
+    },
+    "hysteresis_mean_diff_hz": {
+     "class": "PASS",
+     "value": 0.00304145812988299
+    },
+    "self_sustained_mismatch": {
+     "class": "PASS",
+     "value": 0
+    },
+    "delta_f_mean_diff_hz": {
+     "class": "PASS",
+     "value": 0.09676233111716526
+    },
+    "delta_f_eligible_fraction_diff": {
+     "class": "PASS",
+     "value": 0.0
+    }
+   }
+  },
+  {
+   "gcal": 2.0,
+   "gnap": 1.0,
+   "seed": 202,
+   "verdicts": {
+    "binned_rate_rmse_hz2": {
+     "class": "PASS",
+     "value": 0.3143276274204254
+    },
+    "active_unit_mismatch": {
+     "class": "PASS",
+     "value": 0
+    },
+    "total_spike_rel_diff": {
+     "class": "PASS",
+     "value": 0.003484320557491289
+    },
+    "spike_match_pm5ms_fraction_min": {
+     "class": "PASS",
+     "value": 0.7770034843205574
+    },
+    "hysteresis_mean_diff_hz": {
+     "class": "PASS",
+     "value": 0.08386643727620442
+    },
+    "self_sustained_mismatch": {
+     "class": "PASS",
+     "value": 0
+    },
+    "delta_f_mean_diff_hz": {
+     "class": "PASS",
+     "value": 0.37859854069758014
+    },
+    "delta_f_eligible_fraction_diff": {
+     "class": "PASS",
+     "value": 0.0
+    }
+   }
+  },
+  {
+   "gcal": 4.0,
+   "gnap": 1.0,
+   "seed": 202,
+   "verdicts": {
+    "binned_rate_rmse_hz2": {
+     "class": "PASS",
+     "value": 0.7236843705177307
+    },
+    "active_unit_mismatch": {
+     "class": "PASS",
+     "value": 0
+    },
+    "total_spike_rel_diff": {
+     "class": "PASS",
+     "value": 0.006269592476489028
+    },
+    "spike_match_pm5ms_fraction_min": {
+     "class": "PASS",
+     "value": 0.7053291536050157
+    },
+    "hysteresis_mean_diff_hz": {
+     "class": "PASS",
+     "value": 0.7953335444132487
+    },
+    "self_sustained_mismatch": {
+     "class": "PASS",
+     "value": 0
+    },
+    "delta_f_mean_diff_hz": {
+     "class": "PASS",
+     "value": 0.6240903616525737
+    },
+    "delta_f_eligible_fraction_diff": {
+     "class": "PASS",
+     "value": 0.047619047619047616
+    }
+   }
+  },
+  {
+   "gcal": 6.5,
+   "gnap": 1.0,
+   "seed": 202,
+   "verdicts": {
+    "binned_rate_rmse_hz2": {
+     "class": "PASS",
+     "value": 1.030701756477356
+    },
+    "active_unit_mismatch": {
+     "class": "PASS",
+     "value": 0
+    },
+    "total_spike_rel_diff": {
+     "class": "PASS",
+     "value": 0.00531632110579479
+    },
+    "spike_match_pm5ms_fraction_min": {
+     "class": "PASS",
+     "value": 0.7086656034024456
+    },
+    "hysteresis_mean_diff_hz": {
+     "class": "PASS",
+     "value": 0.2829001545906067
+    },
+    "self_sustained_mismatch": {
+     "class": "PASS",
+     "value": 0
+    },
+    "delta_f_mean_diff_hz": {
+     "class": "PASS",
+     "value": 0.1705009000027673
+    },
+    "delta_f_eligible_fraction_diff": {
+     "class": "PASS",
+     "value": 0.0
+    }
+   }
+  },
+  {
+   "gcal": 7.5,
+   "gnap": 1.0,
+   "seed": 202,
+   "verdicts": {
+    "binned_rate_rmse_hz2": {
+     "class": "PASS",
+     "value": 1.5679821968078613
+    },
+    "active_unit_mismatch": {
+     "class": "PASS",
+     "value": 0
+    },
+    "total_spike_rel_diff": {
+     "class": "PASS",
+     "value": 0.004042037186742118
+    },
+    "spike_match_pm5ms_fraction_min": {
+     "class": "PASS",
+     "value": 0.6632983023443816
+    },
+    "hysteresis_mean_diff_hz": {
+     "class": "PASS",
+     "value": 0.15490001440048218
+    },
+    "self_sustained_mismatch": {
+     "class": "PASS",
+     "value": 0
+    },
+    "delta_f_mean_diff_hz": {
+     "class": "PASS",
+     "value": 0.2873229557701684
+    },
+    "delta_f_eligible_fraction_diff": {
+     "class": "PASS",
+     "value": 0.0
+    }
+   }
+  },
+  {
+   "gcal": 0.0,
+   "gnap": 5.0,
+   "seed": 202,
+   "verdicts": {
+    "binned_rate_rmse_hz2": {
+     "class": "PASS",
+     "value": 0.453216552734375
+    },
+    "active_unit_mismatch": {
+     "class": "PASS",
+     "value": 0
+    },
+    "total_spike_rel_diff": {
+     "class": "PASS",
+     "value": 0.003246753246753247
+    },
+    "spike_match_pm5ms_fraction_min": {
+     "class": "PASS",
+     "value": 0.6444805194805194
+    },
+    "hysteresis_mean_diff_hz": {
+     "class": "PASS",
+     "value": 0.005598704020182282
+    },
+    "self_sustained_mismatch": {
+     "class": "PASS",
+     "value": 0
+    },
+    "delta_f_mean_diff_hz": {
+     "class": "PASS",
+     "value": 0.03285833267333382
+    },
+    "delta_f_eligible_fraction_diff": {
+     "class": "PASS",
+     "value": 0.06666666666666665
+    }
+   }
+  },
+  {
+   "gcal": 0.5,
+   "gnap": 5.0,
+   "seed": 202,
+   "verdicts": {
+    "binned_rate_rmse_hz2": {
+     "class": "PASS",
+     "value": 0.48976612091064453
+    },
+    "active_unit_mismatch": {
+     "class": "PASS",
+     "value": 0
+    },
+    "total_spike_rel_diff": {
+     "class": "PASS",
+     "value": 0.004285714285714286
+    },
+    "spike_match_pm5ms_fraction_min": {
+     "class": "PASS",
+     "value": 0.75
+    },
+    "hysteresis_mean_diff_hz": {
+     "class": "PASS",
+     "value": 0.01360066731770837
+    },
+    "self_sustained_mismatch": {
+     "class": "PASS",
+     "value": 0
+    },
+    "delta_f_mean_diff_hz": {
+     "class": "PASS",
+     "value": 0.3268232694870956
+    },
+    "delta_f_eligible_fraction_diff": {
+     "class": "PASS",
+     "value": 0.0
+    }
+   }
+  },
+  {
+   "gcal": 1.0,
+   "gnap": 5.0,
+   "seed": 202,
+   "verdicts": {
+    "binned_rate_rmse_hz2": {
+     "class": "PASS",
+     "value": 0.42397674918174744
+    },
+    "active_unit_mismatch": {
+     "class": "PASS",
+     "value": 0
+    },
+    "total_spike_rel_diff": {
+     "class": "PASS",
+     "value": 0.0012755102040816326
+    },
+    "spike_match_pm5ms_fraction_min": {
+     "class": "PASS",
+     "value": 0.7627551020408163
+    },
+    "hysteresis_mean_diff_hz": {
+     "class": "PASS",
+     "value": 0.1857334772745769
+    },
+    "self_sustained_mismatch": {
+     "class": "PASS",
+     "value": 0
+    },
+    "delta_f_mean_diff_hz": {
+     "class": "PASS",
+     "value": 0.0897759652728638
+    },
+    "delta_f_eligible_fraction_diff": {
+     "class": "PASS",
+     "value": 0.0
+    }
+   }
+  },
+  {
+   "gcal": 2.0,
+   "gnap": 5.0,
+   "seed": 202,
+   "verdicts": {
+    "binned_rate_rmse_hz2": {
+     "class": "PASS",
+     "value": 0.8333335518836975
+    },
+    "active_unit_mismatch": {
+     "class": "PASS",
+     "value": 0
+    },
+    "total_spike_rel_diff": {
+     "class": "PASS",
+     "value": 0.0050968399592252805
+    },
+    "spike_match_pm5ms_fraction_min": {
+     "class": "PASS",
+     "value": 0.6432212028542303
+    },
+    "hysteresis_mean_diff_hz": {
+     "class": "PASS",
+     "value": 0.1349333127339681
+    },
+    "self_sustained_mismatch": {
+     "class": "PASS",
+     "value": 0
+    },
+    "delta_f_mean_diff_hz": {
+     "class": "PASS",
+     "value": 0.14791117551575783
+    },
+    "delta_f_eligible_fraction_diff": {
+     "class": "PASS",
+     "value": 0.06666666666666671
+    }
+   }
+  },
+  {
+   "gcal": 4.0,
+   "gnap": 5.0,
+   "seed": 202,
+   "verdicts": {
+    "binned_rate_rmse_hz2": {
+     "class": "PASS",
+     "value": 1.030701756477356
+    },
+    "active_unit_mismatch": {
+     "class": "PASS",
+     "value": 0
+    },
+    "total_spike_rel_diff": {
+     "class": "PASS",
+     "value": 0.004560260586319218
+    },
+    "spike_match_pm5ms_fraction_min": {
+     "class": "PASS",
+     "value": 0.6579804560260586
+    },
+    "hysteresis_mean_diff_hz": {
+     "class": "PASS",
+     "value": 0.4800000871930804
+    },
+    "self_sustained_mismatch": {
+     "class": "PASS",
+     "value": 0
+    },
+    "delta_f_mean_diff_hz": {
+     "class": "PASS",
+     "value": 1.4659453215687712
+    },
+    "delta_f_eligible_fraction_diff": {
+     "class": "PASS",
+     "value": 0.0
+    }
+   }
+  },
+  {
+   "gcal": 6.5,
+   "gnap": 5.0,
+   "seed": 202,
+   "verdicts": {
+    "binned_rate_rmse_hz2": {
+     "class": "PASS",
+     "value": 1.7105265855789185
+    },
+    "active_unit_mismatch": {
+     "class": "PASS",
+     "value": 0
+    },
+    "total_spike_rel_diff": {
+     "class": "PASS",
+     "value": 0.001392757660167131
+    },
+    "spike_match_pm5ms_fraction_min": {
+     "class": "PASS",
+     "value": 0.6754874651810585
+    },
+    "hysteresis_mean_diff_hz": {
+     "class": "PASS",
+     "value": 0.02610000967979431
+    },
+    "self_sustained_mismatch": {
+     "class": "PASS",
+     "value": 0
+    },
+    "delta_f_mean_diff_hz": {
+     "class": "PASS",
+     "value": 0.11586776351567529
+    },
+    "delta_f_eligible_fraction_diff": {
+     "class": "PASS",
+     "value": 0.0
+    }
+   }
+  },
+  {
+   "gcal": 7.5,
+   "gnap": 5.0,
+   "seed": 202,
+   "verdicts": {
+    "binned_rate_rmse_hz2": {
+     "class": "PASS",
+     "value": 2.0138893127441406
+    },
+    "active_unit_mismatch": {
+     "class": "PASS",
+     "value": 0
+    },
+    "total_spike_rel_diff": {
+     "class": "PASS",
+     "value": 0.0017878426698450535
+    },
+    "spike_match_pm5ms_fraction_min": {
+     "class": "FAIL",
+     "value": 0.5390345649582837
+    },
+    "hysteresis_mean_diff_hz": {
+     "class": "PASS",
+     "value": 0.014499843120574951
+    },
+    "self_sustained_mismatch": {
+     "class": "PASS",
+     "value": 0
+    },
+    "delta_f_mean_diff_hz": {
+     "class": "NOT_EVALUABLE",
+     "value": null
+    },
+    "delta_f_eligible_fraction_diff": {
+     "class": "PASS",
+     "value": 0.0
+    }
+   }
+  }
+ ],
+ "wall_s": 129.8
+}

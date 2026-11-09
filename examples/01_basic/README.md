@@ -15,6 +15,11 @@ The examples are self-contained and can be run independently, though they may
 depend on each other for context. Following the numbered order provides the
 best learning experience.
 
+Example 03 writes backend-qualified Jaxley artifacts (for example,
+`trapezoid_dd_spike_trains_jaxley.pkl`) so they can coexist with the NEURON
+reference artifacts. Canonical Examples 06, 08 and 09 consume the Jaxley files.
+Example 12 reports both and uses an explicit `SPIKE_BACKEND` selection.
+
 ## Profiles
 
 Examples 01, 03, 04, 05, 06 and 08 simulate the first dorsal interosseous (FDI)

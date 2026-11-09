@@ -1,238 +1,168 @@
-<div align="center">
-  <h1 style="display: flex; align-items: center; justify-content: center; gap: 10px;">
-    <span>Welcome to</span>
-    <img src="https://raw.githubusercontent.com/NsquaredLab/MyoGen/main/docs/images/myogen_logo.png" height="100" alt="MyoGen Logo">
-  </h1>
+# MyoGen — Jaxley branch
 
-  <h2>The modular and extensible simulation toolkit for neurophysiology</h2>
+> **This is the Jaxley branch of MyoGen.** It uses **Jaxley** (JAX) as the simulation
+> backend and makes the full neuromuscular closed loop **differentiable end-to-end**.
+> The original NEURON-based implementation lives on the upstream **`main` branch**; use
+> that branch if you need NEURON as the primary simulator. This branch keeps NEURON only
+> as an optional validation reference.
 
-  [![Documentation](https://img.shields.io/badge/docs-latest-blue.svg)](https://nsquaredlab.github.io/MyoGen/)
-  [![Python 3.12+](https://img.shields.io/badge/python-3.12+-blue.svg)](https://www.python.org/downloads/)
-  [![Version](https://img.shields.io/badge/version-0.13.0-orange.svg)](https://github.com/NsquaredLab/MyoGen)
+MyoGen is a modular neuromuscular simulation framework for generating physiologically
+grounded motor-unit activity, muscle force, and EMG (surface and intramuscular).
 
-  [Installation](https://nsquaredlab.github.io/MyoGen/getting-started/#install) •
-  [Documentation](https://nsquaredlab.github.io/MyoGen/) •
-  [Examples](https://nsquaredlab.github.io/MyoGen/auto_examples/01_basic/) •
-  [How to Cite](https://nsquaredlab.github.io/MyoGen/#how-to-cite)
-</div>
-
-# Overview
-
-MyoGen is a **modular and extensible neuromuscular simulation framework** for generating physiologically grounded motor-unit activity, muscle force, and surface EMG signals.  
-
-It supports end-to-end modeling of the neuromuscular pathway, from descending neural drive and spinal motor neuron dynamics to muscle activation and bioelectric signal formation at the electrode level.
-MyoGen is designed for algorithm validation, hypothesis-driven research, and education, providing configurable building blocks that can be independently combined and extended.
-
-# Highlights
-
-🧬 **Biophysically inspired neuron models** — NEURON-based motor neurons with validated calcium dynamics and membrane properties
-
-🎯 **Everything is inspectable** — Complete access to every motor unit, spike time, fiber location etc. for rigorous algorithm testing
-
-⚡️ **Vectorized & parallel** — Multi-core CPU processing with NumPy/Numba vectorization for fast computation
-
-🔬 **End-to-end simulation** — From motor unit recruitment to high-density surface EMG in a single framework
-
-📊 **Reproducible science** — Deterministic random seeds and standardized Neo Block outputs for exact replication
-
-📦 **NWB export** — Optional export to [Neurodata Without Borders](https://www.nwb.org/) format for data sharing via DANDI
-
-🧰 **Comprehensive toolkit** — Surface EMG, intramuscular EMG, force generation, and spinal network modeling
-
-# Installation
-
-> **Requires Python 3.12+** — Check your version with `python --version`
-
-## System Requirements
-
-| Platform | Before Installing MyoGen |
-|----------|--------------------------|
-| **Windows** | [NEURON 8.2.7](https://github.com/neuronsimulator/nrn/releases/download/8.2.7/nrn-8.2.7.w64-mingw-py-39-310-311-312-313-setup.exe) - Download, run installer, select "Add to PATH" |
-| **Linux** | `sudo apt install libopenmpi-dev` (Ubuntu/Debian) or `sudo dnf install openmpi-devel` (Fedora) |
-| **macOS** | `brew install open-mpi` |
-
-> [!CAUTION]
->
-> ## Windows Users: Prerequisites
->
-> **You MUST install the following before installing MyoGen on Windows:**
->
-> ### 1. Visual C++ Build Tools
->
-> Download and install [Visual C++ Build Tools](https://visualstudio.microsoft.com/visual-cpp-build-tools/).
->
->During installation, select these components:
->
-> - MSVC Build Tools for x64/x86 (Latest)
-> - MSVC v143 – VS 2022 C++ x64/x86 build tools
-> - Windows 11 SDK (latest)
-> - C++ core desktop features
->
-> ### 2. NEURON Simulator
->
-> 1. **Download**: [NEURON 8.2.7 Installer](https://github.com/neuronsimulator/nrn/releases/download/8.2.7/nrn-8.2.7.w64-mingw-py-39-310-311-312-313-setup.exe)
-> 2. **Run the installer** and select **"Add to PATH"** when prompted
-> 3. **Restart your terminal** (close and reopen)
-> 4. Then continue with the installation below
+On this branch, Jaxley is JAX-based, runs on CPU/GPU, and — the headline feature — lets
+you take gradients of force, joint kinematics, and EMG with respect to neural, muscle,
+and joint parameters. That is what the NEURON branch cannot do.
 
 ---
 
-## Step 1: Install uv (Package Manager)
+## Why Jaxley + differentiability
 
-We use [uv](https://docs.astral.sh/uv/) - a fast Python package manager. Install it first:
+The whole simulation — spiking motor neurons → muscle force → spindle/GTO
+proprioception → joint dynamics → EMG — runs as a single `jax.lax.scan` and is a pure
+function of its parameters. That makes it possible to:
 
-**Windows** (open PowerShell):
+- **Fit a subject-specific digital twin**: gradient-descend neural/muscle parameters so
+  simulated EMG or force matches a real recording.
+- **Optimize** descending drive, recruitment, muscle mechanics, or reflex gains against
+  any differentiable objective.
+- **Accelerate** on GPU via JIT compilation.
 
-```powershell
-powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"
-```
+Gradients flow through spikes via a selectable **surrogate-gradient** mode while the
+forward pass stays bit-identical to the exact spiking model.
 
-**Linux/macOS**:
-
-```bash
-curl -LsSf https://astral.sh/uv/install.sh | sh
-```
-
-After installing, **restart your terminal** (close and reopen it).
-
----
-
-## Step 2: Create a New Project
-
-Open a terminal and navigate to where you want your project:
+## Installation
 
 ```bash
-# Create a new folder for your project
-mkdir my_emg_project
-cd my_emg_project
-
-# Initialize a Python project
-uv init
-
-# Add MyoGen to your project
-uv add myogen
+pip install myogen                 # default: Jaxley backend only (no NEURON/MPI)
+pip install "myogen[neuron]"       # add the optional NEURON validation backend
 ```
 
-That's it! MyoGen is now installed and ready to use.
+`import myogen` requires no NEURON runtime, compiler, or MPI.
 
----
+## Quick start — a differentiable simulation
 
-## Step 3: Verify Installation
+```python
+import jax, jax.numpy as jnp
+from myogen.simulator.jaxley import (
+    run_jax, value_and_grad_run, compile_run, surface_emg_jax,
+)
 
-Create a test file to make sure everything works:
+# Build a ClosedLoopConfig + params PyTree for your network (see
+# examples/01_basic/11_simulate_spinal_network.py for a full setup), then:
 
-```bash
-# Create a test script
-uv run python -c "from myogen import simulator; print('MyoGen installed successfully!')"
+# 1) Forward simulation (hard spikes = scientific default)
+outputs, meta = run_jax(params, config, inputs, jax.random.PRNGKey(0), spike_mode="hard")
+force, angle, spikes = outputs["force"], outputs["angle_deg"], outputs["mn_spikes"]
+
+# 2) Differentiate a loss w.r.t. all float parameters (surrogate spikes)
+def loss(out):
+    return jnp.mean(out["force"] ** 2)
+
+value, grads = value_and_grad_run(loss, params, config, inputs,
+                                  jax.random.PRNGKey(0), spike_mode="surrogate")
+
+# 3) Differentiable EMG: convolve spikes with (frozen) MUAP templates
+emg = surface_emg_jax(spikes.T[None].astype("float32"), muap_templates)
+
+# 4) JIT-compiled forward pass
+run = compile_run(config, params, spike_mode="hard")
+outputs = run(params, inputs, jax.random.PRNGKey(0))
 ```
 
-If you see `MyoGen installed successfully!` - you're all set!
+### Spike modes
 
----
+| `spike_mode` | Forward pass | Gradient through spikes | Use for |
+|---|---|---|---|
+| `"hard"` (default) | exact discrete spikes | none (spikes non-differentiable) | scientific simulation |
+| `"surrogate"` | **identical to `hard`** | smooth surrogate (biased) | optimization / fitting |
+| `"rate"` | continuous rate proxy | exact | clean gradients when a continuous forward is acceptable |
 
-## Alternative: pip install
+The active mode is recorded in the returned `metadata`.
 
-If you prefer pip over uv:
+## Differentiable API (in `myogen.simulator.jaxley`)
 
-```bash
-pip install myogen
+- `run_jax(params, config, inputs, key, spike_mode=...)` — run the closed loop; returns
+  `(outputs, metadata)`.
+- `value_and_grad_run(loss_fn, params, config, inputs, key, ...)` — gradients of a loss
+  w.r.t. float parameters (integer fields held constant automatically).
+- `compile_run(config, params_template, spike_mode=...)` — a `jax.jit`-compiled forward
+  pass bound to a config.
+- `surface_emg_jax`, `intramuscular_emg_jax` — differentiable EMG from spikes + static
+  MUAP templates.
+- `ClosedLoopConfig` — static (non-differentiable) network configuration.
+
+What is differentiable today: force, joint kinematics, and EMG **with respect to neural,
+muscle, and joint parameters**. Differentiating EMG w.r.t. tissue conductivities /
+geometry (the volume-conductor model) is future work; the enabling piece
+(differentiable Bessel functions, `myogen.simulator.jaxley.bessel`) is already
+validated.
+
+## Branches & backends
+
+MyoGen is developed on two branches with different primary simulators:
+
+| | **Jaxley branch** (this one) | NEURON branch (upstream `main`) |
+|---|---|---|
+| Primary simulator | Jaxley (JAX) | NEURON |
+| Differentiable | **yes** | no |
+| GPU | yes | no |
+| Install | `pip install myogen` | (that branch's instructions) |
+| Best for | gradient-based fitting, digital twins, GPU runs | exact NEURON semantics / reference results |
+
+On **this** branch Jaxley is the default and only required backend — `import myogen`
+needs no NEURON runtime, compiler, or MPI. NEURON is still available here as an
+**optional** validation reference (`pip install "myogen[neuron]"`, then
+`from myogen.simulator.neuron import ...`), but it is not needed for normal use.
+
+The top-level `myogen.simulator` classes (`HillModel`, `Network`, `SimulationRunner`,
+`SpindleModel`, `GolgiTendonOrganModel`, `JointDynamics`) resolve to the **Jaxley**
+implementations on this branch.
+
+### Motor-neuron model
+
+The default motor neuron is the **NERLab** single-isopotential-dendrite cell matching
+the production NEURON model: a soma (channel `napp`: fast Na + persistent Na + fast K +
+slow K + leak) plus one isopotential dendrite (channel `caL`: L-type Ca + leak), in the
+original 1952 Hodgkin–Huxley voltage frame (V_rest ≈ 0 mV, spikes peak ≈ +90 mV). An
+older Powers2017 cable model is available via `model="Powers2017"`.
+
+## Where the code lives
+
+```text
+myogen/simulator/jaxley/
+  closed_loop.py         # run_jax / value_and_grad_run / compile_run (differentiable entry point)
+  jax_models.py          # pure-JAX spindle / GTO / Hill / joint steps + spike_detect + scan factory
+  emg.py                 # differentiable surface / intramuscular EMG
+  bessel.py              # differentiable modified Bessel functions (for future volume-conductor grads)
+  populations/           # AlphaMN__Pool, DescendingDrive__Pool, AffIa/II/Ib__Pool, GII/GIb__Pool
+  channels/              # NERLab (napp, caL) and Powers2017 channels
+  muscle.py, proprioception/, joint_dynamics.py, network.py, simulation_runner.py
+
+myogen/simulator/core/   # backend-agnostic muscle geometry, force, MUAP, surface/intramuscular EMG
+myogen/simulator/neuron/ # optional NEURON backend (validation reference)
 ```
 
----
+## Examples
 
-## For Developers (From Source)
+Canonical examples default to Jaxley — see `examples/README.md` for the full map.
+`XX_<name>.py` is the Jaxley version; `XX_<name>_neuron.py` (where present) is the
+NEURON counterpart and needs `myogen[neuron]`. The full closed-loop spinal network is
+`examples/01_basic/11_simulate_spinal_network.py`.
 
-```bash
-git clone https://github.com/NsquaredLab/MyoGen.git
-cd MyoGen
-uv sync
-uv run poe setup_myogen
-```
+## Status & caveats
 
-## Optional: GPU Acceleration
+- Surrogate spike gradients are **biased** — inherent to differentiating spiking models;
+  use `rate` mode for unbiased gradients when a continuous forward output is acceptable.
+- This branch running on Jaxley is distinct from "Jaxley reproduces NEURON exactly
+  everywhere" — some quantitative gaps remain (e.g. F-I gain on some examples). If you
+  need NEURON as the reference, use this branch's optional `[neuron]` extra or the
+  upstream NEURON branch.
+- Not yet ported to Jaxley: the `02_finetune` and `03_papers/watanabe` NEURON
+  simulations (runnable via the extra).
 
-For 5-10× faster convolutions (requires NVIDIA GPU):
+## Further reading
 
-```bash
-uv add cupy-cuda12x
-```
-
-# Documentation
-
-📖 **[Read the full documentation](https://nsquaredlab.github.io/MyoGen/)**
-
-- [User Guide](https://nsquaredlab.github.io/MyoGen/neo-blocks/) — Working with simulation outputs
-- [API Reference](https://nsquaredlab.github.io/MyoGen/api/) — Complete class documentation
-- [Examples](examples/) — Step-by-step tutorials from recruitment to EMG
-
-# How to Cite
-
-If you use MyoGen in your research, please cite:
-
-```bibtex
-@article{simpetru_molinari_2026_myogen,
-  title   = {MyoGen: Unified Biophysical Modeling of Human Neuromotor Activity and Resulting Signals},
-  author  = {S{\^i}mpetru, Raul C. and Molinari, Ricardo G. and Rohlf, Devon R. and
-             Batichotti, Rebeka L. and Watanabe, Renato N. and
-             Elias, Leonardo A. and Del Vecchio, Alessandro},
-  journal = {bioRxiv},
-  note    = {preprint},
-  year    = {2026},
-  doi     = {10.64898/2026.01.01.697284},
-  url     = {https://www.biorxiv.org/content/10.64898/2026.01.01.697284}
-}
-```
-
-# Contributing
-
-Contributions welcome! See [issues](https://github.com/NsquaredLab/MyoGen/issues) if you want to add a feature or fix a bug.
-
-# Contributors
-
-MyoGen is authored by **Raul C. Sîmpetru** and **Ricardo G. Molinari**. It is a joint project of the [Nsquared Lab](https://nsquared.tf.fau.de/) (Neuromuscular Physiology and Neural Interfacing Laboratory) at FAU Erlangen-Nürnberg, the [NER Lab](https://www.ceb.unicamp.br/pesquisa/laboratorios/laboratorio-de-pesquisa-em-neuroengenharia/) (Neural Engineering Research Laboratory) at the University of Campinas, and the [BMClab](https://bmclab.pesquisa.ufabc.edu.br/) (Biomechanics and Motor Control Laboratory) at the Federal University of ABC.
-
-Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/en/reference/emoji-key/)):
-
-<!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
-[![All Contributors](https://img.shields.io/badge/all_contributors-8-orange.svg?style=flat-square)](#contributors)
-<!-- ALL-CONTRIBUTORS-BADGE:END -->
-
-<!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
-<!-- prettier-ignore-start -->
-<!-- markdownlint-disable -->
-<table>
-  <tbody>
-    <tr>
-      <td align="center" valign="top" width="14.28%"><a href="https://github.com/RaulSimpetru"><img src="https://avatars.githubusercontent.com/u/26602941?v=4?s=100" width="100px;" alt="Raul C. Sîmpetru"/><br /><sub><b>Raul C. Sîmpetru</b></sub></a><br /><a href="https://github.com/NsquaredLab/MyoGen/commits?author=RaulSimpetru" title="Code">💻</a> <a href="#ideas-RaulSimpetru" title="Ideas, Planning, & Feedback">🤔</a> <a href="#maintenance-RaulSimpetru" title="Maintenance">🚧</a> <a href="#projectManagement-RaulSimpetru" title="Project Management">📆</a> <a href="#research-RaulSimpetru" title="Research">🔬</a></td>
-      <td align="center" valign="top" width="14.28%"><a href="https://github.com/molinaris"><img src="https://avatars.githubusercontent.com/u/18554447?v=4?s=100" width="100px;" alt="Ricardo G. Molinari"/><br /><sub><b>Ricardo G. Molinari</b></sub></a><br /><a href="#ideas-molinaris" title="Ideas, Planning, & Feedback">🤔</a> <a href="#maintenance-molinaris" title="Maintenance">🚧</a> <a href="#research-molinaris" title="Research">🔬</a></td>
-      <td align="center" valign="top" width="14.28%"><a href="https://github.com/DRohlf"><img src="https://avatars.githubusercontent.com/u/199583526?v=4?s=100" width="100px;" alt="Devon R. Rohlf"/><br /><sub><b>Devon R. Rohlf</b></sub></a><br /><a href="https://github.com/NsquaredLab/MyoGen/commits?author=DRohlf" title="Code">💻</a> <a href="#maintenance-DRohlf" title="Maintenance">🚧</a> <a href="#research-DRohlf" title="Research">🔬</a></td>
-      <td align="center" valign="top" width="14.28%"><a href="https://github.com/rnwatanabe"><img src="https://avatars.githubusercontent.com/u/12960874?v=4?s=100" width="100px;" alt="Renato N. Watanabe"/><br /><sub><b>Renato N. Watanabe</b></sub></a><br /><a href="https://github.com/NsquaredLab/MyoGen/commits?author=rnwatanabe" title="Code">💻</a> <a href="#ideas-rnwatanabe" title="Ideas, Planning, & Feedback">🤔</a> <a href="#mentoring-rnwatanabe" title="Mentoring">🧑‍🏫</a> <a href="#research-rnwatanabe" title="Research">🔬</a></td>
-      <td align="center" valign="top" width="14.28%"><a href="https://github.com/alecsdelvecchio"><img src="https://www.nsquared.tf.fau.de/files/2021/05/0811_FAU_TECHFAK_FATHER-AND-SUN_20231018_1420-scaled-e1709914326501.jpg?s=100" width="100px;" alt="Alessandro Del Vecchio"/><br /><sub><b>Alessandro Del Vecchio</b></sub></a><br /><a href="#ideas-alecsdelvecchio" title="Ideas, Planning, & Feedback">🤔</a> <a href="#mentoring-alecsdelvecchio" title="Mentoring">🧑‍🏫</a> <a href="#research-alecsdelvecchio" title="Research">🔬</a></td>
-      <td align="center" valign="top" width="14.28%"><a href="https://github.com/leoelias-unicamp"><img src="https://avatars.githubusercontent.com/u/16341631?v=4?s=100" width="100px;" alt="Leonardo A. Elias"/><br /><sub><b>Leonardo A. Elias</b></sub></a><br /><a href="#ideas-leoelias-unicamp" title="Ideas, Planning, & Feedback">🤔</a> <a href="#mentoring-leoelias-unicamp" title="Mentoring">🧑‍🏫</a> <a href="#research-leoelias-unicamp" title="Research">🔬</a></td>
-      <td align="center" valign="top" width="14.28%"><a href="https://github.com/joaohbbittar"><img src="https://avatars.githubusercontent.com/u/140083565?v=4?s=100" width="100px;" alt="João Bittar"/><br /><sub><b>João Bittar</b></sub></a><br /><a href="https://github.com/NsquaredLab/MyoGen/issues?q=author%3Ajoaohbbittar" title="Bug reports">🐛</a> <a href="#ideas-joaohbbittar" title="Ideas, Planning, & Feedback">🤔</a></td>
-    </tr>
-    <tr>
-      <td align="center" valign="top" width="14.28%"><a href="https://github.com/veylantis"><img src="https://avatars.githubusercontent.com/u/93032025?v=4?s=100" width="100px;" alt="BraveUnicorn"/><br /><sub><b>BraveUnicorn</b></sub></a><br /><a href="https://github.com/NsquaredLab/MyoGen/commits?author=veylantis" title="Code">💻</a></td>
-    </tr>
-  </tbody>
-  <tfoot>
-    <tr>
-      <td align="center" size="13px" colspan="7">
-        <img src="https://raw.githubusercontent.com/all-contributors/all-contributors-cli/1b8533af435da9854653492b1327a23a4dbd0a10/assets/logo-small.svg">
-          <a href="https://all-contributors.js.org/docs/en/bot/usage">Add your contributions</a>
-        </img>
-      </td>
-    </tr>
-  </tfoot>
-</table>
-
-<!-- markdownlint-restore -->
-<!-- prettier-ignore-end -->
-
-<!-- ALL-CONTRIBUTORS-LIST:END -->
-
-This project follows the [all-contributors](https://github.com/all-contributors/all-contributors) specification. Contributions of any kind welcome!
-
-# License
-
-MyoGen is AGPL licensed. See [LICENSE](https://github.com/NsquaredLab/MyoGen/blob/main/LICENSE.md) for details.
+- `docs/DIFFERENTIABILITY_STATUS.md` — what is differentiable, how it was validated.
+- `docs/NEURON_DECOUPLING.md` — how Jaxley became the default and NEURON optional.
+- `docs/M1_bessel_feasibility.md` — differentiable volume-conductor feasibility.
+- `examples/README.md` — the Jaxley (default) vs NEURON example map.
