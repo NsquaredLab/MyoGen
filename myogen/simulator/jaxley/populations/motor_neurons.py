@@ -18,9 +18,6 @@ distributions (similar to NEURON), creating physiological heterogeneity:
 - Parameters scale non-linearly to match experimental observations
 """
 
-from pathlib import Path
-from typing import Optional, Union
-
 import numpy as np
 import quantities as pq
 
@@ -29,7 +26,6 @@ from myogen.utils.decorators import beartowertype
 from myogen.utils.types import RECRUITMENT_THRESHOLDS__ARRAY
 
 from .base import _exp_interp, _Pool
-
 
 # Powers2017 motor neuron parameter ranges for soma + 1 dendrite architecture.
 # Format: (min, max, curvature) where curvature controls exponential shape
@@ -222,6 +218,11 @@ class AlphaMN__Pool(_Pool):
     use_jaxley_mech : bool, optional
         If True, use 2-compartment (soma + dendrite) Powers2017 channels.
         If False, use single-compartment custom channels. Default is False.
+    normalize_nerlab_thresholds : bool, optional
+        Normalize supplied NERLab recruitment thresholds before parameter
+        interpolation. The backwards-compatible default is True. Set False
+        when reproducing the production NEURON profile, which consumes the
+        supplied threshold fractions verbatim.
 
     Attributes
     ----------
@@ -240,10 +241,11 @@ class AlphaMN__Pool(_Pool):
         axon_velocities: tuple[float, float] = (50, 65),
         axon_length: float = 0.6,
         gamma: float = 0.2,
-        cell_index: Optional[int] = None,
-        initial_voltage__mV: Union[float, list[float], None] = None,
-        spike_threshold__mV: Optional[float] = None,
+        cell_index: int | None = None,
+        initial_voltage__mV: float | list[float] | None = None,
+        spike_threshold__mV: float | None = None,
         use_jaxley_mech: bool = False,
+        normalize_nerlab_thresholds: bool = True,
     ):
         self.recruitment_thresholds__array = recruitment_thresholds__array
 
@@ -261,6 +263,7 @@ class AlphaMN__Pool(_Pool):
         self.gamma = gamma
         self.cell_index = cell_index
         self.use_jaxley_mech = use_jaxley_mech
+        self.normalize_nerlab_thresholds = normalize_nerlab_thresholds
 
         # Voltage-frame defaults depend on the model. NERLab uses the original
         # 1952 HH convention (V_rest ≈ 0 mV, ENa = +120, EK = -10); Powers2017
@@ -309,7 +312,15 @@ class AlphaMN__Pool(_Pool):
         n = self.n
         if self.recruitment_thresholds__array is not None:
             rt = np.array(self.recruitment_thresholds__array)
-            rt_norm = (rt - rt.min()) / (rt.max() - rt.min() + 1e-10)
+            # The production NEURON NERLab pool consumes recruitment thresholds
+            # verbatim.  Keep normalization as the backwards-compatible default
+            # for existing Jaxley studies, but allow profile-card simulations to
+            # construct the same cells as the NEURON backend.
+            rt_norm = (
+                (rt - rt.min()) / (rt.max() - rt.min() + 1e-10)
+                if self.normalize_nerlab_thresholds
+                else rt
+            )
             def lin(lo, hi):
                 return rt_norm * (hi - lo) + lo
         else:
