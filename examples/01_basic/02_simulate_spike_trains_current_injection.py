@@ -220,6 +220,7 @@ for pool in motor_neuron_pools:
         section.v = voltage
 
 # Initialize NEURON's internal state and run the simulation
+h.load_file("stdrun.hoc")  # NEURON's standard run library, which defines h.tstop
 h.finitialize()  # Initialize all mechanisms and variables
 # Advance the solver to the end of the simulation (replaces the deprecated
 # neuron.run(); finitialize() above already set the initial state).
