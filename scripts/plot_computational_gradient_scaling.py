@@ -131,14 +131,14 @@ def draw(src: dict):
         def legend(ax, groups=None):
             ax.legend(**({"handles": groups[0]} if groups else {}), frameon=False)
 
-        def trim(ax):
+        def trim(ax, which=None):
             pass
 
     P = src["panels"]
     dev_style = {"gpu": (pal[0], "o", "GPU"), "cpu": (pal[1], "s", "CPU")}
-    fig = plt.figure(figsize=(width, 5.0), layout="constrained")
-    gs = fig.add_gridspec(2, 3)
-    ax = {k: fig.add_subplot(gs[i // 3, i % 3]) for i, k in enumerate("ABCDEF")}
+    fig = plt.figure(figsize=(width, 7.2), layout="constrained")
+    gs = fig.add_gridspec(3, 2)
+    ax = {k: fig.add_subplot(gs[i // 2, i % 2]) for i, k in enumerate("ABCDEF")}
 
     # A, B -- throughput, shared y range
     ys = [p["y"] for k in "AB" for s in P[k]["series"].values() for p in s if p["y"]]
@@ -152,12 +152,14 @@ def draw(src: dict):
             a.plot([p["x"] for p in ok], [p["y"] for p in ok], marker=m, color=c,
                    markersize=3.5, label=name)
             bad = [p for p in pts if p["status"] != "ok"]
-            a.plot([p["x"] for p in bad], [lim[0]] * len(bad), "x", color=c,
-                   markersize=5, clip_on=False)
+            if bad:  # an empty unclipped line spans the figure in the tight bbox
+                a.plot([p["x"] for p in bad], [lim[0]] * len(bad), "x", color=c,
+                       markersize=5, clip_on=False)
         a.set(xscale="log", yscale="log", ylim=lim, title=titles[k],
               xlabel="Motor Neurons" if src["workload"] == "pool" else "Batch Size")
-        a.set_ylabel("Throughput (MN Steps/s)" if src["workload"] == "pool"
-                     else "Simulations (1/s)")
+        a.set_ylabel("Throughput (MN Steps/s, Float32)" if src["workload"] == "pool"
+                     else "Simulations (1/s, Float32)")
+        a.minorticks_off()
     handles = [Line2D([], [], color=dev_style[d][0], marker=dev_style[d][1],
                       markersize=3.5, label=dev_style[d][2]) for d in ("gpu", "cpu")]
     handles.append(Line2D([], [], color=grey[0], marker="x", ls="", label="Not Completed"))
@@ -171,8 +173,10 @@ def draw(src: dict):
         v = np.array([P["C"][l][c] for l in labels])
         a.barh(labels, v, left=left, color=colors[c], label=c.capitalize(), height=0.6)
         for i, (x0, n) in enumerate(zip(left, v)):
-            if n:
+            if n >= 3:
                 a.text(x0 + n / 2, i, str(n), ha="center", va="center", color="white")
+            elif n:
+                a.text(x0 + n / 2, i - 0.32, str(n), ha="center", va="bottom")
         left += v
     a.set(xlabel="Coordinate Variants", title="Surrogate Sign vs CRN Control",
           xlim=(0, max(left)))
@@ -187,13 +191,14 @@ def draw(src: dict):
     for r in P["D"]:
         i, j = dts.index(r["dt_ms"]), hs.index(r["horizon_s"])
         grid[i, j] = code[r["class"]]
-        a.text(j, i, f"{r['class']}\n{r['n_spikes']} spikes", ha="center",
+        a.text(j, i, f"{r['class']}\n{r['n_spikes']} Spikes", ha="center",
                va="center", color="white")
     a.imshow(grid, cmap=ListedColormap([pal[0], pal[2], grey[1]]), vmin=-0.5,
              vmax=2.5, aspect="auto")
     a.set(xticks=range(len(hs)), xticklabels=[f"{h:g}" for h in hs],
           yticks=range(len(dts)), yticklabels=[f"{d:g}" for d in dts],
-          xlabel="Horizon (s)", ylabel="Timestep (ms)", title="AD vs Local FD (Float64)")
+          xlabel="Horizon (s)", ylabel="Timestep (ms)",
+          title="AD vs Local FD (x64 Flag, Mixed)")
     for s in a.spines.values():
         s.set_visible(False)
     a.tick_params(length=0)
@@ -208,27 +213,34 @@ def draw(src: dict):
         a.barh(y + (n - 0.5) * 0.38, [e[s] for s, _ in steps], height=0.36, color=c,
                label=f"{name} ({e['nonfinite']} Non-Finite)")
     a.axvline(P["E"]["gate"], color=grey[1], ls="--", lw=1)
-    a.text(P["E"]["gate"], len(steps) - 0.45, "Gate 0.8", ha="center", va="bottom")
-    a.set(yticks=y, yticklabels=[s for _, s in steps], xlim=(0, 1),
-          xlabel="Accepted Step Fraction", title="Hard-Spike Forward Acceptance")
-    a.invert_yaxis()
+    a.text(P["E"]["gate"] + 0.02, 2.72, f"Gate {P['E']['gate']:g}", ha="left",
+           va="center")
+    a.set(yticks=y, yticklabels=[s for _, s in steps], xlim=(0, 1), ylim=(2.9, -0.5),
+          xlabel="Accepted Step Fraction", title="Steps Accepted by Hard-Spike Loss")
 
     # F -- direction cosines, every start shown
     a = ax["F"]
     cos = np.array([r["cosine"] for r in P["F"]])
-    jitter = np.random.default_rng(0).uniform(-0.15, 0.15, len(cos))
-    a.scatter(jitter, cos, s=9, facecolors="none", edgecolors=pal[0], linewidths=0.8)
-    a.plot([-0.3, 0.3], [np.median(cos)] * 2, color=grey[0])
-    a.set(xlim=(-0.6, 0.6), ylim=(-1.05, 1.05), xticks=[], ylabel="Direction Cosine",
-          title="Surrogate vs CRN Control")
+    jitter = np.random.default_rng(0).uniform(-0.12, 0.12, len(cos))
+    a.scatter(cos, jitter, s=12, facecolors="none", edgecolors=pal[0], linewidths=0.8)
+    a.plot([np.median(cos)] * 2, [-0.36, -0.2], color=grey[0], lw=1.6)
+    a.text(np.median(cos), -0.28, f"Median {np.median(cos):.2f}  ", ha="right",
+           va="center")
+    i = int(np.argmin(cos))
+    a.annotate(f"{cos[i]:.2f}", (cos[i], jitter[i]), xytext=(0, 8),
+               textcoords="offset points", ha="center")
+    a.set(xlim=(-1.05, 1.05), ylim=(-0.4, 0.4), yticks=[], xlabel="Direction Cosine",
+          title=f"Surrogate vs CRN Control (n = {len(cos)})")
+    a.spines["left"].set_visible(False)
 
     for k, a in ax.items():
-        a.text(-0.22, 1.06, k, transform=a.transAxes, va="bottom", ha="left", **letter)
+        a.text(-0.2, 1.04, k, transform=a.transAxes, va="bottom", ha="left", **letter)
     legend(ax["A"], groups=[handles])
     legend(ax["C"])
     legend(ax["E"])
-    for k in "ABCEF":
+    for k in "ABCE":
         trim(ax[k])
+    trim(ax["F"], which=("bottom",))
     if sf is None:
         fig.suptitle("DRAFT (plain Matplotlib, simpetru_figstyle unavailable)")
     return fig
