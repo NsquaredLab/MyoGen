@@ -444,14 +444,19 @@ def run_config(cfg: dict, timeout_s: float) -> dict:
     except subprocess.TimeoutExpired as e:
         err = e.stderr.decode() if isinstance(e.stderr, bytes) else (e.stderr or "")
         return {**cfg, "status": "timeout", "timeout_s": timeout_s,
-                "wall_s": time.time() - t0, "stderr_tail": err[-2000:]}
+                "wall_s": time.time() - t0, "stderr_tail": _tail(err)}
     found = [l for l in p.stdout.splitlines() if l.startswith(RESULT_TAG)]
     if p.returncode == 0 and found:
         return {**cfg, **json.loads(found[-1][len(RESULT_TAG):]),
                 "wall_s": time.time() - t0}
     return {**cfg, "status": classify_failure(p.returncode, p.stderr),
             "returncode": p.returncode, "wall_s": time.time() - t0,
-            "stderr_tail": p.stderr[-2000:]}
+            "stderr_tail": _tail(p.stderr)}
+
+
+def _tail(stderr: str) -> str:
+    """Last 2000 characters, home directory as ``~`` (evidence carries no user paths)."""
+    return stderr.replace(str(Path.home()), "~")[-2000:]
 
 
 def _cmd(*a) -> str:

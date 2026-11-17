@@ -52,11 +52,18 @@ def _load(path: Path) -> tuple[dict, dict]:
     d = json.loads(raw)
     m = d.get("manifest", {})
     src = m.get("source", m)
-    info = {"path": str(path), "sha256": hashlib.sha256(raw).hexdigest(),
+    p = Path(path).resolve()                 # repo-relative: no user paths in the output
+    info = {"path": str(p.relative_to(ROOT)) if p.is_relative_to(ROOT) else p.name,
+            "sha256": hashlib.sha256(raw).hexdigest(),
             "git_revision": m.get("git", {}).get("sha") or src.get("git_revision"),
             "git_dirty": m.get("git", {}).get("dirty", src.get("git_dirty")),
             "device": src.get("device"), "precision": src.get("precision")}
     return d, info
+
+
+def _series(row: dict) -> str:
+    """Checkpointed (rematerialised) rows are their own series, never merged."""
+    return row["device"] + ("_ckpt" if row.get("remat_segment") else "")
 
 
 def build_source_data(benchmarks, g2: dict, g1, g4) -> dict:
@@ -79,8 +86,8 @@ def build_source_data(benchmarks, g2: dict, g1, g4) -> dict:
                                   "mn_steps_per_s": r.get("mn_steps_per_s"),
                                   "precision_label": r.get("precision_label")}
                                  for r in rows if r["sweep"] in sweeps and r["op"] == op
-                                 and r["device"] == dev), key=lambda p: p["x"])
-                                 for dev in ("cpu", "gpu")}}
+                                 and _series(r) == dev), key=lambda p: p["x"])
+                                 for dev in ("cpu", "gpu", "gpu_ckpt")}}
 
     panels["B"] = {}
     for label, path in g2.items():
@@ -152,7 +159,7 @@ def draw(src: dict):
                 ax.spines[s].set_visible(False)
 
     P = src["panels"]
-    dev_c = {"gpu": pal[0], "cpu": pal[1]}
+    dev_c = {"gpu": pal[0], "cpu": pal[1], "gpu_ckpt": pal[0]}
     cls_c = {"agree": "black", "wrong": pal[2], "unresolved": "white"}
     est_c = {"surrogate": pal[5], "crn_fd": pal[4]}
 
@@ -184,11 +191,14 @@ def draw(src: dict):
     for i, (name, title, xlabel) in enumerate(names):
         a = fig.add_subplot(row_a[0, i], sharey=axA[0] if axA else None)
         axA.append(a)
-        for dev in ("cpu", "gpu"):
-            pts = P["A"][name]["series"][dev]
+        for dev in ("cpu", "gpu", "gpu_ckpt"):
+            pts = P["A"][name]["series"].get(dev, [])
             ok = [p for p in pts if p["status"] == "ok"]
-            a.plot([p["x"] for p in ok], [p["y"] for p in ok], color=dev_c[dev],
-                   marker="o", markersize=2.5, lw=1.2)
+            if ok:
+                a.plot([p["x"] for p in ok], [p["y"] for p in ok], color=dev_c[dev],
+                       marker="o", markersize=2.5, lw=1.2,
+                       ls="--" if dev == "gpu_ckpt" else "-",
+                       mfc="white" if dev == "gpu_ckpt" else dev_c[dev])
             bad = [p for p in pts if p["status"] != "ok"]
             if bad:  # an empty unclipped line spans the figure in the tight bbox
                 a.plot([p["x"] for p in bad], [ylim[1]] * len(bad), "x",
@@ -213,6 +223,8 @@ def draw(src: dict):
     axA[0].set_ylabel("Time per Call (s)")
     axA[0].text(1.3, 6, "GPU", color=dev_c["gpu"])
     axA[0].text(1.3, 0.24, "CPU", color=dev_c["cpu"], va="center")
+    if P["A"]["pool_gradient"]["series"].get("gpu_ckpt"):
+        axA[1].text(1.3, 17, "Checkpointed", color=dev_c["gpu"])
     heading(axA[0], "A", "Wall Time per Simulation Call, Float32, Median of 7",
             dy=24)
 

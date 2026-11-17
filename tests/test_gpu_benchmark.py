@@ -147,7 +147,8 @@ def _evidence(tmp_path):
         for n in (1, 10)] + [_row(device="gpu", n_mn=1000, status="oom")] + [
         _row(sweep="batch", device=d, op=op, batch_size=k, sims_per_s=k, median_s=1.0)
         for d in ("cpu", "gpu") for op in ("hard_forward", "surrogate_value_and_grad")
-        for k in (1, 4)]}
+        for k in (1, 4)] + [_row(device="gpu", op="surrogate_value_and_grad", n_mn=1000,
+                                 remat_segment=140, median_s=1.5)]}
     g2 = lambda x64: {"x64": x64, "manifest": {}, "g2": {  # noqa: E731
         "per_coordinate": {"gCaL": {"agree": 8, "wrong": 1, "unresolved": 1},
                            "w_exc": {"agree": 9, "wrong": 1, "unresolved": 0}},
@@ -189,6 +190,8 @@ assert src["panels"]["B"]["Float64"]["agree"] == 17
 assert src["panels"]["B"]["Float64"]["classes"]["gCaL"] == ["agree"]
 assert [r["class"] for r in src["panels"]["C"]] == ["Unresolved", "Pass", "Failed", "Unresolved"]
 assert src["panels"]["A"]["pool_forward"]["series"]["gpu"][-1]["status"] == "oom"
+assert [p["x"] for p in src["panels"]["A"]["pool_gradient"]["series"]["gpu_ckpt"]] == [1000]
+assert 1000 not in [p["x"] for p in src["panels"]["A"]["pool_gradient"]["series"]["gpu"]]
 assert [p["x"] for p in src["panels"]["A"]["batch_forward"]["series"]["cpu"]] == [1, 4]
 assert src["panels"]["D"]["estimators"]["surrogate"]["per_start"]["S1"]["joint"] == 0.8
 """
@@ -215,3 +218,7 @@ def test_checkpointed_rows_are_separate_and_ops_filter():
     cfgs = gb.configs(args)
     assert {c["op"] for c in cfgs} == {"surrogate_value_and_grad"}
     assert all(c["remat_segment"] == 140 for c in cfgs)
+
+
+def test_tracebacks_carry_no_home_directory():
+    assert gb._tail(f"{Path.home()}/code/x.py, line 1") == "~/code/x.py, line 1"
