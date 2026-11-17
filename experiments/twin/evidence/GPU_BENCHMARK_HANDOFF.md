@@ -17,7 +17,9 @@ and the timestamped `gpu_benchmark_*.json` files next to this note.
    grow with pool size: about 0.23 ms per step goes to per-step overhead, not
    arithmetic. The CPU is faster for one forward up to the largest pool it ran
    (1000 MN: 1.20 s vs 3.25 s) and for one gradient up to 100 MN; from 250 MN the
-   GPU gradient is faster (1000 MN: 60.9 s vs 6.8 s, 8.9x).
+   GPU gradient is faster (1000 MN: 60.9 s vs 6.8 s, 8.9x). These are the plain
+   float32 rows; the figure plots float64 checkpointed gradients, where the GPU
+   is faster from 500 MN (verdict 3).
 3. **Batching pays on the GPU only for the forward.** GPU forward parallel
    efficiency stays 0.96–1.01 up to K = 1000 (310 sims/s vs CPU 181 sims/s, 1.7x).
    The GPU gradient batch runs out of memory at K = 256 (10 MN each; 19.1 GiB
@@ -25,10 +27,11 @@ and the timestamped `gpu_benchmark_*.json` files next to this note.
    Opt-in gradient checkpointing removes every gradient OOM (K = 256 and 1000,
    5000 MN) at about 1.5x the time per call; the GPU gradient then beats the CPU
    from K = 1000 (84 vs 27 sims/s, 3.1x). See "Gradient checkpointing".
-   In float64 (mixed), the precision at which G2 is device-stable, the GPU gradient
-   costs 1.2-1.3x its float32 time (K 1000: 1.7x) and beats the CPU from 500 MN
-   (2.5x; 1000 MN 9.6x) and from K 256 (1.5x; K 1000 3.1x). See "Float64 gradient
-   timings".
+   In float64 (mixed), the precision at which the G2 objectives are device-stable,
+   the GPU gradient costs 1.2-1.3x its float32 time (K 1000: 1.7x) and beats the
+   CPU from 500 MN (2.5x; 1000 MN 9.6x) and from K 256 (1.5x; K 1000 3.1x). Float64
+   does not make the timing workload's own gradient usable: CPU and GPU agree only
+   at 1 and 10 MN. See "Float64 gradient timings".
 4. **Float32 surrogate signs are not reproducible across backends.** G2 at the
    same commit: CPU float32 0 agree / 19 wrong / 1 unresolved (the brief's
    "wrong in 19/20" reproduces, and matches the October CPU file exactly);
@@ -291,8 +294,8 @@ the fixed `derive()`.
 The benchmark's gradient workload is `phase2_benchmark.py`'s loss (mean squared
 smoothed surrogate rate over 1.4 s at dt 0.1 ms, float32). It times reverse mode
 at scale; its values are not a qualified gradient. At the default parameters the
-gradient magnitudes are 4e9 to 8e20, and every perturbed batch with K >= 4 has
-non-finite entries (`output_summary.all_finite = false`), on CPU and GPU alike.
+gradient magnitudes are 4e9 to 8e20 (float64 mixed: 4e9 to 2e20), and every
+perturbed batch with K >= 4 has non-finite entries (`output_summary.all_finite = false`), on CPU and GPU alike.
 The timings are unaffected (same arithmetic either way). The qualified gradient
 evidence is G1, G2 (x64) and G4 below, not this workload.
 
@@ -356,7 +359,8 @@ and gradients differ up to 100x, including sign. Plain CPU and plain GPU differ
 by the same order, with opposite signs for the mean-voltage gradient
 (`remat/checks/remat_equal_{cpu,gpu}.json`). This is consistent with the float32
 problem reported below rather than an error of checkpointing, given the x64
-agreement above; no x64 run at this shape was made. (`remat_equal.py` is the
+agreement above. No plain x64 run at this shape was made; the float64 checkpointed
+rows (see "Float64 gradient timings") agree across devices only at 1 and 10 MN. (`remat_equal.py` is the
 script as run; its `mode` variable is unused and both losses go through the
 surrogate path.)
 
@@ -364,8 +368,8 @@ Use it for gradients that do not fit; the plain scan stays the default.
 
 ## Float64 gradient timings
 
-Panel A's gradient lines time float64 (mixed) gradients, the precision at which G2
-is device-stable (float32 G2 is not; see "Float32 vs float64"). Both devices are
+Panel A's gradient lines time float64 (mixed) gradients, the precision at which
+the G2 objectives are device-stable (float32 G2 is not; see "Float32 vs float64"). Both devices are
 checkpointed (`remat_segment` 140): the plain float32 CPU gradient at K 1000
 already used 84 GB RSS of 91 GiB. Graph: voltage float64; theta, drives,
 connectivity, rates, loss and gradient leaves float32; 353 float32 against
@@ -403,10 +407,17 @@ the GPU from K 256 (1.5x; K 1000 3.1x). The crossovers lie between the measured
 sizes; nothing between them was run.
 
 These rows time the same workload as the main table, now in float64; they do not
-make its gradient values usable. Every perturbed batch with K >= 4 still has
-non-finite gradient entries on both devices (`output_summary.all_finite = false`),
-as in float32 (see "Gradient values of the timing workload"). Single pools are
-finite at every size.
+make its gradient values usable. Same rows, CPU against GPU (`output_summary`,
+sum per leaf): the loss agrees to 1e-3 or better at every size and the gradient
+agrees at 1 MN (2.4e-4 relative) and 10 MN (2e-5), but from 50 MN it differs by
+26-150 %, with opposite signs at 250 and 1000 MN, at magnitudes of 1e14-2e20.
+Float64 (mixed) is therefore not enough for this loss at 1.4 s and dt 0.1 ms,
+consistent with G1 (dt 0.1 ms is FD-unconverged at 2 s). Every perturbed batch
+with K >= 4 still has non-finite gradient entries on both devices
+(`output_summary.all_finite = false`): its gradient leaves are float32 in the
+mixed graph and reach 1e35-2e38 or overflow to inf. Single pools are finite at
+every size. The cost of float64 is the measured quantity here; the qualified
+float64 gradients are G1, G2 and G4.
 
 ## Float32 vs float64
 
