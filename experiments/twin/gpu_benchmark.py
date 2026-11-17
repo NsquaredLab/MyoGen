@@ -76,7 +76,7 @@ OPS = {"step": ("hard_forward", "surrogate_value_and_grad"),
 PLATFORM_ENV = {"cpu": "cpu", "gpu": "cuda"}
 FAILED = ("timeout", "oom")                  # larger sizes of the series are skipped
 KEY = ("sweep", "device", "precision", "op", "workload", "theta", "n_mn",
-       "batch_size", "dt_ms")
+       "batch_size", "dt_ms", "remat_segment")
 
 
 # --------------------------------------------------------------------------- #
@@ -157,7 +157,9 @@ def derive(rows: list) -> list:
     for r in rows:
         d = {"key": list(row_key(r))}
         if r["status"] == "ok":
-            base = ok.get(row_key({**r, "batch_size": 1}))
+            # under --theta auto the K = 1 row runs the default theta, K > 1 the draws
+            base = (ok.get(row_key({**r, "batch_size": 1}))
+                    or ok.get(row_key({**r, "batch_size": 1, "theta": "default"})))
             if base and r["sweep"] == "batch":
                 d["speedup_vs_k1"] = r["sims_per_s"] / base["sims_per_s"]
                 d["parallel_efficiency"] = d["speedup_vs_k1"] / r["batch_size"]
@@ -173,7 +175,7 @@ def derive(rows: list) -> list:
 def tidy_rows(rows: list) -> list:
     """One CSV row per device, precision, op, n_mn, batch size and replicate."""
     cols = ("sweep", "device", "precision", "precision_label", "op", "workload",
-            "theta", "n_mn", "batch_size", "dt_ms", "status")
+            "theta", "n_mn", "batch_size", "dt_ms", "remat_segment", "status")
     out = []
     for r in rows:
         base = {c: r.get(c) for c in cols}
@@ -214,7 +216,7 @@ def build_step(cfg):
     from poolbuild import PoolTwin, TwinSpec
 
     twin = PoolTwin(TwinSpec(n_mn=cfg["n_mn"], n_dd=cfg["n_dd"], dt_ms=cfg["dt_ms"],
-                             seed=cfg["seed"]))
+                             seed=cfg["seed"], remat_segment=cfg.get("remat_segment")))
     _, cmd = protocols.step(cfg["dt_ms"], t_pre_s=cfg["t_pre_s"], t_on_s=cfg["t_on_s"],
                             t_post_s=cfg["t_post_s"], level=cfg["level_hz"])
     drives = {"dd": jnp.asarray(cmd), "inh": jnp.zeros(len(cmd), jnp.float32)}
@@ -418,13 +420,16 @@ def configs(args) -> list:
             sizes = {"pool": args.pool_sizes, "batch": args.batch_sizes,
                      "stress": STRESS_SIZES}[sweep]
             for op in OPS["step"]:
+                if op not in getattr(args, "ops", OPS["step"]):
+                    continue
                 for s in sizes:
                     n_mn, k = (args.batch_n_mn, s) if sweep == "batch" else (s, 1)
                     theta = args.theta if args.theta != "auto" else (
                         "default" if k == 1 else "perturbed")
                     out.append(dict(base, **step, sweep=sweep, device=dev,
                                     precision=args.precision, op=op, workload="step",
-                                    theta=theta, n_mn=n_mn, batch_size=k))
+                                    theta=theta, n_mn=n_mn, batch_size=k,
+                                    remat_segment=getattr(args, "remat_segment", None)))
     return out
 
 
@@ -518,6 +523,11 @@ def main():
     ap.add_argument("--devices", nargs="+", default=["cpu", "gpu"], choices=["cpu", "gpu"])
     ap.add_argument("--precision", choices=["float32", "float64"], default="float32",
                     help="precision of the pool/batch/stress sweeps")
+    ap.add_argument("--ops", nargs="+", default=list(OPS["step"]), choices=OPS["step"],
+                    help="operations of the pool/batch/stress sweeps")
+    ap.add_argument("--remat-segment", type=int, default=None,
+                    help="gradient checkpointing: steps per jax.checkpoint block of the "
+                         "simulation scan (must divide the step count); default off")
     ap.add_argument("--pool-sizes", type=int, nargs="+", default=POOL_SIZES)
     ap.add_argument("--batch-sizes", type=int, nargs="+", default=BATCH_SIZES)
     ap.add_argument("--batch-n-mn", type=int, default=10)

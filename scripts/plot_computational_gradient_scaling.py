@@ -3,24 +3,26 @@
 
 Reads ONLY saved evidence (no simulation, no JAX):
 
-* A, B  ``gpu_benchmark.py`` output: hard-spike forward and surrogate
-  value-and-grad throughput, CPU vs GPU, over pool size (or batch size).
-* C     ``gradient_repair.py --tests g2`` (with and without ``--x64``): sign of the
-  surrogate gradient against the common-random-number (CRN) finite-difference
-  control direction, per coordinate variant: agree / wrong / unresolved.
-* D     ``gradient_repair.py --tests g1 --x64 --regime b_config``: AD of the
+* A  ``gpu_benchmark.py`` output: time per call of the hard-spike forward and the
+  surrogate value-and-grad, CPU vs GPU, over pool size (GPU stress sizes
+  included) and over batch size.
+* B  ``gradient_repair.py --tests g2`` (with and without ``--x64``, per device):
+  sign of the surrogate gradient against the common-random-number (CRN)
+  finite-difference control direction, every variant and coordinate.
+* C  ``gradient_repair.py --tests g1 --x64 --regime b_config``: AD of the
   hard-spike mean-voltage objective against a local finite-difference
-  convergence region, per timestep x horizon: pass / failed / unresolved.
-* E, F  ``g4_descent.py`` Stage A: fraction of proposed steps the hard-spike
-  forward loss accepts, and the surrogate-vs-CRN direction cosines.
+  convergence region, per timestep x horizon.
+* D, E  ``g4_descent.py`` Stage A: fraction of proposed steps the hard-spike
+  forward loss accepts, per start and overall, and the surrogate-vs-CRN
+  direction cosines.
 
 Writes ``results/figures/figure_computational_gradient_scaling.{png,pdf}`` and
 ``..._source_data.json`` (every plotted value plus input hashes and manifests).
 Uses ``simpetru_figstyle`` when installed, plain Matplotlib otherwise (draft).
 
     python scripts/plot_computational_gradient_scaling.py \\
-        --benchmark .../benchmark.json \\
-        --g2 Float32=.../gradient_repair_f32_*.json Float64=.../gradient_repair_x64_*.json \\
+        --benchmark .../bench/benchmark.json .../stress/benchmark.json \\
+        --g2 "Float32, CPU=..." "Float32, GPU=..." "Float64 (Mixed), CPU=..." ... \\
         --g1 .../gradient_repair_x64_*.json --g4 .../g4_descent_full_*.json
 """
 
@@ -35,6 +37,14 @@ ROOT = Path(__file__).resolve().parents[1]
 OUT = ROOT / "results" / "figures" / "figure_computational_gradient_scaling"
 CLASSES = ("agree", "wrong", "unresolved")
 VERDICT = {"PASS": "Pass", "FAIL": "Failed", "FD_UNCONVERGED": "Unresolved"}
+COORDS = ("gCaL", "w_exc")
+STARTS = ("S1_both_wrong", "S2_gcal_wrong_only", "S3_w_wrong_only")
+
+#  name: (sweeps, op, x key); the GPU-only stress sizes extend the pool sweep
+SCALING = {"pool_forward": (("pool", "stress"), "hard_forward", "n_mn"),
+           "pool_gradient": (("pool", "stress"), "surrogate_value_and_grad", "n_mn"),
+           "batch_forward": (("batch",), "hard_forward", "batch_size"),
+           "batch_gradient": (("batch",), "surrogate_value_and_grad", "batch_size")}
 
 
 def _load(path: Path) -> tuple[dict, dict]:
@@ -49,64 +59,73 @@ def _load(path: Path) -> tuple[dict, dict]:
     return d, info
 
 
-def build_source_data(benchmark, g2: dict, g1, g4, workload="pool") -> dict:
+def build_source_data(benchmarks, g2: dict, g1, g4) -> dict:
     """Every plotted number, parsed from the evidence files."""
     inputs, panels = {}, {}
 
-    bench, inputs["benchmark"] = _load(benchmark)
-    rows = [r for r in bench["rows"] if r["sweep"] == workload and r["workload"] == "step"]
-    x_key = "n_mn" if workload == "pool" else "batch_size"
-    y_key = "mn_steps_per_s" if workload == "pool" else "sims_per_s"
-    for panel, op in (("A", "hard_forward"), ("B", "surrogate_value_and_grad")):
-        panels[panel] = {"op": op, "x": x_key, "y": y_key, "series": {
-            dev: [{"x": r[x_key], "y": r.get(y_key), "status": r["status"],
-                   "median_s": r.get("median_s"), "iqr_s": r.get("iqr_s"),
-                   "first_call_s": r.get("first_call_s"),
-                   "precision_label": r.get("precision_label")}
-                  for r in rows if r["op"] == op and r["device"] == dev]
-            for dev in ("cpu", "gpu")}}
+    rows = []
+    for i, path in enumerate(benchmarks):
+        bench, inputs[f"benchmark_{i}"] = _load(path)
+        rows += [r for r in bench["rows"] if r["workload"] == "step"]
+    panels["A"] = {}
+    for name, (sweeps, op, x_key) in SCALING.items():
+        panels["A"][name] = {"op": op, "sweeps": sweeps, "x": x_key, "y": "median_s",
+                             "series": {dev: sorted((
+                                 {"x": r[x_key], "y": r.get("median_s"),
+                                  "status": r["status"], "sweep": r["sweep"],
+                                  "iqr_s": r.get("iqr_s"),
+                                  "first_call_s": r.get("first_call_s"),
+                                  "sims_per_s": r.get("sims_per_s"),
+                                  "mn_steps_per_s": r.get("mn_steps_per_s"),
+                                  "precision_label": r.get("precision_label")}
+                                 for r in rows if r["sweep"] in sweeps and r["op"] == op
+                                 and r["device"] == dev), key=lambda p: p["x"])
+                                 for dev in ("cpu", "gpu")}}
 
-    panels["C"] = {}
+    panels["B"] = {}
     for label, path in g2.items():
         d, inputs[f"g2_{label}"] = _load(path)
         inputs[f"g2_{label}"]["x64"] = d.get("x64")
         counts = d["g2"]["per_coordinate"]
-        panels["C"][label] = {
+        panels["B"][label] = {
             "x64": d.get("x64"), "n": sum(sum(c.values()) for c in counts.values()),
             "per_coordinate": counts,
             **{c: sum(v[c] for v in counts.values()) for c in CLASSES},
+            "variants": [r["variant"] for r in d["g2"]["rows"]],
+            "classes": {c: [r["classification"][i] for r in d["g2"]["rows"]]
+                        for i, c in enumerate(COORDS)},
             "leaf_dtypes": sorted({r["leaf_dtype"] for r in d["g2"]["rows"]}),
             "nonfinite": sum(not r["grad_finite"] for r in d["g2"]["rows"])}
 
     d, inputs["g1"] = _load(g1)
     if d.get("regime") != "b_config" or not d.get("x64"):
         raise ValueError(f"{g1} is not the float64 b_config G1 run")
-    panels["D"] = [{"dt_ms": r["dt_ms"], "horizon_s": r["horizon_s"],
+    panels["C"] = [{"dt_ms": r["dt_ms"], "horizon_s": r["horizon_s"],
                     "n_spikes": r["n_spikes"], "verdict": r["verdict"],
                     "class": VERDICT[r["verdict"]], "rel_error": r["rel_rev_vs_fdconv"],
                     "cosine": r["cosine"]} for r in d["g1"]["rows"]]
 
     d, inputs["g4"] = _load(g4)
-    gate = d["stageA"]["gate"]
-    panels["E"] = {"gate": 0.8, "estimators": {}}
-    for est, g in gate.items():
-        tot = {"joint": [0, 0], "gCaL": [0, 0], "w": [0, 0]}
-        for s in g["per_start"].values():
-            tot["joint"][0] += s["joint_acc"]
-            tot["joint"][1] += s["joint_tot"]
-            for c in ("gCaL", "w"):
-                tot[c][0] += s["coord_acc"][c]
-                tot[c][1] += s["coord_tot"][c]
-        panels["E"]["estimators"][est] = {
+    panels["D"] = {"gate": 0.8, "estimators": {}}
+    for est, g in d["stageA"]["gate"].items():
+        per_start = {}
+        for s, v in g["per_start"].items():
+            per_start[s] = {"joint": v["joint_acc"] / v["joint_tot"],
+                            **{c: v["coord_acc"][c] / v["coord_tot"][c]
+                               for c in ("gCaL", "w")},
+                            "counts": {"joint": [v["joint_acc"], v["joint_tot"]],
+                                       **{c: [v["coord_acc"][c], v["coord_tot"][c]]
+                                          for c in ("gCaL", "w")}}}
+        panels["D"]["estimators"][est] = {
             "joint": g["joint_accepted_fraction"],
             "gCaL": g["coord_accepted_fraction"]["gCaL"],
             "w": g["coord_accepted_fraction"]["w"],
-            "counts": tot, "nonfinite": g["nonfinite"],
+            "per_start": per_start, "nonfinite": g["nonfinite"],
             "joint_pass": g["joint_pass"]}
-    panels["F"] = [{"case": r["case"], "start": s, "cosine": v["cosine_sur_vs_fd"]}
+    panels["E"] = [{"case": r["case"], "start": s, "cosine": v["cosine_sur_vs_fd"]}
                    for r in d["stageA"]["rows"] for s, v in r["starts"].items()
                    if "cosine_sur_vs_fd" in v]
-    return {"inputs": inputs, "workload": workload, "panels": panels}
+    return {"inputs": inputs, "panels": panels}
 
 
 # --------------------------------------------------------------------------- #
@@ -114,133 +133,211 @@ def build_source_data(benchmark, g2: dict, g1, g4, workload="pool") -> dict:
 def draw(src: dict):
     import matplotlib.pyplot as plt
     import numpy as np
-    from matplotlib.colors import ListedColormap
-    from matplotlib.lines import Line2D
+    from matplotlib.patches import FancyBboxPatch
+    from matplotlib.ticker import FixedLocator, NullFormatter
 
     try:
         import simpetru_figstyle as sf
         plt.style.use(["science", "ieee", "simpetru"])
         pal, grey, width = sf.PALETTE, sf.GREYS, sf.COL_2
-        letter = dict(fontsize=sf.PANEL_LETTER_SIZE, gid=sf.PANEL_LETTER_GID)
-        legend, trim = sf.place_legend, sf.trim_spines
+        letter_kw = dict(fontsize=sf.PANEL_LETTER_SIZE, gid=sf.PANEL_LETTER_GID)
+        trim = sf.trim_spines
     except ImportError:                                    # draft fallback
         sf = None
         pal = ("#5790fc", "#f89c20", "#e42536", "#964a8b", "#9c9ca1", "#7a21dd")
-        grey, width, letter = ("#6d6f72", "#939699"), 7.16, dict(fontsize=12)
+        grey, width, letter_kw = ("#6d6f72", "#939699"), 7.16, dict(fontsize=12)
 
-        def legend(ax, groups=None):
-            ax.legend(**({"handles": groups[0]} if groups else {}), frameon=False)
-
-        def trim(ax, which=None):
-            pass
+        def trim(ax, which=("left", "bottom"), offset=5):
+            for s in ("top", "right"):
+                ax.spines[s].set_visible(False)
 
     P = src["panels"]
-    dev_style = {"gpu": (pal[0], "o", "GPU"), "cpu": (pal[1], "s", "CPU")}
-    fig = plt.figure(figsize=(width, 7.2), layout="constrained")
-    gs = fig.add_gridspec(3, 2)
-    ax = {k: fig.add_subplot(gs[i // 2, i % 2]) for i, k in enumerate("ABCDEF")}
+    dev_c = {"gpu": pal[0], "cpu": pal[1]}
+    cls_c = {"agree": "black", "wrong": pal[2], "unresolved": "white"}
+    est_c = {"surrogate": pal[5], "crn_fd": pal[4]}
 
-    # A, B -- throughput, shared y range
-    ys = [p["y"] for k in "AB" for s in P[k]["series"].values() for p in s if p["y"]]
-    lim = (10 ** np.floor(np.log10(min(ys))), 10 ** np.ceil(np.log10(max(ys))))
-    titles = {"A": "Hard-Spike Forward", "B": "Surrogate Value and Gradient"}
-    for k in "AB":
-        a = ax[k]
-        for dev, pts in P[k]["series"].items():
-            c, m, name = dev_style[dev]
+    def heading(ax, letter, title, dx=-30, dy=12):
+        """Letter and title on one line, left-aligned (Affinity layout)."""
+        ax.annotate(letter, (0, 1), xycoords="axes fraction", xytext=(dx, dy),
+                    textcoords="offset points", ha="left", va="baseline", **letter_kw)
+        ax.annotate(title, (0, 1), xycoords="axes fraction", xytext=(dx + 14, dy),
+                    textcoords="offset points", ha="left",
+                    va="baseline").set_in_layout(False)
+
+    def ends(ax, axis, lo, hi, fmt="{:g}"):
+        """End-point ticks only."""
+        getattr(ax, f"set_{axis}ticks")([lo, hi], [fmt.format(lo), fmt.format(hi)])
+
+    fig = plt.figure(figsize=(width, 6.4), layout="constrained")
+    outer = fig.add_gridspec(3, 1, height_ratios=[1, 1.15, 1.05])
+    row_a = outer[0].subgridspec(1, 4)
+    row_b = outer[1].subgridspec(1, 2, width_ratios=[1.55, 1])
+    row_c = outer[2].subgridspec(1, 2, width_ratios=[1.9, 1])
+
+    # A -- time per call; failed runs sit on the top edge as crosses
+    ylim = (0.15, 300)
+    names = [("pool_forward", "Forward, One Pool", "Motor Neurons"),
+             ("pool_gradient", "Gradient, One Pool", "Motor Neurons"),
+             ("batch_forward", "Forward, Batched", "Pools of 10 MN"),
+             ("batch_gradient", "Gradient, Batched", "Pools of 10 MN")]
+    axA = []
+    for i, (name, title, xlabel) in enumerate(names):
+        a = fig.add_subplot(row_a[0, i], sharey=axA[0] if axA else None)
+        axA.append(a)
+        for dev in ("cpu", "gpu"):
+            pts = P["A"][name]["series"][dev]
             ok = [p for p in pts if p["status"] == "ok"]
-            a.plot([p["x"] for p in ok], [p["y"] for p in ok], marker=m, color=c,
-                   markersize=3.5, label=name)
+            a.plot([p["x"] for p in ok], [p["y"] for p in ok], color=dev_c[dev],
+                   marker="o", markersize=2.5, lw=1.2)
             bad = [p for p in pts if p["status"] != "ok"]
             if bad:  # an empty unclipped line spans the figure in the tight bbox
-                a.plot([p["x"] for p in bad], [lim[0]] * len(bad), "x", color=c,
-                       markersize=5, clip_on=False)
-        a.set(xscale="log", yscale="log", ylim=lim, title=titles[k],
-              xlabel="Motor Neurons" if src["workload"] == "pool" else "Batch Size")
-        a.set_ylabel("Throughput (MN Steps/s, Float32)" if src["workload"] == "pool"
-                     else "Simulations (1/s, Float32)")
+                a.plot([p["x"] for p in bad], [ylim[1]] * len(bad), "x",
+                       color=dev_c[dev], markersize=4, mew=1.2, clip_on=False)
+                first = bad[0]
+                a.annotate("OOM" if first["status"] == "oom" else first["status"],
+                           (first["x"], ylim[1]), xytext=(-4, 0),
+                           textcoords="offset points", ha="right", va="center",
+                           color=dev_c[dev])
+        a.set(xscale="log", yscale="log", ylim=ylim, xlabel=xlabel)
+        a.set_title(title)
+        hi = max(p["x"] for s in P["A"][name]["series"].values() for p in s)
+        a.xaxis.set_major_locator(FixedLocator([1, hi]))
+        a.set_xticklabels(["1", f"{hi:g}"])
+        a.xaxis.set_minor_formatter(NullFormatter())
         a.minorticks_off()
-    handles = [Line2D([], [], color=dev_style[d][0], marker=dev_style[d][1],
-                      markersize=3.5, label=dev_style[d][2]) for d in ("gpu", "cpu")]
-    handles.append(Line2D([], [], color=grey[0], marker="x", ls="", label="Not Completed"))
+        a.yaxis.set_major_locator(FixedLocator([1, 10, 100]))
+        a.set_yticklabels(["1", "10", "100"])
+        if i:
+            a.tick_params(labelleft=False)
+        trim(a)
+    axA[0].set_ylabel("Time per Call (s)")
+    axA[0].text(1.3, 6, "GPU", color=dev_c["gpu"])
+    axA[0].text(1.3, 0.24, "CPU", color=dev_c["cpu"], va="center")
+    heading(axA[0], "A", "Wall Time per Simulation Call, Float32, Median of 7",
+            dy=24)
 
-    # C -- stacked agree / wrong / unresolved
-    a = ax["C"]
-    labels = list(P["C"])
-    colors = {"agree": pal[0], "wrong": pal[2], "unresolved": grey[1]}
-    left = np.zeros(len(labels))
-    for c in CLASSES:
-        v = np.array([P["C"][l][c] for l in labels])
-        a.barh(labels, v, left=left, color=colors[c], label=c.capitalize(), height=0.6)
-        for i, (x0, n) in enumerate(zip(left, v)):
-            if n >= 3:
-                a.text(x0 + n / 2, i, str(n), ha="center", va="center", color="white")
-            elif n:
-                a.text(x0 + n / 2, i - 0.32, str(n), ha="center", va="bottom")
-        left += v
-    a.set(xlabel="Coordinate Variants", title="Surrogate Sign vs CRN Control",
-          xlim=(0, max(left)))
-    a.invert_yaxis()
-
-    # D -- timestep x horizon verdicts
-    a = ax["D"]
-    dts = sorted({r["dt_ms"] for r in P["D"]})
-    hs = sorted({r["horizon_s"] for r in P["D"]})
-    code = {"Pass": 0, "Failed": 1, "Unresolved": 2}
-    grid = np.full((len(dts), len(hs)), np.nan)
-    for r in P["D"]:
-        i, j = dts.index(r["dt_ms"]), hs.index(r["horizon_s"])
-        grid[i, j] = code[r["class"]]
-        a.text(j, i, f"{r['class']}\n{r['n_spikes']} Spikes", ha="center",
-               va="center", color="white")
-    a.imshow(grid, cmap=ListedColormap([pal[0], pal[2], grey[1]]), vmin=-0.5,
-             vmax=2.5, aspect="auto")
-    a.set(xticks=range(len(hs)), xticklabels=[f"{h:g}" for h in hs],
-          yticks=range(len(dts)), yticklabels=[f"{d:g}" for d in dts],
-          xlabel="Horizon (s)", ylabel="Timestep (ms)",
-          title="AD vs Local FD (x64 Flag, Mixed)")
+    # B -- every G2 variant and coordinate, per precision and device
+    a = fig.add_subplot(row_b[0, 0])
+    runs = list(P["B"])
+    variants = P["B"][runs[0]]["variants"]
+    groups = [v.split("=")[0] for v in variants]
+    xs, x = [], 0.0
+    for j, g in enumerate(groups):
+        x += (1.6 if g == "dt" else 1.2) if j and g == groups[j - 1] else (1.9 if j else 0.0)
+        xs.append(x)
+    ys = {}
+    for r, run in enumerate(runs):
+        for c, coord in enumerate(COORDS):
+            y = r * 2.8 + c
+            ys[(run, coord)] = y
+            for xv, k in zip(xs, P["B"][run]["classes"][coord]):
+                a.scatter(xv, y, s=26, color=cls_c[k],
+                          edgecolors=grey[0] if k == "unresolved" else cls_c[k],
+                          linewidths=0.8, zorder=3)
+        e = P["B"][run]
+        a.text(xs[-1] + 1.2, r * 2.8 + 0.5, f"{e['agree']} of {e['n']}", va="center")
+        a.text(-3.0, r * 2.8 + 0.5, run, ha="right", va="center")
+    a.set_yticks([ys[k] for k in ys], ["gCaL" if k[1] == "gCaL" else "w" for k in ys])
+    names_short = {"beta": "Surrogate\nSlope", "vth": "Threshold\n(mV)",
+                   "dt": "Step\n(ms)", "evshift": "Event\nShift"}
+    a.set_xticks(xs, [v.split("=")[1].removesuffix(".0") for v in variants])
+    for g in dict.fromkeys(groups):
+        gx = [xv for xv, gg in zip(xs, groups) if gg == g]
+        a.annotate(names_short[g], (np.mean(gx), 0), xycoords=("data", "axes fraction"),
+                   xytext=(0, -24), textcoords="offset points", ha="center", va="top")
+    a.set(xlim=(-0.6, xs[-1] + 0.6), ylim=(max(ys.values()) + 0.6, -0.6))
     for s in a.spines.values():
         s.set_visible(False)
     a.tick_params(length=0)
+    a.minorticks_off()
+    key = [("Agree", "agree"), ("Wrong", "wrong"), ("Unresolved", "unresolved")]
+    for i, (lab, k) in enumerate(key):
+        a.scatter([], [], s=26, color=cls_c[k], label=lab,
+                  edgecolors=grey[0] if k == "unresolved" else cls_c[k], linewidths=0.8)
+    a.legend(loc="upper left", bbox_to_anchor=(1.0, -0.02), frameon=False,
+             handletextpad=0.2, borderaxespad=0.0, labelspacing=0.3)
+    heading(a, "B", "Surrogate Sign Against the CRN Control", dx=-118)
 
-    # E -- accepted-step fractions, hard-spike forward judges
-    a = ax["E"]
-    est_style = {"surrogate": (pal[0], "Surrogate"), "crn_fd": (grey[0], "CRN Control")}
+    # C -- timestep x horizon verdicts, same encoding as B
+    a = fig.add_subplot(row_b[0, 1])
+    dts = sorted({r["dt_ms"] for r in P["C"]})
+    hs = sorted({r["horizon_s"] for r in P["C"]})
+    fill = {"Pass": "black", "Failed": pal[2], "Unresolved": "white"}
+    for r in P["C"]:
+        i, j = dts.index(r["dt_ms"]), hs.index(r["horizon_s"])
+        a.add_patch(FancyBboxPatch((j - 0.44, i - 0.42), 0.88, 0.84,
+                                   boxstyle="round,pad=0,rounding_size=0.06",
+                                   fc=fill[r["class"]],
+                                   ec=grey[0] if r["class"] == "Unresolved" else "none",
+                                   lw=0.8))
+        a.text(j, i, r["class"], ha="center", va="center",
+               color="white" if r["class"] != "Unresolved" else "black")
+    spikes = {r["horizon_s"]: r["n_spikes"] for r in P["C"]}  # set by the horizon
+    a.set(xlim=(-0.5, len(hs) - 0.5), ylim=(len(dts) - 0.5, -0.5),
+          xticks=range(len(hs)),
+          xticklabels=[f"{h:g}\n{spikes[h]} Spikes" for h in hs],
+          yticks=range(len(dts)), yticklabels=[f"{d:g}" for d in dts],
+          xlabel="Horizon (s)", ylabel="Step (ms)")
+    for s in a.spines.values():
+        s.set_visible(False)
+    a.tick_params(length=0)
+    a.minorticks_off()
+    heading(a, "C", "AD Against Local FD, Mixed x64", dx=-42)
+
+    # D -- accepted fractions: one dot per start, bar = all steps
+    a = fig.add_subplot(row_c[0, 0])
     steps = [("joint", "Joint"), ("gCaL", "gCaL Only"), ("w", "w Only")]
-    y = np.arange(len(steps))
-    for n, (est, (c, name)) in enumerate(est_style.items()):
-        e = P["E"]["estimators"][est]
-        a.barh(y + (n - 0.5) * 0.38, [e[s] for s, _ in steps], height=0.36, color=c,
-               label=f"{name} ({e['nonfinite']} Non-Finite)")
-    a.axvline(P["E"]["gate"], color=grey[1], ls="--", lw=1)
-    a.text(P["E"]["gate"] + 0.02, 2.72, f"Gate {P['E']['gate']:g}", ha="left",
-           va="center")
-    a.set(yticks=y, yticklabels=[s for _, s in steps], xlim=(0, 1), ylim=(2.9, -0.5),
-          xlabel="Accepted Step Fraction", title="Steps Accepted by Hard-Spike Loss")
+    off = {"surrogate": -0.17, "crn_fd": 0.17}
+    for gi, (s, _) in enumerate(steps):
+        for est, e in P["D"]["estimators"].items():
+            x0 = gi + off[est]
+            for k, v in enumerate(e["per_start"].values()):
+                a.scatter(x0 + (k - 1) * 0.06, v[s], s=12, color=est_c[est],
+                          alpha=0.85, linewidths=0, zorder=3)
+            a.plot([x0 - 0.12, x0 + 0.12], [e[s]] * 2, color=est_c[est], lw=2.4,
+                   solid_capstyle="butt", zorder=4)
+    a.axhline(P["D"]["gate"], color=grey[1], ls="--", lw=0.8, zorder=1)
+    a.text(len(steps) - 0.45, P["D"]["gate"], "Gate", va="center", ha="left")
+    s2 = P["D"]["estimators"]["surrogate"]["per_start"].get(STARTS[1])
+    if s2:  # S2 starts with w at its true value, so w-only steps cannot help
+        a.annotate("Start S2: w Already True", (2, s2["w"]), xytext=(0, 7),
+                   textcoords="offset points", ha="center", va="bottom")
+    a.set(xlim=(-0.5, len(steps) - 0.5), ylim=(-0.05, 1.05))
+    a.set_xticks(range(len(steps)), [lab for _, lab in steps])
+    ends(a, "y", 0, 1)
+    a.set_ylabel("Accepted Fraction")
+    a.minorticks_off()
+    nf = sum(e["nonfinite"] for e in P["D"]["estimators"].values())
+    a.text(0.62, 0.50, "Surrogate", color=est_c["surrogate"])
+    a.text(0.62, 0.36, "CRN Control", color=est_c["crn_fd"])
+    a.text(0.62, 0.18, f"{nf} Non-Finite", color=grey[0])
+    trim(a)
+    heading(a, "D", "Steps the Hard-Spike Loss Accepts, 3 Starts, 8 Cases", dx=-36)
 
-    # F -- direction cosines, every start shown
-    a = ax["F"]
-    cos = np.array([r["cosine"] for r in P["F"]])
-    jitter = np.random.default_rng(0).uniform(-0.12, 0.12, len(cos))
-    a.scatter(cos, jitter, s=12, facecolors="none", edgecolors=pal[0], linewidths=0.8)
-    a.plot([np.median(cos)] * 2, [-0.36, -0.2], color=grey[0], lw=1.6)
-    a.text(np.median(cos), -0.28, f"Median {np.median(cos):.2f}  ", ha="right",
-           va="center")
+    # E -- direction cosines, every start shown, median bar
+    a = fig.add_subplot(row_c[0, 1])
+    cos = np.array([r["cosine"] for r in P["E"]])
+    order = np.argsort(cos)
+    xj = np.zeros(len(cos))
+    for rank, i in enumerate(order):               # small beeswarm by rank
+        xj[i] = ((rank % 5) - 2) * 0.07
+    a.scatter(xj, cos, s=12, color=est_c["surrogate"], alpha=0.85, linewidths=0,
+              zorder=3)
+    med = float(np.median(cos))
+    a.plot([-0.25, 0.25], [med] * 2, color="black", lw=2.4, solid_capstyle="butt")
+    a.text(0.3, med, f"Median {med:.3f}", va="center")
     i = int(np.argmin(cos))
-    a.annotate(f"{cos[i]:.2f}", (cos[i], jitter[i]), xytext=(0, 8),
-               textcoords="offset points", ha="center")
-    a.set(xlim=(-1.05, 1.05), ylim=(-0.4, 0.4), yticks=[], xlabel="Direction Cosine",
-          title=f"Surrogate vs CRN Control (n = {len(cos)})")
-    a.spines["left"].set_visible(False)
+    a.annotate(f"{cos[i]:.2f}", (xj[i], cos[i]), xytext=(8, 0),
+               textcoords="offset points", va="center")
+    a.axhline(0, color=grey[1], ls="--", lw=0.8, zorder=1)
+    a.set(xlim=(-0.5, 1.2), ylim=(-1.08, 1.08), xticks=[])
+    ends(a, "y", -1, 1)
+    a.set_ylabel("Cosine to CRN Control")
+    a.spines["bottom"].set_visible(False)
+    a.minorticks_off()
+    trim(a, which=("left",))
+    heading(a, "E", f"Surrogate Direction, n = {len(cos)}", dx=-36)
 
-    for k, a in ax.items():
-        a.text(-0.2, 1.04, k, transform=a.transAxes, va="bottom", ha="left", **letter)
-    legend(ax["A"], groups=[handles])
-    legend(ax["C"])
-    legend(ax["E"])
-    for k in "ABCE":
-        trim(ax[k])
-    trim(ax["F"], which=("bottom",))
     if sf is None:
         fig.suptitle("DRAFT (plain Matplotlib, simpetru_figstyle unavailable)")
     return fig
@@ -248,20 +345,20 @@ def draw(src: dict):
 
 def main():
     ap = argparse.ArgumentParser(description=__doc__.split("\n\n")[0])
-    ap.add_argument("--benchmark", type=Path, required=True)
+    ap.add_argument("--benchmark", type=Path, nargs="+", required=True,
+                    help="gpu_benchmark.py outputs (main run, stress run)")
     ap.add_argument("--g2", nargs="+", required=True, metavar="LABEL=PATH")
     ap.add_argument("--g1", type=Path, required=True)
     ap.add_argument("--g4", type=Path, required=True)
-    ap.add_argument("--workload", choices=["pool", "batch"], default="pool")
     ap.add_argument("--out", type=Path, default=OUT)
     args = ap.parse_args()
     g2 = dict(s.split("=", 1) for s in args.g2)
-    src = build_source_data(args.benchmark, g2, args.g1, args.g4, args.workload)
+    src = build_source_data(args.benchmark, g2, args.g1, args.g4)
     args.out.parent.mkdir(parents=True, exist_ok=True)
     Path(f"{args.out}_source_data.json").write_text(json.dumps(src, indent=1))
     fig = draw(src)
     for ext in ("png", "pdf"):
-        fig.savefig(f"{args.out}.{ext}", dpi=300)
+        fig.savefig(f"{args.out}.{ext}")
     print(f"saved -> {args.out}.{{png,pdf}} + _source_data.json")
 
 

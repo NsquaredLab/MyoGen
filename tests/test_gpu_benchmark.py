@@ -144,11 +144,15 @@ def _evidence(tmp_path):
     bench = {"manifest": {"git": {"sha": "x", "dirty": False}}, "rows": [
         _row(device=d, op=op, n_mn=n, mn_steps_per_s=1e6 * n, median_s=1.0)
         for d in ("cpu", "gpu") for op in ("hard_forward", "surrogate_value_and_grad")
-        for n in (1, 10)] + [_row(device="gpu", n_mn=1000, status="oom")]}
+        for n in (1, 10)] + [_row(device="gpu", n_mn=1000, status="oom")] + [
+        _row(sweep="batch", device=d, op=op, batch_size=k, sims_per_s=k, median_s=1.0)
+        for d in ("cpu", "gpu") for op in ("hard_forward", "surrogate_value_and_grad")
+        for k in (1, 4)]}
     g2 = lambda x64: {"x64": x64, "manifest": {}, "g2": {  # noqa: E731
         "per_coordinate": {"gCaL": {"agree": 8, "wrong": 1, "unresolved": 1},
                            "w_exc": {"agree": 9, "wrong": 1, "unresolved": 0}},
-        "rows": [{"leaf_dtype": "float64", "grad_finite": True}]}}
+        "rows": [{"variant": "beta=5.0", "classification": ["agree", "agree"],
+                  "leaf_dtype": "float64", "grad_finite": True}]}}
     g1 = {"x64": True, "regime": "b_config", "manifest": {}, "g1": {"rows": [
         {"dt_ms": dt, "horizon_s": h, "n_spikes": 5, "verdict": v,
          "rel_rev_vs_fdconv": None, "cosine": None}
@@ -175,15 +179,39 @@ def test_plot_reads_only_saved_evidence(tmp_path):
 import sys, json
 sys.path.insert(0, {str(ROOT / 'scripts')!r})
 import plot_computational_gradient_scaling as plot
-src = plot.build_source_data({str(p['bench'])!r},
+src = plot.build_source_data([{str(p['bench'])!r}],
                              {{"Float32": {str(p['f32'])!r}, "Float64": {str(p['f64'])!r}}},
                              {str(p['g1'])!r}, {str(p['g4'])!r})
 fig = plot.draw(src)
 banned = [m for m in ("jax", "jaxley", "poolbuild", "gpu_benchmark") if m in sys.modules]
 assert not banned, banned
-assert src["panels"]["C"]["Float64"]["agree"] == 17
-assert [r["class"] for r in src["panels"]["D"]] == ["Unresolved", "Pass", "Failed", "Unresolved"]
-assert src["panels"]["A"]["series"]["gpu"][-1]["status"] == "oom"
+assert src["panels"]["B"]["Float64"]["agree"] == 17
+assert src["panels"]["B"]["Float64"]["classes"]["gCaL"] == ["agree"]
+assert [r["class"] for r in src["panels"]["C"]] == ["Unresolved", "Pass", "Failed", "Unresolved"]
+assert src["panels"]["A"]["pool_forward"]["series"]["gpu"][-1]["status"] == "oom"
+assert [p["x"] for p in src["panels"]["A"]["batch_forward"]["series"]["cpu"]] == [1, 4]
+assert src["panels"]["D"]["estimators"]["surrogate"]["per_start"]["S1"]["joint"] == 0.8
 """
     r = subprocess.run([sys.executable, "-c", code], capture_output=True, text=True)
     assert r.returncode == 0, r.stderr[-2000:]
+
+
+def test_batch_speedup_uses_the_default_theta_k1_row():
+    rows = [_row(sweep="batch", batch_size=1, theta="default", sims_per_s=2.0, median_s=0.5),
+            _row(sweep="batch", batch_size=4, theta="perturbed", sims_per_s=6.0, median_s=0.67)]
+    d = gb.derive(rows)[1]
+    assert d["speedup_vs_k1"] == 3.0 and d["parallel_efficiency"] == 0.75
+
+
+def test_checkpointed_rows_are_separate_and_ops_filter():
+    rows = []
+    gb.add_row(rows, _row(op="surrogate_value_and_grad"))
+    gb.add_row(rows, _row(op="surrogate_value_and_grad", remat_segment=140))
+    args = argparse.Namespace(devices=["gpu"], sweeps=["batch"], precision="float32",
+                              pool_sizes=[1], batch_sizes=[1, 4], batch_n_mn=10,
+                              n_dd=100, dt_ms=0.1, t_on=1.0, seed=0, n_warmup=2,
+                              n_rep=7, theta="auto", ops=["surrogate_value_and_grad"],
+                              remat_segment=140)
+    cfgs = gb.configs(args)
+    assert {c["op"] for c in cfgs} == {"surrogate_value_and_grad"}
+    assert all(c["remat_segment"] == 140 for c in cfgs)

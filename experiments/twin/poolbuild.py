@@ -86,6 +86,24 @@ SPIKE_THRESHOLD_MV = 50.0
 _GEN_MODE = {"hard": "hard", "surrogate": "pathwise", "rate": "rate"}
 
 
+def checkpointed_scan(body, carry0, xs, segment: int | None = None):
+    """``jax.lax.scan``; with ``segment`` the steps run in ``jax.checkpoint``
+    blocks of that many steps. Reverse mode then stores only the carry at block
+    boundaries and recomputes inside a block, so gradient memory falls from
+    O(steps) to O(steps / segment + segment) for about one extra forward pass.
+    Same arithmetic, same results up to float rounding."""
+    if not segment:
+        return jax.lax.scan(body, carry0, xs)
+    n = jax.tree_util.tree_leaves(xs)[0].shape[0]
+    if n % segment:
+        raise ValueError(f"{n} steps are not a multiple of remat_segment={segment}")
+    blocks = jax.tree_util.tree_map(
+        lambda x: x.reshape(n // segment, segment, *x.shape[1:]), xs)
+    carry, out = jax.lax.scan(
+        jax.checkpoint(lambda c, xb: jax.lax.scan(body, c, xb)), carry0, blocks)
+    return carry, jax.tree_util.tree_map(lambda y: y.reshape(n, *y.shape[2:]), out)
+
+
 def fuglevand_thresholds(n: int, recruitment_range: float = 30.0) -> np.ndarray:
     """Exponential recruitment-threshold distribution (Fuglevand et al. 1993)."""
     i = np.arange(1, n + 1)
@@ -123,6 +141,9 @@ class TwinSpec:
     # comparison must state which convention it used.
     e_exc_mV: float = E_EXC_MV
     e_inh_mV: float = E_INH_MV
+    # Gradient checkpointing (memory only, see checkpointed_scan). None = plain
+    # scan; an int must divide the number of steps of every run.
+    remat_segment: int | None = None
 
 
 class PoolTwin:
@@ -335,7 +356,7 @@ class PoolTwin:
             }
 
         xs = (drives["dd"], drives["inh"])
-        _, out = jax.lax.scan(body, carry0, xs)
+        _, out = checkpointed_scan(body, carry0, xs, spec.remat_segment)
         return out
 
     def _run_events(self, theta: dict, events: dict, spike_mode: str = "hard"):
@@ -372,7 +393,8 @@ class PoolTwin:
                 "v": v_soma, "v_dend": v_dend, "spikes": sp.astype(jnp.float32),
             }
 
-        _, out = jax.lax.scan(body, carry0, (events["exc"], events["inh"]))
+        _, out = checkpointed_scan(body, carry0, (events["exc"], events["inh"]),
+                                   self.spec.remat_segment)
         return out
 
     def _run_events_carry(self, theta: dict, events: dict, carry0,
@@ -408,8 +430,9 @@ class PoolTwin:
                 "v": v_soma, "v_dend": v_dend, "spikes": sp.astype(v_soma.dtype),
             }
 
-        carry_f, out = jax.lax.scan(body, carry0,
-                                    (events["exc"], events["inh"]))
+        carry_f, out = checkpointed_scan(body, carry0,
+                                         (events["exc"], events["inh"]),
+                                         self.spec.remat_segment)
         return out, carry_f
 
     def _run_current(self, theta: dict, i_ext, spike_mode: str = "hard"):
@@ -434,7 +457,7 @@ class PoolTwin:
                 {"v": v_soma, "v_dend": v_dend, "spikes": sp.astype(jnp.float32)},
             )
 
-        _, out = jax.lax.scan(body, carry0, i_ext)
+        _, out = checkpointed_scan(body, carry0, i_ext, self.spec.remat_segment)
         return out
 
     # ------------------------------------------------------------------ #
