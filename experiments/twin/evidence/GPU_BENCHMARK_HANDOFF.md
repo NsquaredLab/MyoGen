@@ -105,6 +105,10 @@ python gpu_benchmark.py --devices gpu --sweeps batch pool stress \
 # equality checks, once with JAX_PLATFORMS=cpu and once on the GPU:
 PYTHONPATH=. python evidence/gpu_benchmark_run_20261117/remat/remat_g1.py
 PYTHONPATH=. python evidence/gpu_benchmark_run_20261117/remat/remat_equal.py
+# the pool sizes the run above skipped (remat/pool2/run_remat_pool2.sh, 567bb031):
+python gpu_benchmark.py --devices gpu --sweeps pool --pool-sizes 1 50 250 500 \
+    --ops surrogate_value_and_grad --remat-segment 140 --timeout-s 3600 \
+    --out-dir results/gpu_benchmark_remat_pool2
 ```
 
 Follow-ups: `run_g2_repeat.sh` (float32 G2 twice more on the GPU, once more on
@@ -128,6 +132,7 @@ with `jax.block_until_ready` before `perf_counter` stops.
 | `gpu_benchmark_20261117_144350.json` | Main benchmark: manifest + 60 rows (the run's `bench/benchmark.json`; workstation sha256 `25a825dd1622a2df…`; the committed copy has the home directory replaced by `~` in two traceback tails, nothing else) |
 | `gpu_benchmark_20261117_164705.json` | GPU stress rows (the run's `stress/benchmark.json`; sha256 `be944c29e7f7edf4…`; same substitution) |
 | `gpu_benchmark_20261117_195639.json` | Checkpointed GPU gradient rows (`remat_segment` 140), revision `ad9afd97`, 11 rows, all ok (sha256 `8ee0b92dfde86f84…`, no substitution needed) |
+| `gpu_benchmark_20261117_213319.json` | Checkpointed GPU gradient at 1, 50, 250, 500 MN, revision `567bb031`, 4 rows, all ok (sha256 `dd552111e35fc25b…`) |
 | `gpu_benchmark_run_20261117/remat/` | Its tidy CSV, log, script, `nvidia-smi`; `remat_g1.py`, `remat_equal.py` and their outputs in `checks/` |
 | `gpu_benchmark_run_20261117/bench/benchmark_reps.csv`, `stress/benchmark_reps.csv` | Tidy CSV, one row per repetition; failed rows kept |
 | `gpu_benchmark_run_20261117/checks/{cpu,gpu}/` | G2 f32, G2 x64, G1 b_config, G4 smoke evidence + logs per device |
@@ -144,7 +149,7 @@ installed, plain Matplotlib otherwise):
 E=experiments/twin/evidence; R=$E/gpu_benchmark_run_20261117
 python scripts/plot_computational_gradient_scaling.py \
   --benchmark $E/gpu_benchmark_20261117_144350.json $E/gpu_benchmark_20261117_164705.json \
-              $E/gpu_benchmark_20261117_195639.json \
+              $E/gpu_benchmark_20261117_195639.json $E/gpu_benchmark_20261117_213319.json \
   --g2 "Float32, CPU=$R/checks/cpu/g2_f32__gradient_repair_f32_20261117_182119.json" \
        "Float32, GPU=$R/checks/gpu/g2_f32__gradient_repair_f32_20261117_182735.json" \
        "Mixed x64, CPU=$R/checks/cpu/g2_x64__gradient_repair_x64_20261117_182152.json" \
@@ -155,9 +160,9 @@ python scripts/plot_computational_gradient_scaling.py \
 
 Panels: A time per call, four small plots (hard-spike forward and surrogate
 value-and-grad, one pool over pool size and batched pools over batch size;
-failed runs as crosses on the top edge; checkpointed GPU gradient dashed with
-open dots); B G2 sign for every variant and
-coordinate per precision and device; C G1 horizon; D G4 accepted fractions, a dot
+failed runs as crosses on the top edge; the GPU gradient line is the
+checkpointed run, the plain rows with their OOMs are in the tables); B G2 sign,
+one row per precision and device, a dot pair (gCaL, w) per variant; C G1 horizon; D G4 accepted fractions, a dot
 per start and a bar for all steps; E G4 direction cosines.
 
 ## Tests
@@ -285,8 +290,12 @@ theta rule as the main table; peak = XLA allocator peak, compilation included):
 
 | Configuration | Plain GPU: median, peak | Checkpointed GPU: median, peak | CPU median |
 |---|---|---|---|
+| 1 pool, 1 MN | 7.24 s, 0.10 GB | 9.78 s, 0.10 GB | 0.68 s |
 | 1 pool, 10 MN | 6.46 s, 0.14 GB | 9.68 s, 0.10 GB | 0.80 s |
+| 1 pool, 50 MN | 6.45 s, 0.38 GB | 9.96 s, 0.10 GB | 2.15 s |
 | 1 pool, 100 MN | 6.70 s, 0.75 GB | 9.75 s, 0.10 GB | 3.80 s |
+| 1 pool, 250 MN | 6.55 s, 1.85 GB | 9.78 s, 0.10 GB | 8.23 s |
+| 1 pool, 500 MN | 6.54 s, 3.69 GB | 9.72 s, 0.15 GB | 19.36 s |
 | 1 pool, 1000 MN | 6.81 s, 7.38 GB | 10.11 s, 0.29 GB | 60.88 s |
 | 1 pool, 2000 MN | 6.76 s, 14.76 GB | 9.95 s, 0.40 GB | not run |
 | 1 pool, 5000 MN | **OOM** (34.23 GiB requested) | 10.47 s, 1.01 GB | not run |
@@ -297,12 +306,12 @@ theta rule as the main table; peak = XLA allocator peak, compilation included):
 | K 256 | **OOM** (19.10 GiB requested) | 10.52 s, 0.54 GB | 10.82 s |
 | K 1000 | not attempted | 11.93 s, 1.86 GB | 37.50 s |
 
-Time per call rises 1.44-1.52x (each segment runs forward twice); peak memory
+Time per call rises 1.35-1.54x (each segment runs forward twice); peak memory
 falls up to 38x. The GPU gradient stays latency-bound (about 10 s for every
 size). Against the CPU it ties at K 256 and wins at K 1000 (3.1x). In one pool it
-is slower than the CPU at 100 MN and faster at 1000 MN (6.0x, against 8.9x without
-checkpointing); 250 and 500 MN were not run with checkpointing (CPU 8.2 s and
-19.4 s there), so the crossover lies between 100 and 1000 MN. As in the plain
+is slower than the CPU up to 250 MN and faster from 500 MN (2.0x; 1000 MN 6.0x,
+against 8.9x without checkpointing). The 1, 50, 250 and 500 MN rows come from a
+second solo run at `567bb031` (same runner and protocol). As in the plain
 rows, every perturbed batch with K >= 4 has non-finite gradient entries: these
 rows time the workload, they are not usable gradients (see "Gradient values of
 the timing workload").

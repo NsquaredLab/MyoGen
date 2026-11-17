@@ -1,0 +1,912 @@
+{
+ "manifest": {
+  "command_line": [
+   "gpu_benchmark.py",
+   "--devices",
+   "gpu",
+   "--sweeps",
+   "pool",
+   "--pool-sizes",
+   "1",
+   "50",
+   "250",
+   "500",
+   "--ops",
+   "surrogate_value_and_grad",
+   "--remat-segment",
+   "140",
+   "--timeout-s",
+   "3600",
+   "--out-dir",
+   "results/gpu_benchmark_remat_pool2"
+  ],
+  "args": {
+   "child": null,
+   "audit": null,
+   "theta": "auto",
+   "sweeps": [
+    "pool"
+   ],
+   "devices": [
+    "gpu"
+   ],
+   "precision": "float32",
+   "ops": [
+    "surrogate_value_and_grad"
+   ],
+   "remat_segment": 140,
+   "pool_sizes": [
+    1,
+    50,
+    250,
+    500
+   ],
+   "batch_sizes": [
+    1,
+    4,
+    16,
+    64,
+    256,
+    1000
+   ],
+   "batch_n_mn": 10,
+   "n_dd": 100,
+   "dt_ms": 0.1,
+   "t_on": 1.0,
+   "seed": 0,
+   "n_warmup": 2,
+   "n_rep": 7,
+   "timeout_s": 3600.0,
+   "out_dir": "results/gpu_benchmark_remat_pool2"
+  },
+  "child_environment": {
+   "JAX_PLATFORMS": {
+    "cpu": "cpu",
+    "gpu": "cuda"
+   },
+   "XLA_PYTHON_CLIENT_PREALLOCATE": "false"
+  },
+  "environment_variables": {
+   "XLA_PYTHON_CLIENT_PREALLOCATE": "false",
+   "JAX_PLATFORMS": "cpu",
+   "TF_CPP_MIN_LOG_LEVEL": "1"
+  },
+  "git": {
+   "sha": "567bb0315a98e13807cc51fad1e2dd604cc2136f",
+   "branch": "HEAD",
+   "dirty": false
+  },
+  "hardware": {
+   "os": "Ubuntu 26.04.1 LTS",
+   "kernel": "6.14.0-061400-generic",
+   "wsl": false,
+   "cpu_model": "AMD Ryzen 9 7950X 16-Core Processor",
+   "cpu_physical_cores": 16,
+   "cpu_logical_cores": 32,
+   "ram_bytes": 97885384704,
+   "gpu_name_vram_driver_cc": "NVIDIA GeForce RTX 4090, 24564 MiB, 595.71.05, 8.9",
+   "cuda_version_driver": "13.2"
+  },
+  "software": {
+   "python": "3.12.8",
+   "jax": "0.9.0",
+   "jaxlib": "0.9.0",
+   "jaxley": "0.13.0",
+   "numpy": "2.4.6",
+   "jax-cuda12-plugin": "0.9.0",
+   "jax-cuda12-pjrt": "0.9.0",
+   "psutil": "7.2.2"
+  },
+  "source": {
+   "git_revision": "567bb031",
+   "git_dirty": false,
+   "provenance_note": "experiments/twin sources are untracked by git; reconstruction relies on the file hashes below, not the revision",
+   "source_sha256_16": {
+    "sensitivity_checks.py": "a433b78e7bd7e581",
+    "poolbuild.py": "e0ddd87e70bb5d3e",
+    "observables.py": "dbee3449569d4951",
+    "validation_protocol.py": "983f8bbcafebd67e",
+    "protocols.py": "404ea437741ea2ae",
+    "gradient_repair.py": "78812d0e94b7be75",
+    "deliverable_b.py": "8c16e479bcea843d",
+    "deliverable_c.py": "0c1896bdc5a2e5fc",
+    "pic_grid.py": "d900172c74ba1695",
+    "r2a_profiles.py": "ac4802b3bdfe1191",
+    "acceptance.py": "24200ac953a87395",
+    "myogen/simulator/jaxley/jax_models.py": "8b99fc4b69d735c7",
+    "myogen/simulator/jaxley/channels/nerlab_channels.py": "f6161ceaca04285e",
+    "myogen/simulator/jaxley/cells_api.py": "c6534ba58adaf3b1",
+    "myogen/simulator/jaxley/populations/motor_neurons.py": "32dda3e3599ec978"
+   },
+   "versions": {
+    "jax": "0.9.0",
+    "jaxley": "0.13.0",
+    "numpy": "2.4.6"
+   },
+   "dt_ms": 0.1,
+   "voltage_frame": "NERLab 1952-HH (V_rest\u22480, spike threshold +50 mV)",
+   "seed_taxonomy": {
+    "connectivity": "TwinSpec.seed (numpy default_rng)",
+    "events": "jax.random.PRNGKey (rate path) / numpy default_rng (frozen renewal events)",
+    "fd_probes": "deterministic, no sampling"
+   },
+   "objectives": {
+    "t2": "mean soma voltage, subthreshold deterministic current",
+    "t3_t4": "mean exponentially-smoothed rate (tau 100 ms)",
+    "t5": "MSE of smoothed rates (tau 100 ms) vs frozen-event target"
+   },
+   "scope": "this Jaxley harness configuration only \u2014 NOT a validated NEURON-matched forward model; conclusions are specific to the stated parameter points, objectives, and frozen input realizations"
+  },
+  "protocol": {
+   "step": {
+    "dt_ms": 0.1,
+    "t_pre_s": 0.2,
+    "t_on_s": 1.0,
+    "t_post_s": 0.2,
+    "level_hz": 40.0,
+    "n_dd": 100,
+    "seed": 0
+   },
+   "g4_case": {
+    "conn_seed": 0,
+    "event_offset": 0,
+    "theta_true": [
+     1.5,
+     0.011
+    ],
+    "start": [
+     1.0,
+     0.009
+    ]
+   },
+   "pool_sizes": [
+    1,
+    50,
+    250,
+    500
+   ],
+   "batch_sizes": [
+    1,
+    4,
+    16,
+    64,
+    256,
+    1000
+   ],
+   "batch_n_mn": 10,
+   "stress_sizes": [
+    2000,
+    5000
+   ],
+   "timing": "first call = compile + first execution; then n_warmup untimed; then n_rep timed with block_until_ready after each; perf_counter"
+  }
+ },
+ "rows": [
+  {
+   "n_warmup": 2,
+   "n_rep": 7,
+   "dt_ms": 0.1,
+   "t_pre_s": 0.2,
+   "t_on_s": 1.0,
+   "t_post_s": 0.2,
+   "level_hz": 40.0,
+   "n_dd": 100,
+   "seed": 0,
+   "sweep": "pool",
+   "device": "gpu",
+   "precision": "float32",
+   "op": "surrogate_value_and_grad",
+   "workload": "step",
+   "theta": "default",
+   "n_mn": 1,
+   "batch_size": 1,
+   "remat_segment": 140,
+   "status": "ok",
+   "jax_platform": "gpu",
+   "output_platforms": [
+    "gpu"
+   ],
+   "device_kind": "NVIDIA GeForce RTX 4090",
+   "build_s": 6.328335421043448,
+   "first_call_s": 16.48705575207714,
+   "reps_s": [
+    9.784587849047966,
+    9.77971340098884,
+    9.771693580085412,
+    9.768770933966152,
+    9.780671800952405,
+    9.777526765945368,
+    9.78309817891568
+   ],
+   "median_s": 9.77971340098884,
+   "min_s": 9.768770933966152,
+   "max_s": 9.784587849047966,
+   "q1_s": 9.77461017301539,
+   "q3_s": 9.781884989934042,
+   "iqr_s": 0.007274816918652505,
+   "n_steps": 14000,
+   "sim_duration_s": 1.4000000000000001,
+   "sims_per_s": 0.1022524852209768,
+   "bio_s_per_wall_s": 0.14315347930936753,
+   "mn_steps_per_s": 1431.534793093675,
+   "memory": {
+    "before_build": {
+     "process_rss_bytes": 633442304,
+     "device_bytes_in_use": 0,
+     "device_peak_bytes_in_use": 0
+    },
+    "before_compile": {
+     "process_rss_bytes": 1326731264,
+     "device_bytes_in_use": 171264,
+     "device_peak_bytes_in_use": 33562880
+    },
+    "after_compile": {
+     "process_rss_bytes": 1680437248,
+     "device_bytes_in_use": 172800,
+     "device_peak_bytes_in_use": 100836096
+    },
+    "after_steady_state": {
+     "process_rss_bytes": 1680760832,
+     "device_bytes_in_use": 172800,
+     "device_peak_bytes_in_use": 100836096
+    }
+   },
+   "memory_note": "device_* from jax memory_stats() (XLA allocator; peak is process-wide since start, compilation included); process_rss_bytes from psutil (observed, not peak)",
+   "dtype_audit": {
+    "theta['drive_gain']": "float32",
+    "theta['gCaL_scale']": "float32",
+    "theta['gNaP_scale']": "float32",
+    "theta['w_exc']": "float32",
+    "theta['w_inh']": "float32",
+    "drives['dd']": "float32",
+    "drives['inh']": "float32",
+    "exc_connectivity": "float32",
+    "inh_connectivity": "float32",
+    "voltage": "float32",
+    "rates": "float32",
+    "loss": "float32",
+    "grad['drive_gain']": "float32",
+    "grad['gCaL_scale']": "float32",
+    "grad['gNaP_scale']": "float32",
+    "grad['w_exc']": "float32",
+    "grad['w_inh']": "float32"
+   },
+   "jaxpr_float_counts": {
+    "float32": 4414
+   },
+   "precision_label": "float32",
+   "float32_components": [
+    "drives['dd']",
+    "drives['inh']",
+    "exc_connectivity",
+    "grad['drive_gain']",
+    "grad['gCaL_scale']",
+    "grad['gNaP_scale']",
+    "grad['w_exc']",
+    "grad['w_inh']",
+    "inh_connectivity",
+    "loss",
+    "rates",
+    "theta['drive_gain']",
+    "theta['gCaL_scale']",
+    "theta['gNaP_scale']",
+    "theta['w_exc']",
+    "theta['w_inh']",
+    "voltage",
+    "4414 float32 values inside the graph"
+   ],
+   "pool_fired": true,
+   "output_summary": {
+    "all_finite": true,
+    "n_values": 6,
+    "sum": -12871366710.21476,
+    "abs_max": 8221081600.0,
+    "sha256_16": "6f912c4858c1404f",
+    "leaves": [
+     {
+      "shape": [
+       1
+      ],
+      "sum": 43.535240173339844,
+      "abs_max": 43.535240173339844
+     },
+     {
+      "shape": [
+       1
+      ],
+      "sum": -8221081600.0,
+      "abs_max": 8221081600.0
+     },
+     {
+      "shape": [
+       1
+      ],
+      "sum": -1525244.75,
+      "abs_max": 1525244.75
+     },
+     {
+      "shape": [
+       1
+      ],
+      "sum": -4429925.0,
+      "abs_max": 4429925.0
+     },
+     {
+      "shape": [
+       1
+      ],
+      "sum": -4644329984.0,
+      "abs_max": 4644329984.0
+     },
+     {
+      "shape": [
+       1
+      ],
+      "sum": 0.0,
+      "abs_max": 0.0
+     }
+    ]
+   },
+   "wall_s": 113.48728632926941
+  },
+  {
+   "n_warmup": 2,
+   "n_rep": 7,
+   "dt_ms": 0.1,
+   "t_pre_s": 0.2,
+   "t_on_s": 1.0,
+   "t_post_s": 0.2,
+   "level_hz": 40.0,
+   "n_dd": 100,
+   "seed": 0,
+   "sweep": "pool",
+   "device": "gpu",
+   "precision": "float32",
+   "op": "surrogate_value_and_grad",
+   "workload": "step",
+   "theta": "default",
+   "n_mn": 50,
+   "batch_size": 1,
+   "remat_segment": 140,
+   "status": "ok",
+   "jax_platform": "gpu",
+   "output_platforms": [
+    "gpu"
+   ],
+   "device_kind": "NVIDIA GeForce RTX 4090",
+   "build_s": 25.05725940898992,
+   "first_call_s": 16.373663434991613,
+   "reps_s": [
+    9.95657639496494,
+    9.962648442015052,
+    9.950947160017677,
+    9.959369810996577,
+    9.95446132007055,
+    9.957948321010917,
+    9.951067236950621
+   ],
+   "median_s": 9.95657639496494,
+   "min_s": 9.950947160017677,
+   "max_s": 9.962648442015052,
+   "q1_s": 9.952764278510585,
+   "q3_s": 9.958659066003747,
+   "iqr_s": 0.005894787493161857,
+   "n_steps": 14000,
+   "sim_duration_s": 1.4000000000000001,
+   "sims_per_s": 0.10043612988353123,
+   "bio_s_per_wall_s": 0.14061058183694375,
+   "mn_steps_per_s": 70305.29091847186,
+   "memory": {
+    "before_build": {
+     "process_rss_bytes": 633192448,
+     "device_bytes_in_use": 0,
+     "device_peak_bytes_in_use": 0
+    },
+    "before_compile": {
+     "process_rss_bytes": 1642512384,
+     "device_bytes_in_use": 1315584,
+     "device_peak_bytes_in_use": 34634496
+    },
+    "after_compile": {
+     "process_rss_bytes": 1998139392,
+     "device_bytes_in_use": 1317120,
+     "device_peak_bytes_in_use": 101980416
+    },
+    "after_steady_state": {
+     "process_rss_bytes": 1998139392,
+     "device_bytes_in_use": 1317120,
+     "device_peak_bytes_in_use": 101980416
+    }
+   },
+   "memory_note": "device_* from jax memory_stats() (XLA allocator; peak is process-wide since start, compilation included); process_rss_bytes from psutil (observed, not peak)",
+   "dtype_audit": {
+    "theta['drive_gain']": "float32",
+    "theta['gCaL_scale']": "float32",
+    "theta['gNaP_scale']": "float32",
+    "theta['w_exc']": "float32",
+    "theta['w_inh']": "float32",
+    "drives['dd']": "float32",
+    "drives['inh']": "float32",
+    "exc_connectivity": "float32",
+    "inh_connectivity": "float32",
+    "voltage": "float32",
+    "rates": "float32",
+    "loss": "float32",
+    "grad['drive_gain']": "float32",
+    "grad['gCaL_scale']": "float32",
+    "grad['gNaP_scale']": "float32",
+    "grad['w_exc']": "float32",
+    "grad['w_inh']": "float32"
+   },
+   "jaxpr_float_counts": {
+    "float32": 4407
+   },
+   "precision_label": "float32",
+   "float32_components": [
+    "drives['dd']",
+    "drives['inh']",
+    "exc_connectivity",
+    "grad['drive_gain']",
+    "grad['gCaL_scale']",
+    "grad['gNaP_scale']",
+    "grad['w_exc']",
+    "grad['w_inh']",
+    "inh_connectivity",
+    "loss",
+    "rates",
+    "theta['drive_gain']",
+    "theta['gCaL_scale']",
+    "theta['gNaP_scale']",
+    "theta['w_exc']",
+    "theta['w_inh']",
+    "voltage",
+    "4407 float32 values inside the graph"
+   ],
+   "pool_fired": true,
+   "output_summary": {
+    "all_finite": true,
+    "n_values": 6,
+    "sum": -1.3065959061156004e+18,
+    "abs_max": 8.101677899427348e+17,
+    "sha256_16": "04ffc046df6d04a0",
+    "leaves": [
+     {
+      "shape": [
+       1
+      ],
+      "sum": 34.78655242919922,
+      "abs_max": 34.78655242919922
+     },
+     {
+      "shape": [
+       1
+      ],
+      "sum": -8.101677899427348e+17,
+      "abs_max": 8.101677899427348e+17
+     },
+     {
+      "shape": [
+       1
+      ],
+      "sum": -37243657912320.0,
+      "abs_max": 37243657912320.0
+     },
+     {
+      "shape": [
+       1
+      ],
+      "sum": -386505616916480.0,
+      "abs_max": 386505616916480.0
+     },
+     {
+      "shape": [
+       1
+      ],
+      "sum": -4.9600436689803674e+17,
+      "abs_max": 4.9600436689803674e+17
+     },
+     {
+      "shape": [
+       1
+      ],
+      "sum": 0.0,
+      "abs_max": 0.0
+     }
+    ]
+   },
+   "wall_s": 133.85909223556519
+  },
+  {
+   "n_warmup": 2,
+   "n_rep": 7,
+   "dt_ms": 0.1,
+   "t_pre_s": 0.2,
+   "t_on_s": 1.0,
+   "t_post_s": 0.2,
+   "level_hz": 40.0,
+   "n_dd": 100,
+   "seed": 0,
+   "sweep": "pool",
+   "device": "gpu",
+   "precision": "float32",
+   "op": "surrogate_value_and_grad",
+   "workload": "step",
+   "theta": "default",
+   "n_mn": 250,
+   "batch_size": 1,
+   "remat_segment": 140,
+   "status": "ok",
+   "jax_platform": "gpu",
+   "output_platforms": [
+    "gpu"
+   ],
+   "device_kind": "NVIDIA GeForce RTX 4090",
+   "build_s": 97.88459823909216,
+   "first_call_s": 16.267059948993847,
+   "reps_s": [
+    9.81777724600397,
+    9.804138230974786,
+    9.796015638043173,
+    9.767090683919378,
+    9.774881824036129,
+    9.76585058204364,
+    9.767517849919386
+   ],
+   "median_s": 9.774881824036129,
+   "min_s": 9.76585058204364,
+   "max_s": 9.81777724600397,
+   "q1_s": 9.767304266919382,
+   "q3_s": 9.80007693450898,
+   "iqr_s": 0.032772667589597404,
+   "n_steps": 14000,
+   "sim_duration_s": 1.4000000000000001,
+   "sims_per_s": 0.10230302708530259,
+   "bio_s_per_wall_s": 0.14322423791942362,
+   "mn_steps_per_s": 358060.59479855903,
+   "memory": {
+    "before_build": {
+     "process_rss_bytes": 633647104,
+     "device_bytes_in_use": 0,
+     "device_peak_bytes_in_use": 0
+    },
+    "before_compile": {
+     "process_rss_bytes": 2364841984,
+     "device_bytes_in_use": 6003968,
+     "device_peak_bytes_in_use": 35618304
+    },
+    "after_compile": {
+     "process_rss_bytes": 2715877376,
+     "device_bytes_in_use": 6005504,
+     "device_peak_bytes_in_use": 102759424
+    },
+    "after_steady_state": {
+     "process_rss_bytes": 2715877376,
+     "device_bytes_in_use": 6005504,
+     "device_peak_bytes_in_use": 102759424
+    }
+   },
+   "memory_note": "device_* from jax memory_stats() (XLA allocator; peak is process-wide since start, compilation included); process_rss_bytes from psutil (observed, not peak)",
+   "dtype_audit": {
+    "theta['drive_gain']": "float32",
+    "theta['gCaL_scale']": "float32",
+    "theta['gNaP_scale']": "float32",
+    "theta['w_exc']": "float32",
+    "theta['w_inh']": "float32",
+    "drives['dd']": "float32",
+    "drives['inh']": "float32",
+    "exc_connectivity": "float32",
+    "inh_connectivity": "float32",
+    "voltage": "float32",
+    "rates": "float32",
+    "loss": "float32",
+    "grad['drive_gain']": "float32",
+    "grad['gCaL_scale']": "float32",
+    "grad['gNaP_scale']": "float32",
+    "grad['w_exc']": "float32",
+    "grad['w_inh']": "float32"
+   },
+   "jaxpr_float_counts": {
+    "float32": 4407
+   },
+   "precision_label": "float32",
+   "float32_components": [
+    "drives['dd']",
+    "drives['inh']",
+    "exc_connectivity",
+    "grad['drive_gain']",
+    "grad['gCaL_scale']",
+    "grad['gNaP_scale']",
+    "grad['w_exc']",
+    "grad['w_inh']",
+    "inh_connectivity",
+    "loss",
+    "rates",
+    "theta['drive_gain']",
+    "theta['gCaL_scale']",
+    "theta['gNaP_scale']",
+    "theta['w_exc']",
+    "theta['w_inh']",
+    "voltage",
+    "4407 float32 values inside the graph"
+   ],
+   "pool_fired": true,
+   "output_summary": {
+    "all_finite": true,
+    "n_values": 6,
+    "sum": -1.5139241319927592e+21,
+    "abs_max": 8.803492295658281e+20,
+    "sha256_16": "9c41703fdce5b1e4",
+    "leaves": [
+     {
+      "shape": [
+       1
+      ],
+      "sum": 31.77674674987793,
+      "abs_max": 31.77674674987793
+     },
+     {
+      "shape": [
+       1
+      ],
+      "sum": -8.803492295658281e+20,
+      "abs_max": 8.803492295658281e+20
+     },
+     {
+      "shape": [
+       1
+      ],
+      "sum": -3.728034619405107e+16,
+      "abs_max": 3.728034619405107e+16
+     },
+     {
+      "shape": [
+       1
+      ],
+      "sum": -4.576152620116214e+17,
+      "abs_max": 4.576152620116214e+17
+     },
+     {
+      "shape": [
+       1
+      ],
+      "sum": -6.330800068187254e+20,
+      "abs_max": 6.330800068187254e+20
+     },
+     {
+      "shape": [
+       1
+      ],
+      "sum": 0.0,
+      "abs_max": 0.0
+     }
+    ]
+   },
+   "wall_s": 206.04545283317566
+  },
+  {
+   "n_warmup": 2,
+   "n_rep": 7,
+   "dt_ms": 0.1,
+   "t_pre_s": 0.2,
+   "t_on_s": 1.0,
+   "t_post_s": 0.2,
+   "level_hz": 40.0,
+   "n_dd": 100,
+   "seed": 0,
+   "sweep": "pool",
+   "device": "gpu",
+   "precision": "float32",
+   "op": "surrogate_value_and_grad",
+   "workload": "step",
+   "theta": "default",
+   "n_mn": 500,
+   "batch_size": 1,
+   "remat_segment": 140,
+   "status": "ok",
+   "jax_platform": "gpu",
+   "output_platforms": [
+    "gpu"
+   ],
+   "device_kind": "NVIDIA GeForce RTX 4090",
+   "build_s": 189.40153575397562,
+   "first_call_s": 16.304499311023392,
+   "reps_s": [
+    9.732749824994244,
+    9.735749940038659,
+    9.72580289596226,
+    9.704553942079656,
+    9.702687075012363,
+    9.700100144022144,
+    9.716898279031739
+   ],
+   "median_s": 9.716898279031739,
+   "min_s": 9.700100144022144,
+   "max_s": 9.735749940038659,
+   "q1_s": 9.70362050854601,
+   "q3_s": 9.729276360478252,
+   "iqr_s": 0.025655851932242513,
+   "n_steps": 14000,
+   "sim_duration_s": 1.4000000000000001,
+   "sims_per_s": 0.10291349886392422,
+   "bio_s_per_wall_s": 0.14407889840949392,
+   "mn_steps_per_s": 720394.4920474695,
+   "memory": {
+    "before_build": {
+     "process_rss_bytes": 632729600,
+     "device_bytes_in_use": 0,
+     "device_peak_bytes_in_use": 0
+    },
+    "before_compile": {
+     "process_rss_bytes": 3262509056,
+     "device_bytes_in_use": 11902720,
+     "device_peak_bytes_in_use": 35596544
+    },
+    "after_compile": {
+     "process_rss_bytes": 3618844672,
+     "device_bytes_in_use": 11904256,
+     "device_peak_bytes_in_use": 146122240
+    },
+    "after_steady_state": {
+     "process_rss_bytes": 3618844672,
+     "device_bytes_in_use": 11904256,
+     "device_peak_bytes_in_use": 146123776
+    }
+   },
+   "memory_note": "device_* from jax memory_stats() (XLA allocator; peak is process-wide since start, compilation included); process_rss_bytes from psutil (observed, not peak)",
+   "dtype_audit": {
+    "theta['drive_gain']": "float32",
+    "theta['gCaL_scale']": "float32",
+    "theta['gNaP_scale']": "float32",
+    "theta['w_exc']": "float32",
+    "theta['w_inh']": "float32",
+    "drives['dd']": "float32",
+    "drives['inh']": "float32",
+    "exc_connectivity": "float32",
+    "inh_connectivity": "float32",
+    "voltage": "float32",
+    "rates": "float32",
+    "loss": "float32",
+    "grad['drive_gain']": "float32",
+    "grad['gCaL_scale']": "float32",
+    "grad['gNaP_scale']": "float32",
+    "grad['w_exc']": "float32",
+    "grad['w_inh']": "float32"
+   },
+   "jaxpr_float_counts": {
+    "float32": 4407
+   },
+   "precision_label": "float32",
+   "float32_components": [
+    "drives['dd']",
+    "drives['inh']",
+    "exc_connectivity",
+    "grad['drive_gain']",
+    "grad['gCaL_scale']",
+    "grad['gNaP_scale']",
+    "grad['w_exc']",
+    "grad['w_inh']",
+    "inh_connectivity",
+    "loss",
+    "rates",
+    "theta['drive_gain']",
+    "theta['gCaL_scale']",
+    "theta['gNaP_scale']",
+    "theta['w_exc']",
+    "theta['w_inh']",
+    "voltage",
+    "4407 float32 values inside the graph"
+   ],
+   "pool_fired": true,
+   "output_summary": {
+    "all_finite": true,
+    "n_values": 6,
+    "sum": -5.786598941923475e+18,
+    "abs_max": 3.4135042171747697e+18,
+    "sha256_16": "9264bc01d2efe04f",
+    "leaves": [
+     {
+      "shape": [
+       1
+      ],
+      "sum": 32.00819396972656,
+      "abs_max": 32.00819396972656
+     },
+     {
+      "shape": [
+       1
+      ],
+      "sum": -3.4135042171747697e+18,
+      "abs_max": 3.4135042171747697e+18
+     },
+     {
+      "shape": [
+       1
+      ],
+      "sum": -204046900133888.0,
+      "abs_max": 204046900133888.0
+     },
+     {
+      "shape": [
+       1
+      ],
+      "sum": -1665484567085056.0,
+      "abs_max": 1665484567085056.0
+     },
+     {
+      "shape": [
+       1
+      ],
+      "sum": -2.371225193281487e+18,
+      "abs_max": 2.371225193281487e+18
+     },
+     {
+      "shape": [
+       1
+      ],
+      "sum": 0.0,
+      "abs_max": 0.0
+     }
+    ]
+   },
+   "wall_s": 297.6858229637146
+  }
+ ],
+ "derived": [
+  {
+   "key": [
+    "pool",
+    "gpu",
+    "float32",
+    "surrogate_value_and_grad",
+    "step",
+    "default",
+    1,
+    1,
+    0.1,
+    140
+   ]
+  },
+  {
+   "key": [
+    "pool",
+    "gpu",
+    "float32",
+    "surrogate_value_and_grad",
+    "step",
+    "default",
+    50,
+    1,
+    0.1,
+    140
+   ]
+  },
+  {
+   "key": [
+    "pool",
+    "gpu",
+    "float32",
+    "surrogate_value_and_grad",
+    "step",
+    "default",
+    250,
+    1,
+    0.1,
+    140
+   ]
+  },
+  {
+   "key": [
+    "pool",
+    "gpu",
+    "float32",
+    "surrogate_value_and_grad",
+    "step",
+    "default",
+    500,
+    1,
+    0.1,
+    140
+   ]
+  }
+ ]
+}

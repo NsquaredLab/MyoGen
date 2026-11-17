@@ -24,6 +24,14 @@
    "device": null,
    "precision": null
   },
+  "benchmark_3": {
+   "path": "experiments/twin/evidence/gpu_benchmark_20261117_213319.json",
+   "sha256": "dd552111e35fc25b2211341e07cbf5387eceaabe1b91f2a05aae6b932f97d9a1",
+   "git_revision": "567bb0315a98e13807cc51fad1e2dd604cc2136f",
+   "git_dirty": false,
+   "device": null,
+   "precision": null
+  },
   "g2_Float32, CPU": {
    "path": "experiments/twin/evidence/gpu_benchmark_run_20261117/checks/cpu/g2_f32__gradient_repair_f32_20261117_182119.json",
    "sha256": "480b76da45d1552d8fccb921a3c6069744a4dafd7220f01bb8bbea9dbf25e239",
@@ -269,6 +277,10 @@
       }
      ],
      "gpu_ckpt": []
+    },
+    "plotted": {
+     "cpu": "cpu",
+     "gpu": "gpu"
     }
    },
    "pool_gradient": {
@@ -462,6 +474,17 @@
      ],
      "gpu_ckpt": [
       {
+       "x": 1,
+       "y": 9.77971340098884,
+       "status": "ok",
+       "sweep": "pool",
+       "iqr_s": 0.007274816918652505,
+       "first_call_s": 16.48705575207714,
+       "sims_per_s": 0.1022524852209768,
+       "mn_steps_per_s": 1431.534793093675,
+       "precision_label": "float32"
+      },
+      {
        "x": 10,
        "y": 9.675755960051902,
        "status": "ok",
@@ -473,6 +496,17 @@
        "precision_label": "float32"
       },
       {
+       "x": 50,
+       "y": 9.95657639496494,
+       "status": "ok",
+       "sweep": "pool",
+       "iqr_s": 0.005894787493161857,
+       "first_call_s": 16.373663434991613,
+       "sims_per_s": 0.10043612988353123,
+       "mn_steps_per_s": 70305.29091847186,
+       "precision_label": "float32"
+      },
+      {
        "x": 100,
        "y": 9.754396375035867,
        "status": "ok",
@@ -481,6 +515,28 @@
        "first_call_s": 16.307315839920193,
        "sims_per_s": 0.1025178762018806,
        "mn_steps_per_s": 143525.02668263286,
+       "precision_label": "float32"
+      },
+      {
+       "x": 250,
+       "y": 9.774881824036129,
+       "status": "ok",
+       "sweep": "pool",
+       "iqr_s": 0.032772667589597404,
+       "first_call_s": 16.267059948993847,
+       "sims_per_s": 0.10230302708530259,
+       "mn_steps_per_s": 358060.59479855903,
+       "precision_label": "float32"
+      },
+      {
+       "x": 500,
+       "y": 9.716898279031739,
+       "status": "ok",
+       "sweep": "pool",
+       "iqr_s": 0.025655851932242513,
+       "first_call_s": 16.304499311023392,
+       "sims_per_s": 0.10291349886392422,
+       "mn_steps_per_s": 720394.4920474695,
        "precision_label": "float32"
       },
       {
@@ -517,6 +573,10 @@
        "precision_label": "float32"
       }
      ]
+    },
+    "plotted": {
+     "cpu": "cpu",
+     "gpu": "gpu_ckpt"
     }
    },
    "batch_forward": {
@@ -664,6 +724,10 @@
       }
      ],
      "gpu_ckpt": []
+    },
+    "plotted": {
+     "cpu": "cpu",
+     "gpu": "gpu"
     }
    },
    "batch_gradient": {
@@ -878,6 +942,10 @@
        "precision_label": "float32"
       }
      ]
+    },
+    "plotted": {
+     "cpu": "cpu",
+     "gpu": "gpu_ckpt"
     }
    }
   },
