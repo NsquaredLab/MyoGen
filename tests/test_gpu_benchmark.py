@@ -192,6 +192,8 @@ assert [r["class"] for r in src["panels"]["C"]] == ["Unresolved", "Pass", "Faile
 assert src["panels"]["A"]["pool_forward"]["series"]["gpu"][-1]["status"] == "oom"
 assert [p["x"] for p in src["panels"]["A"]["pool_gradient"]["series"]["gpu_ckpt"]] == [1000]
 assert 1000 not in [p["x"] for p in src["panels"]["A"]["pool_gradient"]["series"]["gpu"]]
+assert src["panels"]["A"]["pool_gradient"]["plotted"]["gpu"] == "gpu_ckpt"
+assert src["panels"]["A"]["pool_forward"]["plotted"]["gpu"] == "gpu"
 assert [p["x"] for p in src["panels"]["A"]["batch_forward"]["series"]["cpu"]] == [1, 4]
 assert src["panels"]["D"]["estimators"]["surrogate"]["per_start"]["S1"]["joint"] == 0.8
 """
