@@ -62,8 +62,9 @@ def _load(path: Path) -> tuple[dict, dict]:
 
 
 def _series(row: dict) -> str:
-    """Checkpointed (rematerialised) rows are their own series, never merged."""
-    return row["device"] + ("_ckpt" if row.get("remat_segment") else "")
+    """Device, float64 and checkpointing each make their own series, never merged."""
+    return (row["device"] + ("_f64" if row.get("precision") == "float64" else "")
+            + ("_ckpt" if row.get("remat_segment") else ""))
 
 
 def build_source_data(benchmarks, g2: dict, g1, g4) -> dict:
@@ -87,11 +88,14 @@ def build_source_data(benchmarks, g2: dict, g1, g4) -> dict:
                                   "precision_label": r.get("precision_label")}
                                  for r in rows if r["sweep"] in sweeps and r["op"] == op
                                  and _series(r) == dev), key=lambda p: p["x"])
-                                 for dev in ("cpu", "gpu", "gpu_ckpt")}}
-        # the GPU line is the checkpointed run where one exists (it fits in memory);
-        # the plain rows, out-of-memory ones included, stay in the series above
+                                 for dev in {"cpu", "gpu"} | {_series(r) for r in rows}}}
+        # gradient lines plot the float64 checkpointed run where one exists (float32
+        # gradient signs fail G2; checkpointing fits in memory), else float32
+        # checkpointed, else plain; every other series stays in the source data
         A = panels["A"][name]
-        A["plotted"] = {"cpu": "cpu", "gpu": "gpu_ckpt" if A["series"]["gpu_ckpt"] else "gpu"}
+        pick = lambda *keys: next((k for k in keys if A["series"].get(k)), keys[-1])  # noqa: E731
+        A["plotted"] = {"cpu": pick("cpu_f64_ckpt", "cpu"),
+                        "gpu": pick("gpu_f64_ckpt", "gpu_ckpt", "gpu")}
 
     panels["B"] = {}
     for label, path in g2.items():
@@ -225,8 +229,10 @@ def draw(src: dict):
     axA[0].set_ylabel("Time per Call (s)")
     axA[0].text(1.3, 6, "GPU", color=dev_c["gpu"])
     axA[0].text(1.3, 0.24, "CPU", color=dev_c["cpu"], va="center")
-    heading(axA[0], "A", "Wall Time per Simulation Call, Float32, Median of 7",
-            dy=24)
+    f64 = "f64" in P["A"]["pool_gradient"]["plotted"]["gpu"]
+    heading(axA[0], "A", "Wall Time per Call, Median of 7, Forward in Float32, "
+            "Gradient in Float64 (Mixed)" if f64 else
+            "Wall Time per Simulation Call, Float32, Median of 7", dy=24)
 
     # B -- one row per run; each variant is a pair of dots (gCaL left, w right)
     a = fig.add_subplot(row_b[0, 0])

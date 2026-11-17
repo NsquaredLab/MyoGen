@@ -148,7 +148,10 @@ def _evidence(tmp_path):
         _row(sweep="batch", device=d, op=op, batch_size=k, sims_per_s=k, median_s=1.0)
         for d in ("cpu", "gpu") for op in ("hard_forward", "surrogate_value_and_grad")
         for k in (1, 4)] + [_row(device="gpu", op="surrogate_value_and_grad", n_mn=1000,
-                                 remat_segment=140, median_s=1.5)]}
+                                 remat_segment=140, median_s=1.5),
+                            _row(sweep="batch", device="gpu", op="surrogate_value_and_grad",
+                                 batch_size=1000, precision="float64", remat_segment=140,
+                                 median_s=2.0)]}
     g2 = lambda x64: {"x64": x64, "manifest": {}, "g2": {  # noqa: E731
         "per_coordinate": {"gCaL": {"agree": 8, "wrong": 1, "unresolved": 1},
                            "w_exc": {"agree": 9, "wrong": 1, "unresolved": 0}},
@@ -194,6 +197,8 @@ assert [p["x"] for p in src["panels"]["A"]["pool_gradient"]["series"]["gpu_ckpt"
 assert 1000 not in [p["x"] for p in src["panels"]["A"]["pool_gradient"]["series"]["gpu"]]
 assert src["panels"]["A"]["pool_gradient"]["plotted"]["gpu"] == "gpu_ckpt"
 assert src["panels"]["A"]["pool_forward"]["plotted"]["gpu"] == "gpu"
+assert src["panels"]["A"]["batch_gradient"]["plotted"] == dict(cpu="cpu", gpu="gpu_f64_ckpt")
+assert [p["x"] for p in src["panels"]["A"]["batch_gradient"]["series"]["gpu"]] == [1, 4]
 assert [p["x"] for p in src["panels"]["A"]["batch_forward"]["series"]["cpu"]] == [1, 4]
 assert src["panels"]["D"]["estimators"]["surrogate"]["per_start"]["S1"]["joint"] == 0.8
 """
