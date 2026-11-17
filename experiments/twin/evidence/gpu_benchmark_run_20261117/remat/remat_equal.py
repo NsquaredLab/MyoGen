@@ -16,6 +16,7 @@ for name, f in (("mean_voltage", lambda o: jnp.mean(o["v"])),
     out = {}
     for seg in (None, 140):
         twin = PoolTwin(TwinSpec(n_mn=10, n_dd=100, seed=0, remat_segment=seg))
+        mode = "hard" if name == "mean_voltage" else "surrogate"
         v, g = jax.jit(jax.value_and_grad(
             lambda th: f(twin._run(th, drives, key, "surrogate"))))(twin.default_theta())
         out[seg] = (float(v), {k: float(x) for k, x in g.items()})

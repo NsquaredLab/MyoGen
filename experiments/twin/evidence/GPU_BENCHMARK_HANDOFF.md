@@ -3,13 +3,13 @@
 Evidence for draft Figure "Gradient qualification and computational scaling"
 (provisional name; the existing Figure 2 PIC-envelope file is untouched).
 All numbers below are parsed from the files in `gpu_benchmark_run_20261117/`
-and the two timestamped `gpu_benchmark_*.json` files next to this note.
+and the three timestamped `gpu_benchmark_*.json` files next to this note.
 
 ## Verdicts first
 
 1. **The GPU never ran silently on CPU.** Every GPU row reports
    `jax_platform = gpu` (`CudaDevice(id=0)`, NVIDIA GeForce RTX 4090); every CPU row
-   reports `cpu`. No `device_fallback` row exists.
+   reports `cpu`, the 11 checkpointed rows included. No `device_fallback` row exists.
 2. **Single simulations are latency-bound on the GPU.** One hard-spike forward takes
    2.98–3.29 s on the GPU for 1 to 5000 motor neurons (14 000 steps at dt 0.1 ms),
    and one surrogate value-and-grad 6.45–7.24 s for 1 to 2000. The time does not
@@ -299,8 +299,17 @@ theta rule as the main table; peak = XLA allocator peak, compilation included):
 
 Time per call rises 1.44-1.52x (each segment runs forward twice); peak memory
 falls up to 38x. The GPU gradient stays latency-bound (about 10 s for every
-size). Against the CPU it ties at K 256 and wins from K 1000 (3.1x) and from
-250 MN in one pool (1000 MN: 6.0x, against 8.9x without checkpointing).
+size). Against the CPU it ties at K 256 and wins at K 1000 (3.1x). In one pool it
+is slower than the CPU at 100 MN and faster at 1000 MN (6.0x, against 8.9x without
+checkpointing); 250 and 500 MN were not run with checkpointing (CPU 8.2 s and
+19.4 s there), so the crossover lies between 100 and 1000 MN. As in the plain
+rows, every perturbed batch with K >= 4 has non-finite gradient entries: these
+rows time the workload, they are not usable gradients (see "Gradient values of
+the timing workload").
+
+An earlier K 64 check (`gpu_benchmark_20261117_194833.json` on the workstation,
+not copied) ran while the G4 rerun was using the machine; the solo run above
+supersedes it (10.0 s, 0.135 GB, the same peak memory).
 
 Same gradient where the gradient is qualified: in the G1 `b_config` cell that
 passes (dt 0.025 ms, 2 s, x64, Salome's G1 loss unchanged, `remat_segment` 400),
@@ -314,8 +323,11 @@ different rounding. On the GPU the loss is identical and the gradients differ by
 0.7-14 %; on the CPU the loss already differs in the third digit (4.925 vs 4.939)
 and gradients differ up to 100x, including sign. Plain CPU and plain GPU differ
 by the same order, with opposite signs for the mean-voltage gradient
-(`remat/checks/remat_equal_{cpu,gpu}.json`). This is the float32 problem
-reported below, not a property of checkpointing.
+(`remat/checks/remat_equal_{cpu,gpu}.json`). This is consistent with the float32
+problem reported below rather than an error of checkpointing, given the x64
+agreement above; no x64 run at this shape was made. (`remat_equal.py` is the
+script as run; its `mode` variable is unused and both losses go through the
+surrogate path.)
 
 Use it for gradients that do not fit; the plain scan stays the default.
 
