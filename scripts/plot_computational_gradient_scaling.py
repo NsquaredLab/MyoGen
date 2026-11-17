@@ -144,6 +144,7 @@ def build_source_data(benchmarks, g2: dict, g1, g4) -> dict:
 def draw(src: dict):
     import matplotlib.pyplot as plt
     import numpy as np
+    from matplotlib.legend_handler import HandlerTuple
     from matplotlib.patches import FancyBboxPatch
     from matplotlib.ticker import FixedLocator, NullFormatter
 
@@ -227,7 +228,7 @@ def draw(src: dict):
     heading(axA[0], "A", "Wall Time per Simulation Call, Float32, Median of 7",
             dy=24)
 
-    # B -- every G2 variant and coordinate, per precision and device
+    # B -- one row per run; each variant is a pair of dots (gCaL left, w right)
     a = fig.add_subplot(row_b[0, 0])
     runs = list(P["B"])
     variants = P["B"][runs[0]]["variants"]
@@ -236,19 +237,27 @@ def draw(src: dict):
     for j, g in enumerate(groups):
         x += (1.6 if g == "dt" else 1.2) if j and g == groups[j - 1] else (1.9 if j else 0.0)
         xs.append(x)
+    pair = {"gCaL": -0.22, "w_exc": 0.22}
+    precisions = list(dict.fromkeys(r.split(", ")[0] for r in runs))
     ys = {}
     for r, run in enumerate(runs):
-        for c, coord in enumerate(COORDS):
-            y = r * 2.8 + c
-            ys[(run, coord)] = y
+        prec, _, dev = run.partition(", ")
+        y = r + 0.5 * precisions.index(prec)          # a gap between precisions
+        ys[run] = y
+        for coord in COORDS:
             for xv, k in zip(xs, P["B"][run]["classes"][coord]):
-                a.scatter(xv, y, s=26, color=cls_c[k],
+                a.scatter(xv + pair[coord], y, s=22, color=cls_c[k],
                           edgecolors=grey[0] if k == "unresolved" else cls_c[k],
                           linewidths=0.8, zorder=3)
         e = P["B"][run]
-        a.text(xs[-1] + 1.2, r * 2.8 + 0.5, f"{e['agree']} of {e['n']}", va="center")
-        a.text(-3.0, r * 2.8 + 0.5, run, ha="right", va="center")
-    a.set_yticks([ys[k] for k in ys], ["gCaL" if k[1] == "gCaL" else "w" for k in ys])
+        a.text(xs[-1] + 1.0, y, f"{e['agree']} of {e['n']}", va="center")
+        a.text(-0.9, y, dev or prec, ha="right", va="center")
+    for prec in precisions:
+        yy = [ys[r] for r in runs if r.split(", ")[0] == prec]
+        if any(", " in r for r in runs):
+            a.text(-3.2, np.mean(yy), prec.replace("Mixed x64", "Float64\n(Mixed)"),
+                   ha="right", va="center")
+    a.set_yticks([])
     names_short = {"beta": "Surrogate\nSlope", "vth": "Threshold\n(mV)",
                    "dt": "Step\n(ms)", "evshift": "Event\nShift"}
     a.set_xticks(xs, [v.split("=")[1].removesuffix(".0") for v in variants])
@@ -256,16 +265,19 @@ def draw(src: dict):
         gx = [xv for xv, gg in zip(xs, groups) if gg == g]
         a.annotate(names_short[g], (np.mean(gx), 0), xycoords=("data", "axes fraction"),
                    xytext=(0, -24), textcoords="offset points", ha="center", va="top")
-    a.set(xlim=(-0.6, xs[-1] + 0.6), ylim=(max(ys.values()) + 0.6, -0.6))
+    a.set(xlim=(-0.6, xs[-1] + 0.6), ylim=(max(ys.values()) + 0.5, -0.5))
     for s in a.spines.values():
         s.set_visible(False)
     a.tick_params(length=0)
     a.minorticks_off()
     key = [("Agree", "agree"), ("Wrong", "wrong"), ("Unresolved", "unresolved")]
-    for i, (lab, k) in enumerate(key):
-        a.scatter([], [], s=26, color=cls_c[k], label=lab,
-                  edgecolors=grey[0] if k == "unresolved" else cls_c[k], linewidths=0.8)
-    a.legend(loc="upper left", bbox_to_anchor=(1.0, -0.02), frameon=False,
+    hs = [a.scatter([], [], s=22, color=cls_c[k], label=lab,
+                    edgecolors=grey[0] if k == "unresolved" else cls_c[k], linewidths=0.8)
+          for lab, k in key]
+    duo = tuple(a.scatter([], [], s=22, color=grey[1]) for _ in COORDS)
+    a.legend(hs + [duo], [lab for lab, _ in key] + ["Pair (gCaL, w)"],
+             handler_map={tuple: HandlerTuple(ndivide=None, pad=0.1)},
+             loc="upper left", bbox_to_anchor=(1.0, -0.02), frameon=False,
              handletextpad=0.2, borderaxespad=0.0, labelspacing=0.3)
     heading(a, "B", "Surrogate Sign Against the CRN Control", dx=-118)
 
