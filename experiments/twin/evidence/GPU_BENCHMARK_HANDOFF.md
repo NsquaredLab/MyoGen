@@ -3,13 +3,14 @@
 Evidence for draft Figure "Gradient qualification and computational scaling"
 (provisional name; the existing Figure 2 PIC-envelope file is untouched).
 All numbers below are parsed from the files in `gpu_benchmark_run_20261117/`
-and the three timestamped `gpu_benchmark_*.json` files next to this note.
+and the timestamped `gpu_benchmark_*.json` files next to this note.
 
 ## Verdicts first
 
 1. **The GPU never ran silently on CPU.** Every GPU row reports
    `jax_platform = gpu` (`CudaDevice(id=0)`, NVIDIA GeForce RTX 4090); every CPU row
-   reports `cpu`, the 11 checkpointed rows included. No `device_fallback` row exists.
+   reports `cpu`, the checkpointed and float64 rows included. No `device_fallback`
+   row exists.
 2. **Single simulations are latency-bound on the GPU.** One hard-spike forward takes
    2.98–3.29 s on the GPU for 1 to 5000 motor neurons (14 000 steps at dt 0.1 ms),
    and one surrogate value-and-grad 6.45–7.24 s for 1 to 2000. The time does not
@@ -24,6 +25,10 @@ and the three timestamped `gpu_benchmark_*.json` files next to this note.
    Opt-in gradient checkpointing removes every gradient OOM (K = 256 and 1000,
    5000 MN) at about 1.5x the time per call; the GPU gradient then beats the CPU
    from K = 1000 (84 vs 27 sims/s, 3.1x). See "Gradient checkpointing".
+   In float64 (mixed), the precision at which G2 is device-stable, the GPU gradient
+   costs 1.2-1.3x its float32 time (K 1000: 1.7x) and beats the CPU from 500 MN
+   (2.5x; 1000 MN 9.6x) and from K 256 (1.5x; K 1000 3.1x). See "Float64 gradient
+   timings".
 4. **Float32 surrogate signs are not reproducible across backends.** G2 at the
    same commit: CPU float32 0 agree / 19 wrong / 1 unresolved (the brief's
    "wrong in 19/20" reproduces, and matches the October CPU file exactly);
@@ -111,6 +116,18 @@ python gpu_benchmark.py --devices gpu --sweeps pool --pool-sizes 1 50 250 500 \
     --out-dir results/gpu_benchmark_remat_pool2
 ```
 
+Float64 (mixed) checkpointed gradient rows (`f64/run_f64_bench.sh`, revision
+`c51046c6`, alone on the machine, GPU then CPU):
+
+```bash
+python gpu_benchmark.py --devices gpu --sweeps pool batch stress \
+    --ops surrogate_value_and_grad --precision float64 --remat-segment 140 \
+    --timeout-s 3600 --out-dir results/gpu_benchmark_f64_gpu
+python gpu_benchmark.py --devices cpu --sweeps pool batch \
+    --ops surrogate_value_and_grad --precision float64 --remat-segment 140 \
+    --timeout-s 3600 --out-dir results/gpu_benchmark_f64_cpu
+```
+
 Follow-ups: `run_g2_repeat.sh` (float32 G2 twice more on the GPU, once more on
 the CPU) and `run_g4_full.sh` (`g4_descent.py --iters 10`, CPU).
 Preflight (before the run): `--theta default|perturbed` timing check at
@@ -133,6 +150,9 @@ with `jax.block_until_ready` before `perf_counter` stops.
 | `gpu_benchmark_20261117_164705.json` | GPU stress rows (the run's `stress/benchmark.json`; sha256 `be944c29e7f7edf4…`; same substitution) |
 | `gpu_benchmark_20261117_195639.json` | Checkpointed GPU gradient rows (`remat_segment` 140), revision `ad9afd97`, 11 rows, all ok (sha256 `8ee0b92dfde86f84…`, no substitution needed) |
 | `gpu_benchmark_20261117_213319.json` | Checkpointed GPU gradient at 1, 50, 250, 500 MN, revision `567bb031`, 4 rows, all ok (sha256 `dd552111e35fc25b…`) |
+| `gpu_benchmark_20261117_220513.json` | Float64 (mixed) checkpointed gradient, GPU, revision `c51046c6`, 15 rows, all ok (sha256 `a1c3a487b5c1ad74…`) |
+| `gpu_benchmark_20261117_233911.json` | Float64 (mixed) checkpointed gradient, CPU, same run, 13 rows, all ok (sha256 `bc6a3d73c65886fe…`) |
+| `gpu_benchmark_run_20261117/f64/` | Its tidy CSVs (`gpu_`, `cpu_benchmark_reps.csv`), logs, script, `nvidia-smi` before/after |
 | `gpu_benchmark_run_20261117/remat/` | Its tidy CSV, log, script, `nvidia-smi`; `remat_g1.py`, `remat_equal.py` and their outputs in `checks/` |
 | `gpu_benchmark_run_20261117/bench/benchmark_reps.csv`, `stress/benchmark_reps.csv` | Tidy CSV, one row per repetition; failed rows kept |
 | `gpu_benchmark_run_20261117/checks/{cpu,gpu}/` | G2 f32, G2 x64, G1 b_config, G4 smoke evidence + logs per device |
@@ -150,6 +170,7 @@ E=experiments/twin/evidence; R=$E/gpu_benchmark_run_20261117
 python scripts/plot_computational_gradient_scaling.py \
   --benchmark $E/gpu_benchmark_20261117_144350.json $E/gpu_benchmark_20261117_164705.json \
               $E/gpu_benchmark_20261117_195639.json $E/gpu_benchmark_20261117_213319.json \
+              $E/gpu_benchmark_20261117_220513.json $E/gpu_benchmark_20261117_233911.json \
   --g2 "Float32, CPU=$R/checks/cpu/g2_f32__gradient_repair_f32_20261117_182119.json" \
        "Float32, GPU=$R/checks/gpu/g2_f32__gradient_repair_f32_20261117_182735.json" \
        "Mixed x64, CPU=$R/checks/cpu/g2_x64__gradient_repair_x64_20261117_182152.json" \
@@ -160,8 +181,9 @@ python scripts/plot_computational_gradient_scaling.py \
 
 Panels: A time per call, four small plots (hard-spike forward and surrogate
 value-and-grad, one pool over pool size and batched pools over batch size;
-failed runs as crosses on the top edge; the GPU gradient line is the
-checkpointed run, the plain rows with their OOMs are in the tables); B G2 sign,
+failed runs as crosses on the top edge; forward lines are float32, both gradient
+lines are the float64 (mixed) checkpointed runs; the float32 and plain rows, with
+their OOMs, are in the tables); B G2 sign,
 one row per precision and device, a dot pair (gCaL, w) per variant; C G1 horizon; D G4 accepted fractions, a dot
 per start and a bar for all steps; E G4 direction cosines.
 
@@ -294,7 +316,7 @@ theta rule as the main table; peak = XLA allocator peak, compilation included):
 | 1 pool, 10 MN | 6.46 s, 0.14 GB | 9.68 s, 0.10 GB | 0.80 s |
 | 1 pool, 50 MN | 6.45 s, 0.38 GB | 9.96 s, 0.10 GB | 2.15 s |
 | 1 pool, 100 MN | 6.70 s, 0.75 GB | 9.75 s, 0.10 GB | 3.80 s |
-| 1 pool, 250 MN | 6.55 s, 1.85 GB | 9.78 s, 0.10 GB | 8.23 s |
+| 1 pool, 250 MN | 6.55 s, 1.85 GB | 9.77 s, 0.10 GB | 8.23 s |
 | 1 pool, 500 MN | 6.54 s, 3.69 GB | 9.72 s, 0.15 GB | 19.36 s |
 | 1 pool, 1000 MN | 6.81 s, 7.38 GB | 10.11 s, 0.29 GB | 60.88 s |
 | 1 pool, 2000 MN | 6.76 s, 14.76 GB | 9.95 s, 0.40 GB | not run |
@@ -339,6 +361,52 @@ script as run; its `mode` variable is unused and both losses go through the
 surrogate path.)
 
 Use it for gradients that do not fit; the plain scan stays the default.
+
+## Float64 gradient timings
+
+Panel A's gradient lines time float64 (mixed) gradients, the precision at which G2
+is device-stable (float32 G2 is not; see "Float32 vs float64"). Both devices are
+checkpointed (`remat_segment` 140): the plain float32 CPU gradient at K 1000
+already used 84 GB RSS of 91 GiB. Graph: voltage float64; theta, drives,
+connectivity, rates, loss and gradient leaves float32; 353 float32 against
+4078–4085 float64 values in the jaxpr (G2 x64 objectives: 27–35 float32). Label:
+mixed. Same protocol and theta rule as the main table; GPU peak = XLA allocator
+peak, CPU = RSS after the timed calls.
+
+| Configuration | GPU float32, checkpointed | GPU float64, checkpointed: median, peak | CPU float32, plain | CPU float64, checkpointed: median, RSS |
+|---|---|---|---|---|
+| 1 pool, 1 MN | 9.78 s | 11.96 s, 0.10 GB | 0.68 s | 1.11 s, 1.33 GB |
+| 1 pool, 10 MN | 9.68 s | 11.78 s, 0.10 GB | 0.80 s | 1.34 s, 1.51 GB |
+| 1 pool, 50 MN | 9.96 s | 11.90 s, 0.10 GB | 2.15 s | 2.54 s, 1.66 GB |
+| 1 pool, 100 MN | 9.75 s | 12.38 s, 0.10 GB | 3.80 s | 4.09 s, 1.84 GB |
+| 1 pool, 250 MN | 9.77 s | 12.34 s, 0.10 GB | 8.23 s | 11.11 s, 2.36 GB |
+| 1 pool, 500 MN | 9.72 s | 12.41 s, 0.15 GB | 19.36 s | 31.60 s, 3.24 GB |
+| 1 pool, 1000 MN | 10.11 s | 12.54 s, 0.29 GB | 60.88 s | 120.18 s, 4.71 GB |
+| 1 pool, 2000 MN | 9.95 s | 12.63 s, 0.59 GB | not run | not run |
+| 1 pool, 5000 MN | 10.47 s | 13.05 s, 1.22 GB | not run | not run |
+| K 1 x 10 MN | 9.89 s | 11.72 s, 0.10 GB | 0.81 s | 1.31 s, 1.51 GB |
+| K 4 | 9.95 s | 12.02 s, 0.10 GB | 1.08 s | 1.88 s, 1.53 GB |
+| K 16 | 10.12 s | 12.39 s, 0.10 GB | 1.75 s | 2.70 s, 1.56 GB |
+| K 64 | 10.01 s | 12.53 s, 0.27 GB | 3.45 s | 6.60 s, 1.69 GB |
+| K 256 | 10.52 s | 13.17 s, 0.64 GB | 10.82 s | 19.94 s, 2.17 GB |
+| K 1000 | 11.93 s | 19.86 s, 2.51 GB | 37.50 s | 61.82 s, 4.07 GB |
+
+On the GPU, float64 costs 1.18-1.28x the float32 checkpointed time and 1.66x at
+K 1000; the time per call stays near 12 s up to 5000 MN and K 256, so it is still
+latency-bound. On the CPU, float64 checkpointed costs 1.08-1.97x the plain float32
+time; this ratio mixes precision and checkpointing (no CPU float32 checkpointed
+timing exists to separate them). CPU memory stays at or below 4.7 GB.
+
+Who is faster in float64: in one pool the CPU up to 250 MN (11.1 vs 12.3 s), the
+GPU from 500 MN (2.5x; 1000 MN 9.6x). Batched, the CPU up to K 64 (6.6 vs 12.5 s),
+the GPU from K 256 (1.5x; K 1000 3.1x). The crossovers lie between the measured
+sizes; nothing between them was run.
+
+These rows time the same workload as the main table, now in float64; they do not
+make its gradient values usable. Every perturbed batch with K >= 4 still has
+non-finite gradient entries on both devices (`output_summary.all_finite = false`),
+as in float32 (see "Gradient values of the timing workload"). Single pools are
+finite at every size.
 
 ## Float32 vs float64
 
@@ -428,7 +496,7 @@ at 1000 MN, 14.8 GB at 2000 MN, 5.1 GB at K 64 x 10 MN.
 
 ## Limitations
 
-- No CPU rows above 1000 MN (the stress sweep is GPU-only), so panels A/B make no
+- No CPU rows above 1000 MN (the stress sweep is GPU-only), so panel A makes no
   CPU-GPU comparison beyond 1000 MN.
 - CPU memory is observed RSS, not a peak; GPU peak is process-wide and includes
   compilation.
@@ -451,6 +519,9 @@ at 1000 MN, 14.8 GB at 2000 MN, 5.1 GB at K 64 x 10 MN.
 
 - Gradient checkpointing (`remat_segment`) is an addition beyond the brief: opt-in,
   default off, so every brief result above uses the plain scan.
+- Float64 (mixed) gradient timings are an addition beyond the brief; panel A's
+  gradient lines use them, and the float32 rows the brief asked for stay in the
+  main table.
 - Native Ubuntu workstation instead of WSL2 on the laptop (no Windows driver
   steps apply).
 - Theta rule for K = 1 (above).
