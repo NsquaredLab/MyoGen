@@ -1,0 +1,240 @@
+{
+ "manifest": {
+  "git_revision": "4ed55623",
+  "git_dirty": false,
+  "provenance_note": "experiments/twin sources are untracked by git; reconstruction relies on the file hashes below, not the revision",
+  "source_sha256_16": {
+   "sensitivity_checks.py": "a433b78e7bd7e581",
+   "poolbuild.py": "2dd213214e166343",
+   "observables.py": "dbee3449569d4951",
+   "validation_protocol.py": "983f8bbcafebd67e",
+   "protocols.py": "404ea437741ea2ae",
+   "gradient_repair.py": "78812d0e94b7be75",
+   "deliverable_b.py": "8c16e479bcea843d",
+   "deliverable_c.py": "0c1896bdc5a2e5fc",
+   "pic_grid.py": "d900172c74ba1695",
+   "r2a_profiles.py": "ac4802b3bdfe1191",
+   "acceptance.py": "24200ac953a87395",
+   "myogen/simulator/jaxley/jax_models.py": "8b99fc4b69d735c7",
+   "myogen/simulator/jaxley/channels/nerlab_channels.py": "f6161ceaca04285e",
+   "myogen/simulator/jaxley/cells_api.py": "c6534ba58adaf3b1",
+   "myogen/simulator/jaxley/populations/motor_neurons.py": "32dda3e3599ec978"
+  },
+  "versions": {
+   "jax": "0.9.0",
+   "jaxley": "0.13.0",
+   "numpy": "2.4.6"
+  },
+  "device": "gpu",
+  "precision": "float64 (jax_enable_x64=True)",
+  "dt_ms": 0.1,
+  "voltage_frame": "NERLab 1952-HH (V_rest\u22480, spike threshold +50 mV)",
+  "seed_taxonomy": {
+   "connectivity": "TwinSpec.seed (numpy default_rng)",
+   "events": "jax.random.PRNGKey (rate path) / numpy default_rng (frozen renewal events)",
+   "fd_probes": "deterministic, no sampling"
+  },
+  "objectives": {
+   "t2": "mean soma voltage, subthreshold deterministic current",
+   "t3_t4": "mean exponentially-smoothed rate (tau 100 ms)",
+   "t5": "MSE of smoothed rates (tau 100 ms) vs frozen-event target"
+  },
+  "scope": "this Jaxley harness configuration only \u2014 NOT a validated NEURON-matched forward model; conclusions are specific to the stated parameter points, objectives, and frozen input realizations"
+ },
+ "x64": true,
+ "regime": "current",
+ "g2": {
+  "ok": false,
+  "n_variants": 10,
+  "per_coordinate": {
+   "gCaL": {
+    "agree": 8,
+    "wrong": 1,
+    "unresolved": 1
+   },
+   "w_exc": {
+    "agree": 9,
+    "wrong": 1,
+    "unresolved": 0
+   }
+  },
+  "surrogate_grad_magnitude_range": [
+   8955947.700998751,
+   14751815276.815994
+  ],
+  "magnitude_note": "sign agreement does NOT establish usefulness \u2014 magnitudes remain enormous and must be handled by the optimizer (G4 question)",
+  "rows": [
+   {
+    "variant": "beta=5.0",
+    "surrogate_grad": [
+     -6137590.409868468,
+     -5233487150.929125
+    ],
+    "crn_fd_ref": [
+     -22.22222222222225,
+     -4320.987654320989
+    ],
+    "classification": [
+     "agree",
+     "agree"
+    ],
+    "leaf_dtype": "float64",
+    "grad_finite": true
+   },
+   {
+    "variant": "beta=10.0",
+    "surrogate_grad": [
+     -3061168.2992799683,
+     -2610237987.699581
+    ],
+    "crn_fd_ref": [
+     -22.22222222222225,
+     -4320.987654320989
+    ],
+    "classification": [
+     "agree",
+     "agree"
+    ],
+    "leaf_dtype": "float64",
+    "grad_finite": true
+   },
+   {
+    "variant": "beta=20.0",
+    "surrogate_grad": [
+     -1524785.1009778152,
+     -1300173487.3543653
+    ],
+    "crn_fd_ref": [
+     -22.22222222222225,
+     -4320.987654320989
+    ],
+    "classification": [
+     "agree",
+     "agree"
+    ],
+    "leaf_dtype": "float64",
+    "grad_finite": true
+   },
+   {
+    "variant": "vth=49.0",
+    "surrogate_grad": [
+     -4535982.064581962,
+     -3867823534.5144763
+    ],
+    "crn_fd_ref": [
+     -22.22222222222225,
+     -4320.987654320989
+    ],
+    "classification": [
+     "agree",
+     "agree"
+    ],
+    "leaf_dtype": "float64",
+    "grad_finite": true
+   },
+   {
+    "variant": "vth=50.0",
+    "surrogate_grad": [
+     -3061168.2992799683,
+     -2610237987.699581
+    ],
+    "crn_fd_ref": [
+     -22.22222222222225,
+     -4320.987654320989
+    ],
+    "classification": [
+     "agree",
+     "agree"
+    ],
+    "leaf_dtype": "float64",
+    "grad_finite": true
+   },
+   {
+    "variant": "vth=51.0",
+    "surrogate_grad": [
+     17299451.782082997,
+     14751815276.815994
+    ],
+    "crn_fd_ref": [
+     -22.22222222222225,
+     -4320.987654320989
+    ],
+    "classification": [
+     "wrong",
+     "wrong"
+    ],
+    "leaf_dtype": "float64",
+    "grad_finite": true
+   },
+   {
+    "variant": "dt=0.1",
+    "surrogate_grad": [
+     -3061168.2992799683,
+     -2610237987.699581
+    ],
+    "crn_fd_ref": [
+     -22.22222222222225,
+     -4320.987654320989
+    ],
+    "classification": [
+     "agree",
+     "agree"
+    ],
+    "leaf_dtype": "float64",
+    "grad_finite": true
+   },
+   {
+    "variant": "dt=0.05",
+    "surrogate_grad": [
+     -9547.350321099506,
+     -8955947.700998751
+    ],
+    "crn_fd_ref": [
+     0.0,
+     -4732.510288065845
+    ],
+    "classification": [
+     "unresolved",
+     "agree"
+    ],
+    "leaf_dtype": "float64",
+    "grad_finite": true
+   },
+   {
+    "variant": "evshift=0",
+    "surrogate_grad": [
+     -3061168.2992799683,
+     -2610237987.699581
+    ],
+    "crn_fd_ref": [
+     -22.22222222222225,
+     -4320.987654320989
+    ],
+    "classification": [
+     "agree",
+     "agree"
+    ],
+    "leaf_dtype": "float64",
+    "grad_finite": true
+   },
+   {
+    "variant": "evshift=1",
+    "surrogate_grad": [
+     -3062356.747252227,
+     -2611251465.8914723
+    ],
+    "crn_fd_ref": [
+     -22.22222222222225,
+     -4320.987654320989
+    ],
+    "classification": [
+     "agree",
+     "agree"
+    ],
+    "leaf_dtype": "float64",
+    "grad_finite": true
+   }
+  ],
+  "runtime_s": 262.1
+ }
+}

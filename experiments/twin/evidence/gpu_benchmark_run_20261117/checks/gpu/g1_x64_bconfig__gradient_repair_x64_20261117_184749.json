@@ -1,0 +1,458 @@
+{
+ "manifest": {
+  "git_revision": "4ed55623",
+  "git_dirty": false,
+  "provenance_note": "experiments/twin sources are untracked by git; reconstruction relies on the file hashes below, not the revision",
+  "source_sha256_16": {
+   "sensitivity_checks.py": "a433b78e7bd7e581",
+   "poolbuild.py": "2dd213214e166343",
+   "observables.py": "dbee3449569d4951",
+   "validation_protocol.py": "983f8bbcafebd67e",
+   "protocols.py": "404ea437741ea2ae",
+   "gradient_repair.py": "78812d0e94b7be75",
+   "deliverable_b.py": "8c16e479bcea843d",
+   "deliverable_c.py": "0c1896bdc5a2e5fc",
+   "pic_grid.py": "d900172c74ba1695",
+   "r2a_profiles.py": "ac4802b3bdfe1191",
+   "acceptance.py": "24200ac953a87395",
+   "myogen/simulator/jaxley/jax_models.py": "8b99fc4b69d735c7",
+   "myogen/simulator/jaxley/channels/nerlab_channels.py": "f6161ceaca04285e",
+   "myogen/simulator/jaxley/cells_api.py": "c6534ba58adaf3b1",
+   "myogen/simulator/jaxley/populations/motor_neurons.py": "32dda3e3599ec978"
+  },
+  "versions": {
+   "jax": "0.9.0",
+   "jaxley": "0.13.0",
+   "numpy": "2.4.6"
+  },
+  "device": "gpu",
+  "precision": "float64 (jax_enable_x64=True)",
+  "dt_ms": 0.1,
+  "voltage_frame": "NERLab 1952-HH (V_rest\u22480, spike threshold +50 mV)",
+  "seed_taxonomy": {
+   "connectivity": "TwinSpec.seed (numpy default_rng)",
+   "events": "jax.random.PRNGKey (rate path) / numpy default_rng (frozen renewal events)",
+   "fd_probes": "deterministic, no sampling"
+  },
+  "objectives": {
+   "t2": "mean soma voltage, subthreshold deterministic current",
+   "t3_t4": "mean exponentially-smoothed rate (tau 100 ms)",
+   "t5": "MSE of smoothed rates (tau 100 ms) vs frozen-event target"
+  },
+  "scope": "this Jaxley harness configuration only \u2014 NOT a validated NEURON-matched forward model; conclusions are specific to the stated parameter points, objectives, and frozen input realizations"
+ },
+ "x64": true,
+ "regime": "b_config",
+ "g1": {
+  "ok": false,
+  "rows": [
+   {
+    "regime": "b_config",
+    "dt_ms": 0.1,
+    "horizon_s": 2.0,
+    "n_spikes": 60,
+    "grad_rev": [
+     2401210828465.8,
+     9645820384025.701
+    ],
+    "grad_fwd": [
+     12117636018766.914,
+     48653865849886.83
+    ],
+    "fd_converged_value": [
+     null,
+     null
+    ],
+    "fd_sweeps": {
+     "0": [
+      [
+       0.1,
+       0.008805617546989719
+      ],
+      [
+       0.01,
+       1.0187722019374013
+      ],
+      [
+       0.001,
+       -16.612812319513058
+      ],
+      [
+       0.0001,
+       0.5553382387479822
+      ],
+      [
+       1e-05,
+       252.4911204577762
+      ],
+      [
+       1e-06,
+       -183.09548491202145
+      ],
+      [
+       1e-07,
+       37221.71748959058
+      ],
+      [
+       1e-08,
+       -19735.323512937164
+      ]
+     ],
+     "1": [
+      [
+       0.1,
+       1.3706009119097762
+      ],
+      [
+       0.01,
+       -0.005418139935353672
+      ],
+      [
+       0.001,
+       -1.6082381029827175
+      ],
+      [
+       0.0001,
+       -118.01759960949454
+      ],
+      [
+       1e-05,
+       304.9581912285104
+      ],
+      [
+       1e-06,
+       -517.6338627723709
+      ],
+      [
+       1e-07,
+       11339.922207191934
+      ],
+      [
+       1e-08,
+       19827.4930499176
+      ]
+     ]
+    },
+    "rel_rev_vs_fdconv": null,
+    "cosine": null,
+    "rev_vs_fwd_rel": 0.8018416442986916,
+    "verdict": "FD_UNCONVERGED"
+   },
+   {
+    "regime": "b_config",
+    "dt_ms": 0.1,
+    "horizon_s": 4.0,
+    "n_spikes": 116,
+    "grad_rev": [
+     -1.2271058602704113e+20,
+     -6.144639924170852e+20
+    ],
+    "grad_fwd": [
+     -3.178152111985417e+22,
+     -1.2735744664594686e+23
+    ],
+    "fd_converged_value": [
+     null,
+     null
+    ],
+    "fd_sweeps": {
+     "0": [
+      [
+       0.1,
+       0.023339242499571533
+      ],
+      [
+       0.01,
+       1.2753882994785304
+      ],
+      [
+       0.001,
+       -5.987752158172377
+      ],
+      [
+       0.0001,
+       25.98009789940736
+      ],
+      [
+       1e-05,
+       -240.49618102264245
+      ],
+      [
+       1e-06,
+       -6458.039141844285
+      ],
+      [
+       1e-07,
+       38898.12729508613
+      ],
+      [
+       1e-08,
+       319285.8931856168
+      ]
+     ],
+     "1": [
+      [
+       0.1,
+       1.0030508506844171
+      ],
+      [
+       0.01,
+       0.33566817058052756
+      ],
+      [
+       0.001,
+       -3.6367697622416983
+      ],
+      [
+       0.0001,
+       -61.42016522371119
+      ],
+      [
+       1e-05,
+       562.8865058790121
+      ],
+      [
+       1e-06,
+       -2434.5755548207394
+      ],
+      [
+       1e-07,
+       -1813.692815040291
+      ],
+      [
+       1e-08,
+       -27531.668508995466
+      ]
+     ]
+    },
+    "rel_rev_vs_fdconv": null,
+    "cosine": null,
+    "rev_vs_fwd_rel": 0.9961389328860543,
+    "verdict": "FD_UNCONVERGED"
+   },
+   {
+    "regime": "b_config",
+    "dt_ms": 0.025,
+    "horizon_s": 2.0,
+    "n_spikes": 60,
+    "grad_rev": [
+     0.8419109102518156,
+     6.2505750449734885
+    ],
+    "grad_fwd": [
+     0.8419109454132435,
+     6.2505752419220535
+    ],
+    "fd_converged_value": [
+     0.8419158259442838,
+     6.250589690282027
+    ],
+    "fd_sweeps": {
+     "0": [
+      [
+       0.1,
+       -0.13227139294576418
+      ],
+      [
+       0.01,
+       -1.038501110323753
+      ],
+      [
+       0.001,
+       0.09103863992199202
+      ],
+      [
+       0.0001,
+       0.4698049136719895
+      ],
+      [
+       1e-05,
+       0.8734715319258511
+      ],
+      [
+       1e-06,
+       0.8425391073707544
+      ],
+      [
+       1e-07,
+       0.8419181596330816
+      ],
+      [
+       1e-08,
+       0.8419158259442838
+      ]
+     ],
+     "1": [
+      [
+       0.1,
+       1.557949552280049
+      ],
+      [
+       0.01,
+       0.01842980309521014
+      ],
+      [
+       0.001,
+       -12.58428275306156
+      ],
+      [
+       0.0001,
+       2.2095776124775313
+      ],
+      [
+       1e-05,
+       2.5842497761274785
+      ],
+      [
+       1e-06,
+       6.299146975141667
+      ],
+      [
+       1e-07,
+       6.251262729684015
+      ],
+      [
+       1e-08,
+       6.250589690282027
+      ]
+     ]
+    },
+    "rel_rev_vs_fdconv": 5.838698260214717e-06,
+    "cosine": 0.999999999999893,
+    "rev_vs_fwd_rel": 4.176383270934305e-08,
+    "verdict": "PASS"
+   },
+   {
+    "regime": "b_config",
+    "dt_ms": 0.025,
+    "horizon_s": 4.0,
+    "n_spikes": 116,
+    "grad_rev": [
+     17.946839932133372,
+     102.10533678994898
+    ],
+    "grad_fwd": [
+     17.94684295618281,
+     102.10535406579501
+    ],
+    "fd_converged_value": [
+     null,
+     null
+    ],
+    "fd_sweeps": {
+     "0": [
+      [
+       0.1,
+       0.015656312461440614
+      ],
+      [
+       0.01,
+       -0.737919129106146
+      ],
+      [
+       0.001,
+       0.7133858504921875
+      ],
+      [
+       0.0001,
+       1.5726392049852933
+      ],
+      [
+       1e-05,
+       -1.0516348096345496
+      ],
+      [
+       1e-06,
+       5.45914774630063
+      ],
+      [
+       1e-07,
+       16.541540635017782
+      ],
+      [
+       1e-08,
+       17.932423501676453
+      ]
+     ],
+     "1": [
+      [
+       0.1,
+       1.2570373164385384
+      ],
+      [
+       0.01,
+       -0.8333920378017723
+      ],
+      [
+       0.001,
+       -13.29029270601989
+      ],
+      [
+       0.0001,
+       4.8513451171317
+      ],
+      [
+       1e-05,
+       10.930949603116245
+      ],
+      [
+       1e-06,
+       -4.512929747679806
+      ],
+      [
+       1e-07,
+       34.609105470373436
+      ],
+      [
+       1e-08,
+       99.4368713591598
+      ]
+     ]
+    },
+    "rel_rev_vs_fdconv": null,
+    "cosine": null,
+    "rev_vs_fwd_rel": 1.6919627958582922e-07,
+    "verdict": "FD_UNCONVERGED"
+   }
+  ],
+  "passed_cases": [
+   [
+    0.025,
+    2.0
+   ]
+  ],
+  "failed_cases": [],
+  "unresolved_cases": [
+   [
+    0.1,
+    2.0
+   ],
+   [
+    0.1,
+    4.0
+   ],
+   [
+    0.025,
+    4.0
+   ]
+  ],
+  "required_cases_dt_le_0p025": [
+   [
+    0.025,
+    2.0
+   ],
+   [
+    0.025,
+    4.0
+   ]
+  ],
+  "qualified_envelope": [
+   [
+    0.025,
+    2.0
+   ]
+  ],
+  "scope": "regime=b_config; claims limited to these operating points/timesteps; FD_UNCONVERGED combos are unresolvable by local FD, not passes",
+  "runtime_s": 946.4
+ }
+}

@@ -1,0 +1,529 @@
+{
+ "manifest": {
+  "git_revision": "4ed55623",
+  "git_dirty": false,
+  "provenance_note": "experiments/twin sources are untracked by git; reconstruction relies on the file hashes below, not the revision",
+  "source_sha256_16": {
+   "sensitivity_checks.py": "a433b78e7bd7e581",
+   "poolbuild.py": "2dd213214e166343",
+   "observables.py": "dbee3449569d4951",
+   "validation_protocol.py": "983f8bbcafebd67e",
+   "protocols.py": "404ea437741ea2ae",
+   "gradient_repair.py": "78812d0e94b7be75",
+   "deliverable_b.py": "8c16e479bcea843d",
+   "deliverable_c.py": "0c1896bdc5a2e5fc",
+   "pic_grid.py": "d900172c74ba1695",
+   "r2a_profiles.py": "ac4802b3bdfe1191",
+   "acceptance.py": "24200ac953a87395",
+   "myogen/simulator/jaxley/jax_models.py": "8b99fc4b69d735c7",
+   "myogen/simulator/jaxley/channels/nerlab_channels.py": "f6161ceaca04285e",
+   "myogen/simulator/jaxley/cells_api.py": "c6534ba58adaf3b1",
+   "myogen/simulator/jaxley/populations/motor_neurons.py": "32dda3e3599ec978"
+  },
+  "versions": {
+   "jax": "0.9.0",
+   "jaxley": "0.13.0",
+   "numpy": "2.4.6"
+  },
+  "device": "cpu",
+  "precision": "float64 (jax_enable_x64=True)",
+  "dt_ms": 0.1,
+  "voltage_frame": "NERLab 1952-HH (V_rest\u22480, spike threshold +50 mV)",
+  "seed_taxonomy": {
+   "connectivity": "TwinSpec.seed (numpy default_rng)",
+   "events": "jax.random.PRNGKey (rate path) / numpy default_rng (frozen renewal events)",
+   "fd_probes": "deterministic, no sampling"
+  },
+  "objectives": {
+   "t2": "mean soma voltage, subthreshold deterministic current",
+   "t3_t4": "mean exponentially-smoothed rate (tau 100 ms)",
+   "t5": "MSE of smoothed rates (tau 100 ms) vs frozen-event target"
+  },
+  "scope": "this Jaxley harness configuration only \u2014 NOT a validated NEURON-matched forward model; conclusions are specific to the stated parameter points, objectives, and frozen input realizations",
+  "g4_sha256_16": "c42a163d0ea57376",
+  "args": {
+   "smoke": true,
+   "iters": 2
+  },
+  "run_tag": "smoke"
+ },
+ "declared": {
+  "dt_ms": 0.025,
+  "window_s": 2.0,
+  "objective": "FULL-TRACE hard binned-rate MSE (50/300 ms) at dt 0.025; windows affect gradient flow only",
+  "starts": "S1 both-wrong, S2 gCaL-wrong-only, S3 w-wrong-only",
+  "lambdas": [
+   0.03,
+   0.1
+  ]
+ },
+ "stageA": {
+  "rows": [
+   {
+    "case": {
+     "conn_seed": 0,
+     "event_offset": 0,
+     "theta_true": [
+      1.5,
+      0.011
+     ]
+    },
+    "n_obs_spikes": 41,
+    "starts": {
+     "S1_both_wrong": {
+      "L0": 8.055555555555555,
+      "estimators": {
+       "surrogate": {
+        "grad": [
+         57553.198771583455,
+         71723419.01286593
+        ],
+        "direction": [
+         -0.08880688096220107,
+         -0.9960488632058998
+        ],
+        "joint": {
+         "0.03": {
+          "loss": 9.722222222222218,
+          "accepted": false
+         },
+         "0.1": {
+          "loss": 13.333333333333336,
+          "accepted": false
+         }
+        },
+        "coord": {
+         "gCaL": {
+          "loss": 9.166666666666663,
+          "accepted": false
+         },
+         "w": {
+          "loss": 13.333333333333336,
+          "accepted": false
+         }
+        }
+       },
+       "crn_fd": {
+        "grad": [
+         -6.249999999999982,
+         -4552.4691358024675
+        ],
+        "direction": [
+         0.15079798967141003,
+         0.9885645989570238
+        ],
+        "joint": {
+         "0.03": {
+          "loss": 7.08333333333333,
+          "accepted": true
+         },
+         "0.1": {
+          "loss": 3.2638888888888875,
+          "accepted": true
+         }
+        },
+        "coord": {
+         "gCaL": {
+          "loss": 7.083333333333332,
+          "accepted": true
+         },
+         "w": {
+          "loss": 3.2638888888888875,
+          "accepted": true
+         }
+        }
+       }
+      },
+      "cosine_sur_vs_fd": -0.9980505441148279
+     },
+     "S2_gcal_wrong_only": {
+      "L0": 0.625,
+      "estimators": {
+       "surrogate": {
+        "grad": [
+         51.12793214627105,
+         75028.62246204994
+        ],
+        "direction": [
+         -0.061831076465241545,
+         -0.9980866284963191
+        ],
+        "joint": {
+         "0.03": {
+          "loss": 1.5277777777777777,
+          "accepted": false
+         },
+         "0.1": {
+          "loss": 3.2638888888888875,
+          "accepted": false
+         }
+        },
+        "coord": {
+         "gCaL": {
+          "loss": 1.1111111111111112,
+          "accepted": false
+         },
+         "w": {
+          "loss": 3.2638888888888875,
+          "accepted": false
+         }
+        }
+       },
+       "crn_fd": {
+        "grad": [
+         -4.861111111111112,
+         -1452.0202020202019
+        ],
+        "direction": [
+         0.2911616157826961,
+         0.9566738804288585
+        ],
+        "joint": {
+         "0.03": {
+          "loss": 0.34722222222222227,
+          "accepted": true
+         },
+         "0.1": {
+          "loss": 1.9444444444444438,
+          "accepted": false
+         }
+        },
+        "coord": {
+         "gCaL": {
+          "loss": 0.625,
+          "accepted": false
+         },
+         "w": {
+          "loss": 1.9444444444444438,
+          "accepted": false
+         }
+        }
+       }
+      },
+      "cosine_sur_vs_fd": -0.9728462440169333
+     },
+     "S3_w_wrong_only": {
+      "L0": 5.069444444444443,
+      "estimators": {
+       "surrogate": {
+        "grad": [
+         -3335.954273066955,
+         -3751746.8942320584
+        ],
+        "direction": [
+         0.14659459123006927,
+         0.9891966567988838
+        ],
+        "joint": {
+         "0.03": {
+          "loss": 4.3055555555555545,
+          "accepted": true
+         },
+         "0.1": {
+          "loss": 2.3611111111111103,
+          "accepted": true
+         }
+        },
+        "coord": {
+         "gCaL": {
+          "loss": 4.3055555555555545,
+          "accepted": true
+         },
+         "w": {
+          "loss": 2.3611111111111103,
+          "accepted": true
+         }
+        }
+       },
+       "crn_fd": {
+        "grad": [
+         -18.518518518518505,
+         -3472.2222222222204
+        ],
+        "direction": [
+         0.6643638388299197,
+         0.7474093186836598
+        ],
+        "joint": {
+         "0.03": {
+          "loss": 4.3055555555555545,
+          "accepted": true
+         },
+         "0.1": {
+          "loss": 3.4722222222222214,
+          "accepted": true
+         }
+        },
+        "coord": {
+         "gCaL": {
+          "loss": 4.3055555555555545,
+          "accepted": true
+         },
+         "w": {
+          "loss": 2.3611111111111103,
+          "accepted": true
+         }
+        }
+       }
+      },
+      "cosine_sur_vs_fd": 0.8367269446835195
+     }
+    }
+   }
+  ],
+  "gate": {
+   "surrogate": {
+    "joint_accepted_fraction": 0.3333333333333333,
+    "coord_accepted_fraction": {
+     "gCaL": 0.3333333333333333,
+     "w": 0.3333333333333333
+    },
+    "nonfinite": 0,
+    "per_start": {
+     "S1_both_wrong": {
+      "joint_acc": 0,
+      "joint_tot": 2,
+      "coord_acc": {
+       "gCaL": 0,
+       "w": 0
+      },
+      "coord_tot": {
+       "gCaL": 1,
+       "w": 1
+      },
+      "nonfinite": 0
+     },
+     "S2_gcal_wrong_only": {
+      "joint_acc": 0,
+      "joint_tot": 2,
+      "coord_acc": {
+       "gCaL": 0,
+       "w": 0
+      },
+      "coord_tot": {
+       "gCaL": 1,
+       "w": 1
+      },
+      "nonfinite": 0
+     },
+     "S3_w_wrong_only": {
+      "joint_acc": 2,
+      "joint_tot": 2,
+      "coord_acc": {
+       "gCaL": 1,
+       "w": 1
+      },
+      "coord_tot": {
+       "gCaL": 1,
+       "w": 1
+      },
+      "nonfinite": 0
+     }
+    },
+    "joint_pass": false,
+    "gcal_pass": false
+   },
+   "crn_fd": {
+    "joint_accepted_fraction": 0.8333333333333334,
+    "coord_accepted_fraction": {
+     "gCaL": 0.6666666666666666,
+     "w": 0.6666666666666666
+    },
+    "nonfinite": 0,
+    "per_start": {
+     "S1_both_wrong": {
+      "joint_acc": 2,
+      "joint_tot": 2,
+      "coord_acc": {
+       "gCaL": 1,
+       "w": 1
+      },
+      "coord_tot": {
+       "gCaL": 1,
+       "w": 1
+      },
+      "nonfinite": 0
+     },
+     "S2_gcal_wrong_only": {
+      "joint_acc": 1,
+      "joint_tot": 2,
+      "coord_acc": {
+       "gCaL": 0,
+       "w": 0
+      },
+      "coord_tot": {
+       "gCaL": 1,
+       "w": 1
+      },
+      "nonfinite": 0
+     },
+     "S3_w_wrong_only": {
+      "joint_acc": 2,
+      "joint_tot": 2,
+      "coord_acc": {
+       "gCaL": 1,
+       "w": 1
+      },
+      "coord_tot": {
+       "gCaL": 1,
+       "w": 1
+      },
+      "nonfinite": 0
+     }
+    },
+    "joint_pass": true,
+    "gcal_pass": false
+   }
+  },
+  "cosine_sur_vs_fd": {
+   "mean": -0.37805661448274724,
+   "min": -0.9980505441148279
+  }
+ },
+ "stageB": {
+  "runs": [
+   {
+    "case": 0,
+    "start": "S1_both_wrong",
+    "estimator": "surrogate",
+    "eps_dt_halving": 0.001,
+    "best_loss": 8.055555555555555,
+    "within_eps": false,
+    "theta_best": [
+     1.0,
+     0.009
+    ],
+    "rel_err": [
+     0.3333333333333333,
+     0.18181818181818182
+    ],
+    "gcal_recovered_20pct": false,
+    "w_recovered_20pct": true,
+    "heldout_mse": 5.333333333333333,
+    "nonfinite": 0,
+    "hard_evals": 13,
+    "wall_s": 6.6
+   },
+   {
+    "case": 0,
+    "start": "S1_both_wrong",
+    "estimator": "crn_fd",
+    "eps_dt_halving": 0.001,
+    "best_loss": 0.8333333333333336,
+    "within_eps": false,
+    "theta_best": [
+     1.037861518741912,
+     0.010952988781808115
+    ],
+    "rel_err": [
+     0.30809232083872534,
+     0.004273747108353117
+    ],
+    "gcal_recovered_20pct": false,
+    "w_recovered_20pct": true,
+    "heldout_mse": 1.5,
+    "nonfinite": 0,
+    "hard_evals": 11,
+    "wall_s": 3.8
+   },
+   {
+    "case": 0,
+    "start": "S2_gcal_wrong_only",
+    "estimator": "surrogate",
+    "eps_dt_halving": 0.001,
+    "best_loss": 0.625,
+    "within_eps": false,
+    "theta_best": [
+     1.0,
+     0.011
+    ],
+    "rel_err": [
+     0.3333333333333333,
+     0.0
+    ],
+    "gcal_recovered_20pct": false,
+    "w_recovered_20pct": true,
+    "heldout_mse": 1.166666666666667,
+    "nonfinite": 0,
+    "hard_evals": 13,
+    "wall_s": 6.5
+   },
+   {
+    "case": 0,
+    "start": "S2_gcal_wrong_only",
+    "estimator": "crn_fd",
+    "eps_dt_halving": 0.001,
+    "best_loss": 0.0,
+    "within_eps": true,
+    "theta_best": [
+     1.009752637199196,
+     0.011356433393376435
+    ],
+    "rel_err": [
+     0.32683157520053596,
+     0.03240303576149412
+    ],
+    "gcal_recovered_20pct": false,
+    "w_recovered_20pct": true,
+    "heldout_mse": 0.16666666666666669,
+    "nonfinite": 0,
+    "hard_evals": 14,
+    "wall_s": 4.4
+   }
+  ],
+  "summary": {
+   "surrogate": {
+    "n_runs": 2,
+    "gcal_recovered_20pct": 0,
+    "w_recovered_20pct": 2,
+    "within_eps": 0,
+    "nonfinite_runs": 0,
+    "median_heldout": 3.25
+   },
+   "crn_fd": {
+    "n_runs": 2,
+    "gcal_recovered_20pct": 0,
+    "w_recovered_20pct": 2,
+    "within_eps": 1,
+    "nonfinite_runs": 0,
+    "median_heldout": 0.8333333333333334
+   }
+  }
+ },
+ "profile_case0": {
+  "g_axis": [
+   0.25,
+   0.32987697769322355,
+   0.43527528164806206,
+   0.5743491774985175,
+   0.7578582832551991,
+   1.0,
+   1.3195079107728944,
+   1.5,
+   1.7411011265922485,
+   2.29739670999407,
+   3.0314331330207964,
+   4.0
+  ],
+  "profile_gcal": [
+   1.3888888888888893,
+   1.3888888888888893,
+   1.4583333333333335,
+   1.4583333333333333,
+   1.458333333333333,
+   0.625,
+   0.5555555555555557,
+   0.0,
+   0.06944444444444445,
+   1.8055555555555551,
+   1.9444444444444433,
+   2.708333333333332
+  ],
+  "eps": 0.001,
+  "gcal_compat_interval": [
+   1.5,
+   1.5
+  ]
+ },
+ "wall_s": 84.1
+}

@@ -1,0 +1,14 @@
+Warning: no DISPLAY environment variable.
+--No graphics will be displayed.
+batch     gpu float32 surrogate_value_and_grad n_mn    10 K     1 ... ok 9.893 s
+batch     gpu float32 surrogate_value_and_grad n_mn    10 K     4 ... ok 9.953 s
+batch     gpu float32 surrogate_value_and_grad n_mn    10 K    16 ... ok 10.12 s
+batch     gpu float32 surrogate_value_and_grad n_mn    10 K    64 ... ok 10.01 s
+batch     gpu float32 surrogate_value_and_grad n_mn    10 K   256 ... ok 10.52 s
+batch     gpu float32 surrogate_value_and_grad n_mn    10 K  1000 ... ok 11.93 s
+pool      gpu float32 surrogate_value_and_grad n_mn    10 K     1 ... ok 9.676 s
+pool      gpu float32 surrogate_value_and_grad n_mn   100 K     1 ... ok 9.754 s
+pool      gpu float32 surrogate_value_and_grad n_mn  1000 K     1 ... ok 10.11 s
+stress    gpu float32 surrogate_value_and_grad n_mn  2000 K     1 ... ok 9.946 s
+stress    gpu float32 surrogate_value_and_grad n_mn  5000 K     1 ... ok 10.47 s
+saved -> results/gpu_benchmark_remat (+ evidence/gpu_benchmark_20261117_195639.json)
