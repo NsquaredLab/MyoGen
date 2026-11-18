@@ -4,7 +4,7 @@
 Reads ONLY saved evidence (no simulation, no JAX):
 
 * A  ``gpu_benchmark.py`` output: time per call of the hard-spike forward and the
-  surrogate value-and-grad, CPU vs GPU, over pool size (GPU stress sizes
+  surrogate value-and-grad, CPU vs GPU, over pool size (stress sizes
   included) and over batch size.
 * B  ``gradient_repair.py --tests g2`` (with and without ``--x64``, per device):
   sign of the surrogate gradient against the common-random-number (CRN)
@@ -40,7 +40,7 @@ VERDICT = {"PASS": "Pass", "FAIL": "Failed", "FD_UNCONVERGED": "Unresolved"}
 COORDS = ("gCaL", "w_exc")
 STARTS = ("S1_both_wrong", "S2_gcal_wrong_only", "S3_w_wrong_only")
 
-#  name: (sweeps, op, x key); the GPU-only stress sizes extend the pool sweep
+#  name: (sweeps, op, x key); the stress sizes (2000, 5000 MN) extend the pool sweep
 SCALING = {"pool_forward": (("pool", "stress"), "hard_forward", "n_mn"),
            "pool_gradient": (("pool", "stress"), "surrogate_value_and_grad", "n_mn"),
            "batch_forward": (("batch",), "hard_forward", "batch_size"),
@@ -191,7 +191,7 @@ def draw(src: dict):
     row_c = outer[2].subgridspec(1, 2, width_ratios=[1.9, 1])
 
     # A -- time per call; failed runs sit on the top edge as crosses
-    ylim = (0.15, 300)
+    ylim = (0.15, 4000)
     names = [("pool_forward", "Forward, One Pool", "Motor Neurons"),
              ("pool_gradient", "Gradient, One Pool", "Motor Neurons"),
              ("batch_forward", "Forward, Batched", "Pools of 10 MN"),
@@ -221,8 +221,8 @@ def draw(src: dict):
         a.set_xticklabels(["1", f"{hi:g}"])
         a.xaxis.set_minor_formatter(NullFormatter())
         a.minorticks_off()
-        a.yaxis.set_major_locator(FixedLocator([1, 10, 100]))
-        a.set_yticklabels(["1", "10", "100"])
+        a.yaxis.set_major_locator(FixedLocator([1, 10, 100, 1000]))
+        a.set_yticklabels(["1", "10", "100", "1000"])
         if i:
             a.tick_params(labelleft=False)
         trim(a)

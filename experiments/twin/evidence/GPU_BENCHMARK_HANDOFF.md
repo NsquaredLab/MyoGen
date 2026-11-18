@@ -15,8 +15,9 @@ and the timestamped `gpu_benchmark_*.json` files next to this note.
    2.98–3.29 s on the GPU for 1 to 5000 motor neurons (14 000 steps at dt 0.1 ms),
    and one surrogate value-and-grad 6.45–7.24 s for 1 to 2000. The time does not
    grow with pool size: about 0.23 ms per step goes to per-step overhead, not
-   arithmetic. The CPU is faster for one forward up to the largest pool it ran
-   (1000 MN: 1.20 s vs 3.25 s) and for one gradient up to 100 MN; from 250 MN the
+   arithmetic. The CPU is faster for one forward up to 2000 MN
+   (1000 MN: 1.20 s vs 3.25 s; 2000 MN: 1.75 s vs 3.29 s) and level with the GPU at
+   5000 MN (3.35 s vs 3.27 s), and faster for one gradient up to 100 MN; from 250 MN the
    GPU gradient is faster (1000 MN: 60.9 s vs 6.8 s, 8.9x). These are the plain
    float32 rows; the figure plots float64 checkpointed gradients, where the GPU
    is faster from 500 MN (verdict 3).
@@ -29,7 +30,8 @@ and the timestamped `gpu_benchmark_*.json` files next to this note.
    from K = 1000 (84 vs 27 sims/s, 3.1x). See "Gradient checkpointing".
    In float64 (mixed), the precision at which the G2 objectives are device-stable,
    the GPU gradient costs 1.2-1.3x its float32 time (K 1000: 1.7x) and beats the
-   CPU from 500 MN (2.5x; 1000 MN 9.6x) and from K 256 (1.5x; K 1000 3.1x). Float64
+   CPU from 500 MN (2.5x; 1000 MN 9.6x, 2000 MN 32x, 5000 MN 170x) and from K 256
+   (1.5x; K 1000 3.1x). Float64
    does not make the timing workload's own gradient usable: CPU and GPU agree only
    at 1 and 10 MN. See "Float64 gradient timings".
 4. **Float32 surrogate signs are not reproducible across backends.** G2 at the
@@ -139,7 +141,8 @@ objectives).
 
 Protocol: step drive, dt 0.1 ms, t_pre 0.2 s, t_on 1.0 s, t_post 0.2 s, 40 Hz,
 n_dd 100, seed 0 (14 000 steps, 1.4 s). Pool sweep n_mn 1–1000 at K = 1; batch
-sweep K 1–1000 at n_mn 10; stress n_mn 2000, 5000 (GPU); precision: G4 case
+sweep K 1–1000 at n_mn 10; stress n_mn 2000, 5000 (GPU; the CPU forward and float64 checkpointed gradient
+in a later run, `cpu_stress/`); precision: G4 case
 (conn 0, offset 0, truth (1.5, 0.011), start (1.0, 0.009)), n_mn 8, dt 0.025 ms.
 Each configuration is a fresh subprocess; build, first call (compile + first run)
 and 2 warm-ups are untimed for the statistics; 7 repetitions, each synchronized
@@ -155,6 +158,9 @@ with `jax.block_until_ready` before `perf_counter` stops.
 | `gpu_benchmark_20261117_213319.json` | Checkpointed GPU gradient at 1, 50, 250, 500 MN, revision `567bb031`, 4 rows, all ok (sha256 `dd552111e35fc25b…`) |
 | `gpu_benchmark_20261117_220513.json` | Float64 (mixed) checkpointed gradient, GPU, revision `c51046c6`, 15 rows, all ok (sha256 `a1c3a487b5c1ad74…`) |
 | `gpu_benchmark_20261117_233911.json` | Float64 (mixed) checkpointed gradient, CPU, same run, 13 rows, all ok (sha256 `bc6a3d73c65886fe…`) |
+| `gpu_benchmark_20261118_110306.json` | CPU stress forward (float32), 2000 and 5000 MN, revision `c51046c6`, 2 rows, all ok (sha256 `5836931c6b020b31…`) |
+| `gpu_benchmark_20261118_113746.json` | CPU stress float64 (mixed) checkpointed gradient, 2000 and 5000 MN, same run, 2 rows, all ok (sha256 `cda4bb5ed2183d7a…`) |
+| `gpu_benchmark_run_20261117/cpu_stress/` | Their tidy CSVs (`fwd_`, `f64_benchmark_reps.csv`), logs, script, `uptime` / `free` before and after |
 | `gpu_benchmark_run_20261117/f64/` | Its tidy CSVs (`gpu_`, `cpu_benchmark_reps.csv`), logs, script, `nvidia-smi` before/after |
 | `gpu_benchmark_run_20261117/remat/` | Its tidy CSV, log, script, `nvidia-smi`; `remat_g1.py`, `remat_equal.py` and their outputs in `checks/` |
 | `gpu_benchmark_run_20261117/bench/benchmark_reps.csv`, `stress/benchmark_reps.csv` | Tidy CSV, one row per repetition; failed rows kept |
@@ -174,6 +180,7 @@ python scripts/plot_computational_gradient_scaling.py \
   --benchmark $E/gpu_benchmark_20261117_144350.json $E/gpu_benchmark_20261117_164705.json \
               $E/gpu_benchmark_20261117_195639.json $E/gpu_benchmark_20261117_213319.json \
               $E/gpu_benchmark_20261117_220513.json $E/gpu_benchmark_20261117_233911.json \
+              $E/gpu_benchmark_20261118_110306.json $E/gpu_benchmark_20261118_113746.json \
   --g2 "Float32, CPU=$R/checks/cpu/g2_f32__gradient_repair_f32_20261117_182119.json" \
        "Float32, GPU=$R/checks/gpu/g2_f32__gradient_repair_f32_20261117_182735.json" \
        "Mixed x64, CPU=$R/checks/cpu/g2_x64__gradient_repair_x64_20261117_182152.json" \
@@ -284,6 +291,8 @@ the fixed `derive()`.
 | precision | gpu | surrogate_grad | float32 | 8 | 1 | ok | 40.2 | 53.42 | 46.282 | 0.007 | 46.272–46.287 | 0.0216 | 0.0864 | 2.77e+04 | 4.98 |  |  | 0.85 | 2.92 |
 | precision | gpu | hard_forward_loss | mixed | 8 | 1 | ok | 47.3 | 13.69 | 11.265 | 0.008 | 11.246–11.266 | 0.0888 | 0.355 | 1.14e+05 |  |  |  | 0.71 | 2.86 |
 | precision | gpu | surrogate_grad | mixed | 8 | 1 | ok | 47.1 | 67.55 | 54.798 | 0.002 | 54.789–54.801 | 0.0182 | 0.073 | 2.34e+04 | 4.86 |  |  | 1.76 | 3.30 |
+| stress | cpu | hard_forward | float32 | 2000 | 1 | ok | 547.5 | 2.43 | 1.753 | 0.051 | 1.693–1.828 | 0.57 | 0.799 | 1.6e+07 |  |  |  |  | 5.32 |
+| stress | cpu | hard_forward | float32 | 5000 | 1 | ok | 1452.4 | 4.20 | 3.348 | 0.028 | 3.311–3.377 | 0.299 | 0.418 | 2.09e+07 |  |  |  |  | 7.64 |
 | stress | gpu | hard_forward | float32 | 2000 | 1 | ok | 754.4 | 6.03 | 3.291 | 0.001 | 3.286–3.295 | 0.304 | 0.425 | 8.51e+06 |  |  |  | 0.29 | 6.07 |
 | stress | gpu | hard_forward | float32 | 5000 | 1 | ok | 1944.1 | 5.99 | 3.267 | 0.007 | 3.261–3.275 | 0.306 | 0.428 | 2.14e+07 |  |  |  | 0.68 | 8.98 |
 | stress | gpu | surrogate_value_and_grad | float32 | 2000 | 1 | ok | 742.4 | 12.07 | 6.759 | 0.008 | 6.745–6.762 | 0.148 | 0.207 | 4.14e+06 | 2.05 |  |  | 14.75 | 6.68 |
@@ -386,8 +395,8 @@ peak, CPU = RSS after the timed calls.
 | 1 pool, 250 MN | 9.77 s | 12.34 s, 0.10 GB | 8.23 s | 11.11 s, 2.36 GB |
 | 1 pool, 500 MN | 9.72 s | 12.41 s, 0.15 GB | 19.36 s | 31.60 s, 3.24 GB |
 | 1 pool, 1000 MN | 10.11 s | 12.54 s, 0.29 GB | 60.88 s | 120.18 s, 4.71 GB |
-| 1 pool, 2000 MN | 9.95 s | 12.63 s, 0.59 GB | not run | not run |
-| 1 pool, 5000 MN | 10.47 s | 13.05 s, 1.22 GB | not run | not run |
+| 1 pool, 2000 MN | 9.95 s | 12.63 s, 0.59 GB | not run | 400.17 s, 5.79 GB* |
+| 1 pool, 5000 MN | 10.47 s | 13.05 s, 1.22 GB | not run | 2225.24 s, 8.72 GB* |
 | K 1 x 10 MN | 9.89 s | 11.72 s, 0.10 GB | 0.81 s | 1.31 s, 1.51 GB |
 | K 4 | 9.95 s | 12.02 s, 0.10 GB | 1.08 s | 1.88 s, 1.53 GB |
 | K 16 | 10.12 s | 12.39 s, 0.10 GB | 1.75 s | 2.70 s, 1.56 GB |
@@ -399,10 +408,24 @@ On the GPU, float64 costs 1.18-1.28x the float32 checkpointed time and 1.66x at
 K 1000; the time per call stays near 12 s up to 5000 MN and K 256, so it is still
 latency-bound. On the CPU, float64 checkpointed costs 1.08-1.97x the plain float32
 time; this ratio mixes precision and checkpointing (no CPU float32 checkpointed
-timing exists to separate them). CPU memory stays at or below 4.7 GB.
+timing exists to separate them). CPU memory stays at or below 4.7 GB up to
+1000 MN. *At 2000 and 5000 MN the RSS read after the timed calls (0.06 and
+2.08 GB) is below the value before the build, so the process's pages were evicted
+during the hours of timing; these two cells give the RSS after compilation.
+
+The CPU rows at 2000 and 5000 MN come from a separate run (`cpu_stress/`, same
+revision, limit 12 h per configuration, no timeout). From 2000 to 5000 MN the CPU
+gradient time grows 5.6x for 2.5x the neurons. At 5000 MN it ran on about one of
+32 cores: an 8 s `perf` profile of the running process (not kept) put 89 % of
+the samples in one `memmove` inside the XLA while loop, a buffer copied on every
+step, which XLA:CPU does on one thread. The machine was not idle for the whole of
+that row: a Mutagen file sync ran from 13:32 (about 0.3 of a core on average),
+and from 19:20 four worker processes of another project overlapped the last
+~10 min of the seventh repetition (2316 s, the slowest; the other six span
+2181-2250 s).
 
 Who is faster in float64: in one pool the CPU up to 250 MN (11.1 vs 12.3 s), the
-GPU from 500 MN (2.5x; 1000 MN 9.6x). Batched, the CPU up to K 64 (6.6 vs 12.5 s),
+GPU from 500 MN (2.5x; 1000 MN 9.6x, 2000 MN 32x, 5000 MN 170x). Batched, the CPU up to K 64 (6.6 vs 12.5 s),
 the GPU from K 256 (1.5x; K 1000 3.1x). The crossovers lie between the measured
 sizes; nothing between them was run.
 
@@ -501,14 +524,14 @@ near-opposite at -0.9997 (conn 0, offset 10, truth (1.5, 0.011), S2).
 | stress, GPU, surrogate value-and-grad, n_mn 5000 | oom | `RESOURCE_EXHAUSTED`: 34.23 GiB requested |
 
 All three rows run with gradient checkpointing (separate rows, above); the
-plain rows stay as recorded. No timeouts (limit 3600 s per configuration), no
+plain rows stay as recorded. No timeouts (limit 3600 s per configuration; 43 200 s in the CPU stress run), no
 other failures, no device fallback. GPU gradient peak memory grows linearly with the work per call: 7.4 GB
 at 1000 MN, 14.8 GB at 2000 MN, 5.1 GB at K 64 x 10 MN.
 
 ## Limitations
 
-- No CPU rows above 1000 MN (the stress sweep is GPU-only), so panel A makes no
-  CPU-GPU comparison beyond 1000 MN.
+- Above 1000 MN the CPU has only the float32 forward and the float64 checkpointed
+  gradient (separate run, `cpu_stress/`); the float32 CPU gradient stops at 1000 MN.
 - CPU memory is observed RSS, not a peak; GPU peak is process-wide and includes
   compilation.
 - The canonical G4 file was produced at `a483b1d` (dirty) with numpy 2.3.5; its

@@ -1,0 +1,553 @@
+{
+ "manifest": {
+  "command_line": [
+   "gpu_benchmark.py",
+   "--devices",
+   "cpu",
+   "--sweeps",
+   "stress",
+   "--ops",
+   "surrogate_value_and_grad",
+   "--precision",
+   "float64",
+   "--remat-segment",
+   "140",
+   "--timeout-s",
+   "43200",
+   "--out-dir",
+   "results/gpu_benchmark_cpu_stress_f64"
+  ],
+  "args": {
+   "child": null,
+   "audit": null,
+   "theta": "auto",
+   "sweeps": [
+    "stress"
+   ],
+   "devices": [
+    "cpu"
+   ],
+   "precision": "float64",
+   "ops": [
+    "surrogate_value_and_grad"
+   ],
+   "remat_segment": 140,
+   "pool_sizes": [
+    1,
+    10,
+    50,
+    100,
+    250,
+    500,
+    1000
+   ],
+   "batch_sizes": [
+    1,
+    4,
+    16,
+    64,
+    256,
+    1000
+   ],
+   "batch_n_mn": 10,
+   "n_dd": 100,
+   "dt_ms": 0.1,
+   "t_on": 1.0,
+   "seed": 0,
+   "n_warmup": 2,
+   "n_rep": 7,
+   "timeout_s": 43200.0,
+   "out_dir": "results/gpu_benchmark_cpu_stress_f64"
+  },
+  "child_environment": {
+   "JAX_PLATFORMS": {
+    "cpu": "cpu",
+    "gpu": "cuda"
+   },
+   "XLA_PYTHON_CLIENT_PREALLOCATE": "false"
+  },
+  "environment_variables": {
+   "XLA_PYTHON_CLIENT_PREALLOCATE": "false",
+   "JAX_PLATFORMS": "cpu",
+   "TF_CPP_MIN_LOG_LEVEL": "1"
+  },
+  "git": {
+   "sha": "c51046c62001e9c2026b1aebe5d7c49d4e0949f0",
+   "branch": "HEAD",
+   "dirty": false
+  },
+  "hardware": {
+   "os": "Ubuntu 26.04.1 LTS",
+   "kernel": "6.14.0-061400-generic",
+   "wsl": false,
+   "cpu_model": "AMD Ryzen 9 7950X 16-Core Processor",
+   "cpu_physical_cores": 16,
+   "cpu_logical_cores": 32,
+   "ram_bytes": 97885376512,
+   "gpu_name_vram_driver_cc": "NVIDIA GeForce RTX 4090, 24564 MiB, 595.71.05, 8.9",
+   "cuda_version_driver": "13.2"
+  },
+  "software": {
+   "python": "3.12.8",
+   "jax": "0.9.0",
+   "jaxlib": "0.9.0",
+   "jaxley": "0.13.0",
+   "numpy": "2.4.6",
+   "jax-cuda12-plugin": "0.9.0",
+   "jax-cuda12-pjrt": "0.9.0",
+   "psutil": "7.2.2"
+  },
+  "source": {
+   "git_revision": "c51046c6",
+   "git_dirty": false,
+   "provenance_note": "experiments/twin sources are untracked by git; reconstruction relies on the file hashes below, not the revision",
+   "source_sha256_16": {
+    "sensitivity_checks.py": "a433b78e7bd7e581",
+    "poolbuild.py": "e0ddd87e70bb5d3e",
+    "observables.py": "dbee3449569d4951",
+    "validation_protocol.py": "983f8bbcafebd67e",
+    "protocols.py": "404ea437741ea2ae",
+    "gradient_repair.py": "78812d0e94b7be75",
+    "deliverable_b.py": "8c16e479bcea843d",
+    "deliverable_c.py": "0c1896bdc5a2e5fc",
+    "pic_grid.py": "d900172c74ba1695",
+    "r2a_profiles.py": "ac4802b3bdfe1191",
+    "acceptance.py": "24200ac953a87395",
+    "myogen/simulator/jaxley/jax_models.py": "8b99fc4b69d735c7",
+    "myogen/simulator/jaxley/channels/nerlab_channels.py": "f6161ceaca04285e",
+    "myogen/simulator/jaxley/cells_api.py": "c6534ba58adaf3b1",
+    "myogen/simulator/jaxley/populations/motor_neurons.py": "32dda3e3599ec978"
+   },
+   "versions": {
+    "jax": "0.9.0",
+    "jaxley": "0.13.0",
+    "numpy": "2.4.6"
+   },
+   "dt_ms": 0.1,
+   "voltage_frame": "NERLab 1952-HH (V_rest\u22480, spike threshold +50 mV)",
+   "seed_taxonomy": {
+    "connectivity": "TwinSpec.seed (numpy default_rng)",
+    "events": "jax.random.PRNGKey (rate path) / numpy default_rng (frozen renewal events)",
+    "fd_probes": "deterministic, no sampling"
+   },
+   "objectives": {
+    "t2": "mean soma voltage, subthreshold deterministic current",
+    "t3_t4": "mean exponentially-smoothed rate (tau 100 ms)",
+    "t5": "MSE of smoothed rates (tau 100 ms) vs frozen-event target"
+   },
+   "scope": "this Jaxley harness configuration only \u2014 NOT a validated NEURON-matched forward model; conclusions are specific to the stated parameter points, objectives, and frozen input realizations"
+  },
+  "protocol": {
+   "step": {
+    "dt_ms": 0.1,
+    "t_pre_s": 0.2,
+    "t_on_s": 1.0,
+    "t_post_s": 0.2,
+    "level_hz": 40.0,
+    "n_dd": 100,
+    "seed": 0
+   },
+   "g4_case": {
+    "conn_seed": 0,
+    "event_offset": 0,
+    "theta_true": [
+     1.5,
+     0.011
+    ],
+    "start": [
+     1.0,
+     0.009
+    ]
+   },
+   "pool_sizes": [
+    1,
+    10,
+    50,
+    100,
+    250,
+    500,
+    1000
+   ],
+   "batch_sizes": [
+    1,
+    4,
+    16,
+    64,
+    256,
+    1000
+   ],
+   "batch_n_mn": 10,
+   "stress_sizes": [
+    2000,
+    5000
+   ],
+   "timing": "first call = compile + first execution; then n_warmup untimed; then n_rep timed with block_until_ready after each; perf_counter"
+  }
+ },
+ "rows": [
+  {
+   "n_warmup": 2,
+   "n_rep": 7,
+   "dt_ms": 0.1,
+   "t_pre_s": 0.2,
+   "t_on_s": 1.0,
+   "t_post_s": 0.2,
+   "level_hz": 40.0,
+   "n_dd": 100,
+   "seed": 0,
+   "sweep": "stress",
+   "device": "cpu",
+   "precision": "float64",
+   "op": "surrogate_value_and_grad",
+   "workload": "step",
+   "theta": "default",
+   "n_mn": 2000,
+   "batch_size": 1,
+   "remat_segment": 140,
+   "status": "ok",
+   "jax_platform": "cpu",
+   "output_platforms": [
+    "cpu"
+   ],
+   "device_kind": "cpu",
+   "build_s": 553.6218521150004,
+   "first_call_s": 402.24186931999975,
+   "reps_s": [
+    402.09220658600134,
+    400.1748398230011,
+    398.31852796400017,
+    410.0011604579995,
+    400.2711547529998,
+    399.8597579800007,
+    400.0182933220003
+   ],
+   "median_s": 400.1748398230011,
+   "min_s": 398.31852796400017,
+   "max_s": 410.0011604579995,
+   "q1_s": 399.9390256510005,
+   "q3_s": 401.18168066950057,
+   "iqr_s": 1.2426550185000451,
+   "n_steps": 14000,
+   "sim_duration_s": 1.4000000000000001,
+   "sims_per_s": 0.002498907728537616,
+   "bio_s_per_wall_s": 0.0034984708199526627,
+   "mn_steps_per_s": 69969.41639905325,
+   "memory": {
+    "before_build": {
+     "process_rss_bytes": 526163968,
+     "device_bytes_in_use": null,
+     "device_peak_bytes_in_use": null
+    },
+    "before_compile": {
+     "process_rss_bytes": 5018750976,
+     "device_bytes_in_use": null,
+     "device_peak_bytes_in_use": null
+    },
+    "after_compile": {
+     "process_rss_bytes": 5788024832,
+     "device_bytes_in_use": null,
+     "device_peak_bytes_in_use": null
+    },
+    "after_steady_state": {
+     "process_rss_bytes": 55959552,
+     "device_bytes_in_use": null,
+     "device_peak_bytes_in_use": null
+    }
+   },
+   "memory_note": "device_* from jax memory_stats() (XLA allocator; peak is process-wide since start, compilation included); process_rss_bytes from psutil (observed, not peak)",
+   "dtype_audit": {
+    "theta['drive_gain']": "float32",
+    "theta['gCaL_scale']": "float32",
+    "theta['gNaP_scale']": "float32",
+    "theta['w_exc']": "float32",
+    "theta['w_inh']": "float32",
+    "drives['dd']": "float32",
+    "drives['inh']": "float32",
+    "exc_connectivity": "float32",
+    "inh_connectivity": "float32",
+    "voltage": "float64",
+    "rates": "float32",
+    "loss": "float32",
+    "grad['drive_gain']": "float32",
+    "grad['gCaL_scale']": "float32",
+    "grad['gNaP_scale']": "float32",
+    "grad['w_exc']": "float32",
+    "grad['w_inh']": "float32"
+   },
+   "jaxpr_float_counts": {
+    "float32": 353,
+    "float64": 4078
+   },
+   "precision_label": "mixed",
+   "float32_components": [
+    "drives['dd']",
+    "drives['inh']",
+    "exc_connectivity",
+    "grad['drive_gain']",
+    "grad['gCaL_scale']",
+    "grad['gNaP_scale']",
+    "grad['w_exc']",
+    "grad['w_inh']",
+    "inh_connectivity",
+    "loss",
+    "rates",
+    "theta['drive_gain']",
+    "theta['gCaL_scale']",
+    "theta['gNaP_scale']",
+    "theta['w_exc']",
+    "theta['w_inh']",
+    "353 float32 values inside the graph"
+   ],
+   "pool_fired": true,
+   "output_summary": {
+    "all_finite": true,
+    "n_values": 6,
+    "sum": 2.2036106537762554e+20,
+    "abs_max": 1.2800007715610113e+20,
+    "sha256_16": "912a950595d1591f",
+    "leaves": [
+     {
+      "shape": [
+       1
+      ],
+      "sum": 34.02701950073242,
+      "abs_max": 34.02701950073242
+     },
+     {
+      "shape": [
+       1
+      ],
+      "sum": 1.2800007715610113e+20,
+      "abs_max": 1.2800007715610113e+20
+     },
+     {
+      "shape": [
+       1
+      ],
+      "sum": 3884390434209792.0,
+      "abs_max": 3884390434209792.0
+     },
+     {
+      "shape": [
+       1
+      ],
+      "sum": 6.680699222360064e+16,
+      "abs_max": 6.680699222360064e+16
+     },
+     {
+      "shape": [
+       1
+      ],
+      "sum": 9.22902968388666e+19,
+      "abs_max": 9.22902968388666e+19
+     },
+     {
+      "shape": [
+       1
+      ],
+      "sum": 0.0,
+      "abs_max": 0.0
+     }
+    ]
+   },
+   "wall_s": 4607.397181987762
+  },
+  {
+   "n_warmup": 2,
+   "n_rep": 7,
+   "dt_ms": 0.1,
+   "t_pre_s": 0.2,
+   "t_on_s": 1.0,
+   "t_post_s": 0.2,
+   "level_hz": 40.0,
+   "n_dd": 100,
+   "seed": 0,
+   "sweep": "stress",
+   "device": "cpu",
+   "precision": "float64",
+   "op": "surrogate_value_and_grad",
+   "workload": "step",
+   "theta": "default",
+   "n_mn": 5000,
+   "batch_size": 1,
+   "remat_segment": 140,
+   "status": "ok",
+   "jax_platform": "cpu",
+   "output_platforms": [
+    "cpu"
+   ],
+   "device_kind": "cpu",
+   "build_s": 1394.8937375839996,
+   "first_call_s": 2226.8604539169974,
+   "reps_s": [
+    2249.892962359998,
+    2225.242106234,
+    2180.9301923349994,
+    2181.1668630509994,
+    2205.1033766790024,
+    2240.850986033998,
+    2315.540792120002
+   ],
+   "median_s": 2225.242106234,
+   "min_s": 2180.9301923349994,
+   "max_s": 2315.540792120002,
+   "q1_s": 2193.135119865001,
+   "q3_s": 2245.371974196998,
+   "iqr_s": 52.236854331997165,
+   "n_steps": 14000,
+   "sim_duration_s": 1.4000000000000001,
+   "sims_per_s": 0.0004493893033924296,
+   "bio_s_per_wall_s": 0.0006291450247494014,
+   "mn_steps_per_s": 31457.25123747007,
+   "memory": {
+    "before_build": {
+     "process_rss_bytes": 518991872,
+     "device_bytes_in_use": null,
+     "device_peak_bytes_in_use": null
+    },
+    "before_compile": {
+     "process_rss_bytes": 7193092096,
+     "device_bytes_in_use": null,
+     "device_peak_bytes_in_use": null
+    },
+    "after_compile": {
+     "process_rss_bytes": 8719507456,
+     "device_bytes_in_use": null,
+     "device_peak_bytes_in_use": null
+    },
+    "after_steady_state": {
+     "process_rss_bytes": 2080022528,
+     "device_bytes_in_use": null,
+     "device_peak_bytes_in_use": null
+    }
+   },
+   "memory_note": "device_* from jax memory_stats() (XLA allocator; peak is process-wide since start, compilation included); process_rss_bytes from psutil (observed, not peak)",
+   "dtype_audit": {
+    "theta['drive_gain']": "float32",
+    "theta['gCaL_scale']": "float32",
+    "theta['gNaP_scale']": "float32",
+    "theta['w_exc']": "float32",
+    "theta['w_inh']": "float32",
+    "drives['dd']": "float32",
+    "drives['inh']": "float32",
+    "exc_connectivity": "float32",
+    "inh_connectivity": "float32",
+    "voltage": "float64",
+    "rates": "float32",
+    "loss": "float32",
+    "grad['drive_gain']": "float32",
+    "grad['gCaL_scale']": "float32",
+    "grad['gNaP_scale']": "float32",
+    "grad['w_exc']": "float32",
+    "grad['w_inh']": "float32"
+   },
+   "jaxpr_float_counts": {
+    "float32": 353,
+    "float64": 4078
+   },
+   "precision_label": "mixed",
+   "float32_components": [
+    "drives['dd']",
+    "drives['inh']",
+    "exc_connectivity",
+    "grad['drive_gain']",
+    "grad['gCaL_scale']",
+    "grad['gNaP_scale']",
+    "grad['w_exc']",
+    "grad['w_inh']",
+    "inh_connectivity",
+    "loss",
+    "rates",
+    "theta['drive_gain']",
+    "theta['gCaL_scale']",
+    "theta['gNaP_scale']",
+    "theta['w_exc']",
+    "theta['w_inh']",
+    "353 float32 values inside the graph"
+   ],
+   "pool_fired": true,
+   "output_summary": {
+    "all_finite": true,
+    "n_values": 6,
+    "sum": 1.1890117975517377e+20,
+    "abs_max": 6.297616015612602e+19,
+    "sha256_16": "fd386a95c79c7257",
+    "leaves": [
+     {
+      "shape": [
+       1
+      ],
+      "sum": 34.063541412353516,
+      "abs_max": 34.063541412353516
+     },
+     {
+      "shape": [
+       1
+      ],
+      "sum": 6.297616015612602e+19,
+      "abs_max": 6.297616015612602e+19
+     },
+     {
+      "shape": [
+       1
+      ],
+      "sum": -421604290985984.0,
+      "abs_max": 421604290985984.0
+     },
+     {
+      "shape": [
+       1
+      ],
+      "sum": 4.556427725111296e+16,
+      "abs_max": 4.556427725111296e+16
+     },
+     {
+      "shape": [
+       1
+      ],
+      "sum": 5.587987692608763e+19,
+      "abs_max": 5.587987692608763e+19
+     },
+     {
+      "shape": [
+       1
+      ],
+      "sum": 0.0,
+      "abs_max": 0.0
+     }
+    ]
+   },
+   "wall_s": 23732.926933288574
+  }
+ ],
+ "derived": [
+  {
+   "key": [
+    "stress",
+    "cpu",
+    "float64",
+    "surrogate_value_and_grad",
+    "step",
+    "default",
+    2000,
+    1,
+    0.1,
+    140
+   ]
+  },
+  {
+   "key": [
+    "stress",
+    "cpu",
+    "float64",
+    "surrogate_value_and_grad",
+    "step",
+    "default",
+    5000,
+    1,
+    0.1,
+    140
+   ]
+  }
+ ]
+}

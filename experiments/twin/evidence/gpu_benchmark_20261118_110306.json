@@ -1,0 +1,483 @@
+{
+ "manifest": {
+  "command_line": [
+   "gpu_benchmark.py",
+   "--devices",
+   "cpu",
+   "--sweeps",
+   "stress",
+   "--ops",
+   "hard_forward",
+   "--timeout-s",
+   "43200",
+   "--out-dir",
+   "results/gpu_benchmark_cpu_stress_fwd"
+  ],
+  "args": {
+   "child": null,
+   "audit": null,
+   "theta": "auto",
+   "sweeps": [
+    "stress"
+   ],
+   "devices": [
+    "cpu"
+   ],
+   "precision": "float32",
+   "ops": [
+    "hard_forward"
+   ],
+   "remat_segment": null,
+   "pool_sizes": [
+    1,
+    10,
+    50,
+    100,
+    250,
+    500,
+    1000
+   ],
+   "batch_sizes": [
+    1,
+    4,
+    16,
+    64,
+    256,
+    1000
+   ],
+   "batch_n_mn": 10,
+   "n_dd": 100,
+   "dt_ms": 0.1,
+   "t_on": 1.0,
+   "seed": 0,
+   "n_warmup": 2,
+   "n_rep": 7,
+   "timeout_s": 43200.0,
+   "out_dir": "results/gpu_benchmark_cpu_stress_fwd"
+  },
+  "child_environment": {
+   "JAX_PLATFORMS": {
+    "cpu": "cpu",
+    "gpu": "cuda"
+   },
+   "XLA_PYTHON_CLIENT_PREALLOCATE": "false"
+  },
+  "environment_variables": {
+   "XLA_PYTHON_CLIENT_PREALLOCATE": "false",
+   "JAX_PLATFORMS": "cpu",
+   "TF_CPP_MIN_LOG_LEVEL": "1"
+  },
+  "git": {
+   "sha": "c51046c62001e9c2026b1aebe5d7c49d4e0949f0",
+   "branch": "HEAD",
+   "dirty": false
+  },
+  "hardware": {
+   "os": "Ubuntu 26.04.1 LTS",
+   "kernel": "6.14.0-061400-generic",
+   "wsl": false,
+   "cpu_model": "AMD Ryzen 9 7950X 16-Core Processor",
+   "cpu_physical_cores": 16,
+   "cpu_logical_cores": 32,
+   "ram_bytes": 97885376512,
+   "gpu_name_vram_driver_cc": "NVIDIA GeForce RTX 4090, 24564 MiB, 595.71.05, 8.9",
+   "cuda_version_driver": "13.2"
+  },
+  "software": {
+   "python": "3.12.8",
+   "jax": "0.9.0",
+   "jaxlib": "0.9.0",
+   "jaxley": "0.13.0",
+   "numpy": "2.4.6",
+   "jax-cuda12-plugin": "0.9.0",
+   "jax-cuda12-pjrt": "0.9.0",
+   "psutil": "7.2.2"
+  },
+  "source": {
+   "git_revision": "c51046c6",
+   "git_dirty": false,
+   "provenance_note": "experiments/twin sources are untracked by git; reconstruction relies on the file hashes below, not the revision",
+   "source_sha256_16": {
+    "sensitivity_checks.py": "a433b78e7bd7e581",
+    "poolbuild.py": "e0ddd87e70bb5d3e",
+    "observables.py": "dbee3449569d4951",
+    "validation_protocol.py": "983f8bbcafebd67e",
+    "protocols.py": "404ea437741ea2ae",
+    "gradient_repair.py": "78812d0e94b7be75",
+    "deliverable_b.py": "8c16e479bcea843d",
+    "deliverable_c.py": "0c1896bdc5a2e5fc",
+    "pic_grid.py": "d900172c74ba1695",
+    "r2a_profiles.py": "ac4802b3bdfe1191",
+    "acceptance.py": "24200ac953a87395",
+    "myogen/simulator/jaxley/jax_models.py": "8b99fc4b69d735c7",
+    "myogen/simulator/jaxley/channels/nerlab_channels.py": "f6161ceaca04285e",
+    "myogen/simulator/jaxley/cells_api.py": "c6534ba58adaf3b1",
+    "myogen/simulator/jaxley/populations/motor_neurons.py": "32dda3e3599ec978"
+   },
+   "versions": {
+    "jax": "0.9.0",
+    "jaxley": "0.13.0",
+    "numpy": "2.4.6"
+   },
+   "dt_ms": 0.1,
+   "voltage_frame": "NERLab 1952-HH (V_rest\u22480, spike threshold +50 mV)",
+   "seed_taxonomy": {
+    "connectivity": "TwinSpec.seed (numpy default_rng)",
+    "events": "jax.random.PRNGKey (rate path) / numpy default_rng (frozen renewal events)",
+    "fd_probes": "deterministic, no sampling"
+   },
+   "objectives": {
+    "t2": "mean soma voltage, subthreshold deterministic current",
+    "t3_t4": "mean exponentially-smoothed rate (tau 100 ms)",
+    "t5": "MSE of smoothed rates (tau 100 ms) vs frozen-event target"
+   },
+   "scope": "this Jaxley harness configuration only \u2014 NOT a validated NEURON-matched forward model; conclusions are specific to the stated parameter points, objectives, and frozen input realizations"
+  },
+  "protocol": {
+   "step": {
+    "dt_ms": 0.1,
+    "t_pre_s": 0.2,
+    "t_on_s": 1.0,
+    "t_post_s": 0.2,
+    "level_hz": 40.0,
+    "n_dd": 100,
+    "seed": 0
+   },
+   "g4_case": {
+    "conn_seed": 0,
+    "event_offset": 0,
+    "theta_true": [
+     1.5,
+     0.011
+    ],
+    "start": [
+     1.0,
+     0.009
+    ]
+   },
+   "pool_sizes": [
+    1,
+    10,
+    50,
+    100,
+    250,
+    500,
+    1000
+   ],
+   "batch_sizes": [
+    1,
+    4,
+    16,
+    64,
+    256,
+    1000
+   ],
+   "batch_n_mn": 10,
+   "stress_sizes": [
+    2000,
+    5000
+   ],
+   "timing": "first call = compile + first execution; then n_warmup untimed; then n_rep timed with block_until_ready after each; perf_counter"
+  }
+ },
+ "rows": [
+  {
+   "n_warmup": 2,
+   "n_rep": 7,
+   "dt_ms": 0.1,
+   "t_pre_s": 0.2,
+   "t_on_s": 1.0,
+   "t_post_s": 0.2,
+   "level_hz": 40.0,
+   "n_dd": 100,
+   "seed": 0,
+   "sweep": "stress",
+   "device": "cpu",
+   "precision": "float32",
+   "op": "hard_forward",
+   "workload": "step",
+   "theta": "default",
+   "n_mn": 2000,
+   "batch_size": 1,
+   "remat_segment": null,
+   "status": "ok",
+   "jax_platform": "cpu",
+   "output_platforms": [
+    "cpu"
+   ],
+   "device_kind": "cpu",
+   "build_s": 547.5340997250005,
+   "first_call_s": 2.426269883999339,
+   "reps_s": [
+    1.7060873240006913,
+    1.7529745560004812,
+    1.69344850699963,
+    1.828243317999295,
+    1.772737954999684,
+    1.7749435719997564,
+    1.7392269280007895
+   ],
+   "median_s": 1.7529745560004812,
+   "min_s": 1.69344850699963,
+   "max_s": 1.828243317999295,
+   "q1_s": 1.7226571260007404,
+   "q3_s": 1.7738407634997202,
+   "iqr_s": 0.051183637498979806,
+   "n_steps": 14000,
+   "sim_duration_s": 1.4000000000000001,
+   "sims_per_s": 0.5704589359708456,
+   "bio_s_per_wall_s": 0.7986425103591839,
+   "mn_steps_per_s": 15972850.207183676,
+   "memory": {
+    "before_build": {
+     "process_rss_bytes": 524193792,
+     "device_bytes_in_use": null,
+     "device_peak_bytes_in_use": null
+    },
+    "before_compile": {
+     "process_rss_bytes": 5021732864,
+     "device_bytes_in_use": null,
+     "device_peak_bytes_in_use": null
+    },
+    "after_compile": {
+     "process_rss_bytes": 5319548928,
+     "device_bytes_in_use": null,
+     "device_peak_bytes_in_use": null
+    },
+    "after_steady_state": {
+     "process_rss_bytes": 5321764864,
+     "device_bytes_in_use": null,
+     "device_peak_bytes_in_use": null
+    }
+   },
+   "memory_note": "device_* from jax memory_stats() (XLA allocator; peak is process-wide since start, compilation included); process_rss_bytes from psutil (observed, not peak)",
+   "dtype_audit": {
+    "theta['drive_gain']": "float32",
+    "theta['gCaL_scale']": "float32",
+    "theta['gNaP_scale']": "float32",
+    "theta['w_exc']": "float32",
+    "theta['w_inh']": "float32",
+    "drives['dd']": "float32",
+    "drives['inh']": "float32",
+    "exc_connectivity": "float32",
+    "inh_connectivity": "float32",
+    "voltage": "float32",
+    "rates": "float32",
+    "loss": "float32",
+    "grad['drive_gain']": "float32",
+    "grad['gCaL_scale']": "float32",
+    "grad['gNaP_scale']": "float32",
+    "grad['w_exc']": "float32",
+    "grad['w_inh']": "float32"
+   },
+   "jaxpr_float_counts": {
+    "float32": 978
+   },
+   "precision_label": "float32",
+   "float32_components": [
+    "drives['dd']",
+    "drives['inh']",
+    "exc_connectivity",
+    "grad['drive_gain']",
+    "grad['gCaL_scale']",
+    "grad['gNaP_scale']",
+    "grad['w_exc']",
+    "grad['w_inh']",
+    "inh_connectivity",
+    "loss",
+    "rates",
+    "theta['drive_gain']",
+    "theta['gCaL_scale']",
+    "theta['gNaP_scale']",
+    "theta['w_exc']",
+    "theta['w_inh']",
+    "voltage",
+    "978 float32 values inside the graph"
+   ],
+   "pool_fired": true,
+   "output_summary": {
+    "all_finite": true,
+    "n_values": 28000000,
+    "sum": 10413.0,
+    "abs_max": 1.0,
+    "sha256_16": "6f5672feba323dcb",
+    "leaves": [
+     {
+      "shape": [
+       1,
+       14000,
+       2000
+      ],
+      "sum": 10413.0,
+      "abs_max": 1.0
+     }
+    ]
+   },
+   "wall_s": 573.3890166282654
+  },
+  {
+   "n_warmup": 2,
+   "n_rep": 7,
+   "dt_ms": 0.1,
+   "t_pre_s": 0.2,
+   "t_on_s": 1.0,
+   "t_post_s": 0.2,
+   "level_hz": 40.0,
+   "n_dd": 100,
+   "seed": 0,
+   "sweep": "stress",
+   "device": "cpu",
+   "precision": "float32",
+   "op": "hard_forward",
+   "workload": "step",
+   "theta": "default",
+   "n_mn": 5000,
+   "batch_size": 1,
+   "remat_segment": null,
+   "status": "ok",
+   "jax_platform": "cpu",
+   "output_platforms": [
+    "cpu"
+   ],
+   "device_kind": "cpu",
+   "build_s": 1452.3814416839996,
+   "first_call_s": 4.203466879998814,
+   "reps_s": [
+    3.3481203589999495,
+    3.348196189999726,
+    3.368708398000308,
+    3.318518440999469,
+    3.3530406579993723,
+    3.3766498230015713,
+    3.3106054669988225
+   ],
+   "median_s": 3.348196189999726,
+   "min_s": 3.3106054669988225,
+   "max_s": 3.3766498230015713,
+   "q1_s": 3.3333193999997093,
+   "q3_s": 3.36087452799984,
+   "iqr_s": 0.027555128000130935,
+   "n_steps": 14000,
+   "sim_duration_s": 1.4000000000000001,
+   "sims_per_s": 0.2986682808452995,
+   "bio_s_per_wall_s": 0.41813559318341936,
+   "mn_steps_per_s": 20906779.659170967,
+   "memory": {
+    "before_build": {
+     "process_rss_bytes": 525365248,
+     "device_bytes_in_use": null,
+     "device_peak_bytes_in_use": null
+    },
+    "before_compile": {
+     "process_rss_bytes": 7172169728,
+     "device_bytes_in_use": null,
+     "device_peak_bytes_in_use": null
+    },
+    "after_compile": {
+     "process_rss_bytes": 7633125376,
+     "device_bytes_in_use": null,
+     "device_peak_bytes_in_use": null
+    },
+    "after_steady_state": {
+     "process_rss_bytes": 7636004864,
+     "device_bytes_in_use": null,
+     "device_peak_bytes_in_use": null
+    }
+   },
+   "memory_note": "device_* from jax memory_stats() (XLA allocator; peak is process-wide since start, compilation included); process_rss_bytes from psutil (observed, not peak)",
+   "dtype_audit": {
+    "theta['drive_gain']": "float32",
+    "theta['gCaL_scale']": "float32",
+    "theta['gNaP_scale']": "float32",
+    "theta['w_exc']": "float32",
+    "theta['w_inh']": "float32",
+    "drives['dd']": "float32",
+    "drives['inh']": "float32",
+    "exc_connectivity": "float32",
+    "inh_connectivity": "float32",
+    "voltage": "float32",
+    "rates": "float32",
+    "loss": "float32",
+    "grad['drive_gain']": "float32",
+    "grad['gCaL_scale']": "float32",
+    "grad['gNaP_scale']": "float32",
+    "grad['w_exc']": "float32",
+    "grad['w_inh']": "float32"
+   },
+   "jaxpr_float_counts": {
+    "float32": 978
+   },
+   "precision_label": "float32",
+   "float32_components": [
+    "drives['dd']",
+    "drives['inh']",
+    "exc_connectivity",
+    "grad['drive_gain']",
+    "grad['gCaL_scale']",
+    "grad['gNaP_scale']",
+    "grad['w_exc']",
+    "grad['w_inh']",
+    "inh_connectivity",
+    "loss",
+    "rates",
+    "theta['drive_gain']",
+    "theta['gCaL_scale']",
+    "theta['gNaP_scale']",
+    "theta['w_exc']",
+    "theta['w_inh']",
+    "voltage",
+    "978 float32 values inside the graph"
+   ],
+   "pool_fired": true,
+   "output_summary": {
+    "all_finite": true,
+    "n_values": 70000000,
+    "sum": 25945.0,
+    "abs_max": 1.0,
+    "sha256_16": "fa34b0226ffa53b7",
+    "leaves": [
+     {
+      "shape": [
+       1,
+       14000,
+       5000
+      ],
+      "sum": 25945.0,
+      "abs_max": 1.0
+     }
+    ]
+   },
+   "wall_s": 1503.3831260204315
+  }
+ ],
+ "derived": [
+  {
+   "key": [
+    "stress",
+    "cpu",
+    "float32",
+    "hard_forward",
+    "step",
+    "default",
+    2000,
+    1,
+    0.1,
+    null
+   ]
+  },
+  {
+   "key": [
+    "stress",
+    "cpu",
+    "float32",
+    "hard_forward",
+    "step",
+    "default",
+    5000,
+    1,
+    0.1,
+    null
+   ]
+  }
+ ]
+}
