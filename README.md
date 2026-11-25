@@ -12,7 +12,7 @@
 
 ## Overview
 
-<a href="https://simpetru.com/img/myogen-summary.mp4"><img src="docs/images/myogen_video_poster.jpg" align="right" width="330" alt="Video summary of the MyoGen paper"></a>
+<a href="https://simpetru.com/img/myogen-summary.mp4"><img src="docs/images/myogen_video_overview.jpg" align="right" width="330" alt="Video summary of the MyoGen paper"></a>
 
 MyoGen simulates the neuromuscular pathway end to end: descending neural drive, spinal motor neurons, muscle activation and force, and the surface and intramuscular EMG they produce at the electrodes.
 
