@@ -10,15 +10,13 @@
 
 <br clear="left">
 
-<a href="https://simpetru.com/img/myogen-summary.mp4"><img src="docs/images/myogen_video_poster.jpg" align="right" width="340" alt="Video summary of the MyoGen paper"></a>
-
 ## Overview
+
+<a href="https://simpetru.com/img/myogen-summary.mp4"><img src="docs/images/myogen_video_poster.jpg" align="right" width="340" alt="Video summary of the MyoGen paper"></a>
 
 MyoGen simulates the neuromuscular pathway end to end: descending neural drive, spinal motor neurons, muscle activation and force, and the surface and intramuscular EMG they produce at the electrodes.
 
 Every motor unit, spike time and fiber location stays accessible, so decomposition and decoding algorithms can be tested against signals whose ground truth is known.
-
-## Highlights
 
 - **Biophysical motor neurons.** NEURON models with validated calcium dynamics and membrane properties.
 - **Vectorized and parallel.** NumPy and Numba on all CPU cores, optional GPU convolutions.
