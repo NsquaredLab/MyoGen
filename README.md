@@ -23,6 +23,10 @@ MyoGen is a **modular and extensible neuromuscular simulation framework** for ge
 It supports end-to-end modeling of the neuromuscular pathway, from descending neural drive and spinal motor neuron dynamics to muscle activation and bioelectric signal formation at the electrode level.
 MyoGen is designed for algorithm validation, hypothesis-driven research, and education, providing configurable building blocks that can be independently combined and extended.
 
+<a href="https://simpetru.com/img/myogen-summary.mp4"><img src="https://simpetru.com/img/myogen-summary.jpg" width="640" alt="Video summary of the MyoGen paper"></a>
+
+▶ [The paper in one minute](https://simpetru.com/img/myogen-summary.mp4), a video summary by Springer Nature.
+
 # Highlights
 
 🧬 **Biophysically inspired neuron models** — NEURON-based motor neurons with validated calcium dynamics and membrane properties

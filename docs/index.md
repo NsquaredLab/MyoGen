@@ -20,6 +20,10 @@ bioelectric signal formation at the electrode level. MyoGen is designed for
 algorithm validation, hypothesis-driven research, and education, providing
 configurable building blocks that can be combined and extended independently.
 
+<video src="https://simpetru.com/img/myogen-summary.mp4" poster="https://simpetru.com/img/myogen-summary.jpg" controls playsinline preload="none" style="width:100%"></video>
+
+The paper in one minute, a video summary by Springer Nature.
+
 ## Highlights
 
 - 🧬 **Biophysically inspired neuron models** — NEURON-based motor neurons with validated calcium dynamics and membrane properties.
