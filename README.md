@@ -1,150 +1,65 @@
-<div align="center">
-  <h1 style="display: flex; align-items: center; justify-content: center; gap: 10px;">
-    <span>Welcome to</span>
-    <img src="https://raw.githubusercontent.com/NsquaredLab/MyoGen/main/docs/images/myogen_logo.png" height="100" alt="MyoGen Logo">
-  </h1>
+<img src="https://raw.githubusercontent.com/NsquaredLab/MyoGen/main/docs/images/myogen_logo.png" align="left" height="140" alt="MyoGen">
 
-  <h2>The modular and extensible simulation toolkit for neurophysiology</h2>
+### Biophysical simulation from neural drive to EMG
 
-  [![Documentation](https://img.shields.io/badge/docs-latest-blue.svg)](https://nsquaredlab.github.io/MyoGen/)
-  [![Python 3.12+](https://img.shields.io/badge/python-3.12+-blue.svg)](https://www.python.org/downloads/)
-  [![Version](https://img.shields.io/badge/version-0.13.0-orange.svg)](https://github.com/NsquaredLab/MyoGen)
+[![Nature Communications](https://img.shields.io/badge/Nature%20Communications-2026-a5222f)](https://www.nature.com/articles/s41467-026-79273-3)
+[![PyPI](https://img.shields.io/pypi/v/myogen?color=c2410c)](https://pypi.org/project/myogen/)
+[![License](https://img.shields.io/badge/license-AGPL--3.0-2f7d32)](https://github.com/NsquaredLab/MyoGen/blob/main/LICENSE.md)
 
-  [Installation](https://nsquaredlab.github.io/MyoGen/getting-started/#install) •
-  [Documentation](https://nsquaredlab.github.io/MyoGen/) •
-  [Examples](https://nsquaredlab.github.io/MyoGen/auto_examples/01_basic/) •
-  [How to Cite](https://nsquaredlab.github.io/MyoGen/#how-to-cite)
-</div>
+[Install](#quick-start) · [Docs](https://nsquaredlab.github.io/MyoGen/) · [Examples](https://nsquaredlab.github.io/MyoGen/auto_examples/01_basic/) · [Cite](#how-to-cite)
 
-# Overview
+<br clear="left">
 
-MyoGen is a **modular and extensible neuromuscular simulation framework** for generating physiologically grounded motor-unit activity, muscle force, and surface EMG signals.  
+<a href="https://simpetru.com/img/myogen-summary.mp4"><img src="https://raw.githubusercontent.com/NsquaredLab/MyoGen/main/docs/images/myogen_video_poster.jpg" align="right" width="340" alt="Video summary of the MyoGen paper"></a>
 
-It supports end-to-end modeling of the neuromuscular pathway, from descending neural drive and spinal motor neuron dynamics to muscle activation and bioelectric signal formation at the electrode level.
-MyoGen is designed for algorithm validation, hypothesis-driven research, and education, providing configurable building blocks that can be independently combined and extended.
+## Overview
 
-<a href="https://simpetru.com/img/myogen-summary.mp4"><img src="https://simpetru.com/img/myogen-summary.jpg" width="640" alt="Video summary of the MyoGen paper"></a>
+MyoGen simulates the neuromuscular pathway end to end: descending neural drive, spinal motor neurons, muscle activation and force, and the surface and intramuscular EMG they produce at the electrodes.
 
-▶ [The paper in one minute](https://simpetru.com/img/myogen-summary.mp4), a video summary by Springer Nature.
+Every motor unit, spike time and fiber location stays accessible, so decomposition and decoding algorithms can be tested against signals whose ground truth is known.
 
-# Highlights
+## Highlights
 
-🧬 **Biophysically inspired neuron models** — NEURON-based motor neurons with validated calcium dynamics and membrane properties
+- **Biophysical motor neurons.** NEURON models with validated calcium dynamics and membrane properties.
+- **Vectorized and parallel.** NumPy and Numba on all CPU cores, optional GPU convolutions.
+- **Reproducible.** Deterministic seeds and standard Neo Block outputs.
+- **NWB export.** Share simulations through [Neurodata Without Borders](https://www.nwb.org/) and DANDI.
 
-🎯 **Everything is inspectable** — Complete access to every motor unit, spike time, fiber location etc. for rigorous algorithm testing
+<br clear="right">
 
-⚡️ **Vectorized & parallel** — Multi-core CPU processing with NumPy/Numba vectorization for fast computation
+## Quick start
 
-🔬 **End-to-end simulation** — From motor unit recruitment to high-density surface EMG in a single framework
-
-📊 **Reproducible science** — Deterministic random seeds and standardized Neo Block outputs for exact replication
-
-📦 **NWB export** — Optional export to [Neurodata Without Borders](https://www.nwb.org/) format for data sharing via DANDI
-
-🧰 **Comprehensive toolkit** — Surface EMG, intramuscular EMG, force generation, and spinal network modeling
-
-# Installation
-
-> **Requires Python 3.12+** — Check your version with `python --version`
-
-## System Requirements
-
-| Platform | Before Installing MyoGen |
-|----------|--------------------------|
-| **Windows** | [NEURON 8.2.7](https://github.com/neuronsimulator/nrn/releases/download/8.2.7/nrn-8.2.7.w64-mingw-py-39-310-311-312-313-setup.exe) - Download, run installer, select "Add to PATH" |
-| **Linux** | `sudo apt install libopenmpi-dev` (Ubuntu/Debian) or `sudo dnf install openmpi-devel` (Fedora) |
-| **macOS** | `brew install open-mpi` |
-
-> [!CAUTION]
->
-> ## Windows Users: Prerequisites
->
-> **You MUST install the following before installing MyoGen on Windows:**
->
-> ### 1. Visual C++ Build Tools
->
-> Download and install [Visual C++ Build Tools](https://visualstudio.microsoft.com/visual-cpp-build-tools/).
->
->During installation, select these components:
->
-> - MSVC Build Tools for x64/x86 (Latest)
-> - MSVC v143 – VS 2022 C++ x64/x86 build tools
-> - Windows 11 SDK (latest)
-> - C++ core desktop features
->
-> ### 2. NEURON Simulator
->
-> 1. **Download**: [NEURON 8.2.7 Installer](https://github.com/neuronsimulator/nrn/releases/download/8.2.7/nrn-8.2.7.w64-mingw-py-39-310-311-312-313-setup.exe)
-> 2. **Run the installer** and select **"Add to PATH"** when prompted
-> 3. **Restart your terminal** (close and reopen)
-> 4. Then continue with the installation below
-
----
-
-## Step 1: Install uv (Package Manager)
-
-We use [uv](https://docs.astral.sh/uv/) - a fast Python package manager. Install it first:
-
-**Windows** (open PowerShell):
-
-```powershell
-powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"
-```
-
-**Linux/macOS**:
+Needs Python 3.12+ and [uv](https://docs.astral.sh/uv/).
 
 ```bash
-curl -LsSf https://astral.sh/uv/install.sh | sh
-```
-
-After installing, **restart your terminal** (close and reopen it).
-
----
-
-## Step 2: Create a New Project
-
-Open a terminal and navigate to where you want your project:
-
-```bash
-# Create a new folder for your project
-mkdir my_emg_project
+uv init my_emg_project
 cd my_emg_project
-
-# Initialize a Python project
-uv init
-
-# Add MyoGen to your project
 uv add myogen
 ```
 
-That's it! MyoGen is now installed and ready to use.
+Or `pip install myogen`.
 
----
+<details>
+<summary><b>Windows prerequisites</b></summary>
 
-## Step 3: Verify Installation
+1. [Visual C++ Build Tools](https://visualstudio.microsoft.com/visual-cpp-build-tools/) with MSVC Build Tools for x64/x86 (latest), MSVC v143 (VS 2022 C++ x64/x86 build tools), the Windows 11 SDK (latest) and C++ core desktop features.
+2. [NEURON 8.2.7](https://github.com/neuronsimulator/nrn/releases/download/8.2.7/nrn-8.2.7.w64-mingw-py-39-310-311-312-313-setup.exe): run the installer, choose "Add to PATH", then restart the terminal.
 
-Create a test file to make sure everything works:
+</details>
 
-```bash
-# Create a test script
-uv run python -c "from myogen import simulator; print('MyoGen installed successfully!')"
-```
-
-If you see `MyoGen installed successfully!` - you're all set!
-
----
-
-## Alternative: pip install
-
-If you prefer pip over uv:
+<details>
+<summary><b>Linux and macOS prerequisites</b></summary>
 
 ```bash
-pip install myogen
+sudo apt install libopenmpi-dev   # Ubuntu, Debian
+sudo dnf install openmpi-devel    # Fedora
+brew install open-mpi             # macOS
 ```
 
----
+</details>
 
-## For Developers (From Source)
+<details>
+<summary><b>From source</b></summary>
 
 ```bash
 git clone https://github.com/NsquaredLab/MyoGen.git
@@ -153,25 +68,24 @@ uv sync
 uv run poe setup_myogen
 ```
 
-## Optional: GPU Acceleration
+</details>
 
-For 5-10× faster convolutions (requires NVIDIA GPU):
+<details>
+<summary><b>GPU acceleration</b></summary>
 
-```bash
-uv add cupy-cuda12x
-```
+5 to 10 times faster convolutions on an NVIDIA GPU: `uv add cupy-cuda12x`
 
-# Documentation
+</details>
 
-📖 **[Read the full documentation](https://nsquaredlab.github.io/MyoGen/)**
+## Documentation
 
-- [User Guide](https://nsquaredlab.github.io/MyoGen/neo-blocks/) — Working with simulation outputs
-- [API Reference](https://nsquaredlab.github.io/MyoGen/api/) — Complete class documentation
-- [Examples](examples/) — Step-by-step tutorials from recruitment to EMG
+- [User guide](https://nsquaredlab.github.io/MyoGen/neo-blocks/): working with simulation outputs
+- [API reference](https://nsquaredlab.github.io/MyoGen/api/)
+- [Examples](https://nsquaredlab.github.io/MyoGen/auto_examples/01_basic/): step by step from recruitment to EMG
 
-# How to Cite
+## How to cite
 
-If you use MyoGen in your research, please cite:
+If you use MyoGen, please cite:
 
 ```bibtex
 @article{simpetru_molinari_2026_myogen,
@@ -188,11 +102,11 @@ If you use MyoGen in your research, please cite:
 }
 ```
 
-# Contributing
+## Contributing
 
 Contributions welcome! See [issues](https://github.com/NsquaredLab/MyoGen/issues) if you want to add a feature or fix a bug.
 
-# Contributors
+## Contributors
 
 MyoGen is authored by **Raul C. Sîmpetru** and **Ricardo G. Molinari**. It is a joint project of the [Nsquared Lab](https://nsquared.tf.fau.de/) (Neuromuscular Physiology and Neural Interfacing Laboratory) at FAU Erlangen-Nürnberg, the [NER Lab](https://www.ceb.unicamp.br/pesquisa/laboratorios/laboratorio-de-pesquisa-em-neuroengenharia/) (Neural Engineering Research Laboratory) at the University of Campinas, and the [BMClab](https://bmclab.pesquisa.ufabc.edu.br/) (Biomechanics and Motor Control Laboratory) at the Federal University of ABC.
 
@@ -238,6 +152,6 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/e
 
 This project follows the [all-contributors](https://github.com/all-contributors/all-contributors) specification. Contributions of any kind welcome!
 
-# License
+## License
 
 MyoGen is AGPL licensed. See [LICENSE](https://github.com/NsquaredLab/MyoGen/blob/main/LICENSE.md) for details.
