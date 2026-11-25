@@ -10,7 +10,7 @@
 
 <br clear="left">
 
-<a href="https://simpetru.com/img/myogen-summary.mp4"><img src="https://raw.githubusercontent.com/NsquaredLab/MyoGen/main/docs/images/myogen_video_poster.jpg" align="right" width="340" alt="Video summary of the MyoGen paper"></a>
+<a href="https://simpetru.com/img/myogen-summary.mp4"><img src="docs/images/myogen_video_poster.jpg" align="right" width="340" alt="Video summary of the MyoGen paper"></a>
 
 ## Overview
 
