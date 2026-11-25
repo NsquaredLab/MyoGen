@@ -40,15 +40,16 @@ If you use MyoGen in your research, please cite:
 
 ```bibtex
 @article{simpetru_molinari_2026_myogen,
-  title   = {MyoGen: Unified Biophysical Modeling of Human Neuromotor Activity and Resulting Signals},
+  title   = {{MyoGen}: unified biophysical modeling of human neuromotor activity and resulting signals},
   author  = {S{\^i}mpetru, Raul C. and Molinari, Ricardo G. and Rohlf, Devon R. and
              Batichotti, Rebeka L. and Watanabe, Renato N. and
              Elias, Leonardo A. and Del Vecchio, Alessandro},
-  journal = {bioRxiv},
-  note    = {preprint},
+  journal = {Nature Communications},
+  volume  = {17},
+  pages   = {11532},
   year    = {2026},
-  doi     = {10.64898/2026.01.01.697284},
-  url     = {https://www.biorxiv.org/content/10.64898/2026.01.01.697284}
+  doi     = {10.1038/s41467-026-79273-3},
+  url     = {https://www.nature.com/articles/s41467-026-79273-3}
 }
 ```
 
